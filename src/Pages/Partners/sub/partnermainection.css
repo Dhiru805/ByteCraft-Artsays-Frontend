@@ -1,0 +1,167 @@
+/* Existing styles */
+
+.main-section {
+    padding: 2rem;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 2rem;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.main-section-one {
+    margin-top: 2rem;
+    width: 100%;
+    max-width: 39rem;
+}
+
+.main-section-btn {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 29px;
+}
+
+.main-section-btn button {
+    margin-top: 1rem;
+    border-radius: 50px;
+    width: 12rem;
+    height: 4rem;
+    font-size: 1rem;
+    padding: 15px;
+    border: none; /* Remove default border */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition for hover effect */
+}
+
+/* Primary Button */
+.main-section-btn button.btn-primary {
+    background-color: #A67B5B; /* Default background color */
+    color: white; /* Text color */
+}
+
+.main-section-btn button.btn-primary:hover {
+    background-color: #6F4E37; /* Background color on hover */
+    color: white; /* Text color on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), /* Shadow for hover effect */
+                0 8px 16px rgba(0, 0, 0, 0.25),
+                0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.main-section-btn button.btn-primary:focus,
+.main-section-btn button.btn-primary:active {
+    outline: none; /* Remove default outline */
+    box-shadow: none; /* Remove default box-shadow */
+    background-color: #6F4E37 !important; /* Ensure consistent background color when focused/active */
+}
+
+/* Outline Button */
+.main-section-btn button.btn-outline-info {
+    border: 2px solid #A67B5B; /* Border color matching the primary button */
+    color: #A67B5B; /* Text color matching the primary button */
+    background-color: transparent; /* Transparent background */
+}
+
+.main-section-btn button.btn-outline-info:hover {
+    background-color: #A67B5B; /* Background color on hover */
+    color: white; /* Text color on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), /* Shadow for hover effect */
+                0 8px 16px rgba(0, 0, 0, 0.25),
+                0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.main-section-btn button.btn-outline-info:focus,
+.main-section-btn button.btn-outline-info:active {
+    outline: none; /* Remove default outline */
+    box-shadow: none; /* Remove default box-shadow */
+    background-color: #A67B5B !important; /* Ensure consistent background color when focused/active */
+    color: white ; /* Ensure consistent text color when focused/active */
+}
+
+
+/* Image styles */
+.main-one-image img {
+    width: 100%;
+    max-width: 55rem;
+    height: auto;
+    /* border-radius: 2rem; */
+    box-shadow: 9px 11px #efefef;
+}
+
+/* Heading and paragraph styles */
+.main-section-one h1 {
+    font-size: 3rem;
+}
+
+.main-section-one p {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Media Queries */
+@media (max-width: 1200px) {
+    .main-section {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .main-section-one {
+        text-align: center;
+    }
+
+    .main-one-image img {
+        width: 90%;
+    }
+
+    .main-section-one h1 {
+        font-size: 3rem;
+    }
+
+    .main-section-one p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .partner-main-section {
+        padding: 2px;
+    }
+    .main-section-one h1 {
+        font-size: 2.5rem;
+    }
+
+    .main-section-one p {
+        font-size: 0.8rem;
+    }
+
+    .main-section-btn {
+        flex-direction: row;
+    }
+
+    .main-section-btn button {
+        width: 100%;
+        max-width: 20rem;
+        margin-top: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .main-section {
+        padding: 0rem;
+        gap: 2rem;
+        margin: 2rem 15px;
+        
+    }
+    .main-section-one h1 {
+        font-size: 2rem;
+    }
+
+    .main-section-one p {
+        font-size: 0.7rem;
+    }
+
+    .main-one-image img {
+        padding-top: 13px;
+        width: 100%;
+    }
+}

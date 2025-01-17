@@ -1,0 +1,57 @@
+.bid-carousel-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    width: 97%;
+    margin: 0 auto;
+  }
+  
+  .bid-carousel-cards-container {
+    display: flex;
+    width: 100%; /* Five items visible at a time */
+    transition: transform 1s ease-in-out;
+  }
+  
+  .static-carousel-card {
+    flex: 0 0 20%; /* Take 20% of the container width for 5 items */
+    margin: 0 15px;
+    height: 350px;
+    text-align: center;
+  }
+  
+  /* .biding-carousel-image {
+    width: 100%;
+    /* height: 250px; */
+    /* border-rdius: 10px; */
+   */
+  
+  .bid-card-content {
+    margin-top: 10px;
+    padding: 15px;
+  }
+  
+  /* .bid-card-title {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+  }
+   */
+  .bid-card-details {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .bid-card-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  
+  .btn-place-bid {
+    background-color: #721c24;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  

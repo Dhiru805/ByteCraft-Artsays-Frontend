@@ -1,0 +1,100 @@
+.help-card:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+   
+  .help-card .content {
+    width: 100%;
+  }
+   
+  .help-card .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+   
+  
+   
+  .help-card .description {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+  }
+   
+  .help-card .description.show {
+    max-height: 100px;
+    opacity: 1;
+  }
+   
+  .help-card .expand-icon {
+    font-size: 2rem;
+    font-weight: bold;
+    height: 35px;
+    width: 35px;
+    text-align: center;
+    color: #ffffff;
+    background-color: #e47423;
+    border-radius:50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    cursor: pointer;
+    padding-bottom: 6px;
+  }
+   
+   
+   
+  @media (max-width: 768px) {
+    .help-header .search-bar {
+      flex-direction: column;
+    }
+   
+    .help-header .search-bar input {
+      border-radius: 25px;
+      margin-bottom: 0.5rem;
+    }
+   
+    .help-header .search-bar .btn {
+      border-radius: 25px;
+    }
+   
+    .help-header h1 {
+      font-size: 36px;
+    }
+   
+    .help-main {
+      width: 100%;
+      margin-top: 1rem;
+      padding: 1rem;
+    }
+   
+    .help-card {
+      flex-direction: column;
+      text-align: center;
+    }
+   
+    .help-card .icon {
+      margin-bottom: 1rem;
+    }
+  }
+   
+  @media (max-width: 576px) {
+    .help-header h1 {
+      font-size: 28px;
+    }
+   
+    .help-main {
+      padding: 1rem 0.5rem;
+    }
+   
+    .help-card .content h2 {
+      font-size: 1rem;
+      text-align: center;
+    }
+   
+    .help-card .content p {
+      font-size: 0.875rem;
+    }
+  }
+   

@@ -1,0 +1,104 @@
+.logo-heading{
+       padding: 17px;
+    width: 31rem;
+}
+.main-section-partners {
+    display: flex;
+    justify-content: center;
+    /* top: 4rem; */
+    position: relative;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
+}
+
+.logo-section {
+    display: flex;
+    width: 57rem;
+    justify-content: space-evenly;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.logo-section img {
+   height: 4rem;
+    width: 4rem;
+}
+
+.logo-section-imgs {
+    display: flex;
+    margin-right: 20px;
+    margin-left:20px ;
+    justify-content: space-evenly;
+    overflow: hidden; /* Ensure that logos stay within their containers */
+}
+/* Media Queries */
+@media (max-width: 1200px) {
+    .logo-heading {
+        width: 100%;
+        text-align: center;
+    }
+
+    .main-section-partners {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .logo-section {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .logo-heading {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .logo-heading h1 {
+        font-size: 1.5rem;
+    }
+
+    .logo-section {
+        width: 100%;
+    }
+
+    .logo-section img {
+        height: 3rem;
+        width: 3rem;
+    }
+
+    .logo-section-imgs {
+        padding: 0.5rem;
+        width: auto;
+        margin-right: 20px;
+        margin-left: 20px;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .logo-heading {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .logo-heading h1 {
+        font-size: 1.2rem;
+    }
+
+    .logo-section img {
+        height: 2.5rem;
+        width: 2.5rem;
+    }
+
+    .logo-section-imgs {
+        padding: 0.5rem;
+        width: auto;
+        justify-content: center;
+    }
+}

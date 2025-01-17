@@ -1,0 +1,191 @@
+@keyframes borderColorAnimation {
+  0% {
+    border-color: #6a1b9a;
+  }
+  25% {
+    border-color: #1a237e;
+  }
+  50% {
+    border-color: #1e88e5;
+  }
+  75% {
+    border-color: #e91e63;
+  }
+  100% {
+    border-color: #6a1b9a;
+  }
+}
+
+.investment-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  margin: 0 auto;
+  max-width: 95%;
+  height: 400px; /* Adjust the height as needed */
+  border: 5px solid/none;
+}
+
+.investment-title h1 {
+  font-size: 2.4rem;
+}
+.investment-title p {
+  font-size: 1rem;
+}
+
+.investment-title {
+  flex: 1;
+  font-size: 1em;
+  color: black;
+  padding-right: 20px;
+  text-align: left; /* Align text to the left */
+}
+
+.invest-cards {
+  display: flex;
+  flex: 1;
+  border-radius: 25px;
+  padding: 10px;
+  justify-content: space-between;
+  perspective: 1000px; /* Add perspective for 3D effect */
+}
+
+.btnnn {
+  display: inline-flex; /* Change to inline-flex to center the content */
+  align-items: center; /* Vertically centers the content */
+  justify-content: center; /* Horizontally centers the content */
+  padding: 10px 20px;
+  font-size: 1em;
+  color: #6f4e37;
+  border: none;
+  font-size: large;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.btn-invest {
+  margin-top: 10px;
+  text-align: left; /* Align the "Store" button to the left */
+}
+
+/* .btn-invest:hover {
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+    rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+} */
+
+.arrow-invest {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px; /* Adjust the spacing between text and arrow */
+  font-size: 30px;
+  width: 30px; /* Adjust width as needed */
+  height: 100%;
+  margin-bottom: 4px;
+}
+
+.btn:hover {
+  color: #6f4e37;
+  /* background-color: #A67B5B; */
+}
+
+.carde {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  text-align: center;
+  width: 48%;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+    rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  height: 350px;
+  -webkit-mask-image: linear-gradient(
+    45deg,
+    #000 25%,
+    rgba(0, 0, 0, 0.2) 50%,
+    #000 75%
+  );
+  mask-image: linear-gradient(
+    45deg,
+    #000 25%,
+    rgba(0, 0, 0, 0.2) 50%,
+    #000 75%
+  );
+  -webkit-mask-size: 800%;
+  mask-size: 800%;
+  -webkit-mask-position: 0;
+  mask-position: 0;
+}
+
+.carde:hover {
+  scale: 1.01;
+  transition: mask-position 2s ease, -webkit-mask-position 2s ease;
+  -webkit-mask-position: 120%;
+  mask-position: 120%;
+  opacity: 1;
+}
+
+.carde h3 {
+  color: #1a237e;
+}
+
+.carde p {
+  color: #616161;
+}
+
+.more-link {
+  color: #1e88e5;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.more-link:hover {
+  text-decoration: underline;
+}
+
+/* Responsive styling for small devices */
+@media (max-width: 1000px) {
+  .investment-section {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .investment-title {
+    padding-right: 0;
+    padding-bottom: 20px;
+    text-align: center;
+  }
+
+  .invest-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .carde {
+    width: 100%;
+    margin-bottom: 20px;
+    height: auto; /* Adjust the height for small devices */
+  }
+}
+
+@media (max-width: 576px){
+  .investment-section{
+    padding: 20px 0px 20px 0px;
+    max-width: 93%;
+  }
+   
+  .investment-title h1{
+    font-size: 2.2rem;
+  }
+  .invest-cards{
+    border-radius: 0px;
+  }
+  .investment-title p{
+    padding: 0px 10px 0px 10px;
+  }
+}
