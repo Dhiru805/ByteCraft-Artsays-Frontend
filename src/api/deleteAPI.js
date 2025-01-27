@@ -1,19 +1,25 @@
 import axiosInstance from "./axiosConfig";
 
-const deleteAPI = async (url, headers = {}, isPrivate = true) => {
+async function deleteAPI(url, config = {}, isPrivate = true) {
   try {
     let accessToken;
-
     if (isPrivate) {
-      accessToken = JSON.parse(localStorage.getItem("accessToken"));
+      accessToken = localStorage.getItem("token");
     }
 
-    const response = await axiosInstance.delete(url, {
+    const requestConfig = {
       headers: {
-        ...headers,
-        access_token: accessToken,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+        ...config.headers,
       },
-    });
+    };
+
+    if (config.params) {
+      requestConfig.params = config.params;
+    }
+
+    const response = await axiosInstance.delete(url, requestConfig);
 
     if (response.status === 200) {
       return {
@@ -26,6 +32,6 @@ const deleteAPI = async (url, headers = {}, isPrivate = true) => {
     console.error("Error during API request:", error);
     throw error;
   }
-};
+}
 
 export default deleteAPI;

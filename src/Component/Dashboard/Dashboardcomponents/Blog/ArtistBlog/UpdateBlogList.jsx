@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const UpdateModal = ({ showModal, setShowModal, selectedBlog, setBlogs }) => {
+const UpdateModal = ({ showModal, setShowModal, selectedBlog, setBlogs,fetchBlog }) => {
   const [formData, setFormData] = useState({
     blogName: selectedBlog?.blogName || "",
     blogDescription: selectedBlog?.blogDescription || "",
@@ -26,7 +28,7 @@ const UpdateModal = ({ showModal, setShowModal, selectedBlog, setBlogs }) => {
     form.append("blogAuthor", formData.blogAuthor);
     form.append("category", formData.category);
     if (formData.blogImage) form.append("blogImage", formData.blogImage);
-
+  
     fetch(`http://localhost:3001/Blog-Post/update/${selectedBlog._id}`, {
       method: "PUT",
       headers: {
@@ -42,10 +44,13 @@ const UpdateModal = ({ showModal, setShowModal, selectedBlog, setBlogs }) => {
         setBlogs((prevBlogs) =>
           prevBlogs.map((blog) => (blog._id === updatedBlog._id ? updatedBlog : blog))
         );
+        fetchBlog();
         setShowModal(false);
+        toast.success("Blog updated successfully!", { autoClose: 3000 });
       })
       .catch((error) => {
         console.error("Error updating blog:", error);
+        toast.error("Failed to update blog. Please try again.", { autoClose: 3000 });
       });
   };
 

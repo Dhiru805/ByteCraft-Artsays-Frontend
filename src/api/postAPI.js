@@ -1,23 +1,25 @@
-// src/api/postAPI.js
-
 import axiosInstance from "./axiosConfig";
 
-async function postAPI(url, payload, headers = {}, isPrivate = true) {
+async function postAPI(url, payload, isPrivate = true, config = {}) {
   try {
     let accessToken;
-
     if (isPrivate) {
-      accessToken = JSON.parse(localStorage.getItem("accessToken"));
+      accessToken = localStorage.getItem("token");
     }
 
-    const response = await axiosInstance.post(url, payload, {
+    const requestConfig = {
       headers: {
-        access_token: accessToken,
-        ...headers,
+        "Authorization": `Bearer ${accessToken}`,
+        ...(payload instanceof FormData
+          ? { "Content-Type": "multipart/form-data" } // Let the browser set proper boundaries
+          : { "Content-Type": "application/json" }),
+        ...config.headers,
       },
-    });
+    };
 
-    if ((response.status = 200)) {
+    const response = await axiosInstance.post(url, payload, requestConfig);
+
+    if (response.status === 200) {
       return {
         message: response.data.message,
         hasError: response.data.hasError,
@@ -25,10 +27,12 @@ async function postAPI(url, payload, headers = {}, isPrivate = true) {
       };
     }
   } catch (error) {
-    console.error("Error during Api request:", error);
-
+    console.error("Error during API request:", error);
     throw error;
   }
 }
 
 export default postAPI;
+
+
+

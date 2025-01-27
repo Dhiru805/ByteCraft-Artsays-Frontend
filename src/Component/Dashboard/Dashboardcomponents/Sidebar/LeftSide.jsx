@@ -131,9 +131,8 @@ const UserAccount = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null)
 
-  const HandletoggleDropdown = (event) => {
-    event.stopPropagation();
-    setIsOpen((prevState) => !prevState);
+  const HandletoggleDropdown = () => {
+    setIsOpen((prev) => !prev);
   };
 
   useEffect(() => {
@@ -163,7 +162,7 @@ const UserAccount = () => {
     return JSON.parse(atob(payload));
   };
 
-  // Fetch user details
+
   const fetchUserDetails = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -208,6 +207,7 @@ const UserAccount = () => {
         isOpen={isOpen}
         handleToggleSidebar={handleToggleSidebar}
         HandletoggleDropdown={HandletoggleDropdown}
+        userId={user?._id} 
       />
       <div className="sidebar-scroll">
 

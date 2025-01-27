@@ -9,19 +9,19 @@ async function getAPI(
   try {
     let accessToken;
     if (isPrivate) {
-      accessToken = localStorage.getItem("token"); // Get token from localStorage
+      accessToken = localStorage.getItem("token"); 
     }
 
     const requestConfig = {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`, // Pass token in the Authorization header
+        Authorization: `Bearer ${accessToken}`, 
       },
     };
 
-    // Conditionally include query parameters
+  
     if (includeParams && config.params) {
-      requestConfig.params = config.params; // Only add params if includeParams is true and params are provided
+      requestConfig.params = config.params; 
     }
 
     const response = await axiosInstance.get(url, requestConfig);

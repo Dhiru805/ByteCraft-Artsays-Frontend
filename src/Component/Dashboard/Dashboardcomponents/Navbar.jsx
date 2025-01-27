@@ -1,11 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faBell, faPowerOff, faInfo, faThumbsUp, faPieChart, faSearch } from '@fortawesome/free-solid-svg-icons';
+import {  faInfo, faThumbsUp, faPieChart, faSearch } from '@fortawesome/free-solid-svg-icons';
 import useSidebarToggle from './Sidebar/Handletooglesidebar';
+import { useNavigate } from "react-router-dom";
+import  {handleLogout} from './LogoutConfirmation';
 
 
 const Navbar = () => {
   const { handleToggleSidebar } = useSidebarToggle();
+  const navigate = useNavigate();
+
   return (
     <nav className="navbar navbar-fixed-top">
       <div className="container-fluid">
@@ -14,23 +18,24 @@ const Navbar = () => {
             type="button"
             className="btn-toggle-offcanvas"
             onClick={handleToggleSidebar}
-            
           >
-         <i class="fa fa-bars"></i>
+            <i className="fa fa-bars"></i>
           </button>
           <button
             type="button"
             className="btn-toggle-fullwidth"
             onClick={handleToggleSidebar}
           >
-            <i class="fa fa-bars"></i>
+            <i className="fa fa-bars"></i>
           </button>
-          <a href="index.html" className="windhvi-text" >Artsays</a>
+          <a href="index.html" className="windhvi-text">
+            Artsays
+          </a>
         </div>
 
         <div className="navbar-right">
           <SearchForm />
-          <NavbarMenu />
+          <NavbarMenu navigate={navigate} />
         </div>
       </div>
     </nav>
@@ -41,18 +46,18 @@ const SearchForm = () => (
   <form id="navbar-search" className="navbar-form search-form">
     <input value="" className="form-control" placeholder="Search here..." type="text" />
     <button type="button" className="btn btn-default">
-      <FontAwesomeIcon icon={faSearch} /> {/* Use the imported icon */}
+      <FontAwesomeIcon icon={faSearch} />
     </button>
   </form>
 );
 
-const  NavbarMenu = () => (
+const NavbarMenu = ({navigate}) => (
   <div id="navbar-menu">
     <ul className="nav navbar-nav">
       <Notifications />
       <li>
-        <a href="page-login.html" className="icon-menu">
-          <FontAwesomeIcon icon={faPowerOff} />
+      <a href="#" className="icon-menu" onClick={() => handleLogout(navigate)}>
+          <i className="fa fa-power-off"></i>
         </a>
       </li>
     </ul>
@@ -61,14 +66,10 @@ const  NavbarMenu = () => (
 
 const Notifications = () => (
   <li className="dropdown show">
-  <a
-    href=""
-    className="dropdown-toggle icon-menu"
-    data-toggle="dropdown"
-  >
-    <i className="fa fa-bell" />
-    <span className="notification-dot" />
-  </a>
+    <a href="#" className="dropdown-toggle icon-menu" data-toggle="dropdown">
+      <i className="fa fa-bell" />
+      <span className="notification-dot" />
+    </a>
     <ul className="dropdown-menu notifications">
       <li className="header">
         <strong>You have 4 new Notifications</strong>
@@ -106,13 +107,11 @@ const Notifications = () => (
   </li>
 );
 
-const Notification = ({ icon, text, timestamp, color }) => (
+const Notification = ({ text, timestamp }) => (
   <li>
     <a href="#">
       <div className="media">
-        <div className="media-left">
-          {/* <FontAwesomeIcon icon={icon} className={color} /> */}
-        </div>
+        <div className="media-left"></div>
         <div className="media-body">
           <p className="text">{text}</p>
           <span className="timestamp">{timestamp}</span>

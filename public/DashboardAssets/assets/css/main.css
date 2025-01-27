@@ -3164,7 +3164,7 @@ label {
   vertical-align: middle;
   vertical-align: auto;
   zoom: 1;
-  display: inline;
+  /* display: inline; */
   -webkit-border-radius: 8px;
   -moz-border-radius: 8px;
   border-radius: 8px;
@@ -8925,5 +8925,15 @@ ul.list-connected-app > li:last-child .connected-app {
 
 .myClass {
   margin-right: 10px !important;
+}
+
+@font-face {
+  font-family: 'Windhvi';
+  src: url('../../../fonts/Windhavi.ttf') format('truetype');
+}
+
+.windhvi-text {
+  font-family: 'Windhvi', sans-serif;
+  
 }
 

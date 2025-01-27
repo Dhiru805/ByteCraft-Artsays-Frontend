@@ -1,14 +1,35 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { handleLogout } from "../LogoutConfirmation";
 
-const Sidebar = ({ user, isOpen, handleToggleSidebar, HandletoggleDropdown }) => {
+const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, HandletoggleDropdown }) => {
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
+
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        HandletoggleDropdown(); 
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    } else {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [isOpen, HandletoggleDropdown]);
 
   const sidebarItems = [
     {
       label: "My Profile",
       icon: "fa-user",
-      path: "/completeprofile",
+      path: `/Dashboard/completeprofile/${userId}`, 
     },
     {
       label: "Messages",
@@ -23,7 +44,7 @@ const Sidebar = ({ user, isOpen, handleToggleSidebar, HandletoggleDropdown }) =>
     {
       label: "Logout",
       icon: "bi-power",
-      path: "/page-login.html",
+      action: () => handleLogout(navigate),
     },
   ];
 
@@ -44,7 +65,11 @@ const Sidebar = ({ user, isOpen, handleToggleSidebar, HandletoggleDropdown }) =>
 
   return (
     <div>
-      <button type="button" className="btn-toggle-offcanvas" onClick={handleToggleSidebar}>
+      <button
+        type="button"
+        className="btn-toggle-offcanvas"
+        onClick={handleToggleSidebar}
+      >
         <i className="fa fa-arrow-left"></i>
       </button>
       <div className="sidebar-scroll">
@@ -54,16 +79,24 @@ const Sidebar = ({ user, isOpen, handleToggleSidebar, HandletoggleDropdown }) =>
               src={`http://localhost:3001${user.profilePhoto}`}
               className="rounded-circle user-photo"
               alt="User Profile Picture"
+              style={{
+                width: '50px',
+                height: '50px',
+                objectFit: 'cover',
+              }}
             />
           )}
           <div className="dropdown" ref={dropdownRef}>
             <span>Welcome,</span>
             {user ? (
               <a
-                href="javascript:void(0);"
+                href="#!"
                 className="dropdown-toggle user-name"
                 data-toggle="dropdown"
-                onClick={HandletoggleDropdown}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  HandletoggleDropdown(); 
+                }}
                 aria-expanded={isOpen ? "true" : "false"}
               >
                 <strong>{`${user.name} ${user.lastName}`}</strong>
@@ -72,7 +105,9 @@ const Sidebar = ({ user, isOpen, handleToggleSidebar, HandletoggleDropdown }) =>
               <strong>Guest</strong>
             )}
             <ul
-              className={`dropdown-menu dropdown-menu-right account ${isOpen ? "show" : ""}`}
+              className={`dropdown-menu dropdown-menu-right account ${
+                isOpen ? "show" : ""
+              }`}
               style={{
                 position: "absolute",
                 top: isOpen ? "100%" : "80%",
@@ -80,13 +115,18 @@ const Sidebar = ({ user, isOpen, handleToggleSidebar, HandletoggleDropdown }) =>
                 transform: isOpen ? "translate3d(-54px, 42px, 0px)" : "none",
                 willChange: "transform",
               }}
-              x-placement="bottom-end"
             >
               {sidebarItems.map((item, index) => (
                 <li key={index}>
-                  <Link to={item.path}>
-                    <i className={`fa ${item.icon}`}></i> {item.label}
-                  </Link>
+                  {item.action ? (
+                    <a href="#!" onClick={item.action}>
+                      <i className={`fa ${item.icon}`}></i> {item.label}
+                    </a>
+                  ) : (
+                    <Link to={item.path}>
+                      <i className={`fa ${item.icon}`}></i> {item.label}
+                    </Link>
+                  )}
                 </li>
               ))}
               <li className="divider"></li>
@@ -107,4 +147,4 @@ const Sidebar = ({ user, isOpen, handleToggleSidebar, HandletoggleDropdown }) =>
   );
 };
 
-export default Sidebar;
+export default Sidebarprofile;

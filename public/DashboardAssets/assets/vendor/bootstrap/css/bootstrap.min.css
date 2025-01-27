@@ -5510,8 +5510,9 @@ input[type=submit].btn-block {
 }
 
 .breadcrumb-item {
-    display: -ms-flexbox;
-    display: flex
+    display: -ms-flexbox; 
+    display: flex;       
+    cursor: pointer; 
 }
 
 .breadcrumb-item+.breadcrumb-item {

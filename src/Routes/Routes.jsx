@@ -31,8 +31,10 @@ import AllComponent from "../Pages/AllComponent";
 import StoreDetails from "../Component/Product-Details/StoreDetails";
 import ArtistSupport from "../Pages/Artist/ArtistSupport";
 import NewSlider from "../Component/newSlider/NewSlider";
-import UserProfile from "../Component/Dashboard/UserProf";
-import BlogForm from "../Component/Dashboard/Dashboardcomponents/Blog/ArtistBlog/BlogPost";
+import UserProfile from "../Component/Dashboard/Dashboardcomponents/UserProfile/UserProf";
+import ArtistProfile from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/UserProfile/UserProf"
+import ArtistProfileView from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ViewUserProfile/UserProf"
+import CreateBlog from "../Component/Dashboard/Dashboardcomponents/Blog/ArtistBlog/BlogPost";
 import Dashboard from "../Component/Dashboard/Dashboard";
 import AppInbox from "../Component/Dashboard/Dashboardcomponents/Chat/AppInbox";
 import AppContact from "../Component/Dashboard/Dashboardcomponents/Chat/AppContact";
@@ -41,7 +43,8 @@ import BlogDashboard from "../Component/Dashboard/Dashboardcomponents/Blog/BlogD
 import BlogPost from "../Component/Dashboard/Dashboardcomponents/Blog/ArtistBlog/BlogPost";
 import BlogList from "../Component/Dashboard/Dashboardcomponents/Blog/ArtistBlog/BlogList";
 import BlogView from '../Component/Dashboard/Dashboardcomponents/Blog/SuperAdminBlog/ViewBlog';
-import BlogDetails from "../Component/Dashboard/Dashboardcomponents/Blog/BlogDetails";
+import BlogDetails from "../Component/Dashboard/Dashboardcomponents/Blog/SuperAdminBlog/BlogDetails";
+import ArtistBlogDetails from "../Component/Dashboard/Dashboardcomponents/Blog/ArtistBlog/ArtistBlogDetails";
 import FileDashboard from "../Pages/Dashboard/DashBoardPages/FileDashboard";
 import TradingPage from "../Pages/TradingPage/TradingPage";
 import FileDocument from "../Pages/Dashboard/DashBoardPages/FileDocument";
@@ -59,12 +62,18 @@ import Trial from "../Pages/Trial";
 import ArtistManagement from "../Pages/ArtistManagement";
 import ArtistManageTable from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistManageTable";
 import BuyerManageTable from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerManageTable"
+import CustomOrder from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/CustomOrder/Customorder";
+import CreateCustomOrder from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/CustomOrder/CreateCustomOrder"
 import ArtistDetail from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistDetail";
+import BuyerProfile from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/UserProfile/UserProf"
+import UpdateCustomOrder from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/CustomOrder/UpdateCustomOrder"
+import ViewCustomOrder from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/CustomOrder/ViewCustomOrde"
 import ProductUpload from "../Component/Dashboard/Dashboardcomponents/ProductDetails/productUploade";
 
 import BlogRequest from "../Component/Dashboard/Dashboardcomponents/Blog/SuperAdminBlog/BlogRequest"
 
 import ResellPage from "../Pages/ResellPage/ResellPage";
+
 
 const AppRoutes = () => {
   return (
@@ -73,7 +82,7 @@ const AppRoutes = () => {
         <Routes>
           {/* <Route path="/" element={<Home />} /> */}
           <Route path="/login" element={<Login />} />
-          {/* <Route path="/register" element={<Register />} /> */}
+          <Route path="/register" element={<Register />} />
           {/* <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
           <Route path="/store" element={<StoreProduct />} />
@@ -91,7 +100,7 @@ const AppRoutes = () => {
           <Route path="/why-artsays?" element={<WhyChooseUs />} />
           <Route path="/product-details" element={<StoreDetails />} />
           <Route path="/Allcom" element={<AllComponent />} /> */}
-          <Route path="/completeprofile" element={<UserProfile />} />
+         
          
           {/* <Route path="/view-blog" element={<BlogView />} /> */}
 
@@ -119,12 +128,13 @@ const AppRoutes = () => {
 
         <Route path="/Dashboard" element={<Dashboard />}>
            
-           <Route path="/Dashboard/Blogdetails" element={<BlogDetails />} />
+           <Route path="/Dashboard/BlogRequest/view-blog/BlogDetails/:blogId" element={<BlogDetails />} />
+           <Route path="/Dashboard/Bloglist/BlogDetails/:blogId" element={<ArtistBlogDetails />} />
           <Route path="/Dashboard/BlogRequest" element={<BlogRequest />} />
           <Route path="/Dashboard/BlogRequest/view-blog/:blogId" element={<BlogView />} />
           <Route path="/Dashboard/Bloglist" element={<BlogList />} />
          <Route path="/Dashboard/Blogdashboard" element={<BlogDashboard />} />
-         <Route path="/Dashboard/Blogpost" element={<BlogForm />} />
+         <Route path="/Dashboard/Bloglist/CreateBlog" element={<CreateBlog/>} />
 
          <Route path="/Dashboard/Appinbox" element={<AppInbox />} />
         <Route path="/Dashboard/Appcontact" element={<AppContact />} />
@@ -132,11 +142,23 @@ const AppRoutes = () => {
 
         <Route path='/Dashboard/ArtistManageTable' element={<ArtistManageTable/>} />
         <Route path='/Dashboard/artists/:id' element={<ArtistDetail/>} />
+        <Route path='/Dashboard/ArtistManageTable/ArtistProfile/:userId' element={<ArtistProfile/>} />
+        <Route path='/Dashboard/ArtistManageTable/ArtistProfileView/:userId' element={<ArtistProfileView/>} />
+
 
 
       <Route path='/Dashboard/Product-uploade' element={<ProductUpload />} />
 
       <Route path='/Dashboard/BuyerManageTable' element={<BuyerManageTable />} />
+      <Route path='/Dashboard/BuyerManageTable/BuyerProfile/:userId' element={<BuyerProfile/>} />
+      <Route path='/Dashboard/BuyerCustomrequest' element={<CustomOrder />} />
+      <Route path='/Dashboard/BuyerCustomrequest/CreateCustomrequest' element={<CreateCustomOrder />} />
+      <Route path='/Dashboard/BuyerCustomrequest/UpdateCustomrequest/:id' element={<UpdateCustomOrder />} />
+      <Route path='/Dashboard/BuyerCustomrequest/ViewCustomrequest/:id' element={<ViewCustomOrder />} />
+
+
+
+      <Route path="/Dashboard/completeprofile/:userId" element={<UserProfile />} />
 
 
      

@@ -11,7 +11,7 @@ const Login = () => {
   const [userType, setUserType] = useState('option1'); // Default to 'option1'
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State to check if user is logged in
   const navigate = useNavigate();
-  // Check if the user is already logged in by looking for a token
+
   useEffect(() => {
     const token = localStorage.getItem('token'); // Example of token stored in localStorage
     if (token) {
@@ -128,7 +128,7 @@ setTimeout(() => {
                           </div>
                         </div>
                         <div className="text-center">
-                          <p>Not a member? <a href="register.html">Register</a></p>
+                          <p>Not a member? <Link to="/register">Register</Link></p>
                           <p>or sign up with:</p>
                           <button type="button" data-mdb-button-init data-mdb-ripple-init className="btn btn-link btn-floating mx-1">
                             <i className="fab fa-facebook-f text-success"></i>

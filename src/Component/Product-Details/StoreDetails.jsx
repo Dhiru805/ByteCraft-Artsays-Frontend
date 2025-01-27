@@ -1,5 +1,5 @@
 import React, { useState,useEffect,useRef } from "react";
-import "./storedetails.css";
+// import "./storedetails.css";
 import { Link } from "react-router-dom";
 import ShareButton from "../Product-Details/Sub-product-detail-component/ShareButton";
 import Productreview from "../Product-Details/Sub-product-detail-component/Productreview";
