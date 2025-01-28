@@ -1,0 +1,73 @@
+.image-description-box{
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  position: relative;
+}
+
+.img-holder {
+  padding: 0.3rem;
+  width: 100%; /* Make the img-holder take full width of the parent */
+  height: 225px;
+  max-width: 225px; /* Set a maximum width for larger screens */
+  border: 1px solid ;
+  border-radius: 8px;
+}
+
+.img-art {
+  border-radius: 8px;
+  width: 100%; /* Image takes full width of img-holder */
+  height:100%; /* Maintain aspect ratio */
+  object-fit: contain; /* Ensure the image fits within the holder without distortion */
+}
+.shop-now-btnnnn {
+  display: flex;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  width: 100%;
+}
+
+.bgcol:hover{
+  background-color: #a8693b;
+}
+
+.font-size-title{
+    font-size: medium;
+}
+
+.image-description{
+  vertical-align:middle;
+}
+
+.new-price{
+  font-size: 1.5rem;
+  color: black;
+}
+
+.store-price{
+  font-size: large;
+}
+
+.btn-group button {
+  background-color:#6F4E37; /* Green background */
+  border: 1px solid #6F4E37; /* Green border */
+  color: white; /* White text */
+  padding: 10px 24px; /* Some padding */
+  cursor: pointer; /* Pointer/hand icon */
+  float: left; /* Float the buttons side by side */
+}
+
+.btn-group button:not(:last-child) {
+  border-right: none; /* Prevent double borders */
+}
+
+/* Clear floats (clearfix hack) */
+.btn-group:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+/* Add a background color on hover */
+.btn-group button:hover {
+  background-color: #f06c0d;
+}

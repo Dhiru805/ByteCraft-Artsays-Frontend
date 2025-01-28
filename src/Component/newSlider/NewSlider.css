@@ -1,0 +1,805 @@
+.carousel-container {
+  position: relative;
+  width: 100%;
+  margin: auto;
+  height: 600px;
+  /* display: flex; */
+  top: 99px;
+  height: 90vh;
+  overflow: hidden;
+  align-items: center;
+  background: linear-gradient(109.5deg, rgb(229, 233, 177) 11.2%, rgb(223, 205, 187) 100.2%);
+  /* background-image: linear-gradient(to top, lightgrey 0%, lightgrey 1%, #e0e0e0 26%, #efefef 48%, #d9d9d9 75%, #bcbcbc 100%); */
+  justify-content: center;
+  align-content: center;
+}
+
+button.slider-arrows.next,
+button.slider-arrows.prev {
+  display: none;
+}
+
+.carousel-background{
+  display: flex;
+  height: -webkit-fill-available;
+  /* margin: auto; */
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.Slider-container{
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  /* padding: 2px; */
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+  justify-content: center;
+
+
+  }
+  .slick-track{
+        /* position: relative; */
+        top: 0;
+        display: flex;
+        left: 0;
+        /* display: block; */
+        align-items: center;
+        justify-content: center;
+    
+  }
+
+.carousel-content-trading {
+    /* position: absolute; */
+    /* left: 5%; */
+    z-index: 2;
+    margin: auto;
+    /* margin-left: 5rem; */
+    color: #fff;
+    max-width: 400px;
+}
+
+.carousel-content-trading h1 {
+  font-size: 3rem;
+  color: #343a40;
+  margin-bottom: 1rem;
+}
+
+.carousel-content-trading p {
+  margin-bottom: 0rem;
+  /* margin-bottom: 0px; */
+  color: #343a40;
+}
+
+.explore-button {
+  padding: 10px 20px;
+  background-color: #795548;
+  color: #fff;
+  border: none;
+  margin: 17px;
+  margin-left: 0px;
+  cursor: pointer;
+}
+
+.carousel-card-trading {
+    /* width: -webkit-fill-available !important; */
+    /* margin: 17px; */
+    width: 90% !important;
+    margin-left: 37px;
+    transition: transform 0.5s ease-in-out, height 0.5s ease-in-out, opacity 0.5s ease;
+    /* height: 100% !important; */
+    overflow: hidden;
+    position: relative;
+    background-size: cover;
+    opacity: 0.7;
+ 
+}
+
+/* Active card styling */
+.carousel-card-trading.active {
+  height: 60%;
+  border-radius: 14px;
+  margin: 0px;
+  margin-bottom: 13px;
+  margin-top: 13px;
+  /* transition: transform 0.5s ease-in-out, height 0.5s ease-in-out, opacity 0.5s ease; */
+  width: 100% !important;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  opacity: 1;
+  transition: height 0.8s ease-in-out, width 0.8s ease-in-out, border-radius 0.5s ease-in-out ,margin 0.5s ease-in-out, opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+
+.card-overlay {
+  position: absolute;
+  bottom: 0;
+  margin: 2px;
+  /* width: 92%; */
+  padding: 10px;
+  /* background: rgba(0, 0, 0, 0.5); */
+  color: white;
+  text-align: left;
+}
+
+.slider-container-main {
+  width: 60%;
+  /* height: 100%; */
+  /* display: flex; */
+  /* align-items: center; */
+}
+
+.carousel-container {
+  position: relative;
+  padding: 1px;
+  margin-bottom: 95px;
+}
+
+.vertical-dots {
+  position: absolute;
+  top: 51%;
+  left: 61px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 139px;
+}
+
+.dot-active {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.5s;
+  padding: 2px;
+}
+
+.dot-active.active {
+  background-color: black;
+  width: 30px;
+  height: 30px;
+}
+
+.carousel-content-trading {
+  /* Adjust this to provide enough space for the dots */
+  /* margin-left: 200px; */
+}
+
+.active-slide-number {
+  margin: 8px;
+  color: #fff;
+  font-weight: bold;
+
+}
+.card-overlay h2{
+  color: #f8f9fa;
+  margin-bottom: 0;
+}
+
+.vertical-line {
+  width: 2px;
+  height: 100%;
+  background-color: var(--dark);
+  position: absolute;
+  top: 0;
+  z-index: -3;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+
+  .content-wrapper {
+    transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+    transform: translateY(-50%);
+    align-items: flex-start;
+    align-content: center;
+    display: flex;
+    opacity: 0;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+
+.content-wrapper.slide-in {
+  transform: translateY(0);
+  opacity: 1;
+  padding: 0 15px;
+  transition: all 0.5s ease-out;
+}
+
+.content-wrapper.slide-out {
+  transform: translateY(50%);
+  opacity: 0;
+  transition: all 0.5s ease-out;
+}
+
+
+.trading-arrows {
+  position: absolute;
+  z-index: 1;
+  bottom: rem;
+  margin: 0px;
+  /* margin-left: 8px; */
+  /* width: 104px; */
+  bottom: 9%;
+  max-width: 30%;
+  display: flex;
+  gap: 5px;
+  /* align-items: center; */
+  /* /* justify-content: space-around; */
+}
+
+.trading-arrows button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #795548;
+  border: none;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  color: #000;
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 22px;
+  transition: .5s;
+}
+
+.dot-container{
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  display: flex;
+}
+
+/*  */
+
+
+
+.slider-trading-image{
+  height: 100%;
+  width: 100%;
+}
+
+.carousel-card-trading img {
+  transform: scale(1); /* Default scale for inactive cards */
+  transition: transform 0.5s ease-in-out; /* Smooth transition for the scaling */
+}
+
+.carousel-card-trading.active img {
+  transform: scale(1); /* Scale up the image when the card is active */
+  transition: transform 0.5s ease-in-out; /* Smooth transition for the scaling */
+}
+
+@media (max-width: 431px) {
+  .slider-container-main {
+    width: 90%;
+    height: 40%;
+    display: flex;
+    align-items: center;
+}
+.card-overlay h2 {
+  color: #f8f9fa;
+  margin-bottom: 0;
+  font-size: 1.1rem;
+}
+.carousel-card-trading{
+  margin-left: 13px;
+}
+.carousel-container {
+  position: relative;
+  width: 100%;
+  margin: auto;
+  height: 600px;
+  /* display: flex; */
+top:0px;
+  height: 90vh;
+  overflow: hidden;
+  align-items: center;
+  background: linear-gradient(109.5deg, rgb(229, 233, 177) 11.2%, rgb(223, 205, 187) 100.2%);
+  /* background-image: linear-gradient(to top, lightgrey 0%, lightgrey 1%, #e0e0e0 26%, #efefef 48%, #d9d9d9 75%, #bcbcbc 100%); */
+  justify-content: center;
+  align-content: center;
+}
+.carousel-background {
+  display: flex;
+  height: -webkit-fill-available;
+  /* margin: auto; */
+  flex-direction: row;
+  /* align-content: center; */
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+.vertical-dots {
+  position: absolute;
+  top: 82.5%;
+  left: 65px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: row;
+  gap: 71px;
+}
+.vertical-line {
+  width: 99%;
+  height: 2px;
+  background-color: var(--dark);
+  position: absolute;
+  top: 15px;
+  z-index: -3;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.trading-arrows {
+  position: absolute;
+  z-index: 1;
+  bottom: rem;
+  margin: 0px;
+  /* margin-left: 8px; */
+  /* width: 104px; */
+  bottom: 15%;
+  max-width: 100%;
+  display: flex;
+  gap: 20.5rem;
+  /* align-items: center; */
+}
+.active-slide-number {
+  margin: 9px;
+  color: #fff;
+  font-weight: bold;
+}
+.card-overlay {
+  position: absolute;
+  bottom: -12px;
+  margin: 2px;
+  /* width: 92%; */
+  padding: 3px;
+  /* background: rgba(0, 0, 0, 0.5); */
+  color: white;
+  text-align: left;
+}
+
+}
+
+@media (max-width: 400px) {
+  .slider-container-main {
+    width: 90%;
+    height: 40%;
+    display: flex;
+    align-items: center;
+}
+.card-overlay h2 {
+  color: #f8f9fa;
+  margin-bottom: 0;
+  font-size: 1.1rem;
+}
+.carousel-card-trading{
+  margin-left: 13px;
+}
+.carousel-container {
+  position: relative;
+  width: 100%;
+  margin: auto;
+  height: 600px;
+  /* display: flex; */
+top:0px;
+  height: 90vh;
+  overflow: hidden;
+  align-items: center;
+  background: linear-gradient(109.5deg, rgb(229, 233, 177) 11.2%, rgb(223, 205, 187) 100.2%);
+  /* background-image: linear-gradient(to top, lightgrey 0%, lightgrey 1%, #e0e0e0 26%, #efefef 48%, #d9d9d9 75%, #bcbcbc 100%); */
+  justify-content: center;
+  align-content: center;
+}
+.carousel-background {
+  display: flex;
+  height: -webkit-fill-available;
+  /* margin: auto; */
+  flex-direction: row;
+  /* align-content: center; */
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+.vertical-dots {
+  position: absolute;
+  top: 82.5%;
+  left: 65px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: row;
+  gap: 52px;
+}
+.vertical-line {
+  width: 99%;
+  height: 2px;
+  background-color: var(--dark);
+  position: absolute;
+  top: 15px;
+  z-index: -3;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.trading-arrows {
+  position: absolute;
+  z-index: 1;
+  bottom: rem;
+  margin: 0px;
+  /* margin-left: 8px; */
+  /* width: 104px; */
+  bottom: 15%;
+  max-width: 100%;
+  display: flex;
+  gap: 17rem;
+  /* align-items: center; */
+}
+.active-slide-number {
+  margin: 9px;
+  color: #fff;
+  font-weight: bold;
+}
+.card-overlay {
+  position: absolute;
+  bottom: -12px;
+  margin: 2px;
+  /* width: 92%; */
+  padding: 3px;
+  /* background: rgba(0, 0, 0, 0.5); */
+  color: white;
+  text-align: left;
+}
+
+
+
+}
+
+/* Media Query for low resolution  Tablets, Ipads */
+@media (min-width: 450px) and (max-width: 668px) {
+  .slider-container-main {
+    width: 93%;
+    height: 58%;
+    display: flex;
+    align-items: center;
+}
+.card-overlay h2 {
+  color: #f8f9fa;
+  margin-bottom: 0;
+  font-size: 1.1rem;
+}
+.vertical-dots {
+  position: absolute;
+  top: 87.5%;
+  left: 149px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: row;
+  gap: 78px;
+}
+.vertical-line {
+  width: 99%;
+  height: 2px;
+  background-color: var(--dark);
+  position: absolute;
+  top: 15px;
+  z-index: -3;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.trading-arrows {
+  position: absolute;
+  z-index: 1;
+  bottom: rem;
+  margin: 0px;
+  /* margin-left: 8px; */
+  /* width: 104px; */
+  bottom: 10%;
+  left: 18.6%;
+  max-width: 100%;
+  display: flex;
+  gap: 22.5rem;
+}
+.active-slide-number {
+  margin: 10px;
+  color: #fff;
+  font-weight: bold;
+}
+.card-overlay {
+  position: absolute;
+  bottom: -12px;
+  margin: 2px;
+  /* width: 92%; */
+  padding: 3px;
+  /* background: rgba(0, 0, 0, 0.5); */
+  color: white;
+  text-align: left;
+}
+
+
+}
+
+/* Media Query for Tablets Ipads portrait mode */
+@media (min-width: 669px) and (max-width: 800px) {
+  .slider-container-main {
+    width: 93%;
+    height: 58%;
+    display: flex;
+    align-items: center;
+}
+.card-overlay h2 {
+  color: #f8f9fa;
+  margin-bottom: 0;
+  font-size: 1.1rem;
+}
+.carousel-container {
+  position: relative;
+  width: 100%;
+  /* margin: auto; */
+  height: 600px;
+  /* display: flex; */
+  top: 65px;
+  height: 65vh;
+  overflow: hidden;
+  align-items: center;
+  background: linear-gradient(109.5deg, rgb(229, 233, 177) 11.2%, rgb(223, 205, 187) 100.2%);
+  /* background-image: linear-gradient(to top, lightgrey 0%, lightgrey 1%, #e0e0e0 26%, #efefef 48%, #d9d9d9 75%, #bcbcbc 100%); */
+  justify-content: center;
+  align-content: center;
+}
+.vertical-dots {
+  position: absolute;
+  top: 95%;
+  left: 212px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: row;
+  gap: 93px;
+}
+.vertical-line {
+  width: 99%;
+  height: 2px;
+  background-color: var(--dark);
+  position: absolute;
+  top: 15px;
+  z-index: -3;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.trading-arrows {
+  position: absolute;
+  z-index: 1;
+  bottom: rem;
+  margin: 0px;
+  /* margin-left: 8px; */
+  /* width: 104px; */
+  bottom: 2%;
+  right: 9rem;
+  max-width: 100%;
+  display: flex;
+  gap: 27.5rem;
+}
+.active-slide-number {
+  margin: 10px;
+  color: #fff;
+  font-weight: bold;
+}
+}
+@media (min-width: 801px) and (max-width: 900px) {
+  .slider-container-main {
+    width: 93%;
+    height: 58%;
+    display: flex;
+    align-items: center;
+}
+.card-overlay h2 {
+  color: #f8f9fa;
+  margin-bottom: 0;
+  font-size: 1.1rem;
+}
+.carousel-container {
+  position: relative;
+  width: 100%;
+  /* margin: auto; */
+  height: 600px;
+  /* display: flex; */
+  top: 65px;
+  height: 65vh;
+  overflow: hidden;
+  align-items: center;
+  background: linear-gradient(109.5deg, rgb(229, 233, 177) 11.2%, rgb(223, 205, 187) 100.2%);
+  /* background-image: linear-gradient(to top, lightgrey 0%, lightgrey 1%, #e0e0e0 26%, #efefef 48%, #d9d9d9 75%, #bcbcbc 100%); */
+  justify-content: center;
+  align-content: center;
+}
+.vertical-dots {
+  position: absolute;
+  top: 95%;
+  left: 235px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: row;
+  gap: 93px;
+}
+.vertical-line {
+  width: 99%;
+  height: 2px;
+  background-color: var(--dark);
+  position: absolute;
+  top: 15px;
+  z-index: -3;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.trading-arrows {
+  position: absolute;
+  z-index: 1;
+  bottom: rem;
+  margin: 0px;
+  /* margin-left: 8px; */
+  /* width: 104px; */
+  bottom: 2%;
+  right: 9rem;
+  max-width: 100%;
+  display: flex;
+  gap: 27.5rem;
+}
+.active-slide-number {
+  margin: 10px;
+  color: #fff;
+  font-weight: bold;
+}
+}
+@media (min-width: 901px) and (max-width: 1023px) {
+  .slider-container-main {
+    width: 93%;
+    height: 58%;
+    display: flex;
+    align-items: center;
+}
+.card-overlay h2 {
+  color: #f8f9fa;
+  margin-bottom: 0;
+  font-size: 1.1rem;
+}
+.carousel-container {
+  position: relative;
+  width: 100%;
+  /* margin: auto; */
+  height: 600px;
+  /* display: flex; */
+  top: 65px;
+  height: 65vh;
+  overflow: hidden;
+  align-items: center;
+  background: linear-gradient(109.5deg, rgb(229, 233, 177) 11.2%, rgb(223, 205, 187) 100.2%);
+  /* background-image: linear-gradient(to top, lightgrey 0%, lightgrey 1%, #e0e0e0 26%, #efefef 48%, #d9d9d9 75%, #bcbcbc 100%); */
+  justify-content: center;
+  align-content: center;
+}
+.vertical-dots {
+  position: absolute;
+  top: 95.5%;
+  left: 285px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: row;
+  gap: 115px;
+}
+.vertical-line {
+  width: 99%;
+  height: 2px;
+  background-color: var(--dark);
+  position: absolute;
+  top: 15px;
+  z-index: -3;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.trading-arrows {
+  position: absolute;
+  z-index: 1;
+  bottom: rem;
+  margin: 0px;
+  /* margin-left: 8px; */
+  /* width: 104px; */
+  bottom: 2%;
+  right: 9rem;
+  max-width: 100%;
+  display: flex;
+  gap: 30.5rem;
+}
+.active-slide-number {
+  margin: 10px;
+  color: #fff;
+  font-weight: bold;
+}
+}
+
+
+/* Media Query for Laptops and Desktops */
+@media (min-width: 1023px) and (max-width: 1279px) {
+  .slider-container-main {
+    /* width: 93%; */
+    height: 58%;
+    display: flex;
+    align-items: center;
+}
+.carousel-container {
+  position: relative;
+  width: 100%;
+  /* margin: auto; */
+  height: 600px;
+  /* display: flex; */
+  top: 104px;
+  height: 66vh;
+  overflow: hidden;
+  align-items: center;
+  background: linear-gradient(109.5deg, rgb(229, 233, 177) 11.2%, rgb(223, 205, 187) 100.2%);
+  /* background-image: linear-gradient(to top, lightgrey 0%, lightgrey 1%, #e0e0e0 26%, #efefef 48%, #d9d9d9 75%, #bcbcbc 100%); */
+  justify-content: center;
+  align-content: center;
+}
+
+.vertical-dots {
+  position: absolute;
+  top: 95.5%;
+  left: 345px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: row;
+  gap: 106px;
+}
+.vertical-line {
+  width: 99%;
+  height: 2px;
+  background-color: var(--dark);
+  position: absolute;
+  top: 15px;
+  z-index: -3;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.trading-arrows {
+  position: absolute;
+  z-index: 1;
+  bottom: rem;
+  margin: 0px;
+  /* margin-left: 8px; */
+  /* width: 104px; */
+  bottom: 2.5%;
+  right: 15rem;
+  max-width: 100%;
+  display: flex;
+  gap: 27.5rem;
+}
+.active-slide-number {
+  margin: 10px;
+  color: #fff;
+  font-weight: bold;
+}
+
+}
+
+/* Media Query for Large screens */
+@media (min-width: 1280px) and (max-width: 1300px) {
+  .carousel-content-trading {
+    /* position: absolute; */
+    /* left: 5%; */
+    z-index: 2;
+    margin: auto;
+    margin-left: 6.5rem;
+    color: #fff;
+    max-width: 400px;
+}
+.vertical-dots {
+  position: absolute;
+  top: 51%;
+  left: 46px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 139px;
+}
+}
+

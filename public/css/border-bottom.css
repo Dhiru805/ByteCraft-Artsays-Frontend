@@ -1,0 +1,9 @@
+.bottom-line input{
+    outline: 0; 
+    border-width: 0 0 2px; 
+    border-color: green; 
+}
+
+#exampleInputEmail1{
+    width:186%
+}

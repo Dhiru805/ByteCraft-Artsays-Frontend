@@ -1,0 +1,195 @@
+.category-container::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .category-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    /* padding: 0px 10px; */
+    /* flex-grow: 1; */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    /* width: 83%; */
+    margin: 0 45px;
+  }
+  
+  .category-wrapper {
+    display: flex;
+    flex-direction: column;
+    /* width: 100%; */
+    /* padding: 15px; */
+    position: relative;
+    /* overflow: hidden; */
+    z-index: 1;
+    align-items: flex-end;
+  }
+  
+  .category-nav {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    padding: 0 20px;
+    position: relative;
+  }
+  
+  .category-item {
+    min-width: 150px;
+    margin: 10px;
+    padding: 15px;
+    border-radius: 50px;
+    text-align: center;
+    cursor: pointer;
+    /* background-color: rgba(255, 255, 255, 0.8); */
+    color: #000000;
+    border: 1px solid transparent;
+    /* backdrop-filter: blur(5px); */
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    font-weight: bolder; 
+  }
+  
+  .category-item:hover {
+    transform: scale(1.05);
+  }
+  
+  .category-item.active {
+    transform: scale(1.1);
+    background-color: rgba(255, 255, 255, 0.8);
+    
+  }
+   
+  .scroll-btn {
+    border: 1px solid transparent;
+    background: #f0f0f0;
+    color: #000;
+    font-size: 1.5rem;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* backdrop-filter: blur(5px); */
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    transform: translateY(-50%);
+  }
+  
+  .scroll-btn.left {
+    /* left: 40px; */
+  }
+  
+  .scroll-btn.right {
+    right: 95px;
+  }
+  
+  .toggle-btn {
+    margin-left: 10px;
+    padding: 10px 15px;
+    background-color: rgba(0, 102, 255, 0.3);
+    color: #fff;
+    border: 1px solid rgba(0, 102, 255, 0.5);
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+  }
+  
+  .toggle-btn:hover {
+    transform: scale(1.1);
+    transform: translateY(2px);
+    background-color: rgba(0, 102, 255, 0.5);
+  }
+  
+  .more-buttons-container {
+    position: absolute;
+    top: calc(100% + 10px); /* Positions the container just below the toggle button */
+    right: 20px; 
+    width: 70%;
+    z-index: 1;
+    background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    
+  }
+  
+  .arrow {
+    position: absolute;
+    top: -20px;
+    left: 97%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    /* border-radius: 50px 50px 0 0; */
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 20px solid wheat; /* Set the color of the arrow to white */
+  }
+  
+
+  .more-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px;
+    border-radius: 20px;
+    justify-content: space-around;
+    /* backdrop-filter: blur(5px); */
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, 
+            rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+            rgba(10, 37, 64, 0.35) 0px 4px 12px -6px ;
+
+  }
+  
+  .additional-btn {
+    min-width: 150px;
+    margin: 10px 20px;
+    padding: 15px;
+    border-radius: 50px;
+    text-align: center;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #000000;
+    border: 1px solid transparent;
+    backdrop-filter: blur(5px);
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+                rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+                rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    font-weight: bolder;
+  }
+  
+  .additional-btn:hover {
+    transform: scale(1.05);
+    transform: translateY(2px);
+  }
+  
+  .related-items {
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-radius: 10px;
+    margin-top: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .additional-btn {
+      flex: 1 1 40%;
+    }
+    .toggle-btn{
+      display: none;
+    }
+    .category-container{
+      margin: 0;
+    }
+    .scroll-btn{
+      display: none;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .additional-btn {
+      flex: 1 1 100%;
+    }
+  }
+  

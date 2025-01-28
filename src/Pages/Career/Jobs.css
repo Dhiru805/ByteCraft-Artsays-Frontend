@@ -1,0 +1,159 @@
+/* General styles */
+.app {
+    color: #333; /* Dark gray text */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* padding: 40px; */
+    font-family: Arial, sans-serif;
+  }
+  
+  h1 {
+    font-size: 26px;
+    color: #333; /* Dark gray */
+    margin-bottom: 20px;
+  }
+  
+  .view-all {
+    background-color: #A67B5B; /* Using #A67B5B for buttons */
+    border: none;
+    color: #fff; /* White text */
+    padding: 10px 20px;
+    cursor: pointer;
+    margin: 20px;
+    border-radius: 50px;
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+  }
+ 
+  
+  .view-all:hover {
+    background-color: #8A5D3A; /* Darker shade for hover */
+    transform: translateY(-4px); /* Slight lift effect */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), /* Subtle shadow */
+                0 8px 16px rgba(0, 0, 0, 0.2), /* Medium shadow */
+                0 12px 24px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+  }
+  
+  .view-all:active {
+    background-color: #6F4E37; /* Even darker shade for active */
+    transform: scale(0.98); /* Slight scale down effect */
+  }
+  
+  .job-list {
+    width: 100%;
+    max-width: 1200px;
+    margin: 20px 0;
+  }
+  
+  .job-list h2 {
+    font-size: 22px;
+    color: #333; /* Dark gray */
+    margin-bottom: 15px;
+  }
+  
+  .job-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive columns */
+    gap: 20px;
+  }
+  
+  .job-card {
+    background-color: #ffffff; /* White for job cards */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .job-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), /* Subtle shadow */
+                0 8px 16px rgba(0, 0, 0, 0.2), /* Medium shadow */
+                0 12px 24px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+  }
+  
+  .job-logo img {
+    height: 50px;
+    width: 50px;
+    object-fit: contain;
+  }
+  
+  .job-details {
+    margin-left: 20px;
+  }
+  
+  .job-details h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333; /* Dark gray */
+  }
+  
+  .job-details p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #666; /* Lighter gray */
+  }
+  
+  .job-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  
+  .apply-now {
+    background-color: #A67B5B; /* Using #A67B5B for buttons */
+    border: none;
+    color: #fff; /* White text */
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 50px;
+    font-size: 14px;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+  }
+  
+  .apply-now:hover {
+    background-color: #8A5D3A; /* Darker shade for hover */
+    transform: translateY(-2px); /* Slight lift effect */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), /* Subtle shadow */
+                0 8px 16px rgba(0, 0, 0, 0.2), /* Medium shadow */
+                0 12px 24px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+  }
+  
+  .apply-now:active {
+    background-color: #6F4E37; /* Even darker shade for active */
+    transform: scale(0.98); /* Slight scale down effect */
+  }
+  
+  .save-job {
+    background: none;
+    border: none;
+    color: #888; /* Faint gray */
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.3s;
+  }
+  
+  .save-job:hover {
+    color: #444; /* Darker gray for hover */
+  }
+  /* Mobile Styles */
+@media (max-width: 768px) {
+  .view-all {
+    padding: 10px 14px;
+    cursor: pointer;
+    margin: 3px;
+  }
+
+  .job-card {
+    flex-direction: column; /* Stack logo and details vertically */
+    padding: 15px;
+  }
+
+  .job-logo img {
+    height: 40px; /* Smaller logo */
+    width: 40px;
+  }
+}

@@ -1,0 +1,152 @@
+.store-carousel-container {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  /* background-color: #0c83e7; */
+  background-image: linear-gradient(-50deg, #6f4e37 10%, #a67b5b 60%, #ecb176 60%);
+   
+  display: flex;
+  margin: 0px auto 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.store-card-animation {
+  width: 40vw;
+}
+
+.store-carousel-slide {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* First slide styling */
+.first-slide {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+}
+
+.slide-left {
+  width: 45%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slide-left1 {
+  width: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.store-animated-card,
+.store-animated-card-img {
+  width: 200px;
+  height: 250px;
+  
+}
+
+.store-animated-card{
+  background-color: #ffffff;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: bounce 1.5s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.slide-right {
+  width: 45%;
+  text-align: center;
+  right: 10px;
+}
+
+.slide-right1 {
+  width: 35%;
+  text-align: center;
+  right: 10px;
+}
+
+.slide-right h1,
+slide-right1 h1 {
+  color: #fff;
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.slide-right p,
+.slide-right1 p {
+  color: #fff;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.cta-button {
+  background-color: #ff9800;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.store-prev, .store-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #c9c9c9;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 3px;
+}
+
+.store-prev {
+  left: 10px;
+}
+
+.store-next {
+  right: 10px;
+}
+
+.store-dots {
+  position: absolute;
+  bottom: 20px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.store-dot {
+  height: 10px;
+  width: 10px;
+  margin: 0 5px;
+  background-color: #c9c9c9;
+  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.store-dot.active {
+  background-color: #e47423;
+  width: 30px;
+  height: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 25px;
+}

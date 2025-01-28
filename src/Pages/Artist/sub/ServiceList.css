@@ -1,0 +1,14 @@
+.svc-unique-service-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  @media only screen and (max-width: 768px) {
+    .svc-unique-service-list {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+  

@@ -1,0 +1,272 @@
+.carousel-container {
+    overflow: hidden;
+    width: 97%;
+    /* padding: 20px 10px; */
+    margin: 0 auto;
+    position: relative;
+    background-color:white;
+/* background-image: linear-gradient(62deg, #FBAB7E 0%, #F7CE68 100%); */
+
+  }
+
+  .biding-bid{
+    /* display: flex; */
+    /* padding: 20px 0px; */
+    width: 97%;
+    padding: 0px 20px;
+    /* margin: 0 auto; */
+    /* position: relative; */
+  }
+
+  .bid-carousel-wrappe{
+    display: flex;
+    width: 100%;
+    /* padding: 0 15px 0px 0px; */
+    transition: transform 1s ease-in-out;
+  }
+
+  .carousel-container-biding{
+     width: 95%;
+     margin: 0 auto;
+     overflow: hidden;
+  }
+
+  .biding-carousel-image{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.5s ease-in-out;
+  }
+  
+  .biding-carousel-card{
+    flex: 0 0 19.2%;
+    position: relative;
+    height: 350px;
+    margin: 20px 28px 20px 0px;
+    cursor: pointer;
+    box-sizing: border-box;
+    /* box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3); */
+    /* background-image: linear-gradient(62deg, #FBAB7E 0%, #F7CE68 100%); */
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+    /* background-image: url("https://cdn.pixabay.com/photo/2016/03/27/16/40/window-1283073_1280.jpg"); */
+    /* background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwjJx8pyi_0_WOEuhGk7huQRbyukGN2PWdKg&s"); */
+    /* background-image: url("https://cdn.prod.website-files.com/5a9ee6416e90d20001b20038/64f5de458cdc87f3cd09fd99_Rectangle%20(82).svg"); */
+    /* background-image: url("https://media.istockphoto.com/id/695100728/vector/vector-background-with-blurred-objects-abstraction-in-gray.jpg?s=612x612&w=0&k=20&c=QG_1GxXUvuF6q_tnnPXn-CV1GQdgCBkqONZSKaURafE="); */
+    /* background-image: url("https://img.freepik.com/premium-vector/illustration-vector-graphic-white-gradient-background-abstract-paper-texture_393879-3472.jpg"); */
+    /* background-image: url("https://cdn.vectorstock.com/i/500p/84/65/abstract-white-monochrome-background-vector-32028465.jpg"); */
+    /* background-image: url("https://i.pinimg.com/736x/25/44/5a/25445a43d5ac691372f7091703bb16a2.jpg"); */
+    background-repeat: no-repeat;
+    background-size:contain ;
+  }
+
+  .bid-card-content {
+    position: absolute;
+    bottom: 0;
+    width: 90%;
+    right: 0;
+    border-radius: 25px 0 0;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    color: #fff;
+    transition: opacity 0.3s ease;
+  }
+  
+  .bid-card-title {
+    font-size: 1.2em;
+    margin: 10px 0;
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  .bid-card-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .bid-card-price, .bid-card-time {
+    font-size: 1.1em;
+    color: #f8f8f8;
+  }
+  
+  .bid-card-time {
+    font-size: 0.9em;
+    /* color: #ccc; */
+  }
+
+  .btn.bid-btn-place-bid {
+    position: relative;
+    display: inline-block;
+    /* background: rgba(236, 221, 221, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 10px; */
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    border-top: 1px solid rgba(white, 0.3);
+    background-color: rgba(white, 0.05);
+    cursor: pointer;
+    /* transition: transform 0.3s ease-in-out, background 0.5s ease, box-shadow 0.3s ease;
+    box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.5); */
+    overflow: hidden;
+  }
+  
+  .btn.bid-btn-place-bid::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    /* background: radial-gradient(circle, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0));
+    transition: width 0.5s ease, height 0.5s ease, top 0.5s ease, left 0.5s ease;
+    transform: translate(-50%, -50%); */
+    border-radius: 50%;
+    z-index: 0;
+  }
+  
+  .btn.bid-btn-place-bid:hover::before {
+    width: 120%;
+    height: 120%;
+    top: 50%;
+    left: 50%;
+  }
+  
+  .btn.bid-btn-place-bid:hover {
+    box-shadow: 0px 0px 30px rgba(255, 255, 255, 0.7);
+  }
+  
+  .bid-heart-btn{
+    outline: none;
+    font-size: 2em;
+  }
+
+  .btn.bid-btn-place-bid{
+    padding: 12px 10px;
+    font-size: 1.1rem;
+    /* backdrop-filter: blur(30px);
+    box-shadow: 0px 0px 30px rgba(227,228,237,0.37);
+    border: 2px solid rgba(255,255,255,0.18); */
+  }
+ 
+  
+  .card-actions {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+  }
+
+  @media (max-width: 1300px) {
+    .biding-carousel-card{
+      flex: 0 0 22.9%;
+      
+    }
+        
+  }
+  @media (max-width: 1200px) {
+    .biding-carousel-card{
+      flex: 0 0 23%;
+      
+    }
+    .btn.bid-btn-place-bid{
+      font-size: 0.72rem;
+    }
+  }
+  
+  @media (max-width: 900px) {
+    .biding-carousel-card {
+      flex: 0 0 30.50%;
+      height: 318px;
+      padding: 5px;
+    }
+    .bid-heart-btn{
+      outline: none;
+      font-size: 1.9em;
+    }
+
+    .btn.bid-btn-place-bid{
+      padding: 9px 3px;
+      font-size: 1rem;
+    }
+    
+  }
+  
+  
+  @media (max-width: 576px) {
+    .carousel-container {
+      width: 95%;
+      padding: 0px 2px;
+    }
+    
+    
+    .biding-carousel-card{
+      flex: 0 0 47.5%;
+      height: 245px;
+      padding: 5px;
+    }
+
+    .bid-card-title,
+    .bid-card-details{
+      font-size: 0.9125em;
+    }
+  .btn.bid-btn-place-bid{
+    padding: 9px 3px;
+    font-size: 0.8rem;
+  }
+  .bid-heart-btn{
+    outline: none;
+    font-size: 1.4em;
+  }
+    
+  }
+
+  @media (max-width: 400px) {
+    .bid-card-title{
+      font-size: 0.88em;
+    }
+
+    .btn.bid-btn-place-bid{
+      padding: 9px 3px;
+      font-size: 0.84rem;
+    }
+  }
+  
+  @media (max-width:385px) {
+    .carousel-container{
+      width: 92%;
+      padding: 0px 2px;
+    }
+    .biding-carousel-card{
+      flex: 0 0 47.4%;
+      height: 215px;
+      padding: 5px;
+      margin: 20px 17px 20px 0px;
+    }
+    .bid-card-title,
+    .bid-card-details{
+      font-size: 0.78em;
+    }
+  .btn.bid-btn-place-bid{
+    padding: 9px 3px;
+    font-size: 0.64rem;
+  }
+  .bid-heart-btn{
+    outline: none;
+    font-size: 1.4em;
+  }
+
+  }
+  
+  @media (max-width:370px) {
+    .btn.btn-place-bid{
+      font-size: 0.59rem;
+    }
+    
+  }
+  
+  

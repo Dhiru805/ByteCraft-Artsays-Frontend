@@ -1,0 +1,533 @@
+.img-fluids{
+    width: 100%;
+    height: 50px;
+    object-fit: contain;
+}
+header.show-head.d-flex.flex-wrap.justify-content-between {
+  padding: 0px 15px 0px 13px;
+}
+.image-collectiones {
+	display: flex;
+	flex-wrap: wrap;
+	padding:  0 10px;
+  justify-content: space-around;
+	background-color: white;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.store-card{
+    gap:10px ;
+}
+.store-old-price{
+  font-size: 0.8375rem;
+  color: #999;
+}
+.store-rating{
+  font-size: 0.9em;
+  font-weight: bold;
+  line-height: 1;
+}
+.store-rat, 
+.store-artist,
+.store-artist-rat,
+.no-pourches,
+store-artist-name
+{
+  line-height: 1; 
+  font-size: 0.9em;
+  padding: 2px 0px 2px 0px;
+}
+
+i.fa.fa-star {
+  color: #ffa534;
+}
+
+.store-artist{
+  color: black
+}
+
+.store-img-size-span{
+  padding-left: 2px;
+}
+
+.store-img-size{
+  font-size: 11px;
+  line-height: 2;
+  /* color: ; */
+  font-weight: 600;
+  border-bottom: 1px solid #ebebeb;
+}
+.store-container{
+    max-width: 1465px;
+}
+
+.cardes{
+    position: relative;
+    width: 24%;
+    height: 365px;
+    /* border: 1px solid #ddd; */
+    /* border-radius: 15px; */
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.cardes:hover{
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.cardes:hover .postHoverLinskList {
+	bottom: 50px;
+	opacity: 1;
+}
+.ImageHolderes{
+    position: relative;
+    width: 100%;
+    height: 244px;
+}
+.store-cards-title{
+  font-size: 1em;
+  font-weight: bold;
+}
+
+.searchForm{
+    padding: 0px;
+    padding-left: 10px;
+}
+
+.searchForm input{
+    outline: none;
+    border: none;
+    padding: 7px;
+    width: 90%;
+}
+
+.range-slider {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.show-more-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+.filter {
+  width: 100%;
+  outline: none;
+  border-radius: 5px;
+  overflow: hidden;
+  background: #721c24;
+}
+
+.filter::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  background: #721c24;
+  /* border: 2px solid burlywood; */
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.cards-contentss{
+  padding: 5px;
+    text-align: left;
+    /* line-height: 1px !important; */
+}
+
+.price-inputs {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.price-input-group {
+  display: flex;
+  align-items: center;
+}
+
+.price-range {
+  font-size: 0.9rem;
+  color: #555;
+  text-align: center;
+}
+.price-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-top: 13px;
+}
+
+.price-input {
+  width: 100%;
+  padding: 10px 0px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 1rem;
+  /* -moz-appearance: textfield; Hide default number spinner buttons in Firefox */
+}
+
+.price-input::-webkit-outer-spin-button,
+.price-input::-webkit-inner-spin-button {
+  /* -webkit-appearance: none; Hide default number spinner buttons in Chrome, Safari, and Edge */
+  margin: 0;
+}
+
+.price-input-group .placeholder {
+  position: absolute;
+  top: 40%;
+  left: 33px;
+  transform: translateY(-33%);
+  transition: all 0.2s ease;
+  color: #999;
+  pointer-events: none;
+}
+
+.price-input-group.has-value .placeholder,
+.price-input:focus + .placeholder {
+  top: -5px;
+  left: 10px;
+  font-size: 0.8rem;
+  background-color: white;
+  padding: 0 5px;
+  color: #555;
+}
+
+.currency {
+  margin-left: 5px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.custom-size-section {
+  margin-top: 10px;
+  border-top: 1px solid #ddd;
+  padding-top: 10px;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.input-group label {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.custom-input {
+  width: 100px;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  text-align: center;
+  font-size: 1rem;
+  margin-right: 5px;
+  /* -moz-appearance: textfield; */
+}
+
+.unit-label {
+  margin-left: 5px;
+  font-size: 0.9rem;
+  color: #555;
+  margin-right: 7px;
+}
+
+.set-size-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #eee;
+  border: none;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: #333;
+  cursor: pointer;
+  align-items: center;
+}
+
+.set-size-btn:hover {
+  background-color:#6F4E37;
+  color: white;
+}
+
+.custom-size-btn {
+  background: none;
+  border: none;
+  color: #721c24;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.unit-selection {
+  text-align: center;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+
+.size-options {
+  display: flex;
+  flex-direction: column;
+}
+.size-checkbox,
+.artist-checkbox{
+  margin-right: 5px;
+  accent-color: #721c24; 
+}
+
+.unit-radio,
+.pinting-Type{
+  /* padding: 10px; */
+  margin:0px 5px 0px 0px;
+  accent-color: #721c24;
+}
+
+.size-checkbox:checked + span,
+.artist-checkbox:checked + span {
+  color: #721c24;
+  
+}
+
+.unit-radio:checked::before,
+.pinting-Type:checked::before,
+.size-checkbox:checked::before,
+.artist-checkbox:checked::before {
+  background-color:#6F4E37;
+}
+
+.radio-background {
+  background-color: #6F4E37;
+  color: white; /* Optional: If you want the text to be white */
+}
+
+
+
+
+/* Sidebar visible state */
+#sidebar.visible {
+  transform: translateX(0); /* Slide in */
+}
+
+/* Sidebar hidden state */
+#sidebar.hidden {
+  transform: translateX(100%); /* Slide out */
+}
+
+.fas fa-chevron-circle-left {
+  background-color: #fff;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  /* cursor: pointer; */
+  display: none; /* Hidden by default */
+}
+
+.sidebar-back-button{
+  position: absolute;
+  top: 30px;
+  left: 15px;
+  border: none;
+  background-color: white;
+  display: none;
+  font-size: x-large;
+}
+
+.tag-name {
+  position: relative;
+  overflow: hidden;
+  color: black;
+  cursor: pointer; /* Add cursor pointer for better UX */
+}
+
+.tag-name::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #6F4E37; /* Change this to your desired color */
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease-out;
+}
+
+.tag-name:hover::after {
+  transform: scaleX(1);
+}
+
+.tag-name.active::after {
+  transform: scaleX(1);
+  transition: none; /* Stops the transition on the active tag */
+}
+
+.tag-name.active {
+  color: black; /* Keeps text color black when active */
+  font-size: medium;
+  /* Optionally, you can add more styles for the active state */
+}
+
+@media (max-width:1400px) {
+  .store-rating{
+    font-size: 0.7em;
+  }
+}
+
+@media (max-width:1230px) {
+  .cardes{
+    width: 32%;
+    margin-bottom: 1px;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 630px) {
+  .store-rating {
+    font-size: 0.6em;
+  }
+
+  .store-rating .store-rat {
+    font-size: 1em; /* Adjust if necessary for smaller stars */
+  }
+
+  .no-pourches, .store-img-size-span {
+    font-size: 0.8em;
+  }
+}
+
+@media (min-width: 821px) and (max-width: 987px) {
+  .store-rating {
+    font-size: 0.6em;
+  }
+
+  .store-rating .store-rat {
+    font-size: 1em; /* Adjust if necessary for smaller stars */
+  }
+
+  .no-pourches, .store-img-size-span {
+    font-size: 0.8em;
+  }
+
+  .cardes{
+    width: 23%;
+  }
+}
+
+@media (max-width: 769px) {
+
+.cardes{
+    position: relative;
+    width: 32%;
+    margin-bottom: 1px;
+    height: 325px;
+}  
+.ImageHolderes{
+    position: relative;
+    width: 100%;
+    height: 210px;
+}
+
+
+#sidebar {
+  max-width: 300px;
+}
+
+} 
+
+
+@media (max-width: 576px) {
+	.cardes{
+    position: relative;
+    width: 48%;
+    height: 325px;
+}
+
+.ImageHolderes{
+    height: 210px;
+}
+
+.store-rat, 
+.no-pourches{
+  line-height: 1; 
+  font-size: 0.7em;
+  padding: 2px 0px 2px 0px;
+}
+
+.store-list{
+  display: none;
+}
+}
+
+@media (max-width:400px) {
+  .store-rat, 
+.no-pourches{
+  line-height: 1; 
+  font-size: 0.5em;
+  padding: 2px 0px 2px 0px;
+}
+}
+
+@media (max-width:420px) {
+  .store-rat, 
+.no-pourches{
+  line-height: 1; 
+  font-size: 0.7em;
+  padding: 2px 0px 2px 0px;
+}
+}
+
+/* Hide the filter icon for screens above 992px */
+@media (min-width: 992px) {
+  .fas.fa-filters {
+      display: none;
+  }
+  .sidebar-back-button {
+    display: none; /* Show back button below 992px */
+  }
+}
+
+/* Show the filter icon for screens below 992px */
+@media (max-width: 991px) {
+  .fas.fa-filters {
+      display: block; /* Or another value depending on how you want it displayed */
+  }
+  .sidebar-back-button {
+    display: block; /* Show back button below 992px */
+  }
+
+#sidebar {
+  position: fixed;
+  top: 0;
+  left: -215%; /* Hide the sidebar off-screen */
+  height: 100%;
+  width: 100%; /* Width of the sidebar */
+  max-width: 300px;
+  padding: 0px 15px 0px 15px;
+  background-color: #f8f9fa;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+  z-index: 1000; 
+  overflow-y: auto; /* Enables vertical scrolling */
+}
+
+.sidebar-back-button.visible {
+  display: block; /* Visible below 992px */
+}
+
+#sidebar.visible {
+  left: 0; /* Slide in the sidebar */
+}
+
+.search-top{
+  margin-top: 95px;
+}
+}
+

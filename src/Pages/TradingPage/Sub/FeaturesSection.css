@@ -1,0 +1,114 @@
+
+  
+  .features-section {
+    padding: 60px 20px;
+    /* background: linear-gradient(45deg, #6F4E37, #A67B5B); */
+    color: #fff;
+    width: 95%;
+
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto; /* Center the section horizontally */
+  }
+  
+  .features-section-title {
+    font-size: 3.5rem;
+    margin-bottom: 40px;
+    color: #A67B5B;
+    animation: featuresFadeInDown 1s ease-in-out;
+  }
+  
+  .features-section-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+  }
+  
+  .features-section-item {
+    background: #fff;
+    color: #000;
+    padding: 40px 30px;
+    border-radius: 15px;
+    max-width: 300px;
+    width: 100%;
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    animation: featuresFadeInUp 1s ease-in-out;
+  }
+  
+  .features-section-item.up {
+    height: 400px; /* Increased height for 'up' items */
+    transform: translateY(-20px);
+  }
+  
+  .features-section-item.down {
+    height: 450px; /* Increased height for 'down' items */
+    transform: translateY(20px);
+  }
+  
+  .features-section-item:hover {
+    transform: translateY(0);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  .features-section-item-number {
+    font-size: 2.5rem;
+    color: #A67B5B;
+    margin-bottom: 20px;
+  }
+  
+  .features-section-item-title {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+  }
+  
+  .features-section-item-description {
+    font-size: 1.2rem;
+    line-height: 1.8;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    .features-section-content {
+      flex-direction: column;
+    }
+  
+    .features-section-item {
+      transform: translateY(0) !important; /* Disable alternating effect on mobile */
+      margin-bottom: 20px;
+      height: auto; /* Remove fixed height on mobile */
+    }
+  
+    .features-section-item.up, .features-section-item.down {
+      height: auto; /* Ensure responsiveness on mobile */
+    }
+  }
+  
+  /* Animations */
+  @keyframes featuresFadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes featuresFadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  

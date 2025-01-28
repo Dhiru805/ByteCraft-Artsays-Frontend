@@ -1,0 +1,38 @@
+import axiosInstance from "./axiosConfig";
+
+async function postAPI(url, payload, isPrivate = true, config = {}) {
+  try {
+    let accessToken;
+    if (isPrivate) {
+      accessToken = localStorage.getItem("token");
+    }
+
+    const requestConfig = {
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        ...(payload instanceof FormData
+          ? { "Content-Type": "multipart/form-data" } // Let the browser set proper boundaries
+          : { "Content-Type": "application/json" }),
+        ...config.headers,
+      },
+    };
+
+    const response = await axiosInstance.post(url, payload, requestConfig);
+
+    if (response.status === 200) {
+      return {
+        message: response.data.message,
+        hasError: response.data.hasError,
+        data: response.data,
+      };
+    }
+  } catch (error) {
+    console.error("Error during API request:", error);
+    throw error;
+  }
+}
+
+export default postAPI;
+
+
+

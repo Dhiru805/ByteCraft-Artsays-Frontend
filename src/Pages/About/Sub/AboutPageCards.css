@@ -1,0 +1,123 @@
+.card-container {
+	text-align: center;
+	margin-top: 8%;
+  }
+  
+  .overlap-cards {
+	position: relative;
+	height: 200px;
+	padding-top: 35px;
+	display: flex;
+	justify-content: center;
+	overflow: hidden;
+  }
+  
+  .about-card {
+	position: absolute;
+	width: 150px;
+	height: 200px;
+	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+	transition: transform 1.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 1.5s ease-in-out;
+	overflow: hidden;
+  }
+  
+  .about-card.move-out {
+	transform: translateX(-100%) scale(0.5); /* Move out to the left and shrink */
+	opacity: 0; /* Fade out the card */
+	z-index: 0;
+  }
+
+  .col-lg-5A {
+	width: 41%;
+  }
+  
+  .about-card:nth-child(1) {
+	transform: translateX(-180px) rotate(-90deg); /* Rotate to left for initial */
+	z-index: 9;
+	bottom: -175px;
+  }
+  
+  .about-card:nth-child(2) {
+	transform: translateX(-120px) rotate(-40deg); /* Rotate to left */
+	z-index: 8;
+	bottom: -30%;
+  }
+  
+  .about-card:nth-child(3) {
+	transform: translateX(-90px) rotate(-30deg); /* Rotate to left */
+	z-index: 7;
+  }
+  
+  .about-card:nth-child(4) {
+	transform: translateX(-40px) rotate(-10deg); /* Rotate to left */
+	z-index: 6;
+  }
+  
+  .about-card:nth-child(5) {
+	transform: translateX(0px) rotate(0deg); /* Center card with no rotation */
+	z-index: 5;
+  }
+  
+  .about-card:nth-child(6) {
+	transform: translateX(40px) rotate(10deg); /* Rotate to right */
+	z-index: 4;
+  }
+  
+  .about-card:nth-child(7) {
+	transform: translateX(90px) rotate(30deg); /* Rotate to right */
+	z-index: 3;
+  }
+  
+  .about-card:nth-child(8) {
+	transform: translateX(120px) rotate(60deg); /* Rotate to right */
+	z-index: 2;
+  }
+  
+  .about-card:nth-child(9) {
+	transform: translateX(150px) rotate(90deg); /* Rotate to right */
+	z-index: 1;
+	bottom: -175px;
+  }
+  
+  .about-card.move-in {
+	transform: translateX(100%) scale(1); /* Move in from right */
+	opacity: 1;
+  }
+  
+  .about-card-img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+  }
+  
+  .submission-info {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	text-align: center;
+	border-top: 1px solid #ccc;
+  }
+  
+  .submission-text {
+	font-weight: bold;
+  }
+  
+  .submission-author {
+	display: block;
+	color: #555;
+	font-size: 0.9rem;
+  }
+  
+  @media (max-width: 767px) {
+	.col-lg-5A {
+	  flex: 0 0 92%;
+	  max-width: 100%;
+	  margin: 0 auto;
+	}
+	.card-container {
+	  text-align: center;
+	  margin-top: 1%;
+	  margin-bottom: 1%;
+	}
+  }
+  

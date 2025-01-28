@@ -1,0 +1,199 @@
+.image-collection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+  padding: 20px;
+  background-color: white;
+}
+
+.card-img {
+  position: relative;
+  width: 250px;
+  height: 350px;
+  overflow: hidden;
+  border-radius: 15px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  align-items: center;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit:contain;
+  /* align-items: center; */
+  transition: transform 0.3s ease-in-out;
+}
+
+.card:hover .card-image {
+  transform: scale(1.03);
+}
+
+.card-content {
+  position: absolute;
+  bottom: 0;
+  width: 90%;
+  right: 0;
+  border-radius: 25px 0 0;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  transition: opacity 0.3s ease;
+}
+
+.card-title {
+  font-size: 1.2em;
+  margin: 10px 0;
+  text-align: center;
+  font-weight: bold;
+}
+
+.card-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.card-price, .card-time {
+  font-size: 1.1em;
+  color: #f8f8f8;
+}
+
+.card-time {
+  font-size: 0.9em;
+  color: #ccc;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px;
+}
+
+.heart-btn,.share-button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 50%;
+  align-items: center;
+  color: #fff;
+  font-size: 1.5em;
+  transition: color 0.3s ease;
+  outline: none; /* Removes the outline on focus/click */
+  box-shadow: none; /* Removes any box shadow */
+}
+
+.heart-btn {
+ outline: none;
+  font-size: 1.7em; /* Adjust size as needed */
+}
+
+.share-button {
+  color: white;
+  outline: none; /* Removes outline */
+  box-shadow: none; /* Removes any box shadow */
+}
+
+.heart-btn:hover{
+  outline: none;
+}
+
+
+
+.btn.btn-place-bid {
+  background: rgba(236, 221, 221, 0.13);
+  backdrop-filter: blur(4.5px);
+  -webkit-backdrop-filter: blur(4.5px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 10px 20px;
+  font-size: 1em;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+
+.btn.btn-place-bid:hover {
+  transform: translateY(-5px);
+  color: white !important;
+}
+
+.btn.btn-place-bid:active {
+  transform: translateY(1px);
+}
+
+@media (max-width: 848px) {
+  .card-title{
+    text-align: start;
+  }
+
+  .image-collection{
+   gap: 15px;
+   padding: 15px;
+   justify-content: space-between;
+  }
+
+  .card-img{
+    width: 225px;
+    height: 330px;
+  }
+
+  .btn.btn-place-bid{
+    font-size: 0.72rem;
+  }
+
+  .card-actions {
+    margin-top: 0px;
+  }
+}
+
+@media (max-width: 568px) {
+  .card-title{
+    text-align: start;
+    font-size: 1em;
+    margin-bottom: 0px;
+  }
+
+  .image-collection{
+   gap: 15px;
+   padding: 10px;
+   justify-content: space-between;
+  }
+
+  .card-img{
+    width: 47%;
+    height: 320px;
+  }
+
+  .btn.btn-place-bid{
+    font-size: 0.62rem;
+  }
+
+  .card-actions {
+    margin-top: 0px;
+  }
+
+  .card-details {
+    font-size: 0.86em;
+    margin-top: 5px;
+  }
+
+  .btn.btn-place-bid {
+    padding: 10px 6px;
+  }
+}
+
+@media (max-width:400px) {
+  .card-img{
+    width: 47%;
+    height: 285px;
+  }
+  .btn.btn-place-bid{
+    font-size: 0.59rem;
+  }
+
+}

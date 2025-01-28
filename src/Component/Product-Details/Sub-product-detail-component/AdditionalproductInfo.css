@@ -1,0 +1,26 @@
+.arttist-pofile-pic-container
+{
+	width: 7%;
+
+}
+.artist-profile-pic{
+  width: -webkit-fill-available;
+}
+
+.star-rating .fa-star, .star-rating .fa-star-half-alt {
+	color: #6f4e37; /* Yellow color for the filled stars */
+  }
+  
+  .star-rating .fa-star {
+	color: #ccc; /* Grey color for the empty stars */
+  }
+  
+  .star-rating .fa-star.checked, .star-rating .fa-star-half-alt.checked {
+	color: #6f4e37; /* Yellow color for filled stars */
+  }
+  
+  @media (max-width: 768px) {
+  .artist-info-artistdiscription{
+    padding-right: 0px !important;
+  }
+}
