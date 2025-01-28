@@ -8,8 +8,10 @@ import ViewBlogRequest from './ViewBlogRequest';
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import Settings from './BasicInformation';
+import useUserType from '../../urlconfig'
 
 const UserProfileForm = () => {
+  const userType = useUserType();
   const { userId } = useParams();
   const location = useLocation();
   const navigate = useNavigate(); 
@@ -167,7 +169,7 @@ const UserProfileForm = () => {
                   <i className="fa fa-dashboard" />
                 </a>
               </li>
-              <li className="breadcrumb-item"><Link to="/Dashboard/ArtistManageTable">ArtistManageTable</Link></li>
+              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/ArtistManageTable`}>ArtistManageTable</Link></li>
               <li className="breadcrumb-item">Artist Profile</li>
             </ul>
           </div>

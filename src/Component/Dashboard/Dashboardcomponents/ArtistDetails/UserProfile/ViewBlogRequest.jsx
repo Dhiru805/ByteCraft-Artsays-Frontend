@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
-import { useConfirm } from '../../Blog/SuperAdminBlog/StatusConfirm';
+import { useConfirm } from '../../StatusConfirm';
 import { toast } from 'react-toastify';
 import putAPI from '../../../../../api/putAPI';
 import ConfirmationDialog from '../../ConfirmationDialog';

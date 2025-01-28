@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useConfirm } from './StatusConfirm';
+import { useConfirm } from '../../StatusConfirm';
 import { toast } from 'react-toastify';
 import getAPI from '../../../../../api/getAPI';
 import putAPI from '../../../../../api/putAPI';
 import { useNavigate } from 'react-router-dom';
+import useUserType from '../../urlconfig';
 
 const BlogRequest = () => {
     const [blogs, setBlogs] = useState([]);
@@ -12,6 +13,7 @@ const BlogRequest = () => {
     const [blogsPerPage, setBlogsPerPage] = useState(10);
     const confirm = useConfirm();
     const navigate = useNavigate();
+    const userType = useUserType(); 
 
     useEffect(() => {
         const fetchBlogs = async () => {
@@ -86,6 +88,8 @@ const BlogRequest = () => {
         setBlogsPerPage(Number(event.target.value));
         setCurrentPage(1);
     };
+
+
 
     return (
         <div className="container-fluid">
@@ -171,7 +175,7 @@ const BlogRequest = () => {
                                                 <td>
                                                     <button
                                                         className="btn btn-sm btn-outline-info"
-                                                        onClick={() => navigate(`/Dashboard/BlogRequest/view-blog/${blog._id}`)}
+                                                        onClick={() => navigate(`/${userType}/Dashboard/BlogRequest/view-blog/${blog._id}`)}
                                                     >
                                                         View
                                                     </button>

@@ -7,9 +7,11 @@ import Billings from './Billings';
 import Password from './Password';
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
+import useUserType from '../../urlconfig'
 
 const UserProfileForm = () => {
   const { userId } = useParams();
+  const userType = useUserType();
   const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
   const [profileData, setProfileData] = useState({
     name: '',
@@ -73,7 +75,7 @@ const UserProfileForm = () => {
                   <i className="fa fa-dashboard" />
                 </a>
               </li>
-              <li className="breadcrumb-item"><Link to="/Dashboard/ArtistManageTable">ArtistManageTable</Link></li>
+              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/ArtistManageTable`}>ArtistManageTable</Link></li>
               <li className="breadcrumb-item">Artist Profile</li>
             </ul>
           </div>

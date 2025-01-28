@@ -3,11 +3,14 @@ import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
+import axios from 'axios';
+import useUserType from '../../urlconfig';
 
 function UpdateBuyerRequest() {
   const navigate = useNavigate();
+  const userType = useUserType(); 
   const { id } = useParams();
   const location = useLocation();
   const { state } = location || {};
@@ -16,16 +19,27 @@ function UpdateBuyerRequest() {
   const [productName, setProductName] = useState('');
   const [description, setDescription] = useState('');
   const [buyerImage, setBuyerImage] = useState(null);
-  const [imageName, setImageName] = useState(''); 
-  // const [errorMessage, setErrorMessage] = useState(''); 
-
+  const [budget, setBudget] = useState('');
+  const [artistId, setArtistId] = useState('');
+  const [artists, setArtists] = useState([]);
 
   useEffect(() => {
+    const fetchArtists = async () => {
+      try {
+        const response = await axios.get("http://localhost:3001/artist/artists");
+        setArtists(response.data);
+      } catch (error) {
+        console.error("Error fetching artists:", error);
+      }
+    };
+    fetchArtists();
+
     if (request) {
       setProductName(request.ProductName || '');
       setDescription(request.Description || '');
-      if (request.BuyerImage) {
-        setImageName(request.BuyerImage); 
+      setBudget(request.Budget || '');
+      if (request.Artist?.id && request.Artist.id._id) {
+        setArtistId(request.Artist.id._id);
       }
     }
   }, [request]);
@@ -38,31 +52,20 @@ function UpdateBuyerRequest() {
     const file = event.target.files[0];
     if (file) {
       setBuyerImage(file);
-      setImageName(file.name);
     }
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    // if (!description.trim()) {
-    //   setErrorMessage('Description is required!');
-    //   return;
-    // }
-
- 
-    // if (!buyerImage && !request.BuyerImage) {
-    //   setErrorMessage('Buyer image is required!');
-    //   return;
-    // }
-
-    // setErrorMessage('');
-
     const token = localStorage.getItem("token");
 
     const formData = new FormData();
     formData.append('ProductName', productName);
     formData.append('Description', description);
+    formData.append('Budget', budget);
+    if (artistId) {
+      formData.append('Artist', artistId);
+    }
     if (buyerImage) {
       formData.append('BuyerImage', buyerImage, buyerImage.name);
     }
@@ -80,7 +83,7 @@ function UpdateBuyerRequest() {
 
       if (response.ok) {
         toast.success(data.message || "Request updated successfully!");
-        navigate("/Dashboard/BuyerCustomrequest");
+        navigate(`/${userType}/Dashboard/BuyerCustomrequest`);
       } else {
         toast.error(data.message || "Failed to update the request. Please try again.");
       }
@@ -91,7 +94,7 @@ function UpdateBuyerRequest() {
 
   const modules = {
     toolbar: [
-      [{ 'font': ['sans-serif', 'serif', 'monospace'] }, { 'size': ['small', 'medium', 'large', 'huge'] }],
+      [{ 'font': ['sans-serif'] }, { 'size': ['small', 'large', 'huge'] }],
       [{ 'header': '1' }, { 'header': '2' }, 'bold', 'italic', 'underline'],
       [{ 'align': [] }],
       [{ 'list': 'ordered' }, { 'list': 'bullet' }],
@@ -100,11 +103,14 @@ function UpdateBuyerRequest() {
       ['code-block'],
       ['blockquote'],
       ['fullscreen'],
-      ['help']
+      ['help'],
     ],
   };
-  
-  
+
+  const editorStyle = {
+    fontFamily: 'Nunito, Ubuntu, Raleway, IBM Plex Sans, sans-serif',
+    fontSize: '12px', 
+  };
 
   return (
     <div className="container-fluid">
@@ -117,7 +123,7 @@ function UpdateBuyerRequest() {
                 <a href="/"><i className="fa fa-dashboard"></i></a>
               </li>
               <li className="breadcrumb-item active">
-                <Link to="/Dashboard/BuyerCustomrequest">Buyer Custom Request</Link>
+                <Link to={`/${userType}/Dashboard/BuyerCustomrequest`}>Buyer Custom Request</Link>
               </li>
               <li className="breadcrumb-item">Edit Custom Request</li>
             </ul>
@@ -142,14 +148,49 @@ function UpdateBuyerRequest() {
                   />
                 </div>
                 <div className="form-group mt-3">
+                  <select
+                    name="Artist"
+                    value={artistId}
+                    onChange={(e) => setArtistId(e.target.value)}
+                    className="form-control"
+                    required
+                  >
+                    <option value="">Select Artist</option>
+                    {artists.map((artist) => (
+                      <option key={artist._id} value={artist._id}>
+                        {artist.name}  {artist.lastName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group mt-3">
+                  <input
+                    type="number"
+                    name="Budget"
+                    value={budget}
+                    onChange={(e) => setBudget(e.target.value)}
+                    className="form-control"
+                    placeholder="Budget"
+                    required
+                  />
+                </div>
+                <div className="form-group mt-3">
                   <input
                     type="file"
                     name="BuyerImage"
                     onChange={handleFileChange}
                     className="form-control-file"
-                    required={!imageName && !buyerImage}
                   />
-                  {request && request.BuyerImage && !buyerImage && (
+                  {buyerImage && (
+                    <div className="mt-2" style={{ width: '200px', height: '200px', overflow: 'hidden' }}>
+                      <img
+                        src={URL.createObjectURL(buyerImage)}
+                        alt="Selected Buyer Image"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    </div>
+                  )}
+                  {request?.BuyerImage && !buyerImage && (
                     <div className="mt-2" style={{ width: '200px', height: '200px', overflow: 'hidden' }}>
                       <img
                         src={`http://localhost:3001/${request.BuyerImage}`}
@@ -166,6 +207,7 @@ function UpdateBuyerRequest() {
                     placeholder="Enter your request description here."
                     modules={modules}
                     theme="snow"
+                    style={editorStyle}
                     required
                   />
                 </div>

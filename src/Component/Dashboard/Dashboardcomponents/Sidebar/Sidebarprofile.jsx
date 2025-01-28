@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { handleLogout } from "../LogoutConfirmation";
+import useUserType from '../urlconfig';
 
 const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, HandletoggleDropdown }) => {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const userType = useUserType(); 
 
 
   useEffect(() => {
@@ -29,7 +31,7 @@ const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, Handletoggle
     {
       label: "My Profile",
       icon: "fa-user",
-      path: `/Dashboard/completeprofile/${userId}`, 
+      path: `/${userType}/Dashboard/completeprofile/${userId}`, 
     },
     {
       label: "Messages",

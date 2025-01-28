@@ -4,6 +4,7 @@ import getAPI from '../../../../../api/getAPI';
 import UpdateModal from "./../ArtistBlog/UpdateBlogList";
 import { Link } from 'react-router-dom';
 import ConfirmationDialog from '../../ConfirmationDialog';
+import useUserType from '../../urlconfig';
 
 function BlogDetails() {
   const { blogId } = useParams();
@@ -13,6 +14,7 @@ function BlogDetails() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedBlogToDelete, setSelectedBlogToDelete] = useState(null);
   const navigate = useNavigate();  
+  const userType = useUserType(); 
 
   const fetchBlog = async () => {
     try {
@@ -63,7 +65,7 @@ function BlogDetails() {
             <ul className="breadcrumb">
               <li className="breadcrumb-item active"><a href="index.html"><i className="fa fa-dashboard"></i></a></li>
               <li className="breadcrumb-item active" >
-                <Link to="/Dashboard/BlogRequest">Blog Request</Link></li>
+                <Link to={`/${userType}/Dashboard/BlogRequest`}>Blog Request</Link></li>
               <li className="breadcrumb-item">View Blog</li>
             </ul>
           </div>
@@ -103,7 +105,7 @@ function BlogDetails() {
                       <button
                         type="button"
                         className="btn btn-outline-secondary mx-2"
-                        onClick={() => navigate(`/Dashboard/BlogRequest/view-blog/BlogDetails/${blog._id}`)}
+                        onClick={() => navigate(`/${userType}/Dashboard/BlogRequest/view-blog/BlogDetails/${blog._id}`)}
                       >
                         Continue Reading
                       </button>

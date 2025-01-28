@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from '../../ConfirmationDialog';
-
+import useUserType from '../../urlconfig';
 
 function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -9,7 +9,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
     const [selectedRequestDescription, setSelectedRequestDescription] = useState(null);
 
     const navigate = useNavigate();
-
+    const userType = useUserType(); 
 
     const handleDeleteCancel = () => {
         setIsDeleteDialogOpen(false);
@@ -28,13 +28,13 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
         setIsDeleteDialogOpen(true);
     };
 
-
+    const convertToINR = (budget) => {
+        return (budget).toLocaleString("en-IN", { style: "currency", currency: "INR" });
+    };
 
     return (
         <>
             <div className="container-fluid">
-
-
                 <div className="row clearfix">
                     <div className="col-lg-12">
                         <div className="card">
@@ -62,6 +62,8 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                                             <tr>
                                                 <th>#</th>
                                                 <th>Product Name</th>
+                                                <th>Artist Name</th>
+                                                <th>Budget </th>
                                                 <th>Request Date</th>
                                                 <th>Request Status</th>
                                                 <th>Action</th>
@@ -85,10 +87,18 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                                                             }}
                                                         />
                                                         <p className="c_name">
-                                                            {request.ProductName}</p></td>
+                                                            {request.ProductName}
+                                                        </p>
+                                                    </td>
+                                                    <td>
+                                                        {request.Artist ? `${request.Artist.id.name} ${request.Artist.id.lastName}` : 'N/A'}
+                                                    </td>
+                                                    <td>
+                                                        {convertToINR(request.Budget)}
+                                                    </td>
                                                     <td>{new Date(request.createdAt).toLocaleDateString()}</td>
                                                     <td>
-                                                        <button className={`btn btn-sm  ${request.RequestStatus === 'Pending' ? 'btn-outline-warning' : request.RequestStatus === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
+                                                        <button className={`btn btn-sm ${request.RequestStatus === 'Pending' ? 'btn-outline-warning' : request.RequestStatus === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
                                                             {request.RequestStatus}
                                                         </button>
                                                     </td>
@@ -97,12 +107,11 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                                                             type="button"
                                                             className="btn btn-outline-primary btn-sm mr-2"
                                                             title="Navigate"
-                                                          onClick={() =>
-                                                            navigate(`/Dashboard/BuyerCustomrequest/ViewCustomrequest/${request._id}`,{
-                                                                state: { request },
-                                                            })
-                                                          }
-
+                                                            onClick={() =>
+                                                                navigate(`/${userType}/Dashboard/BuyerCustomrequest/ViewCustomrequest/${request._id}`, {
+                                                                    state: { request },
+                                                                })
+                                                            }
                                                         >
                                                             <i className="fa fa-eye"></i>
                                                         </button>
@@ -111,7 +120,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                                                             className="btn btn-outline-info btn-sm mr-2"
                                                             title="Edit"
                                                             onClick={() =>
-                                                                navigate(`/Dashboard/BuyerCustomrequest/UpdateCustomrequest/${request._id}`, {
+                                                                navigate(`/${userType}/Dashboard/BuyerCustomrequest/UpdateCustomrequest/${request._id}`, {
                                                                     state: { request },
                                                                 })
                                                             }

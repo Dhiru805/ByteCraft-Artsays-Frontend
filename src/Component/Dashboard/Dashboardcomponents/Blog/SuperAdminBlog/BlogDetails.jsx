@@ -4,11 +4,14 @@ import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
+import useUserType from '../../urlconfig';
+
 
 
 function BlogDetails() {
   const { blogId } = useParams();
   const [blogs, setBlogs] = useState([]);
+  const userType = useUserType(); 
 
 
   const fetchBlog = async () => {
@@ -24,19 +27,18 @@ function BlogDetails() {
 
   useEffect(() => {
     fetchBlog();
-    // Apply inline styles to .ql-container and .ql-editor
-    // const quillContainer = document.querySelector('.ql-container');
-    // const quillEditor = document.querySelector('.ql-editor');
+    const quillContainer = document.querySelector('.ql-container');
+    const quillEditor = document.querySelector('.ql-editor');
 
-    // if (quillContainer && quillEditor) {
-    //   quillContainer.style.border = 'none';
-    //   quillContainer.style.background = 'none';
-    //   quillContainer.style.padding = '0';
-    //   quillContainer.style.margin = '0';
+    if (quillContainer && quillEditor) {
+      quillContainer.style.border = 'none';
+      quillContainer.style.background = 'none';
+      quillContainer.style.padding = '0';
+      quillContainer.style.margin = '0';
 
-    //   quillEditor.style.padding = '0';
-    //   quillEditor.style.minHeight = '0';
-    // }
+      quillEditor.style.padding = '0';
+      quillEditor.style.minHeight = '0';
+    }
   }, [blogId]);
 
 
@@ -50,8 +52,8 @@ function BlogDetails() {
             <h2>Blog Details</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item"><a href="index.html"><i className="fa fa-dashboard"></i></a></li>
-              <li className="breadcrumb-item"><Link to="/Dashboard/BlogRequest">Blog Request</Link></li>
-              <li className="breadcrumb-item"><Link to={`/Dashboard/BlogRequest/view-blog/${blogId}`}>View Blog</Link></li>
+              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/BlogRequest`}>Blog Request</Link></li>
+              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/BlogRequest/view-blog/${blogId}`}>View Blog</Link></li>
               <li className="breadcrumb-item">Blog Details</li>
             </ul>
           </div>
@@ -86,10 +88,18 @@ function BlogDetails() {
                   <ReactQuill
                     value={blogs[0].blogDescription}
                     readOnly={true}
-                    theme="snow"
+                    theme="bubble"
                     modules={{ toolbar: false }}
+                    style={{
+                      border: 'none',
+                      background: 'none',
+                      padding: '0',
+                      margin: '0',
+                      minHeight: 'auto',
+                    }}
                   />
                 </div> */}
+
                 <p
                   dangerouslySetInnerHTML={{
                     __html: blogs[0].blogDescription.replace(/<img[^>]*>/g, (match) => {

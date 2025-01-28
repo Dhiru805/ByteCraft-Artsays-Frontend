@@ -1,36 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   useLocation,
 } from "react-router-dom";
-import Home from "../Pages/Home/Home";
-import About from "../Pages/About/About";
-import StoreProduct from "../Pages/Store/StoreProduct";
-import Blog from "../Pages/Blog/Blog";
+// import Home from "../Pages/Home/Home";
+// import About from "../Pages/About/About";
+// import StoreProduct from "../Pages/Store/StoreProduct";
+// import Blog from "../Pages/Blog/Blog";
 import Login from "../Pages/Login/Login";
 import Register from "../Pages/Register/Register";
-import Contact from "../Pages/Contact/Contact";
-import NotFound from "../Component/NotFound";
-import PrivacyPolicy from "../Pages/PrivacyPolicy/PrivacyPolicy";
-import Career from "../Pages/Career/Career";
-import CartPage from "../Pages/Cart/CartPage";
-import Wishlist from "../Pages/WishList/Wishlist";
-import Partners from "../Pages/Partners/Partners";
-import HelpPage from "../Pages/HelpCenter/HelpPage";
-import HelpSubPage from "../Pages/HelpCenter/HelpSubPage";
-import TermsofServices from "../Pages/TermsAndCondition/TermsofServices";
-import FAQPage from "../Pages/FAQPage/FAQPage";
-import Header from "../Component/Header/Header";
-import Footer from "../Component/Footer";
-import Biddingpage from "../Pages/Art-Biding/BidingPage";
-import WhyChooseUs from "../Pages/WhyChooseUs/WhyChooseUs";
-import NFTCard from "../Pages/Art-Biding/NFTCard";
-import AllComponent from "../Pages/AllComponent";
-import StoreDetails from "../Component/Product-Details/StoreDetails";
-import ArtistSupport from "../Pages/Artist/ArtistSupport";
-import NewSlider from "../Component/newSlider/NewSlider";
+// import Contact from "../Pages/Contact/Contact";
+// import NotFound from "../Component/NotFound";
+// import PrivacyPolicy from "../Pages/PrivacyPolicy/PrivacyPolicy";
+// import Career from "../Pages/Career/Career";
+// import CartPage from "../Pages/Cart/CartPage";
+// import Wishlist from "../Pages/WishList/Wishlist";
+// import Partners from "../Pages/Partners/Partners";
+// import HelpPage from "../Pages/HelpCenter/HelpPage";
+// import HelpSubPage from "../Pages/HelpCenter/HelpSubPage";
+// import TermsofServices from "../Pages/TermsAndCondition/TermsofServices";
+// import FAQPage from "../Pages/FAQPage/FAQPage";
+// import Header from "../Component/Header/Header";
+// import Footer from "../Component/Footer";
+// import Biddingpage from "../Pages/Art-Biding/BidingPage";
+// import WhyChooseUs from "../Pages/WhyChooseUs/WhyChooseUs";
+// import NFTCard from "../Pages/Art-Biding/NFTCard";
+// import AllComponent from "../Pages/AllComponent";
+// import StoreDetails from "../Component/Product-Details/StoreDetails";
+// import ArtistSupport from "../Pages/Artist/ArtistSupport";
+// import NewSlider from "../Component/newSlider/NewSlider";
 import UserProfile from "../Component/Dashboard/Dashboardcomponents/UserProfile/UserProf";
 import ArtistProfile from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/UserProfile/UserProf"
 import ArtistProfileView from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ViewUserProfile/UserProf"
@@ -40,42 +40,54 @@ import AppInbox from "../Component/Dashboard/Dashboardcomponents/Chat/AppInbox";
 import AppContact from "../Component/Dashboard/Dashboardcomponents/Chat/AppContact";
 import AppChat from "../Component/Dashboard/Dashboardcomponents/Chat/AppChat";
 import BlogDashboard from "../Component/Dashboard/Dashboardcomponents/Blog/BlogDashboard";
-import BlogPost from "../Component/Dashboard/Dashboardcomponents/Blog/ArtistBlog/BlogPost";
+// import BlogPost from "../Component/Dashboard/Dashboardcomponents/Blog/ArtistBlog/BlogPost";
 import BlogList from "../Component/Dashboard/Dashboardcomponents/Blog/ArtistBlog/BlogList";
 import BlogView from '../Component/Dashboard/Dashboardcomponents/Blog/SuperAdminBlog/ViewBlog';
 import BlogDetails from "../Component/Dashboard/Dashboardcomponents/Blog/SuperAdminBlog/BlogDetails";
 import ArtistBlogDetails from "../Component/Dashboard/Dashboardcomponents/Blog/ArtistBlog/ArtistBlogDetails";
-import FileDashboard from "../Pages/Dashboard/DashBoardPages/FileDashboard";
-import TradingPage from "../Pages/TradingPage/TradingPage";
-import FileDocument from "../Pages/Dashboard/DashBoardPages/FileDocument";
-import FileMedia from "../Pages/Dashboard/DashBoardPages/FileMedia";
-import FileImages from "../Pages/Dashboard/DashBoardPages/FileImages";
-import ForbiddonError from "../Pages/Dashboard/DashBoardPages/ForbiddonError";
-import NotFoundError from "../Pages/Dashboard/DashBoardPages/NotFoundError";
-import ImageGallery from "../Pages/Dashboard/DashBoardPages/ImageGallery";
-import Invoices from "../Pages/Dashboard/DashBoardPages/Invoices";
-import SearchResult from "../Pages/Dashboard/DashBoardPages/SearchResult";
-import Maintenance from "../Pages/Dashboard/DashBoardPages/Maintenance";
-import Teamboards from "../Pages/Dashboard/DashBoardPages/Teamboards";
+// import FileDashboard from "../Pages/Dashboard/DashBoardPages/FileDashboard";
+// import TradingPage from "../Pages/TradingPage/TradingPage";
+// import FileDocument from "../Pages/Dashboard/DashBoardPages/FileDocument";
+// import FileMedia from "../Pages/Dashboard/DashBoardPages/FileMedia";
+// import FileImages from "../Pages/Dashboard/DashBoardPages/FileImages";
+// import ForbiddonError from "../Pages/Dashboard/DashBoardPages/ForbiddonError";
+// import NotFoundError from "../Pages/Dashboard/DashBoardPages/NotFoundError";
+// import ImageGallery from "../Pages/Dashboard/DashBoardPages/ImageGallery";
+// import Invoices from "../Pages/Dashboard/DashBoardPages/Invoices";
+// import SearchResult from "../Pages/Dashboard/DashBoardPages/SearchResult";
+// import Maintenance from "../Pages/Dashboard/DashBoardPages/Maintenance";
+// import Teamboards from "../Pages/Dashboard/DashBoardPages/Teamboards";
 
-import Trial from "../Pages/Trial";
-import ArtistManagement from "../Pages/ArtistManagement";
+// import Trial from "../Pages/Trial";
+// import ArtistManagement from "../Pages/ArtistManagement";
 import ArtistManageTable from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistManageTable";
+import ArtistDetail from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistDetail";
 import BuyerManageTable from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerManageTable"
 import CustomOrder from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/CustomOrder/Customorder";
 import CreateCustomOrder from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/CustomOrder/CreateCustomOrder"
-import ArtistDetail from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistDetail";
+import BuyerRequest from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerRequest/BuyerRequest";
 import BuyerProfile from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/UserProfile/UserProf"
 import UpdateCustomOrder from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/CustomOrder/UpdateCustomOrder"
 import ViewCustomOrder from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/CustomOrder/ViewCustomOrde"
+import ViewBuyerRequest from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerRequest/ViewRequest";
 import ProductUpload from "../Component/Dashboard/Dashboardcomponents/ProductDetails/productUploade";
 
 import BlogRequest from "../Component/Dashboard/Dashboardcomponents/Blog/SuperAdminBlog/BlogRequest"
 
-import ResellPage from "../Pages/ResellPage/ResellPage";
+// import ResellPage from "../Pages/ResellPage/ResellPage";
+
 
 
 const AppRoutes = () => {
+  const [userType, setUserType] = useState(null);
+
+  useEffect(() => {
+    const storedUserType = localStorage.getItem("userType");
+    if (storedUserType) {
+      setUserType(storedUserType);
+    }
+  }, []);
+  
   return (
     <Router>
       <LayoutWrapper>
@@ -126,43 +138,45 @@ const AppRoutes = () => {
           <Route path="/new-slider" element={<NewSlider />} />
           <Route path="*" element={<NotFound />} /> */}
 
-        <Route path="/Dashboard" element={<Dashboard />}>
-           
-           <Route path="/Dashboard/BlogRequest/view-blog/BlogDetails/:blogId" element={<BlogDetails />} />
-           <Route path="/Dashboard/Bloglist/BlogDetails/:blogId" element={<ArtistBlogDetails />} />
-          <Route path="/Dashboard/BlogRequest" element={<BlogRequest />} />
-          <Route path="/Dashboard/BlogRequest/view-blog/:blogId" element={<BlogView />} />
-          <Route path="/Dashboard/Bloglist" element={<BlogList />} />
-         <Route path="/Dashboard/Blogdashboard" element={<BlogDashboard />} />
-         <Route path="/Dashboard/Bloglist/CreateBlog" element={<CreateBlog/>} />
+<Route path={`/${userType}/Dashboard`} element={<Dashboard />}>
+  
+  {/* Blog Routes */}
+  <Route path="BlogRequest/view-blog/BlogDetails/:blogId" element={<BlogDetails />} />
+  <Route path="Bloglist/BlogDetails/:blogId" element={<ArtistBlogDetails />} />
+  <Route path="BlogRequest" element={<BlogRequest />} />
+  <Route path="BlogRequest/view-blog/:blogId" element={<BlogView />} />
+  <Route path="Bloglist" element={<BlogList />} />
+  <Route path="Blogdashboard" element={<BlogDashboard />} />
+  <Route path="Bloglist/CreateBlog" element={<CreateBlog />} />
 
-         <Route path="/Dashboard/Appinbox" element={<AppInbox />} />
-        <Route path="/Dashboard/Appcontact" element={<AppContact />} />
-        <Route path="/Dashboard/Appchat" element={<AppChat />} />
+  {/* App Routes */}
+  <Route path="Appinbox" element={<AppInbox />} />
+  <Route path="Appcontact" element={<AppContact />} />
+  <Route path="Appchat" element={<AppChat />} />
 
-        <Route path='/Dashboard/ArtistManageTable' element={<ArtistManageTable/>} />
-        <Route path='/Dashboard/artists/:id' element={<ArtistDetail/>} />
-        <Route path='/Dashboard/ArtistManageTable/ArtistProfile/:userId' element={<ArtistProfile/>} />
-        <Route path='/Dashboard/ArtistManageTable/ArtistProfileView/:userId' element={<ArtistProfileView/>} />
+  {/* Artist Routes */}
+  <Route path="ArtistManageTable" element={<ArtistManageTable />} />
+  <Route path="artists/:id" element={<ArtistDetail />} />
+  <Route path="ArtistManageTable/ArtistProfile/:userId" element={<ArtistProfile />} />
+  <Route path="ArtistManageTable/ArtistProfileView/:userId" element={<ArtistProfileView />} />
 
+  {/* Product Routes */}
+  <Route path="Product-uploade" element={<ProductUpload />} />
 
+  {/* Buyer Routes */}
+  <Route path="BuyerManageTable" element={<BuyerManageTable />} />
+  <Route path="BuyerManageTable/BuyerProfile/:userId" element={<BuyerProfile />} />
+  <Route path="BuyerCustomrequest" element={<CustomOrder />} />
+  <Route path="BuyerCustomrequest/CreateCustomrequest" element={<CreateCustomOrder />} />
+  <Route path="BuyerCustomrequest/UpdateCustomrequest/:id" element={<UpdateCustomOrder />} />
+  <Route path="BuyerCustomrequest/ViewCustomrequest/:id" element={<ViewCustomOrder />} />
+  <Route path="BuyerRequest" element={<BuyerRequest />} />
+  <Route path="BuyerRequest/ViewBuyerrequest/:id" element={<ViewBuyerRequest />} />
 
-      <Route path='/Dashboard/Product-uploade' element={<ProductUpload />} />
+  {/* User Profile Route */}
+  <Route path="completeprofile/:userId" element={<UserProfile />} />
+</Route>
 
-      <Route path='/Dashboard/BuyerManageTable' element={<BuyerManageTable />} />
-      <Route path='/Dashboard/BuyerManageTable/BuyerProfile/:userId' element={<BuyerProfile/>} />
-      <Route path='/Dashboard/BuyerCustomrequest' element={<CustomOrder />} />
-      <Route path='/Dashboard/BuyerCustomrequest/CreateCustomrequest' element={<CreateCustomOrder />} />
-      <Route path='/Dashboard/BuyerCustomrequest/UpdateCustomrequest/:id' element={<UpdateCustomOrder />} />
-      <Route path='/Dashboard/BuyerCustomrequest/ViewCustomrequest/:id' element={<ViewCustomOrder />} />
-
-
-
-      <Route path="/Dashboard/completeprofile/:userId" element={<UserProfile />} />
-
-
-     
-      </Route>
 
 
 

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ConfirmationDialog from '../ConfirmationDialog';
+import useUserType from '../urlconfig'
+
 
 function ArtistManageTable() {
   const [artists, setArtists] = useState([]);
@@ -9,6 +11,7 @@ function ArtistManageTable() {
   const [selectedArtistToDelete, setSelectedArtistToDelete] = useState(null);
   const BASE_URL = 'http://localhost:3001';
   const navigate = useNavigate();
+  const userType = useUserType(); 
 
   const fetchArtists = async () => {
     try {
@@ -152,7 +155,7 @@ function ArtistManageTable() {
                               className="btn btn-outline-primary btn-sm mr-2"
                               title="Navigate"
                               onClick={() =>
-                                navigate(`/Dashboard/ArtistManageTable/ArtistProfileView/${artist._id}`)
+                                navigate(`/${userType}/Dashboard/ArtistManageTable/ArtistProfileView/${artist._id}`)
                               }
 
                             >
@@ -163,7 +166,7 @@ function ArtistManageTable() {
                               className="btn btn-outline-info btn-sm mr-2"
                               title="Edit"
                               onClick={() =>
-                                navigate(`/Dashboard/ArtistManageTable/ArtistProfile/${artist._id}`)
+                                navigate(`/${userType}/Dashboard/ArtistManageTable/ArtistProfile/${artist._id}`)
                               }
                             >
                               <i class="fa fa-pencil"></i>

@@ -5,9 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; 
 import { Link } from "react-router-dom";
+import useUserType from '../../urlconfig';
 
 function BlogPost() {
   const navigate = useNavigate();
+  const userType = useUserType(); 
   const [formData, setFormData] = useState({
     blogName: "",
     blogAuthor: "",
@@ -91,7 +93,7 @@ function BlogPost() {
   
   const editorStyle = {
     fontFamily: 'Nunito, Ubuntu, Raleway, IBM Plex Sans, sans-serif',
-    fontSize: '16px', // This corresponds to the default "medium" font size.
+    fontSize: '12px', 
   };
 
   return (
@@ -106,7 +108,7 @@ function BlogPost() {
                   <i className="fa fa-dashboard"></i>
                 </a>
               </li>
-              <li className="breadcrumb-item active"><Link to="/Dashboard/Bloglist">Blogs</Link></li>
+              <li className="breadcrumb-item active"><Link to={`/${userType}/Dashboard/Bloglist`}>Blogs</Link></li>
               <li className="breadcrumb-item">Create Blog Post</li>
             </ul>
           </div>

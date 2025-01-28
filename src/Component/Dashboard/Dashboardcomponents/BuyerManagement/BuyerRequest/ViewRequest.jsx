@@ -43,15 +43,15 @@ function ViewBuyerRequest() {
             <div className="block-header">
                 <div className="row">
                     <div className="col-lg-6 col-md-6 col-sm-12">
-                        <h2>View Buyer Custom Request</h2>
+                        <h2>View Buyer Request</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
                                 <a href="/"><i className="fa fa-dashboard"></i></a>
                             </li>
                             <li className="breadcrumb-item active">
-                                <Link to={`/${userType}/Dashboard/BuyerCustomrequest`}>Buyer Custom Request</Link>
+                                <Link to={`/${userType}/Dashboard/BuyerRequest`}>Buyer Request</Link>
                             </li>
-                            <li className="breadcrumb-item">View Custom Request</li>
+                            <li className="breadcrumb-item">View Buyer Request</li>
                         </ul>
                     </div>
                 </div>

@@ -20,47 +20,39 @@ const Login = () => {
   }, []);
  
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission
- 
-    // If user is already logged in, show a message
-    if (isLoggedIn) {
-      console.log('User is already logged in.');
-      alert('User is already logged in.');
-      return;
-    }
- 
+    e.preventDefault();
+  
     try {
       const response = await fetch('http://localhost:3001/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ emailOrPhone: input, password }),
       });
- 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Error response:', errorData);
-        throw new Error(errorData.message || 'Network response was not ok');
-      }
- 
+  
       const data = await response.json();
-      console.log('Login Successful:', data);
- 
-// Wait for 4 seconds before redirecting
-setTimeout(() => {
-  navigate("/Dashboard");
-}, 3000); // 3 seconds
- 
-      // Save token and update logged-in status
-      localStorage.setItem('token', data.token); // Assuming token is returned in the response
-      setIsLoggedIn(true); // Set user as logged in
+      console.log(data); // Debug response
+  
+      const { token, userType } = data;
+  
+      if (!token || !userType) {
+        throw new Error('Invalid response from server');
+      }
+  
+      // Store token and userType in localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('userType', userType);
+  
+      setIsLoggedIn(true);
+      setUserType(userType);
+  
       toast.success('Login Successful!');
+      navigate(`/${userType}/Dashboard`);
     } catch (error) {
-      toast.error('Error logging in:', error);
+      console.error('Login error:', error.message);
+      toast.error(`Error logging in: ${error.message}`);
     }
   };
- 
+  
   const handleLogout = () => {
     localStorage.removeItem('token'); // Remove the token from localStorage
     setIsLoggedIn(false); // Set logged in status to false

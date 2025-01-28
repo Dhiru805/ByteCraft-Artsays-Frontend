@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
+import useUserType from '../../urlconfig';
 
 function ArtistBlogDetails() {
   const { blogId } = useParams();
   const [blogs, setBlogs] = useState([]);
+  const userType = useUserType(); 
 
   const fetchBlog = async () => {
     try {
@@ -30,7 +32,7 @@ function ArtistBlogDetails() {
             <h2>Blog Details</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item"><a href="index.html"><i className="fa fa-dashboard"></i></a></li>
-              <li className="breadcrumb-item"><Link to="/Dashboard/Bloglist">Blogs</Link></li>
+              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/Bloglist`}>Blogs</Link></li>
               <li className="breadcrumb-item">Blog Details</li>
             </ul>
           </div>

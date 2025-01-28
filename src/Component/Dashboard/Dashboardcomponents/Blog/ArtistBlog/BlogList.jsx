@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import UpdateModal from "./UpdateBlogList";
 import getAPI from "../../../../../api/getAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
+import useUserType from '../../urlconfig';
 
 function BlogList() {
   const [blogs, setBlogs] = useState([]);
@@ -11,7 +12,7 @@ function BlogList() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedBlogToDelete, setSelectedBlogToDelete] = useState(null);
   const navigate = useNavigate();
-
+  const userType = useUserType(); 
 
   const fetchBlog = async () => {
     try {
@@ -73,7 +74,7 @@ function BlogList() {
                 <button
                   type="button"
                   className="btn btn-secondary mr-2"
-                  onClick={() => navigate("/Dashboard/Bloglist/CreateBlog")}
+                  onClick={() => navigate(`/${userType}/Dashboard/Bloglist/CreateBlog`)}
                 >
                   <i className="fa fa-plus"></i> Add Blog
                 </button>
@@ -122,7 +123,7 @@ function BlogList() {
                       <button
                         type="button"
                         className="btn btn-outline-secondary mx-2"
-                        onClick={() => navigate(`/Dashboard/Bloglist/BlogDetails/${blog._id}`)}
+                        onClick={() => navigate(`/${userType}/Dashboard/Bloglist/BlogDetails/${blog._id}`)}
                       >
                         Continue Reading
                       </button>
