@@ -1,0 +1,123 @@
+/* Existing CSS */
+.partner-benifits-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.partner-benifits-section2 {
+  padding: 23px;
+  position: relative;
+}
+
+.partner-benifits {
+  padding: 3rem;
+  position: relative;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  text-align: center;
+  bottom: 2rem;
+  width: auto;
+  margin: 45px;
+  border-radius: 1rem;
+}
+
+.partner-benifits-card {
+  padding: 12px;
+  text-align: left;
+  margin: 2rem;
+  box-shadow: 0 9px 30px 0 rgba(0, 0, 0, 0.2), 0 7px 57px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 1rem;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.partner-benifits-card:hover {
+  transform: scale(1.1);
+  color: #8d8282;
+  box-shadow: 0 12px 36px 0 rgba(0, 0, 0, 0.3), 0 9px 64px 0 rgba(0, 0, 0, 0.25);
+}
+
+.card-title {
+  font-size: 29px;
+}
+
+.cart-discription {
+  font-size: 25px;
+}
+
+/* Media Queries for Responsiveness */
+
+/* For screens smaller than 1200px */
+@media (max-width: 1200px) {
+  .partner-benifits {
+    padding: 2rem;
+    margin: 30px;
+  }
+  
+  .partner-benifits-card {
+    margin: 1.5rem;
+    padding: 10px;
+  }
+
+  .card-title {
+    font-size: 24px;
+  }
+  
+  .cart-discription {
+    font-size: 20px;
+  }
+}
+
+/* For screens smaller than 992px */
+@media (max-width: 992px) {
+  .partner-benifits {
+    padding: 1.5rem;
+    margin: 20px;
+  }
+
+  .partner-benifits-content {
+    flex-direction: column;
+  }
+
+  .partner-benifits-card {
+    width: 100%;
+    margin: 1rem 0;
+    padding: 15px;
+  }
+
+  .card-title {
+    font-size: 22px;
+  }
+  
+  .cart-discription {
+    font-size: 18px;
+  }
+}
+
+/* For screens smaller than 768px */
+@media (max-width: 768px) {
+  .partner-benifits {
+    padding: 1rem;
+    margin: 15px;
+  }
+
+  .partner-benifits-content {
+    flex-direction: column;
+    padding: 0;
+  }
+
+  .partner-benifits-card {
+    width: 100%;
+    margin: 0.5rem 0;
+    padding: 10px;
+  }
+
+  .card-title {
+    font-size: 20px;
+  }
+  
+  .cart-discription {
+    font-size: 16px;
+  }
+}

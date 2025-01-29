@@ -1,0 +1,130 @@
+.svc-unique-service-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    overflow: hidden;
+    /* width: 100%; */
+    max-width: 450px;
+    transition: transform 0.3s ease;
+}
+
+.svc-unique-service-card:hover {
+    transform: translateY(-5px);
+}
+
+.svc-unique-card-header {
+    position: relative;
+}
+
+.svc-unique-carousel-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.svc-unique-service-image {
+    width: 100%;
+    height: 230px;
+    object-fit: cover;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+}
+
+.carousel-dot {
+    height: 15px;
+    width: 15px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    margin: 0 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.carousel-dot.active {
+    background-color: #84cfdf; /* Change to match your theme */
+}
+
+.svc-unique-profile-image {
+    position: absolute;
+    bottom: -25px;
+    left: 15px;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+}
+
+.svc-unique-card-content {
+    padding: 50px 15px 20px 15px;
+    text-align: left;
+}
+
+.svc-unique-card-header-content {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.svc-unique-card-header-content h4 {
+    font-size: 20px;
+    color: black;
+}
+
+.heart-icon {
+    color: #ff4081; /* Change the color of the heart icon if desired */
+    font-size: 29px;
+}
+
+.user-profile-crd-check-icon {
+    color: #00b074; /* Change the color of the check icon if desired */
+}
+
+.svc-unique-delivery {
+    font-size: 18px;
+    color: #555;
+}
+
+.svc-unique-delivery span {
+    font-size: 18px;
+    color: #000000;
+    font-weight: bold;
+}
+
+.svc-unique-description {
+    font-size: 31px;
+    margin-bottom: 10px;
+    height: 140px;
+    color: black;
+    overflow: hidden;
+}
+
+.svc-category-price {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.svc-unique-category {
+    font-size: 20px;
+    font-weight: bold;
+    color: #888;
+}
+
+.svc-unique-price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #00b074;
+}
+
+@media only screen and (max-width: 768px) {
+    .svc-unique-service-card {
+        max-width: 100%;
+    }
+}

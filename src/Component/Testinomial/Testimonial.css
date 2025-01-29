@@ -1,0 +1,263 @@
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap');
+ 
+.testimonial-area .container {
+  max-width: 100%;
+  margin: auto;
+  padding: 0 15px;
+}
+ 
+.testimonial-area .container .sec-title {
+  text-align: center;
+}
+ 
+.testimonial-area .container .sec-title:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+ 
+.testimonial-area .container .sec-title h2 {
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: black;
+}
+ 
+.testimonial-area .container .sec-title p {
+  font-size: 18px;
+  line-height: 28px;
+  color:black;
+  text-transform: capitalize;
+}
+ 
+.testimonial-area {
+  font-family: 'League Spartan', sans-serif;
+  /* background: brown; */
+  position: relative;
+  z-index: 3;
+  width: 95%;
+  border: 0.5px;
+  margin: 0 auto;
+  padding: 30px 0;
+}
+ 
+.testimonial-area {
+  padding: 0;
+  /* border-radius: 25px; */
+}
+ 
+.testimonial-content {
+  padding: 35px;
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  transition: transform 0.5s ease-in-out;
+  overflow: hidden;
+}
+ 
+.single-testimonial {
+  position: relative;
+  text-align: center;
+  z-index: 1;
+  flex: 1;
+  border-radius: 45px;
+  /* background-color: brown; */
+  border: 7px solid #6F4E37;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 300px; /* Adjust to your desired height */
+  max-height: 350px; /* Adjust to your desired height */
+  animation: borderColorChange 5s infinite; /* Animation for border color */
+  transition: transform 1s; /* Smooth rotation */
+}
+ 
+.single-testimonial:hover {
+  transform: rotate(5deg); /* Rotate on hover */
+}
+ 
+@keyframes borderColorChange {
+  0% {
+    border-color: #6F4E37;
+  }
+  50% {
+    border-color: #e47423;
+  }
+  100% {
+    border-color: #6F4E37;
+  }
+ 
+}
+ 
+.single-testimonial p {
+  color:black;
+  font-size: 18px;
+  padding: 30px 10px 0 10px;
+  position: relative;
+  z-index: 3;
+  flex-grow: 1;
+  overflow: hidden;
+}
+ 
+.client-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: left;
+  padding: 20px;
+}
+ 
+.client-info .client-details h6 {
+  color: black;
+  font-size: 18px;
+  font-weight: 500;
+}
+ 
+.client-info .client-details span {
+  display: inline-block;
+  color:black;
+  font-size: 13px;
+}
+ 
+.client-info .client-pic {
+  padding-right: 15px;
+}
+ 
+.client-info .client-pic img {
+  width: 100%;
+  border: 5px transparent;
+  border-radius: 60px;
+}
+ 
+.quote {
+  color: #6F4E37;
+  font-size: 80px;
+  position: absolute;
+}
+ 
+.quote-left {
+  top: -68px;
+  left: -25px;
+  font-size: 130px;
+}
+ 
+.quote-right {
+  bottom: -145px;
+  right: -30px;
+  font-size: 130px;
+}
+ 
+.single-testimonial::before,
+.single-testimonial::after {
+  content: '';
+  position: absolute;
+  background-color: white;
+  z-index: -3;
+ 
+}
+ 
+.single-testimonial::before {
+  top: -20px;
+  left: -20px;
+  width: 60px;
+  height: 50px;
+  border-top-left-radius: 45px;
+}
+ 
+.single-testimonial::after {
+  bottom: -20px;
+  right: -20px;
+  width: 60px;
+  height: 50px;
+  border-bottom-right-radius: 45px;
+}
+ 
+.dots {
+  display: flex;
+  justify-content: center;
+}
+ 
+.dot {
+  height: 15px;
+  width: 15px;
+  margin: 0 5px;
+  background-color: #6F4E37;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+  cursor: pointer;
+}
+ 
+.dot.active {
+  background-color: #e47423;
+  width: 40px;
+  height: 15px;
+  padding-left: 10px;
+  padding-right: 10px;
+  /* margin-top: 3px; */
+  border-radius: 25px;
+}
+ 
+@media (max-width: 768px) {
+  
+ 
+  .quote-left,
+  .quote-right {
+    font-size: 90px;
+  }
+ 
+  .quote-left {
+    top: -43px;
+    left: -13px;
+  }
+ 
+  .quote-right {
+    bottom: -98px;
+    right: -17px;
+  }
+}
+ 
+@media (max-width: 576px) {
+  .single-testimonial p {
+    padding: 15px;
+    padding-bottom: 10px;
+  }
+
+  .testimonial-area{
+    width: 93%;
+  }
+
+  .testimonial-area .container{
+    /* width: 93/%; */
+    padding: 0px;
+  }
+
+  .testimonial-content{
+   padding: 0px;
+  }
+
+  .client-info {
+    padding: 15px;
+  }
+  
+  .single-testimonial:hover{
+    transform: rotate(0deg); /* Rotate on hover */
+
+  }
+  .quote-left,
+  .quote-right {
+    font-size: 90px;
+  }
+ 
+  .quote-left {
+    top: -40px;
+    left: -5px;
+  }
+ 
+  .quote-right {
+    bottom: -92px;
+    right: -10px;
+  }
+}

@@ -1,0 +1,99 @@
+.how-it-works-container {
+    text-align: center;
+    padding: 20px 20px;
+    background-color: #f9f9f9;
+    width: 97%; /* Adjusted width to be more flexible */
+    margin: 0 auto; /* Center the container horizontally */
+  }
+  
+  .how-it-works-title {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    color: #333;
+  }
+  
+  .how-it-works-steps {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .how-it-works-step {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    flex: 1 1 30%; /* Adjusted flex-basis to make steps wider and responsive */
+    max-width: 380px; /* Adjusted max-width for larger step cards */
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .how-it-works-step:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .how-it-works-icon {
+    font-size: 4rem; /* Adjusted icon size */
+    color: #6F4E37;
+    margin-bottom: 15px;
+  }
+  
+  .how-it-works-heading {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .how-it-works-description {
+    color: #666;
+  }
+  
+  @media (max-width: 1024px) {
+    .how-it-works-container {
+      width: 95%; /* Increased width on larger tablets and small screens */
+    }
+  
+    .how-it-works-step {
+      flex: 1 1 45%; /* Adjusted flex-basis for slightly larger tablets */
+      max-width: 400px; /* Increased max-width for larger tablets */
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .how-it-works-steps {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .how-it-works-step {
+      margin-bottom: 20px;
+      width: 100%; /* Ensure full width on smaller screens */
+      max-width: 90%; /* Adjust max-width for smaller screens */
+    }
+  
+    .how-it-works-icon {
+      font-size: 3rem; /* Adjusted icon size for smaller screens */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .how-it-works-step {
+      padding: 20px; /* Adjusted padding for very small screens */
+    }
+  
+    .how-it-works-icon {
+      font-size: 2.5rem; /* Further reduced icon size */
+    }
+  
+    .how-it-works-heading {
+      font-size: 1.25rem; /* Reduced heading size for small screens */
+    }
+  
+    .how-it-works-description {
+      font-size: 0.875rem; /* Adjusted font size for descriptions */
+    }
+  }
+  

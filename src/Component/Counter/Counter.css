@@ -1,0 +1,101 @@
+.bg-dark {
+    /* background-color:  #a37858 !important; */
+    width: 95%;
+    padding: 20px 0 20px 0;
+    /* border-radius: 25px; */
+    background:linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.7)), url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG2GUUekxUs8K5Qmmv4DugByXZfMTnz93l1w&s"); 
+    /* background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwjJx8pyi_0_WOEuhGk7huQRbyukGN2PWdKg&s"); */
+    /* background-image: url("https://cdn.prod.website-files.com/5a9ee6416e90d20001b20038/64f5de458cdc87f3cd09fd99_Rectangle%20(82).svg"); */
+    /* background-image: url("https://media.istockphoto.com/id/695100728/vector/vector-background-with-blurred-objects-abstraction-in-gray.jpg?s=612x612&w=0&k=20&c=QG_1GxXUvuF6q_tnnPXn-CV1GQdgCBkqONZSKaURafE="); */
+    /* background-image: url("https://img.freepik.com/premium-vector/illustration-vector-graphic-white-gradient-background-abstract-paper-texture_393879-3472.jpg"); */
+    /* background-image: url("https://cdn.vectorstock.com/i/500p/84/65/abstract-white-monochrome-background-vector-32028465.jpg"); */
+    /* background-image: url("https://i.pinimg.com/736x/25/44/5a/25445a43d5ac691372f7091703bb16a2.jpg"); */
+    /* background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTx9E208nJjz0eMpbpc7FU3YjJe3ozWtfcivA&s"); */
+    background-repeat: no-repeat;
+    background-size:cover ;
+    object-fit: contain;
+    /* opacity: 0.5; */
+    /* backdrop-filter: blur(30px);
+    border: 2px solid rgba(225,225,225,0.18);
+    box-shadow: 0px 0px 30px rgba(227,228,237,0.37); */
+  }
+  .text-white a {
+    color: white !important;
+  }
+   
+  /* Animation styles */
+  .fade-in {
+    opacity: 0;
+    color: white;
+    animation: fadeIn 2s forwards;
+  }
+ 
+  h1.drop-in.number{
+    font-size: 35px;
+  }
+
+  .count-font{
+    font-weight: bold;
+  }
+   
+  .drop-in {
+    color: white;
+    transform: translateY(-100%);
+    animation: dropIn 1s forwards;
+  }
+   
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+   
+  @keyframes dropIn {
+    0% {
+      transform: translateY(-100%);
+    }
+    60% {
+      transform: translateY(20%);
+    }
+    80% {
+      transform: translateY(-10%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+   
+  .animated {
+    animation-fill-mode: forwards;
+  }
+   
+  /* Add some delay for sequential animation effect */
+  .drop-in:nth-child(1) {
+    animation-delay: 0.5s;
+  }
+  .drop-in:nth-child(2) {
+    animation-delay: 1s;
+  }
+  .drop-in:nth-child(3) {
+    animation-delay: 1.5s;
+  }
+  .drop-in:nth-child(4) {
+    animation-delay: 2s;
+  }
+   
+  @media (max-width: 768px) {
+    .bg-dark{
+      /* width: ; */
+    }
+    }
+    
+  @media (max-width: 576px) {
+    .bg-dark{
+      width: 93%;
+    }
+  }
+ 
+  

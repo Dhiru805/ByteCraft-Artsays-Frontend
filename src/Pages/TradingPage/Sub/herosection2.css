@@ -1,0 +1,270 @@
+/* Existing CSS */
+.hero2-main-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    top: 0;
+    position: relative;
+    height: 100vh;
+    margin-bottom: 60px;
+    align-content: center;
+    justify-content: space-around;
+
+}
+.hero2-text-area{
+    align-items: center;
+    align-content: center;
+    width: 100%;
+    height: 100%;
+}
+.text-area-insider{
+    padding: 21px;
+    margin: 16px;
+    width: auto;
+    height: auto;
+}
+.hero-image-section{
+    display: flex;
+    width: 64%;
+    height: 100%;
+    justify-content: flex-start;
+    align-items: center;
+}
+.section-container{
+    padding:0px 50px;
+    margin: 0px;
+    overflow: hidden;
+}
+.img1{
+    position: relative;
+    left: 41px;
+    top: 10rem;
+}
+.image-section-text{
+    position: relative;
+    top: 9rem;
+    width: auto;
+    right: 56px;
+    transform: rotate(-90deg);
+}
+.image-section-text h1{
+    font-size: 4rem;
+    margin: 0;
+    padding: 8px;
+    font-weight: 500;
+}
+.title-hero2 h1{
+    font-size: 3.5rem;
+    font-weight: 500;
+    padding: 5px;
+}
+.paragraph-hero2 p{
+    font-size: 2rem;
+    padding: 5px;
+}
+
+
+@media (min-width:1500px) {
+    .hero2-text-area2{
+        padding: 29px
+        
+    }
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 1024px) {
+    .hero2-main-container {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: auto;
+    }
+    .hero-image-section {
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+    }
+    .img1 {
+           /* left: -1px; */
+           top: 180px;
+           margin-top: 20px;
+    }
+    .image-section-text {
+        top: 62px;
+        right: 26px;
+        /* transform: rotate(0deg); */
+        text-align: center;
+    }
+    .image-section-text h1 {
+        font-size: 3rem;
+    }
+    
+    .hero2-text-area2{
+        padding: 29px;
+        text-align: center;
+        overflow: hidden;
+        width: 100%;
+    }
+    
+    .text-area-insider{
+        position: relative;
+        text-align: center;
+    }
+    .title-hero2 h1{
+font-size:2rem;
+    }
+    .paragraph-hero2 p{
+        font-size: 1.5rem;
+    }
+    .img1-image{
+width:23vw;
+    }
+    .img2-image{
+        width:41vw;
+    }
+}
+
+@media (min-width: 1024px) and (max-width:1334px) {
+    .image-section-text h1{
+      display: none;
+    }
+}
+
+@media (min-width: 1024px) and (max-width:1374px) {
+    .image-section-text h1{
+      font-size: 3rem;
+    }
+    .title-hero2 h1 {
+        font-size: 2.4rem;
+        font-weight: 500;
+        padding: 5px;
+    }
+    .text-area-insider {
+        padding: 0px;
+        margin: 16px;
+        width: auto;
+        height: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero2-main-container {
+        flex-direction: column;
+        height: auto;
+    }
+    .hero2-text-area {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .hero-image-section {
+        /* flex-direction: column; */
+        width: 100%;
+    }
+    .img1 {
+        position: relative;
+        left: 41px;
+        top: 0;
+        margin: 20px 0;
+    }
+    .image-section-text {
+        position: relative;
+        top: 3rem;
+        width: auto;
+        right: 22px;
+        transform: rotate(-90deg);
+    }
+    .image-section-text h1 {
+        font-size: 2.5rem;
+    }
+    .hero2-text-area2{
+        padding: 0px;
+        overflow: hidden;
+        width: 100%;
+    }
+    
+}
+
+@media (max-width: 480px) {
+    .hero2-main-container {
+        flex-direction: column;
+        height: auto;
+        margin-top: 20px;
+    }
+    .hero2-text-area {
+        text-align: center;
+    }
+    .hero2-text-area2{
+        overflow: hidden;
+        width: 100%;
+    }
+    .hero-image-section {
+        width: 100%;
+        /* justify-content: flex-start; */
+        align-items: center;
+        margin-bottom: 50px;
+    }
+    .img1 {
+        position: relative;
+        left: 41px;
+        top: 109px;
+        margin: 10px 0;
+    }
+    .image-section-text {
+        position: relative;
+        /* top: 9rem; */
+        width: auto;
+        /* right: 56px; */
+        transform: rotate(-90deg);
+    }
+    .image-section-text h1 {
+        font-size: 2rem;
+        position: relative;
+        left: 0px;
+        padding: 0px;
+    }
+    .title-hero2 h1 {
+        font-size: 2rem;
+        margin:0;
+    }
+    .paragraph-hero2 p {
+        font-size: 1rem;
+        margin:0;
+    }
+    .img1-image{
+width:28vw;
+    }
+    .img2-image{
+width:49vw;
+    }
+
+
+    .text-area-insider{
+        position: relative;
+        text-align: center;
+        margin: 0;
+    }
+    .title-hero2 h1{
+font-size:2rem;
+    }
+    .paragraph-hero2 p{
+        font-size: 1rem;
+    }
+    .hero2-text-area2{
+        padding: 2px
+    }
+}
+
+
+
+
+
+.hero-btm{
+    font-size: 25px;
+    font-weight: 600;
+    /* color: #fff; */
+}
+.image-section-text2{
+    position: relative;
+    left: 38px;
+}
+

@@ -1,0 +1,367 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+ 
+ 
+/* art-carousel */
+.art-carousel {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    position: relative;
+}
+ 
+.art-carousel .art-list .art-item {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+   
+}
+ 
+.art-carousel .art-list .art-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+ 
+.art-carousel .art-list .art-item .art-content {
+    position: absolute;
+    top: 18%;
+    width: 1140px;
+    max-width: 80%;
+    left: 80%;
+    transform: translateX(-50%);
+    padding-right: 30%;
+    box-sizing: border-box;
+    color: #fff;
+    text-shadow: 0 5px 10px #0004;
+}
+ 
+.art-carousel .art-list .art-item .art-author {
+    font-weight: bold;
+    letter-spacing: 10px;
+}
+ 
+.art-carousel .art-list .art-item .art-title,
+.art-carousel .art-list .art-item .art-topic {
+    font-size: 3.5em;
+    font-weight: bold;
+    line-height: 1.3em;
+}
+ 
+.art-carousel .art-list .art-item .art-topic {
+    color: #f1683a;
+}
+ 
+.art-carousel .art-list .art-item .art-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 130px);
+    grid-template-rows: 40px;
+    gap: 5px;
+    margin-top: 20px;
+}
+ 
+.art-carousel .art-list .art-item .art-buttons button {
+    border: none;
+    background-color: #eee;
+    border-radius: 50px;
+    letter-spacing: 3px;
+    font-family: Poppins, sans-serif;
+    box-shadow:
+        rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+        rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+        rgba(10, 37, 64, 0.35) 0px -2px 8px 0px inset; /* Enhanced third shadow */
+    font-weight: 500;
+}
+ 
+.art-carousel .art-list .art-item .art-buttons button:nth-child(2) {
+    background-color: transparent;
+    border: 1px solid #fff;
+    color: #eee;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+    rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+}
+ 
+/* thumbnail */
+.art-thumbnail {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    width: max-content;
+    z-index: 1;
+    display: flex;
+    gap: 20px;
+}
+ 
+.art-thumbnail .art-item {
+    width: 217px;
+    height: 270px;
+    flex-shrink: 0;
+    border-radius: 20px;
+    position: relative;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+    rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+}
+ 
+.art-thumbnail .art-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+    rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    border-radius: 20px;
+}
+ 
+.art-thumbnail .art-item .art-content {
+    color: #fff;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+}
+ 
+.art-thumbnail .art-item .art-content .art-title {
+    font-weight: 500;
+}
+ 
+.art-thumbnail .art-item .art-content .art-description {
+    font-weight: 300;
+}
+ 
+/* art-arrows */
+.art-arrows {
+    position: absolute;
+    bottom: 6%;
+    right: 70%;
+    z-index: 1;
+    width: 300px;
+    max-width: 30%;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+ 
+.art-arrows button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #fff;
+    border: none;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+    rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    color: #000;
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 22px;
+    transition: .5s;
+}
+ 
+ 
+/* animation */
+.art-carousel .art-list .art-item:nth-child(1) {
+    z-index: 1;
+}
+ 
+/* animation text in first art-item */
+.art-carousel .art-list .art-item:nth-child(1) .art-content .art-author,
+.art-carousel .art-list .art-item:nth-child(1) .art-content .art-title,
+.art-carousel .art-list .art-item:nth-child(1) .art-content .art-topic,
+.art-carousel .art-list .art-item:nth-child(1) .art-content .art-des,
+.art-carousel .art-list .art-item:nth-child(1) .art-content .art-buttons {
+    transform: translateY(50px);
+    filter: blur(20px);
+    opacity: 0;
+    animation: showcontent .5s 1s linear 1 forwards;
+}
+ 
+@keyframes showcontent {
+    to {
+        transform: translateY(0px);
+        filter: blur(0px);
+        opacity: 1;
+    }
+}
+ 
+.art-carousel .art-list .art-item:nth-child(1) .art-content .art-title {
+    animation-delay: 1.2s !important;
+}
+ 
+.art-carousel .art-list .art-item:nth-child(1) .art-content .art-topic {
+    animation-delay: 1.4s !important;
+}
+ 
+.art-carousel .art-list .art-item:nth-child(1) .art-content .art-des {
+    animation-delay: 1.6s !important;
+}
+ 
+.art-carousel .art-list .art-item:nth-child(1) .art-content .art-buttons {
+    animation-delay: 1.8s !important;
+}
+ 
+/* create animation when art-next click */
+.art-carousel.art-next .art-list .art-item:nth-child(1) img {
+    width: 150px;
+    height: 220px;
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    border-radius: 30px;
+    animation: showImage .5s linear 1 forwards;
+}
+ 
+@keyframes showImage {
+    to {
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+    }
+}
+ 
+.art-carousel.art-next .art-thumbnail .art-item:nth-last-child(1) {
+    overflow: hidden;
+    animation: showthumbnail .5s linear 1 forwards;
+}
+ 
+.art-carousel.art-prev .art-list .art-item img {
+    z-index: 100;
+}
+ 
+@keyframes showthumbnail {
+    from {
+        width: 0;
+        opacity: 0;
+    }
+}
+ 
+.art-carousel.art-next .art-thumbnail {
+    animation: effectnext .5s linear 1 forwards;
+}
+ 
+@keyframes effectnext {
+    from {
+        transform: translateX(150px);
+    }
+}
+ 
+/* running art-time */
+.art-carousel .art-time {
+    position: absolute;
+    z-index: 1000;
+    width: 0%;
+    height: 3px;
+    background-color: #f1683a;
+    left: 0;
+    top: 0;
+}
+ 
+.art-carousel.art-next .art-time,
+.art-carousel.art-prev .art-time {
+    animation: runningtime 3s linear 1 forwards;
+}
+ 
+@keyframes runningtime {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0;
+    }
+}
+ 
+/* art-prev click */
+.art-carousel.art-prev .art-list .art-item:nth-child(2) {
+    z-index: 2;
+}
+ 
+.art-carousel.art-prev .art-list .art-item:nth-child(2) img {
+    animation: outFrame 0.5s linear 1 forwards;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+ 
+@keyframes outFrame {
+    to {
+        width: 0px;
+        height: 0px;
+        bottom: 50px;
+        left: 90%;
+        border-radius: 20px;
+    }
+}
+ 
+.art-carousel.art-prev .art-thumbnail .art-item:nth-child(1) {
+    overflow: hidden;
+    opacity: 0;
+    animation: showart-thumbnail .5s linear 1 forwards;
+}
+ 
+.art-carousel.art-next .art-arrows button,
+.art-carousel.art-prev .art-arrows button {
+    pointer-events: none;
+}
+ 
+.art-carousel.art-prev .art-arrows {
+    transform: translateX(300px);
+}
+ 
+@keyframes showart-thumbnail {
+    from {
+        width: 0;
+    }
+}
+ 
+/* Responsive Design */
+@media (max-width: 992px) {
+    .art-carousel .art-list .art-item .art-content {
+        left: 50%;
+        padding-right: 0;
+    }
+ 
+    .art-carousel .art-list .art-item .art-buttons {
+        grid-template-columns: repeat(2, 150px);
+    }
+ 
+    .art-thumbnail {
+        bottom: 20px;
+    }
+   
+ 
+    .art-thumbnail .art-item {
+        width: 160px;
+        height: 250px;
+    }
+}
+ 
+@media (max-width: 768px) {
+    /* header {
+        width: 90%;
+        height: 40px;
+    }
+ 
+    header a {
+        margin-right: 20px;
+    } */
+    .art-item{
+        top: 50%;
+    }
+    .art-carousel .art-list .art-item .art-content .art-title {
+        font-size: 2.5em;
+    }
+ 
+    .art-carousel .art-list .art-item .art-content .art-topic {
+        font-size: 2.2em;
+    }
+ 
+    .art-thumbnail .art-item {
+        width: 160px;
+        height: 250px;
+    }
+}
+ 
+ 

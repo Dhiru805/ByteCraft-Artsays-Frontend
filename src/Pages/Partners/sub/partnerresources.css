@@ -1,0 +1,155 @@
+
+.partner-resources {
+  text-align: center;
+  width: 95%;
+  margin: 20px auto;
+  background-color: #ffffff;
+}
+
+.partner-resources h1 {
+  font-size: 2rem;
+  margin-bottom: 55px;
+}
+
+.cards-container {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 2rem;
+  overflow: hidden;
+}
+
+.pat-card {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  /* padding: 35px; */
+  gap: 0rem;
+  margin: 1rem;
+  width: auto;
+  transition: transform 0.3s ease-in-out;
+  height: auto;
+}
+
+.pat-card:hover {
+  transform: scale(1.1);
+}
+
+.card-icon {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.pat-card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.pat-card p {
+  font-size: 1rem;
+  color: #888888;
+  /* margin-bottom: 20px; */
+}
+
+.card-link {
+  text-decoration: none;
+  color: #6f4e37;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.card-link i {
+  transition: transform 0.3s ease-in-out;
+}
+
+.card-link:hover i {
+  transform: translateX(5px);
+}
+
+/* CSS for large screens */
+@media (min-width: 1200px) {
+  .cards-container {
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
+  /* .card {
+      width: 30%;
+    } */
+}
+
+/* CSS for medium screens */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .cards-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .pat-card {
+    width: 45%;
+  }
+}
+
+/* CSS for small screens */
+@media (max-width: 767px) {
+  .partner-resources {
+    padding: 20px;
+  }
+  .cards-container {
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+  }
+  .pat-card {
+    width: 23rem;
+  }
+  .partner-resources h1 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+  }
+  .pat-card h2 {
+    font-size: 1.25rem;
+  }
+  .pat-card p {
+    font-size: 0.9rem;
+  }
+  .card-link {
+    font-size: 0.9rem;
+  }
+  .resource-section2 {
+    display: flex;
+    /* position: relative; */
+    top: 0px !important;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+  }
+  .resource-section2 button {
+    margin: 21px;
+  }
+}
+
+.resource-section2 {
+  padding: 6px;
+  display: flex;
+  position: relative;
+  top: 8rem;
+  margin: 35px;
+  margin-top: 2rem;
+  align-items: center;
+  justify-content: space-between;
+}
+.resource-section2 h1 {
+  padding: 1px;
+  text-align: center;
+  margin-bottom: 0;
+  justify-items: center;
+}
+.resource-section2 button {
+  width: 14rem;
+  height: 4rem;
+  font-size: 1.5rem;
+}

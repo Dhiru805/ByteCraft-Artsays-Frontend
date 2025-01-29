@@ -1,0 +1,208 @@
+.finance-detail-main {
+    padding: 25px;
+    height: auto;
+    width: auto;
+    position: relative;
+    /* top: 14px; */
+  }
+  
+  .finance-detail-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+  
+  .finance-detail-container1 {
+    display: block;
+  }
+  
+  .finance-image1, .finance-image2 {
+    /* margin: 35px; */
+    /* padding: 7px; */
+  }
+  
+  .finance-image1 {
+    width: 30vw;
+    /* height: 85vh; */
+  }
+  
+  .finance-image2 {
+    width: 785px;
+    display: flex;
+    gap: 41px;
+    /* height: 39vh; */
+    align-items: center;
+  }
+  
+  .finance-img1, .finance-img2 {
+    width: 50vw;
+    height: 50vh;
+    /* border-radius: 51px; */
+    /* height: -webkit-fill-available; */
+  }
+  
+  /* .finance-image-2 {
+    width: 364px;
+    height: -webkit-fill-available;
+    padding: 7px;
+  } */
+  
+  .finance-detail-container2 {
+    position: relative;
+    background: white;
+    /* height: 50vh; */
+    right: 1rem;
+    width: 50vw;
+    height: 40vh;
+    align-items: center;
+    /* border-style: solid; */
+    /* border-width: 2px; */
+    border-radius: 50px;
+    padding: 17px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+
+  }
+  
+  .finance-text-container {
+    width: 42vw;
+    width: -webkit-fill-available;
+    background: #e4dbd575;
+    overflow: hidden;
+    border-radius: 32px;
+  }
+  
+  .inner-text-box {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+  }
+  
+  .slide {
+    min-width: 100%;
+    height: 35vh;
+    box-sizing: border-box;
+  }
+  
+  .finance-heading h1 {
+    font-size: 2.5rem;
+    padding: 10px;
+    margin:0px;
+  }
+  
+  .finance-paragraph p {
+    font-size: 1rem;
+    padding: 10px;
+    margin:0px;
+  }
+  
+  .finance-button {
+    /* margin-top: 20px; */
+    margin:0px;
+    /* height: 20%; */
+  }
+  
+  .btn-hoverr {
+    width: 200px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    margin: 5px 20px ;
+    height: 55px;
+    text-align: center;
+    border: none;
+    /* background-size: 300% 100%; */
+    border-radius: 50px;
+    transition: all 0.4s ease-in-out;
+  }
+  
+  .btn-hoverr:hover {
+    background-position: 100% 0;
+    transition: all 0.4s ease-in-out;
+  }
+  
+  .btn-hoverr.color-11 {
+    background-image: linear-gradient(to right, #a1795d, #d7b095, #e6ae87, #6f4e37);
+  }
+  
+  .prev-button, .next-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: transparent;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+  }
+  
+  .prev-button {
+    left: 0;
+  }
+  
+  .next-button {
+    right: 0;
+  }
+  .finance-arrow-section{
+       width: 72px;
+       position: relative;
+       display: block;
+       display: flex;
+       top: 1px;
+       right: -350px;
+       justify-content: flex-end;
+  }
+
+  .finance-slide-btn{
+    background: brown;
+    color: wheat;
+    border-radius: 50px;
+  }
+  
+
+  .scroll-button {
+    background: #f0f0f0 !important; /* Lighter background on hover */
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+  }
+  .finenace-content-content{
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    align-content: center;
+    vertical-align: middle;
+  }
+  /* Additional styles for responsiveness and fixed position of arrows */
+  @media (max-width: 1050px){
+    .finance-img1, .finance-img2 {
+      width: 50vw;
+      height: 35vh;
+    }
+
+    .finance-detail-container2{
+      height: 25vh;
+      width: 60vw;
+    }
+
+    .slide{
+      height: 22vh;
+    }
+
+  }
+  @media (max-width: 1024px){
+
+  } 
+ @media (max-width: 600px){
+
+ }
+  @media (max-width: 480px){
+    
+  }
