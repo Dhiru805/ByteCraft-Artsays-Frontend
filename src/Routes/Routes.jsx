@@ -67,9 +67,11 @@ import CustomOrder from "../Component/Dashboard/Dashboardcomponents/BuyerManagem
 import CreateCustomOrder from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/CustomOrder/CreateCustomOrder"
 import BuyerRequest from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerRequest/BuyerRequest";
 import BuyerProfile from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/UserProfile/UserProf"
+import BuyerRequestToArtist from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerRequestToArtist/BuyerRequestToArtist"
 import UpdateCustomOrder from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/CustomOrder/UpdateCustomOrder"
 import ViewCustomOrder from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/CustomOrder/ViewCustomOrde"
 import ViewBuyerRequest from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerRequest/ViewRequest";
+import ViewBuyerRequestToArtist from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerRequestToArtist/ViewBuyerRequestToArtist";
 import ProductUpload from "../Component/Dashboard/Dashboardcomponents/ProductDetails/productUploade";
 
 import BlogRequest from "../Component/Dashboard/Dashboardcomponents/Blog/SuperAdminBlog/BlogRequest"
@@ -172,6 +174,8 @@ const AppRoutes = () => {
   <Route path="BuyerCustomrequest/ViewCustomrequest/:id" element={<ViewCustomOrder />} />
   <Route path="BuyerRequest" element={<BuyerRequest />} />
   <Route path="BuyerRequest/ViewBuyerrequest/:id" element={<ViewBuyerRequest />} />
+  <Route path="buyerrequesttoartist" element={<BuyerRequestToArtist />} />
+  <Route path="buyerrequesttoartist/viewbuyerrequest/:id" element={<ViewBuyerRequestToArtist />} />
 
   {/* User Profile Route */}
   <Route path="completeprofile/:userId" element={<UserProfile />} />

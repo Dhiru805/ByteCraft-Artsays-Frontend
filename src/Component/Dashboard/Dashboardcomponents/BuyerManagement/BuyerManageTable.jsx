@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ConfirmationDialog from '../ConfirmationDialog';
+import useUserType from '../urlconfig';
 
 function BuyerManageTable() {
   const [buyers, setBuyers] = useState([]);
+  const userType = useUserType(); 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedBuyerToDelete, setSelectedBuyerToDelete] = useState(null);
   const BASE_URL = 'http://localhost:3001';
@@ -152,7 +154,7 @@ function BuyerManageTable() {
                               className="btn btn-outline-info btn-sm mr-2"
                               title="Edit"
                               onClick={() =>
-                                navigate(`/Dashboard/BuyerManageTable/BuyerProfile/${buyer._id}`)
+                                navigate(`/${userType}/Dashboard/BuyerManageTable/BuyerProfile/${buyer._id}`)
                               }
                             >
                               <i className="fa fa-pencil"></i>
