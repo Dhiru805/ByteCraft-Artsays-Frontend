@@ -50,20 +50,41 @@ function ProductUpload() {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === "images") {
-      const filesArray = Array.from(files);
-      setFormData((prev) => ({
-        ...prev,
-        images: [...prev.images, ...filesArray], // Append new images to the existing ones
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+  const [selectedImage, setSelectedImage] = useState(null);
+  // const [formData, setFormData] = useState({ mainImage: "" });
+
+  const [images, setImages] = useState([]); // Store uploaded images
+  const [error, setError] = useState(null);
+  const [editingImage, setEditingImage] = useState(null); // Store the image being edited
+  const [editingIndex, setEditingIndex] = useState(null); // Store the index of the image being edited
+
+  const handleChange = (event) => {
+    const files = Array.from(event.target.files);
+
+    // Ensure at least 3 and at most 10 images are selected
+    if (files.length < 3 || files.length > 10) {
+      setError("Please select between 3 and 10 images.");
+      return;
     }
+
+    setError(null); // Clear error if the correct number of images is selected
+
+    const newImages = files.map((file) => URL.createObjectURL(file));
+    setImages(newImages);
+  };
+
+  const handleEditClick = (image, index) => {
+    setEditingImage(image); // Set the image to be edited
+    setEditingIndex(index); // Store the index of the image being edited
+  };
+
+  const handleCroppedImage = (dataURL) => {
+    console.log("Cropped Image Data URL:", dataURL);
+    const updatedImages = [...images];
+    updatedImages[editingIndex] = dataURL; // Replace the edited image in the array
+    setImages(updatedImages);
+    setEditingImage(null); // Close the editor after editing
+    setEditingIndex(null);
   };
 
   // Function to strip HTML tags and get plain text content
@@ -98,9 +119,9 @@ function ProductUpload() {
     }
 
     // Append additional images
-  formData.images.forEach((image) => {
-  formDataObj.append("images", image); // Ensure the field name matches
-});
+    formData.images.forEach((image) => {
+      formDataObj.append("images", image); // Ensure the field name matches
+    });
 
 
     // Log formData entries
@@ -138,158 +159,189 @@ function ProductUpload() {
     //   <UserAccount />
     //   <RightIconBar />
     //   <div id="main-content">
-        <div className="container-fluid">
-          <div className="block-header">
-            <div className="row">
-              <div className="col-lg-6 col-md-6 col-sm-12">
-                <h2>Create Product</h2>
-                <ul className="breadcrumb">
-                  <li className="breadcrumb-item">
-                    <a href="/">
-                      <i className="fa fa-dashboard"></i>
-                    </a>
-                  </li>
-                  <li className="breadcrumb-item">App</li>
-                  <li className="breadcrumb-item active">Product Upload</li>
-                </ul>
-              </div>
-            </div>
+    <div className="container-fluid">
+      <div className="block-header">
+        <div className="row">
+          <div className="col-lg-6 col-md-6 col-sm-12">
+            <h2>Create Product</h2>
+            <ul className="breadcrumb">
+              <li className="breadcrumb-item">
+                <a href="/">
+                  <i className="fa fa-dashboard"></i>
+                </a>
+              </li>
+              <li className="breadcrumb-item">App</li>
+              <li className="breadcrumb-item active">Product Upload</li>
+            </ul>
           </div>
+        </div>
+      </div>
 
-          <div className="row clearfix">
-            <div className="col-lg-12">
-              <div className="card">
-                <div className="body">
-                  {successMessage && (
-                    <div className="alert alert-success">{successMessage}</div>
-                  )}
-                  {errorMessage && (
-                    <div className="alert alert-danger">{errorMessage}</div>
-                  )}
-                  <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                      <input
-                        type="text"
-                        name="productName"
-                        value={formData.productName}
-                        onChange={handleChange}
-                        className="form-control"
-                        placeholder="Enter Product Name"
-                        required
-                      />
-                    </div>
-                    <div className="form-group">
-                      <input
-                        type="text"
-                        name="artistName"
-                        value={formData.artistName}
-                        onChange={handleChange}
-                        className="form-control"
-                        placeholder="Artist Name"
-                        required
-                      />
-                    </div>
-                    <div className="form-group">
-                      <input
-                        type="text"
-                        name="newPrice"
-                        value={formData.newPrice}
-                        onChange={handleChange}
-                        className="form-control"
-                        placeholder="$$"
-                        required
-                      />
-                    </div>
-                    <div className="form-group">
-                      <input
-                        type="text"
-                        name="size"
-                        value={formData.newsize}
-                        onChange={handleChange}
-                        className="form-control"
-                        placeholder="Enter size"
-                        required
-                      />
-                    </div>
-                    <div className="form-group">
-                      <input
-                        type="text"
-                        name="oldPrice"
-                        value={formData.oldPrice}
-                        onChange={handleChange}
-                        className="form-control"
-                        placeholder="$$"
-                        required
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <select
-                        name="productCategory"
-                        value={formData.productCategory}
-                        onChange={handleChange}
-                        className="form-control show-tick"
-                        required
-                      >
-                        <option value="">Select productCategory</option>
-                        <option value="Web Design">Web Design</option>
-                        <option value="Photography">Photography</option>
-                        <option value="Technology">Technology</option>
-                        <option value="Lifestyle">Lifestyle</option>
-                        <option value="Sports">Sports</option>
-                      </select>
-                    </div>
-
-                    <div className="form-group mt-3 main-image">
-                      <ImageEditor
-                        onCroppedImage={(dataURL) => {
-                          console.log("Cropped Image Data URL:", dataURL);
-                          setFormData((prev) => ({
-                            ...prev,
-                            mainImage: dataURL, // Update mainImage in formData
-                          }));
-                        }}
-                      />
-                      ;
-                    </div>
-
-                    {/* Add multiple image fields */}
-                    <div className="form-group mt-3">
-                      <label>Upload Additional Images</label>
-                      <input
-                        type="file"
-                        name="images"
-                        onChange={handleChange}
-                        className="form-control-file"
-                        multiple
-                        accept="image/*"
-                      />
-                    </div>
-                    <div className="form-group mt-3">
-                      <FroalaEditor
-                        model={content}
-                        onModelChange={(newContent) => {
-                          console.log("Editor content:", newContent); // Debugging log
-                          setContent(newContent);
-                        }}
-                        config={{
-                          placeholderText: "Enter your product details here.",
-                          charCounterCount: true,
-                        }}
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      className="btn btn-block btn-primary mt-3"
-                    >
-                      Upload product
-                    </button>
-                  </form>
+      <div className="row clearfix">
+        <div className="col-lg-12">
+          <div className="card">
+            <div className="body">
+              {successMessage && (
+                <div className="alert alert-success">{successMessage}</div>
+              )}
+              {errorMessage && (
+                <div className="alert alert-danger">{errorMessage}</div>
+              )}
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    name="productName"
+                    value={formData.productName}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder="Enter Product Name"
+                    required
+                  />
                 </div>
-              </div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    name="artistName"
+                    value={formData.artistName}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder="Artist Name"
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    name="newPrice"
+                    value={formData.newPrice}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder="$$"
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    name="size"
+                    value={formData.newsize}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder="Enter size"
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    name="oldPrice"
+                    value={formData.oldPrice}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder="$$"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <select
+                    name="productCategory"
+                    value={formData.productCategory}
+                    onChange={handleChange}
+                    className="form-control show-tick"
+                    required
+                  >
+                    <option value="">Select productCategory</option>
+                    <option value="Web Design">Web Design</option>
+                    <option value="Photography">Photography</option>
+                    <option value="Technology">Technology</option>
+                    <option value="Lifestyle">Lifestyle</option>
+                    <option value="Sports">Sports</option>
+                  </select>
+                </div>
+
+                {/* Add multiple image fields */}
+                <div className="form-group mt-3">
+                  {/* <label>Images</label>  */}
+                  <input
+                    type="file"
+                    name="images"
+                    onChange={handleChange}
+                    className="form-control-file"
+                    multiple
+                    accept="image/*"
+                  />
+                </div>
+
+                {error && <div style={{ color: "red" }}>{error}</div>}
+
+                <div className="mt-3">
+                {images.length > 0 && <h5>Preview Images</h5>}
+                  <div className="d-flex">
+                    {images.map((image, index) => (
+                      <div key={index} className="position-relative" style={{ marginRight: "10px" }}>
+                        <img
+                          src={image}
+                          alt={`preview-${index}`}
+                          style={{ width: "100px", height: "100px", borderRadius: "5px" }}
+                        />
+                        {images.length >= 3 && images.length <= 10 && (
+                          <button
+                            className="fa fa-edit position-absolute"
+                            style={{
+                              top: "5px",
+                              right: "5px",
+                              background: "rgba(0, 0, 0, 0.5)",
+                              color: "#fff",
+                              border: "none",
+                              padding: "5px",
+                              borderRadius: "50%",
+                            }}
+                            onClick={() => handleEditClick(image, index)}
+                          ></button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {editingImage && (
+                  <div className="form-group mt-3 main-image">
+                    <ImageEditor
+                      initialImage={editingImage} 
+                      onCroppedImage={handleCroppedImage} 
+                    />
+                  </div>
+                )}
+
+
+
+                <div className="form-group mt-3">
+                  <FroalaEditor
+                    model={content}
+                    onModelChange={(newContent) => {
+                      console.log("Editor content:", newContent); // Debugging log
+                      setContent(newContent);
+                    }}
+                    config={{
+                      placeholderText: "Enter your product details here.",
+                      charCounterCount: true,
+                    }}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="btn btn-block btn-primary mt-3"
+                >
+                  Upload product
+                </button>
+              </form>
             </div>
           </div>
         </div>
+      </div>
+    </div>
     //   </div>
     // </div>
   );

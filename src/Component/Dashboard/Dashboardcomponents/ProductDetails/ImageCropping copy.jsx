@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
-import $ from "jquery";   
 
 function ImageCropping({ onCroppedImage, initialImage }) {
   const [cropper, setCropper] = useState(null);
@@ -9,21 +8,19 @@ function ImageCropping({ onCroppedImage, initialImage }) {
   const imageRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
   const [image, setImage] = useState(initialImage);
-  const [croppedImage, setCroppedImage] = useState(null);
+//   useEffect(() => {
+//     console.log("Updated Image:", image);
+// }, [image]);
 
-  const handleCrop = () => {
-    if (cropper) {
-      console.log("Crop button clicked!");
-      const canvas = cropper.getCroppedCanvas(); // Removed width and height
-      const dataURL = canvas.toDataURL("image/png");
-      console.log("Cropped Image Data URL: ", dataURL);  // Log the data URL to the console
-      onCroppedImage(dataURL); 
-      $('#getCroppedCanvasModal').modal("show");
-      document.getElementById('download').href = dataURL; 
-    }
-  };
-
- 
+// useEffect(() => {
+//     console.log("Initial Image:", initialImage);
+    
+//     if (Array.isArray(initialImage)) {
+//         console.log("Number of images:", initialImage.length);
+//     } else {
+//         console.log("Initial image is not an array:", initialImage);
+//     }
+// }, [initialImage]);
 
 
   const loadScript = (src) => {
@@ -37,39 +34,56 @@ function ImageCropping({ onCroppedImage, initialImage }) {
     });
   };
 
-useEffect(() => {
-  const initCropper = async () => {
-    try {
-      setLoading(true);
-      
-      // Load external scripts
-      await loadScript("/DashboardAssets/assets/vendor/cropper/cropper.min.js");
-      await loadScript("/DashboardAssets/assets/vendor/cropper/cropper-init.js");
-
-      if (imageRef.current) {
-        const cropperInstance = new Cropper(imageRef.current, {
-          aspectRatio: 16 / 9,
-          viewMode: 1,
-        });
-
-        setCropper(cropperInstance);
-
-        // Cleanup function to destroy Cropper instance
-        return () => {
-          cropperInstance.destroy();
-        };
+  useEffect(() => {
+    const initCropper = async () => {
+      try {
+        setLoading(true);
+        
+        // Load external scripts
+        await loadScript("/DashboardAssets/assets/vendor/cropper/cropper.min.js");
+        await loadScript("/DashboardAssets/assets/vendor/cropper/cropper-init.js");
+  
+        if (imageRef.current) {
+          const cropperInstance = new Cropper(imageRef.current, {
+            aspectRatio: 16 / 9,
+            viewMode: 1,
+          });
+  
+          setCropper(cropperInstance);
+  
+          // Cleanup function to destroy Cropper instance
+          return () => {
+            cropperInstance.destroy();
+          };
+        }
+      } catch (err) {
+        console.error("Failed to load script:", err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Failed to load script:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+  
+    initCropper();
+  }, []);
+  
 
-  initCropper();
-}, []);
+  // useEffect(() => {
+  //   if (initialImage) {
+  //     setImage(initialImage);
+  //   }
+  // }, []);
 
-
+  // const handleImageChange = (event) => {
+  //   const file = event.target.files[0];
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       setImage(reader.result); // Update the image state with the new file
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+ 
 
   return (
     <>
@@ -502,7 +516,35 @@ useEffect(() => {
                   <span className="fa fa-refresh" />{" "}
                 </span>
               </button>
-              <button
+              {/* <label
+                className="btn btn-sm btn-secondary btn-upload"
+                htmlFor="inputImage"
+                title="Upload image file"
+              >
+                <input
+                  type="file"
+                  className="sr-only"
+                  id="inputImage"
+                  name="file"
+                  accept="image/*"
+                  // onChange={handleImageChange}
+                  onChange={(e) => {
+                    if (e.target.files.length > 0) {
+                      const selectedImage = URL.createObjectURL(e.target.files[0]);
+                      setImage(selectedImage);
+                    }
+                  }} 
+                />
+                <span
+                  className="docs-tooltip"
+                  data-toggle="tooltip"
+                  title="Import image with Blob URLs"
+                >
+                  {" "}
+                  <span className="fa fa-upload" />{" "}
+                </span>
+              </label> */}
+              {/* <button
                 type="button"
                 className="btn btn-sm  btn-secondary"
                 data-method="destroy"
@@ -517,13 +559,12 @@ useEffect(() => {
                   {" "}
                   <span className="fa fa-power-off" />{" "}
                 </span>
-              </button>
+              </button> */}
               <div className="btn-group">
                 <button
                   type="button"
                   className="btn btn-sm btn-danger"
                   data-method="getCroppedCanvas"
-                  onClick={handleCrop}
                 >
                   {" "}
                   <span
@@ -533,6 +574,38 @@ useEffect(() => {
                   >
                     {" "}
                     Get Cropped Canvas{" "}
+                  </span>{" "}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-danger"
+                  data-method="getCroppedCanvas"
+                  data-option='{ "width": 160, "height": 90 }'
+                >
+                  {" "}
+                  <span
+                    className="docs-tooltip"
+                    data-toggle="tooltip"
+                    title='$().cropper("getCroppedCanvas", { width: 160, height: 90 })'
+                  >
+                    {" "}
+                    160×90{" "}
+                  </span>{" "}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-danger"
+                  data-method="getCroppedCanvas"
+                  data-option='{ "width": 320, "height": 180 }'
+                >
+                  {" "}
+                  <span
+                    className="docs-tooltip"
+                    data-toggle="tooltip"
+                    title='$().cropper("getCroppedCanvas", { width: 320, height: 180 })'
+                  >
+                    {" "}
+                    320×180{" "}
                   </span>{" "}
                 </button>
               </div>
@@ -816,7 +889,194 @@ useEffect(() => {
                   </span>{" "}
                 </label>
               </div>
-              
+              <div className="dropdown dropup docs-options">
+                <button
+                  type="button"
+                  className="btn btn-success btn-block dropdown-toggle"
+                  id="toggleOptions"
+                  data-toggle="dropdown"
+                  aria-expanded="true"
+                >
+                  {" "}
+                  Toggle Options <span className="caret" />{" "}
+                </button>
+                <ul
+                  className="dropdown-menu"
+                  aria-labelledby="toggleOptions"
+                  role="menu"
+                >
+                  <li role="presentation">
+                    <label className="checkbox-inline">
+                      <input
+                        type="checkbox"
+                        name="responsive"
+                        defaultChecked=""
+                      />{" "}
+                      responsive{" "}
+                    </label>
+                  </li>
+                  <li role="presentation">
+                    <label className="checkbox-inline">
+                      <input type="checkbox" name="restore" defaultChecked="" />{" "}
+                      restore{" "}
+                    </label>
+                  </li>
+                  <li role="presentation">
+                    <label className="checkbox-inline">
+                      <input
+                        type="checkbox"
+                        name="checkCrossOrigin"
+                        defaultChecked=""
+                      />{" "}
+                      checkCrossOrigin{" "}
+                    </label>
+                  </li>
+                  <li role="presentation">
+                    <label className="checkbox-inline">
+                      <input
+                        type="checkbox"
+                        name="checkOrientation"
+                        defaultChecked=""
+                      />{" "}
+                      checkOrientation{" "}
+                    </label>
+                  </li>
+                  <li role="presentation">
+                    <label className="checkbox-inline">
+                      <input type="checkbox" name="modal" defaultChecked="" />{" "}
+                      modal{" "}
+                    </label>
+                  </li>
+                  <li role="presentation">
+                    <label className="checkbox-inline">
+                      <input type="checkbox" name="guides" defaultChecked="" />{" "}
+                      guides{" "}
+                    </label>
+                  </li>
+                  <li role="presentation">
+                    <label className="checkbox-inline">
+                      <input type="checkbox" name="center" defaultChecked="" />{" "}
+                      center{" "}
+                    </label>
+                  </li>
+                  <li role="presentation">
+                    <label className="checkbox-inline">
+                      <input
+                        type="checkbox"
+                        name="highlight"
+                        defaultChecked=""
+                      />{" "}
+                      highlight{" "}
+                    </label>
+                  </li>
+                  <li role="presentation">
+                    <label className="checkbox-inline">
+                      <input
+                        type="checkbox"
+                        name="background"
+                        defaultChecked=""
+                      />{" "}
+                      background{" "}
+                    </label>
+                  </li>
+                  <li role="presentation">
+                    <label className="checkbox-inline">
+                      <input
+                        type="checkbox"
+                        name="autoCrop"
+                        defaultChecked=""
+                      />{" "}
+                      autoCrop{" "}
+                    </label>
+                  </li>
+                  <li role="presentation">
+                    <label className="checkbox-inline">
+                      <input type="checkbox" name="movable" defaultChecked="" />{" "}
+                      movable{" "}
+                    </label>
+                  </li>
+                  <li role="presentation">
+                    <label className="checkbox-inline">
+                      <input
+                        type="checkbox"
+                        name="rotatable"
+                        defaultChecked=""
+                      />{" "}
+                      rotatable{" "}
+                    </label>
+                  </li>
+                  <li role="presentation">
+                    <label className="checkbox-inline">
+                      <input
+                        type="checkbox"
+                        name="scalable"
+                        defaultChecked=""
+                      />{" "}
+                      scalable{" "}
+                    </label>
+                  </li>
+                  <li role="presentation">
+                    <label className="checkbox-inline">
+                      <input
+                        type="checkbox"
+                        name="zoomable"
+                        defaultChecked=""
+                      />{" "}
+                      zoomable{" "}
+                    </label>
+                  </li>
+                  <li role="presentation">
+                    <label className="checkbox-inline">
+                      <input
+                        type="checkbox"
+                        name="zoomOnTouch"
+                        defaultChecked=""
+                      />{" "}
+                      zoomOnTouch{" "}
+                    </label>
+                  </li>
+                  <li role="presentation">
+                    <label className="checkbox-inline">
+                      <input
+                        type="checkbox"
+                        name="zoomOnWheel"
+                        defaultChecked=""
+                      />{" "}
+                      zoomOnWheel{" "}
+                    </label>
+                  </li>
+                  <li role="presentation">
+                    <label className="checkbox-inline">
+                      <input
+                        type="checkbox"
+                        name="cropBoxMovable"
+                        defaultChecked=""
+                      />{" "}
+                      cropBoxMovable{" "}
+                    </label>
+                  </li>
+                  <li role="presentation">
+                    <label className="checkbox-inline">
+                      <input
+                        type="checkbox"
+                        name="cropBoxResizable"
+                        defaultChecked=""
+                      />{" "}
+                      cropBoxResizable{" "}
+                    </label>
+                  </li>
+                  <li role="presentation">
+                    <label className="checkbox-inline">
+                      <input
+                        type="checkbox"
+                        name="toggleDragModeOnDblclick"
+                        defaultChecked=""
+                      />{" "}
+                      toggleDragModeOnDblclick{" "}
+                    </label>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -825,39 +1085,41 @@ useEffect(() => {
   </div>
   {/* Show the cropped image in modal */}
   <div
-      className="modal docs-cropped"
-      id="getCroppedCanvasModal"
-      aria-hidden="true"
-      aria-labelledby="getCroppedCanvasTitle"
-      role="dialog"
-      tabIndex={-1}
-    >
-      <div className="modal-dialog">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h4 className="title" id="getCroppedCanvasModal">
-              Cropped
-            </h4>
-          </div>
-          <div className="modal-body">
-            {/* Your cropped image canvas should be here */}
-            <canvas id="croppedCanvas"></canvas>
-          </div>
-          <div className="modal-footer">
-            <button
-              type="button"
-              className="btn btn-outline-secondary"
-              data-dismiss="modal"
-            >
-              Close
-            </button>
-            <button className="btn btn-primary" >
-              Save
-            </button>
-          </div>
+    className="modal docs-cropped"
+    id="getCroppedCanvasModal"
+    aria-hidden="true"
+    aria-labelledby="getCroppedCanvasTitle"
+    role="dialog"
+    tabIndex={-1}
+  >
+    <div className="modal-dialog">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h4 className="title" id="getCroppedCanvasModal">
+            Cropped
+          </h4>
+        </div>
+        <div className="modal-body" />
+        <div className="modal-footer">
+          <button
+            type="button"
+            className="btn btn-outline-secondary"
+            data-dismiss="modal"
+          >
+            Close
+          </button>
+          <a
+            className="btn btn-primary"
+            id="download"
+            href="javascript:void(0);"
+            download="cropped.html"
+          >
+            Download
+          </a>
         </div>
       </div>
     </div>
+  </div>
 </>
 
   );
