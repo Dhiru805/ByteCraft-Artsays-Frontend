@@ -7,7 +7,7 @@ import getAPI from "../../../../../api/getAPI";
 const Customorder = () => {
     const [buyerRequests, setBuyerRequests] = useState([]);
    
-    const fetchBuyerRequests = async () => {
+   const fetchBuyerRequests = async () => {
         try {
             const response = await getAPI("http://localhost:3001/api/get-buyer-request");
             const buyerRequestsData = response.data.buyerRequests;
@@ -19,7 +19,7 @@ const Customorder = () => {
 
     useEffect(() => {
         fetchBuyerRequests();
-    }, []);
+    }, []); 
 
     return (
         <>

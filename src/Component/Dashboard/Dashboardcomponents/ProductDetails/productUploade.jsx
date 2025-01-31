@@ -7,6 +7,7 @@ import "froala-editor/css/froala_editor.pkgd.min.css";
 import FroalaEditor from "react-froala-wysiwyg";
 import "froala-editor/js/plugins/image.min.js";
 import "froala-editor/js/plugins/char_counter.min.js";
+import getAPI from "../../../../api/getAPI";
 
 
 
@@ -27,7 +28,50 @@ function ProductUpload() {
 
   });
   const [content, setContent] = useState(""); // Froala Editor content
+  const [croppedImages, setCroppedImages] = useState([]);
 
+
+
+
+  const fetchImages = async () => {
+    try {
+      const response = await getAPI("http://localhost:3001/api/get-cropImage"); 
+      const data = response.data;
+  
+      if (data && data.data) {
+        setCroppedImages(data.data);
+      } else {
+        console.error("No images found in the response.");
+      }
+    } catch (error) {
+      console.error("Error fetching images:", error);
+    }
+  };
+  
+
+
+  useEffect(() => {
+    fetchImages();
+  }, []);
+
+  useEffect(() => {
+    const imageCount = localStorage.getItem("imageCount");
+    const images = [];
+
+    if (imageCount) {
+      for (let i = 1; i <= parseInt(imageCount); i++) {
+        const savedCroppedImage = localStorage.getItem("croppedImage" + i);
+        if (savedCroppedImage) {
+          images.push(savedCroppedImage);
+        }
+      }
+    }
+
+    setCroppedImages(images);
+  }, []); 
+
+
+  
   // Function to convert a dataURL to a Blob
   const dataURLToBlob = (dataURL) => {
     if (!dataURL || !dataURL.includes(",")) {
@@ -69,23 +113,38 @@ function ProductUpload() {
 
     setError(null); // Clear error if the correct number of images is selected
 
+    // Store the selected images in a state array
     const newImages = files.map((file) => URL.createObjectURL(file));
     setImages(newImages);
-  };
 
-  const handleEditClick = (image, index) => {
-    setEditingImage(image); // Set the image to be edited
-    setEditingIndex(index); // Store the index of the image being edited
-  };
+    // Clear previous cropped image data from localStorage when new images are selected
+    localStorage.removeItem("imageCount");
+    let i = 1;
+    while (localStorage.getItem(`croppedImage${i}`)) {
+      localStorage.removeItem(`croppedImage${i}`);
+      i++;
+    }
 
-  const handleCroppedImage = (dataURL) => {
-    console.log("Cropped Image Data URL:", dataURL);
-    const updatedImages = [...images];
-    updatedImages[editingIndex] = dataURL; // Replace the edited image in the array
-    setImages(updatedImages);
-    setEditingImage(null); // Close the editor after editing
+    // Optionally, reset the edit state if you want to clear the editing state on image change
+    setEditingImage(null);
     setEditingIndex(null);
   };
+  const handleEditClick = (image, index) => {
+    // Open the image editor for the selected image
+    setEditingImage(image);
+    setEditingIndex(index);
+
+  
+  };
+
+  // const handleCroppedImage = (dataURL) => {
+  //   console.log("Cropped Image Data URL:", dataURL);
+  //   const updatedImages = [...images];
+  //   updatedImages[editingIndex] = dataURL; // Replace the edited image in the array
+  //   setImages(updatedImages);
+  //   setEditingImage(null); // Close the editor after editing
+  //   setEditingIndex(null);
+  // };
 
   // Function to strip HTML tags and get plain text content
   const stripHtmlTags = (html) => {
@@ -188,7 +247,7 @@ function ProductUpload() {
                 <div className="alert alert-danger">{errorMessage}</div>
               )}
               <form onSubmit={handleSubmit}>
-                <div className="form-group">
+                {/* <div className="form-group">
                   <input
                     type="text"
                     name="productName"
@@ -259,7 +318,7 @@ function ProductUpload() {
                     <option value="Lifestyle">Lifestyle</option>
                     <option value="Sports">Sports</option>
                   </select>
-                </div>
+                </div> */}
 
                 {/* Add multiple image fields */}
                 <div className="form-group mt-3">
@@ -278,9 +337,10 @@ function ProductUpload() {
 
                 <div className="mt-3">
                 {images.length > 0 && <h5>Preview Images</h5>}
+                <div className=" image-preview-container"></div>
                   <div className="d-flex">
                     {images.map((image, index) => (
-                      <div key={index} className="position-relative" style={{ marginRight: "10px" }}>
+                      <div key={index} className="position-relative" style={{ marginRight: "10px" }} >
                         <img
                           src={image}
                           alt={`preview-${index}`}
@@ -306,11 +366,12 @@ function ProductUpload() {
                   </div>
                 </div>
 
+
+
                 {editingImage && (
                   <div className="form-group mt-3 main-image">
                     <ImageEditor
                       initialImage={editingImage} 
-                      onCroppedImage={handleCroppedImage} 
                     />
                   </div>
                 )}
@@ -342,6 +403,8 @@ function ProductUpload() {
         </div>
       </div>
     </div>
+
+    
     //   </div>
     // </div>
   );
