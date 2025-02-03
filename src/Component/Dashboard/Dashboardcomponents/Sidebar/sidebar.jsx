@@ -69,6 +69,17 @@ const Sidebar = () => {
           { label: "Buyer Custom Request", path: `/${userType}/Dashboard/BuyerCustomrequest` },
           { label: "Buyer Transactions", path: `/${userType}/Dashboard/Appchat` }
         ]
+      },
+      {
+        label: "Transaction Management",
+        // icon: "fa-handshake",
+        path: `#Transaction-management`,
+        subTabs: [
+          { label: "Transaction Management", path: `/${userType}/Dashboard/TransactionManagementTable` },
+          // { label: "Transaction Request", path: `/${userType}/Dashboard/BuyerRequest` },
+          // { label: "Transaction Custom Request", path: `/${userType}/Dashboard/BuyerCustomrequest` },
+          // { label: "Transaction Transactions", path: `/${userType}/Dashboard/Appchat` }
+        ]
       }
     ];
     

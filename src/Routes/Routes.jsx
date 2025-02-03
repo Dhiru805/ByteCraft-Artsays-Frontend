@@ -63,6 +63,7 @@ import ArtistBlogDetails from "../Component/Dashboard/Dashboardcomponents/Blog/A
 import ArtistManageTable from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistManageTable";
 import ArtistDetail from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistDetail";
 import BuyerManageTable from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerManageTable"
+import TransactionManagementTable from "../Component/Dashboard/Dashboardcomponents/TransactionManagement/TransactionManagementTable"
 import CustomOrder from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/CustomOrder/Customorder";
 import CreateCustomOrder from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/CustomOrder/CreateCustomOrder"
 import BuyerRequest from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerRequest/BuyerRequest";
@@ -95,9 +96,11 @@ const AppRoutes = () => {
           {/* <Route path="/" element={<Home />} /> */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          {/* <Route path="/store" element={<StoreProduct />} /> */}
+          {/* <Route path="/product-details" element={<StoreDetails />} /> */}
           {/* <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
-          <Route path="/store" element={<StoreProduct />} />
+    
           <Route path="/blog" element={<Blog />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/cart-page" element={<CartPage />} />
@@ -110,7 +113,7 @@ const AppRoutes = () => {
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/art" element={<NFTCard />} />
           <Route path="/why-artsays?" element={<WhyChooseUs />} />
-          <Route path="/product-details" element={<StoreDetails />} />
+         
           <Route path="/Allcom" element={<AllComponent />} /> */}
          
          
@@ -175,6 +178,11 @@ const AppRoutes = () => {
 
   {/* User Profile Route */}
   <Route path="completeprofile/:userId" element={<UserProfile />} />
+
+
+  {/* Transaction Management */}
+  <Route path="TransactionManagementTable" element={<TransactionManagementTable />} />
+
 </Route>
 
 
