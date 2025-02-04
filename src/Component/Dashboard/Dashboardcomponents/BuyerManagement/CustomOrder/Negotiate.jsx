@@ -3,7 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import putAPI from '../../../../../api/putAPI'; 
 
-const UpdateModal = ({ request, onClose, onSubmit }) => {
+const NegotiateModal = ({ request, onClose, onSubmit }) => {
   const [buyerName] = useState(
     request ? `${request.Buyer.id.name} ${request.Buyer.id.lastName}` : ""
   );
@@ -11,34 +11,35 @@ const UpdateModal = ({ request, onClose, onSubmit }) => {
     new Date(request?.createdAt).toLocaleDateString() || ""
   );
   const [budget, setBudget] = useState(request?.Budget || "");
-  const [notes, setNotes] = useState(request?.Notes || "");
+  const [notes, setNotes] = useState(request?.BuyerNotes || "");
   const [negotiateBudget, setNegotiateBudget] = useState(request?.NegiotaiteBudget || ""); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await putAPI(
-        `http://localhost:3001/api/update-negiotaite-budget/${request._id}`,
+        `http://localhost:3001/api/update-negiotaite-Buyer-budget/${request._id}`,
         {
           ProductName: request?.ProductName || "",
           Description: request?.Description || "",
           Budget: budget,
           NegiotaiteBudget: negotiateBudget,
-          Notes: notes,
+          BuyerNotes: notes,
         }
       );
-
-        if (response && response.data) {
-              toast.success(response.data.successMessage || "Buyer request updated successfully");
-              onSubmit(response.data.updatedRequest);
-            } else {
-              toast.error(response?.message || "Failed to update buyer request");
-            }
-          } catch (error) {
-            console.error("Error updating buyer request:", error);
-            toast.error(error.response?.data?.message || "Error updating buyer request");
-          }
+  
+      if (response && response.data) {
+        toast.success(response.data.successMessage || "Buyer request updated successfully");
+        onSubmit(response.data.updatedRequest);
+      } else {
+        toast.error(response?.message || "Failed to update buyer request");
+      }
+    } catch (error) {
+      console.error("Error updating buyer request:", error);
+      toast.error(error.response?.data?.message || "Error updating buyer request");
+    }
   };
+  
 
   return (
     <div
@@ -110,11 +111,8 @@ const UpdateModal = ({ request, onClose, onSubmit }) => {
                   className="form-control"
                   id="budget"
                   name="budget"
-                  placeholder="Enter budget"
                   value={budget}
                   onChange={(e) => setBudget(e.target.value)}
-                  required
-                  readOnly
                 />
               </div>
 
@@ -127,10 +125,8 @@ const UpdateModal = ({ request, onClose, onSubmit }) => {
                   className="form-control"
                   id="negotiateBudget"
                   name="negotiateBudget"
-                  placeholder="Enter Negotiated Budget"
                   value={negotiateBudget}
                   onChange={(e) => setNegotiateBudget(e.target.value)}
-                  required
                 />
               </div>
 
@@ -143,22 +139,18 @@ const UpdateModal = ({ request, onClose, onSubmit }) => {
                   id="notes"
                   name="notes"
                   rows="4"
-                  placeholder="Enter additional notes or negotiation terms"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                ></textarea>
+                />
               </div>
             </div>
+
             <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={onClose}
-              >
+              <button type="button" className="btn btn-secondary" onClick={onClose}>
                 Close
               </button>
               <button type="submit" className="btn btn-primary">
-                Save Changes
+                Save changes
               </button>
             </div>
           </form>
@@ -168,4 +160,4 @@ const UpdateModal = ({ request, onClose, onSubmit }) => {
   );
 };
 
-export default UpdateModal;
+export default NegotiateModal;

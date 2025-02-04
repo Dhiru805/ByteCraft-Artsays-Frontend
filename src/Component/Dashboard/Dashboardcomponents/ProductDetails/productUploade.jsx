@@ -7,7 +7,7 @@ import "froala-editor/css/froala_editor.pkgd.min.css";
 import FroalaEditor from "react-froala-wysiwyg";
 import "froala-editor/js/plugins/image.min.js";
 import "froala-editor/js/plugins/char_counter.min.js";
-import getAPI from "../../../../api/getAPI";
+// import getAPI from "../../../../api/getAPI";
 
 
 
@@ -27,32 +27,49 @@ function ProductUpload() {
 
 
   });
+
+
+
+
   const [content, setContent] = useState(""); // Froala Editor content
   const [croppedImages, setCroppedImages] = useState([]);
+  // const [lastReloadTimestamp, setLastReloadTimestamp] = useState(new Date()); 
+
+  const [editingImageIndex, setEditingImageIndex] = useState(null); 
 
 
 
 
-  const fetchImages = async () => {
-    try {
-      const response = await getAPI("http://localhost:3001/api/get-cropImage"); 
-      const data = response.data;
-  
-      if (data && data.data) {
-        setCroppedImages(data.data);
-      } else {
-        console.error("No images found in the response.");
-      }
-    } catch (error) {
-      console.error("Error fetching images:", error);
-    }
-  };
-  
+  // const fetchImages = async () => {
+  //   try {
+  //     const response = await getAPI('http://localhost:3001/api/get-cropImage', {
+  //       lastReload: lastReloadTimestamp, // Send the last reload timestamp to the backend
+  //     });
 
+  //     const data = response.data;
 
-  useEffect(() => {
-    fetchImages();
-  }, []);
+  //     if (data && data.data) {
+  //       setCroppedImages(data.data);
+  //       // Update the last reload timestamp to the current time
+  //       setLastReloadTimestamp(new Date());
+  //     } else {
+  //       console.error("No new images found.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching images:", error);
+  //   }
+  // };
+
+  // // Fetch images when the component mounts (initial page load or reload)
+  // useEffect(() => {
+  //   // Fetch images immediately when the page loads or is reloaded
+  //   fetchImages();
+
+  //   // Optionally, set an interval for periodic re-fetching of images (every 10 seconds)
+  //   const interval = setInterval(fetchImages, 10000); // Refresh every 10 seconds
+
+  //   return () => clearInterval(interval); // Cleanup interval on unmount
+  // }, []); // Empty dependency array to run this effect once on page reload
 
   useEffect(() => {
     const imageCount = localStorage.getItem("imageCount");
@@ -100,41 +117,66 @@ function ProductUpload() {
   const [images, setImages] = useState([]); // Store uploaded images
   const [error, setError] = useState(null);
   const [editingImage, setEditingImage] = useState(null); // Store the image being edited
-  const [editingIndex, setEditingIndex] = useState(null); // Store the index of the image being edited
+  const [editingIndex, setEditingIndex] = useState(null); 
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);// Store the index of the image being edited
+
+  useEffect(() => {
+    const imageCount = localStorage.getItem("imageCount");
+    const images = [];
+
+    if (imageCount) {
+      for (let i = 1; i <= parseInt(imageCount); i++) {
+        const savedCroppedImage = localStorage.getItem("croppedImage" + i);
+        if (savedCroppedImage) {
+          images.push(savedCroppedImage);
+        }
+      }
+    }
+
+    setCroppedImages(images);
+  }, []);
 
   const handleChange = (event) => {
     const files = Array.from(event.target.files);
-
-    // Ensure at least 3 and at most 10 images are selected
-    if (files.length < 3 || files.length > 10) {
+  
+    const totalFiles = images.length + files.length;
+  
+    if (totalFiles < 3 || totalFiles > 10) {
       setError("Please select between 3 and 10 images.");
       return;
     }
-
-    setError(null); // Clear error if the correct number of images is selected
-
-    // Store the selected images in a state array
-    const newImages = files.map((file) => URL.createObjectURL(file));
+  
+    setError(null);
+  
+    const newImages = [...images, ...files.map((file) => URL.createObjectURL(file))];
     setImages(newImages);
-
-    // Clear previous cropped image data from localStorage when new images are selected
+  
     localStorage.removeItem("imageCount");
     let i = 1;
     while (localStorage.getItem(`croppedImage${i}`)) {
       localStorage.removeItem(`croppedImage${i}`);
       i++;
     }
-
-    // Optionally, reset the edit state if you want to clear the editing state on image change
-    setEditingImage(null);
-    setEditingIndex(null);
   };
-  const handleEditClick = (image, index) => {
-    // Open the image editor for the selected image
-    setEditingImage(image);
-    setEditingIndex(index);
-
   
+
+
+  const handleEditClick = (image, index) => {
+    const updatedImages = [...images];
+    updatedImages[index] = {
+      ...updatedImages[index],
+      removed: true, // This flag hides the image
+    };
+  
+    setSelectedImageIndex(index);
+    setImages(updatedImages);
+    setEditingImage(null);
+  
+    // Use a timeout to ensure the state is updated before reopening
+    setTimeout(() => {
+      setEditingImage(image);
+      setEditingIndex(index);
+    }, 0);
   };
 
   // const handleCroppedImage = (dataURL) => {
@@ -247,7 +289,7 @@ function ProductUpload() {
                 <div className="alert alert-danger">{errorMessage}</div>
               )}
               <form onSubmit={handleSubmit}>
-                {/* <div className="form-group">
+                <div className="form-group">
                   <input
                     type="text"
                     name="productName"
@@ -318,7 +360,7 @@ function ProductUpload() {
                     <option value="Lifestyle">Lifestyle</option>
                     <option value="Sports">Sports</option>
                   </select>
-                </div> */}
+                </div>
 
                 {/* Add multiple image fields */}
                 <div className="form-group mt-3">
@@ -336,35 +378,47 @@ function ProductUpload() {
                 {error && <div style={{ color: "red" }}>{error}</div>}
 
                 <div className="mt-3">
-                {images.length > 0 && <h5>Preview Images</h5>}
-                <div className=" image-preview-container"></div>
-                  <div className="d-flex">
-                    {images.map((image, index) => (
-                      <div key={index} className="position-relative" style={{ marginRight: "10px" }} >
-                        <img
-                          src={image}
-                          alt={`preview-${index}`}
-                          style={{ width: "100px", height: "100px", borderRadius: "5px" }}
-                        />
-                        {images.length >= 3 && images.length <= 10 && (
-                          <button
-                            className="fa fa-edit position-absolute"
-                            style={{
-                              top: "5px",
-                              right: "5px",
-                              background: "rgba(0, 0, 0, 0.5)",
-                              color: "#fff",
-                              border: "none",
-                              padding: "5px",
-                              borderRadius: "50%",
-                            }}
-                            onClick={() => handleEditClick(image, index)}
-                          ></button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
+  {images.length > 0 && images.some(image => !image.removed) && <h5>Preview Images</h5>} 
+  <div className="image-preview-container" style={{
+    display: 'flex',
+    flexDirection: 'row', 
+    gap: '10px', 
+    flexWrap: 'wrap' 
+  }}>
+    {images.map((image, index) => (
+      !image.removed && (
+        <div key={index} className="position-relative" style={{ marginRight: "10px" }}>
+          <img
+            src={image}
+            alt={`preview-${index}`}
+            style={{
+              width: '100px',
+              height: '100px',
+              borderRadius: '5px',
+              display: selectedImageIndex === index ? 'none' : 'block', 
+            }}
+          />
+          {images.length >= 3 && images.length <= 10 && selectedImageIndex !== index && (
+            <button
+              className="fa fa-edit position-absolute"
+              style={{
+                top: '5px',
+                right: '5px',
+                background: 'rgba(0, 0, 0, 0.5)',
+                color: '#fff',
+                border: 'none',
+                padding: '5px',
+                borderRadius: '50%',
+                display: selectedImageIndex === index || image.removed ? 'none' : 'block', 
+              }}
+              onClick={() => handleEditClick(image, index)} 
+            ></button>
+          )}
+        </div>
+      )
+    ))}
+  </div>
+</div>
 
 
 
@@ -372,6 +426,7 @@ function ProductUpload() {
                   <div className="form-group mt-3 main-image">
                     <ImageEditor
                       initialImage={editingImage} 
+                      editingImageIndex={editingImageIndex}
                     />
                   </div>
                 )}

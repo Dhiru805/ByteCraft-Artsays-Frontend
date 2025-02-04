@@ -153,43 +153,78 @@ $(function () {
             $('#getCroppedCanvasModal').modal().find('.modal-body').html(result);
 
             //save Button
-          $('#saveImageBtn').on('click', function () {
-    var imageData = result.toDataURL('image/jpeg');
-
-    // Show success toast
-    Toastify({
-        text: 'Image has been saved!',
-        backgroundColor: "green",
-        duration: 3000
-    }).showToast();
-
-    // Find the preview container
-    var previewContainer = document.querySelector('.image-preview-container');
-
-    // Create a new image element
-    var newImage = document.createElement('img');
-    newImage.src = imageData;
-    newImage.style.width = "100px";
-    newImage.style.height = "100px";
-    newImage.style.borderRadius = "5px";
-    newImage.style.objectFit = "cover";  // Ensures the cropped image looks similar
-    newImage.alt = "Cropped Image Preview";
-
-    // Append the new image
-    previewContainer.appendChild(newImage);
-
-    // Add the cropped image to all image containers
-    var containers = document.querySelectorAll('.image-container');
-    containers.forEach(function (container) {
-        container.innerHTML = ''; // Clear previous images
-        var clonedImage = newImage.cloneNode(); // Clone the cropped image
-        container.appendChild(clonedImage);
-    });
-
-    // Update the image in the cropper box
-    $image.cropper('replace', imageData);
-});
-
+            $('#saveImageBtn').on('click', function () {
+              var imageData = result.toDataURL('image/jpeg');
+          
+              var formData = new FormData();
+              var byteString = atob(imageData.split(',')[1]);
+              var arrayBuffer = new ArrayBuffer(byteString.length);
+              var uintArray = new Uint8Array(arrayBuffer);
+          
+              for (var i = 0; i < byteString.length; i++) {
+                  uintArray[i] = byteString.charCodeAt(i);
+              }
+          
+              var blob = new Blob([arrayBuffer], { type: 'image/jpeg' });
+              formData.append('file', blob, 'image.jpg');
+          
+              fetch('http://localhost:3001/api/cropImage', {
+                  method: 'POST',
+                  body: formData
+              })
+              .then(response => response.json())
+              .then(data => {
+                  // Show success toast
+                  Toastify({
+                      text: 'Image has been saved!',
+                      backgroundColor: "green",
+                      duration: 3000
+                  }).showToast();
+          
+                  // Find the preview container
+                  var previewContainer = document.querySelector('.image-preview-container');
+          
+                  // Create a new image element
+                  var newImage = document.createElement('img');
+                  newImage.src = imageData;
+                  newImage.style.width = "100px";
+                  newImage.style.height = "100px";
+                  newImage.style.borderRadius = "5px";
+                  newImage.style.objectFit = "cover";  // Ensures the cropped image looks similar
+                  newImage.alt = "Cropped Image Preview";
+          
+                  // Remove the last image before appending the new one
+                  // var lastImage = previewContainer.querySelector('img');
+                  // if (lastImage) {
+                  //     previewContainer.removeChild(lastImage);
+                  // }
+          
+                  // Append the new image
+                  previewContainer.appendChild(newImage);
+          
+                  // Add the cropped image to all image containers
+                  var containers = document.querySelectorAll('.image-container');
+                  containers.forEach(function (container) {
+                      container.innerHTML = ''; // Clear previous images
+                      var clonedImage = newImage.cloneNode(); // Clone the cropped image
+                      container.appendChild(clonedImage);
+                  });
+          
+                  // Update the image in the cropper box
+                  $image.cropper('replace', imageData);
+              })
+              .catch(error => {
+                  console.error('Error uploading image:', error);
+                  
+                  // Show error toast
+                  Toastify({
+                      text: 'Error saving image.',
+                      backgroundColor: "red",
+                      duration: 3000
+                  }).showToast();
+              });
+          });
+          
 
             //   $('#saveImageBtn').on('click', function() {
             //     var imageData = result.toDataURL('image/jpeg');

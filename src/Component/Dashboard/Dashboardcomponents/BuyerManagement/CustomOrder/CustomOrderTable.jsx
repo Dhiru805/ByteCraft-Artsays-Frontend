@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from '../../ConfirmationDialog';
 import useUserType from '../../urlconfig';
+import NegotiateModal from './Negotiate'
 
 function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -10,6 +11,29 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
 
     const navigate = useNavigate();
     const userType = useUserType();
+        const [showModal, setShowModal] = useState(false);
+        const [selectedRequest, setSelectedRequest] = useState(null);
+    
+    const handleOpenModal = (request) => {
+      setSelectedRequest(request);
+      setShowModal(true);
+    };
+    
+    const handleCloseModal = () => {
+      setShowModal(false);
+      setSelectedRequest(null);
+    };
+    
+    const handleSaveChanges = (updatedData) => {
+        console.log("Updated Data:", updatedData);
+        setBuyerRequests((prevRequests) =>
+          prevRequests.map((request) =>
+            request._id === updatedData._id ? { ...request, ...updatedData } : request
+          )
+        );
+        handleCloseModal();
+      };
+      
 
     const handleDeleteCancel = () => {
         setIsDeleteDialogOpen(false);
@@ -144,7 +168,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                                                                 type="button"
                                                                 className="btn btn-outline-secondary btn-sm"
                                                                 title="Negotiate"
-                                                            // onClick={() => handleOpenModal(request)}
+                                                                onClick={() => handleOpenModal(request)}
                                                             >
                                                                 <i className="fas fa-handshake"></i>
                                                             </button>
@@ -169,7 +193,13 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                     </div>
                 )}
             </div>
-
+            {showModal && (
+  <NegotiateModal 
+    request={selectedRequest}
+    onClose={handleCloseModal}
+    onSubmit={handleSaveChanges}
+  />
+)}
             {isDeleteDialogOpen && (
                 <ConfirmationDialog
                     onClose={handleDeleteCancel}

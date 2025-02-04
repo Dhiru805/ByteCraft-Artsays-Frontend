@@ -3,25 +3,34 @@ import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
 import $ from "jquery";
 
-function ImageCropping({ onCroppedImage, initialImage }) {
+function ImageCropping({ onCroppedImage, initialImage, editingImageIndex }) {
   const [cropper, setCropper] = useState(null);
   const [loading, setLoading] = useState(false);
   const imageRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
   const [image, setImage] = useState(initialImage);
   const [croppedImage, setCroppedImage] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(16 / 9);
+  let cropperInstance = useRef(null);
 
-  const handleCrop = () => {
-    if (cropper) {
-      console.log("Crop button clicked!");
-      const canvas = cropper.getCroppedCanvas(); // Removed width and height
-      const dataURL = canvas.toDataURL("image/png");
-      console.log("Cropped Image Data URL: ", dataURL);  // Log the data URL to the console
-      onCroppedImage(dataURL);
-      $('#getCroppedCanvasModal').modal("show");
-      document.getElementById('download').href = dataURL;
+  useEffect(() => {
+    setImage(initialImage);
+
+    if (imageRef.current) {
+      imageRef.current.onload = () => {
+        if (cropperInstance.current) {
+          cropperInstance.current.destroy(); // Destroy old instance
+        }
+
+        cropperInstance.current = new Cropper(imageRef.current, {
+          aspectRatio: aspectRatio,
+          viewMode: 1,
+        });
+      };
     }
-  };
+  }, [initialImage, aspectRatio]);
+
+  
 
 
 
@@ -85,7 +94,7 @@ function ImageCropping({ onCroppedImage, initialImage }) {
                   <div className="img-container">
                     <img
                       id="image"
-                      src={initialImage || "DashboardAssets/assets/images/auth_bg.jpg"}
+                      src={image || "DashboardAssets/assets/images/auth_bg.jpg"}
                       className="img-responsive"
                       alt="Picture"
                     />
@@ -557,7 +566,7 @@ function ImageCropping({ onCroppedImage, initialImage }) {
                       type="button"
                       className="btn btn-sm btn-danger"
                       data-method="getCroppedCanvas"
-                      onClick={handleCrop}
+                      // onClick={handleCrop}
                     >
                       {" "}
                       <span
