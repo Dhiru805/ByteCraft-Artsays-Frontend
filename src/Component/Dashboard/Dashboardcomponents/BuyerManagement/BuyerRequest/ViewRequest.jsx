@@ -16,6 +16,7 @@ function ViewBuyerRequest() {
     const [budget, setBudget] = useState('');
     const [artistId, setArtistId] = useState('');
     const [artists, setArtists] = useState([]);
+   const [image, setImage] = useState('');
 
     useEffect(() => {
         const fetchArtists = async () => {
@@ -32,8 +33,9 @@ function ViewBuyerRequest() {
             setProductName(request.ProductName || '');
             setDescription(request.Description || '');
             setBudget(request.Budget || '');
-            if (request.Artist?.id && request.Artist.id._id) {
-                setArtistId(request.Artist.id._id);
+            setImage(request.BuyerImage ? `http://localhost:3001/${request.BuyerImage}` : '');
+            if (request.Buyer?.id && request.Buyer.id._id) {
+                setArtistId(request.Buyer.id._id);
             }
         }
     }, [request]);
@@ -58,62 +60,84 @@ function ViewBuyerRequest() {
             </div>
 
             <div className="row clearfix">
-                <div className="col-lg-12">
-                    <div className="card">
-                        <div className="body">
-                            <div className="form-group">
-                                <label>Product Name</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    value={productName}
-
-                                />
-                            </div>
-
-                            <div className="form-group mt-3">
-                                <label>Artist</label>
-                                {artistId && artists.some(artist => artist._id === artistId) ? (
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        value={artists.find((artist) => artist._id === artistId)?.name + ' ' + artists.find((artist) => artist._id === artistId)?.lastName || ''}
-                                    />
-                                ) : (
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        value=""
-                                    />
-                                )}
-                            </div>
-
-
-                            <div className="form-group mt-3">
-                                <label>Budget</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    value={budget}
-
-                                />
-                            </div>
-
-                            <div className="form-group mt-3">
-                                <label>Description</label>
-                                <div className="form-group mt-3">
-                                    <ReactQuill
-                                        value={description}
-                                        readOnly={true}
-                                        theme="snow"
-                                        modules={{ toolbar: false }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                           <div className="col-lg-12">
+                               <div className="card">
+                                   <div className="body">
+                                       <div className="row d-flex align-items-stretch">
+                                         
+                                           <div className="col-md-12 d-flex align-items-center" style={{ paddingBottom: '20px' }}>
+                                               <div className="media-left m-r-20" style={{ width: '140px', height: '140px', overflow: 'hidden' }}>
+                                                   {image ? (
+                                                       <img
+                                                           src={image}
+                                                           alt="Buyer"
+                                                           className="img-fluid rounded shadow w-100"
+                                                           style={{ height: '100%', objectFit: 'cover' }}
+                                                       />
+                                                   ) : (
+                                                       <p className="align-self-center"></p>
+                                                   )}
+                                               </div>
+                                               <div className="flex-grow-1">
+                                                   <div className="row">
+                                                       <div className="col-md-6">
+                                                           <div className="form-group">
+                                                               <label>Product Name</label>
+                                                               <input type="text" className="form-control" value={productName} readOnly />
+                                                           </div>
+                                                       </div>
+                                                       <div className="col-md-6">
+                                                           <div className="form-group">
+                                                               <label>Buyer</label>
+                                                               <input
+                                                                   type="text"
+                                                                   className="form-control"
+                                                                   value={artistId ? artists.find(a => a._id === artistId)?.name + ' ' + artists.find(a => a._id === artistId)?.lastName : 'Not Assigned'}
+                                                                   readOnly
+                                                               />
+                                                           </div>
+                                                       </div>
+                                                   </div>
+                                               </div>
+                                           </div>
+           
+                                      
+                                           <div className="col-md-12">
+                                               <div className="form-group mt-3">
+                                                   <label>Budget</label>
+                                                   <input type="text" className="form-control" value={budget} readOnly />
+                                               </div>
+           
+                                               <div className="form-group mt-3">
+                                                   <label>Description</label>
+                                                   <ReactQuill value={description} readOnly theme="snow" modules={{ toolbar: false }} />
+                                               </div>
+           
+                                               {request?.NegiotaiteBudget || request?.BuyerNotes ? <hr /> : null}
+           
+                                               {request?.NegiotaiteBudget && request?.BuyerNotes && (
+                                                   <label className="mt-3 d-block">Negotiation By Buyer</label>
+                                               )}
+           
+                                               {request?.NegiotaiteBudget && (
+                                                   <div className="form-group mt-3">
+                                                       <label>Negotiate Budget</label>
+                                                       <input type="text" className="form-control" value={request.NegiotaiteBudget} readOnly />
+                                                   </div>
+                                               )}
+           
+                                               {request?.Notes && (
+                                                   <div className="form-group mt-3">
+                                                       <label>Notes</label>
+                                                       <textarea className="form-control" value={request.BuyerNotes} readOnly />
+                                                   </div>
+                                               )}
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
         </div>
     );
 }

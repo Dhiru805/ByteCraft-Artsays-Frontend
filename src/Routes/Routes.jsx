@@ -74,8 +74,16 @@ import ViewBuyerRequest from "../Component/Dashboard/Dashboardcomponents/BuyerMa
 import ViewBuyerRequestToArtist from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerRequestToArtist/ViewBuyerRequestToArtist";
 import ProductUpload from "../Component/Dashboard/Dashboardcomponents/ProductDetails/productUploade";
 
-import BlogRequest from "../Component/Dashboard/Dashboardcomponents/Blog/SuperAdminBlog/BlogRequest"
+import BlogRequest from "../Component/Dashboard/Dashboardcomponents/Blog/SuperAdminBlog/BlogRequest";
 
+//Artist
+import ArtistBlogRequestTable from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistBlogRequest/BlogRequestTable";
+import ArtistBlogView from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistBlogRequest/Artistviewblog";
+import Artistblogdetails from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistBlogRequest/Artistblogdetails";
+
+//Saler
+import SellerManageTable from "../Component/Dashboard/Dashboardcomponents/Seller/SellerManageTable";
+import SellerProfile from  "../Component/Dashboard/Dashboardcomponents/Seller/SellerUserProfile/UserProf";
 // import ResellPage from "../Pages/ResellPage/ResellPage";
 
 
@@ -157,7 +165,15 @@ const AppRoutes = () => {
   <Route path="Appchat" element={<AppChat />} />
 
   {/* Artist Routes */}
+
+   {/* Artist ManageTable */}
   <Route path="ArtistManageTable" element={<ArtistManageTable />} />
+
+   {/* Artist Blog  */}
+  <Route path="artistblogrequest" element={<ArtistBlogRequestTable/>} />
+  <Route path="artistblogrequest/viewblog/:blogId" element={<ArtistBlogView/>} />
+  <Route path="artistblogrequest/viewblog/blogdetails/:blogId" element={<Artistblogdetails/>} />
+
   <Route path="artists/:id" element={<ArtistDetail />} />
   <Route path="ArtistManageTable/ArtistProfile/:userId" element={<ArtistProfile />} />
   <Route path="ArtistManageTable/ArtistProfileView/:userId" element={<ArtistProfileView />} />
@@ -176,6 +192,10 @@ const AppRoutes = () => {
   <Route path="BuyerRequest/ViewBuyerrequest/:id" element={<ViewBuyerRequest />} />
   <Route path="buyerrequesttoartist" element={<BuyerRequestToArtist />} />
   <Route path="buyerrequesttoartist/viewbuyerrequest/:id" element={<ViewBuyerRequestToArtist />} />
+
+    {/* Saler Routes */}
+    <Route path="sellermanagetable" element={<SellerManageTable/>} />
+    <Route path="sellermanagetable/sellerprofile/:userId" element={<SellerProfile />} />
 
   {/* User Profile Route */}
   <Route path="completeprofile/:userId" element={<UserProfile />} />

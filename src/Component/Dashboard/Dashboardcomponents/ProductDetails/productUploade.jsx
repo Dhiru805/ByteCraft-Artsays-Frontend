@@ -165,7 +165,7 @@ function ProductUpload() {
     const updatedImages = [...images];
     updatedImages[index] = {
       ...updatedImages[index],
-      removed: true, // This flag hides the image
+      removed: true, 
     };
   
     setSelectedImageIndex(index);
@@ -294,7 +294,7 @@ function ProductUpload() {
                     type="text"
                     name="productName"
                     value={formData.productName}
-                    onChange={handleChange}
+                    // onChange={handleChange}
                     className="form-control"
                     placeholder="Enter Product Name"
                     required
@@ -363,17 +363,42 @@ function ProductUpload() {
                 </div>
 
                 {/* Add multiple image fields */}
-                <div className="form-group mt-3">
-                  {/* <label>Images</label>  */}
-                  <input
-                    type="file"
-                    name="images"
-                    onChange={handleChange}
-                    className="form-control-file"
-                    multiple
-                    accept="image/*"
-                  />
-                </div>
+                <label
+                    className="btn btn-sm btn-secondary btn-upload"
+                    htmlFor="inputImage"
+                    title="Upload image file"
+                  >
+                    <input
+                      type="file"
+                      className="sr-only"
+                      id="inputImage"
+                      name="file"
+                      accept="image/*"
+                      multiple
+                    />
+                    <span
+                      className="docs-tooltip"
+                      data-toggle="tooltip"
+                      title=""
+                      data-original-title="Import image with Blob URLs"
+                      aria-describedby="tooltip497647"
+                    >
+                      {" "}
+                      <span className="fa fa-upload" />{" "}
+                    </span>
+                  </label>
+     
+                  <div class="input-image-preview-container">
+                    <h5>Selected Image Preview:</h5>
+                    <div className="image-preview-container" style={{
+    display: 'flex',
+    flexDirection: 'row', 
+    gap: '10px', 
+    flexWrap: 'wrap', 
+  }}>
+                    <div id="imagePreviewList"></div>
+                  </div>
+                  </div>
 
                 {error && <div style={{ color: "red" }}>{error}</div>}
 
@@ -398,7 +423,8 @@ function ProductUpload() {
               display: selectedImageIndex === index ? 'none' : 'block', 
             }}
           />
-          {images.length >= 3 && images.length <= 10 && selectedImageIndex !== index && (
+          {/* ✅ Ensure Edit Button is Always Visible for Non-Removed Images */}
+          {!image.removed && selectedImageIndex !== index && (
             <button
               className="fa fa-edit position-absolute"
               style={{
@@ -409,7 +435,7 @@ function ProductUpload() {
                 border: 'none',
                 padding: '5px',
                 borderRadius: '50%',
-                display: selectedImageIndex === index || image.removed ? 'none' : 'block', 
+                cursor: 'pointer'
               }}
               onClick={() => handleEditClick(image, index)} 
             ></button>
@@ -422,14 +448,15 @@ function ProductUpload() {
 
 
 
-                {editingImage && (
+
+              
                   <div className="form-group mt-3 main-image">
                     <ImageEditor
                       initialImage={editingImage} 
                       editingImageIndex={editingImageIndex}
                     />
                   </div>
-                )}
+             
 
 
 

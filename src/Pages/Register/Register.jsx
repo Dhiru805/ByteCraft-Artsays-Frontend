@@ -137,7 +137,7 @@ const Register = () => {
                               checked={userType === 'Buyer'}
                               onChange={handleRadioChange}
                             />
-                            <label htmlFor="buyer">Buyer/Collector</label>
+                            <label htmlFor="buyer">Buyer</label>
 
                             <input
                               type="radio"
@@ -148,6 +148,16 @@ const Register = () => {
                               onChange={handleRadioChange}
                             />
                             <label htmlFor="artist">Artist</label>
+                            <input
+                              type="radio"
+                              id="seller"
+                              name="userType"
+                              value="Seller"
+                              checked={userType === 'Seller'}
+                              onChange={handleRadioChange}
+                            />
+                            <label htmlFor="seller">Seller</label>
+
                           </div>
                           <div className="d-flex">
                             <input

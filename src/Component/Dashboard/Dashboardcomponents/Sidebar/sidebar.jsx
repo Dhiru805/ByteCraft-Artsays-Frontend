@@ -22,55 +22,122 @@ const Sidebar = () => {
       subTabs: []
     },
     {
+      label: "Artist",
+      icon: "fas fa-user",
+      path: `#artist-management`,
+      subTabs: [
+        { label: "Management", path: `/${userType}/Dashboard/ArtistManageTable` },
+        { label: "Products", path: `#` },
+        { label: "Product Sell", path: `#` },
+        { label: "Blogs", path: `#` },
+        { label: "Blog Request", path: `/${userType}/Dashboard/artistblogrequest` },
+        { label: "Product Request", path: `#` },
+        { label: "Transaction", path: `#` },
+        { label: "Packaging Material", path: `#` },
+      ]
+    },
+    {
+      label: "Buyer",
+      icon: "fa-handshake",
+      path: `#Buyer-management`,
+      subTabs: [
+        { label: "Management", path: `/${userType}/Dashboard/BuyerManageTable` },
+        { label: "Product Purches", path: `#` },
+        { label: "Product Request", path: `/${userType}/Dashboard/BuyerRequest` },
+        { label: "Resell Product", path: `#` },
+        { label: "Transaction", path: `#` },
+        { label: "Packaging Material", path: `#` }
+        // { label: "Buyer Custom Request", path: `/${userType}/Dashboard/BuyerCustomrequest` },
+        // { label: "Buyer Request To Artist", path: `/${userType}/Dashboard/buyerrequesttoartist` },
+        // { label: "Buyer Transactions", path: `/${userType}/Dashboard/Appchat` },
+      ]
+    },
+    {
+      label: "Seller",
+      icon: "fa fa-tag",
+      path: `#Seller-management`,
+      subTabs: [
+        { label: " Management", path: `/${userType}/Dashboard/sellermanagetable` },
+        { label: "Products", path: `#` },
+        { label: "Product Sale", path: `#` },
+        { label: "Transaction", path: `#` },
+        { label: "Packaging Material", path: `#` }
+      ]
+    },
+    {
+      label: "Packaging Material",
+      icon: "fa fa-archive",
+      path: `#Packaging Material`,
+      subTabs: [
+        { label: "Product Purches", path: `#` },
+        { label: "Transaction", path: `#` },
+      ]
+    },
+    {
       label: "Blog",
-      icon: "fa-th-large",
+      icon: "fa fa-newspaper",
       path: `#Blog`,
       subTabs: [
-        { label: "Blogs", path: `/${userType}/Dashboard/Bloglist` },
+        { label: "All Blogs", path: `/${userType}/Dashboard/Bloglist` },
         { label: "Blog Requests", path: `/${userType}/Dashboard/BlogRequest` }
       ]
     },
+      // {
+      //   label: "Chat",
+      //   icon: "fa-comments",
+      //   path: `#Widget`,
+      //   subTabs: [
+      //     { label: "Inbox", path: `/${userType}/Dashboard/Appinbox` },
+      //     { label: "Contact", path: `/${userType}/Dashboard/Appcontact` },
+      //     { label: "Chat", path: `/${userType}/Dashboard/Appchat` }
+      //   ]
+      // },
       {
-        label: "Chat",
-        icon: "fa-comments",
-        path: `#Widget`,
+        label: "Product",
+        icon: "fa fa-cart-plus",
+        path: `#Product`,
         subTabs: [
-          { label: "Inbox", path: `/${userType}/Dashboard/Appinbox` },
-          { label: "Contact", path: `/${userType}/Dashboard/Appcontact` },
-          { label: "Chat", path: `/${userType}/Dashboard/Appchat` }
+          { label: "All Products", path: `/${userType}/Dashboard/Product-uploade` },
+          { label: "Products Request", path: `#` },
+          { label: "Product Purches", path: `#` }
         ]
       },
+
       {
-        label: "Artist Details",
-        icon: "fas fa-user",
-        path: `#artist-management`,
+        label: "Resale",
+        icon: "fa fa-reply",
+        path: `#Resale`,
         subTabs: [
-          { label: "Artist Products", path: `/${userType}/Dashboard/artists/:id` },
-          { label: "Artist Management", path: `/${userType}/Dashboard/ArtistManageTable` }
+          { label: "All Products", path: `#` },
+          { label: "Product Purches", path: `#` },
+          { label: "Transaction", path: `#` }
         ]
       },
+
       {
-        label: "Product Details",
-        icon: "fa-tags",
-        path: `#Product-management`,
+        label: "Bidding",
+        icon: "fa fa-gavel",
+        path: `#Bidding`,
         subTabs: [
-          { label: "Products Upload", path: `/${userType}/Dashboard/Product-uploade` },
-          { label: "Products", path: `/${userType}/Dashboard/artists/:id` },
-          { label: "Product Management Table", path: `/${userType}/Dashboard/ArtistManageTable` }
+          { label: "All Products", path: `#` },
+          { label: "Product Status", path: `#` },
+          { label: "Edit product", path: `#` },
+          { label: "Transaction", path: `#` }
         ]
       },
+
       {
-        label: "Buyer Management",
-        icon: "fa-handshake",
-        path: `#Buyer-management`,
+        label: "Transaction",
+        icon: "fa fa-credit-card",
+        path: `#Transaction`,
         subTabs: [
-          { label: "Buyer Management", path: `/${userType}/Dashboard/BuyerManageTable` },
-          { label: "Buyer Request", path: `/${userType}/Dashboard/BuyerRequest` },
-          { label: "Buyer Custom Request", path: `/${userType}/Dashboard/BuyerCustomrequest` },
-          { label: "Buyer Request To Artist", path: `/${userType}/Dashboard/buyerrequesttoartist` },
-          { label: "Buyer Transactions", path: `/${userType}/Dashboard/Appchat` },
+          { label: "All Transaction", path: `#` },
+          { label: "Product Transaction", path: `#` },
+          { label: "Resale product Transacticon", path: `#` },
+          { label: "Bidding Transaction", path: `#` }
         ]
-      }
+      },
+     
     ];
     
 

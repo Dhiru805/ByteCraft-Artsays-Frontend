@@ -205,8 +205,7 @@ function ViewBuyerRequest() {
                     <div className="card">
                         <div className="body">
                             <div className="row d-flex align-items-stretch">
-                                {/* Image Section */}
-                                <div className="col-md-12 d-flex" style={{ paddingBottom: '20px' }}>
+                                <div className="col-md-12 d-flex align-items-center" style={{ paddingBottom: '20px' }}>
                                     <div className="media-left m-r-20" style={{ width: '140px', height: '140px', overflow: 'hidden' }}>
                                         {image ? (
                                             <img
@@ -219,25 +218,30 @@ function ViewBuyerRequest() {
                                             <p className="align-self-center"></p>
                                         )}
                                     </div>
-                                </div>
-
-                                {/* Data Section (Below Image) */}
-                                <div className="col-md-12">
-                                    <div className="row">
-                                        <div className="col-6" style={{ paddingRight: '10px' }}>
-                                            <div className="form-group">
-                                                <label>Product Name</label>
-                                                <input type="text" className="form-control" value={productName} readOnly />
+                                    <div className="flex-grow-1">
+                                        <div className="row">
+                                            <div className="col-md-6">
+                                                <div className="form-group">
+                                                    <label>Product Name</label>
+                                                    <input type="text" className="form-control" value={productName} readOnly />
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="col-6" style={{ paddingLeft: '10px' }}>
-                                            <div className="form-group">
-                                                <label>Artist</label>
-                                                <input type="text" className="form-control" value={artistId ? artists.find(a => a._id === artistId)?.name + ' ' + artists.find(a => a._id === artistId)?.lastName : 'Not Assigned'} readOnly />
+                                            <div className="col-md-6">
+                                                <div className="form-group">
+                                                    <label>Artist</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        value={artistId ? artists.find(a => a._id === artistId)?.name + ' ' + artists.find(a => a._id === artistId)?.lastName : 'Not Assigned'}
+                                                        readOnly
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
+                                <div className="col-md-12">
                                     <div className="form-group mt-3">
                                         <label>Budget</label>
                                         <input type="text" className="form-control" value={budget} readOnly />
@@ -249,6 +253,10 @@ function ViewBuyerRequest() {
                                     </div>
 
                                     {request?.NegiotaiteBudget || request?.Notes ? <hr /> : null}
+
+                                    {request?.NegiotaiteBudget && request?.Notes && (
+                                        <label className="mt-3 d-block">Negotiation By Artist</label>
+                                    )}
 
                                     {request?.NegiotaiteBudget && (
                                         <div className="form-group mt-3">
@@ -274,4 +282,3 @@ function ViewBuyerRequest() {
 }
 
 export default ViewBuyerRequest;
-

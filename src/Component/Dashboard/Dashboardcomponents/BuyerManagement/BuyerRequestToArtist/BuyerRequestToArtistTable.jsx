@@ -124,11 +124,12 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests ,handleRejectBuyerRe
                                                             type="button"
                                                             className="btn btn-outline-primary btn-sm mr-2"
                                                             title="Navigate"
-                                                            onClick={() =>
+                                                            onClick={() => {
+                                                                console.log('Navigating to request with ID:', request._id); 
                                                                 navigate(`/${userType}/Dashboard/buyerrequesttoartist/viewbuyerrequest/${request._id}`, {
                                                                     state: { request },
-                                                                })
-                                                            }
+                                                                });
+                                                            }}
                                                         >
                                                             <i className="fa fa-eye"></i>
                                                         </button>

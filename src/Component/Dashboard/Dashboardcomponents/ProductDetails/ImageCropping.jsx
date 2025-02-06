@@ -30,11 +30,6 @@ function ImageCropping({ onCroppedImage, initialImage, editingImageIndex }) {
     }
   }, [initialImage, aspectRatio]);
 
-  
-
-
-
-
   const loadScript = (src) => {
     return new Promise((resolve, reject) => {
       const script = document.createElement("script");
@@ -52,8 +47,12 @@ function ImageCropping({ onCroppedImage, initialImage, editingImageIndex }) {
         setLoading(true);
 
         // Load external scripts
-        await loadScript("/DashboardAssets/assets/vendor/cropper/cropper.min.js");
-        await loadScript("/DashboardAssets/assets/vendor/cropper/cropper-init.js");
+        await loadScript(
+          "/DashboardAssets/assets/vendor/cropper/cropper.min.js"
+        );
+        await loadScript(
+          "/DashboardAssets/assets/vendor/cropper/cropper-init.js"
+        );
 
         if (imageRef.current) {
           const cropperInstance = new Cropper(imageRef.current, {
@@ -77,8 +76,6 @@ function ImageCropping({ onCroppedImage, initialImage, editingImageIndex }) {
 
     initCropper();
   }, []);
-
-
 
   return (
     <>
@@ -522,6 +519,7 @@ function ImageCropping({ onCroppedImage, initialImage, editingImageIndex }) {
                       id="inputImage"
                       name="file"
                       accept="image/*"
+                      multiple
                     />
                     <span
                       className="docs-tooltip"
@@ -534,16 +532,12 @@ function ImageCropping({ onCroppedImage, initialImage, editingImageIndex }) {
                       <span className="fa fa-upload" />{" "}
                     </span>
                   </label>
-                 
-                    {/* <div className="image-preview-container">
-                      <h5>Selected Image Preview:</h5>
-                      <img
-                        src={initialImage}
-                        alt="Selected"
-                        style={{ width: '150px', height: 'auto', borderRadius: '8px' }} // Display small preview
-                      />
-                    </div> */}
-                  
+
+                  {/* <div class="input-image-preview-container">
+                    <h5>Selected Image Preview:</h5>
+                    <div id="imagePreviewList"></div>
+                  </div>
+                   */}
                   <button
                     type="button"
                     className="btn btn-sm  btn-secondary"
@@ -560,7 +554,7 @@ function ImageCropping({ onCroppedImage, initialImage, editingImageIndex }) {
                       <span className="fa fa-power-off" />{" "}
                     </span>
                   </button>
-                  
+
                   <div className="btn-group">
                     <button
                       type="button"
@@ -859,14 +853,13 @@ function ImageCropping({ onCroppedImage, initialImage, editingImageIndex }) {
                       </span>{" "}
                     </label>
                   </div>
-
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-     
+
       {/* Show the cropped image in modal */}
       <div
         className="modal docs-cropped"
@@ -895,15 +888,16 @@ function ImageCropping({ onCroppedImage, initialImage, editingImageIndex }) {
               >
                 Close
               </button>
-              <button type="button" class="btn btn-primary" id="saveImageBtn">Save</button>
+              <button type="button" class="btn btn-primary" id="saveImageBtn">
+                Save
+              </button>
 
-              <a class="btn btn-primary" id="download" href="javascript:void(0);" download="cropped.html">Download</a>
+              {/* <a class="btn btn-primary" id="download" href="javascript:void(0);" download="cropped.html">Download</a> */}
             </div>
           </div>
         </div>
       </div>
     </>
-
   );
 }
 
