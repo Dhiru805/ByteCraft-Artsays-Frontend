@@ -1,34 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
-import Cropper from "cropperjs";
-import "cropperjs/dist/cropper.css";
-import $ from "jquery";
+import React, { useEffect } from "react";
 
-function ImageCropping({ onCroppedImage, initialImage, editingImageIndex }) {
-  const [cropper, setCropper] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const imageRef = useRef(null);
-  const [showModal, setShowModal] = useState(false);
-  const [image, setImage] = useState(initialImage);
-  const [croppedImage, setCroppedImage] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(16 / 9);
-  let cropperInstance = useRef(null);
 
-  useEffect(() => {
-    setImage(initialImage);
 
-    if (imageRef.current) {
-      imageRef.current.onload = () => {
-        if (cropperInstance.current) {
-          cropperInstance.current.destroy(); // Destroy old instance
-        }
 
-        cropperInstance.current = new Cropper(imageRef.current, {
-          aspectRatio: aspectRatio,
-          viewMode: 1,
-        });
-      };
-    }
-  }, [initialImage, aspectRatio]);
+function ImageCropping() {
+
+
+
+ 
 
   const loadScript = (src) => {
     return new Promise((resolve, reject) => {
@@ -44,33 +23,15 @@ function ImageCropping({ onCroppedImage, initialImage, editingImageIndex }) {
   useEffect(() => {
     const initCropper = async () => {
       try {
-        setLoading(true);
-
-        // Load external scripts
+       
         await loadScript(
           "/DashboardAssets/assets/vendor/cropper/cropper.min.js"
         );
         await loadScript(
           "/DashboardAssets/assets/vendor/cropper/cropper-init.js"
         );
-
-        if (imageRef.current) {
-          const cropperInstance = new Cropper(imageRef.current, {
-            aspectRatio: 16 / 9,
-            viewMode: 1,
-          });
-
-          setCropper(cropperInstance);
-
-          // Cleanup function to destroy Cropper instance
-          return () => {
-            cropperInstance.destroy();
-          };
-        }
       } catch (err) {
         console.error("Failed to load script:", err);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -91,7 +52,7 @@ function ImageCropping({ onCroppedImage, initialImage, editingImageIndex }) {
                   <div className="img-container">
                     <img
                       id="image"
-                      src={image || "DashboardAssets/assets/images/auth_bg.jpg"}
+                      src={"DashboardAssets/assets/images/auth_bg.jpg"}
                       className="img-responsive"
                       alt="Picture"
                     />
@@ -508,7 +469,7 @@ function ImageCropping({ onCroppedImage, initialImage, editingImageIndex }) {
                       <span className="fa fa-refresh" />{" "}
                     </span>
                   </button>
-                  <label
+                  {/* <label
                     className="btn btn-sm btn-secondary btn-upload"
                     htmlFor="inputImage"
                     title="Upload image file"
@@ -531,14 +492,10 @@ function ImageCropping({ onCroppedImage, initialImage, editingImageIndex }) {
                       {" "}
                       <span className="fa fa-upload" />{" "}
                     </span>
-                  </label>
+                  </label> */}
 
-                  {/* <div class="input-image-preview-container">
-                    <h5>Selected Image Preview:</h5>
-                    <div id="imagePreviewList"></div>
-                  </div>
-                   */}
-                  <button
+
+                  {/* <button
                     type="button"
                     className="btn btn-sm  btn-secondary"
                     data-method="destroy"
@@ -553,10 +510,10 @@ function ImageCropping({ onCroppedImage, initialImage, editingImageIndex }) {
                       {" "}
                       <span className="fa fa-power-off" />{" "}
                     </span>
-                  </button>
+                  </button> */}
 
                   <div className="btn-group">
-                    <button
+                    {/* <button
                       type="button"
                       className="btn btn-sm btn-danger"
                       data-method="getCroppedCanvas"
@@ -571,7 +528,7 @@ function ImageCropping({ onCroppedImage, initialImage, editingImageIndex }) {
                         {" "}
                         Get Cropped Canvas{" "}
                       </span>{" "}
-                    </button>
+                    </button> */}
                   </div>
                   <button
                     type="button"
@@ -763,7 +720,7 @@ function ImageCropping({ onCroppedImage, initialImage, editingImageIndex }) {
                 </div>
                 <div className="col-lg-4 col-md-12 docs-toggles">
                   {/* .btn groups */}
-                  <div
+                  {/* <div
                     className="btn-group btn-group-justified"
                     data-toggle="buttons"
                   >
@@ -852,6 +809,20 @@ function ImageCropping({ onCroppedImage, initialImage, editingImageIndex }) {
                         Free{" "}
                       </span>{" "}
                     </label>
+                  </div> */}
+                  <div className="col-lg-8 col-md-12 docs-buttons d-flex justify-content-start">
+                    <div className="btn-group">
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-danger"
+                        style={{ width: "300px" }}
+                        data-method="getCroppedCanvas"
+                      >
+                        <span className="docs-tooltip" data-toggle="tooltip" title="Preview Image">
+                          Preview Image
+                        </span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

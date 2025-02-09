@@ -3,7 +3,7 @@ import { useLocation, Link } from "react-router-dom";
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 import axios from 'axios';
-import useUserType from '../../urlconfig';
+import useUserType from '../../../urlconfig';
 
 function ViewBuyerRequest() {
     const location = useLocation();
@@ -35,15 +35,15 @@ function ViewBuyerRequest() {
             <div className="block-header">
                 <div className="row">
                     <div className="col-lg-6 col-md-6 col-sm-12">
-                        <h2>View Artist To Buyer Request</h2>
+                        <h2>View Custom Request</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
                                 <a href="/"><i className="fa fa-dashboard"></i></a>
                             </li>
                             <li className="breadcrumb-item active">
-                                <Link to={`/${userType}/Dashboard/buyerrequesttoartist`}>Buyer Request To Artist</Link>
+                                <Link to={`/${userType}/Dashboard/customrequest`}>Custom Request</Link>
                             </li>
-                            <li className="breadcrumb-item">View Artist To Buyer Request</li>
+                            <li className="breadcrumb-item">View Custom Request</li>
                         </ul>
                     </div>
                 </div>

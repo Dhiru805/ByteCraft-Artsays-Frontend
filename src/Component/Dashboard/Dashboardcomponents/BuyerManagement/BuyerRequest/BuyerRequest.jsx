@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import BuyerrequestHeader from "./BuyerRequestHeader";
-import BuyerManageTable from "./BuyerRequestTable";
+import BuyerManageTable from "../../ProductDetails/CustomOrder/Artist/BuyerRequestTable";
 import getAPI from "../../../../../api/getAPI";
 import { useConfirm } from '../../StatusConfirm';
 import { toast } from 'react-toastify';
@@ -54,12 +54,7 @@ const BuyerRequest = () => {
     return (
         <>
             <BuyerrequestHeader />
-            <BuyerManageTable 
-                buyerRequests={buyerRequests}
-                handleRejectBuyerRequest={handleRejectBuyerRequest} 
-                updateBuyerRequestStatus={updateBuyerRequestStatus}
-                setBuyerRequests={setBuyerRequests} 
-            />
+            
         </>
     );
 };

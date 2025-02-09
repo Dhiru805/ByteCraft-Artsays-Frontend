@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ConfirmationDialog from '../../ConfirmationDialog';
-import useUserType from '../../urlconfig';
+import ConfirmationDialog from '../../../ConfirmationDialog';
+import useUserType from '../../../urlconfig';
 import NegotiateModal from './Negotiate'
 
 function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
@@ -52,10 +52,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
         setIsDeleteDialogOpen(true);
     };
 
-    const convertToINR = (budget) => {
-        return (budget).toLocaleString("en-IN", { style: "currency", currency: "INR" });
-    };
-
+   
     return (
         <>
             <div className="container-fluid">
@@ -136,7 +133,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                                                             className="btn btn-outline-primary btn-sm mr-2"
                                                             title="Navigate"
                                                             onClick={() =>
-                                                                navigate(`/${userType}/Dashboard/BuyerCustomrequest/ViewCustomrequest/${request._id}`, {
+                                                                navigate(`/${userType}/Dashboard/customrequest/viewCustomrequest/${request._id}`, {
                                                                     state: { request },
                                                                 })
                                                             }
@@ -148,7 +145,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                                                             className="btn btn-outline-info btn-sm mr-2"
                                                             title="Edit"
                                                             onClick={() =>
-                                                                navigate(`/${userType}/Dashboard/BuyerCustomrequest/UpdateCustomrequest/${request._id}`, {
+                                                                navigate(`/${userType}/Dashboard/customrequest/updatecustomrequest/${request._id}`, {
                                                                     state: { request },
                                                                 })
                                                             }

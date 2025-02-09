@@ -1,1073 +1,426 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import ImageEditor from "../../../Dashboard/Dashboardcomponents/ProductDetails/ImageCropping";
 
-function BlogPost() {
-    const loadScript = (src) => {
-      return new Promise((resolve, reject) => {
-        const script = document.createElement("script");
-        script.src = src;
-        script.async = true;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.body.appendChild(script);
-      });
-    };
-  
-    useEffect(() => {
-      const initCropper = async () => {
-        try {
-          setLoading(true);
-          await loadScript("/DashboardAssets/assets/vendor/cropper/cropper.min.js");
-          await loadScript("/DashboardAssets/assets/vendor/cropper/cropper-init.js");
-  
-          const img = document.getElementById("image");
-          if (img) {
-            const cropperInstance = new Cropper(img, {
-              aspectRatio: 16 / 9,
-              viewMode: 1,
-            });
-            setCropper(cropperInstance);
-          }
-        } catch (err) {
-          console.error("Failed to load script:", err);
-        } finally {
-          setLoading(false);
+import "froala-editor/css/froala_style.min.css";
+import "froala-editor/css/froala_editor.pkgd.min.css";
+
+import FroalaEditor from "react-froala-wysiwyg";
+import "froala-editor/js/plugins/image.min.js";
+import "froala-editor/js/plugins/char_counter.min.js";
+// import getAPI from "../../../../api/getAPI";
+
+
+
+function ProductUpload() {
+  const [successMessage, setsuccessMessage] = useState();
+  const [errorMessage, seterrorMessage] = useState();
+  const [formData, setFormData] = useState({
+    productName: "",
+    artistName: "",
+    productCategory: "",
+    newPrice: "",
+    size: "",
+    oldPrice: "",
+    images: [], // To store all image files
+    mainImage: null, // Add main image to state
+
+
+
+  });
+
+
+
+
+  const [content, setContent] = useState(""); // Froala Editor content
+  const [croppedImages, setCroppedImages] = useState([]);
+  // const [lastReloadTimestamp, setLastReloadTimestamp] = useState(new Date()); 
+
+  const [editingImageIndex, setEditingImageIndex] = useState(null);
+
+
+
+
+  // const fetchImages = async () => {
+  //   try {
+  //     const response = await getAPI('http://localhost:3001/api/get-cropImage', {
+  //       lastReload: lastReloadTimestamp, // Send the last reload timestamp to the backend
+  //     });
+
+  //     const data = response.data;
+
+  //     if (data && data.data) {
+  //       setCroppedImages(data.data);
+  //       // Update the last reload timestamp to the current time
+  //       setLastReloadTimestamp(new Date());
+  //     } else {
+  //       console.error("No new images found.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching images:", error);
+  //   }
+  // };
+
+  // // Fetch images when the component mounts (initial page load or reload)
+  // useEffect(() => {
+  //   // Fetch images immediately when the page loads or is reloaded
+  //   fetchImages();
+
+  //   // Optionally, set an interval for periodic re-fetching of images (every 10 seconds)
+  //   const interval = setInterval(fetchImages, 10000); // Refresh every 10 seconds
+
+  //   return () => clearInterval(interval); // Cleanup interval on unmount
+  // }, []); // Empty dependency array to run this effect once on page reload
+
+  useEffect(() => {
+    const imageCount = localStorage.getItem("imageCount");
+    const images = [];
+
+    if (imageCount) {
+      for (let i = 1; i <= parseInt(imageCount); i++) {
+        const savedCroppedImage = localStorage.getItem("croppedImage" + i);
+        if (savedCroppedImage) {
+          images.push(savedCroppedImage);
         }
-      };
-  
-      initCropper();
-    }, []); 
+      }
+    }
+
+    setCroppedImages(images);
+  }, []);
+
+
+
+  // Function to convert a dataURL to a Blob
+  const dataURLToBlob = (dataURL) => {
+    if (!dataURL || !dataURL.includes(",")) {
+      console.error("Invalid dataURL provided to dataURLToBlob.");
+      return null;
+    }
+    try {
+      const parts = dataURL.split(",");
+      const mime = parts[0].match(/:(.*?);/)[1];
+      const bstr = atob(parts[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new Blob([u8arr], { type: mime });
+    } catch (error) {
+      console.error("Error converting dataURL to Blob:", error.message);
+      return null;
+    }
+  };
+
+  const [selectedImage, setSelectedImage] = useState(null);
+  // const [formData, setFormData] = useState({ mainImage: "" });
+
+  const [images, setImages] = useState([]); // Store uploaded images
+  const [error, setError] = useState(null);
+  const [editingImage, setEditingImage] = useState(null); // Store the image being edited
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);// Store the index of the image being edited
+
+  useEffect(() => {
+    const imageCount = localStorage.getItem("imageCount");
+    const images = [];
+
+    if (imageCount) {
+      for (let i = 1; i <= parseInt(imageCount); i++) {
+        const savedCroppedImage = localStorage.getItem("croppedImage" + i);
+        if (savedCroppedImage) {
+          images.push(savedCroppedImage);
+        }
+      }
+    }
+
+    setCroppedImages(images);
+  }, []);
+
+  const handleChange = (event) => {
+    const files = Array.from(event.target.files);
+
+    const totalFiles = images.length + files.length;
+
+    if (totalFiles < 3 || totalFiles > 10) {
+      setError("Please select between 3 and 10 images.");
+      return;
+    }
+
+    setError(null);
+
+    const newImages = [...images, ...files.map((file) => URL.createObjectURL(file))];
+    setImages(newImages);
+
+    localStorage.removeItem("imageCount");
+    let i = 1;
+    while (localStorage.getItem(`croppedImage${i}`)) {
+      localStorage.removeItem(`croppedImage${i}`);
+      i++;
+    }
+  };
+
+
+
+  const handleEditClick = (image, index) => {
+    const updatedImages = [...images];
+    updatedImages[index] = {
+      ...updatedImages[index],
+      removed: true,
+    };
+
+    setSelectedImageIndex(index);
+    setImages(updatedImages);
+    setEditingImage(null);
+
+    // Use a timeout to ensure the state is updated before reopening
+    setTimeout(() => {
+      setEditingImage(image);
+      setEditingIndex(index);
+    }, 0);
+  };
+
+  // const handleCroppedImage = (dataURL) => {
+  //   console.log("Cropped Image Data URL:", dataURL);
+  //   const updatedImages = [...images];
+  //   updatedImages[editingIndex] = dataURL; // Replace the edited image in the array
+  //   setImages(updatedImages);
+  //   setEditingImage(null); // Close the editor after editing
+  //   setEditingIndex(null);
+  // };
+
+  // Function to strip HTML tags and get plain text content
+  const stripHtmlTags = (html) => {
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = html;
+    return tempDiv.textContent || tempDiv.innerText || "";
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Convert the main image data URL to a Blob
+    const mainImageBlob = dataURLToBlob(formData.mainImage);
+    const plainTextContent = stripHtmlTags(content);
+
+    const token = localStorage.getItem("token");
+    const formDataObj = new FormData();
+
+    formDataObj.append("productName", formData.productName);
+    formDataObj.append("artistName", formData.artistName);
+    formDataObj.append("productCategory", formData.productCategory);
+    formDataObj.append("newPrice", formData.newPrice);
+    formDataObj.append("oldPrice", formData.oldPrice);
+    formDataObj.append("description", plainTextContent);
+    formDataObj.append("size", formData.size);
+
+    if (mainImageBlob) {
+      formDataObj.append("mainImage", mainImageBlob, "cropped-image.png");
+    } else {
+      console.error("Main image is missing!");
+    }
+
+    // Append additional images
+    formData.images.forEach((image) => {
+      formDataObj.append("images", image); // Ensure the field name matches
+    });
+
+
+    // Log formData entries
+    for (let [key, value] of formDataObj.entries()) {
+      console.log(`${key}:`, value);
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:3001/product-management/upload",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formDataObj,
+        }
+      );
+
+      const result = await response.json();
+      if (response.ok) {
+        setsuccessMessage("Product uploaded successfully!");
+      } else {
+        seterrorMessage(result.message || "Failed to upload product.");
+      }
+    } catch (err) {
+      seterrorMessage("Error submitting form. Please try again.");
+      console.error("Error submitting form:", err);
+    }
+  };
 
   return (
-    <>
-  <div className="row clearfix">
-    <div className="col-lg-12">
-      <div className="card">
-        <div className="header">
-          <h2>Image Cropper</h2>
-        </div>
-        <div className="body m-b-10">
-          <div className="row clearfix">
-            <div className="col-lg-8 col-md-12">
-              <div className="img-container">
-                <img
-                  id="image"
-                  src="assets/images/auth_bg.jpg"
-                  className="img-responsive"
-                  alt="Picture"
-                />
-              </div>
-            </div>
-            <div className="col-lg-4 col-md-12">
-              <div className="docs-preview clearfix">
-                <div className="img-preview preview-lg" />
-                <div className="img-preview preview-md" />
-                <div className="img-preview preview-sm" />
-                <div className="img-preview preview-xs" />
-              </div>
-              <div className="docs-data">
-                <div className="input-group">
-                  <div className="input-group-prepend">
-                    <span className="input-group-text" htmlFor="dataX">
-                      X
-                    </span>
-                  </div>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="dataX"
-                    placeholder="x"
-                  />
-                  <div className="input-group-append">
-                    <span className="input-group-text">px</span>
-                  </div>
-                </div>
-                <div className="input-group">
-                  <div className="input-group-prepend">
-                    <span className="input-group-text">Y</span>
-                  </div>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="dataY"
-                    placeholder="y"
-                  />
-                  <div className="input-group-append">
-                    <span className="input-group-text">px</span>
-                  </div>
-                </div>
-                <div className="input-group">
-                  <div className="input-group-prepend">
-                    <span className="input-group-text">Width</span>
-                  </div>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="dataWidth"
-                    placeholder="width"
-                  />
-                  <div className="input-group-append">
-                    <span className="input-group-text">px</span>
-                  </div>
-                </div>
-                <div className="input-group">
-                  <div className="input-group-prepend">
-                    <span className="input-group-text">Height</span>
-                  </div>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="dataHeight"
-                    placeholder="height"
-                  />
-                  <div className="input-group-append">
-                    <span className="input-group-text">px</span>
-                  </div>
-                </div>
-                <div className="input-group">
-                  <div className="input-group-prepend">
-                    <span className="input-group-text">Rotate</span>
-                  </div>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="dataRotate"
-                    placeholder="rotate"
-                  />
-                  <div className="input-group-append">
-                    <span className="input-group-text">deg</span>
-                  </div>
-                </div>
-                <div className="input-group">
-                  <div className="input-group-prepend">
-                    <span className="input-group-text">ScaleX</span>
-                  </div>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="dataScaleX"
-                    placeholder="scaleX"
-                  />
-                </div>
-                <div className="input-group">
-                  <div className="input-group-prepend">
-                    <span className="input-group-text">ScaleY</span>
-                  </div>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="dataScaleY"
-                    placeholder="scaleY"
-                  />
-                </div>
-              </div>
-            </div>
+    // <div id="wrapper" className="theme-cyan">
+    //   <Navbar />
+    //   <UserAccount />
+    //   <RightIconBar />
+    //   <div id="main-content">
+    <div className="container-fluid">
+      <div className="block-header">
+        <div className="row">
+          <div className="col-lg-6 col-md-6 col-sm-12">
+            <h2>Create Product</h2>
+            <ul className="breadcrumb">
+              <li className="breadcrumb-item">
+                <a href="/">
+                  <i className="fa fa-dashboard"></i>
+                </a>
+              </li>
+              <li className="breadcrumb-item">App</li>
+              <li className="breadcrumb-item active">Product Upload</li>
+            </ul>
           </div>
         </div>
-        <div className="body">
-          <div className="row clearfix">
-            <div className="col-lg-8 col-md-12 docs-buttons">
-              <div className="btn-group">
-                <button
-                  type="button"
-                  className="btn btn-sm btn-info"
-                  data-method="setDragMode"
-                  data-option="move"
-                  title="Move"
-                >
-                  {" "}
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title='$().cropper("setDragMode", "move")'
+      </div>
+
+      <div className="row clearfix">
+        <div className="col-lg-12">
+          <div className="card">
+            <div className="body">
+              {successMessage && (
+                <div className="alert alert-success">{successMessage}</div>
+              )}
+              {errorMessage && (
+                <div className="alert alert-danger">{errorMessage}</div>
+              )}
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    name="productName"
+                    value={formData.productName}
+                    // onChange={handleChange}
+                    className="form-control"
+                    placeholder="Enter Product Name"
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    name="artistName"
+                    value={formData.artistName}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder="Artist Name"
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    name="newPrice"
+                    value={formData.newPrice}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder="Price"
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    name="size"
+                    value={formData.newsize}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder="Enter size"
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    name="oldPrice"
+                    value={formData.oldPrice}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder="$$"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <select
+                    name="productCategory"
+                    value={formData.productCategory}
+                    onChange={handleChange}
+                    className="form-control show-tick"
+                    required
                   >
-                    {" "}
-                    <span className="fa fa-arrows" />{" "}
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-info"
-                  data-method="setDragMode"
-                  data-option="crop"
-                  title="Crop"
-                >
-                  {" "}
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title='$().cropper("setDragMode", "crop")'
-                  >
-                    {" "}
-                    <span className="fa fa-crop" />{" "}
-                  </span>
-                </button>
-              </div>
-              <div className="btn-group">
-                <button
-                  type="button"
-                  className="btn btn-sm btn-success"
-                  data-method="zoom"
-                  data-option="0.1"
-                  title="Zoom In"
-                >
-                  {" "}
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title='$().cropper("zoom", 0.1)'
-                  >
-                    {" "}
-                    <span className="fa fa-plus-circle" />{" "}
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-success"
-                  data-method="zoom"
-                  data-option="-0.1"
-                  title="Zoom Out"
-                >
-                  {" "}
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title='$().cropper("zoom", -0.1)'
-                  >
-                    {" "}
-                    <span className="fa fa-minus-circle" />{" "}
-                  </span>
-                </button>
-              </div>
-              <div className="btn-group">
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary"
-                  data-method="move"
-                  data-option={-10}
-                  data-second-option={0}
-                  title="Move Left"
-                >
-                  {" "}
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title='$().cropper("move", -10, 0)'
-                  >
-                    {" "}
-                    <span className="fa fa-arrow-left" />{" "}
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary"
-                  data-method="move"
-                  data-option={10}
-                  data-second-option={0}
-                  title="Move Right"
-                >
-                  {" "}
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title='$().cropper("move", 10, 0)'
-                  >
-                    {" "}
-                    <span className="fa fa-arrow-right" />{" "}
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary"
-                  data-method="move"
-                  data-option={0}
-                  data-second-option={-10}
-                  title="Move Up"
-                >
-                  {" "}
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title='$().cropper("move", 0, -10)'
-                  >
-                    {" "}
-                    <span className="fa fa-arrow-up" />{" "}
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary"
-                  data-method="move"
-                  data-option={0}
-                  data-second-option={10}
-                  title="Move Down"
-                >
-                  {" "}
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title='$().cropper("move", 0, 10)'
-                  >
-                    {" "}
-                    <span className="fa fa-arrow-down" />{" "}
-                  </span>
-                </button>
-              </div>
-              <div className="btn-group">
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary"
-                  data-method="rotate"
-                  data-option={-45}
-                  title="Rotate Left"
-                >
-                  {" "}
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title='$().cropper("rotate", -45)'
-                  >
-                    {" "}
-                    <span className="fa fa-rotate-left" />{" "}
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary"
-                  data-method="rotate"
-                  data-option={45}
-                  title="Rotate Right"
-                >
-                  {" "}
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title='$().cropper("rotate", 45)'
-                  >
-                    {" "}
-                    <span className="fa fa-rotate-right" />{" "}
-                  </span>
-                </button>
-              </div>
-              <div className="btn-group">
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary"
-                  data-method="scaleX"
-                  data-option={-1}
-                  title="Flip Horizontal"
-                >
-                  {" "}
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title='$().cropper("scaleX", -1)'
-                  >
-                    {" "}
-                    <span className="fa fa-arrows-h" />{" "}
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary"
-                  data-method="scaleY"
-                  data-option={-1}
-                  title="Flip Vertical"
-                >
-                  {" "}
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title='$().cropper("scaleY", -1)'
-                  >
-                    {" "}
-                    <span className="fa fa-arrows-v" />{" "}
-                  </span>
-                </button>
-              </div>
-              <div className="btn-group">
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary"
-                  data-method="crop"
-                  title="Crop"
-                >
-                  {" "}
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title='$().cropper("crop")'
-                  >
-                    {" "}
-                    <span className="fa fa-check" />{" "}
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary"
-                  data-method="clear"
-                  title="Clear"
-                >
-                  {" "}
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title='$().cropper("clear")'
-                  >
-                    {" "}
-                    <span className="fa fa-trash-o" />{" "}
-                  </span>
-                </button>
-              </div>
-              <div className="btn-group">
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary"
-                  data-method="disable"
-                  title="Disable"
-                >
-                  {" "}
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title='$().cropper("disable")'
-                  >
-                    {" "}
-                    <span className="fa fa-lock" />{" "}
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary"
-                  data-method="enable"
-                  title="Enable"
-                >
-                  {" "}
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title='$().cropper("enable")'
-                  >
-                    {" "}
-                    <span className="fa fa-unlock" />{" "}
-                  </span>
-                </button>
-              </div>
-              <button
-                type="button"
-                className="btn btn-sm btn-secondary"
-                data-method="reset"
-                title="Reset"
-              >
-                {" "}
-                <span
-                  className="docs-tooltip"
-                  data-toggle="tooltip"
-                  title='$().cropper("reset")'
-                >
-                  {" "}
-                  <span className="fa fa-refresh" />{" "}
-                </span>
-              </button>
-              <label
-                className="btn btn-sm btn-secondary btn-upload"
-                htmlFor="inputImage"
-                title="Upload image file"
-              >
+                    <option value="">Select productCategory</option>
+                    <option value="Web Design">Web Design</option>
+                    <option value="Photography">Photography</option>
+                    <option value="Technology">Technology</option>
+                    <option value="Lifestyle">Lifestyle</option>
+                    <option value="Sports">Sports</option>
+                  </select>
+                </div>
+
+              
+                <label className="btn btn-sm btn-secondary btn-upload" htmlFor="inputImage" title="Upload image file">
+                  Choose file
+                </label>
                 <input
                   type="file"
                   className="sr-only"
                   id="inputImage"
                   name="file"
                   accept="image/*"
+                  multiple
                 />
-                <span
-                  className="docs-tooltip"
-                  data-toggle="tooltip"
-                  title="Import image with Blob URLs"
-                >
-                  {" "}
-                  <span className="fa fa-upload" />{" "}
-                </span>
-              </label>
-              <button
-                type="button"
-                className="btn btn-sm  btn-secondary"
-                data-method="destroy"
-                title="Destroy"
-              >
-                {" "}
-                <span
-                  className="docs-tooltip"
-                  data-toggle="tooltip"
-                  title='$().cropper("destroy")'
-                >
-                  {" "}
-                  <span className="fa fa-power-off" />{" "}
-                </span>
-              </button>
-              <div className="btn-group">
+                <div className="input-image-preview-container">
+                  <h5>Selected Image Preview:</h5>
+                  <div id="imagePreviewList"></div>
+                  
+                </div>
+
+
+                <div className="form-group mt-3 main-image">
+                  <ImageEditor
+                    initialImage={editingImage}
+                    editingImageIndex={editingImageIndex}
+                  />
+                </div>
+
+
+
+
+                <div className="form-group mt-3">
+                  <FroalaEditor
+                    model={content}
+                    onModelChange={(newContent) => {
+                      console.log("Editor content:", newContent); // Debugging log
+                      setContent(newContent);
+                    }}
+                    config={{
+                      placeholderText: "Enter your product details here.",
+                      charCounterCount: true,
+                    }}
+                  />
+                </div>
                 <button
-                  type="button"
-                  className="btn btn-sm btn-danger"
-                  data-method="getCroppedCanvas"
+                  type="submit"
+                  className="btn btn-block btn-primary mt-3"
                 >
-                  {" "}
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title='$().cropper("getCroppedCanvas")'
-                  >
-                    {" "}
-                    Get Cropped Canvas{" "}
-                  </span>{" "}
+                  Upload product
                 </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-danger"
-                  data-method="getCroppedCanvas"
-                  data-option='{ "width": 160, "height": 90 }'
-                >
-                  {" "}
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title='$().cropper("getCroppedCanvas", { width: 160, height: 90 })'
-                  >
-                    {" "}
-                    160×90{" "}
-                  </span>{" "}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-danger"
-                  data-method="getCroppedCanvas"
-                  data-option='{ "width": 320, "height": 180 }'
-                >
-                  {" "}
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title='$().cropper("getCroppedCanvas", { width: 320, height: 180 })'
-                  >
-                    {" "}
-                    320×180{" "}
-                  </span>{" "}
-                </button>
-              </div>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-method="getData"
-                data-option=""
-                data-target="#putData"
-              >
-                {" "}
-                <span
-                  className="docs-tooltip"
-                  data-toggle="tooltip"
-                  title='$().cropper("getData")'
-                >
-                  {" "}
-                  Get Data{" "}
-                </span>{" "}
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-method="setData"
-                data-target="#putData"
-              >
-                {" "}
-                <span
-                  className="docs-tooltip"
-                  data-toggle="tooltip"
-                  title='$().cropper("setData", data)'
-                >
-                  {" "}
-                  Set Data{" "}
-                </span>{" "}
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-method="getContainerData"
-                data-option=""
-                data-target="#putData"
-              >
-                {" "}
-                <span
-                  className="docs-tooltip"
-                  data-toggle="tooltip"
-                  title='$().cropper("getContainerData")'
-                >
-                  {" "}
-                  Get Container Data{" "}
-                </span>{" "}
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-method="getImageData"
-                data-option=""
-                data-target="#putData"
-              >
-                {" "}
-                <span
-                  className="docs-tooltip"
-                  data-toggle="tooltip"
-                  title='$().cropper("getImageData")'
-                >
-                  {" "}
-                  Get Image Data{" "}
-                </span>{" "}
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-method="getCanvasData"
-                data-option=""
-                data-target="#putData"
-              >
-                {" "}
-                <span
-                  className="docs-tooltip"
-                  data-toggle="tooltip"
-                  title='$().cropper("getCanvasData")'
-                >
-                  {" "}
-                  Get Canvas Data{" "}
-                </span>{" "}
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-method="setCanvasData"
-                data-target="#putData"
-              >
-                {" "}
-                <span
-                  className="docs-tooltip"
-                  data-toggle="tooltip"
-                  title='$().cropper("setCanvasData", data)'
-                >
-                  {" "}
-                  Set Canvas Data{" "}
-                </span>{" "}
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-method="getCropBoxData"
-                data-option=""
-                data-target="#putData"
-              >
-                {" "}
-                <span
-                  className="docs-tooltip"
-                  data-toggle="tooltip"
-                  title='$().cropper("getCropBoxData")'
-                >
-                  {" "}
-                  Get Crop Box Data{" "}
-                </span>{" "}
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-method="setCropBoxData"
-                data-target="#putData"
-              >
-                {" "}
-                <span
-                  className="docs-tooltip"
-                  data-toggle="tooltip"
-                  title='$().cropper("setCropBoxData", data)'
-                >
-                  {" "}
-                  Set Crop Box Data{" "}
-                </span>{" "}
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-method="moveTo"
-                data-option={0}
-              >
-                {" "}
-                <span
-                  className="docs-tooltip"
-                  data-toggle="tooltip"
-                  title="cropper.moveTo(0)"
-                >
-                  {" "}
-                  0,0{" "}
-                </span>{" "}
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-method="zoomTo"
-                data-option={1}
-              >
-                {" "}
-                <span
-                  className="docs-tooltip"
-                  data-toggle="tooltip"
-                  title="cropper.zoomTo(1)"
-                >
-                  {" "}
-                  100%{" "}
-                </span>{" "}
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-method="rotateTo"
-                data-option={180}
-              >
-                {" "}
-                <span
-                  className="docs-tooltip"
-                  data-toggle="tooltip"
-                  title="cropper.rotateTo(180)"
-                >
-                  {" "}
-                  180°{" "}
-                </span>{" "}
-              </button>
-              <input
-                type="text"
-                className="form-control"
-                id="putData"
-                placeholder="Get data to here or set data with this value"
-              />
-            </div>
-            <div className="col-lg-4 col-md-12 docs-toggles">
-              {/* .btn groups */}
-              <div
-                className="btn-group btn-group-justified"
-                data-toggle="buttons"
-              >
-                <label className="btn btn-secondary active">
-                  <input
-                    type="radio"
-                    className="sr-only"
-                    id="aspectRatio0"
-                    name="aspectRatio"
-                    defaultValue="1.7777777777777777"
-                  />
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title="aspectRatio: 16 / 9"
-                  >
-                    {" "}
-                    16:9{" "}
-                  </span>{" "}
-                </label>
-                <label className="btn btn-secondary">
-                  <input
-                    type="radio"
-                    className="sr-only"
-                    id="aspectRatio1"
-                    name="aspectRatio"
-                    defaultValue="1.3333333333333333"
-                  />
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title="aspectRatio: 4 / 3"
-                  >
-                    {" "}
-                    4:3{" "}
-                  </span>{" "}
-                </label>
-                <label className="btn btn-secondary">
-                  <input
-                    type="radio"
-                    className="sr-only"
-                    id="aspectRatio2"
-                    name="aspectRatio"
-                    defaultValue={1}
-                  />
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title="aspectRatio: 1 / 1"
-                  >
-                    {" "}
-                    1:1{" "}
-                  </span>{" "}
-                </label>
-                <label className="btn btn-secondary">
-                  <input
-                    type="radio"
-                    className="sr-only"
-                    id="aspectRatio3"
-                    name="aspectRatio"
-                    defaultValue="0.6666666666666666"
-                  />
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title="aspectRatio: 2 / 3"
-                  >
-                    {" "}
-                    2:3{" "}
-                  </span>{" "}
-                </label>
-                <label className="btn btn-secondary">
-                  <input
-                    type="radio"
-                    className="sr-only"
-                    id="aspectRatio4"
-                    name="aspectRatio"
-                    defaultValue="NaN"
-                  />
-                  <span
-                    className="docs-tooltip"
-                    data-toggle="tooltip"
-                    title="aspectRatio: NaN"
-                  >
-                    {" "}
-                    Free{" "}
-                  </span>{" "}
-                </label>
-              </div>
-              <div className="dropdown dropup docs-options">
-                <button
-                  type="button"
-                  className="btn btn-success btn-block dropdown-toggle"
-                  id="toggleOptions"
-                  data-toggle="dropdown"
-                  aria-expanded="true"
-                >
-                  {" "}
-                  Toggle Options <span className="caret" />{" "}
-                </button>
-                <ul
-                  className="dropdown-menu"
-                  aria-labelledby="toggleOptions"
-                  role="menu"
-                >
-                  <li role="presentation">
-                    <label className="checkbox-inline">
-                      <input
-                        type="checkbox"
-                        name="responsive"
-                        defaultChecked=""
-                      />{" "}
-                      responsive{" "}
-                    </label>
-                  </li>
-                  <li role="presentation">
-                    <label className="checkbox-inline">
-                      <input type="checkbox" name="restore" defaultChecked="" />{" "}
-                      restore{" "}
-                    </label>
-                  </li>
-                  <li role="presentation">
-                    <label className="checkbox-inline">
-                      <input
-                        type="checkbox"
-                        name="checkCrossOrigin"
-                        defaultChecked=""
-                      />{" "}
-                      checkCrossOrigin{" "}
-                    </label>
-                  </li>
-                  <li role="presentation">
-                    <label className="checkbox-inline">
-                      <input
-                        type="checkbox"
-                        name="checkOrientation"
-                        defaultChecked=""
-                      />{" "}
-                      checkOrientation{" "}
-                    </label>
-                  </li>
-                  <li role="presentation">
-                    <label className="checkbox-inline">
-                      <input type="checkbox" name="modal" defaultChecked="" />{" "}
-                      modal{" "}
-                    </label>
-                  </li>
-                  <li role="presentation">
-                    <label className="checkbox-inline">
-                      <input type="checkbox" name="guides" defaultChecked="" />{" "}
-                      guides{" "}
-                    </label>
-                  </li>
-                  <li role="presentation">
-                    <label className="checkbox-inline">
-                      <input type="checkbox" name="center" defaultChecked="" />{" "}
-                      center{" "}
-                    </label>
-                  </li>
-                  <li role="presentation">
-                    <label className="checkbox-inline">
-                      <input
-                        type="checkbox"
-                        name="highlight"
-                        defaultChecked=""
-                      />{" "}
-                      highlight{" "}
-                    </label>
-                  </li>
-                  <li role="presentation">
-                    <label className="checkbox-inline">
-                      <input
-                        type="checkbox"
-                        name="background"
-                        defaultChecked=""
-                      />{" "}
-                      background{" "}
-                    </label>
-                  </li>
-                  <li role="presentation">
-                    <label className="checkbox-inline">
-                      <input
-                        type="checkbox"
-                        name="autoCrop"
-                        defaultChecked=""
-                      />{" "}
-                      autoCrop{" "}
-                    </label>
-                  </li>
-                  <li role="presentation">
-                    <label className="checkbox-inline">
-                      <input type="checkbox" name="movable" defaultChecked="" />{" "}
-                      movable{" "}
-                    </label>
-                  </li>
-                  <li role="presentation">
-                    <label className="checkbox-inline">
-                      <input
-                        type="checkbox"
-                        name="rotatable"
-                        defaultChecked=""
-                      />{" "}
-                      rotatable{" "}
-                    </label>
-                  </li>
-                  <li role="presentation">
-                    <label className="checkbox-inline">
-                      <input
-                        type="checkbox"
-                        name="scalable"
-                        defaultChecked=""
-                      />{" "}
-                      scalable{" "}
-                    </label>
-                  </li>
-                  <li role="presentation">
-                    <label className="checkbox-inline">
-                      <input
-                        type="checkbox"
-                        name="zoomable"
-                        defaultChecked=""
-                      />{" "}
-                      zoomable{" "}
-                    </label>
-                  </li>
-                  <li role="presentation">
-                    <label className="checkbox-inline">
-                      <input
-                        type="checkbox"
-                        name="zoomOnTouch"
-                        defaultChecked=""
-                      />{" "}
-                      zoomOnTouch{" "}
-                    </label>
-                  </li>
-                  <li role="presentation">
-                    <label className="checkbox-inline">
-                      <input
-                        type="checkbox"
-                        name="zoomOnWheel"
-                        defaultChecked=""
-                      />{" "}
-                      zoomOnWheel{" "}
-                    </label>
-                  </li>
-                  <li role="presentation">
-                    <label className="checkbox-inline">
-                      <input
-                        type="checkbox"
-                        name="cropBoxMovable"
-                        defaultChecked=""
-                      />{" "}
-                      cropBoxMovable{" "}
-                    </label>
-                  </li>
-                  <li role="presentation">
-                    <label className="checkbox-inline">
-                      <input
-                        type="checkbox"
-                        name="cropBoxResizable"
-                        defaultChecked=""
-                      />{" "}
-                      cropBoxResizable{" "}
-                    </label>
-                  </li>
-                  <li role="presentation">
-                    <label className="checkbox-inline">
-                      <input
-                        type="checkbox"
-                        name="toggleDragModeOnDblclick"
-                        defaultChecked=""
-                      />{" "}
-                      toggleDragModeOnDblclick{" "}
-                    </label>
-                  </li>
-                </ul>
-              </div>
+              </form>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  {/* Show the cropped image in modal */}
-  <div
-    className="modal docs-cropped"
-    id="getCroppedCanvasModal"
-    aria-hidden="true"
-    aria-labelledby="getCroppedCanvasTitle"
-    role="dialog"
-    tabIndex={-1}
-  >
-    <div className="modal-dialog">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h4 className="title" id="getCroppedCanvasModal">
-            Cropped
-          </h4>
-        </div>
-        <div className="modal-body" />
-        <div className="modal-footer">
-          <button
-            type="button"
-            className="btn btn-outline-secondary"
-            data-dismiss="modal"
-          >
-            Close
-          </button>
-          <a
-            className="btn btn-primary"
-            id="download"
-            href="javascript:void(0);"
-            download="cropped.html"
-          >
-            Download
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</>
 
+
+    //   </div>
+    // </div>
   );
 }
 
-export default BlogPost;
+export default ProductUpload;

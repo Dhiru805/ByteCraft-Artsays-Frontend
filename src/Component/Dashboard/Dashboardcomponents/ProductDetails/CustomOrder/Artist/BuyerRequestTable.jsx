@@ -1,6 +1,6 @@
 import React,{useState} from "react";
 import { useNavigate } from "react-router-dom";
-import useUserType from '../../urlconfig';
+import useUserType from '../../../urlconfig';
 import NegotiateModal from "./Negotiate";
 
 function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyerRequestStatus }) {
@@ -105,7 +105,7 @@ const handleSaveChanges = (updatedData) => {
                                                         className="btn btn-outline-info btn-sm mr-2"
                                                         title="View"
                                                         onClick={() =>
-                                                            navigate(`/${userType}/Dashboard/BuyerRequest/ViewBuyerrequest/${request._id}`, {
+                                                            navigate(`/${userType}/Dashboard/customRequest/viewrequest/${request._id}`, {
                                                                 state: { request },
                                                             })
                                                         }

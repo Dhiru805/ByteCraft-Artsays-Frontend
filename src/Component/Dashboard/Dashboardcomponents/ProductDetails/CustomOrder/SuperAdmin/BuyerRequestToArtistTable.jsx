@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ConfirmationDialog from '../../ConfirmationDialog';
-import useUserType from '../../urlconfig';
+import ConfirmationDialog from '../../../ConfirmationDialog';
+import useUserType from '../../../urlconfig';
 
 function BuyerManageTable({ buyerRequests, setBuyerRequests ,handleRejectBuyerRequest, updateBuyerRequestStatus}) {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -126,7 +126,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests ,handleRejectBuyerRe
                                                             title="Navigate"
                                                             onClick={() => {
                                                                 console.log('Navigating to request with ID:', request._id); 
-                                                                navigate(`/${userType}/Dashboard/buyerrequesttoartist/viewbuyerrequest/${request._id}`, {
+                                                                navigate(`/${userType}/Dashboard/customrequesttoartist/viewrequesttoartist/${request._id}`, {
                                                                     state: { request },
                                                                 });
                                                             }}

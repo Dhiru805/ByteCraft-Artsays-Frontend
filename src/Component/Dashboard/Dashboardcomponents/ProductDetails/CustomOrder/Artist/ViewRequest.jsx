@@ -3,7 +3,7 @@ import { useLocation, Link } from "react-router-dom";
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 import axios from 'axios';
-import useUserType from '../../urlconfig';
+import useUserType from '../../../urlconfig';
 
 function ViewBuyerRequest() {
     const location = useLocation();
@@ -14,7 +14,7 @@ function ViewBuyerRequest() {
     const [productName, setProductName] = useState('');
     const [description, setDescription] = useState('');
     const [budget, setBudget] = useState('');
-    const [artistId, setArtistId] = useState('');
+    const [buyerId, setBuyerId] = useState('');
     const [artists, setArtists] = useState([]);
    const [image, setImage] = useState('');
 
@@ -34,9 +34,7 @@ function ViewBuyerRequest() {
             setDescription(request.Description || '');
             setBudget(request.Budget || '');
             setImage(request.BuyerImage ? `http://localhost:3001/${request.BuyerImage}` : '');
-            if (request.Buyer?.id && request.Buyer.id._id) {
-                setArtistId(request.Buyer.id._id);
-            }
+            setBuyerId(`${request.Buyer.id.name} ${request.Buyer.id.lastName}`);
         }
     }, [request]);
 
@@ -45,15 +43,15 @@ function ViewBuyerRequest() {
             <div className="block-header">
                 <div className="row">
                     <div className="col-lg-6 col-md-6 col-sm-12">
-                        <h2>View Buyer Request</h2>
+                        <h2>View Custom Request</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
                                 <a href="/"><i className="fa fa-dashboard"></i></a>
                             </li>
                             <li className="breadcrumb-item active">
-                                <Link to={`/${userType}/Dashboard/BuyerRequest`}>Buyer Request</Link>
+                                <Link to={`/${userType}/Dashboard/customrequest`}>Custom Request</Link>
                             </li>
-                            <li className="breadcrumb-item">View Buyer Request</li>
+                            <li className="breadcrumb-item">View custom Request</li>
                         </ul>
                     </div>
                 </div>
@@ -92,7 +90,7 @@ function ViewBuyerRequest() {
                                                                <input
                                                                    type="text"
                                                                    className="form-control"
-                                                                   value={artistId ? artists.find(a => a._id === artistId)?.name + ' ' + artists.find(a => a._id === artistId)?.lastName : 'Not Assigned'}
+                                                                   value={buyerId}
                                                                    readOnly
                                                                />
                                                            </div>

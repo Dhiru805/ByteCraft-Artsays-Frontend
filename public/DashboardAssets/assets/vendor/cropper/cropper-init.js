@@ -160,126 +160,7 @@ $(function () {
               .find(".modal-body")
               .html(result);
  
-            //save Button
-            $("#saveImageBtn")
-              .off("click")
-              .on("click", function () {
-                var imageData = result.toDataURL("image/jpeg");
- 
-                // Show success toast
-                Toastify({
-                  text: "Image has been saved!",
-                  backgroundColor: "green",
-                  duration: 3000,
-                }).showToast();
- 
-                // Find the preview container
-                var previewContainer = document.querySelector(
-                  ".image-preview-container"
-                );
- 
-                // Create a new div to hold image and edit button
-                var imageWrapper = document.createElement("div");
-                imageWrapper.style.position = "relative"; // Position relative to allow absolute positioning of the button
-                imageWrapper.style.display = "inline-block"; // So it doesn’t take up full width of the parent container
-                imageWrapper.style.marginBottom = "10px";
- 
-                // Create a new image element
-                var newImage = document.createElement("img");
-                newImage.src = imageData;
-                newImage.style.width = "100px";
-                newImage.style.height = "100px";
-                newImage.style.borderRadius = "5px";
-                newImage.style.objectFit = "cover"; // Ensures the cropped image looks similar
-                newImage.alt = "Cropped Image Preview";
- 
-                // Create an edit button
-                var editButton = document.createElement("button");
-                editButton.innerHTML = `<i class="fa fa-edit"></i>`; // Use Font Awesome for the edit icon
-                editButton.style.position = "absolute";
-                editButton.style.top = "5px";
-                editButton.style.right = "5px";
-                editButton.style.background = "rgba(0, 0, 0, 0.5)";
-                editButton.style.color = "#fff";
-                editButton.style.border = "none";
-                editButton.style.padding = "5px";
-                editButton.style.borderRadius = "50%";
-                editButton.style.cursor = "pointer";
- 
-                // Store image data as an attribute on the button
-                editButton.setAttribute("data-image", imageData);
- 
-                // Append the new image and button to the wrapper
-                imageWrapper.appendChild(newImage);
-                imageWrapper.appendChild(editButton);
- 
-                // Append the wrapper to the preview container
-                previewContainer.appendChild(imageWrapper);
- 
-                // Add event listener to edit button
-                // editButton.addEventListener('click', function () {
-                //     var imgSrc = this.getAttribute('data-image'); // Get the stored image data
- 
-                //     // Hide the image wrapper (which contains the image and the edit button)
-                //     imageWrapper.style.display = "none";
- 
-                //     // Destroy the existing cropper instance if it exists
-                //     if ($image.data('cropper')) {
-                //         $image.cropper('destroy'); // Destroy any existing cropper instance
-                //     }
- 
-                //     // Set the new image source for cropper
-                //     $image.attr('src', imgSrc);
- 
-                //     // Reinitialize the cropper with the new image
-                //     $image.cropper({
-                //         aspectRatio: 16 / 9,
-                //         preview: '.img-preview'
-                //     });
-                // });
- 
-                $(document).on(
-                  "click",
-                  ".image-preview-container button",
-                  function () {
-                    var parentWrapper = $(this).parent(); // Get the parent wrapper
- 
-                    // Hide both the image and the edit button
-                    parentWrapper.find("img, button").hide();
- 
-                    // Continue with the cropper functionality
-                    var imgSrc = $(this).data("image");
-                    $image.cropper("destroy");
-                    $image.attr("src", imgSrc);
-                    $image.cropper({
-                      aspectRatio: 16 / 9,
-                      preview: ".img-preview",
-                    });
-                  }
-                );
- 
-                // Update the image in the cropper box
-                $image.cropper("replace", imageData);
-              });
- 
-            //   $('#saveImageBtn').on('click', function() {
-            //     var imageData = result.toDataURL('image/jpeg');
- 
-            //     // Get the current count of saved images, or set to 0 if none exist
-            //     var imageCount = localStorage.getItem('imageCount');
-            //     imageCount = imageCount ? parseInt(imageCount) : 0;
- 
-            //     // Increment the count
-            //     imageCount++;
- 
-            //     // Save the image in localStorage with a dynamic key
-            //     localStorage.setItem('croppedImage' + imageCount, imageData);
- 
-            //     // Update the count in localStorage
-            //     localStorage.setItem('imageCount', imageCount);
- 
-            //     alert('Image has been saved! Image number: ' + imageCount);
-            // })
+          
  
             if (!$download.hasClass("disabled")) {
               $download.attr("href", result.toDataURL("image/jpeg"));
@@ -334,141 +215,214 @@ $(function () {
   var blobURL;
  
   if (URL) {
-    // $inputImage.change(function () {
-    //   var files = this.files;
-    //   var file;
-    //   if (files && files.length) {
-    //       file = files[0];
-    //       if (/^image\/\w+$/.test(file.type)) {
-    //           var reader = new FileReader();
-    //           reader.onload = function (e) {
-    //               // Show the selected image before cropping
-    //               $selectedImagePreview.attr('src', e.target.result).css('display', 'block');
-    //               // Set the image for cropping
-    //               $image.cropper('destroy').attr('src', e.target.result).cropper({
-    //                   aspectRatio: 16 / 9,
-    //                   preview: '.img-preview'
-    //               });
-    //           };
-    //           reader.readAsDataURL(file);
-    //       } else {
-    //           alert('Please choose a valid image file.');
-    //       }
-    //   }
-    // });
   } else {
     $inputImage.prop("disabled", true).parent().addClass("disabled");
   }
  
   $(document).ready(function () {
     var $image = $("#image");
-    var processedFiles = []; // Track processed files by data URL
- 
-    // Initialize Cropper
-    // $image.cropper({
-    //     aspectRatio: 16 / 9,
-    //     preview: ".img-preview"
-    // });
- 
+    var processedFiles = []; // Array to store processed image data URLs
+
     // Handle file input change
-    $("#inputImage").change(function () {
-      var files = this.files;
-      var totalFiles = files.length;
- 
-      console.log("Total files selected:", totalFiles);
- 
-      // Validate file count (Minimum 3, Maximum 10)
-      if (totalFiles < 3) {
-        alert("Please select at least 3 images.");
-        $(this).val(""); // Reset file input
-        $("#imagePreviewList").empty(); // Clear the preview list
-        return;
-      } else if (totalFiles > 10) {
-        alert("You can select a maximum of 10 images.");
-        $(this).val(""); // Reset file input
-        $("#imagePreviewList").empty(); // Clear the preview list
-        return;
-      }
- 
-      // Clear previous images in the preview list
-      $("#imagePreviewList").empty();
- 
-      // Loop through files and append previews
-      $.each(files, function (index, file) {
-        console.log("Processing file:", file.name);
- 
-        // Check if the file is a valid image
-        if (file.type.startsWith("image/")) {
-          var reader = new FileReader();
- 
-          reader.onload = function (e) {
-            var imgSrc = e.target.result;
-            console.log("Image preview source:", imgSrc);
- 
-            // Check if this image's base64 string is already in the processed list
-            if (processedFiles.includes(imgSrc)) {
-              console.log("Duplicate image detected.");
-              return; // Skip adding this image
-            }
- 
-            // Create Image Wrapper
-            var imageWrapper = $('<div class="image-wrapper"></div>').css({
-              position: "relative",
-              display: "inline-block",
-              margin: "5px",
-            });
- 
-            // Create Image Element
-            var newImage = $("<img>").attr("src", imgSrc).css({
-              width: "100px",
-              height: "100px",
-              borderRadius: "5px",
-              objectFit: "cover",
-            });
- 
-            // Create Edit Button
-            var editButton = $("<button>Edit</button>").css({
-              position: "absolute",
-              top: "5px",
-              right: "5px",
-              background: "rgba(0, 0, 0, 0.5)",
-              color: "#fff",
-              border: "none",
-              padding: "5px",
-              borderRadius: "50%",
-              cursor: "pointer",
-            });
- 
-            // Store image data in button
-            editButton.attr("data-image", imgSrc);
- 
-            // Append elements
-            imageWrapper.append(newImage).append(editButton);
-            $("#imagePreviewList").append(imageWrapper);
- 
-            // Mark the file as processed by its data URL (base64 string)
-            processedFiles.push(imgSrc);
-          };
- 
-          reader.readAsDataURL(file); // This triggers the reader.onload
-        } else {
-          alert("Please select a valid image file.");
+    $("#inputImage").off('change').on('change', function () {
+        var files = this.files;
+        var totalFiles = files.length;
+
+        var currentImagesCount = processedFiles.length;
+        var newTotal = currentImagesCount + totalFiles;
+
+        // Validate the number of images
+        if (newTotal < 3) {
+            alert("You must have at least 3 images in total.");
+            $(this).val("");
+            return;
+        } else if (newTotal > 10) {
+            alert("You can select a maximum of 10 images in total.");
+            $(this).val("");
+            return;
         }
-      });
+
+        // Loop through files and append previews
+        $.each(files, function (index, file) {
+            if (file.type.startsWith("image/")) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    var imgSrc = e.target.result;
+
+                    // Check for duplicates
+                    if (processedFiles.includes(imgSrc)) {
+                        console.log("Duplicate image detected.");
+                        return;
+                    }
+
+                    // Create image wrapper and preview
+                    var imageWrapper = $('<div class="image-wrapper"></div>').css({
+                        position: "relative",
+                        display: "inline-block",
+                        margin: "5px",
+                    });
+
+                    var newImage = $("<img>").attr("src", imgSrc).css({
+                        width: "100px",
+                        height: "100px",
+                        borderRadius: "5px",
+                        objectFit: "cover",
+                    });
+
+                    var radioButton = $('<input type="radio" name="mainImage">').css({
+                      position: "absolute",
+                      bottom: "5px",
+                      left: "5px",
+                      cursor: "pointer",
+                  }).attr("data-image", imgSrc); 
+
+
+                    var editButton = $("<button></button>")
+                        .css({
+                            position: "absolute",
+                            top: "5px",
+                            right: "35px",
+                            background: "rgba(0, 0, 0, 0.5)",
+                            color: "#fff",
+                            border: "none",
+                            padding: "5px",
+                            borderRadius: "50%",
+                            cursor: "pointer",
+                        })
+                        .html('<i class="fa fa-edit"></i>')
+                        .attr("data-image", imgSrc); // Store the image source in the button
+
+                    var deleteButton = $("<button></button>")
+                        .css({
+                            position: "absolute",
+                            top: "5px",
+                            right: "5px",
+                            background: "rgba(255, 0, 0, 0.5)",
+                            color: "#fff",
+                            border: "none",
+                            padding: "5px",
+                            borderRadius: "50%",
+                            cursor: "pointer",
+                        })
+                        .html('<i class="fa fa-trash"></i>')
+                        .attr("data-image", imgSrc); // Store the image source in the button
+
+                    imageWrapper.append(newImage).append(editButton).append(deleteButton).append(radioButton);
+                    $("#imagePreviewList").append(imageWrapper);
+
+                    // Add the image source to the processedFiles array
+                    processedFiles.push(imgSrc);
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                alert("Please select a valid image file.");
+            }
+        });
     });
- 
-    // Handle edit button click (Event Delegation)
-    $(document).on("click", ".image-wrapper button", function () {
+
+
+$(document).on("click", ".image-wrapper button", function () {
+  if ($(this).html().includes("fa-edit")) { // Ensure it's the edit button
       var imgSrc = $(this).attr("data-image");
- 
-      // Destroy existing cropper and reset the image
+
+      // Initialize cropper on the selected image
       $image.cropper("destroy").attr("src", imgSrc);
- 
-      // Reinitialize cropper with the new image
+
       $image.cropper({
-        aspectRatio: 16 / 9,
-        preview: ".img-preview",
+          preview: ".img-preview",
+          crop: function (e) {
+            $dataX.val(Math.round(e.x));
+            $dataY.val(Math.round(e.y));
+            $dataHeight.val(Math.round(e.height));
+            $dataWidth.val(Math.round(e.width));
+            $dataRotate.val(e.rotate);
+            $dataScaleX.val(e.scaleX);
+            $dataScaleY.val(e.scaleY);
+            console.log("Crop data:", e);
+              console.log("Crop data:", e);
+          },
       });
+
+      console.log("Editing Image:", imgSrc);
+  }
+});
+
+
+    // Handle delete button click
+   // Handle delete button click
+$(document).on("click", ".image-wrapper button", function () {
+  if ($(this).html().includes("fa-trash")) { // Ensure it's the delete button
+      var imgSrc = $(this).attr("data-image");
+      var $imageWrapper = $(this).closest('.image-wrapper');
+
+      // Remove the image from the processedFiles array
+      var index = processedFiles.indexOf(imgSrc);
+      if (index !== -1) {
+          processedFiles.splice(index, 1);
+      }
+
+      // Remove the image wrapper from the DOM
+      $imageWrapper.remove();
+
+      // If the deleted image is currently in the cropper, clear the cropper
+      if ($image.attr("src") === imgSrc) {
+          $image.cropper("destroy").attr("src", "");
+      }
+
+      console.log("Deleted Image:", imgSrc);
+  }
+});
+
+
+    // Save Button Click Event
+    $("#saveImageBtn").off('click').on("click", function () {
+        var result = $image.cropper("getCroppedCanvas");
+
+        if (result) {
+            var imageData = result.toDataURL("image/jpeg");
+
+         
+            var $activeImageWrapper = $(".image-wrapper").has("button[data-image='" + $image.attr("src") + "']");
+
+            if ($activeImageWrapper.length) {
+         
+                $activeImageWrapper.find('img').attr('src', imageData);
+                $activeImageWrapper.find('button').attr('data-image', imageData);
+
+              
+                var originalImageSrc = $image.attr("src");
+                var index = processedFiles.indexOf(originalImageSrc);
+                if (index !== -1) {
+                    processedFiles[index] = imageData; 
+                }
+
+          
+                $image.cropper("destroy").attr("src", imageData).cropper({
+                    preview: ".img-preview",
+                    crop: function (e) {
+                        $dataX.val(Math.round(e.x));
+                        $dataY.val(Math.round(e.y));
+                        $dataHeight.val(Math.round(e.height));
+                        $dataWidth.val(Math.round(e.width));
+                        $dataRotate.val(e.rotate);
+                        $dataScaleX.val(e.scaleX);
+                        $dataScaleY.val(e.scaleY);
+                        console.log("Crop data:", e);
+                    },
+                });
+
+      
+                Toastify({
+                    text: "Image has been saved!",
+                    backgroundColor: "green",
+                    duration: 3000,
+                }).showToast();
+            } else {
+                console.error("Active image wrapper not found.");
+            }
+        }
     });
-  });
+});
 })

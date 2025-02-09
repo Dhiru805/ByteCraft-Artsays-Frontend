@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import BuyerRequestToArtistHeader from "./BuyerRequestToHeader";
-import BuyerRequestToArtistTable from "./BuyerRequestToArtistTable";
+import BuyerRequestToArtistTable from "../../ProductDetails/CustomOrder/SuperAdmin/BuyerRequestToArtistTable";
 import getAPI from "../../../../../api/getAPI";
 import { useConfirm } from '../../StatusConfirm';
 import { toast } from 'react-toastify';
@@ -50,6 +50,8 @@ const Customorder = () => {
     const handleRejectBuyerRequest = (requestId) => {
         confirm(() => updateBuyerRequestStatus(requestId, 'Rejected'), "Are you sure you want to reject this buyer request?");
     };
+
+
 
     return (
         <>

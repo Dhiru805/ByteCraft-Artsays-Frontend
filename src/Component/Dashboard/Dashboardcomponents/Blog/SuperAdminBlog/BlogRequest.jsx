@@ -160,7 +160,9 @@ const BlogRequest = () => {
                                             <th>Blog View</th>
                                             <th>Date</th>
                                             <th>Status</th>
+                                            {userType === "Super-Admin" && (
                                             <th>Action</th>
+                                            )}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -186,6 +188,7 @@ const BlogRequest = () => {
                                                         {blog.blogStatus}
                                                     </button>
                                                 </td>
+                                                {userType === "Super-Admin" && (
                                                 <td>
                                                     <button
                                                         type="button"
@@ -204,6 +207,7 @@ const BlogRequest = () => {
                                                         <i className="fa fa-ban"></i>
                                                     </button>
                                                 </td>
+                                                )}
                                             </tr>
                                         ))}
                                     </tbody>

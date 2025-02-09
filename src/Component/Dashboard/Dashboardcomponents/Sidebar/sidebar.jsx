@@ -42,14 +42,11 @@ const Sidebar = () => {
       path: `#Buyer-management`,
       subTabs: [
         { label: "Management", path: `/${userType}/Dashboard/BuyerManageTable` },
-        { label: "Product Purches", path: `#` },
-        { label: "Product Request", path: `/${userType}/Dashboard/BuyerRequest` },
+        { label: "Product Purchased", path: `#` },
+        { label: "Product Request", path: `#` },
         { label: "Resell Product", path: `#` },
         { label: "Transaction", path: `#` },
-        { label: "Packaging Material", path: `#` }
-        // { label: "Buyer Custom Request", path: `/${userType}/Dashboard/BuyerCustomrequest` },
-        // { label: "Buyer Request To Artist", path: `/${userType}/Dashboard/buyerrequesttoartist` },
-        // { label: "Buyer Transactions", path: `/${userType}/Dashboard/Appchat` },
+        { label: "Packaging Material", path: `#` },
       ]
     },
     {
@@ -69,7 +66,7 @@ const Sidebar = () => {
       icon: "fa fa-archive",
       path: `#Packaging Material`,
       subTabs: [
-        { label: "Product Purches", path: `#` },
+        { label: "Product Purchased", path: `#` },
         { label: "Transaction", path: `#` },
       ]
     },
@@ -99,17 +96,18 @@ const Sidebar = () => {
         subTabs: [
           { label: "All Products", path: `/${userType}/Dashboard/Product-uploade` },
           { label: "Products Request", path: `#` },
-          { label: "Product Purches", path: `#` }
+          { label: "Product Purchased", path: `#` },
+          { label: "Custom Request", path: `/${userType}/Dashboard/customrequest` },
         ]
       },
 
       {
-        label: "Resale",
-        icon: "fa fa-reply",
-        path: `#Resale`,
+        label: "Resell",
+        icon: "fa fa-exchange",
+        path: `#Resell`,
         subTabs: [
           { label: "All Products", path: `#` },
-          { label: "Product Purches", path: `#` },
+          { label: "Product Purchased", path: `#` },
           { label: "Transaction", path: `#` }
         ]
       },
@@ -121,7 +119,7 @@ const Sidebar = () => {
         subTabs: [
           { label: "All Products", path: `#` },
           { label: "Product Status", path: `#` },
-          { label: "Edit product", path: `#` },
+          { label: "Edit Product", path: `#` },
           { label: "Transaction", path: `#` }
         ]
       },
@@ -133,7 +131,7 @@ const Sidebar = () => {
         subTabs: [
           { label: "All Transaction", path: `#` },
           { label: "Product Transaction", path: `#` },
-          { label: "Resale product Transacticon", path: `#` },
+          { label: "Resell Product Transacticon", path: `#` },
           { label: "Bidding Transaction", path: `#` }
         ]
       },

@@ -63,15 +63,15 @@ import ArtistBlogDetails from "../Component/Dashboard/Dashboardcomponents/Blog/A
 import ArtistManageTable from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistManageTable";
 import ArtistDetail from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistDetail";
 import BuyerManageTable from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerManageTable"
-import CustomOrder from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/CustomOrder/Customorder";
-import CreateCustomOrder from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/CustomOrder/CreateCustomOrder"
+import CustomOrder from "../Component/Dashboard/Dashboardcomponents/ProductDetails/CustomOrder/CustomOrderAll/Customorder";
+import CreateCustomOrder from "../Component/Dashboard/Dashboardcomponents/ProductDetails/CustomOrder/CustomOrderAll/CreateCustomOrder"
 import BuyerRequest from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerRequest/BuyerRequest";
 import BuyerProfile from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/UserProfile/UserProf"
 import BuyerRequestToArtist from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerRequestToArtist/BuyerRequestToArtist"
-import UpdateCustomOrder from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/CustomOrder/UpdateCustomOrder"
-import ViewCustomOrder from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/CustomOrder/ViewCustomOrde"
-import ViewBuyerRequest from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerRequest/ViewRequest";
-import ViewBuyerRequestToArtist from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerRequestToArtist/ViewBuyerRequestToArtist";
+import UpdateCustomOrder from "../Component/Dashboard/Dashboardcomponents/ProductDetails/CustomOrder/CustomOrderAll/UpdateCustomOrder"
+import ViewCustomOrder from "../Component/Dashboard/Dashboardcomponents/ProductDetails/CustomOrder/Buyer/ViewCustomOrde"
+import ViewBuyerRequest from "../Component/Dashboard/Dashboardcomponents/ProductDetails/CustomOrder/Artist/ViewRequest";
+import ViewBuyerRequestToArtist from "../Component/Dashboard/Dashboardcomponents/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist";
 import ProductUpload from "../Component/Dashboard/Dashboardcomponents/ProductDetails/productUploade";
 
 import BlogRequest from "../Component/Dashboard/Dashboardcomponents/Blog/SuperAdminBlog/BlogRequest";
@@ -184,18 +184,22 @@ const AppRoutes = () => {
   {/* Buyer Routes */}
   <Route path="BuyerManageTable" element={<BuyerManageTable />} />
   <Route path="BuyerManageTable/BuyerProfile/:userId" element={<BuyerProfile />} />
-  <Route path="BuyerCustomrequest" element={<CustomOrder />} />
-  <Route path="BuyerCustomrequest/CreateCustomrequest" element={<CreateCustomOrder />} />
-  <Route path="BuyerCustomrequest/UpdateCustomrequest/:id" element={<UpdateCustomOrder />} />
-  <Route path="BuyerCustomrequest/ViewCustomrequest/:id" element={<ViewCustomOrder />} />
-  <Route path="BuyerRequest" element={<BuyerRequest />} />
-  <Route path="BuyerRequest/ViewBuyerrequest/:id" element={<ViewBuyerRequest />} />
-  <Route path="buyerrequesttoartist" element={<BuyerRequestToArtist />} />
-  <Route path="buyerrequesttoartist/viewbuyerrequest/:id" element={<ViewBuyerRequestToArtist />} />
 
-    {/* Saler Routes */}
+ 
+
+
+    {/* Seller Routes */}
     <Route path="sellermanagetable" element={<SellerManageTable/>} />
     <Route path="sellermanagetable/sellerprofile/:userId" element={<SellerProfile />} />
+
+    {/* products Routes */}
+    <Route path="customrequest" element={<CustomOrder />} />
+    <Route path="customrequest/createcustomrequest" element={<CreateCustomOrder />} />
+    <Route path="customrequest/updatecustomrequest/:id" element={<UpdateCustomOrder />} />
+    <Route path="customrequest/viewcustomrequest/:id" element={<ViewCustomOrder />} />
+    <Route path="customRequest/viewrequest/:id" element={<ViewBuyerRequest />} />
+    <Route path="customrequesttoartist" element={<BuyerRequestToArtist />} />
+    <Route path="customrequesttoartist/viewrequesttoartist/:id" element={<ViewBuyerRequestToArtist />} />
 
   {/* User Profile Route */}
   <Route path="completeprofile/:userId" element={<UserProfile />} />
