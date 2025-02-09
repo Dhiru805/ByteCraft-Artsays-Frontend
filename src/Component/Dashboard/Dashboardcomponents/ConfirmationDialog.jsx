@@ -27,7 +27,14 @@ const DELETE_CONFIG = {
     successMessage: "Buyer request successfully deleted!",
     errorMessage: "Failed to delete buyer request.",
     idKey: "BuyerRequestId",
-  }
+  },
+  seller: {
+    getEndpoint: (id) => `http://localhost:3001/api/Delete-seller/${id}`,
+    successMessage: "Seller successfully deleted!",
+    errorMessage: "Failed to delete Seller.",
+    idKey: "SellerId",
+  },
+  
   
 
 };

@@ -10,7 +10,7 @@ const CustomorderHeader = () => {
             <div className="block-header">
                 <div className="row">
                     <div className="col-lg-6 col-md-6 col-sm-12">
-                        <h2>Buyer Custom Request</h2>
+                        <h2>Buyer Request To Artist</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
                                 <a href="index.html">
@@ -18,19 +18,19 @@ const CustomorderHeader = () => {
                                 </a>
                             </li>
                             {/* <li className="breadcrumb-item">App</li> */}
-                            <li className="breadcrumb-item ">Buyer Custom Request</li>
+                            <li className="breadcrumb-item ">Buyer Request To Artist</li>
                         </ul>
                     </div>
                     <div className="col-lg-6 col-md-6 col-sm-12">
                         <div className="d-flex flex-row-reverse">
                             <div className="page_action">
-                                <button
+                                {/* <button
                                     type="button"
                                     className="btn btn-secondary mr-2"
                                     onClick={() => navigate(`/${userType}/Dashboard/BuyerCustomrequest/CreateCustomrequest`)}
                                 >
                                     <i className="fa fa-plus"></i> Add Request
-                                </button>
+                                </button> */}
                             </div>
                         </div>
                     </div>

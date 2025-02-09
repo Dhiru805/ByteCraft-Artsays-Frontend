@@ -96,14 +96,14 @@ const BlogRequest = () => {
             <div className="block-header">
                 <div className="row">
                     <div className="col-lg-6 col-md-6 col-sm-12">
-                        <h2>Blog Request</h2>
+                        <h2>Artist Blog Request</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
                                 <a href="index.html">
                                     <i className="fa fa-dashboard"></i>
                                 </a>
                             </li>
-                            <li className="breadcrumb-item">Blog Request</li>
+                            <li className="breadcrumb-item">Artist Blog Request</li>
                         </ul>
                     </div>
                 </div>
@@ -160,9 +160,7 @@ const BlogRequest = () => {
                                             <th>Blog View</th>
                                             <th>Date</th>
                                             <th>Status</th>
-                                            {userType === "Super-Admin" && (
                                             <th>Action</th>
-                                            )}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -177,7 +175,7 @@ const BlogRequest = () => {
                                                 <td>
                                                     <button
                                                         className="btn btn-sm btn-outline-info"
-                                                        onClick={() => navigate(`/${userType}/Dashboard/BlogRequest/view-blog/${blog._id}`)}
+                                                        onClick={() => navigate(`/${userType}/Dashboard/artistblogrequest/viewblog/${blog._id}`)}
                                                     >
                                                         View
                                                     </button>
@@ -188,7 +186,6 @@ const BlogRequest = () => {
                                                         {blog.blogStatus}
                                                     </button>
                                                 </td>
-                                                {userType === "Super-Admin" && (
                                                 <td>
                                                     <button
                                                         type="button"
@@ -207,7 +204,6 @@ const BlogRequest = () => {
                                                         <i className="fa fa-ban"></i>
                                                     </button>
                                                 </td>
-                                                )}
                                             </tr>
                                         ))}
                                     </tbody>

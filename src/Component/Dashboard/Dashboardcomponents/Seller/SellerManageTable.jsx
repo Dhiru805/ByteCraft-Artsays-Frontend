@@ -4,56 +4,56 @@ import axios from "axios";
 import ConfirmationDialog from '../ConfirmationDialog';
 import useUserType from '../urlconfig';
 
-function BuyerManageTable() {
-  const [buyers, setBuyers] = useState([]);
+function SellerManageTable() {
+  const [sellers, setSellers] = useState([]);
   const userType = useUserType(); 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedBuyerToDelete, setSelectedBuyerToDelete] = useState(null);
+  const [selectedSellerToDelete, setSelectedSellerToDelete] = useState(null);
   const BASE_URL = 'http://localhost:3001';
   const navigate = useNavigate();
 
-  const fetchBuyers = async () => {
+  const fetchSellers = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/api/buyers/get-Allbuyer");
-      const buyersData = response.data;
+      const response = await axios.get("http://localhost:3001/api/get-Allsellers");
+      const sellersData = response.data;
 
-      const parsedBuyers = buyersData.map((buyer) => {
-        const parsedAddress = buyer.address
-          ? typeof buyer.address === "string"
-            ? JSON.parse(buyer.address)
-            : buyer.address
+      const parsedSellers = sellersData.map((seller) => {
+        const parsedAddress = seller.address
+          ? typeof seller.address === "string"
+            ? JSON.parse(seller.address)
+            : seller.address
           : {};
 
         return {
-          ...buyer,
+          ...seller,
           address: parsedAddress,
         };
       });
-      setBuyers(parsedBuyers);
+      setSellers(parsedSellers);
     } catch (error) {
-      console.error("Error fetching buyers:", error);
+      console.error("Error fetching sellers:", error);
     }
   };
 
   useEffect(() => {
-    fetchBuyers();
+    fetchSellers();
   }, []);
 
   const handleDeleteCancel = () => {
     setIsDeleteDialogOpen(false);
-    setSelectedBuyerToDelete(null);
+    setSelectedSellerToDelete(null);
   };
 
   const handleDeleteConfirmed = (id) => {
-    setBuyers((prevBuyers) =>
-      prevBuyers.filter((buyer) => buyer._id !== id)
+    setSellers((prevSellers) =>
+      prevSellers.filter((seller) => seller._id !== id)
     );
 
     setIsDeleteDialogOpen(false);
   };
 
-  const openDeleteDialog = (buyer) => {
-    setSelectedBuyerToDelete(buyer);
+  const openDeleteDialog = (seller) => {
+    setSelectedSellerToDelete(seller);
     setIsDeleteDialogOpen(true);
   };
 
@@ -63,14 +63,14 @@ function BuyerManageTable() {
         <div className="block-header">
           <div className="row">
             <div className="col-lg-6 col-md-6 col-sm-12">
-              <h2>Buyer Management</h2>
+              <h2>Seller Management</h2>
               <ul className="breadcrumb">
                 <li className="breadcrumb-item">
                   <a href="index.html">
                     <i className="fa fa-dashboard"></i>
                   </a>
                 </li>
-                <li className="breadcrumb-item">Buyer Management</li>
+                <li className="breadcrumb-item">Seller Management</li>
               </ul>
             </div>
           </div>
@@ -80,7 +80,7 @@ function BuyerManageTable() {
           <div className="col-lg-12">
             <div className="card">
               <div className="header d-flex justify-content-between align-items-center">
-                <h2>Buyer List</h2>
+                <h2>Seller List</h2>
                 <div className="d-flex">
                   <div className="input-group">
                     <input
@@ -110,16 +110,16 @@ function BuyerManageTable() {
                       </tr>
                     </thead>
                     <tbody>
-                      {buyers.map((buyer, index) => (
-                        <tr key={buyer._id}>
+                      {sellers.map((seller, index) => (
+                        <tr key={seller._id}>
                           <td>
                             <h6 className="mb-0">{index + 1}</h6>
                           </td>
                           <td>
                             <img
                               src={
-                                buyer.profilePhoto
-                                  ? `${BASE_URL}${buyer.profilePhoto}`
+                                seller.profilePhoto
+                                  ? `${BASE_URL}${seller.profilePhoto}`
                                   : 'DashboardAssets/assets/images/user.png'
                               }
                               className="rounded-circle avatar"
@@ -132,20 +132,20 @@ function BuyerManageTable() {
                             />
 
                             <p className="c_name">
-                              {buyer.name} {buyer.lastName}
+                              {seller.name} {seller.lastName}
                             </p>
                           </td>
                           <td>
-                            <span className="phone">{buyer.email}</span>
+                            <span className="phone">{seller.email}</span>
                           </td>
                           <td>
-                            <span className="phone">{buyer.phone}</span>
+                            <span className="phone">{seller.phone}</span>
                           </td>
                           <td>
                             <address>
                               <i className="zmdi zmdi-pin"></i>
-                              {buyer.address.city && `${buyer.address.city}, `}
-                              {buyer.address.country && buyer.address.country}
+                              {seller.address.city && `${seller.address.city}, `}
+                              {seller.address.country && seller.address.country}
                             </address>
                           </td>
                           <td>
@@ -154,7 +154,7 @@ function BuyerManageTable() {
                               className="btn btn-outline-info btn-sm mr-2"
                               title="Edit"
                               onClick={() =>
-                                navigate(`/${userType}/Dashboard/BuyerManageTable/BuyerProfile/${buyer._id}`)
+                                navigate(`/${userType}/Dashboard/sellermanagetable/sellerprofile/${seller._id}`)
                               }
                             >
                               <i className="fa fa-pencil"></i>
@@ -163,7 +163,7 @@ function BuyerManageTable() {
                               type="button"
                               className="btn btn-outline-danger btn-sm mr-2"
                               title="Delete"
-                              onClick={() => openDeleteDialog(buyer)}
+                              onClick={() => openDeleteDialog(seller)}
                             >
                               <i className="fa fa-trash-o"></i>
                             </button>
@@ -181,8 +181,8 @@ function BuyerManageTable() {
       {isDeleteDialogOpen && (
         <ConfirmationDialog
           onClose={handleDeleteCancel}
-          deleteType="buyer"
-          id={selectedBuyerToDelete._id}
+          deleteType="seller"
+          id={selectedSellerToDelete._id}
           onDeleted={handleDeleteConfirmed}
         />
       )}
@@ -190,4 +190,4 @@ function BuyerManageTable() {
   );
 }
 
-export default BuyerManageTable;
+export default SellerManageTable;

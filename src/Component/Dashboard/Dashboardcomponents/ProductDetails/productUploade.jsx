@@ -1,201 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import ImageEditor from "../../../Dashboard/Dashboardcomponents/ProductDetails/ImageCropping";
-
-import "froala-editor/css/froala_style.min.css";
-import "froala-editor/css/froala_editor.pkgd.min.css";
-
-import FroalaEditor from "react-froala-wysiwyg";
-import "froala-editor/js/plugins/image.min.js";
-import "froala-editor/js/plugins/char_counter.min.js";
+import 'react-quill/dist/quill.snow.css';
+import ReactQuill from 'react-quill';
 
 function ProductUpload() {
-  const [successMessage, setsuccessMessage] = useState();
-  const [errorMessage, seterrorMessage] = useState();
-  const [formData, setFormData] = useState({
-    productName: "",
-    artistName: "",
-    productCategory: "",
-    newPrice: "",
-    size: "",
-    oldPrice: "",
-    images: [],
-    mainImage: null, 
-  });
 
-  const [content, setContent] = useState(""); 
-  const [croppedImages, setCroppedImages] = useState([]);
-
-  const [editingImageIndex, setEditingImageIndex] = useState(null);
-
-  useEffect(() => {
-    const imageCount = localStorage.getItem("imageCount");
-    const images = [];
-
-    if (imageCount) {
-      for (let i = 1; i <= parseInt(imageCount); i++) {
-        const savedCroppedImage = localStorage.getItem("croppedImage" + i);
-        if (savedCroppedImage) {
-          images.push(savedCroppedImage);
-        }
-      }
-    }
-
-    setCroppedImages(images);
-  }, []);
-
-  // Function to convert a dataURL to a Blob
-  const dataURLToBlob = (dataURL) => {
-    if (!dataURL || !dataURL.includes(",")) {
-      console.error("Invalid dataURL provided to dataURLToBlob.");
-      return null;
-    }
-    try {
-      const parts = dataURL.split(",");
-      const mime = parts[0].match(/:(.*?);/)[1];
-      const bstr = atob(parts[1]);
-      let n = bstr.length;
-      const u8arr = new Uint8Array(n);
-      while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-      }
-      return new Blob([u8arr], { type: mime });
-    } catch (error) {
-      console.error("Error converting dataURL to Blob:", error.message);
-      return null;
-    }
+  const modules = {
+    toolbar: [
+      [{ 'font': ['sans-serif', 'serif', 'monospace'] }, { 'size': ['small', 'large', 'huge'] }],
+      [{ 'header': '1' }, { 'header': '2' }, 'bold', 'italic', 'underline'],
+      [{ 'align': [] }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      ['link', 'image', 'video'],
+      [{ 'color': [] }, { 'background': [] }],
+      ['code-block'],
+      ['blockquote'],
+      ['fullscreen'],
+      ['help'],
+    ],
   };
-
-  const [selectedImage, setSelectedImage] = useState(null);
-  // const [formData, setFormData] = useState({ mainImage: "" });
-
-  const [images, setImages] = useState([]); // Store uploaded images
-  const [error, setError] = useState(null);
-  const [editingImage, setEditingImage] = useState(null); // Store the image being edited
-  const [editingIndex, setEditingIndex] = useState(null);
-  const [selectedImageIndex, setSelectedImageIndex] = useState(null); // Store the index of the image being edited
-
-  useEffect(() => {
-    const imageCount = localStorage.getItem("imageCount");
-    const images = [];
-
-    if (imageCount) {
-      for (let i = 1; i <= parseInt(imageCount); i++) {
-        const savedCroppedImage = localStorage.getItem("croppedImage" + i);
-        if (savedCroppedImage) {
-          images.push(savedCroppedImage);
-        }
-      }
-    }
-
-    setCroppedImages(images);
-  }, []);
-
-  const handleChange = (event) => {
-    const files = Array.from(event.target.files);
-
-    const totalFiles = images.length + files.length;
-
-    if (totalFiles < 3 || totalFiles > 10) {
-      setError("Please select between 3 and 10 images.");
-      return;
-    }
-
-    setError(null);
-
-    const newImages = [
-      ...images,
-      ...files.map((file) => URL.createObjectURL(file)),
-    ];
-    setImages(newImages);
-
-    localStorage.removeItem("imageCount");
-    let i = 1;
-    while (localStorage.getItem(`croppedImage${i}`)) {
-      localStorage.removeItem(`croppedImage${i}`);
-      i++;
-    }
-  };
-
-  const handleEditClick = (image, index) => {
-    const updatedImages = [...images];
-    updatedImages[index] = {
-      ...updatedImages[index],
-      removed: true, // This flag hides the image
-    };
-
-    setSelectedImageIndex(index);
-    setImages(updatedImages);
-    setEditingImage(null);
-
-    // Use a timeout to ensure the state is updated before reopening
-    setTimeout(() => {
-      setEditingImage(image);
-      setEditingIndex(index);
-    }, 0);
-  };
-
-  const stripHtmlTags = (html) => {
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = html;
-    return tempDiv.textContent || tempDiv.innerText || "";
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Convert the main image data URL to a Blob
-    const mainImageBlob = dataURLToBlob(formData.mainImage);
-    const plainTextContent = stripHtmlTags(content);
-
-    const token = localStorage.getItem("token");
-    const formDataObj = new FormData();
-
-    formDataObj.append("productName", formData.productName);
-    formDataObj.append("artistName", formData.artistName);
-    formDataObj.append("productCategory", formData.productCategory);
-    formDataObj.append("newPrice", formData.newPrice);
-    formDataObj.append("oldPrice", formData.oldPrice);
-    formDataObj.append("description", plainTextContent);
-    formDataObj.append("size", formData.size);
-
-    if (mainImageBlob) {
-      formDataObj.append("mainImage", mainImageBlob, "cropped-image.png");
-    } else {
-      console.error("Main image is missing!");
-    }
-
-    // Append additional images
-    formData.images.forEach((image) => {
-      formDataObj.append("images", image); // Ensure the field name matches
-    });
-
-    // Log formData entries
-    for (let [key, value] of formDataObj.entries()) {
-      console.log(`${key}:`, value);
-    }
-
-    try {
-      const response = await fetch(
-        "http://localhost:3001/product-management/upload",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formDataObj,
-        }
-      );
-
-      const result = await response.json();
-      if (response.ok) {
-        setsuccessMessage("Product uploaded successfully!");
-      } else {
-        seterrorMessage(result.message || "Failed to upload product.");
-      }
-    } catch (err) {
-      seterrorMessage("Error submitting form. Please try again.");
-      console.error("Error submitting form:", err);
-    }
+  
+  const editorStyle = {
+    fontFamily: 'Nunito, Ubuntu, Raleway, IBM Plex Sans, sans-serif',
+    fontSize: '12px', 
   };
 
   return (
@@ -221,19 +48,11 @@ function ProductUpload() {
         <div className="col-lg-12">
           <div className="card">
             <div className="body">
-              {successMessage && (
-                <div className="alert alert-success">{successMessage}</div>
-              )}
-              {errorMessage && (
-                <div className="alert alert-danger">{errorMessage}</div>
-              )}
-              <form onSubmit={handleSubmit}>
+              <form>
                 <div className="form-group">
                   <input
                     type="text"
                     name="productName"
-                    value={formData.productName}
-                    onChange={handleChange}
                     className="form-control"
                     placeholder="Enter Product Name"
                     required
@@ -242,44 +61,9 @@ function ProductUpload() {
                 <div className="form-group">
                   <input
                     type="text"
-                    name="artistName"
-                    value={formData.artistName}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder="Artist Name"
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <input
-                    type="text"
                     name="newPrice"
-                    value={formData.newPrice}
-                    onChange={handleChange}
                     className="form-control"
-                    placeholder="$$"
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <input
-                    type="text"
-                    name="size"
-                    value={formData.newsize}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder="Enter size"
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <input
-                    type="text"
-                    name="oldPrice"
-                    value={formData.oldPrice}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder="$$"
+                    placeholder="Produt Price"
                     required
                   />
                 </div>
@@ -287,8 +71,6 @@ function ProductUpload() {
                 <div className="form-group">
                   <select
                     name="productCategory"
-                    value={formData.productCategory}
-                    onChange={handleChange}
                     className="form-control show-tick"
                     required
                   >
@@ -300,104 +82,47 @@ function ProductUpload() {
                     <option value="Sports">Sports</option>
                   </select>
                 </div>
+                <label className="btn btn-sm btn-secondary btn-upload" htmlFor="inputImage" title="Upload image file">
+                  Choose file
+                </label>
+                <input
+                  type="file"
+                  className="sr-only"
+                  id="inputImage"
+                  name="file"
+                  accept="image/*"
+                  multiple
+                />
+                <div className="input-image-preview-container">
+                  <h5>Selected Image Preview:</h5>
+                  <div id="imagePreviewList"></div>
 
-                {/* Add multiple image fields */}
-                <div className="form-group mt-3">
-                  {/* <label>Images</label>  */}
-                  <input
-                    type="file"
-                    name="images"
-                    onChange={handleChange}
-                    className="form-control-file"
-                    multiple
-                    accept="image/*"
+                </div>
+
+   
+  
+
+
+<div id="otherImagesContainer">
+    <h6>Other Images</h6>
+
+</div>
+
+
+                <div className="form-group mt-3 main-image">
+                  <ImageEditor
+
                   />
                 </div>
-
-                {error && <div style={{ color: "red" }}>{error}</div>}
-
-                <div className="mt-3">
-                  {images.length > 0 &&
-                    images.some((image) => !image.removed) && (
-                      <h5>Preview Images</h5>
-                    )}
-                  <div
-                    className="image-preview-container"
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      gap: "10px",
-                      flexWrap: "wrap",
-                    }}
-                  >
-                    {images.map(
-                      (image, index) =>
-                        !image.removed && (
-                          <div
-                            key={index}
-                            className="position-relative"
-                            style={{ marginRight: "10px" }}
-                          >
-                            <img
-                              src={image}
-                              alt={`preview-${index}`}
-                              style={{
-                                width: "100px",
-                                height: "100px",
-                                borderRadius: "5px",
-                                display:
-                                  selectedImageIndex === index
-                                    ? "none"
-                                    : "block",
-                              }}
-                            />
-                            {images.length >= 3 &&
-                              images.length <= 10 &&
-                              selectedImageIndex !== index && (
-                                <button
-                                  className="fa fa-edit position-absolute"
-                                  style={{
-                                    top: "5px",
-                                    right: "5px",
-                                    background: "rgba(0, 0, 0, 0.5)",
-                                    color: "#fff",
-                                    border: "none",
-                                    padding: "5px",
-                                    borderRadius: "50%",
-                                    display:
-                                      selectedImageIndex === index ||
-                                      image.removed
-                                        ? "none"
-                                        : "block",
-                                  }}
-                                  onClick={() => handleEditClick(image, index)}
-                                ></button>
-                              )}
-                          </div>
-                        )
-                    )}
-                  </div>
-                </div>
-
-                  <div className="form-group mt-3 main-image">
-                    <ImageEditor
-                      initialImage={editingImage}
-                      editingImageIndex={editingImageIndex}
+                <div className="form-group mt-3">
+                  <div className="form-group mt-3">
+                    <ReactQuill
+                      placeholder="Enter Product Details"
+                      modules={modules}
+                      theme="snow"
+                      style={editorStyle}
                     />
                   </div>
-
-                <div className="form-group mt-3">
-                  <FroalaEditor
-                    model={content}
-                    onModelChange={(newContent) => {
-                      console.log("Editor content:", newContent); // Debugging log
-                      setContent(newContent);
-                    }}
-                    config={{
-                      placeholderText: "Enter your product details here.",
-                      charCounterCount: true,
-                    }}
-                  />
                 </div>
                 <button
                   type="submit"
@@ -411,6 +136,10 @@ function ProductUpload() {
         </div>
       </div>
     </div>
+
+
+    //   </div>
+    // </div>
   );
 }
 

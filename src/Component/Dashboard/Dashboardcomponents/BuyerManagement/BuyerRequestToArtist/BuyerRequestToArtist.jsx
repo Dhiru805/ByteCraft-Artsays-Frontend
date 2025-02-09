@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
-import BuyerrequestHeader from "./BuyerRequestHeader";
-import BuyerManageTable from "../../ProductDetails/CustomOrder/Artist/BuyerRequestTable";
+import BuyerRequestToArtistHeader from "./BuyerRequestToHeader";
+import BuyerRequestToArtistTable from "../../ProductDetails/CustomOrder/SuperAdmin/BuyerRequestToArtistTable";
 import getAPI from "../../../../../api/getAPI";
 import { useConfirm } from '../../StatusConfirm';
 import { toast } from 'react-toastify';
 import putAPI from '../../../../../api/putAPI';
 
-const BuyerRequest = () => { 
+
+const Customorder = () => {
     const [buyerRequests, setBuyerRequests] = useState([]);
     const confirm = useConfirm();
-
+   
     const fetchBuyerRequests = async () => {
         try {
-            const response = await getAPI("http://localhost:3001/api/get-buyer-request-data");
+            const response = await getAPI("http://localhost:3001/api/get-data-admin");
             const buyerRequestsData = response.data.buyerRequests;
             setBuyerRequests(buyerRequestsData);
         } catch (error) {
@@ -23,7 +24,6 @@ const BuyerRequest = () => {
     useEffect(() => {
         fetchBuyerRequests();
     }, []);
-
     const updateBuyerRequestStatus = async (requestId, status) => {
         try {
             await putAPI(
@@ -51,12 +51,18 @@ const BuyerRequest = () => {
         confirm(() => updateBuyerRequestStatus(requestId, 'Rejected'), "Are you sure you want to reject this buyer request?");
     };
 
+
+
     return (
         <>
-            <BuyerrequestHeader />
-            
+            <BuyerRequestToArtistHeader  />
+            <BuyerRequestToArtistTable  
+            handleRejectBuyerRequest={handleRejectBuyerRequest} 
+                updateBuyerRequestStatus={updateBuyerRequestStatus}
+                 buyerRequests={buyerRequests} 
+                 setBuyerRequests={setBuyerRequests} />
         </>
     );
 };
 
-export default BuyerRequest;
+export default Customorder;

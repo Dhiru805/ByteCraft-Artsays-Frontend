@@ -1,11 +1,31 @@
-import React from "react";
+import React,{useState} from "react";
 import { useNavigate } from "react-router-dom";
-import useUserType from '../../urlconfig';
+import useUserType from '../../../urlconfig';
+import NegotiateModal from "./Negotiate";
 
 function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyerRequestStatus }) {
-      const navigate = useNavigate();
-      const userType = useUserType();
+    const navigate = useNavigate();
+    const userType = useUserType();
+    const [showModal, setShowModal] = useState(false);
+    const [selectedRequest, setSelectedRequest] = useState(null);
+
+const handleOpenModal = (request) => {
+  setSelectedRequest(request);
+  setShowModal(true);
+};
+
+const handleCloseModal = () => {
+  setShowModal(false);
+  setSelectedRequest(null);
+};
+
+const handleSaveChanges = (updatedData) => {
+  console.log("Updated Data:", updatedData);
+  handleCloseModal();
+};
+
     return (
+        <>
         <div className="container-fluid">
             <div className="row clearfix">
                 <div className="col-lg-12">
@@ -69,30 +89,29 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                                 <td>{new Date(request.createdAt).toLocaleDateString()}</td>
                                                 <td>
                                                     <button
-                                                        className={`btn btn-sm ${
-                                                            request.RequestStatus === 'Pending'
-                                                                ? 'btn-outline-warning'
-                                                                : request.RequestStatus === 'Approved'
+                                                        className={`btn btn-sm ${request.RequestStatus === 'Pending'
+                                                            ? 'btn-outline-warning'
+                                                            : request.RequestStatus === 'Approved'
                                                                 ? 'btn-outline-success'
                                                                 : 'btn-outline-danger'
-                                                        }`}
+                                                            }`}
                                                     >
                                                         {request.RequestStatus}
                                                     </button>
                                                 </td>
                                                 <td>
-                                                <button
-                                                            type="button"
-                                                            className="btn btn-outline-info btn-sm mr-2"
-                                                            title="Edit"
-                                                            onClick={() =>
-                                                                navigate(`/${userType}/Dashboard/BuyerRequest/ViewBuyerrequest/${request._id}`, {
-                                                                    state: { request },
-                                                                })
-                                                            }
-                                                        >
-                                                            <i className="fa fa-eye"></i>
-                                                        </button>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline-info btn-sm mr-2"
+                                                        title="View"
+                                                        onClick={() =>
+                                                            navigate(`/${userType}/Dashboard/customRequest/viewrequest/${request._id}`, {
+                                                                state: { request },
+                                                            })
+                                                        }
+                                                    >
+                                                        <i className="fa fa-eye"></i>
+                                                    </button>
                                                     <button
                                                         type="button"
                                                         className="btn btn-sm btn-outline-success w-2 mr-2"
@@ -103,12 +122,22 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                                     </button>
                                                     <button
                                                         type="button"
-                                                        className="btn btn-sm btn-outline-danger"
+                                                        className="btn btn-sm btn-outline-danger  w-2 mr-2"
                                                         title="Reject"
                                                         onClick={() => handleRejectBuyerRequest(request._id)}
                                                     >
                                                         <i className="fa fa-ban"></i>
                                                     </button>
+                                                    {request.RequestStatus === 'Approved' && (
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-outline-secondary btn-sm"
+                                                            title="Negotiate"
+                                                            onClick={() => handleOpenModal(request)}
+                                                        >
+                                                            <i className="fas fa-handshake"></i>
+                                                        </button>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))}
@@ -120,6 +149,15 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                 </div>
             </div>
         </div>
+        {showModal && (
+  <NegotiateModal 
+    request={selectedRequest}
+    onClose={handleCloseModal}
+    onSubmit={handleSaveChanges}
+  />
+)}
+
+        </>
     );
 }
 

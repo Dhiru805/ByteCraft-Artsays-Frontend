@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ConfirmationDialog from '../../ConfirmationDialog';
-import useUserType from '../../urlconfig';
+import ConfirmationDialog from '../../../ConfirmationDialog';
+import useUserType from '../../../urlconfig';
 
-function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
+function BuyerManageTable({ buyerRequests, setBuyerRequests ,handleRejectBuyerRequest, updateBuyerRequestStatus}) {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [selectedBuyerRequestToDelete, setSelectedBuyerRequestToDelete] = useState(null);
     const [selectedRequestDescription, setSelectedRequestDescription] = useState(null);
 
     const navigate = useNavigate();
-    const userType = useUserType(); 
+    const userType = useUserType();
 
     const handleDeleteCancel = () => {
         setIsDeleteDialogOpen(false);
@@ -39,7 +39,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                     <div className="col-lg-12">
                         <div className="card">
                             <div className="header d-flex justify-content-between align-items-center">
-                                <h2>Buyer Request List</h2>
+                                <h2>Buyer Request To Artist List</h2>
                                 <div className="d-flex">
                                     <div className="input-group">
                                         <input
@@ -61,9 +61,10 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                                         <thead className="thead-dark">
                                             <tr>
                                                 <th>#</th>
-                                                <th>Product Name</th>
+                                                <th>Buyer Name</th>
                                                 <th>Artist Name</th>
                                                 <th>Budget </th>
+                                                <th>Negotiated Budget</th>
                                                 <th>Request Date</th>
                                                 <th>Request Status</th>
                                                 <th>Action</th>
@@ -77,7 +78,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                                                     </td>
                                                     <td>
                                                         <img
-                                                            src={`http://localhost:3001/${request.BuyerImage}`}
+                                                            src={`http://localhost:3001${request.Buyer.id.profilePhoto}`}
                                                             className="rounded-circle avatar"
                                                             alt=""
                                                             style={{
@@ -87,14 +88,30 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                                                             }}
                                                         />
                                                         <p className="c_name">
-                                                            {request.ProductName}
+                                                            {request.Buyer ? `${request.Buyer.id.name} ${request.Buyer.id.lastName}` : 'N/A'}
+                                                        </p>
+
+                                                    </td>
+                                                    <td>
+                                                        <img
+                                                            src={`http://localhost:3001${request.Artist.id.profilePhoto}`}
+                                                            className="rounded-circle avatar"
+                                                            alt=""
+                                                            style={{
+                                                                width: '30px',
+                                                                height: '30px',
+                                                                objectFit: 'cover',
+                                                            }}
+                                                        />
+                                                        <p className="c_name">
+                                                            {request.Artist ? `${request.Artist.id.name} ${request.Artist.id.lastName}` : 'N/A'}
                                                         </p>
                                                     </td>
                                                     <td>
-                                                        {request.Artist ? `${request.Artist.id.name} ${request.Artist.id.lastName}` : 'N/A'}
+                                                        {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.Budget).replace(/\.00$/, '')}
                                                     </td>
                                                     <td>
-                                                        {convertToINR(request.Budget)}
+                                                        {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.NegiotaiteBudget).replace(/\.00$/, '')}
                                                     </td>
                                                     <td>{new Date(request.createdAt).toLocaleDateString()}</td>
                                                     <td>
@@ -107,15 +124,16 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                                                             type="button"
                                                             className="btn btn-outline-primary btn-sm mr-2"
                                                             title="Navigate"
-                                                            onClick={() =>
-                                                                navigate(`/${userType}/Dashboard/BuyerCustomrequest/ViewCustomrequest/${request._id}`, {
+                                                            onClick={() => {
+                                                                console.log('Navigating to request with ID:', request._id); 
+                                                                navigate(`/${userType}/Dashboard/customrequesttoartist/viewrequesttoartist/${request._id}`, {
                                                                     state: { request },
-                                                                })
-                                                            }
+                                                                });
+                                                            }}
                                                         >
                                                             <i className="fa fa-eye"></i>
                                                         </button>
-                                                        <button
+                                                        {/* <button
                                                             type="button"
                                                             className="btn btn-outline-info btn-sm mr-2"
                                                             title="Edit"
@@ -126,7 +144,23 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                                                             }
                                                         >
                                                             <i className="fa fa-pencil"></i>
-                                                        </button>
+                                                        </button> */}
+                                                           <button
+                                                        type="button"
+                                                        className="btn btn-sm btn-outline-success w-2 mr-2"
+                                                        title="Approve"
+                                                        onClick={() => updateBuyerRequestStatus(request._id, 'Approved')}
+                                                    >
+                                                        <i className="fa fa-check"></i>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-sm btn-outline-danger  w-2 mr-2"
+                                                        title="Reject"
+                                                        onClick={() => handleRejectBuyerRequest(request._id)}
+                                                    >
+                                                        <i className="fa fa-ban"></i>
+                                                    </button>
                                                         <button
                                                             type="button"
                                                             className="btn btn-outline-danger btn-sm mr-2"

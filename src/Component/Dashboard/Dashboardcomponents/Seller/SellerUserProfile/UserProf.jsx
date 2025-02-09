@@ -135,15 +135,15 @@ const UserProfileForm = () => {
       <div className="block-header">
         <div className="row">
           <div className="col-lg-6 col-md-6 col-sm-12">
-            <h2>Buyer Profile</h2>
+            <h2>Seller Profile</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
                 <a href="index.html">
                   <i className="fa fa-dashboard" />
                 </a>
               </li>
-              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/BuyerManageTable`}>BuyerManageTable</Link></li>
-              <li className="breadcrumb-item">Buyer Profile</li>
+              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/sellermanagetable`}>Seller Manage Table</Link></li>
+              <li className="breadcrumb-item">Seller Profile</li>
             </ul>
           </div>
         </div>
