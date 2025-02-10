@@ -222,6 +222,8 @@ $(function () {
   $(document).ready(function () {
     var $image = $("#image");
     var processedFiles = []; // Array to store processed image data URLs
+    var mainImage = ""; // Store the main image
+    var otherImages = []; 
 
     // Handle file input change
     $("#inputImage").off('change').on('change', function () {
@@ -350,7 +352,11 @@ $(document).on("click", ".image-wrapper button", function () {
 });
 
 
-    // Handle delete button click
+$(document).on("change", 'input[name="mainImage"]', function () {
+  mainImage = $(this).attr("data-image");
+  console.log("Main Image Selected:", mainImage);
+});
+
    // Handle delete button click
 $(document).on("click", ".image-wrapper button", function () {
   if ($(this).html().includes("fa-trash")) { // Ensure it's the delete button
@@ -425,4 +431,52 @@ $(document).on("click", ".image-wrapper button", function () {
         }
     });
 });
+
+$(document).ready(function () {
+  $("#uploadBtn").off('click').on('click', function () {
+      console.log("Upload button clicked!"); // Debugging
+
+      var mainImage = $("input[name='mainImage']:checked").attr("data-image"); // Get selected main image
+
+      if (!mainImage) {
+          alert("Please select a main image.");
+          return;
+      }
+
+      var otherImages = [];
+
+      $(".image-wrapper img").each(function () {
+          var imgSrc = $(this).attr("src");
+          if (imgSrc !== mainImage) { 
+              otherImages.push(imgSrc); // Store other images
+          }
+      });
+
+      // Prepare data to send to backend
+      var formData = {
+          mainImage: mainImage,
+          otherImages: otherImages
+      };
+
+      console.log("Uploading:", formData); // Debugging
+
+      // Check if AJAX is sending data
+      $.ajax({
+          url: "http://localhost:3001/api/cropImage", // Ensure this matches your backend route
+          type: "POST",
+          contentType: "application/json",
+          data: JSON.stringify(formData),
+          success: function (response) {
+              alert("Images uploaded successfully!");
+              console.log(response);
+          },
+          error: function (xhr, status, error) {
+              alert("Error uploading images. Check the console for details.");
+              console.error("AJAX Error:", status, error);
+              console.error(xhr.responseText);
+          }
+      });
+  });
+});
+
 })
