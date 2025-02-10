@@ -48,7 +48,7 @@ function ProductUpload() {
         <div className="col-lg-12">
           <div className="card">
             <div className="body">
-              <form>
+              {/* <form>
                 <div className="form-group">
                   <input
                     type="text"
@@ -82,7 +82,11 @@ function ProductUpload() {
                     <option value="Sports">Sports</option>
                   </select>
                 </div>
-                <label className="btn btn-sm btn-secondary btn-upload" htmlFor="inputImage" title="Upload image file">
+
+              
+               
+              </form> */}
+              <label className="btn btn-sm btn-secondary btn-upload" htmlFor="inputImage" title="Upload image file">
                   Choose file
                 </label>
                 <input
@@ -98,17 +102,7 @@ function ProductUpload() {
                   <div id="imagePreviewList"></div>
 
                 </div>
-
-   
-  
-
-
-<div id="otherImagesContainer">
-    <h6>Other Images</h6>
-
-</div>
-
-
+                <button  id="uploadBtn">Upload</button>
                 <div className="form-group mt-3 main-image">
                   <ImageEditor
 
@@ -125,12 +119,12 @@ function ProductUpload() {
                   </div>
                 </div>
                 <button
-                  type="submit"
+                  // type="submit"
                   className="btn btn-block btn-primary mt-3"
+                  id="uploadBtn"
                 >
                   Upload product
                 </button>
-              </form>
             </div>
           </div>
         </div>
