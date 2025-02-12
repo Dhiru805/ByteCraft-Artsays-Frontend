@@ -2,16 +2,21 @@ import React from "react";
 import ImageEditor from "../../../Dashboard/Dashboardcomponents/ProductDetails/ImageCropping";
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
-
+ 
 function ProductUpload() {
-
+  const [description, setDescription] = React.useState('');
+ 
+  React.useEffect(() => {
+    document.getElementById('description').value = description;
+  }, [description]);
+ 
   const modules = {
     toolbar: [
       [{ 'font': ['sans-serif', 'serif', 'monospace'] }, { 'size': ['small', 'large', 'huge'] }],
       [{ 'header': '1' }, { 'header': '2' }, 'bold', 'italic', 'underline'],
       [{ 'align': [] }],
       [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-      ['link', 'image', 'video'],
+      ['link'],
       [{ 'color': [] }, { 'background': [] }],
       ['code-block'],
       ['blockquote'],
@@ -19,12 +24,12 @@ function ProductUpload() {
       ['help'],
     ],
   };
-  
+ 
   const editorStyle = {
     fontFamily: 'Nunito, Ubuntu, Raleway, IBM Plex Sans, sans-serif',
-    fontSize: '12px', 
+    fontSize: '12px',
   };
-
+ 
   return (
     <div className="container-fluid">
       <div className="block-header">
@@ -43,12 +48,12 @@ function ProductUpload() {
           </div>
         </div>
       </div>
-
+ 
       <div className="row clearfix">
         <div className="col-lg-12">
           <div className="card">
             <div className="body">
-              {/* <form>
+               <form>
                 <div className="form-group">
                   <input
                     type="text"
@@ -58,23 +63,34 @@ function ProductUpload() {
                     required
                   />
                 </div>
+ 
+                <div className="form-group">
+                  {/* <input
+                    type="text"
+                    name="artistName"
+                    className="form-control"
+                    placeholder="Name"
+                    required
+                  /> */}
+                </div>
                 <div className="form-group">
                   <input
-                    type="text"
+                    type="number"
                     name="newPrice"
                     className="form-control"
-                    placeholder="Produt Price"
+                    placeholder="Product Price"
                     required
+                    min="0"
                   />
                 </div>
-
+ 
                 <div className="form-group">
                   <select
                     name="productCategory"
                     className="form-control show-tick"
                     required
                   >
-                    <option value="">Select productCategory</option>
+                    <option value="">Select Product Category</option>
                     <option value="Web Design">Web Design</option>
                     <option value="Photography">Photography</option>
                     <option value="Technology">Technology</option>
@@ -82,10 +98,7 @@ function ProductUpload() {
                     <option value="Sports">Sports</option>
                   </select>
                 </div>
-
-              
-               
-              </form> */}
+           </form>
               <label className="btn btn-sm btn-secondary btn-upload" htmlFor="inputImage" title="Upload image file">
                   Choose file
                 </label>
@@ -100,26 +113,22 @@ function ProductUpload() {
                 <div className="input-image-preview-container">
                   <h5>Selected Image Preview:</h5>
                   <div id="imagePreviewList"></div>
-
                 </div>
-                <button  id="uploadBtn">Upload</button>
                 <div className="form-group mt-3 main-image">
-                  <ImageEditor
-
-                  />
+                  <ImageEditor/>
                 </div>
                 <div className="form-group mt-3">
-                  <div className="form-group mt-3">
-                    <ReactQuill
-                      placeholder="Enter Product Details"
-                      modules={modules}
-                      theme="snow"
-                      style={editorStyle}
-                    />
-                  </div>
+                  <ReactQuill
+                    placeholder="Enter Product Details"
+                    modules={modules}
+                    theme="snow"
+                    style={editorStyle}
+                    value={description}
+                    onChange={setDescription}
+                  />
+                  <input type="hidden" id="description" />
                 </div>
                 <button
-                  // type="submit"
                   className="btn btn-block btn-primary mt-3"
                   id="uploadBtn"
                 >
@@ -130,11 +139,7 @@ function ProductUpload() {
         </div>
       </div>
     </div>
-
-
-    //   </div>
-    // </div>
   );
 }
-
+ 
 export default ProductUpload;

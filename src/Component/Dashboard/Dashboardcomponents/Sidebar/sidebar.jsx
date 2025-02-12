@@ -27,11 +27,11 @@ const Sidebar = () => {
       path: `#artist-management`,
       subTabs: [
         { label: "Management", path: `/${userType}/Dashboard/ArtistManageTable` },
-        { label: "Products", path: `#` },
+        { label: "Products", path: `/${userType}/Dashboard/allartistproduct` },
         { label: "Product Sell", path: `#` },
-        { label: "Blogs", path: `#` },
+        { label: "Blogs", path: `/${userType}/Dashboard/artistblogs` },
         { label: "Blog Request", path: `/${userType}/Dashboard/artistblogrequest` },
-        { label: "Product Request", path: `#` },
+        { label: "Product Request", path: `/${userType}/Dashboard/artistproductrequest` },
         { label: "Transaction", path: `#` },
         { label: "Packaging Material", path: `#` },
       ]

@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
-import { useConfirm } from '../../StatusConfirm';
-import { toast } from 'react-toastify';
-import putAPI from '../../../../../api/putAPI';
 import ConfirmationDialog from '../../ConfirmationDialog';
 import UpdateModal from '../../Blog/ArtistBlog/UpdateBlogList';
 import useUserType from '../../urlconfig';
 
 const Billings = ({ userId, profileData, previewImage }) => {
-  const userType = useUserType(); 
+const userType = useUserType(); 
   const [blogs, setBlogs] = useState([]);
   const navigate = useNavigate();
-  const confirm = useConfirm();
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedBlogToDelete, setSelectedBlogToDelete] = useState(null);
-  const [hoveredBlogId, setHoveredBlogId] = useState(null); // State to track hovered blog
+  const [hoveredBlogId, setHoveredBlogId] = useState(null); 
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -35,39 +31,13 @@ const Billings = ({ userId, profileData, previewImage }) => {
     return `${month} ${ordinalDay}, ${year}`;
   };
 
-  const updateBlogStatus = async (blogId, status) => {
-    try {
-      await putAPI(
-        `http://localhost:3001/Blog-Post/update-status/${blogId}`,
-        { blogStatus: status },
-        {},
-        true
-      );
+  
 
-      setBlogs((prevBlogs) =>
-        prevBlogs.map((blog) =>
-          blog._id === blogId ? { ...blog, blogStatus: status } : blog
-        )
-      );
-
-      if (status === 'Approved') {
-        toast.success('Blog Request is Approved');
-      } else if (status === 'Rejected') {
-        toast.error('Blog Request is Rejected');
-      }
-    } catch (error) {
-      console.error("Error updating blog status:", error);
-    }
-  };
-
-  const handleReject = (blogId) => {
-    confirm(() => updateBlogStatus(blogId, 'Rejected'), "Are you sure you want to reject this blog?");
-  };
-
+ 
   const fetchBlog = async () => {
     try {
       const result = await getAPI(
-        `http://localhost:3001/Blog-Post/blogs/user/${userId}`,
+        `http://localhost:3001/Blog-Post/blogs/userstatus/${userId}`,
         {},
         true,
         false
@@ -107,17 +77,7 @@ const Billings = ({ userId, profileData, previewImage }) => {
     setIsDeleteDialogOpen(true);
   };
 
-  const getOverallStatus = () => {
-    if (blogs.some(blog => blog.blogStatus === 'Pending')) {
-      return 'Pending';
-    }
-    if (blogs.some(blog => blog.blogStatus === 'Rejected')) {
-      return 'Rejected';
-    }
-    return 'Approved';
-  };
 
-  // const overallStatus = getOverallStatus();
 
   return (
     <>
@@ -134,7 +94,7 @@ const Billings = ({ userId, profileData, previewImage }) => {
                     onMouseEnter={() => setHoveredBlogId(blog._id)}
                     onMouseLeave={() => setHoveredBlogId(null)}
                   >
-                    <div
+                    {/* <div
                       className={`status-dot ${blog.blogStatus === 'Pending' ? 'bg-warning' : blog.blogStatus === 'Approved' ? 'bg-success' : 'bg-danger'}`}
                       style={{
                         position: 'absolute',
@@ -145,7 +105,7 @@ const Billings = ({ userId, profileData, previewImage }) => {
                         borderRadius: '50%',
                         zIndex: 1
                       }}
-                    ></div>
+                    ></div> */}
                     <div className="body p-4">
                       <div className="img-post" style={{
                         width: '100%',
@@ -185,17 +145,17 @@ const Billings = ({ userId, profileData, previewImage }) => {
                         style={{ display: hoveredBlogId === blog._id ? 'block' : 'none' }}>
                             <button
                               className="btn btn-outline-secondary btn-sm mx-1"
-                              // onClick={() =>
-                              //   navigate(`/Dashboard/BlogRequest/view-blog/BlogDetails/${blog._id}`)
-                              // }
-                              onClick={() => navigate(`/${userType}/Dashboard/artistblogs/blogs/${blog._id}`)}
+                            //   onClick={() =>
+                            //     navigate(`/Dashboard/BlogRequest/view-blog/BlogDetails/${blog._id}`)
+                            //   }
+                            onClick={() => navigate(`/${userType}/Dashboard/artistblogs/blogs/${blog._id}`)}
+                              
                             >
                               <i className="fa fa-eye"></i>
                             </button>
 
                             <button
-                              // onClick={() => handleUpdateClick(blog)}
-                              onClick={() => navigate(`/${userType}/Dashboard/artistblogs/updateblog/${blog._id}`, { state: { blog } })}
+                            onClick={() => navigate(`/${userType}/Dashboard/artistblogs/updateblog/${blog._id}`, { state: { blog } })}
                               className="btn btn-outline-primary btn-sm mx-1"
                             >
                               <i className="fa fa-edit"></i>
@@ -207,7 +167,7 @@ const Billings = ({ userId, profileData, previewImage }) => {
                             >
                               <i className="fa fa-trash"></i>
                             </button>
-                            <button
+                            {/* <button
                               type="button"
                               className="btn btn-sm btn-outline-success mx-1"
                               title="Approved"
@@ -222,14 +182,14 @@ const Billings = ({ userId, profileData, previewImage }) => {
                               onClick={() => handleReject(blog._id)}
                             >
                               <i className="fa fa-ban"></i>
-                            </button>
+                            </button> */}
                         </li>
                       </ul>
                     </div>
                   </div>
                 ))
               ) : (
-                <p>No blogs available.</p>
+                <p></p>
               )}
             </div>
           </div>

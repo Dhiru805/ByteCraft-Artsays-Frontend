@@ -3,7 +3,7 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  useLocation,
+  // useLocation,
 } from "react-router-dom";
 // import Home from "../Pages/Home/Home";
 // import About from "../Pages/About/About";
@@ -65,7 +65,7 @@ import ArtistDetail from "../Component/Dashboard/Dashboardcomponents/ArtistDetai
 import BuyerManageTable from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerManageTable"
 import CustomOrder from "../Component/Dashboard/Dashboardcomponents/ProductDetails/CustomOrder/CustomOrderAll/Customorder";
 import CreateCustomOrder from "../Component/Dashboard/Dashboardcomponents/ProductDetails/CustomOrder/CustomOrderAll/CreateCustomOrder"
-import BuyerRequest from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerRequest/BuyerRequest";
+// import BuyerRequest from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerRequest/BuyerRequest";
 import BuyerProfile from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/UserProfile/UserProf"
 import BuyerRequestToArtist from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerRequestToArtist/BuyerRequestToArtist"
 import UpdateCustomOrder from "../Component/Dashboard/Dashboardcomponents/ProductDetails/CustomOrder/CustomOrderAll/UpdateCustomOrder"
@@ -80,7 +80,12 @@ import BlogRequest from "../Component/Dashboard/Dashboardcomponents/Blog/SuperAd
 import ArtistBlogRequestTable from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistBlogRequest/BlogRequestTable";
 import ArtistBlogView from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistBlogRequest/Artistviewblog";
 import Artistblogdetails from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistBlogRequest/Artistblogdetails";
-
+import Artistblogs from"../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistBlogs/BlogList"
+import UpdateArtistblogs from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistBlogs/UpdateBlogList"
+import ArtistBlogs from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistBlogs/ArtistBlogDetails"
+import ArtistProductRequest from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ProductRequest/ProductRequestTable"
+import ArtistProductRequestView from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ProductRequest/ProductRequestView"
+import AllArtistProduct from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/Product/AllArtistProduct"
 //Saler
 import SellerManageTable from "../Component/Dashboard/Dashboardcomponents/Seller/SellerManageTable";
 import SellerProfile from  "../Component/Dashboard/Dashboardcomponents/Seller/SellerUserProfile/UserProf";
@@ -173,6 +178,17 @@ const AppRoutes = () => {
   <Route path="artistblogrequest" element={<ArtistBlogRequestTable/>} />
   <Route path="artistblogrequest/viewblog/:blogId" element={<ArtistBlogView/>} />
   <Route path="artistblogrequest/viewblog/blogdetails/:blogId" element={<Artistblogdetails/>} />
+  <Route path="artistblogs" element={<Artistblogs />} />
+  <Route path="artistblogs/updateblog/:blogId" element={<UpdateArtistblogs />} />
+  <Route path="artistblogs/blogs/:blogId" element={<ArtistBlogs />} />
+  <Route path="artistproductrequest" element={<ArtistProductRequest/>} />
+  <Route path="artistproductrequest/artistproductview/:productId" element={<ArtistProductRequestView />} />
+  <Route path="Product-uploade/:id" element={<ProductUpload />} />
+  <Route path="allartistproduct" element={<AllArtistProduct/>} />
+
+ 
+ 
+
 
   <Route path="artists/:id" element={<ArtistDetail />} />
   <Route path="ArtistManageTable/ArtistProfile/:userId" element={<ArtistProfile />} />
@@ -218,39 +234,39 @@ const AppRoutes = () => {
 };
 
 const LayoutWrapper = ({ children }) => {
-  const location = useLocation(); // Now inside the Router
-  const hideHeaderFooterRoutes = [
-    "/completeprofile",
-    "/image-edit",
-    "/artists/:id",
-    "/ArtistManageTable",//superadmin ,admin  
-    "/BuyerManageTable",//superadmin ,admin  
-    "/teamboard",//superadmin ,admin  
-    "/maintenance",//superadmin ,admin  
-    "/search",
-    "/invoice",
-    "/imagegallery",
-    "/Fileimages",
-    "/403",
-    "/404",
-    "/Filemedia",
-    "/Filedocs",
-    "/create-blog",
-    "/dashboardaccess",
-    "/Bloglist",//superadmin ,admin  
-    "/Filedashboard",
-    "/Blogdetails",
-    "/Blogpost",
-    "/Appinbox",
-    "/Appcontact",
-    "/Appchat",
-    "/Blogdashboard",
-    "/BlogRequest",    //superadmin ,admin
-    "/Product-uploade"
-  ];
-  const shouldHideHeaderFooter = hideHeaderFooterRoutes.includes(
-    location.pathname
-  );
+  // const location = useLocation(); // Now inside the Router
+  // const hideHeaderFooterRoutes = [
+  //   "/completeprofile",
+  //   "/image-edit",
+  //   "/artists/:id",
+  //   "/ArtistManageTable",//superadmin ,admin  
+  //   "/BuyerManageTable",//superadmin ,admin  
+  //   "/teamboard",//superadmin ,admin  
+  //   "/maintenance",//superadmin ,admin  
+  //   "/search",
+  //   "/invoice",
+  //   "/imagegallery",
+  //   "/Fileimages",
+  //   "/403",
+  //   "/404",
+  //   "/Filemedia",
+  //   "/Filedocs",
+  //   "/create-blog",
+  //   "/dashboardaccess",
+  //   "/Bloglist",//superadmin ,admin  
+  //   "/Filedashboard",
+  //   "/Blogdetails",
+  //   "/Blogpost",
+  //   "/Appinbox",
+  //   "/Appcontact",
+  //   "/Appchat",
+  //   "/Blogdashboard",
+  //   "/BlogRequest",    //superadmin ,admin
+  //   "/Product-uploade"
+  // ];
+  // const shouldHideHeaderFooter = hideHeaderFooterRoutes.includes(
+  //   location.pathname
+  // );
 
   return (
     <>

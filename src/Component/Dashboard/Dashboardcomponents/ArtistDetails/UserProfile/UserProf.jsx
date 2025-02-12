@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Preferences from './Pereferences';
 import Billings from './Billings';
 import ViewBlogRequest from './ViewBlogRequest';
+import Blogs from "./Blogs"
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import Settings from './BasicInformation';
@@ -152,6 +153,7 @@ const UserProfileForm = () => {
 
   const tabs = [
     { name: 'Settings', component: Settings },
+    { name: 'Blogs', component: Blogs},
     { name: 'Blog Request', component: ViewBlogRequest },
     { name: 'Billings', component: Billings },
     { name: 'Preferences', component: Preferences },

@@ -28,9 +28,9 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests ,handleRejectBuyerRe
         setIsDeleteDialogOpen(true);
     };
 
-    const convertToINR = (budget) => {
-        return (budget).toLocaleString("en-IN", { style: "currency", currency: "INR" });
-    };
+    // const convertToINR = (budget) => {
+    //     return (budget).toLocaleString("en-IN", { style: "currency", currency: "INR" });
+    // };
 
     return (
         <>

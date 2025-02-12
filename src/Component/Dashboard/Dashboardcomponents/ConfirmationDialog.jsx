@@ -34,6 +34,12 @@ const DELETE_CONFIG = {
     errorMessage: "Failed to delete Seller.",
     idKey: "SellerId",
   },
+  productRequest :{
+    getEndpoint: (id) => `http://localhost:3001/api/deleteproduct/${id}`,
+    successMessage: "Product request successfully deleted!",
+    errorMessage: "Failed to delete product request.",
+    idKey: "ProductRequestId",
+},
   
   
 
