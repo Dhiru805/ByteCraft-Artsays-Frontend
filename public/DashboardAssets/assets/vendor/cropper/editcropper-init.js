@@ -373,29 +373,38 @@ $(function () {
     });
 
     // Save Button Click Event
-    $("#saveImageBtn").off('click').on("click", function () {
+    $("#saveImageBtn").off("click").on("click", function () {
       var result = $image.cropper("getCroppedCanvas");
-
+    
       if (result) {
-        var imageData = result.toDataURL("image/jpeg");
-
-        var $activeImageWrapper = $(".image-wrapper").has("button[data-image='" + $image.attr("src") + "']");
-
+        var croppedImageData = result.toDataURL("image/jpeg"); // Convert cropped image to base64
+    
+        var $activeImageWrapper = $(".image-wrapper").has(
+          "button[data-image='" + $image.attr("src") + "']"
+        );
+    
         if ($activeImageWrapper.length) {
-          // Update the image preview in UI
-          $activeImageWrapper.find('img').attr('src', imageData);
-          $activeImageWrapper.find('button').attr('data-image', imageData);
-          $activeImageWrapper.find('input[type="radio"]').attr('data-image', imageData);
-
-          // Update the processedFiles array
+          // Update the UI with the cropped image
+          $activeImageWrapper.find("img").attr("src", croppedImageData);
+          $activeImageWrapper.find("button").attr("data-image", croppedImageData);
+          $activeImageWrapper
+            .find('input[type="radio"]')
+            .attr("data-image", croppedImageData);
+    
+          // Replace old image with cropped image in processedFiles
           var originalImageSrc = $image.attr("src");
           var index = processedFiles.indexOf(originalImageSrc);
           if (index !== -1) {
-            processedFiles[index] = imageData; // Replace with cropped version
+            processedFiles[index] = croppedImageData;
           }
-
-          // Reinitialize the cropper with the new image
-          $image.cropper("destroy").attr("src", imageData).cropper({
+    
+          // Replace main image if it was cropped
+          if (mainImage === originalImageSrc) {
+            mainImage = croppedImageData;
+          }
+    
+          // Reinitialize cropper with the new image
+          $image.cropper("destroy").attr("src", croppedImageData).cropper({
             preview: ".img-preview",
             crop: function (e) {
               $dataX.val(Math.round(e.x));
@@ -407,93 +416,190 @@ $(function () {
               $dataScaleY.val(e.scaleY);
             },
           });
-
+    
+          // Show success message
           Toastify({
-            text: "Image has been saved!",
+            text: "Cropped image saved successfully!",
             duration: 3000,
             close: true,
             gravity: "top",
             position: "right",
             backgroundColor: "green",
           }).showToast();
-
         }
       }
     });
+    
 
-
-    // Upload Button Click Event
-    $("#uploadBtn").off('click').on('click', function (e) {
-      e.preventDefault();
-
-      // Retrieve userId from localStorage
-      const token = localStorage.getItem('token');
-      let userId = null;
-
-      if (token) {
-        try {
-          const payload = JSON.parse(atob(token.split('.')[1])); // Decode JWT
-          userId = payload.userId; // Assuming 'userId' is stored in the payload
-        } catch (error) {
-          console.error("Invalid token format", error);
+    $(document).ready(function () {
+      var userId = localStorage.getItem("editProductId");
+    
+      if (userId) {
+        // Fetch existing product data
+        $.ajax({
+          url: `http://localhost:3001/api/getproduct/${userId}`,
+          type: "GET",
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`,
+          },
+          success: function (response) {
+            console.log("Full API Response:", response); // Debugging log
+        
+            // Ensure response has data
+            if (!response.data) {
+              console.error("API response does not contain 'data'");
+              return;
+            }
+        
+            const productData = response.data; // Extract product data
+        
+            // Populate form fields
+            $('input[name="productName"]').val(productData.productName || "");
+            $('input[name="newPrice"]').val(productData.price || "");
+            $('select[name="productCategory"]').val(productData.category || "");
+            $('#description').val($("<div>").html(productData.description).text() || "");
+        
+            $("#imagePreviewList").empty();
+            processedFiles = [];
+            // Display main image
+            if (productData.mainImage) {
+              appendImagePreview(productData.mainImage, true);
+              processedFiles.push(productData.mainImage); 
+            }
+        
+            // Display other images
+            if (Array.isArray(productData.otherImages)) {
+              productData.otherImages.forEach(imgSrc => {
+                appendImagePreview(imgSrc);
+                processedFiles.push(imgSrc);
+              });
+            } else {
+              console.warn("otherImages is missing or not an array.");
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error("Error fetching product data:", error);
+          }
+        });
+        
+      }
+    
+      // Function to append images to preview list
+      function appendImagePreview(imgSrc, isMain = false) {
+        var imageWrapper = $('<div class="image-wrapper"></div>').css({
+          position: "relative",
+          display: "inline-block",
+          margin: "5px",
+        });
+    
+        var newImage = $("<img>").attr("src", imgSrc).css({
+          width: "100px",
+          height: "100px",
+          borderRadius: "5px",
+          objectFit: "cover",
+        });
+    
+        var radioButton = $('<input type="radio" name="mainImage">')
+          .css({
+            position: "absolute",
+            bottom: "5px",
+            left: "5px",
+            cursor: "pointer",
+          })
+          .attr("data-image", imgSrc);
+    
+        if (isMain) {
+          radioButton.prop("checked", true);
         }
+    
+        var deleteButton = $("<button></button>")
+          .css({
+            position: "absolute",
+            top: "5px",
+            right: "5px",
+            background: "rgba(255, 0, 0, 0.5)",
+            color: "#fff",
+            border: "none",
+            padding: "5px",
+            borderRadius: "50%",
+            cursor: "pointer",
+          })
+          .html('<i class="fa fa-trash"></i>')
+          .attr("data-image", imgSrc);
+
+          var editButton = $("<button></button>")
+          .css({
+            position: "absolute",
+            top: "5px",
+            right: "35px",
+            background: "rgba(0, 0, 0, 0.5)",
+            color: "#fff",
+            border: "none",
+            padding: "5px",
+            borderRadius: "50%",
+            cursor: "pointer",
+          })
+          .html('<i class="fa fa-edit"></i>')
+          .attr("data-image", imgSrc);
+    
+        imageWrapper.append(newImage).append(editButton).append(deleteButton).append(radioButton);
+        $("#imagePreviewList").append(imageWrapper);
       }
-
-      // Collect form data
-      const productName = $('input[name="productName"]').val();
-      const price = parseFloat($('input[name="newPrice"]').val());
-      const category = $('select[name="productCategory"]').val();
-      const description = $('#description').val();
-      const mainImage = $("input[name='mainImage']:checked").attr("data-image");
-
-      // Validate required fields
-      if (!productName || !userId || !price || !category || !mainImage || !description) {
-        alert("Please fill all required fields, select a main image, and ensure you are logged in.");
-        return;
-      }
-
-      if (price < 0) {
-        alert("Price cannot be negative");
-        return;
-      }
-
-      // Collect other images from processedFiles instead of raw images in UI
-      const otherImages = processedFiles.filter(img => img !== mainImage);
-
-      // Prepare form data
-      const formData = {
-        productName,
-        userId,
-        price,
-        category,
-        description,
-        mainImage, // Ensure this is the cropped version
-        otherImages // Ensure these are cropped versions
-      };
-
-      console.log("Uploading Data:", formData);
-
-      // Send to backend
-      $.ajax({
-        url: "http://localhost:3001/api/cropImage",
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify(formData),
-        success: function (response) {
-          alert("Product uploaded successfully!");
-          console.log(response);
-          // Optional: Reset form
-          $('form')[0].reset();
-          $('#imagePreviewList').empty();
-          $('#description').val('');
-        },
-        error: function (xhr, status, error) {
-          alert("Error uploading product. Check console for details.");
-          console.error("AJAX Error:", status, error);
-          console.error(xhr.responseText);
+    
+      // Update Button Click Event
+      $("#uploadBtn").off("click").on("click", function (e) {
+        e.preventDefault();
+    
+        // Collect form data
+        const productName = $('input[name="productName"]').val();
+        const price = parseFloat($('input[name="newPrice"]').val());
+        const category = $('select[name="productCategory"]').val();
+        const description = $("#description").val();
+        const mainImage = $("input[name='mainImage']:checked").attr("data-image");
+    
+        if (!productName ||!price || !category || !description || !mainImage) {
+          alert("Please fill all required fields and select a main image.");
+          return;
         }
+    
+        const otherImages = $(".image-wrapper input[type='radio']")
+          .map(function () {
+            return $(this).attr("data-image");
+          })
+          .get()
+          .filter(img => img !== mainImage);
+    
+        const formData = {
+          productName,
+          price,
+          category,
+          description,
+          mainImage,
+          otherImages,
+        };
+    
+        console.log("Updating Data:", formData);
+    
+        // Send Update Request
+        $.ajax({
+          url: `http://localhost:3001/api/editcropImage/${userId}`,
+          type: "PUT",
+          contentType: "application/json",
+          data: JSON.stringify(formData),
+          success: function (response) {
+            alert("Product updated successfully!");
+            console.log(response);
+          },
+          error: function (xhr, status, error) {
+            alert("Error updating product.");
+            console.error("AJAX Error:", status, error);
+            console.error(xhr.responseText);
+          },
+        });
       });
     });
+    
 
   });
+
 });

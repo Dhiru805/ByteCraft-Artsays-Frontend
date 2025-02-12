@@ -496,26 +496,4 @@ $(function () {
     });
 
   });
-
-// Wait for the DOM to load before adding event listeners
-document.addEventListener("DOMContentLoaded", function () {
-  const storedUserType = localStorage.getItem("userType") || "admin"; // Default to 'admin' if null
-
-  document.querySelectorAll('.btn').forEach(button => {
-      button.addEventListener('click', function () {
-          let id = this.getAttribute('data-id'); // Get product ID
-          
-          // Debugging logs
-          console.log("Button Clicked!"); // Confirms button was clicked
-          console.log("Extracted Product ID:", id); // Should show the correct ID
-          console.log("Navigating to:", `/${storedUserType}/Dashboard/Product-uploade/${id}`);
-
-          // Navigate to the new route
-          window.location.href = `/${storedUserType}/Dashboard/Product-uploade/${id}`;
-      });
-  });
-});
-
-
-  
 });

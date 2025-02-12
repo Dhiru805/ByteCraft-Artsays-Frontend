@@ -28,7 +28,7 @@
             "/DashboardAssets/assets/vendor/cropper/cropper.min.js"
           );
           await loadScript(
-            "/DashboardAssets/assets/vendor/cropper/cropper-init.js"
+            "/DashboardAssets/assets/vendor/cropper/editcropper-init.js"
           );
         } catch (err) {
           console.error("Failed to load script:", err);

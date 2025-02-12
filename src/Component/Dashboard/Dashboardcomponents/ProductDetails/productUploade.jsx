@@ -117,7 +117,7 @@ function ProductUpload() {
                 <div className="form-group mt-3 main-image">
                   <ImageEditor/>
                 </div>
-                <div className="form-group mt-3">
+                {/* <div className="form-group mt-3">
                   <ReactQuill
                     placeholder="Enter Product Details"
                     modules={modules}
@@ -127,7 +127,15 @@ function ProductUpload() {
                     onChange={setDescription}
                   />
                   <input type="hidden" id="description" />
-                </div>
+                </div> */}
+                <div className="form-group mt-3">
+  <textarea
+    placeholder="Enter Product Details"
+    className="form-control"
+   id="description"
+  />
+</div>
+
                 <button
                   className="btn btn-block btn-primary mt-3"
                   id="uploadBtn"

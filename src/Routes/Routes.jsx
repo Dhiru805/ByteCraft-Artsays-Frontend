@@ -86,6 +86,7 @@ import ArtistBlogs from "../Component/Dashboard/Dashboardcomponents/ArtistDetail
 import ArtistProductRequest from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ProductRequest/ProductRequestTable"
 import ArtistProductRequestView from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ProductRequest/ProductRequestView"
 import AllArtistProduct from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/Product/AllArtistProduct"
+import ArtistEditProduct from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/Product/Editproduct"
 //Saler
 import SellerManageTable from "../Component/Dashboard/Dashboardcomponents/Seller/SellerManageTable";
 import SellerProfile from  "../Component/Dashboard/Dashboardcomponents/Seller/SellerUserProfile/UserProf";
@@ -185,6 +186,7 @@ const AppRoutes = () => {
   <Route path="artistproductrequest/artistproductview/:productId" element={<ArtistProductRequestView />} />
   <Route path="Product-uploade/:id" element={<ProductUpload />} />
   <Route path="allartistproduct" element={<AllArtistProduct/>} />
+  <Route path="allartistproduct/editproduct/:productId" element={<ArtistEditProduct/>} />
 
  
  

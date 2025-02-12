@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../../api/getAPI";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import ConfirmationDialog from "../../ConfirmationDialog";
 import useUserType from "../../urlconfig";
 
@@ -69,6 +69,15 @@ function ProductDetails() {
     setIsDeleteDialogOpen(true);
   };
 
+  const handleEdit = (productId) => {
+  
+    localStorage.removeItem("editProductId");
+  
+  
+    localStorage.setItem("editProductId", productId);
+ 
+    navigate(`/${userType}/Dashboard/allartistproduct/editproduct/${productId}`);
+  };
   return (
     <div className="container-fluid">
        <div className="block-header">
@@ -113,7 +122,7 @@ function ProductDetails() {
                 <h3 className="fw-semibold text-primary mt-3">{product.productName}</h3>
                 <h5 className="text-secondary">Artist: {product.userId.name} {product.userId.lastName}</h5>
                 <div className="mt-3">
-                  <button className="btn btn-outline-dark ms-2">Edit</button>
+                  <button className="btn btn-outline-dark ms-2"  onClick={() => handleEdit(product._id)}>Edit</button>
                   <button className="btn btn-outline-danger mx-2" onClick={() => openDeleteDialog(product)}>
                     Delete
                   </button>
