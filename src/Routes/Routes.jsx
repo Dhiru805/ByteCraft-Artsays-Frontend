@@ -39,7 +39,7 @@ import Dashboard from "../Component/Dashboard/Dashboard";
 import AppInbox from "../Component/Dashboard/Dashboardcomponents/Chat/AppInbox";
 import AppContact from "../Component/Dashboard/Dashboardcomponents/Chat/AppContact";
 import AppChat from "../Component/Dashboard/Dashboardcomponents/Chat/AppChat";
-import BlogDashboard from "../Component/Dashboard/Dashboardcomponents/Blog/BlogDashboard";
+// import BlogDashboard from "../Component/Dashboard/Dashboardcomponents/Blog/BlogDashboard";
 // import BlogPost from "../Component/Dashboard/Dashboardcomponents/Blog/ArtistBlog/BlogPost";
 import BlogList from "../Component/Dashboard/Dashboardcomponents/Blog/ArtistBlog/BlogList";
 import BlogView from '../Component/Dashboard/Dashboardcomponents/Blog/SuperAdminBlog/ViewBlog';
@@ -67,7 +67,7 @@ import CustomOrder from "../Component/Dashboard/Dashboardcomponents/ProductDetai
 import CreateCustomOrder from "../Component/Dashboard/Dashboardcomponents/ProductDetails/CustomOrder/CustomOrderAll/CreateCustomOrder"
 // import BuyerRequest from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerRequest/BuyerRequest";
 import BuyerProfile from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/UserProfile/UserProf"
-import BuyerRequestToArtist from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerRequestToArtist/BuyerRequestToArtist"
+
 import UpdateCustomOrder from "../Component/Dashboard/Dashboardcomponents/ProductDetails/CustomOrder/CustomOrderAll/UpdateCustomOrder"
 import ViewCustomOrder from "../Component/Dashboard/Dashboardcomponents/ProductDetails/CustomOrder/Buyer/ViewCustomOrde"
 import ViewBuyerRequest from "../Component/Dashboard/Dashboardcomponents/ProductDetails/CustomOrder/Artist/ViewRequest";
@@ -87,12 +87,49 @@ import ArtistProductRequest from "../Component/Dashboard/Dashboardcomponents/Art
 import ArtistProductRequestView from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ProductRequest/ProductRequestView"
 import AllArtistProduct from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/Product/AllArtistProduct"
 import ArtistEditProduct from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/Product/Editproduct"
-//Saler
+import ArtistSoldProduct from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/SoldProduct/SoldProduct"
+import ArtistSoldProductDetails from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/SoldProduct/SoldProductDetails"
+import ArtistTransaction from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/Transaction/ArtistTransaction"
+import ArtistTransactionDetails from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/Transaction/TransactionProductDetails"
+
+//Buyer
+import BuyerProductRequest from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/ProductRequest/ProductRequestTable"
+import BuyerProductRequestView from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/ProductRequest/ProductRequestView"
+import BuyerEditProduct from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/ProductRequest/Editproduct"
+import BuyerProductPurchased from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/ProductPurchased/ProductPurchased"
+import BuyerProductPurchasedDetails from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/ProductPurchased/ProductPurchasedDetails"
+import BuyerSoldProduct from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/SoldProduct/SoldProduct"
+import BuyerSoldProductDetails from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/SoldProduct/SoldProductDetails"
+import BuyerTransaction from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/Transaction/BuyerTransaction"
+import BuyerTransactionDetails from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/Transaction/ResellTransactionProductDetails"
+//Seller
 import SellerManageTable from "../Component/Dashboard/Dashboardcomponents/Seller/SellerManageTable";
 import SellerProfile from  "../Component/Dashboard/Dashboardcomponents/Seller/SellerUserProfile/UserProf";
+import SellerProduct from "../Component/Dashboard/Dashboardcomponents/Seller/SellerProducts/SellerProduct";
+import SellerProductDetails from "../Component/Dashboard/Dashboardcomponents/Seller/SellerProducts/SellerProductDetails";
+import SellerSoldProduct from "../Component/Dashboard/Dashboardcomponents/Seller/SoldProduct/SoldProduct";
+import SellerSoldProductDetails from "../Component/Dashboard/Dashboardcomponents/Seller/SoldProduct/SoldProductDetails"
+import SellerTransaction from "../Component/Dashboard/Dashboardcomponents/Seller/Transaction/SellerTransaction"
+import SellerTransactionDetails from "../Component/Dashboard/Dashboardcomponents/Seller/Transaction/TransactionProductDetails"
 // import ResellPage from "../Pages/ResellPage/ResellPage";
 
+//Resell Product 
+import AllResellProduct from "../Component/Dashboard/Dashboardcomponents/ResellProduct/Allproduct/Product";
+import AllResellproductDetails from "../Component/Dashboard/Dashboardcomponents/ResellProduct/Allproduct/ResellProductinfo";
+import ResellProductPurchased from "../Component/Dashboard/Dashboardcomponents/ResellProduct/ProductPurchased/ProductPurchased";
+import ResellProductPurchasedDetails from "../Component/Dashboard/Dashboardcomponents/ResellProduct/ProductPurchased/ProductPurchasedDetails";
+import ResellProductEdit from "../Component/Dashboard/Dashboardcomponents/ResellProduct/Allproduct/Editproduct"
+import ResellTransaction from "../Component/Dashboard/Dashboardcomponents/ResellProduct/Transaction/ResellproductTransaction"
+import ResellTransactionDetails from "../Component/Dashboard/Dashboardcomponents/ResellProduct/Transaction/ResellTransactionProductDetails"
 
+//Product
+import AllProduct from "../Component/Dashboard/Dashboardcomponents/ProductDetails/Product"
+import ProductRequest from "../Component/Dashboard/Dashboardcomponents/ProductDetails/ProductRequest/ProductRequest"
+import ProductInfo from "../Component/Dashboard/Dashboardcomponents/ProductDetails/Productinfo";
+
+//Transaction
+import AllTransaction from "../Component/Dashboard/Dashboardcomponents/Transaction/AllTransaction"
+import AllTransactionDetails from "../Component/Dashboard/Dashboardcomponents/Transaction/TransactionProductDetails"
 
 const AppRoutes = () => {
   const [userType, setUserType] = useState(null);
@@ -162,7 +199,7 @@ const AppRoutes = () => {
   <Route path="BlogRequest" element={<BlogRequest />} />
   <Route path="BlogRequest/view-blog/:blogId" element={<BlogView />} />
   <Route path="Bloglist" element={<BlogList />} />
-  <Route path="Blogdashboard" element={<BlogDashboard />} />
+  {/* <Route path="Blogdashboard" element={<BlogDashboard />} /> */}
   <Route path="Bloglist/CreateBlog" element={<CreateBlog />} />
 
   {/* App Routes */}
@@ -187,6 +224,10 @@ const AppRoutes = () => {
   <Route path="Product-uploade/:id" element={<ProductUpload />} />
   <Route path="allartistproduct" element={<AllArtistProduct/>} />
   <Route path="allartistproduct/editproduct/:productId" element={<ArtistEditProduct/>} />
+  <Route path="artistsoldproduct" element={<ArtistSoldProduct/>} />
+  <Route path="artistsoldproduct/soldproductdetails/:productId" element={<ArtistSoldProductDetails />} />
+  <Route path="artisttransaction" element={<ArtistTransaction/>} />
+  <Route path="artisttransaction/transcationproductdetails/:productId" element={<ArtistTransactionDetails/>} />
 
  
  
@@ -197,28 +238,59 @@ const AppRoutes = () => {
   <Route path="ArtistManageTable/ArtistProfileView/:userId" element={<ArtistProfileView />} />
 
   {/* Product Routes */}
-  <Route path="Product-uploade" element={<ProductUpload />} />
+  <Route path="allproduct/createproduct" element={<ProductUpload />} />
+  <Route path="allproduct"  element={<AllProduct/>}/>
+  <Route path="productrequest" element={<ProductRequest />} />
+  <Route path="allproduct/productinfo/:productId" element={<ProductInfo />} />
 
   {/* Buyer Routes */}
   <Route path="BuyerManageTable" element={<BuyerManageTable />} />
   <Route path="BuyerManageTable/BuyerProfile/:userId" element={<BuyerProfile />} />
-
- 
+  <Route path="buyerproductrequest" element={<BuyerProductRequest />} />
+  <Route path="buyerproductrequest/productview/:productId" element={<BuyerProductRequestView />} />
+  <Route path="buyerproductrequest/productview/editproduct/:userId" element={<BuyerEditProduct/>} />
+  <Route path="buyerproductpurchased" element={<BuyerProductPurchased/>} />
+  <Route path="buyerproductpurchased/productpurchaseddetails/:productId" element={<BuyerProductPurchasedDetails />} />
+  <Route path="buyersoldproduct" element={<BuyerSoldProduct/>} />
+  <Route path="buyersoldproduct/soldproductdetails/:productId" element={<BuyerSoldProductDetails />} />
+  <Route path="buyertransaction" element={<BuyerTransaction/>} />
+  <Route path="buyertransaction/transcationproductdetails/:productId" element={<BuyerTransactionDetails/>} />
 
 
     {/* Seller Routes */}
     <Route path="sellermanagetable" element={<SellerManageTable/>} />
     <Route path="sellermanagetable/sellerprofile/:userId" element={<SellerProfile />} />
-
+    <Route path="sellerproduct" element={<SellerProduct/>} />
+    <Route path="sellerproduct/sellerproductdetails/:productId" element={<SellerProductDetails />} />
+    <Route path="sellersoldproduct" element={<SellerSoldProduct/>} />
+    <Route path="sellersoldproduct/sellersoldproductdetails/:productId" element={<SellerSoldProductDetails/>} />
+    <Route path="sellertransaction" element={<SellerTransaction/>} />
+    <Route path="sellertransaction/transcationproductdetails/:productId" element={< SellerTransactionDetails/>} />
+   
+   
+    
+    
     {/* products Routes */}
     <Route path="customrequest" element={<CustomOrder />} />
     <Route path="customrequest/createcustomrequest" element={<CreateCustomOrder />} />
     <Route path="customrequest/updatecustomrequest/:id" element={<UpdateCustomOrder />} />
     <Route path="customrequest/viewcustomrequest/:id" element={<ViewCustomOrder />} />
     <Route path="customRequest/viewrequest/:id" element={<ViewBuyerRequest />} />
-    <Route path="customrequesttoartist" element={<BuyerRequestToArtist />} />
+    {/* <Route path="customrequesttoartist" element={<BuyerRequestToArtist />} /> */}
     <Route path="customrequesttoartist/viewrequesttoartist/:id" element={<ViewBuyerRequestToArtist />} />
 
+    {/* Resell products Routes */}
+    <Route path="allresellproduct" element={<AllResellProduct />} />
+    <Route path="allresellproduct/productdetails/:productId" element={<AllResellproductDetails />} />
+    <Route path="allresellproduct/productdetails/editproduct/:userId" element={<ResellProductEdit/>} />
+    <Route path="resellproductpurchased" element={<ResellProductPurchased  />} />
+    <Route path="resellproductpurchased/productview/:productId" element={<ResellProductPurchasedDetails/>} />
+    <Route path="reselltransaction" element={<ResellTransaction/>} />
+    <Route path="reselltransaction/transcationproductdetails/:productId" element={<ResellTransactionDetails/>} />
+ 
+    {/* Transaction Routes */}
+    <Route path="alltransaction" element={<AllTransaction />} />
+    <Route path="alltransaction/transcationproductdetails/:productId" element={<AllTransactionDetails/>} />
   {/* User Profile Route */}
   <Route path="completeprofile/:userId" element={<UserProfile />} />
 </Route>

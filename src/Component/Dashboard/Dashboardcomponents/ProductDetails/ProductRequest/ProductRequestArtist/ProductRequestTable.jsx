@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useConfirm } from '../../StatusConfirm';
+import { useConfirm } from '../../../StatusConfirm';
 import { toast } from 'react-toastify';
-import getAPI from '../../../../../api/getAPI';
-import putAPI from '../../../../../api/putAPI';
-// import ConfirmationDialog from '../../ConfirmationDialog';
+import getAPI from '../../../../../../api/getAPI';
+import putAPI from '../../../../../../api/putAPI';
 import { useNavigate } from 'react-router-dom';
-import useUserType from '../../urlconfig';
-
+import useUserType from '../../../urlconfig';
 
 const ProductRequest = () => {
     const [products, setProducts] = useState([]);
@@ -14,16 +12,32 @@ const ProductRequest = () => {
     const [productsPerPage, setProductsPerPage] = useState(10);
     const BASE_URL = 'http://localhost:3001';
   
- 
     const confirm = useConfirm();
     const navigate = useNavigate();
     const userType = useUserType(); 
 
+    // Fetching userId from token in localStorage
+    const token = localStorage.getItem('token');
+    let userId = null;
+
+    if (token) {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1])); 
+            userId = payload.userId; 
+        } catch (error) {
+            console.error("Invalid token format", error);
+        }
+    }
 
     useEffect(() => {
+        if (!userId) {
+            console.error('User ID not found in token');
+            return;
+        }
+
         const fetchProducts = async () => {
             try {
-                const result = await getAPI("http://localhost:3001/api/get-cropImage", {}, true, false);
+                const result = await getAPI(`http://localhost:3001/api/getproductbyartist/${userId}`, {}, true, false);
                 console.log("Full API Response:", result);
                 console.log("Data Type:", typeof result.data);
 
@@ -40,9 +54,31 @@ const ProductRequest = () => {
         };
 
         fetchProducts();
-    }, []);
+    }, [userId]); 
 
+    // Pagination logic
+    const totalPages = Math.ceil(products.length / productsPerPage);
+    const displayedProducts = products.slice(
+        (currentPage - 1) * productsPerPage,
+        currentPage * productsPerPage
+    );
 
+    const handlePrevious = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const handleNext = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handleProductsPerPageChange = (event) => {
+        setProductsPerPage(Number(event.target.value));
+        setCurrentPage(1);  
+    };
 
     const updateProductStatus = async (productId, status) => {
         try {
@@ -73,51 +109,8 @@ const ProductRequest = () => {
         confirm(() => updateProductStatus(productId, 'Rejected'), "Are you sure you want to reject this product?");
     };
 
-    const totalPages = Math.ceil(products.length / productsPerPage);
-    const displayedProducts = products.slice(
-        (currentPage - 1) * productsPerPage,
-        currentPage * productsPerPage
-    );
-
-    const handlePrevious = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
-
-    const handleNext = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
-    const handleProductsPerPageChange = (event) => {
-        setProductsPerPage(Number(event.target.value));
-        setCurrentPage(1);
-    };
-
-
-
-
-
     return (
         <div className="container-fluid">
-            <div className="block-header">
-                <div className="row">
-                    <div className="col-lg-6 col-md-6 col-sm-12">
-                        <h2>Artist Product Request</h2>
-                        <ul className="breadcrumb">
-                            <li className="breadcrumb-item">
-                                <a href="index.html">
-                                    <i className="fa fa-dashboard"></i>
-                                </a>
-                            </li>
-                            <li className="breadcrumb-item">Artist Product Request</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
             <div className="row clearfix">
                 <div className="col-lg-12">
                     <div className="card">
@@ -157,32 +150,19 @@ const ProductRequest = () => {
                                                 <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
                                                 <td>
                                                     <img
-                                                        src={
-                                                            product.userId.profilePhoto
-                                                                ? `${BASE_URL}${product.userId.profilePhoto}`
-                                                                : 'DashboardAssets/assets/images/user.png'
-                                                        }
+                                                        src={product.userId.profilePhoto ? `${BASE_URL}${product.userId.profilePhoto}` : 'DashboardAssets/assets/images/user.png'}
                                                         className="rounded-circle avatar"
                                                         alt=""
-                                                        style={{
-                                                            width: '30px',
-                                                            height: '30px',
-                                                            objectFit: 'cover',
-                                                            marginRight: '10px'
-                                                        }}
+                                                        style={{ width: '30px', height: '30px', objectFit: 'cover', marginRight: '10px' }}
                                                     />
-                                                    {product.userId.name} {product.userId.lastName}</td>
+                                                    {product.userId.name} {product.userId.lastName}
+                                                </td>
                                                 <td>
                                                     <img
                                                         src={product.mainImage}
                                                         className="rounded-circle avatar"
                                                         alt=""
-                                                        style={{
-                                                            width: '30px',
-                                                            height: '30px',
-                                                            objectFit: 'cover',
-                                                            marginRight: '10px'
-                                                        }}
+                                                        style={{ width: '30px', height: '30px', objectFit: 'cover', marginRight: '10px' }}
                                                     />
                                                     {product.productName}
                                                 </td>
@@ -194,34 +174,12 @@ const ProductRequest = () => {
                                                     </button>
                                                 </td>
                                                 <td>
-                                                <button
+                                                    <button
                                                         className="btn btn-sm btn-outline-info mr-2"
                                                         onClick={() => navigate(`/${userType}/Dashboard/artistproductrequest/artistproductview/${product._id}`)}
                                                     >
-                                                         <i className="fa fa-eye"></i>
+                                                        <i className="fa fa-eye"></i>
                                                     </button>
-                                                    <button
-                                                        className="btn btn-sm btn-outline-success mr-2"
-                                                        title="Approved"
-                                                        onClick={() => updateProductStatus(product._id, 'Approved')}
-                                                    >
-                                                        <i className="fa fa-check"></i>
-                                                    </button>
-                                                    <button
-                                                        className="btn btn-sm btn-outline-danger mr-2"
-                                                        title="Declined"
-                                                        onClick={() => handleReject(product._id)}
-                                                    >
-                                                        <i className="fa fa-ban"></i>
-                                                    </button>
-                                                    {/* <button
-                                                        type="button"
-                                                        className="btn btn-outline-danger btn-sm mr-2"
-                                                        title="Delete"
-                                                        onClick={() => openDeleteDialog(product)}
-                                                    >
-                                                        <i className="fa fa-trash-o"></i>
-                                                    </button> */}
                                                 </td>
                                             </tr>
                                         ))}
@@ -245,7 +203,7 @@ const ProductRequest = () => {
                     </div>
                 </div>
             </div>
-  </div>
+        </div>
     );
 };
 

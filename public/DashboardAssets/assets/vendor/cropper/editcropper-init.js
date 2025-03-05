@@ -546,7 +546,7 @@ $(function () {
         $("#imagePreviewList").append(imageWrapper);
       }
     
-      // Update Button Click Event
+  
       $("#uploadBtn").off("click").on("click", function (e) {
         e.preventDefault();
     
@@ -580,18 +580,29 @@ $(function () {
     
         console.log("Updating Data:", formData);
     
-        // Send Update Request
         $.ajax({
           url: `http://localhost:3001/api/editcropImage/${userId}`,
           type: "PUT",
           contentType: "application/json",
           data: JSON.stringify(formData),
           success: function (response) {
-            alert("Product updated successfully!");
+            Toastify({
+              text: "Product updated successfully!",
+              duration: 3000,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "#28a745",
+          }).showToast();
             console.log(response);
           },
           error: function (xhr, status, error) {
-            alert("Error updating product.");
+            Toastify({
+              text: "Error updating product.",
+              duration: 3000,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "#dc3545",
+          }).showToast();
             console.error("AJAX Error:", status, error);
             console.error(xhr.responseText);
           },

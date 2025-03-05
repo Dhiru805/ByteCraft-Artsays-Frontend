@@ -28,11 +28,11 @@ const Sidebar = () => {
       subTabs: [
         { label: "Management", path: `/${userType}/Dashboard/ArtistManageTable` },
         { label: "Products", path: `/${userType}/Dashboard/allartistproduct` },
-        { label: "Product Sell", path: `#` },
+        { label: "Sold Product ", path: `/${userType}/Dashboard/artistsoldproduct` },
         { label: "Blogs", path: `/${userType}/Dashboard/artistblogs` },
         { label: "Blog Request", path: `/${userType}/Dashboard/artistblogrequest` },
         { label: "Product Request", path: `/${userType}/Dashboard/artistproductrequest` },
-        { label: "Transaction", path: `#` },
+        { label: "Transaction", path: `/${userType}/Dashboard/artisttransaction`},
         { label: "Packaging Material", path: `#` },
       ]
     },
@@ -42,10 +42,10 @@ const Sidebar = () => {
       path: `#Buyer-management`,
       subTabs: [
         { label: "Management", path: `/${userType}/Dashboard/BuyerManageTable` },
-        { label: "Product Purchased", path: `#` },
-        { label: "Product Request", path: `#` },
-        { label: "Resell Product", path: `#` },
-        { label: "Transaction", path: `#` },
+        { label: "Product Purchased", path: `/${userType}/Dashboard/buyerproductpurchased` },
+        { label: "Resell Product Request", path: `/${userType}/Dashboard/buyerproductrequest` },
+        { label: "Sold Product", path: `/${userType}/Dashboard/buyersoldproduct` },
+        { label: "Transaction", path: `/${userType}/Dashboard/buyertransaction` },
         { label: "Packaging Material", path: `#` },
       ]
     },
@@ -55,19 +55,10 @@ const Sidebar = () => {
       path: `#Seller-management`,
       subTabs: [
         { label: " Management", path: `/${userType}/Dashboard/sellermanagetable` },
-        { label: "Products", path: `#` },
-        { label: "Product Sale", path: `#` },
-        { label: "Transaction", path: `#` },
+        { label: "Products", path: `/${userType}/Dashboard/sellerproduct` },
+        { label: "Sold  Product ", path: `/${userType}/Dashboard/sellersoldproduct` },
+        { label: "Transaction", path: `/${userType}/Dashboard/sellertransaction` },
         { label: "Packaging Material", path: `#` }
-      ]
-    },
-    {
-      label: "Packaging Material",
-      icon: "fa fa-archive",
-      path: `#Packaging Material`,
-      subTabs: [
-        { label: "Product Purchased", path: `#` },
-        { label: "Transaction", path: `#` },
       ]
     },
     {
@@ -94,8 +85,8 @@ const Sidebar = () => {
         icon: "fa fa-cart-plus",
         path: `#Product`,
         subTabs: [
-          { label: "All Products", path: `/${userType}/Dashboard/Product-uploade` },
-          { label: "Products Request", path: `#` },
+          { label: "All Products", path: `/${userType}/Dashboard/allproduct`},
+          { label: "Products Request", path: `/${userType}/Dashboard/productrequest` },
           { label: "Product Purchased", path: `#` },
           { label: "Custom Request", path: `/${userType}/Dashboard/customrequest` },
         ]
@@ -106,9 +97,9 @@ const Sidebar = () => {
         icon: "fa fa-exchange",
         path: `#Resell`,
         subTabs: [
-          { label: "All Products", path: `#` },
-          { label: "Product Purchased", path: `#` },
-          { label: "Transaction", path: `#` }
+          { label: "All Products", path: `/${userType}/Dashboard/allresellproduct` },
+          { label: "Product Purchased", path: `/${userType}/Dashboard/resellproductpurchased` },
+          { label: "Transaction", path: `/${userType}/Dashboard/reselltransaction` }
         ]
       },
 
@@ -129,12 +120,21 @@ const Sidebar = () => {
         icon: "fa fa-credit-card",
         path: `#Transaction`,
         subTabs: [
-          { label: "All Transaction", path: `#` },
+          { label: "All Transaction", path: `/${userType}/Dashboard/alltransaction` },
           { label: "Product Transaction", path: `#` },
           { label: "Resell Product Transacticon", path: `#` },
           { label: "Bidding Transaction", path: `#` }
         ]
       },
+      {
+        label: "Packaging Material",
+        icon: "fa fa-archive",
+        path: `#Packaging Material`,
+        subTabs: [
+          { label: "Product Purchased", path: `#` },
+          { label: "Transaction", path: `#` },
+        ]
+      }
      
     ];
     

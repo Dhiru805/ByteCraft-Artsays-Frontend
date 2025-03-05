@@ -1,35 +1,39 @@
 import React from "react";
 import ImageEditor from "../../../Dashboard/Dashboardcomponents/ProductDetails/ImageCropping";
-import 'react-quill/dist/quill.snow.css';
-import ReactQuill from 'react-quill';
- 
+// import 'react-quill/dist/quill.snow.css';
+// import ReactQuill from 'react-quill';
+import useUserType from '../urlconfig';
+import { Link } from "react-router-dom";
+
+
 function ProductUpload() {
-  const [description, setDescription] = React.useState('');
- 
-  React.useEffect(() => {
-    document.getElementById('description').value = description;
-  }, [description]);
- 
-  const modules = {
-    toolbar: [
-      [{ 'font': ['sans-serif', 'serif', 'monospace'] }, { 'size': ['small', 'large', 'huge'] }],
-      [{ 'header': '1' }, { 'header': '2' }, 'bold', 'italic', 'underline'],
-      [{ 'align': [] }],
-      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-      ['link'],
-      [{ 'color': [] }, { 'background': [] }],
-      ['code-block'],
-      ['blockquote'],
-      ['fullscreen'],
-      ['help'],
-    ],
-  };
- 
-  const editorStyle = {
-    fontFamily: 'Nunito, Ubuntu, Raleway, IBM Plex Sans, sans-serif',
-    fontSize: '12px',
-  };
- 
+  // const [description, setDescription] = React.useState('');
+  const userType = useUserType(); 
+
+  // React.useEffect(() => {
+  //   document.getElementById('description').value = description;
+  // }, [description]);
+
+  // const modules = {
+  //   toolbar: [
+  //     [{ 'font': ['sans-serif', 'serif', 'monospace'] }, { 'size': ['small', 'large', 'huge'] }],
+  //     [{ 'header': '1' }, { 'header': '2' }, 'bold', 'italic', 'underline'],
+  //     [{ 'align': [] }],
+  //     [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+  //     ['link'],
+  //     [{ 'color': [] }, { 'background': [] }],
+  //     ['code-block'],
+  //     ['blockquote'],
+  //     ['fullscreen'],
+  //     ['help'],
+  //   ],
+  // };
+
+  // const editorStyle = {
+  //   fontFamily: 'Nunito, Ubuntu, Raleway, IBM Plex Sans, sans-serif',
+  //   fontSize: '12px',
+  // };
+
   return (
     <div className="container-fluid">
       <div className="block-header">
@@ -42,18 +46,18 @@ function ProductUpload() {
                   <i className="fa fa-dashboard"></i>
                 </a>
               </li>
-              <li className="breadcrumb-item">App</li>
-              <li className="breadcrumb-item active">Product Upload</li>
+              <li className="breadcrumb-item active"><Link to={`/${userType}/Dashboard/allproduct`}>All Product</Link></li>
+              <li className="breadcrumb-item">Create Product</li>
             </ul>
           </div>
         </div>
       </div>
- 
+
       <div className="row clearfix">
         <div className="col-lg-12">
           <div className="card">
             <div className="body">
-               <form>
+              <form>
                 <div className="form-group">
                   <input
                     type="text"
@@ -63,7 +67,7 @@ function ProductUpload() {
                     required
                   />
                 </div>
- 
+
                 <div className="form-group">
                   {/* <input
                     type="text"
@@ -83,7 +87,7 @@ function ProductUpload() {
                     min="0"
                   />
                 </div>
- 
+
                 <div className="form-group">
                   <select
                     name="productCategory"
@@ -98,26 +102,26 @@ function ProductUpload() {
                     <option value="Sports">Sports</option>
                   </select>
                 </div>
-           </form>
+              </form>
               <label className="btn btn-sm btn-secondary btn-upload" htmlFor="inputImage" title="Upload image file">
-                  Choose file
-                </label>
-                <input
-                  type="file"
-                  className="sr-only"
-                  id="inputImage"
-                  name="file"
-                  accept="image/*"
-                  multiple
-                />
-                <div className="input-image-preview-container">
-                  <h5>Selected Image Preview:</h5>
-                  <div id="imagePreviewList"></div>
-                </div>
-                <div className="form-group mt-3 main-image">
-                  <ImageEditor/>
-                </div>
-                {/* <div className="form-group mt-3">
+                Choose file
+              </label>
+              <input
+                type="file"
+                className="sr-only"
+                id="inputImage"
+                name="file"
+                accept="image/*"
+                multiple
+              />
+              <div className="input-image-preview-container">
+                <h5>Selected Image Preview:</h5>
+                <div id="imagePreviewList"></div>
+              </div>
+              <div className="form-group mt-3 main-image">
+                <ImageEditor />
+              </div>
+              {/* <div className="form-group mt-3">
                   <ReactQuill
                     placeholder="Enter Product Details"
                     modules={modules}
@@ -128,20 +132,20 @@ function ProductUpload() {
                   />
                   <input type="hidden" id="description" />
                 </div> */}
-                <div className="form-group mt-3">
-  <textarea
-    placeholder="Enter Product Details"
-    className="form-control"
-   id="description"
-  />
-</div>
+              <div className="form-group mt-3">
+                <textarea
+                  placeholder="Enter Product Details"
+                  className="form-control"
+                  id="description"
+                />
+              </div>
 
-                <button
-                  className="btn btn-block btn-primary mt-3"
-                  id="uploadBtn"
-                >
-                  Upload product
-                </button>
+              <button
+                className="btn btn-block btn-primary mt-3"
+                id="uploadBtn"
+              >
+                Upload product
+              </button>
             </div>
           </div>
         </div>
@@ -149,5 +153,5 @@ function ProductUpload() {
     </div>
   );
 }
- 
+
 export default ProductUpload;

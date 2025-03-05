@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../../Component/Dashboard/Dashboardcomponents/Navbar";
+import Navbar from "./Dashboardcomponents/Navbar";
 import Sidebar from "../../Component/Dashboard/Dashboardcomponents/Sidebar/LeftSide";
-import RightIconBar from "../../Component/Dashboard/Dashboardcomponents/RightIconBar";
-import DashboardContain from "../Dashboard/Dashboardcomponents/MainContent";
+import RightIconBar from "./Dashboardcomponents/RightIconBar";
+import DashboardContain from "./Dashboardcomponents/MainContent";
 import { Outlet, useLocation } from 'react-router-dom';
 
 const Dashboard = () => {
