@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom'; 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Preferences from './Pereferences';
-import Billings from './Billings';
-import Password from './Password';
+import ViewBlogRequest  from "./BlogRequest/ViewBlogRequest"
+import Blogs from "./Blogs/Blogs"
+import Preferences from './Pereferences/Pereferences';
+import Billings from './Billings/Billings';
+import Products from './Products/Product';
+import Productrequest from './ProductRequest/ProductRequestTable'
+import Transaction from './Transaction/Transaction';
+import SoldProduct  from './SoldProduct/SoldProduct'
+import Packagingmaterial from './PackagingMaterial/ProductPurchasedArtist'
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
+import Settings from './UserProfile/BasicInformation';
 import useUserType from '../../urlconfig'
 
 const UserProfileForm = () => {
-  const { userId } = useParams();
   const userType = useUserType();
+  const { userId } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate(); 
   const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
   const [profileData, setProfileData] = useState({
     name: '',
@@ -35,7 +44,6 @@ const UserProfileForm = () => {
   const fetchProfile = async () => {
     try {
       const result = await getAPI(`http://localhost:3001/auth/userid/${userId}`, {}, true, false);
-      console.log(result);
       if (result.data.user) {
         const userData = result.data.user;
         const formattedBirthdate = userData.birthdate ? new Date(userData.birthdate).toISOString().split('T')[0] : '';
@@ -63,6 +71,51 @@ const UserProfileForm = () => {
     }
   }, [userId]);
 
+  const [activeTab, setActiveTab] = useState('Settings');
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const tabFromUrl = queryParams.get('tab');
+    if (tabFromUrl) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [location]);
+
+  const handleTabClick = (tabName) => {
+    setActiveTab(tabName);
+    navigate({
+      pathname: location.pathname,
+      search: `?tab=${tabName}`,
+    });
+  };
+
+  const handleAddressChange = (e) => {
+    const { name, value } = e.target;
+    const [, subKey] = name.split('.');
+
+    setProfileData((prevState) => ({
+      ...prevState,
+      address: {
+        ...prevState.address,
+        [subKey]: value
+      }
+    }));
+  };
+
+
+  const tabs = [
+    { name: 'Settings', component: Settings },
+    { name: 'Blogs', component: Blogs},
+    { name: 'Blog Request', component: ViewBlogRequest },
+    { name: 'Products', component: Products },
+    { name: 'Product Request', component: Productrequest },
+    { name: 'Transaction', component: Transaction },
+    { name: 'Packaging Material', component: Packagingmaterial },
+    { name: 'Sold Product', component: SoldProduct },
+    { name: 'Billings', component: Billings },
+    { name: 'Preferences', component: Preferences },
+  ];
+
   return (
     <div className="container-fluid">
       <div className="block-header">
@@ -75,7 +128,7 @@ const UserProfileForm = () => {
                   <i className="fa fa-dashboard" />
                 </a>
               </li>
-              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/ArtistManageTable`}>ArtistManageTable</Link></li>
+              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/artistmanagetable`}>ArtistManageTable</Link></li>
               <li className="breadcrumb-item">Artist Profile</li>
             </ul>
           </div>
@@ -87,178 +140,34 @@ const UserProfileForm = () => {
           <div className="card">
             <div className="body">
               <ul className="nav nav-tabs">
-                <li className="nav-item">
-                  <a className="nav-link active" data-toggle="tab" href="#Settings">Settings</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" data-toggle="tab" href="#billings">Billings</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" data-toggle="tab" href="#preferences">Preferences</a>
-                </li>
+                {tabs.map((tab) => (
+                  <li className="nav-item" key={tab.name}>
+                    <a
+                      className={`nav-link ${activeTab === tab.name ? 'active' : ''}`}
+                      onClick={() => handleTabClick(tab.name)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {tab.name}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
 
             <div className="tab-content">
-              <div className="tab-pane active" id="Settings">
-                <div className="body">
-                  <h6>Profile Photo</h6>
-                  <div className="media">
-                    <div className="media-left m-r-15" style={{ width: '140px', height: '140px', overflow: 'hidden' }}>
-                      <img
-                        src={previewImage}
-                        className="user-photo media-object"
-                        alt="User"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                    </div>
-                    <div className="media-body">
-                      <p>Your photo is displayed above.</p>
-                    </div>
-                  </div>
+              {tabs.map((tab) => (
+                <div
+                  key={tab.name}
+                  className={`tab-pane ${activeTab === tab.name ? 'active' : ''}`}
+                  id={tab.name}
+                >
+                  <tab.component
+                    userId={userId}
+                    profileData={profileData}
+                    previewImage={previewImage}
+                  />
                 </div>
-
-                <div className="body">
-                  <h6>Basic Information</h6>
-                  <div className="row clearfix">
-                    <div className="col-lg-6 col-md-12">
-                      <div className="form-group">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="First Name"
-                          value={profileData.name}
-                          disabled
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label className="fancy-radio">
-                          <input
-                            name="gender"
-                            value="male"
-                            type="radio"
-                            checked={profileData.gender === 'male'}
-                            disabled
-                          />
-                          <span>
-                            <i /> Male
-                          </span>
-                        </label>
-                        <label className="fancy-radio">
-                          <input
-                            name="gender"
-                            value="female"
-                            type="radio"
-                            checked={profileData.gender === 'female'}
-                            disabled
-                          />
-                          <span>
-                            <i /> Female
-                          </span>
-                        </label>
-                      </div>
-                      <div className="form-group">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Address Line 1"
-                          value={profileData.address?.line1}
-                          disabled
-                        />
-                      </div>
-                      <div className="form-group">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="City"
-                          value={profileData.address?.city}
-                          disabled
-                        />
-                      </div>
-                      <div className="form-group">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Country"
-                          value={profileData.address?.country}
-                          disabled
-                        />
-                      </div>
-                      <div className="form-group">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Website"
-                          value={profileData.website}
-                          disabled
-                        />
-                      </div>
-                    </div>
-
-                    <div className="col-lg-6 col-md-12">
-                      <div className="form-group">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Last Name"
-                          value={profileData.lastName}
-                          disabled
-                        />
-                      </div>
-                      <div className="form-group">
-                        <div className="input-group">
-                          <div className="input-group-prepend">
-                            <span className="input-group-text"><i className="fa fa-calendar"></i></span>
-                          </div>
-                          <input
-                            type="date"
-                            className="form-control"
-                            placeholder="Birthdate"
-                            value={profileData.birthdate}
-                            disabled
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Address Line 2"
-                          value={profileData.address?.line2}
-                          disabled
-                        />
-                      </div>
-                      <div className="form-group">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="State/Province"
-                          value={profileData.address?.state}
-                          disabled
-                        />
-                      </div>
-                      <div className="form-group">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Pincode"
-                          value={profileData.address?.pincode}
-                          disabled
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <Password
-                  userId={userId}
-                  email={profileData.email}
-                  username={profileData.username}
-                  phoneNumber={profileData.phone}
-                />
-              </div>
-              <Billings />
-              <Preferences />
+              ))}
             </div>
           </div>
         </div>

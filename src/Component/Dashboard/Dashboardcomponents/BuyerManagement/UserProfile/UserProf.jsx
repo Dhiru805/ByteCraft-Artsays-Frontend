@@ -1,19 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom'; 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Preferences from './Pereferences';
-import Billings from './Billings';
-import Password from './Password';
+import Preferences from './Pereferences/Pereferences';
+import Billings from './Billings/Billings';
+import ProductPurchased  from './ProductPurchased/ProductPurchased';
+import Customrequest from './CustomRequest/Customorder'
+import Transaction from './Transaction/BuyerTransaction'
+import Packagingmaterial from './PackagingMaterial/ProductPurchasedBuyer'
+import RsellProduct  from './ResellProductRequest/ProductRequestTable'
+import SodlProduct  from './Soldproduct/SoldProduct'
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
-import useUserType from '../../urlconfig';
+import Settings from './UserProfile/BasicInformation';
+import useUserType from '../../urlconfig'
 
 const UserProfileForm = () => {
-  const { userId } = useParams();
   const userType = useUserType();
+  const { userId } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate(); 
   const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
   const [profileData, setProfileData] = useState({
     name: '',
     lastName: '',
@@ -36,7 +49,6 @@ const UserProfileForm = () => {
   const fetchProfile = async () => {
     try {
       const result = await getAPI(`http://localhost:3001/auth/userid/${userId}`, {}, true, false);
-      console.log(result);
       if (result.data.user) {
         const userData = result.data.user;
         const formattedBirthdate = userData.birthdate ? new Date(userData.birthdate).toISOString().split('T')[0] : '';
@@ -64,6 +76,24 @@ const UserProfileForm = () => {
     }
   }, [userId]);
 
+  const [activeTab, setActiveTab] = useState('Settings');
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const tabFromUrl = queryParams.get('tab');
+    if (tabFromUrl) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [location]);
+
+  const handleTabClick = (tabName) => {
+    setActiveTab(tabName);
+    navigate({
+      pathname: location.pathname,
+      search: `?tab=${tabName}`,
+    });
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfileData((prevState) => ({
@@ -74,13 +104,13 @@ const UserProfileForm = () => {
 
   const handleAddressChange = (e) => {
     const { name, value } = e.target;
-    const [ ,subKey] = name.split('.'); 
+    const [, subKey] = name.split('.');
 
     setProfileData((prevState) => ({
       ...prevState,
       address: {
         ...prevState.address,
-        [subKey]: value 
+        [subKey]: value
       }
     }));
   };
@@ -97,6 +127,14 @@ const UserProfileForm = () => {
     }
   };
 
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -107,7 +145,17 @@ const UserProfileForm = () => {
       formData.append('address', JSON.stringify(profileData.address));
       formData.append('gender', profileData.gender);
       formData.append('birthdate', profileData.birthdate);
-      formData.append('website', profileData.website);
+      formData.append('bio', profileData.bio);
+      formData.append('username', profileData.username || '');
+      formData.append('email', profileData.email || '');
+      formData.append('phone', profileData.phone || '');
+
+      if (passwordData.currentPassword || passwordData.newPassword || passwordData.confirmPassword) {
+        formData.append('currentPassword', passwordData.currentPassword);
+        formData.append('newPassword', passwordData.newPassword);
+        formData.append('confirmPassword', passwordData.confirmPassword);
+      }
+      
 
       if (imageFile) {
         formData.append('profilePhoto', imageFile);
@@ -118,17 +166,35 @@ const UserProfileForm = () => {
         body: formData,
       });
 
+      const result = await response.json(); 
+
       if (response.ok) {
-        toast.success('Profile updated successfully!');
+        toast.success(result.message || 'Profile updated successfully!');
+        setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        });
       } else {
-        const errorText = await response.text();
-        toast.error(`Failed to update profile: ${response.status} ${errorText}`);
+        toast.error(result.message || `Failed to update profile: ${response.status}`);
       }
     } catch (error) {
       console.error('Error updating profile:', error);
       toast.error('Error updating profile. Please try again.');
     }
   };
+
+  const tabs = [
+    { name: 'Settings', component: Settings },
+    { name: 'Product Purchased', component: ProductPurchased },
+    { name: 'Custom Request', component: Customrequest },
+    { name: 'Transaction', component: Transaction },
+    { name: 'Packaging Material', component: Packagingmaterial },
+    { name: 'Resell Product', component: RsellProduct },
+    { name: 'Sold Product', component: SodlProduct },
+    { name: 'Billings', component: Billings },
+    { name: 'Preferences', component: Preferences },
+  ];
 
   return (
     <div className="container-fluid">
@@ -142,7 +208,7 @@ const UserProfileForm = () => {
                   <i className="fa fa-dashboard" />
                 </a>
               </li>
-              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/BuyerManageTable`}>BuyerManageTable</Link></li>
+              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/buyermanagetable`}>BuyerManageTable</Link></li>
               <li className="breadcrumb-item">Buyer Profile</li>
             </ul>
           </div>
@@ -154,204 +220,40 @@ const UserProfileForm = () => {
           <div className="card">
             <div className="body">
               <ul className="nav nav-tabs">
-                <li className="nav-item">
-                  <a className="nav-link active" data-toggle="tab" href="#Settings">Settings</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" data-toggle="tab" href="#billings">Billings</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" data-toggle="tab" href="#preferences">Preferences</a>
-                </li>
+                {tabs.map((tab) => (
+                  <li className="nav-item" key={tab.name}>
+                    <a
+                      className={`nav-link ${activeTab === tab.name ? 'active' : ''}`}
+                      onClick={() => handleTabClick(tab.name)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {tab.name}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
 
             <div className="tab-content">
-              <div className="tab-pane active" id="Settings">
-                <div className="body">
-                  <h6>Profile Photo</h6>
-                  <div className="media">
-                    <div className="media-left m-r-15" style={{ width: '140px', height: '140px', overflow: 'hidden' }}>
-                      <img
-                        src={previewImage}
-                        className="user-photo media-object"
-                        alt="User"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                    </div>
-                    <div className="media-body">
-                      <p>Upload your photo.<br /> <em>Image should be at least 140px x 140px</em></p>
-                      <button
-                        type="button"
-                        className="btn btn-default"
-                        id="btn-upload-photo"
-                        onClick={() => document.getElementById('filePhoto').click()}
-                      >
-                        Upload Photo
-                      </button>
-                      <input
-                        type="file"
-                        id="filePhoto"
-                        className="sr-only"
-                        onChange={handleImageUpload}
-                      />
-                    </div>
-                  </div>
+              {tabs.map((tab) => (
+                <div
+                  key={tab.name}
+                  className={`tab-pane ${activeTab === tab.name ? 'active' : ''}`}
+                  id={tab.name}
+                >
+                  <tab.component
+                    userId={userId}
+                    profileData={profileData}
+                    previewImage={previewImage}
+                    handleImageUpload={handleImageUpload}
+                    handleChange={handleChange}
+                    handleAddressChange={handleAddressChange}
+                    handleSubmit={handleSubmit}
+                    passwordData={passwordData}
+                    handlePasswordChange={handlePasswordChange}
+                  />
                 </div>
-
-                <div className="body">
-                  <h6>Basic Information</h6>
-                  <div className="row clearfix">
-                    <div className="col-lg-6 col-md-12">
-                      <div className="form-group">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="First Name"
-                          value={profileData.name}
-                          name="name"
-                          onChange={handleChange}
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label className="fancy-radio">
-                          <input
-                            name="gender"
-                            value="male"
-                            type="radio"
-                            checked={profileData.gender === 'male'}
-                            onChange={handleChange}
-                          />
-                          <span>
-                            <i /> Male
-                          </span>
-                        </label>
-                        <label className="fancy-radio">
-                          <input
-                            name="gender"
-                            value="female"
-                            type="radio"
-                            checked={profileData.gender === 'female'}
-                            onChange={handleChange}
-                          />
-                          <span>
-                            <i /> Female
-                          </span>
-                        </label>
-                      </div>
-                      <div className="form-group">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Address Line 1"
-                          value={profileData.address?.line1}
-                          name="address.line1" 
-                          onChange={handleAddressChange}
-                        />
-                      </div>
-                      <div className="form-group">
-                      <input
-                          type="text"
-                          className="form-control"
-                          placeholder="City"
-                          value={profileData.address?.city}
-                          name="address.city" 
-                          onChange={handleAddressChange}
-                        />
-                      </div>
-                      <div className="form-group">
-                      <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Country"
-                          value={profileData.address?.country}
-                          name="address.country" 
-                          onChange={handleAddressChange}
-                        />
-                      </div>
-                      <div className="form-group">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Website"
-                          value={profileData.website}
-                          name="website"
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="col-lg-6 col-md-12">
-                      <div className="form-group">
-                         <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Last Name"
-                          value={profileData.lastName}
-                          name="lastName"
-                          onChange={handleChange}
-                        />
-                      </div>
-                      <div className="form-group">
-                      <div className="input-group">
-                          <div className="input-group-prepend">
-                            <span className="input-group-text"><i className="fa fa-calendar"></i></span>
-                          </div>
-                          <input
-                            type="date"
-                            className="form-control"
-                            placeholder="Birthdate"
-                            name="birthdate"
-                            value={profileData.birthdate}
-                            onChange={handleChange}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group">
-                      <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Address Line 2"
-                          value={profileData.address?.line2}
-                          name="address.line2" 
-                          onChange={handleAddressChange}
-                        />
-                      </div>
-                      <div className="form-group">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="State/Province"
-                          value={profileData.address?.state}
-                          name="address.state" 
-                          onChange={handleAddressChange}
-                        />
-                      </div>
-                      <div className="form-group">
-                      <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Pincode"
-                          value={profileData.address?.pincode}
-                          name="address.pincode" 
-                          onChange={handleAddressChange}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <button type="button" className="btn btn-primary mx-2" onClick={handleSubmit}>Update</button>
-                  {/* <button type="button" className="btn btn-default">Cancel</button> */}
-                </div>
-
-                <Password
-                  userId={userId}
-                  email={profileData.email}
-                  username={profileData.username}
-                  phoneNumber={profileData.phone}
-                />
-              </div>
-              <Billings />
-              <Preferences />
+              ))}
             </div>
           </div>
         </div>

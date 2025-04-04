@@ -118,7 +118,7 @@ const SoldProduct = () => {
                                                 <td>{product.productPrice}</td> 
                                                 <td>{product.totalQuantity}</td> 
                                                 <td>
-                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/${userType}/Dashboard/artistsoldproduct/soldproductdetails   /${product.productId}`)}>
+                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/${userType}/Dashboard/artistsoldproduct/soldproductdetails/${product.productId}`)}>
                                                         <i className="fa fa-eye"></i>
                                                     </button>
                                                 </td>

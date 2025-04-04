@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ConfirmationDialog from '../ConfirmationDialog';
+import VerifyModal from "./VerifyModal"
+import CreateSellerModal from "./Createmodal";
 import useUserType from '../urlconfig';
 
 function SellerManageTable() {
@@ -9,6 +11,10 @@ function SellerManageTable() {
   const userType = useUserType(); 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedSellerToDelete, setSelectedSellerToDelete] = useState(null);
+  const [isCreateSellerModalOpen, setIsCreateSellerModalOpen] = useState(false);
+  const [selectedSeller, setSelectedSeller] = useState(null);
+const [isModalOpen, setIsModalOpen] = useState(false);
+
   const BASE_URL = 'http://localhost:3001';
   const navigate = useNavigate();
 
@@ -57,6 +63,12 @@ function SellerManageTable() {
     setIsDeleteDialogOpen(true);
   };
 
+  const openModal = (seller) => {
+    setSelectedSeller(seller);
+    setIsModalOpen(true);
+};
+
+
   return (
     <>
       <div className="container-fluid">
@@ -72,6 +84,20 @@ function SellerManageTable() {
                 </li>
                 <li className="breadcrumb-item">Seller Management</li>
               </ul>
+            </div>
+            <div className="col-lg-6 col-md-6 col-sm-12">
+              <div className="d-flex flex-row-reverse">
+                <div className="page_action">
+                  <button
+                    type="button"
+                    className="btn btn-secondary mr-2"
+                    onClick={() => setIsCreateSellerModalOpen(true)}
+                  >
+                    <i className="fa fa-plus"></i>
+                  </button>
+
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -106,6 +132,7 @@ function SellerManageTable() {
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Address</th>
+                        <th>Status</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -148,7 +175,24 @@ function SellerManageTable() {
                               {seller.address.country && seller.address.country}
                             </address>
                           </td>
+                          <td> 
+  <button className={`btn btn-sm ${seller.status === 'Verified' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
+    {seller.status}
+  </button>
+</td>
+
                           <td>
+                          <button
+                              type="button"
+                              className="btn btn-outline-primary btn-sm mr-2"
+                              title="Navigate"
+                              onClick={() =>
+                                navigate(`/${userType}/Dashboard/sellermanagetable/sellerprofileview/${seller._id}`)
+                              }
+
+                            >
+                              <i className="fa fa-eye"></i>
+                            </button>
                             <button
                               type="button"
                               className="btn btn-outline-info btn-sm mr-2"
@@ -166,6 +210,12 @@ function SellerManageTable() {
                               onClick={() => openDeleteDialog(seller)}
                             >
                               <i className="fa fa-trash-o"></i>
+                            </button>
+                            <button
+                              className="btn btn-outline-success btn-sm"
+                              onClick={() => openModal(seller)}
+                            >
+                              <i className="fa fa-check-circle" style={{ color: "green" }}></i>
                             </button>
                           </td>
                         </tr>
@@ -186,6 +236,21 @@ function SellerManageTable() {
           onDeleted={handleDeleteConfirmed}
         />
       )}
+      {isModalOpen && selectedSeller && (
+  <VerifyModal
+    seller={selectedSeller}
+    onClose={() => setIsModalOpen(false)}
+    refreshSellers={fetchSellers}
+  />
+)}
+{isCreateSellerModalOpen && (
+  <CreateSellerModal
+    onClose={() => setIsCreateSellerModalOpen(false)}
+    fetchSellers={fetchSellers} 
+  />
+)}
+
+
     </>
   );
 }

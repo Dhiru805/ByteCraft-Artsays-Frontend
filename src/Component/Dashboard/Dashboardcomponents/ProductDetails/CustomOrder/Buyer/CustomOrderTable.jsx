@@ -79,15 +79,17 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                             <div className="body">
                                 <div className="table-responsive">
                                     <table className="table table-hover js-basic-example dataTable table-custom m-b-0 c_list">
-                                        <thead className="thead-dark">
+                                        <thead className="thead-dark text-nowrap">
                                             <tr>
                                                 <th>#</th>
                                                 <th>Product Name</th>
                                                 <th>Artist Name</th>
-                                                <th>Budget </th>
+                                                <th>Max Budget </th>
+                                                <th>Min Budget </th>
                                                 <th>Negotiated Budget</th>
                                                 <th>Request Date</th>
                                                 <th>Request Status</th>
+                                                <th>Buyer Request Status</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -116,15 +118,23 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                                                         {request.Artist ? `${request.Artist.id.name} ${request.Artist.id.lastName}` : 'N/A'}
                                                     </td>
                                                     <td>
-                                                        {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.Budget).replace(/\.00$/, '')}
+                                                        {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.MaxBudget).replace(/\.00$/, '')}
                                                     </td>
                                                     <td>
-                                                        {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.NegiotaiteBudget).replace(/\.00$/, '')}
+                                                        {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.MinBudget).replace(/\.00$/, '')}
+                                                    </td>
+                                                    <td>
+                                                        {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.NegotiatedBudget).replace(/\.00$/, '')}
                                                     </td>
                                                     <td>{new Date(request.createdAt).toLocaleDateString()}</td>
                                                     <td>
                                                         <button className={`btn btn-sm ${request.RequestStatus === 'Pending' ? 'btn-outline-warning' : request.RequestStatus === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
                                                             {request.RequestStatus}
+                                                        </button>
+                                                    </td>
+                                                    <td>
+                                                        <button className={`btn btn-sm ${request.BuyerStatus === 'Pending' ? 'btn-outline-warning' : request.BuyerStatus === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
+                                                            {request.BuyerStatus}
                                                         </button>
                                                     </td>
                                                     <td>
@@ -160,7 +170,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                                                         >
                                                             <i className="fa fa-trash-o"></i>
                                                         </button>
-                                                        {request.NegiotaiteBudget && (
+                                                        {request.NegotiatedBudget && (
                                                             <button
                                                                 type="button"
                                                                 className="btn btn-outline-secondary btn-sm"

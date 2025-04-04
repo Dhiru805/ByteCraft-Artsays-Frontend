@@ -88,7 +88,7 @@ const Transaction = () => {
                         <div className="body">
                             <div className="table-responsive">
                                 <table className="table table-hover">
-                                    <thead className="thead-dark">
+                                    <thead className="thead-dark text-nowrap">
                                         <tr>
                                             <th>#</th>
                                             <th>Transaction Id</th>

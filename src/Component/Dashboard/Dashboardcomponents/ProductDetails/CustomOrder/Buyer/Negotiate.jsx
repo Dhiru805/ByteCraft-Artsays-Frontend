@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
-import putAPI from '../../../../../../api/putAPI'; 
+import putAPI from "../../../../../../api/putAPI";
 
 const NegotiateModal = ({ request, onClose, onSubmit }) => {
   const [buyerName] = useState(
@@ -10,9 +10,12 @@ const NegotiateModal = ({ request, onClose, onSubmit }) => {
   const [requestDate] = useState(
     new Date(request?.createdAt).toLocaleDateString() || ""
   );
-  const [budget, setBudget] = useState(request?.Budget || "");
+  const [maxBudget, setMaxBudget] = useState(request?.MaxBudget || "");
+  const [minBudget, setMinBudget] = useState(request?.MinBudget || "");
   const [notes, setNotes] = useState(request?.BuyerNotes || "");
-  const [negotiateBudget, setNegotiateBudget] = useState(request?.NegiotaiteBudget || ""); 
+  const [negotiateBudget, setNegotiateBudget] = useState(request?.NegotiatedBudget || "");
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectComment, setRejectComment] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,12 +25,13 @@ const NegotiateModal = ({ request, onClose, onSubmit }) => {
         {
           ProductName: request?.ProductName || "",
           Description: request?.Description || "",
-          Budget: budget,
+          MaxBudget: maxBudget,
+          MinBudget: minBudget,
           NegiotaiteBudget: negotiateBudget,
           BuyerNotes: notes,
         }
       );
-  
+
       if (response && response.data) {
         toast.success(response.data.successMessage || "Buyer request updated successfully");
         onSubmit(response.data.updatedRequest);
@@ -39,7 +43,30 @@ const NegotiateModal = ({ request, onClose, onSubmit }) => {
       toast.error(error.response?.data?.message || "Error updating buyer request");
     }
   };
-  
+
+  const handleStatusUpdate = async (status, comment = "") => {
+    try {
+      const response = await putAPI(
+        `http://localhost:3001/api/update-negiotaite-Buyer-budget/${request._id}`,
+        {
+          rejectedcomment: comment,
+          BuyerStatus: status
+        
+        }
+      );
+
+      if (response && response.data) {
+        toast.success(`Buyer request ${status.toLowerCase()} successfully`);
+        onSubmit(response.data.updatedRequest);
+        onClose();
+      } else {
+        toast.error(response?.message || `Failed to update buyer request status`);
+      }
+    } catch (error) {
+      console.error("Error updating buyer request status:", error);
+      toast.error(error.response?.data?.message || "Error updating buyer request status");
+    }
+  };
 
   return (
     <div
@@ -103,16 +130,30 @@ const NegotiateModal = ({ request, onClose, onSubmit }) => {
               </div>
 
               <div className="mb-3">
-                <label htmlFor="budget" className="form-label">
-                  Budget
+                <label htmlFor="maxBudget" className="form-label">
+                  Max Budget
                 </label>
                 <input
                   type="number"
                   className="form-control"
-                  id="budget"
-                  name="budget"
-                  value={budget}
-                  onChange={(e) => setBudget(e.target.value)}
+                  id="maxBudget"
+                  name="maxBudget"
+                  value={maxBudget}
+                  onChange={(e) => setMaxBudget(e.target.value)}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="minBudget" className="form-label">
+                  Min Budget
+                </label>
+                <input
+                  type="number"
+                  className="form-control"
+                  id="minBudget"
+                  name="minBudget"
+                  value={minBudget}
+                  onChange={(e) => setMinBudget(e.target.value)}
                 />
               </div>
 
@@ -127,6 +168,7 @@ const NegotiateModal = ({ request, onClose, onSubmit }) => {
                   name="negotiateBudget"
                   value={negotiateBudget}
                   onChange={(e) => setNegotiateBudget(e.target.value)}
+                  disabled
                 />
               </div>
 
@@ -152,10 +194,67 @@ const NegotiateModal = ({ request, onClose, onSubmit }) => {
               <button type="submit" className="btn btn-primary">
                 Save changes
               </button>
+              {request?.BuyerStatus !== "Approved" && (
+              <button type="button" className="btn btn-success" onClick={() => handleStatusUpdate("Approved")}>
+                Accepted
+              </button>
+              )}
+              {request?.BuyerStatus !== "Rejected" && (
+              <button type="button" className="btn btn-danger" onClick={() => setShowRejectModal(true)}>
+                Rejected
+              </button>
+              )}
             </div>
           </form>
         </div>
       </div>
+
+      {showRejectModal && (
+        <div className="modal" style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Reject Request</h5>
+                <button className="btn" onClick={() => setShowRejectModal(false)} style={{ border: "none", background: "transparent", fontSize: "1.0rem" }}>
+                  &#x2715;
+                </button>
+              </div>
+              <div className="modal-body">
+                <label htmlFor="rejectComment" className="form-label">
+                  Rejection Comment
+                </label>
+                <textarea
+                  className="form-control"
+                  id="rejectComment"
+                  name="rejectComment"
+                  rows="4"
+                  value={rejectComment}
+                  onChange={(e) => setRejectComment(e.target.value)}
+                />
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowRejectModal(false)}>
+                  Close
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => {
+                    if (!rejectComment.trim()) {
+                      toast.error("Please enter a rejection comment before saving.");
+                      return;
+                    }
+                    handleStatusUpdate("Rejected", rejectComment);
+                  }}
+                >
+                  Save Rejection
+                </button>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

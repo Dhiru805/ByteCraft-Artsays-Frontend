@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ConfirmationDialog from '../ConfirmationDialog';
+import VerifyModal from "./VerifyModal"
+import CreateArtistModal from "./Createmodal"
 import useUserType from '../urlconfig'
 
 
@@ -9,9 +11,12 @@ function ArtistManageTable() {
   const [artists, setArtists] = useState([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedArtistToDelete, setSelectedArtistToDelete] = useState(null);
+  const [selectedArtist, setSelectedArtist] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateArtistModalOpen, setIsCreateArtistModalOpen] = useState(false);
   const BASE_URL = 'http://localhost:3001';
   const navigate = useNavigate();
-  const userType = useUserType(); 
+  const userType = useUserType();
 
   const fetchArtists = async () => {
     try {
@@ -58,6 +63,11 @@ function ArtistManageTable() {
     setIsDeleteDialogOpen(true);
   };
 
+  const openModal = (artist) => {
+    setSelectedArtist(artist);
+    setIsModalOpen(true);
+  };
+
   return (
     <>
       <div className="container-fluid">
@@ -73,6 +83,20 @@ function ArtistManageTable() {
                 </li>
                 <li className="breadcrumb-item">Artist Management</li>
               </ul>
+            </div>
+            <div className="col-lg-6 col-md-6 col-sm-12">
+              <div className="d-flex flex-row-reverse">
+                <div className="page_action">
+                  <button
+                    type="button"
+                    className="btn btn-secondary mr-2"
+                    onClick={() => setIsCreateArtistModalOpen(true)}
+                  >
+                    <i className="fa fa-plus"></i>
+                  </button>
+
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -107,6 +131,7 @@ function ArtistManageTable() {
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Address</th>
+                        <th>Status</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -149,13 +174,17 @@ function ArtistManageTable() {
                               {artist.address.country && artist.address.country}
                             </address>
                           </td>
+                          <td> <button className={`btn btn-sm ${artist.status === 'Verified' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
+                            {artist.status}
+                          </button>
+                          </td>
                           <td>
-                          <button
+                            <button
                               type="button"
                               className="btn btn-outline-primary btn-sm mr-2"
                               title="Navigate"
                               onClick={() =>
-                                navigate(`/${userType}/Dashboard/ArtistManageTable/ArtistProfileView/${artist._id}`)
+                                navigate(`/${userType}/Dashboard/artistmanagetable/artistprofileview/${artist._id}`)
                               }
 
                             >
@@ -166,7 +195,7 @@ function ArtistManageTable() {
                               className="btn btn-outline-info btn-sm mr-2"
                               title="Edit"
                               onClick={() =>
-                                navigate(`/${userType}/Dashboard/ArtistManageTable/ArtistProfile/${artist._id}`)
+                                navigate(`/${userType}/Dashboard/artistmanagetable/artistprofile/${artist._id}`)
                               }
                             >
                               <i class="fa fa-pencil"></i>
@@ -179,6 +208,14 @@ function ArtistManageTable() {
                             >
                               <i className="fa fa-trash-o"></i>
                             </button>
+                            <button
+                              className="btn btn-outline-success btn-sm"
+                              onClick={() => openModal(artist)}
+                            >
+                              <i className="fa fa-check-circle" style={{ color: "green" }}></i>
+                            </button>
+
+
                           </td>
                         </tr>
                       ))}
@@ -198,6 +235,19 @@ function ArtistManageTable() {
           onDeleted={handleDeleteConfirmed}
         />
       )}
+
+      {isModalOpen && selectedArtist && (
+        <VerifyModal
+          artist={selectedArtist}
+          onClose={() => setIsModalOpen(false)}
+          refreshArtists={fetchArtists}
+        />
+      )}
+      {isCreateArtistModalOpen && (
+        <CreateArtistModal onClose={() => setIsCreateArtistModalOpen(false)}
+          fetchArtists={fetchArtists} />
+      )}
+
     </>
   );
 }

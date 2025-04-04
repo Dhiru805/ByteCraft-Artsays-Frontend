@@ -11,7 +11,7 @@ function ProductUpload() {
     const [description, setDescription] = React.useState('');
     // const navigate = useNavigate();
     const userType = useUserType();
-     const { userId } = useParams();
+    const { userId } = useParams();
 
   
 
@@ -54,12 +54,12 @@ function ProductUpload() {
 
                                 <div className="form-group">
                                     {/* <input
-                    type="text"
-                    name="artistName"
-                    className="form-control"
-                    placeholder="Name"
-                    required
-                  /> */}
+                                         type="text"
+                                         name="artistName"
+                                         className="form-control"
+                                         placeholder="Name"
+                                         required
+                                     /> */}
                                 </div>
                                 <div className="form-group">
                                     <input
@@ -106,16 +106,16 @@ function ProductUpload() {
                                 <ImageEditor />
                             </div>
                             {/* <div className="form-group mt-3">
-                  <ReactQuill
-                    placeholder="Enter Product Details"
-                    modules={modules}
-                    theme="snow"
-                    style={editorStyle}
-                    value={description}
-                    onChange={setDescription}
-                  />
-                  <input type="hidden" id="description" />
-                </div> */}
+                             <ReactQuill
+                               placeholder="Enter Product Details"
+                               modules={modules}
+                               theme="snow"
+                               style={editorStyle}
+                               value={description}
+                               onChange={setDescription}
+                                />
+                             <input type="hidden" id="description" />
+                             </div> */}
                             <div className="form-group mt-3">
                                 <textarea
                                     id="description"
@@ -123,7 +123,7 @@ function ProductUpload() {
                                     placeholder="Enter Product Details"
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
-                                    style={{ height: "150px" }} // Adjust height as needed
+                                    style={{ height: "150px" }}
                                 ></textarea>
                             </div>
                             <button

@@ -4,44 +4,67 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const DELETE_CONFIG = {
+  admin: {
+    getEndpoint: (id) => `/auth/users/${id}`,
+    successMessage: "Super-Admin successfully deleted!",
+    errorMessage: "Failed to delete super-admin.",
+    idKey: "AdminId",
+  },
+  
   blog: {
-    getEndpoint: (id) => `http://localhost:3001/Blog-Post/${id}`,
+    getEndpoint: (id) => `/Blog-Post/${id}`,
     successMessage: "Blog successfully deleted!",
     errorMessage: "Failed to delete Blog.",
     idKey: "BlogId",
   },
   artist: {
-    getEndpoint: (id) => `http://localhost:3001/auth/users/${id}`,
+    getEndpoint: (id) => `/auth/users/${id}`,
     successMessage: "Artist successfully deleted!",
     errorMessage: "Failed to delete Artist.",
     idKey: "ArtistId",
   },
   buyer: {
-    getEndpoint: (id) => `http://localhost:3001/auth/users/${id}`,
+    getEndpoint: (id) => `/auth/users/${id}`,
     successMessage: "Buyer successfully deleted!",
     errorMessage: "Failed to delete Buyer.",
     idKey: "BuyerId",
   },  
  buyerRequest : {
-    getEndpoint: (id) => `http://localhost:3001/api/delete-buyer-requests/${id}`,
+    getEndpoint: (id) => `/api/delete-buyer-requests/${id}`,
     successMessage: "Buyer request successfully deleted!",
     errorMessage: "Failed to delete buyer request.",
     idKey: "BuyerRequestId",
   },
   seller: {
-    getEndpoint: (id) => `http://localhost:3001/api/Delete-seller/${id}`,
+    getEndpoint: (id) => `/api/Delete-seller/${id}`,
     successMessage: "Seller successfully deleted!",
     errorMessage: "Failed to delete Seller.",
     idKey: "SellerId",
   },
   productRequest :{
-    getEndpoint: (id) => `http://localhost:3001/api/deleteproduct/${id}`,
+    getEndpoint: (id) => `/api/deleteproduct/${id}`,
     successMessage: "Product request successfully deleted!",
     errorMessage: "Failed to delete product request.",
     idKey: "ProductRequestId",
 },
-  
-  
+product:{
+  getEndpoint: (id) => `/api/deleteproductbyid/${id}`,
+  successMessage: "Product  successfully deleted!",
+  errorMessage: "Failed to delete product.",
+  idKey: "ProductRequestId",
+},
+subCategory: {
+  getEndpoint: (id) => `/api/sub-category/${id}`,
+  successMessage: "Product Category successfully deleted!",
+  errorMessage: "Failed to delete Product Category.",
+  idKey: "ProductCategoryId",
+},
+blogcategory: {
+  getEndpoint: (id) => `/api/deleteblogcategory/${id}`,
+  successMessage: "Blog Category successfully deleted!",
+  errorMessage: "Failed to delete Blog Category.",
+  idKey: "BlogCategoryId",
+}
 
 };
 

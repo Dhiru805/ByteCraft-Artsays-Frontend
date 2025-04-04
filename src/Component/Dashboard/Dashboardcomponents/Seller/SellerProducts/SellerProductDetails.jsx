@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 import getAPI from "../../../../../api/getAPI";
 import { useParams } from 'react-router-dom';
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useUserType from '../../urlconfig';
 import { Link } from "react-router-dom";
-// import ConfirmationDialog from "../../ConfirmationDialog";
+import ConfirmationDialog from "../../ConfirmationDialog";
 
 function AllProduct() {
     const { productId } = useParams();
     const [products, setProducts] = useState([]);
-    // const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    // const [selectedProductRequestToDelete, setSelectedProductRequestToDelete] = useState(null)
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [selectedProductRequestToDelete, setSelectedProductRequestToDelete] = useState(null)
     const [selectedImages, setSelectedImages] = useState({});
     const [expanded, setExpanded] = useState({});
     const [activeTab, setActiveTab] = useState("description");
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const userType = useUserType();
 
     useEffect(() => {
@@ -60,38 +60,35 @@ function AllProduct() {
         setActiveTab(tab);
     };
 
-    // const handleDeleteCancel = () => {
-    //     setIsDeleteDialogOpen(false);
-    //     setSelectedProductRequestToDelete(null);
-    //   };
     
-    //   const handleDeleteConfirmed = () => {
-    //     setProducts(products.filter((p) => p._id !== selectedProductRequestToDelete._id));
-    //     setIsDeleteDialogOpen(false);
-    //     navigate(`/${userType}/Dashboard/buyerproductrequest`);
-    //   };
-    
-    //   const openDeleteDialog = (productRequest) => {
-    //     setSelectedProductRequestToDelete(productRequest);
-    //     setIsDeleteDialogOpen(true);
-    //   };
+    const handleDeleteCancel = () => {
+        setIsDeleteDialogOpen(false);
+        setSelectedProductRequestToDelete(null);
+    };
 
-    // const handleEdit = (productId) => {
-  
-    //     localStorage.removeItem("editProductId");
-      
-      
-    //     localStorage.setItem("editProductId", productId);
-     
-    //     navigate(`/${userType}/Dashboard/buyerproductrequest/productview/editproduct/${productId}`);
-    //   };
+    const handleDeleteConfirmed = () => {
+        setProducts(null); 
+        setIsDeleteDialogOpen(false);
+        navigate(`/${userType}/Dashboard/sellerrequest`);
+    };
+
+    const openDeleteDialog = (productRequest) => {
+        setSelectedProductRequestToDelete(productRequest);
+        setIsDeleteDialogOpen(true);
+    };
+
+    const handleEdit = (productId) => {
+        localStorage.removeItem("editProductId");
+        localStorage.setItem("editProductId", productId);
+        navigate(`/${userType}/Dashboard/sellerproduct/sellerproductdetails/edit/${productId}`);
+      };
 
     return (
         <>
             <div className="block-header">
                 <div className="row">
                     <div className="col-lg-6 col-md-6 col-sm-12">
-                        <h2>Seller Product Details</h2>
+                        <h2>Product Details</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
                                 <a href="index.html">
@@ -99,8 +96,8 @@ function AllProduct() {
                                 </a>
                             </li>
                             <li className="breadcrumb-item active">
-                                <Link to={`/${userType}/Dashboard/sellerproduct`} >Seller Product</Link></li>
-                            <li className="breadcrumb-item ">Seller Product Details</li>
+                                <Link to={`/${userType}/Dashboard/sellerproduct`} >Products</Link></li>
+                            <li className="breadcrumb-item ">Product Details</li>
                         </ul>
                     </div>
                 </div>
@@ -175,12 +172,8 @@ function AllProduct() {
                                             Category: <span className="text-info">{product.category}</span>
                                         </h5>
                                         <hr />
-                                        {/* <button className="btn btn-outline-dark ms-2"
-                                        onClick={() => handleEdit(product._id)}>Edit</button>
-
-                                        <button className="btn btn-outline-danger mx-2"
-                                            onClick={() => openDeleteDialog(product)}
-                                            >Delete</button> */}
+                                        <button className="btn btn-outline-dark ms-2"  onClick={() => handleEdit(product._id)}>Edit</button>
+                                        <button className="btn btn-outline-danger mx-2" onClick={() => openDeleteDialog(product)}>Delete</button>
                                     </div>
                                 </div>
 
@@ -257,14 +250,14 @@ function AllProduct() {
                     );
                 })}
             </div>
-            {/* {isDeleteDialogOpen && (
-        <ConfirmationDialog
-          onClose={handleDeleteCancel}
-          deleteType="productRequest"
-          id={selectedProductRequestToDelete._id}
-          onDeleted={handleDeleteConfirmed}
-        />
-      )} */}
+            {isDeleteDialogOpen && (
+    <ConfirmationDialog
+        onClose={handleDeleteCancel}
+        deleteType="productRequest"
+        id={selectedProductRequestToDelete._id}
+        onDeleted={handleDeleteConfirmed}
+    />
+            )}
         </>
     );
 }

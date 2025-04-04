@@ -2,13 +2,18 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ConfirmationDialog from '../ConfirmationDialog';
+import VerifyModal from "./VerifyModal"
+import CreateBuyerModal from "./Createmodal";
 import useUserType from '../urlconfig';
 
 function BuyerManageTable() {
   const [buyers, setBuyers] = useState([]);
-  const userType = useUserType(); 
+  const userType = useUserType();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedBuyerToDelete, setSelectedBuyerToDelete] = useState(null);
+  const [isCreateBuyerModalOpen, setIsCreateBuyerModalOpen] = useState(false);
+  const [selectedBuyer, setSelectedBuyer] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const BASE_URL = 'http://localhost:3001';
   const navigate = useNavigate();
 
@@ -56,6 +61,10 @@ function BuyerManageTable() {
     setSelectedBuyerToDelete(buyer);
     setIsDeleteDialogOpen(true);
   };
+  const openModal = (buyer) => {
+    setSelectedBuyer(buyer);
+    setIsModalOpen(true);
+  };
 
   return (
     <>
@@ -72,6 +81,20 @@ function BuyerManageTable() {
                 </li>
                 <li className="breadcrumb-item">Buyer Management</li>
               </ul>
+            </div>
+            <div className="col-lg-6 col-md-6 col-sm-12">
+              <div className="d-flex flex-row-reverse">
+                <div className="page_action">
+                  <button
+                    type="button"
+                    className="btn btn-secondary mr-2"
+                    onClick={() => setIsCreateBuyerModalOpen(true)}
+                  >
+                    <i className="fa fa-plus"></i>
+                  </button>
+
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -106,6 +129,7 @@ function BuyerManageTable() {
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Address</th>
+                        <th>Status</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -149,12 +173,29 @@ function BuyerManageTable() {
                             </address>
                           </td>
                           <td>
+                            <button className={`btn btn-sm ${buyer.status === 'Verified' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
+                              {buyer.status}
+                            </button>
+                          </td>
+
+                          <td>
+                            <button
+                              type="button"
+                              className="btn btn-outline-primary btn-sm mr-2"
+                              title="Navigate"
+                              onClick={() =>
+                                navigate(`/${userType}/Dashboard/buyermanagetable/buyerprofileview/${buyer._id}`)
+                              }
+
+                            >
+                              <i className="fa fa-eye"></i>
+                            </button>
                             <button
                               type="button"
                               className="btn btn-outline-info btn-sm mr-2"
                               title="Edit"
                               onClick={() =>
-                                navigate(`/${userType}/Dashboard/BuyerManageTable/BuyerProfile/${buyer._id}`)
+                                navigate(`/${userType}/Dashboard/buyermanagetable/buyerprofile/${buyer._id}`)
                               }
                             >
                               <i className="fa fa-pencil"></i>
@@ -166,6 +207,12 @@ function BuyerManageTable() {
                               onClick={() => openDeleteDialog(buyer)}
                             >
                               <i className="fa fa-trash-o"></i>
+                            </button>
+                            <button
+                              className="btn btn-outline-success btn-sm"
+                              onClick={() => openModal(buyer)}
+                            >
+                              <i className="fa fa-check-circle" style={{ color: "green" }}></i>
                             </button>
                           </td>
                         </tr>
@@ -186,6 +233,21 @@ function BuyerManageTable() {
           onDeleted={handleDeleteConfirmed}
         />
       )}
+      {isModalOpen && selectedBuyer && (
+        <VerifyModal
+          buyer={selectedBuyer}
+          onClose={() => setIsModalOpen(false)}
+          refreshBuyers={fetchBuyers}
+        />
+      )}
+      {isCreateBuyerModalOpen && (
+        <CreateBuyerModal
+          onClose={() => setIsCreateBuyerModalOpen(false)}
+          fetchBuyers={fetchBuyers}
+        />
+      )}
+
+
     </>
   );
 }

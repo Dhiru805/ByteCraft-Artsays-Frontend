@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import ProductRequestHeader from "./ProductRequestHeader";
 import ProductRequestArtistTable from "./ProductRequestArtist/ProductRequestTable";
-import ProductRequestBuyerTable  from "./ProductRequestBuyer/ProductRequestTable"
+import ProductRequestBuyerTable from "./ProductRequestBuyer/ProductRequestTable";
+import ProductRequestSellerTable from "./ProductRequestSeller/ProductRequestTable"
 // import getAPI from "../../../../../../api/getAPI";
 import useUserType from '../../urlconfig';
 import { useConfirm } from '../../StatusConfirm';
@@ -19,14 +20,18 @@ const Customorder = () => {
 
     return (
         <>
-            <ProductRequestHeader/>
+            <ProductRequestHeader />
 
             {userType === "Artist" && (
-            <ProductRequestArtistTable/>
+                <ProductRequestArtistTable />
             )}
 
             {userType === "Buyer" && (
-            <ProductRequestBuyerTable/>
+                <ProductRequestBuyerTable />
+            )}
+
+            {userType === "Seller" && (
+                <ProductRequestSellerTable />
             )}
 
 

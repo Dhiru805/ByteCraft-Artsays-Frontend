@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
-import putAPI from '../../../../../../api/putAPI'; 
+import putAPI from '../../../../../../api/putAPI';
 
 const UpdateModal = ({ request, onClose, onSubmit }) => {
   const [buyerName] = useState(
@@ -10,9 +10,10 @@ const UpdateModal = ({ request, onClose, onSubmit }) => {
   const [requestDate] = useState(
     new Date(request?.createdAt).toLocaleDateString() || ""
   );
-  const [budget, setBudget] = useState(request?.Budget || "");
+  const [maxBudget, setMaxBudget] = useState(request?.MaxBudget || "");
+  const [minBudget, setMinBudget] = useState(request?.MinBudget || "");
   const [notes, setNotes] = useState(request?.Notes || "");
-  const [negotiateBudget, setNegotiateBudget] = useState(request?.NegiotaiteBudget || ""); 
+  const [negotiateBudget, setNegotiateBudget] = useState(request?.NegotiatedBudget|| "");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,22 +23,23 @@ const UpdateModal = ({ request, onClose, onSubmit }) => {
         {
           ProductName: request?.ProductName || "",
           Description: request?.Description || "",
-          Budget: budget,
-          NegiotaiteBudget: negotiateBudget,
+          MaxBudget: maxBudget, 
+          MinBudget: minBudget,
+          NegotiatedBudget: negotiateBudget, 
           Notes: notes,
         }
-      );
+      )
 
-        if (response && response.data) {
-              toast.success(response.data.successMessage || "Buyer request updated successfully");
-              onSubmit(response.data.updatedRequest);
-            } else {
-              toast.error(response?.message || "Failed to update buyer request");
-            }
-          } catch (error) {
-            console.error("Error updating buyer request:", error);
-            toast.error(error.response?.data?.message || "Error updating buyer request");
-          }
+      if (response && response.data) {
+        toast.success(response.data.successMessage || "Buyer request updated successfully");
+        onSubmit(response.data.updatedRequest);
+      } else {
+        toast.error(response?.message || "Failed to update buyer request");
+      }
+    } catch (error) {
+      console.error("Error updating buyer request:", error);
+      toast.error(error.response?.data?.message || "Error updating buyer request");
+    }
   };
 
   return (
@@ -102,17 +104,34 @@ const UpdateModal = ({ request, onClose, onSubmit }) => {
               </div>
 
               <div className="mb-3">
-                <label htmlFor="budget" className="form-label">
-                  Budget
+                <label htmlFor="maxBudget" className="form-label">
+                  Max Budget
                 </label>
                 <input
                   type="number"
                   className="form-control"
-                  id="budget"
-                  name="budget"
-                  placeholder="Enter budget"
-                  value={budget}
-                  onChange={(e) => setBudget(e.target.value)}
+                  id="maxBudget"
+                  name="maxBudget"
+                  placeholder="Enter Max Budget"
+                  value={maxBudget}
+                  onChange={(e) => setMaxBudget(e.target.value)}
+                  required
+                  readOnly
+                />
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="minBudget" className="form-label">
+                  Min Budget
+                </label>
+                <input
+                  type="number"
+                  className="form-control"
+                  id="minBudget"
+                  name="minBudget"
+                  placeholder="Enter Min Budget"
+                  value={minBudget}
+                  onChange={(e) => setMinBudget(e.target.value)}
                   required
                   readOnly
                 />

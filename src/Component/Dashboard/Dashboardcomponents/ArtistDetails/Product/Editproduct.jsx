@@ -3,12 +3,15 @@ import ImageEditor from "./ImageCropping";
 import 'react-quill/dist/quill.snow.css';
 // import ReactQuill from 'react-quill';
 // import { useNavigate } from "react-router-dom";
-// import useUserType from "../../urlconfig";
+import useUserType from "../../urlconfig";
+import { Link } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 
 function ProductUpload() {
     const [description, setDescription] = React.useState('');
     // const navigate = useNavigate();
-    // const userType = useUserType();
+    const userType = useUserType();
+     const { productId } = useParams();
 
     // const handleNavigation = () => {
     // navigate(`/${userType}/Dashboard/allartistproduct`);
@@ -45,15 +48,18 @@ function ProductUpload() {
             <div className="block-header">
                 <div className="row">
                     <div className="col-lg-6 col-md-6 col-sm-12">
-                        <h2>Create Product</h2>
+                        <h2>Edit Artist Product</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
                                 <a href="/">
                                     <i className="fa fa-dashboard"></i>
                                 </a>
                             </li>
-                            <li className="breadcrumb-item">App</li>
-                            <li className="breadcrumb-item active">Product Upload</li>
+                             <li className="breadcrumb-item active">
+                              <Link to={`/${userType}/Dashboard/allartistproduct`} >Artist Products</Link></li>
+                              <li className="breadcrumb-item active">
+                              <Link to={`/${userType}/Dashboard/allartistproduct/productdetails/${productId}`} >Product Details</Link></li>
+                            <li className="breadcrumb-item ">Edit Artist Product</li>
                         </ul>
                     </div>
                 </div>
@@ -145,7 +151,7 @@ function ProductUpload() {
                                     placeholder="Enter Product Details"
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
-                                    style={{ height: "150px" }} // Adjust height as needed
+                                    style={{ height: "150px" }} 
                                 ></textarea>
                             </div>
                             <button

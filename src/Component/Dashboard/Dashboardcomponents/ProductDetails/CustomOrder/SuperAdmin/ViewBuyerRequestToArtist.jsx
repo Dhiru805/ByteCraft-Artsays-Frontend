@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
-import axios from 'axios';
 import useUserType from '../../../urlconfig';
+import Switch from "react-switch";
 
 function ViewBuyerRequest() {
     const location = useLocation();
@@ -77,6 +77,12 @@ function ViewBuyerRequest() {
                                                 </div>
                                             </div>
                                             <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Art Type</label>
+                                                <input type="text" className="form-control" value={request?.ArtType} readOnly />
+                                            </div>
+                                        </div>
+                                            <div className="col-md-6">
                                                 <div className="form-group">
                                                     <label>Artist</label>
                                                     <input
@@ -98,24 +104,108 @@ function ViewBuyerRequest() {
                                                     />
                                                 </div>
                                             </div>
-                                            <div className="col-md-6">
-                                                <div className="form-group">
-                                                    <label>Budget</label>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        value={budget}
-                                                        readOnly
-                                                    />
-                                                </div>
-                                                
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
+                                <div className="flex-grow-1 mx-3">
+                                    <div className="row">
+                                        <div className="col-md-6">
+                                                <div className="form-group">
+                                                    <label>Min Budget</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        value={request?.MinBudget}
+                                                        readOnly
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <div className="form-group">
+                                                    <label>Max Budget</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        value={request?.MaxBudget}
+                                                        readOnly
+                                                    />
+                                                </div>
 
+                                            </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Size</label>
+                                                <input type="text" className="form-control" value={request?.Size} readOnly />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Colour Preferences</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={request?.ColourPreferences
+                                                        .map(color => color.charAt(0).toUpperCase() + color.slice(1).toLowerCase())
+                                                        .join(', ')}
+                                                    readOnly
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Payment Term</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={request?.PaymentTerm}
+                                                    readOnly
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group mt-4 d-flex align-items-center gap-2">
+                                                <label className="ms-2">Frame Required</label>
+                                                <div className="mx-4">
+                                                    <Switch
+                                                        onColor="#007bff"
+                                                        offColor="#ccc"
+                                                        uncheckedIcon={false}
+                                                        checkedIcon={false}
+                                                        height={19}
+                                                        width={36}
+                                                        handleDiameter={12}
+                                                        checked={request?.IsFramed || false}
+                                                        disabled
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Expected Deadline</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={request?.ExpectedDeadline}
+                                                    readOnly
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div className="col-md-12">
+                                <div className="form-group mt-3">
+                                        <label>Comments With Refrence</label>
+                                        <textarea
+                                            id="comments"
+                                            value={request?.Comments}
+                                            className="form-control"
+                                            placeholder="Any other details or references you'd like to include"
+                                            rows="3"
+                                            readOnly
+                                        />
+                                    </div>
                                     <div className="form-group mt-3">
                                         <label>Description</label>
                                         <ReactQuill value={description} readOnly theme="snow" modules={{ toolbar: false }} />
@@ -158,6 +248,12 @@ function ViewBuyerRequest() {
                                         <div className="form-group mt-3">
                                             <label>Notes</label>
                                             <textarea className="form-control" value={request.Notes} readOnly />
+                                        </div>
+                                    )}
+                                      {request?.rejectedcomment && (
+                                        <div className="form-group mt-3">
+                                            <label>Rejected Comment</label>
+                                            <textarea className="form-control" value={request.rejectedcomment} readOnly />
                                         </div>
                                     )}
                                 </div>

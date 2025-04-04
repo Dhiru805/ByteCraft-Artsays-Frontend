@@ -1,6 +1,6 @@
 import axiosInstance from "./axiosConfig";
 
-async function postAPI(url, payload, isPrivate = true, config = {}) {
+async function postAPI(url, payload, config = {},isPrivate = true,) {
   try {
     let accessToken;
     if (isPrivate) {
@@ -11,7 +11,7 @@ async function postAPI(url, payload, isPrivate = true, config = {}) {
       headers: {
         "Authorization": `Bearer ${accessToken}`,
         ...(payload instanceof FormData
-          ? { "Content-Type": "multipart/form-data" } // Let the browser set proper boundaries
+          ? { "Content-Type": "multipart/form-data" } 
           : { "Content-Type": "application/json" }),
         ...config.headers,
       },

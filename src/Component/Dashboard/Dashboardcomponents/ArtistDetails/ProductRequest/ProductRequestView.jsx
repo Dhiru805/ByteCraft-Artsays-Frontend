@@ -1,77 +1,73 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import getAPI from '../../../../../api/getAPI';
-import { Link } from 'react-router-dom';
-import ConfirmationDialog from '../../ConfirmationDialog';
+import React, { useEffect, useState } from "react";
+import getAPI from "../../../../../api/getAPI";
+import { useParams } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import useUserType from '../../urlconfig';
+import { Link } from "react-router-dom";
+import ConfirmationDialog from "../../ConfirmationDialog";
 
-function ProductDetails() {
+function AllProduct() {
     const { productId } = useParams();
-    const [product, setProduct] = useState(null);
-    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+    const [products, setProducts] = useState([]);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    const [selectedProductRequestToDelete, setSelectedProductRequestToDelete] = useState(null);
-    const [isAutoSliding, setIsAutoSliding] = useState(true);
+    const [selectedProductRequestToDelete, setSelectedProductRequestToDelete] = useState(null)
+    const [selectedImages, setSelectedImages] = useState({});
+    const [expanded, setExpanded] = useState({});
+    const [activeTab, setActiveTab] = useState("description");
     const navigate = useNavigate();
     const userType = useUserType();
 
-    const fetchProduct = async () => {
-        try {
-            const result = await getAPI(`http://localhost:3001/api/getproduct/${productId}`, {}, true, false);
-            if (result.data && result.data.data) {
-                setProduct(result.data.data);
-            } else {
-                console.error("Unexpected API response:", result);
-                setProduct(null);
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                const result = await getAPI(`http://localhost:3001/api/getproduct/${productId}`, {}, true, false);
+                if (result.data && result.data.data) {
+                    const productData = Array.isArray(result.data.data) ? result.data.data : [result.data.data];
+                    setProducts(productData);
+
+                    const initialSelectedImages = {};
+                    productData.forEach((product) => {
+                        initialSelectedImages[product._id] = product.mainImage;
+                    });
+                    setSelectedImages(initialSelectedImages);
+                } else {
+                    console.error("Unexpected API response:", result);
+                    setProducts([]);
+                }
+            } catch (error) {
+                console.error("Error fetching product:", error);
+                setProducts([]);
             }
-        } catch (error) {
-            console.error("Error fetching product:", error);
-            setProduct(null);
-        }
-    };
-
-    useEffect(() => {
+        };
         fetchProduct();
-    }, []);
+    }, [productId]);
 
-    useEffect(() => {
-        let interval;
-        if (isAutoSliding && product) {
-            interval = setInterval(() => {
-                handleNextImage();
-            }, 3000);
-        }
-        return () => clearInterval(interval);
-    }, [isAutoSliding, product, selectedImageIndex]);
-
-    const handleNextImage = () => {
-        if (product) {
-            const totalImages = [product.mainImage, ...(product.otherImages || [])].length;
-            setSelectedImageIndex((prevIndex) => (prevIndex + 1) % totalImages);
-        }
+    const handleImageClick = (productId, image) => {
+        setSelectedImages((prevState) => ({
+            ...prevState,
+            [productId]: image,
+        }));
     };
 
-    const handlePrevImage = () => {
-        if (product) {
-            const totalImages = [product.mainImage, ...(product.otherImages || [])].length;
-            setSelectedImageIndex((prevIndex) => (prevIndex - 1 + totalImages) % totalImages);
-        }
+    const toggleDescription = (productId) => {
+        setExpanded((prevState) => ({
+            ...prevState,
+            [productId]: !prevState[productId],
+        }));
     };
 
-    const handleImageClick = () => {
-        setIsAutoSliding(false);
-        setTimeout(() => {
-            setIsAutoSliding(true);
-        }, 5000);
+    const handleTabChange = (tab) => {
+        setActiveTab(tab);
     };
 
+    
     const handleDeleteCancel = () => {
         setIsDeleteDialogOpen(false);
         setSelectedProductRequestToDelete(null);
     };
 
     const handleDeleteConfirmed = () => {
-        setProduct(null); 
+        setProducts(null); 
         setIsDeleteDialogOpen(false);
         navigate(`/${userType}/Dashboard/artistproductrequest`);
     };
@@ -81,99 +77,179 @@ function ProductDetails() {
         setIsDeleteDialogOpen(true);
     };
 
+    const handleEdit = (productId) => {
+        localStorage.removeItem("editProductId");
+        localStorage.setItem("editProductId", productId);
+        navigate(`/${userType}/Dashboard/artistproductrequest/artistproductview/editproduct/${productId}`);
+      };
 
     return (
-        <div className="container-fluid">
+        <>
             <div className="block-header">
                 <div className="row">
                     <div className="col-lg-6 col-md-6 col-sm-12">
-                        <h2>Artist Product View</h2>
+                        <h2>Product Details</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
                                 <a href="index.html">
                                     <i className="fa fa-dashboard"></i>
                                 </a>
                             </li>
-                            <li className="breadcrumb-item">
-                         <Link to={`/${userType}/Dashboard/artistproductrequest`}>Artist Product Request</Link></li>
-                            <li className="breadcrumb-item">Artist Product View</li>
+                            <li className="breadcrumb-item active">
+                                <Link to={`/${userType}/Dashboard/artistproductrequest`} >Artist Products Request</Link></li>
+                            <li className="breadcrumb-item ">Product Details</li>
                         </ul>
                     </div>
                 </div>
             </div>
-            <div className="row clearfix">
-                {/* Left Side - Image Carousel */}
-                <div className="col-lg-5 col-md-12 text-center">
-                     {product && (
-                        <div className="card p-4 shadow-sm">
-                            {product.userId && (
-                                <div className="text-center">
-                                    <img
-                                        src={`http://localhost:3001${product.userId.profilePhoto}`}
-                                        alt="User Profile"
-                                        width="140"
-                                        height="140"
-                                        className="rounded-circle border border-3 mb-2"
-                                    />
-                                    <h5 className="mt-2 mb-3 fw-bold">{product.userId.name} {product.userId.lastName}</h5>
+            <div className="block-header">
+                {products.map((product) => {
+                    return (
+                        <div className="card" key={product._id}>
+                            <div className="body">
+                                <div className="row">
+                                    {/* Image Preview Column */}
+                                    <div className="preview col-lg-4 col-md-12">
+                                        <div className="preview-pic tab-content">
+                                            <div className="tab-pane active">
+                                                <img
+                                                    src={selectedImages[product._id] || product.mainImage}
+                                                    className="img-fluid"
+                                                    style={{
+                                                        width: "350px",
+                                                        height: "350px",
+                                                        objectFit: "cover",
+                                                    }}
+                                                    alt="Product Preview"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Small Images */}
+                                        <div className="d-flex flex-wrap justify-content-start">
+                                            {[product.mainImage, ...product.otherImages.slice(0, 4)].map((image, imgIndex) => (
+                                                <div key={imgIndex} style={{ margin: "5px" }}>
+                                                    <img
+                                                        src={image}
+                                                        className="img-thumbnail"
+                                                        alt={`Thumbnail ${imgIndex + 1}`}
+                                                        style={{
+                                                            width: "55px",
+                                                            height: "55px",
+                                                            cursor: "pointer",
+                                                            objectFit: "cover",
+                                                            transition: "transform 0.3s ease",
+                                                            border: "none",
+                                                            outline: "none",
+                                                        }}
+                                                        onClick={() => handleImageClick(product._id, image)}
+                                                        onMouseEnter={(e) => {
+                                                            e.target.style.transform = "scale(1.1)";
+                                                            e.target.style.border = "none";
+                                                            e.target.style.outline = "none";
+                                                        }}
+                                                        onMouseLeave={(e) => {
+                                                            e.target.style.transform = "scale(1)";
+                                                            e.target.style.border = "none";
+                                                            e.target.style.outline = "none";
+                                                        }}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Product Details Column */}
+                                    <div className="details col-lg-8 col-md-12">
+                                        <h3 className="product-title mb-0">{product.productName}</h3>
+                                        <hr />
+                                        <h5 className="price m-t-0">
+                                            Price: <span className="text-warning">
+                                                {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.price).replace(/\.00$/, '')}
+                                            </span>
+                                        </h5>
+                                        <h5 className="category m-t-0">
+                                            Category: <span className="text-info">{product.category}</span>
+                                        </h5>
+                                        <hr />
+                                        <button className="btn btn-outline-dark ms-2"  onClick={() => handleEdit(product._id)}>Edit</button>
+                                        <button className="btn btn-outline-danger mx-2" onClick={() => openDeleteDialog(product)}>Delete</button>
+                                    </div>
                                 </div>
-                            )}
 
-                            <h3 className="fw-semibold text-primary text-center">{product.productName}</h3>
+                                {/* Full-Width Tab Content Below */}
+                                <div className="row mt-4">
+                                    <div className="col-12">
+                                        <ul className="nav nav-tabs">
+                                            <li className="nav-item">
+                                                <button
+                                                    className={`nav-link ${activeTab === "description" ? "active" : ""}`}
+                                                    onClick={() => handleTabChange("description")}
+                                                >
+                                                    Product Description
+                                                </button>
+                                            </li>
+                                            <li className="nav-item">
+                                                <button
+                                                    className={`nav-link ${activeTab === "artist" ? "active" : ""}`}
+                                                    onClick={() => handleTabChange("artist")}
+                                                >
+                                                    Artist Details
+                                                </button>
+                                            </li>
+                                        </ul>
 
-                            <p
-                                className="text-muted"
-                                dangerouslySetInnerHTML={{
-                                    __html: product.description.replace(/<img[^>]+src="([^"]+)"[^>]*>/g, (_, src) => {
-                                        return `<img src="${src}" style="max-width: 70%; height: auto; object-fit: contain;" />`;
-                                    })
-                                }}
-                            ></p>
+                                        <div className="tab-content mt-3">
+                                            {activeTab === "description" && (
+                                                <div className="tab-pane active">
+                                                    <p
+                                                        className="product-description"
+                                                        style={{
+                                                            maxHeight: expanded[product._id] ? "none" : "60px",
+                                                            overflow: "hidden",
+                                                            transition: "max-height 0.3s ease",
+                                                        }}
+                                                    >
+                                                        {product.description}
+                                                    </p>
+                                                    <button
+                                                        className="btn btn-link"
+                                                        style={{
+                                                            padding: "0",
+                                                            textDecoration: "none",
+                                                            cursor: "pointer"
+                                                        }}
+                                                        onClick={() => toggleDescription(product._id)}
+                                                    >
+                                                        {expanded[product._id] ? "Show Less" : "Read More"}
+                                                    </button>
+                                                </div>
+                                            )}
 
-                            {/* 
-                            <div className="mt-4">
-                                <p className="mb-3"><strong>Category:</strong> {product.category}</p>
-                                <p className="mb-3"><strong>Price:</strong> <span className="text-success fw-bold">₹{product.price}</span></p>
-                                <p className="mb-3"><strong>Status:</strong>
-                                    <button
-                                        className={`btn btn-sm ms-3 py-1 px-3 ${product.status === 'Pending' ? 'btn-warning' : product.status === 'Approved' ? 'btn-success' : 'btn-danger'}`}
-                                    >
-                                        {product.status}
-                                    </button>
-                                </p>
-                            </div> */}
-
-                        </div>
-                    )}
-                </div>
-
-                {/* Right Side - Product Details */}
-                <div className="col-lg-7 col-md-12">
-                {product && (
-                        <div className="card p-3">
-                            <div className="image-carousel d-flex align-items-center justify-content-center">
-                                <button className="btn btn-light mx-2" onClick={handlePrevImage}>&lt;</button>
-                                <img
-                                    src={[product.mainImage, ...(product.otherImages || [])][selectedImageIndex]}
-                                    alt="Product"
-                                    width="300"
-                                    height="300"
-                                    className="rounded shadow"
-                                    onClick={handleImageClick}
-                                />
-                                <button className="btn btn-light mx-2" onClick={handleNextImage}>&gt;</button>
+                                            {activeTab === "artist" && (
+                                                <div className="tab-pane active">
+                                                    <p><strong>Name:</strong> <span style={{ marginLeft: "10px" }}>{product.userId.name} {product.userId.lastName}</span></p>
+                                                    <p><strong>Email:</strong> <span style={{ marginLeft: "10px" }}>{product.userId.email}</span></p>
+                                                    <p><strong>Website:</strong>
+                                                        <a
+                                                            href={product.userId.website}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            style={{ marginLeft: "10px", textDecoration: "none", color: "blue" }}
+                                                        >
+                                                            {product.userId.website}
+                                                        </a>
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="mt-3">
-                            <button className="btn btn-outline-dark ms-2" data-id="123">Edit</button>
-
-                                <button className="btn btn-outline-danger mx-2"    onClick={() => openDeleteDialog(product)}>Delete</button>
-                            </div>
                         </div>
-                    )}
-                </div>
-
+                    );
+                })}
             </div>
-
             {isDeleteDialogOpen && (
     <ConfirmationDialog
         onClose={handleDeleteCancel}
@@ -181,10 +257,9 @@ function ProductDetails() {
         id={selectedProductRequestToDelete._id}
         onDeleted={handleDeleteConfirmed}
     />
-)}
-      
-        </div>
+            )}
+        </>
     );
 }
 
-export default ProductDetails;
+export default AllProduct;

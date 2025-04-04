@@ -1,143 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import { useLocation, Link } from "react-router-dom";
-// import 'react-quill/dist/quill.snow.css';
-// import ReactQuill from 'react-quill';
-// import axios from 'axios';
-// import useUserType from '../../urlconfig';
-
-// function ViewBuyerRequest() {
-//     const location = useLocation();
-//     const userType = useUserType();
-//     const { state } = location || {};
-//     const { request } = state || {};
-
-//     const [productName, setProductName] = useState('');
-//     const [description, setDescription] = useState('');
-//     const [budget, setBudget] = useState('');
-//     const [artistId, setArtistId] = useState('');
-//     const [artists, setArtists] = useState([]);
-//     const [image, setImage] = useState('');
-
-//     useEffect(() => {
-//         const fetchArtists = async () => {
-//             try {
-//                 const response = await axios.get("http://localhost:3001/artist/artists");
-//                 setArtists(response.data);
-//             } catch (error) {
-//                 console.error("Error fetching artists:", error);
-//             }
-//         };
-//         fetchArtists();
-
-//         if (request) {
-//             setProductName(request.ProductName || '');
-//             setDescription(request.Description || '');
-//             setBudget(request.Budget || '');
-//             setImage(request.BuyerImage ? `http://localhost:3001/${request.BuyerImage}` : '');
-//             if (request.Artist?.id && request.Artist.id._id) {
-//                 setArtistId(request.Artist.id._id);
-//             }
-//         }
-//     }, [request]);
-
-//     return (
-//         <div className="container-fluid">
-//             <div className="block-header">
-//                 <div className="row">
-//                     <div className="col-lg-6 col-md-6 col-sm-12">
-//                         <h2>View Buyer Custom Request</h2>
-//                         <ul className="breadcrumb">
-//                             <li className="breadcrumb-item">
-//                                 <a href="/"><i className="fa fa-dashboard"></i></a>
-//                             </li>
-//                             <li className="breadcrumb-item active">
-//                                 <Link to={`/${userType}/Dashboard/BuyerCustomrequest`}>Buyer Custom Request</Link>
-//                             </li>
-//                             <li className="breadcrumb-item">View Custom Request</li>
-//                         </ul>
-//                     </div>
-//                 </div>
-//             </div>
-
-//             <div className="row clearfix">
-//                 <div className="col-lg-12">
-//                     <div className="card">
-//                         <div className="body">
-//                             <div className="row d-flex align-items-stretch">
-//                                 {/* Left Column for Image */}
-//                                 <div className="col-md-4 d-flex" style={{ display: 'flex', justifyContent: 'center' }}>
-//                                     <div style={{ height: '140px', width: '100%', overflow: 'hidden' }}>
-//                                         {image ? (
-//                                             <img
-//                                                 src={image}
-//                                                 alt="Buyer"
-//                                                 className="img-fluid rounded shadow w-100"
-//                                                 style={{ height: '100%', objectFit: 'cover' }}
-//                                             />
-//                                         ) : (
-//                                             <p className="align-self-center"></p>
-//                                         )}
-//                                     </div>
-//                                 </div>
-
-                          
-//                                 <div className="col-md-8 d-flex flex-column">
-//                                     <div className="row">
-//                                         <div className="col-6" style={{ paddingRight: '10px' }}>
-//                                             <div className="form-group">
-//                                                 <label>Product Name</label>
-//                                                 <input type="text" className="form-control" value={productName} readOnly />
-//                                             </div>
-//                                         </div>
-//                                         <div className="col-6" style={{ paddingLeft: '10px' }}>
-//                                             <div className="form-group">
-//                                                 <label>Artist</label>
-//                                                 <input type="text" className="form-control" value={artistId ? artists.find(a => a._id === artistId)?.name + ' ' + artists.find(a => a._id === artistId)?.lastName : 'Not Assigned'} readOnly />
-//                                             </div>
-//                                         </div>
-//                                     </div>
-
-                                 
-//                                     <div className="form-group mt-3">
-//                                         <label>Budget</label>
-//                                         <input type="text" className="form-control" value={budget} readOnly />
-//                                     </div>
-
-                                  
-//                                     <div className="form-group mt-3">
-//                                         <label>Description</label>
-//                                         <ReactQuill value={description} readOnly theme="snow" modules={{ toolbar: false }} />
-//                                     </div>
-
-//                                     {request?.NegiotaiteBudget || request?.Notes ? <hr /> : null}
-
-                             
-//                                     {request?.NegiotaiteBudget && (
-//                                         <div className="form-group mt-3">
-//                                             <label>Negotiate Budget</label>
-//                                             <input type="text" className="form-control" value={request.NegiotaiteBudget} readOnly />
-//                                         </div>
-//                                     )}
-
-                                
-//                                     {request?.Notes && (
-//                                         <div className="form-group mt-3">
-//                                             <label>Notes</label>
-//                                             <textarea className="form-control" value={request.Notes} readOnly />
-//                                         </div>
-//                                     )}
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// }
-
-// export default ViewBuyerRequest;
-
 
 import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
@@ -145,6 +5,7 @@ import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 import axios from 'axios';
 import useUserType from '../../../urlconfig';
+import Switch from "react-switch";
 
 function ViewBuyerRequest() {
     const location = useLocation();
@@ -154,7 +15,6 @@ function ViewBuyerRequest() {
 
     const [productName, setProductName] = useState('');
     const [description, setDescription] = useState('');
-    const [budget, setBudget] = useState('');
     const [artistId, setArtistId] = useState('');
     const [artists, setArtists] = useState([]);
     const [image, setImage] = useState('');
@@ -173,10 +33,9 @@ function ViewBuyerRequest() {
         if (request) {
             setProductName(request.ProductName || '');
             setDescription(request.Description || '');
-            setBudget(request.Budget || '');
             setImage(request.BuyerImage ? `http://localhost:3001/${request.BuyerImage}` : '');
             if (request.Artist?.id && request.Artist.id._id) {
-                setArtistId(request.Artist.id._id);
+                setArtistId(request.Artist.id.name);
             }
         }
     }, [request]);
@@ -232,24 +91,123 @@ function ViewBuyerRequest() {
                                                     <input
                                                         type="text"
                                                         className="form-control"
-                                                        value={artistId ? artists.find(a => a._id === artistId)?.name + ' ' + artists.find(a => a._id === artistId)?.lastName : 'Not Assigned'}
+                                                        value={artistId}
                                                         readOnly
                                                     />
                                                 </div>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <div className="form-group">
+                                                    <label>Min Budget</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        value={request?.MinBudget}
+                                                        readOnly
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <div className="form-group">
+                                                    <label>Max Budget</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        value={request?.MaxBudget}
+                                                        readOnly
+                                                    />
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex-grow-1 mx-3">
+                                    <div className="row">
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Art Type</label>
+                                                <input type="text" className="form-control" value={request?.ArtType} readOnly />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Size</label>
+                                                <input type="text" className="form-control" value={request?.Size} readOnly />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Colour Preferences</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={request?.ColourPreferences
+                                                        .map(color => color.charAt(0).toUpperCase() + color.slice(1).toLowerCase())
+                                                        .join(', ')}
+                                                    readOnly
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group mt-4 d-flex align-items-center gap-2">
+                                                <label className="ms-2">Frame Required</label>
+                                                <div className="mx-4">
+                                                    <Switch
+                                                        onColor="#007bff"
+                                                        offColor="#ccc"
+                                                        uncheckedIcon={false}
+                                                        checkedIcon={false}
+                                                        height={19}
+                                                        width={36}
+                                                        handleDiameter={12}
+                                                        checked={request?.IsFramed || false}
+                                                        disabled
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Payment Term</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={request?.PaymentTerm}
+                                                    readOnly
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Expected Deadline</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={request?.ExpectedDeadline}
+                                                    readOnly
+                                                />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
+
                                 <div className="col-md-12">
                                     <div className="form-group mt-3">
-                                        <label>Budget</label>
-                                        <input type="text" className="form-control" value={budget} readOnly />
+                                        <label>Comments With Refrence</label>
+                                        <textarea
+                                            id="comments"
+                                            value={request?.Comments}
+                                            className="form-control"
+                                            placeholder="Any other details or references you'd like to include"
+                                            rows="3"
+                                            readOnly
+                                        />
                                     </div>
-
                                     <div className="form-group mt-3">
                                         <label>Description</label>
-                                        <ReactQuill value={description} readOnly theme="snow" modules={{ toolbar: false }} />
+                                        <ReactQuill value={description} readOnly theme="snow" modules={{ toolbar: false }} isdisabled />
                                     </div>
 
                                     {request?.NegiotaiteBudget || request?.Notes ? <hr /> : null}
@@ -269,6 +227,12 @@ function ViewBuyerRequest() {
                                         <div className="form-group mt-3">
                                             <label>Notes</label>
                                             <textarea className="form-control" value={request.Notes} readOnly />
+                                        </div>
+                                    )}
+                                      {request?.rejectedcomment && (
+                                        <div className="form-group mt-3">
+                                            <label>Rejected Comment</label>
+                                            <textarea className="form-control" value={request.rejectedcomment} readOnly />
                                         </div>
                                     )}
                                 </div>

@@ -78,7 +78,7 @@ function AllProduct() {
                             </li>
                             <li className="breadcrumb-item active">
                                 <Link to={`/${userType}/Dashboard/alltransaction`}>
-                                All Transaction
+                                 Transaction
                                 </Link>
                             </li>
                             <li className="breadcrumb-item ">Transaction Product Details</li>

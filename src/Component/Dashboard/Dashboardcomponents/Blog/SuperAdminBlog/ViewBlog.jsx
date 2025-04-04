@@ -105,8 +105,13 @@ function BlogDetails() {
                       <button
                         type="button"
                         className="btn btn-outline-secondary mx-2"
-                        onClick={() => navigate(`/${userType}/Dashboard/BlogRequest/view-blog/BlogDetails/${blog._id}`)}
+                        onClick={() =>
+                          navigate(`/${userType}/Dashboard/BlogRequest/view-blog/BlogDetails/${blog.slug}`, {
+                            state: { id: blog._id },
+                          })
+                        }
                       >
+                         
                         Continue Reading
                       </button>
                       <button

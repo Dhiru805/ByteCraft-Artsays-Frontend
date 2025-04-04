@@ -18,14 +18,29 @@ const Transaction = () => {
             try {
                 const result = await getAPI("http://localhost:3001/api/get-alltransaction", {}, true, false);
                 console.log("Full API Response:", result);
-                console.log("Data Type:", typeof result.data);
 
-                if (result && result.data && Array.isArray(result.data.purchases)) {
-                    setProducts(result.data.purchases);
+                let combinedProducts = [];
+
+                if (result?.data) {
+                    if (Array.isArray(result.data.productPurchases)) {
+                        combinedProducts = [...result.data.productPurchases];
+                    }
+                    if (Array.isArray(result.data.packagingPurchases)) {
+                        combinedProducts = [...combinedProducts, ...result.data.packagingPurchases];
+                    }
+                    if (Array.isArray(result.data.biddedProducts)) {
+                      
+                        const formattedBiddedProducts = result.data.biddedProducts.map(bid => ({
+                            ...bid,
+                            product: bid.product?.product || null 
+                        }));
+                        combinedProducts = [...combinedProducts, ...formattedBiddedProducts];
+                    }
                 } else {
-                    console.error("API response does not contain an array:", result.data);
-                    setProducts([]);
+                    console.error("API response does not contain valid data:", result.data);
                 }
+
+                setProducts(combinedProducts);
 
             } catch (error) {
                 console.error("Error fetching products:", error);
@@ -35,6 +50,8 @@ const Transaction = () => {
 
         fetchProducts();
     }, []);
+
+
 
 
     const displayedProducts = products.slice(
@@ -49,7 +66,7 @@ const Transaction = () => {
     };
 
     return (
-      <>
+        <>
             <div className="row clearfix">
                 <div className="col-lg-12">
                     <div className="card">
@@ -72,7 +89,7 @@ const Transaction = () => {
                         <div className="body">
                             <div className="table-responsive">
                                 <table className="table table-hover">
-                                    <thead className="thead-dark">
+                                    <thead className="thead-dark text-nowrap">
                                         <tr>
                                             <th>#</th>
                                             <th>Transaction Id</th>
@@ -88,18 +105,25 @@ const Transaction = () => {
                                     </thead>
                                     <tbody>
                                         {displayedProducts.map((product, index) => {
-                                            const productData = product.product || product.resellProduct;
+                                            const productData =
+                                                product.product ||
+                                                product.resellProduct ||
+                                                product.packagingProduct ||
+                                                (product.biddedProduct ? product.biddedProduct.product : null);
+
+
                                             return (
                                                 <tr key={product._id}>
                                                     <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
                                                     <td>{product.transactionId}</td>
-                                                    {/* <td>
+                                                    <td>
+                                                        {product.buyer
+                                                            ? `${product.buyer.name} ${product.buyer.lastName}`
+                                                            : product.user
+                                                                ? `${product.user.name} ${product.user.lastName}`
+                                                                : "N/A"}
+                                                    </td>
 
-                                                        {productData?.userId?.name
-                                                            ? `${productData.userId.name} ${productData.userId.lastName}`
-                                                            : 'N/A'}
-                                                    </td> */}
-                                                    <td>{product.buyer.name} {product.buyer.lastName}</td>
                                                     <td>
                                                         {productData ? (
                                                             <>
@@ -123,7 +147,7 @@ const Transaction = () => {
                                                     <td>
                                                         {productData
                                                             ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' })
-                                                                .format(productData.price)
+                                                                .format((productData.price) || (product.totalPrice))
                                                                 .replace(/\.00$/, '')
                                                             : 'N/A'}
                                                     </td>
@@ -135,7 +159,7 @@ const Transaction = () => {
                                                     <td>
                                                         {productData && (
                                                             <button className="btn btn-sm btn-outline-info mr-2"
-                                                                onClick={() => navigate(`/${userType}/Dashboard/alltransaction/transcationproductdetails/${product._id}`)}>
+                                                                onClick={() => navigate(`/${userType}/Dashboard/alltransaction/transcationproductdetails/${product._id || productData._id}`)}>
                                                                 <i className="fa fa-eye"></i>
                                                             </button>
                                                         )}
@@ -143,6 +167,7 @@ const Transaction = () => {
                                                 </tr>
                                             );
                                         })}
+
                                     </tbody>
                                 </table>
                             </div>

@@ -1,208 +1,465 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-// import './Register.css';
+import { useNavigate, Link } from "react-router-dom";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import '../Login/LoginStyles.css';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Register = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    lastName: '', // Lowercase 'l'
-    emailOrPhone: '',
-    password: '',
-    retypePassword: '',
-    acceptTerms: false,
-  });
-  const [userType, setUserType] = useState('');
-  const [error, setError] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [isBusiness, setIsBusiness] = useState(false);
+  const [artistName, setArtistName] = useState('');
+  const [businessName, setBusinessName] = useState('');
+  const navigate = useNavigate();
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const handleRadioChange = (event) => {
-    setUserType(event.target.value);
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!formData.name || !formData.LastName || !formData.emailOrPhone || !formData.password || !formData.retypePassword || !userType) {
-      setError('All fields are required.');
+    if (password !== confirmPassword) {
+      toast.error("Passwords don't match!");
       return;
     }
 
-    if (formData.password !== formData.retypePassword) {
-      setError('Passwords do not match.');
+    if (!acceptTerms) {
+      toast.error("You must accept the Terms and Conditions");
       return;
     }
-
-    setError('');
-    const fullFormData = { ...formData, userType };
 
     try {
-      const response = await axios.post('http://localhost:3001/register', fullFormData);
+      const response = await fetch('http://localhost:3001/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          firstName, 
+          lastName, 
+          email, 
+          password,
+          isBusiness,
+          ...(isBusiness ? { businessName } : { artistName })
+        }),
+      });
 
-      console.log('Response:', response.data);
-      alert('Registration Successful!');
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Registration failed. Please try again.');
+      }
+
+      toast.success('Registration Successful! Please login.');
+      setTimeout(() => {
+        navigate('/login');
+      }, 1000);
     } catch (error) {
-      console.error('There was an error registering the user!', error);
-      setError('Failed to register the user.');
+      console.error('Registration error:', error.message);
+      toast.error(error.message || 'Something went wrong. Please try again.');
     }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value,
-    });
-  };
-
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
   };
 
   return (
-    <div id="pageWrapper">
-      <main>
-        <section className="introSec bg-lightGray  pb-xl-7  pb-10 mb-6   text-center">
-          <div className="container">
-            <div className="row">
-              <div className="col-12 col-lg-6 mb-lg-0 mb-6 pt-lg-5">
-                <img src="images/img81.png" alt="image description" className="img-fluid pt-5" />
+    <>
+      <ToastContainer />
+      <div className="container-fluid p-0 min-vh-100 d-flex flex-column flex-lg-row">
+        {/* Right Panel (now on left) */}
+        <div className="col-12 col-lg-6 d-none d-lg-flex flex-column justify-content-center align-items-center p-4 p-md-5 text-white right-panel-register">
+          <h2 className="fw-bold mb-3 mb-md-4 fs-2 fs-md-1">Already Sign up?</h2>
+          <p className="mb-3 mb-md-4 text-center"
+            style={{
+              fontSize: '20px',
+              fontWeight: 'normal',
+              lineHeight: '1.4',
+            }}
+          >
+            Let's get you all set up so you can <br className="d-none d-md-block" />start creating your first onboarding experience.
+          </p>
+          <Link
+            to="/login"
+            className="btn btn-outline-light py-2 mt-2 mt-md-3 signup-btn"
+            style={{
+              width: '25%',
+              fontSize: '20px',
+              fontStyle: 'italic',
+              border: '2px solid',
+              transition: 'all 0.3s ease',
+            }}
+          >
+            Sign In
+          </Link>
+        </div>
+
+        {/* Left Panel (now on right) */}
+        <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5">
+        <h2 className="fw-bold mb-4 mb-md-3 text-dark fs-3 fs-md-1 text-center">Sign up for an Account</h2>
+          <p className="mb-3 mb-md-4 text-dark text-center"
+            style={{
+              fontSize: '20px',
+              fontWeight: 'normal',
+              lineHeight: '1.4',
+            }}
+          >
+            Let's get you all set up so you can <br className="d-none d-md-block" />start creating your first onboarding experience.
+          </p>
+
+          <form onSubmit={handleSubmit} className="w-100">
+            <div className="row mb-3">
+              <div className="col-md-6 mb-3 mb-md-0">
+                <div className="position-relative">
+                  <label htmlFor="firstName" className="form-label position-absolute text-dark px-2" style={{
+                    top: '-12px',
+                    left: '15px',
+                    fontStyle: 'italic',
+                    fontSize: '1rem',
+                    zIndex: '1',
+                    background: "white",
+                  }}>
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="firstName"
+                    required
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    style={{ height: '48px', border: "1px solid #6b4f36", fontSize: "16px", color: "black" }}
+                  />
+                </div>
               </div>
-              <div className="col-12 col-lg-6">
-                <div className="d-flex justify-content-center align-items-center mt-5">
-                  <div className="container">
-                    <div className="tab-content" id="pills-tabContent">
-                      <div className="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-                      <form className="form" onSubmit={handleSubmit}>
-                          {error && <div className="alert alert-danger">{error}</div>}
-                          <div className="mb-4 tab-radio-group">
-                            <input
-                              type="radio"
-                              id="buyer"
-                              name="userType"
-                              value="Buyer"
-                              checked={userType === 'Buyer'}
-                              onChange={handleRadioChange}
-                            />
-                            <label htmlFor="buyer">Buyer/Collector</label>
- 
-                            <input
-                              type="radio"
-                              id="artist"
-                              name="userType"
-                              value="Artist"
-                              checked={userType === 'Artist'}
-                              onChange={handleRadioChange}
-                            />
-                            <label htmlFor="artist">Artist</label>
-                          </div>
-                          <div className="d-flex">
-                            <input
-                              type="text"
-                              name="name"
-                              className="form-control mb-6 bg-light transparent-input mx-0 mr-6"
-                              placeholder="Name"
-                              value={formData.name}
-                              onChange={handleChange}
-                              autoComplete="given-name"
-                            />
-                            <input
-  type="text"
-  name="lastName" // Update to lowercase
-  className="form-control mb-6 bg-light transparent-input mx-0"
-  placeholder="Last Name"
-  value={formData.lastName} // Update here as well
-  onChange={handleChange}
-  autoComplete="family-name"
-/>
-                          </div>
-                          <input
-                            type="text"
-                            name="emailOrPhone"
-                            className="form-control mb-6 bg-light transparent-input"
-                            placeholder="Email or Phone"
-                            value={formData.emailOrPhone}
-                            onChange={handleChange}
-                            autoComplete="email"
-                          />
-                          <div className="password-container mb-6">
-                            <input
-                              type={showPassword ? "text" : "password"}
-                              name="password"
-                              className="form-control bg-light transparent-input"
-                              placeholder="Create Password"
-                              value={formData.password}
-                              onChange={handleChange}
-                              autoComplete="new-password"
-                            />
-                            <i
-                              className={`password-toggle-icon ${showPassword ? "fa fa-eye-slash" : "fa fa-eye"}`}
-                              onClick={toggleShowPassword}
-                            ></i>
-                          </div>
-                          <div className="password-container mb-6">
-                            <input
-                              type={showPassword ? "text" : "password"}
-                              name="retypePassword"
-                              className="form-control bg-light transparent-input"
-                              placeholder="Retype Password"
-                              value={formData.retypePassword}
-                              onChange={handleChange}
-                              autoComplete="new-password"
-                            />
-                            <i
-                              className={`password-toggle-icon ${showPassword ? "fa fa-eye-slash" : "fa fa-eye"}`}
-                              onClick={toggleShowPassword}
-                            ></i>
-                          </div>
-                          <div className="form-group form-check mb-3">
-                            <input
-                              type="checkbox"
-                              name="acceptTerms"
-                              className="form-check-input"
-                              checked={formData.acceptTerms}
-                              onChange={handleInputChange}
-                            />
-                            <label className="form-check-label">
-                              I accept the <a href="#">terms and conditions</a>.
-                            </label>
-                          </div>
-                          <button type="submit" className="btn btn-success btn-block mb-6">REGISTER</button>
-                          <div className="row mb-6">
-                            <div className="col d-flex justify-content-center">
-                              <div className="text-center">
-                                <p>Already a member <a href="Login.html">Login</a></p>
-                                <p>or sign up with:</p>
-                                <button type="button" className="btn btn-link btn-floating mx-1">
-                                  <i className="fab fa-facebook-f text-success"></i>
-                                </button>
-                                <button type="button" className="btn btn-link btn-floating mx-1">
-                                  <i className="fab fa-google text-success"></i>
-                                </button>
-                                <button type="button" className="btn btn-link btn-floating mx-1">
-                                  <i className="fab fa-twitter text-success"></i>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
+              <div className="col-md-6">
+                <div className="position-relative">
+                  <label htmlFor="lastName" className="form-label position-absolute text-dark px-2" style={{
+                    top: '-12px',
+                    left: '15px',
+                    fontStyle: 'italic',
+                    fontSize: '1rem',
+                    zIndex: '1',
+                    background: "white",
+                  }}>
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="lastName"
+                    required
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    style={{ height: '48px', border: "1px solid #6b4f36", fontSize: "16px", color: "black" }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-3 position-relative">
+              <label htmlFor="email" className="form-label position-absolute text-dark px-2" style={{
+                top: '-12px',
+                left: '15px',
+                fontStyle: 'italic',
+                fontSize: '1rem',
+                zIndex: '1',
+                background: "white",
+              }}>
+                Email
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                style={{
+                  height: '48px',
+                  border: "1px solid #6b4f36",
+                  fontSize: "16px",
+                  color: "black",
+                  paddingRight: '40px'
+                }}
+              />
+            </div>
+
+            {/* Slider Toggle for Business/Artist */}
+            <div className="mb-3 d-flex flex-column align-items-center">
+              <label className="mb-2 fst-italic" style={{ color: '#6b4f36' }}>
+                Account Type
+              </label>
+              <div 
+                className="d-flex align-items-center position-relative"
+                style={{
+                  width: '200px',
+                  height: '40px',
+                  borderRadius: '20px',
+                  backgroundColor: '#f0e6d6',
+                  border: '1px solid #6b4f36',
+                  cursor: 'pointer',
+                }}
+                onClick={() => setIsBusiness(!isBusiness)}
+              >
+                {/* Slider Button */}
+                <div 
+                  className="position-absolute d-flex justify-content-center align-items-center"
+                  style={{
+                    width: '100px',
+                    height: '36px',
+                    borderRadius: '18px',
+                    backgroundColor: '#6b4f36',
+                    color: 'white',
+                    left: isBusiness ? '100px' : '0',
+                    transform: isBusiness ? 'translateX(-4px)' : 'translateX(4px)',
+                    transition: 'all 0.3s ease',
+                    zIndex: 2,
+                  }}
+                >
+                  {isBusiness ? 'Business' : 'Artist'}
+                </div>
+                
+                {/* Background Labels */}
+                <div 
+                  className="position-absolute d-flex w-100 justify-content-around px-2"
+                  style={{
+                    zIndex: 1,
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  <span style={{ color: !isBusiness ? 'white' : '#6b4f36', fontWeight: !isBusiness ? 'bold' : 'normal' }}>
+                    Artist
+                  </span>
+                  <span style={{ color: isBusiness ? 'white' : '#6b4f36', fontWeight: isBusiness ? 'bold' : 'normal' }}>
+                    Business
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Artist/Business Name Field */}
+            {!isBusiness ? (
+              <div className="mb-3 position-relative">
+                <label htmlFor="artistName" className="form-label position-absolute text-dark px-2" style={{
+                  top: '-12px',
+                  left: '15px',
+                  fontStyle: 'italic',
+                  fontSize: '1rem',
+                  zIndex: '1',
+                  background: "white",
+                }}>
+                  Artist Name
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="artistName"
+                  required
+                  value={artistName}
+                  onChange={(e) => setArtistName(e.target.value)}
+                  style={{
+                    height: '48px',
+                    border: "1px solid #6b4f36",
+                    fontSize: "16px",
+                    color: "black",
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="mb-3 position-relative">
+                <label htmlFor="businessName" className="form-label position-absolute text-dark px-2" style={{
+                  top: '-12px',
+                  left: '15px',
+                  fontStyle: 'italic',
+                  fontSize: '1rem',
+                  zIndex: '1',
+                  background: "white",
+                }}>
+                  Business Name
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="businessName"
+                  required
+                  value={businessName}
+                  onChange={(e) => setBusinessName(e.target.value)}
+                  style={{
+                    height: '48px',
+                    border: "1px solid #6b4f36",
+                    fontSize: "16px",
+                    color: "black",
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Password and Confirm Password in one row */}
+            <div className="row mb-3">
+              <div className="col-md-6 mb-3 mb-md-0">
+                <div className="position-relative">
+                  <label htmlFor="password" className="form-label position-absolute text-dark px-2" style={{
+                    top: '-12px',
+                    left: '15px',
+                    fontStyle: 'italic',
+                    fontSize: '1rem',
+                    zIndex: '1',
+                    background: "white",
+                  }}>
+                    Password
+                  </label>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      className="form-control"
+                      id="password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      style={{
+                        height: '48px',
+                        border: "1px solid #6b4f36",
+                        fontSize: "16px",
+                        color: "black",
+                        paddingRight: '40px'
+                      }}
+                    />
+                    <button
+                      type="button"
+                      style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        border: "none",
+                        background: "transparent",
+                        outline: "none",
+                        cursor: 'pointer',
+                        color: '#6b4f36'
+                      }}
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-6">
+                <div className="position-relative">
+                  <label htmlFor="confirmPassword" className="form-label position-absolute text-dark px-2" style={{
+                    top: '-12px',
+                    left: '15px',
+                    fontStyle: 'italic',
+                    fontSize: '1rem',
+                    zIndex: '1',
+                    background: "white",
+                  }}>
+                    Confirm Password
+                  </label>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      className="form-control"
+                      id="confirmPassword"
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      style={{
+                        height: '48px',
+                        border: "1px solid #6b4f36",
+                        fontSize: "16px",
+                        color: "black",
+                        paddingRight: '40px'
+                      }}
+                    />
+                    <button
+                      type="button"
+                      style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        border: "none",
+                        background: "transparent",
+                        outline: "none",
+                        cursor: 'pointer',
+                        color: '#6b4f36'
+                      }}
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                    >
+                      {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
+
+            <div className="d-flex justify-content-start align-items-center mb-3 mb-md-4">
+              <div className="form-check">
+                <input
+                  className="form-check-input me-2"
+                  type="checkbox"
+                  id="acceptTerms"
+                  checked={acceptTerms}
+                  onChange={(e) => setAcceptTerms(e.target.checked)}
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                    border: '2px solid #6b4f36',
+                    borderRadius: '25%',
+                    appearance: 'none',
+                    cursor: 'pointer',
+                    backgroundColor: acceptTerms ? '#6b4f36' : 'transparent'
+                  }}
+                />
+                <label className="form-check-label text-dark fst-italic" htmlFor="acceptTerms" style={{ fontSize: '1rem', fontStyle: 'italic' }}>
+                  I accept Terms and Conditions
+                </label>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="btn w-100  text-white fst-italic mb-3 mb-md-0 register-btn"
+              style={{
+                backgroundColor: '#6b4f36',
+                fontSize: '1.1rem',
+                height: '48px',
+                transition: 'all 0.3s ease',
+                fontStyle: 'italic'
+              }}
+            >
+              Sign up
+            </button>
+          </form>
+        
+        </div>
+        <div className="d-block d-md-none">
+          <div className="mobile-signup-section text-center">
+            <h3 className="mb-4 fs-4">Already Signed up?</h3>
+            <p className="fs-5 mb-4">
+              Let's get you all set up so you can <br /> start creating your first
+              onboarding experience.
+            </p>
+            <Link
+              to="/login"
+              className="btn btn-outline-light py-2 mt-2 mt-md-3 signup-btn"
+              style={{
+                width: '25%',
+                fontSize: '20px',
+                fontStyle: 'italic',
+                border: '2px solid',
+                transition: 'all 0.3s ease',
+              }}
+            >
+              Sign In
+            </Link>
           </div>
-        </section>
-      </main>
-    </div>
+        </div>
+      </div>
+    </>
   );
 };
 

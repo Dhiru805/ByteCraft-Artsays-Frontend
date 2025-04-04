@@ -2,13 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom'; 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Preferences from './Pereferences';
-import Billings from './Billings';
-import ViewBlogRequest from './ViewBlogRequest';
-import Blogs from "./Blogs"
+import Preferences from './Preferences/Pereferences';
+import Billings from './Billings/Billings';
+import ViewBlogRequest from './BlogRequest/ViewBlogRequest';
+import Blogs from "./Blogs/Blogs"
+import Products from "./Products/Product"
+import Productrequest  from "./ProductRequest/ProductRequestTable"
+import Transaction from "./Transaction/Transaction"
+import Packagingmaterial from "./PackagingMaterial/ProductPurchasedArtist"
+import Soldproduct  from "./SoldProduct/SoldProduct"
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
-import Settings from './BasicInformation';
+import Settings from './UserInfo/BasicInformation';
 import useUserType from '../../urlconfig'
 
 const UserProfileForm = () => {
@@ -18,6 +23,11 @@ const UserProfileForm = () => {
   const navigate = useNavigate(); 
   const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
   const [profileData, setProfileData] = useState({
     name: '',
     lastName: '',
@@ -84,6 +94,7 @@ const UserProfileForm = () => {
       search: `?tab=${tabName}`,
     });
   };
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -118,6 +129,14 @@ const UserProfileForm = () => {
     }
   };
 
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -128,7 +147,17 @@ const UserProfileForm = () => {
       formData.append('address', JSON.stringify(profileData.address));
       formData.append('gender', profileData.gender);
       formData.append('birthdate', profileData.birthdate);
-      formData.append('website', profileData.website);
+      formData.append('bio', profileData.bio);
+      formData.append('username', profileData.username || '');
+      formData.append('email', profileData.email || '');
+      formData.append('phone', profileData.phone || '');
+
+      if (passwordData.currentPassword || passwordData.newPassword || passwordData.confirmPassword) {
+        formData.append('currentPassword', passwordData.currentPassword);
+        formData.append('newPassword', passwordData.newPassword);
+        formData.append('confirmPassword', passwordData.confirmPassword);
+      }
+      
 
       if (imageFile) {
         formData.append('profilePhoto', imageFile);
@@ -139,11 +168,17 @@ const UserProfileForm = () => {
         body: formData,
       });
 
+      const result = await response.json(); 
+
       if (response.ok) {
-        toast.success('Profile updated successfully!');
+        toast.success(result.message || 'Profile updated successfully!');
+        setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        });
       } else {
-        const errorText = await response.text();
-        toast.error(`Failed to update profile: ${response.status} ${errorText}`);
+        toast.error(result.message || `Failed to update profile: ${response.status}`);
       }
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -155,6 +190,11 @@ const UserProfileForm = () => {
     { name: 'Settings', component: Settings },
     { name: 'Blogs', component: Blogs},
     { name: 'Blog Request', component: ViewBlogRequest },
+    { name: 'Products', component: Products },
+    { name: 'Product Request', component: Productrequest },
+    { name: 'Transaction', component: Transaction },
+    { name: 'Packaging Material', component: Packagingmaterial },
+    { name: 'Sold Product', component: Soldproduct },
     { name: 'Billings', component: Billings },
     { name: 'Preferences', component: Preferences },
   ];
@@ -171,7 +211,7 @@ const UserProfileForm = () => {
                   <i className="fa fa-dashboard" />
                 </a>
               </li>
-              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/ArtistManageTable`}>ArtistManageTable</Link></li>
+              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/artistmanagetable`}>ArtistManageTable</Link></li>
               <li className="breadcrumb-item">Artist Profile</li>
             </ul>
           </div>
@@ -212,6 +252,8 @@ const UserProfileForm = () => {
                     handleChange={handleChange}
                     handleAddressChange={handleAddressChange}
                     handleSubmit={handleSubmit}
+                    passwordData={passwordData}
+                    handlePasswordChange={handlePasswordChange}
                   />
                 </div>
               ))}

@@ -6,11 +6,17 @@ const Sidebar = () => {
   const [isActive, setIsActive] = useState({});
   const [expandedTab, setExpandedTab] = useState(null); 
   const [userType, setUserType] = useState(null);
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     const storedUserType = localStorage.getItem("userType");
+    const storedEmail = localStorage.getItem("email");
+
     if (storedUserType) {
       setUserType(storedUserType);
+    }
+    if (storedEmail) {
+      setEmail(storedEmail);
     }
   }, []);
 
@@ -21,19 +27,29 @@ const Sidebar = () => {
       path: `/${userType}/Dashboard`,
       subTabs: []
     },
+    ...(email === "superadmin@admin.com"
+      ? [
+          {
+            label: "Admin",
+            icon: "fas fa-user",
+            path: `/${userType}/Dashboard/admin`,
+            subTabs: []
+          }
+        ]
+      : []),
     {
       label: "Artist",
-      icon: "fas fa-user",
+      icon: "fa fa-paint-brush",
       path: `#artist-management`,
       subTabs: [
-        { label: "Management", path: `/${userType}/Dashboard/ArtistManageTable` },
+        { label: "Management", path: `/${userType}/Dashboard/artistmanagetable` },
         { label: "Products", path: `/${userType}/Dashboard/allartistproduct` },
         { label: "Sold Product ", path: `/${userType}/Dashboard/artistsoldproduct` },
         { label: "Blogs", path: `/${userType}/Dashboard/artistblogs` },
         { label: "Blog Request", path: `/${userType}/Dashboard/artistblogrequest` },
         { label: "Product Request", path: `/${userType}/Dashboard/artistproductrequest` },
         { label: "Transaction", path: `/${userType}/Dashboard/artisttransaction`},
-        { label: "Packaging Material", path: `#` },
+        { label: "Packaging Material", path: `/${userType}/Dashboard/artistpackagingmaterial` },
       ]
     },
     {
@@ -41,12 +57,12 @@ const Sidebar = () => {
       icon: "fa-handshake",
       path: `#Buyer-management`,
       subTabs: [
-        { label: "Management", path: `/${userType}/Dashboard/BuyerManageTable` },
+        { label: "Management", path: `/${userType}/Dashboard/buyermanagetable` },
         { label: "Product Purchased", path: `/${userType}/Dashboard/buyerproductpurchased` },
         { label: "Resell Product Request", path: `/${userType}/Dashboard/buyerproductrequest` },
         { label: "Sold Product", path: `/${userType}/Dashboard/buyersoldproduct` },
         { label: "Transaction", path: `/${userType}/Dashboard/buyertransaction` },
-        { label: "Packaging Material", path: `#` },
+        { label: "Packaging Material", path: `/${userType}/Dashboard/buyerpackagingmaterial` },
       ]
     },
     {
@@ -56,9 +72,10 @@ const Sidebar = () => {
       subTabs: [
         { label: " Management", path: `/${userType}/Dashboard/sellermanagetable` },
         { label: "Products", path: `/${userType}/Dashboard/sellerproduct` },
+        { label: "Product Request", path: `/${userType}/Dashboard/sellerrequest` },
         { label: "Sold  Product ", path: `/${userType}/Dashboard/sellersoldproduct` },
         { label: "Transaction", path: `/${userType}/Dashboard/sellertransaction` },
-        { label: "Packaging Material", path: `#` }
+        { label: "Packaging Material", path: `/${userType}/Dashboard/sellerpackagingmaterial` }
       ]
     },
     {
@@ -66,7 +83,7 @@ const Sidebar = () => {
       icon: "fa fa-newspaper",
       path: `#Blog`,
       subTabs: [
-        { label: "All Blogs", path: `/${userType}/Dashboard/Bloglist` },
+        { label: "All Blogs", path: `/${userType}/Dashboard/bloglist` },
         { label: "Blog Requests", path: `/${userType}/Dashboard/BlogRequest` }
       ]
     },
@@ -87,7 +104,7 @@ const Sidebar = () => {
         subTabs: [
           { label: "All Products", path: `/${userType}/Dashboard/allproduct`},
           { label: "Products Request", path: `/${userType}/Dashboard/productrequest` },
-          { label: "Product Purchased", path: `#` },
+          { label: "Product Purchased", path: `/${userType}/Dashboard/productpurchased` },
           { label: "Custom Request", path: `/${userType}/Dashboard/customrequest` },
         ]
       },
@@ -108,22 +125,22 @@ const Sidebar = () => {
         icon: "fa fa-gavel",
         path: `#Bidding`,
         subTabs: [
-          { label: "All Products", path: `#` },
-          { label: "Product Status", path: `#` },
-          { label: "Edit Product", path: `#` },
-          { label: "Transaction", path: `#` }
+          { label: "All Products", path: `/${userType}/Dashboard/allbiddingproduct` },
+          // { label: "Product Status", path: `/${userType}/Dashboard/biddingproductststus` },
+          { label: "Bidded Product", path: `/${userType}/Dashboard/biddedproduct` },
+          { label: "Transaction", path: `/${userType}/Dashboard/transactionbiddedprdouct` }
         ]
       },
 
       {
         label: "Transaction",
         icon: "fa fa-credit-card",
-        path: `#Transaction`,
+        path: `/${userType}/Dashboard/alltransaction`,
         subTabs: [
-          { label: "All Transaction", path: `/${userType}/Dashboard/alltransaction` },
-          { label: "Product Transaction", path: `#` },
-          { label: "Resell Product Transacticon", path: `#` },
-          { label: "Bidding Transaction", path: `#` }
+          // { label: "All Transaction", path: `/${userType}/Dashboard/alltransaction` },
+          // { label: "Product Transaction", path: `#` },
+          // { label: "Resell Product Transacticon", path: `#` },
+          // { label: "Bidding Transaction", path: `#` }
         ]
       },
       {
@@ -131,11 +148,20 @@ const Sidebar = () => {
         icon: "fa fa-archive",
         path: `#Packaging Material`,
         subTabs: [
-          { label: "Product Purchased", path: `#` },
-          { label: "Transaction", path: `#` },
+          { label: "Product", path: `/${userType}/Dashboard/packagingmaterialproduct`},
+          { label: "Product Purchased", path: `/${userType}/Dashboard/packagingproductpurchased` },
+          { label: "Transaction", path: `/${userType}/Dashboard/packagingproducttransaction` },
         ]
-      }
-     
+      },
+      {
+        label: "Settings",
+        icon: "fa fa-cog", 
+        path: `#Settings`,
+        subTabs: [
+          { label: "Product Category", path: `/${userType}/Dashboard/productcategory`},
+          { label: "Blog Category", path: `/${userType}/Dashboard/blogcategory` },
+        ]
+      }  
     ];
     
 

@@ -3,8 +3,8 @@ import axiosInstance from "./axiosConfig";
 async function getAPI(
   url,
   config = {},
+  includeParams = false,
   isPrivate = true,
-  includeParams = false
 ) {
   try {
     let accessToken;

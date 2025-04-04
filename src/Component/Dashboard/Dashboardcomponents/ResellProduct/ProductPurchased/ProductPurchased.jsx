@@ -35,7 +35,7 @@ const ProductRequest = () => {
         if (!userId) return; 
         const fetchProducts = async () => {
             try {
-                const result = await getAPI(`http://localhost:3001/api/getallpurchasedproduct/${encodeURIComponent(userId)}`, {}, true, false);
+                const result = await getAPI(`http://localhost:3001/api/getallresellproducttransaction/${encodeURIComponent(userId)}`, {}, true, false);
                 console.log("Full API Response:", result);
                 console.log("Data Type:", typeof result.data);
 
@@ -114,7 +114,6 @@ const ProductRequest = () => {
                                             <th>Product Name</th>
                                             <th>Product Price</th>
                                             <th>Product Quantity</th>
-                                            <th>Payment Type</th>
                                             <th>Date</th>
                                             <th>Action</th>
                                         </tr>
@@ -154,7 +153,6 @@ const ProductRequest = () => {
                                                             : 'N/A'}
                                                     </td>
                                                     <td>{product.quantity}</td>
-                                                    <td>{product.paymentMethod}</td>
                                                     <td>
                                                         {new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
                                                     </td>

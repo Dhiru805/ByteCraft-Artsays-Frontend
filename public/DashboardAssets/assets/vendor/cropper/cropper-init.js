@@ -467,8 +467,8 @@ $(function () {
         price,
         category,
         description,
-        mainImage, // Ensure this is the cropped version
-        otherImages // Ensure these are cropped versions
+        mainImage, 
+        otherImages 
       };
 
       console.log("Uploading Data:", formData);
@@ -482,7 +482,7 @@ $(function () {
         success: function (response) {
           alert("Product uploaded successfully!");
           console.log(response);
-          // Optional: Reset form
+          
           $('form')[0].reset();
           $('#imagePreviewList').empty();
           $('#description').val('');

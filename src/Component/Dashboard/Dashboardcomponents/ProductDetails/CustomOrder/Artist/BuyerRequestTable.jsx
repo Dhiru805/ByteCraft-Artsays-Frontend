@@ -59,6 +59,7 @@ const handleSaveChanges = (updatedData) => {
                                             <th>Product Name</th>
                                             <th>Request Date</th>
                                             <th>Request Status</th>
+                                            <th>Buyer Request Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -99,6 +100,11 @@ const handleSaveChanges = (updatedData) => {
                                                         {request.RequestStatus}
                                                     </button>
                                                 </td>
+                                                <td>
+                                                        <button className={`btn btn-sm ${request.BuyerStatus === 'Pending' ? 'btn-outline-warning' : request.BuyerStatus === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
+                                                            {request.BuyerStatus}
+                                                        </button>
+                                                    </td>
                                                 <td>
                                                     <button
                                                         type="button"

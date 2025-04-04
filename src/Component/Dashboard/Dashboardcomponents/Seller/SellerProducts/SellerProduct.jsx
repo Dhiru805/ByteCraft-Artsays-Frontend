@@ -33,10 +33,10 @@ const ProductRequest = () => {
         fetchProducts();
     }, []);
 
-    const displayedProducts = products.slice(
-        (currentPage - 1) * productsPerPage,
-        currentPage * productsPerPage
-    );
+    const displayedProducts = products
+    .filter(product => product.status === 'Approved') 
+    .slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage);
+
 
     const handleProductsPerPageChange = (event) => {
         setProductsPerPage(Number(event.target.value));

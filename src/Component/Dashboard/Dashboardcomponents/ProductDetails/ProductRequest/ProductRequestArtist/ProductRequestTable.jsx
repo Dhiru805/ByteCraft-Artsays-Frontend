@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useConfirm } from '../../../StatusConfirm';
-import { toast } from 'react-toastify';
 import getAPI from '../../../../../../api/getAPI';
-import putAPI from '../../../../../../api/putAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
 
@@ -12,7 +9,7 @@ const ProductRequest = () => {
     const [productsPerPage, setProductsPerPage] = useState(10);
     const BASE_URL = 'http://localhost:3001';
   
-    const confirm = useConfirm();
+
     const navigate = useNavigate();
     const userType = useUserType(); 
 
@@ -80,34 +77,7 @@ const ProductRequest = () => {
         setCurrentPage(1);  
     };
 
-    const updateProductStatus = async (productId, status) => {
-        try {
-            await putAPI(
-                `http://localhost:3001/api/updateproductstatus/${productId}`,
-                { status: status },
-                {},
-                true
-            );
-
-            setProducts((prevProducts) =>
-                prevProducts.map((product) =>
-                    product._id === productId ? { ...product, status: status } : product
-                )
-            );
-
-            if (status === 'Approved') {
-                toast.success('Product Request is Approved');
-            } else if (status === 'Rejected') {
-                toast.error('Product Request is Rejected');
-            }
-        } catch (error) {
-            console.error("Error updating product status:", error);
-        }
-    };
-
-    const handleReject = (productId) => {
-        confirm(() => updateProductStatus(productId, 'Rejected'), "Are you sure you want to reject this product?");
-    };
+   
 
     return (
         <div className="container-fluid">
@@ -176,7 +146,7 @@ const ProductRequest = () => {
                                                 <td>
                                                     <button
                                                         className="btn btn-sm btn-outline-info mr-2"
-                                                        onClick={() => navigate(`/${userType}/Dashboard/artistproductrequest/artistproductview/${product._id}`)}
+                                                        onClick={() => navigate(`/${userType}/Dashboard/productrequest/productdetails/${product.userId._id}`)}
                                                     >
                                                         <i className="fa fa-eye"></i>
                                                     </button>

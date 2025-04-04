@@ -187,6 +187,7 @@ const BlogRequest = () => {
                                                     </button>
                                                 </td>
                                                 <td>
+                                                {blog.blogStatus !== 'Approved' && (
                                                     <button
                                                         type="button"
                                                         className="btn btn-sm btn-outline-success w-2 mr-2"
@@ -195,6 +196,8 @@ const BlogRequest = () => {
                                                     >
                                                         <i className="fa fa-check"></i>
                                                     </button>
+                                                )}
+                                                  {blog.blogStatus !== 'Rejected' && (
                                                     <button
                                                         type="button"
                                                         className="btn btn-sm btn-outline-danger"
@@ -203,6 +206,7 @@ const BlogRequest = () => {
                                                     >
                                                         <i className="fa fa-ban"></i>
                                                     </button>
+                                                  )}
                                                 </td>
                                             </tr>
                                         ))}
