@@ -13,6 +13,7 @@ import {
 import Login from "../Pages/Login/Login";
 import Register from "../Pages/Register/Register";
 import ArtistSellerRegister from "../Pages/Register/ArtistSellerRegister"
+import ForgotPassword from "../Pages/Login/Forgotpassword";
 // import Contact from "../Pages/Contact/Contact";
 // import NotFound from "../Component/NotFound";
 // import PrivacyPolicy from "../Pages/PrivacyPolicy/PrivacyPolicy";
@@ -272,6 +273,15 @@ const AppRoutes = () => {
         element={
           // <PublicRoute>
             <Login />
+          // </PublicRoute>
+        }
+      />
+
+<Route
+        path="/forgotpassword"
+        element={
+          // <PublicRoute>
+            <ForgotPassword />
           // </PublicRoute>
         }
       />

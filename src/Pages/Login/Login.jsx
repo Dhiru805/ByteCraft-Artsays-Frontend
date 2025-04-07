@@ -34,28 +34,28 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
       const response = await fetch('http://localhost:3001/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ emailOrPhone: input, password }),
       });
-  
-   
+
+
       const data = await response.json();
-  
+
 
       if (!response.ok) {
         throw new Error(data.message || 'Login failed. Please try again.');
       }
-  
-      const { token, userType, email,phone } = data;
-  
-      if (!token || !userType ) {
+
+      const { token, userType, email, phone } = data;
+
+      if (!token || !userType) {
         throw new Error('Invalid response from server');
       }
-  
+
       if (rememberMe) {
         localStorage.setItem('rememberedEmailOrPhone', input);
         localStorage.setItem('rememberedPassword', password);
@@ -65,11 +65,11 @@ const Login = () => {
         localStorage.removeItem('rememberedPassword');
         localStorage.setItem('rememberMe', 'false');
       }
-  
+
       localStorage.setItem('token', token);
       localStorage.setItem('userType', userType);
       localStorage.setItem('email', email);
-  
+
       toast.success('Login Successful!');
       setTimeout(() => {
         navigate(`/${userType}/Dashboard`);
@@ -79,7 +79,7 @@ const Login = () => {
       toast.error(error.message || 'Something went wrong. Please try again.');
     }
   };
-  
+
 
   return (
     <>
@@ -140,23 +140,23 @@ const Login = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  style={{ 
-                    height: '48px', 
+                  style={{
+                    height: '48px',
                     border: "1px solid #6b4f36",
-                    fontSize: "16px", 
+                    fontSize: "16px",
                     color: "black",
-                    paddingRight: '40px' 
+                    paddingRight: '40px'
                   }}
                 />
                 <button
                   type="button"
-                  style={{ 
+                  style={{
                     position: 'absolute',
                     right: '10px',
                     top: '50%',
                     transform: 'translateY(-50%)',
-                    border: "none", 
-                    background: "transparent", 
+                    border: "none",
+                    background: "transparent",
                     outline: "none",
                     cursor: 'pointer',
                     color: '#6b4f36'
@@ -191,9 +191,9 @@ const Login = () => {
                   Remember Me
                 </label>
               </div>
-              <a href="#" className="text-decoration-none" style={{ color: '#6b4f36', fontSize: '1rem' }}>
+              <Link to="/forgotpassword" className="text-decoration-none" style={{ color: '#6b4f36', fontSize: '1rem' }}>
                 Forgot Password?
-              </a>
+              </Link>
             </div>
 
             <button
@@ -204,7 +204,7 @@ const Login = () => {
                 fontSize: '1.1rem',
                 height: '48px',
                 transition: 'all 0.3s ease',
-                        fontStyle: 'italic'
+                fontStyle: 'italic'
               }}
             >
               Login

@@ -1,13 +1,17 @@
 // src/components/productUpload/sections/NFTDetails.js
-import React from "react";
+import React, { useState, useEffect } from "react";
 import CreatableSelect from 'react-select/creatable';
+
 
 const NFTDetails = ({
     formData,
     isSubmitting,
     handleInputChange,
-    handleSelectChange
+    handleSelectChange,
+    profileData
 }) => {
+   
+
     const blockchainOptions = [
         { value: 'ethereum', label: 'Ethereum' },
         { value: 'polygon', label: 'Polygon' },
@@ -30,19 +34,19 @@ const NFTDetails = ({
         { value: 'lazy', label: 'Lazy Minting' }
     ];
 
-    const sellingMethodOptions = [
-        { value: 'fixed', label: 'Fixed Price' },
-        { value: 'auction', label: 'Auction' },
-        { value: 'offers', label: 'Open for Offers' }
-    ];
+    // const sellingMethodOptions = [
+    //     { value: 'fixed', label: 'Fixed Price' },
+    //     { value: 'auction', label: 'Auction' },
+    //     { value: 'offers', label: 'Open for Offers' }
+    // ];
 
-    const currencyOptions = [
-        { value: 'eth', label: 'ETH' },
-        { value: 'matic', label: 'MATIC' },
-        { value: 'sol', label: 'SOL' },
-        { value: 'usdt', label: 'USDT' },
-        { value: 'usdc', label: 'USDC' }
-    ];
+    // const currencyOptions = [
+    //     { value: 'eth', label: 'ETH' },
+    //     { value: 'matic', label: 'MATIC' },
+    //     { value: 'sol', label: 'SOL' },
+    //     { value: 'usdt', label: 'USDT' },
+    //     { value: 'usdc', label: 'USDC' }
+    // ];
 
     const licenseTypeOptions = [
         { value: 'personal', label: 'Personal Use Only' },
@@ -51,13 +55,14 @@ const NFTDetails = ({
         { value: 'exclusive', label: 'Exclusive Ownership' }
     ];
 
-    // Rarity options
     const rarityOptions = [
         { value: 'common', label: 'Common' },
         { value: 'rare', label: 'Rare' },
         { value: 'epic', label: 'Epic' },
         { value: 'legendary', label: 'Legendary' }
     ];
+
+   
 
     return (
         <>
@@ -314,20 +319,142 @@ const NFTDetails = ({
                         </div>
 
                         {formData.partOfCollection && (
-                            <div className="col-md-6 form-group">
-                                <label htmlFor="collectionName">Collection Name *</label>
-                                <input
-                                    type="text"
-                                    id="collectionName"
-                                    name="collectionName"
-                                    className="form-control"
-                                    placeholder="e.g., Crypto Punks"
-                                    value={formData.collectionName || ''}
-                                    onChange={handleInputChange}
-                                    disabled={isSubmitting}
-                                    required
-                                />
-                            </div>
+                            <>
+                                <div className="col-md-6 form-group">
+                                    <label htmlFor="collectionName">Collection Name *</label>
+                                    <input
+                                        type="text"
+                                        id="collectionName"
+                                        name="collectionName"
+                                        className="form-control"
+                                        placeholder="e.g., Crypto Punks"
+                                        value={formData.collectionName || ''}
+                                        onChange={handleInputChange}
+                                        disabled={isSubmitting}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="col-md-6 form-group">
+                                    <label htmlFor="editionSize">Edition Size *</label>
+                                    <input
+                                        type="number"
+                                        id="editionSize"
+                                        name="editionSize"
+                                        className="form-control"
+                                        placeholder="Total number of items in collection"
+                                        value={formData.editionSize || ''}
+                                        onChange={handleInputChange}
+                                        disabled={isSubmitting}
+                                        required
+                                        min="1"
+                                    />
+                                </div>
+
+                                {/* Address Fields */}
+                                <div className="col-md-6 form-group">
+                                    <label htmlFor="addressLine1">Address Line 1</label>
+                                    <input
+                                        type="text"
+                                        id="addressLine1"
+                                        name="addressLine1"
+                                        className="form-control"
+                                        placeholder="Street address, P.O. box"
+                                        value={formData.addressLine1 || profileData.address?.line1 || ''}
+                                        onChange={handleInputChange}
+                                        disabled={isSubmitting}
+                                    
+                                    />
+                                </div>
+
+                                <div className="col-md-6 form-group">
+                                    <label htmlFor="addressLine2">Address Line 2</label>
+                                    <input
+                                        type="text"
+                                        id="addressLine2"
+                                        name="addressLine2"
+                                        className="form-control"
+                                        placeholder="Apartment, suite, unit, building, floor"
+                                        value={formData.addressLine2 || profileData.address?.line2 || ''}
+                                        onChange={handleInputChange}
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
+
+                                <div className="col-md-6 form-group">
+                                    <label htmlFor="landmark">Landmark</label>
+                                    <input
+                                        type="text"
+                                        id="landmark"
+                                        name="landmark"
+                                        className="form-control"
+                                        placeholder="Nearby recognizable location"
+                                        value={formData.landmark || profileData.address?.landmark || ''}
+                                        onChange={handleInputChange}
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
+
+                                <div className="col-md-6 form-group">
+                                    <label htmlFor="city">City </label>
+                                    <input
+                                        type="text"
+                                        id="city"
+                                        name="city"
+                                        className="form-control"
+                                        placeholder="City name"
+                                        value={formData.city || profileData.address?.city || ''}
+                                        onChange={handleInputChange}
+                                        disabled={isSubmitting}
+                                        
+                                    />
+                                </div>
+
+                                <div className="col-md-6 form-group">
+                                    <label htmlFor="state">State/Province </label>
+                                    <input
+                                        type="text"
+                                        id="state"
+                                        name="state"
+                                        className="form-control"
+                                        placeholder="State or province"
+                                        value={formData.state || profileData.address?.state || ''}
+                                        onChange={handleInputChange}
+                                        disabled={isSubmitting}
+                                        
+                                    />
+                                </div>
+
+                                <div className="col-md-6 form-group">
+                                    <label htmlFor="country">Country </label>
+                                    <input
+                                        type="text"
+                                        id="country"
+                                        name="country"
+                                        className="form-control"
+                                        placeholder="Country name"
+                                        value={formData.country || profileData.address?.country || ''}
+                                        onChange={handleInputChange}
+                                        disabled={isSubmitting}
+                                        
+                                    />
+                                </div>
+
+                                <div className="col-md-6 form-group">
+                                    <label htmlFor="pincode">Pincode/Zipcode </label>
+                                    <input
+                                        type="text"
+                                        id="pincode"
+                                        name="pincode"
+                                        className="form-control"
+                                        placeholder="Postal code"
+                                        value={formData.pincode || profileData.address?.pincode || ''}
+                                        onChange={handleInputChange}
+                                        disabled={isSubmitting}
+                                        r
+                                    />
+                                </div>
+                            </>
                         )}
                     </div>
                 </div>

@@ -74,8 +74,28 @@ export default function useProductForm() {
     unlockableContent: false,
     partOfCollection: false,
     collectionName: '',
+    editionSize: '',
+    addressLine1: '',
+    addressLine2: '',
+    landmark: '',
+    city: '',
+    state: '',
+    country: '',
+    pincode: '',
     rarityType: null,
-    traits: ''
+    traits: '',
+
+    originRegion: null,
+    periodEra: null,
+    antiqueCondition: null,
+    restorationHistory: '',
+    provenanceHistory: '',
+    engravingMarkings: '',
+    patinaWear: '',
+    isHandmade: false,
+    originalReproduction: null,
+    museumExhibitionHistory: '',
+    customEngravingAvailable: false,
 
   });
 
@@ -191,6 +211,32 @@ export default function useProductForm() {
       subCat => subCat.categoryId === categoryId
     );
   };
+
+  const [profileData, setProfileData] = useState({ address: {} });
+  useEffect(() => {
+    if (userId) {
+        fetchProfile();
+    }
+}, [userId]);
+
+const fetchProfile = async () => {
+    try {
+        const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
+        if (result.data.user) {
+            const userData = result.data.user;
+            const formattedBirthdate = userData.birthdate ? new Date(userData.birthdate).toISOString().split('T')[0] : '';
+            const parsedAddress = userData.address ? (typeof userData.address === 'string' ? JSON.parse(userData.address) : userData.address) : {};
+
+            setProfileData({
+                ...userData,
+                birthdate: formattedBirthdate,
+                address: parsedAddress,
+            });
+        }
+    } catch (error) {
+        console.error('Error fetching profile:', error);
+    }
+};
 
 
 
@@ -436,5 +482,7 @@ export default function useProductForm() {
     productTypeOptions,
     getCategoriesByMainCategory,
     getSubCategoriesByCategory,
+    profileData
+
   };
 }

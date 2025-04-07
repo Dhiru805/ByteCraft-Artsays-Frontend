@@ -382,7 +382,7 @@ const Register = () => {
             }}
 
           >
-             Register as Artist/Seller
+         Register to Become an Artist or Seller
           </Link>
         </div>
         <div className="d-block d-md-none">

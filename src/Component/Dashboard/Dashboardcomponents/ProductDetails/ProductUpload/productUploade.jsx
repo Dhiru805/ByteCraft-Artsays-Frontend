@@ -14,12 +14,13 @@ import ShippingDelivery from "./Sections/ShippingDelivery";
 import PayoutDetails from "./Sections/PayoutDetails";
 import LegalCompliance from "./Sections/LegalCompliance";
 import NFTDetails from "./Sections/NFTDetails";
+import AntiqueVintageDetails from "./Sections/AntiqueVintageDetails";
 
 function ProductUpload() {
   const userType = useUserType();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('basic');
-  
+
 
   const {
     formData,
@@ -66,61 +67,37 @@ function ProductUpload() {
     getCategoriesByMainCategory,
     getSubCategoriesByCategory,
 
+    profileData
+
   } = useProductForm();
 
-  const validateNFTFields = (formData) => {
+  const validateAntiqueFields = (formData) => {
     const errors = {};
-    
-    if (formData.productType?.value === 'nft') {
-  
-      if (!formData.blockchainNetwork) {
-        errors.blockchainNetwork = 'Blockchain network is required';
-      }
-      if (!formData.smartContractAddress) {
-        errors.smartContractAddress = 'Smart contract address is required';
-      }
-      if (!formData.tokenStandard) {
-        errors.tokenStandard = 'Token standard is required';
-      }
-      if (!formData.tokenId) {
-        errors.tokenId = 'Token ID is required';
-      }
-      if (!formData.walletAddress) {
-        errors.walletAddress = 'Wallet address is required';
-      }
-      if (formData.royaltyPercentage === '' || formData.royaltyPercentage === null || formData.royaltyPercentage === undefined) {
-        errors.royaltyPercentage = 'Royalty percentage is required';
-      } else if (isNaN(formData.royaltyPercentage)) {  
-        errors.royaltyPercentage = 'Royalty must be a number';
-      } else if (formData.royaltyPercentage < 0 || formData.royaltyPercentage > 50) {
-        errors.royaltyPercentage = 'Royalty must be between 0 and 50';
-      }
-      if (!formData.mintingType) {
-        errors.mintingType = 'Minting type is required';
-      }
-  
+    if (!formData.originRegion) {
+      errors.originRegion = 'Origin/Region is required';
+      toast.error('Origin/Region is required');
+  }
+  if (!formData.periodEra) {
+      errors.periodEra = 'Period/Era is required';
+      toast.error('Period/Era is required');
+  }
+  if (!formData.antiqueCondition) {
+      errors.antiqueCondition = 'Condition is required';
+      toast.error('Condition is required');
+  }
+  if (!formData.originalReproduction) {
+      errors.originalReproduction = 'Original vs. Reproduction is required';
+      toast.error('Original vs. Reproduction is required');
+  }
+  if (formData.isHandmade === undefined || formData.isHandmade === null) {
+      errors.isHandmade = 'Please specify if handmade';
+      toast.error('Please specify if handmade');
+  }
+    return Object.keys(errors).length > 0 ? errors : null;
+};
 
-      if (!formData.licenseType) {
-        errors.licenseType = 'License type is required';
-      }
-  
 
-      if (formData.partOfCollection && !formData.collectionName) {
-        errors.collectionName = 'Collection name is required when part of collection';
-      }
-  
- 
-      if (!formData.rarityType) {
-        errors.rarityType = 'Rarity type is required';
-      }
-      if (!formData.traits) {
-        errors.traits = 'Traits are required';
-      }
-    }
-  
-    return errors;
-  };
-  
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -156,6 +133,23 @@ function ProductUpload() {
       return;
     }
 
+    if (formData.partOfCollection && (!formData.editionSize )) {
+      toast.error("Please fill all required collection details");
+      setIsSubmitting(false);
+      return;
+    }
+
+    
+
+  if (isAntiqueVintageSelected) {
+    const antiqueErrors = validateAntiqueFields(formData);
+    if (antiqueErrors) {
+        setIsSubmitting(false);
+        toast.error("Please fill all required Antique & Vintage fields");
+        setActiveTab('antique'); // Switch to antique tab to show errors
+        return;
+    }
+}
     try {
       const formDataToSend = new FormData();
 
@@ -164,7 +158,7 @@ function ProductUpload() {
       formDataToSend.append('productName', formData.productName);
       formDataToSend.append('mainCategory', formData.mainCategory.value);
       formDataToSend.append('category', formData.category.value);
-      formDataToSend.append('subCategory', formData.subCategory.value);          
+      formDataToSend.append('subCategory', formData.subCategory.value);
       formDataToSend.append('productType', formData.productType.value);
       if (formData.productType.value === 'limited') {
         formDataToSend.append('editionNumber', parseInt(formData.editionNumber));
@@ -254,35 +248,62 @@ function ProductUpload() {
         }
       }
 
-        // NFT Details (only append if they exist)
-        if (formData.blockchainNetwork) {
-          formDataToSend.append('blockchainNetwork', formData.blockchainNetwork.value);
+      // NFT Details (only append if they exist)
+      if (formData.blockchainNetwork) {
+        formDataToSend.append('blockchainNetwork', formData.blockchainNetwork.value);
       }
       formDataToSend.append('smartContractAddress', formData.smartContractAddress);
       if (formData.tokenStandard) {
-          formDataToSend.append('tokenStandard', formData.tokenStandard.value);
+        formDataToSend.append('tokenStandard', formData.tokenStandard.value);
       }
       formDataToSend.append('tokenId', formData.tokenId);
       formDataToSend.append('walletAddress', formData.walletAddress);
       formDataToSend.append('royaltyPercentage', formData.royaltyPercentage);
       if (formData.mintingType) {
-          formDataToSend.append('mintingType', formData.mintingType.value);
+        formDataToSend.append('mintingType', formData.mintingType.value);
       }
       if (formData.licenseType) {
-          formDataToSend.append('licenseType', formData.licenseType.value);
+        formDataToSend.append('licenseType', formData.licenseType.value);
       }
       formDataToSend.append('ipfsStorage', formData.ipfsStorage);
       formDataToSend.append('unlockableContent', formData.unlockableContent);
       formDataToSend.append('partOfCollection', formData.partOfCollection);
       formDataToSend.append('collectionName', formData.collectionName);
+      if (formData.partOfCollection) {
+        formDataToSend.append('editionSize', parseInt(formData.editionSize));
+      }
       if (formData.rarityType) {
-          formDataToSend.append('rarityType', formData.rarityType.value);
+        formDataToSend.append('rarityType', formData.rarityType.value);
       }
       formDataToSend.append('traits', formData.traits);
-      console.log("form data",formDataToSend)
+      if (formData.originRegion) {
+        formDataToSend.append('originRegion', formData.originRegion.value);
+      }
+      if (formData.periodEra) {
+        formDataToSend.append('periodEra', formData.periodEra.value);
+      }
+      if (formData.antiqueCondition) {
+        formDataToSend.append('antiqueCondition', formData.antiqueCondition.value);
+      }
+      formDataToSend.append('restorationHistory', formData.restorationHistory || '');
+      formDataToSend.append('provenanceHistory', formData.provenanceHistory || '');
+      formDataToSend.append('engravingMarkings', formData.engravingMarkings || '');
+      formDataToSend.append('patinaWear', formData.patinaWear || '');
+      formDataToSend.append('isHandmade', formData.isHandmade);
+      if (formData.originalReproduction) {
+        formDataToSend.append('originalReproduction', formData.originalReproduction.value);
+      }
+      formDataToSend.append('museumExhibitionHistory', formData.museumExhibitionHistory || '');
+      formDataToSend.append('customEngravingAvailable', formData.customEngravingAvailable);
+      formDataToSend.append('addressLine1', formData.addressLine1 || profileData.address?.line1 || '');
+      formDataToSend.append('addressLine2', formData.addressLine2 || profileData.address?.line2 || '');
+      formDataToSend.append('landmark', formData.landmark || profileData.address?.landmark || '');
+      formDataToSend.append('city', formData.city || profileData.address?.city || '');
+      formDataToSend.append('state', formData.state || profileData.address?.state || '');
+      formDataToSend.append('country', formData.country || profileData.address?.country || '');
+      formDataToSend.append('pincode', formData.pincode || profileData.address?.pincode || '');
+ 
       const response = await postAPI('/api/cropImage', formDataToSend, {}, true);
-
-
       toast.success('Product created successfully!');
       navigate(`/${userType}/Dashboard/allproduct`);
     } catch (error) {
@@ -304,6 +325,8 @@ function ProductUpload() {
 
   const isNFTArtSelected = formData.category?.label === "NFT Art" ||
     formData.subCategory?.label === "NFT Art";
+
+  const isAntiqueVintageSelected = formData.mainCategory?.label === "Antiques & Vintage";
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -333,6 +356,19 @@ function ProductUpload() {
             isSubmitting={isSubmitting}
             handleInputChange={handleInputChange}
             handleSelectChange={handleSelectChange}
+            userId={userId}
+            profileData={profileData}
+          />
+        );
+      case 'antique':
+        return (
+          <AntiqueVintageDetails
+            formData={formData}
+            isSubmitting={isSubmitting}
+            handleInputChange={handleInputChange}
+            handleSelectChange={handleSelectChange}
+            userId={userId}
+            profileData={profileData}
           />
         );
       case 'images':
@@ -459,6 +495,18 @@ function ProductUpload() {
                     </button>
                   </li>
                 )}
+                {isAntiqueVintageSelected && (
+                  <li className="nav-item">
+                    <button
+                      type="button"
+                      className={`nav-link ${activeTab === 'antique' ? 'active' : ''}`}
+                      onClick={() => setActiveTab('antique')}
+                    >
+                      Antique
+                    </button>
+                  </li>
+                )}
+
                 <li className="nav-item">
                   <button
                     type="button"
@@ -525,7 +573,7 @@ function ProductUpload() {
                     type="button"
                     className="btn btn-secondary"
                     onClick={() => {
-                      const tabs = ['basic', ...(isNFTArtSelected ? ['nft'] : []), 'images', 'artwork', 'pricing', 'shipping', 'payoutDetails', 'legal'];
+                      const tabs = ['basic', ...(isNFTArtSelected ? ['nft'] : []), ...(isAntiqueVintageSelected ? ['antique'] : []), 'images', 'artwork', 'pricing', 'shipping', 'payoutDetails', 'legal'];
                       const currentIndex = tabs.indexOf(activeTab);
                       setActiveTab(tabs[currentIndex - 1]);
                     }}
@@ -539,7 +587,7 @@ function ProductUpload() {
                     type="button"
                     className="btn btn-primary ms-auto"
                     onClick={() => {
-                      const tabs = ['basic', ...(isNFTArtSelected ? ['nft'] : []), 'images', 'artwork', 'pricing', 'shipping', 'payoutDetails', 'legal'];
+                      const tabs = ['basic', ...(isNFTArtSelected ? ['nft'] : []), ...(isAntiqueVintageSelected ? ['antique'] : []), 'images', 'artwork', 'pricing', 'shipping', 'payoutDetails', 'legal'];
                       const currentIndex = tabs.indexOf(activeTab);
                       setActiveTab(tabs[currentIndex + 1]);
                     }}
