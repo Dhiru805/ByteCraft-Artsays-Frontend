@@ -235,6 +235,8 @@ import AllTransactionDetails from "../Component/Dashboard/Dashboardcomponents/Tr
  import Admin from "../Component/Dashboard/Dashboardcomponents/Admin/Admin"
  import AdminProfile  from "../Component/Dashboard/Dashboardcomponents/Admin/Profile/UserProf"
  import AdminProfileView  from "../Component/Dashboard/Dashboardcomponents/Admin/ViewProfile/UserProf"
+ // Email Setting
+ import EmailSetting from "../Component/Dashboard/Dashboardcomponents/Category/Email Setting/EmailSetting";
 
 //  const PrivateRoute = ({ children }) => {
 //   const isAuthenticated = !!localStorage.getItem("token");
@@ -246,6 +248,9 @@ import AllTransactionDetails from "../Component/Dashboard/Dashboardcomponents/Tr
 //   const isAuthenticated = !!localStorage.getItem("token");
 //   return !isAuthenticated ? children : <Navigate to="/" />; 
 // };
+
+
+
 
 const AppRoutes = () => {
  
@@ -554,6 +559,7 @@ const AppRoutes = () => {
     {/* Category Routes */}
     <Route path="productcategory"element={< ProductCategory/>}/>
     <Route path="blogcategory"element={< BlogCategory/>}/>
+    <Route path="emailsetting" element={< EmailSetting/>}></Route>
    
        {/* Admin*/}
     <Route path="admin"element={< Admin/>}/>

@@ -160,6 +160,7 @@ const Sidebar = () => {
         subTabs: [
           { label: "Product Category", path: `/${userType}/Dashboard/productcategory`},
           { label: "Blog Category", path: `/${userType}/Dashboard/blogcategory` },
+          { label: "Email Setting", path: `/${userType}/Dashboard/emailsetting` },
         ]
       }  
     ];
