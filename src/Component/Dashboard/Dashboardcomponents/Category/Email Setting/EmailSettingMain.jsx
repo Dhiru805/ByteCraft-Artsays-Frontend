@@ -60,15 +60,15 @@ const EmailSettingMain = () => {
     fetchSettings();
   }, []);
 
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData((prevData) => ({
-//       ...prevState,
-//       [name]: value,
-//     }));
-//   };
+  //   const handleChange = (e) => {
+  //     const { name, value } = e.target;
+  //     setFormData((prevData) => ({
+  //       ...prevState,
+  //       [name]: value,
+  //     }));
+  //   };
 
-const handleChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -76,14 +76,33 @@ const handleChange = (e) => {
     }));
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   try {
+  //     await postAPI("/api/save-email-settings", formData);
+  //     toast.success("Email setting change successfully!");
+  //   } catch (err) {
+  //     toast.error("Failed to update email settings.");
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await postAPI("/api/save-email-settings", formData);
-      toast.success("Email setting change successfully!");
+      const response = await postAPI("/api/save-email-settings", formData);
+      if (response.success) {
+        toast.success(response.message || "Email settings saved successfully!");
+      } 
+      else {
+        toast.success(response.message || "Email settings update successfully.");
+      }
     } catch (err) {
-      toast.error("Failed to update email settings.");
+      console.error("Submission error:", err);
+      toast.error(
+        err.response?.data?.message || "Failed to update email settings."
+      );
     }
   };
 
@@ -279,7 +298,10 @@ const handleChange = (e) => {
                   </div>
 
                   <div className="col-lg-4 col-md-6 col-sm-6 form-group">
-                    <label htmlFor="mail_from_address" className="col-form-label">
+                    <label
+                      htmlFor="mail_from_address"
+                      className="col-form-label"
+                    >
                       Mail From Address
                     </label>
                     <div className="position-relative">
