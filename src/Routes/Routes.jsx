@@ -42,6 +42,7 @@ import BuyerDashboard from "../Component/Dashboard/BuyerDashboard/Dashboard/Main
 
 //----------------------------------------Seller-------------------------------------------------------------------//
 import SellerDashboard from "../Component/Dashboard/SellerDashboard/Dashboard/MainContent";
+import Home from "../Pages/Home/Home";
 
 const PrivateRoute = ({ children }) => {
   const isAuthenticated = !!localStorage.getItem("token");
@@ -57,6 +58,16 @@ const AppRoutes = () => {
   return (
     <Routes>
       {/* Public Routes */}
+
+
+      <Route
+        path="/home"
+        element={
+          <PublicRoute>
+            <Home />
+          </PublicRoute>
+        }
+      />
       <Route
         path="/login"
         element={
