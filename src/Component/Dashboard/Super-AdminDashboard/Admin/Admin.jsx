@@ -10,13 +10,30 @@ function AdminManageTable() {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [selectedAdminToDelete, setSelectedAdminToDelete] = useState(null);
     const [isCreateAdminModalOpen, setIsCreateAdminModalOpen] = useState(false);
-    const BASE_URL = 'http://localhost:3001';
+    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
     const navigate = useNavigate();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+
+    const totalPages = Math.ceil(admins.length / itemsPerPage);
+
+    const handlePrevious = () => {
+        if (currentPage > 1) {
+            setCurrentPage(prev => prev - 1);
+        }
+    };
+
+    const handleNext = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(prev => prev + 1);
+        }
+    };
+
 
 
     const fetchAdmins = async () => {
         try {
-            const response = await getAPI("/api/getadmin",{},true);
+            const response = await getAPI("/api/getadmin", {}, true);
             setAdmins(response.data);
         } catch (error) {
             console.error("Error fetching admins:", error);
@@ -76,20 +93,22 @@ function AdminManageTable() {
                     <div className="col-lg-12">
                         <div className="card">
                             <div className="header d-flex justify-content-between align-items-center">
-                                <h2>Admin List</h2>
-                                <div className="d-flex">
-                                    <div className="input-group">
-                                        <input
-                                            type="text"
-                                            className="form-control form-control-sm"
-                                            placeholder="Search"
-                                        />
-                                        <div className="input-group-append">
-                                            <button className="btn btn-sm btn-outline-secondary">
-                                                <i className="fa fa-search"></i>
-                                            </button>
-                                        </div>
-                                    </div>
+                                <div className="d-flex align-items-center">
+                                    <label className="mb-0 mr-2">Show</label>
+                                    <select
+                                        name="DataTables_Table_0_length"
+                                        aria-controls="DataTables_Table_0"
+                                        className="form-control form-control-sm"
+                                        onChange={(e) => setItemsPerPage(parseInt(e.target.value))}
+                                        value={itemsPerPage}
+                                    >
+                                        <option value="10">5</option>
+                                        <option value="10">10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
+                                    <label className="mb-0 ml-2">entries</label>
                                 </div>
                             </div>
                             <div className="body">
@@ -105,53 +124,92 @@ function AdminManageTable() {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {admins
-                                                .filter((admin) => admin.email !== localStorage.getItem("email") || admin.email !== "superadmin@admin.com")
-                                                .map((admin, index) => (
-                                                    <tr key={admin._id}>
-                                                        <td>{index + 1}</td>
-                                                        <td>
-                                                            <img
-                                                                src={admin.profilePhoto ? `${BASE_URL}${admin.profilePhoto}` : 'DashboardAssets/assets/images/user.png'}
-                                                                className="rounded-circle avatar"
-                                                                alt=""
-                                                                style={{ width: '30px', height: '30px', objectFit: 'cover' }}
-                                                            />
-                                                            <p className="c_name">{admin.name} {admin.lastName}</p>
-                                                        </td>
-                                                        <td>{admin.email}</td>
-                                                        <td>{admin.phone}</td>
-                                                        <td>
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-outline-primary btn-sm mr-2"
-                                                                title="View"
-                                                                onClick={() => navigate('/super-admin/admin/viewprofile', { state: { admin } })}
-                                                            >
-                                                                <i className="fa fa-eye"></i>
-                                                            </button>
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-outline-info btn-sm mr-2"
-                                                                title="Edit"
-                                                                onClick={() => navigate('/super-admin/admin/editprofile', { state: { admin } })}
-                                                            >
-                                                                <i className="fa fa-pencil"></i>
-                                                            </button>
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-outline-danger btn-sm"
-                                                                title="Delete"
-                                                                onClick={() => openDeleteDialog(admin)}
-                                                            >
-                                                                <i className="fa fa-trash-o"></i>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                ))}
+                                            {admins.length === 1 ? (
+                                                <tr>
+                                                    <td colSpan="5" className="text-center">
+                                                        No data available
+                                                    </td>
+                                                </tr>
+                                            ) : (
+                                                admins
+                                                    .filter((admin) => admin.email !== localStorage.getItem("email") && admin.email !== "shantu131201@gmail.com")
+                                                    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                                                    .map((admin, index) => (
+                                                        <tr key={admin._id}>
+                                                            <td>{index + 1}</td>
+                                                            <td>
+                                                                <img
+                                                                    src={admin.profilePhoto ? `${BASE_URL}${admin.profilePhoto}` : '/DashboardAssets/assets/images/user.png'}
+                                                                    className="rounded-circle avatar"
+                                                                    alt=""
+                                                                    style={{ width: '30px', height: '30px', objectFit: 'cover' }}
+                                                                />
+                                                                <p className="c_name">{admin.name} {admin.lastName}</p>
+                                                            </td>
+                                                            <td>{admin.email}</td>
+                                                            <td>{admin.phone}</td>
+                                                            <td>
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-outline-primary btn-sm mr-2"
+                                                                    title="View"
+                                                                    onClick={() => navigate('/super-admin/admin/viewprofile', { state: { admin } })}
+                                                                >
+                                                                    <i className="fa fa-eye"></i>
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-outline-info btn-sm mr-2"
+                                                                    title="Edit"
+                                                                    onClick={() => navigate('/super-admin/admin/editprofile', { state: { admin } })}
+                                                                >
+                                                                    <i className="fa fa-pencil"></i>
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-outline-danger btn-sm"
+                                                                    title="Delete"
+                                                                    onClick={() => openDeleteDialog(admin)}
+                                                                >
+                                                                    <i className="fa fa-trash-o"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    ))
+                                            )}
                                         </tbody>
-
                                     </table>
+                                </div>
+                                <div className="pagination d-flex justify-content-end mt-4">
+                                    <ul className="pagination">
+                                        <li
+                                            className={`paginate_button page-item ${currentPage === 1 ? 'disabled' : ''}`}
+                                            onClick={handlePrevious}
+                                        >
+                                            <button className="page-link">Previous</button>
+                                        </li>
+                                        {Array.from({ length: totalPages }, (_, index) => index + 1)
+                                            .filter((pageNumber) =>
+                                                // pageNumber >= currentPage &&
+                                                // pageNumber < currentPage + 3
+                                                pageNumber === currentPage
+                                            )
+                                            .map((pageNumber) => (
+                                                <li
+                                                    key={pageNumber}
+                                                    className={`paginate_button page-item ${currentPage === pageNumber ? 'active' : ''}`}
+                                                    onClick={() => setCurrentPage(pageNumber)}
+                                                >
+                                                    <button className="page-link">{pageNumber}</button>
+                                                </li>
+                                            ))}
+                                        <li
+                                            className={`paginate_button page-item ${currentPage === totalPages ? 'disabled' : ''}`}
+                                            onClick={handleNext}
+                                        >
+                                            <button className="page-link">Next</button>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>

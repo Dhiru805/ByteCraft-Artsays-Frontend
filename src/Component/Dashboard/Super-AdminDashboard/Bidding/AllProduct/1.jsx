@@ -1,77 +1,77 @@
 import React, { useState, useEffect } from 'react';
-// import { useConfirm } from '../../StatusConfirm';
-// import { toast } from 'react-toastify';
+import { useConfirm } from '../../../StatusConfirm';
+import { toast } from 'react-toastify';
 import getAPI from '../../../../../api/getAPI';
-// import putAPI from '../../../../../api/putAPI';
-// import ConfirmationDialog from '../../ConfirmationDialog';
+import putAPI from '../../../../../api/putAPI';
 import { useNavigate } from 'react-router-dom';
-import useUserType from '../../urlconfig';
+import useUserType from '../../../urlconfig';
+
 
 
 const AllBiddingProduct = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
-    // const BASE_URL = 'http://localhost:3001';
-  
- 
-    // const confirm = useConfirm();
-    const navigate = useNavigate();
-    const userType = useUserType(); 
 
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const result = await getAPI("http://localhost:3001/api/getallbidstatusactive", {}, true, false);
-                console.log("Full API Response:", result);
-                console.log("Data Type:", typeof result.data);
-                if (result && result.data && Array.isArray(result.data.bids)) {
-                    setProducts(result.data.bids);
-                }                
-                else {
-                    console.error("API response does not contain an array:", result.data);
-                    setProducts([]);
-                }
-            } catch (error) {
-                console.error("Error fetching products:", error);
+    const confirm = useConfirm();
+
+
+    const fetchProducts = async () => {
+        try {
+            const result = await getAPI("/api/getallbid", {}, true, false);
+            if (result && result.data && Array.isArray(result.data.bids)) {
+                setProducts(result.data.bids);
+            } else {
+                console.error("Invalid API response", result.data);
                 setProducts([]);
             }
-        };
+        } catch (error) {
+            console.error("Error fetching bids:", error);
+        }
+    };
 
+    useEffect(() => {
         fetchProducts();
+        // const interval = setInterval(() => {
+        //     fetchProducts(); 
+        //   }, 1000);
+
+        //   return () => clearInterval(interval);
     }, []);
 
 
 
-    // const updateProductStatus = async (productId, status) => {
-    //     try {
-    //         await putAPI(
-    //             `http://localhost:3001/api/updateproductstatus/${productId}`,
-    //             { status: status },
-    //             {},
-    //             true
-    //         );
 
-    //         setProducts((prevProducts) =>
-    //             prevProducts.map((product) =>
-    //                 product._id === productId ? { ...product, status: status } : product
-    //             )
-    //         );
 
-    //         if (status === 'Approved') {
-    //             toast.success('Product Request is Approved');
-    //         } else if (status === 'Rejected') {
-    //             toast.error('Product Request is Rejected');
-    //         }
-    //     } catch (error) {
-    //         console.error("Error updating product status:", error);
-    //     }
-    // };
+    const updateProductStatus = async (productId, status) => {
+        try {
+            await putAPI(
+                `/api/updateproductstatus/${productId}`,
+                { status: status },
+                {},
+                true
+            );
 
-    // const handleReject = (productId) => {
-    //     confirm(() => updateProductStatus(productId, 'Rejected'), "Are you sure you want to reject this product?");
-    // };
+            setProducts((prevProducts) =>
+                prevProducts.map((product) =>
+                    product._id === productId ? { ...product, status: status } : product
+                )
+            );
+
+            if (status === 'Approved') {
+                toast.success('Product Request is Approved');
+            } else if (status === 'Rejected') {
+                toast.error('Product Request is Rejected');
+            }
+        } catch (error) {
+            toast.error("Error updating product status:", error);
+        }
+    };
+
+    const handleReject = (productId) => {
+        confirm(() => updateProductStatus(productId, 'Rejected'), "Are you sure you want to reject this product?");
+    };
 
     const totalPages = Math.ceil(products.length / productsPerPage);
     const displayedProducts = products.slice(
@@ -105,14 +105,14 @@ const AllBiddingProduct = () => {
             <div className="block-header">
                 <div className="row">
                     <div className="col-lg-6 col-md-6 col-sm-12">
-                        <h2>Product Status</h2>
+                        <h2>All Product</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
                                 <a href="index.html">
                                     <i className="fa fa-dashboard"></i>
                                 </a>
                             </li>
-                            <li className="breadcrumb-item">Product Status</li>
+                            <li className="breadcrumb-item">All product</li>
                         </ul>
                     </div>
                 </div>
@@ -180,13 +180,12 @@ const AllBiddingProduct = () => {
                                                     </button>
                                                 </td>
                                                 <td>
-                                                <button
+                                                    <button
                                                         className="btn btn-sm btn-outline-info mr-2"
-                                                        onClick={() => navigate(`/${userType}/Dashboard/biddingproductststus/productdetails/${product.product._id}`)}
                                                     >
-                                                         <i className="fa fa-eye"></i>
+                                                        <i className="fa fa-eye"></i>
                                                     </button>
-                                                    {/* <button
+                                                    <button
                                                         className="btn btn-sm btn-outline-success mr-2"
                                                         title="Approved"
                                                         onClick={() => updateProductStatus(product._id, 'Approved')}
@@ -199,15 +198,7 @@ const AllBiddingProduct = () => {
                                                         onClick={() => handleReject(product._id)}
                                                     >
                                                         <i className="fa fa-ban"></i>
-                                                    </button> */}
-                                                    {/* <button
-                                                        type="button"
-                                                        className="btn btn-outline-danger btn-sm mr-2"
-                                                        title="Delete"
-                                                        onClick={() => openDeleteDialog(product)}
-                                                    >
-                                                        <i className="fa fa-trash-o"></i>
-                                                    </button> */}
+                                                    </button>
                                                 </td>
                                             </tr>
                                         ))}
@@ -231,7 +222,7 @@ const AllBiddingProduct = () => {
                     </div>
                 </div>
             </div>
-       </div>
+        </div>
     );
 };
 

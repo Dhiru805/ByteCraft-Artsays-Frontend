@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useConfirm } from '../../StatusConfirm';
+import { useConfirm } from '../../../StatusConfirm';
 import { toast } from 'react-toastify';
 import getAPI from '../../../../../api/getAPI';
 import putAPI from '../../../../../api/putAPI';
 import { useNavigate } from 'react-router-dom';
-import useUserType from '../../urlconfig';
+import useUserType from '../../../urlconfig';
 
 const BlogRequest = () => {
     const [blogs, setBlogs] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [blogsPerPage, setBlogsPerPage] = useState(10);
+    const [blogsPerPage, setBlogsPerPage] = useState(5);
     const confirm = useConfirm();
     const navigate = useNavigate();
-    const userType = useUserType(); 
+    const userType = useUserType();
 
     useEffect(() => {
         const fetchBlogs = async () => {
@@ -112,9 +112,8 @@ const BlogRequest = () => {
             <div className="row clearfix">
                 <div className="col-lg-12">
                     <div className="card">
-                        <div className="header d-flex justify-content-between align-items-center">
-                            {/* <h2>Blog Request List</h2> */}
-                            <div className="d-flex align-items-center">
+                        <div className="header d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center">
+                            <div className="d-none d-md-flex align-items-center mb-2 mb-md-0">
                                 <label className="mb-0 mr-2">Show</label>
                                 <select
                                     name="DataTables_Table_0_length"
@@ -122,7 +121,9 @@ const BlogRequest = () => {
                                     className="form-control form-control-sm"
                                     value={blogsPerPage}
                                     onChange={handleBlogsPerPageChange}
+                                    style={{ minWidth: '70px' }}
                                 >
+                                    <option value="5">5</option>
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
@@ -131,8 +132,9 @@ const BlogRequest = () => {
                                 <label className="mb-0 ml-2">entries</label>
                             </div>
 
-                            <div className="d-flex">
-                                <div className="input-group">
+
+                            <div className="w-100 w-md-auto d-flex justify-content-end">
+                                <div className="input-group" style={{ maxWidth: '150px' }}>
                                     <input
                                         type="text"
                                         className="form-control form-control-sm"
@@ -140,17 +142,20 @@ const BlogRequest = () => {
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
-                                    <div className="input-group-append">
-                                        <button className="btn btn-sm btn-outline-secondary">
-                                            <i className="fa fa-search"></i>
-                                        </button>
-                                    </div>
+                                    <i
+                                        className="fa fa-search"
+                                        style={{
+                                            position: 'absolute',
+                                            right: '10px',
+                                            top: '50%',
+                                            transform: 'translateY(-50%)',
+                                            pointerEvents: 'none',
+                                        }}
+                                    ></i>
                                 </div>
                             </div>
                         </div>
                         <div className="body">
-                            <div className="d-flex justify-content-between mb-3">
-                            </div>
                             <div className="table-responsive">
                                 <table className="table table-hover js-basic-example dataTable table-custom m-b-0 c_list">
                                     <thead className="thead-dark">
@@ -161,96 +166,113 @@ const BlogRequest = () => {
                                             <th>Date</th>
                                             <th>Status</th>
                                             {userType === "Super-Admin" && (
-                                            <th>Action</th>
+                                                <th>Action</th>
                                             )}
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {displayedBlogs.map((blog, index) => (
-                                            <tr key={blog._id}>
-                                                <td>
-                                                    <h6 className="mb-0">{(currentPage - 1) * blogsPerPage + index + 1}</h6>
+                                        {displayedBlogs.length === 0 ? (
+                                            <tr>
+                                                <td colSpan="5" className="text-center">
+                                                    No data available
                                                 </td>
-                                                <td>
-                                                    <span>{blog.blogAuthor}</span>
-                                                </td>
-                                                <td>
-                                                    <button
-                                                        className="btn btn-sm btn-outline-info"
-                                                        onClick={() => navigate(`/${userType}/Dashboard/BlogRequest/view-blog/${blog._id}`)}
-                                                    >
-                             
-                                                        View
-                                                    </button>
-                                                </td>
-                                                <td>{new Date(blog.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
-                                                <td>
-                                                    <button className={`btn btn-sm  ${blog.blogStatus === 'Pending' ? 'btn-outline-warning' : blog.blogStatus === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
-                                                        {blog.blogStatus}
-                                                    </button>
-                                                </td>
-                                                {userType === "Super-Admin" && (
-                                                <td>
-                                                     {blog.blogStatus !== 'Approved' && (
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-sm btn-outline-success w-2 mr-2"
-                                                        title="Approved"
-                                                        onClick={() => updateBlogStatus(blog._id, 'Approved')}
-                                                    >
-                                                        <i className="fa fa-check"></i>
-                                                    </button>
-                                                     )}
-                                                      {blog.blogStatus !== 'Rejected' && (
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-sm btn-outline-danger"
-                                                        title="Declined"
-                                                        onClick={() => handleReject(blog._id)}
-                                                    >
-                                                        <i className="fa fa-ban"></i>
-                                                    </button>
-                                                      )}
-                                                </td>
-                                                )}
                                             </tr>
-                                        ))}
+                                        ) : (
+                                            displayedBlogs.map((blog, index) => (
+                                                <tr key={blog._id}>
+                                                    <td>
+                                                        <h6 className="mb-0">{(currentPage - 1) * blogsPerPage + index + 1}</h6>
+                                                    </td>
+                                                    <td>
+                                                        <span>{blog.blogAuthor}</span>
+                                                    </td>
+                                                    <td>
+                                                        <button
+                                                            className="btn btn-sm btn-outline-info"
+                                                            onClick={() => navigate(`/${userType}/Dashboard/BlogRequest/view-blog/${blog._id}`)}
+                                                        >
+
+                                                            View
+                                                        </button>
+                                                    </td>
+                                                    <td>{new Date(blog.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
+                                                    <td>
+                                                        <button className={`btn btn-sm  ${blog.blogStatus === 'Pending' ? 'btn-outline-warning' : blog.blogStatus === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
+                                                            {blog.blogStatus}
+                                                        </button>
+                                                    </td>
+                                                    {userType === "Super-Admin" && (
+                                                        <td>
+                                                            {blog.blogStatus !== 'Approved' && (
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-sm btn-outline-success w-2 mr-2"
+                                                                    title="Approved"
+                                                                    onClick={() => updateBlogStatus(blog._id, 'Approved')}
+                                                                >
+                                                                    <i className="fa fa-check"></i>
+                                                                </button>
+                                                            )}
+                                                            {blog.blogStatus !== 'Rejected' && (
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-sm btn-outline-danger"
+                                                                    title="Declined"
+                                                                    onClick={() => handleReject(blog._id)}
+                                                                >
+                                                                    <i className="fa fa-ban"></i>
+                                                                </button>
+                                                            )}
+                                                        </td>
+                                                    )}
+                                                </tr>
+                                            ))
+                                        )}
                                     </tbody>
                                 </table>
                             </div>
                             <div className="pagination d-flex justify-content-between mt-4">
-                                <span className="mx-3">
+                                <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
                                     Showing {(currentPage - 1) * blogsPerPage + 1} to {Math.min(currentPage * blogsPerPage, filteredBlogs.length)} of {filteredBlogs.length} entries
                                 </span>
-                                <ul className="pagination">
+
+                                <ul className="pagination d-flex justify-content-end w-100">
                                     <li
                                         className={`paginate_button page-item ${currentPage === 1 ? 'disabled' : ''}`}
                                         onClick={handlePrevious}
                                     >
                                         <button className="page-link">Previous</button>
                                     </li>
+
                                     {Array.from({ length: totalPages }, (_, index) => index + 1)
-                                        .filter((pageNumber) =>
-                                            pageNumber === 1 ||
-                                            pageNumber === totalPages ||
-                                            (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
-                                        )
-                                        .map((pageNumber, index, visiblePages) => (
-                                            <React.Fragment key={pageNumber}>
-                                                {index > 0 &&
-                                                    pageNumber !== visiblePages[index - 1] + 1 && (
-                                                        <li className="paginate_button page-item disabled">
-                                                            <span className="page-link">...</span>
+                                        .filter((pageNumber) => pageNumber === currentPage)
+                                        .map((pageNumber, index, array) => {
+                                            const prevPage = array[index - 1];
+                                            if (prevPage && pageNumber - prevPage > 1) {
+                                                return (
+                                                    <React.Fragment key={`ellipsis-${pageNumber}`}>
+                                                        <li className="page-item disabled"><span className="page-link">...</span></li>
+                                                        <li
+                                                            key={pageNumber}
+                                                            className={`paginate_button page-item ${currentPage === pageNumber ? 'active' : ''}`}
+                                                            onClick={() => setCurrentPage(pageNumber)}
+                                                        >
+                                                            <button className="page-link">{pageNumber}</button>
                                                         </li>
-                                                    )}
+                                                    </React.Fragment>
+                                                );
+                                            }
+
+                                            return (
                                                 <li
+                                                    key={pageNumber}
                                                     className={`paginate_button page-item ${currentPage === pageNumber ? 'active' : ''}`}
                                                     onClick={() => setCurrentPage(pageNumber)}
                                                 >
                                                     <button className="page-link">{pageNumber}</button>
                                                 </li>
-                                            </React.Fragment>
-                                        ))}
+                                            );
+                                        })}
 
                                     <li
                                         className={`paginate_button page-item ${currentPage === totalPages ? 'disabled' : ''}`}

@@ -1,7 +1,7 @@
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 
-export const handleLogout = (navigate) => {
+export const handleLogout = (navigate, logout) => {
   Swal.fire({
     title: 'Are you sure?',
     text: "You will be logged out!",
@@ -12,10 +12,9 @@ export const handleLogout = (navigate) => {
     confirmButtonText: 'Yes, logout!',
   }).then((result) => {
     if (result.isConfirmed) {
-      localStorage.removeItem("token");
-      sessionStorage.clear();
+      logout(); 
       toast.success("Logout Successful");
-      navigate("/login");
+      navigate("/login", { replace: true });
     }
   });
 };

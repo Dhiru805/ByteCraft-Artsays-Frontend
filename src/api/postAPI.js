@@ -15,17 +15,20 @@ async function postAPI(url, payload, config = {},isPrivate = true,) {
           : { "Content-Type": "application/json" }),
         ...config.headers,
       },
+      validateStatus: function (status) {
+        return status >= 200 && status < 300;
+      },
     };
 
     const response = await axiosInstance.post(url, payload, requestConfig);
 
-    if (response.status === 200) {
+   
       return {
         message: response.data.message,
         hasError: response.data.hasError,
         data: response.data,
       };
-    }
+  
   } catch (error) {
     console.error("Error during API request:", error);
     throw error;

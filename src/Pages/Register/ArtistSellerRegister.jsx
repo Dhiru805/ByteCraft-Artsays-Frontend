@@ -4,7 +4,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../Login/LoginStyles.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import axios from 'axios';
+import postAPI from '../../api/postAPI';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -22,6 +22,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [isBusiness, setIsBusiness] = useState(false); 
   const navigate = useNavigate();
 
@@ -59,7 +60,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+   setLoading(true);
 
     const requiredFields = ['firstName', 'lastName', 'emailOrPhone', 'password', 'confirmPassword'];
     for (const field of requiredFields) {
@@ -119,7 +120,7 @@ const Register = () => {
         payload.businessName = formData.businessName;
       }
 
-      const response = await axios.post('http://localhost:3001/auth/createuser', payload);
+      const response = await postAPI('/auth/createuser', payload);
 
       toast.success(response.data.message);
       setTimeout(() => {
@@ -128,6 +129,8 @@ const Register = () => {
     } catch (error) {
       console.error('Registration error:', error);
       toast.error(error.response?.data?.message || 'Something went wrong. Please try again.');
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -463,6 +466,7 @@ const Register = () => {
                   className="form-check-input me-2"
                   type="checkbox"
                   id="acceptTerms"
+                  required
                   checked={acceptTerms}
                   onChange={(e) => setAcceptTerms(e.target.checked)}
                   style={{
@@ -491,8 +495,9 @@ const Register = () => {
                 transition: 'all 0.3s ease',
                 fontStyle: 'italic'
               }}
+              disabled={loading}
             >
-              Sign up
+            {loading ? 'Creating account...' : 'Sign up'}
             </button>
           </form>
         </div>

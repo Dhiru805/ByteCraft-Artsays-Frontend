@@ -1,108 +1,50 @@
 import React, { useState, useEffect } from 'react';
-// import { useConfirm } from '../../StatusConfirm';
-// import { toast } from 'react-toastify';
 import getAPI from '../../../../../api/getAPI';
-// import putAPI from '../../../../../api/putAPI';
-// import ConfirmationDialog from '../../ConfirmationDialog';
-import { useNavigate } from 'react-router-dom';
-import useUserType from '../../urlconfig';
-
-
 
 const AllBiddingProduct = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [productsPerPage, setProductsPerPage] = useState(10);
-    // const BASE_URL = 'http://localhost:3001';
-  
- 
-    // const confirm = useConfirm();
-    const navigate = useNavigate();
-    const userType = useUserType(); 
-
+    const [itemsPerPage, setItemsPerPage] = useState(5);
 
     const fetchProducts = async () => {
         try {
-          const result = await getAPI("http://localhost:3001/api/getallbid", {}, true, false);
-          if (result && result.data && Array.isArray(result.data.bids)) {
-            setProducts(result.data.bids);
-          } else {
-            console.error("Invalid API response", result.data);
-            setProducts([]);
-          }
+            const result = await getAPI("/api/getallbid", {}, true, false);
+            if (result && result.data && Array.isArray(result.data.bids)) {
+                setProducts(result.data.bids);
+            } else {
+                console.error("Invalid API response", result.data);
+                setProducts([]);
+            }
         } catch (error) {
-          console.error("Error fetching bids:", error);
+            console.error("Error fetching bids:", error);
         }
-      };
-    
-      useEffect(() => {
+    };
+
+    useEffect(() => {
         fetchProducts();
         const interval = setInterval(() => {
-            fetchProducts(); 
-          }, 1000);
-      
-          return () => clearInterval(interval);
-      }, []);
+            fetchProducts();
+        }, 1000);
 
-    
-
-
-
-    // const updateProductStatus = async (productId, status) => {
-    //     try {
-    //         await putAPI(
-    //             `http://localhost:3001/api/updateproductstatus/${productId}`,
-    //             { status: status },
-    //             {},
-    //             true
-    //         );
-
-    //         setProducts((prevProducts) =>
-    //             prevProducts.map((product) =>
-    //                 product._id === productId ? { ...product, status: status } : product
-    //             )
-    //         );
-
-    //         if (status === 'Approved') {
-    //             toast.success('Product Request is Approved');
-    //         } else if (status === 'Rejected') {
-    //             toast.error('Product Request is Rejected');
-    //         }
-    //     } catch (error) {
-    //         console.error("Error updating product status:", error);
-    //     }
-    // };
-
-    // const handleReject = (productId) => {
-    //     confirm(() => updateProductStatus(productId, 'Rejected'), "Are you sure you want to reject this product?");
-    // };
-
-    const totalPages = Math.ceil(products.length / productsPerPage);
-    const displayedProducts = products.slice(
-        (currentPage - 1) * productsPerPage,
-        currentPage * productsPerPage
-    );
+        return () => clearInterval(interval);
+    }, []);
 
     const handlePrevious = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
+        setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
     };
 
     const handleNext = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        }
+        const totalPages = Math.ceil(products.length / itemsPerPage);
+        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
     };
 
-    const handleProductsPerPageChange = (event) => {
-        setProductsPerPage(Number(event.target.value));
-        setCurrentPage(1);
-    };
+    const totalPages = Math.ceil(products.length / itemsPerPage);
 
 
-
-
+    const paginatedProducts = products.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
 
     return (
         <div className="container-fluid">
@@ -129,10 +71,16 @@ const AllBiddingProduct = () => {
                             <div className="d-flex align-items-center">
                                 <label className="mb-0 mr-2">Show</label>
                                 <select
+                                    name="DataTables_Table_0_length"
+                                    aria-controls="DataTables_Table_0"
                                     className="form-control form-control-sm"
-                                    value={productsPerPage}
-                                    onChange={handleProductsPerPageChange}
+                                    value={itemsPerPage}
+                                    onChange={(e) => {
+                                        setItemsPerPage(parseInt(e.target.value));
+                                        setCurrentPage(1);
+                                    }}
                                 >
+                                    <option value="5">5</option>
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
@@ -141,9 +89,10 @@ const AllBiddingProduct = () => {
                                 <label className="mb-0 ml-2">entries</label>
                             </div>
                         </div>
+
                         <div className="body">
                             <div className="table-responsive">
-                                <table className="table table-hover">
+                                <table className="table table-hover text-nowrap">
                                     <thead className="thead-dark">
                                         <tr>
                                             <th>#</th>
@@ -157,76 +106,109 @@ const AllBiddingProduct = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {displayedProducts.map((product, index) => (
-                                            <tr key={product._id}>
-                                                <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
-                                                <td>
-                                                    <img
-                                                        src={product.product.mainImage}
-                                                        className="rounded-circle avatar"
-                                                        alt=""
-                                                        style={{
-                                                            width: '30px',
-                                                            height: '30px',
-                                                            objectFit: 'cover',
-                                                            marginRight: '10px'
-                                                        }}
-                                                    />
-                                                    {product.product.productName}
-                                                </td>
-                                                <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.startingBid).replace(/\.00$/, '')}</td>
-                                                <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.currentBid).replace(/\.00$/, '')}</td>
-                                                <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.endBid).replace(/\.00$/, '')}</td>
-                                                <td>{new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
-                                                <td>
-                                                    <button className={`btn btn-sm ${product.status === 'Pending' ? 'btn-outline-warning' : product.status === 'Active' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
-                                                        {product.status}
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                <button
-                                                        className="btn btn-sm btn-outline-info mr-2"
-                                                        onClick={() => navigate(`/${userType}/Dashboard/allbiddingproduct/productdetails/${product.product._id}`)}
-                                                    >
-                                                         <i className="fa fa-eye"></i>
-                                                    </button>
-                                                    {/* <button
-                                                        className="btn btn-sm btn-outline-success mr-2"
-                                                        title="Approved"
-                                                        onClick={() => updateProductStatus(product._id, 'Approved')}
-                                                    >
-                                                        <i className="fa fa-check"></i>
-                                                    </button>
-                                                    <button
-                                                        className="btn btn-sm btn-outline-danger mr-2"
-                                                        title="Declined"
-                                                        onClick={() => handleReject(product._id)}
-                                                    >
-                                                        <i className="fa fa-ban"></i>
-                                                    </button> */}
-                                                    {/* <button
-                                                        type="button"
-                                                        className="btn btn-outline-danger btn-sm mr-2"
-                                                        title="Delete"
-                                                        onClick={() => openDeleteDialog(product)}
-                                                    >
-                                                        <i className="fa fa-trash-o"></i>
-                                                    </button> */}
+                                        {paginatedProducts.length === 0 ? (
+                                            <tr>
+                                                <td colSpan="6" className="text-center">
+                                                    No data available
                                                 </td>
                                             </tr>
-                                        ))}
+                                        ) : (
+                                            paginatedProducts.map((product, index) => (
+                                                <tr key={product._id}>
+                                                    <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                                                    <td>
+                                                        <img
+                                                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${product.product.mainImage}`}
+                                                            className="rounded-circle avatar"
+                                                            alt=""
+                                                            style={{
+                                                                width: '30px',
+                                                                height: '30px',
+                                                                objectFit: 'cover',
+                                                                marginRight: '10px'
+                                                            }}
+                                                        />
+                                                        {product.product.productName}
+                                                    </td>
+                                                    <td>
+                                                        {new Intl.NumberFormat('en-IN', {
+                                                            style: 'currency',
+                                                            currency: 'INR'
+                                                        }).format(product.startingBid).replace(/\.00$/, '')}
+                                                    </td>
+                                                    <td>
+                                                        {new Intl.NumberFormat('en-IN', {
+                                                            style: 'currency',
+                                                            currency: 'INR'
+                                                        }).format(product.currentBid).replace(/\.00$/, '')}
+                                                    </td>
+                                                    <td>
+                                                        {new Intl.NumberFormat('en-IN', {
+                                                            style: 'currency',
+                                                            currency: 'INR'
+                                                        }).format(product.endBid).replace(/\.00$/, '')}
+                                                    </td>
+                                                    <td>
+                                                        {new Date(product.createdAt).toLocaleDateString('en-IN', {
+                                                            year: 'numeric',
+                                                            month: 'long',
+                                                            day: 'numeric'
+                                                        })}
+                                                    </td>
+                                                    <td>
+                                                        <button
+                                                            className={`btn btn-sm ${product.status === 'Pending'
+                                                                    ? 'btn-outline-warning'
+                                                                    : product.status === 'Active'
+                                                                        ? 'btn-outline-success'
+                                                                        : 'btn-outline-danger'
+                                                                }`}
+                                                        >
+                                                            {product.status}
+                                                        </button>
+                                                    </td>
+                                                    <td>
+                                                        <button className="btn btn-sm btn-outline-info mr-2">
+                                                            <i className="fa fa-eye"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
                                     </tbody>
                                 </table>
                             </div>
-                            <div className="pagination d-flex justify-content-between mt-4">
-                                <span>
-                                    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, products.length)} of {products.length} entries
-                                </span>
+
+
+                            <div className="pagination d-flex justify-content-end mt-4">
                                 <ul className="pagination">
-                                    <li className={`paginate_button page-item ${currentPage === 1 ? 'disabled' : ''}`} onClick={handlePrevious}>
+                                    <li
+                                        className={`paginate_button page-item ${currentPage === 1 ? 'disabled' : ''}`}
+                                        onClick={handlePrevious}
+                                    >
                                         <button className="page-link">Previous</button>
                                     </li>
-                                    <li className={`paginate_button page-item ${currentPage === totalPages ? 'disabled' : ''}`} onClick={handleNext}>
+
+                                    {Array.from({ length: totalPages }, (_, index) => index + 1)
+                                        .filter((pageNumber) =>
+                                            // pageNumber >= currentPage &&
+                                            // pageNumber < currentPage + 3
+                                            pageNumber === currentPage
+                                        )
+                                        .map((pageNumber) => (
+                                            <li
+                                                key={pageNumber}
+                                                className={`paginate_button page-item ${currentPage === pageNumber ? 'active' : ''}`}
+                                                onClick={() => setCurrentPage(pageNumber)}
+                                            >
+                                                <button className="page-link">{pageNumber}</button>
+                                            </li>
+                                        ))}
+
+                                    <li
+                                        className={`paginate_button page-item ${currentPage === totalPages ? 'disabled' : ''}`}
+                                        onClick={handleNext}
+                                    >
                                         <button className="page-link">Next</button>
                                     </li>
                                 </ul>
@@ -235,7 +217,7 @@ const AllBiddingProduct = () => {
                     </div>
                 </div>
             </div>
-  </div>
+        </div>
     );
 };
 

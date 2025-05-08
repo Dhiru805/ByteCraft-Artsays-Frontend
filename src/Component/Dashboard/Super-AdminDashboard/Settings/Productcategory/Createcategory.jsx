@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../../api/getAPI";
 import postAPI from "../../../../../api/postAPI";
 import CreatableSelect from 'react-select/creatable';
@@ -12,8 +11,7 @@ const AddCategory = ({ onClose, fetchSubCategoryData }) => {
     { mainCategoryName: "", categoryName: "", subCategoryName: "" },
   ]);
   const [showOtherFields, setShowOtherFields] = useState(false);
-
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchMainCategories = async () => {
@@ -85,6 +83,8 @@ const AddCategory = ({ onClose, fetchSubCategoryData }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
+    console.log("Set loading to true");
     try {
       for (const row of categoryRows) {
         let subCategoryData = {};
@@ -121,6 +121,9 @@ const AddCategory = ({ onClose, fetchSubCategoryData }) => {
         error.response?.data?.message || "An error occurred while processing the request.";
       toast.error(errorMessage);
     }
+    finally {
+      setLoading(false)
+    }
   };
 
   const mainCategoryOptions = mainCategories.map(mainCategory => ({
@@ -128,7 +131,6 @@ const AddCategory = ({ onClose, fetchSubCategoryData }) => {
     label: mainCategory.mainCategoryName
   }));
 
-  // Function to generate category options for CreatableSelect
   const getCategoryOptions = (row) => {
     if (row.mainCategoryId && row.categories) {
       return row.categories.map(category => ({
@@ -358,8 +360,11 @@ const AddCategory = ({ onClose, fetchSubCategoryData }) => {
                     ? "Use Existing Categories"
                     : "Add Custom Categories"}
                 </button>
-                <button type="submit" className="btn btn-primary">
-                  Submit
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={loading}>
+                  {loading ? "Adding..." : "Add Category"}
                 </button>
               </div>
             </form>

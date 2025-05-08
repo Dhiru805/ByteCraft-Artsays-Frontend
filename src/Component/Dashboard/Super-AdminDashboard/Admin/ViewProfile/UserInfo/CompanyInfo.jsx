@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import getAPI from '../../../../../../api/getAPI';
 
 const CompanyProfile = ({ userId }) => {
     const [formData, setFormData] = useState({
@@ -22,7 +22,7 @@ const CompanyProfile = ({ userId }) => {
     useEffect(() => {
         const fetchCompanyData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/api/getcompanyinfo/${userId}`);
+                const response = await getAPI(`/api/getcompanyinfo/${userId}`);
                 if (response.data && response.data.length > 0) {
                     setFormData(response.data[0]);
                 }

@@ -4,11 +4,13 @@ import {  faInfo, faThumbsUp, faPieChart, faSearch } from '@fortawesome/free-sol
 import useSidebarToggle from '../Sidebar/Handletooglesidebar';
 import { useNavigate } from "react-router-dom";
 import  {handleLogout} from '../LogoutConfirmation';
+import { useAuth } from '../../../AuthContext';
 
 
 const Navbar = () => {
   const { handleToggleSidebar } = useSidebarToggle();
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   return (
     <nav className="navbar navbar-fixed-top">
@@ -35,7 +37,7 @@ const Navbar = () => {
 
         <div className="navbar-right">
           <SearchForm />
-          <NavbarMenu navigate={navigate} />
+          <NavbarMenu navigate={navigate} logout={logout} />
         </div>
       </div>
     </nav>
@@ -51,14 +53,16 @@ const SearchForm = () => (
   </form>
 );
 
-const NavbarMenu = ({navigate}) => (
+const NavbarMenu = ({navigate,logout}) => (
   <div id="navbar-menu">
     <ul className="nav navbar-nav">
       <Notifications />
       <li>
-      <a href="#" className="icon-menu" onClick={() => handleLogout(navigate)}>
-          <i className="fa fa-power-off"></i>
-        </a>
+ 
+      <a href="#" className="icon-menu" onClick={() => handleLogout(navigate, logout)}>
+        <i className="fa fa-power-off"></i>
+      </a>
+
       </li>
     </ul>
   </div>

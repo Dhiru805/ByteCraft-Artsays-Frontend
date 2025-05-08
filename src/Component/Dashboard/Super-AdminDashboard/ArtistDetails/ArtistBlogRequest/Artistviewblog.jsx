@@ -3,8 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import getAPI from '../../../../../api/getAPI';
 // import UpdateModal from "./../ArtistBlog/UpdateBlogList";
 import { Link } from 'react-router-dom';
-import ConfirmationDialog from '../../ConfirmationDialog';
-import useUserType from '../../urlconfig';
+import ConfirmationDialog from '../../../ConfirmationDialog';
+import useUserType from '../../../urlconfig';
 
 function BlogDetails() {
   const { blogId } = useParams();
