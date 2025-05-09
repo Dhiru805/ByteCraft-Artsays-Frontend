@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 const Footer = () => {
+ 
   return (
-    <footer className="h-[504px] w-full bg-black-900">
-      <section className="h-[25%]  flex flex-row items-center justify-between">
+    <footer className="  w-full bg-black-900 ">
+      <div className="max-w-[1440px] mx-auto px-[80px] pt-[20px]">
+      <section className="h-[100px]   flex flex-row items-center justify-between">
         <img src="/assets/home/flogo.svg" alt="logo" />
         <u className="w-[40%] text-base">
           Artsays is powered by 100% authenticity, transparency, and innovation,
@@ -89,7 +91,7 @@ const Footer = () => {
               </li>
             </ul>
           </section>
-          <section className="flex-[0.4] ">
+          <section className="flex-[0.5] ">
             <h3 className=" text-lg text-black-400 mb-2 ">CONTACT US</h3>
             <ul className="gap-4 flex-col flex  text-sm text-base">
               <li className="flex flex-row gap-2 items-center ">
@@ -103,7 +105,7 @@ const Footer = () => {
               <li className="flex flex-row gap-4 items-center ">
                 <img src="/assets/footer/location.svg" alt="" />
                 <p>
-                  F Wing, Park Connect, Hinjawadi Phase 1, Pune, <br />
+                  F Wing, Park Connect, Hinjawadi Phase 1, Pune, 
                   Pimpri-Chinchwad, Maharashtra 411057
                 </p>
               </li>
@@ -124,7 +126,7 @@ const Footer = () => {
             </ul>
           </section>
         </section>
-        <section className="ml-4">
+        <section className="">
           <h3 className=" text-lg text-black-400 mb-2 ">
             Secure Payments & Trust Badges
           </h3>
@@ -136,12 +138,16 @@ const Footer = () => {
         </section>
       </section>
 
-      <section className="flex flex-row justify-between text-xs text-base pt-4">
+      <section className="flex flex-row justify-between text-xs text-base py-4 ">
         <span className="flex-row flex  items-center gap-2">
-          <img className="w-4 h-4 rounded-full " src="assets/footer/ind.png" alt="" /> India | English(UK)
-          |₹(INR)
+          <img
+            className="w-4 h-4 rounded-full "
+            src="assets/footer/ind.png"
+            alt=""
+          />{" "}
+          India | English(UK) |₹(INR)
         </span>
-        <ul className="flex flex-row flex-0.7 gap-4">
+        <ul className="flex flex-row flex-0.7 gap-4 ">
           <li>
             <Link>© 2025 Artsays, Inc</Link>
           </li>
@@ -162,6 +168,8 @@ const Footer = () => {
           </li>
         </ul>
       </section>
+      </div>
+      
     </footer>
   );
 };
