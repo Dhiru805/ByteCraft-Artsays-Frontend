@@ -30,23 +30,7 @@ const Input = memo(() => {
   );
 });
 
-// Create AnimatedText as a separate component
-const AnimatedText = ({ text }) => {
-  return (
-    <motion.h2
-      key={text}
-      initial={{ y: 80, opacity: 1 }}
-      animate={{ y: 0, opacity: 1 }}
-      exit={{ y: -120, opacity: 1 }}
-      transition={{ duration: 0.6 }}
-      className="text-[90px] z-[2] text-left will-change-transform font-bold bg-gradient-to-r from-orange-500 to-blue-500 bg-clip-text text-transparent whitespace-nowrap overflow-visible w-fit"
-    >
-      {text}
-    </motion.h2>
-  );
-};
-
-const HeroSection = () => {
+const AnimatedText = memo(() => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -56,7 +40,26 @@ const HeroSection = () => {
 
     return () => clearInterval(interval);
   }, []);
+  return (
+    <AnimatePresence className="" mode="wait">
+      <motion.h2
+        key={heroStats[currentIndex]}
+        initial={{ y: 80, opacity: 1 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: -90, opacity: 1 }}
+        transition={{ duration: 0.4 }}
+        className="text-[90px] z-[2] text-left will-change-transform font-bold bg-gradient-to-r from-orange-500 to-blue-500 bg-clip-text text-transparent whitespace-nowrap overflow-visible w-fit"
+      >
+        {heroStats[currentIndex]}
+      </motion.h2>
+    </AnimatePresence>
+  );
+});
 
+const HeroSection = () => {
+  useEffect(()=>{
+  console.log("hero render here ")
+  },[])
   return (
     <div className="w-full min-h-[740px]  bg-gray-100 ">
       <div className="max-w-[1440px] w-full h-full  px-[80px] mx-auto   flex flex-row relative pb-8">
@@ -72,13 +75,11 @@ const HeroSection = () => {
         />
 
         <div className="w-[70%]  ml-8 mt-8">
-          <h2 className="text-black-900 text-[90px] font-bold overflow-visible">
+          <h2 className="text-black-900 text-[90px] font-bold ">
             Find yours
           </h2>
-          <div className="min-h-[110px]  z-[40]  h-auto w-full overflow-hidden  text-left flex items-center justify-start">
-            <AnimatePresence className="transform-gpu" mode="wait">
-              <AnimatedText text={heroStats[currentIndex]} />
-            </AnimatePresence>
+          <div className="min-h-[110px] z-[40]  h-auto w-full overflow-hidden  whitespace-nowrap  text-left flex items-center justify-start">
+            <AnimatedText />
           </div>
 
           <p className=" w-[60%] text-[16px] text-wrap text-black-900 my-[40px]">
@@ -109,20 +110,20 @@ const HeroSection = () => {
         </div>
 
         <div className="w-[50%] h-[740px] absolute right-0 top-0  ml-auto flex flex-row z-[1]  overflow-visible  ">
-          <div className=" w-auto  float-end  h-full  mt-auto ">
-            <div className="w-24 h-[40%] "></div>
+          <div className=" w-auto    h-full  mt-auto ">
+            <div className="w-12 h-[40%] "></div>
             <img src="/assets/hero/th3.svg" className="z-0 mb-4" alt="hey" />
             <img src="/assets/hero/o2.svg" alt="" className="z-0 " />
           </div>
-          <div className="mx-12 h-full my-auto  ">
+          <div className="mx-8 h-full my-auto  ">
             <div className="w-24 h-[40%] "></div>
             <img src="/assets/hero/tw1.svg" alt="" className="z-0 mt-auto" />
             <img src="/assets/hero/tw2.svg" alt="" className="z-0 my-6" />
             <img src="/assets/hero/tw3.svg" alt="" className="z-0" />
           </div>
-          <div className=" h-full my-auto  ">
+          <div className=" h-full my-auto   ">
             <div className="w-24 h-[10%] "></div>
-            <img src="/assets/hero/th1.svg" alt="" className="z-0 mt-auto" />
+            <img src="/assets/hero/th1.svg" alt="" className="z-0 mt-auto " />
             <img src="/assets/hero/th2.svg" alt="" className="z-0 my-6" />
             <img src="/assets/hero/th3.svg" alt="" className="z-0" />
           </div>

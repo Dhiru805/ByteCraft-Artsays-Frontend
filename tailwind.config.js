@@ -17,7 +17,7 @@ module.exports = {
         },
         black: {
           400: "#868686",
-          700:"#0A0A30",
+          700: "#0A0A30",
           900: "#1A1A1A",
         },
         base: "#FFFFFF",
@@ -37,6 +37,9 @@ module.exports = {
         base: "16px",
         lg: "18px",
         xl: "24px",
+      },
+      fontFamily: {
+        oswald: ["Oswald", "sans-serif"],
       },
     },
   },

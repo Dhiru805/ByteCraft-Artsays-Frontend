@@ -4,7 +4,7 @@ import { Product } from "./FeaturedProducts";
 const Deals = ({ deal }) => {
   return (
     // <div className="w-full bg-gray-100">
-      <div className="px-[80px] py-[20px]  max-w-[1440px] mx-auto">
+      <div className="px-[80px] py-[20px] pb-[80px]  max-w-[1440px] mx-auto">
         <h4 className="text-orange-200 font-semibold text-[40px] ">
          {deal.title}
         </h4>

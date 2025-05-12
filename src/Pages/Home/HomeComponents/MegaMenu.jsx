@@ -115,7 +115,7 @@ const SubCategories = () => {
 
 const MegaMenu = () => {
   return (
-    <div className=" z-[999] w-[95%] bg-gray-100  h-[500px] mx-auto md:w-[70%]  rounded-xl  flex flex-row gap-2 p-3 ">
+    <div className=" z-[999] w-full bg-gray-100  h-[500px] mx-auto  rounded-xl  flex flex-row gap-2 p-3 ">
       <MegaMenuCategories />
       <div className="rounded-2xl w-full bg-base  p-2 flex flex-row gap-2">
         <SubCategories />

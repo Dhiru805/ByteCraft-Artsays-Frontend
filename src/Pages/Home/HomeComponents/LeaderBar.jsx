@@ -12,14 +12,14 @@ const LeaderBar = () => {
           </button>
         </div>
         <div className="flex h-[256px] flex-col items-center justify-center gap-[20px] py-[42px] px-[30px] text-center shadow-md rounded-md ">
-          <h2 className="text-[30px] text-orange-200 font-bold ">Our Business Productions</h2>
+          <h2 className="text-[30px] text-orange-200 font-bold font-oswald ">Our Business Productions</h2>
           <h4 className="text-[16px] text-black font-normal">Use this paragraph to describe what you do. Add information that visitors may find interesting..</h4>
           <button className="border-2 font-semibold h-[38px]   w-[176px] px-1.5 py-1 border-orange-200  text-center  text-black-900  text-base text-[16px] rounded-[25px] ">
             Buy
           </button>
         </div>
         <div className="flex h-[256px] flex-col items-center justify-center gap-[20px] text-center py-[42px] px-[30px] shadow-md rounded-md ">
-          <h2 className="text-[30px] text-orange-200 font-bold text-center ">Our approach in Investment</h2>
+          <h2 className="text-[30px] text-orange-200 font-bold text-center  font-oswald">Our approach in Investment</h2>
           <h4 className="text-[16px] text-black font-normal">Use this paragraph to describe what you do. Add information that visitors may find interesting.</h4>
           <button className="border-2 h-[48px]   w-[176px] px-1.5 py-1 font-semibold   border-orange-200  text-center  text-black-900 text-[16px] rounded-[25px]">
             Resell

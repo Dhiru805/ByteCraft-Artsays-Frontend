@@ -3,8 +3,7 @@ import { Plus, Minus } from "lucide-react";
 import { useState } from "react";
 import clsx from "clsx";
 const faqscol1 = [
-
-    {
+  {
     question: "How does Idukki identify and curate UGC for my brand?",
     answer:
       "User-Generated Content (UGC) includes reviews, images, and videos created by your customers. This authentic content boosts trust, enhances engagement, and drives higher conversions for your brand.",
@@ -19,11 +18,9 @@ const faqscol1 = [
     answer:
       "User-Generated Content (UGC) includes reviews, images, and videos created by your customers. This authentic content boosts trust, enhances engagement, and drives higher conversions for your brand.",
   },
-
-
 ];
 
-const faqscol2=[
+const faqscol2 = [
   {
     question: "What is User-Generated Content (UGC)?",
     answer:
@@ -35,13 +32,13 @@ const faqscol2=[
     answer:
       "User-Generated Content (UGC) includes reviews, images, and videos created by your customers. This authentic content boosts trust, enhances engagement, and drives higher conversions for your brand.",
   },
-    {
+  {
     question:
       "Is it possible widget into my existing marketing workflows and tech stack?",
     answer:
       "User-Generated Content (UGC) includes reviews, images, and videos created by your customers. This authentic content boosts trust, enhances engagement, and drives higher conversions for your brand.",
-  }
-]
+  },
+];
 
 function FAQItem({ faq, index }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -58,12 +55,12 @@ function FAQItem({ faq, index }) {
         </p>
         <span
           className={clsx(
-            isOpen && "bg-orange-200 text-base",
+            isOpen && "bg-orange-200  text-base",
             "text-2xl text-orange-200 bg-[#F7F7FF] w-[42px] h-[42px] flex items-center justify-center rounded-[8px] font-bold transition-transform duration-200"
           )}
         >
           {isOpen ? (
-            <Minus className="mx-auto animate" />
+            <Minus className="mx-auto animate" color="white" />
           ) : (
             <Plus className="mx-auto" />
           )}
