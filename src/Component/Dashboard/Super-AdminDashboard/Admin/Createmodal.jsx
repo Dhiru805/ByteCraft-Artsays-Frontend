@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import postAPI from "../../../../api/postAPI";
 
 const CreateAdminModal = ({ onClose, fetchAdmins }) => {
   const [formData, setFormData] = useState({
@@ -14,6 +14,7 @@ const CreateAdminModal = ({ onClose, fetchAdmins }) => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading]=useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,6 +27,7 @@ const CreateAdminModal = ({ onClose, fetchAdmins }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
     
     for (const key in formData) {
       if (!formData[key]) {
@@ -45,13 +47,15 @@ const CreateAdminModal = ({ onClose, fetchAdmins }) => {
     }
     
     try {
-      const response = await axios.post("http://localhost:3001/auth/createuser", formData);
+      const response = await postAPI("/auth/createuser", formData);
       toast.success(response.data.message);
       fetchAdmins();
       onClose();
     } catch (error) {
       console.error("Error response:", error);
       toast.error(error.response?.data?.message || "An unexpected error occurred");
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -119,8 +123,11 @@ const CreateAdminModal = ({ onClose, fetchAdmins }) => {
                 <button type="button" className="btn btn-secondary" onClick={onClose}>
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary">
-                  Create Admin
+                <button 
+                type="submit" 
+                className="btn btn-primary"
+                disabled={loading}>
+                 {loading?"Creating.....":"Create Admin"} 
                 </button>
               </div>
             </form>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom'; 
+import { useLocation, useNavigate } from 'react-router-dom'; 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Preferences from './Preferences/Pereferences';
@@ -49,7 +49,9 @@ const ViewAdminProfileForm = () => {
         });
 
         const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-        const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : 'DashboardAssets/assets/images/user.png';
+        const profilePhotoUrl = result.data.user.profilePhoto 
+        ? `${BASE_URL}${result.data.user.profilePhoto}` 
+        : '/DashboardAssets/assets/images/user.png';      
         setPreviewImage(profilePhotoUrl);
       }
     } catch (error) {

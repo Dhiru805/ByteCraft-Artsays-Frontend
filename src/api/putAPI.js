@@ -15,17 +15,20 @@ async function putAPI(url, payload, config = {}, isPrivate = true) {
           : { "Content-Type": "application/json" }),
         ...config.headers,
       },
+      validateStatus: function (status) {
+        return status >= 200 && status < 300;
+      },
     };
 
     const response = await axiosInstance.put(url, payload, requestConfig);
 
-    if (response.status === 200 || response.status === 201) {
+ 
       return {
         message: response.data.message,
         hasError: response.data.hasError,
         data: response.data,
       };
-    }
+   
   } catch (error) {
     console.error("Error during PUT API request:", error);
     throw error;

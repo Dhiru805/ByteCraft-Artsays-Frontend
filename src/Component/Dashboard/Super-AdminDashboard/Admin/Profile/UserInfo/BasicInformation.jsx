@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Companyinfo from "../UserInfo/CompanyInfo"
 
 
-const Settings = ({ userId, profileData, previewImage, handleImageUpload, handleChange, handleAddressChange, handleSubmit, passwordData, handlePasswordChange }) => {
+const Settings = ({ userId, profileData, previewImage, handleImageUpload, handleChange,loading, handleSubmit, passwordData, handlePasswordChange }) => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -186,7 +186,13 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
             </div>
           </div>
         </div>
-        <button type="button" className="btn btn-primary mx-2" onClick={handleSubmit}>Update</button>
+        <button 
+        type="button" 
+        className="btn btn-primary mx-2" 
+        onClick={handleSubmit}
+        disabled={loading}>
+          {loading?"Updating.....":"Update"}
+          </button>
       </div>
     
       <Companyinfo

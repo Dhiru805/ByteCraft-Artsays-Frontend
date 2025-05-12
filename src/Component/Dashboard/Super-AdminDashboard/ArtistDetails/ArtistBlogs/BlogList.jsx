@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; 
 import getAPI from "../../../../../api/getAPI";
-import ConfirmationDialog from "../../ConfirmationDialog";
-import useUserType from '../../urlconfig';
+import ConfirmationDialog from "../../../ConfirmationDialog";
+import useUserType from '../../../urlconfig';
 
 function BlogList() {
   const [blogs, setBlogs] = useState([]);
@@ -10,10 +10,11 @@ function BlogList() {
   const [selectedBlogToDelete, setSelectedBlogToDelete] = useState(null);
   const navigate = useNavigate();
   const userType = useUserType(); 
+  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   const fetchBlog = async () => {
     try {
-      const result = await getAPI("http://localhost:3001/Blog-Post/statusapproved-blogs", {}, true, false);
+      const result = await getAPI("/Blog-Post/statusapproved-blogs", {}, true, false);
       if (result.data) {
         setBlogs(result.data.blogs);
       }
@@ -81,7 +82,7 @@ function BlogList() {
                         style={{ objectFit: "cover" }}
                         src={
                           blog.blogImage
-                            ? `http://localhost:3001/${blog.blogImage.replace(/\\/g, "/")}`
+                            ? `${BASE_URL}/${blog.blogImage.replace(/\\/g, "/")}`
                             : "/placeholder.jpg"
                         }
                         alt={blog.blogName}
@@ -107,22 +108,26 @@ function BlogList() {
                       <button
                         type="button"
                         className="btn btn-outline-secondary mx-2"
-                        onClick={() => navigate(`/${userType}/Dashboard/artistblogs/blogs/${blog._id}`)}
+                      onClick={() =>
+                          navigate(`/super-admin/artist/blogs/blog-details/${blog.slug}`, {
+                            state: { blogData: blog }
+                          })
+                        }
                       >
                         Continue Reading
                       </button>
-                      <button
+                      {/* <button
                         className="btn btn-outline-danger mx-2"
                         onClick={() => openDeleteDialog(blog)}
                       >
                         Delete
-                      </button>
-                      <button
+                      </button> */}
+                      {/* <button
                         className="btn btn-outline-dark"
                         onClick={() => navigate(`/${userType}/Dashboard/artistblogs/updateblog/${blog._id}`, { state: { blog } })}
                       >
                         Update
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 </div>

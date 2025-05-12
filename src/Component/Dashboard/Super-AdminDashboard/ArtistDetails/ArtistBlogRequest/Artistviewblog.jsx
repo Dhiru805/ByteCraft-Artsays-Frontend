@@ -1,26 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';  
+import { useNavigate, useLocation } from 'react-router-dom';
 import getAPI from '../../../../../api/getAPI';
-// import UpdateModal from "./../ArtistBlog/UpdateBlogList";
 import { Link } from 'react-router-dom';
-import ConfirmationDialog from '../../ConfirmationDialog';
-import useUserType from '../../urlconfig';
+import ConfirmationDialog from '../../../ConfirmationDialog';
 
-function BlogDetails() {
-  const { blogId } = useParams();
+
+function ViewDetails() {
+  const location = useLocation();
+  const { blog } = location.state || {};
   const [blogs, setBlogs] = useState(null);
-  const [selectedBlog, setSelectedBlog] = useState(null);
-  const [showModal, setShowModal] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedBlogToDelete, setSelectedBlogToDelete] = useState(null);
-  const navigate = useNavigate();  
-  const userType = useUserType(); 
+  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const navigate = useNavigate();
+
 
   const fetchBlog = async () => {
     try {
-      const result = await getAPI(`http://localhost:3001/Blog-Post/getblogbyid/${blogId}`, {}, true, false);
+      const result = await getAPI(`/Blog-Post/getblogbyid/${blog._id}`, {}, true, false);
       if (result.data) {
-        setBlogs([result.data.blog]); 
+        setBlogs([result.data.blog]);
       }
     } catch (error) {
       console.error("Error fetching blog:", error);
@@ -31,12 +30,6 @@ function BlogDetails() {
     fetchBlog();
   }, []);
 
-  const handleUpdateClick = (blog) => {
-    setSelectedBlog(blog);
-    fetchBlog();
-    setShowModal(true);
-   
-  };
 
   const handleDeleteCancel = () => {
     setIsDeleteDialogOpen(false);
@@ -47,7 +40,7 @@ function BlogDetails() {
     setBlogs((prevBlogs) =>
       prevBlogs.filter((blog) => blog._id !== id)
     );
-    navigate('/Dashboard/artistblogrequest');
+    navigate('/super-admin/artist/blogrequest');
     setIsDeleteDialogOpen(false);
   };
 
@@ -61,12 +54,12 @@ function BlogDetails() {
       <div className="block-header">
         <div className="row">
           <div className="col-lg-6 col-md-6 col-sm-12">
-            <h2>View Artist Blog</h2>
+            <h2>View Blog</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item active"><a href="index.html"><i className="fa fa-dashboard"></i></a></li>
               <li className="breadcrumb-item active" >
-                <Link to={`/${userType}/Dashboard/artistblogrequest`}>Artist Blog Request</Link></li>
-              <li className="breadcrumb-item">View Artist Blog</li>
+                <Link to={`/super-admin/artist/blogrequest`}> Blog Request</Link></li>
+              <li className="breadcrumb-item">View Blog</li>
             </ul>
           </div>
         </div>
@@ -82,7 +75,7 @@ function BlogDetails() {
                     <div className="img-post" >
                       <img
                         className="d-block object-fit-cover"
-                        src={blog.blogImage ? `http://localhost:3001/${blog.blogImage.replace(/\\/g, "/")}` : "/placeholder.jpg"}
+                        src={blog.blogImage ? `${BASE_URL}/${blog.blogImage.replace(/\\/g, "/")}` : "/placeholder.jpg"}
                         alt={blog.blogName}
                       />
                     </div>
@@ -93,8 +86,8 @@ function BlogDetails() {
                         WebkitBoxOrient: "vertical",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
-                        WebkitLineClamp: 2, 
-                        maxHeight: "3em",   
+                        WebkitLineClamp: 2,
+                        maxHeight: "3em",
                       }}
                     >
                       {blog.blogDescription.replace(/<\/?[^>]+(>|$)/g, "")}
@@ -105,13 +98,22 @@ function BlogDetails() {
                       <button
                         type="button"
                         className="btn btn-outline-secondary mx-2"
-                        onClick={() => navigate(`/${userType}/Dashboard/artistblogrequest/viewblog/blogdetails/${blog._id}`)}
+                         onClick={() =>
+                          navigate(`/super-admin/artist/blogrequest/blog-details/${blog.slug}`, {
+                            state: { blogData: blog }
+                          })
+                        }
                       >
                         Continue Reading
                       </button>
                       <button
                         className="btn btn-outline-dark"
-                        onClick={() => handleUpdateClick(blog)}
+                        onClick={() =>
+                          navigate(`/super-admin/artist/blogrequest/update-blog`, {
+                            state: { blogData: blog }
+                          })
+                        }
+
                       >
                         Update
                       </button>
@@ -129,7 +131,7 @@ function BlogDetails() {
           ) : null}
         </div>
       </div>
-      
+
       {isDeleteDialogOpen && (
         <ConfirmationDialog
           onClose={handleDeleteCancel}
@@ -138,18 +140,9 @@ function BlogDetails() {
           onDeleted={handleDeleteConfirmed}
         />
       )}
-      
-      {/* {showModal && (
-        <UpdateModal
-          showModal={showModal}
-          setShowModal={setShowModal}
-          selectedBlog={selectedBlog}
-          setBlogs={setBlogs}
-          fetchBlog={fetchBlog}
-        />
-      )} */}
+
     </div>
   );
 }
 
-export default BlogDetails;
+export default ViewDetails;

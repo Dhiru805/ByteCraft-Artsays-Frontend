@@ -23,7 +23,7 @@
           path: "/super-admin/dashboard",
           subTabs: []
         },
-        ...(email === "akashbalodi11@gmail.com"
+        ...(email === "shantu131201@gmail.com"
           ? [
               {
                 label: "Admin",
@@ -38,12 +38,12 @@
             icon: "fa fa-paint-brush",
             path: `#artist-management`,
             subTabs: [
-              { label: "Management", path: `/super-admin/artistmanagement` },
+              { label: "Management", path: `/super-admin/artist/management` },
+              { label: "Blog Request", path: `/super-admin/artist/blogrequest` },
+              { label: "Blogs", path: `/super-admin/artistblogs` },
+              { label: "Product Request", path: `/super-admin/artistproductrequest` },
               { label: "Products", path: `/super-admin/allartistproduct` },
               { label: "Sold Product ", path: `/super-admin/artistsoldproduct` },
-              { label: "Blogs", path: `/super-admin/artistblogs` },
-              { label: "Blog Request", path: `/super-admin/artistblogrequest` },
-              { label: "Product Request", path: `/super-admin/artistproductrequest` },
               { label: "Transaction", path: `/super-admin/artisttransaction`},
               { label: "Packaging Material", path: `/super-admin/artistpackagingmaterial` },
             ]
@@ -79,10 +79,9 @@
             icon: "fa fa-gavel",
             path: `#Bidding`,
             subTabs: [
-              { label: "All Products", path: `/${userType}/Dashboard/allbiddingproduct` },
-              // { label: "Product Status", path: `/${userType}/Dashboard/biddingproductststus` },
-              { label: "Bidded Product", path: `/${userType}/Dashboard/biddedproduct` },
-              { label: "Transaction", path: `/${userType}/Dashboard/transactionbiddedprdouct` }
+              { label: "All Products", path: `/super-admin/bidding/allproduct` },
+              { label: "Bidded Product", path: `/super-admin/bidding/bidded-product` },
+              { label: "Transaction", path: `/super-admin/bidding/transaction` }
             ]
           },
     
@@ -112,8 +111,9 @@
             icon: "fa fa-cog", 
             path: `#Settings`,
             subTabs: [
-              { label: "Product Category", path: `/super-admin/productcategory`},
-              { label: "Blog Category", path: `/super-admin/blogcategory` },
+              { label: "Product Category", path: `/super-admin/settings/product-category`},
+              { label: "Blog Category", path: `/super-admin/settings/blog-category` },
+              { label: "Email Setting", path: `/super-admin/settings/email-setting` },
             ]
           } 
       ],
@@ -123,6 +123,12 @@
           label: "Dashboard",
           icon: "fa-dashboard",
           path: "/artist/dashboard",
+          subTabs: []
+        },
+        {
+          label: "Blogs",
+          icon: "fa fa-newspaper",
+          path: "/artist/bloglist",
           subTabs: []
         },
       ],

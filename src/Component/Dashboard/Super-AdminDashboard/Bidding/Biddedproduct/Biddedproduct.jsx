@@ -1,12 +1,9 @@
 import React from 'react';
-import useUserType from '../../urlconfig';
 import ProductBiddedAdmin from "./Biddedproductadmin"
-import ProductBiddedBuyer from "./Biddedproductbuyer"
+
 
 
 const BiddedProduct = () => {
-
-const userType = useUserType();
 
     return (
         <div className="container-fluid">
@@ -25,14 +22,7 @@ const userType = useUserType();
                     </div>
                 </div>
             </div>
-            {userType === "Super-Admin" && (
             <ProductBiddedAdmin  />
-            )}
-           
-            {userType === "Buyer" && (
-              <ProductBiddedBuyer/>
-            )}
-           
         </div>
     );
 };

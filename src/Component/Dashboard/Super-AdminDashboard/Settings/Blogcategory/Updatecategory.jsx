@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import putAPI from "../../../../../api/putAPI";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const CategoryModal = ({ onClose, refreshCategories, selectedCategory }) => {
   const [categoryName, setCategoryName] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (selectedCategory) {
@@ -20,8 +21,10 @@ const CategoryModal = ({ onClose, refreshCategories, selectedCategory }) => {
       return;
     }
 
+    setLoading(true);
+
     try {
-      const response = await axios.put(`http://localhost:3001/api/updateblogcategory/${selectedCategory._id}`, {
+      const response = await putAPI(`/api/updateblogcategory/${selectedCategory._id}`, {
         name: categoryName,
       });
 
@@ -30,6 +33,8 @@ const CategoryModal = ({ onClose, refreshCategories, selectedCategory }) => {
       onClose();
     } catch (error) {
       toast.error(error.response?.data?.error || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,8 +89,12 @@ const CategoryModal = ({ onClose, refreshCategories, selectedCategory }) => {
               <button type="button" className="btn btn-secondary" onClick={onClose}>
                 Cancel
               </button>
-              <button type="submit" className="btn btn-primary">
-                Update Category
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={loading}
+              >
+                {loading ? "Updating..." : "Update Category"}
               </button>
             </div>
           </form>

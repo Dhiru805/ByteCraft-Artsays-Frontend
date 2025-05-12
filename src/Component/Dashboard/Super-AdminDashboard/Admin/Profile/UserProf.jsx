@@ -14,8 +14,9 @@ const AdminUserProfileForm = () => {
   const adminData = location.state?.admin; 
 
   const navigate = useNavigate(); 
+  const [loading, setLoading]=useState(false)
   const [imageFile, setImageFile] = useState(null);
-  const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
+  const [previewImage, setPreviewImage] = useState('/DashboardAssets/assets/images/user.png');
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -57,7 +58,7 @@ const AdminUserProfileForm = () => {
         });
 
         const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-        const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : 'DashboardAssets/assets/images/user.png';
+        const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : '/DashboardAssets/assets/images/user.png';
         setPreviewImage(profilePhotoUrl);
       }
     } catch (error) {
@@ -132,6 +133,7 @@ const AdminUserProfileForm = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
   
     try {
       const formData = new FormData();
@@ -170,6 +172,8 @@ const AdminUserProfileForm = () => {
     } catch (error) {
       const errorMessage = error.response ? error.response.message : 'Error updating profile. Please try again.';
       toast.error(errorMessage); 
+    }finally{
+      setLoading(false)
     }
   };
   
@@ -235,6 +239,7 @@ const AdminUserProfileForm = () => {
                     handleSubmit={handleSubmit}
                     passwordData={passwordData}
                     handlePasswordChange={handlePasswordChange}
+                    loading={loading}
                   />
                 </div>
               ))}

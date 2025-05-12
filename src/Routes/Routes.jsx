@@ -2,175 +2,233 @@ import React from "react";
 import {
   Routes,
   Route,
-  Navigate
+  Navigate,
+  Outlet,
+  useLocation
 } from "react-router-dom";
+import WebsiteLayout from "../Layouts/WebsiteLayout";
+import { useAuth } from '../AuthContext';
 
+//----------------------------------------Auth Pages------------------------------------------//
 import Login from "../Pages/Login/Login";
 import Register from "../Pages/Register/Register";
 import ArtistSellerRegister from "../Pages/Register/ArtistSellerRegister";
 import ForgotPassword from "../Pages/Login/Forgotpassword";
-import PagenotFound404 from "../Pages/404Error/404Error";
 
-//----------------------------------------UserProfile---------------------------------------------------------------------//
-import SuperAdminProfile from "../Component/Dashboard/UserProfile/UserInfo" ; 
-import ArtistProfile from "../Component/Dashboard/UserProfile/UserInfo"; 
-import BuyerProfile from "../Component/Dashboard/UserProfile/UserInfo";
-import SellerProfile from "../Component/Dashboard/UserProfile/UserInfo"
+//----------------------------------------Error Pages-----------------------------------------//
+import PagenotFound404 from "../Pages/Error/404Error";
+import UnauthorizedAccess from "../Pages/Error/403Error";
 
+//----------------------------------------WebsiteRoutes-----------------------------------------//
+import WebsiteMain from "../Pages/Home/Home";
 
-//-----------------------------------------Dashboard----------------------------------------------------------------------//
-import SuperAdminDashboardMain from "../Component/Dashboard/Super-AdminDashboard/MainDashboard";
-import ArtistDashboardMain from "../Component/Dashboard/ArtistDashbooard/MainDashboard";
-import BuyerDashboardMain from "../Component/Dashboard/BuyerDashboard/MainDashboard";
-import SellerDashboardMain from "../Component/Dashboard/SellerDashboard/MainDashboard";
+//----------------------------------------User Profile---------------------------------------//
+import UserProfile from "../Component/Dashboard/UserProfile/UserInfo";
 
-//----------------------------------------Super-Admin-------------------------------------------------------------------//
+//----------------------------------------Dashboard Layouts-----------------------------------//
+import SuperAdminLayout from "../Component/Dashboard/Super-AdminDashboard/MainDashboard";
+import ArtistLayout from "../Component/Dashboard/ArtistDashbooard/MainDashboard";
+import BuyerLayout from "../Component/Dashboard/BuyerDashboard/MainDashboard";
+import SellerLayout from "../Component/Dashboard/SellerDashboard/MainDashboard";
+
+//----------------------------------------Super-Admin Components-----------------------------//
 import SuperAdminDashboard from "../Component/Dashboard/Super-AdminDashboard/Dashboard/MainContent";
-                            //-----------------Admin-------------------//
+              //-----------------------------Admin--------------------------//
 import Admin from "../Component/Dashboard/Super-AdminDashboard/Admin/Admin";
 import AdminProfile from "../Component/Dashboard/Super-AdminDashboard/Admin/Profile/UserProf";
+              //-----------------------------Artist--------------------------//
 import AdminViewProfile from "../Component/Dashboard/Super-AdminDashboard/Admin/ViewProfile/UserProf";
-
-                               //-----------------Artist Management-------------------//
 import ArtistManagement from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistManageTable";
+import BlogRequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogRequest/BlogRequestTable";
+import BlogRequestView from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogRequest/Artistviewblog";
+import BlogRequestUpdate from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogRequest/UpdateBlogList";
+import BlogRequestDetails from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogRequest/Artistblogdetails";
+import ApprovedBlogs from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogs/BlogList";
+import ApprovedBlogsDetails from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogs/ArtistBlogDetails";
+                 //-----------------------------Bidding--------------------------//
+import AllBiddingProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/AllProduct/BiddingProduct";
+import BiddedProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddedproduct/Biddedproduct";
+import BiddedProductTransaction from "../Component/Dashboard/Super-AdminDashboard/Bidding/Transaction/BiddedproductTransaction"
+                 //-----------------------------Settings--------------------------//
+import EmailSettings from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailSetting/EmailSetting";
+import BlogCategory from "../Component/Dashboard/Super-AdminDashboard/Settings/Blogcategory/Category";
+import ProductCategory from "../Component/Dashboard/Super-AdminDashboard/Settings/Productcategory/Category";
 
-//----------------------------------------Artist-------------------------------------------------------------------//
+//----------------------------------------Artist Components----------------------------------//
 import ArtistDashboard from "../Component/Dashboard/ArtistDashbooard/Dashboard/MainContent";
+              //-----------------------------Blogs--------------------------//
+import BlogList from "../Component/Dashboard/ArtistDashbooard/Blog/BlogList";
+import BlogPost from "../Component/Dashboard/ArtistDashbooard/Blog/BlogPost";
+import UpdateBlog from "../Component/Dashboard/ArtistDashbooard/Blog/UpdateBlogList";
+import BlogDetails from "../Component/Dashboard/ArtistDashbooard/Blog/ArtistBlogDetails";
 
-//----------------------------------------Buyer-------------------------------------------------------------------//
+//----------------------------------------Buyer Components-----------------------------------//
 import BuyerDashboard from "../Component/Dashboard/BuyerDashboard/Dashboard/MainContent";
 
-//----------------------------------------Seller-------------------------------------------------------------------//
+//----------------------------------------Seller Components----------------------------------//
 import SellerDashboard from "../Component/Dashboard/SellerDashboard/Dashboard/MainContent";
-import Home from "../Pages/Home/Home";
 
-const PrivateRoute = ({ children }) => {
-  const isAuthenticated = !!localStorage.getItem("token");
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
+// Route Protection Components
+const PrivateRoute = ({ allowedRoles, children }) => {
+  const { isAuthenticated, userType } = useAuth();
+  const location = useLocation();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(userType)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  return children ? children : <Outlet />;
 };
 
 const PublicRoute = ({ children }) => {
-  const isAuthenticated = !!localStorage.getItem("token");
-  return !isAuthenticated ? children : <Navigate to="/" replace />;
+  const { isAuthenticated } = useAuth();
+  const location = useLocation();
+
+  // Only redirect auth pages if authenticated
+  const authPages = ['/login', '/register', '/artist-seller-register', '/forgotpassword'];
+  if (isAuthenticated && authPages.includes(location.pathname)) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children ? children : <Outlet />;
 };
 
 const AppRoutes = () => {
+  const { isAuthenticated, userType } = useAuth();
+
   return (
     <Routes>
-      {/* Public Routes */}
+      {/* -------------------------------------------Public Routes------------------------------------------------- */}
+      <Route element={<PublicRoute />}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/artist-seller-register" element={<ArtistSellerRegister />} />
+        <Route path="/forgotpassword" element={<ForgotPassword />} />
+      </Route>
 
-
-      <Route
-        path="/home"
-        element={
-          <PublicRoute>
-            <Home />
-          </PublicRoute>
-        }
-      />
-      <Route
-        path="/login"
-        element={
-          <PublicRoute>
-            <Login />
-          </PublicRoute>
-        }
-      />
-      <Route
-        path="/forgotpassword"
-        element={
-          <PublicRoute>
-            <ForgotPassword />
-          </PublicRoute>
-        }
-      />
-      <Route
-        path="/register"
-        element={
-          <PublicRoute>
-            <Register />
-          </PublicRoute>
-        }
-      />
-      <Route
-        path="/artist-seller-register"
-        element={
-          <PublicRoute>
-            <ArtistSellerRegister />
-          </PublicRoute>
-        }
-      />
-
-      {/*--------------------------------- Super Admin------------------------------------------------- */}
+      {/*-------------------------------------------Super Admin Routes--------------------------------------------- */}
       <Route
         path="/super-admin"
         element={
-          <PrivateRoute>
-            <SuperAdminDashboardMain  />
+          <PrivateRoute allowedRoles={["Super-Admin"]}>
+            <SuperAdminLayout />
           </PrivateRoute>
         }
-      >       
-        <Route index element={<Login />} />
-        <Route path="dashboard"element={<SuperAdminDashboard/>}/>
-        <Route path="profile"element={<SuperAdminProfile/>}/>
-        
-                    {/*--------------------Admin----------------------------- */}
-           <Route path="admin"element={<Admin/>}/>
-           <Route path="admin/editprofile"element={<AdminProfile/>}/>
-           <Route path="admin/viewprofile"element={< AdminViewProfile/>}/>
+      >
+        <Route index element={<SuperAdminDashboard />} />
+        <Route path="dashboard" element={<SuperAdminDashboard />} />
+        <Route path="profile" element={<UserProfile />} />
 
-             {/*--------------------Artist management----------------------------- */}
-           
-           <Route path="artistmanagement"element={< ArtistManagement/>}/>
-       
-         
-       
+        {/* Admin Management */}
+        <Route path="admin" element={<Admin />} />
+        <Route path="admin/editprofile" element={<AdminProfile />} />
+        <Route path="admin/viewprofile" element={<AdminViewProfile />} />
+
+        {/* Artist Management */}
+        <Route path="artist/management" element={<ArtistManagement />} />
+        <Route path="artist/blogrequest" element={<BlogRequest />} />
+        <Route path="artist/blogrequest/view-Blog" element={<BlogRequestView />} />
+        <Route path="artist/blogrequest/update-blog" element={<BlogRequestUpdate />} />
+        <Route path="artist/blogrequest/blog-details/:slug" element={<BlogRequestDetails/>} />
+        <Route path="artist/blogs" element={<ApprovedBlogs/>} />
+        <Route path="artist/blogs/blog-details/:slug" element={<ApprovedBlogsDetails/>} />
+      
+        {/* Bidding Management */}
+        <Route path="bidding/allproduct" element={<AllBiddingProduct />} />
+        <Route path="bidding/bidded-product" element={<BiddedProduct />} />
+        <Route path="bidding/transaction" element={<BiddedProductTransaction />} />
+
+        {/* Settings */}
+        <Route path="settings/email-setting" element={<EmailSettings />} />
+        <Route path="settings/blog-category" element={<BlogCategory />} />
+        <Route path="settings/product-category" element={<ProductCategory />} />
       </Route>
 
-    {/*---------------------------------Artist------------------------------------------------- */}
+      {/*-------------------------------------------- Artist Routes-------------------------------------------------- */}
       <Route
         path="/artist"
         element={
-          <PrivateRoute>
-            <ArtistDashboardMain />
+          <PrivateRoute allowedRoles={["Artist"]}>
+            <ArtistLayout />
           </PrivateRoute>
         }
       >
-      <Route index element={<Login />} />
-      <Route path="dashboard"element={<ArtistDashboard/>}/>
-      <Route path="profile"element={<ArtistProfile/>}/>
+        <Route index element={<ArtistDashboard />} />
+        <Route path="dashboard" element={<ArtistDashboard />} />
+        <Route path="profile" element={<UserProfile />} />
+
+        {/*Blogs*/}
+        <Route path="bloglist" element={<BlogList/>} />
+        <Route path="bloglist/create-blog" element={<BlogPost/>} />
+        <Route path="bloglist/update-blog" element={<UpdateBlog/>} />
+        <Route path="bloglist/blog-details/:slug" element={<BlogDetails/>}/>
       </Route>
 
-    {/*---------------------------------Buyer------------------------------------------------- */}
-       <Route
+      {/* --------------------------------------------Buyer Routes---------------------------------------------------- */}
+      <Route
         path="/buyer"
         element={
-          <PrivateRoute>
-            <BuyerDashboardMain/>
+          <PrivateRoute allowedRoles={["Buyer"]}>
+            <BuyerLayout />
           </PrivateRoute>
         }
       >
-      <Route index element={<Login />} />
-      <Route path="dashboard"element={<BuyerDashboard/>}/>
-      <Route path="profile"element={<BuyerProfile/>}/>
-      </Route>
-    
-    {/*---------------------------------Seller------------------------------------------------- */}
-       <Route
-        path="/seller"
-        element={
-          <PrivateRoute>
-            <SellerDashboardMain/>
-          </PrivateRoute>
-        }
-      >
-      <Route index element={<Login />} />
-      <Route path="dashboard"element={<SellerDashboard/>}/>
-      <Route path="profile"element={<SellerProfile/>}/>
+        <Route index element={<BuyerDashboard />} />
+        <Route path="dashboard" element={<BuyerDashboard />} />
+        <Route path="profile" element={<UserProfile />} />
       </Route>
 
-      <Route path="*" element={<PagenotFound404 />} />
-    
+      {/*-------------------------------------------------- Seller Routes -----------------------------------------------*/}
+      <Route
+        path="/seller"
+        element={
+          <PrivateRoute allowedRoles={["Seller"]}>
+            <SellerLayout />
+          </PrivateRoute>
+        }
+      >
+        <Route index element={<SellerDashboard />} />
+        <Route path="dashboard" element={<SellerDashboard />} />
+        <Route path="profile" element={<UserProfile />} />
+      </Route>
+
+      {/*-------------------------------------------- Website Routes-------------------------------------------------- */}
+
+      
+<Route path="/" element={<WebsiteLayout />}>
+  <Route index element={<WebsiteMain />} />
+</Route>
+
+      {/*-------------------------------------------- Root Route - Auto Redirect----------------------------------------- */}
+      <Route
+        index
+        element={
+          isAuthenticated ? (
+            userType === "Super-Admin" ? (
+              <Navigate to="/super-admin/dashboard" replace />
+            ) : userType === "Artist" ? (
+              <Navigate to="/artist/dashboard" replace />
+            ) : userType === "Buyer" ? (
+              <Navigate to="/buyer/dashboard" replace />
+            ) : userType === "Seller" ? (
+              <Navigate to="/seller/dashboard" replace />
+            ) : (
+              <WebsiteMain />
+            )
+          ) : (
+            <WebsiteMain />
+          )
+        }
+      />
+
+      {/*----------------------------------------- Error Routes-------------------------------------------------------- */}
+      <Route path="/404" element={<PagenotFound404 />} />
+      <Route path="/unauthorized" element={<UnauthorizedAccess/>} />
+      <Route path="*" element={<Navigate to="/404" replace />} />
     </Routes>
   );
 };

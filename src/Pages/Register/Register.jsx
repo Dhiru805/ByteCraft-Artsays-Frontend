@@ -4,7 +4,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../Login/LoginStyles.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import axios from 'axios';
+import postAPI from '../../api/postAPI';
 
 
 const Register = () => {
@@ -17,10 +17,11 @@ const Register = () => {
     userType: 'Buyer',
     role: 'buyer'
   });
-  
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -46,7 +47,8 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    setLoading(true);
+
     const requiredFields = ['firstName', 'lastName', 'emailOrPhone', 'password', 'confirmPassword'];
     for (const field of requiredFields) {
       if (!formData[field]) {
@@ -54,14 +56,14 @@ const Register = () => {
         return;
       }
     }
-    
+
     const isEmail = isValidEmail(formData.emailOrPhone);
-      const isPhone = isValidPhone(formData.emailOrPhone);
-  
-      if (!isEmail && !isPhone) {
-        toast.error("Please enter a valid email or phone number (10 digits with optional +91)");
-        return;
-      }
+    const isPhone = isValidPhone(formData.emailOrPhone);
+
+    if (!isEmail && !isPhone) {
+      toast.error("Please enter a valid email or phone number (10 digits with optional +91)");
+      return;
+    }
 
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords don't match!");
@@ -84,17 +86,19 @@ const Register = () => {
         userType: formData.userType,
         role: formData.role
       };
-      delete payload.emailOrPhone; 
+      delete payload.emailOrPhone;
 
-      const response = await axios.post('http://localhost:3001/auth/createuser', payload);
-      
-         toast.success(response.data.message);
+      const response = await postAPI('/auth/createuser', payload);
+
+      toast.success(response.data.message);
       setTimeout(() => {
         navigate('/login');
       }, 1000);
     } catch (error) {
       console.error('Registration error:', error);
       toast.error(error.response?.data?.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -129,7 +133,7 @@ const Register = () => {
         </div>
 
         <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5">
-        <h2 className="fw-bold mb-4 mb-md-3 text-dark fs-3 fs-md-1 text-center">Sign up for an Account</h2>
+          <h2 className="fw-bold mb-4 mb-md-3 text-dark fs-3 fs-md-1 text-center">Sign up for an Account</h2>
           <p className="mb-3 mb-md-4 text-dark text-center"
             style={{
               fontSize: '20px',
@@ -160,7 +164,7 @@ const Register = () => {
                     id="firstName"
                     required
                     value={formData.firstName}
-                    onChange={handleChange}                  
+                    onChange={handleChange}
                     style={{ height: '48px', border: "1px solid #6b4f36", fontSize: "16px", color: "black" }}
                   />
                 </div>
@@ -183,7 +187,7 @@ const Register = () => {
                     id="lastName"
                     required
                     value={formData.lastName}
-                    onChange={handleChange}                 
+                    onChange={handleChange}
                     style={{ height: '48px', border: "1px solid #6b4f36", fontSize: "16px", color: "black" }}
                   />
                 </div>
@@ -191,7 +195,7 @@ const Register = () => {
             </div>
 
             <div className="mb-3 position-relative">
-            <label htmlFor="emailOrPhone" className="form-label position-absolute text-dark px-2" style={{
+              <label htmlFor="emailOrPhone" className="form-label position-absolute text-dark px-2" style={{
                 top: '-12px',
                 left: '15px',
                 fontStyle: 'italic',
@@ -204,10 +208,10 @@ const Register = () => {
               <input
                 type="text"
                 className="form-control"
-                id="emailOrPhone"  
+                id="emailOrPhone"
                 required
                 value={formData.emailOrPhone}
-                onChange={handleChange}   
+                onChange={handleChange}
                 style={{
                   height: '48px',
                   border: "1px solid #6b4f36",
@@ -220,7 +224,7 @@ const Register = () => {
             </div>
 
 
-        
+
             <div className="row mb-3">
               <div className="col-md-6 mb-3 mb-md-0">
                 <div className="position-relative">
@@ -241,7 +245,7 @@ const Register = () => {
                       id="password"
                       required
                       value={formData.password}
-                      onChange={handleChange}    
+                      onChange={handleChange}
                       style={{
                         height: '48px',
                         border: "1px solid #6b4f36",
@@ -289,7 +293,7 @@ const Register = () => {
                       className="form-control"
                       id="confirmPassword"
                       required
-                      value={formData.confirmPassword} 
+                      value={formData.confirmPassword}
                       onChange={handleChange}
                       style={{
                         height: '48px',
@@ -329,6 +333,7 @@ const Register = () => {
                   type="checkbox"
                   id="acceptTerms"
                   checked={acceptTerms}
+                  required
                   onChange={(e) => setAcceptTerms(e.target.checked)}
                   style={{
                     width: '16px',
@@ -356,8 +361,9 @@ const Register = () => {
                 transition: 'all 0.3s ease',
                 fontStyle: 'italic'
               }}
+              disabled={loading}
             >
-              Sign up
+                {loading ? 'Creating account...' : 'Sign up'}
             </button>
           </form>
           <div className="d-flex justify-content-center align-items-center my-3 w-100">
@@ -382,7 +388,7 @@ const Register = () => {
             }}
 
           >
-         Register to Become an Artist or Seller
+            Register to Become an Artist or Seller
           </Link>
         </div>
         <div className="d-block d-md-none">

@@ -1,29 +1,36 @@
 import React, { useState } from "react";
-import axios from "axios";
+import postAPI from "../../../../../api/postAPI";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const CreateCategoryModal = ({ onClose, refreshCategories }) => {
   const [categoryName, setCategoryName] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!categoryName.trim()) {
       toast.error("Blog Category Name is required");
       return;
     }
 
-    try {
-      const response = await axios.post("http://localhost:3001/api/createblogcategory", {
-        name: categoryName,
-      });
+    const payload = {
+      name: categoryName,
+    };
 
-      toast.success(response.data.message);
+    setLoading(true);
+
+    try {
+      const response = await postAPI("/api/createblogcategory", payload, {}, true);
+      toast.success(response.message);
       refreshCategories();
-      onClose(); 
+      onClose();
     } catch (error) {
+      console.error("API Error:", error);
       toast.error(error.response?.data?.error || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -78,8 +85,12 @@ const CreateCategoryModal = ({ onClose, refreshCategories }) => {
               <button type="button" className="btn btn-secondary" onClick={onClose}>
                 Cancel
               </button>
-              <button type="submit" className="btn btn-primary">
-                Add Category
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={loading}
+              >
+                {loading ? "Adding..." : "Add Category"}
               </button>
             </div>
           </form>

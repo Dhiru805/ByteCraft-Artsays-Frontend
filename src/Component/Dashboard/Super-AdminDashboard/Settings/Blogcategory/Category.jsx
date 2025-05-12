@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import getAPI from "../../../../../api/getAPI";
 import Categorytable from "./Categotytable";
 import CreateCategoryModal from "./Createcategory";
 
@@ -9,13 +9,12 @@ const BlogCategory = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get("http://localhost:3001/api/getblogcategory");
+            const response = await getAPI("/api/getblogcategory");
             setCategories(response.data);
         } catch (error) {
             console.error("Error fetching categories:", error);
         }
     };
-
     useEffect(() => {
         fetchCategories();
     }, []);
@@ -55,7 +54,6 @@ const BlogCategory = () => {
                 categories={categories}
                 refreshCategories={fetchCategories}
             />
-
             {showModal && <CreateCategoryModal onClose={() => setShowModal(false)} refreshCategories={fetchCategories} />}
         </div>
     );

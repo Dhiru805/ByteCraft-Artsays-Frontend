@@ -2,13 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { handleLogout } from "../LogoutConfirmation";
 import useUserType from '../urlconfig';
+import { useAuth } from '../../../AuthContext';
 
 const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, HandletoggleDropdown}) => {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const userType = useUserType(); 
-
-  
+  const BASE_URL=process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const { logout } = useAuth();
 
 
   useEffect(() => {
@@ -49,7 +50,7 @@ const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, Handletoggle
     {
       label: "Logout",
       icon: "bi-power",
-      action: () => handleLogout(navigate),
+      action: () => handleLogout(navigate,logout),
     },
   ];
 
@@ -79,18 +80,19 @@ const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, Handletoggle
       </button>
       <div className="sidebar-scroll">
         <div className="user-account">
-          {user && user.profilePhoto && (
+          {/* {user && user.profilePhoto && ( */}
             <img
-            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}?${Date.now()}`} 
-              className="rounded-circle user-photo"
-              alt="User Profile Picture"
-              style={{
-                width: '50px',
-                height: '50px',
-                objectFit: 'cover',
-              }}
-            />
-          )}
+            src={user.profilePhoto ? `${BASE_URL}${user.profilePhoto}` : '/DashboardAssets/assets/images/user.png'}
+            className="rounded-circle user-photo"
+            alt="User Profile Picture"
+            style={{
+              width: '50px',
+              height: '50px',
+              objectFit: 'cover',
+            }}
+          />
+          
+          {/* )} */}
           <div className="dropdown" ref={dropdownRef}>
             <span>Welcome,</span>
             {user ? (

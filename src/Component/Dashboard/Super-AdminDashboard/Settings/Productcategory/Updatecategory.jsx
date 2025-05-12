@@ -4,30 +4,24 @@ import putAPI from "../../../../../api/putAPI";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const EditSubCategoryModal = ({ 
-  isOpen, 
-  onClose, 
-  subCategory, 
-  fetchSubCategoryData 
+const EditSubCategoryModal = ({
+  isOpen,
+  onClose,
+  subCategory,
+  fetchSubCategoryData
 }) => {
   const [mainCategories, setMainCategories] = useState([]);
   const [categories, setCategories] = useState([]);
   const [mainCategoryId, setMainCategoryId] = useState("");
   const [categoryId, setCategoryId] = useState("");
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     subCategoryName: "",
     categoryId: "",
     mainCategoryId: "",
   });
 
-  // Fetch main categories when modal opens
-  
 
-  // Populate form when subCategory changes
- 
-
-
-  // Fetch main categories on mount
   useEffect(() => {
     const fetchMainCategories = async () => {
       try {
@@ -44,7 +38,7 @@ const EditSubCategoryModal = ({
     fetchMainCategories();
   }, []);
 
-  // Fetch categories when main category is selected
+
   const handleMainCategoryChange = async (e) => {
     const selectedMainCategoryId = e.target.value;
     setMainCategoryId(selectedMainCategoryId);
@@ -69,12 +63,12 @@ const EditSubCategoryModal = ({
     }
   };
 
-  // Handle category selection
+
   const handleCategoryChange = (e) => {
     setCategoryId(e.target.value);
   };
 
-  // Populate form with existing data
+
   useEffect(() => {
     if (subCategory) {
       setFormData({
@@ -83,7 +77,7 @@ const EditSubCategoryModal = ({
       setMainCategoryId(subCategory.mainCategoryId || "");
       setCategoryId(subCategory.categoryId || "");
 
-      // Fetch categories for the selected main category
+
       const fetchCategoriesForMainCategory = async () => {
         try {
           const response = await getAPI(
@@ -105,14 +99,15 @@ const EditSubCategoryModal = ({
     }
   }, [subCategory]);
 
-  // Handle input change
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle update
+
   const handleUpdate = async (e) => {
     e.preventDefault();
+    setLoading(true)
 
     try {
       const response = await putAPI(
@@ -137,13 +132,15 @@ const EditSubCategoryModal = ({
       toast.error(
         error.response?.data?.message || "An unexpected error occurred."
       );
+    } finally {
+      setLoading(false)
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="modal"style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+    <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
       <div className="modal-dialog modal-lg">
         <div className="modal-content">
           <div className="modal-header">
@@ -161,7 +158,7 @@ const EditSubCategoryModal = ({
             </button>
           </div>
           <form onSubmit={handleUpdate}>
-          <div className="row mb-2 ml-2">
+            <div className="row mb-2 ml-2">
               <div className="col-md-4">
                 <div className="mb-3">
                   <label className="form-label">Main Category</label>
@@ -219,15 +216,19 @@ const EditSubCategoryModal = ({
             </div>
 
             <div className="modal-footer">
-              <button 
-                type="button" 
-                className="btn btn-secondary" 
+              <button
+                type="button"
+                className="btn btn-secondary"
                 onClick={onClose}
               >
                 Close
               </button>
-              <button type="submit" className="btn btn-primary">
-                Update
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={loading}
+              >
+                {loading ? "Updating..." : "Update"}
               </button>
             </div>
           </form>

@@ -4,6 +4,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './LoginStyles.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useAuth } from '../../AuthContext';
+import postAPI from '../../api/postAPI';
 
 const Login = () => {
   const [input, setInput] = useState('');
@@ -11,6 +13,9 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
+  const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
 
@@ -34,28 +39,22 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
+  
     try {
-      const response = await fetch('http://localhost:3001/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ emailOrPhone: input, password }),
-      });
-
-
-      const data = await response.json();
-
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed. Please try again.');
-      }
-
-      const { token, userType, email, phone } = data;
-
+      const data = await postAPI('/auth/login', {
+        emailOrPhone: input,
+        password,
+      },true);
+      
+      const { token, userType, email } = data.data;
+  
       if (!token || !userType) {
         throw new Error('Invalid response from server');
       }
-
+  
+      login(token, userType);
+  
       if (rememberMe) {
         localStorage.setItem('rememberedEmailOrPhone', input);
         localStorage.setItem('rememberedPassword', password);
@@ -65,21 +64,21 @@ const Login = () => {
         localStorage.removeItem('rememberedPassword');
         localStorage.setItem('rememberMe', 'false');
       }
-
+  
       localStorage.setItem('token', token);
       localStorage.setItem('userType', userType);
       localStorage.setItem('email', email);
-
+  
       toast.success('Login Successful!');
-      setTimeout(() => {
-        navigate(`/${userType.toLowerCase()}/dashboard`);
-      }, 500);
+      navigate(`/${userType.toLowerCase()}/dashboard`);
     } catch (error) {
-      console.error('Login error:', error.message);
-      toast.error(error.message || 'Something went wrong. Please try again.');
+      const errorMessage = error?.response?.data?.message || error.message || 'Something went wrong. Please try again.';
+      toast.error(errorMessage);
+    }finally {
+      setLoading(false); 
     }
   };
-
+  
 
   return (
     <>
@@ -206,8 +205,9 @@ const Login = () => {
                 transition: 'all 0.3s ease',
                 fontStyle: 'italic'
               }}
+              disabled={loading}
             >
-              Login
+             {loading ? 'Logging in...' : 'Login'}
             </button>
           </form>
         </div>
