@@ -12,49 +12,47 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [loading, setLoading] = useState(false);
-
 
   useEffect(() => {
-
-    const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
-    setRememberMe(savedRememberMe);
-
-    if (savedRememberMe) {
-      const savedEmailOrPhone = localStorage.getItem('rememberedEmailOrPhone');
-      const savedPassword = localStorage.getItem('rememberedPassword');
-      if (savedEmailOrPhone) setInput(savedEmailOrPhone);
-      if (savedPassword) setPassword(savedPassword);
-    }
-
-
     const token = localStorage.getItem('token');
     const userType = localStorage.getItem('userType');
+
     if (token && userType) {
-      navigate(`/${userType.toLowerCase()}-dashboard`);
+      navigate(`/${userType.toLowerCase()}/dashboard`);
+    }
+
+    const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
+    if (savedRememberMe) {
+      setRememberMe(true);
+      setInput(localStorage.getItem('rememberedEmailOrPhone') || '');
+      setPassword(localStorage.getItem('rememberedPassword') || '');
     }
   }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-  
+
     try {
-      const data = await postAPI('/auth/login', {
+      const res = await postAPI('/auth/login', {
         emailOrPhone: input,
         password,
-      },true);
-      
-      const { token, userType, email } = data.data;
-  
+      }, true);
+
+      const { token, userType, email } = res.data;
+
       if (!token || !userType) {
         throw new Error('Invalid response from server');
       }
-  
+
       login(token, userType);
-  
+      localStorage.setItem('token', token);
+      localStorage.setItem('userType', userType);
+      localStorage.setItem('email', email);
+
       if (rememberMe) {
         localStorage.setItem('rememberedEmailOrPhone', input);
         localStorage.setItem('rememberedPassword', password);
@@ -64,21 +62,20 @@ const Login = () => {
         localStorage.removeItem('rememberedPassword');
         localStorage.setItem('rememberMe', 'false');
       }
-  
-      localStorage.setItem('token', token);
-      localStorage.setItem('userType', userType);
-      localStorage.setItem('email', email);
-  
+
       toast.success('Login Successful!');
-      navigate(`/${userType.toLowerCase()}/dashboard`);
+      if( userType.toLowerCase() === 'buyer' ) {
+        navigate('/');
+      }
+      else navigate(`/${userType.toLowerCase()}/dashboard`);
+      
     } catch (error) {
-      const errorMessage = error?.response?.data?.message || error.message || 'Something went wrong. Please try again.';
-      toast.error(errorMessage);
-    }finally {
-      setLoading(false); 
+      const message = error?.response?.data?.message || error.message || 'Something went wrong. Please try again.';
+      toast.error(message);
+    } finally {
+      setLoading(false);
     }
   };
-  
 
   return (
     <>
@@ -87,26 +84,15 @@ const Login = () => {
         {/* Left Panel */}
         <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5">
           <h2 className="fw-bold mb-3 mb-md-4 text-dark fs-2 fs-md-1">Login to your Account</h2>
-          <p className="mb-3 mb-md-4 text-dark text-center"
-            style={{
-              fontSize: '20px',
-              fontWeight: 'normal',
-              lineHeight: '1.4',
-            }}
-          >
+          <p className="mb-3 mb-md-4 text-dark text-center" style={{ fontSize: '20px', fontWeight: 'normal', lineHeight: '1.4' }}>
             Let's get you all set up so you can <br className="d-none d-md-block" />start creating your first onboarding experience.
           </p>
 
-          <form onSubmit={handleSubmit} className="w-100" >
+          <form onSubmit={handleSubmit} className="w-100">
+            {/* Email/Phone */}
             <div className="mb-3 position-relative">
-              <label htmlFor="email" className="form-label position-absolute text-dark px-2" style={{
-                top: '-12px',
-                left: '15px',
-                fontStyle: 'italic',
-                fontSize: '1rem',
-                zIndex: '1',
-                background: "white",
-              }}>
+              <label htmlFor="email" className="form-label position-absolute text-dark px-2"
+                style={{ top: '-12px', left: '15px', fontStyle: 'italic', fontSize: '1rem', zIndex: '1', background: "white" }}>
                 Email/Phone
               </label>
               <input
@@ -120,15 +106,10 @@ const Login = () => {
               />
             </div>
 
+            {/* Password */}
             <div className="mb-3 position-relative">
-              <label htmlFor="password" className="form-label position-absolute text-dark px-2" style={{
-                top: '-12px',
-                left: '15px',
-                fontStyle: 'italic',
-                fontSize: '1rem',
-                zIndex: '1',
-                background: "white",
-              }}>
+              <label htmlFor="password" className="form-label position-absolute text-dark px-2"
+                style={{ top: '-12px', left: '15px', fontStyle: 'italic', fontSize: '1rem', zIndex: '1', background: "white" }}>
                 Password
               </label>
               <div style={{ position: 'relative' }}>
@@ -139,13 +120,7 @@ const Login = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  style={{
-                    height: '48px',
-                    border: "1px solid #6b4f36",
-                    fontSize: "16px",
-                    color: "black",
-                    paddingRight: '40px'
-                  }}
+                  style={{ height: '48px', border: "1px solid #6b4f36", fontSize: "16px", color: "black", paddingRight: '40px' }}
                 />
                 <button
                   type="button"
@@ -168,6 +143,7 @@ const Login = () => {
               </div>
             </div>
 
+            {/* Remember Me & Forgot */}
             <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 mb-md-4">
               <div className="form-check mb-2 mb-sm-0">
                 <input
@@ -186,7 +162,7 @@ const Login = () => {
                     backgroundColor: rememberMe ? '#6b4f36' : 'transparent'
                   }}
                 />
-                <label className="form-check-label text-dark fst-italic" htmlFor="remember" style={{ fontSize: '1rem', fontStyle: 'italic' }}>
+                <label className="form-check-label text-dark fst-italic" htmlFor="remember" style={{ fontSize: '1rem' }}>
                   Remember Me
                 </label>
               </div>
@@ -195,6 +171,7 @@ const Login = () => {
               </Link>
             </div>
 
+            {/* Login Button */}
             <button
               type="submit"
               className="btn w-100 text-white fst-italic mb-3 mb-md-0 login-btn"
@@ -207,19 +184,15 @@ const Login = () => {
               }}
               disabled={loading}
             >
-             {loading ? 'Logging in...' : 'Login'}
+              {loading ? 'Logging in...' : 'Login'}
             </button>
           </form>
         </div>
 
+        {/* Right Panel */}
         <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5 text-white right-panel">
           <h3 className="mb-3 mb-md-4 fs-3 fs-md-2">Don't Have An Account?</h3>
-          <p className="mb-3 mb-md-4 text-center"
-            style={{
-              fontSize: '20px',
-              fontWeight: 'normal',
-              lineHeight: '1.4',
-            }}>
+          <p className="mb-3 mb-md-4 text-center" style={{ fontSize: '20px', fontWeight: 'normal', lineHeight: '1.4' }}>
             Let's get you all set up so you can <br className="d-none d-md-block" />start creating your first onboarding experience.
           </p>
           <Link

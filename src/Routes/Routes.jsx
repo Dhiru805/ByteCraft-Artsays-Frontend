@@ -15,6 +15,23 @@ import Register from "../Pages/Register/Register";
 import ArtistSellerRegister from "../Pages/Register/ArtistSellerRegister";
 import ForgotPassword from "../Pages/Login/Forgotpassword";
 
+//----------------------------------------My Account-----------------------------------------//
+import MyAccountMainLayout from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/MyAccountMainLayout';
+
+import { AccountPage } from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyAccountPage';
+import { AccountForm } from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PersonaInformation';
+import ManageAddress from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/ManageAddress';
+import  PaymentMethod  from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PaymentMethod';
+import  PasswordManager  from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PasswordManager';
+import  AccountVerification  from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/AccountVerification';
+import  SocialMediaPromotion  from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/SocialMediaPromotion';
+import  CustomRequest  from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/CustomRequest';
+import  NotificationAndPreferences  from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/NotificationAndPreferences';
+import  AccountSecurityAndAgreements  from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/AccountSecurityAndAgreements';
+import  Logout from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/Logout';
+
+
+
 //----------------------------------------Error Pages-----------------------------------------//
 import PagenotFound404 from "../Pages/Error/404Error";
 import UnauthorizedAccess from "../Pages/Error/403Error";
@@ -33,10 +50,10 @@ import SellerLayout from "../Component/Dashboard/SellerDashboard/MainDashboard";
 
 //----------------------------------------Super-Admin Components-----------------------------//
 import SuperAdminDashboard from "../Component/Dashboard/Super-AdminDashboard/Dashboard/MainContent";
-              //-----------------------------Admin--------------------------//
+//-----------------------------Admin--------------------------//
 import Admin from "../Component/Dashboard/Super-AdminDashboard/Admin/Admin";
 import AdminProfile from "../Component/Dashboard/Super-AdminDashboard/Admin/Profile/UserProf";
-              //-----------------------------Artist--------------------------//
+//-----------------------------Artist--------------------------//
 import AdminViewProfile from "../Component/Dashboard/Super-AdminDashboard/Admin/ViewProfile/UserProf";
 import ArtistManagement from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistManageTable";
 import BlogRequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogRequest/BlogRequestTable";
@@ -45,18 +62,18 @@ import BlogRequestUpdate from "../Component/Dashboard/Super-AdminDashboard/Artis
 import BlogRequestDetails from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogRequest/Artistblogdetails";
 import ApprovedBlogs from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogs/BlogList";
 import ApprovedBlogsDetails from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogs/ArtistBlogDetails";
-                 //-----------------------------Bidding--------------------------//
+//-----------------------------Bidding--------------------------//
 import AllBiddingProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/AllProduct/BiddingProduct";
 import BiddedProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddedproduct/Biddedproduct";
 import BiddedProductTransaction from "../Component/Dashboard/Super-AdminDashboard/Bidding/Transaction/BiddedproductTransaction"
-                 //-----------------------------Settings--------------------------//
+//-----------------------------Settings--------------------------//
 import EmailSettings from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailSetting/EmailSetting";
 import BlogCategory from "../Component/Dashboard/Super-AdminDashboard/Settings/Blogcategory/Category";
 import ProductCategory from "../Component/Dashboard/Super-AdminDashboard/Settings/Productcategory/Category";
 
 //----------------------------------------Artist Components----------------------------------//
 import ArtistDashboard from "../Component/Dashboard/ArtistDashbooard/Dashboard/MainContent";
-              //-----------------------------Blogs--------------------------//
+//-----------------------------Blogs--------------------------//
 import BlogList from "../Component/Dashboard/ArtistDashbooard/Blog/BlogList";
 import BlogPost from "../Component/Dashboard/ArtistDashbooard/Blog/BlogPost";
 import UpdateBlog from "../Component/Dashboard/ArtistDashbooard/Blog/UpdateBlogList";
@@ -110,6 +127,24 @@ const AppRoutes = () => {
         <Route path="/forgotpassword" element={<ForgotPassword />} />
       </Route>
 
+      {/* -------------------------------------------MyAccount Routes------------------------------------------------- */}
+      <Route path="/my-account" element={<MyAccountMainLayout />}>
+        <Route element={<AccountPage />}>
+          <Route index element={<AccountForm />} />
+          <Route path="personal-info" element={<AccountForm />} />
+          <Route path="manage-address" element={<ManageAddress />} />
+          <Route path="payment-method" element={<PaymentMethod />} />
+          <Route path="password-manager" element={<PasswordManager />} />
+          <Route path="account-verification" element={<AccountVerification />} />
+          <Route path="social-media-promotion" element={<SocialMediaPromotion />} />
+          <Route path="custom-request" element={<CustomRequest />} />
+          <Route path="notification-preferences" element={<NotificationAndPreferences />} />
+          <Route path="security-agreements" element={<AccountSecurityAndAgreements />} />
+          <Route path="logout" element={<Logout />} />
+        </Route>
+      </Route>
+
+
       {/*-------------------------------------------Super Admin Routes--------------------------------------------- */}
       <Route
         path="/super-admin"
@@ -133,10 +168,10 @@ const AppRoutes = () => {
         <Route path="artist/blogrequest" element={<BlogRequest />} />
         <Route path="artist/blogrequest/view-Blog" element={<BlogRequestView />} />
         <Route path="artist/blogrequest/update-blog" element={<BlogRequestUpdate />} />
-        <Route path="artist/blogrequest/blog-details/:slug" element={<BlogRequestDetails/>} />
-        <Route path="artist/blogs" element={<ApprovedBlogs/>} />
-        <Route path="artist/blogs/blog-details/:slug" element={<ApprovedBlogsDetails/>} />
-      
+        <Route path="artist/blogrequest/blog-details/:slug" element={<BlogRequestDetails />} />
+        <Route path="artist/blogs" element={<ApprovedBlogs />} />
+        <Route path="artist/blogs/blog-details/:slug" element={<ApprovedBlogsDetails />} />
+
         {/* Bidding Management */}
         <Route path="bidding/allproduct" element={<AllBiddingProduct />} />
         <Route path="bidding/bidded-product" element={<BiddedProduct />} />
@@ -162,10 +197,10 @@ const AppRoutes = () => {
         <Route path="profile" element={<UserProfile />} />
 
         {/*Blogs*/}
-        <Route path="bloglist" element={<BlogList/>} />
-        <Route path="bloglist/create-blog" element={<BlogPost/>} />
-        <Route path="bloglist/update-blog" element={<UpdateBlog/>} />
-        <Route path="bloglist/blog-details/:slug" element={<BlogDetails/>}/>
+        <Route path="bloglist" element={<BlogList />} />
+        <Route path="bloglist/create-blog" element={<BlogPost />} />
+        <Route path="bloglist/update-blog" element={<UpdateBlog />} />
+        <Route path="bloglist/blog-details/:slug" element={<BlogDetails />} />
       </Route>
 
       {/* --------------------------------------------Buyer Routes---------------------------------------------------- */}
@@ -198,10 +233,10 @@ const AppRoutes = () => {
 
       {/*-------------------------------------------- Website Routes-------------------------------------------------- */}
 
-      
-<Route path="/" element={<WebsiteLayout />}>
-  <Route index element={<WebsiteMain />} />
-</Route>
+
+      <Route path="/" element={<WebsiteLayout />}>
+        <Route index element={<WebsiteMain />} />
+      </Route>
 
       {/*-------------------------------------------- Root Route - Auto Redirect----------------------------------------- */}
       <Route
@@ -227,7 +262,7 @@ const AppRoutes = () => {
 
       {/*----------------------------------------- Error Routes-------------------------------------------------------- */}
       <Route path="/404" element={<PagenotFound404 />} />
-      <Route path="/unauthorized" element={<UnauthorizedAccess/>} />
+      <Route path="/unauthorized" element={<UnauthorizedAccess />} />
       <Route path="*" element={<Navigate to="/404" replace />} />
     </Routes>
   );
