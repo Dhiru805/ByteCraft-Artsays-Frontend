@@ -1,14 +1,14 @@
 import React from 'react';
 
-const SocialMediaPromotion = () => {
+const BankPaymentDetails = () => {
   return (
-    <div className="space-y-[40px] w-[856px]">
-      <h2 className="text-2xl text-gray-950 font-semibold">Social Media Promotion</h2>
+    <div className="space-y-6 w-[856px]">
+      <h2 className="text-2xl text-gray-950 font-semibold">Bank/Payment Details (For Payments & Withdrawals)</h2>
       <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Instagram */}
         <div>
           <label className="block mb-2 font-lg">
-            Instagram <span className="text-red-600">*</span>
+            Account Holder Name <span className="text-red-600">*</span>
           </label>
           <input
             className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
@@ -19,7 +19,7 @@ const SocialMediaPromotion = () => {
         {/* YouTube */}
         <div>
           <label className="block mb-2 font-lg">
-            YouTube <span className="text-red-600">*</span>
+            Account Number <span className="text-red-600">*</span>
           </label>
           <input
             className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
@@ -30,7 +30,7 @@ const SocialMediaPromotion = () => {
         {/* Facebook */}
         <div>
           <label className="block mb-2 font-lg">
-            Facebook <span className="text-red-600">*</span>
+            Bank Name <span className="text-red-600">*</span>
           </label>
           <input
             className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
@@ -41,7 +41,16 @@ const SocialMediaPromotion = () => {
         {/* LinkedIn */}
         <div>
           <label className="block mb-2 font-lg">
-            LinkedIn <span className="text-red-600">*</span>
+            IFSC Code <span className="text-red-600">*</span>
+          </label>
+          <input
+            className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
+            placeholder="LinkedIn"
+          />
+        </div>
+        <div>
+          <label className="block mb-2 font-lg">
+            UPI ID 
           </label>
           <input
             className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
@@ -63,4 +72,4 @@ const SocialMediaPromotion = () => {
   );
 };
 
-export default SocialMediaPromotion;
+export default BankPaymentDetails;

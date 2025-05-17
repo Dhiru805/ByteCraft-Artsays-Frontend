@@ -4,6 +4,7 @@ const links = [
   { name: 'Personal Information', path: 'personal-info' },
   { name: 'My Orders', path: 'my-orders' },
   { name: 'Manage Address', path: 'manage-address' },
+  { name: 'Bank Payment Details', path: 'bank-payment-details' },
   { name: 'Payment Method', path: 'payment-method' },
   { name: 'Password Manager', path: 'password-manager' },
   { name: 'Account Verification', path: 'account-verification' },
@@ -19,7 +20,7 @@ const MyAccountSidebar = () => {
   const currentPath = location.pathname;
 
   return (
-    <div className="bg-white rounded shadow p-4 space-y-2">
+    <div className="bg-white h-[920px] w-[350px] flex flex-col space-y-[20px]">
       {links.map(({ name, path }) => {
         const fullPath = `/my-account/${path}`;
         const isPersonalInfo =
@@ -32,10 +33,10 @@ const MyAccountSidebar = () => {
           <NavLink
             key={path}
             to={fullPath}
-            className={`block w-full text-left px-4 py-2 rounded transition ${
+            className={`block w-[340px] h-[60px] text-[18px] font-semibold text-left py-[15px] px-[20px] border-[0.6px] rounded-[14px] transition ${
               isActive
-                ? 'bg-[#5F3E2D] text-white'
-                : 'bg-white border text-gray-700'
+                ? 'bg-[#6F4D34] text-white'
+                : 'bg-white text-[#7B7B7B]'
             }`}
           >
             {name}

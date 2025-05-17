@@ -3,7 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import AccountSidebar from '../../MyAccountSidebar';
 
 const headingMap = {
-  'personal-info': 'Personal Information',
+  'personal-info': 'My Account',
   'my-orders': 'My Orders',
   'manage-address': 'Manage Address',
   'payment-method': 'Payment Method',
@@ -14,19 +14,21 @@ const headingMap = {
   'notification-preferences': 'Notification and Preferences',
   'security-agreements': 'Account Security and Agreements',
   'logout': 'Logout',
+
+  'track-your-order': 'Track Your Order'
 };
 
 export const AccountPage = () => {
   const location = useLocation();
   const pathname = location.pathname;
 
-  const path = pathname === '/my-account' ? 'personal-info' : pathname.split('/').pop();
+  const path = pathname === '/my-account' ? 'my-account' : pathname.split('/').pop();
   const heading = headingMap[path] || 'My Account';
 
   return (
     <>
       {/* Top Section */}
-      <div className="h-[300px] w-full bg-[#E8E8E8] flex items-center justify-center">
+      <div className="h-[300px] w-full px-[5rem] bg-[#E8E8E8] flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-4xl font-bold text-zinc-900">{heading}</h2>
           <p className="text-sm text-gray-500 mt-4">Home &gt; {heading}</p>
@@ -34,9 +36,9 @@ export const AccountPage = () => {
       </div>
 
       {/* Main Layout */}
-      <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className=" w-[1208px] pt-[80px] pl-[116px] flex bg-white">
         <AccountSidebar />
-        <div className="md:col-span-3 bg-white p-6 rounded shadow">
+        <div className="w-[896px] pl-[40px]">
           <Outlet />
         </div>
       </div>

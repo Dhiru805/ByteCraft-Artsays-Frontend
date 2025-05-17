@@ -6,10 +6,10 @@ import { Outlet } from 'react-router-dom';
 
 const MyAccountMainLayout = () => {
   return (
-    <div className="">
+    <div className=" bg-white">
       <NavBar />
       <main className="">
-        <Outlet />
+        <Outlet className="" />
       </main>
       <MyAccountFooter />
       <Footer />

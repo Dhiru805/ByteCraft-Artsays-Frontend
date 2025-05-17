@@ -21,6 +21,7 @@ import MyAccountMainLayout from '../Pages/Home/HomeComponents/MyAccountPage/MyAc
 import { AccountPage } from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyAccountPage';
 import { AccountForm } from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PersonaInformation';
 import ManageAddress from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/ManageAddress';
+import BankPaymentDetails from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/BankPaymentDetails';
 import  PaymentMethod  from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PaymentMethod';
 import  PasswordManager  from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PasswordManager';
 import  AccountVerification  from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/AccountVerification';
@@ -50,9 +51,11 @@ import SellerLayout from "../Component/Dashboard/SellerDashboard/MainDashboard";
 
 //----------------------------------------Super-Admin Components-----------------------------//
 import SuperAdminDashboard from "../Component/Dashboard/Super-AdminDashboard/Dashboard/MainContent";
+
 //-----------------------------Admin--------------------------//
 import Admin from "../Component/Dashboard/Super-AdminDashboard/Admin/Admin";
 import AdminProfile from "../Component/Dashboard/Super-AdminDashboard/Admin/Profile/UserProf";
+
 //-----------------------------Artist--------------------------//
 import AdminViewProfile from "../Component/Dashboard/Super-AdminDashboard/Admin/ViewProfile/UserProf";
 import ArtistManagement from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistManageTable";
@@ -62,10 +65,12 @@ import BlogRequestUpdate from "../Component/Dashboard/Super-AdminDashboard/Artis
 import BlogRequestDetails from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogRequest/Artistblogdetails";
 import ApprovedBlogs from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogs/BlogList";
 import ApprovedBlogsDetails from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogs/ArtistBlogDetails";
+
 //-----------------------------Bidding--------------------------//
 import AllBiddingProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/AllProduct/BiddingProduct";
 import BiddedProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddedproduct/Biddedproduct";
 import BiddedProductTransaction from "../Component/Dashboard/Super-AdminDashboard/Bidding/Transaction/BiddedproductTransaction"
+
 //-----------------------------Settings--------------------------//
 import EmailSettings from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailSetting/EmailSetting";
 import BlogCategory from "../Component/Dashboard/Super-AdminDashboard/Settings/Blogcategory/Category";
@@ -73,6 +78,7 @@ import ProductCategory from "../Component/Dashboard/Super-AdminDashboard/Setting
 
 //----------------------------------------Artist Components----------------------------------//
 import ArtistDashboard from "../Component/Dashboard/ArtistDashbooard/Dashboard/MainContent";
+
 //-----------------------------Blogs--------------------------//
 import BlogList from "../Component/Dashboard/ArtistDashbooard/Blog/BlogList";
 import BlogPost from "../Component/Dashboard/ArtistDashbooard/Blog/BlogPost";
@@ -84,6 +90,8 @@ import BuyerDashboard from "../Component/Dashboard/BuyerDashboard/Dashboard/Main
 
 //----------------------------------------Seller Components----------------------------------//
 import SellerDashboard from "../Component/Dashboard/SellerDashboard/Dashboard/MainContent";
+import MyOrders from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyOrders";
+import TrackOrder from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/TrackOrder";
 
 // Route Protection Components
 const PrivateRoute = ({ allowedRoles, children }) => {
@@ -127,12 +135,15 @@ const AppRoutes = () => {
         <Route path="/forgotpassword" element={<ForgotPassword />} />
       </Route>
 
+
       {/* -------------------------------------------MyAccount Routes------------------------------------------------- */}
       <Route path="/my-account" element={<MyAccountMainLayout />}>
         <Route element={<AccountPage />}>
           <Route index element={<AccountForm />} />
           <Route path="personal-info" element={<AccountForm />} />
+          <Route path="my-orders" element={<MyOrders />} />
           <Route path="manage-address" element={<ManageAddress />} />
+          <Route path="bank-payment-details" element={<BankPaymentDetails />} />
           <Route path="payment-method" element={<PaymentMethod />} />
           <Route path="password-manager" element={<PasswordManager />} />
           <Route path="account-verification" element={<AccountVerification />} />
@@ -141,8 +152,12 @@ const AppRoutes = () => {
           <Route path="notification-preferences" element={<NotificationAndPreferences />} />
           <Route path="security-agreements" element={<AccountSecurityAndAgreements />} />
           <Route path="logout" element={<Logout />} />
+
+          {/* <Route path="track-your-order" element={<TrackOrder />} /> */}
+
         </Route>
       </Route>
+
 
 
       {/*-------------------------------------------Super Admin Routes--------------------------------------------- */}

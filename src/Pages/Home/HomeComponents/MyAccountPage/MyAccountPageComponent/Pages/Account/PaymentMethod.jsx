@@ -1,44 +1,95 @@
 import React from 'react';
+import { FaCreditCard, FaRegCircle } from 'react-icons/fa';
+import { BsFillCreditCard2FrontFill } from 'react-icons/bs';
 
 const PaymentMethod = () => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-[856px] ">
       <h2 className="text-xl font-semibold">Payment Method</h2>
-      <div className="space-y-2">
-        <div className="flex justify-between items-center border p-3 rounded">
-          <span>Paytm UPI</span>
-          <button className="text-blue-600">Link Account</button>
+
+      {/* Linked / Linkable Accounts */}
+      <div className="space-y-5">
+        <div className="flex justify-between items-center border-2 border-gray-300 p-3 rounded-xl">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2b/Paytm_Logo.png" alt="Paytm" className="h-6" />
+          <button className="text-[#6F3E2D] font-semibold">Link Account</button>
         </div>
-        <div className="flex justify-between items-center border p-3 rounded">
-          <span>Visa **** 0223</span>
-          <button className="text-red-500">Delete</button>
+        <div className="flex justify-between items-center border-2 border-gray-300 p-3 rounded-xl">
+          <div className="flex items-center space-x-2">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa" className="h-5" />
+            <span>**** **** **** 0223</span>
+          </div>
+          <button className="text-red-500 font-semibold">Delete</button>
         </div>
-        <div className="flex justify-between items-center border p-3 rounded">
-          <span>Google Pay</span>
-          <button className="text-blue-600">Link Account</button>
+        <div className="flex justify-between items-center border-2 border-gray-300 p-3 rounded-xl">
+          <div className="flex items-center space-x-2">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/Google_Pay_Logo.svg" alt="Google Pay" className="h-6" />
+          </div>
+          <button className="text-[#6F3E2D] font-semibold">Link Account</button>
         </div>
-        <div className="flex justify-between items-center border p-3 rounded">
-          <span>Phone Pay</span>
-          <button className="text-blue-600">Link Account</button>
+        <div className="flex justify-between items-center border-2 border-gray-300 p-3 rounded-xl">
+          <div className="flex items-center space-x-2">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/f/fb/PhonePe_Logo.svg" alt="PhonePe" className="h-6" />
+          </div>
+          <button className="text-[#6F3E2D] font-semibold">Link Account</button>
         </div>
       </div>
 
-      <div className="border p-4 rounded space-y-4">
+      {/* Add New Card Section */}
+      <div className="border-2 border-[#6F3E2D] rounded-3xl p-4 space-y-4">
         <div className="flex items-center space-x-2">
-          <input type="radio" />
-          <span className="font-medium">Add New Credit/Debit Card</span>
+          <FaRegCircle className="text-[#6F3E2D]" />
+          <span className="font-medium text-[#6F3E2D]">Add New Credit/Debit Card</span>
         </div>
-        <input className="border p-2 rounded w-full" placeholder="Card Holder Name" defaultValue="Nelson" />
-        <input className="border p-2 rounded w-full" placeholder="Card Number" defaultValue="4715 2256 3598 3654" />
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Card Holder Name .</label>
+          <input
+            className="border p-2 rounded-lg w-full"
+            placeholder="Nelson"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Card Number .</label>
+          <input
+            className="border p-2 rounded-lg w-full"
+            placeholder="4715 2256 3598 3654"
+          />
+        </div>
+
         <div className="grid grid-cols-2 gap-4">
-          <input className="border p-2 rounded" placeholder="Expiry Date" defaultValue="02/30" />
-          <input className="border p-2 rounded" placeholder="CVV" defaultValue="000" />
+          <div>
+            <label className="block text-sm font-medium mb-1">Expiry Date .</label>
+            <input
+              className="border p-2 rounded-lg w-full"
+              placeholder="MM/YY"
+              defaultValue="02/30"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">CVV .</label>
+            <input
+              className="border p-2 rounded-lg w-full"
+              placeholder="000"
+            />
+          </div>
         </div>
+
         <div className="flex items-center space-x-2">
-          <input type="checkbox" />
-          <label>Save card for future payments</label>
-        </div>
-        <button className="bg-[#5F3E2D] text-white px-6 py-2 rounded">Add Card</button>
+  <input
+    id="saveCard"
+    type="checkbox"
+    className="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500"
+  />
+  <label htmlFor="saveCard" className="text-sm text-gray-700">
+    Save card for future payments
+  </label>
+</div>
+
+
+        <button className="bg-[#6F4D34] text-white px-6 py-2 rounded-full text-sm">
+          Add Card
+        </button>
       </div>
     </div>
   );
