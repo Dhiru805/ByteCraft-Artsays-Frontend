@@ -9,10 +9,11 @@ import axios from 'axios';
 import useUserType from '../../../urlconfig';
 import Switch from "react-switch";
 
+
 function BuyerRequest() {
   const navigate = useNavigate();
   const userType = useUserType();
-
+  
   const [productName, setProductName] = useState('');
   const [description, setDescription] = useState('');
   const [buyerImage, setBuyerImage] = useState(null);
@@ -33,7 +34,7 @@ function BuyerRequest() {
   useEffect(() => {
     const fetchArtists = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/artist/artists");
+        const response = await axios.get(`${BASE_URL}/artist/artists`);
         setArtists(response.data);
       } catch (error) {
         console.error("Error fetching artists:", error);
@@ -100,7 +101,7 @@ function BuyerRequest() {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/api/buyer-request', {
+      const response = await fetch(`/api/buyer-request`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

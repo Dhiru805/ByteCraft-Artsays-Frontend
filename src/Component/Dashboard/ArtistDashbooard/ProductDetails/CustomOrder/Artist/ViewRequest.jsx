@@ -6,11 +6,14 @@ import axios from 'axios';
 import useUserType from '../../../../urlconfig';
 import Switch from "react-switch";
 
+const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+
 function ViewBuyerRequest() {
     const location = useLocation();
     const userType = useUserType();
     const { state } = location || {};
     const { request } = state || {};
+
 
     const [productName, setProductName] = useState('');
     const [description, setDescription] = useState('');
@@ -22,7 +25,7 @@ function ViewBuyerRequest() {
     useEffect(() => {
         const fetchArtists = async () => {
             try {
-                const response = await axios.get("http://localhost:3001/artist/artists");
+                const response = await axios.get("/api/artist/artists");
                 setArtists(response.data);
             } catch (error) {
                 console.error("Error fetching artists:", error);
@@ -34,7 +37,7 @@ function ViewBuyerRequest() {
             setProductName(request.ProductName || '');
             setDescription(request.Description || '');
             setBudget(request.Budget || '');
-            setImage(request.BuyerImage ? `http://localhost:3001/${request.BuyerImage}` : '');
+            setImage(request.BuyerImage ? `${BASE_URL}/${request.BuyerImage}` : '');
             setBuyerId(`${request.Buyer.id.name} ${request.Buyer.id.lastName}`);
         }
     }, [request]);

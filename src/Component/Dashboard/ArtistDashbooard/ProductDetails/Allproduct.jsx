@@ -20,7 +20,7 @@ const  ApprovedProduct = () => {
             const userId = localStorage.getItem('userId');                
                 
             try {                
-                const result = await getAPI(`api/getproductbyartist/${userId}`, {}, true, false);
+                const result = await getAPI(`/api/getproductbyartist/${userId}`, {}, true, false);
                 console.log("Full API Response:", result);
                 console.log("Data Type:", typeof result.data);
 

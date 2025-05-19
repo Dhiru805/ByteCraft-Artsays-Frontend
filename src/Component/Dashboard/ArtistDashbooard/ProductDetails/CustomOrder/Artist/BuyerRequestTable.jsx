@@ -6,6 +6,7 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [selectedRequest, setSelectedRequest] = useState(null);
+    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
 
     // pagination helpers 
@@ -119,9 +120,9 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                                         </td>
                                                         <td>
                                                             <img
-                                                                src={`http://localhost:3001${request.Buyer.id.profilePhoto}`}
+                                                                src={`${BASE_URL}${request.Buyer.id.profilePhoto}`}
                                                                 className="rounded-circle avatar"
-                                                                alt=""
+                                                                alt="Profile"
                                                                 style={{
                                                                     width: '30px',
                                                                     height: '30px',
