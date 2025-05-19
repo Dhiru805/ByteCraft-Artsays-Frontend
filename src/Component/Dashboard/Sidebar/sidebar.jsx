@@ -130,6 +130,17 @@
           icon: "fa fa-newspaper",
           path: "/artist/bloglist",
           subTabs: []
+          
+        },
+        {
+          label: "product",
+          icon: "fa fa-newspaper",
+          path: "#",
+          subTabs: [
+              { label: "All Product", path: `/artist/product` },
+              { label: "Custom Order", path: `/artist/custom-order` },
+          ]
+
         },
       ],
       // ----------------------------------------------Buyer-----------------------------------------------------//

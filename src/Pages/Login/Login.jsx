@@ -47,7 +47,7 @@ const Login = () => {
         password,
       },true);
       
-      const { token, userType, email } = data.data;
+      const { token, userType, email , userId } = data.data;
   
       if (!token || !userType) {
         throw new Error('Invalid response from server');
@@ -68,6 +68,7 @@ const Login = () => {
       localStorage.setItem('token', token);
       localStorage.setItem('userType', userType);
       localStorage.setItem('email', email);
+      localStorage.setItem('userId', userId);
   
       toast.success('Login Successful!');
       navigate(`/${userType.toLowerCase()}/dashboard`);

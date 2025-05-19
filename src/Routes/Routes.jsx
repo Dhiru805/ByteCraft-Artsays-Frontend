@@ -62,11 +62,18 @@ import BlogPost from "../Component/Dashboard/ArtistDashbooard/Blog/BlogPost";
 import UpdateBlog from "../Component/Dashboard/ArtistDashbooard/Blog/UpdateBlogList";
 import BlogDetails from "../Component/Dashboard/ArtistDashbooard/Blog/ArtistBlogDetails";
 
+//-----------------------------Products Route--------------------------//
+import AllProduct from "../Component/Dashboard/ArtistDashbooard/ProductDetails/Product";
+import ProductUploade from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductUpload/productUploade';
+import CustomOrder from '../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/CustomOrderAll/Customorder';
+
+
 //----------------------------------------Buyer Components-----------------------------------//
 import BuyerDashboard from "../Component/Dashboard/BuyerDashboard/Dashboard/MainContent";
 
 //----------------------------------------Seller Components----------------------------------//
 import SellerDashboard from "../Component/Dashboard/SellerDashboard/Dashboard/MainContent";
+import ViewBuyerRequest from "../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/Artist/ViewRequest";
 
 // Route Protection Components
 const PrivateRoute = ({ allowedRoles, children }) => {
@@ -166,6 +173,11 @@ const AppRoutes = () => {
         <Route path="bloglist/create-blog" element={<BlogPost/>} />
         <Route path="bloglist/update-blog" element={<UpdateBlog/>} />
         <Route path="bloglist/blog-details/:slug" element={<BlogDetails/>}/>
+      {/* ----Product Route-------*/}
+        <Route path="product" element={<AllProduct/>}/>
+        <Route path="productUpload" element={<ProductUploade />}/>
+        <Route path="custom-order" element={<CustomOrder />}/>
+        <Route path="custom-view" element={<ViewBuyerRequest />} />
       </Route>
 
       {/* --------------------------------------------Buyer Routes---------------------------------------------------- */}
