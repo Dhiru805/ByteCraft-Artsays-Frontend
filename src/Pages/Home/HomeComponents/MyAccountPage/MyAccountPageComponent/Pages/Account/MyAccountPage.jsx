@@ -25,6 +25,9 @@ export const AccountPage = () => {
   const path = pathname === '/my-account' ? 'my-account' : pathname.split('/').pop();
   const heading = headingMap[path] || 'My Account';
 
+  const isTrackOrder = path === 'track-your-order';
+
+
   return (
     <>
       {/* Top Section */}
@@ -36,12 +39,23 @@ export const AccountPage = () => {
       </div>
 
       {/* Main Layout */}
-      <div className=" w-[1208px] pt-[80px] pl-[116px] flex bg-white">
-        <AccountSidebar />
-        <div className="w-[896px] pl-[40px]">
+
+      {!isTrackOrder && (
+
+        <div className=" w-[1208px] pt-[80px] pl-[116px] flex bg-white">
+          <AccountSidebar />
+          <div className="w-[896px] pl-[40px]">
+            <Outlet />
+          </div>
+        </div>
+      )}
+
+      {isTrackOrder && (
+        <div className="pt-[80px] px-[116px] bg-white">
           <Outlet />
         </div>
-      </div>
+      )}
+
     </>
   );
 };

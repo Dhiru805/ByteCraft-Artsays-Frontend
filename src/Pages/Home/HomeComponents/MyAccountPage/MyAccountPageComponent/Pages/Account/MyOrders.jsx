@@ -115,7 +115,7 @@ const MyOrders = () => {
                         {/* Left Side Buttons */}
                         <div className="flex gap-3 flex-wrap">
                             {order.status === 'Accepted' && (
-                                <Link to="/track-order">
+                                <Link to="/my-account/track-your-order">
                                     <button className="bg-[#6F4D34] text-white px-4 py-2 rounded-full text-sm">
                                         Track Order
                                     </button>

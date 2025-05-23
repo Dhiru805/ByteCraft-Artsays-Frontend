@@ -31,6 +31,8 @@ import  NotificationAndPreferences  from '../Pages/Home/HomeComponents/MyAccount
 import  AccountSecurityAndAgreements  from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/AccountSecurityAndAgreements';
 import  Logout from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/Logout';
 
+// import TrackOrder from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/TrackOrder';
+
 
 
 //----------------------------------------Error Pages-----------------------------------------//
@@ -153,7 +155,7 @@ const AppRoutes = () => {
           <Route path="security-agreements" element={<AccountSecurityAndAgreements />} />
           <Route path="logout" element={<Logout />} />
 
-          {/* <Route path="track-your-order" element={<TrackOrder />} /> */}
+          <Route path="track-your-order" element={<TrackOrder />} />
 
         </Route>
       </Route>
