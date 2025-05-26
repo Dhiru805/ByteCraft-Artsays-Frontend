@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
-import useUserType from '../../../urlconfig';
+import useUserType from '../../../../urlconfig';
 import Switch from "react-switch";
 
 function ViewBuyerRequest() {
@@ -24,7 +24,7 @@ function ViewBuyerRequest() {
             setProductName(request.ProductName || '');
             setDescription(request.Description || '');
             setBudget(request.Budget || '');
-            setImage(request.BuyerImage ? `http://localhost:3001/${request.BuyerImage}` : '');
+            setImage(request.BuyerImage ? `/api/${request.BuyerImage}` : '');
             setArtistId(`${request.Artist.id.name} ${request.Artist.id.lastName}`);
             setBuyerId(`${request.Buyer.id.name} ${request.Buyer.id.lastName}`);
         }

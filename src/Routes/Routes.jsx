@@ -45,7 +45,19 @@ import BlogRequestUpdate from "../Component/Dashboard/Super-AdminDashboard/Artis
 import BlogRequestDetails from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogRequest/Artistblogdetails";
 import ApprovedBlogs from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogs/BlogList";
 import ApprovedBlogsDetails from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogs/ArtistBlogDetails";
-                 //-----------------------------Bidding--------------------------//
+import Artistproductrequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ProductRequest/ProductRequestTable";
+    //------Seller tab-----//
+import SellerProductRequest from "../Component/Dashboard/Super-AdminDashboard/Seller/ProductRequest/ProductRequestTable";
+    //------Products tab---//
+import ProductTableView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Product";
+import CustomOrderView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/CustomOrderAll/Customorder";
+import PurchaseTable from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductPurchased/ProductPurchased";
+import ProductUploads from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductUpload/productUploade";
+import ProductRequestView  from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist";
+
+
+
+//-----------------------------Bidding--------------------------//
 import AllBiddingProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/AllProduct/BiddingProduct";
 import BiddedProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddedproduct/Biddedproduct";
 import BiddedProductTransaction from "../Component/Dashboard/Super-AdminDashboard/Bidding/Transaction/BiddedproductTransaction"
@@ -66,6 +78,7 @@ import BlogDetails from "../Component/Dashboard/ArtistDashbooard/Blog/ArtistBlog
 import AllProduct from "../Component/Dashboard/ArtistDashbooard/ProductDetails/Product";
 import ProductUploade from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductUpload/productUploade';
 import CustomOrder from '../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/CustomOrderAll/Customorder';
+import Productpurchase from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductPurchased/ProductPurchased';
 
 
 //----------------------------------------Buyer Components-----------------------------------//
@@ -73,7 +86,9 @@ import BuyerDashboard from "../Component/Dashboard/BuyerDashboard/Dashboard/Main
 
 //----------------------------------------Seller Components----------------------------------//
 import SellerDashboard from "../Component/Dashboard/SellerDashboard/Dashboard/MainContent";
-import ViewBuyerRequest from "../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/Artist/ViewRequest";
+import ViewProductDetails from "../Component/Dashboard/SellerDashboard/ProductsDetails/Product";
+import SellerProductUpload from "../Component/Dashboard/SellerDashboard/ProductsDetails/ProductUpload/productUploade";
+import SellerPurchasedProducts from "../Component/Dashboard/SellerDashboard/ProductsDetails/ProductPurchased/ProductPurchased";
 
 // Route Protection Components
 const PrivateRoute = ({ allowedRoles, children }) => {
@@ -143,7 +158,19 @@ const AppRoutes = () => {
         <Route path="artist/blogrequest/blog-details/:slug" element={<BlogRequestDetails/>} />
         <Route path="artist/blogs" element={<ApprovedBlogs/>} />
         <Route path="artist/blogs/blog-details/:slug" element={<ApprovedBlogsDetails/>} />
-      
+        <Route path="artist/artistproductrequest" element={<Artistproductrequest/>} />
+        <Route path="artist/viewrequesttoartist/:id" element={<ProductRequestView/>} />
+
+        {/* Seller Management */}
+        <Route path="sellerrequest" element={<SellerProductRequest/>} />
+
+        {/* Product Management */}
+        <Route path="product-table" element={<ProductTableView/>} />
+        <Route path="customordertable" element={<CustomOrderView/>} />
+        <Route path="purchasetable" element={<PurchaseTable/>} />
+        <Route path="product-upload" element={<ProductUploads/>} />
+
+        
         {/* Bidding Management */}
         <Route path="bidding/allproduct" element={<AllBiddingProduct />} />
         <Route path="bidding/bidded-product" element={<BiddedProduct />} />
@@ -177,7 +204,7 @@ const AppRoutes = () => {
         <Route path="product" element={<AllProduct/>}/>
         <Route path="productUpload" element={<ProductUploade />}/>
         <Route path="custom-order" element={<CustomOrder />}/>
-        <Route path="custom-view" element={<ViewBuyerRequest />} />
+        <Route path="product-purchase" element={<Productpurchase />}/>
       </Route>
 
       {/* --------------------------------------------Buyer Routes---------------------------------------------------- */}
@@ -204,8 +231,13 @@ const AppRoutes = () => {
         }
       >
         <Route index element={<SellerDashboard />} />
-        <Route path="dashboard" element={<SellerDashboard />} />
         <Route path="profile" element={<UserProfile />} />
+        <Route path="dashboard" element={<SellerDashboard />} />
+        <Route path="product-details" element={<ViewProductDetails/>}/>
+        <Route path="SellerProductUpload" element={<SellerProductUpload />}/>
+        <Route path="purchased-product" element={<SellerPurchasedProducts/>}/>
+
+
       </Route>
 
       {/*-------------------------------------------- Website Routes-------------------------------------------------- */}
@@ -222,7 +254,7 @@ const AppRoutes = () => {
           isAuthenticated ? (
             userType === "Super-Admin" ? (
               <Navigate to="/super-admin/dashboard" replace />
-            ) : userType === "Artist" ? (
+            ) : userType === "Ar  tist" ? (
               <Navigate to="/artist/dashboard" replace />
             ) : userType === "Buyer" ? (
               <Navigate to="/buyer/dashboard" replace />

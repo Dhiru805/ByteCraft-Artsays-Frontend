@@ -5,9 +5,9 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import axios from 'axios';
 import useUserType from '../../../urlconfig';
 import Switch from "react-switch";
+import getAPI from "../../../../../../api/getAPI";
 
 
 function BuyerRequest() {
@@ -30,11 +30,11 @@ function BuyerRequest() {
   const [paymentTerm, setPaymentTerm] = useState('');
   const [expectedDeadline, setExpectedDeadline] = useState('');
   const [comments, setComments] = useState('');
-
+  
   useEffect(() => {
     const fetchArtists = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/artist/artists`);
+        const response = await getAPI(`${BASE_URL}/artist/artists`);
         setArtists(response.data);
       } catch (error) {
         console.error("Error fetching artists:", error);

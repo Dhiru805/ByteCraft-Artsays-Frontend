@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom"; 
 import useUserType from '../../urlconfig';
-import AllProduct from "./Allproduct";
+import AllProduct from "./SellerAllproduct";
 
 
 function Product() {
@@ -33,7 +33,7 @@ function Product() {
                 <button
                   type="button"
                   className="btn btn-secondary mr-2"
-                  onClick={() => navigate(`/super-admin/product-upload`)}
+                  onClick={() => navigate(`/seller/SellerProductUpload`)}
                 >
                   <i className="fa fa-plus"></i> Add Product
                 </button>

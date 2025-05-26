@@ -11,7 +11,7 @@ const ProductRequest = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
 
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE
 
 
     const navigate = useNavigate();
@@ -25,6 +25,8 @@ const ProductRequest = () => {
                 const decodedToken = jwtDecode(token);
                 if (decodedToken.userId) {
                     setUserId(decodedToken.userId);
+                    console.log("Seller ID:", decodedToken.userId); // <-- Add this line
+
                 } else {
                     console.error("User ID not found in token");
                 }
@@ -40,17 +42,16 @@ const ProductRequest = () => {
         if (!userId) return;
         const fetchProducts = async () => {
             try {
-                const result = await getAPI(`/api/getallpurchasedproduct/${encodeURIComponent(userId)}`, {}, true, false);
+                const result = await getAPI(`/api/getsoldproductbyid/${encodeURIComponent(userId)}`, {}, true, false);
                 console.log("Full API Response:", result);
                 console.log("Data Type:", typeof result.data);
 
-                if (result && result.data && Array.isArray(result.data.purchases)) {
-                    setProducts(result.data.purchases);
+                if (result && result.data && Array.isArray(result.data)) {
+                    setProducts(result.data); // MODIFIED
                 } else {
-                    console.error("API response does not contain an array:", result.data);
-                    setProducts([]);
+                    console.error("API response does not contain a valid array:", result.data);
+                    setProducts([]); // MODIFIED
                 }
-
             } catch (error) {
                 console.error("Error fetching products:", error);
                 setProducts([]);
@@ -61,24 +62,16 @@ const ProductRequest = () => {
     }, [userId]);
 
 
-
-
     const totalPages = Math.ceil(products.length / productsPerPage);
-    const displayedProducts = products.slice(
-        (currentPage - 1) * productsPerPage,
-        currentPage * productsPerPage
-    );
+
+    const displayedProducts = products.slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage);
 
     const handlePrevious = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
+        if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
 
     const handleNext = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        }
+        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
     };
 
     const handleProductsPerPageChange = (event) => {
@@ -171,12 +164,14 @@ const ProductRequest = () => {
                                             return (
                                                 <tr key={product._id}>
                                                     <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
-                                                    <td>{product.buyer.name} {product.buyer.lastName}</td>
+                                                    {/* changed for name as mentioned in the data */}
+                                                    <td>{product.artistName || 'N/A'}</td>
+
                                                     <td>
                                                         {productData ? (
                                                             <>
                                                                 <img
-                                                                    src={productData.mainImage || 'default-image-url.jpg'}
+                                                                    src={product.product ? `${BASE_URL}${product.product}` : 'default-image-url.jpg'}
                                                                     className="rounded-circle avatar"
                                                                     alt=""
                                                                     style={{
@@ -186,7 +181,7 @@ const ProductRequest = () => {
                                                                         marginRight: '10px'
                                                                     }}
                                                                 />
-                                                                {productData.productName}
+                                                                {product.productName || 'N/A'}
                                                             </>
                                                         ) : (
                                                             "No Product Data"
@@ -195,14 +190,13 @@ const ProductRequest = () => {
                                                     <td>
                                                         {productData
                                                             ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' })
-                                                                .format(productData.price)
-                                                                .replace(/\.00$/, '')
+                                                                .format(product.productPrice).replace(/\.00$/, '')
                                                             : 'N/A'}
                                                     </td>
-                                                    <td>{product.quantity}</td>
-                                                    <td>{product.paymentMethod}</td>
+                                                    <td>{product.totalQuantity ?? 'N/A'}</td>
+                                                    <td>{product.paymentMethod || 'N/A'}</td>
                                                     <td>
-                                                        {new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                                        <td>{product.purchaseDate ? new Date(product.purchaseDate).toLocaleDateString() : 'N/A'}</td>
                                                     </td>
                                                     <td>
                                                         {productData && (
@@ -269,6 +263,7 @@ const ProductRequest = () => {
                                     </li>
                                 </ul>
                             </div>
+
                         </div>
                     </div>
                 </div>

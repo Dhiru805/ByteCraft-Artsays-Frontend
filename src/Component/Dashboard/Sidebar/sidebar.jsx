@@ -41,7 +41,7 @@
               { label: "Management", path: `/super-admin/artist/management` },
               { label: "Blog Request", path: `/super-admin/artist/blogrequest` },
               { label: "Blogs", path: `/super-admin/artistblogs` },
-              { label: "Product Request", path: `/super-admin/artistproductrequest` },
+              { label: "Product Request", path: `/super-admin/artist/artistproductrequest` },
               { label: "Products", path: `/super-admin/allartistproduct` },
               { label: "Sold Product ", path: `/super-admin/artistsoldproduct` },
               { label: "Transaction", path: `/super-admin/artisttransaction`},
@@ -72,6 +72,16 @@
               { label: "Sold  Product ", path: `/super-admin/sellersoldproduct` },
               { label: "Transaction", path: `//super-admin/sellertransaction` },
               { label: "Packaging Material", path: `/super-admin/sellerpackagingmaterial` }
+            ]
+          },
+          {
+            label: "Product",
+            icon: "fa fa-newspaper",
+            path: `#Product-management`,
+            subTabs: [
+              { label: "All Product", path: `/super-admin/product-table` },
+              { label: "Custom Order", path: `/super-admin/customordertable` },
+              { label: "Product Purchased", path: `/super-admin/purchasetable` },
             ]
           },
           {
@@ -139,6 +149,7 @@
           subTabs: [
               { label: "All Product", path: `/artist/product` },
               { label: "Custom Order", path: `/artist/custom-order` },
+              { label: "Product Purchased", path: `/artist/product-purchase` },
           ]
 
         },
@@ -160,6 +171,17 @@
           path: "/seller/dashboard",
           subTabs: []
         },
+        {
+          label: "product",
+          icon: "fa fa-newspaper",
+          path: "#",
+          subTabs: [
+            { label: "All Product", path: `/seller/product-details` },
+            { label: "Product Purchased", path: `/seller/purchased-product` },
+          ]
+
+        },
+
       ],
     };
 
