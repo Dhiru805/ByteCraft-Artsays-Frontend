@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import getAPI from '../../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
-import ConfirmationDialog from '../../../ConfirmationDialog';
-import useUserType from '../../../urlconfig';
+import ConfirmationDialog from '../../../../ConfirmationDialog';
+import useUserType from '../../../../urlconfig';
 
 const Billings = ({ userId, profileData, previewImage }) => {
   const userType = useUserType(); 

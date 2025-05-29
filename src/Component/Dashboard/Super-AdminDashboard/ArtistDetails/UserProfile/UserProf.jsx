@@ -14,13 +14,14 @@ import Soldproduct  from "./SoldProduct/SoldProduct"
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import Settings from './UserInfo/BasicInformation';
-import useUserType from '../../urlconfig'
+import useUserType from '../../../urlconfig'
 
 const UserProfileForm = () => {
   const userType = useUserType();
   const { userId } = useParams();
   const location = useLocation();
   const navigate = useNavigate(); 
+  
   const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
   const [passwordData, setPasswordData] = useState({
@@ -49,7 +50,7 @@ const UserProfileForm = () => {
 
   const fetchProfile = async () => {
     try {
-      const result = await getAPI(`http://localhost:3001/auth/userid/${userId}`, {}, true, false);
+      const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
       if (result.data.user) {
         const userData = result.data.user;
         const formattedBirthdate = userData.birthdate ? new Date(userData.birthdate).toISOString().split('T')[0] : '';
@@ -61,7 +62,7 @@ const UserProfileForm = () => {
           address: parsedAddress,
         });
 
-        const BASE_URL = 'http://localhost:3001';
+    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
         const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : 'DashboardAssets/assets/images/user.png';
         setPreviewImage(profilePhotoUrl);
       }
@@ -163,7 +164,7 @@ const UserProfileForm = () => {
         formData.append('profilePhoto', imageFile);
       }
 
-      const response = await fetch(`http://localhost:3001/auth/users/${userId}`, {
+      const response = await fetch(`/api/auth/users/${userId}`, {
         method: 'PUT',
         body: formData,
       });

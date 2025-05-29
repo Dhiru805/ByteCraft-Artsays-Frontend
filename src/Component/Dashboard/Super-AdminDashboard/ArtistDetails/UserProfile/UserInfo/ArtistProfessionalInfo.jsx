@@ -37,7 +37,7 @@ const ArtistInfo = ({ userId }) => {
     useEffect(() => {
         const fetchArtistData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/auth/getartistdetails/${userId}`);
+                const response = await axios.get(`/auth/getartistdetails/${userId}`);
                 if (response.data) {
                     setFormData({
                         ...response.data,
@@ -75,7 +75,7 @@ const ArtistInfo = ({ userId }) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const url = `http://localhost:3001/auth/updateartistdetails/${userId}`;
+            const url = `/auth/updateartistdetails/${userId}`;
             const result = await putAPI(url, {
                 ...formData,
                 artCategories: formData.artCategories.join(','),

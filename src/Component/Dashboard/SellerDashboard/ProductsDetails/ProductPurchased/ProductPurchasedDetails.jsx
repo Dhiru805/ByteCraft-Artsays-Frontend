@@ -78,7 +78,7 @@ function AllProduct() {
                             </li>
                             <li className="breadcrumb-item active">
                                 <Link to={`/${userType}/Dashboard/productpurchased`}>
-                                 Product Purchased
+                                    Product Purchased
                                 </Link>
                             </li>
                             <li className="breadcrumb-item ">Product Purchased Details</li>

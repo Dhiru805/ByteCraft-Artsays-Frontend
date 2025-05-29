@@ -18,7 +18,8 @@ const  ApprovedProduct = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const result = await getAPI("/api/get-allapprovedproduct", {}, true, false);
+                const userId = localStorage.getItem("userId");
+                const result = await getAPI(`/api/getproductdetails/${userId}`, {}, true, false);
                 console.log("Full API Response:", result);
                 console.log("Data Type:", typeof result.data);
 

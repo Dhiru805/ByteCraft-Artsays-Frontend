@@ -21,7 +21,7 @@ const Transaction = ({userId}) => {
 useEffect(() => { 
 const fetchProducts = async () => {
     try {
-        const result = await getAPI(`http://localhost:3001/api/get-alltransactionbyartistid/${userId}`, {}, true, false);
+        const result = await getAPI(`/api/get-alltransactionbyartistid/${userId}`, {}, true, false);
         console.log("Full API Response:", result);
         console.log("Data Type:", typeof result.data);
 

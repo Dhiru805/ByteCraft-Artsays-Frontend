@@ -20,7 +20,7 @@ const BankPaymentDetails = ({ userId }) => {
                     return;
                 }
     
-                const url = `http://localhost:3001/auth/bankdetails/${userId}`;
+                const url = `/auth/bankdetails/${userId}`;
                 const result = await getAPI(url);
 
                 if (result && result.data && result.data.bankDetails) { 
@@ -53,7 +53,7 @@ const BankPaymentDetails = ({ userId }) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const url = `http://localhost:3001/auth/updatebankdetails/${userId}`;
+            const url = `/auth/updatebankdetails/${userId}`;
             const result = await putAPI(url, formData);
 
             if (result) {

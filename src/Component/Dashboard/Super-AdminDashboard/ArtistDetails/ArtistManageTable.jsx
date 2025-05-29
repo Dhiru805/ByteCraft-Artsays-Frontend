@@ -195,7 +195,7 @@ function ArtistManageTable() {
                               className="btn btn-outline-info btn-sm mr-2"
                               title="Edit"
                               onClick={() =>
-                                navigate(`/${userType}/Dashboard/artistmanagetable/artistprofile/${artist._id}`)
+                                navigate(`/super-admin/artist/artisteditreuqest/${artist._id}`)
                               }
                             >
                               <i class="fa fa-pencil"></i>

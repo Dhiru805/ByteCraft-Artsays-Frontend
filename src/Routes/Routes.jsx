@@ -46,10 +46,12 @@ import BlogRequestDetails from "../Component/Dashboard/Super-AdminDashboard/Arti
 import ApprovedBlogs from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogs/BlogList";
 import ApprovedBlogsDetails from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogs/ArtistBlogDetails";
 import Artistproductrequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ProductRequest/ProductRequestTable";
+import ArtistProductView from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Product/AllArtistProduct";
+import ProductEditRequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/UserProfile/UserProf";
     //------Seller tab-----//
 import SellerProductRequest from "../Component/Dashboard/Super-AdminDashboard/Seller/ProductRequest/ProductRequestTable";
     //------Products tab---//
-import ProductTableView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Product";
+import ProductTableView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Product";///redirect the page here 
 import CustomOrderView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/CustomOrderAll/Customorder";
 import PurchaseTable from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductPurchased/ProductPurchased";
 import ProductUploads from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductUpload/productUploade";
@@ -159,7 +161,9 @@ const AppRoutes = () => {
         <Route path="artist/blogs" element={<ApprovedBlogs/>} />
         <Route path="artist/blogs/blog-details/:slug" element={<ApprovedBlogsDetails/>} />
         <Route path="artist/artistproductrequest" element={<Artistproductrequest/>} />
+        <Route path="artist/allartistproduct" element={<ArtistProductView/>} />
         <Route path="artist/viewrequesttoartist/:id" element={<ProductRequestView/>} />
+        <Route path="artist/artisteditreuqest/:userId" element={<ProductEditRequest/>} />
 
         {/* Seller Management */}
         <Route path="sellerrequest" element={<SellerProductRequest/>} />
@@ -254,7 +258,7 @@ const AppRoutes = () => {
           isAuthenticated ? (
             userType === "Super-Admin" ? (
               <Navigate to="/super-admin/dashboard" replace />
-            ) : userType === "Ar  tist" ? (
+            ) : userType === "Artist" ? (
               <Navigate to="/artist/dashboard" replace />
             ) : userType === "Buyer" ? (
               <Navigate to="/buyer/dashboard" replace />

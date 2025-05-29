@@ -42,7 +42,7 @@
               { label: "Blog Request", path: `/super-admin/artist/blogrequest` },
               { label: "Blogs", path: `/super-admin/artistblogs` },
               { label: "Product Request", path: `/super-admin/artist/artistproductrequest` },
-              { label: "Products", path: `/super-admin/allartistproduct` },
+              { label: "Products", path: `/super-admin/artist/allartistproduct` },
               { label: "Sold Product ", path: `/super-admin/artistsoldproduct` },
               { label: "Transaction", path: `/super-admin/artisttransaction`},
               { label: "Packaging Material", path: `/super-admin/artistpackagingmaterial` },

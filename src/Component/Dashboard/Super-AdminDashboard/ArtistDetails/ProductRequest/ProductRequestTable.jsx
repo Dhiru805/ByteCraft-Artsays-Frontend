@@ -13,6 +13,8 @@ const ProductRequest = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
+    const [loadingIds, setLoadingIds] = useState([]);
+
     
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   
@@ -71,8 +73,12 @@ const ProductRequest = () => {
         }
     };
 
-    const handleReject = (productId) => {
-        confirm(() => updateProductStatus(productId, 'Rejected'), "Are you sure you want to reject this product?");
+    const handleReject = async (productId) => {
+        confirm(async () => {
+            setLoadingIds(prev => [...prev, productId]);  
+            await updateProductStatus(productId, 'Rejected');
+            setLoadingIds(prev => prev.filter(id => id !== productId));  
+        }, "Are you sure you want to reject this product?");
     };
 
     const totalPages = Math.ceil(products.length / productsPerPage);
@@ -191,7 +197,7 @@ const ProductRequest = () => {
                                                         }
                                                         className="rounded-circle avatar"
                                                         alt=""
-                                                        style={{
+                                                        style={{    
                                                             width: '30px',
                                                             height: '30px',
                                                             objectFit: 'cover',
@@ -213,7 +219,7 @@ const ProductRequest = () => {
                                                     />
                                                     {product.productName}
                                                 </td>
-                                                <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.price).replace(/\.00$/, '')}</td>
+                                                <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.sellingPrice || 0).replace(/\.00$/, '')}</td>
                                                 <td>{new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
                                                 <td>
                                                     <button className={`btn btn-sm ${product.status === 'Pending' ? 'btn-outline-warning' : product.status === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
@@ -227,21 +233,36 @@ const ProductRequest = () => {
                                                     >
                                                          <i className="fa fa-eye"></i>
                                                     </button>
-                                                    <button
+<button
                                                         className="btn btn-sm btn-outline-success mr-2"
                                                         title="Approved"
-                                                        onClick={() => updateProductStatus(product._id, 'Approved')}
+                                                        disabled={loadingIds.includes(product._id)}  
+                                                        onClick={async () => {
+                                                            setLoadingIds(prev => [...prev, product._id]);  
+                                                            await updateProductStatus(product._id, 'Approved');
+                                                            setLoadingIds(prev => prev.filter(id => id !== product._id));  
+                                                        }}
                                                     >
-                                                        <i className="fa fa-check"></i>
+                                                        {loadingIds.includes(product._id) ? (  
+                                                            <i className="fa fa-spinner fa-spin"></i>  
+                                                        ) : (  
+                                                            <i className="fa fa-check"></i>  
+                                                        )}  
                                                     </button>
+
+                                                    {/* Reject button loading state and disabling */}
                                                     <button
                                                         className="btn btn-sm btn-outline-danger mr-2"
                                                         title="Declined"
+                                                        disabled={loadingIds.includes(product._id)}  
                                                         onClick={() => handleReject(product._id)}
                                                     >
-                                                        <i className="fa fa-ban"></i>
-                                                    </button>
-                                                    {/* <button
+                                                        {loadingIds.includes(product._id) ? (  
+                                                            <i className="fa fa-spinner fa-spin"></i>  
+                                                        ) : (  
+                                                            <i className="fa fa-ban"></i>  
+                                                        )} 
+                                                    </button>                                                    {/* <button
                                                         type="button"
                                                         className="btn btn-outline-danger btn-sm mr-2"
                                                         title="Delete"
