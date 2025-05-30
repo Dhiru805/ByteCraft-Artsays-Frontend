@@ -149,7 +149,7 @@ const AppRoutes = () => {
           <Route path="payment-method" element={<PaymentMethod />} />
           <Route path="password-manager" element={<PasswordManager />} />
           <Route path="account-verification" element={<AccountVerification />} />
-          <Route path="social-media-promotion" element={<SocialMediaPromotion />} />
+          <Route path="social-media-promotion" element={<SocialMediaPromotion  />} />
           <Route path="custom-request" element={<CustomRequest />} />
           <Route path="notification-preferences" element={<NotificationAndPreferences />} />
           <Route path="security-agreements" element={<AccountSecurityAndAgreements />} />
