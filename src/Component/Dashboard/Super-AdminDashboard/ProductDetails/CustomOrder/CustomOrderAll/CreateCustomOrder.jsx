@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import axios from 'axios';
 import useUserType from '../../../urlconfig';
 import Switch from "react-switch";
+import postAPI from '../../../../../../api/postAPI';
 
 function BuyerRequest() {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ function BuyerRequest() {
   const [minBudget, setMinBudget] = useState('');
   const [maxBudget, setMaxBudget] = useState('');
   const [paymentTerm, setPaymentTerm] = useState('');
-  const [expectedDeadline, setExpectedDeadline] = useState('');
+  const [expectedDeadline, setExpectedDeadline] = useState(0);
   const [comments, setComments] = useState('');
 
   useEffect(() => {
@@ -100,13 +101,13 @@ function BuyerRequest() {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/api/buyer-request', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
+      const response = await postAPI('/api/buyer-request', formData, {
+        // method: 'POST',
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
+        // body: formData,
+      }, true);
 
       const data = await response.json();
 
@@ -124,7 +125,7 @@ function BuyerRequest() {
         setMinBudget('');
         setMaxBudget('');
         setPaymentTerm('');
-        setExpectedDeadline('');
+        setExpectedDeadline(0);
         setComments('');
         navigate(`/${userType}/Dashboard/customrequest`);
       } else {

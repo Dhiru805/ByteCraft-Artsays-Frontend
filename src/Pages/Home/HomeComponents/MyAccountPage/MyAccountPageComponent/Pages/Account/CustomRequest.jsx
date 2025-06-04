@@ -1,113 +1,251 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiSearch } from "react-icons/fi";
 import { FaPlus } from "react-icons/fa6";
 import { GoPencil } from "react-icons/go";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { LuHandshake } from "react-icons/lu";
 import { FaEye } from 'react-icons/fa';
-
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import postAPI from '../../../../../../../api/postAPI';
+import deleteAPI from '../../../../../../../api/deleteAPI';
+import getAPI from '../../../../../../../api/getAPI';
 
 
 const AddCustomRequestForm = () => {
+
+  const [artistId, setArtistId] = useState('');
+  const [paymentTerm, setPaymentTerm] = useState([]);
+
+
   const [requests, setRequests] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [colorPref, setColorPref] = useState('');
   const [colorPreferences, setColorPreferences] = useState([]);
-  const [editingIndex, setEditingIndex] = useState(null);
-
-
+  const [editingId, setEditingId] = useState(null);
+  const [artists, setArtists] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [showNegotiationPopup, setShowNegotiationPopup] = useState(false);
 
+  const [imagePreview, setImagePreview] = useState(null);
 
-  // Form state fields
+  const [fileType, setFileType] = useState(null);
+
+  // const [buyerImage, setBuyerImage] = useState(null);
+  const [showFullImage, setShowFullImage] = useState(false); // Optional for full-size view
+
+// const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [formData, setFormData] = useState({
     productName: '',
-    artist: '',
+    description: '',
+    artists: [],
     artType: '',
     size: '',
-    frameRequired: false,
-    minBudget: '',
-    maxBudget: '',
+    isFramed: false,
+    minBudget: 0,
+    maxBudget: 0,
     paymentTerm: '',
-    deadline: '',
-    referenceImage: null,
-    comments: ''
+    expectedDeadline: 0,
+    buyerImage: null,
+    comments: '',
+    description: ''
   });
 
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    const fetchArtists = async () => {
+      try {
+        const response = await getAPI("/artist/artists");
+        setArtists(response.data);
+      } catch (error) {
+        console.error("Error fetching artists:", error);
+      }
+    };
+
+    const fetchRequests = async () => {
+      try {
+        const response = await getAPI("/api/buyer-request", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setRequests(response.data.requests || []);
+      } catch (error) {
+        console.error("Error fetching requests:", error);
+      }
+    };
+
+    fetchArtists();
+    fetchRequests();
+  }, [token]);
+
   const handleAddColor = () => {
-    if (colorPref.trim()) {
-      setColorPreferences([...colorPreferences, colorPref]);
+    if (colorPref.trim() && !colorPreferences.includes(colorPref.trim())) {
+      setColorPreferences([...colorPreferences, colorPref.trim()]);
       setColorPref('');
     }
   };
 
   const handleChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
-    if (type === 'checkbox') {
-      setFormData({ ...formData, [name]: checked });
-    } else if (type === 'file') {
-      setFormData({ ...formData, [name]: files[0] });
-    } else {
-      setFormData({ ...formData, [name]: value });
+  const { name, value, type, checked, files } = e.target;
+
+  if (type === 'checkbox') {
+    setFormData({ ...formData, [name]: checked });
+  } else if (type === 'file') {
+    setFormData({ ...formData, [name]: files[0] });
+  } else {
+    const numericFields = ['expectedDeadline', 'minBudget', 'maxBudget'];
+    setFormData({
+      ...formData,
+      [name]: numericFields.includes(name) ? Number(value) : value,
+    });
+  }
+};
+
+
+  const handleDescriptionChange = (value) => {
+    setFormData({ ...formData, description: value });
+  };
+
+  const handleEditRequest = (request) => {
+    setFormData({
+      ...request,
+      description: request.description || '',
+      buyerImage: null
+    });
+    setColorPreferences(request.colourPreferences || []);
+    setEditingId(request._id);
+    setShowForm(true);
+  };
+
+  const handleDeleteRequest = async (id) => {
+    try {
+      await deleteAPI(`/api/buyer-request/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      toast.success("Request deleted");
+      setRequests(requests.filter(req => req._id !== id));
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error("Failed to delete request");
     }
   };
 
 
-  const handleEditRequest = (index) => {
-  const requestToEdit = requests[index];
-  setFormData({
-    ...requestToEdit,
-    referenceImage: null // Reset file input to avoid issues
-  });
-  setColorPreferences(requestToEdit.colorPreferences || []);
-  setEditingIndex(index);
-  setShowForm(true);
-};
-
-
-
-  const handleDeleteRequest = (index) => {
-    const updatedRequests = [...requests];
-    updatedRequests.splice(index, 1);
-    setRequests(updatedRequests);
+  const handleImageClick = () => {
+    setShowFullImage(prev => !prev);
   };
 
 
-  const handleSubmit = (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const newRequest = {
-    ...formData,
-    colorPreferences
-  };
 
-  if (editingIndex !== null) {
-    const updatedRequests = [...requests];
-    updatedRequests[editingIndex] = newRequest;
-    setRequests(updatedRequests);
-    setEditingIndex(null); // Clear edit mode
+    const tempElement = document.createElement("div");
+    tempElement.innerHTML = formData.description;
+    const plainTextDescription = tempElement.innerText;
+
+    const formPayload = new FormData();
+    formPayload.append('ProductName', formData.productName);
+    formPayload.append('Description', plainTextDescription);
+    formPayload.append('ArtType', formData.artType);
+    formPayload.append('Size', formData.size);
+    formPayload.append('IsFramed', formData.isFramed);
+    formPayload.append('MinBudget', formData.minBudget);
+    formPayload.append('MaxBudget', formData.maxBudget);
+    formPayload.append('PaymentTerm', formData.paymentTerm);
+    formPayload.append('ExpectedDeadline', formData.expectedDeadline);
+
+    formPayload.append('Comments', formData.comments);
+    formPayload.append('ColourPreferences', JSON.stringify(colorPreferences));
+    formPayload.append('Artists', JSON.stringify(formData.artists));
+    if (formData.buyerImage) {
+      formPayload.append('BuyerImage', formData.buyerImage);
+      // formData.append("buyerImage", yourFileObject);
+    }
+
+
+    if (artistId) {
+      formPayload.append('Artist', artistId);
+    }
+
+    // if (buyerImage) {
+    //   formPayload.append('buyerImage', buyerImage, buyerImage.name);
+    // }
+
+    try {
+      let response;
+
+      response = await postAPI('/api/buyer-request', formPayload, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        // method: 'POST',
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
+        // body: formPayload,
+      }, true);
+
+ const data = response.data;
+
+  if (response.status === 200 || response.status === 201) {
+    toast.success(data.message || "Request created successfully!");
+    const updatedRequests = await getAPI("/api/buyer-request", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setRequests(updatedRequests.data.requests || []);
   } else {
-    setRequests([...requests, newRequest]);
+    toast.error(data.message || "Submission failed");
   }
+} catch (error) {
+  console.error("Submit error:", error);
+  const message = error?.response?.data?.message || "An error occurred";
+  toast.error(message);
+}
 
-  // Reset form
-  setFormData({
-    productName: '',
-    artist: '',
-    artType: '',
-    size: '',
-    frameRequired: false,
-    minBudget: '',
-    maxBudget: '',
-    paymentTerm: '',
-    deadline: '',
-    referenceImage: null,
-    comments: ''
-  });
-  setColorPreferences([]);
-  setShowForm(false);
-};
+    setFormData({
+      productName: '',
+      description: '',
+      artists: [],
+      artType: '',
+      size: '',
+      isFramed: false,
+      minBudget: 0,
+      maxBudget: 0,
+      paymentTerm: '',
+      expectedDeadline: 0,
+      buyerImage: null,
+      comments: ''
+    });
+    setColorPreferences([]);
+    setEditingId(null);
+    setShowForm(false);
+  };
 
+  const modules = {
+    toolbar: [
+      [{ 'font': ['sans-serif'] }, { 'size': ['small', 'large', 'huge'] }],
+      [{ 'header': '1' }, { 'header': '2' }, 'bold', 'italic', 'underline'],
+      [{ 'align': [] }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      ['link', 'image', 'video'],
+      [{ 'color': [] }, { 'background': [] }],
+      ['code-block'],
+      ['blockquote'],
+      // ['fullscreen'],
+      ['help'],
+    ],
+  };
+
+  const editorStyle = {
+    fontFamily: 'Nunito, Ubuntu, Raleway, IBM Plex Sans, sans-serif',
+    fontSize: '12px',
+  };
 
   return (
     <div className="w-[856px]  ">
@@ -270,14 +408,34 @@ const AddCustomRequestForm = () => {
           {/* Select Artist */}
           <div>
             <label className="block font-medium mb-1">Select Artist</label>
-            <input
-              type="text"
+            <select
+              id="artistSelect"
               name="artist"
-              value={formData.artist}
-              onChange={handleChange}
-              placeholder="Enter artist name"
+              value={formData.artists[0] || ''}
+              onChange={(e) => {
+                const selectedId = e.target.value;
+                setArtistId(selectedId);
+
+                // Optional: find the selected artist object if needed
+                const selectedArtist = artists.find(a => a._id === selectedId);
+                if (selectedArtist) {
+                  setFormData({
+                    ...formData,
+                    artists: [selectedArtist._id], // Only one artist allowed
+                  });
+                }
+              }}
               className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
-            />
+              required
+            >
+              <option value="">Select an artist</option>
+              {artists.map((artist) => (
+                <option key={artist._id} value={artist._id}>
+                  {artist.name} {artist.lastName}
+                </option>
+              ))}
+            </select>
+
           </div>
 
           {/* Art Type */}
@@ -374,13 +532,20 @@ const AddCustomRequestForm = () => {
           {/* Payment Term */}
           <div>
             <label className="block font-medium mb-1">Payment Term</label>
-            <input
-              type="text"
-              name="paymentTerm"
+            <select
+              id="paymentTerm"
+              name="paymentTerm" // ✅ should match formData
               value={formData.paymentTerm}
-              onChange={handleChange}
-              className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
-            />
+              onChange={handleChange} // ✅ use the shared handler
+              className="form-control"
+              required
+            >
+              <option value="">Select payment option</option>
+              <option value="full">Full Payment</option>
+              <option value="installment">Installment</option>
+              <option value="two-step">Two Step Payment</option>
+            </select>
+
           </div>
 
           {/* Deadline */}
@@ -400,10 +565,76 @@ const AddCustomRequestForm = () => {
             <label className="block font-medium mb-1">Reference Image</label>
             <input
               type="file"
-              name="referenceImage"
-              onChange={handleChange}
+              name="BuyerImage"
+              onChange={(e) => {
+                handleChange(e);
+                const file = e.target.files[0];
+                if (file) {
+                  const fileType = file.type;
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    if (fileType.startsWith("image/")) {
+                      setImagePreview(reader.result);
+                      setFileType("image");
+                    } else if (fileType === "application/pdf") {
+                      setImagePreview(null);
+                      setFileType("pdf");
+                    } else {
+                      setImagePreview(null);
+                      setFileType(null);
+                    }
+                  };
+                  reader.readAsDataURL(file);
+                }
+
+              }}
               className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
             />
+            {fileType === "image" && imagePreview && (
+              <div className="mt-2">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '200px',
+                    borderRadius: '4px',
+                    padding: '5px'
+                  }}
+                />
+
+              </div>
+            )}
+            {fileType === "pdf" && imagePreview && (
+              <a
+                href={imagePreview}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-gray-200 text-sm w-[120px] px-6 py-2 rounded-xl border mt-2 text-center"
+              >
+                View PDF
+              </a>
+            )}
+
+
+            {showFullImage && fileType === "image" && imagePreview && (
+              <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+                <div className="relative">
+                  <img
+                    src={imagePreview}
+                    alt="Full Image"
+                    className="max-w-[90vw] max-h-[90vh] rounded-lg shadow-lg"
+                  />
+                  <button
+                    className="absolute top-2 right-2 text-white text-2xl"
+                    onClick={() => setShowFullImage(false)}
+                  >
+                    &times;
+                  </button>
+                </div>
+              </div>
+            )}
+
           </div>
 
           {/* Additional Comments */}
@@ -418,8 +649,26 @@ const AddCustomRequestForm = () => {
             ></textarea>
           </div>
 
+          <div className="form-group mt-3">
+            <label htmlFor="description">Detailed Description</label>
+            <ReactQuill
+              id="description"
+              value={formData.description}
+              onChange={handleDescriptionChange}
+              placeholder="Describe your request in detail..."
+              modules={modules}
+              theme="snow"
+              style={editorStyle}
+              required
+            />
+          </div>
+
           {/* Submit Button */}
-          <button type="submit" className="bg-[#6F4D34] text-white font-semibold px-11 py-2 rounded-full">
+          <button 
+          type="submit" 
+          // disabled={isSubmitting}
+          className="bg-[#6F4D34] text-white font-semibold px-11 py-2 rounded-full">
+            {/* {isSubmitting ? 'Submitting...' : 'Submit'} */}
             Submit
           </button>
         </form>

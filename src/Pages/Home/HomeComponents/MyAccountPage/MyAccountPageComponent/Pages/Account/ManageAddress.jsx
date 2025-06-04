@@ -25,67 +25,6 @@ const ManageAddress = () => {
     }));
   };
 
-  // const handleAddAddress = async (e) => {
-  //   e.preventDefault();
-
-  //   if (!formData.line1 || !formData.city || !formData.state || !formData.pincode) {
-  //     alert('Please fill in required fields');
-  //     return;
-  //   }
-
-  //   try {
-
-  //     const responseGet = await getAPI(`/auth/userid/${userId}`);
-  //   if (!responseGet.data?.user) {
-  //     toast.error('Failed to fetch user data');
-  //     return;
-  //   }
-
-  //   const user = responseGet.data.user;
-  //   const updatedUser = {
-  //     ...user,
-  //     address: formData
-  //   };
-
-  //     const response = await putAPI(`/auth/users/${userId}`, updatedUser, {
-  //       'Content-Type': 'multipart/form-data',
-  //     });
-
-  //     if (response.hasError) {
-  //       toast.error(response.message || 'Failed to update address');
-  //       return;
-  //     } else {
-  //       toast.success(response.message || 'Address updated successfully');
-  //     }
-
-  //     if (editIndex !== null) {
-  //       const updatedAddresses = [...addresses];
-  //       updatedAddresses[editIndex] = formData;
-  //       setAddresses(updatedAddresses);
-  //       setEditIndex(null);
-  //     } else {
-  //       setAddresses([...addresses, formData]);
-  //     }
-
-  //     setFormData({
-  //       line1: '',
-  //       line2: '',
-  //       city: '',
-  //       state: '',
-  //       country: '',
-  //       pincode: '',
-  //       // email: ''
-  //     });
-
-  //     console.log('Updated user:', response.data.user);
-
-  //   } catch (error) {
-  //     toast.error('Server error while updating address');
-  //     console.error(error);
-  //   }
-  // };
-
-
   const handleAddAddress = async (e) => {
   e.preventDefault();
 
@@ -116,7 +55,7 @@ const ManageAddress = () => {
     };
 
     const response = await putAPI(`/auth/users/${userId}`, updatedUser, {
-      'Content-Type': 'application/json', // Use JSON unless you're uploading files
+      'Content-Type': 'application/json', 
     });
 
     if (response.hasError) {
@@ -167,12 +106,6 @@ useEffect(() => {
     setEditIndex(index);
   };
 
-  // const handleDelete = (index) => {
-  //   const updated = [...addresses];
-  //   updated.splice(index, 1);
-  //   setAddresses(updated);
-  // };
-
 
   const handleDelete = async (index) => {
   try {
@@ -203,6 +136,7 @@ useEffect(() => {
     }
 
     toast.success(responsePut.message || 'Address deleted successfully');
+    toast.success('Address deleted successfully');
     setAddresses(updatedAddresses);
 
   } catch (error) {
