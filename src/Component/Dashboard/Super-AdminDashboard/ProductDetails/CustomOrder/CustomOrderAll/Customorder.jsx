@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
-import CustomorderHeader from "./CustomorderHeader";
-import CustomOrderTable from "../Buyer/CustomOrderTable";
-import CustomOrderRequestArtist from "../Artist/BuyerRequestTable";
 import BuyerRequestToArtistTable from "../SuperAdmin/BuyerRequestToArtistTable"
 import getAPI from "../../../../../../api/getAPI";
-import useUserType from '../../../urlconfig';
-import { useConfirm } from '../../../StatusConfirm';
+import useUserType from '../../../../urlconfig';
+import { useConfirm } from '../../../../StatusConfirm';
 import { toast } from 'react-toastify';
 import putAPI from '../../../../../../api/putAPI';
 
@@ -15,46 +12,46 @@ const Customorder = () => {
     const userType = useUserType();
     const confirm = useConfirm();
 
-    //Buyer
-    const [buyerRequests, setBuyerRequests] = useState([]);
-    const fetchBuyerRequests = async () => {
-        try {
-            const response = await getAPI("http://localhost:3001/api/get-buyer-request");
-            const buyerRequestsData = response.data.buyerRequests;
-            setBuyerRequests(buyerRequestsData);
-        } catch (error) {
-            console.error("Error fetching buyer requests:", error);
-        }
-    };
+    // //Buyer
+    // const [buyerRequests, setBuyerRequests] = useState([]);
+    // const fetchBuyerRequests = async () => {
+    //     try {
+    //         const response = await getAPI("/api/get-buyer-request");
+    //         const buyerRequestsData = response.data.buyerRequests;
+    //         setBuyerRequests(buyerRequestsData);
+    //     } catch (error) {
+    //         console.error("Error fetching buyer requests:", error);
+    //     }
+    // };
 
-    useEffect(() => {
-        fetchBuyerRequests();
-    }, []);
+    // useEffect(() => {
+    //     fetchBuyerRequests();
+    // }, []);
 
     //Artist
 
-    const [buyerRequestsdata, setBuyerRequestsdata] = useState([]);
+    // const [buyerRequestsdata, setBuyerRequestsdata] = useState([]);
 
-    const fetchBuyerRequestsdata = async () => {
-        try {
-            const response = await getAPI("http://localhost:3001/api/get-buyer-request-data");
-            const buyerRequestsData = response.data.buyerRequests;
-            setBuyerRequestsdata(buyerRequestsData);
-        } catch (error) {
-            console.error("Error fetching buyer requests:", error);
-        }
-    };
+    // const fetchBuyerRequestsdata = async () => {
+    //     try {
+    //         const response = await getAPI("/api/get-buyer-request-data");
+    //         const buyerRequestsData = response.data.buyerRequests;
+    //         setBuyerRequestsdata(buyerRequestsData);
+    //     } catch (error) {
+    //         console.error("Error fetching buyer requests:", error);
+    //     }
+    // };
 
-    useEffect(() => {
-        fetchBuyerRequestsdata();
-    }, []);
+    // useEffect(() => {
+    //     fetchBuyerRequestsdata();
+    // }, []);
 
     //Super Admin
 
     const [buyerRequestsAdmin, setBuyerRequestsAdmin] = useState([]);
     const fetchBuyerRequestsAdmin = async () => {
         try {
-            const response = await getAPI("http://localhost:3001/api/get-data-admin");
+            const response = await getAPI("/api/get-data-admin");
             const buyerRequestsData = response.data.buyerRequests;
             setBuyerRequestsAdmin(buyerRequestsData);
         } catch (error) {
@@ -72,20 +69,13 @@ const Customorder = () => {
     const updateBuyerRequestStatus = async (requestId, status) => {
         try {
             await putAPI(
-                `http://localhost:3001/api/update-request-status/${requestId}`,
+                `/api/update-request-status/${requestId}`,
                 { requestStatus: status },
                 {},
                 true
             );
-            fetchBuyerRequests();      
-            fetchBuyerRequestsdata(); 
             fetchBuyerRequestsAdmin();
             
-            setBuyerRequests((prevRequests) =>
-                prevRequests.map((request) =>
-                    request._id === requestId ? { ...request, RequestStatus: status } : request
-                )
-            );
             
     
             if (status === 'Approved') {
@@ -106,19 +96,7 @@ const Customorder = () => {
 
     return (
         <>
-            <CustomorderHeader />
-            {userType === "Buyer" && (
-                <CustomOrderTable buyerRequests={buyerRequests} setBuyerRequests={setBuyerRequests} />
-            )}
 
-            {userType === "Artist" && (
-                <CustomOrderRequestArtist
-                    buyerRequests={buyerRequestsdata}
-                    handleRejectBuyerRequest={handleRejectBuyerRequest}
-                    updateBuyerRequestStatus={updateBuyerRequestStatus}
-                    setBuyerRequests={setBuyerRequestsdata}
-                />
-            )}
             {userType === "Super-Admin" && (
                 <BuyerRequestToArtistTable
                     handleRejectBuyerRequest={handleRejectBuyerRequest}

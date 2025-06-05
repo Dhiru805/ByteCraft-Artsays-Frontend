@@ -15,6 +15,24 @@ import Register from "../Pages/Register/Register";
 import ArtistSellerRegister from "../Pages/Register/ArtistSellerRegister";
 import ForgotPassword from "../Pages/Login/Forgotpassword";
 
+//----------------------------------------My Account-----------------------------------------//
+import MyAccountMainLayout from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/MyAccountMainLayout';
+
+import { AccountPage } from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyAccountPage';
+import { AccountForm } from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PersonaInformation';
+import ManageAddress from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/ManageAddress';
+import BankPaymentDetails from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/BankPaymentDetails';
+import  PaymentMethod  from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PaymentMethod';
+import  PasswordManager  from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PasswordManager';
+import  AccountVerification  from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/AccountVerification';
+import  SocialMediaPromotion  from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/SocialMediaPromotion';
+import  CustomRequest  from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/CustomRequest';
+import  NotificationAndPreferences  from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/NotificationAndPreferences';
+import  AccountSecurityAndAgreements  from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/AccountSecurityAndAgreements';
+import MyOrders from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyOrders";
+import TrackOrder from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/TrackOrder";
+import  Logout from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/Logout';
+
 //----------------------------------------Error Pages-----------------------------------------//
 import PagenotFound404 from "../Pages/Error/404Error";
 import UnauthorizedAccess from "../Pages/Error/403Error";
@@ -45,6 +63,18 @@ import BlogRequestUpdate from "../Component/Dashboard/Super-AdminDashboard/Artis
 import BlogRequestDetails from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogRequest/Artistblogdetails";
 import ApprovedBlogs from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogs/BlogList";
 import ApprovedBlogsDetails from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogs/ArtistBlogDetails";
+import SoldProduct from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/SoldProduct/SoldProduct";
+import Artistproductrequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ProductRequest/ProductRequestTable";
+import ArtistAllProduct from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Product/AllArtistProduct";
+import ProductEditRequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/UserProfile/UserProf";
+// import ArtistManagementView from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ViewUserProfile/UserProf";
+                                 //-----------------------------Product--------------------------//
+import ProductTableView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Product";///redirect the page here 
+import CustomOrderView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/CustomOrderAll/Customorder";
+import PurchaseTable from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductPurchased/ProductPurchased";
+import ProductUploads from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductUpload/productUploade";
+import ProductRequestView  from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist";
+import ViewCustomRequestsuperadmin from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist"
                  //-----------------------------Bidding--------------------------//
 import AllBiddingProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/AllProduct/BiddingProduct";
 import BiddedProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddedproduct/Biddedproduct";
@@ -62,13 +92,23 @@ import BlogPost from "../Component/Dashboard/ArtistDashbooard/Blog/BlogPost";
 import UpdateBlog from "../Component/Dashboard/ArtistDashbooard/Blog/UpdateBlogList";
 import BlogDetails from "../Component/Dashboard/ArtistDashbooard/Blog/ArtistBlogDetails";
 
+              //-----------------------------Products Route--------------------------//
+import AllProduct from "../Component/Dashboard/ArtistDashbooard/ProductDetails/Product";
+import ProductUploade from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductUpload/productUploade';
+import CustomOrder from '../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/CustomOrderAll/Customorder';
+import ViewCustomRequest from '../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/Artist/ViewRequest'
+import Productpurchase from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductPurchased/ProductPurchased';
+
 //----------------------------------------Buyer Components-----------------------------------//
 import BuyerDashboard from "../Component/Dashboard/BuyerDashboard/Dashboard/MainContent";
 
 //----------------------------------------Seller Components----------------------------------//
 import SellerDashboard from "../Component/Dashboard/SellerDashboard/Dashboard/MainContent";
+import ViewProductDetails from "../Component/Dashboard/SellerDashboard/ProductsDetails/Product";
+import SellerProductUpload from "../Component/Dashboard/SellerDashboard/ProductsDetails/ProductUpload/productUploade";
+import SellerPurchasedProducts from "../Component/Dashboard/SellerDashboard/ProductsDetails/ProductPurchased/ProductPurchased";
 
-// Route Protection Components
+
 const PrivateRoute = ({ allowedRoles, children }) => {
   const { isAuthenticated, userType } = useAuth();
   const location = useLocation();
@@ -130,12 +170,25 @@ const AppRoutes = () => {
 
         {/* Artist Management */}
         <Route path="artist/management" element={<ArtistManagement />} />
+        <Route path="artist/artist-edit" element={<ProductEditRequest/>} />
+        {/* <Route path="artist/artist-view" element={</>} /> */}
         <Route path="artist/blogrequest" element={<BlogRequest />} />
         <Route path="artist/blogrequest/view-Blog" element={<BlogRequestView />} />
         <Route path="artist/blogrequest/update-blog" element={<BlogRequestUpdate />} />
         <Route path="artist/blogrequest/blog-details/:slug" element={<BlogRequestDetails/>} />
         <Route path="artist/blogs" element={<ApprovedBlogs/>} />
         <Route path="artist/blogs/blog-details/:slug" element={<ApprovedBlogsDetails/>} />
+        <Route path="artist/artistproductrequest" element={<Artistproductrequest/>} />
+        <Route path="artist/allartistproduct" element={<ArtistAllProduct/>} />
+        <Route path="artist/sold-product" element={<SoldProduct/>} />
+
+            {/* Product Management */}
+        <Route path="product-table" element={<ProductTableView/>} />
+        <Route path="customordertable" element={<CustomOrderView/>} />
+          <Route path="customordertable/view-request" element={< ViewCustomRequestsuperadmin/>} />
+        <Route path="purchasetable" element={<PurchaseTable/>} />
+        <Route path="product-upload" element={<ProductUploads/>} />
+    
       
         {/* Bidding Management */}
         <Route path="bidding/allproduct" element={<AllBiddingProduct />} />
@@ -166,6 +219,14 @@ const AppRoutes = () => {
         <Route path="bloglist/create-blog" element={<BlogPost/>} />
         <Route path="bloglist/update-blog" element={<UpdateBlog/>} />
         <Route path="bloglist/blog-details/:slug" element={<BlogDetails/>}/>
+
+             {/* ----Product Route-------*/}
+        <Route path="product" element={<AllProduct/>}/>
+        <Route path="productUpload" element={<ProductUploade />}/>
+        <Route path="custom-order" element={<CustomOrder />}/>
+        <Route path="custom-order/view-request" element={<ViewCustomRequest/>}/>
+       
+        <Route path="product-purchase" element={<Productpurchase />}/>
       </Route>
 
       {/* --------------------------------------------Buyer Routes---------------------------------------------------- */}
@@ -194,6 +255,10 @@ const AppRoutes = () => {
         <Route index element={<SellerDashboard />} />
         <Route path="dashboard" element={<SellerDashboard />} />
         <Route path="profile" element={<UserProfile />} />
+                 {/* ----Product Route-------*/}
+        <Route path="product-details" element={<ViewProductDetails/>}/>
+        <Route path="SellerProductUpload" element={<SellerProductUpload />}/>
+        <Route path="purchased-product" element={<SellerPurchasedProducts/>}/>
       </Route>
 
       {/*-------------------------------------------- Website Routes-------------------------------------------------- */}
@@ -201,6 +266,26 @@ const AppRoutes = () => {
       
 <Route path="/" element={<WebsiteLayout />}>
   <Route index element={<WebsiteMain />} />
+    <Route path="/my-account" element={<MyAccountMainLayout />}>
+        <Route element={<AccountPage />}>
+          <Route index element={<AccountForm />} />
+          <Route path="personal-info" element={<AccountForm />} />
+          <Route path="my-orders" element={<MyOrders />} />
+          <Route path="manage-address" element={<ManageAddress />} />
+          <Route path="bank-payment-details" element={<BankPaymentDetails />} />
+          <Route path="payment-method" element={<PaymentMethod />} />
+          <Route path="password-manager" element={<PasswordManager />} />
+          <Route path="account-verification" element={<AccountVerification />} />
+          <Route path="social-media-promotion" element={<SocialMediaPromotion  />} />
+          <Route path="custom-request" element={<CustomRequest />} />
+          <Route path="notification-preferences" element={<NotificationAndPreferences />} />
+          <Route path="security-agreements" element={<AccountSecurityAndAgreements />} />
+          <Route path="logout" element={<Logout />} />
+
+          <Route path="track-your-order" element={<TrackOrder />} />
+
+        </Route>
+      </Route>
 </Route>
 
       {/*-------------------------------------------- Root Route - Auto Redirect----------------------------------------- */}

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import getAPI from '../../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
-import ConfirmationDialog from '../../../ConfirmationDialog';
-import useUserType from '../../../urlconfig';
+import ConfirmationDialog from '../../../../ConfirmationDialog';
+import useUserType from '../../../../urlconfig';
 
 const Billings = ({ userId, profileData, previewImage }) => {
   const userType = useUserType(); 
@@ -35,7 +35,7 @@ const Billings = ({ userId, profileData, previewImage }) => {
   const fetchBlog = async () => {
     try {
       const result = await getAPI(
-        `http://localhost:3001/Blog-Post/blogs/user/${userId}`,
+        `/Blog-Post/blogs/user/${userId}`,
         {},
         true,
         false
@@ -109,7 +109,7 @@ const Billings = ({ userId, profileData, previewImage }) => {
                           className="d-block img-fluid rounded"
                           src={
                             blog.blogImage
-                              ? `http://localhost:3001/${blog.blogImage.replace(/\\/g, "/")}`
+                              ? `/${blog.blogImage.replace(/\\/g, "/")}`
                               : "/placeholder.jpg"
                           }
                           alt={blog.blogName}

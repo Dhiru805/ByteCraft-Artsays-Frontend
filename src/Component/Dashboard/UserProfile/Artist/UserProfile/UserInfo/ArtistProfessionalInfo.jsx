@@ -25,7 +25,7 @@ const predefinedAchievements = [
     { value: 'Awards', label: 'Awards' },
 ];
 
-const ArtistInfo = ({ userId }) => {
+const ArtistInfo = ({ userId,loading}) => {
     const [formData, setFormData] = useState({
         artCategories: [],
         mediumUsed: [],
@@ -182,7 +182,9 @@ const ArtistInfo = ({ userId }) => {
                         </div>
                     </div>
                 </div>
-                <button type="submit" className="btn btn-primary mx-2">Update</button>
+                <button type="submit" className="btn btn-primary mx-2"disabled={loading}>
+                 {loading? "Updating.........":"Update"}
+                </button>
             </form>
         </div>
     );

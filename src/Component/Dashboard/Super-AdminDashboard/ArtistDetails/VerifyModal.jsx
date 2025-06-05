@@ -9,9 +9,12 @@ const VerifyModal = ({ artist, onClose,refreshArtists  }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [users, setUsers] = useState([]);
     const confirm = useConfirm();
+    const [loading,setLoading]=useState(false);
 
 
     const updateUserStatus = async (userId, status) => {
+   
+    setLoading(true);
         try {
             await putAPI(
                 `/auth/updateuserstatus/${userId}`,
@@ -35,6 +38,8 @@ const VerifyModal = ({ artist, onClose,refreshArtists  }) => {
             onClose();
         } catch (error) {
             console.error("Error updating user status:", error);
+        }finally{
+            setLoading(false);
         }
     };
 
@@ -140,13 +145,15 @@ const VerifyModal = ({ artist, onClose,refreshArtists  }) => {
                             Close
                         </button> */}
                             {artist.status !== 'Verified' && (
-                            <button type="button" className="btn btn-success" onClick={() => updateUserStatus(artist._id, 'Verified')}>
-                                Verified
+                            <button type="button" className="btn btn-success" onClick={() => updateUserStatus(artist._id, 'Verified')}
+                            disabled={loading}>
+                                {loading?'Verified....':'Verified'}
                             </button>
                         )}
                         {artist.status !== 'Unverified' && (
-                            <button type="button" className="btn btn-danger" onClick={() => handleReject(artist._id)}>
-                                Unverified
+                            <button type="button" className="btn btn-danger" onClick={() => handleReject(artist._id)}
+                            disabled={loading}>
+                                {loading?'Unverified....':'Unverified'}
                             </button>
                         )}
                     </div>

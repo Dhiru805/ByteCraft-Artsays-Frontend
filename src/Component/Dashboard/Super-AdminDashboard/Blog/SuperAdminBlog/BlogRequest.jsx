@@ -18,7 +18,7 @@ const BlogRequest = () => {
     useEffect(() => {
         const fetchBlogs = async () => {
             try {
-                const result = await getAPI("http://localhost:3001/Blog-Post/all-blogs", {}, true, false);
+                const result = await getAPI("/Blog-Post/all-blogs", {}, true, false);
                 if (result.data) {
                     setBlogs(result.data.blogs);
                 }
@@ -33,7 +33,7 @@ const BlogRequest = () => {
     const updateBlogStatus = async (blogId, status) => {
         try {
             await putAPI(
-                `http://localhost:3001/Blog-Post/update-status/${blogId}`,
+                `/Blog-Post/update-status/${blogId}`,
                 { blogStatus: status },
                 {},
                 true

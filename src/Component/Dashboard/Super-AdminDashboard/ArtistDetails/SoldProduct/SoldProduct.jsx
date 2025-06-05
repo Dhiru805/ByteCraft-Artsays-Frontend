@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
-import useUserType from '../../urlconfig';
+import useUserType from '../../../urlconfig';
 
 const SoldProduct = () => {
     const [products, setProducts] = useState([]);
@@ -16,11 +16,11 @@ const SoldProduct = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const result = await getAPI("http://localhost:3001/api/totalpurchaseproduct", {}, true, false);
+                const result = await getAPI("/api/totalpurchaseproduct", {}, true, false);
                 console.log("Full API Response:", result);
 
                 if (result && result.data && Array.isArray(result.data)) {
-                    setProducts(result.data); // Set only the array
+                    setProducts(result.data); 
                 } else {
                     console.error("API response does not contain an array:", result.data);
                     setProducts([]);
@@ -52,14 +52,14 @@ const SoldProduct = () => {
             <div className="block-header">
                 <div className="row">
                     <div className="col-lg-6 col-md-6 col-sm-12">
-                        <h2>Artist Sold Product</h2>
+                        <h2> Sold Product</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
                                 <a href="index.html">
                                     <i className="fa fa-dashboard"></i>
                                 </a>
                             </li>
-                            <li className="breadcrumb-item">Artist Sold Product</li>
+                            <li className="breadcrumb-item"> Sold Product</li>
                         </ul>
                     </div>
                 </div>

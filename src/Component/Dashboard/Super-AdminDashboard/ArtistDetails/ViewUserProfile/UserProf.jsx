@@ -43,7 +43,7 @@ const UserProfileForm = () => {
 
   const fetchProfile = async () => {
     try {
-      const result = await getAPI(`http://localhost:3001/auth/userid/${userId}`, {}, true, false);
+      const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
       if (result.data.user) {
         const userData = result.data.user;
         const formattedBirthdate = userData.birthdate ? new Date(userData.birthdate).toISOString().split('T')[0] : '';
@@ -55,7 +55,7 @@ const UserProfileForm = () => {
           address: parsedAddress,
         });
 
-        const BASE_URL = 'http://localhost:3001';
+        const BASE_URL = process.env.REACT_APP_API_URL;
         const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : 'DashboardAssets/assets/images/user.png';
         setPreviewImage(profilePhotoUrl);
       }

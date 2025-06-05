@@ -44,6 +44,7 @@ const UserProfileForm = () => {
   });
   const location = useLocation();
   const userId = location.state?._id || localStorage.getItem('userId');
+   const [loading,setLoading]=useState(false);
 
 useEffect(() => {
   if (location.state?._id) {
@@ -142,6 +143,7 @@ useEffect(() => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const formData = new FormData();
@@ -186,6 +188,8 @@ useEffect(() => {
             } else {
               toast.error('Something went wrong. Please try again.');
             }
+          }finally{
+            setLoading(false);
           }
   };
 
@@ -256,6 +260,7 @@ useEffect(() => {
                     handleSubmit={handleSubmit}
                     passwordData={passwordData}
                     handlePasswordChange={handlePasswordChange}
+                    loading={loading}
                   />
                 </div>
               ))}

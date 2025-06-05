@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import getAPI from '../../../../api/getAPI';
 import { Link } from 'react-router-dom';
-import useUserType from '../../urlconfig';
+
 import { Helmet } from 'react-helmet';
 
 function ArtistBlogDetails() {
   const location = useLocation();
   const [blogData] = useState(location.state?.blogData || null);
   const [blogs, setBlogs] = useState([]);
-  const userType = useUserType();
+
 
   const fetchBlog = async () => {
     try {

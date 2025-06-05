@@ -5,7 +5,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; 
 import { Link } from "react-router-dom";
-import useUserType from '../../urlconfig';
+import useUserType from '../../../urlconfig';
 import axios from 'axios';
 
 function BlogUpdate() {

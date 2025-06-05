@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import getAPI from '../../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
-import { useConfirm } from '../../../StatusConfirm';
+import { useConfirm } from '../../../../StatusConfirm';
 import { toast } from 'react-toastify';
 import putAPI from '../../../../../../api/putAPI';
-import ConfirmationDialog from '../../../ConfirmationDialog';
+import ConfirmationDialog from '../../../../ConfirmationDialog';
 import UpdateModal from '../../../Blog/ArtistBlog/UpdateBlogList';
-import useUserType from '../../../urlconfig';
+import useUserType from '../../../../urlconfig';
 
 const Billings = ({ userId, profileData, previewImage }) => {
   const userType = useUserType(); 

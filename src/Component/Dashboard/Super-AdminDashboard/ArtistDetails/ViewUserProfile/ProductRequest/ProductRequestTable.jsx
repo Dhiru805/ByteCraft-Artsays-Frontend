@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useConfirm } from '../../../StatusConfirm';
 import getAPI from '../../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
-import useUserType from '../../../urlconfig';
+import useUserType from '../../../../../urlconfig';
 
 
 const ProductRequest = ({userId}) => {
