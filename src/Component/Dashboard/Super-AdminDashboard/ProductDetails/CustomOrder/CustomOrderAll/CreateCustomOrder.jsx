@@ -125,7 +125,7 @@ function BuyerRequest() {
         setMinBudget('');
         setMaxBudget('');
         setPaymentTerm('');
-        setExpectedDeadline(0);
+        setExpectedDeadline('');
         setComments('');
         navigate(`/${userType}/Dashboard/customrequest`);
       } else {

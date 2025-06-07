@@ -11,29 +11,29 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
 
     const navigate = useNavigate();
     const userType = useUserType();
-        const [showModal, setShowModal] = useState(false);
-        const [selectedRequest, setSelectedRequest] = useState(null);
-    
+    const [showModal, setShowModal] = useState(false);
+    const [selectedRequest, setSelectedRequest] = useState(null);
+
     const handleOpenModal = (request) => {
-      setSelectedRequest(request);
-      setShowModal(true);
+        setSelectedRequest(request);
+        setShowModal(true);
     };
-    
+
     const handleCloseModal = () => {
-      setShowModal(false);
-      setSelectedRequest(null);
+        setShowModal(false);
+        setSelectedRequest(null);
     };
-    
+
     const handleSaveChanges = (updatedData) => {
         console.log("Updated Data:", updatedData);
         setBuyerRequests((prevRequests) =>
-          prevRequests.map((request) =>
-            request._id === updatedData._id ? { ...request, ...updatedData } : request
-          )
+            prevRequests.map((request) =>
+                request._id === updatedData._id ? { ...request, ...updatedData } : request
+            )
         );
         handleCloseModal();
-      };
-      
+    };
+
 
     const handleDeleteCancel = () => {
         setIsDeleteDialogOpen(false);
@@ -52,7 +52,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
         setIsDeleteDialogOpen(true);
     };
 
-   
+
     return (
         <>
             <div className="container-fluid">
@@ -201,12 +201,12 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                 )}
             </div>
             {showModal && (
-  <NegotiateModal 
-    request={selectedRequest}
-    onClose={handleCloseModal}
-    onSubmit={handleSaveChanges}
-  />
-)}
+                <NegotiateModal
+                    request={selectedRequest}
+                    onClose={handleCloseModal}
+                    onSubmit={handleSaveChanges}
+                />
+            )}
             {isDeleteDialogOpen && (
                 <ConfirmationDialog
                     onClose={handleDeleteCancel}
