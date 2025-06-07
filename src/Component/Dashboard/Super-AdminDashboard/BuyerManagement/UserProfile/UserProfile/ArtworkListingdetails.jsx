@@ -23,7 +23,7 @@ const ArtworkPricingDetails = ({ userId }) => {
                     return;
                 }
 
-                const url = `http://localhost:3001/auth/artworkdetails/${userId}`;
+                const url = `/auth/artworkdetails/${userId}`;
                 const result = await getAPI(url);
 
                 if (result?.data?.artwork) {
@@ -97,7 +97,7 @@ const ArtworkPricingDetails = ({ userId }) => {
         };
 
         try {
-            const url = `http://localhost:3001/auth/updateartworkdetails/${userId}`;
+            const url = `/auth/updateartworkdetails/${userId}`;
             const result = await putAPI(url, dataToSend);
 
             if (result) {

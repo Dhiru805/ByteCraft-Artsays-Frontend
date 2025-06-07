@@ -14,12 +14,13 @@ import RsellProduct  from './ResellProductRequest/ProductRequestTable'
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import Settings from './UserProfile/BasicInformation';
-import useUserType from '../../urlconfig'
+import useUserType from '../../../urlconfig'
 
 const UserProfileForm = () => {
   const userType = useUserType();
-  const { userId } = useParams();
+  // const { userId } = useParams();
   const location = useLocation();
+  const { buyer } = location.state || {};
   const navigate = useNavigate(); 
   const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
   const [profileData, setProfileData] = useState({
@@ -41,9 +42,12 @@ const UserProfileForm = () => {
     website: ''
   });
 
+    const userId = buyer?._id;
+
+
   const fetchProfile = async () => {
     try {
-      const result = await getAPI(`http://localhost:3001/auth/userid/${userId}`, {}, true, false);
+      const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
       if (result.data.user) {
         const userData = result.data.user;
         const formattedBirthdate = userData.birthdate ? new Date(userData.birthdate).toISOString().split('T')[0] : '';
@@ -55,7 +59,7 @@ const UserProfileForm = () => {
           address: parsedAddress,
         });
 
-        const BASE_URL = 'http://localhost:3001';
+const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
         const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : 'DashboardAssets/assets/images/user.png';
         setPreviewImage(profilePhotoUrl);
       }

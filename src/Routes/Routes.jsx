@@ -68,6 +68,28 @@ import Artistproductrequest from "../Component/Dashboard/Super-AdminDashboard/Ar
 import ArtistAllProduct from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Product/AllArtistProduct";
 import ProductEditRequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/UserProfile/UserProf";
 // import ArtistManagementView from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ViewUserProfile/UserProf";
+
+
+import BuyerManagement from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/BuyerManageTable";
+import BuyerProductPurchase from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductPurchased/ProductPurchased";
+import BuyerProductRequest from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductRequest/ProductRequestTable";
+import BuyerSoldProduct from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/SoldProduct/SoldProduct";
+import BuyerTransaction from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/Transaction/BuyerTransaction";
+import BuyerPackagingMaterial from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/PackagingMaterial/ProductPurchasedBuyer";
+import BuyermanageProductView from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/BuyerUserProdileView/UserProf";
+import BuyermanageProductEdit from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/UserProfile/UserProf";
+import BuyerResellProductView from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductRequest/ProductRequestView";
+
+
+    //------Seller tab-----//
+import SellerManagement from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerManageTable";
+import SellerProducts from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerProducts/SellerProduct";
+import SellerProductRequest from "../Component/Dashboard/Super-AdminDashboard/Seller/ProductRequest/ProductRequestTable";
+import SellerSoldProducts from "../Component/Dashboard/Super-AdminDashboard/Seller/SoldProduct/SoldProduct";
+import SellerTransaction from "../Component/Dashboard/Super-AdminDashboard/Seller/Transaction/SellerTransaction";
+import SellerPackaging from "../Component/Dashboard/Super-AdminDashboard/Seller/PackagingMaterial/ProductPurchasedSeller";
+import SellerManageProductView from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerUserProdileView/UserProf";
+import SellerManageProductEdit from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerUserProfile/UserProf";
                                  //-----------------------------Product--------------------------//
 import ProductTableView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Product";///redirect the page here 
 import CustomOrderView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/CustomOrderAll/Customorder";
@@ -182,10 +204,33 @@ const AppRoutes = () => {
         <Route path="artist/allartistproduct" element={<ArtistAllProduct/>} />
         <Route path="artist/sold-product" element={<SoldProduct/>} />
 
+
+         <Route path="buyer/management" element={<BuyerManagement/>} />
+        <Route path="buyer/productpurchased" element={<BuyerProductPurchase/>} />
+        <Route path="buyer/resellproduct" element={<BuyerProductRequest/>} />
+        <Route path="buyer/soldproduct" element={<BuyerSoldProduct/>} />
+        <Route path="buyer/transaction" element={<BuyerTransaction/>} />
+        <Route path="buyer/packagingmaterial" element={<BuyerPackagingMaterial/>} />
+        
+        <Route path="buyer/management/productview/" element={<BuyermanageProductView/>} />
+        <Route path="buyer/management/productedit/" element={<BuyermanageProductEdit/>} />
+        <Route path="buyer/resellproduct/productview/:userId" element={<BuyerResellProductView/>} />
+
+             {/* Seller Management */}
+        <Route path="seller/management" element={<SellerManagement/>} />
+        <Route path="seller/product" element={<SellerProducts/>} />
+        <Route path="seller/productrequest" element={<SellerProductRequest/>} />
+        <Route path="seller/soldproduct" element={<SellerSoldProducts/>} />
+        <Route path="seller/transaction" element={<SellerTransaction/>} />
+        <Route path="seller/packagingmaterial" element={<SellerPackaging/>} />
+
+        <Route path="seller/management/productdetails-view" element={<SellerManageProductView/>} />
+        <Route path="seller/management/productdetails-edit" element={<SellerManageProductEdit/>} />
+
             {/* Product Management */}
         <Route path="product-table" element={<ProductTableView/>} />
         <Route path="customordertable" element={<CustomOrderView/>} />
-          <Route path="customordertable/view-request" element={< ViewCustomRequestsuperadmin/>} />
+         <Route path="customordertable/view-request" element={< ViewCustomRequestsuperadmin/>} />
         <Route path="purchasetable" element={<PurchaseTable/>} />
         <Route path="product-upload" element={<ProductUploads/>} />
     

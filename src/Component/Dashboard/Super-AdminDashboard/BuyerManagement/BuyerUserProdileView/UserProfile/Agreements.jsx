@@ -18,7 +18,7 @@ const AccountSecurityAgreement = ({ userId }) => {
                     return;
                 }
 
-                const url = `http://localhost:3001/auth/agreementdetails/${userId}`;
+                const url = `/auth/agreementdetails/${userId}`;
                 const result = await getAPI(url);
 
                 if (result && result.data && Array.isArray(result.data.agreements)) {

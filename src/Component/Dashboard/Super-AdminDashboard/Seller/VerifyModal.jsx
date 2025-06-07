@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { toast } from 'react-toastify';
 import putAPI from "../../../../api/putAPI";
-import axios from 'axios';
-import { useConfirm } from '../StatusConfirm';
+import { useConfirm } from '../../StatusConfirm';
+import getAPI from "../../../../api/getAPI";
 
 const VerifyModal = ({ seller, onClose, refreshSellers }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const confirm = useConfirm();
-    const [loading, setLoading] = useState(false); 
+    const [loading, setLoading] = useState(false);
+    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE; 
 
     const [formData, setFormData] = useState({
         gstNumber: '',
@@ -21,7 +22,7 @@ const VerifyModal = ({ seller, onClose, refreshSellers }) => {
 
     useEffect(() => {
         if (seller?._id) {
-            axios.get(`http://localhost:3001/auth/gettaxlegalcompliance/${seller._id}`)
+            getAPI(`/auth/gettaxlegalcompliance/${seller._id}`)
                 .then(response => {
                     if (response.data?.compliance) {
                         setFormData(prev => ({
@@ -38,7 +39,7 @@ const VerifyModal = ({ seller, onClose, refreshSellers }) => {
     const updateUserStatus = async (userId, status) => {
         setLoading(true);
         try {
-            await putAPI(`http://localhost:3001/auth/updateuserstatus/${userId}`, { status }, {}, true);
+            await putAPI(`/auth/updateuserstatus/${userId}`, { status }, {}, true);
             toast[status === 'Verified' ? 'success' : 'error'](`User status is ${status}`);
             refreshSellers();
             onClose();
@@ -65,7 +66,7 @@ const VerifyModal = ({ seller, onClose, refreshSellers }) => {
     const renderDocumentPreview = (fileOrUrl) => {
         if (!fileOrUrl) return null;
 
-        const fileUrl = typeof fileOrUrl === 'string' ? `http://localhost:3001${fileOrUrl}` : URL.createObjectURL(fileOrUrl);
+        const fileUrl = typeof fileOrUrl === 'string' ? `${BASE_URL}${fileOrUrl}` : URL.createObjectURL(fileOrUrl);
 
         return fileUrl.includes('.pdf') ? (
             <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="btn btn-info">

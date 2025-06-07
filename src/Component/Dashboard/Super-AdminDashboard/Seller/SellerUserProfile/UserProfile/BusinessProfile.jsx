@@ -13,7 +13,7 @@ const BusinessProfile = ({ userId }) => {
     useEffect(() => {
         const fetchBusinessData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/auth/getbusinessprofile/${userId}`);
+                const response = await axios.get(`/auth/getbusinessprofile/${userId}`);
                 if (response.data) {
                     setFormData({
                         ...response.data,
@@ -32,7 +32,7 @@ const BusinessProfile = ({ userId }) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const url = `http://localhost:3001/auth/updatebusinessprofile/${userId}`;
+            const url = `/auth/updatebusinessprofile/${userId}`;
             const result = await putAPI(url, {
                 ...formData,
             });

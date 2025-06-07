@@ -20,7 +20,7 @@ const ArtworkPricingDetails = ({ userId }) => {
                 return;
             }
             try {
-                const url = `http://localhost:3001/auth/getsellartwork/${userId}`;
+                const url = `/auth/getsellartwork/${userId}`;
                 const result = await getAPI(url);
 
                 if (result?.data?.artwork) {

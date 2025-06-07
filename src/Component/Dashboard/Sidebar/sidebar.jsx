@@ -53,25 +53,25 @@
             icon: "fa-handshake",
             path: `#Buyer-management`,
             subTabs: [
-              { label: "Management", path: `/super-admin/buyermanagetable` },
-              { label: "Product Purchased", path: `/super-admin/buyerproductpurchased` },
-              { label: "Resell Product Request", path: `/super-admin/buyerproductrequest` },
-              { label: "Sold Product", path: `/super-admin/buyersoldproduct` },
+                { label: "Management", path: `/super-admin/buyer/management` },
+              { label: "Product Purchased", path: `/super-admin/buyer/productpurchased` },
+              { label: "Resell Product Request", path: `/super-admin/buyer/resellproduct` },
+              { label: "Sold Product", path: `/super-admin/buyer/soldproduct` },
               // { label: "Transaction", path: `/super-admin/buyertransaction` },
               // { label: "Packaging Material", path: `/super-admin/buyerpackagingmaterial` },
             ]
           },
-          {
+              {
             label: "Seller",
             icon: "fa fa-tag",
             path: `#Seller-management`,
             subTabs: [
-              { label: " Management", path: `/super-admin/sellermanagetable` },
-              { label: "Products", path: `/super-admin/sellerproduct` },
-              { label: "Product Request", path: `/super-admin/sellerrequest` },
-              { label: "Sold  Product ", path: `/super-admin/sellersoldproduct` },
-              // { label: "Transaction", path: `//super-admin/sellertransaction` },
-              // { label: "Packaging Material", path: `/super-admin/sellerpackagingmaterial` }
+              { label: " Management", path: `/super-admin/seller/management` },
+              { label: "Products", path: `/super-admin/seller/product` },
+              { label: "Product Request", path: `/super-admin/seller/productrequest` },
+              { label: "Sold  Product ", path: `/super-admin/seller/soldproduct` },
+              // { label: "Transaction", path: `/super-admin/seller/transaction` },
+              // { label: "Packaging Material", path: `/super-admin/seller/packagingmaterial` }
             ]
           },
             {

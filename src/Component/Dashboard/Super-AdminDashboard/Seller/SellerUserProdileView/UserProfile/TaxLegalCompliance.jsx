@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import getAPI from '../../../../../../api/getAPI';
 
 const TaxLegalCompliance = ({ userId }) => {
     const [formData, setFormData] = useState({
@@ -22,10 +21,13 @@ const TaxLegalCompliance = ({ userId }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
 
+    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+
+
     useEffect(() => {
         const fetchBusinessData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/auth/gettaxlegalcompliance/${userId}`);
+                const response = await getAPI(`/auth/gettaxlegalcompliance/${userId}`);
                 if (response.data && response.data.compliance) {
                     const complianceData = response.data.compliance;
                     setFormData((prev) => ({
@@ -61,18 +63,18 @@ const TaxLegalCompliance = ({ userId }) => {
         if (typeof fileOrUrl === 'string') {
             if (fileOrUrl.includes('.pdf')) {
                 return (
-                    <a href={`http://localhost:3001${fileOrUrl}`} target="_blank" rel="noopener noreferrer" className="btn btn-info">
+                    <a href={`${BASE_URL}${fileOrUrl}`} target="_blank" rel="noopener noreferrer" className="btn btn-info">
                         View PDF
                     </a>
                 );
             } else {
                 return (
                     <img
-                        src={`http://localhost:3001${fileOrUrl}`}
+                        src={`${BASE_URL}${fileOrUrl}`}
                         alt="Uploaded Document"
                         className="img-thumbnail"
                         width="100"
-                        onClick={() => openModal(`http://localhost:3001${fileOrUrl}`)}
+                        onClick={() => openModal(`${BASE_URL}${fileOrUrl}`)}
                         style={{ cursor: 'pointer' }}
                     />
                 );

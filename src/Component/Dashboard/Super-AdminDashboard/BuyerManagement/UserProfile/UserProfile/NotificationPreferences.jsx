@@ -16,7 +16,7 @@ const AccountPreferences = ({ userId }) => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/api/getproductcategory");
+      const response = await getAPI("/api/getproductcategory");
       const formattedCategories = response.data.map((category) => ({
         value: category._id,
         label: category.name,
@@ -39,7 +39,7 @@ const AccountPreferences = ({ userId }) => {
           return;
         }
   
-        const url = `http://localhost:3001/auth/getpreferences/${userId}`;
+        const url = `/auth/getpreferences/${userId}`;
         const result = await getAPI(url);
         const preferencesData = result?.data?.data;
   
@@ -94,7 +94,7 @@ const AccountPreferences = ({ userId }) => {
     event.preventDefault();
   
     try {
-      const url = `http://localhost:3001/auth/updatepreferences/${userId}`;
+      const url = `/auth/updatepreferences/${userId}`;
       const payload = {
         preferences: {
           ...formData,

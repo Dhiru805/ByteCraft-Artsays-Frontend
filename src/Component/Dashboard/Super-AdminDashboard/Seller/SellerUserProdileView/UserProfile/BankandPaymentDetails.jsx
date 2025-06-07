@@ -18,7 +18,7 @@ const BankPaymentDetails = ({ userId }) => {
                     return;
                 }
     
-                const url = `http://localhost:3001/auth/bankdetails/${userId}`;
+                const url = `/auth/bankdetails/${userId}`;
                 const result = await getAPI(url);
 
                 if (result && result.data && result.data.bankDetails) { 

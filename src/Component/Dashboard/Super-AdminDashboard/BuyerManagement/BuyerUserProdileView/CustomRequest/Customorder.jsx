@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import BuyerRequestToArtistTable from "./BuyerRequestToArtistTable"
 import getAPI from "../../../../../../api/getAPI";
-import { useConfirm } from '../../../StatusConfirm';
+import { useConfirm } from '../../../../StatusConfirm';
 import { toast } from 'react-toastify';
 import putAPI from '../../../../../../api/putAPI';
 
@@ -12,7 +12,7 @@ const Customorder = ({userId}) => {
     const [buyerRequestsAdmin, setBuyerRequestsAdmin] = useState([]);
     const fetchBuyerRequestsAdmin = async () => {
         try {
-            const response = await getAPI(`http://localhost:3001/api/get-data-adminbyid/${userId}`);
+            const response = await getAPI(`/api/get-data-adminbyid/${userId}`);
             const buyerRequestsData = response.data.buyerRequests;
             setBuyerRequestsAdmin(buyerRequestsData);
         } catch (error) {
@@ -30,7 +30,7 @@ const Customorder = ({userId}) => {
     const updateBuyerRequestStatus = async (requestId, status) => {
         try {
             await putAPI(
-                `http://localhost:3001/api/update-request-status/${requestId}`,
+                `/api/update-request-status/${requestId}`,
                 { requestStatus: status },
                 {},
                 true
