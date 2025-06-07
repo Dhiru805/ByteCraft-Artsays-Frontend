@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import getAPI from '../../../../../../api/getAPI';
+import putAPI from '../../../../../../api/putAPI';
 
 const TaxLegalCompliance = ({ userId }) => {
     const [formData, setFormData] = useState({
@@ -27,7 +29,7 @@ const TaxLegalCompliance = ({ userId }) => {
     useEffect(() => {
         const fetchBusinessData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/auth/gettaxlegalcompliance/${userId}`);
+                const response = await getAPI(`/auth/gettaxlegalcompliance/${userId}`);
                 if (response.data && response.data.compliance) {
                     const complianceData = response.data.compliance;
                     setFormData((prev) => ({
@@ -82,7 +84,7 @@ const TaxLegalCompliance = ({ userId }) => {
         }
     
         try {
-            const url = `http://localhost:3001/auth/updatetaxlegalcompliance/${userId}`;
+            const url = `/auth/updatetaxlegalcompliance/${userId}`;
             const formDataToSend = new FormData();
     
             Object.keys(formData).forEach(key => {
@@ -100,7 +102,7 @@ const TaxLegalCompliance = ({ userId }) => {
                 }
             });
     
-            const result = await axios.put(url, formDataToSend, {
+            const result = await putAPI(url, formDataToSend, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
     

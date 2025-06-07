@@ -35,7 +35,7 @@ const Billings = ({ userId, profileData, previewImage }) => {
   const fetchBlog = async () => {
     try {
       const result = await getAPI(
-        `http://localhost:3001/Blog-Post/blogs/user/${userId}`,
+        `/Blog-Post/blogs/user/${userId}`,
         {},
         true,
         false

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from 'react-toastify';
 import putAPI from "../../../../api/putAPI";
-import { useConfirm } from '../StatusConfirm';
+import { useConfirm } from '../../StatusConfirm';
 
 const VerifyModal = ({ buyer, onClose, refreshBuyers }) => {
     const [filePreview, setFilePreview] = useState(null);

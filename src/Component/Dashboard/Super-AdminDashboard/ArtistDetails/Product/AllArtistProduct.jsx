@@ -10,6 +10,8 @@ const ApprovedProduct = () => {
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
 
+    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+
 
     const navigate = useNavigate();
     const userType = useUserType();
@@ -43,6 +45,7 @@ const ApprovedProduct = () => {
         (currentPage - 1) * productsPerPage,
         currentPage * productsPerPage
     );
+    
 
     const handlePrevious = () => {
         if (currentPage > 1) {
@@ -148,7 +151,7 @@ const ApprovedProduct = () => {
                                                     {product.userId.name} {product.userId.lastName}</td>
                                                 <td>
                                                     <img
-                                                        src={product.mainImage}
+                                                        src={`${BASE_URL}${product.mainImage}`}
                                                         className="rounded-circle avatar"
                                                         alt=""
                                                         style={{
@@ -170,7 +173,7 @@ const ApprovedProduct = () => {
                                                     </button>
                                                 </td> */}
                                                 <td>
-                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/${userType}/Dashboard/allartistproduct/productdetails/${product._id}`)}>
+                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/super-admin/artist/allartistproduct/productdetails/${product._id}`)}>
                                                         <i className="fa fa-eye"></i>
                                                     </button>
                                                 </td>

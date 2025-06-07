@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import getAPI from '../../../../../../api/getAPI';
 
 
 const BusinessProfile = ({ userId }) => {
@@ -12,7 +13,7 @@ const BusinessProfile = ({ userId }) => {
     useEffect(() => {
         const fetchBusinessData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/auth/getbusinessprofile/${userId}`);
+                const response = await getAPI(`/auth/getbusinessprofile/${userId}`);
                 if (response.data) {
                     setFormData({
                         ...response.data,

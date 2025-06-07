@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ConfirmationDialog from '../../../ConfirmationDialog';
-import useUserType from '../../../urlconfig';
+import ConfirmationDialog from '../../../../ConfirmationDialog';
+import useUserType from '../../../../urlconfig';
 
 function BuyerManageTable({ buyerRequests, setBuyerRequests ,handleRejectBuyerRequest, updateBuyerRequestStatus,userId}) {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [selectedBuyerRequestToDelete, setSelectedBuyerRequestToDelete] = useState(null);
     const [selectedRequestDescription, setSelectedRequestDescription] = useState(null);
+
+const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
     const navigate = useNavigate();
     const userType = useUserType();
@@ -76,7 +78,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests ,handleRejectBuyerRe
                                                     </td>
                                                     <td>
                                                         <img
-                                                            src={`http://localhost:3001${request.Buyer.id.profilePhoto}`}
+                                                            src={`${BASE_URL}${request.Buyer.id.profilePhoto}`}
                                                             className="rounded-circle avatar"
                                                             alt=""
                                                             style={{
@@ -92,7 +94,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests ,handleRejectBuyerRe
                                                     </td>
                                                     <td>
                                                         <img
-                                                            src={`http://localhost:3001${request.Artist.id.profilePhoto}`}
+                                                            src={`${BASE_URL}${request.Artist.id.profilePhoto}`}
                                                             className="rounded-circle avatar"
                                                             alt=""
                                                             style={{

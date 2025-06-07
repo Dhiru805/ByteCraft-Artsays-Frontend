@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
-import useUserType from '../../../urlconfig';
+import useUserType from '../../../../urlconfig';
 
 
 const Transaction = ({userId}) => {
@@ -21,7 +21,7 @@ const Transaction = ({userId}) => {
 useEffect(() => { 
 const fetchProducts = async () => {
     try {
-        const result = await getAPI(`http://localhost:3001/api/get-alltransactionbysellerid/${userId}`, {}, true, false);
+        const result = await getAPI(`/api/get-alltransactionbysellerid/${userId}`, {}, true, false);
         console.log("Full API Response:", result);
         console.log("Data Type:", typeof result.data);
 

@@ -14,7 +14,7 @@ const ProductRequest = ({userId}) => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const result = await getAPI(`http://localhost:3001/api/getsellerproductbyid/${userId}`, {}, true, false);
+                const result = await getAPI(`/api/getsellerproductbyid/${userId}`, {}, true, false);
                 console.log("Full API Response:", result);
                 console.log("Data Type:", typeof result.data);
 
@@ -56,6 +56,8 @@ const ProductRequest = ({userId}) => {
                                     value={productsPerPage}
                                     onChange={handleProductsPerPageChange}
                                 >
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>

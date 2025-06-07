@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import getAPI from '../../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
-import useUserType from '../../../urlconfig';
+import useUserType from '../../../../urlconfig';
 
 const Billings = ({ userId, profileData, previewImage }) => {
   const userType = useUserType(); 
@@ -32,7 +32,7 @@ const Billings = ({ userId, profileData, previewImage }) => {
   const fetchBlog = async () => {
     try {
       const result = await getAPI(
-        `http://localhost:3001/Blog-Post/blogs/user/${userId}`,
+        `/Blog-Post/blogs/user/${userId}`,
         {},
         true,
         false

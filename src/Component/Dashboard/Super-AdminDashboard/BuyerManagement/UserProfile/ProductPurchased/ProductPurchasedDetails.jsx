@@ -17,7 +17,7 @@ function AllProduct() {
         const fetchProduct = async () => {
             try {
                 const result = await getAPI(
-                    `http://localhost:3001/api/getbuyerproductpurchaseddetailsbyid/${productId}`,
+                    `/api/getbuyerproductpurchaseddetailsbyid/${productId}`,
                     {},
                     true,
                     false

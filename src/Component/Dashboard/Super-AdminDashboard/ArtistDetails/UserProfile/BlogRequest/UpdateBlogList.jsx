@@ -70,7 +70,7 @@ function UpdateBlog() {
     formDataObj.append("blogDescription", content);
 
     try {
-      const response = await fetch(`http://localhost:3001/Blog-Post/update/${blog._id}`, {
+      const response = await fetch(`/Blog-Post/update/${blog._id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,

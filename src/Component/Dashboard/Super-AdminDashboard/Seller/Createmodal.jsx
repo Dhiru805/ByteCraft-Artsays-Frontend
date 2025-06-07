@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
+import postAPI from "../../../../api/postAPI";
 
 const CreateSellerModal = ({ onClose, fetchSellers }) => {
   const [formData, setFormData] = useState({
@@ -67,7 +68,7 @@ const CreateSellerModal = ({ onClose, fetchSellers }) => {
         phone: isPhone ? normalizePhone(formData.emailOrPhone) : undefined
       };
       delete payload.emailOrPhone;
-      const response = await axios.post("http://localhost:3001/auth/createuser", payload);
+      const response = await postAPI("/auth/createuser", payload);
       toast.success(response.data.message);
       fetchSellers();
       onClose();

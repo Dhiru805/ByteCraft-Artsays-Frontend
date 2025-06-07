@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useConfirm } from '../../../StatusConfirm';
+import { useConfirm } from '../../../../StatusConfirm';
 import getAPI from '../../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
-import useUserType from '../../../urlconfig';
+import useUserType from '../../../../urlconfig';
 
 
 const ProductRequest = ({userId}) => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
-    const BASE_URL = 'http://localhost:3001';
+  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE
   
  
     const confirm = useConfirm();
@@ -20,7 +20,7 @@ const ProductRequest = ({userId}) => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const result = await getAPI(`http://localhost:3001/api/getartistproductbyid/${userId}`, {}, true, false);
+                const result = await getAPI(`/api/getartistproductbyid/${userId}`, {}, true, false);
                 console.log("Full API Response:", result);
                 console.log("Data Type:", typeof result.data);
 
@@ -125,7 +125,7 @@ const ProductRequest = ({userId}) => {
                                                     {product.userId.name} {product.userId.lastName}</td>
                                                 <td>
                                                     <img
-                                                        src={product.mainImage}
+                                                        src={`${BASE_URL}${product.mainImage}`}
                                                         className="rounded-circle avatar"
                                                         alt=""
                                                         style={{
@@ -137,7 +137,7 @@ const ProductRequest = ({userId}) => {
                                                     />
                                                     {product.productName}
                                                 </td>
-                                                <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.price).replace(/\.00$/, '')}</td>
+                                                <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.sellingPrice).replace(/\.00$/, '')}</td>
                                                 <td>{new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
                                                 <td>
                                                     <button className={`btn btn-sm ${product.status === 'Pending' ? 'btn-outline-warning' : product.status === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>

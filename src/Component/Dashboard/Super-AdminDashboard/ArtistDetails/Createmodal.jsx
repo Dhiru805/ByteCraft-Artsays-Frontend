@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
+import postAPI from "../../../../api/getAPI";
 
 const CreateArtistModal = ({ onClose, fetchArtists }) => {
   const [formData, setFormData] = useState({
@@ -70,7 +71,7 @@ const CreateArtistModal = ({ onClose, fetchArtists }) => {
       };
       delete payload.emailOrPhone; 
       
-      const response = await axios.post("http://localhost:3001/auth/createuser", payload);
+      const response = await postAPI("/auth/createuser", payload);
       toast.success(response.data.message);
       fetchArtists();
       onClose();

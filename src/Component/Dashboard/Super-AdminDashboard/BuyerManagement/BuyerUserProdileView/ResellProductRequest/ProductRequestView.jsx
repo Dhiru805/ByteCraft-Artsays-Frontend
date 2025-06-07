@@ -17,7 +17,7 @@ function AllProduct() {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const result = await getAPI(`http://localhost:3001/api/getbuyerproductbyid/${productId}`, {}, true, false);
+                const result = await getAPI(`/api/getbuyerproductbyid/${productId}`, {}, true, false);
                 if (result.data && result.data.data) {
                     const productData = Array.isArray(result.data.data) ? result.data.data : [result.data.data];
                     setProducts(productData);

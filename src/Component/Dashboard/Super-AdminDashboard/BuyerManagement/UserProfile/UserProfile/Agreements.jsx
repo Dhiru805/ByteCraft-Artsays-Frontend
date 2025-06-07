@@ -20,7 +20,7 @@ const AccountSecurityAgreement = ({ userId }) => {
                     return;
                 }
 
-                const url = `http://localhost:3001/auth/agreementdetails/${userId}`;
+                const url = `/auth/agreementdetails/${userId}`;
                 const result = await getAPI(url);
 
                 if (result && result.data && Array.isArray(result.data.agreements)) {
@@ -60,7 +60,7 @@ const AccountSecurityAgreement = ({ userId }) => {
             .map((key) => checkboxLabels[key]);
 
         try {
-            const url = `http://localhost:3001/auth/updateagreementdetails/${userId}`;
+            const url = `/auth/updateagreementdetails/${userId}`;
             const result = await putAPI(url, { agreements: selectedAgreements });
 
             if (result) {

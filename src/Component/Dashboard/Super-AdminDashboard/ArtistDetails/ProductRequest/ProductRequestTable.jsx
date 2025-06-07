@@ -10,9 +10,9 @@ import useUserType from '../../../urlconfig';
 
 const ProductRequest = () => {
     const [products, setProducts] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
-    const [searchTerm, setSearchTerm] = useState('');
     const [loadingIds, setLoadingIds] = useState([]);
 
     
@@ -229,11 +229,11 @@ const ProductRequest = () => {
                                                 <td>
                                                 <button
                                                         className="btn btn-sm btn-outline-info mr-2"
-                                                        onClick={() => navigate(`/${userType}/Dashboard/artistproductrequest/artistproductview/${product._id}`)}
+                                                        onClick={() => navigate(`/super-admin/artist/management/productrequest/${product._id}`)}
                                                     >
                                                          <i className="fa fa-eye"></i>
                                                     </button>
-<button
+                                                <button
                                                         className="btn btn-sm btn-outline-success mr-2"
                                                         title="Approved"
                                                         disabled={loadingIds.includes(product._id)}  

@@ -18,8 +18,8 @@ import useUserType from '../../../urlconfig'
 
 const UserProfileForm = () => {
   const userType = useUserType();
-  const { userId } = useParams();
   const location = useLocation();
+  const { artist } = location.state || {};
   const navigate = useNavigate(); 
   
   const [imageFile, setImageFile] = useState(null);
@@ -47,6 +47,8 @@ const UserProfileForm = () => {
     birthdate: '',
     website: ''
   });
+
+  const userId = artist?._id;
 
   const fetchProfile = async () => {
     try {

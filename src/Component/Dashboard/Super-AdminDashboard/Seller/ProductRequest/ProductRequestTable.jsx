@@ -222,7 +222,7 @@ const ProductRequest = () => {
                                                 <td>
                                                     <button
                                                         className="btn btn-sm btn-outline-info mr-2"
-                                                        onClick={() => navigate(`/${userType}/Dashboard/sellerrequest/prdouctdetails/${product._id}`)}
+                                                        onClick={() => navigate(`/super-admin/sellerproductrequestView/${product._id}`)}
                                                     >
                                                         <i className="fa fa-eye"></i>
                                                     </button>

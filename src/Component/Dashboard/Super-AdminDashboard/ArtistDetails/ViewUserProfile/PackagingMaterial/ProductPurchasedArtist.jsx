@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
-import useUserType from '../../../urlconfig';
+import useUserType from '../../../../urlconfig';
 
 
 const ProductPurchased = ({userId}) => {
@@ -17,7 +17,7 @@ const ProductPurchased = ({userId}) => {
     
         const fetchProducts = async () => {
             try {
-                const url = `http://localhost:3001/api/getartist-purchasedproductbyid/${userId}`;
+                const url = `/api/getartist-purchasedproductbyid/${userId}`;
                 console.log("Fetching URL:", url); 
     
                 const result = await getAPI(url, {}, true, false);

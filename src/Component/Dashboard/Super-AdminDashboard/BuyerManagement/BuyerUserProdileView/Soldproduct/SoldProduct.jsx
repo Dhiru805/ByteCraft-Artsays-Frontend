@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
-import useUserType from '../../../urlconfig';
+import useUserType from '../../../../urlconfig';
 
 const SoldProduct = ({userId}) => {
     const [products, setProducts] = useState([]);
@@ -14,7 +14,7 @@ const SoldProduct = ({userId}) => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const result = await getAPI(`http://localhost:3001/api/buyersoldproductbyid/${userId}`, {}, true, false);
+                const result = await getAPI(`/api/buyersoldproductbyid/${userId}`, {}, true, false);
                 console.log("Full API Response:", result);
 
                 if (result && result.data && Array.isArray(result.data)) {
@@ -55,6 +55,7 @@ const SoldProduct = ({userId}) => {
                                     value={productsPerPage}
                                     onChange={handleProductsPerPageChange}
                                 >
+                                    <option value="5">5</option>
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>

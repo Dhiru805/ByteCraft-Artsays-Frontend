@@ -38,7 +38,7 @@ const Billings = ({ userId, profileData, previewImage }) => {
   const updateBlogStatus = async (blogId, status) => {
     try {
       await putAPI(
-        `http://localhost:3001/Blog-Post/update-status/${blogId}`,
+        `/Blog-Post/update-status/${blogId}`,
         { blogStatus: status },
         {},
         true

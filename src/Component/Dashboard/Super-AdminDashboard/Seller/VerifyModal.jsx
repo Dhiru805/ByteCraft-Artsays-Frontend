@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from 'react-toastify';
 import putAPI from "../../../../api/putAPI";
 import axios from 'axios';
-import { useConfirm } from '../StatusConfirm';
+import { useConfirm } from '../../StatusConfirm';
 
 const VerifyModal = ({ seller, onClose, refreshSellers }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);

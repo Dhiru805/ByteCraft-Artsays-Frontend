@@ -12,7 +12,7 @@ function ArtistBlogDetails() {
 
   const fetchBlog = async () => {
     try {
-      const result = await getAPI(`http://localhost:3001/Blog-Post/getblogbyid/${blogId}`, {}, true, false);
+      const result = await getAPI(`/Blog-Post/getblogbyid/${blogId}`, {}, true, false);
       if (result.data) {
         setBlogs([result.data.blog]);
       }

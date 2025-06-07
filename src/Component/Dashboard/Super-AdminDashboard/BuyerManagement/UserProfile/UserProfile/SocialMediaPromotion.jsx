@@ -34,7 +34,7 @@ const SocialLink = ({ userId, profileData }) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const url = `http://localhost:3001/auth/updatesociallink/${userId}`;
+            const url = `/auth/updatesociallink/${userId}`;
             const result = await putAPI(url, formData);
 
             if (result) {
