@@ -13,28 +13,14 @@ import postAPI from '../../../../../../../api/postAPI';
 import deleteAPI from '../../../../../../../api/deleteAPI';
 import getAPI from '../../../../../../../api/getAPI';
 import putAPI from '../../../../../../../api/putAPI';
+import NegotiateModal from './NegotiateModal'; 
+import ViewBuyerRequest from './ViewRequest';
 
 
 const AddCustomRequestForm = () => {
-
-  const [showNegotiationPopup, setShowNegotiationPopup] = useState(false);
-  const [negotiationData, setNegotiationData] = useState({
-    buyerName: '',
-    requestDate: '',
-    maxBudget: '',
-    minBudget: '',
-    negotiatedBudget: '',
-    notes: '',
-    status: 'pending', // default
-  });
-
-  const [negotiatedBudget, setNegotiatedBudget] = useState('');
-  const [notes, setNotes] = useState('');
-
-
+  const [showNegotiationModal, setShowNegotiationModal] = useState(false); // Updated state name
+  const [selectedRequest, setSelectedRequest] = useState(null);
   const [artistId, setArtistId] = useState('');
-  const [paymentTerm, setPaymentTerm] = useState([]);
-
   const [requests, setRequests] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [colorPref, setColorPref] = useState('');
@@ -47,8 +33,9 @@ const AddCustomRequestForm = () => {
   const [showFullImage, setShowFullImage] = useState(false);
   const [selectedArtistName, setSelectedArtistName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState(null);
 
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [viewRequest, setViewRequest] = useState(null);
 
   const [formData, setFormData] = useState({
     productName: '',
@@ -101,14 +88,13 @@ const AddCustomRequestForm = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
-
     if (type === 'checkbox') {
       setFormData({ ...formData, [name]: checked });
     } else if (type === 'file') {
       const file = files && files.length > 0 ? files[0] : null;
       setFormData({ ...formData, [name]: file });
     } else {
-      const numericFields = ['expectedDeadline', 'minBudget', 'maxBudget', 'negotiatedBudget'];
+      const numericFields = ['expectedDeadline', 'minBudget', 'maxBudget'];
       setFormData({
         ...formData,
         [name]: numericFields.includes(name) ? Number(value) : value,
@@ -116,27 +102,9 @@ const AddCustomRequestForm = () => {
     }
   };
 
-
   const handleDescriptionChange = (value) => {
     setFormData({ ...formData, description: value });
   };
-
-  // const handleEditRequest = (request) => {
-  //   setFormData({
-  //     ...request,
-  //     description: request.description || '',
-  //     buyerImage: null
-  //   });
-
-
-  //   if (request.Artist?.id) {
-  //     setArtistId(request.Artist.id);
-  //   }
-
-  //   setColorPreferences(request.colourPreferences || []);
-  //   setEditingId(request._id);
-  //   setShowForm(true);
-  // };
 
   const handleEditRequest = async (id) => {
     try {
@@ -166,7 +134,7 @@ const AddCustomRequestForm = () => {
       setColorPreferences(existingData.ColourPreferences || []);
       setArtistId(existingData.Artist?.id || '');
       setSelectedArtistName(
-        `${existingData.Artist?.name || ''} ${existingData.Artist?.lastname || ''}`.trim()
+        `${existingData.Artist?.name || ''} ${existingData.Artist?.lastName || ''}`.trim()
       );
 
       setEditingId(id);
@@ -210,7 +178,6 @@ const AddCustomRequestForm = () => {
     formPayload.append('MaxBudget', formData.maxBudget);
     formPayload.append('PaymentTerm', formData.paymentTerm);
     formPayload.append('ExpectedDeadline', formData.expectedDeadline);
-
     formPayload.append('Comments', formData.comments);
     formPayload.append('ColourPreferences', JSON.stringify(colorPreferences));
 
@@ -232,9 +199,7 @@ const AddCustomRequestForm = () => {
     formPayload.append('Artist', selectedArtist._id);
 
     try {
-
       let response;
-
       if (editingId) {
         response = await putAPI(`/api/update-buyer-request/${editingId}`, formPayload);
       } else {
@@ -244,11 +209,10 @@ const AddCustomRequestForm = () => {
       }
 
       const data = response.data;
-
       if (response.status === 200 || response.status === 201) {
         toast.success(data.message || "Request created successfully!");
-        const updatedRequests = await getAPI("/api/buyer-request");
-        setRequests(updatedRequests.data.requests || []);
+        const updatedRequests = await getAPI("/api/get-buyer-request");
+        setRequests(updatedRequests.data.buyerRequests || []);
       } else {
         toast.error(data.message || "Submission failed");
       }
@@ -258,7 +222,6 @@ const AddCustomRequestForm = () => {
       toast.error(message);
     }
 
-    //Reset form
     setFormData({
       productName: '',
       description: '',
@@ -279,32 +242,19 @@ const AddCustomRequestForm = () => {
     setIsSubmitting(false);
   };
 
-  const handleNegotiationAction = async (actionType) => {
-    if (!selectedRequest) return;
+  const handleViewRequest = (req) => {
+    setViewRequest(req);
+    setShowViewModal(true);
+  };
 
-    const payload = {
-      negotiatedBudget,
-      notes,
-      status: actionType === 'save' ? selectedRequest.status : actionType,
-    };
-
-    try {
-      // Send update to correct negotiation endpoint
-      const updatedData = await putAPI(`/update-negiotaite-Buyer-budget/${selectedRequest._id}`, payload);
-
-      // Update UI state (either with optimistic payload or from server response)
-      setRequests((prev) =>
-        prev.map((req) =>
-          req._id === selectedRequest._id
-            ? { ...req, ...updatedData } // or use ...payload if server returns nothing
-            : req
-        )
-      );
-
-      setShowNegotiationPopup(false);
-    } catch (err) {
-      console.error("Failed to update negotiation data:", err);
-    }
+  const handleNegotiationSubmit = async (updatedRequest) => {
+    setRequests((prev) =>
+      prev.map((req) =>
+        req._id === updatedRequest._id ? { ...req, ...updatedRequest } : req
+      )
+    );
+    setShowNegotiationModal(false);
+    setSelectedRequest(null);
   };
 
   const modules = {
@@ -317,8 +267,6 @@ const AddCustomRequestForm = () => {
       [{ 'color': [] }, { 'background': [] }],
       ['code-block'],
       ['blockquote'],
-      // ['fullscreen'],
-      ['help'],
     ],
   };
 
@@ -328,29 +276,23 @@ const AddCustomRequestForm = () => {
   };
 
   return (
-    <div className="w-[856px]  ">
-      <div className='flex justify-between mb-[30px] h-[48px] '>
-
+    <div className="w-[856px]">
+      <div className='flex justify-between mb-[30px] h-[48px]'>
         <h2 className="text-2xl text-gray-950 top-[480px] left-[506px] font-semibold">Custom Requests</h2>
-
         <div>
           <button
             onClick={() => setShowForm(true)}
             className="bg-[#6F4D34] text-white text-[16px] text-semibold px-4 py-2 rounded-xl flex"
           >
-            <FaPlus className='mt-1' />  &nbsp; Add Request
+            <FaPlus className='mt-1' /> &nbsp; Add Request
           </button>
         </div>
       </div>
 
       {/* Table of Requests */}
-
       <div className="border-2 rounded-3xl p-4 w-full max-w-5xl mx-auto bg-white">
-        {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
           <h2 className="text-2xl font-semibold">Buyer Request List</h2>
-
-          {/* Search Bar */}
           <div className="relative w-[200px]">
             <input
               type="text"
@@ -361,7 +303,6 @@ const AddCustomRequestForm = () => {
           </div>
         </div>
 
-        {/* Table Section */}
         <div className="overflow-x-auto pb-4">
           <table className="min-w-full text-sm text-left">
             <thead className="bg-gray-700 text-white">
@@ -384,13 +325,10 @@ const AddCustomRequestForm = () => {
                   <tr key={req._id} className="border-b">
                     <td className="px-4 py-2">{index + 1}</td>
                     <td className="px-4 py-2 flex items-center gap-2">
-
                       <img
                         src={`http://localhost:3001/${req.BuyerImage}`}
-                        // src={req.Buyer.id.profilePhoto ? req.Buyer.id.profilePhoto : '/placeholder.jpg'} alt="product"
                         className="w-8 h-8 rounded-full object-cover"
                       />
-
                       {req.ProductName || '₹ NaN'}
                     </td>
                     <td className="px-4 py-2">{req.Artist?.id?.name || ''} {req.Artist?.id?.lastName || ''}</td>
@@ -400,14 +338,10 @@ const AddCustomRequestForm = () => {
                     <td className="px-4 py-2">
                       {req.MinBudget ? `₹${req.MinBudget}` : '₹ NaN'}
                     </td>
-
                     <td className="px-4 py-2">{req.NegotiatedBudget || "—"}</td>
-
-
                     <td className="px-4 py-2">
                       {req?.createdAt ? new Date(req.createdAt).toLocaleDateString() : ''}
                     </td>
-
                     <td className="px-4 py-2">
                       <button
                         className={`px-3 py-1 rounded-lg border text-sm ${req.RequestStatus === 'Approved'
@@ -434,6 +368,7 @@ const AddCustomRequestForm = () => {
                     </td>
                     <td className="px-4 py-2 flex gap-2 text-gray-700">
                       <FaEye
+                      onClick={() => handleViewRequest(req)}
                         className="cursor-pointer text-2xl text-cyan-600 border border-cyan-400 p-1 rounded-lg"
                         title="View"
                       />
@@ -449,25 +384,12 @@ const AddCustomRequestForm = () => {
                       />
                       <LuHandshake
                         onClick={() => {
-                          setNegotiationData({
-                            buyerName: `${req.Buyer?.id?.name} ${" "} ${req.Buyer?.id.lastName}` || '',
-                            requestDate: req.createdAt?.substring(0, 10) || '',
-                            maxBudget: req.MaxBudget || '',
-                            minBudget: req.MinBudget || '',
-                            negotiatedBudget: req.negotiatedBudget || '',
-                            notes: req.notes || '',
-                            status: req.status || '',
-                          });
-                          setSelectedRequest(req);  // req = clicked request
-                          setShowNegotiationPopup(true);
-                          setNegotiatedBudget(req.NegotiatedBudget || '');
-                          setNotes(req.Notes || '');
-
+                          setSelectedRequest(req);
+                          setShowNegotiationModal(true);
                         }}
                         className="cursor-pointer text-2xl text-white bg-gray-500 p-1 rounded-lg"
                         title="Negotiate"
                       />
-
                     </td>
                   </tr>
                 ))
@@ -485,10 +407,9 @@ const AddCustomRequestForm = () => {
 
       {/* Form (Conditional) */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="space-y-5  p-6 ">
+        <form onSubmit={handleSubmit} className="space-y-5 p-6">
           <h3 className="text-xl font-semibold">Add Custom Request</h3>
-
-          {/* Product Name */}
+          {/* Form fields remain unchanged */}
           <div>
             <label className="block font-medium mb-1">Product Name</label>
             <input
@@ -501,8 +422,6 @@ const AddCustomRequestForm = () => {
               required
             />
           </div>
-
-          {/* Select Artist */}
           <div>
             <label className="block font-medium mb-1">Select Artist</label>
             <select
@@ -512,8 +431,6 @@ const AddCustomRequestForm = () => {
               onChange={(e) => {
                 const selectedId = e.target.value;
                 setArtistId(selectedId);
-
-                // If you want to update selectedArtistName when user selects a new artist:
                 const selectedArtist = artists.find(a => a._id === selectedId);
                 if (selectedArtist) {
                   setSelectedArtistName(`${selectedArtist.name} ${selectedArtist.lastName || ''}`.trim());
@@ -525,7 +442,6 @@ const AddCustomRequestForm = () => {
               required
             >
               <option value="">Select an artist</option>
-
               {artists.map((artist) => (
                 <option key={artist._id} value={artist._id}>
                   {artist.name} {artist.lastName}
@@ -533,8 +449,6 @@ const AddCustomRequestForm = () => {
               ))}
             </select>
           </div>
-
-          {/* Art Type */}
           <div>
             <label className="block font-medium mb-1">Art Type</label>
             <input
@@ -546,8 +460,6 @@ const AddCustomRequestForm = () => {
               className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
             />
           </div>
-
-          {/* Size */}
           <div>
             <label className="block font-medium mb-1">Size</label>
             <input
@@ -559,8 +471,6 @@ const AddCustomRequestForm = () => {
               className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
             />
           </div>
-
-          {/* Color Preferences */}
           <div>
             <label className="block font-medium mb-1">Color Preferences</label>
             <div className="flex w-full items-center border-2 border-gray-300 rounded-xl px-2">
@@ -580,7 +490,6 @@ const AddCustomRequestForm = () => {
               </button>
             </div>
             <div className='pt-2 text-sm text-gray-400'>Click "Add" to include each colour preference</div>
-
             {colorPreferences.length > 0 && (
               <ul className="mt-2 text-sm text-gray-700 list-disc pl-5">
                 {colorPreferences.map((color, index) => (
@@ -589,8 +498,6 @@ const AddCustomRequestForm = () => {
               </ul>
             )}
           </div>
-
-          {/* Frame Required */}
           <div className="flex items-center space-x-3">
             <label className="font-medium">Frame Required</label>
             <input
@@ -601,8 +508,6 @@ const AddCustomRequestForm = () => {
               className="w-5 h-5"
             />
           </div>
-
-          {/* Budget */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block font-medium mb-1">Minimum Budget ($)</label>
@@ -625,9 +530,9 @@ const AddCustomRequestForm = () => {
               />
             </div>
           </div>
-
-          {/* Payment Term */}
           <div>
+—
+
             <label className="block font-medium mb-1">Payment Term</label>
             <select
               id="paymentTerm"
@@ -642,10 +547,7 @@ const AddCustomRequestForm = () => {
               <option value="installment">Installment</option>
               <option value="two-step">Two Step Payment</option>
             </select>
-
           </div>
-
-          {/* Deadline */}
           <div>
             <label className="block font-medium mb-1">Expected Deadline (days)</label>
             <input
@@ -656,8 +558,6 @@ const AddCustomRequestForm = () => {
               className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
             />
           </div>
-
-          {/* Reference Image */}
           <div>
             <label className="block font-medium mb-1">Reference Image</label>
             <input
@@ -667,9 +567,7 @@ const AddCustomRequestForm = () => {
               onChange={(e) => {
                 const file = e.target.files && e.target.files.length > 0 ? e.target.files[0] : null;
                 if (!file) return;
-
                 handleChange(e);
-
                 const fileType = file.type;
                 const reader = new FileReader();
                 reader.onloadend = () => {
@@ -688,8 +586,6 @@ const AddCustomRequestForm = () => {
               }}
               className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
             />
-
-            {/* Image preview */}
             {fileType === "image" && imagePreview && (
               <div className="mt-2">
                 <img
@@ -701,8 +597,6 @@ const AddCustomRequestForm = () => {
                 />
               </div>
             )}
-
-            {/* PDF preview */}
             {fileType === "pdf" && imagePreview && (
               <a
                 href={imagePreview}
@@ -713,8 +607,6 @@ const AddCustomRequestForm = () => {
                 View PDF
               </a>
             )}
-
-            {/* Full Image Modal */}
             {showFullImage && fileType === "image" && imagePreview && (
               <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
                 <div className="relative">
@@ -727,15 +619,12 @@ const AddCustomRequestForm = () => {
                     className="absolute top-2 right-2 text-white text-2xl"
                     onClick={() => setShowFullImage(false)}
                   >
-                    &times;
+                    ×
                   </button>
                 </div>
               </div>
             )}
           </div>
-
-
-          {/* Additional Comments */}
           <div>
             <label className="block font-medium mb-1">Additional Comments</label>
             <textarea
@@ -746,8 +635,6 @@ const AddCustomRequestForm = () => {
               className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
             ></textarea>
           </div>
-
-          {/* Detailed description */}
           <div className="form-group mt-3">
             <label htmlFor="description">Detailed Description</label>
             <ReactQuill
@@ -761,119 +648,40 @@ const AddCustomRequestForm = () => {
               required
             />
           </div>
-
-          {/* Submit button */}
           <button
             type="submit"
             disabled={isSubmitting}
-            className="bg-[#6F4D34] text-white font-semibold px-11 py-2 rounded-full">
+            className="bg-[#6F4D34] text-white font-semibold px-11 py-2 rounded-full"
+          >
             {isSubmitting ? 'Submitting...' : 'Submit'}
           </button>
         </form>
       )}
 
-
-
-      {/* Pop-up */}
-      {showNegotiationPopup && selectedRequest && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-          <div className="bg-white w-[537px] h-[812px] text-lg rounded-[30px] px-6 py-8 relative shadow-lg overflow-y-auto">
-            <div className="flex justify-between items-center border-b pb-3 mb-3">
-              <h2 className="text-xl mb-2 font-semibold">Negotiable Request</h2>
-              <button onClick={() => setShowNegotiationPopup(false)} className="text-xl font-bold">&times;</button>
-            </div>
-
-            <form className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium mb-2">Buyer Name</label>
-                <input
-                  type="text"
-                  className="w-full border rounded-xl px-3 py-2"
-                  value={`${selectedRequest.Buyer?.id.name} ${selectedRequest.Buyer?.id.lastName}`}
-                  disabled
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Request Date</label>
-                <input
-                  type="date"
-                  className="w-full border rounded-xl px-3 py-2"
-                  value={selectedRequest.createdAt?.substring(0, 10)}
-                  disabled
-                />
-              </div>
-
-              <div className="flex gap-4">
-                <div className="w-1/2">
-                  <label className="block text-sm font-medium mb-2">Max Budget</label>
-                  <input
-                    type="number"
-                    className="w-full border rounded-xl px-3 py-2"
-                    value={selectedRequest.MaxBudget}
-                    disabled
-                  />
-                </div>
-                <div className="w-1/2">
-                  <label className="block text-sm font-medium mb-2">Min Budget</label>
-                  <input
-                    type="number"
-                    className="w-full border rounded-xl px-3 py-2"
-                    value={selectedRequest.MinBudget}
-                    disabled
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Negotiated Budget</label>
-                <input
-                  type="number"
-                  className="w-full border rounded-xl px-3 py-2"
-                  value={negotiatedBudget}
-                  onChange={(e) => setNegotiatedBudget(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Notes</label>
-                <textarea
-                  className="w-full border rounded-xl px-3 py-2"
-                  rows="3"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                />
-              </div>
-
-              {/* Buttons */}
-              <div className="flex justify-between pt-4 border-t mt-4 text-lg px-3 font-semibold">
-                <button
-                  type="button"
-                  className="bg-cyan-500 text-white px-4 py-2 rounded-xl"
-                  onClick={() => handleNegotiationAction('save')}
-                >
-                  Save Changes
-                </button>
-                <button
-                  type="button"
-                  className="bg-green-500 text-white px-4 py-2 rounded-xl"
-                  onClick={() => handleNegotiationAction('accepted')}
-                >
-                  Accept
-                </button>
-                <button
-                  type="button"
-                  className="bg-white text-red-600 border border-red-600 px-4 py-2 rounded-xl"
-                  onClick={() => handleNegotiationAction('rejected')}
-                >
-                  Reject
-                </button>
-              </div>
-            </form>
+      {/* NEW: Render ViewBuyerRequest modal */}
+        {showViewModal && viewRequest && (
+          <div className="mt-6 p-6 bg-gray-50 border-2 rounded-3xl">
+            <ViewBuyerRequest
+              request={viewRequest}
+              onClose={() => {
+                setShowViewModal(false);
+                setViewRequest(null);
+              }}
+            />
           </div>
-        </div>
-      )}
+        )}
 
+      {/* Negotiate Modal */}
+      {showNegotiationModal && selectedRequest && (
+        <NegotiateModal
+          request={selectedRequest}
+          onClose={() => {
+            setShowNegotiationModal(false);
+            setSelectedRequest(null);
+          }}
+          onSubmit={handleNegotiationSubmit}
+        />
+      )}
     </div>
   );
 };
