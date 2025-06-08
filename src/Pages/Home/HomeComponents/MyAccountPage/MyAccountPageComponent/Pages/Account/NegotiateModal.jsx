@@ -32,6 +32,7 @@ const NegotiateModal = ({ request, onClose, onSubmit }) => {
         }
       );
 
+
       if (response && response.data) {
         toast.success(response.data.successMessage || "Buyer request updated successfully");
         onSubmit(response.data.updatedRequest);
@@ -51,7 +52,7 @@ const NegotiateModal = ({ request, onClose, onSubmit }) => {
         {
           rejectedcomment: comment,
           BuyerStatus: status
-        
+
         }
       );
 
@@ -157,7 +158,7 @@ const NegotiateModal = ({ request, onClose, onSubmit }) => {
                 />
               </div>
 
-              <div className="mb-3">
+              {/* <div className="mb-3">
                 <label htmlFor="negotiateBudget" className="form-label">
                   Negotiated Budget
                 </label>
@@ -170,7 +171,23 @@ const NegotiateModal = ({ request, onClose, onSubmit }) => {
                   onChange={(e) => setNegotiateBudget(e.target.value)}
                   disabled
                 />
+              </div> */}
+
+              <div className="mb-3">
+                <label htmlFor="negotiateBudget" className="form-label">
+                  Negotiated Budget
+                </label>
+                <input
+                  type="number"
+                  className="form-control"
+                  id="negotiateBudget"
+                  name="negotiateBudget"
+                  value={negotiateBudget}
+                  onChange={(e) => setNegotiateBudget(e.target.value)} 
+                  disabled
+                />
               </div>
+
 
               <div className="mb-3">
                 <label htmlFor="notes" className="form-label">
@@ -191,18 +208,21 @@ const NegotiateModal = ({ request, onClose, onSubmit }) => {
               <button type="button" className="btn btn-secondary" onClick={onClose}>
                 Close
               </button>
-              <button type="submit" className="btn btn-primary">
+              <button type="submit" 
+              // className="btn btn-primary" 
+              className=" text-[16px] py-1 px-3 text-zinc-900 border-[1.6px] rounded-lg border-zinc-600 "
+              >
                 Save changes
               </button>
               {request?.BuyerStatus !== "Approved" && (
-              <button type="button" className="btn btn-success" onClick={() => handleStatusUpdate("Approved")}>
-                Accepted
-              </button>
+                <button type="button" className="btn btn-success" onClick={() => handleStatusUpdate("Approved")}>
+                  Accepted
+                </button>
               )}
               {request?.BuyerStatus !== "Rejected" && (
-              <button type="button" className="btn btn-danger" onClick={() => setShowRejectModal(true)}>
-                Rejected
-              </button>
+                <button type="button" className="btn btn-danger" onClick={() => setShowRejectModal(true)}>
+                  Rejected
+                </button>
               )}
             </div>
           </form>

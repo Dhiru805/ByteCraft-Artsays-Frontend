@@ -14,6 +14,8 @@ import deleteAPI from '../../../../../../../api/deleteAPI';
 import getAPI from '../../../../../../../api/getAPI';
 import putAPI from '../../../../../../../api/putAPI';
 import NegotiateModal from './NegotiateModal'; 
+import ViewBuyerRequest from './ViewRequest';
+
 
 const AddCustomRequestForm = () => {
   const [showNegotiationModal, setShowNegotiationModal] = useState(false); // Updated state name
@@ -31,6 +33,9 @@ const AddCustomRequestForm = () => {
   const [showFullImage, setShowFullImage] = useState(false);
   const [selectedArtistName, setSelectedArtistName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [viewRequest, setViewRequest] = useState(null);
 
   const [formData, setFormData] = useState({
     productName: '',
@@ -237,8 +242,12 @@ const AddCustomRequestForm = () => {
     setIsSubmitting(false);
   };
 
+  const handleViewRequest = (req) => {
+    setViewRequest(req);
+    setShowViewModal(true);
+  };
+
   const handleNegotiationSubmit = async (updatedRequest) => {
-    // Update the requests state with the updated request
     setRequests((prev) =>
       prev.map((req) =>
         req._id === updatedRequest._id ? { ...req, ...updatedRequest } : req
@@ -359,6 +368,7 @@ const AddCustomRequestForm = () => {
                     </td>
                     <td className="px-4 py-2 flex gap-2 text-gray-700">
                       <FaEye
+                      onClick={() => handleViewRequest(req)}
                         className="cursor-pointer text-2xl text-cyan-600 border border-cyan-400 p-1 rounded-lg"
                         title="View"
                       />
@@ -647,6 +657,19 @@ const AddCustomRequestForm = () => {
           </button>
         </form>
       )}
+
+      {/* NEW: Render ViewBuyerRequest modal */}
+        {showViewModal && viewRequest && (
+          <div className="mt-6 p-6 bg-gray-50 border-2 rounded-3xl">
+            <ViewBuyerRequest
+              request={viewRequest}
+              onClose={() => {
+                setShowViewModal(false);
+                setViewRequest(null);
+              }}
+            />
+          </div>
+        )}
 
       {/* Negotiate Modal */}
       {showNegotiationModal && selectedRequest && (
