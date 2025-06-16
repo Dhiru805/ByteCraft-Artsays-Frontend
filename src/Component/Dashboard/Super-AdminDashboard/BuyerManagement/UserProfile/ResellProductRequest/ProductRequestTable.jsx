@@ -6,7 +6,7 @@ import putAPI from '../../../../../../api/putAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../../urlconfig';
 
-const ProductRequest = ({userId}) => {
+const ProductRequest = ({ userId }) => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
@@ -85,11 +85,19 @@ const ProductRequest = ({userId}) => {
     };
 
 
-     const totalPages = Math.ceil(products.length / productsPerPage);
-    const displayedProducts = products.slice(
-        (currentPage - 1) * productsPerPage,
-        currentPage * productsPerPage
-    );
+ const filteredProducts = products.filter(product =>
+    product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    product.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    product.userId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
+);
+
+const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+const displayedProducts = filteredProducts.slice(
+    (currentPage - 1) * productsPerPage,
+    currentPage * productsPerPage
+);
+
 
     const handlePrevious = () => {
         if (currentPage > 1) {
@@ -114,7 +122,7 @@ const ProductRequest = ({userId}) => {
             <div className="row clearfix">
                 <div className="col-lg-12">
                     <div className="card">
-                     <div className="header d-flex justify-content-between align-items-center">
+                        <div className="header d-flex justify-content-between align-items-center">
                             <div className="d-none d-md-flex align-items-center mb-2 mb-md-0">
                                 <label className="mb-0 mr-2">Show</label>
                                 <select
@@ -125,7 +133,7 @@ const ProductRequest = ({userId}) => {
                                     onChange={handleProductsPerPageChange}
                                     style={{ minWidth: '70px' }}
                                 >
-                                    <option value="5">5</option>
+                                    {/* <option value="5">5</option> */}
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
@@ -133,7 +141,7 @@ const ProductRequest = ({userId}) => {
                                 </select>
                                 <label className="mb-0 ml-2">entries</label>
                             </div>
-                                <div className="w-100 w-md-auto d-flex justify-content-end">
+                            <div className="w-100 w-md-auto d-flex justify-content-end">
                                 <div className="input-group" style={{ maxWidth: '150px' }}>
                                     <input
                                         type="text"
@@ -154,7 +162,7 @@ const ProductRequest = ({userId}) => {
                                     ></i>
                                 </div>
                             </div>
-                      </div>
+                        </div>
                         <div className="body">
                             <div className="table-responsive">
                                 <table className="table table-hover">
@@ -216,7 +224,7 @@ const ProductRequest = ({userId}) => {
                                                                     toast.error("Cannot navigate: ID is missing.");
                                                                     return;
                                                                 }
-                                                                navigate(`/${userType}/Dashboard/buyermanagetable/buyerprofile/${userId}/resellproductdetails/${buyerId}`,{ state: { userId } });
+                                                                navigate(`/${userType}/Dashboard/buyermanagetable/buyerprofile/${userId}/resellproductdetails/${buyerId}`, { state: { userId } });
                                                             }}
                                                         >
                                                             <i className="fa fa-eye"></i>
@@ -241,9 +249,9 @@ const ProductRequest = ({userId}) => {
                                     </tbody>
                                 </table>
                             </div>
-                                                        <div className="pagination d-flex justify-content-between mt-4">
+                            <div className="pagination d-flex justify-content-between mt-4">
                                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                                    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, products.length)} of {products.length} entries
+    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
                                 </span>
 
                                 <ul className="pagination d-flex justify-content-end w-100">

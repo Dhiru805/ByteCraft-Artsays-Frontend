@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; 
 import { Link } from "react-router-dom";
 import useUserType from '../../../urlconfig';
-import getAPI from "../../../../../api/getAPI";
+import axios from 'axios';
 
 function BlogUpdate() {
   const navigate = useNavigate();
@@ -51,7 +51,7 @@ function BlogUpdate() {
 
   const fetchCategories = async () => {
     try {
-      const response = await getAPI("/api/getblogcategory");
+      const response = await axios.get("http://localhost:3001/api/getblogcategory");
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);

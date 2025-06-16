@@ -11,6 +11,7 @@ const predefinedArtCategories = [
     { value: 'Digital', label: 'Digital' },
 ];
 
+
 const predefinedMediumUsed = [
     { value: 'Canvas', label: 'Canvas' },
     { value: 'Acrylic', label: 'Acrylic' },
@@ -25,7 +26,7 @@ const predefinedAchievements = [
     { value: 'Awards', label: 'Awards' },
 ];
 
-const ArtistInfo = ({ userId }) => {
+const ArtistInfo = ({ userId, loading }) => {
     const [formData, setFormData] = useState({
         artCategories: [],
         mediumUsed: [],
@@ -69,7 +70,8 @@ const ArtistInfo = ({ userId }) => {
             setFormData(prevState => ({ ...prevState, [field]: values }));
         }
     };
-    
+
+    const [load, setLoad] = useState(false);
 
 
     const handleSubmit = async (event) => {
@@ -182,7 +184,19 @@ const ArtistInfo = ({ userId }) => {
                         </div>
                     </div>
                 </div>
-                <button type="submit" className="btn btn-primary mx-2">Update</button>
+                <button type="button"
+                    className="btn btn-primary mx-2"
+                    disabled={load}
+                    onClick={(e) => {
+                        setLoad(true);
+                        Promise.resolve(handleSubmit(e))
+                            .then(() => {
+                                window.location.reload();
+                            })
+                            .catch(console.error)
+                            .finally(() => setLoad(false));
+                    }}
+                >{load ? "Updating..." : "Update"}</button>
             </form>
         </div>
     );

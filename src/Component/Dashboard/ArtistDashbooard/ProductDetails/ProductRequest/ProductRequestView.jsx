@@ -20,7 +20,7 @@ function AllProduct() {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const result = await getAPI(`http://localhost:3001/api/getallartistbuyerprodyctdetailsbyid/${productId}`, {}, true, false);
+                const result = await getAPI(`/api/getallartistbuyerprodyctdetailsbyid/${productId}`, {}, true, false);
                 if (result.data && result.data.data) {
                     const productData = Array.isArray(result.data.data) ? result.data.data : [result.data.data];
                     setProducts(productData);
@@ -94,9 +94,9 @@ function AllProduct() {
                         <h2>Product Details</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
-                                <a href="index.html">
+                                <span onClick={() => navigate('/artist/dashboard')} style={{ cursor: 'pointer' }}>
                                     <i className="fa fa-dashboard"></i>
-                                </a>
+                                </span>
                             </li>
                             <li className="breadcrumb-item active">
                                 <Link to={`/${userType}/Dashboard/productrequest`} >Product Request</Link></li>

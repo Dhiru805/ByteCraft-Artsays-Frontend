@@ -21,6 +21,7 @@ const CompanyProfile = ({ userId }) => {
         emailAddress: '',
     });
     const [isAuthorized, setIsAuthorized] = useState(false);
+  const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchCompanyData = async () => {
@@ -29,7 +30,7 @@ const CompanyProfile = ({ userId }) => {
                 if (response.data && response.data.length > 0) {
                     setFormData(response.data[0]);
                     const storedEmail = localStorage.getItem("email");
-                    setIsAuthorized(storedEmail === 'superadmin@admin.com');
+                    setIsAuthorized(storedEmail === 'shantu131201@gmail.com');
                 }
             } catch (error) {
                 console.log("Fetch attempt completed");
@@ -110,7 +111,21 @@ const CompanyProfile = ({ userId }) => {
                         </div>
                     ))}
                 </div>
-                {isAuthorized && <button type="submit" className="btn btn-primary mx-2">Update</button>}
+                {isAuthorized && 
+                        <button type="button"
+          className="btn btn-primary mx-2"
+          disabled={loading}
+          onClick={(e) => {
+            setLoading(true);
+            Promise.resolve(handleSubmit(e))
+              .then(() => {
+                window.location.reload();
+              })
+              .catch(console.error)
+              .finally(() => setLoading(false));
+          }}
+        >{loading ? "Updating..." : "Update"}</button>
+}
             </form>
         </div>
     );

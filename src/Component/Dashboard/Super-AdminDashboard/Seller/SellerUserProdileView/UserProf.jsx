@@ -15,9 +15,12 @@ import useUserType from '../../../urlconfig'
 
 const UserProfileForm = () => {
   const userType = useUserType();
-  const { userId } = useParams();
+  // const { userId } = useParams();
   const location = useLocation();
+    const { seller } = location.state || {};
+
   const navigate = useNavigate(); 
+  const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
   const [profileData, setProfileData] = useState({
     name: '',
@@ -38,9 +41,12 @@ const UserProfileForm = () => {
     website: ''
   });
 
+    const userId = seller?._id;
+
+
   const fetchProfile = async () => {
     try {
-      const result = await getAPI(`/api/auth/userid/${userId}`, {}, true, false);
+      const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
       if (result.data.user) {
         const userData = result.data.user;
         const formattedBirthdate = userData.birthdate ? new Date(userData.birthdate).toISOString().split('T')[0] : '';
@@ -52,7 +58,7 @@ const UserProfileForm = () => {
           address: parsedAddress,
         });
 
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
         const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : 'DashboardAssets/assets/images/user.png';
         setPreviewImage(profilePhotoUrl);
       }
@@ -86,6 +92,14 @@ const UserProfileForm = () => {
     });
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProfileData((prevState) => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
   const handleAddressChange = (e) => {
     const { name, value } = e.target;
     const [, subKey] = name.split('.');
@@ -99,7 +113,50 @@ const UserProfileForm = () => {
     }));
   };
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+      setImageFile(file);
+    }
+  };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const formData = new FormData();
+      formData.append('name', profileData.name);
+      formData.append('lastName', profileData.lastName);
+      formData.append('address', JSON.stringify(profileData.address));
+      formData.append('gender', profileData.gender);
+      formData.append('birthdate', profileData.birthdate);
+      formData.append('website', profileData.website);
+
+      if (imageFile) {
+        formData.append('profilePhoto', imageFile);
+      }
+
+      const response = await fetch(`/auth/users/${userId}`, {
+        method: 'PUT',
+        body: formData,
+      });
+
+      if (response.ok) {
+        toast.success('Profile updated successfully!');
+      } else {
+        const errorText = await response.text();
+        toast.error(`Failed to update profile: ${response.status} ${errorText}`);
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error('Error updating profile. Please try again.');
+    }
+  };
 
   const tabs = [
     { name: 'Settings', component: Settings },
@@ -117,15 +174,22 @@ const UserProfileForm = () => {
       <div className="block-header">
         <div className="row">
           <div className="col-lg-6 col-md-6 col-sm-12">
-            <h2>Seller Profile</h2>
+            <h2>Seller Profile View</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <a href="index.html">
-                  <i className="fa fa-dashboard" />
-                </a>
+<span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+    <i className="fa fa-dashboard"></i>
+</span>
               </li>
-              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/sellermanagetable`}>SellerManageTable</Link></li>
-              <li className="breadcrumb-item">Seller Profile</li>
+              <li className="breadcrumb-item">
+                <span
+                  onClick={() => navigate('/super-admin/artist/management')}
+                  style={{ cursor: 'pointer' }}
+                >
+                  ArtistManageTable
+                </span>
+              </li>
+              <li className="breadcrumb-item">Seller Profile View</li>
             </ul>
           </div>
         </div>
@@ -161,6 +225,10 @@ const UserProfileForm = () => {
                     userId={userId}
                     profileData={profileData}
                     previewImage={previewImage}
+                    handleImageUpload={handleImageUpload}
+                    handleChange={handleChange}
+                    handleAddressChange={handleAddressChange}
+                    handleSubmit={handleSubmit}
                   />
                 </div>
               ))}

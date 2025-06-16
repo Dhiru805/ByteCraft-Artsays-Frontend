@@ -1,12 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import ArtistInfo from "./ArtistProfessionalInfo";
 import SocialMedia from "./SocialMediaPromotion";
 import BankDetails from "./BankandPaymentDetails"
-import ArtworkDetails from "./ArtworkListingdetails"
-import Agreement from "./Agreements"
-import Verification from "./Verifications"
+import ArtworkDetails from "./ArtworkListingdetails";
+import Agreement from "./Agreements";
+import Verification from "./Verifications";
+import { DEFAULT_PROFILE_IMAGE } from "../../../../../../Constants/ConstantsVariables"; 
 
 const Settings = ({ userId, profileData, previewImage,}) => {
+
+  const [imageError, setImageError] = useState(false);
+  const [localPreviewImage, setLocalPreviewImage] = useState(previewImage);
+
+  useEffect(() => {
+    setLocalPreviewImage(previewImage);
+  }, [previewImage]);
+
+  const actualImage = !localPreviewImage || imageError ? DEFAULT_PROFILE_IMAGE : localPreviewImage;
+
+useEffect(() => {
+    if (!previewImage) return;
+
+    const img = new Image();
+    img.src = previewImage;
+    img.onload = () => setImageError(false);
+    img.onerror = () => setImageError(true);
+  }, [previewImage]);
 
   return (
     <div className="body">
@@ -14,7 +33,7 @@ const Settings = ({ userId, profileData, previewImage,}) => {
       <div className="media">
         <div className="media-left m-r-15" style={{ width: '140px', height: '140px', overflow: 'hidden' }}>
           <img
-            src={previewImage}
+            src={actualImage}
             className="user-photo media-object"
             alt="User"
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}

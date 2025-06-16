@@ -4,6 +4,8 @@ import putAPI from '../../../../../../api/putAPI';
 import getAPI from '../../../../../../api/getAPI';
 
 const BankPaymentDetails = ({ userId }) => {
+
+    const [loading,setLoading]=useState(false);
     const [formData, setFormData] = useState({
         accountHolderName: '',
         bankName: '',
@@ -40,7 +42,7 @@ const BankPaymentDetails = ({ userId }) => {
     
         fetchBankDetails();
     }, [userId]);
-    
+
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -131,7 +133,16 @@ const BankPaymentDetails = ({ userId }) => {
                         </div>
                     </div>
                 </div>
-                <button type="submit" className="btn btn-primary mx-2">Update</button>
+      <button type="button"
+          className="btn btn-primary mx-2"
+          disabled={loading}
+          onClick={(e) => {
+            setLoading(true);
+            Promise.resolve(handleSubmit(e))
+              .catch(console.error)
+              .finally(() => setLoading(false));
+          }}
+        >{loading ? "Updating..." : "Update"}</button>
             </form>
         </div>
     );

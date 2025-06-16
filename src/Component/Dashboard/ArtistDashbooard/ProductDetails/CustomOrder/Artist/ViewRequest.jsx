@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
-import axios from 'axios';
 import useUserType from '../../../../urlconfig';
 import Switch from "react-switch";
+import getAPI from "../../../../../../api/getAPI";
 
 const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
@@ -25,7 +25,7 @@ function ViewBuyerRequest() {
     useEffect(() => {
         const fetchArtists = async () => {
             try {
-                const response = await axios.get("/api/artist/artists");
+                const response = await getAPI("/api/artist/artists");
                 setArtists(response.data);
             } catch (error) {
                 console.error("Error fetching artists:", error);

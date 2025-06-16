@@ -6,6 +6,7 @@ import VerifyModal from "./VerifyModal"
 import CreateArtistModal from "./Createmodal"
 import useUserType from '../../urlconfig'
 import getAPI from "../../../../api/getAPI";
+import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
 
 
 function ArtistManageTable() {
@@ -15,7 +16,6 @@ function ArtistManageTable() {
   const [selectedArtist, setSelectedArtist] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateArtistModalOpen, setIsCreateArtistModalOpen] = useState(false);
-  const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage, setProductsPerPage] = useState(10);
@@ -76,8 +76,14 @@ function ArtistManageTable() {
     setIsModalOpen(true);
   };
 
-  const totalPages = Math.ceil(artists.length / productsPerPage);
-  const displayedArtists = artists.slice(
+  const filteredArtists = artists.filter((artist) => {
+    const fullName = `${artist.name} ${artist.lastName}`.toLowerCase();
+    return fullName.includes(searchTerm.toLowerCase());
+  });
+
+
+  const totalPages = Math.ceil(filteredArtists.length / productsPerPage);
+  const displayedArtists = filteredArtists.slice(
     (currentPage - 1) * productsPerPage,
     currentPage * productsPerPage
   );
@@ -109,9 +115,9 @@ function ArtistManageTable() {
               <h2>Artist Management</h2>
               <ul className="breadcrumb">
                 <li className="breadcrumb-item">
-                  <a href="index.html">
+                  <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
                     <i className="fa fa-dashboard"></i>
-                  </a>
+                  </span>
                 </li>
                 <li className="breadcrumb-item">Artist Management</li>
               </ul>
@@ -147,7 +153,7 @@ function ArtistManageTable() {
                     onChange={handleProductsPerPageChange}
                     style={{ minWidth: '70px' }}
                   >
-                    <option value="5">5</option>
+                    {/* <option value="5">5</option> */}
                     <option value="10">10</option>
                     <option value="25">25</option>
                     <option value="50">50</option>
@@ -200,9 +206,9 @@ function ArtistManageTable() {
                           <td>
                             <img
                               src={
-                                artist.profilePhoto
+                                artist.profilePhoto && artist.profilePhoto !== "null"
                                   ? `${BASE_URL}${artist.profilePhoto}`
-                                  : 'DashboardAssets/assets/images/user.png'
+                                  : DEFAULT_PROFILE_IMAGE
                               }
                               className="rounded-circle avatar"
                               alt=""
@@ -240,7 +246,7 @@ function ArtistManageTable() {
                               className="btn btn-outline-primary btn-sm mr-2"
                               title="Navigate"
                               onClick={() =>
-                                navigate("/super-admin/artist/management/artistprofileview",{ state: { artist } })
+                                navigate("/super-admin/artist/management/artistprofileview", { state: { artist } })
                               }
 
                             >
@@ -251,7 +257,7 @@ function ArtistManageTable() {
                               className="btn btn-outline-info btn-sm mr-2"
                               title="Edit"
                               onClick={() =>
-                                navigate("/super-admin/artist/management/artisteditreuqest/",{ state: { artist } })
+                                navigate("/super-admin/artist/management/artisteditreuqest/", { state: { artist } })
                               }
                             >
                               <i class="fa fa-pencil"></i>
@@ -280,7 +286,7 @@ function ArtistManageTable() {
                 </div>
                 <div className="pagination d-flex justify-content-between mt-4">
                   <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, artists.length)} of {artists.length} entries
+                    Showing {(filteredArtists.length === 0 ? 0 : (currentPage - 1) * productsPerPage + 1)} to {Math.min(currentPage * productsPerPage, filteredArtists.length)} of {filteredArtists.length} entries
                   </span>
 
                   <ul className="pagination d-flex justify-content-end w-100">

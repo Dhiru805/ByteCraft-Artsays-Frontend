@@ -82,9 +82,17 @@ const ProductRequest = () => {
         confirm(() => updateProductStatus(productId, 'Rejected'), "Are you sure you want to reject this product?");
     };
 
+    const filteredProducts = products.filter((product) => {
+        const buyer = product?.buyerId || product?.userId || {};
+        const fullName = `${buyer?.name || ''} ${buyer?.lastName || ''}`.trim().toLowerCase();
+        const term = searchTerm.toLowerCase().trim();
 
-    const totalPages = Math.ceil(products.length / productsPerPage);
-    const displayedProducts = products.slice(
+        return fullName.includes(term);
+    });
+
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+    const displayedProducts = filteredProducts.slice(
         (currentPage - 1) * productsPerPage,
         currentPage * productsPerPage
     );
@@ -115,9 +123,9 @@ const ProductRequest = () => {
                         <h2>Resell Product Request</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
-                                <a href="index.html">
+                                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
                                     <i className="fa fa-dashboard"></i>
-                                </a>
+                                </span>
                             </li>
                             <li className="breadcrumb-item">Resell Product Request</li>
                         </ul>
@@ -128,7 +136,7 @@ const ProductRequest = () => {
             <div className="row clearfix">
                 <div className="col-lg-12">
                     <div className="card">
-                      <div className="header d-flex justify-content-between align-items-center">
+                        <div className="header d-flex justify-content-between align-items-center">
                             <div className="d-none d-md-flex align-items-center mb-2 mb-md-0">
                                 <label className="mb-0 mr-2">Show</label>
                                 <select
@@ -139,7 +147,7 @@ const ProductRequest = () => {
                                     onChange={handleProductsPerPageChange}
                                     style={{ minWidth: '70px' }}
                                 >
-                                    <option value="5">5</option>
+                                    {/* <option value="5">5</option> */}
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
@@ -147,7 +155,7 @@ const ProductRequest = () => {
                                 </select>
                                 <label className="mb-0 ml-2">entries</label>
                             </div>
-                                <div className="w-100 w-md-auto d-flex justify-content-end">
+                            <div className="w-100 w-md-auto d-flex justify-content-end">
                                 <div className="input-group" style={{ maxWidth: '150px' }}>
                                     <input
                                         type="text"
@@ -168,7 +176,7 @@ const ProductRequest = () => {
                                     ></i>
                                 </div>
                             </div>
-                      </div>
+                        </div>
                         <div className="body">
                             <div className="table-responsive">
                                 <table className="table table-hover">
@@ -255,9 +263,9 @@ const ProductRequest = () => {
                                     </tbody>
                                 </table>
                             </div>
-                                                        <div className="pagination d-flex justify-content-between mt-4">
+                            <div className="pagination d-flex justify-content-between mt-4">
                                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                                    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, products.length)} of {products.length} entries
+                                    Showing {filteredProducts.length === 0 ? 0 : (currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
                                 </span>
 
                                 <ul className="pagination d-flex justify-content-end w-100">

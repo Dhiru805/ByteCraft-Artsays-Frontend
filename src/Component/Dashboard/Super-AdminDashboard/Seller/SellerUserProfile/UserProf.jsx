@@ -12,6 +12,7 @@ import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import Settings from './UserProfile/BasicInformation';
 import useUserType from '../../../urlconfig'
+import putAPI from '../../../../../api/putAPI';
 
 const UserProfileForm = () => {
   const userType = useUserType();
@@ -137,7 +138,7 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
     }));
   };
 
-  const handleSubmit = async (e) => {
+   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
@@ -163,27 +164,27 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
         formData.append('profilePhoto', imageFile);
       }
 
-      const response = await fetch(`/auth/users/${userId}`, {
-        method: 'PUT',
-        body: formData,
-      });
-
-      const result = await response.json(); 
-
-      if (response.ok) {
-        toast.success(result.message || 'Profile updated successfully!');
-        setPasswordData({
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: '',
-        });
-      } else {
-        toast.error(result.message || `Failed to update profile: ${response.status}`);
-      }
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      toast.error('Error updating profile. Please try again.');
-    }
+          const response = await putAPI(`/auth/users/${userId}`, formData, {
+              'Content-Type': 'multipart/form-data',
+            });
+      
+            toast.success(response.message || 'Profile updated successfully!');
+            if (response.ok) {
+              setPasswordData({
+                currentPassword: '',
+                newPassword: '',
+                confirmPassword: '',
+              });
+             
+            }
+          } catch (error) {
+            console.error('Error updating profile:', error);
+            if (error.response?.data?.message) {
+              toast.error(error.response.data.message);
+            } else {
+              toast.error('Something went wrong. Please try again.');
+            }
+          }
   };
 
   const tabs = [
@@ -204,11 +205,18 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
             <h2>Seller Profile</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <a href="index.html">
-                  <i className="fa fa-dashboard" />
-                </a>
+<span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+    <i className="fa fa-dashboard"></i>
+</span>
               </li>
-              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/sellermanagetable`}>SellerManageTable</Link></li>
+              <li className="breadcrumb-item">
+                <span
+                  onClick={() => navigate('/super-admin/seller/management')}
+                  style={{ cursor: 'pointer' }}
+                >
+                  SellerManageTable
+                </span>
+              </li>
               <li className="breadcrumb-item">Seller Profile</li>
             </ul>
           </div>

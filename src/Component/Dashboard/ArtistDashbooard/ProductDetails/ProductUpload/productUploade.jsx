@@ -305,7 +305,7 @@ function ProductUpload() {
  
       const response = await postAPI('/api/cropImage', formDataToSend, {}, true);
       toast.success('Product created successfully!');
-      navigate(`/${userType}/Dashboard/allproduct`);
+      navigate(`/artist/product`);
     } catch (error) {
       console.error('Error creating product:', error);
       const errorMessage = error.response?.data?.message || 'Failed to create product';

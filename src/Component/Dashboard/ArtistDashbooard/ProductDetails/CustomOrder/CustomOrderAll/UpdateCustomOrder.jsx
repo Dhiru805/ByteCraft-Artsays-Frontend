@@ -17,8 +17,6 @@ function UpdateBuyerRequest() {
   const location = useLocation();
   const { state } = location || {};
   const { request } = state || {};
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-
 
   const [productName, setProductName] = useState('');
   const [description, setDescription] = useState('');
@@ -386,7 +384,7 @@ function UpdateBuyerRequest() {
                     <div className="mb-3">
                       <div className="image-container" style={{ position: 'relative', display: 'inline-block' }}>
                         <img
-                          src={`${BASE_URL}${existingImage}`}
+                          src={`http://localhost:3001/${existingImage}`}
                           alt="Current reference"
                           style={{
                             maxWidth: '200px',

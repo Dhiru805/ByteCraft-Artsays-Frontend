@@ -2,14 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import getAPI from '../../../../api/getAPI';
 import { Link } from 'react-router-dom';
-import useUserType from '../../urlconfig';
+import { useNavigate } from 'react-router-dom';
+
+
 import { Helmet } from 'react-helmet';
 
 function ArtistBlogDetails() {
   const location = useLocation();
   const [blogData] = useState(location.state?.blogData || null);
   const [blogs, setBlogs] = useState([]);
-  const userType = useUserType();
+const navigate = useNavigate();
+
 
   const fetchBlog = async () => {
     try {
@@ -49,7 +52,6 @@ function ArtistBlogDetails() {
             />
           )}
 
-          {/* Twitter */}
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:title" content={blogs[0].blogName} />
           <meta name="twitter:description" content={blogs[0].summary} />
@@ -68,9 +70,9 @@ function ArtistBlogDetails() {
           <div className="col-lg-6 col-md-6 col-sm-12">
             <h2>Blog Details</h2>
             <ul className="breadcrumb">
-              <li className="breadcrumb-item">
-                <Link to="/"><i className="fa fa-dashboard"></i></Link>
-              </li>
+ <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+    <i className="fa fa-dashboard"></i>
+</span>
               <li className="breadcrumb-item">
                 <Link to={`/artist/bloglist`}>Blogs</Link>
               </li>

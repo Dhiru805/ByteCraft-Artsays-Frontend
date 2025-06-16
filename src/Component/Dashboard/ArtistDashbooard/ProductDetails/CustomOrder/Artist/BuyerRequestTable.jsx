@@ -7,6 +7,7 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
     const [showModal, setShowModal] = useState(false);
     const [selectedRequest, setSelectedRequest] = useState(null);
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const [searchTerm, setSearchTerm] = useState('');
 
 
     // pagination helpers 
@@ -14,12 +15,18 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
     const [productsPerPage, setProductsPerPage] = useState(10);
 
 
-    const totalPages = Math.ceil(buyerRequests.length / productsPerPage);
+   const filteredProducts = buyerRequests.filter(request =>
+        request.Buyer?.id?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        request.Buyer?.id?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
-    const displayedProducts = buyerRequests.slice(
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+    const displayedProducts = filteredProducts.slice(
         (currentPage - 1) * productsPerPage,
         currentPage * productsPerPage
-    );
+    );    
+    
     const handlePrevious = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
@@ -71,7 +78,7 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                         onChange={handleProductsPerPageChange}
                                         style={{ minWidth: '70px' }}
                                     >
-                                        <option value="5">5</option>
+                                        {/* <option value="5">5</option> */}
                                         <option value="10">10</option>
                                         <option value="25">25</option>
                                         <option value="50">50</option>
@@ -120,7 +127,7 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                                         </td>
                                                         <td>
                                                             <img
-                                                                src={`${BASE_URL}${request.Buyer.id.profilePhoto}`}
+                                                                src={`${BASE_URL}${request.Buyer?.id?.profilePhoto}`}
                                                                 className="rounded-circle avatar"
                                                                 alt="Profile"
                                                                 style={{
@@ -160,7 +167,7 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                                                 className="btn btn-outline-info btn-sm mr-2"
                                                                 title="View"
                                                                 onClick={() =>
-                                                                    navigate(`/artist/custom-view`, {
+                                                                    navigate(`/artist/custom-order/view-request`, {
                                                                         state: { request },
                                                                     })
                                                                 }
@@ -230,7 +237,7 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                 </div>
                                 <div className="pagination d-flex justify-content-between mt-4">
                                     <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                                        Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, buyerRequests.length)} of {buyerRequests.length} entries
+                                        Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
                                     </span>
 
                                     <ul className="pagination d-flex justify-content-end w-100">

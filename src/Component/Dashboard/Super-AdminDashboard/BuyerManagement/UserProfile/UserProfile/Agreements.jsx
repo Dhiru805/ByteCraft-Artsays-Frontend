@@ -6,6 +6,8 @@ import getAPI from '../../../../../../api/getAPI';
 const AccountSecurityAgreement = ({ userId }) => {
     const [formData, setFormData] = useState({});
 
+    const [loading,setLoading]=useState(false);
+
     const checkboxLabels = {
         twoStepAuthentication: "2-Step Authentication (OTP, Email verification, etc.)",
         termsConditionsAgreement: "Terms & Conditions Agreement",
@@ -107,7 +109,16 @@ const AccountSecurityAgreement = ({ userId }) => {
                     />
                     <label className="mx-2">{checkboxLabels.privacyPolicyAgreement}</label>
                 </div>
-                <button type="submit" className="btn btn-primary mx-2">Update</button>
+       <button type="button"
+          className="btn btn-primary mx-2"
+          disabled={loading}
+          onClick={(e) => {
+            setLoading(true);
+            Promise.resolve(handleSubmit(e))
+              .catch(console.error)
+              .finally(() => setLoading(false));
+          }}
+        >{loading ? "Updating..." : "Update"}</button>
             </form>
         </div>
     );

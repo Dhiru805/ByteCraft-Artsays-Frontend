@@ -11,6 +11,7 @@ import Packagingmaterial from './PackagingMaterial/ProductPurchasedBuyer'
 import RsellProduct  from './ResellProductRequest/ProductRequestTable'
 import SodlProduct  from './Soldproduct/SoldProduct'
 import getAPI from '../../../../../api/getAPI';
+import putAPI from '../../../../../api/putAPI';
 import { Link } from 'react-router-dom';
 import Settings from './UserProfile/BasicInformation';
 import useUserType from '../../../urlconfig'
@@ -140,7 +141,7 @@ const UserProfileForm = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
@@ -166,27 +167,27 @@ const UserProfileForm = () => {
         formData.append('profilePhoto', imageFile);
       }
 
-      const response = await fetch(`/auth/users/${userId}`, {
-        method: 'PUT',
-        body: formData,
-      });
-
-      const result = await response.json(); 
-
-      if (response.ok) {
-        toast.success(result.message || 'Profile updated successfully!');
-        setPasswordData({
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: '',
-        });
-      } else {
-        toast.error(result.message || `Failed to update profile: ${response.status}`);
-      }
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      toast.error('Error updating profile. Please try again.');
-    }
+          const response = await putAPI(`/auth/users/${userId}`, formData, {
+              'Content-Type': 'multipart/form-data',
+            });
+      
+            toast.success(response.message || 'Profile updated successfully!');
+            if (response.ok) {
+              setPasswordData({
+                currentPassword: '',
+                newPassword: '',
+                confirmPassword: '',
+              });
+             
+            }
+          } catch (error) {
+            console.error('Error updating profile:', error);
+            if (error.response?.data?.message) {
+              toast.error(error.response.data.message);
+            } else {
+              toast.error('Something went wrong. Please try again.');
+            }
+          }
   };
 
   const tabs = [
@@ -209,11 +210,18 @@ const UserProfileForm = () => {
             <h2>Buyer Profile</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <a href="index.html">
-                  <i className="fa fa-dashboard" />
-                </a>
+<span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+    <i className="fa fa-dashboard"></i>
+</span>
               </li>
-              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/buyermanagetable`}>BuyerManageTable</Link></li>
+              <li className="breadcrumb-item">
+                <span
+                  onClick={() => navigate('/super-admin/buyer/management')}
+                  style={{ cursor: 'pointer' }}
+                >
+                  BuyerManageTable
+                </span>
+              </li>
               <li className="breadcrumb-item">Buyer Profile</li>
             </ul>
           </div>

@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import putAPI from '../../../../../../api/putAPI';
 import getAPI from '../../../../../../api/getAPI';
 
-const ArtworkPricingDetails = ({ userId }) => {
+const ArtworkPricingDetails = ({ userId,loading }) => {
     const [formData, setFormData] = useState({
         minArtworkPrice: '',
         customOrders: false,
@@ -14,6 +14,7 @@ const ArtworkPricingDetails = ({ userId }) => {
         sampleArtwork: null
     });
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [load, setLoad] = useState(false);
 
     useEffect(() => {
         const fetchDetails = async () => {
@@ -249,7 +250,19 @@ const ArtworkPricingDetails = ({ userId }) => {
                         )}
                     </div>
                 </div>
-                <button type="submit" className="btn btn-primary mx-2">Update</button>
+                <button type="button"
+                    className="btn btn-primary mx-2"
+                    disabled={load}
+                    onClick={(e) => {
+                        setLoad(true);
+                        Promise.resolve(handleSubmit(e))
+                            .then(() => {
+                                window.location.reload();
+                            })
+                            .catch(console.error)
+                            .finally(() => setLoad(false));
+                    }}
+                >{load ? "Updating..." : "Update"}</button>
             </form>
 
 

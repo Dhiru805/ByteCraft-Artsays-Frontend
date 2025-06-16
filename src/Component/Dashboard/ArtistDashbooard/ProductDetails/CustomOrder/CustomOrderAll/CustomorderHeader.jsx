@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const CustomorderHeader = () => {
-     const navigate = useNavigate();
+    const navigate = useNavigate();
     return (
         <>
             <div className="block-header">
@@ -11,9 +11,9 @@ const CustomorderHeader = () => {
                         <h2>Custom Request</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
-                                <a href="index.html">
+                                <span onClick={() => navigate('/artist/dashboard')} style={{ cursor: 'pointer' }}>
                                     <i className="fa fa-dashboard"></i>
-                                </a>
+                                </span>
                             </li>
                             {/* <li className="breadcrumb-item">App</li> */}
                             <li className="breadcrumb-item ">Custom Request</li>

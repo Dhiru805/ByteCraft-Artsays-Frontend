@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../urlconfig';
+import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
+
 
 
 const  ApprovedProduct = () => {
@@ -41,9 +43,14 @@ const  ApprovedProduct = () => {
 
 
 
-    const totalPages = Math.ceil(products.length / productsPerPage);
+  const filteredProducts = products.filter(product =>
+        product.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.userId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
-    const displayedProducts = products.slice((currentPage - 1) * productsPerPage,currentPage * productsPerPage); 
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+    const displayedProducts = filteredProducts.slice((currentPage - 1) * productsPerPage,currentPage * productsPerPage); 
     
     const handlePrevious = () => {
             if (currentPage > 1) setCurrentPage(currentPage - 1); 
@@ -78,7 +85,7 @@ return (
                                     onChange={handleProductsPerPageChange}
                                     style={{ minWidth: '70px' }}
                                 >
-                                    <option value="5">5</option>
+                                    {/* <option value="5">5</option> */}
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
@@ -132,7 +139,7 @@ return (
                                               {product.userId.name} {product.userId.lastName}</td>
                                               <td>
                                                   <img
-                                                    src={product.mainImage ? `${BASE_URL}${product.mainImage}` : '/DashboardAssets/assets/images/user.png'}
+                                                    src={product.mainImage ? `${BASE_URL}${product.mainImage}` : DEFAULT_PROFILE_IMAGE}
                                                       className="rounded-circle avatar"
                                                       alt=""
                                                       style={{
@@ -165,7 +172,7 @@ return (
                           </div>
                             <div className="pagination d-flex justify-content-between mt-4">
                                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                                    Showing {(currentPage - 1) * productsPerPage  + 1} to {Math.min(currentPage * productsPerPage, products.length)} of {products.length} entries
+                                    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
                                 </span>
 
                                 <ul className="pagination d-flex justify-content-end w-100">

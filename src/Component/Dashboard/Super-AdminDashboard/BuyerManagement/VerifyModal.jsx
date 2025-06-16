@@ -9,11 +9,12 @@ const VerifyModal = ({ buyer, onClose, refreshBuyers }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [users, setUsers] = useState([]);
     const confirm = useConfirm();
+    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
     const updateUserStatus = async (userId, status) => {
         try {
             await putAPI(
-                `http://localhost:3001/auth/updateuserstatus/${userId}`,
+                `/auth/updateuserstatus/${userId}`,
                 { status: status },
                 {},
                 true
@@ -43,7 +44,7 @@ const VerifyModal = ({ buyer, onClose, refreshBuyers }) => {
 
     useEffect(() => {
         if (buyer?.verification?.documentFile) {
-            setFilePreview(`http://localhost:3001/${buyer.verification.documentFile}`);
+            setFilePreview(`${BASE_URL}/${buyer.verification.documentFile}`);
             setFileType(buyer.verification.documentFile.endsWith(".pdf") ? "application/pdf" : "image/jpeg");
         }
     }, [buyer]);

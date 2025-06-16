@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../api/getAPI"
 import ConfirmationDialog from '../../ConfirmationDialog';
 import CreateAdminModal from "./Createmodal";
+import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
+
 
 
 function AdminManageTable() {
@@ -14,11 +16,6 @@ function AdminManageTable() {
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
-        const [products, setProducts] = useState([]);
-        const [productsPerPage, setProductsPerPage] = useState(10);
-            const [searchTerm, setSearchTerm] = useState('');
-        
-    
 
     const totalPages = Math.ceil(admins.length / itemsPerPage);
 
@@ -64,12 +61,6 @@ function AdminManageTable() {
         setIsDeleteDialogOpen(true);
     };
 
-    const handleProductsPerPageChange = (event) => {
-        setProductsPerPage(Number(event.target.value));
-        setCurrentPage(1);
-    };
-    
-
     return (
         <>
             <div className="container-fluid">
@@ -79,9 +70,9 @@ function AdminManageTable() {
                             <h2>Admin Management</h2>
                             <ul className="breadcrumb">
                                 <li className="breadcrumb-item">
-                                    <a href="index.html">
+                                    <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
                                         <i className="fa fa-dashboard"></i>
-                                    </a>
+                                    </span>
                                 </li>
                                 <li className="breadcrumb-item">Admin Management</li>
                             </ul>
@@ -103,47 +94,25 @@ function AdminManageTable() {
                 <div className="row clearfix">
                     <div className="col-lg-12">
                         <div className="card">
-                      <div className="header d-flex justify-content-between align-items-center">
-                            <div className="d-none d-md-flex align-items-center mb-2 mb-md-0">
-                                <label className="mb-0 mr-2">Show</label>
-                                <select
-                                    name="DataTables_Table_0_length"
-                                    aria-controls="DataTables_Table_0"
-                                    className="form-control form-control-sm"
-                                    value={productsPerPage}
-                                    onChange={handleProductsPerPageChange}
-                                    style={{ minWidth: '70px' }}
-                                >
-                                    <option value="5">5</option>
-                                    <option value="10">10</option>
-                                    <option value="25">25</option>
-                                    <option value="50">50</option>
-                                    <option value="100">100</option>
-                                </select>
-                                <label className="mb-0 ml-2">entries</label>
-                            </div>
-                                <div className="w-100 w-md-auto d-flex justify-content-end">
-                                <div className="input-group" style={{ maxWidth: '150px' }}>
-                                    <input
-                                        type="text"
+                            <div className="header d-flex justify-content-between align-items-center">
+                                <div className="d-flex align-items-center">
+                                    <label className="mb-0 mr-2">Show</label>
+                                    <select
+                                        name="DataTables_Table_0_length"
+                                        aria-controls="DataTables_Table_0"
                                         className="form-control form-control-sm"
-                                        placeholder="Search"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                    />
-                                    <i
-                                        className="fa fa-search"
-                                        style={{
-                                            position: 'absolute',
-                                            right: '10px',
-                                            top: '50%',
-                                            transform: 'translateY(-50%)',
-                                            pointerEvents: 'none',
-                                        }}
-                                    ></i>
+                                        onChange={(e) => setItemsPerPage(parseInt(e.target.value))}
+                                        value={itemsPerPage}
+                                    >
+                                        <option value="10">5</option>
+                                        <option value="10">10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
+                                    <label className="mb-0 ml-2">entries</label>
                                 </div>
                             </div>
-                      </div>
                             <div className="body">
                                 <div className="table-responsive">
                                     <table className="table table-hover js-basic-example dataTable table-custom m-b-0 c_list">
@@ -172,7 +141,7 @@ function AdminManageTable() {
                                                             <td>{index + 1}</td>
                                                             <td>
                                                                 <img
-                                                                    src={admin.profilePhoto ? `${BASE_URL}${admin.profilePhoto}` : '/DashboardAssets/assets/images/user.png'}
+                                                                    src={admin.profilePhoto ? `${BASE_URL}${admin.profilePhoto}` : DEFAULT_PROFILE_IMAGE}
                                                                     className="rounded-circle avatar"
                                                                     alt=""
                                                                     style={{ width: '30px', height: '30px', objectFit: 'cover' }}
@@ -213,39 +182,21 @@ function AdminManageTable() {
                                         </tbody>
                                     </table>
                                 </div>
-                            <div className="pagination d-flex justify-content-between mt-4">
-                                <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                                    Showing {(currentPage - 1) * productsPerPage  + 1} to {Math.min(currentPage * productsPerPage, products.length)} of {products.length} entries
-                                </span>
-
-                                <ul className="pagination d-flex justify-content-end w-100">
-                                    <li
-                                        className={`paginate_button page-item ${currentPage === 1 ? 'disabled' : ''}`}
-                                        onClick={handlePrevious}
-                                    >
-                                        <button className="page-link">Previous</button>
-                                    </li>
-
-                                    {Array.from({ length: totalPages }, (_, index) => index + 1)
-                                        .filter((pageNumber) => pageNumber === currentPage)
-                                        .map((pageNumber, index, array) => {
-                                            const prevPage = array[index - 1];
-                                            if (prevPage && pageNumber - prevPage > 1) {
-                                                return (
-                                                    <React.Fragment key={`ellipsis-${pageNumber}`}>
-                                                        <li className="page-item disabled"><span className="page-link">...</span></li>
-                                                        <li
-                                                            key={pageNumber}
-                                                            className={`paginate_button page-item ${currentPage === pageNumber ? 'active' : ''}`}
-                                                            onClick={() => setCurrentPage(pageNumber)}
-                                                        >
-                                                            <button className="page-link">{pageNumber}</button>
-                                                        </li>
-                                                    </React.Fragment>
-                                                );
-                                            }
-
-                                            return (
+                                <div className="pagination d-flex justify-content-end mt-4">
+                                    <ul className="pagination">
+                                        <li
+                                            className={`paginate_button page-item ${currentPage === 1 ? 'disabled' : ''}`}
+                                            onClick={handlePrevious}
+                                        >
+                                            <button className="page-link">Previous</button>
+                                        </li>
+                                        {Array.from({ length: totalPages }, (_, index) => index + 1)
+                                            .filter((pageNumber) =>
+                                                // pageNumber >= currentPage &&
+                                                // pageNumber < currentPage + 3
+                                                pageNumber === currentPage
+                                            )
+                                            .map((pageNumber) => (
                                                 <li
                                                     key={pageNumber}
                                                     className={`paginate_button page-item ${currentPage === pageNumber ? 'active' : ''}`}
@@ -253,17 +204,15 @@ function AdminManageTable() {
                                                 >
                                                     <button className="page-link">{pageNumber}</button>
                                                 </li>
-                                            );
-                                        })}
-
-                                    <li
-                                        className={`paginate_button page-item ${currentPage === totalPages ? 'disabled' : ''}`}
-                                        onClick={handleNext}
-                                    >
-                                        <button className="page-link">Next</button>
-                                    </li>
-                                </ul>
-                            </div>
+                                            ))}
+                                        <li
+                                            className={`paginate_button page-item ${currentPage === totalPages ? 'disabled' : ''}`}
+                                            onClick={handleNext}
+                                        >
+                                            <button className="page-link">Next</button>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>

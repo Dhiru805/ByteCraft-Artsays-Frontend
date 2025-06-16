@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import putAPI from '../../../../../../api/putAPI';
+import { faL } from "@fortawesome/free-solid-svg-icons";
 
 const UpdateModal = ({ request, onClose, onSubmit }) => {
   const [buyerName] = useState(
@@ -14,9 +15,11 @@ const UpdateModal = ({ request, onClose, onSubmit }) => {
   const [minBudget, setMinBudget] = useState(request?.MinBudget || "");
   const [notes, setNotes] = useState(request?.Notes || "");
   const [negotiateBudget, setNegotiateBudget] = useState(request?.NegotiatedBudget|| "");
+    const [loading,setLoading]=useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await putAPI(
         `/api/update-negiotaite-budget/${request._id}`,
@@ -39,6 +42,8 @@ const UpdateModal = ({ request, onClose, onSubmit }) => {
     } catch (error) {
       console.error("Error updating buyer request:", error);
       toast.error(error.response?.data?.message || "Error updating buyer request");
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -176,8 +181,10 @@ const UpdateModal = ({ request, onClose, onSubmit }) => {
               >
                 Close
               </button>
-              <button type="submit" className="btn btn-primary">
-                Save Changes
+              <button
+               type="submit" className="btn btn-primary"
+                disabled={loading}>
+                 {loading? "Submitting.........":"Submit"}
               </button>
             </div>
           </form>

@@ -36,11 +36,20 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests ,handleRejectBuyerRe
         setIsDeleteDialogOpen(true);
     };
 
-const totalPages = Math.ceil(buyerRequests.length / productsPerPage);
-const displayedBuyerRequests = buyerRequests.slice(
-    (currentPage - 1) * productsPerPage,
-    currentPage * productsPerPage
-);
+   const filteredProducts = products.filter(product => {
+        const productData = product.product || product.resellProduct;
+        return (
+            productData?.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            product.buyer?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            product.buyer?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    });
+
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+    const displayedBuyerRequests = filteredProducts.slice(
+        (currentPage - 1) * productsPerPage,
+        currentPage * productsPerPage
+    );
 
     const handlePrevious = () => {
         if (currentPage > 1) {
@@ -81,7 +90,7 @@ const displayedBuyerRequests = buyerRequests.slice(
                                     onChange={handleProductsPerPageChange}
                                     style={{ minWidth: '70px' }}
                                 >
-                                    <option value="5">5</option>
+                                    {/* <option value="5">5</option> */}
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
@@ -233,7 +242,7 @@ const displayedBuyerRequests = buyerRequests.slice(
                                 </div>
                                                             <div className="pagination d-flex justify-content-between mt-4">
                                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, buyerRequests.length)} of {buyerRequests.length} entries
+                                    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
                                 </span>
 
                                 <ul className="pagination d-flex justify-content-end w-100">

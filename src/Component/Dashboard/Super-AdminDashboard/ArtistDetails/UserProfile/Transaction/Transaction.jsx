@@ -44,10 +44,17 @@ const Transaction = ({ userId }) => {
     }, [userId]);
 
     const totalPages = Math.ceil(products.length / productsPerPage);
-    const displayedProducts = products.slice(
-        (currentPage - 1) * productsPerPage,
-        currentPage * productsPerPage
-    );
+const filteredProducts = products.filter(product =>
+    product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    product.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    product.userId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) 
+);
+
+
+ const displayedProducts = filteredProducts.slice(
+    (currentPage - 1) * productsPerPage,
+    currentPage * productsPerPage
+);
 
     const handlePrevious = () => {
         if (currentPage > 1) {
@@ -85,7 +92,7 @@ const Transaction = ({ userId }) => {
                                         onChange={handleProductsPerPageChange}
                                         style={{ minWidth: '70px' }}
                                     >
-                                        <option value="5">5</option>
+                                        {/* <option value="5">5</option> */}
                                         <option value="10">10</option>
                                         <option value="25">25</option>
                                         <option value="50">50</option>
@@ -196,7 +203,7 @@ const Transaction = ({ userId }) => {
                                 </div>
                                 <div className="pagination d-flex justify-content-between mt-4">
                                     <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                                        Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, products.length)} of {products.length} entries
+Showing {(filteredProducts.length === 0 ? 0 : (currentPage - 1) * productsPerPage + 1)} to {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
                                     </span>
 
                                     <ul className="pagination d-flex justify-content-end w-100">

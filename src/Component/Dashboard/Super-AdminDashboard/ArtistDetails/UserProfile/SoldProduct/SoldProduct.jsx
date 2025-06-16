@@ -36,7 +36,14 @@ const SoldProduct = ({ userId }) => {
     }, [userId]);
 
     const totalPages = Math.ceil(products.length / productsPerPage);
-    const displayedProducts = products.slice(
+    const filteredProducts = products.filter(product =>
+        product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.userId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+
+    const displayedProducts = filteredProducts.slice(
         (currentPage - 1) * productsPerPage,
         currentPage * productsPerPage
     );
@@ -75,7 +82,7 @@ const SoldProduct = ({ userId }) => {
                                     onChange={handleProductsPerPageChange}
                                     style={{ minWidth: '70px' }}
                                 >
-                                    <option value="5">5</option>
+                                    {/* <option value="5">5</option> */}
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
@@ -154,7 +161,7 @@ const SoldProduct = ({ userId }) => {
                             </div>
                             <div className="pagination d-flex justify-content-between mt-4">
                                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                                    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, products.length)} of {products.length} entries
+                                    Showing {(filteredProducts.length === 0 ? 0 : (currentPage - 1) * productsPerPage + 1)} to {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
                                 </span>
 
                                 <ul className="pagination d-flex justify-content-end w-100">

@@ -43,9 +43,9 @@
               { label: "Blogs", path: `/super-admin/artist/blogs` },
               { label: "Product Request", path: `/super-admin/artist/artistproductrequest` },
               { label: "Products", path: `/super-admin/artist/allartistproduct` },
-              { label: "Sold Product ", path: `/super-admin/artist/soldproducts` },
-              { label: "Transaction", path: `/super-admin/artist/artisttransaction`},
-              { label: "Packaging Material", path: `/super-admin/artist/artistpackagingmaterial` },
+              { label: "Sold Product ", path: `/super-admin/artist/sold-product` },
+              // { label: "Transaction", path: `/super-admin/artisttransaction`},
+              // { label: "Packaging Material", path: `/super-admin/artistpackagingmaterial` },
             ]
           },
           {
@@ -53,15 +53,15 @@
             icon: "fa-handshake",
             path: `#Buyer-management`,
             subTabs: [
-              { label: "Management", path: `/super-admin/buyer/management` },
+                { label: "Management", path: `/super-admin/buyer/management` },
               { label: "Product Purchased", path: `/super-admin/buyer/productpurchased` },
               { label: "Resell Product Request", path: `/super-admin/buyer/resellproduct` },
               { label: "Sold Product", path: `/super-admin/buyer/soldproduct` },
-              { label: "Transaction", path: `/super-admin/buyer/transaction` },
-              { label: "Packaging Material", path: `/super-admin/buyer/packagingmaterial` },
+              // { label: "Transaction", path: `/super-admin/buyertransaction` },
+              // { label: "Packaging Material", path: `/super-admin/buyerpackagingmaterial` },
             ]
           },
-          {
+              {
             label: "Seller",
             icon: "fa fa-tag",
             path: `#Seller-management`,
@@ -70,13 +70,13 @@
               { label: "Products", path: `/super-admin/seller/product` },
               { label: "Product Request", path: `/super-admin/seller/productrequest` },
               { label: "Sold  Product ", path: `/super-admin/seller/soldproduct` },
-              { label: "Transaction", path: `/super-admin/seller/transaction` },
-              { label: "Packaging Material", path: `/super-admin/seller/packagingmaterial` }
+              // { label: "Transaction", path: `/super-admin/seller/transaction` },
+              // { label: "Packaging Material", path: `/super-admin/seller/packagingmaterial` }
             ]
           },
-          {
+            {
             label: "Product",
-            icon: "fa fa-newspaper",
+            icon: "fa fa-cart-plus",
             path: `#Product-management`,
             subTabs: [
               { label: "All Product", path: `/super-admin/product-table` },
@@ -95,27 +95,27 @@
             ]
           },
     
-          {
-            label: "Transaction",
-            icon: "fa fa-credit-card",
-            path: `/super-admin/alltransaction`,
-            subTabs: [
-              // { label: "All Transaction", path: `/${userType}/Dashboard/alltransaction` },
-              // { label: "Product Transaction", path: `#` },
-              // { label: "Resell Product Transacticon", path: `#` },
-              // { label: "Bidding Transaction", path: `#` }
-            ]
-          },
-          {
-            label: "Packaging Material",
-            icon: "fa fa-archive",
-            path: `#Packaging Material`,
-            subTabs: [
-              { label: "Product", path: `/super-admin/packagingmaterialproduct`},
-              { label: "Product Purchased", path: `/super-admin/packagingproductpurchased` },
-              { label: "Transaction", path: `/super-admin/packagingproducttransaction` },
-            ]
-          },
+          // {
+          //   label: "Transaction",
+          //   icon: "fa fa-credit-card",
+          //   path: `/super-admin/alltransaction`,
+          //   subTabs: [
+          //     // { label: "All Transaction", path: `/${userType}/Dashboard/alltransaction` },
+          //     // { label: "Product Transaction", path: `#` },
+          //     // { label: "Resell Product Transacticon", path: `#` },
+          //     // { label: "Bidding Transaction", path: `#` }
+          //   ]
+          // },
+          // {
+          //   label: "Packaging Material",
+          //   icon: "fa fa-archive",
+          //   path: `#Packaging Material`,
+          //   subTabs: [
+          //     { label: "Product", path: `/super-admin/packagingmaterialproduct`},
+          //     { label: "Product Purchased", path: `/super-admin/packagingproductpurchased` },
+          //     { label: "Transaction", path: `/super-admin/packagingproducttransaction` },
+          //   ]
+          // },
           {
             label: "Settings",
             icon: "fa fa-cog", 
@@ -140,11 +140,10 @@
           icon: "fa fa-newspaper",
           path: "/artist/bloglist",
           subTabs: []
-          
         },
-        {
+           {
           label: "product",
-          icon: "fa fa-newspaper",
+          icon: "fa fa-cart-plus",
           path: "#",
           subTabs: [
               { label: "All Product", path: `/artist/product` },
@@ -171,9 +170,9 @@
           path: "/seller/dashboard",
           subTabs: []
         },
-        {
+         {
           label: "product",
-          icon: "fa fa-newspaper",
+          icon: "fa fa-cart-plus",
           path: "#",
           subTabs: [
             { label: "All Product", path: `/seller/product-details` },
@@ -181,7 +180,6 @@
           ]
 
         },
-
       ],
     };
 

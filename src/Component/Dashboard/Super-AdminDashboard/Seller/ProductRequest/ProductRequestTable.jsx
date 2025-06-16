@@ -6,6 +6,7 @@ import putAPI from '../../../../../api/putAPI';
 // import ConfirmationDialog from '../../ConfirmationDialog';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
+import { DEFAULT_PROFILE_IMAGE } from "../../../../../Constants/ConstantsVariables";
 
 
 const ProductRequest = () => {
@@ -14,6 +15,8 @@ const ProductRequest = () => {
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const [loadingIds, setLoadingIds] = useState([]);
+    
 
 
     const confirm = useConfirm();
@@ -74,12 +77,18 @@ const ProductRequest = () => {
         confirm(() => updateProductStatus(productId, 'Rejected'), "Are you sure you want to reject this product?");
     };
 
-    const totalPages = Math.ceil(products.length / productsPerPage);
-    const displayedProducts = products.slice(
+    const filteredProducts = products.filter((product) => {
+        const buyer = product.userId || {};
+        const fullName = `${buyer.name || ''} ${buyer.lastName || ''}`.trim().toLowerCase();
+        const term = searchTerm.toLowerCase().trim();
+        return fullName.includes(term);
+    });
+
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+    const displayedProducts = filteredProducts.slice(
         (currentPage - 1) * productsPerPage,
         currentPage * productsPerPage
     );
-
     const handlePrevious = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
@@ -109,9 +118,9 @@ const ProductRequest = () => {
                         <h2>Seller Product Request</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
-                                <a href="index.html">
+                                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
                                     <i className="fa fa-dashboard"></i>
-                                </a>
+                                </span>
                             </li>
                             <li className="breadcrumb-item">Seller Product Request</li>
                         </ul>
@@ -133,7 +142,7 @@ const ProductRequest = () => {
                                     onChange={handleProductsPerPageChange}
                                     style={{ minWidth: '70px' }}
                                 >
-                                    <option value="5">5</option>
+                                    {/* <option value="5">5</option> */}
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
@@ -162,7 +171,7 @@ const ProductRequest = () => {
                                     ></i>
                                 </div>
                             </div>
-                        </div>                        
+                        </div>
                         <div className="body">
                             <div className="table-responsive">
                                 <table className="table table-hover">
@@ -186,7 +195,7 @@ const ProductRequest = () => {
                                                         src={
                                                             product.userId.profilePhoto
                                                                 ? `${BASE_URL}${product.userId.profilePhoto}`
-                                                                : 'DashboardAssets/assets/images/user.png'
+                                                                : DEFAULT_PROFILE_IMAGE
                                                         }
                                                         className="rounded-circle avatar"
                                                         alt=""
@@ -229,17 +238,33 @@ const ProductRequest = () => {
                                                     <button
                                                         className="btn btn-sm btn-outline-success mr-2"
                                                         title="Approved"
-                                                        onClick={() => updateProductStatus(product._id, 'Approved')}
+                                                        disabled={loadingIds.includes(product._id)}
+                                                        onClick={async () => {
+                                                            setLoadingIds(prev => [...prev, product._id]);
+                                                            await updateProductStatus(product._id, 'Approved');
+                                                            setLoadingIds(prev => prev.filter(id => id !== product._id));
+                                                        }}
                                                     >
-                                                        <i className="fa fa-check"></i>
+                                                        {loadingIds.includes(product._id) ? (
+                                                            <i className="fa fa-spinner fa-spin"></i>
+                                                        ) : (
+                                                            <i className="fa fa-check"></i>
+                                                        )}
                                                     </button>
+
+                                                    {/* Reject button loading state and disabling */}
                                                     <button
                                                         className="btn btn-sm btn-outline-danger mr-2"
                                                         title="Declined"
+                                                        disabled={loadingIds.includes(product._id)}
                                                         onClick={() => handleReject(product._id)}
                                                     >
-                                                        <i className="fa fa-ban"></i>
-                                                    </button>
+                                                        {loadingIds.includes(product._id) ? (
+                                                            <i className="fa fa-spinner fa-spin"></i>
+                                                        ) : (
+                                                            <i className="fa fa-ban"></i>
+                                                        )}
+                                                    </button>                                                    
                                                     {/* <button
                                                         type="button"
                                                         className="btn btn-outline-danger btn-sm mr-2"
@@ -256,7 +281,7 @@ const ProductRequest = () => {
                             </div>
                             <div className="pagination d-flex justify-content-between mt-4">
                                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                                    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, products.length)} of {products.length} entries
+                                    Showing {filteredProducts.length === 0 ? 0 : (currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
                                 </span>
 
                                 <ul className="pagination d-flex justify-content-end w-100">

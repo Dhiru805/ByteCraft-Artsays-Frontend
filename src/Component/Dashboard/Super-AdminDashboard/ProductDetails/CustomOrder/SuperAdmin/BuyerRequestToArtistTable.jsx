@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from '../../../../ConfirmationDialog';
 import useUserType from '../../../../urlconfig';
+import { DEFAULT_PROFILE_IMAGE } from "../../../../../../Constants/ConstantsVariables";
+import { toast } from 'react-toastify';
+import putAPI from '../../../../../../api/putAPI';
+import { useConfirm } from '../../../../StatusConfirm';
+
 
 function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRequest, updateBuyerRequestStatus }) {
     console.log("Buyer Requests:", buyerRequests);
@@ -9,15 +14,16 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
     const [selectedBuyerRequestToDelete, setSelectedBuyerRequestToDelete] = useState(null);
     const [selectedRequestDescription, setSelectedRequestDescription] = useState(null);
 
+    const [loadingIds, setLoadingIds] = useState([]);
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
-
-    const navigate = useNavigate();
-    const userType = useUserType();
+  const confirm = useConfirm();
+  const navigate = useNavigate();
+ 
 
     const handleDeleteCancel = () => {
         setIsDeleteDialogOpen(false);
@@ -36,13 +42,54 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
         setIsDeleteDialogOpen(true);
     };
 
+        const handleReject = (productId) => {
+        confirm(() => updateProductStatus(productId, 'Rejected'), "Are you sure you want to reject this product?");
+    };
 
-    const totalPages = Math.ceil(buyerRequests.length / productsPerPage);
-    const displayedProducts = buyerRequests.slice(
+    const updateProductStatus = async (productId, status) => {
+        try {
+            await putAPI(
+                `/api/updateproductstatus/${productId}`,
+                { status: status },
+                {},
+                true
+            );
+
+            setProducts((prevProducts) =>
+                prevProducts.map((product) =>
+                    product._id === productId ? { ...product, status: status } : product
+                )
+            );
+
+            if (status === 'Approved') {
+                toast.success('Product Request is Approved');
+            } else if (status === 'Rejected') {
+                toast.error('Product Request is Rejected');
+            }
+        } catch (error) {
+            console.error("Error updating product status:", error);
+        }
+    };
+
+    const filteredRequests = buyerRequests.filter((request) => {
+        const buyerName = request.Buyer?.id?.name && request.Buyer?.id?.lastName
+            ? `${request.Buyer.id.name} ${request.Buyer.id.lastName}`.toLowerCase() : '';
+
+        const artistName = request.Artist?.id?.name && request.Artist?.id?.lastName
+            ? `${request.Artist.id.name} ${request.Artist.id.lastName}`.toLowerCase()
+            : '';
+        return (
+            buyerName.includes(searchTerm.toLowerCase()) ||
+            artistName.includes(searchTerm.toLowerCase())
+        );
+    });
+
+    const totalPages = Math.ceil(filteredRequests.length / productsPerPage);
+
+    const displayedProducts = filteredRequests.slice(
         (currentPage - 1) * productsPerPage,
         currentPage * productsPerPage
     );
-
 
     const handlePrevious = () => {
         if (currentPage > 1) {
@@ -74,10 +121,9 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                             <h2>Seller Product Request</h2>
                             <ul className="breadcrumb">
                                 <li className="breadcrumb-item">
-                                    <a href="index.html">
+                                    <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
                                         <i className="fa fa-dashboard"></i>
-                                    </a>
-                                </li>
+                                    </span>                                </li>
                                 <li className="breadcrumb-item">Seller Product Request</li>
                             </ul>
                         </div>
@@ -98,7 +144,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                         onChange={handleProductsPerPageChange}
                                         style={{ minWidth: '70px' }}
                                     >
-                                        <option value="5">5</option>
+                                        {/* <option value="5">5</option> */}
                                         <option value="10">10</option>
                                         <option value="25">25</option>
                                         <option value="50">50</option>
@@ -148,12 +194,14 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                         <tbody>
                                             {displayedProducts.map((request, index) => (
                                                 <tr key={request._id}>
-                                                    <td>
-                                                        <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
-                                                    </td>
+                                                    <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
                                                     <td>
                                                         <img
-                                                            src={`${BASE_URL}${request.Buyer.id.profilePhoto}`}
+                                                            src={
+                                                                request?.Buyer?.id?.profilePhoto
+                                                                    ? `${BASE_URL}${request.Buyer.id.profilePhoto}`
+                                                                    : DEFAULT_PROFILE_IMAGE
+                                                            }
                                                             className="rounded-circle avatar"
                                                             alt=""
                                                             style={{
@@ -163,14 +211,19 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                             }}
                                                         />
                                                         <p className="c_name">
-                                                            {request.Buyer ? `${request.Buyer.id.name} ${request.Buyer.id.lastName}` : 'N/A'}
+                                                            {request?.Buyer?.id
+                                                                ? `${request.Buyer.id.name} ${request.Buyer.id.lastName}`
+                                                                : 'N/A'}
                                                         </p>
 
                                                     </td>
                                                     <td>
                                                         <img
-                                                            src={`${BASE_URL}${request.Artist.id.profilePhoto}`}
-                                                            className="rounded-circle avatar"
+                                                            src={
+                                                                request?.Artist?.id?.profilePhoto
+                                                                    ? `${BASE_URL}${request.Artist.id.profilePhoto}`
+                                                                    : DEFAULT_PROFILE_IMAGE
+                                                            } className="rounded-circle avatar"
                                                             alt=""
                                                             style={{
                                                                 width: '30px',
@@ -179,7 +232,9 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                             }}
                                                         />
                                                         <p className="c_name">
-                                                            {request.Artist ? `${request.Artist.id.name} ${request.Artist.id.lastName}` : 'N/A'}
+                                                            {request?.Artist?.id
+                                                                ? `${request.Artist.id.name} ${request.Artist.id.lastName}`
+                                                                : 'N/A'}
                                                         </p>
                                                     </td>
                                                     <td>
@@ -209,7 +264,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                             title="Navigate"
                                                             onClick={() => {
                                                                 console.log('Navigating to request with ID:', request._id);
-                                                                navigate(`/super-admin/artist/viewrequesttoartist/${request._id}`, {
+                                                                navigate(`/super-admin/customordertable/view-request`, {
                                                                     state: { request },
                                                                 });
                                                             }}
@@ -228,22 +283,35 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                         >
                                                             <i className="fa fa-pencil"></i>
                                                         </button> */}
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-sm btn-outline-success w-2 mr-2"
-                                                            title="Approve"
-                                                            onClick={() => updateBuyerRequestStatus(request._id, 'Approved')}
-                                                        >
-                                                            <i className="fa fa-check"></i>
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-sm btn-outline-danger  w-2 mr-2"
-                                                            title="Reject"
-                                                            onClick={() => handleRejectBuyerRequest(request._id)}
-                                                        >
-                                                            <i className="fa fa-ban"></i>
-                                                        </button>
+<button
+  className="btn btn-sm btn-outline-success mr-2"
+  title="Approved"
+  disabled={loadingIds.includes(request._id)}
+  onClick={async () => {
+    setLoadingIds(prev => [...prev, request._id]);
+    await updateProductStatus(request._id, 'Approved');
+    setLoadingIds(prev => prev.filter(id => id !== request._id));
+  }}
+>
+  {loadingIds.includes(request._id) ? (
+    <i className="fa fa-spinner fa-spin"></i>
+  ) : (
+    <i className="fa fa-check"></i>
+  )}
+</button>
+
+<button
+  className="btn btn-sm btn-outline-danger mr-2"
+  title="Declined"
+  disabled={loadingIds.includes(request._id)}
+  onClick={() => handleReject(request._id)}
+>
+  {loadingIds.includes(request._id) ? (
+    <i className="fa fa-spinner fa-spin"></i>
+  ) : (
+    <i className="fa fa-ban"></i>
+  )}
+</button>
                                                         <button
                                                             type="button"
                                                             className="btn btn-outline-danger btn-sm mr-2"

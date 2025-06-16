@@ -1,10 +1,13 @@
 import React from 'react';
 import ProductBiddedAdminTransaction from "./BiddedproductadminTransaction"
+import { useNavigate } from 'react-router-dom';
+
 
 
 
 const BiddedProductTransaction = () => {
 
+const navigate = useNavigate();
 
 
     return (
@@ -15,16 +18,16 @@ const BiddedProductTransaction = () => {
                         <h2>Transaction</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
-                                <a href="index.html">
+                                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
                                     <i className="fa fa-dashboard"></i>
-                                </a>
+                                </span>
                             </li>
                             <li className="breadcrumb-item">Transaction</li>
                         </ul>
                     </div>
                 </div>
             </div>
-            <ProductBiddedAdminTransaction/>
+            <ProductBiddedAdminTransaction />
         </div>
     );
 };

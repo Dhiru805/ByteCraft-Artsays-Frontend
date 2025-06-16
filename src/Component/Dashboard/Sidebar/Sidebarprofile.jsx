@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { handleLogout } from "../LogoutConfirmation";
 import useUserType from '../urlconfig';
 import { useAuth } from '../../../AuthContext';
+import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
+
 
 const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, HandletoggleDropdown}) => {
   const dropdownRef = useRef(null);
@@ -36,16 +38,6 @@ const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, Handletoggle
       icon: "fa-user",
       path: `/${userType ? userType.toLowerCase() : "user"}/profile`,
       state: { _id: userId }
-    },
-    {
-      label: "Messages",
-      icon: "bi-envelope-open",
-      path: "/app-inbox.html",
-    },
-    {
-      label: "Settings",
-      icon: "bi-gear",
-      path: "#",
     },
     {
       label: "Logout",
@@ -82,7 +74,7 @@ const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, Handletoggle
         <div className="user-account">
           {/* {user && user.profilePhoto && ( */}
             <img
-            src={user.profilePhoto ? `${BASE_URL}${user.profilePhoto}` : '/DashboardAssets/assets/images/user.png'}
+            src={user.profilePhoto ? `${BASE_URL}${user.profilePhoto}` : DEFAULT_PROFILE_IMAGE}
             className="rounded-circle user-photo"
             alt="User Profile Picture"
             style={{

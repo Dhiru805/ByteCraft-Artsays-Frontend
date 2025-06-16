@@ -37,12 +37,17 @@ const ProductRequest = () => {
         fetchProducts();
     }, []);
 
-    const totalPages = Math.ceil(products.length / productsPerPage);
-    const displayedProducts = products.slice(
+    const filteredProducts = products.filter((product) => {
+        const user = product.userId || {};
+        const fullName = `${user.name || ''} ${user.lastName || ''}`.trim().toLowerCase();
+        return fullName.includes(searchTerm.toLowerCase().trim());
+    });
+
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+    const displayedProducts = filteredProducts.slice(
         (currentPage - 1) * productsPerPage,
         currentPage * productsPerPage
     );
-
     const handlePrevious = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
@@ -68,9 +73,9 @@ const ProductRequest = () => {
                         <h2>Seller Product</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
-                                <a href="index.html">
+                                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
                                     <i className="fa fa-dashboard"></i>
-                                </a>
+                                </span>
                             </li>
                             <li className="breadcrumb-item">Seller Product</li>
                         </ul>
@@ -93,7 +98,7 @@ const ProductRequest = () => {
                                     onChange={handleProductsPerPageChange}
                                     style={{ minWidth: '70px' }}
                                 >
-                                    <option value="5">5</option>
+                                    {/* <option value="5">5</option> */}
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
@@ -175,7 +180,7 @@ const ProductRequest = () => {
 
                             <div className="pagination d-flex justify-content-between mt-4">
                                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                                    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, products.length)} of {products.length} entries
+                                    Showing {filteredProducts.length === 0 ? 0 : (currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
                                 </span>
 
                                 <ul className="pagination d-flex justify-content-end w-100">

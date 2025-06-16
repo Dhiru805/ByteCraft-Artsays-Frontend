@@ -10,7 +10,7 @@ const Dashboard = () => {
     <div id="wrapper">
       <Navbar />
       <Sidebar />
-      <RightIconBar />
+      {/* <RightIconBar /> */}
 
       <div id="main-content" className="d-flex flex-column min-vh-100">
         <div className="flex-grow-1">

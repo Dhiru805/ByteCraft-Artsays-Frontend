@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
 import getAPI from '../../../../../../api/getAPI';
 
 const TaxLegalCompliance = ({ userId }) => {

@@ -16,7 +16,7 @@ function AllProduct() {
         const fetchProduct = async () => {
             try {
                 const result = await getAPI(
-                    `http://localhost:3001/api/getbuyerproductpurchaseddetailsbyid/${productId}`,
+                    `/api/getbuyerproductpurchaseddetailsbyid/${productId}`,
                     {},
                     true,
                     false
@@ -28,7 +28,7 @@ function AllProduct() {
 
                     const initialSelectedImages = {};
                     productData.forEach((product) => {
-                        const productInfo = product?.product || product?.resellProduct; // Handle both cases
+                        const productInfo = product?.product || product?.resellProduct; 
                         if (productInfo?.mainImage) {
                             initialSelectedImages[productInfo._id] = productInfo.mainImage;
                         }
@@ -72,9 +72,9 @@ function AllProduct() {
                         <h2>Product Purchased Details</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
-                                <a href="index.html">
+                                <span onClick={() => navigate('/artist/dashboard')} style={{ cursor: 'pointer' }}>
                                     <i className="fa fa-dashboard"></i>
-                                </a>
+                                </span>
                             </li>
                             <li className="breadcrumb-item active">
                                 <Link to={`/${userType}/Dashboard/productpurchased`}>

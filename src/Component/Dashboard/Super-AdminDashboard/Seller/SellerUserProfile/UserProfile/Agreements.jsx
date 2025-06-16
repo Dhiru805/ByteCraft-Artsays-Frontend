@@ -4,6 +4,8 @@ import putAPI from '../../../../../../api/putAPI';
 import getAPI from '../../../../../../api/getAPI';
 
 const AccountSecurityAgreement = ({ userId }) => {
+    const [loading, setLoading] = useState(false);
+
     const [formData, setFormData] = useState({});
 
     const checkboxLabels = {
@@ -49,7 +51,7 @@ const AccountSecurityAgreement = ({ userId }) => {
         event.preventDefault();
 
         const allSelected = Object.keys(checkboxLabels).every(key => formData[key]);
-        
+
         if (!allSelected) {
             toast.warn('Please agree to all agreements.');
             return;
@@ -79,35 +81,45 @@ const AccountSecurityAgreement = ({ userId }) => {
             <hr className="mt-1" />
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <input 
-                        type="checkbox" 
-                        name="agreeTerms" 
-                        checked={!!formData.agreeTerms} 
-                        onChange={handleChange} 
-                        
+                    <input
+                        type="checkbox"
+                        name="agreeTerms"
+                        checked={!!formData.agreeTerms}
+                        onChange={handleChange}
+
                     />
                     <label className="mx-2">{checkboxLabels.agreeTerms}</label>
                 </div>
                 <div className="form-group">
-                    <input 
-                        type="checkbox" 
-                        name="agreeCommissionFees" 
-                        checked={!!formData.agreeCommissionFees} 
-                        onChange={handleChange} 
-                        
+                    <input
+                        type="checkbox"
+                        name="agreeCommissionFees"
+                        checked={!!formData.agreeCommissionFees}
+                        onChange={handleChange}
+
                     />
                     <label className="mx-2">{checkboxLabels.agreeCommissionFees}</label>
                 </div>
                 <div className="form-group">
-                    <input 
-                        type="checkbox" 
-                        name="agreeNoFakeArtwork" 
-                        checked={!!formData.agreeNoFakeArtwork} 
-                        onChange={handleChange} 
+                    <input
+                        type="checkbox"
+                        name="agreeNoFakeArtwork"
+                        checked={!!formData.agreeNoFakeArtwork}
+                        onChange={handleChange}
                     />
                     <label className="mx-2">{checkboxLabels.agreeNoFakeArtwork}</label>
                 </div>
-                <button type="submit" className="btn btn-primary mx-2">Update</button>
+
+                <button type="button"
+                    className="btn btn-primary mx-2"
+                    disabled={loading}
+                    onClick={(e) => {
+                        setLoading(true);
+                        Promise.resolve(handleSubmit(e))
+                            .catch(console.error)
+                            .finally(() => setLoading(false));
+                    }}
+                >{loading ? "Updating..." : "Update"}</button>
             </form>
         </div>
     );

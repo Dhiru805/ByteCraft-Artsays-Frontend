@@ -6,6 +6,8 @@ import Preferences from './Preferences/Pereferences';
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import Settings from './UserInfo/BasicInformation';
+import { DEFAULT_PROFILE_IMAGE } from "../../../../../Constants/ConstantsVariables";
+
 
 
 const ViewAdminProfileForm = () => {
@@ -51,7 +53,7 @@ const ViewAdminProfileForm = () => {
         const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
         const profilePhotoUrl = result.data.user.profilePhoto 
         ? `${BASE_URL}${result.data.user.profilePhoto}` 
-        : '/DashboardAssets/assets/images/user.png';      
+        : DEFAULT_PROFILE_IMAGE;      
         setPreviewImage(profilePhotoUrl);
       }
     } catch (error) {
@@ -97,9 +99,9 @@ const ViewAdminProfileForm = () => {
             <h2>Admin Profile View</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <a href="index.html">
-                  <i className="fa fa-dashboard" />
-                </a>
+<span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+    <i className="fa fa-dashboard"></i>
+</span>
               </li>
               <li className="breadcrumb-item"><Link to={`/super-admin/admin`}>Admin Management</Link></li>
               <li className="breadcrumb-item">Admin Profile view </li>

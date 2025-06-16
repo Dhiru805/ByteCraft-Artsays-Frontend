@@ -6,20 +6,21 @@ import putAPI from '../../../../../../api/putAPI';
 // import ConfirmationDialog from '../../ConfirmationDialog';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../../urlconfig';
+import { DEFAULT_PROFILE_IMAGE } from "../../../../../../Constants/ConstantsVariables";
 
 
-const ProductRequest = ({userId}) => {
+const ProductRequest = ({ userId }) => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
-        const [searchTerm, setSearchTerm] = useState('');
-    
-  
-     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE
+    const [searchTerm, setSearchTerm] = useState('');
+
+
+    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE
 
     const confirm = useConfirm();
     const navigate = useNavigate();
-    const userType = useUserType(); 
+    const userType = useUserType();
 
 
     useEffect(() => {
@@ -75,11 +76,19 @@ const ProductRequest = ({userId}) => {
         confirm(() => updateProductStatus(productId, 'Rejected'), "Are you sure you want to reject this product?");
     };
 
-    const totalPages = Math.ceil(products.length / productsPerPage);
-    const displayedProducts = products.slice(
+    const filteredProducts = products.filter(product =>
+        product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.userId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+
+    const displayedProducts = filteredProducts.slice(
         (currentPage - 1) * productsPerPage,
         currentPage * productsPerPage
     );
+
+    const totalPages = Math.ceil(products.length / productsPerPage);
 
     const handlePrevious = () => {
         if (currentPage > 1) {
@@ -118,7 +127,7 @@ const ProductRequest = ({userId}) => {
                                     onChange={handleProductsPerPageChange}
                                     style={{ minWidth: '70px' }}
                                 >
-                                    <option value="5">5</option>
+                                    {/* <option value="5">5</option> */}
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
@@ -171,7 +180,7 @@ const ProductRequest = ({userId}) => {
                                                         src={
                                                             product.userId.profilePhoto
                                                                 ? `${BASE_URL}${product.userId.profilePhoto}`
-                                                                : 'DashboardAssets/assets/images/user.png'
+                                                                : DEFAULT_PROFILE_IMAGE
                                                         }
                                                         className="rounded-circle avatar"
                                                         alt=""
@@ -209,11 +218,11 @@ const ProductRequest = ({userId}) => {
                                                     </button>
                                                 </td>
                                                 <td>
-                                                <button
+                                                    <button
                                                         className="btn btn-sm btn-outline-info mr-2"
-                                                        onClick={() => navigate(`/${userType}/Dashboard/artistmanagetable/artistprofile/${userId}/productrequestdetails/${product._id}`,{ state: { userId } })}
+                                                        onClick={() => navigate(`/${userType}/Dashboard/artistmanagetable/artistprofile/${userId}/productrequestdetails/${product._id}`, { state: { userId } })}
                                                     >
-                                                         <i className="fa fa-eye"></i>
+                                                        <i className="fa fa-eye"></i>
                                                     </button>
                                                     <button
                                                         className="btn btn-sm btn-outline-success mr-2"
@@ -245,7 +254,7 @@ const ProductRequest = ({userId}) => {
                             </div>
                             <div className="pagination d-flex justify-content-between mt-4">
                                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                                    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, products.length)} of {products.length} entries
+                                    Showing {(filteredProducts.length === 0 ? 0 : (currentPage - 1) * productsPerPage + 1)} to {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
                                 </span>
 
                                 <ul className="pagination d-flex justify-content-end w-100">
@@ -298,7 +307,7 @@ const ProductRequest = ({userId}) => {
                     </div>
                 </div>
             </div>
-  </div>
+        </div>
     );
 };
 

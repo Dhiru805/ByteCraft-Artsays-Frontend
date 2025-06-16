@@ -25,6 +25,7 @@ function BlogUpdate() {
   const [imagePreview, setImagePreview] = useState(null);
   const [existingImage, setExistingImage] = useState("");
   const [categories, setCategories] = useState([]);
+    const [loading,setLoading]=useState(false);
 
   
   useEffect(() => {
@@ -101,6 +102,7 @@ function BlogUpdate() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const formDataObj = new FormData();
 
     for (const key in formData) {
@@ -121,6 +123,8 @@ function BlogUpdate() {
     } catch (error) {
       const errorMessage = error?.response?.data?.message || error.message || 'Something went wrong. Please try again.';
       toast.error(errorMessage)
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -296,8 +300,11 @@ function BlogUpdate() {
                     style={editorStyle}
                   />
                 </div>
-                <button type="submit" className="btn btn-block btn-primary mt-3">
-                  Update Blog
+                <button 
+                type="submit"
+                 className="btn btn-block btn-primary mt-3"
+               disabled={loading}>
+                 {loading? "Updating Blog.........":"Update Blog"}
                 </button>
               </form>
             </div>

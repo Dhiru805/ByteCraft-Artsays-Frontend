@@ -7,6 +7,9 @@ import axios from "axios";
 import Select from "react-select";
 
 const AccountPreferences = ({ userId }) => {
+  
+  const [loading,setLoading]=useState(false);
+  
   const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
     preferredArtCategories: [],
@@ -179,9 +182,20 @@ const AccountPreferences = ({ userId }) => {
           </div>
         </div>
 
-        <button type="submit" className="btn btn-primary mx-2">
-          Update
-        </button>
+             <button type="button"
+          className="btn btn-primary mx-2"
+          disabled={loading}
+          onClick={(e) => {
+            setLoading(true);
+            Promise.resolve(handleSubmit(e))
+              .then(() => {
+                window.location.reload();
+              })
+              .catch(console.error)
+              .finally(() => setLoading(false));
+          }}
+        >{loading ? "Updating..." : "Update"}</button>
+
       </form>
     </div>
   );

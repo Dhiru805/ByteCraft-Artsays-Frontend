@@ -63,6 +63,8 @@ const ArtistInfo = ({ userId }) => {
             .join(" ");
     };
 
+const [loading,setLoading]=useState(false);
+
     const handleMultiSelectChange = (selectedOptions, field) => {
         if (selectedOptions && selectedOptions.length > 0) {
             const values = selectedOptions.map(option => capitalize(option.value));
@@ -208,7 +210,19 @@ const ArtistInfo = ({ userId }) => {
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     ></textarea>
                 </div>
-                <button type="submit" className="btn btn-primary mx-2">Update</button>
+        <button type="button"
+          className="btn btn-primary mx-2"
+          disabled={loading}
+          onClick={(e) => {
+            setLoading(true);
+            Promise.resolve(handleSubmit(e))
+              .then(() => {
+                window.location.reload();
+              })
+              .catch(console.error)
+              .finally(() => setLoading(false));
+          }}
+        >{loading ? "Updating..." : "Update"}</button>
             </form>
         </div>
     );

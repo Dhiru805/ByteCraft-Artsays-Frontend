@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../../api/getAPI";
 import ConfirmationDialog from "../../../ConfirmationDialog";
 import useUserType from '../../../urlconfig';
@@ -9,7 +9,7 @@ function BlogList() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedBlogToDelete, setSelectedBlogToDelete] = useState(null);
   const navigate = useNavigate();
-  const userType = useUserType(); 
+  const userType = useUserType();
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   const fetchBlog = async () => {
@@ -52,9 +52,9 @@ function BlogList() {
             <h2>Blogs</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <a href="index.html">
+                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
                   <i className="fa fa-dashboard"></i>
-                </a>
+                </span>
               </li>
               {/* <li className="breadcrumb-item">App</li> */}
               <li className="breadcrumb-item ">Blogs</li>
@@ -108,7 +108,7 @@ function BlogList() {
                       <button
                         type="button"
                         className="btn btn-outline-secondary mx-2"
-                      onClick={() =>
+                        onClick={() =>
                           navigate(`/super-admin/artist/blogs/blog-details/${blog.slug}`, {
                             state: { blogData: blog }
                           })
@@ -137,7 +137,7 @@ function BlogList() {
         ) : null}
       </div>
 
-        {isDeleteDialogOpen && (
+      {isDeleteDialogOpen && (
         <ConfirmationDialog
           onClose={handleDeleteCancel}
           deleteType="blog"

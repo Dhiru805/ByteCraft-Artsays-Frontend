@@ -108,9 +108,9 @@ const BlogRequest = () => {
                         <h2>Blog Request</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
-                                <a href="index.html">
+                                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
                                     <i className="fa fa-dashboard"></i>
-                                </a>
+                                </span>
                             </li>
                             <li className="breadcrumb-item">Blog Request</li>
                         </ul>
@@ -132,7 +132,7 @@ const BlogRequest = () => {
                                     onChange={handleBlogsPerPageChange}
                                     style={{ minWidth: '70px' }}
                                 >
-                                    <option value="5">5</option>
+                                    {/* <option value="5">5</option> */}
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
@@ -197,7 +197,7 @@ const BlogRequest = () => {
                                                     <td>
                                                         <button
                                                             className="btn btn-sm btn-outline-info"
-                                                             onClick={() => navigate(`/super-admin/artist/blogrequest/view-Blog`, { state: { blog } })}
+                                                            onClick={() => navigate(`/super-admin/artist/blogrequest/view-Blog`, { state: { blog } })}
                                                         >
 
                                                             View
