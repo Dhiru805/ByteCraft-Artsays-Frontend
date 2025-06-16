@@ -3,9 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../Login/LoginStyles.css';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaCheck } from 'react-icons/fa';
 import postAPI from '../../api/postAPI';
-
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -21,15 +20,31 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loadingOTP, setLoadingOTP] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [showOTPField, setShowOTPField] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.id]: e.target.value
-    });
-  };
+  const { id, value } = e.target;
+  let updatedValue = value;
+  
+  if (id === 'firstName' || id === 'lastName') {
+    updatedValue = value.charAt(0).toUpperCase() + value.slice(1);
+  }
+
+  setFormData({
+    ...formData,
+    [id]: updatedValue,
+  });
+
+  if (id === 'emailOrPhone' && isEmailVerified) {
+    setIsEmailVerified(false);
+    setShowOTPField(false);
+  }
+};
 
   const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -45,14 +60,54 @@ const Register = () => {
     return `+91${phone.replace(/^\+91/, '')}`;
   };
 
+  const handleSendOTP = async () => {
+    if (!isValidEmail(formData.emailOrPhone)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    try {
+      setLoadingOTP(true);
+      await postAPI('/auth/send-otp', { email: formData.emailOrPhone });
+      setShowOTPField(true);
+      toast.success("OTP sent to your email");
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to send OTP');
+    } finally {
+      setLoadingOTP(false);
+    }
+  };
+
+  const handleVerifyOTP = async () => {
+    try {
+      setLoadingOTP(true);
+      const response = await postAPI('/auth/verify-otp', { 
+        email: formData.emailOrPhone, 
+        otp 
+      });
+      
+      if (response.data.success) {
+        setIsEmailVerified(true);
+        setShowOTPField(false);
+        setOtp('');
+        toast.success("Email verified successfully");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Invalid OTP');
+    } finally {
+      setLoadingOTP(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setLoadingSubmit(true);
 
     const requiredFields = ['firstName', 'lastName', 'emailOrPhone', 'password', 'confirmPassword'];
     for (const field of requiredFields) {
       if (!formData[field]) {
         toast.error(`Please fill in ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+        setLoadingSubmit(false);
         return;
       }
     }
@@ -62,16 +117,25 @@ const Register = () => {
 
     if (!isEmail && !isPhone) {
       toast.error("Please enter a valid email or phone number (10 digits with optional +91)");
+      setLoadingSubmit(false);
+      return;
+    }
+
+    if (isEmail && !isEmailVerified) {
+      toast.error("Please verify your email before signing up");
+      setLoadingSubmit(false);
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords don't match!");
+      setLoadingSubmit(false);
       return;
     }
 
     if (!acceptTerms) {
       toast.error("You must accept the Terms and Conditions");
+      setLoadingSubmit(false);
       return;
     }
 
@@ -98,7 +162,7 @@ const Register = () => {
       console.error('Registration error:', error);
       toast.error(error.response?.data?.message || 'Something went wrong. Please try again.');
     } finally {
-      setLoading(false);
+      setLoadingSubmit(false);
     }
   };
 
@@ -165,7 +229,7 @@ const Register = () => {
                     required
                     value={formData.firstName}
                     onChange={handleChange}
-                    style={{ height: '48px', border: "1px solid #6b4f36", fontSize: "16px", color: "black" }}
+                    style={{ height: '48px', border: "1px solid #6b4f36", fontSize: "16px", color: "black"}}
                   />
                 </div>
               </div>
@@ -205,25 +269,115 @@ const Register = () => {
               }}>
                 Email/Phone
               </label>
-              <input
-                type="text"
-                className="form-control"
-                id="emailOrPhone"
-                required
-                value={formData.emailOrPhone}
-                onChange={handleChange}
-                style={{
-                  height: '48px',
-                  border: "1px solid #6b4f36",
-                  fontSize: "16px",
-                  color: "black",
-                  paddingRight: '40px'
-                }}
-              />
-
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="emailOrPhone"
+                  required
+                  value={formData.emailOrPhone}
+                  onChange={handleChange}
+                  style={{
+                    height: '48px',
+                    border: "1px solid #6b4f36",
+                    fontSize: "16px",
+                    color: "black",
+                    paddingRight: isValidEmail(formData.emailOrPhone) ? '50px' : '10px'
+                  }}
+                  disabled={isEmailVerified}
+                />
+                {isValidEmail(formData.emailOrPhone) && (
+                  isEmailVerified ? (
+                    <span
+                      style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        color: '#28a745',
+                        fontSize: '18px'
+                      }}
+                    >
+                      <FaCheck />
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        border: "none",
+                        background: "#6b4f36",
+                        color: "white",
+                        padding: '8px 12px',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '14px'
+                      }}
+                      onClick={handleSendOTP}
+                      disabled={loadingOTP}
+                    >
+                      {loadingOTP ? 'Sending...' : 'Send OTP'}
+                    </button>
+                  )
+                )}
+              </div>
             </div>
 
-
+            {showOTPField && !isEmailVerified && isValidEmail(formData.emailOrPhone) && (
+              <div className="mb-3 position-relative">
+                <label htmlFor="otp" className="form-label position-absolute text-dark px-2" style={{
+                  top: '-12px',
+                  left: '15px',
+                  fontStyle: 'italic',
+                  fontSize: '1rem',
+                  zIndex: '1',
+                  background: "white",
+                }}>
+                  Enter OTP
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="otp"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    placeholder="Enter 6-digit OTP"
+                    maxLength={6}
+                    style={{
+                      height: '48px',
+                      border: "1px solid #6b4f36",
+                      fontSize: "16px",
+                      color: "black",
+                      paddingRight: '80px'
+                    }}
+                  />
+                  <button
+                    type="button"
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      border: "none",
+                      background: "#6b4f36",
+                      color: "white",
+                      padding: '8px 12px',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '14px'
+                    }}
+                    onClick={handleVerifyOTP}
+                    disabled={loadingOTP || otp.length !== 6}
+                  >
+                    {loadingOTP ? 'Verifying...' : 'Verify'}
+                  </button>
+                </div>
+              </div>
+            )}
 
             <div className="row mb-3">
               <div className="col-md-6 mb-3 mb-md-0">
@@ -353,23 +507,26 @@ const Register = () => {
 
             <button
               type="submit"
-              className="btn w-100  text-white fst-italic mb-3 mb-md-0 register-btn"
+              className="btn w-100 text-white fst-italic mb-3 mb-md-0 register-btn"
               style={{
                 backgroundColor: '#6b4f36',
                 fontSize: '1.1rem',
                 height: '48px',
                 transition: 'all 0.3s ease',
-                fontStyle: 'italic'
+                fontStyle: 'italic',
+                opacity: isValidEmail(formData.emailOrPhone) && !isEmailVerified ? 0.6 : 1
               }}
-              disabled={loading}
+              disabled={loadingSubmit || (isValidEmail(formData.emailOrPhone) && !isEmailVerified)}
             >
-                {loading ? 'Creating account...' : 'Sign up'}
+              {loadingSubmit ? 'Creating account...' : 'Sign up'}
             </button>
           </form>
+
           <div className="d-flex justify-content-center align-items-center my-3 w-100">
             <span className="text-dark" style={{
               fontSize: '1.0rem',
-            }}>
+            }}
+            >
               OR
             </span>
           </div>
@@ -386,15 +543,14 @@ const Register = () => {
               color: '#6b4f36',
               backgroundColor: 'white'
             }}
-
-          >
+            >
             Register to Become an Artist or Seller
           </Link>
         </div>
         <div className="d-block d-md-none">
           <div className="mobile-signup-section text-center">
             <h3 className="mb-4 fs-4">Already Signed up?</h3>
-            <p className="fs-5 mb-4">
+            <p className="mb-4 fs-5">
               Let's get you all set up so you can <br /> start creating your first
               onboarding experience.
             </p>
@@ -414,8 +570,6 @@ const Register = () => {
           </div>
         </div>
       </div>
-
-
     </>
   );
 };

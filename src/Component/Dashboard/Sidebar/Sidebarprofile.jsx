@@ -38,16 +38,6 @@ const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, Handletoggle
       state: { _id: userId }
     },
     {
-      label: "Messages",
-      icon: "bi-envelope-open",
-      path: "/app-inbox.html",
-    },
-    {
-      label: "Settings",
-      icon: "bi-gear",
-      path: "#",
-    },
-    {
       label: "Logout",
       icon: "bi-power",
       action: () => handleLogout(navigate,logout),

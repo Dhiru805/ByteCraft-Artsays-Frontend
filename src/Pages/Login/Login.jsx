@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './LoginStyles.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useAuth } from '../../AuthContext';
 import postAPI from '../../api/postAPI';
+import VerificationPopup from './VerificationPopup';
 
 const Login = () => {
   const [input, setInput] = useState('');
@@ -13,15 +14,54 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, userType, status: userStatus } = useAuth();
+
+
+  const normalizeUserType = (userType) => {
+    const userTypeMap = {
+      'super-admin': 'Super-Admin',
+      'super_admin': 'Super-Admin',
+      'SUPER_ADMIN': 'Super-Admin',
+      'Super-Admin': 'Super-Admin',
+      'artist': 'Artist',
+      'ARTIST': 'Artist',
+      'buyer': 'Buyer',
+      'BUYER': 'Buyer',
+      'seller': 'Seller',
+      'SELLER': 'Seller',
+    };
+    return userTypeMap[userType.toLowerCase()] || userType;
+  };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userType = localStorage.getItem('userType');
+    console.log('Login component mounted. Initial state:', {
+      userType,
+      userStatus,
+      localStorage: {
+        token: localStorage.getItem('token'),
+        userType: localStorage.getItem('userType'),
+        status: localStorage.getItem('status'),
+      },
+    });
 
-    if (token && userType) {
-      navigate(`/${userType.toLowerCase()}/dashboard`);
+    const token = localStorage.getItem('token');
+    const storedUserType = localStorage.getItem('userType');
+    const storedStatus = localStorage.getItem('status');
+
+
+    if (token && storedUserType) {
+      if ((storedUserType === 'Artist' || storedUserType === 'Seller') && (storedStatus === 'Unverified' || storedStatus === 'Rejected')) {
+        setShowPopup(true);
+      } else if (storedUserType === 'Buyer') {
+        console.log('Navigating to / for Buyer');
+        navigate('/');
+      } else {
+        console.log('Navigating to dashboard:', `/${storedUserType.toLowerCase()}/dashboard`);
+        navigate(`/${storedUserType.toLowerCase()}/dashboard`);
+      }
+    } else {
     }
 
     const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
@@ -30,7 +70,16 @@ const Login = () => {
       setInput(localStorage.getItem('rememberedEmailOrPhone') || '');
       setPassword(localStorage.getItem('rememberedPassword') || '');
     }
-  }, [navigate]);
+  }, [navigate, userType, userStatus]);
+
+  useEffect(() => {
+    console.log('AuthContext updated:', { userType, userStatus });
+    if ((userType === 'Artist' || userType === 'Seller') && (userStatus === 'Unverified' || userStatus === 'Rejected')) {
+      setShowPopup(true);
+    } else {
+      setShowPopup(false);
+    }
+  }, [userType, userStatus]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,17 +91,30 @@ const Login = () => {
         password,
       }, true);
 
-      const { token, userType, email,userId } = res.data;
+      const { token, userType, email, userId, status } = res.data;
+      console.log('Login API response:', { token, userType, email, userId, status });
 
       if (!token || !userType) {
         throw new Error('Invalid response from server');
       }
 
-      login(token, userType);
+      const normalizedUserType = normalizeUserType(userType);
+      const normalizedStatus = status ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase() : null;
+
+
+      login(token, normalizedUserType, normalizedStatus);
+
       localStorage.setItem('token', token);
-      localStorage.setItem('userType', userType);
+      localStorage.setItem('userType', normalizedUserType);
       localStorage.setItem('email', email);
       localStorage.setItem('userId', userId);
+      localStorage.setItem('status', normalizedStatus);
+
+      console.log('localStorage after login:', {
+        token: localStorage.getItem('token'),
+        userType: localStorage.getItem('userType'),
+        status: localStorage.getItem('status'),
+      });
 
       if (rememberMe) {
         localStorage.setItem('rememberedEmailOrPhone', input);
@@ -65,13 +127,17 @@ const Login = () => {
       }
 
       toast.success('Login Successful!');
-      if( userType.toLowerCase() === 'buyer' ) {
+
+      if (normalizedUserType === 'Buyer') {
         navigate('/');
+      } else if ((normalizedUserType === 'Artist' || normalizedUserType === 'Seller') && (normalizedStatus === 'Unverified' || normalizedStatus === 'Rejected')) {
+        setShowPopup(true);
+      } else {
+        navigate(`/${normalizedUserType.toLowerCase()}/dashboard`);
       }
-      else navigate(`/${userType.toLowerCase()}/dashboard`);
-      
     } catch (error) {
       const message = error?.response?.data?.message || error.message || 'Something went wrong. Please try again.';
+      console.error('Login error:', message);
       toast.error(message);
     } finally {
       setLoading(false);
@@ -81,8 +147,8 @@ const Login = () => {
   return (
     <>
       <ToastContainer />
+      <VerificationPopup show={showPopup} onHide={() => setShowPopup(false)} />
       <div className="container-fluid p-0 min-vh-100 d-flex flex-column flex-lg-row">
-        {/* Left Panel */}
         <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5">
           <h2 className="fw-bold mb-3 mb-md-4 text-dark fs-2 fs-md-1">Login to your Account</h2>
           <p className="mb-3 mb-md-4 text-dark text-center" style={{ fontSize: '20px', fontWeight: 'normal', lineHeight: '1.4' }}>
@@ -90,10 +156,9 @@ const Login = () => {
           </p>
 
           <form onSubmit={handleSubmit} className="w-100">
-            {/* Email/Phone */}
             <div className="mb-3 position-relative">
               <label htmlFor="email" className="form-label position-absolute text-dark px-2"
-                style={{ top: '-12px', left: '15px', fontStyle: 'italic', fontSize: '1rem', zIndex: '1', background: "white" }}>
+                style={{ top: '-12px', left: '15px', fontStyle: 'italic', fontSize: '1rem', zIndex: '1', background: 'white' }}>
                 Email/Phone
               </label>
               <input
@@ -103,25 +168,24 @@ const Login = () => {
                 required
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                style={{ height: '48px', border: "1px solid #6b4f36", fontSize: "16px", color: "black" }}
+                style={{ height: '48px', border: '1px solid #6b4f36', fontSize: '16px', color: 'black' }}
               />
             </div>
 
-            {/* Password */}
             <div className="mb-3 position-relative">
               <label htmlFor="password" className="form-label position-absolute text-dark px-2"
-                style={{ top: '-12px', left: '15px', fontStyle: 'italic', fontSize: '1rem', zIndex: '1', background: "white" }}>
+                style={{ top: '-12px', left: '15px', fontStyle: 'italic', fontSize: '1rem', zIndex: '1', background: 'white' }}>
                 Password
               </label>
               <div style={{ position: 'relative' }}>
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   className="form-control"
                   id="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  style={{ height: '48px', border: "1px solid #6b4f36", fontSize: "16px", color: "black", paddingRight: '40px' }}
+                  style={{ height: '48px', border: '1px solid #6b4f36', fontSize: '16px', color: 'black', paddingRight: '40px' }}
                 />
                 <button
                   type="button"
@@ -130,21 +194,20 @@ const Login = () => {
                     right: '10px',
                     top: '50%',
                     transform: 'translateY(-50%)',
-                    border: "none",
-                    background: "transparent",
-                    outline: "none",
+                    border: 'none',
+                    background: 'transparent',
+                    outline: 'none',
                     cursor: 'pointer',
                     color: '#6b4f36'
                   }}
                   onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
             </div>
 
-            {/* Remember Me & Forgot */}
             <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 mb-md-4">
               <div className="form-check mb-2 mb-sm-0">
                 <input
@@ -172,7 +235,6 @@ const Login = () => {
               </Link>
             </div>
 
-            {/* Login Button */}
             <button
               type="submit"
               className="btn w-100 text-white fst-italic mb-3 mb-md-0 login-btn"
@@ -190,7 +252,6 @@ const Login = () => {
           </form>
         </div>
 
-        {/* Right Panel */}
         <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5 text-white right-panel">
           <h3 className="mb-3 mb-md-4 fs-3 fs-md-2">Don't Have An Account?</h3>
           <p className="mb-3 mb-md-4 text-center" style={{ fontSize: '20px', fontWeight: 'normal', lineHeight: '1.4' }}>
@@ -208,7 +269,8 @@ const Login = () => {
             }}
           >
             Sign Up
-          </Link>
+          </Link >
+
         </div>
       </div>
     </>

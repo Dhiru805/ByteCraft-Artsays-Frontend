@@ -49,7 +49,7 @@ function ArtistBlogDetails() {
             />
           )}
 
-          {/* Twitter */}
+ 
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:title" content={blogs[0].blogName} />
           <meta name="twitter:description" content={blogs[0].summary} />

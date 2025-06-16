@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+// src/Routes/Routes.jsx
+import React, { useEffect } from 'react';
 import {
   Routes,
   Route,
@@ -9,7 +10,6 @@ import {
 } from "react-router-dom";
 import WebsiteLayout from "../Layouts/WebsiteLayout";
 import { useAuth } from '../AuthContext';
-import PreloaderAnimation from '../Pages/Animation/PreloaderAnimation';
 
 //----------------------------------------Auth Pages------------------------------------------//
 import Login from "../Pages/Login/Login";
@@ -132,6 +132,7 @@ const PrivateRoute = ({ allowedRoles, children }) => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
   const location = useLocation();
 
+
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
@@ -139,8 +140,9 @@ const PrivateRoute = ({ allowedRoles, children }) => {
   if (allowedRoles && !allowedRoles.includes(userType)) {
     return <Navigate to="/unauthorized" replace />;
   }
+  
 
-  if ((userType === 'Artist' || userType === 'Seller') && (userStatus === 'Unverified' || userStatus === 'Rejected') && location.pathname !== `/${userType.toLowerCase()}/profile`) {
+  if ((userType === 'Artist' || userType === 'Seller') && (userStatus === 'Unverified' ||userStatus === 'Rejected') && location.pathname !== `/${userType.toLowerCase()}/profile`) {
     return <Navigate to={`/${userType.toLowerCase()}/profile`} replace />;
   }
 
@@ -152,9 +154,11 @@ const PublicRoute = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
+
+
   useEffect(() => {
     if (isAuthenticated && authPages.includes(location.pathname)) {
-      if ((userType === 'Artist' || userType === 'Seller') && (userStatus === 'Unverified' || userStatus === 'Rejected') && location.pathname === '/login') {
+      if ((userType === 'Artist' || userType === 'Seller') && (userStatus === 'Unverified'|| userStatus === 'Rejected' )&& location.pathname === '/login') {
         return;
       }
       const timer = setTimeout(() => {
@@ -171,6 +175,7 @@ const PublicRoute = ({ children }) => {
 
 const AppRoutes = () => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
+
 
   return (
     <Routes>
@@ -336,26 +341,26 @@ const AppRoutes = () => {
       </Route>
 
       {/*-------------------------------------------- Root Route - Auto Redirect----------------------------------------- */}
-      <Route
-        index
-        element={
-          isAuthenticated ? (
-            userType === 'Super-Admin' ? (
-              <Navigate to="/super-admin/dashboard" replace />
-            ) : userType === 'Artist' ? (
-              <Navigate to={(userStatus === 'Unverified' || userStatus === 'Rejected') ? '/artist/profile' : '/artist/dashboard'} replace />
-            ) : userType === 'Buyer' ? (
-              <Navigate to="/buyer/dashboard" replace />
-            ) : userType === 'Seller' ? (
-              <Navigate to={(userStatus === 'Unverified' || userStatus === 'Rejected') ? '/seller/profile' : '/seller/dashboard'} replace />
-            ) : (
-              <WebsiteMain />
-            )
-          ) : (
-            <WebsiteMain />
-          )
-        }
-      />
+    <Route
+  index
+  element={
+    isAuthenticated ? (
+      userType === 'Super-Admin' ? (
+        <Navigate to="/super-admin/dashboard" replace />
+      ) : userType === 'Artist' ? (
+        <Navigate to={(userStatus === 'Unverified' ||userStatus === 'Rejected') ? '/artist/profile' : '/artist/dashboard'} replace />
+      ) : userType === 'Buyer' ? (
+        <Navigate to="/buyer/dashboard" replace />
+      ) : userType === 'Seller' ? (
+        <Navigate to={(userStatus === 'Unverified' ||userStatus === 'Rejected') ? '/seller/profile' : '/seller/dashboard'} replace />
+      ) : (
+        <WebsiteMain />
+      )
+    ) : (
+      <WebsiteMain />
+    )
+  }
+/>
 
       {/*----------------------------------------- Error Routes-------------------------------------------------------- */}
       <Route path="/404" element={<PagenotFound404 />} />
@@ -365,18 +370,4 @@ const AppRoutes = () => {
   );
 };
 
-const AppWrapper = () => {
-  const [showAnimation, setShowAnimation] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowAnimation(false);
-    }, 6000); // Match the animation duration in PreloaderAnimation
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  return showAnimation ? <PreloaderAnimation /> : <AppRoutes />;
-};
-
-export default AppWrapper;
+export default AppRoutes;
