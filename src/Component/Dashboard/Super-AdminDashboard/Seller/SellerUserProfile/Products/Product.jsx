@@ -3,12 +3,12 @@ import getAPI from '../../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../../urlconfig';
 
-const ProductRequest = ({userId}) => {
+const ProductRequest = ({ userId }) => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
 
-const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
     const [searchTerm, setSearchTerm] = useState('');
 
 
@@ -38,8 +38,14 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
     }, []);
 
 
-    const totalPages = Math.ceil(products.length / productsPerPage);
-    const displayedProducts = products.slice(
+    const filteredProducts = products.filter(product =>
+        product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.userId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+    const displayedProducts = filteredProducts.slice(
         (currentPage - 1) * productsPerPage,
         currentPage * productsPerPage
     );
@@ -63,10 +69,10 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
     return (
         <div className="container-fluid">
-             <div className="row clearfix">
+            <div className="row clearfix">
                 <div className="col-lg-12">
                     <div className="card">
-                      <div className="header d-flex justify-content-between align-items-center">
+                        <div className="header d-flex justify-content-between align-items-center">
                             <div className="d-none d-md-flex align-items-center mb-2 mb-md-0">
                                 <label className="mb-0 mr-2">Show</label>
                                 <select
@@ -77,7 +83,7 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
                                     onChange={handleProductsPerPageChange}
                                     style={{ minWidth: '70px' }}
                                 >
-                                    <option value="5">5</option>
+                                    {/* <option value="5">5</option> */}
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
@@ -85,7 +91,7 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
                                 </select>
                                 <label className="mb-0 ml-2">entries</label>
                             </div>
-                                <div className="w-100 w-md-auto d-flex justify-content-end">
+                            <div className="w-100 w-md-auto d-flex justify-content-end">
                                 <div className="input-group" style={{ maxWidth: '150px' }}>
                                     <input
                                         type="text"
@@ -106,7 +112,7 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
                                     ></i>
                                 </div>
                             </div>
-                      </div>
+                        </div>
                         <div className="body">
                             <div className="table-responsive">
                                 <table className="table table-hover">
@@ -126,7 +132,7 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
                                             <tr key={product._id}>
                                                 <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
                                                 <td>
-                                                {product.userId.name} {product.userId.lastName}</td>
+                                                    {product.userId.name} {product.userId.lastName}</td>
                                                 <td>
                                                     <img
                                                         src={`${BASE_URL}${product.mainImage}`}
@@ -139,11 +145,11 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
                                                             marginRight: '10px'
                                                         }}
                                                     />{product.productName}</td>
-<td>
-  {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' })
-    .format(product.finalPrice ?? product.sellingPrice ?? 0)
-    .replace(/\.00$/, '')}
-</td>
+                                                <td>
+                                                    {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' })
+                                                        .format(product.finalPrice ?? product.sellingPrice ?? 0)
+                                                        .replace(/\.00$/, '')}
+                                                </td>
                                                 <td>{new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
                                                 {/* <td>
                                                     <button className={`btn btn-sm ${product.status === 'Pending' ? 'btn-outline-warning' : product.status === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
@@ -151,7 +157,7 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
                                                     </button>
                                                 </td> */}
                                                 <td>
-                                                <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/${userType}/Dashboard/sellermanagetable/sellerprofile/${userId}/sellerproductdetails/${product._id}`, { state: { userId } })}>
+                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/${userType}/Dashboard/sellermanagetable/sellerprofile/${userId}/sellerproductdetails/${product._id}`, { state: { userId } })}>
                                                         <i className="fa fa-eye"></i>
                                                     </button>
                                                 </td>
@@ -160,7 +166,7 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
                                     </tbody>
                                 </table>
                             </div>
-                                                       <div className="pagination d-flex justify-content-between mt-4">
+                            <div className="pagination d-flex justify-content-between mt-4">
                                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
                                     Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, products.length)} of {products.length} entries
                                 </span>

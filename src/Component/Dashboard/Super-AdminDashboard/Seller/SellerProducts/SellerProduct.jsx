@@ -10,6 +10,9 @@ const ProductRequest = () => {
 
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
     const [searchTerm, setSearchTerm] = useState('');
+    const [showPopup, setShowPopup] = useState(false); 
+    const [currentImages, setCurrentImages] = useState([]); 
+    const [currentImageIndex, setCurrentImageIndex] = useState(0); 
 
 
     const navigate = useNavigate();
@@ -37,12 +40,17 @@ const ProductRequest = () => {
         fetchProducts();
     }, []);
 
-    const totalPages = Math.ceil(products.length / productsPerPage);
-    const displayedProducts = products.slice(
+    const filteredProducts = products.filter((product) => {
+        const user = product.userId || {};
+        const fullName = `${user.name || ''} ${user.lastName || ''}`.trim().toLowerCase();
+        return fullName.includes(searchTerm.toLowerCase().trim());
+    });
+
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+    const displayedProducts = filteredProducts.slice(
         (currentPage - 1) * productsPerPage,
         currentPage * productsPerPage
     );
-
     const handlePrevious = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
@@ -60,6 +68,22 @@ const ProductRequest = () => {
         setCurrentPage(1);
     };
 
+    const handleImageClick = (product) => {
+        const images = [product.mainImage, ...(product.otherImages || [])];
+        setCurrentImages(images);
+        setCurrentImageIndex(0);
+        setShowPopup(true);
+    };
+
+    
+    const goToPreviousImage = () => {
+        setCurrentImageIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+    };
+
+    const goToNextImage = () => {
+        setCurrentImageIndex((prevIndex) => Math.min(prevIndex + 1, currentImages.length - 1));
+    };
+
     return (
         <div className="container-fluid">
             <div className="block-header">
@@ -68,9 +92,9 @@ const ProductRequest = () => {
                         <h2>Seller Product</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
-                                <a href="index.html">
+                                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
                                     <i className="fa fa-dashboard"></i>
-                                </a>
+                                </span>
                             </li>
                             <li className="breadcrumb-item">Seller Product</li>
                         </ul>
@@ -93,7 +117,7 @@ const ProductRequest = () => {
                                     onChange={handleProductsPerPageChange}
                                     style={{ minWidth: '70px' }}
                                 >
-                                    <option value="5">5</option>
+                                    {/* <option value="5">5</option> */}
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
@@ -148,11 +172,13 @@ const ProductRequest = () => {
                                                         src={`${BASE_URL}${product.mainImage}`}
                                                         className="rounded-circle avatar"
                                                         alt=""
+                                                        onClick={() => handleImageClick(product)}
                                                         style={{
                                                             width: '30px',
                                                             height: '30px',
                                                             objectFit: 'cover',
-                                                            marginRight: '10px'
+                                                            marginRight: '10px',
+                                                            cursor: 'pointer'
                                                         }}
                                                     />{product.productName}</td>
                                                 <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.sellingPrice).replace(/\.00$/, '')}</td>
@@ -175,7 +201,7 @@ const ProductRequest = () => {
 
                             <div className="pagination d-flex justify-content-between mt-4">
                                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                                    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, products.length)} of {products.length} entries
+                                    Showing {filteredProducts.length === 0 ? 0 : (currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
                                 </span>
 
                                 <ul className="pagination d-flex justify-content-end w-100">
@@ -224,13 +250,98 @@ const ProductRequest = () => {
                                     </li>
                                 </ul>
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
+{showPopup && (
+    <div
+        onClick={() => setShowPopup(false)}
+        style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+        }}
+    >
+        <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+                position: 'relative',
+                width: '500px',
+                height: '600px',
+                backgroundColor: '#111',
+                borderRadius: '12px',
+                boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                overflow: 'hidden',
+            }}
+        >
+            {/* Left Arrow */}
+            <button
+                onClick={goToPreviousImage}
+                style={{
+                    position: 'absolute',
+                    left: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    fontSize: '2rem',
+                    color: currentImageIndex === 0 ? '#666' : '#fff',
+                    background:'Black',
+                    border: 'none',
+                    cursor: currentImageIndex === 0 ? 'not-allowed' : 'pointer',
+                    zIndex: 2,
+                }}
+                disabled={currentImageIndex === 0}
+            >
+                &#10094;
+            </button>
+
+            {/* Image */}
+            <img
+                src={`${BASE_URL}${currentImages[currentImageIndex]}`}
+                alt="Popup"
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '12px',
+                }}
+            />
+
+            {/* Right Arrow */}
+            <button
+                onClick={goToNextImage}
+                style={{
+                    position: 'absolute',
+                    right: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    fontSize: '2rem',
+                    color: currentImageIndex === currentImages.length - 1 ? '#666' : '#fff',
+                    background: 'Black',
+                    border: 'none',
+                    cursor: currentImageIndex === currentImages.length - 1 ? 'not-allowed' : 'pointer',
+                    zIndex: 2,
+                }}
+                disabled={currentImageIndex === currentImages.length - 1}
+            >
+                &#10095;
+            </button>
+        </div>
+    </div>
+)}
         </div>
     );
-};
+}
+
 
 export default ProductRequest;

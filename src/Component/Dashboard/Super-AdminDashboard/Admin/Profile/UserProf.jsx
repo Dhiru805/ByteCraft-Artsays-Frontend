@@ -7,6 +7,7 @@ import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import Settings from './UserInfo/BasicInformation';
 import putAPI from '../../../../../api/putAPI';
+import { DEFAULT_PROFILE_IMAGE } from "../../../../../Constants/ConstantsVariables";
 
 
 const AdminUserProfileForm = () => {
@@ -16,7 +17,7 @@ const AdminUserProfileForm = () => {
   const navigate = useNavigate(); 
   const [loading, setLoading]=useState(false)
   const [imageFile, setImageFile] = useState(null);
-  const [previewImage, setPreviewImage] = useState('/DashboardAssets/assets/images/user.png');
+  const [previewImage, setPreviewImage] = useState(DEFAULT_PROFILE_IMAGE);
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -58,7 +59,7 @@ const AdminUserProfileForm = () => {
         });
 
         const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-        const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : '/DashboardAssets/assets/images/user.png';
+        const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : DEFAULT_PROFILE_IMAGE;
         setPreviewImage(profilePhotoUrl);
       }
     } catch (error) {
@@ -192,9 +193,9 @@ const AdminUserProfileForm = () => {
             <h2>Admin Profile</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <a href="index.html">
-                  <i className="fa fa-dashboard" />
-                </a>
+<span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+    <i className="fa fa-dashboard"></i>
+</span>
               </li>
                <li className="breadcrumb-item"><Link to={`/super-admin/admin`}>Admin Management</Link></li>
               <li className="breadcrumb-item">Admin Profile</li>

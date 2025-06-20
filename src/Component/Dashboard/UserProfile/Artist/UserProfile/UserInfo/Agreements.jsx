@@ -11,6 +11,7 @@ const AccountSecurityAgreement = ({ userId,loading}) => {
         agreeCommissionFees: "Agree to Commission Fees (Platform commission percentage per sale)",
         agreeNoFakeArtwork: "Agree to No Fake Artwork Policy"
     };
+    const [load, setLoad] = useState(false);
 
     useEffect(() => {
         const fetchAgreementDetails = async () => {
@@ -107,10 +108,19 @@ const AccountSecurityAgreement = ({ userId,loading}) => {
                     />
                     <label className="mx-2">{checkboxLabels.agreeNoFakeArtwork}</label>
                 </div>
-                <button type="submit" className="btn btn-primary mx-2"
-                disabled={loading}>
-                 {loading? "Updating.........":"Update"}
-                </button>
+                <button type="button"
+                    className="btn btn-primary mx-2"
+                    disabled={load}
+                    onClick={(e) => {
+                        setLoad(true);
+                        Promise.resolve(handleSubmit(e))
+                            .then(() => {
+                                window.location.reload();
+                            })
+                            .catch(console.error)
+                            .finally(() => setLoad(false));
+                    }}
+                >{load ? "Updating..." : "Update"}</button>
             </form>
         </div>
     );

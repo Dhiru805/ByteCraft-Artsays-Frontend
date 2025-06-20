@@ -10,6 +10,8 @@ const AccountVerification = ({ userId }) => {
     const [filePreview, setFilePreview] = useState(null);
     const [fileType, setFileType] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+      const [loading, setLoading] = useState(false);
+    
 
     useEffect(() => {
         const fetchVerificationData = async () => {
@@ -147,6 +149,7 @@ const AccountVerification = ({ userId }) => {
                         <option value="">Select</option>
                         <option value="Aadhar Card">Aadhar Card</option>
                         <option value="Driving License">Driving License</option>
+                        <option value="Passport">Passport</option>
                     </select>
                 </div>
                 {verificationType && (
@@ -193,7 +196,16 @@ const AccountVerification = ({ userId }) => {
                         )}
                     </>
                 )}
-                <button type="submit" className="btn btn-primary mt-3">Update</button>
+        <button type="button"
+          className="btn btn-primary mx-2"
+          disabled={loading}
+          onClick={(e) => {
+            setLoading(true);
+            Promise.resolve(handleSubmit(e))
+              .catch(console.error)
+              .finally(() => setLoading(false));
+          }}
+        >{loading ? "Updating..." : "Update"}</button>
             </form>
             {isModalOpen && (
                 <div className="modal fade show d-block" style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }} tabIndex="-1">

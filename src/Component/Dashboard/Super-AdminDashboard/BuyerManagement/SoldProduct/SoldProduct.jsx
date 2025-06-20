@@ -35,12 +35,15 @@ const SoldProduct = () => {
         fetchProducts();
     }, []);
 
-    const totalPages = Math.ceil(products.length / productsPerPage);
-    const displayedProducts = products.slice(
+    const filteredProducts = products.filter((product) => {
+        return product.buyerName.toLowerCase().includes(searchTerm.toLowerCase().trim());
+    });
+
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+    const displayedProducts = filteredProducts.slice(
         (currentPage - 1) * productsPerPage,
         currentPage * productsPerPage
     );
-
     const handlePrevious = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
@@ -66,9 +69,9 @@ const SoldProduct = () => {
                         <h2>Buyer Sold Product</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
-                                <a href="index.html">
+                                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
                                     <i className="fa fa-dashboard"></i>
-                                </a>
+                                </span>
                             </li>
                             <li className="breadcrumb-item">Buyer Sold Product</li>
                         </ul>
@@ -79,7 +82,7 @@ const SoldProduct = () => {
             <div className="row clearfix">
                 <div className="col-lg-12">
                     <div className="card">
-                    <div className="header d-flex justify-content-between align-items-center">
+                        <div className="header d-flex justify-content-between align-items-center">
                             <div className="d-none d-md-flex align-items-center mb-2 mb-md-0">
                                 <label className="mb-0 mr-2">Show</label>
                                 <select
@@ -90,7 +93,7 @@ const SoldProduct = () => {
                                     onChange={handleProductsPerPageChange}
                                     style={{ minWidth: '70px' }}
                                 >
-                                    <option value="5">5</option>
+                                    {/* <option value="5">5</option> */}
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
@@ -98,7 +101,7 @@ const SoldProduct = () => {
                                 </select>
                                 <label className="mb-0 ml-2">entries</label>
                             </div>
-                                <div className="w-100 w-md-auto d-flex justify-content-end">
+                            <div className="w-100 w-md-auto d-flex justify-content-end">
                                 <div className="input-group" style={{ maxWidth: '150px' }}>
                                     <input
                                         type="text"
@@ -119,7 +122,7 @@ const SoldProduct = () => {
                                     ></i>
                                 </div>
                             </div>
-                      </div>
+                        </div>
                         <div className="body">
                             <div className="table-responsive">
                                 <table className="table table-hover">
@@ -137,10 +140,10 @@ const SoldProduct = () => {
                                         {displayedProducts.map((product, index) => (
                                             <tr key={product.productId}>
                                                 <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
-                                                <td>{product.buyerName}</td> 
+                                                <td>{product.buyerName}</td>
                                                 <td>
                                                     <img
-                                                        src={product.product}  
+                                                        src={product.product}
                                                         className="rounded-circle avatar"
                                                         alt=""
                                                         style={{
@@ -151,8 +154,8 @@ const SoldProduct = () => {
                                                         }}
                                                     /> {product.productName}
                                                 </td>
-                                                <td>{product.productPrice}</td> 
-                                                <td>{product.totalQuantity}</td> 
+                                                <td>{product.productPrice}</td>
+                                                <td>{product.totalQuantity}</td>
                                                 <td>
                                                     <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/${userType}/Dashboard/buyersoldproduct/soldproductdetails/${product.productId}`)}>
                                                         <i className="fa fa-eye"></i>
@@ -163,9 +166,9 @@ const SoldProduct = () => {
                                     </tbody>
                                 </table>
                             </div>
-                                                        <div className="pagination d-flex justify-content-between mt-4">
+                            <div className="pagination d-flex justify-content-between mt-4">
                                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                                    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, products.length)} of {products.length} entries
+                                    Showing {filteredProducts.length === 0 ? 0 : (currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
                                 </span>
 
                                 <ul className="pagination d-flex justify-content-end w-100">

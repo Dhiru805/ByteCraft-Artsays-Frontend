@@ -3,7 +3,6 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import CreatableSelect from 'react-select/creatable';
 import putAPI from '../../../../../../api/putAPI';
-import getAPI from '../../../../../../api/getAPI';
 
 const predefinedArtCategories = [
     { value: 'Mandala', label: 'Mandala' },
@@ -38,7 +37,7 @@ const ArtistInfo = ({ userId }) => {
     useEffect(() => {
         const fetchArtistData = async () => {
             try {
-                const response = await getAPI(`/auth/getartistdetails/${userId}`);
+                const response = await axios.get(`/auth/getartistdetails/${userId}`);
                 if (response.data) {
                     setFormData({
                         ...response.data,
@@ -63,6 +62,8 @@ const ArtistInfo = ({ userId }) => {
             .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
             .join(" ");
     };
+
+const [loading,setLoading]=useState(false);
 
     const handleMultiSelectChange = (selectedOptions, field) => {
         if (selectedOptions && selectedOptions.length > 0) {
@@ -209,7 +210,16 @@ const ArtistInfo = ({ userId }) => {
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     ></textarea>
                 </div>
-                <button type="submit" className="btn btn-primary mx-2">Update</button>
+        <button type="button"
+          className="btn btn-primary mx-2"
+          disabled={loading}
+          onClick={(e) => {
+            setLoading(true);
+            Promise.resolve(handleSubmit(e))
+              .catch(console.error)
+              .finally(() => setLoading(false));
+          }}
+        >{loading ? "Updating..." : "Update"}</button>
             </form>
         </div>
     );

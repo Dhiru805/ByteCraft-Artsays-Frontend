@@ -1,26 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom'; 
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import ViewBlogRequest  from "./BlogRequest/ViewBlogRequest"
+import ViewBlogRequest from "./BlogRequest/ViewBlogRequest"
 import Blogs from "./Blogs/Blogs"
 import Preferences from './Pereferences/Pereferences';
 import Billings from './Billings/Billings';
 import Products from './Products/Product';
 import Productrequest from './ProductRequest/ProductRequestTable'
 import Transaction from './Transaction/Transaction';
-import SoldProduct  from './SoldProduct/SoldProduct'
+import SoldProduct from './SoldProduct/SoldProduct'
 import Packagingmaterial from './PackagingMaterial/ProductPurchasedArtist'
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import Settings from './UserProfile/BasicInformation';
-import useUserType from '../../urlconfig'
+import useUserType from '../../../urlconfig'
+
 
 const UserProfileForm = () => {
   const userType = useUserType();
-  const { userId } = useParams();
   const location = useLocation();
-  const navigate = useNavigate(); 
+  const { artist } = location.state || {};
+  const navigate = useNavigate();
   const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
   const [profileData, setProfileData] = useState({
     name: '',
@@ -41,6 +42,9 @@ const UserProfileForm = () => {
     website: ''
   });
 
+  const userId = artist?._id;
+
+
   const fetchProfile = async () => {
     try {
       const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
@@ -55,7 +59,8 @@ const UserProfileForm = () => {
           address: parsedAddress,
         });
 
-        const BASE_URL = process.env.REACT_APP_API_URL;
+        const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE
+
         const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : 'DashboardAssets/assets/images/user.png';
         setPreviewImage(profilePhotoUrl);
       }
@@ -105,7 +110,7 @@ const UserProfileForm = () => {
 
   const tabs = [
     { name: 'Settings', component: Settings },
-    { name: 'Blogs', component: Blogs},
+    { name: 'Blogs', component: Blogs },
     { name: 'Blog Request', component: ViewBlogRequest },
     { name: 'Products', component: Products },
     { name: 'Product Request', component: Productrequest },
@@ -124,11 +129,18 @@ const UserProfileForm = () => {
             <h2>Artist Profile</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <a href="index.html">
-                  <i className="fa fa-dashboard" />
-                </a>
+                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+                  <i className="fa fa-dashboard"></i>
+                </span>
               </li>
-              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/artistmanagetable`}>ArtistManageTable</Link></li>
+              <li className="breadcrumb-item">
+                <span
+                  onClick={() => navigate('/super-admin/artist/management')}
+                  style={{ cursor: 'pointer' }}
+                >
+                  ArtistManageTable
+                </span>
+              </li>
               <li className="breadcrumb-item">Artist Profile</li>
             </ul>
           </div>

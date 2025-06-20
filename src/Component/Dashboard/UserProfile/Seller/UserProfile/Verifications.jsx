@@ -129,6 +129,7 @@ const AccountVerification = ({ userId }) => {
                         <option value="">Select</option>
                         <option value="Aadhar Card">Aadhar Card</option>
                         <option value="Driving License">Driving License</option>
+                        <option value="Passport">Passport</option>
                     </select>
                 </div>
                 {verificationType && (

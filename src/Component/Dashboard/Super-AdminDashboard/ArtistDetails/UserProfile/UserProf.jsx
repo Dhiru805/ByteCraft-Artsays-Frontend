@@ -15,7 +15,6 @@ import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import Settings from './UserInfo/BasicInformation';
 import useUserType from '../../../urlconfig'
-import putAPI from '../../../../../api/putAPI';
 
 const UserProfileForm = () => {
   const userType = useUserType();
@@ -162,29 +161,33 @@ const UserProfileForm = () => {
         formData.append('confirmPassword', passwordData.confirmPassword);
       }
 
+
       if (imageFile) {
         formData.append('profilePhoto', imageFile);
       }
 
-      const result = await putAPI(`/auth/user/${userId}`, formData, {}, true);
+      const response = await fetch(`/api/auth/users/${userId}`, {
+        method: 'PUT',
+        body: formData,
+      });
 
+      const result = await response.json();
 
-      if (result?.message === 'Profile updated successfully') {
-        toast.success(result.message);
+      if (response.ok) {
+        toast.success(result.message || 'Profile updated successfully!');
         setPasswordData({
           currentPassword: '',
           newPassword: '',
           confirmPassword: '',
         });
       } else {
-        toast.error(result?.message || 'Failed to update profile.');
+        toast.error(result.message || `Failed to update profile: ${response.status}`);
       }
     } catch (error) {
-      console.error("Caught error in try-catch:", error);
+      console.error('Error updating profile:', error);
       toast.error('Error updating profile. Please try again.');
     }
   };
-
 
   const tabs = [
     { name: 'Settings', component: Settings },
@@ -207,11 +210,18 @@ const UserProfileForm = () => {
             <h2>Artist Profile</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <a href="index.html">
-                  <i className="fa fa-dashboard" />
-                </a>
+                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+                  <i className="fa fa-dashboard"></i>
+                </span>
               </li>
-              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/artistmanagetable`}>ArtistManageTable</Link></li>
+              <li className="breadcrumb-item">
+                <span
+                  onClick={() => navigate('/super-admin/artist/management')}
+                  style={{ cursor: 'pointer' }}
+                >
+                  ArtistManageTable
+                </span>
+              </li>
               <li className="breadcrumb-item">Artist Profile</li>
             </ul>
           </div>

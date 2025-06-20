@@ -4,8 +4,7 @@ const Footer = () => {
   return (
     <>
             <div className="col-12 text-center">
-              All Copyright © {new Date().getFullYear()} Artsay Tech PVT LTD.
-              All Rights Reserved.
+              All Copyright © 2025 Artsays Tech PVT LTD. All Rights Reserved. Powered By Bytecraft Studios.
             </div>
            
     </>

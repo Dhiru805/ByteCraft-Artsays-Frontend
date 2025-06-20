@@ -2,10 +2,14 @@ import React, { useEffect, useState } from "react";
 import CategoryTable from "./Categotytable";
 import CreateCategoryModal from "./Createcategory";
 import getAPI from "../../../../../api/getAPI";
+import { useNavigate } from 'react-router-dom';
+
 
 const Category = () => {
   const [categories] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
+
 
   const [subCategories, setSubCategories] = useState([]);
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
@@ -39,9 +43,9 @@ const Category = () => {
             <h2>Product Category</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <a href="index.html">
-                  <i className="fa fa-dashboard"></i>
-                </a>
+ <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+    <i className="fa fa-dashboard"></i>
+</span>
               </li>
               <li className="breadcrumb-item">Product Category</li>
             </ul>

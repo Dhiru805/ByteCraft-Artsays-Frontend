@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom'; 
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Preferences from './Pereferences/Pereferences';
 import Billings from './Billings/Billings';
-import ProductPurchased  from './ProductPurchased/ProductPurchased';
+import ProductPurchased from './ProductPurchased/ProductPurchased';
 import Customrequest from './CustomRequest/Customorder'
 import Transaction from './Transaction/BuyerTransaction'
 import Packagingmaterial from './PackagingMaterial/ProductPurchasedBuyer'
-import RsellProduct  from './ResellProductRequest/ProductRequestTable'
-import SodlProduct  from './Soldproduct/SoldProduct'
+import RsellProduct from './ResellProductRequest/ProductRequestTable'
+import SodlProduct from './Soldproduct/SoldProduct'
 import getAPI from '../../../../../api/getAPI';
 import putAPI from '../../../../../api/putAPI';
 import { Link } from 'react-router-dom';
@@ -21,7 +21,7 @@ const UserProfileForm = () => {
   // const { userId } = useParams();
   const location = useLocation();
   const { buyer } = location.state || {};
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [imageFile, setImageFile] = useState(null);
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
@@ -50,7 +50,7 @@ const UserProfileForm = () => {
     website: ''
   });
 
-    const userId = buyer?._id;
+  const userId = buyer?._id;
 
   const fetchProfile = async () => {
     try {
@@ -66,7 +66,7 @@ const UserProfileForm = () => {
           address: parsedAddress,
         });
 
-   
+
         const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : 'DashboardAssets/assets/images/user.png';
         setPreviewImage(profilePhotoUrl);
       }
@@ -141,7 +141,7 @@ const UserProfileForm = () => {
     }));
   };
 
- const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
@@ -161,33 +161,33 @@ const UserProfileForm = () => {
         formData.append('newPassword', passwordData.newPassword);
         formData.append('confirmPassword', passwordData.confirmPassword);
       }
-      
+
 
       if (imageFile) {
         formData.append('profilePhoto', imageFile);
       }
 
-          const response = await putAPI(`/auth/users/${userId}`, formData, {
-              'Content-Type': 'multipart/form-data',
-            });
-      
-            toast.success(response.message || 'Profile updated successfully!');
-            if (response.ok) {
-              setPasswordData({
-                currentPassword: '',
-                newPassword: '',
-                confirmPassword: '',
-              });
-             
-            }
-          } catch (error) {
-            console.error('Error updating profile:', error);
-            if (error.response?.data?.message) {
-              toast.error(error.response.data.message);
-            } else {
-              toast.error('Something went wrong. Please try again.');
-            }
-          }
+      const response = await putAPI(`/auth/users/${userId}`, formData, {
+        'Content-Type': 'multipart/form-data',
+      });
+
+      toast.success(response.message || 'Profile updated successfully!');
+      if (response.ok) {
+        setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        });
+
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('Something went wrong. Please try again.');
+      }
+    }
   };
 
   const tabs = [
@@ -210,11 +210,18 @@ const UserProfileForm = () => {
             <h2>Buyer Profile</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <a href="index.html">
-                  <i className="fa fa-dashboard" />
-                </a>
+                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+                  <i className="fa fa-dashboard"></i>
+                </span>
               </li>
-              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/buyermanagetable`}>BuyerManageTable</Link></li>
+              <li className="breadcrumb-item">
+                <span
+                  onClick={() => navigate('/super-admin/buyer/management')}
+                  style={{ cursor: 'pointer' }}
+                >
+                  BuyerManageTable
+                </span>
+              </li>
               <li className="breadcrumb-item">Buyer Profile</li>
             </ul>
           </div>

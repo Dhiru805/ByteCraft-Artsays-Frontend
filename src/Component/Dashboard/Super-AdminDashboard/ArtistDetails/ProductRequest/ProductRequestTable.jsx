@@ -6,22 +6,23 @@ import putAPI from '../../../../../api/putAPI';
 // import ConfirmationDialog from 'ConfirmationDialog';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
+import { DEFAULT_PROFILE_IMAGE } from "../../../../../Constants/ConstantsVariables";
 
 
 const ProductRequest = () => {
     const [products, setProducts] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
-    const [searchTerm, setSearchTerm] = useState('');
     const [loadingIds, setLoadingIds] = useState([]);
 
-    
+
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-  
- 
+
+
     const confirm = useConfirm();
     const navigate = useNavigate();
-    const userType = useUserType(); 
+    const userType = useUserType();
 
 
     useEffect(() => {
@@ -75,23 +76,29 @@ const ProductRequest = () => {
 
     const handleReject = async (productId) => {
         confirm(async () => {
-            setLoadingIds(prev => [...prev, productId]);  
+            setLoadingIds(prev => [...prev, productId]);
             await updateProductStatus(productId, 'Rejected');
-            setLoadingIds(prev => prev.filter(id => id !== productId));  
+            setLoadingIds(prev => prev.filter(id => id !== productId));
         }, "Are you sure you want to reject this product?");
     };
 
-    const totalPages = Math.ceil(products.length / productsPerPage);
-    const displayedProducts = products.slice(
-        (currentPage - 1) * productsPerPage,
-        currentPage * productsPerPage
+    const filteredProducts = products.filter(product =>
+        product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.userId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
     const handlePrevious = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
         }
     };
+
+    const displayedProducts = filteredProducts.slice(
+        (currentPage - 1) * productsPerPage,
+        currentPage * productsPerPage
+    );
 
     const handleNext = () => {
         if (currentPage < totalPages) {
@@ -116,9 +123,9 @@ const ProductRequest = () => {
                         <h2>Artist Product Request</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
-                                <a href="index.html">
+                                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
                                     <i className="fa fa-dashboard"></i>
-                                </a>
+                                </span>
                             </li>
                             <li className="breadcrumb-item">Artist Product Request</li>
                         </ul>
@@ -129,7 +136,7 @@ const ProductRequest = () => {
             <div className="row clearfix">
                 <div className="col-lg-12">
                     <div className="card">
-                      <div className="header d-flex justify-content-between align-items-center">
+                        <div className="header d-flex justify-content-between align-items-center">
                             <div className="d-none d-md-flex align-items-center mb-2 mb-md-0">
                                 <label className="mb-0 mr-2">Show</label>
                                 <select
@@ -140,7 +147,6 @@ const ProductRequest = () => {
                                     onChange={handleProductsPerPageChange}
                                     style={{ minWidth: '70px' }}
                                 >
-                                    <option value="5">5</option>
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
@@ -148,14 +154,17 @@ const ProductRequest = () => {
                                 </select>
                                 <label className="mb-0 ml-2">entries</label>
                             </div>
-                                <div className="w-100 w-md-auto d-flex justify-content-end">
+                            <div className="w-100 w-md-auto d-flex justify-content-end">
                                 <div className="input-group" style={{ maxWidth: '150px' }}>
                                     <input
                                         type="text"
                                         className="form-control form-control-sm"
                                         placeholder="Search"
                                         value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        onChange={(e) => {
+                                            setSearchTerm(e.target.value);
+                                            setCurrentPage(1);
+                                        }}
                                     />
                                     <i
                                         className="fa fa-search"
@@ -169,7 +178,7 @@ const ProductRequest = () => {
                                     ></i>
                                 </div>
                             </div>
-                      </div>
+                        </div>
                         <div className="body">
                             <div className="table-responsive">
                                 <table className="table table-hover">
@@ -193,11 +202,11 @@ const ProductRequest = () => {
                                                         src={
                                                             product.userId.profilePhoto
                                                                 ? `${BASE_URL}${product.userId.profilePhoto}`
-                                                                : 'DashboardAssets/assets/images/user.png'
+                                                                : DEFAULT_PROFILE_IMAGE
                                                         }
                                                         className="rounded-circle avatar"
                                                         alt=""
-                                                        style={{    
+                                                        style={{
                                                             width: '30px',
                                                             height: '30px',
                                                             objectFit: 'cover',
@@ -207,7 +216,11 @@ const ProductRequest = () => {
                                                     {product.userId.name} {product.userId.lastName}</td>
                                                 <td>
                                                     <img
-                                                        src={product.mainImage}
+                                                        src={
+                                                            product.mainImage && product.mainImage !== "null"
+                                                                ? `${BASE_URL}${product.mainImage}`
+                                                                : DEFAULT_PROFILE_IMAGE
+                                                        }
                                                         className="rounded-circle avatar"
                                                         alt=""
                                                         style={{
@@ -227,42 +240,44 @@ const ProductRequest = () => {
                                                     </button>
                                                 </td>
                                                 <td>
-                                                <button
+                                                    <button
                                                         className="btn btn-sm btn-outline-info mr-2"
-                                                        onClick={() => navigate(`/${userType}/Dashboard/artistproductrequest/artistproductview/${product._id}`)}
+                                                        onClick={() => navigate(`/super-admin/artist/management/productrequest/${product._id}`)}
                                                     >
-                                                         <i className="fa fa-eye"></i>
+                                                        <i className="fa fa-eye"></i>
                                                     </button>
-<button
+                                                    <button
                                                         className="btn btn-sm btn-outline-success mr-2"
                                                         title="Approved"
-                                                        disabled={loadingIds.includes(product._id)}  
+                                                        disabled={loadingIds.includes(product._id)}
                                                         onClick={async () => {
-                                                            setLoadingIds(prev => [...prev, product._id]);  
+                                                            setLoadingIds(prev => [...prev, product._id]);
                                                             await updateProductStatus(product._id, 'Approved');
-                                                            setLoadingIds(prev => prev.filter(id => id !== product._id));  
+                                                            setLoadingIds(prev => prev.filter(id => id !== product._id));
                                                         }}
                                                     >
-                                                        {loadingIds.includes(product._id) ? (  
-                                                            <i className="fa fa-spinner fa-spin"></i>  
-                                                        ) : (  
-                                                            <i className="fa fa-check"></i>  
-                                                        )}  
+                                                        {loadingIds.includes(product._id) ? (
+                                                            <i className="fa fa-spinner fa-spin"></i>
+                                                        ) : (
+                                                            <i className="fa fa-check"></i>
+                                                        )}
                                                     </button>
 
                                                     {/* Reject button loading state and disabling */}
                                                     <button
                                                         className="btn btn-sm btn-outline-danger mr-2"
                                                         title="Declined"
-                                                        disabled={loadingIds.includes(product._id)}  
+                                                        disabled={loadingIds.includes(product._id)}
                                                         onClick={() => handleReject(product._id)}
                                                     >
-                                                        {loadingIds.includes(product._id) ? (  
-                                                            <i className="fa fa-spinner fa-spin"></i>  
-                                                        ) : (  
-                                                            <i className="fa fa-ban"></i>  
-                                                        )} 
-                                                    </button>                                                    {/* <button
+                                                        {loadingIds.includes(product._id) ? (
+                                                            <i className="fa fa-spinner fa-spin"></i>
+                                                        ) : (
+                                                            <i className="fa fa-ban"></i>
+                                                        )}
+                                                    </button>                                                    
+                                                    
+                                                    {/* <button
                                                         type="button"
                                                         className="btn btn-outline-danger btn-sm mr-2"
                                                         title="Delete"
@@ -278,7 +293,7 @@ const ProductRequest = () => {
                             </div>
                             <div className="pagination d-flex justify-content-between mt-4">
                                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                                    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, products.length)} of {products.length} entries
+                                    Showing {(filteredProducts.length === 0 ? 0 : (currentPage - 1) * productsPerPage + 1)} to {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
                                 </span>
 
                                 <ul className="pagination d-flex justify-content-end w-100">
@@ -331,7 +346,7 @@ const ProductRequest = () => {
                     </div>
                 </div>
             </div>
-  </div>
+        </div>
     );
 };
 

@@ -24,14 +24,15 @@ const Billings = ({ userId, profileData, previewImage }) => {
     const month = date.toLocaleString('default', { month: 'long' });
     const year = date.getFullYear();
     const ordinalDay = `${day}${getOrdinalSuffix(day)}`;
-
+    
+    
     return `${month} ${ordinalDay}, ${year}`;
   };
-
-
-
-
-
+  
+  
+  
+  
+  
   const fetchBlog = async () => {
     try {
       const result = await getAPI(
@@ -47,13 +48,14 @@ const Billings = ({ userId, profileData, previewImage }) => {
       console.error('Error fetching blogs:', error);
     }
   };
-
+  
   useEffect(() => {
     fetchBlog();
   }, []);
-
-
-
+  
+  
+  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  
   const handleDeleteCancel = () => {
     setIsDeleteDialogOpen(false);
     setSelectedBlogToDelete(null);
@@ -109,7 +111,7 @@ const Billings = ({ userId, profileData, previewImage }) => {
                           className="d-block img-fluid rounded"
                           src={
                             blog.blogImage
-                              ? `/${blog.blogImage.replace(/\\/g, "/")}`
+                              ? `${BASE_URL}/${blog.blogImage.replace(/\\/g, "/")}`
                               : "/placeholder.jpg"
                           }
                           alt={blog.blogName}

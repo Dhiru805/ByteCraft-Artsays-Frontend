@@ -39,8 +39,17 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
     }, []);
 
 
-     const totalPages = Math.ceil(products.length / productsPerPage);
-    const displayedProducts = products.slice(
+  const filteredProducts = products.filter(product => {
+        const productData = product.product || product.resellProduct;
+        return (
+            productData?.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            product.buyer?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            product.buyer?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    });
+
+        const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+    const displayedProducts = filteredProducts.slice(
         (currentPage - 1) * productsPerPage,
         currentPage * productsPerPage
     );
@@ -79,7 +88,7 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
                                     onChange={handleProductsPerPageChange}
                                     style={{ minWidth: '70px' }}
                                 >
-                                    <option value="5">5</option>
+                                    {/* <option value="5">5</option> */}
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
@@ -94,8 +103,10 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
                                         className="form-control form-control-sm"
                                         placeholder="Search"
                                         value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                    />
+                                       onChange={(e) => {
+                                            setSearchTerm(e.target.value);
+                                        }}
+                                     />
                                     <i
                                         className="fa fa-search"
                                         style={{
@@ -188,7 +199,7 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
                             </div>
                                                         <div className="pagination d-flex justify-content-between mt-4">
                                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                                    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, products.length)} of {products.length} entries
+                                    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
                                 </span>
 
                                 <ul className="pagination d-flex justify-content-end w-100">

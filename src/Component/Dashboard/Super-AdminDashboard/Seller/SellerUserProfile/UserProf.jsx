@@ -205,11 +205,18 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
             <h2>Seller Profile</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <a href="index.html">
-                  <i className="fa fa-dashboard" />
-                </a>
+<span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+    <i className="fa fa-dashboard"></i>
+</span>
               </li>
-              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/sellermanagetable`}>SellerManageTable</Link></li>
+              <li className="breadcrumb-item">
+                <span
+                  onClick={() => navigate('/super-admin/seller/management')}
+                  style={{ cursor: 'pointer' }}
+                >
+                  SellerManageTable
+                </span>
+              </li>
               <li className="breadcrumb-item">Seller Profile</li>
             </ul>
           </div>

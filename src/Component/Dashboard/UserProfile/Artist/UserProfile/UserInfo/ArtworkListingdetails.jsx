@@ -14,6 +14,7 @@ const ArtworkPricingDetails = ({ userId,loading }) => {
         sampleArtwork: null
     });
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [load, setLoad] = useState(false);
 
     useEffect(() => {
         const fetchDetails = async () => {
@@ -249,9 +250,19 @@ const ArtworkPricingDetails = ({ userId,loading }) => {
                         )}
                     </div>
                 </div>
-                <button type="submit" className="btn btn-primary mx-2"disabled={loading}>
-                 {loading? "Updating.........":"Update"}
-                </button>
+                <button type="button"
+                    className="btn btn-primary mx-2"
+                    disabled={load}
+                    onClick={(e) => {
+                        setLoad(true);
+                        Promise.resolve(handleSubmit(e))
+                            .then(() => {
+                                window.location.reload();
+                            })
+                            .catch(console.error)
+                            .finally(() => setLoad(false));
+                    }}
+                >{load ? "Updating..." : "Update"}</button>
             </form>
 
 

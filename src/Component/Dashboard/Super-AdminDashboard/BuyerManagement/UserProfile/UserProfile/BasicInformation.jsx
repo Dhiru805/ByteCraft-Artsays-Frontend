@@ -1,30 +1,142 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect, useRef } from 'react';
 import ArtistInfo from "./ArtistProfessionalInfo";
 import SocialMedia from "./SocialMediaPromotion";
 import BankDetails from "./BankandPaymentDetails"
 import Notification from "./NotificationPreferences"
 import Agreement from "./Agreements"
 import Verification from "./Verifications"
+import putAPI from "../../../../../../api/putAPI";
+import { toast } from "react-toastify";
+import { DEFAULT_PROFILE_IMAGE } from "../../../../../../Constants/ConstantsVariables";
 
 const Settings = ({ userId, profileData, previewImage, handleImageUpload, handleChange, handleAddressChange, handleSubmit, passwordData, handlePasswordChange }) => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+  const [localPreviewImage, setLocalPreviewImage] = useState(previewImage);
+
+  const fileInputRef = useRef(null); 
+
+  const [imageError, setImageError] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false); 
+
+const actualImage = !localPreviewImage || imageError ? DEFAULT_PROFILE_IMAGE : localPreviewImage;
+
+ useEffect(() => {
+    if (!previewImage) {
+      setIsImageLoaded(true);
+      return;
+    }
+
+    const img = new Image();
+    img.src = previewImage;
+    img.onload = () => {
+      setImageError(false);
+      setIsImageLoaded(true);
+    };
+    img.onerror = () => {
+      setImageError(true);
+      setIsImageLoaded(true);
+    };
+  }, [previewImage]);
+
+  useEffect(() => {
+    setLocalPreviewImage(previewImage); 
+  }, [previewImage]);
+
+
+const handleDeleteImage = async () => {
+    try {
+      const token = localStorage.getItem('token');
+
+      if (!token || !userId) {
+        toast.error('Please log in again.');
+        return;
+      }
+
+      setLoading(true);
+
+      await putAPI(
+        `/auth/users/${userId}`,
+        { profilePhoto: null },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+
+      setLocalPreviewImage(null); 
+
+      toast.success('Profile image deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting profile image:', error.response?.data || error.message);
+      toast.error(error?.response?.data?.message || 'Failed to delete profile image');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const togglePasswordVisibility = (setter, currentState) => {
     setter(!currentState);
   };
+
+
   return (
     <div className="body">
       <h6>Profile Photo</h6>
       <div className="media">
-        <div className="media-left m-r-15" style={{ width: '140px', height: '140px', overflow: 'hidden' }}>
-          <img
-            src={previewImage}
-            className="user-photo media-object"
-            alt="User"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
+        <div className="media-left m-r-15" style={{ width: '140px', height: '140px', overflow: 'hidden', position: 'relative' }}>
+          {isImageLoaded && (
+            <img
+              src={actualImage}
+              alt="User"
+              className="user-photo media-object"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                transition: 'opacity 0.3s ease-in-out'
+              }}
+            />
+          )}
+
+        {isImageLoaded && actualImage !== DEFAULT_PROFILE_IMAGE && !imageError && (
+            <button
+              onClick={handleDeleteImage}
+              style={{
+                position: 'absolute',
+                bottom: '3px',
+                right: '3px',
+                background: 'red',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                width: '24px',
+                height: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                outline: 'none',
+                boxShadow: 'none',
+                transition: 'transform 0.1s ease-in-out',
+                zIndex: 2
+              }}
+              onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.9)'}
+              onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              title="Delete photo"
+            >
+              <i className="fa fa-trash" />
+            </button>
+          )}
         </div>
         <div className="media-body">
           <p>Upload your photo.<br /> <em>Image should be at least 140px x 140px</em></p>
@@ -347,7 +459,16 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
             rows={3}
           />
         </div>
-        <button type="button" className="btn btn-primary mx-2" onClick={handleSubmit}>Update</button>
+        <button type="button"
+          className="btn btn-primary mx-2"
+          disabled={loading}
+          onClick={(e) => {
+            setLoading(true);
+            Promise.resolve(handleSubmit(e))
+              .catch(console.error)
+              .finally(() => setLoading(false));
+          }}
+        >{loading ? "Updating..." : "Update"}</button>
       </div>
       {/* <ArtistInfo userId={userId} /> */}
 

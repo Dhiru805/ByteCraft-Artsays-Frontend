@@ -1,7 +1,22 @@
-import React from 'react';
+import React, { useEffect } from "react";
 
 const BlockHeader = () => {
-    return (
+//     useEffect(() => {
+//     window.scrollTo(0, 0); 
+//   }, []);
+
+useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+
+    console.log('Scroll position on load:', window.scrollY);
+
+    const handleBeforeUnload = () => window.scrollTo(0, 0);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
+
+  return (
         <div class="container-fluid">
             <div class="block-header">
                 <div class="row">

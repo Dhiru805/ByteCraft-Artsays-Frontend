@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import getAPI from "../../../../../api/getAPI";
 import { useParams } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-import useUserType from '../../urlconfig';
+import useUserType from '../../../urlconfig';
 import { Link } from "react-router-dom";
-import ConfirmationDialog from "../../ConfirmationDialog";
+import ConfirmationDialog from "../../../ConfirmationDialog";
 
 function AllProduct() {
     const { productId } = useParams();

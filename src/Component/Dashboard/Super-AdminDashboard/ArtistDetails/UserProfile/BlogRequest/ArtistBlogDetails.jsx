@@ -64,7 +64,7 @@ function ArtistBlogDetails() {
                     className="d-block img-fluid"
                     src={
                       blogs[0].blogImage
-                        ? `/${blogs[0].blogImage.replace(/\\/g, "/")}`
+                        ? `http://localhost:3001/${blogs[0].blogImage.replace(/\\/g, "/")}`
                         : "/placeholder.jpg"
                     }
                     alt={blogs[0].blogName}

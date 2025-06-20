@@ -4,6 +4,8 @@ import { toast } from 'react-toastify';
 import putAPI from '../../../../../../api/putAPI';
 
 const BusinessProfile = ({ userId }) => {
+    const [loading,setLoading]=useState(false);
+
     const [formData, setFormData] = useState({
         businessName: '',
         businessDescription: '',
@@ -96,8 +98,17 @@ const BusinessProfile = ({ userId }) => {
                         </div>
                     </div>
                 </div>
-                <button type="submit" className="btn btn-primary mx-2">Update</button>
-            </form>
+                <button type="button"
+                    className="btn btn-primary mx-2"
+                    disabled={loading}
+                    onClick={(e) => {
+                        setLoading(true);
+                        Promise.resolve(handleSubmit(e))
+                            .catch(console.error)
+                            .finally(() => setLoading(false));
+                    }}
+                >{loading ? "Updating..." : "Update"}</button>            
+                </form>
         </div>
     );
 };

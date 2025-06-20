@@ -1,9 +1,11 @@
 import React from 'react';
 import ProductBiddedAdmin from "./Biddedproductadmin"
+import { useNavigate } from 'react-router-dom';
 
 
 
 const BiddedProduct = () => {
+const navigate = useNavigate();
 
     return (
         <div className="container-fluid">
@@ -13,16 +15,16 @@ const BiddedProduct = () => {
                         <h2>Bidded Product</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
-                                <a href="index.html">
+                                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
                                     <i className="fa fa-dashboard"></i>
-                                </a>
+                                </span>
                             </li>
                             <li className="breadcrumb-item">Bidded Product</li>
                         </ul>
                     </div>
                 </div>
             </div>
-            <ProductBiddedAdmin  />
+            <ProductBiddedAdmin />
         </div>
     );
 };

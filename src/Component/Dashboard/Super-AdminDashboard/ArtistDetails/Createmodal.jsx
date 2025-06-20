@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { Flag } from "lucide-react";
-import postAPI from "../../../../api/postAPI";
+import postAPI from "../../../../api/getAPI";
 
 const CreateArtistModal = ({ onClose, fetchArtists }) => {
   const [formData, setFormData] = useState({
@@ -17,7 +16,6 @@ const CreateArtistModal = ({ onClose, fetchArtists }) => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading,setLoading]=useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,7 +38,7 @@ const CreateArtistModal = ({ onClose, fetchArtists }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    
  
     const requiredFields = ["firstName", "lastName", "artistName", "password", "confirmPassword", "emailOrPhone"];
     for (const field of requiredFields) {
@@ -80,8 +78,6 @@ const CreateArtistModal = ({ onClose, fetchArtists }) => {
     } catch (error) {
       console.error("Error response:", error);
       toast.error(error.response?.data?.message || "An unexpected error occurred");
-    }finally{
-      setLoading(false);
     }
   };
   return (
@@ -160,9 +156,8 @@ const CreateArtistModal = ({ onClose, fetchArtists }) => {
                 <button type="button" className="btn btn-secondary" onClick={onClose}>
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary"
-                disabled={loading}>
-                {loading?"Submitting.....":"Submit"}  
+                <button type="submit" className="btn btn-primary">
+                  Create Artist
                 </button>
               </div>
             </form>

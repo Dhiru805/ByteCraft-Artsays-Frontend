@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
-import axios from 'axios';
 import useUserType from '../../../../urlconfig';
 import Switch from "react-switch";
 import getAPI from "../../../../../../api/getAPI";

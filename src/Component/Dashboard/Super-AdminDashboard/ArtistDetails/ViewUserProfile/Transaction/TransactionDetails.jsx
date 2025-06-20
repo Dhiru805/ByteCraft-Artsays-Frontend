@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import getAPI from "../../../../../../api/getAPI";
 import { useParams } from "react-router-dom";
-import useUserType from "../../../../urlconfig";
+import useUserType from "../../../urlconfig";
 import { Link } from "react-router-dom";
 
 function AllProduct() {
@@ -17,7 +17,7 @@ function AllProduct() {
         const fetchProduct = async () => {
             try {
                 const result = await getAPI(
-                    `http://localhost:3001/api/getbuyerproductpurchaseddetailsbyid/${productId}`,
+                    `/api/getbuyerproductpurchaseddetailsbyid/${productId}`,
                     {},
                     true,
                     false

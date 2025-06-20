@@ -4,6 +4,8 @@ import putAPI from '../../../../../../api/putAPI';
 import getAPI from '../../../../../../api/getAPI';
 
 const BankPaymentDetails = ({ userId }) => {
+    const [loading, setLoading] = useState(false);
+
     const [formData, setFormData] = useState({
         accountHolderName: '',
         bankName: '',
@@ -19,11 +21,11 @@ const BankPaymentDetails = ({ userId }) => {
                     console.warn("User ID is undefined. Cannot fetch bank details.");
                     return;
                 }
-    
+
                 const url = `/auth/bankdetails/${userId}`;
                 const result = await getAPI(url);
 
-                if (result && result.data && result.data.bankDetails) { 
+                if (result && result.data && result.data.bankDetails) {
                     setFormData({
                         accountHolderName: result.data.bankDetails.accountHolderName || '',
                         bankName: result.data.bankDetails.bankName || '',
@@ -37,10 +39,10 @@ const BankPaymentDetails = ({ userId }) => {
                 // toast.error("Failed to fetch bank details");
             }
         };
-    
+
         fetchBankDetails();
     }, [userId]);
-    
+
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -75,63 +77,73 @@ const BankPaymentDetails = ({ userId }) => {
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
                             <label>Account Holder Name <span style={{ color: 'red' }}>*</span></label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                name="accountHolderName" 
-                                value={formData.accountHolderName} 
-                                onChange={handleChange} 
-                                required 
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="accountHolderName"
+                                value={formData.accountHolderName}
+                                onChange={handleChange}
+                                required
                             />
                         </div>
                         <div className="form-group">
                             <label>Bank Name <span style={{ color: 'red' }}>*</span></label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                name="bankName" 
-                                value={formData.bankName} 
-                                onChange={handleChange} 
-                                required 
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="bankName"
+                                value={formData.bankName}
+                                onChange={handleChange}
+                                required
                             />
                         </div>
                         <div className="form-group">
                             <label>UPI ID</label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                name="upiId" 
-                                value={formData.upiId} 
-                                onChange={handleChange} 
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="upiId"
+                                value={formData.upiId}
+                                onChange={handleChange}
                             />
                         </div>
                     </div>
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
                             <label>Account Number <span style={{ color: 'red' }}>*</span></label>
-                            <input 
-                                type="number" 
-                                className="form-control" 
-                                name="accountNumber" 
-                                value={formData.accountNumber} 
-                                onChange={handleChange} 
-                                required 
+                            <input
+                                type="number"
+                                className="form-control"
+                                name="accountNumber"
+                                value={formData.accountNumber}
+                                onChange={handleChange}
+                                required
                             />
                         </div>
                         <div className="form-group">
                             <label>IFSC Code <span style={{ color: 'red' }}>*</span></label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                name="ifscCode" 
-                                value={formData.ifscCode} 
-                                onChange={handleChange} 
-                                required 
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="ifscCode"
+                                value={formData.ifscCode}
+                                onChange={handleChange}
+                                required
                             />
                         </div>
                     </div>
                 </div>
-                <button type="submit" className="btn btn-primary mx-2">Update</button>
+                <button type="button"
+                    className="btn btn-primary mx-2"
+                    disabled={loading}
+                    onClick={(e) => {
+                        setLoading(true);
+                        Promise.resolve(handleSubmit(e))
+                            .catch(console.error)
+                            .finally(() => setLoading(false));
+                    }}
+                >{loading ? "Updating..." : "Update"}</button>
+
             </form>
         </div>
     );

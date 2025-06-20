@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import getAPI from '../../../../../../api/getAPI';
-const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+import axios from 'axios';
 
 const AccountVerification = ({ userId }) => {
     const [verificationType, setVerificationType] = useState('');
@@ -13,14 +12,14 @@ const AccountVerification = ({ userId }) => {
     useEffect(() => {
         const fetchVerificationData = async () => {
             try {
-                const response = await getAPI(`/auth/verificationdetails/${userId}`);
+                const response = await axios.get(`http://localhost:3001/auth/verificationdetails/${userId}`);
                 const data = response.data.verification;
     
                 if (data) {
                     setVerificationType(data.documentType || '');  
                     setDocNumber(data.documentNumber || ''); 
                     if (data.documentFile) {  
-                        setFilePreview(`${BASE_URL}/${data.documentFile}`);
+                        setFilePreview(`http://localhost:3001/${data.documentFile}`);
                         setFileType(data.documentFile.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg');
                     }
                 }
@@ -55,6 +54,7 @@ const AccountVerification = ({ userId }) => {
                         <option value="">Select</option>
                         <option value="Aadhar Card">Aadhar Card</option>
                         <option value="Driving License">Driving License</option>
+                        <option value="Passport">Passport</option>
                     </select>
                 </div>
                 {verificationType && (

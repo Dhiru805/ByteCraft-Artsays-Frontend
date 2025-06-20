@@ -9,7 +9,7 @@ import UpdateModal from '../../../Blog/ArtistBlog/UpdateBlogList';
 import useUserType from '../../../../urlconfig';
 
 const Billings = ({ userId, profileData, previewImage }) => {
-  const userType = useUserType(); 
+  const userType = useUserType();
   const [blogs, setBlogs] = useState([]);
   const navigate = useNavigate();
   const confirm = useConfirm();
@@ -18,6 +18,7 @@ const Billings = ({ userId, profileData, previewImage }) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedBlogToDelete, setSelectedBlogToDelete] = useState(null);
   const [hoveredBlogId, setHoveredBlogId] = useState(null); // State to track hovered blog
+  const [loadingIds, setLoadingIds] = useState([]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -35,10 +36,14 @@ const Billings = ({ userId, profileData, previewImage }) => {
     return `${month} ${ordinalDay}, ${year}`;
   };
 
+  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+
+
   const updateBlogStatus = async (blogId, status) => {
+    setLoadingIds(prev => [...prev, blogId]);
     try {
       await putAPI(
-        `http://localhost:3001/Blog-Post/update-status/${blogId}`,
+        `/Blog-Post/update-status/${blogId}`,
         { blogStatus: status },
         {},
         true
@@ -57,6 +62,8 @@ const Billings = ({ userId, profileData, previewImage }) => {
       }
     } catch (error) {
       console.error("Error updating blog status:", error);
+    } finally {
+      setLoadingIds(prev => prev.filter(id => id !== blogId));
     }
   };
 
@@ -67,7 +74,7 @@ const Billings = ({ userId, profileData, previewImage }) => {
   const fetchBlog = async () => {
     try {
       const result = await getAPI(
-        `http://localhost:3001/Blog-Post/blogs/user/${userId}`,
+        `/Blog-Post/blogs/user/${userId}`,
         {},
         true,
         false
@@ -156,7 +163,7 @@ const Billings = ({ userId, profileData, previewImage }) => {
                           className="d-block img-fluid rounded"
                           src={
                             blog.blogImage
-                              ? `http://localhost:3001/${blog.blogImage.replace(/\\/g, "/")}`
+                              ? `${BASE_URL}/${blog.blogImage.replace(/\\/g, "/")}`
                               : "/placeholder.jpg"
                           }
                           alt={blog.blogName}
@@ -181,49 +188,63 @@ const Billings = ({ userId, profileData, previewImage }) => {
                     </div>
                     <div className="footer p-1">
                       <ul className="stats list-inline ">
-                        <li className="list-inline-item  mb-3" 
-                        style={{ display: hoveredBlogId === blog._id ? 'block' : 'none' }}>
-                            <button
-                              className="btn btn-outline-secondary btn-sm mx-1"
-                              // onClick={() =>
-                              //   navigate(`/Dashboard/BlogRequest/view-blog/BlogDetails/${blog._id}`)
-                              // }
-                              onClick={() => navigate(`/${userType}/Dashboard/artistmanagetable/artistprofile/${userId}/blogrequestdetails/${blog._id}`, { state: {userId } })}
-                            >
-                              <i className="fa fa-eye"></i>
-                            </button>
+                        <li className="list-inline-item  mb-3"
+                          style={{ display: hoveredBlogId === blog._id ? 'block' : 'none' }}>
+                          <button
+                            className="btn btn-outline-secondary btn-sm mx-1"
+                            // onClick={() =>
+                            //   navigate(`/Dashboard/BlogRequest/view-blog/BlogDetails/${blog._id}`)
+                            // }
+                            onClick={() => navigate(`/${userType}/Dashboard/artistmanagetable/artistprofile/${userId}/blogrequestdetails/${blog._id}`, { state: { userId } })}
+                          >
+                            <i className="fa fa-eye"></i>
+                          </button>
 
-                            <button
-                              // onClick={() => handleUpdateClick(blog)}
-                              onClick={() => navigate(`/${userType}/Dashboard/artistmanagetable/artistprofile/${userId}/blogrequestdetails/editblog/${blog._id}`, { state: { blog,userId } })}
-                              className="btn btn-outline-primary btn-sm mx-1"
+                          <button
+                            // onClick={() => handleUpdateClick(blog)}
+                            className="btn btn-outline-primary btn-sm mx-1"
+                          onClick={() => navigate(`/super-admin/artist/management/artisteditreuqest/update-blog`, { state: { blogData: blog, userId } })}
                             >
-                              <i className="fa fa-edit"></i>
-                            </button>
+                            <i className="fa fa-edit"></i>
+                          </button>
+                            {/* onClick={() => {
+    navigate(`/super-admin/artist/blogrequest/update-blog`, {
+      state: { blog, userId }
+    });
+  }} */}
 
-                            <button
-                              onClick={() => openDeleteDialog(blog)}
-                              className="btn btn-outline-danger btn-sm mx-1"
-                            >
-                              <i className="fa fa-trash"></i>
-                            </button>
-                            <button
-                              type="button"
-                              className="btn btn-sm btn-outline-success mx-1"
-                              title="Approved"
-                              onClick={() => updateBlogStatus(blog._id, 'Approved')}
-                            >
+
+                          <button
+                            onClick={() => openDeleteDialog(blog)}
+                            className="btn btn-outline-danger btn-sm mx-1"
+                          >
+                            <i className="fa fa-trash"></i>
+                          </button>
+                          <button
+                            type="button"
+                            className="btn bt n-sm btn-outline-success mx-1"
+                            title="Approved"
+                            onClick={() => updateBlogStatus(blog._id, 'Approved')}
+                            disabled={loadingIds.includes(blog._id)}
+                          >
+                            {loadingIds.includes(blog._id) ? (
+                              <i className="fa fa-spinner fa-spin"></i>
+                            ) : (
                               <i className="fa fa-check"></i>
-                            </button>
-                            <button
-                              type="button"
-                              className="btn btn-sm btn-outline-danger mx-1"
-                              title="Declined"
-                              onClick={() => handleReject(blog._id)}
-                            >
+                            )}
+                          </button>                            <button
+                            type="button"
+                            className="btn btn-sm btn-outline-danger mx-1"
+                            title="Declined"
+                            onClick={() => handleReject(blog._id)}
+                            disabled={loadingIds.includes(blog._id)}
+                          >
+                            {loadingIds.includes(blog._id) ? ( 
+                              <i className="fa fa-spinner fa-spin"></i>
+                            ) : (
                               <i className="fa fa-ban"></i>
-                            </button>
-                        </li>
+                            )}
+                          </button>                        </li>
                       </ul>
                     </div>
                   </div>

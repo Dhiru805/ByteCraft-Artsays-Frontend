@@ -1,7 +1,10 @@
 import React from "react";
 import EmailSettingMain from "./EmailSettingMain";
+import { useNavigate } from 'react-router-dom';
 
 const EmailSetting = () => {
+  const navigate = useNavigate();
+
   return (
     <>
       <div className="container-fluid">
@@ -11,9 +14,9 @@ const EmailSetting = () => {
               <h2>Email Setting</h2>
               <ul className="breadcrumb">
                 <li className="breadcrumb-item">
-                  <a href="index.html">
-                    <i className="fa fa-dashboard"></i>
-                  </a>
+ <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+    <i className="fa fa-dashboard"></i>
+</span>
                 </li>
                 <li className="breadcrumb-item">Email Setting</li>
               </ul>

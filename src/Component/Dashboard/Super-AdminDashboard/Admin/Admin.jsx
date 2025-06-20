@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../api/getAPI"
 import ConfirmationDialog from '../../ConfirmationDialog';
 import CreateAdminModal from "./Createmodal";
+import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
+
 
 
 function AdminManageTable() {
@@ -68,9 +70,9 @@ function AdminManageTable() {
                             <h2>Admin Management</h2>
                             <ul className="breadcrumb">
                                 <li className="breadcrumb-item">
-                                    <a href="index.html">
+                                    <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
                                         <i className="fa fa-dashboard"></i>
-                                    </a>
+                                    </span>
                                 </li>
                                 <li className="breadcrumb-item">Admin Management</li>
                             </ul>
@@ -139,7 +141,7 @@ function AdminManageTable() {
                                                             <td>{index + 1}</td>
                                                             <td>
                                                                 <img
-                                                                    src={admin.profilePhoto ? `${BASE_URL}${admin.profilePhoto}` : '/DashboardAssets/assets/images/user.png'}
+                                                                    src={admin.profilePhoto ? `${BASE_URL}${admin.profilePhoto}` : DEFAULT_PROFILE_IMAGE}
                                                                     className="rounded-circle avatar"
                                                                     alt=""
                                                                     style={{ width: '30px', height: '30px', objectFit: 'cover' }}
