@@ -12,6 +12,9 @@ const ApprovedProduct = () => {
 
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
+    const [showPopup, setShowPopup] = useState(false); 
+    const [currentImages, setCurrentImages] = useState([]); 
+    const [currentImageIndex, setCurrentImageIndex] = useState(0); 
 
     const navigate = useNavigate();
     const userType = useUserType();
@@ -71,7 +74,21 @@ const ApprovedProduct = () => {
     };
 
 
+const handleImageClick = (product) => {
+        const images = [product.mainImage, ...(product.otherImages || [])];
+        setCurrentImages(images);
+        setCurrentImageIndex(0);
+        setShowPopup(true);
+    };
 
+    
+    const goToPreviousImage = () => {
+        setCurrentImageIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+    };
+
+    const goToNextImage = () => {
+        setCurrentImageIndex((prevIndex) => Math.min(prevIndex + 1, currentImages.length - 1));
+    };
 
     return (
         <div className="container-fluid">
@@ -160,11 +177,13 @@ const ApprovedProduct = () => {
                                                         src={`${BASE_URL}${product.mainImage}`}
                                                         className="rounded-circle avatar"
                                                         alt=""
+                                                        onClick={() => handleImageClick(product)}
                                                         style={{
                                                             width: '30px',
                                                             height: '30px',
                                                             objectFit: 'cover',
-                                                            marginRight: '10px'
+                                                            marginRight: '10px',
+                                                            cursor: 'pointer'
                                                         }}
                                                     />{product.productName}</td>
                                                 <td>
@@ -244,6 +263,93 @@ const ApprovedProduct = () => {
                     </div>
                 </div>
             </div>
+
+            {/* [ADDED] Image popup viewer */}
+{showPopup && (
+    <div
+        onClick={() => setShowPopup(false)}
+        style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+        }}
+    >
+        <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+                position: 'relative',
+                width: '500px',
+                height: '600px',
+                backgroundColor: '#111',
+                borderRadius: '12px',
+                boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                overflow: 'hidden',
+            }}
+        >
+            {/* Left Arrow */}
+            <button
+                onClick={goToPreviousImage}
+                style={{
+                    position: 'absolute',
+                    left: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    fontSize: '2rem',
+                    color: currentImageIndex === 0 ? '#666' : '#fff',
+                    background:'Black',
+                    border: 'none',
+                    cursor: currentImageIndex === 0 ? 'not-allowed' : 'pointer',
+                    zIndex: 2,
+                }}
+                disabled={currentImageIndex === 0}
+            >
+                &#10094;
+            </button>
+
+            {/* Image */}
+            <img
+                src={`${BASE_URL}${currentImages[currentImageIndex]}`}
+                alt="Popup"
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '12px',
+                }}
+            />
+
+            {/* Right Arrow */}
+            <button
+                onClick={goToNextImage}
+                style={{
+                    position: 'absolute',
+                    right: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    fontSize: '2rem',
+                    color: currentImageIndex === currentImages.length - 1 ? '#666' : '#fff',
+                    background: 'Black',
+                    border: 'none',
+                    cursor: currentImageIndex === currentImages.length - 1 ? 'not-allowed' : 'pointer',
+                    zIndex: 2,
+                }}
+                disabled={currentImageIndex === currentImages.length - 1}
+            >
+                &#10095;
+            </button>
+        </div>
+    </div>
+)}
         </div>
     );
 }

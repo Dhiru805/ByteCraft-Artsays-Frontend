@@ -272,7 +272,7 @@ function SellerManageTable() {
                               className="btn btn-outline-success btn-sm"
                               onClick={() => openModal(seller)}
                             >
-                              <i className="fa fa-check-circle" style={{ color: "green" }}></i>
+                              <i className="fa fa-info-circle" style={{ color: "green" }}></i>
                             </button>
                           </td>
                         </tr>

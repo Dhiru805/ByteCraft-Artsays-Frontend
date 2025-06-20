@@ -274,7 +274,7 @@ function ArtistManageTable() {
                               className="btn btn-outline-success btn-sm"
                               onClick={() => openModal(artist)}
                             >
-                              <i className="fa fa-check-circle" style={{ color: "green" }}></i>
+                              <i className="fa fa-info-circle" style={{ color: "green" }}></i>
                             </button>
 
 

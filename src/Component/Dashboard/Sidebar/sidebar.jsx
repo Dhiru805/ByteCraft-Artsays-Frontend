@@ -33,6 +33,13 @@
               }
             ]
           : []),
+        {
+          label: "Blogs",
+          icon: "fa fa-newspaper",
+          path: "/super-admin/blog",
+          subTabs: []
+        },
+
           {
             label: "Artist",
             icon: "fa fa-paint-brush",
@@ -77,12 +84,20 @@
             {
             label: "Product",
             icon: "fa fa-cart-plus",
-            path: `#Product-management`,
-            subTabs: [
-              { label: "All Product", path: `/super-admin/product-table` },
-              { label: "Custom Order", path: `/super-admin/customordertable` },
-              { label: "Product Purchased", path: `/super-admin/purchasetable` },
-            ]
+            path: `/super-admin/product-table`,
+            subTabs: []
+          },
+            {
+            label: "Custom Order",
+            icon: "fa fa-cart-plus",
+            path: `/super-admin/customordertable`,
+            subTabs: []
+          },
+            {
+            label: "Product Purchased",
+            icon: "fa fa-cart-plus",
+            path: `/super-admin/purchasetable`,
+            subTabs: []
           },
           {
             label: "Bidding",
@@ -144,12 +159,20 @@
            {
           label: "product",
           icon: "fa fa-cart-plus",
-          path: "#",
-          subTabs: [
-              { label: "All Product", path: `/artist/product` },
-              { label: "Custom Order", path: `/artist/custom-order` },
-              { label: "Product Purchased", path: `/artist/product-purchase` },
-          ]
+          path: "/artist/product",
+          subTabs: []
+        },
+           {
+          label: "Custom Order",
+          icon: "fa fa-cart-plus",
+          path: "/artist/custom-order",
+          subTabs: []
+        },
+           {
+          label: "Product Purchased",
+          icon: "fa fa-cart-plus",
+          path: "/artist/product-purchase",
+          subTabs: []
 
         },
       ],
@@ -173,12 +196,14 @@
          {
           label: "product",
           icon: "fa fa-cart-plus",
-          path: "#",
-          subTabs: [
-            { label: "All Product", path: `/seller/product-details` },
-            { label: "Product Purchased", path: `/seller/purchased-product` },
-          ]
-
+          path: "/seller/product-details",
+          subTabs: []
+        },
+         {
+          label: "Product Purchased",
+          icon: "fa fa-cart-plus",
+          path: "/seller/purchased-product",
+          subTabs: []
         },
       ],
     };

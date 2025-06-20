@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom'; 
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Preferences from './Preferences/Pereferences';
@@ -7,10 +7,10 @@ import Billings from './Billings/Billings';
 import ViewBlogRequest from './BlogRequest/ViewBlogRequest';
 import Blogs from "./Blogs/Blogs"
 import Products from "./Products/Product"
-import Productrequest  from "./ProductRequest/ProductRequestTable"
+import Productrequest from "./ProductRequest/ProductRequestTable"
 import Transaction from "./Transaction/Transaction"
 import Packagingmaterial from "./PackagingMaterial/ProductPurchasedArtist"
-import Soldproduct  from "./SoldProduct/SoldProduct"
+import Soldproduct from "./SoldProduct/SoldProduct"
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import Settings from './UserInfo/BasicInformation';
@@ -20,8 +20,8 @@ const UserProfileForm = () => {
   const userType = useUserType();
   const location = useLocation();
   const { artist } = location.state || {};
-  const navigate = useNavigate(); 
-  
+  const navigate = useNavigate();
+
   const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
   const [passwordData, setPasswordData] = useState({
@@ -64,7 +64,7 @@ const UserProfileForm = () => {
           address: parsedAddress,
         });
 
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+        const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
         const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : 'DashboardAssets/assets/images/user.png';
         setPreviewImage(profilePhotoUrl);
       }
@@ -97,7 +97,7 @@ const UserProfileForm = () => {
       search: `?tab=${tabName}`,
     });
   };
-  
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -160,7 +160,7 @@ const UserProfileForm = () => {
         formData.append('newPassword', passwordData.newPassword);
         formData.append('confirmPassword', passwordData.confirmPassword);
       }
-      
+
 
       if (imageFile) {
         formData.append('profilePhoto', imageFile);
@@ -171,7 +171,7 @@ const UserProfileForm = () => {
         body: formData,
       });
 
-      const result = await response.json(); 
+      const result = await response.json();
 
       if (response.ok) {
         toast.success(result.message || 'Profile updated successfully!');
@@ -191,7 +191,7 @@ const UserProfileForm = () => {
 
   const tabs = [
     { name: 'Settings', component: Settings },
-    { name: 'Blogs', component: Blogs},
+    { name: 'Blogs', component: Blogs },
     { name: 'Blog Request', component: ViewBlogRequest },
     { name: 'Products', component: Products },
     { name: 'Product Request', component: Productrequest },
@@ -210,9 +210,9 @@ const UserProfileForm = () => {
             <h2>Artist Profile</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-<span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
-    <i className="fa fa-dashboard"></i>
-</span>
+                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+                  <i className="fa fa-dashboard"></i>
+                </span>
               </li>
               <li className="breadcrumb-item">
                 <span

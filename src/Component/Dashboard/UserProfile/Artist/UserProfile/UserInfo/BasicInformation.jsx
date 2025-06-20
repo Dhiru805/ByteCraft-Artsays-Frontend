@@ -465,9 +465,6 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
           onClick={(e) => {
             setLoading(true);
             Promise.resolve(handleSubmit(e))
-              .then(() => {
-                window.location.reload();
-              })
               .catch(console.error)
               .finally(() => setLoading(false));
           }}

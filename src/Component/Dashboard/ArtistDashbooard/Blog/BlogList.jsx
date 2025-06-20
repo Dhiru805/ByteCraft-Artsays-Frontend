@@ -211,22 +211,26 @@ function BlogList() {
                             >
                               <i className="fa fa-eye"></i>
                             </button>
-                            <button
-                              className="btn btn-sm btn-outline-danger mr-2"
-                              onClick={() => openDeleteDialog(blog)}
-                            >
-                              <i className="fa fa-trash"></i>
-                            </button>
-                            <button
-                              className="btn btn-sm btn-outline-primary"
-                              onClick={() =>
-                                navigate(`/artist/bloglist/update-blog`, {
-                                  state: { blogData: blog }
-                                })
-                              }
-                            >
-                              <i className="fa fa-edit"></i>
-                            </button>
+                            {blog.blogStatus !== 'Approved' && (
+                              <>
+                                <button
+                                  className="btn btn-sm btn-outline-danger mr-2"
+                                  onClick={() => openDeleteDialog(blog)}
+                                >
+                                  <i className="fa fa-trash"></i>
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-outline-primary"
+                                  onClick={() =>
+                                    navigate(`/artist/bloglist/update-blog`, {
+                                      state: { blogData: blog }
+                                    })
+                                  }
+                                >
+                                  <i className="fa fa-edit"></i>
+                                </button>
+                              </>
+                            )}
                           </td>
                         </tr>
                       ))

@@ -115,9 +115,6 @@ const SocialLink = ({ userId, profileData }) => {
           onClick={(e) => {
             setLoading(true);
             Promise.resolve(handleSubmit(e))
-              .then(() => {
-                window.location.reload();
-              })
               .catch(console.error)
               .finally(() => setLoading(false));
           }}

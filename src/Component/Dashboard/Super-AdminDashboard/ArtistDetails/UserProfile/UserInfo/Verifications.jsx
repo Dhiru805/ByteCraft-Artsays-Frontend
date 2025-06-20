@@ -142,6 +142,7 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
                         <option value="">Select</option>
                         <option value="Aadhar Card">Aadhar Card</option>
                         <option value="Driving License">Driving License</option>
+                        <option value="Passport">Passport</option>
                     </select>
                 </div>
                 {verificationType && (
@@ -194,9 +195,6 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
           onClick={(e) => {
             setLoading(true);
             Promise.resolve(handleSubmit(e))
-              .then(() => {
-                window.location.reload();
-              })
               .catch(console.error)
               .finally(() => setLoading(false));
           }}

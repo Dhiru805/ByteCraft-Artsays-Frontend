@@ -16,6 +16,10 @@ const BlogRequest = () => {
     const [loadingBlogId, setLoadingBlogId] = useState(null);
     const [actionType, setActionType] = useState('');
 
+    const [isRejectModalOpen, setIsRejectModalOpen] = useState(false); 
+    const [rejectionComment, setRejectionComment] = useState(''); 
+    const [selectedArtistToReject, setSelectedArtistToReject] = useState(null); 
+
 
     useEffect(() => {
         const fetchBlogs = async () => {
@@ -39,7 +43,9 @@ const BlogRequest = () => {
         try {
             await putAPI(
                 `/Blog-Post/update-status/${blogId}`,
-                { blogStatus: status },
+                { blogStatus: status,
+                    adminComments: status === 'Rejected' ? rejectionComment : ''
+                 },
                 {},
                 true
             );
@@ -63,9 +69,51 @@ const BlogRequest = () => {
         }
     };
 
-
     const handleReject = (blogId) => {
-        confirm(() => updateBlogStatus(blogId, 'Rejected'), "Are you sure you want to reject this blog?");
+        setSelectedArtistToReject(blogId); 
+        setIsRejectModalOpen(true); 
+    };
+
+    const submitRejection = async () => {
+        if (!rejectionComment.trim()) {
+            toast.error("Rejection comment is required."); 
+            return;
+        }
+
+        setLoadingBlogId(selectedArtistToReject);
+        setActionType('Rejected');
+
+        try {
+            await putAPI(
+                `/Blog-Post/update-status/${selectedArtistToReject}`,
+                {
+                    blogStatus: 'Rejected',
+                    rejectionComment: rejectionComment.trim()  
+                },
+                {},
+                true
+            );
+
+            setBlogs((prevBlogs) =>
+                prevBlogs.map((blog) =>
+                    blog._id === selectedArtistToReject
+                        ? { ...blog, blogStatus: 'Rejected' }
+                        : blog
+                )
+            );
+
+            toast.error("Blog Request is Rejected");
+
+            // 🔧 Reset modal state
+            setIsRejectModalOpen(false);
+            setRejectionComment('');
+            setSelectedArtistToReject(null);
+        } catch (error) {
+            console.error("Error rejecting blog:", error);
+        } finally {
+            setLoadingBlogId(null);
+            setActionType('');
+        }
     };
 
     const filteredBlogs = blogs.filter(blog => {
@@ -199,7 +247,6 @@ const BlogRequest = () => {
                                                             className="btn btn-sm btn-outline-info"
                                                             onClick={() => navigate(`/super-admin/artist/blogrequest/view-Blog`, { state: { blog } })}
                                                         >
-
                                                             View
                                                         </button>
                                                     </td>
@@ -227,7 +274,6 @@ const BlogRequest = () => {
                                                         )}
                                                         {blog.blogStatus !== 'Rejected' && (
                                                             <button
-                                                                type="button"
                                                                 className="btn btn-sm btn-outline-danger"
                                                                 title="Declined"
                                                                 onClick={() => handleReject(blog._id)}
@@ -241,7 +287,6 @@ const BlogRequest = () => {
                                                             </button>
                                                         )}
                                                     </td>
-
                                                 </tr>
                                             ))
                                         )}
@@ -303,8 +348,61 @@ const BlogRequest = () => {
                     </div>
                 </div>
             </div>
+            {isRejectModalOpen && (
+                <div className="modal show d-block" style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }} tabIndex="-1">
+                 <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Reject Blog</h5>
+                                <button type="button" className="close" onClick={() => {
+                                    setIsRejectModalOpen(false);
+                                    setRejectionComment('');
+                                    setSelectedArtistToReject(null);
+                                }}>
+                                    <span></span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="form-group">
+                                    <label htmlFor="rejectComment">Rejection Comment</label>
+                                    <textarea
+                                        className="form-control"
+                                        id="rejectComment"
+                                        rows="4"
+                                        value={rejectionComment}
+                                        onChange={(e) => setRejectionComment(e.target.value)}
+                                        placeholder="Enter reason for rejection"
+                                    />
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={() => {
+                                        setIsRejectModalOpen(false);
+                                        setRejectionComment('');
+                                        setSelectedArtistToReject(null);
+                                    }}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn btn-danger"
+                                    onClick={submitRejection}
+                                    disabled={loadingBlogId === selectedArtistToReject || !rejectionComment.trim()}
+                                >
+                                    {loadingBlogId === selectedArtistToReject ? "Rejecting..." : "Confirm Reject"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
+
 
 export default BlogRequest;

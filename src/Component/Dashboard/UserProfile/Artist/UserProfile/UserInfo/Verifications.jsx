@@ -149,6 +149,7 @@ const AccountVerification = ({ userId }) => {
                         <option value="">Select</option>
                         <option value="Aadhar Card">Aadhar Card</option>
                         <option value="Driving License">Driving License</option>
+                        <option value="Passport">Passport</option>
                     </select>
                 </div>
                 {verificationType && (
@@ -201,9 +202,6 @@ const AccountVerification = ({ userId }) => {
           onClick={(e) => {
             setLoading(true);
             Promise.resolve(handleSubmit(e))
-              .then(() => {
-                window.location.reload();
-              })
               .catch(console.error)
               .finally(() => setLoading(false));
           }}

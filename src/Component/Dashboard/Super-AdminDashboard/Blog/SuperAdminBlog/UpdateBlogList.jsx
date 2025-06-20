@@ -3,16 +3,15 @@ import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import 'react-toastify/dist/ReactToastify.css'; 
 import { Link } from "react-router-dom";
-import getAPI from "../../../../../../api/getAPI";
-import putAPI from "../../../../../../api/putAPI";
+import getAPI from "../../../../../api/getAPI";
+import putAPI from "../../../../../api/putAPI";
 
 function BlogUpdate() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { blogData } = location.state || {};
-
+  const [blogData] = useState(location.state?.blogData || null);
   const [formData, setFormData] = useState({
     blogName: "",
     slug: "",
@@ -21,19 +20,17 @@ function BlogUpdate() {
     category: "",
     tags: []
   });
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(""); 
   const [tagInput, setTagInput] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const [existingImage, setExistingImage] = useState("");
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(false);
+    const [loading,setLoading]=useState(false);
+
   
-
-
   useEffect(() => {
-    console.log("Blog data received for update:", blogData);
     fetchCategories();
-
+    
     if (blogData) {
       setFormData({
         blogName: blogData.blogName || "",
@@ -43,7 +40,7 @@ function BlogUpdate() {
         category: blogData.category || "",
         tags: blogData.tags || []
       });
-
+      
       setContent(blogData.blogDescription || "");
       setExistingImage(blogData.blogImage || "");
     }
@@ -118,11 +115,11 @@ function BlogUpdate() {
     formDataObj.append("blogDescription", content);
 
     try {
-      await putAPI(`/Blog-Post/update/${blogData._id}`,
-        formDataObj, true
+        await putAPI(`/Blog-Post/update/${blogData._id}`, 
+       formDataObj,true
       );
       toast.success('Blog post updated successfully!');
-       navigate('/super-admin/artist/management');
+      navigate(-1);
     } catch (error) {
       const errorMessage = error?.response?.data?.message || error.message || 'Something went wrong. Please try again.';
       toast.error(errorMessage)
@@ -145,10 +142,10 @@ function BlogUpdate() {
       ['help'],
     ],
   };
-
+  
   const editorStyle = {
     fontFamily: 'Nunito, Ubuntu, Raleway, IBM Plex Sans, sans-serif',
-    fontSize: '12px',
+    fontSize: '12px', 
   };
 
   return (
@@ -163,17 +160,7 @@ function BlogUpdate() {
                   <i className="fa fa-dashboard"></i>
                 </a>
               </li>
-               <li className="breadcrumb-item active">
-                <Link to="/super-admin/artist/blogrequest">
-                  Blogs Request
-                </Link>
-              </li>
-              {/* <li className="breadcrumb-item active">
-                <Link to="/super-admin/artist/blogrequest" >
-                  View Blogs
-                </Link>
-              </li> */}
-
+              <li className="breadcrumb-item active"><Link to={`/artist/Bloglist`}>Blogs</Link></li>
               <li className="breadcrumb-item">Update Blog Post</li>
             </ul>
           </div>
@@ -226,17 +213,17 @@ function BlogUpdate() {
                 </div>
                 <div className="form-group">
                   <label htmlFor="tags">Tags</label>
-                  <div
-                    className="d-flex flex-wrap align-items-center form-control p-2"
+                  <div 
+                    className="d-flex flex-wrap align-items-center form-control p-2" 
                     style={{ minHeight: '44px' }}
                   >
                     {formData.tags.map((tag, index) => (
-                      <div
+                      <div 
                         key={index}
                         className="d-flex align-items-center bg-light rounded px-2 py-1 m-1"
                       >
                         <span className="mr-1">#{tag}</span>
-                        <span
+                        <span 
                           className="ml-1 text-danger"
                           style={{ cursor: 'pointer' }}
                           onClick={() => removeTag(index)}
@@ -290,10 +277,10 @@ function BlogUpdate() {
                   />
                   {(imagePreview || existingImage) && (
                     <div className="mt-2">
-                      <img
-                        src={imagePreview || `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${existingImage}`}
-                        alt="Preview"
-                        className="img-thumbnail"
+                      <img 
+                        src={imagePreview || `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${existingImage}`} 
+                        alt="Preview" 
+                        className="img-thumbnail" 
                         style={{ maxHeight: '200px' }}
                       />
                     </div>
@@ -314,10 +301,10 @@ function BlogUpdate() {
                   />
                 </div>
                 <button 
-                type="submit" 
-                className="btn btn-block btn-primary mt-3"
-                disabled={loading}>
-                  {loading?"Updateing Blog....":"Update Blog"}
+                type="submit"
+                 className="btn btn-block btn-primary mt-3"
+               disabled={loading}>
+                 {loading? "Updating Blog.........":"Update Blog"}
                 </button>
               </form>
             </div>

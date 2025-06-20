@@ -202,11 +202,17 @@ const Billings = ({ userId, profileData, previewImage }) => {
 
                           <button
                             // onClick={() => handleUpdateClick(blog)}
-                            onClick={() => navigate(`/${userType}/Dashboard/artistmanagetable/artistprofile/${userId}/blogrequestdetails/editblog/${blog._id}`, { state: { blog, userId } })}
                             className="btn btn-outline-primary btn-sm mx-1"
-                          >
+                          onClick={() => navigate(`/super-admin/artist/management/artisteditreuqest/update-blog`, { state: { blogData: blog, userId } })}
+                            >
                             <i className="fa fa-edit"></i>
                           </button>
+                            {/* onClick={() => {
+    navigate(`/super-admin/artist/blogrequest/update-blog`, {
+      state: { blog, userId }
+    });
+  }} */}
+
 
                           <button
                             onClick={() => openDeleteDialog(blog)}

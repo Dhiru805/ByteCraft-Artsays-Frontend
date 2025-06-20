@@ -4,6 +4,7 @@ import { handleLogout } from "../LogoutConfirmation";
 import useUserType from '../urlconfig';
 import { useAuth } from '../../../AuthContext';
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
+import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 
 
 const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, HandletoggleDropdown}) => {
@@ -11,8 +12,8 @@ const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, Handletoggle
   const navigate = useNavigate();
   const userType = useUserType(); 
   const BASE_URL=process.env.REACT_APP_API_URL_FOR_IMAGE;
-    const { logout } = useAuth();
-
+  const { logout } = useAuth();
+  const status = localStorage.getItem("status");
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -60,6 +61,55 @@ const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, Handletoggle
       value: "$23B",
     },
   ];
+const renderVerificationBadge = () => {
+  if (status?.toLowerCase() === "verified") {
+    return (
+      <div style={styles.verificationIconBlue} title="Verified">
+        <FaCheckCircle color="white" size={10} />
+      </div>
+    );
+  } else if (status?.toLowerCase() === "unverified") {
+    return (
+      <div style={styles.verificationIconRed} title="Unverified">
+        <FaTimesCircle color="white" size={10} />
+      </div>
+    );
+  }
+  return null;
+};
+const styles = {
+  
+  verificationIconBlue: {
+    position: "absolute",
+    top: "40px",
+    right: "10px",
+    backgroundColor: "#58d0ff",
+    borderRadius: "50%",
+    // padding: "3px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "15px",
+    height: "15px",
+    pointerEvents: "none", 
+  },
+
+  verificationIconRed: {
+    position: "absolute",
+    top: "40px",
+    right: "10px",
+    backgroundColor: "red",
+    borderRadius: "50%",
+    // padding: "3px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "15px",
+    height: "15px",
+    pointerEvents: "none", 
+  },
+};
+
 
   return (
     <div>
@@ -73,17 +123,21 @@ const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, Handletoggle
       <div className="sidebar-scroll">
         <div className="user-account">
           {/* {user && user.profilePhoto && ( */}
+          <div style={{ position: "relative", display: "inline-block", width: "65px", height: "40px" }}>
             <img
             src={user.profilePhoto ? `${BASE_URL}${user.profilePhoto}` : DEFAULT_PROFILE_IMAGE}
             className="rounded-circle user-photo"
             alt="User Profile Picture"
             style={{
-              width: '50px',
-              height: '50px',
+              width: '55px',
+              height: '55px',
               objectFit: 'cover',
+              display: 'block',
             }}
           />
-          
+                      {renderVerificationBadge()}
+            </div>
+
           {/* )} */}
           <div className="dropdown" ref={dropdownRef}>
             <span>Welcome,</span>
@@ -145,5 +199,4 @@ const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, Handletoggle
     </div>
   );
 };
-
 export default Sidebarprofile;

@@ -52,6 +52,10 @@ import SellerLayout from "../Component/Dashboard/SellerDashboard/MainDashboard";
 
 //----------------------------------------Super-Admin Components-----------------------------//
 import SuperAdminDashboard from "../Component/Dashboard/Super-AdminDashboard/Dashboard/MainContent";
+import SuperAdminBlog from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/BlogRequest";
+import SuperAdminBlogPost from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/BlogPost";
+import SuperAdminViewBlog from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/ViewBlog";
+import SuperAdminUpdateBlog from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/UpdateBlogList";
 //-----------------------------Admin--------------------------//
 import Admin from "../Component/Dashboard/Super-AdminDashboard/Admin/Admin";
 import AdminProfile from "../Component/Dashboard/Super-AdminDashboard/Admin/Profile/UserProf";
@@ -68,6 +72,7 @@ import SoldProduct from "../Component/Dashboard/Super-AdminDashboard/ArtistDetai
 import Artistproductrequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ProductRequest/ProductRequestTable";
 import ArtistAllProduct from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Product/AllArtistProduct";
 import ProductEditRequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/UserProfile/UserProf";
+import EditBlogRequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/UserProfile/BlogRequest/UpdateBlogList";
 
 import ProductViewRequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ViewUserProfile/UserProf";
 import ArtistProductRequestView   from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ProductRequest/ProductRequestView";
@@ -202,6 +207,10 @@ const AppRoutes = () => {
         <Route index element={<SuperAdminDashboard />} />
         <Route path="dashboard" element={<SuperAdminDashboard />} />
         <Route path="profile" element={<UserProfile />} />
+        <Route path="blog" element={<SuperAdminBlog />} />
+        <Route path="blog/create-blog" element={<SuperAdminBlogPost />} />
+        <Route path="blog/view-blog" element={<SuperAdminViewBlog />} />
+        <Route path="blog/update-blog" element={<SuperAdminUpdateBlog />} />
 
         {/* Admin Management */}
         <Route path="admin" element={<Admin />} />
@@ -227,6 +236,7 @@ const AppRoutes = () => {
         <Route path="artist/artisttransaction" element={<ArtistTransaction/>} />
         <Route path="artist/artistpackagingmaterial" element={<ArtistPackagingMaterial/>} />
         <Route path="artist/management/productrequest/:userId" element={<ArtistProductRequestView/>} />
+        <Route path="artist/management/artisteditreuqest/update-blog" element={<EditBlogRequest/>} />
 
         <Route path="artist/management/artisteditreuqest/" element={<ProductEditRequest/>} />        
         <Route path="artist/allartistproduct/productdetails/:userId" element={<ArtistProductsDetails/>} />
