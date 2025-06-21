@@ -177,10 +177,6 @@ const UserAccount = () => {
 
     try {
       const response = await getAPI(`/auth/user/${userId}`); 
-      // if (!response.ok) {
-      //   throw new Error("Network response was not ok");
-      // }
-      // const data = await response.json();
       setUser(response.data);
     } catch (error) {
       setError(error.message);
@@ -220,11 +216,6 @@ const UserAccount = () => {
           <li className="nav-item">
             <a className="nav-link active" data-toggle="tab" href="#menu">
               Menu
-            </a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" data-toggle="tab" href="#Chat">
-              <i class="fas fa-book-open"></i>
             </a>
           </li>
           <li className="nav-item">
