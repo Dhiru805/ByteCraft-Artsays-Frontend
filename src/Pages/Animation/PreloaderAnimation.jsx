@@ -27,8 +27,8 @@ export default function PreloaderAnimation() {
     >
       <style jsx global>{`
         @font-face {
-          font-family: 'Windhvi';
-          src: url('/fonts/Windhvi.ttf') format('truetype');
+          font-family: "Windhvi";
+          src: url("/fonts/Windhvi.ttf") format("truetype");
           font-display: swap;
         }
       `}</style>
@@ -115,7 +115,7 @@ export default function PreloaderAnimation() {
                 <motion.div
                   style={{
                     position: "absolute",
-                    height: isMobile ? "40px" : "70px",
+                    height: isMobile ? "30px" : "60px",
                     width: "100%",
                     top: "20%",
                     left: 0,
@@ -123,14 +123,15 @@ export default function PreloaderAnimation() {
                     zIndex: 4,
                     transformOrigin: "left",
                   }}
-                  initial={{ scaleX: 0, opacity: 1 }}
+                  initial={{ scaleX: 0, opacity: 1, x: 0 }}
                   animate={{
-                    scaleX: [0, 1, 1, 0],
+                    scaleX: [0, 0, 1, 0],
+                    x: [0, 50, 50, 0], // moving while expanding
                   }}
                   transition={{
                     delay: 3.6,
-                    duration: 0.8,
-                    times: [0, 0.4, 0.6, 1],
+                    duration: 1.2,
+                    times: [0, 0.4, 0.7, 1],
                     ease: "easeInOut",
                   }}
                 />
@@ -139,7 +140,7 @@ export default function PreloaderAnimation() {
                 <motion.div
                   style={{
                     position: "absolute",
-                    height: isMobile ? "40px" : "70px",
+                    height: isMobile ? "30px" : "60px",
                     width: "100%",
                     top: "20%",
                     left: 0,
@@ -147,15 +148,16 @@ export default function PreloaderAnimation() {
                     zIndex: 3,
                     transformOrigin: "right",
                   }}
-                  initial={{ scaleX: 0, opacity: 1 }}
+                  initial={{ scaleX: 0, opacity: 1, x: 0 }}
                   animate={{
                     scaleX: [0, 0, 1, 0],
+                    x: [0, -50, -50, 0],
                   }}
                   transition={{
-                    delay: 3.9,
-                    duration: 1,
+                    delay: 4.2,
+                    duration: 1.2,
                     ease: "easeInOut",
-                    times: [0, 0.3, 0.5, 1],
+                    times: [0, 0.3, 0.6, 1],
                   }}
                 />
 
@@ -165,8 +167,8 @@ export default function PreloaderAnimation() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -30 }}
                   transition={{
-                    delay: 4.6,
-                    duration: 0.6,
+                    delay: 5.2,
+                    duration: 1.5,
                     ease: "easeOut",
                   }}
                   style={{
