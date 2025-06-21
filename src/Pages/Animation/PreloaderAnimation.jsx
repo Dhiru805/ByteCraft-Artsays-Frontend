@@ -5,10 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function PreloaderAnimation() {
   const [isLoading, setIsLoading] = useState(true);
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 1440;
+  const isMobile = typeof window !== "undefined" && window.innerWidth <= 992;
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 8000);
+    const timer = setTimeout(() => setIsLoading(false), 8800); // extended to allow blackout
     return () => clearTimeout(timer);
   }, []);
 
@@ -21,7 +21,7 @@ export default function PreloaderAnimation() {
         left: 0,
         width: "100%",
         height: "100vh",
-        backgroundColor: "#000000",
+        backgroundColor: "#000",
         overflow: "hidden",
       }}
     >
@@ -36,17 +36,20 @@ export default function PreloaderAnimation() {
       <AnimatePresence>
         {isLoading && (
           <motion.div
-            initial={{ opacity: 0}}
+            initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.8, ease: "easeOut" } }}
+            exit={{
+              opacity: 0,
+              transition: { duration: 0.8, ease: "easeOut" },
+            }}
             style={{
               width: "100%",
               height: "100%",
               position: "relative",
-              color: "#ffffff",
+              color: "#fff",
             }}
           >
-            {/* Text Animation */}
+            {/* Text Slide In-Out */}
             <motion.div
               style={{
                 position: "absolute",
@@ -55,44 +58,38 @@ export default function PreloaderAnimation() {
                 width: "100%",
                 height: "100%",
                 display: "flex",
-                alignItems: "center",
                 justifyContent: "center",
+                alignItems: "center",
                 flexDirection: isMobile ? "column" : "row",
               }}
               initial={{ opacity: 1 }}
               animate={{ opacity: 0 }}
               transition={{ delay: 3.2, duration: 0.6 }}
             >
-              {[
-                { text: "Pioneering", delay: 0 },
-                { text: "Creative", delay: 0.4 },
-                { text: "Excellence", delay: 0.8 },
-              ].map((item, i) => (
+              {["Pioneering", "Creative", "Excellence"].map((word, index) => (
                 <motion.p
-                  key={item.text}
-                  initial={{ opacity: 0, y: 50 }}
+                  key={word}
+                  initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -50 }}
                   transition={{
-                    delay: 0.8 + i * 0.4,
-                    duration: 0.5,
+                    delay: 0.8 + index * 0.4,
+                    duration: 0.6,
                     ease: "easeOut",
                   }}
                   style={{
-                    fontSize: isMobile ? "36px" : "54px",
-                    fontWeight: i === 1 ? "bold" : 100,
+                    fontSize: isMobile ? "24px" : "44px",
+                    fontWeight: word === "Creative" ? 700 : 100,
                     color: "#d1d5db",
-                    margin: isMobile ? "0 0 8px 0" : "0 10px",
-                    fontFamily: "system-ui, sans-serif",
+                    margin: isMobile ? "0 0 10px 0" : "0 10px",
                     whiteSpace: "nowrap",
                   }}
                 >
-                  {item.text}
+                  {word}
                 </motion.p>
               ))}
             </motion.div>
 
-            {/* Reveal Box and Final Text */}
+            {/* Reveal Box + Brand */}
             <motion.div
               style={{
                 position: "absolute",
@@ -101,8 +98,8 @@ export default function PreloaderAnimation() {
                 width: "100%",
                 height: "100%",
                 display: "flex",
-                alignItems: "center",
                 justifyContent: "center",
+                alignItems: "center",
               }}
             >
               <div
@@ -114,7 +111,7 @@ export default function PreloaderAnimation() {
                   justifyContent: "center",
                 }}
               >
-                {/* Reveal Box (expanding and splitting) */}
+                {/* Reveal Box Expand */}
                 <motion.div
                   style={{
                     position: "absolute",
@@ -125,23 +122,20 @@ export default function PreloaderAnimation() {
                     backgroundColor: "#FED8B1",
                     zIndex: 4,
                     transformOrigin: "left",
-                    x: [ "0%", "0%", "-20%", "0%" ]
                   }}
-                  initial={{ scaleX: 0, opacity: 0 }}
+                  initial={{ scaleX: 0, opacity: 1 }}
                   animate={{
                     scaleX: [0, 1, 1, 0],
-                    opacity: [1, 1, 1, 1],
-                    x: ["0%", "0%", "-10%", "20%"],
                   }}
                   transition={{
                     delay: 3.6,
-                    duration: 1.0,
-                    times: [0, 0.3, 0.5, 0.8, 1],
+                    duration: 0.8,
+                    times: [0, 0.4, 0.6, 1],
                     ease: "easeInOut",
                   }}
                 />
 
-                {/* Collapse Phase (into right) */}
+                {/* Reveal Box Collapse */}
                 <motion.div
                   style={{
                     position: "absolute",
@@ -150,48 +144,62 @@ export default function PreloaderAnimation() {
                     top: "20%",
                     left: 0,
                     backgroundColor: "#FED8B1",
-                    zIndex: 4,
-                    transformOrigin: "right", 
+                    zIndex: 3,
+                    transformOrigin: "right",
                   }}
-                  initial={{ scaleX: 0, opacity: 0 }}
+                  initial={{ scaleX: 0, opacity: 1 }}
                   animate={{
                     scaleX: [0, 0, 1, 0],
-                    opacity: [1, 1, 1, 1],
-                    x: ["0%", "0%", "-20%", "0%"],
                   }}
                   transition={{
                     delay: 3.9,
-                    duration: 1.0,
-                    times: [0, 0.3, 0.5, 0.8, 1],
+                    duration: 1,
                     ease: "easeInOut",
+                    times: [0, 0.3, 0.5, 1],
                   }}
                 />
 
-                {/* Final Brand Name Text */}
+                {/* Brand Text - Appear + Exit */}
                 <motion.p
                   initial={{ opacity: 0, y: 0 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -50 }}
+                  exit={{ opacity: 0, y: -30 }}
                   transition={{
-                    delay: 4.6, 
+                    delay: 4.6,
                     duration: 0.6,
-                    ease: "easeOut"
+                    ease: "easeOut",
                   }}
                   style={{
-                    fontSize: isMobile ? "42px" : "60px",
+                    fontSize: isMobile ? "32px" : "54px",
                     fontFamily: "Windhvi, sans-serif",
                     color: "#ffffff",
-                    zIndex: 2,
+                    zIndex: 5,
                     margin: 0,
                     textAlign: "center",
                     whiteSpace: "nowrap",
-
                   }}
                 >
                   Artsays.in
                 </motion.p>
               </div>
             </motion.div>
+
+            {/* Exit blackout after brand */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0 }}
+              exit={{ opacity: 1 }}
+              transition={{ delay: 5.6, duration: 0.8, ease: "easeOut" }}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                backgroundColor: "#000000",
+                zIndex: 10,
+              }}
+            />
           </motion.div>
         )}
       </AnimatePresence>
