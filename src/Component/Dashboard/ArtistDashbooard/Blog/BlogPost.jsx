@@ -51,6 +51,20 @@ useEffect(() => {
       } else {
         setImagePreview(null);
       }
+    } else if (name === "blogName") {
+    const capitalizedTitle = value.charAt(0).toUpperCase() + value.slice(1);
+    const generatedSlug = value
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')     // remove special characters
+      .replace(/\s+/g, '-')         // replace spaces with dashes
+      .replace(/--+/g, '-');        // remove multiple dashes
+
+    setFormData({
+      ...formData,
+      blogName: capitalizedTitle,
+      slug: generatedSlug,
+    });
     } else {
       setFormData({ ...formData, [name]: value });
     }

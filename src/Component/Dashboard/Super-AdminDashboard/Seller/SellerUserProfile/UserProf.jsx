@@ -11,12 +11,14 @@ import Packagingmaterial from './PackagingMaterial/ProductPurchasedSeller'
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import Settings from './UserProfile/BasicInformation';
-import useUserType from '../../urlconfig'
+import useUserType from '../../../urlconfig'
+import putAPI from '../../../../../api/putAPI';
 
 const UserProfileForm = () => {
   const userType = useUserType();
-  const { userId } = useParams();
+  // const { userId } = useParams();
   const location = useLocation();
+  const { seller } = location.state || {};
   const navigate = useNavigate(); 
   const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
@@ -44,9 +46,12 @@ const UserProfileForm = () => {
     website: ''
   });
 
+    const userId = seller?._id;
+
+
   const fetchProfile = async () => {
     try {
-      const result = await getAPI(`http://localhost:3001/auth/userid/${userId}`, {}, true, false);
+      const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
       if (result.data.user) {
         const userData = result.data.user;
         const formattedBirthdate = userData.birthdate ? new Date(userData.birthdate).toISOString().split('T')[0] : '';
@@ -58,7 +63,7 @@ const UserProfileForm = () => {
           address: parsedAddress,
         });
 
-        const BASE_URL = 'http://localhost:3001';
+const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
         const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : 'DashboardAssets/assets/images/user.png';
         setPreviewImage(profilePhotoUrl);
       }
@@ -133,7 +138,7 @@ const UserProfileForm = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
@@ -159,27 +164,27 @@ const UserProfileForm = () => {
         formData.append('profilePhoto', imageFile);
       }
 
-      const response = await fetch(`http://localhost:3001/auth/users/${userId}`, {
-        method: 'PUT',
-        body: formData,
-      });
-
-      const result = await response.json(); 
-
-      if (response.ok) {
-        toast.success(result.message || 'Profile updated successfully!');
-        setPasswordData({
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: '',
-        });
-      } else {
-        toast.error(result.message || `Failed to update profile: ${response.status}`);
-      }
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      toast.error('Error updating profile. Please try again.');
-    }
+          const response = await putAPI(`/auth/users/${userId}`, formData, {
+              'Content-Type': 'multipart/form-data',
+            });
+      
+            toast.success(response.message || 'Profile updated successfully!');
+            if (response.ok) {
+              setPasswordData({
+                currentPassword: '',
+                newPassword: '',
+                confirmPassword: '',
+              });
+             
+            }
+          } catch (error) {
+            console.error('Error updating profile:', error);
+            if (error.response?.data?.message) {
+              toast.error(error.response.data.message);
+            } else {
+              toast.error('Something went wrong. Please try again.');
+            }
+          }
   };
 
   const tabs = [

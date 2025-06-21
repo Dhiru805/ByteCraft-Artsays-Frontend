@@ -34,7 +34,7 @@ const OrderStatus = () => {
     const lastCompleteIndex = steps.reduce((acc, step, idx) => step.status === "complete" ? idx : acc, -1);
 
     return (
-        <div className="">
+        <div className=" w-[1208px]">
             <h2 className="text-xl font-semibold mb-1">Order Status</h2>
             <p className="text-gray-500 mb-6 text-sm">
                 Order ID : <span className="font-medium">#SDGT1254FD</span>

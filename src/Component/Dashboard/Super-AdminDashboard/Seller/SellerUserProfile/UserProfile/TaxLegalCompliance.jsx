@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import getAPI from '../../../../../../api/getAPI';
+import putAPI from '../../../../../../api/putAPI';
 
 const TaxLegalCompliance = ({ userId }) => {
     const [formData, setFormData] = useState({
@@ -23,11 +25,12 @@ const TaxLegalCompliance = ({ userId }) => {
     const [errors, setErrors] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
+    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
     useEffect(() => {
         const fetchBusinessData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/auth/gettaxlegalcompliance/${userId}`);
+                const response = await getAPI(`/auth/gettaxlegalcompliance/${userId}`);
                 if (response.data && response.data.compliance) {
                     const complianceData = response.data.compliance;
                     setFormData((prev) => ({
@@ -49,14 +52,14 @@ const TaxLegalCompliance = ({ userId }) => {
         const file = event.target.files[0];
         setFormData((prev) => ({
             ...prev,
-            documents: { 
-                ...prev.documents,  
-                [field]: file       
+            documents: {
+                ...prev.documents,
+                [field]: file
             }
         }));
         setErrors((prev) => ({ ...prev, [field]: "" }));
     };
-    
+
     const validateForm = () => {
         const requiredFields = ['gst', 'pan', 'tan', 'cin', 'aadhaar'];
         let newErrors = {};
@@ -80,36 +83,36 @@ const TaxLegalCompliance = ({ userId }) => {
             toast.error("Please upload all required documents.");
             return;
         }
-    
+
         try {
-            const url = `http://localhost:3001/auth/updatetaxlegalcompliance/${userId}`;
+            const url = `/auth/updatetaxlegalcompliance/${userId}`;
             const formDataToSend = new FormData();
-    
+
             Object.keys(formData).forEach(key => {
                 if (key !== 'documents') {
                     formDataToSend.append(key, formData[key]);
                 }
             });
-    
+
             Object.keys(formData.documents).forEach(key => {
                 const fileOrUrl = formData.documents[key];
                 if (fileOrUrl instanceof File) {
                     formDataToSend.append(key, fileOrUrl);
                 } else if (typeof fileOrUrl === 'string') {
-                    formDataToSend.append(`${key}_existing`, fileOrUrl); 
+                    formDataToSend.append(`${key}_existing`, fileOrUrl);
                 }
             });
-    
-            const result = await axios.put(url, formDataToSend, {
-                headers: { 'Content-Type': 'multipart/form-data' },
+
+            const result = await putAPI(url, formDataToSend, {
+                'Content-Type': 'multipart/form-data'
             });
-    
-            if (result.status === 200) {
+
+            if (result) {
                 toast.success(result.data.message || 'Tax and Legal Compliance details updated successfully');
             } else {
                 toast.error(result.data.message.error || 'Failed to update details');
             }
-        }catch (error) {
+        } catch (error) {
             if (error.response?.data?.errors) {
                 const validationErrors = error.response.data.errors;
                 Object.values(validationErrors).forEach(errorMessage => {
@@ -119,10 +122,10 @@ const TaxLegalCompliance = ({ userId }) => {
                 toast.error(error.response?.data?.message || 'Error updating details');
             }
         }
-        
+
     };
-    
-    
+
+
     const openModal = (imageUrl) => {
         setSelectedImage(imageUrl);
         setIsModalOpen(true);
@@ -139,18 +142,18 @@ const TaxLegalCompliance = ({ userId }) => {
         if (typeof fileOrUrl === 'string') {
             if (fileOrUrl.includes('.pdf')) {
                 return (
-                    <a href={`http://localhost:3001${fileOrUrl}`} target="_blank" rel="noopener noreferrer" className="btn btn-info">
+                    <a href={`${BASE_URL}${fileOrUrl}`} target="_blank" rel="noopener noreferrer" className="btn btn-info">
                         View PDF
                     </a>
                 );
             } else {
                 return (
                     <img
-                        src={`http://localhost:3001${fileOrUrl}`}
+                        src={`${BASE_URL}${fileOrUrl}`}
                         alt="Uploaded Document"
                         className="img-thumbnail"
                         width="100"
-                        onClick={() => openModal(`http://localhost:3001${fileOrUrl}`)}
+                        onClick={() => openModal(`${BASE_URL}${fileOrUrl}`)}
                         style={{ cursor: 'pointer' }}
                     />
                 );
@@ -204,9 +207,9 @@ const TaxLegalCompliance = ({ userId }) => {
                         </div>
                         <div className="col-lg-6 col-md-6">
                             <div className="form-group">
-                            <label>
-    Upload Document {field === 'businessCert' ? "(Optional)" : <span style={{ color: 'red' }}>*</span>}
-</label>
+                                <label>
+                                    Upload Document {field === 'businessCert' ? "(Optional)" : <span style={{ color: 'red' }}>*</span>}
+                                </label>
 
                                 <input type="file" className="form-control" accept=".jpg,.jpeg,.png,.pdf" onChange={(e) => handleFileChange(e, field)} />
                                 {/* {errors[field] && <small className="text-danger">{errors[field]}</small>} */}

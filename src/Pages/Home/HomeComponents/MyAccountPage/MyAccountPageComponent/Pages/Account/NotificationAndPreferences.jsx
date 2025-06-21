@@ -10,7 +10,7 @@ const NotificationAndPreferences = () => {
   };
 
   return (
-    <div className="w-[856px] mx-auto  text-gray-800 text-[16px]">
+    <div className="w-[1208px] mx-auto  text-gray-800 text-[16px]">
       <h2 className="text-xl text-gray-950 font-semibold mb-6">Notification and Preferences</h2>
 
       <div className="mb-6">
@@ -49,9 +49,9 @@ const NotificationAndPreferences = () => {
       </div>
 
       <div className="mb-6">
-        <label className="block mb-2 font-medium">SMS/Email Alerts for Bids & Offer</label>
-
-
+        <label className="block mb-2 font-medium">
+          SMS/Email Alerts for Bids & Offer
+          </label>
         <div
           className={`w-10 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${isOn ? 'bg-[#6B5A5C]' : 'bg-gray-200'
             }`}
@@ -62,12 +62,7 @@ const NotificationAndPreferences = () => {
               }`}
           ></div>
         </div>
-
-
-
-
       </div>
-
       <button className="bg-[#6F4D34] text-white px-9 py-2 rounded-full">Update</button>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom'; 
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Preferences from './Preferences/Pereferences';
@@ -7,20 +7,22 @@ import Billings from './Billings/Billings';
 import ViewBlogRequest from './BlogRequest/ViewBlogRequest';
 import Blogs from "./Blogs/Blogs"
 import Products from "./Products/Product"
-import Productrequest  from "./ProductRequest/ProductRequestTable"
+import Productrequest from "./ProductRequest/ProductRequestTable"
 import Transaction from "./Transaction/Transaction"
 import Packagingmaterial from "./PackagingMaterial/ProductPurchasedArtist"
-import Soldproduct  from "./SoldProduct/SoldProduct"
+import Soldproduct from "./SoldProduct/SoldProduct"
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import Settings from './UserInfo/BasicInformation';
-import useUserType from '../../urlconfig'
+import useUserType from '../../../urlconfig'
+import putAPI from '../../../../../api/putAPI';
 
 const UserProfileForm = () => {
   const userType = useUserType();
-  const { userId } = useParams();
   const location = useLocation();
-  const navigate = useNavigate(); 
+  const { artist } = location.state || {};
+  const navigate = useNavigate();
+
   const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
   const [passwordData, setPasswordData] = useState({
@@ -47,9 +49,11 @@ const UserProfileForm = () => {
     website: ''
   });
 
+  const userId = artist?._id;
+
   const fetchProfile = async () => {
     try {
-      const result = await getAPI(`http://localhost:3001/auth/userid/${userId}`, {}, true, false);
+      const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
       if (result.data.user) {
         const userData = result.data.user;
         const formattedBirthdate = userData.birthdate ? new Date(userData.birthdate).toISOString().split('T')[0] : '';
@@ -61,7 +65,7 @@ const UserProfileForm = () => {
           address: parsedAddress,
         });
 
-        const BASE_URL = 'http://localhost:3001';
+        const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
         const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : 'DashboardAssets/assets/images/user.png';
         setPreviewImage(profilePhotoUrl);
       }
@@ -94,7 +98,7 @@ const UserProfileForm = () => {
       search: `?tab=${tabName}`,
     });
   };
-  
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -157,38 +161,34 @@ const UserProfileForm = () => {
         formData.append('newPassword', passwordData.newPassword);
         formData.append('confirmPassword', passwordData.confirmPassword);
       }
-      
 
       if (imageFile) {
         formData.append('profilePhoto', imageFile);
       }
 
-      const response = await fetch(`http://localhost:3001/auth/users/${userId}`, {
-        method: 'PUT',
-        body: formData,
-      });
+      const result = await putAPI(`/auth/user/${userId}`, formData, {}, true);
 
-      const result = await response.json(); 
 
-      if (response.ok) {
-        toast.success(result.message || 'Profile updated successfully!');
+      if (result?.message === 'Profile updated successfully') {
+        toast.success(result.message);
         setPasswordData({
           currentPassword: '',
           newPassword: '',
           confirmPassword: '',
         });
       } else {
-        toast.error(result.message || `Failed to update profile: ${response.status}`);
+        toast.error(result?.message || 'Failed to update profile.');
       }
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.error("Caught error in try-catch:", error);
       toast.error('Error updating profile. Please try again.');
     }
   };
 
+
   const tabs = [
     { name: 'Settings', component: Settings },
-    { name: 'Blogs', component: Blogs},
+    { name: 'Blogs', component: Blogs },
     { name: 'Blog Request', component: ViewBlogRequest },
     { name: 'Products', component: Products },
     { name: 'Product Request', component: Productrequest },

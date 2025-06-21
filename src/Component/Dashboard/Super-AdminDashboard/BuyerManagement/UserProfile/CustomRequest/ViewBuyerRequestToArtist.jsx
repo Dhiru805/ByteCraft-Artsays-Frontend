@@ -11,6 +11,9 @@ function ViewBuyerRequest() {
     const { request } = state || {};
     const {userId} =useParams();
 
+    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+
+
     const [productName, setProductName] = useState('');
     const [description, setDescription] = useState('');
     const [budget, setBudget] = useState('');
@@ -24,7 +27,7 @@ function ViewBuyerRequest() {
             setProductName(request.ProductName || '');
             setDescription(request.Description || '');
             setBudget(request.Budget || '');
-            setImage(request.BuyerImage ? `http://localhost:3001/${request.BuyerImage}` : '');
+            setImage(request.BuyerImage ? `${BASE_URL}${request.BuyerImage}` : '');
             setArtistId(`${request.Artist.id.name} ${request.Artist.id.lastName}`);
             setBuyerId(`${request.Buyer.id.name} ${request.Buyer.id.lastName}`);
         }

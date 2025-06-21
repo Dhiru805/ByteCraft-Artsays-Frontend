@@ -12,7 +12,7 @@ const Logout = () => {
   };
 
   return (
-    <div className="space-y-4 w-[856px]">
+    <div className="space-y-4 w-[1208px]">
       <h2 className="text-2xl text-gray-950 font-semibold">Logout</h2>
       <p className='text-[#4F3E2D] text-[15px] font-semibold'>Are you sure you want to logout?</p>
       <button

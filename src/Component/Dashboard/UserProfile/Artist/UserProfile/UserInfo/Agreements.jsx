@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import putAPI from '../../../../../../api/putAPI';
 import getAPI from '../../../../../../api/getAPI';
 
-const AccountSecurityAgreement = ({ userId }) => {
+const AccountSecurityAgreement = ({ userId,loading}) => {
     const [formData, setFormData] = useState({});
 
     const checkboxLabels = {
@@ -107,7 +107,10 @@ const AccountSecurityAgreement = ({ userId }) => {
                     />
                     <label className="mx-2">{checkboxLabels.agreeNoFakeArtwork}</label>
                 </div>
-                <button type="submit" className="btn btn-primary mx-2">Update</button>
+                <button type="submit" className="btn btn-primary mx-2"
+                disabled={loading}>
+                 {loading? "Updating.........":"Update"}
+                </button>
             </form>
         </div>
     );

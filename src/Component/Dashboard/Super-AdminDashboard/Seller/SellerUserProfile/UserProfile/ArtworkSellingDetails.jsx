@@ -22,7 +22,7 @@ const ArtworkPricingDetails = ({ userId }) => {
                 return;
             }
             try {
-                const url = `http://localhost:3001/auth/getsellartwork/${userId}`;
+                const url = `/auth/getsellartwork/${userId}`;
                 const result = await getAPI(url);
 
                 if (result?.data?.artwork) {
@@ -51,7 +51,7 @@ const ArtworkPricingDetails = ({ userId }) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const url = `http://localhost:3001/auth/updatesellartwork/${userId}`;
+            const url = `/auth/updatesellartwork/${userId}`;
             const result = await putAPI(url, formData);
             if (result) {
                 toast.success('Artwork details updated successfully');

@@ -11,6 +11,7 @@ const BankPaymentDetails = () => {
     ifscCode: '',
     upiId: ''
   });
+  const [loading, setLoading] = useState(false);
 
   const userId = localStorage.getItem('userId');
 
@@ -57,23 +58,27 @@ const BankPaymentDetails = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
     try {
       const url = `/auth/updatebankdetails/${userId}`;
       const result = await putAPI(url, formData);
 
       if (result) {
+        setLoading(false);
         toast.success('Bank details updated successfully');
       } else {
+        setLoading(false);
         toast.error('Failed to update bank details');
       }
     } catch (error) {
+      setLoading(false);
       toast.error('Error updating bank details');
     }
   };
 
 
   return (
-    <div className="space-y-6 w-[856px]">
+    <div className="space-y-6 w-[1208px]">
       <h2 className="text-2xl text-gray-950 font-semibold">Bank/Payment Details (For Payments & Withdrawals)</h2>
       <form className="grid grid-cols-1 md:grid-cols-2 gap-6"
         onSubmit={handleSubmit}
@@ -162,7 +167,7 @@ const BankPaymentDetails = () => {
             type="submit"
             className="bg-[#6F4D34] text-white px-10 py-2 rounded-full text-sm font-medium"
           >
-            Update
+            {loading ? 'Updating...' : 'Update'}
           </button>
         </div>
       </form>

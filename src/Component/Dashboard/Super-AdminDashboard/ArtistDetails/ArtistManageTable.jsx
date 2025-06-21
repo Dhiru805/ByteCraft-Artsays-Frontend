@@ -5,6 +5,7 @@ import ConfirmationDialog from '../../ConfirmationDialog';
 import VerifyModal from "./VerifyModal"
 import CreateArtistModal from "./Createmodal"
 import useUserType from '../../urlconfig'
+import getAPI from "../../../../api/getAPI";
 
 
 function ArtistManageTable() {
@@ -14,13 +15,13 @@ function ArtistManageTable() {
   const [selectedArtist, setSelectedArtist] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateArtistModalOpen, setIsCreateArtistModalOpen] = useState(false);
-  const BASE_URL = 'http://localhost:3001';
+  const BASE_URL = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
   const userType = useUserType();
 
   const fetchArtists = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/artist/artists");
+      const response = await getAPI("/artist/artists");
       const artistsData = response.data;
 
       const parsedArtists = artistsData.map((artist) => {
@@ -183,9 +184,9 @@ function ArtistManageTable() {
                               type="button"
                               className="btn btn-outline-primary btn-sm mr-2"
                               title="Navigate"
-                              onClick={() =>
-                                navigate(`/${userType}/Dashboard/artistmanagetable/artistprofileview/${artist._id}`)
-                              }
+                              // onClick={() =>
+                              //   navigate("/super-admin/artist/artist-edit",{ state: { artist } })
+                              // }
 
                             >
                               <i className="fa fa-eye"></i>
@@ -195,7 +196,7 @@ function ArtistManageTable() {
                               className="btn btn-outline-info btn-sm mr-2"
                               title="Edit"
                               onClick={() =>
-                                navigate(`/${userType}/Dashboard/artistmanagetable/artistprofile/${artist._id}`)
+                                navigate("/super-admin/artist/artist-edit", { state: { artist } })
                               }
                             >
                               <i class="fa fa-pencil"></i>

@@ -4,13 +4,15 @@ import Sidebar from "../Sidebar/LeftSide";
 import RightIconBar from "../RightIconBar/RightIconBar";
 import Footer from "../Footer/Footer";
 import { Outlet } from 'react-router-dom';
+import ScrollToTop from "../ScrollToTop";
 
 const Dashboard = () => {
   return (
     <div id="wrapper">
+      <ScrollToTop />
       <Navbar />
       <Sidebar />
-      <RightIconBar />
+      {/* <RightIconBar /> */}
 
       <div id="main-content" className="d-flex flex-column min-vh-100">
         <div className="flex-grow-1">

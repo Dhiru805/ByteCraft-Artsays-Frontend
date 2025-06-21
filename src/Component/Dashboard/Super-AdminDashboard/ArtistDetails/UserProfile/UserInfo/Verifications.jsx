@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import getAPI from '../../../../../../api/getAPI';
+import putAPI from '../../../../../../api/putAPI';
 
 const AccountVerification = ({ userId }) => {
     const [verificationType, setVerificationType] = useState('');
@@ -9,18 +11,19 @@ const AccountVerification = ({ userId }) => {
     const [filePreview, setFilePreview] = useState(null);
     const [fileType, setFileType] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const baseURL = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         const fetchVerificationData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/auth/verificationdetails/${userId}`);
+                const response = await getAPI(`/auth/verificationdetails/${userId}`);
                 const data = response.data.verification;
     
                 if (data) {
                     setVerificationType(data.documentType || '');  
                     setDocNumber(data.documentNumber || ''); 
                     if (data.documentFile) {  
-                        setFilePreview(`http://localhost:3001/${data.documentFile}`);
+                       setFilePreview(`${baseURL}/${data.documentFile}`);
                         setFileType(data.documentFile.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg');
                     }
                 }
@@ -97,12 +100,8 @@ const AccountVerification = ({ userId }) => {
         formData.append('file', file);
 
         try {
-            const url = `http://localhost:3001/auth/updateverificationdetails/${userId}`;
-            const response = await axios.put(url, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+            const url = `/auth/updateverificationdetails/${userId}`;
+            const response = await putAPI(url, formData, {},true);
 
             if (response.status === 200) {
                 toast.success('Verification details updated successfully');

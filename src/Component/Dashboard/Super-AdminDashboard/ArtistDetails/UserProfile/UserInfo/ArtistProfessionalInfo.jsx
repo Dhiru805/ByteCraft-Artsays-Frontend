@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import CreatableSelect from 'react-select/creatable';
 import putAPI from '../../../../../../api/putAPI';
+import getAPI from '../../../../../../api/getAPI';
 
 const predefinedArtCategories = [
     { value: 'Mandala', label: 'Mandala' },
@@ -37,7 +38,7 @@ const ArtistInfo = ({ userId }) => {
     useEffect(() => {
         const fetchArtistData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/auth/getartistdetails/${userId}`);
+                const response = await getAPI(`/auth/getartistdetails/${userId}`);
                 if (response.data) {
                     setFormData({
                         ...response.data,
@@ -75,7 +76,7 @@ const ArtistInfo = ({ userId }) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const url = `http://localhost:3001/auth/updateartistdetails/${userId}`;
+            const url = `/auth/updateartistdetails/${userId}`;
             const result = await putAPI(url, {
                 ...formData,
                 artCategories: formData.artCategories.join(','),

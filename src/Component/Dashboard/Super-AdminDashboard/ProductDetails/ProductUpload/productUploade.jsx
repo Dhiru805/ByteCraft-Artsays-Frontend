@@ -1,7 +1,7 @@
 // src/components/productUpload/ProductUpload.js
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import useUserType from '../../urlconfig';
+import useUserType from '../../../urlconfig';
 import { toast } from 'react-toastify';
 import postAPI from "../../../../../api/postAPI";
 
@@ -76,25 +76,25 @@ function ProductUpload() {
     if (!formData.originRegion) {
       errors.originRegion = 'Origin/Region is required';
       toast.error('Origin/Region is required');
-  }
-  if (!formData.periodEra) {
+    }
+    if (!formData.periodEra) {
       errors.periodEra = 'Period/Era is required';
       toast.error('Period/Era is required');
-  }
-  if (!formData.antiqueCondition) {
+    }
+    if (!formData.antiqueCondition) {
       errors.antiqueCondition = 'Condition is required';
       toast.error('Condition is required');
-  }
-  if (!formData.originalReproduction) {
+    }
+    if (!formData.originalReproduction) {
       errors.originalReproduction = 'Original vs. Reproduction is required';
       toast.error('Original vs. Reproduction is required');
-  }
-  if (formData.isHandmade === undefined || formData.isHandmade === null) {
+    }
+    if (formData.isHandmade === undefined || formData.isHandmade === null) {
       errors.isHandmade = 'Please specify if handmade';
       toast.error('Please specify if handmade');
-  }
+    }
     return Object.keys(errors).length > 0 ? errors : null;
-};
+  };
 
 
 
@@ -133,23 +133,23 @@ function ProductUpload() {
       return;
     }
 
-    if (formData.partOfCollection && (!formData.editionSize )) {
+    if (formData.partOfCollection && (!formData.editionSize)) {
       toast.error("Please fill all required collection details");
       setIsSubmitting(false);
       return;
     }
 
-    
 
-  if (isAntiqueVintageSelected) {
-    const antiqueErrors = validateAntiqueFields(formData);
-    if (antiqueErrors) {
+
+    if (isAntiqueVintageSelected) {
+      const antiqueErrors = validateAntiqueFields(formData);
+      if (antiqueErrors) {
         setIsSubmitting(false);
         toast.error("Please fill all required Antique & Vintage fields");
         setActiveTab('antique'); // Switch to antique tab to show errors
         return;
+      }
     }
-}
     try {
       const formDataToSend = new FormData();
 
@@ -302,11 +302,15 @@ function ProductUpload() {
       formDataToSend.append('state', formData.state || profileData.address?.state || '');
       formDataToSend.append('country', formData.country || profileData.address?.country || '');
       formDataToSend.append('pincode', formData.pincode || profileData.address?.pincode || '');
- 
+
       const response = await postAPI('/api/cropImage', formDataToSend, {}, true);
       toast.success('Product created successfully!');
-      navigate(`/${userType}/Dashboard/allproduct`);
-    } catch (error) {
+      
+      setTimeout(() => {
+        navigate(`/super-admin/product-table`);
+      }, 1000);
+    } 
+    catch (error) {
       console.error('Error creating product:', error);
       const errorMessage = error.response?.data?.message || 'Failed to create product';
 

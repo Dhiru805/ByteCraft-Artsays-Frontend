@@ -3,8 +3,8 @@ import { RiCustomerServiceLine } from "react-icons/ri";
 import { BsBoxSeam } from "react-icons/bs";
 const MyAccountFooter = () => {
   return (
-    <div className="py-[80px] pl-[172px] bg-white text-gray-500 font-medium">
-      <div className="max-w-[1097px] flex gap-[120px]">
+    <div className="py-[80px]  bg-white text-gray-500 font-medium">
+      <div className="max-w-[1208px]  mx-auto flex gap-[120px]">
         <div className="flex items-start gap-3">
           <div className="text-5xl mt-1 text-[#6E4E37]"><BsBoxSeam /></div>
           <div className="text-left">

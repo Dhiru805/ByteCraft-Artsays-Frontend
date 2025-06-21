@@ -12,7 +12,7 @@ function ArtistBlogDetails() {
 
   const fetchBlog = async () => {
     try {
-      const result = await getAPI(`http://localhost:3001/Blog-Post/getblogbyid/${blogId}`, {}, true, false);
+      const result = await getAPI(`/Blog-Post/getblogbyid/${blogId}`, {}, true, false);
       if (result.data) {
         setBlogs([result.data.blog]);
       }
@@ -64,7 +64,7 @@ function ArtistBlogDetails() {
                     className="d-block img-fluid"
                     src={
                       blogs[0].blogImage
-                        ? `http://localhost:3001/${blogs[0].blogImage.replace(/\\/g, "/")}`
+                        ? `/${blogs[0].blogImage.replace(/\\/g, "/")}`
                         : "/placeholder.jpg"
                     }
                     alt={blogs[0].blogName}
