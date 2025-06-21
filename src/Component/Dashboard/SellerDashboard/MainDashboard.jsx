@@ -4,10 +4,12 @@ import Sidebar from "../Sidebar/LeftSide";
 import RightIconBar from "../RightIconBar/RightIconBar";
 import Footer from "../Footer/Footer";
 import { Outlet } from 'react-router-dom';
+import ScrollToTop from "../ScrollToTop/ScrollToTop";
 
 const Dashboard = () => {
   return (
     <div id="wrapper">
+      <ScrollToTop/>
       <Navbar />
       <Sidebar />
       {/* <RightIconBar /> */}
