@@ -61,10 +61,8 @@ const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, Handletoggle
       value: "$23B",
     },
   ];
-const renderVerificationBadge = () => {
- if (userType?.toLowerCase() === "super-admin") {
-    return null; 
-  }
+
+  const renderVerificationBadge = () => {
   if (status?.toLowerCase() === "verified") {
     return (
       <div style={styles.verificationIconBlue} title="Verified">
@@ -80,12 +78,13 @@ const renderVerificationBadge = () => {
   }
   return null;
 };
+
 const styles = {
   
   verificationIconBlue: {
     position: "absolute",
-    top: "40px",
-    right: "130px",
+    top: "5px",
+    left: "225px",
     backgroundColor: "#58d0ff",
     borderRadius: "50%",
     display: "flex",
@@ -136,7 +135,7 @@ const styles = {
               display: 'block',
             }}
           />
-            {renderVerificationBadge()}
+{userType?.toLowerCase() !== "super-admin" && renderVerificationBadge()}
             </div>
 
           {/* )} */}
