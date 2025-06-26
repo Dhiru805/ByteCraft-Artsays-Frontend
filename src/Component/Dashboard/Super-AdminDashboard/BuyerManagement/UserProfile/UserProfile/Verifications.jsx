@@ -126,13 +126,36 @@ const AccountVerification = ({ userId }) => {
         setIsModalOpen(false);
     };
 
+    const validateRequiredFields = () => {
+        const missing = [];
+    
+        if (!verificationType) {
+            missing.push("Document Type");
+        }
+    
+        if (!docNumber.trim()) {
+            missing.push("Document Number");
+        }
+    
+        if (!file) {
+            missing.push("Document File (please upload a new file)");
+        }
+    
+        if (missing.length > 0) {
+            toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
+            return false;
+        }
+    
+        return true;
+    };
+    
     return (
         <div className="body">
             <h5 className="mb-2">Account Verification</h5>
             <hr className="mt-1" />
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label>Select Document Type</label>
+                    <label>Select Document Type <span style={{ color: 'red' }}>*</span></label>
                     <select
                         className="form-control"
                         value={verificationType}
@@ -148,7 +171,7 @@ const AccountVerification = ({ userId }) => {
                 {verificationType && (
                     <>
                         <div className="form-group mt-2">
-                            <label>{verificationType} Number</label>
+                            <label>{verificationType} Number <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="text"
                                 className="form-control"
@@ -159,7 +182,7 @@ const AccountVerification = ({ userId }) => {
                             />
                         </div>
                         <div className="form-group mt-2">
-                            <label>Upload Document (PDF, JPG, PNG)</label>
+                            <label>Upload Document (PDF, JPG, PNG) <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="file"
                                 className="form-control"
@@ -193,8 +216,12 @@ const AccountVerification = ({ userId }) => {
           className="btn btn-primary mx-2"
           disabled={loading}
           onClick={(e) => {
+            if (!validateRequiredFields()) return;
             setLoading(true);
             Promise.resolve(handleSubmit(e))
+              .then(() => {
+                 window.location.reload();
+              })
               .catch(console.error)
               .finally(() => setLoading(false));
           }}

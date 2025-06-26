@@ -131,6 +131,33 @@ const ArtworkPricingDetails = ({ userId }) => {
         { value: 'professional', label: 'Professional' },
     ];
 
+    const validateRequiredFields = () => {
+    const missing = [];
+
+    if (!formData.typeOfSeller || formData.typeOfSeller.length === 0)
+        missing.push("Type of Seller");
+
+    if (!formData.categoryOfArt || formData.categoryOfArt.length === 0)
+        missing.push("Category of Art");
+
+    if (!formData.artStyleSpecialization || formData.artStyleSpecialization.length === 0)
+        missing.push("Art Style Specialization");
+
+    if (!formData.experienceInSellingArt)
+        missing.push("Experience in Selling Art");
+
+    if (!formData.sampleArtwork)
+        missing.push("Sample Artwork");
+
+    if (missing.length > 0) {
+        toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
+        return false;
+    }
+
+    return true;
+};
+
+
     return (
         <div className="body">
             <h5 className="mb-2">Artwork And Selling Details</h5>
@@ -139,7 +166,7 @@ const ArtworkPricingDetails = ({ userId }) => {
                 <div className="row clearfix">
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
-                            <label>Type of Seller</label>
+                            <label>Type of Seller <span style={{ color: 'red' }}>*</span></label>
                             <Select
                                 options={sellerOptions}
                                 value={sellerOptions.find(option => option.value === formData.typeOfSeller)}
@@ -150,7 +177,7 @@ const ArtworkPricingDetails = ({ userId }) => {
                     </div>
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
-                            <label>Category of Art</label>
+                            <label>Category of Art <span style={{ color: 'red' }}>*</span></label>
                             <CreatableSelect
                                 isMulti
                                 options={categoryOptions}
@@ -166,7 +193,7 @@ const ArtworkPricingDetails = ({ userId }) => {
                 <div className="row clearfix">
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
-                            <label>Art Style Specialization</label>
+                            <label>Art Style Specialization <span style={{ color: 'red' }}>*</span></label>
                             <CreatableSelect
                                 isMulti
                                 options={artStyleOptions}
@@ -176,7 +203,7 @@ const ArtworkPricingDetails = ({ userId }) => {
                             />
                         </div>
                         <div className="form-group">
-                            <label>Sample Artwork</label>
+                            <label>Sample Artwork <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="file"
                                 className="form-control"
@@ -187,7 +214,7 @@ const ArtworkPricingDetails = ({ userId }) => {
                     </div>
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
-                            <label>Experience in Selling Art</label>
+                            <label>Experience in Selling Art <span style={{ color: 'red' }}>*</span></label>
                             <Select
                                 options={experienceOptions}
                                 value={experienceOptions.find(option => option.value === formData.experienceInSellingArt)}
@@ -214,6 +241,7 @@ const ArtworkPricingDetails = ({ userId }) => {
                     className="btn btn-primary mx-2"
                     disabled={loading}
                     onClick={(e) => {
+                        if (!validateRequiredFields()) return;
                         setLoading(true);
                         Promise.resolve(handleSubmit(e))
                             .catch(console.error)

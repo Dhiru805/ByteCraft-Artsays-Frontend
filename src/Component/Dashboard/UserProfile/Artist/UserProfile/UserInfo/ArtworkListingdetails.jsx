@@ -133,6 +133,30 @@ const ArtworkPricingDetails = ({ userId,loading }) => {
         setIsModalOpen(false);
     };
 
+    const validateRequiredFields = () => {
+    const missing = [];
+
+    const requiredMap = {
+        'Minimum Artwork Price': formData.minArtworkPrice,
+        'Commission Terms'     : formData.commissionTerms.length,
+        'Preferred Payment Method': formData.preferredPaymentMethod.length,
+        'Sample Artwork'       : formData.sampleArtwork,
+    };
+
+    Object.entries(requiredMap).forEach(([label, value]) => {
+        if (!value || String(value).trim?.() === '' || value === 0) {
+            missing.push(label);
+        }
+    });
+
+    if (missing.length > 0) {
+        toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
+        return false;
+    }
+
+    return true;
+};
+
     return (
         <div className="body">
             <h5 className="mb-2">Artwork Listing And Details</h5>
@@ -141,7 +165,7 @@ const ArtworkPricingDetails = ({ userId,loading }) => {
                 <div className="row clearfix">
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
-                            <label>Minimum Artwork Price</label>
+                            <label>Minimum Artwork Price <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="number"
                                 className="form-control"
@@ -154,7 +178,7 @@ const ArtworkPricingDetails = ({ userId,loading }) => {
                     </div>
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
-                            <label>Available for Custom Orders?</label>
+                            <label>Available for Custom Orders? <span style={{ color: 'red' }}>*</span></label>
                             <div className="d-flex align-items-center">
                                 <div className="form-check form-check-inline">
                                     <input
@@ -185,7 +209,7 @@ const ArtworkPricingDetails = ({ userId,loading }) => {
                 <div className="row clearfix">
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
-                            <label>Commission Terms</label>
+                            <label>Commission Terms <span style={{ color: 'red' }}>*</span></label>
                             <CreatableSelect
                                 isMulti
                                 options={commissionOptions}
@@ -205,7 +229,7 @@ const ArtworkPricingDetails = ({ userId,loading }) => {
                             />
                         </div>
                         <div className="form-group">
-                            <label>Sample Artwork</label>
+                            <label>Sample Artwork <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="file"
                                 className="form-control"
@@ -216,7 +240,7 @@ const ArtworkPricingDetails = ({ userId,loading }) => {
                     </div>
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
-                            <label>Preferred Payment Method</label>
+                            <label>Preferred Payment Method <span style={{ color: 'red' }}>*</span></label>
                             <Select
                                 isMulti
                                 options={paymentOptions}
@@ -254,6 +278,7 @@ const ArtworkPricingDetails = ({ userId,loading }) => {
                     className="btn btn-primary mx-2"
                     disabled={load}
                     onClick={(e) => {
+                        if (!validateRequiredFields()) return;
                         setLoad(true);
                         Promise.resolve(handleSubmit(e))
                             .then(() => {

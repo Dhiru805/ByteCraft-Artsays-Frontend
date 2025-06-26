@@ -71,6 +71,38 @@ const CompanyProfile = ({ userId }) => {
         }
     };
 
+    const validateRequiredCompanyFields = () => {
+    const missing = [];
+    const requiredMap = {
+        'Company Name'     : formData.companyName,
+        'Company Type'     : formData.companyType,
+        'GSTIN'            : formData.gstin,
+        'TAN'              : formData.tan,
+        'CIN'              : formData.cin,
+        'PAN'              : formData.pan,
+        'Address'          : formData.address,
+        'Landmark'         : formData.landmark,
+        'City'             : formData.city,
+        'State'            : formData.state,
+        'Country'          : formData.country,
+        'PIN'              : formData.pin,
+        'Contact Number'   : formData.contactNo,
+        'Email Address'    : formData.emailAddress,
+    };
+
+    Object.entries(requiredMap).forEach(([label, value]) => {
+        if (!value || String(value).trim() === '') {
+            missing.push(label);
+        }
+    });
+
+    if (missing.length) {
+        toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
+        return false;
+    }
+    return true;
+};
+
     return (
         <div className="body">
             <h5 className="mb-2">Company Information</h5>
@@ -116,8 +148,13 @@ const CompanyProfile = ({ userId }) => {
           className="btn btn-primary mx-2"
           disabled={loading}
           onClick={(e) => {
+             if (!validateRequiredCompanyFields()) return;
+
             setLoading(true);
             Promise.resolve(handleSubmit(e))
+              .then(() => {
+                 window.location.reload();
+              })
               .catch(console.error)
               .finally(() => setLoading(false));
           }}

@@ -49,6 +49,29 @@ const BusinessProfile = ({ userId }) => {
         }
     };
 
+    const validateRequiredFields = () => {
+    const missing = [];
+
+    const requiredFields = {
+        'Business Name': formData.businessName,
+        'Website': formData.website,
+        'Business Description': formData.businessDescription,
+    };
+
+    Object.entries(requiredFields).forEach(([label, value]) => {
+        if (!value || String(value).trim() === '') {
+            missing.push(label);
+        }
+    });
+
+    if (missing.length > 0) {
+        toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
+        return false;
+    }
+
+    return true;
+};
+
     return (
         <div className="body">
             <h5 className="mb-2">Business Profile</h5>
@@ -57,7 +80,7 @@ const BusinessProfile = ({ userId }) => {
                 <div className="row clearfix">
                     <div className="col-lg-6 col-md-6">
                         <div className="form-group">
-                            <label htmlFor="businessName">Business Name</label>
+                            <label htmlFor="businessName">Business Name <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="text"
                                 className="form-control"
@@ -71,7 +94,7 @@ const BusinessProfile = ({ userId }) => {
                     </div>
                     <div className="col-lg-6 col-md-6">
                         <div className="form-group">
-                            <label htmlFor="website">Website</label>
+                            <label htmlFor="website">Website <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="url"
                                 className="form-control"
@@ -85,7 +108,7 @@ const BusinessProfile = ({ userId }) => {
                     </div>
                     <div className="col-lg-12 col-md-12">
                         <div className="form-group">
-                            <label htmlFor="businessDescription">Business Description</label>
+                            <label htmlFor="businessDescription">Business Description <span style={{ color: 'red' }}>*</span></label>
                             <textarea
                                 className="form-control"
                                 id="businessDescription"
@@ -102,6 +125,7 @@ const BusinessProfile = ({ userId }) => {
                     className="btn btn-primary mx-2"
                     disabled={loading}
                     onClick={(e) => {
+                        if (!validateRequiredFields()) return;
                         setLoading(true);
                         Promise.resolve(handleSubmit(e))
                             .catch(console.error)

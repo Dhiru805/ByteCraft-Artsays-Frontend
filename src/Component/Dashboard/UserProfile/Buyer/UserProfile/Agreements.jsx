@@ -74,6 +74,26 @@ const AccountSecurityAgreement = ({ userId }) => {
         }
     };
 
+    const validateRequiredAgreements = () => {
+        const missing = [];
+        const requiredMap = {
+            'Terms & Conditions'   : formData.agreeTerms,
+            'Commission Fees'      : formData.agreeCommissionFees,
+            'No Fake Artwork'      : formData.agreeNoFakeArtwork,
+        };
+    
+        Object.entries(requiredMap).forEach(([label, value]) => {
+            if (!value) missing.push(label);
+        });
+    
+        if (missing.length) {
+            toast.warn(`Please agree to: ${missing.join(', ')}`);
+            return false;
+        }
+        return true;
+    };
+    
+    
     return (
         <div className="body">
             <h5 className="mb-2">Account Security And Agreements</h5>
@@ -87,7 +107,7 @@ const AccountSecurityAgreement = ({ userId }) => {
                         onChange={handleChange} 
                         
                     />
-                    <label className="mx-2">{checkboxLabels.twoStepAuthentication}</label>
+                    <label className="mx-2">{checkboxLabels.twoStepAuthentication} <span style={{ color: 'red' }}>*</span></label>
                 </div>
                 <div className="form-group">
                     <input 
@@ -97,7 +117,7 @@ const AccountSecurityAgreement = ({ userId }) => {
                         onChange={handleChange} 
                         
                     />
-                    <label className="mx-2">{checkboxLabels.termsConditionsAgreement}</label>
+                    <label className="mx-2">{checkboxLabels.termsConditionsAgreement} <span style={{ color: 'red' }}>*</span></label>
                 </div>
                 <div className="form-group">
                     <input 
@@ -106,14 +126,18 @@ const AccountSecurityAgreement = ({ userId }) => {
                         checked={!!formData.privacyPolicyAgreement} 
                         onChange={handleChange} 
                     />
-                    <label className="mx-2">{checkboxLabels.privacyPolicyAgreement}</label>
+                    <label className="mx-2">{checkboxLabels.privacyPolicyAgreement} <span style={{ color: 'red' }}>*</span></label>
                 </div>
         <button type="button"
           className="btn btn-primary mx-2"
           disabled={loading}
           onClick={(e) => {
+            if (!validateRequiredAgreements()) return;
             setLoading(true);
             Promise.resolve(handleSubmit(e))
+              .then(() => {
+                 window.location.reload();
+              })
               .catch(console.error)
               .finally(() => setLoading(false));
           }}

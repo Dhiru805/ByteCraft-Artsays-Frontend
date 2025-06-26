@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom'; 
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Preferences from './Preferences/Pereferences';
@@ -16,7 +16,7 @@ import Settings from './UserInfo/BasicInformation';
 import putAPI from '../../../../../api/putAPI';
 
 const UserProfileForm = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
   const [passwordData, setPasswordData] = useState({
@@ -44,13 +44,13 @@ const UserProfileForm = () => {
   });
   const location = useLocation();
   const userId = location.state?._id || localStorage.getItem('userId');
-   const [loading,setLoading]=useState(false);
+  const [loading, setLoading] = useState(false);
 
-useEffect(() => {
-  if (location.state?._id) {
-    localStorage.setItem('userId', location.state._id);
-  }
-}, [location.state]);
+  useEffect(() => {
+    if (location.state?._id) {
+      localStorage.setItem('userId', location.state._id);
+    }
+  }, [location.state]);
 
   const fetchProfile = async () => {
     try {
@@ -162,35 +162,35 @@ useEffect(() => {
         formData.append('newPassword', passwordData.newPassword);
         formData.append('confirmPassword', passwordData.confirmPassword);
       }
-      
+
 
       if (imageFile) {
         formData.append('profilePhoto', imageFile);
       }
 
-          const response = await putAPI(`/auth/users/${userId}`, formData, {
-              'Content-Type': 'multipart/form-data',
-            });
-      
-            toast.success(response.message || 'Profile updated successfully!');
-            if (response.ok) {
-              setPasswordData({
-                currentPassword: '',
-                newPassword: '',
-                confirmPassword: '',
-              });
-             
-            }
-          } catch (error) {
-            console.error('Error updating profile:', error);
-            if (error.response?.data?.message) {
-              toast.error(error.response.data.message);
-            } else {
-              toast.error('Something went wrong. Please try again.');
-            }
-          }finally{
-            setLoading(false);
-          }
+      const response = await putAPI(`/auth/users/${userId}`, formData, {
+        'Content-Type': 'multipart/form-data',
+      });
+
+      toast.success(response.message || 'Profile updated successfully!');
+      if (response.ok) {
+        setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        });
+
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('Something went wrong. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const tabs = [
@@ -214,9 +214,9 @@ useEffect(() => {
             <h2>Profile</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-<span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
-    <i className="fa fa-dashboard"></i>
-</span>
+                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+                  <i className="fa fa-dashboard"></i>
+                </span>
               </li>
               <li className="breadcrumb-item">Profile</li>
             </ul>

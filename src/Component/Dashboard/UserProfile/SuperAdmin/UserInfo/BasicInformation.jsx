@@ -84,6 +84,27 @@ const handleDeleteImage = async () => {
   const togglePasswordVisibility = (setter, currentState) => {
     setter(!currentState);
   };
+    const validateRequired = () => {
+      const missing = [];
+      const requiredMap = {
+        'First Name'        : profileData.name,
+        'Last Name'         : profileData.lastName,
+        'Email'             : profileData.email,
+        'Phone Number'      : profileData.phone,
+      };
+    
+      Object.entries(requiredMap).forEach(([label, value]) => {
+        if (!value || String(value).trim() === '') missing.push(label);
+      });
+    
+      if (missing.length) {
+        toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
+        return false;
+      }
+      return true;
+    };
+    
+  
   return (
     <div className="body">
       <h6>Profile Photo</h6>
@@ -160,7 +181,7 @@ const handleDeleteImage = async () => {
         <div className="row clearfix">
           <div className="col-lg-6 col-md-12">
             <div className="form-group">
-              <label htmlFor="firstName">First Name</label>
+              <label htmlFor="firstName">First Name <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -176,7 +197,7 @@ const handleDeleteImage = async () => {
 
           <div className="col-lg-6 col-md-12">
             <div className="form-group">
-              <label htmlFor="lastName">Last Name</label>
+              <label htmlFor="lastName">Last Name <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -193,7 +214,7 @@ const handleDeleteImage = async () => {
         <div className="row clearfix">
           <div className="col-lg-6 col-md-12">
             <div className="form-group">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="email">Email <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="email"
                 className="form-control"
@@ -214,7 +235,7 @@ const handleDeleteImage = async () => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="phone">Phone Number</label>
+              <label htmlFor="phone">Phone Number <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -303,8 +324,12 @@ const handleDeleteImage = async () => {
           className="btn btn-primary mx-2"
           disabled={loading}
           onClick={(e) => {
+            if (!validateRequired()) return;
             setLoading(true);
             Promise.resolve(handleSubmit(e))
+              .then(() => {
+                 window.location.reload();
+              })
               .catch(console.error)
               .finally(() => setLoading(false));
           }}

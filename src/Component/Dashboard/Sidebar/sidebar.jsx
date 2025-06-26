@@ -157,7 +157,7 @@
           subTabs: []
         },
            {
-          label: "product",
+          label: "Product",
           icon: "fa fa-cart-plus",
           path: "/artist/product",
           subTabs: []
@@ -194,7 +194,7 @@
           subTabs: []
         },
          {
-          label: "product",
+          label: "Product",
           icon: "fa fa-cart-plus",
           path: "/seller/product-details",
           subTabs: []

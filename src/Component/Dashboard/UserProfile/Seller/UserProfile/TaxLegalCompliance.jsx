@@ -183,6 +183,36 @@ const TaxLegalCompliance = ({ userId }) => {
         return null;
     };
 
+    const validateRequiredFields = () => {
+    const missing = [];
+
+    const requiredMap = {
+        'GST Number': formData.gstNumber,
+        'PAN Number': formData.panNumber,
+        'TAN Number': formData.tanNumber,
+        'CIN Number': formData.cinNumber,
+        'Aadhaar Number': formData.aadhaarNumber,
+        'GST Document': formData.documents.gst,
+        'PAN Document': formData.documents.pan,
+        'TAN Document': formData.documents.tan,
+        'CIN Document': formData.documents.cin,
+        'Aadhaar Document': formData.documents.aadhaar
+    };
+
+    Object.entries(requiredMap).forEach(([label, value]) => {
+        if (!value || String(value).trim?.() === '') {
+            missing.push(label);
+        }
+    });
+
+    if (missing.length > 0) {
+        toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
+        return false;
+    }
+
+    return true;
+};
+
     return (
         <div className="body">
             <h5 className="mb-2">Tax & Legal Compliance</h5>
@@ -223,6 +253,7 @@ const TaxLegalCompliance = ({ userId }) => {
                     className="btn btn-primary mx-2"
                     disabled={loading}
                     onClick={(e) => {
+                         if (!validateRequiredFields()) return;
                         setLoading(true);
                         Promise.resolve(handleSubmit(e))
                             .then(() => {

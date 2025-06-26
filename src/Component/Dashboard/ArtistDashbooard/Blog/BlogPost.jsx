@@ -37,6 +37,40 @@ useEffect(() => {
     fetchCategories();
 }, []);
   
+  useEffect(() => {
+    const saved = localStorage.getItem("blogPostDraft");
+    if (saved) {
+      try {
+        const draft = JSON.parse(saved);
+        if (draft.formData?.blogName || draft.content) {
+          setFormData(prev => ({
+            ...prev,
+            ...draft.formData,
+            blogImage: null,
+          }));
+          setContent(draft.content || "");
+          setImagePreview(draft.imagePreview || null);
+        }
+      } catch (err) {
+        console.warn("Failed to parse draft:", err);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const draft = {
+      formData: { ...formData, blogImage: null },
+      content,
+      imagePreview,
+    };
+    localStorage.setItem("blogPostDraft", JSON.stringify(draft));
+  }, [formData, content, imagePreview]);
+
+  useEffect(() => {
+    getAPI("/api/getblogcategory")
+      .then(res => setCategories(res.data))
+      .catch(console.error);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;

@@ -14,7 +14,7 @@ const ArtworkPricingDetails = ({ userId }) => {
         sampleArtwork: null
     });
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [loading,setLoading]=useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchDetails = async () => {
@@ -132,6 +132,32 @@ const ArtworkPricingDetails = ({ userId }) => {
     const closeModal = () => {
         setIsModalOpen(false);
     };
+const validateRequiredFields = () => {
+    const missingFields = [];
+
+    if (!formData.minArtworkPrice || String(formData.minArtworkPrice).trim() === '') {
+        missingFields.push("Minimum Artwork Price");
+    }
+
+    if (!Array.isArray(formData.commissionTerms) || formData.commissionTerms.length === 0) {
+        missingFields.push("Commission Terms");
+    }
+
+    if (!Array.isArray(formData.preferredPaymentMethod) || formData.preferredPaymentMethod.length === 0) {
+        missingFields.push("Preferred Payment Method");
+    }
+
+    if (typeof formData.customOrders !== 'boolean') {
+        missingFields.push("Custom Orders");
+    }
+
+    if (missingFields.length > 0) {
+        toast.warn(`Please fill the required fields: ${missingFields.join(', ')}`);
+        return false;
+    }
+
+    return true;
+};
 
     return (
         <div className="body">
@@ -141,7 +167,7 @@ const ArtworkPricingDetails = ({ userId }) => {
                 <div className="row clearfix">
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
-                            <label>Minimum Artwork Price</label>
+                            <label>Minimum Artwork Price <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="number"
                                 className="form-control"
@@ -154,7 +180,7 @@ const ArtworkPricingDetails = ({ userId }) => {
                     </div>
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
-                            <label>Available for Custom Orders?</label>
+                            <label>Available for Custom Orders? <span style={{ color: 'red' }}>*</span></label>
                             <div className="d-flex align-items-center">
                                 <div className="form-check form-check-inline">
                                     <input
@@ -185,7 +211,7 @@ const ArtworkPricingDetails = ({ userId }) => {
                 <div className="row clearfix">
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
-                            <label>Commission Terms</label>
+                            <label>Commission Terms <span style={{ color: 'red' }}>*</span></label>
                             <CreatableSelect
                                 isMulti
                                 options={commissionOptions}
@@ -216,7 +242,7 @@ const ArtworkPricingDetails = ({ userId }) => {
                     </div>
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
-                            <label>Preferred Payment Method</label>
+                            <label>Preferred Payment Method <span style={{ color: 'red' }}>*</span></label>
                             <Select
                                 isMulti
                                 options={paymentOptions}
@@ -236,6 +262,7 @@ const ArtworkPricingDetails = ({ userId }) => {
                             />
                         </div>
                         {formData.sampleArtwork && (
+                            
                             <div
                                 className="col-lg-4 d-flex justify-content-center align-items-center"
                                 onClick={handleImageClick}
@@ -250,16 +277,20 @@ const ArtworkPricingDetails = ({ userId }) => {
                         )}
                     </div>
                 </div>
-        <button type="button"
-          className="btn btn-primary mx-2"
-          disabled={loading}
-          onClick={(e) => {
-            setLoading(true);
-            Promise.resolve(handleSubmit(e))
-              .catch(console.error)
-              .finally(() => setLoading(false));
-          }}
-        >{loading ? "Updating..." : "Update"}</button>
+                <button type="button"
+                    className="btn btn-primary mx-2"
+                    disabled={loading}
+                    onClick={(e) => {
+                        if (!validateRequiredFields()) return;
+                        setLoading(true);
+                        Promise.resolve(handleSubmit(e))
+                            .then(() => {
+                                window.location.reload();
+                            })
+                            .catch(console.error)
+                            .finally(() => setLoading(false));
+                    }}
+                >{loading ? "Updating..." : "Update"}</button>
 
             </form>
 

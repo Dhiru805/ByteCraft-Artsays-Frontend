@@ -25,6 +25,7 @@ const predefinedAchievements = [
     { value: 'Awards', label: 'Awards' },
 ];
 
+
 const ArtistInfo = ({ userId }) => {
     const [formData, setFormData] = useState({
         artCategories: [],
@@ -69,7 +70,9 @@ const ArtistInfo = ({ userId }) => {
             setFormData(prevState => ({ ...prevState, [field]: values }));
         }
     };
-    
+
+    const [loading, setLoading] = useState(false);
+
 
 
     const handleSubmit = async (event) => {
@@ -93,6 +96,30 @@ const ArtistInfo = ({ userId }) => {
         }
     };
 
+        const validateRequiredFields = () => {
+        const missing = [];
+        const requiredMap = {
+            'Art Categories'      : formData.artCategories.length,
+            'Medium Used'         : formData.mediumUsed.length,
+            'Years of Experience' : formData.yearsOfExperience,
+            'Portfolio Link'      : formData.portfolioLink,
+            'Achievements'        : formData.achievements.length
+        };
+    
+        Object.entries(requiredMap).forEach(([label, value]) => {
+            if (!value || String(value).trim?.() === '' || value === 0) {
+                missing.push(label);
+            }
+        });
+    
+        if (missing.length > 0) {
+            toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
+            return false;
+        }
+    
+        return true;
+    };
+    
     return (
         <div className="body">
             <h5 className="mb-2">Artist Professional Info</h5>
@@ -101,7 +128,7 @@ const ArtistInfo = ({ userId }) => {
                 <div className="row clearfix">
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
-                            <label htmlFor="artCategories">Art Categories/Styles</label>
+                            <label htmlFor="artCategories">Art Categories/Styles <span style={{ color: 'red' }}>*</span></label>
                             <CreatableSelect
                                 isMulti
                                 options={predefinedArtCategories.map(item => ({
@@ -119,7 +146,7 @@ const ArtistInfo = ({ userId }) => {
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="mediumUsed">Medium Used</label>
+                            <label htmlFor="mediumUsed">Medium Used <span style={{ color: 'red' }}>*</span></label>
                             <CreatableSelect
                                 isMulti
                                 options={predefinedMediumUsed.map(item => ({
@@ -137,7 +164,7 @@ const ArtistInfo = ({ userId }) => {
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="yearsOfExperience">Years of Experience</label>
+                            <label htmlFor="yearsOfExperience">Years of Experience <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="number"
                                 className="form-control"
@@ -151,7 +178,7 @@ const ArtistInfo = ({ userId }) => {
                     </div>
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
-                            <label htmlFor="portfolioLink">Portfolio Link</label>
+                            <label htmlFor="portfolioLink">Portfolio Link <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="url"
                                 className="form-control"
@@ -182,7 +209,20 @@ const ArtistInfo = ({ userId }) => {
                         </div>
                     </div>
                 </div>
-                <button type="submit" className="btn btn-primary mx-2">Update</button>
+        <button type="button"
+          className="btn btn-primary mx-2"
+          disabled={loading}
+          onClick={(e) => {
+            if (!validateRequiredFields()) return;
+            setLoading(true);
+            Promise.resolve(handleSubmit(e))
+              .then(() => {
+                 window.location.reload();
+              })
+              .catch(console.error)
+              .finally(() => setLoading(false));
+          }}
+        >{loading ? "Updating..." : "Update"}</button>
             </form>
         </div>
     );

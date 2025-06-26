@@ -67,6 +67,28 @@ const BankPaymentDetails = ({ userId }) => {
             toast.error('Error updating bank details');
         }
     };
+        const validateRequiredFields = () => {
+      const missing = [];
+      const requiredMap = {
+        'Account Holder Name': formData.accountHolderName,
+        'Bank Name'          : formData.bankName,
+        'Account Number'     : formData.accountNumber,
+        'IFSC Code'          : formData.ifscCode,
+      };
+    
+      Object.entries(requiredMap).forEach(([label, value]) => {
+        if (!value || String(value).trim() === '') {
+          missing.push(label);
+        }
+      });
+    
+      if (missing.length > 0) {
+        toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
+        return false;
+      }
+    
+      return true;
+    };
 
     return (
         <div className="body">
@@ -137,6 +159,7 @@ const BankPaymentDetails = ({ userId }) => {
           className="btn btn-primary mx-2"
           disabled={loading}
           onClick={(e) => {
+             if (!validateRequiredFields()) return;
             setLoading(true);
             Promise.resolve(handleSubmit(e))
               .catch(console.error)

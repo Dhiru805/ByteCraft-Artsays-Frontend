@@ -95,6 +95,29 @@ const [loading,setLoading]=useState(false);
         }
     };
 
+    const validateRequiredFields = () => {
+    const requiredFields = {
+        'Artist Name': formData.artistName,
+        'Art Categories': formData.artCategories?.length,
+        'Medium Used': formData.mediumUsed?.length,
+        'Portfolio Link': formData.portfolioLink,
+        'Achievements': formData.achievements?.length,
+        'Years of Experience': formData.yearsOfExperience,
+        'Description': formData.description,
+    };
+
+    const missing = Object.entries(requiredFields)
+        .filter(([_, value]) => !value || (typeof value === 'string' && value.trim() === ''))
+        .map(([key]) => key);
+
+    if (missing.length > 0) {
+        toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
+        return false;
+    }
+
+    return true;
+};
+
     return (
         <div className="body">
             <h5 className="mb-2">Artist Professional Info</h5>
@@ -103,7 +126,7 @@ const [loading,setLoading]=useState(false);
                 <div className="row clearfix">
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
-                            <label htmlFor="artistName">Artist Name</label>
+                            <label htmlFor="artistName">Artist Name <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="text"
                                 className="form-control"
@@ -115,7 +138,7 @@ const [loading,setLoading]=useState(false);
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="artCategories">Art Categories/Styles</label>
+                            <label htmlFor="artCategories">Art Categories/Styles <span style={{ color: 'red' }}>*</span></label>
                             <CreatableSelect
                                 isMulti
                                 options={predefinedArtCategories.map(item => ({
@@ -133,7 +156,7 @@ const [loading,setLoading]=useState(false);
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="mediumUsed">Medium Used</label>
+                            <label htmlFor="mediumUsed">Medium Used <span style={{ color: 'red' }}>*</span></label>
                             <CreatableSelect
                                 isMulti
                                 options={predefinedMediumUsed.map(item => ({
@@ -154,7 +177,7 @@ const [loading,setLoading]=useState(false);
                     </div>
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
-                            <label htmlFor="portfolioLink">Portfolio Link</label>
+                            <label htmlFor="portfolioLink">Portfolio Link <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="url"
                                 className="form-control"
@@ -167,7 +190,7 @@ const [loading,setLoading]=useState(false);
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="achievements">Achievements (List of notable works, exhibitions, or awards)</label>
+                            <label htmlFor="achievements">Achievements (List of notable works, exhibitions, or awards) <span style={{ color: 'red' }}>*</span></label>
                             <CreatableSelect
                                 isMulti
                                 options={predefinedAchievements.map(item => ({
@@ -184,7 +207,7 @@ const [loading,setLoading]=useState(false);
 
                         </div>
                         <div className="form-group">
-                            <label htmlFor="yearsOfExperience">Years of Experience</label>
+                            <label htmlFor="yearsOfExperience">Years of Experience <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="number"
                                 className="form-control"
@@ -200,7 +223,7 @@ const [loading,setLoading]=useState(false);
 
                 </div>
                 <div className="form-group">
-                    <label htmlFor="description">Description</label>
+                    <label htmlFor="description">Description <span style={{ color: 'red' }}>*</span></label>
                     <textarea
                         className="form-control"
                         id="description"
@@ -214,8 +237,12 @@ const [loading,setLoading]=useState(false);
           className="btn btn-primary mx-2"
           disabled={loading}
           onClick={(e) => {
+            if (!validateRequiredFields()) return;
             setLoading(true);
             Promise.resolve(handleSubmit(e))
+              .then(() => {
+                 window.location.reload();
+              })
               .catch(console.error)
               .finally(() => setLoading(false));
           }}

@@ -1,5 +1,7 @@
 // src/components/productUpload/sections/BasicDetails.js
 import React from "react";
+import Select from 'react-select';
+
 
 const BasicDetails = ({
   formData,
@@ -35,6 +37,40 @@ const BasicDetails = ({
     }
   }, [isNFTArtSelected, formData.productType, productTypeOptions, handleSelectChange]);
 
+// Inside BasicDetails.jsx
+const searchableCategories = React.useMemo(() => {
+  const main = categoryData.mainCategories.map(cat => ({
+    ...cat,
+    type: 'mainCategory',
+    fullLabel: cat.label
+  }));
+
+  const categories = categoryData.categories.map(cat => {
+    const mainLabel = categoryData.mainCategories.find(main => main.value === cat.mainCategoryId)?.label;
+    return {
+      ...cat,
+      type: 'category',
+      fullLabel: `${mainLabel} - ${cat.label}`,
+      mainCategoryId: cat.mainCategoryId
+    };
+  });
+
+  const sub = categoryData.subCategories.map(sub => {
+    const cat = categoryData.categories.find(c => c.value === sub.categoryId);
+    const mainLabel = categoryData.mainCategories.find(main => main.value === cat?.mainCategoryId)?.label;
+    return {
+      ...sub,
+      type: 'subCategory',
+      fullLabel: `${mainLabel} - ${cat?.label} - ${sub.label}`,
+      categoryId: sub.categoryId,
+      mainCategoryId: cat?.mainCategoryId
+    };
+  });
+
+return [...main, ...categories, ...sub].sort((a, b) => a.fullLabel.localeCompare(b.fullLabel));
+}, [categoryData]);
+
+
   return (
     <>
       <h4 className="mb-3">Basic Product Details</h4>
@@ -53,7 +89,44 @@ const BasicDetails = ({
           disabled={isSubmitting}
         />
       </div>
+      <div className="form-group">
+        <label>Search Category</label>
+        <Select
+          options={searchableCategories}
+          getOptionLabel={e => e.fullLabel}
+          getOptionValue={e => e.value}
+          placeholder="Search for any category..."
+          isClearable
+          onChange={(selectedOption) => {
+            if (!selectedOption) return;
 
+            const selected = selectedOption;
+
+            let mainCat = null, cat = null, subCat = null;
+
+         
+            if (selected.type === 'mainCategory') {
+              mainCat = categoryData.mainCategories.find(m => m.value === selected.value); 
+            }
+
+            if (selected.type === 'category') {
+              cat = categoryData.categories.find(c => c.value === selected.value); 
+              mainCat = categoryData.mainCategories.find(m => m.value === cat?.mainCategoryId); 
+            }
+
+            if (selected.type === 'subCategory') {
+              subCat = categoryData.subCategories.find(s => s.value === selected.value); 
+              cat = categoryData.categories.find(c => c.value === subCat?.categoryId); 
+              mainCat = categoryData.mainCategories.find(m => m.value === cat?.mainCategoryId); 
+            }
+
+            handleSelectChange('mainCategory', mainCat || null); 
+            handleSelectChange('category', cat || null);         
+            handleSelectChange('subCategory', subCat || null);   
+          }}
+          isDisabled={isSubmitting}
+        />
+      </div>      
       <div className="form-group">
         <label htmlFor="mainCategory">Main Category *</label>
         <select

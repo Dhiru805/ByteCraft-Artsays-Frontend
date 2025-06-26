@@ -87,6 +87,35 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
   const togglePasswordVisibility = (setter, currentState) => {
     setter(!currentState);
   };
+
+  const validateRequired = () => {
+  const missing = [];
+  const requiredMap = {
+    'First Name'        : profileData.name,
+    'Last Name'         : profileData.lastName,
+    'Birthdate'         : profileData.birthdate,
+    'Gender'            : profileData.gender,
+    'Address Line 1'    : profileData.address?.line1,
+    'City'              : profileData.address?.city,
+    'State/Province'    : profileData.address?.state,
+    'Country'           : profileData.address?.country,
+    'Username'          : profileData.username,
+    'Email'             : profileData.email,
+    'Phone Number'      : profileData.phone,
+    'Bio'               : profileData.bio,
+  };
+
+  Object.entries(requiredMap).forEach(([label, value]) => {
+    if (!value || String(value).trim() === '') missing.push(label);
+  });
+
+  if (missing.length) {
+    toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
+    return false;
+  }
+  return true;
+};
+
   return (
     <div className="body">
       <h6>Profile Photo</h6>
@@ -163,7 +192,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
         <div className="row clearfix">
           <div className="col-lg-6 col-md-12">
             <div className="form-group">
-              <label htmlFor="firstName">First Name</label>
+              <label htmlFor="firstName">First Name <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -175,7 +204,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
               />
             </div>
             <div className="form-group">
-              <label>Gender</label>
+              <label>Gender <span style={{ color: 'red' }}>*</span></label>
               <label className="fancy-radio mx-2">
                 <input
                   name="gender"
@@ -202,7 +231,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
               </label>
             </div>
             <div className="form-group" >
-              <label htmlFor="birthdate">Birthdate</label>
+              <label htmlFor="birthdate">Birthdate <span style={{ color: 'red' }}>*</span></label>
               <div className="input-group">
                 <div className="input-group-prepend">
                   <span className="input-group-text"><i className="fa fa-calendar"></i></span>
@@ -232,7 +261,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
             </div>
 
             <div className="form-group">
-              <label htmlFor="city">City</label>
+              <label htmlFor="city">City <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -244,7 +273,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
               />
             </div>
             <div className="form-group">
-              <label htmlFor="country">Country</label>
+              <label htmlFor="country">Country <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -259,7 +288,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
 
           <div className="col-lg-6 col-md-12">
             <div className="form-group">
-              <label htmlFor="lastName">Last Name</label>
+              <label htmlFor="lastName">Last Name <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -272,7 +301,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
             </div>
 
             <div className="form-group" style={{ marginTop: "63px" }}>
-              <label htmlFor="addressLine1">Address Line 1</label>
+              <label htmlFor="addressLine1">Address Line 1 <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -298,7 +327,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
             </div>
 
             <div className="form-group">
-              <label htmlFor="state">State/Province</label>
+              <label htmlFor="state">State/Province <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -328,7 +357,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
         <div className="row clearfix">
           <div className="col-lg-6 col-md-12">
             <div className="form-group">
-              <label htmlFor="username">Username</label>
+              <label htmlFor="username">Username <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -341,7 +370,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
               />
             </div>
             <div className="form-group">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="email">Email <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="email"
                 className="form-control"
@@ -362,7 +391,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
               />
             </div>
             <div className="form-group">
-              <label htmlFor="phone">Phone Number</label>
+              <label htmlFor="phone">Phone Number <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -448,7 +477,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
           </div>
         </div>
         <div className="form-group">
-          <label htmlFor="bio">Bio</label>
+          <label htmlFor="bio">Bio <span style={{ color: 'red' }}>*</span></label>
           <textarea
             className="form-control"
             id="bio"
@@ -463,8 +492,13 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
           className="btn btn-primary mx-2"
           disabled={loading}
           onClick={(e) => {
+                       if (!validateRequired()) return;
+
             setLoading(true);
             Promise.resolve(handleSubmit(e))
+              .then(() => {
+                 window.location.reload();
+              })
               .catch(console.error)
               .finally(() => setLoading(false));
           }}

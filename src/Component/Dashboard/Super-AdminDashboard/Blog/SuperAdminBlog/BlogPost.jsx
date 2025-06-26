@@ -1,15 +1,21 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; 
-import { Link } from "react-router-dom";
+import 'react-toastify/dist/ReactToastify.css';
 import getAPI from "../../../../../api/getAPI";
 import postAPI from "../../../../../api/postAPI";
+import { useAuth } from '../../../../../AuthContext';
 
 function BlogPost() {
+  const { user } = useAuth(); 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const userId = user?._id || "guest"; 
+  const DRAFT_KEY = `blogPostDraft_${userId}`; 
+
   const [formData, setFormData] = useState({
     blogName: "",
     slug: "",
@@ -18,25 +24,53 @@ function BlogPost() {
     category: "",
     tags: []
   });
-  const [content, setContent] = useState(""); 
+  const [content, setContent] = useState("");
   const [tagInput, setTagInput] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [loading,setLoading]=useState(false);
+  const [loading, setLoading] = useState(false);
 
   const fetchCategories = async () => {
     try {
-        const response = await getAPI("/api/getblogcategory");
-        setCategories(response.data);
+      const response = await getAPI("/api/getblogcategory");
+      setCategories(response.data);
     } catch (error) {
-        console.error("Error fetching categories:", error);
+      console.error("Error fetching categories:", error);
     }
-};
+  };
 
-useEffect(() => {
+  useEffect(() => {
     fetchCategories();
-}, []);
-  
+  }, []);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(DRAFT_KEY); 
+    if (saved) {
+      try {
+        const draft = JSON.parse(saved);
+        if (draft.formData?.blogName || draft.content) {
+          setFormData(prev => ({
+            ...prev,
+            ...draft.formData,
+            blogImage: null,
+          }));
+          setContent(draft.content || "");
+          setImagePreview(draft.imagePreview || null);
+        }
+      } catch (err) {
+        console.warn("Failed to parse draft:", err);
+      }
+    }
+  }, [userId]); 
+
+  useEffect(() => {
+    const draft = {
+      formData: { ...formData, blogImage: null },
+      content,
+      imagePreview,
+    };
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); 
+  }, [formData, content, imagePreview, userId]); 
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -51,6 +85,35 @@ useEffect(() => {
       } else {
         setImagePreview(null);
       }
+
+    } else if (name === "blogName") {
+      const capitalizedTitle = value.charAt(0).toUpperCase() + value.slice(1);
+
+      const generatedSlug = value
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+      setFormData({
+        ...formData,
+        blogName: capitalizedTitle,
+        slug: generatedSlug,
+      });
+
+    } else if (name === "slug") {
+      const cleanedSlug = value
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+      setFormData({ ...formData, slug: cleanedSlug });
+
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -96,13 +159,19 @@ useEffect(() => {
     formDataObj.append("blogDescription", content);
 
     try {
-      await postAPI("/Blog-Post/create", formDataObj,true);
+      await postAPI("/Blog-Post/create", formDataObj, true);
       toast.success('Blog post created successfully!');
+      localStorage.removeItem(DRAFT_KEY); 
       navigate(-1);
     } catch (error) {
-       const errorMessage = error?.response?.data?.message || error.message || 'Something went wrong. Please try again.';
-       toast.error(errorMessage)
-    }finally{
+      const errorData = error?.response?.data;
+      if (Array.isArray(errorData?.errors)) {
+        errorData.errors.forEach(msg => toast.error(msg));
+      } else {
+        const errorMessage = errorData?.message || error.message || 'Something went wrong.';
+        toast.error(errorMessage);
+      }
+    } finally {
       setLoading(false);
     }
   };
@@ -121,10 +190,10 @@ useEffect(() => {
       ['help'],
     ],
   };
-  
+
   const editorStyle = {
     fontFamily: 'Nunito, Ubuntu, Raleway, IBM Plex Sans, sans-serif',
-    fontSize: '12px', 
+    fontSize: '12px',
   };
 
   return (
@@ -135,11 +204,15 @@ useEffect(() => {
             <h2>Create Blog Post</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <a href="/">
+                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
                   <i className="fa fa-dashboard"></i>
-                </a>
+                </span>
               </li>
-              <li className="breadcrumb-item active"><Link to={`/artist/bloglist`}>Blogs</Link></li>
+              <li className="breadcrumb-item active">
+                <span onClick={() => navigate('/super-admin/blog')} style={{ cursor: 'pointer' }}>
+                  Blogs
+                </span>
+              </li>
               <li className="breadcrumb-item">Create Blog Post</li>
             </ul>
           </div>
@@ -192,17 +265,17 @@ useEffect(() => {
                 </div>
                 <div className="form-group">
                   <label htmlFor="tags">Tags</label>
-                  <div 
-                    className="d-flex flex-wrap align-items-center form-control p-2" 
+                  <div
+                    className="d-flex flex-wrap align-items-center form-control p-2"
                     style={{ minHeight: '44px' }}
                   >
                     {formData.tags.map((tag, index) => (
-                      <div 
+                      <div
                         key={index}
                         className="d-flex align-items-center bg-light rounded px-2 py-1 m-1"
                       >
                         <span className="mr-1">#{tag}</span>
-                        <span 
+                        <span
                           className="ml-1 text-danger"
                           style={{ cursor: 'pointer' }}
                           onClick={() => removeTag(index)}
@@ -227,23 +300,23 @@ useEffect(() => {
                   </small>
                 </div>
                 <div className="form-group">
-                <label htmlFor="category">Category</label>
-                <select
-                  id="category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className="form-control show-tick"
-                  required
-                >
-                  <option value="">Select Category</option>
-                  {categories.map((category) => (
-                    <option key={category._id} value={category.name}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                  <label htmlFor="category">Category</label>
+                  <select
+                    id="category"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    className="form-control show-tick"
+                    required
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map((category) => (
+                      <option key={category._id} value={category.name}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
                 <div className="form-group mt-3">
                   <label htmlFor="blogImage">Featured Image</label>
                   <input
@@ -253,14 +326,13 @@ useEffect(() => {
                     onChange={handleChange}
                     className="form-control-file"
                     accept="image/*"
-                    required
                   />
                   {imagePreview && (
                     <div className="mt-2">
-                      <img 
-                        src={imagePreview} 
-                        alt="Preview" 
-                        className="img-thumbnail" 
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="img-thumbnail"
                         style={{ maxHeight: '200px' }}
                       />
                     </div>
@@ -278,8 +350,8 @@ useEffect(() => {
                   />
                 </div>
                 <button type="submit" className="btn btn-block btn-primary mt-3"
-                disabled={loading}>
-                 {loading? "Creating Blog.........":"Create Blog"}
+                  disabled={loading}>
+                  {loading ? "Creating Blog........." : "Create Blog"}
                 </button>
               </form>
             </div>

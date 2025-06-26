@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import getAPI from '../../../../../api/getAPI';
 
 const AccountVerification = ({ userId }) => {
     const [verificationType, setVerificationType] = useState('');
@@ -8,18 +9,19 @@ const AccountVerification = ({ userId }) => {
     const [file, setFile] = useState(null);
     const [filePreview, setFilePreview] = useState(null);
     const [fileType, setFileType] = useState('');
+const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
     useEffect(() => {
         const fetchVerificationData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/auth/verificationdetails/${userId}`);
+                const response = await getAPI(`/auth/verificationdetails/${userId}`);
                 const data = response.data.verification;
     
                 if (data) {
                     setVerificationType(data.documentType || '');  
                     setDocNumber(data.documentNumber || ''); 
                     if (data.documentFile) {  
-                        setFilePreview(`http://localhost:3001/${data.documentFile}`);
+                        setFilePreview(`${BASE_URL}/${data.documentFile}`);
                         setFileType(data.documentFile.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg');
                     }
                 }
@@ -96,7 +98,7 @@ const AccountVerification = ({ userId }) => {
         formData.append('file', file);
 
         try {
-            const url = `http://localhost:3001/auth/updateverificationdetails/${userId}`;
+            const url = `/auth/updateverificationdetails/${userId}`;
             const response = await axios.put(url, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -113,13 +115,37 @@ const AccountVerification = ({ userId }) => {
         }
     };
 
+    const validateRequiredFields = () => {
+        const missing = [];
+    
+        if (!verificationType) {
+            missing.push("Document Type");
+        }
+    
+        if (!docNumber.trim()) {
+            missing.push("Document Number");
+        }
+    
+        if (!file) {
+            missing.push("Document File (please upload a new file)");
+        }
+    
+        if (missing.length > 0) {
+            toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
+            return false;
+        }
+    
+        return true;
+    };
+    
+
     return (
         <div className="body">
             <h5 className="mb-2">Account Verification</h5>
             <hr className="mt-1" />
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label>Select Document Type</label>
+                    <label>Select Document Type <span style={{ color: 'red' }}>*</span></label>
                     <select
                         className="form-control"
                         value={verificationType}
@@ -135,7 +161,7 @@ const AccountVerification = ({ userId }) => {
                 {verificationType && (
                     <>
                         <div className="form-group mt-2">
-                            <label>{verificationType} Number</label>
+                            <label>{verificationType} Number <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="text"
                                 className="form-control"
@@ -146,7 +172,7 @@ const AccountVerification = ({ userId }) => {
                             />
                         </div>
                         <div className="form-group mt-2">
-                            <label>Upload Document (PDF, JPG, PNG)</label>
+                            <label>Upload Document (PDF, JPG, PNG) <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="file"
                                 className="form-control"
@@ -174,7 +200,20 @@ const AccountVerification = ({ userId }) => {
                         )}
                     </>
                 )}
-                <button type="submit" className="btn btn-primary mt-3">Update</button>
+        <button type="button"
+          className="btn btn-primary mx-2"
+          disabled={loading}
+          onClick={(e) => {
+            if (!validateRequiredFields()) return;
+            setLoading(true);
+            Promise.resolve(handleSubmit(e))
+              .then(() => {
+                 window.location.reload();
+              })
+              .catch(console.error)
+              .finally(() => setLoading(false));
+          }}
+        >{loading ? "Updating..." : "Update"}</button>
             </form>
         </div>
     );

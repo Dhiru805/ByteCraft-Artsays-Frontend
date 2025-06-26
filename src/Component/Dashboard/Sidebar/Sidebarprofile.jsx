@@ -62,6 +62,9 @@ const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, Handletoggle
     },
   ];
 const renderVerificationBadge = () => {
+ if (userType?.toLowerCase() === "super-admin") {
+    return null; 
+  }
   if (status?.toLowerCase() === "verified") {
     return (
       <div style={styles.verificationIconBlue} title="Verified">
@@ -82,31 +85,29 @@ const styles = {
   verificationIconBlue: {
     position: "absolute",
     top: "40px",
-    right: "10px",
+    right: "130px",
     backgroundColor: "#58d0ff",
     borderRadius: "50%",
-    // padding: "3px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     width: "15px",
     height: "15px",
-    pointerEvents: "none", 
+    pointerEvents: "auto", 
   },
 
   verificationIconRed: {
     position: "absolute",
-    top: "40px",
-    right: "10px",
+    top: "5px",
+    left: "225px",
     backgroundColor: "red",
     borderRadius: "50%",
-    // padding: "3px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     width: "15px",
     height: "15px",
-    pointerEvents: "none", 
+    pointerEvents: "auto", 
   },
 };
 
@@ -135,7 +136,7 @@ const styles = {
               display: 'block',
             }}
           />
-                      {renderVerificationBadge()}
+            {renderVerificationBadge()}
             </div>
 
           {/* )} */}
