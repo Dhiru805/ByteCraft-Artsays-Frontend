@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, Link } from 'react-router-dom';
 import AccountSidebar from '../../MyAccountSidebar';
 
 const headingMap = {
@@ -27,24 +27,27 @@ export const AccountPage = () => {
 
   const isTrackOrder = path === 'track-your-order';
 
-
   return (
     <>
       {/* Top Section */}
       <div className="h-[300px] w-full px-[5rem] bg-[#E8E8E8] flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-4xl font-bold text-zinc-900">{heading}</h2>
-          <p className="text-sm text-gray-500 mt-4">Home &gt; {heading}</p>
+          <p className="text-sm text-gray-500 mt-4">
+            <Link to="/" className="text-gray-500 hover:underline cursor-pointer">
+              Home
+            </Link> &gt; {heading}
+          </p>
+
         </div>
       </div>
 
       {/* Main Layout */}
-
       {!isTrackOrder && (
 
-        <div className=" w-[1208px] pt-[80px] pl-[116px] flex bg-white">
+        <div className=" w-[1440px] pt-[80px] pl-[116px] flex bg-white">
           <AccountSidebar />
-          <div className="w-[896px] pl-[40px]">
+          <div className="w-[1208px] pl-[40px]">
             <Outlet />
           </div>
         </div>
@@ -55,7 +58,6 @@ export const AccountPage = () => {
           <Outlet />
         </div>
       )}
-
     </>
   );
 };

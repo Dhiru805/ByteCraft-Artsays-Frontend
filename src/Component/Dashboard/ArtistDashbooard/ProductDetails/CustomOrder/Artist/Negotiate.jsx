@@ -146,7 +146,7 @@ const UpdateModal = ({ request, onClose, onSubmit }) => {
                 </div>
               )}
 
-              {/* {negotiatedBudgets.filter((b) => b.updatedBy === 'artist').map((budget, index) => (
+              {/* {negfotiatedBudgets.filter((b) => b.updatedBy === 'artist').map((budget, index) => (
                 <div className="mb-3" key={index}>
                   <label className="form-label">Artist Negotiated Budget {index + 1}</label>
                   <input type="number" className="form-control" value={budget.amount} readOnly />

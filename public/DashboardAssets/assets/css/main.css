@@ -2289,13 +2289,21 @@ html.fullscreen-bg #wrapper {
   -ms-transition: all 0.3s ease-in-out;
   -o-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
-  width: calc(100% - 330px);
+  /* update width */
+  width: calc(100% - 250px);
   float: right;
   position: relative;
   margin-top: 60px;
-  margin-right: 50px;
+  /* update margin-right */
+  margin-right: 0;
   padding: 0 20px;
   background: var(--body-color);
+}
+/* update @media */
+@media (min-width: 769px) {
+  #main-content {
+    width: calc(100% - 280px);
+  }
 }
 .right_icon_toggle .navbar-fixed-top {
   width: calc(100% - 280px);
@@ -2472,9 +2480,22 @@ html.fullscreen-bg #wrapper {
   position: fixed;
   top: 0px;
   left: 280px;
-  width: calc(100% - 330px);
+  /* update width */
+  width: calc(100% - 70px);
   z-index: 99;
   background: var(--body-color);
+}
+/* update both @media */
+@media (min-width: 769px) {
+  .navbar-fixed-top {
+    width: calc(100% - 275px);
+  }
+}
+@media (max-width: 769px) {
+  .navbar-fixed-top {
+    padding-right: 0;
+    padding-left: 15px;
+  }
 }
 .navbar-fixed-top .navbar-brand {
   padding: 15px 0;
@@ -2483,7 +2504,8 @@ html.fullscreen-bg #wrapper {
 }
 @media screen and (max-width: 992px) {
   .navbar-fixed-top .navbar-brand {
-    padding: 15px;
+    /* padding: 15px; */
+    padding: 0;
   }
 }
 .navbar-fixed-top .navbar-brand a {
@@ -2837,7 +2859,7 @@ html.fullscreen-bg #wrapper {
   color: var(--primary-color);
 }
 .layout-fullwidth #wrapper .navbar-fixed-top {
-  width: calc(100% - 50px);
+  width: calc(100% - 15px);
   left: 0;
 }
 .layout-fullwidth #wrapper .sidebar {
@@ -2847,7 +2869,7 @@ html.fullscreen-bg #wrapper {
   overflow: visible !important;
 }
 .layout-fullwidth #wrapper #main-content {
-  width: calc(100% - 50px);
+  width: calc(100% - 0px);
 }
 .user-account {
   margin: 20px 0;

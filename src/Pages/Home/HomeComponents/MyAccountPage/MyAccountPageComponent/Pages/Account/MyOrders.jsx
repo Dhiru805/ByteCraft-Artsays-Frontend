@@ -30,7 +30,7 @@ const MyOrders = () => {
     ];
 
     return (
-        <div className="w-[856px] space-y-6 ">
+        <div className="w-[1208px] space-y-6 ">
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold">Orders ({orders.length})</h2>
@@ -49,8 +49,6 @@ const MyOrders = () => {
                         <FaChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 text-xs pointer-events-none" />
                     </div>
                 </div>
-
-
             </div>
 
             {/* Order Cards */}
@@ -62,9 +60,6 @@ const MyOrders = () => {
                         <div className='border-r pl-8  ' >Payment Method<br /><span className="font-normal">{order.paymentMethod}</span></div>
                         <div className='border-r pl-8  ' >Transaction ID<br /><span className="font-normal">{order.transactionId}</span></div>
 
-                        {/* {order.total && (
-              <div>Total Payment<br /><span className="font-normal">${order.total}</span></div>
-            )} */}
                         <div className='pl-8  '>
                             {order.status === 'Delivered' ? 'Delivery Date' : 'Estimated Delivery Date'}<br />
                             <span className="font-normal ">{order.deliveryDate}</span>
@@ -107,9 +102,7 @@ const MyOrders = () => {
                                 Your Order has been {order.status}
                             </p>
                         </div>
-
                     </div>
-
 
                     <div className="px-4 py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         {/* Left Side Buttons */}
@@ -133,7 +126,6 @@ const MyOrders = () => {
                             </div>
                         )}
                     </div>
-
                 </div>
             ))}
         </div>

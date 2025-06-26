@@ -1,10 +1,14 @@
-import { Link } from "react-router-dom";
-import { useState, useRef, useEffect, useState as useReactState } from "react";
+import { Link } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
+import { DEFAULT_PROFILE_IMAGE } from './MyAccountPage/MyAccountPageComponent/Pages/Account/constant';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import getAPI from '../../../api/getAPI'; 
 
 export const NavUserState = () => {
   return (
     <div className="bg-white rounded-[10px] gap-[10px] font-semibold p-[20px]">
-      <Link to='/login'>
+      <Link to="/login">
         <button
           className="w-[160px] h-[50px] p-[10px] gap-[10px] bg-[#6F4D34] text-white rounded-[10px] text-lg"
         >
@@ -17,18 +21,53 @@ export const NavUserState = () => {
 
 export const NavGuestState = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [userType, setUserType] = useReactState(null);
+  const [userType, setUserType] = useState(null);
+  const [profileImage, setProfileImage] = useState(DEFAULT_PROFILE_IMAGE);
   const dropdownRef = useRef(null);
 
- useEffect(() => {
-  const storedType = localStorage.getItem('userType')
-  if (storedType) {
-    console.log("Detected userType:", storedType);
-    setUserType(storedType);
-  }
-}, []);
+  // Fetch user profile and userType
+  useEffect(() => {
+    const storedType = localStorage.getItem('userType');
+    const storedUserId = localStorage.getItem('userId'); // Assuming userId is stored
+    if (storedType) {
+      console.log("Detected userType:", storedType);
+      setUserType(storedType);
+    }
 
-// Handle outside click
+    // Fetch user profile
+    const fetchUserProfile = async () => {
+      if (!storedUserId) {
+        console.log("No userId found in localStorage, using default image");
+        setProfileImage(DEFAULT_PROFILE_IMAGE);
+        return;
+      }
+
+      try {
+        const response = await getAPI(`/auth/userid/${storedUserId}`, {}, true, false);
+        console.log("Profile API response:", response.data); // Debugging log
+        const profileData = response.data.user; // Access user object
+        if (profileData?.profilePhoto) {
+          setProfileImage(`http://localhost:3001${profileData.profilePhoto}`); // Use profilePhoto
+        } else {
+          console.log("No profile photo found, using default");
+          setProfileImage(DEFAULT_PROFILE_IMAGE);
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error.response || error);
+        toast.error("Failed to load profile image");
+        setProfileImage(DEFAULT_PROFILE_IMAGE);
+      }
+    };
+
+    if (localStorage.getItem('token') && storedUserId) {
+      fetchUserProfile();
+    } else {
+      console.log("No token or userId found, skipping profile fetch");
+      setProfileImage(DEFAULT_PROFILE_IMAGE);
+    }
+  }, []);
+
+  // Handle outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -38,10 +77,9 @@ export const NavGuestState = () => {
 
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
-    } 
-    // else {
-    //   document.removeEventListener('mousedown', handleClickOutside);
-    // }
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -52,14 +90,23 @@ export const NavGuestState = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userType');
     localStorage.removeItem('email');
+    localStorage.removeItem('userId');
+    setProfileImage(DEFAULT_PROFILE_IMAGE);
     window.location.href = '/';
   };
 
   return (
     <div className="relative flex flex-row gap-1 items-center" ref={dropdownRef}>
       <Link to="/profile">
-        <img src="/assets/home/profile.svg" 
-        alt="Profile" />
+        <img
+          src={profileImage}
+          alt="Profile"
+          className="w-8 h-8 rounded-full object-cover"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = DEFAULT_PROFILE_IMAGE;
+          }}
+        />
       </Link>
 
       <div className="relative">
@@ -67,17 +114,17 @@ export const NavGuestState = () => {
           onClick={() => setIsOpen(!isOpen)}
           className="focus:outline-none"
         >
-          <img src="/assets/home/toggle.svg" 
-          alt="Toggle Dropdown" />
+          <img src="/assets/home/toggle.svg" alt="Toggle Dropdown" />
         </button>
 
         {isOpen && userType && (
           <div className="absolute right-0 top-full mt-2 bg-white border rounded-md shadow-md w-44 z-10">
             <div className="flex flex-col gap-6 py-4 font-semibold">
               <nav className="flex flex-col gap-3 text-zinc-700 text-base">
-                <Link 
-                to={userType === "Buyer" ? "/my-account" : `${userType}/dashboard`} 
-                className="px-3 pb-2">
+                <Link
+                  to={userType === "Buyer" ? "/my-account" : `${userType}/dashboard`}
+                  className="px-3 pb-2"
+                >
                   {userType === "Buyer" ? "My Account" : "My Dashboard"}
                 </Link>
 

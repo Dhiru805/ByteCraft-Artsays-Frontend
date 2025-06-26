@@ -71,7 +71,6 @@ const SocialMediaPromotion = () => {
     setLoading(true);
     try {
       const url = `/auth/updatesociallink/${userId}`;
-      console.log("Hello Rohit Patel");
       
       const result = await putAPI(url, formData);
       console.log("Update response:", result);
@@ -91,24 +90,8 @@ const SocialMediaPromotion = () => {
     }
   };
 
-  // const handleSubmit = async (event) => {
-  //       event.preventDefault();
-  //       try {
-  //           const url = `/auth/updatesociallink/${userId}`;
-  //           const result = await putAPI(url, formData);
-
-  //           if (result) {
-  //               toast.success('Social links updated successfully');
-  //           } else {
-  //               toast.error('Failed to update social links');
-  //           }
-  //       } catch (error) {
-  //           toast.error('Error updating social links');
-  //       }
-  //   };
-
   return (
-    <div className="space-y-[40px] w-[856px]">
+    <div className="space-y-[40px] w-[1208px]">
       <h2 className="text-2xl text-gray-950 font-semibold">Social Media Promotion</h2>
       <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
         {/* Instagram */}

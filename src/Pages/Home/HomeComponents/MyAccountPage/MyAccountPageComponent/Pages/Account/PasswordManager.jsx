@@ -64,7 +64,7 @@ const PasswordManager = () => {
   };
 
   return (
-    <div className="space-y-6 w-[856px]">
+    <div className="space-y-6 w-[1208px]">
       <h2 className="text-2xl text-gray-900 font-semibold">Password Manager</h2>
 
       <form className="space-y-8">

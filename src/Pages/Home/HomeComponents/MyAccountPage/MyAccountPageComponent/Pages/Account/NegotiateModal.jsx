@@ -4,68 +4,81 @@ import { toast } from "react-toastify";
 import putAPI from "../../../../../../../api/putAPI";
 
 const NegotiateModal = ({ request, onClose, onSubmit }) => {
-  const isBuyer = true;
-
   const [buyerName] = useState(
-    request ? `${request.Buyer.id.name} ${request.Buyer.id.lastName}` : ""
+    request?.Buyer?.id?.name && request?.Buyer?.id?.lastName
+      ? `${request.Buyer.id.name} ${request.Buyer.id.lastName}`
+      : "Unknown Buyer"
   );
   const [requestDate] = useState(
-    new Date(request?.createdAt).toLocaleDateString() || ""
+    request?.createdAt && !isNaN(new Date(request.createdAt))
+      ? new Date(request.createdAt).toLocaleDateString()
+      : "Unknown Date"
   );
-  const [maxBudget, setMaxBudget] = useState(request?.MaxBudget || "");
-  const [minBudget, setMinBudget] = useState(request?.MinBudget || "");
+  const [maxBudget] = useState(request?.MaxBudget || "");
+  const [minBudget] = useState(request?.MinBudget || "");
   const [notes, setNotes] = useState(request?.BuyerNotes || "");
-  const [negotiatedBudgets, setNegotiatedBudgets] = useState(
-    request?.NegotiatedBudget || []
-  );
-  const [newBudget, setNewBudget] = useState("");
+  // const [negotiatedBudgets] = useState(request?.NegotiatedBudget || []);
+  const [negotiatedBudgets, setNegotiatedBudgets] = useState(request?.NegotiatedBudget || []);
+
+  const [currentBudget, setCurrentBudget] = useState("");
+  const [isUpdated] = useState(request?.isUpdated || 0);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectComment, setRejectComment] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const numericBudget = parseFloat(newBudget);
 
-    if (numericBudget < minBudget || numericBudget > maxBudget) {
-      toast.error("Negotiated Budget must be within the allowed range.");
+    if (isUpdated >= 2) {
+      toast.error("Cannot update anymore: Maximum 2 negotiations reached");
       return;
     }
 
-    const updatedBudgets = [
-      ...negotiatedBudgets,
-      { amount: numericBudget, updatedBy: isBuyer ? "buyer" : "artist" },
-    ];
+    if (!currentBudget) {
+      toast.error("Please enter a negotiated budget");
+      return;
+    }
 
+    if (parseFloat(currentBudget) < parseFloat(minBudget) || parseFloat(currentBudget) > parseFloat(maxBudget)) {
+      toast.error("Negotiated budget must be between minimum and maximum budget");
+      return;
+    }
+
+    setLoading(true);
     try {
+      const updatedBudgets = [...negotiatedBudgets, parseFloat(currentBudget)];
+      setNegotiatedBudgets(updatedBudgets);
       const response = await putAPI(
         `/api/update-negiotaite-Buyer-budget/${request._id}`,
         {
           ProductName: request?.ProductName || "",
           Description: request?.Description || "",
-          MaxBudget: maxBudget,
-          MinBudget: minBudget,
+          MaxBudget: maxBudget ? parseFloat(maxBudget) : "",
+          MinBudget: minBudget ? parseFloat(minBudget) : "",
           NegotiatedBudget: updatedBudgets,
           BuyerNotes: notes,
+          isUpdated: isUpdated + 1,
         }
       );
 
       if (response && response.data) {
-        toast.success(
-          response.data.successMessage || "Buyer request updated successfully"
-        );
+        toast.success(response.data.successMessage || "Buyer request updated successfully");
         onSubmit(response.data.updatedRequest);
+        setCurrentBudget("");
+        onClose();
       } else {
         toast.error(response?.message || "Failed to update buyer request");
       }
     } catch (error) {
       console.error("Error updating buyer request:", error);
-      toast.error(
-        error.response?.data?.message || "Error updating buyer request"
-      );
+      toast.error(error.response?.data?.message || "Error updating buyer request");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleStatusUpdate = async (status, comment = "") => {
+    setLoading(true);
     try {
       const response = await putAPI(
         `/api/update-negiotaite-Buyer-budget/${request._id}`,
@@ -84,9 +97,9 @@ const NegotiateModal = ({ request, onClose, onSubmit }) => {
       }
     } catch (error) {
       console.error("Error updating buyer request status:", error);
-      toast.error(
-        error.response?.data?.message || "Error updating buyer request status"
-      );
+      toast.error(error.response?.data?.message || "Error updating buyer request status");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -112,7 +125,12 @@ const NegotiateModal = ({ request, onClose, onSubmit }) => {
             <button
               className="btn"
               onClick={onClose}
-              style={{ border: "none", background: "transparent", fontSize: "1.0rem" }}
+              style={{
+                border: "none",
+                background: "transparent",
+                fontSize: "1.0rem",
+              }}
+              disabled={loading}
             >
               ✕
             </button>
@@ -120,82 +138,107 @@ const NegotiateModal = ({ request, onClose, onSubmit }) => {
           <form onSubmit={handleSubmit}>
             <div className="modal-body">
               <div className="mb-3">
-                <label className="form-label">Buyer Name</label>
+                <label htmlFor="buyerName" className="form-label">
+                  Buyer Name
+                </label>
                 <input
                   type="text"
                   className="form-control"
+                  id="buyerName"
+                  name="buyerName"
                   value={buyerName}
                   readOnly
                 />
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Request Date</label>
+                <label htmlFor="requestDate" className="form-label">
+                  Request Date
+                </label>
                 <input
                   type="text"
                   className="form-control"
+                  id="requestDate"
+                  name="requestDate"
                   value={requestDate}
                   readOnly
                 />
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Max Budget</label>
+                <label htmlFor="maxBudget" className="form-label">
+                  Max Budget
+                </label>
                 <input
                   type="number"
                   className="form-control"
+                  id="maxBudget"
+                  name="maxBudget"
                   value={maxBudget}
-                  onChange={(e) => setMaxBudget(e.target.value)}
                   readOnly
                 />
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Min Budget</label>
+                <label htmlFor="minBudget" className="form-label">
+                  Min Budget
+                </label>
                 <input
                   type="number"
                   className="form-control"
+                  id="minBudget"
+                  name="minBudget"
                   value={minBudget}
-                  onChange={(e) => setMinBudget(e.target.value)}
                   readOnly
                 />
               </div>
 
               {negotiatedBudgets.map((budget, index) => (
-                <div className="mb-3" key={index}>
-                  <label className="form-label">
-                    Negotiated Budget {index + 1} ({budget.updatedBy})
+                <div key={index} className="mb-3">
+                  <label htmlFor={`negotiatedBudget${index}`} className="form-label">
+                    {`Negotiated Budget ${index + 1}`}
                   </label>
                   <input
                     type="number"
                     className="form-control"
-                    value={budget.amount}
+                    id={`negotiatedBudget${index}`}
+                    name={`negotiatedBudget${index}`}
+                    value={budget}
                     readOnly
                   />
                 </div>
               ))}
 
-              {negotiatedBudgets.length < 2 && (
+              {isUpdated < 2 && negotiatedBudgets.length < 2 && (
                 <div className="mb-3">
-                  <label className="form-label">
-                    Negotiated Budget {negotiatedBudgets.length + 1}
+                  <label htmlFor={`negotiatedBudget${negotiatedBudgets.length}`} className="form-label">
+                    {`Negotiated Budget ${negotiatedBudgets.length + 1}`}
                   </label>
                   <input
                     type="number"
                     className="form-control"
-                    value={newBudget}
-                    onChange={(e) => setNewBudget(e.target.value)}
-                    placeholder="Enter Negotiated Budget"
+                    id={`negotiatedBudget${negotiatedBudgets.length}`}
+                    name={`negotiatedBudget${negotiatedBudgets.length}`}
+                    placeholder={`Enter Negotiated Budget ${negotiatedBudgets.length + 1}`}
+                    value={currentBudget}
+                    onChange={(e) => setCurrentBudget(e.target.value)}
                     required
+                    min={minBudget}
+                    max={maxBudget}
                   />
                 </div>
               )}
 
               <div className="mb-3">
-                <label className="form-label">Notes</label>
+                <label htmlFor="notes" className="form-label">
+                  Notes
+                </label>
                 <textarea
                   className="form-control"
+                  id="notes"
+                  name="notes"
                   rows="4"
+                  placeholder="Enter additional notes or negotiation terms"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                 />
@@ -207,34 +250,36 @@ const NegotiateModal = ({ request, onClose, onSubmit }) => {
                 type="button"
                 className="btn btn-secondary"
                 onClick={onClose}
+                disabled={loading}
               >
                 Close
               </button>
-              {negotiatedBudgets.length < 2 && (
-                <button
-                  type="submit"
-                  className="text-[16px] py-1 px-3 text-zinc-900 border-[1.6px] rounded-lg border-zinc-600"
-                >
-                  Save changes
-                </button>
-              )}
-              {request?.BuyerStatus !== "Approved" && (
-                <button
-                  type="button"
-                  className="btn btn-success"
-                  onClick={() => handleStatusUpdate("Approved")}
-                >
-                  Accepted
-                </button>
-              )}
-              {request?.BuyerStatus !== "Rejected" && (
-                <button
-                  type="button"
-                  className="btn btn-danger"
-                  onClick={() => setShowRejectModal(true)}
-                >
-                  Rejected
-                </button>
+              <button
+                type="submit"
+                className="text-[16px] py-1 px-3 text-zinc-900 border-[1.6px] rounded-lg border-zinc-600"
+                disabled={loading || isUpdated >= 2 || negotiatedBudgets.length >= 2}
+              >
+                {loading ? "Saving..." : "Save changes"}
+              </button>
+              {request?.BuyerStatus !== "Approved" && request?.BuyerStatus !== "Rejected" && (
+                <>
+                  <button
+                    type="button"
+                    className="btn btn-success"
+                    onClick={() => handleStatusUpdate("Approved")}
+                    disabled={loading}
+                  >
+                    Accepted
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-danger"
+                    onClick={() => setShowRejectModal(true)}
+                    disabled={loading}
+                  >
+                    Rejected
+                  </button>
+                </>
               )}
             </div>
           </form>
@@ -242,10 +287,7 @@ const NegotiateModal = ({ request, onClose, onSubmit }) => {
       </div>
 
       {showRejectModal && (
-        <div
-          className="modal"
-          style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-        >
+        <div className="modal" style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
@@ -254,17 +296,23 @@ const NegotiateModal = ({ request, onClose, onSubmit }) => {
                   className="btn"
                   onClick={() => setShowRejectModal(false)}
                   style={{ border: "none", background: "transparent", fontSize: "1.0rem" }}
+                  disabled={loading}
                 >
                   ✕
                 </button>
               </div>
               <div className="modal-body">
-                <label className="form-label">Rejection Comment</label>
+                <label htmlFor="rejectComment" className="form-label">
+                  Rejection Comment
+                </label>
                 <textarea
                   className="form-control"
+                  id="rejectComment"
+                  name="rejectComment"
                   rows="4"
                   value={rejectComment}
                   onChange={(e) => setRejectComment(e.target.value)}
+                  disabled={loading}
                 />
               </div>
               <div className="modal-footer">
@@ -272,6 +320,7 @@ const NegotiateModal = ({ request, onClose, onSubmit }) => {
                   type="button"
                   className="btn btn-secondary"
                   onClick={() => setShowRejectModal(false)}
+                  disabled={loading}
                 >
                   Close
                 </button>
@@ -285,6 +334,7 @@ const NegotiateModal = ({ request, onClose, onSubmit }) => {
                     }
                     handleStatusUpdate("Rejected", rejectComment);
                   }}
+                  disabled={loading}
                 >
                   Save Rejection
                 </button>

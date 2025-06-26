@@ -11,6 +11,7 @@ const AccountVerification = () => {
   const [filePreview, setFilePreview] = useState(null);
   const [fileType, setFileType] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
 
   const userId = localStorage.getItem('userId');
@@ -26,7 +27,6 @@ const AccountVerification = () => {
           setDocNumber(data.documentNumber || '');
 
           if (data.documentFile) {
-            // 🔧 Replace backslashes with forward slashes
             const normalizedPath = data.documentFile.replace(/\\/g, '/');
 
             setFilePreview(`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${normalizedPath}`);
@@ -90,49 +90,54 @@ const AccountVerification = () => {
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
+  event.preventDefault();
+  setLoading(true);
 
+  if (!validateDocumentNumber()) {
+    setLoading(false);
+    return;
+  }
 
-    if (!validateDocumentNumber()) {
-      return;
+  if (!verificationType || !docNumber || (!file && !filePreview)) {
+    toast.warn('Please complete all fields');
+    setLoading(false);
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('userId', userId);
+  formData.append('verificationType', verificationType);
+  formData.append('docNumber', docNumber);
+
+  try {
+    if (!file && filePreview) {
+      const response = await fetch(filePreview);
+      const blob = await response.blob();
+      const filename = verificationType.replace(/\s+/g, '_') + '.' + blob.type.split('/')[1];
+      const fileFromBlob = new File([blob], filename, { type: blob.type });
+      formData.append('file', fileFromBlob);
+    } else if (file) {
+      formData.append('file', file);
     }
 
-    if (!verificationType || !docNumber || (!file && !filePreview)) {
-      toast.warn('Please complete all fields');
-      return;
+    const url = `/auth/updateverificationdetails/${userId}`;
+    const response = await putAPI(url, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    if (response) {
+      toast.success('Verification details updated successfully');
+    } else {
+      toast.error('Failed to update verification details');
     }
-
-    const formData = new FormData();
-    formData.append('userId', userId);
-    formData.append('verificationType', verificationType);
-    formData.append('docNumber', docNumber);
-
-
-    try {
-      if (!file && filePreview) {
-        const response = await fetch(filePreview);
-        const blob = await response.blob();
-        const filename = verificationType.replace(/\s+/g, '_') + '.' + blob.type.split('/')[1];
-        const fileFromBlob = new File([blob], filename, { type: blob.type });
-        formData.append('file', fileFromBlob);
-      } else if (file) {
-        formData.append('file', file);
-      }
-      const url = `/auth/updateverificationdetails/${userId}`;
-      const response = await putAPI(url, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      if (response) {
-        toast.success('Verification details updated successfully');
-      } else {
-        toast.error('Failed to update verification details');
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Error updating verification details');
-    }
-  };
+  } catch (error) {
+    toast.error(error.response?.data?.message || 'Error updating verification details');
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleDocNumberChange = (e) => {
     setDocNumber(e.target.value);
@@ -147,7 +152,7 @@ const AccountVerification = () => {
   };
 
   return (
-    <div className="w-[856px]">
+    <div className="w-[1208px]">
       <h2 className="text-2xl text-gray-950 pb-4 font-semibold">Account Verification</h2>
 
       <form className="space-y-8 text-sm font-semibold" onSubmit={handleSubmit}>
@@ -194,8 +199,6 @@ const AccountVerification = () => {
         {/* Buttons */}
         <div className="flex flex-col gap-6 mt-4">
 
-
-
           {filePreview && fileType.startsWith('image/') && (
             <img
               src={filePreview}
@@ -219,7 +222,7 @@ const AccountVerification = () => {
             type="submit"
             className="bg-[#6F4D34] text-white w-[120px] px-8 py-2 rounded-full text-base font-medium"
           >
-            Update
+            {loading ? 'Updating...' : 'Update'}
           </button>
         </div>
       </form>
