@@ -71,7 +71,6 @@ const SocialMediaPromotion = () => {
     setLoading(true);
     try {
       const url = `/auth/updatesociallink/${userId}`;
-      console.log("Hello Rohit Patel");
       
       const result = await putAPI(url, formData);
       console.log("Update response:", result);

@@ -15,11 +15,12 @@ const UpdateModal = ({ request, onClose, onSubmit }) => {
   const [notes, setNotes] = useState(request?.Notes || "");
   const [loading, setLoading] = useState(false);
 
+  // Parse existing negotiated budgets (stored as array or fallback to single value)
   const existingNegotiatedBudgets = Array.isArray(request?.NegotiatedBudget)
     ? request.NegotiatedBudget
     : request?.NegotiatedBudget
-      ? [request.NegotiatedBudget]
-      : [];
+    ? [request.NegotiatedBudget]
+    : [];
 
   const [negotiatedBudgets, setNegotiatedBudgets] = useState(existingNegotiatedBudgets);
   const [newBudget, setNewBudget] = useState("");
@@ -145,30 +146,6 @@ const UpdateModal = ({ request, onClose, onSubmit }) => {
                   />
                 </div>
               )}
-
-              {/* {negotiatedBudgets.filter((b) => b.updatedBy === 'artist').map((budget, index) => (
-                <div className="mb-3" key={index}>
-                  <label className="form-label">Artist Negotiated Budget {index + 1}</label>
-                  <input type="number" className="form-control" value={budget.amount} readOnly />
-                </div>
-              ))}
-
-              {negotiatedBudgets.length < 3 && (negotiatedBudgets.length % 2 === 0) && (
-                <div className="mb-3">
-                  <label className="form-label">
-                    Artist Negotiated Budget {Math.floor(negotiatedBudgets.length / 2) + 1}
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    placeholder="Enter Negotiated Budget"
-                    value={newBudget}
-                    onChange={(e) => setNewBudget(e.target.value)}
-                    required
-                  />
-                </div>
-              )} */}
-
 
               <div className="mb-3">
                 <label className="form-label">Notes</label>

@@ -152,7 +152,7 @@ const AddCustomRequestForm = () => {
 
       // Set image preview and file type for existing image
       if (existingData.BuyerImage) {
-        const imageUrl = `http://localhost:3001/${existingData.BuyerImage}`;
+        const imageUrl = `api/${existingData.BuyerImage}`;
         setImagePreview(imageUrl);
         setFileType(existingData.BuyerImage.endsWith(".pdf") ? "pdf" : "image");
       } else {
@@ -421,25 +421,25 @@ const AddCustomRequestForm = () => {
                   <tr key={req._id} className="border-b">
                     <td className="px-4 py-2">{index + 1}</td>
                     <td className="px-4 py-2 flex items-center gap-2">
-  {req.BuyerImage ? (
-    <img
-      src={`http://localhost:3001/${req.BuyerImage}`}
-      className="w-8 h-8 rounded-full object-cover"
-      alt="Buyer"
-      onError={(e) => {
-        e.target.onerror = null;
-        e.target.src = DEFAULT_PROFILE_IMAGE;
-      }}
-    />
-  ) : (
-    <img
-      src={DEFAULT_PROFILE_IMAGE}
-      className="w-8 h-8 rounded-full object-cover"
-      alt="Default Buyer"
-    />
-  )}
-  {req.ProductName || "₹ NaN"}
-</td>
+                      {req.BuyerImage ? (
+                        <img
+                          src={`http://localhost:3001/${req.BuyerImage}`}
+                          className="w-8 h-8 rounded-full object-cover"
+                          alt="Buyer"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = DEFAULT_PROFILE_IMAGE;
+                          }}
+                        />
+                      ) : (
+                        <img
+                          src={DEFAULT_PROFILE_IMAGE}
+                          className="w-8 h-8 rounded-full object-cover"
+                          alt="Default Buyer"
+                        />
+                      )}
+                      {req.ProductName || "₹ NaN"}
+                    </td>
                     <td className="px-4 py-2">
                       {req.Artist?.id?.name || ""} {req.Artist?.id?.lastName || ""}
                     </td>
@@ -449,32 +449,30 @@ const AddCustomRequestForm = () => {
                     <td className="px-4 py-2">
                       {req.MinBudget ? `₹${req.MinBudget}` : "₹ NaN"}
                     </td>
-                    <td className="px-4 py-2">{req.NegotiatedBudget[req.NegotiatedBudget.length-1] || "—"}</td>
+                    <td className="px-4 py-2">{req.NegotiatedBudget[req.NegotiatedBudget.length - 1] || "—"}</td>
                     <td className="px-4 py-2">
                       {req?.createdAt ? new Date(req.createdAt).toLocaleDateString() : ""}
                     </td>
                     <td className="px-4 py-2">
                       <button
-                        className={`px-3 py-1 rounded-lg border text-sm ${
-                          req.RequestStatus === "Approved"
+                        className={`px-3 py-1 rounded-lg border text-sm ${req.RequestStatus === "Approved"
                             ? "text-green-500 border-green-500 bg-white"
                             : req.RequestStatus === "Pending"
-                            ? "text-yellow-500 border-yellow-500 bg-white"
-                            : "text-red-500 border-red-500 bg-white"
-                        }`}
+                              ? "text-yellow-500 border-yellow-500 bg-white"
+                              : "text-red-500 border-red-500 bg-white"
+                          }`}
                       >
                         {req.RequestStatus || "Pending"}
                       </button>
                     </td>
                     <td className="px-4 py-2">
                       <button
-                        className={`px-3 py-1 rounded-lg border text-sm ${
-                          req.BuyerStatus === "Approved"
+                        className={`px-3 py-1 rounded-lg border text-sm ${req.BuyerStatus === "Approved"
                             ? "text-green-500 border-green-500 bg-white"
                             : req.BuyerStatus === "Pending"
-                            ? "text-yellow-500 border-yellow-500 bg-white"
-                            : "text-red-500 border-red-500 bg-white"
-                        }`}
+                              ? "text-yellow-500 border-yellow-500 bg-white"
+                              : "text-red-500 border-red-500 bg-white"
+                          }`}
                       >
                         {req.BuyerStatus || "Pending"}
                       </button>
