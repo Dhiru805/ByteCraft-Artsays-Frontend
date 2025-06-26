@@ -73,14 +73,12 @@ import Artistproductrequest from "../Component/Dashboard/Super-AdminDashboard/Ar
 import ArtistAllProduct from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Product/AllArtistProduct";
 import ProductEditRequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/UserProfile/UserProf";
 import EditBlogRequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/UserProfile/BlogRequest/UpdateBlogList";
-
 import ProductViewRequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ViewUserProfile/UserProf";
-import ArtistProductRequestView   from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ProductRequest/ProductRequestView";
-import ArtistSoldProductTable   from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/SoldProduct/SoldProduct";
-import ArtistTransaction   from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Transaction/ArtistTransaction";
-import ArtistPackagingMaterial   from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/PackagingMaterial/ProductPurchasedArtist";
-import ArtistProductsDetails   from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Product/ArtistProductDetails";
-
+import ArtistProductRequestView from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ProductRequest/ProductRequestView";
+import ArtistSoldProductTable from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/SoldProduct/SoldProduct";
+import ArtistTransaction from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Transaction/ArtistTransaction";
+import ArtistPackagingMaterial from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/PackagingMaterial/ProductPurchasedArtist";
+import ArtistProductsDetails from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Product/ArtistProductDetails";
 
 import BuyerManagement from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/BuyerManageTable";
 import BuyerProductPurchase from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductPurchased/ProductPurchased";
@@ -101,6 +99,7 @@ import SellerTransaction from "../Component/Dashboard/Super-AdminDashboard/Selle
 import SellerPackaging from "../Component/Dashboard/Super-AdminDashboard/Seller/PackagingMaterial/ProductPurchasedSeller";
 import SellerManageProductView from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerUserProdileView/UserProf";
 import SellerManageProductEdit from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerUserProfile/UserProf";
+
 //-----------------------------Product--------------------------//
 import ProductTableView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Product";
 import CustomOrderView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/CustomOrderAll/Customorder";
@@ -108,10 +107,12 @@ import PurchaseTable from "../Component/Dashboard/Super-AdminDashboard/ProductDe
 import ProductUploads from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductUpload/productUploade";
 import ProductRequestView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist";
 import ViewCustomRequestsuperadmin from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist";
+
 //-----------------------------Bidding--------------------------//
 import AllBiddingProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/AllProduct/BiddingProduct";
 import BiddedProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddedproduct/Biddedproduct";
 import BiddedProductTransaction from "../Component/Dashboard/Super-AdminDashboard/Bidding/Transaction/BiddedproductTransaction";
+
 //-----------------------------Settings--------------------------//
 import EmailSettings from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailSetting/EmailSetting";
 import BlogCategory from "../Component/Dashboard/Super-AdminDashboard/Settings/Blogcategory/Category";
@@ -182,6 +183,30 @@ const PublicRoute = ({ children }) => {
   return children ? children : <Outlet />;
 };
 
+const WebsiteWrapper = () => {
+  const [showAnimation, setShowAnimation] = useState(true);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === '/') {
+      const timer = setTimeout(() => {
+        setShowAnimation(false);
+      }, 6000); // Preloader duration (6 seconds)
+      return () => clearTimeout(timer);
+    } else {
+      setShowAnimation(false); // Skip preloader for other routes
+    }
+  }, [location.pathname]);
+
+  return showAnimation && location.pathname === '/' ? (
+    <PreloaderAnimation />
+  ) : (
+    <WebsiteLayout>
+      <Outlet />
+    </WebsiteLayout>
+  );
+};
+
 const AppRoutes = () => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
 
@@ -229,27 +254,23 @@ const AppRoutes = () => {
         <Route path="artist/artistproductrequest" element={<Artistproductrequest />} />
         <Route path="artist/allartistproduct" element={<ArtistAllProduct />} />
         <Route path="artist/sold-product" element={<SoldProduct />} />
+        <Route path="artist/management/artistprofileview/" element={<ProductViewRequest />} />
+        <Route path="artist/artistprofileview/:userId" element={<ProductViewRequest />} />
+        <Route path="artist/soldproducts" element={<ArtistSoldProductTable />} />
+        <Route path="artist/artisttransaction" element={<ArtistTransaction />} />
+        <Route path="artist/artistpackagingmaterial" element={<ArtistPackagingMaterial />} />
+        <Route path="artist/management/productrequest/:userId" element={<ArtistProductRequestView />} />
+        <Route path="artist/management/artisteditreuqest/update-blog" element={<EditBlogRequest />} />
+        <Route path="artist/management/artisteditreuqest/" element={<ProductEditRequest />} />
+        <Route path="artist/allartistproduct/productdetails/:userId" element={<ArtistProductsDetails />} />
 
-        <Route path="artist/management/artistprofileview/" element={<ProductViewRequest/>} />
-        <Route path="artist/artistprofileview/:userId" element={<ProductViewRequest/>} />
-        <Route path="artist/soldproducts" element={<ArtistSoldProductTable/>} />
-        <Route path="artist/artisttransaction" element={<ArtistTransaction/>} />
-        <Route path="artist/artistpackagingmaterial" element={<ArtistPackagingMaterial/>} />
-        <Route path="artist/management/productrequest/:userId" element={<ArtistProductRequestView/>} />
-        <Route path="artist/management/artisteditreuqest/update-blog" element={<EditBlogRequest/>} />
-
-        <Route path="artist/management/artisteditreuqest/" element={<ProductEditRequest/>} />        
-        <Route path="artist/allartistproduct/productdetails/:userId" element={<ArtistProductsDetails/>} />
-
-
-
+        {/* Buyer Management */}
         <Route path="buyer/management" element={<BuyerManagement />} />
         <Route path="buyer/productpurchased" element={<BuyerProductPurchase />} />
         <Route path="buyer/resellproduct" element={<BuyerProductRequest />} />
         <Route path="buyer/soldproduct" element={<BuyerSoldProduct />} />
         <Route path="buyer/transaction" element={<BuyerTransaction />} />
         <Route path="buyer/packagingmaterial" element={<BuyerPackagingMaterial />} />
-
         <Route path="buyer/management/productview/" element={<BuyermanageProductView />} />
         <Route path="buyer/management/productedit/" element={<BuyermanageProductEdit />} />
         <Route path="buyer/resellproduct/productview/:userId" element={<BuyerResellProductView />} />
@@ -261,7 +282,6 @@ const AppRoutes = () => {
         <Route path="seller/soldproduct" element={<SellerSoldProducts />} />
         <Route path="seller/transaction" element={<SellerTransaction />} />
         <Route path="seller/packagingmaterial" element={<SellerPackaging />} />
-
         <Route path="seller/management/productdetails-view" element={<SellerManageProductView />} />
         <Route path="seller/management/productdetails-edit" element={<SellerManageProductEdit />} />
 
@@ -295,14 +315,12 @@ const AppRoutes = () => {
         <Route index element={<ArtistDashboard />} />
         <Route path="dashboard" element={<ArtistDashboard />} />
         <Route path="profile" element={<UserProfile />} />
-
-        {/*Blogs*/}
+        {/* Blogs */}
         <Route path="bloglist" element={<BlogList />} />
         <Route path="bloglist/create-blog" element={<BlogPost />} />
         <Route path="bloglist/update-blog" element={<UpdateBlog />} />
         <Route path="bloglist/blog-details/:slug" element={<BlogDetails />} />
-
-        {/* ----Product Route-------*/}
+        {/* Product Routes */}
         <Route path="product" element={<AllProduct />} />
         <Route path="productUpload" element={<ProductUploade />} />
         <Route path="custom-order" element={<CustomOrder />} />
@@ -336,14 +354,14 @@ const AppRoutes = () => {
         <Route index element={<SellerDashboard />} />
         <Route path="dashboard" element={<SellerDashboard />} />
         <Route path="profile" element={<UserProfile />} />
-        {/* ----Product Route-------*/}
+        {/* Product Routes */}
         <Route path="product-details" element={<ViewProductDetails />} />
         <Route path="SellerProductUpload" element={<SellerProductUpload />} />
         <Route path="purchased-product" element={<SellerPurchasedProducts />} />
       </Route>
 
       {/*-------------------------------------------- Website Routes-------------------------------------------------- */}
-      <Route path="/" element={<WebsiteLayout />}>
+      <Route path="/" element={<WebsiteWrapper />}>
         <Route index element={<WebsiteMain />} />
         <Route path="/my-account" element={<MyAccountMainLayout />}>
           <Route element={<AccountPage />}>
@@ -395,18 +413,4 @@ const AppRoutes = () => {
   );
 };
 
-const AppWrapper = () => {
-  const [showAnimation, setShowAnimation] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowAnimation(false);
-    }, 6000); // Match the animation duration in PreloaderAnimation
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  return showAnimation ? <PreloaderAnimation /> : <AppRoutes />;
-};
-
-export default AppWrapper;
+export default AppRoutes;
