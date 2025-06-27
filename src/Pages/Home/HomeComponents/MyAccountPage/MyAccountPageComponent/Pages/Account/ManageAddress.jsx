@@ -63,7 +63,7 @@ const ManageAddress = () => {
     e.preventDefault();
     setLoading(true);
 
-    if (!formData.line1 || !formData.city || !formData.state || !formData.pincode) {
+    if (!formData.line1 || !formData.line2 || !formData.city || !formData.state || !formData.pincode) {
       setLoading(false);
       toast.error('Please fill in all required fields');
       return;
@@ -189,10 +189,10 @@ const ManageAddress = () => {
             <div className="px-4 py-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
                 <p className="font-semibold text-lg text-gray-900">
-                  {addr.city}, {addr.state}
+                  {addr.city}, {addr.state}, {addr.country}
                 </p>
                 <p className="text-sm text-gray-600">
-                  {addr.line1}, {addr.pincode}
+                  {addr.line1}, {addr.line2}, {addr.pincode}
                 </p>
               </div>
               <div className="flex gap-4 text-sm font-medium">
@@ -253,7 +253,7 @@ const ManageAddress = () => {
         </div>
 
         <div>
-          <label className="block text-sm">Address Line 2</label>
+          <label className="block text-sm">Address Line 2 *</label>
           <input
             name="line2"
             value={formData.line2}
