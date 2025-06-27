@@ -387,6 +387,7 @@ const fetchProfile = async () => {
 
   const handlePricingChange = (e) => {
     const { name, value, type, checked } = e.target;
+    console.log("Pricing Change:", name, value); 
     setPricingData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value

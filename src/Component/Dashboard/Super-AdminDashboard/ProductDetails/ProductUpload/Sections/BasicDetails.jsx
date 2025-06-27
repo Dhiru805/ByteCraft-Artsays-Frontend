@@ -76,7 +76,7 @@ return [...main, ...categories, ...sub].sort((a, b) => a.fullLabel.localeCompare
       <h4 className="mb-3">Basic Product Details</h4>
 
       <div className="form-group">
-        <label htmlFor="productName">Product Name *</label>
+        <label htmlFor="productName">Product Name <span style={{ color: 'red' }}>*</span></label>
         <input
           type="text"
           id="productName"
@@ -128,7 +128,7 @@ return [...main, ...categories, ...sub].sort((a, b) => a.fullLabel.localeCompare
         />
       </div>      
       <div className="form-group">
-        <label htmlFor="mainCategory">Main Category *</label>
+        <label htmlFor="mainCategory">Main Category <span style={{ color: 'red' }}>*</span></label>
         <select
           id="mainCategory"
           name="mainCategory"
@@ -155,7 +155,7 @@ return [...main, ...categories, ...sub].sort((a, b) => a.fullLabel.localeCompare
       </div>
 
       <div className="form-group">
-        <label htmlFor="category">Category *</label>
+        <label htmlFor="category">Category <span style={{ color: 'red' }}>*</span></label>
         <select
           id="category"
           name="category"
@@ -184,7 +184,7 @@ return [...main, ...categories, ...sub].sort((a, b) => a.fullLabel.localeCompare
       </div>
 
       <div className="form-group">
-        <label htmlFor="subCategory">Subcategory *</label>
+        <label htmlFor="subCategory">Subcategory <span style={{ color: 'red' }}>*</span></label>
         <select
           id="subCategory"
           name="subCategory"
@@ -211,40 +211,40 @@ return [...main, ...categories, ...sub].sort((a, b) => a.fullLabel.localeCompare
         </select>
       </div>
 
-      <div className="form-group">
-        <label htmlFor="productType">Product Type *</label>
-        <select
-          id="productType"
-          name="productType"
-          className="form-control"
-          value={formData.productType?.value || ''}
-          onChange={(e) => {
-            const selected = filteredProductTypeOptions.find(
-              opt => opt.value === e.target.value
-            );
-            handleSelectChange('productType', selected);
-            if (selected?.value !== 'limited') {
-              handleInputChange({ target: { name: 'editionNumber', value: '' } });
-            }
-          }}
-          disabled={isSubmitting || isNFTArtSelected}
-          required
-        >
-          <option value="">Select Product Type</option>
-          {filteredProductTypeOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        {isNFTArtSelected && (
-          <small className="text-muted">NFT product type is automatically selected for NFT Art</small>
-        )}
-      </div>
+<div className="form-group">
+  <label htmlFor="productType">Product Type <span style={{ color: 'red' }}>*</span></label>
+  <select
+    id="productType"
+    name="productType"
+    className="form-control"
+    value={formData.productType?.value || ''}
+    onChange={(e) => {
+      const selected = productTypeOptions.find(
+        opt => opt.value === e.target.value
+      );
+      handleSelectChange('productType', selected);
+      if (selected?.value !== 'limited') {
+        handleInputChange({ target: { name: 'editionNumber', value: '' } });
+      }
+    }}
+    disabled={isSubmitting || isNFTArtSelected}
+    required
+  >
+    <option value="">Select Product Type</option>
+    {productTypeOptions.map((option) => (
+      <option key={option.value} value={option.value}>
+        {option.label}
+      </option>
+    ))}
+  </select>
+  {isNFTArtSelected && (
+    <small className="text-muted">NFT product type is automatically selected for NFT Art</small>
+  )}
+</div>
 
       {formData.productType?.value === 'limited' && (
         <div className="form-group">
-          <label htmlFor="editionNumber">Limited Edition Number *</label>
+          <label htmlFor="editionNumber">Limited Edition Number <span style={{ color: 'red' }}>*</span></label>
           <input
             type="number"
             id="editionNumber"
@@ -261,7 +261,7 @@ return [...main, ...categories, ...sub].sort((a, b) => a.fullLabel.localeCompare
       )}
 
       <div className="form-group">
-        <label htmlFor="description">Description *</label>
+        <label htmlFor="description">Description <span style={{ color: 'red' }}>*</span></label>
         <textarea
           id="description"
           name="description"

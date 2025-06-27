@@ -16,9 +16,9 @@ const BlogRequest = () => {
     const [loadingBlogId, setLoadingBlogId] = useState(null);
     const [actionType, setActionType] = useState('');
 
-    const [isRejectModalOpen, setIsRejectModalOpen] = useState(false); 
-    const [rejectionComment, setRejectionComment] = useState(''); 
-    const [selectedArtistToReject, setSelectedArtistToReject] = useState(null); 
+    const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+    const [rejectionComment, setRejectionComment] = useState('');
+    const [selectedArtistToReject, setSelectedArtistToReject] = useState(null);
 
 
     useEffect(() => {
@@ -27,6 +27,8 @@ const BlogRequest = () => {
                 const result = await getAPI("/Blog-Post/all-blogs", {}, true, false);
                 if (result.data) {
                     setBlogs(result.data.blogs);
+                    console.log(result.data.blogs);
+
                 }
             } catch (error) {
                 console.error("Error fetching blogs:", error);
@@ -43,9 +45,10 @@ const BlogRequest = () => {
         try {
             await putAPI(
                 `/Blog-Post/update-status/${blogId}`,
-                { blogStatus: status,
+                {
+                    blogStatus: status,
                     adminComments: status === 'Rejected' ? rejectionComment : ''
-                 },
+                },
                 {},
                 true
             );
@@ -70,13 +73,13 @@ const BlogRequest = () => {
     };
 
     const handleReject = (blogId) => {
-        setSelectedArtistToReject(blogId); 
-        setIsRejectModalOpen(true); 
+        setSelectedArtistToReject(blogId);
+        setIsRejectModalOpen(true);
     };
 
     const submitRejection = async () => {
         if (!rejectionComment.trim()) {
-            toast.error("Rejection comment is required."); 
+            toast.error("Rejection comment is required.");
             return;
         }
 
@@ -88,7 +91,7 @@ const BlogRequest = () => {
                 `/Blog-Post/update-status/${selectedArtistToReject}`,
                 {
                     blogStatus: 'Rejected',
-                    rejectionComment: rejectionComment.trim()  
+                    rejectionComment: rejectionComment.trim()
                 },
                 {},
                 true
@@ -350,7 +353,7 @@ const BlogRequest = () => {
             </div>
             {isRejectModalOpen && (
                 <div className="modal show d-block" style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }} tabIndex="-1">
-                 <div className="modal-dialog">
+                    <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title">Reject Blog</h5>

@@ -83,8 +83,8 @@ const styles = {
   
   verificationIconBlue: {
     position: "absolute",
-    top: "8px",
-    left: "140px",
+    top: "36px",
+    left: "42px",
     backgroundColor: "#58d0ff",
     borderRadius: "50%",
     display: "flex",
@@ -97,8 +97,8 @@ const styles = {
 
   verificationIconRed: {
     position: "absolute",
-    top: "8px",
-    left: "140px",
+    top: "36px",
+    left: "42px",
     backgroundColor: "red",
     borderRadius: "50%",
     display: "flex",
