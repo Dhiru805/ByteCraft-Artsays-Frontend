@@ -91,74 +91,76 @@ const SocialMediaPromotion = () => {
   };
 
   return (
-    <div className="space-y-[40px] w-[1208px]">
-      <h2 className="text-2xl text-gray-950 font-semibold">Social Media Promotion</h2>
-      <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
-        {/* Instagram */}
-        <div>
-          <label className="block mb-2 font-lg">Instagram</label>
-          <input
-            name="instagram"
-            type="url"
-            value={formData.instagram}
-            onChange={handleChange}
-            className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
-            placeholder="Instagram"
-          />
-        </div>
+  <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 lg:px-0 space-y-10">
+    <h2 className="text-2xl text-gray-950 font-semibold">Social Media Promotion</h2>
 
-        {/* YouTube */}
-        <div>
-          <label className="block mb-2 font-lg">YouTube</label>
-          <input
-            name="youtube"
-            type="url"
-            value={formData.youtube}
-            onChange={handleChange}
-            className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
-            placeholder="YouTube"
-          />
-        </div>
+    <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
+      {/* Instagram */}
+      <div>
+        <label className="block mb-2 font-medium">Instagram</label>
+        <input
+          name="instagram"
+          type="url"
+          value={formData.instagram}
+          onChange={handleChange}
+          className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
+          placeholder="Instagram"
+        />
+      </div>
 
-        {/* Facebook */}
-        <div>
-          <label className="block mb-2 font-lg">Facebook</label>
-          <input
-            name="facebook"
-            type="url"
-            value={formData.facebook}
-            onChange={handleChange}
-            className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
-            placeholder="Facebook"
-          />
-        </div>
+      {/* YouTube */}
+      <div>
+        <label className="block mb-2 font-medium">YouTube</label>
+        <input
+          name="youtube"
+          type="url"
+          value={formData.youtube}
+          onChange={handleChange}
+          className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
+          placeholder="YouTube"
+        />
+      </div>
 
-        {/* LinkedIn */}
-        <div>
-          <label className="block mb-2 font-lg">LinkedIn</label>
-          <input
-            name="linkdin"
-            type="url"
-            value={formData.linkdin}
-            onChange={handleChange}
-            className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
-            placeholder="LinkedIn"
-          />
-        </div>
+      {/* Facebook */}
+      <div>
+        <label className="block mb-2 font-medium">Facebook</label>
+        <input
+          name="facebook"
+          type="url"
+          value={formData.facebook}
+          onChange={handleChange}
+          className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
+          placeholder="Facebook"
+        />
+      </div>
 
-        {/* Submit Button */}
-        <div className="md:col-span-2">
-          <button
-            type="submit"
-            className="bg-[#6F4D34] text-white px-10 py-2 rounded-full text-sm font-medium"
-            disabled={loading}
-          >
-            {loading ? 'Updating...' : 'Update Changes'}
-          </button>
-        </div>
-      </form>
-    </div>
-  );
+      {/* LinkedIn */}
+      <div>
+        <label className="block mb-2 font-medium">LinkedIn</label>
+        <input
+          name="linkdin"
+          type="url"
+          value={formData.linkdin}
+          onChange={handleChange}
+          className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
+          placeholder="LinkedIn"
+        />
+      </div>
+
+      {/* Submit Button */}
+      <div className="md:col-span-2">
+        <button
+          type="submit"
+          className="bg-[#6F4D34] text-white px-10 py-2 rounded-full text-sm font-medium"
+          disabled={loading}
+        >
+          {loading ? 'Updating...' : 'Update Changes'}
+        </button>
+      </div>
+    </form>
+  </div>
+);
+
 };
 
 export default SocialMediaPromotion;

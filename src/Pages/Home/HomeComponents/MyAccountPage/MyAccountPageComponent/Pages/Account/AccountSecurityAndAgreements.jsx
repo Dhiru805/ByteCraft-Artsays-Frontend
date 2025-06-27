@@ -80,52 +80,60 @@ const AccountSecurityAgreements = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-[1208px]">
-      <h2 className="text-xl font-semibold pb-4 text-gray-950">Account Security and Agreements</h2>
-      <ul className="space-y-2 text-[16px] font-medium text-gray-800 mb-4">
-        <li className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            name="twoStepAuthentication"
-            checked={formData.twoStepAuthentication || false}
-            onChange={handleChange}
-            className={`form-checkbox rounded-full h-5 w-5 
-              ${formData.twoStepAuthentication ? 'text-blue-600' : 'text-gray-400'}`}
-          />
-          <span>2-Step Authentication (OTP, Email verification, etc.)</span>
-        </li>
-        <li className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            name="termsConditionsAgreement"
-            checked={formData.termsConditionsAgreement || false}
-            onChange={handleChange}
-            className={`form-checkbox rounded-full h-5 w-5 
-              ${formData.termsConditionsAgreement ? 'text-blue-600' : 'text-gray-400'}`}
-          />
-          <span>Terms & Conditions Agreement</span>
-        </li>
-        <li className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            name="privacyPolicyAgreement"
-            checked={formData.privacyPolicyAgreement || false}
-            onChange={handleChange}
-            className={`form-checkbox rounded-full h-5 w-5 
-              ${formData.privacyPolicyAgreement ? 'text-blue-600' : 'text-gray-400'}`}
-          />
-          <span>Privacy Policy Agreement</span>
-        </li>
-      </ul>
+  <form onSubmit={handleSubmit} className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 space-y-6 text-gray-800">
+    <h2 className="text-2xl font-semibold text-gray-950">Account Security and Agreements</h2>
 
-      <button
-        type="submit"
-        className="bg-[#6F4D34] text-white text-[16px] text-semibold px-5 py-2 rounded-3xl"
-      >
-        {loading ? 'Updating...' : 'Update'}
-      </button>
-    </form>
-  );
+    <ul className="space-y-4 text-[16px] font-medium">
+      <li className="flex items-center gap-3">
+        <input
+          type="checkbox"
+          name="twoStepAuthentication"
+          checked={formData.twoStepAuthentication || false}
+          onChange={handleChange}
+          className="h-5 w-5 text-blue-600 rounded-full border-gray-300 focus:ring-blue-500"
+        />
+        <label htmlFor="twoStepAuthentication">
+          2-Step Authentication (OTP, Email verification, etc.)
+        </label>
+      </li>
+
+      <li className="flex items-center gap-3">
+        <input
+          type="checkbox"
+          name="termsConditionsAgreement"
+          checked={formData.termsConditionsAgreement || false}
+          onChange={handleChange}
+          className="h-5 w-5 text-blue-600 rounded-full border-gray-300 focus:ring-blue-500"
+        />
+        <label htmlFor="termsConditionsAgreement">
+          Terms & Conditions Agreement
+        </label>
+      </li>
+
+      <li className="flex items-center gap-3">
+        <input
+          type="checkbox"
+          name="privacyPolicyAgreement"
+          checked={formData.privacyPolicyAgreement || false}
+          onChange={handleChange}
+          className="h-5 w-5 text-blue-600 rounded-full border-gray-300 focus:ring-blue-500"
+        />
+        <label htmlFor="privacyPolicyAgreement">
+          Privacy Policy Agreement
+        </label>
+      </li>
+    </ul>
+
+    <button
+      type="submit"
+      disabled={loading}
+      className="bg-[#6F4D34] text-white text-base font-semibold px-6 py-2 rounded-full disabled:opacity-60"
+    >
+      {loading ? 'Updating...' : 'Update'}
+    </button>
+  </form>
+);
+
 };
 
 export default AccountSecurityAgreements;

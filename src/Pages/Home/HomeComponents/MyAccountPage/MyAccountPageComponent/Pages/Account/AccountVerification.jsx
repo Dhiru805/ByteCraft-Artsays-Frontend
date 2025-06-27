@@ -152,96 +152,97 @@ const AccountVerification = () => {
   };
 
   return (
-    <div className="w-[1208px]">
-      <h2 className="text-2xl text-gray-950 pb-4 font-semibold">Account Verification</h2>
+  <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 lg:px-0 space-y-6">
+    <h2 className="text-2xl text-gray-950 pb-4 font-semibold">Account Verification</h2>
 
-      <form className="space-y-8 text-sm font-semibold" onSubmit={handleSubmit}>
-        {/* ID Type */}
-        <div>
-          <label className="block mb-2 font-medium">
-            Select Document Type <span className="text-red-600">*</span>
-          </label>
-          <select
-            value={verificationType}
-            // defaultValue={verificationType}
-            onChange={handleVerificationChange}
-            className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
-          >
-            <option value="">Select</option>
-            <option value="Driving License">Driving License</option>
-            <option value="Aadhar Card">Aadhar Card</option>
-          </select>
-        </div>
+    <form className="space-y-8 text-sm font-semibold" onSubmit={handleSubmit}>
+      {/* ID Type */}
+      <div>
+        <label className="block mb-2 font-medium">
+          Select Document Type <span className="text-red-600">*</span>
+        </label>
+        <select
+          value={verificationType}
+          onChange={handleVerificationChange}
+          className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
+        >
+          <option value="">Select</option>
+          <option value="Driving License">Driving License</option>
+          <option value="Aadhar Card">Aadhar Card</option>
+        </select>
+      </div>
 
-        <div>
-          <label className="block mb-2 font-medium">
-            {verificationType || 'Document'} Number <span className="text-red-600">*</span>
-          </label>
-          <input
-            value={docNumber}
-            onChange={handleDocNumberChange}
-            className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
-            placeholder={verificationType === 'Driving License' ? 'DL-45-67564567' : '213456789012'}
+      {/* Document Number */}
+      <div>
+        <label className="block mb-2 font-medium">
+          {verificationType || 'Document'} Number <span className="text-red-600">*</span>
+        </label>
+        <input
+          value={docNumber}
+          onChange={handleDocNumberChange}
+          className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
+          placeholder={verificationType === 'Driving License' ? 'DL-45-67564567' : '213456789012'}
+        />
+      </div>
+
+      {/* Upload Field */}
+      <div>
+        <label className="block mb-2 font-medium">
+          Upload Document <span className="text-red-600">*</span>
+        </label>
+        <input
+          type="file"
+          onChange={handleFileChange}
+          className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
+        />
+      </div>
+
+      {/* Preview & Submit */}
+      <div className="flex flex-col gap-6 mt-4">
+        {filePreview && fileType.startsWith('image/') && (
+          <img
+            src={filePreview}
+            alt="Uploaded Document"
+            className="max-w-[200px] h-auto rounded-lg border"
           />
-        </div>
+        )}
 
-        <div>
-          <label className="block mb-2 font-medium">
-            Upload Document <span className="text-red-600">*</span>
-          </label>
-          <input
-            type="file"
-            onChange={handleFileChange}
-            className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
-          />
-        </div>
-
-        {/* Buttons */}
-        <div className="flex flex-col gap-6 mt-4">
-
-          {filePreview && fileType.startsWith('image/') && (
-            <img
-              src={filePreview}
-              alt="Uploaded Document"
-              className="max-w-[200px] h-auto rounded-lg border"
-            />
-          )}
-
-          {filePreview && fileType === 'application/pdf' && (
-            <a
-              href={filePreview}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-gray-200 text-sm w-[120px] px-6 py-2 rounded-xl border text-center"
-            >
-              View PDF
-            </a>
-          )}
-
-          <button
-            type="submit"
-            className="bg-[#6F4D34] text-white w-[120px] px-8 py-2 rounded-full text-base font-medium"
+        {filePreview && fileType === 'application/pdf' && (
+          <a
+            href={filePreview}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-gray-200 text-sm w-[120px] px-6 py-2 rounded-xl border text-center"
           >
-            {loading ? 'Updating...' : 'Update'}
-          </button>
-        </div>
-      </form>
+            View PDF
+          </a>
+        )}
 
-      {/* Modal */}
-      {isModalOpen && filePreview && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-          <div className="bg-white rounded-xl p-4 max-w-[90%] max-h-[90%] overflow-auto relative">
-            <button onClick={closeModal} className="absolute top-2 right-2 text-black">✖</button>
-            {fileType === 'application/pdf' ? (
-              <iframe src={filePreview} width="100" height="75" title="PDF Preview"></iframe>
-            ) : (
-              <img src={filePreview} alt="Document Preview" className="max-w-full h-auto rounded-lg" />
-            )}
-          </div>
+        <button
+          type="submit"
+          className="bg-[#6F4D34] text-white w-[120px] px-8 py-2 rounded-full text-base font-medium"
+        >
+          {loading ? 'Updating...' : 'Update'}
+        </button>
+      </div>
+    </form>
+
+    {/* Modal */}
+    {isModalOpen && filePreview && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+        <div className="bg-white rounded-xl p-4 max-w-[90%] max-h-[90%] overflow-auto relative">
+          <button onClick={closeModal} className="absolute top-2 right-2 text-black">✖</button>
+          {fileType === 'application/pdf' ? (
+            <iframe src={filePreview} width="100%" height="600" title="PDF Preview" />
+          ) : (
+            <img src={filePreview} alt="Document Preview" className="max-w-full h-auto rounded-lg" />
+          )}
         </div>
-      )}
-    </div>
-  );
+      </div>
+    )}
+  </div>
+);
+
 };
 
 export default AccountVerification;

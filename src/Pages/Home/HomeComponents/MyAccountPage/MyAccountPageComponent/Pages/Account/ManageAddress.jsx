@@ -169,69 +169,77 @@ const ManageAddress = () => {
   };
 
   return (
-    <div className="w-[1208px]">
-      <h2 className="text-xl text-gray-950 font-semibold">Manage Address</h2>
+  <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 lg:px-0 space-y-6">
+    <h2 className="text-xl text-gray-950 font-semibold">Manage Address</h2>
 
-      {isFetching && <div className="text-gray-600 py-4">Loading addresses...</div>}
+    {isFetching && <div className="text-gray-600 py-4">Loading addresses...</div>}
 
-      {!isFetching && fetchError && (
-        <div className="text-red-500 py-4">{fetchError}</div>
-      )}
+    {!isFetching && fetchError && (
+      <div className="text-red-500 py-4">{fetchError}</div>
+    )}
 
-      {!isFetching && !fetchError && addresses.length === 0 && (
-        <div className="text-gray-600 py-4">No addresses found. Add a new address below.</div>
-      )}
+    {!isFetching && !fetchError && addresses.length === 0 && (
+      <div className="text-gray-600 py-4">No addresses found. Add a new address below.</div>
+    )}
 
-      {!isFetching && addresses.length > 0 && (
-        <div className="border-[0.6px] border-[#6F3E2D] rounded-[50px] p-4 my-4 space-y-4">
-          {addresses.map((addr, index) => (
-            <div key={index}>
-              <div className="px-4 py-2 flex justify-between items-center">
-                <div>
-                  <p className="font-semibold text-lg text-gray-900">{addr.city}, {addr.state}</p>
-                  <p className="text-sm text-gray-600">{addr.line1}, {addr.pincode}</p>
-                </div>
-                <div className="space-x-6 text-lg font-semibold">
-                  <button
-                    onClick={() => handleEdit(index)}
-                    className="text-[#6F3E2D] hover:text-red-900"
-                    disabled={loading}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedItemToDelete(index);
-                      setIsDeleteDialogOpen(true);
-                    }}
-                    className="text-red-500 hover:text-red-700"
-                    disabled={loading}
-                  >
-                    Delete
-                  </button>
-                  {isDeleteDialogOpen && selectedItemToDelete === index && (
-                    <ConfirmationDialog
-                      onClose={handleDeleteCancel}
-                      deleteType="address"
-                      id={index}
-                      onDeleted={handleDeleteConfirmed}
-                    />
-                  )}
-                </div>
+    {!isFetching && addresses.length > 0 && (
+      <div className="border-[0.6px] border-[#6F3E2D] rounded-full p-4 my-4 space-y-4">
+        {addresses.map((addr, index) => (
+          <div key={index}>
+            <div className="px-4 py-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <p className="font-semibold text-lg text-gray-900">
+                  {addr.city}, {addr.state}
+                </p>
+                <p className="text-sm text-gray-600">
+                  {addr.line1}, {addr.pincode}
+                </p>
               </div>
-              {addresses.length > 1 && index < addresses.length - 1 && (
-                <hr className="border-t border-gray-300 m-4" />
-              )}
+              <div className="flex gap-4 text-sm font-medium">
+                <button
+                  onClick={() => handleEdit(index)}
+                  className="text-[#6F3E2D] hover:text-red-900"
+                  disabled={loading}
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedItemToDelete(index);
+                    setIsDeleteDialogOpen(true);
+                  }}
+                  className="text-red-500 hover:text-red-700"
+                  disabled={loading}
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-          ))}
-        </div>
-      )}
 
-      <form onSubmit={handleAddAddress} className="space-y-4">
-        <h3 className="text-xl text-gray-950 pb-2 font-semibold">
-          {editIndex !== null ? 'Edit Address' : 'Add New Address'}
-        </h3>
+            {isDeleteDialogOpen && selectedItemToDelete === index && (
+              <ConfirmationDialog
+                onClose={handleDeleteCancel}
+                deleteType="address"
+                id={index}
+                onDeleted={handleDeleteConfirmed}
+              />
+            )}
 
+            {addresses.length > 1 && index < addresses.length - 1 && (
+              <hr className="border-t border-gray-300 m-4" />
+            )}
+          </div>
+        ))}
+      </div>
+    )}
+
+    {/* Address Form */}
+    <form onSubmit={handleAddAddress} className="space-y-4">
+      <h3 className="text-xl text-gray-950 pb-2 font-semibold">
+        {editIndex !== null ? 'Edit Address' : 'Add New Address'}
+      </h3>
+
+      <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
         <div>
           <label className="block text-sm">Address Line 1 *</label>
           <input
@@ -314,19 +322,25 @@ const ManageAddress = () => {
             required
           />
         </div>
+      </div>
 
-        <button
-          type="submit"
-          disabled={loading || isFetching}
-          className="bg-[#6F4D34] text-white px-6 py-2 rounded-3xl"
-        >
-          {editIndex !== null
-            ? (loading ? 'Updating...' : 'Update Address')
-            : (loading ? 'Adding address...' : 'Add Address')}
-        </button>
-      </form>
-    </div>
-  );
+      <button
+        type="submit"
+        disabled={loading || isFetching}
+        className="bg-[#6F4D34] text-white px-6 py-2 rounded-3xl"
+      >
+        {editIndex !== null
+          ? loading
+            ? 'Updating...'
+            : 'Update Address'
+          : loading
+          ? 'Adding address...'
+          : 'Add Address'}
+      </button>
+    </form>
+  </div>
+);
+
 };
 
 export default ManageAddress;

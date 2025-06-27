@@ -43,21 +43,21 @@ export const AccountPage = () => {
       </div>
 
       {/* Main Layout */}
-      {!isTrackOrder && (
-
-        <div className=" w-[1440px] pt-[80px] pl-[116px] flex bg-white">
-          <AccountSidebar />
-          <div className="w-[1208px] pl-[40px]">
+      {!isTrackOrder ? (
+        <div className="w-full max-w-[1464px] mx-auto px-4 sm:px-8 md:px-12 lg:px-[116px] py-10 flex flex-col lg:flex-row gap-6 md:gap-8 lg:gap-[40px] bg-white">
+          <div className="w-full lg:w-[300px]">
+            <AccountSidebar />
+          </div>
+          <div className="w-full">
             <Outlet />
           </div>
         </div>
-      )}
-
-      {isTrackOrder && (
-        <div className="pt-[80px] px-[116px] bg-white">
+      ) : (
+        <div className="w-full max-w-[1464px] mx-auto px-4 sm:px-8 md:px-12 lg:px-[116px] py-10 bg-white">
           <Outlet />
         </div>
       )}
+
     </>
   );
 };

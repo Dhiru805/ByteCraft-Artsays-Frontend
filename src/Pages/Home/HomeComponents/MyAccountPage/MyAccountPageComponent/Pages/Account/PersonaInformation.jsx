@@ -198,10 +198,10 @@ export const AccountForm = () => {
   };
 
   return (
-    <form className="w-[1208px] space-y-6" onSubmit={handleSubmit}>
+    <form className="w-full max-w-[1100px] mx-auto px-4 mr-0 sm:px-6 lg:px-0 space-y-6" onSubmit={handleSubmit}>
       <h3 className="text-xl font-semibold">Personal Information</h3>
 
-      <div className="flex items-center space-x-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <div className="relative w-24 h-24">
           <div className="w-24 h-24 bg-gray-300 rounded-full overflow-hidden">
             <img
@@ -316,7 +316,7 @@ export const AccountForm = () => {
             <button
               type="button"
               onClick={() => handleGenderSelect('Male')}
-              className={`w-[130px] py-1 rounded-xl ${gender === 'Male' ? 'bg-[#6F3E2D] text-white' : 'border-2 border-gray-300'
+              className={`flex-1 min-w-[120px] py-2 rounded-xl text-center ${gender === 'Male' ? 'bg-[#6F3E2D] text-white' : 'border-2 border-gray-300'
                 }`}
             >
               Male
@@ -324,7 +324,7 @@ export const AccountForm = () => {
             <button
               type="button"
               onClick={() => handleGenderSelect('Female')}
-              className={`w-[130px] py-1 rounded-xl ${gender === 'Female' ? 'bg-[#6F3E2D] text-white' : 'border-2 border-gray-400 text-black'
+              className={`flex-1 min-w-[120px] py-2 rounded-xl text-center ${gender === 'Female' ? 'bg-[#6F3E2D] text-white' : 'border-2 border-gray-400 text-black'
                 }`}
             >
               Female
@@ -355,7 +355,7 @@ export const AccountForm = () => {
 
       <button
         type="submit"
-        className="bg-[#6F4D34] text-white text-[17px] font-semibold w-[200px] py-2 px-4 rounded-3xl"
+        className="bg-[#6F4D34] text-white text-[17px] font-semibold w-full sm:w-[200px] py-2 px-4 rounded-3xl"
         disabled={loading}
       >
         {loading ? 'Updating...' : 'Update Changes'}

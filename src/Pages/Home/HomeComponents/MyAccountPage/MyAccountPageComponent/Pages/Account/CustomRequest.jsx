@@ -373,37 +373,39 @@ const AddCustomRequestForm = () => {
   );
 
   return (
-    <div className="w-[1208px]">
-      <div className="flex justify-between mb-[30px] h-[48px]">
-        <h2 className="text-2xl text-gray-950 font-semibold">
-          Custom Requests
-        </h2>
-        <div className="flex items-center gap-4">
-          <div className="relative w-[200px]">
+    <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 lg:px-0">
+      {/* heading section */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <h2 className="text-2xl text-gray-950 font-semibold">Custom Requests</h2>
+
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto">
+          <div className="relative w-full sm:w-[200px]">
             <input
               type="text"
               placeholder="Search request"
-              className="w-full border-2 border-gray-300 rounded-xl pl-9 pr-4 py-2 text-sm transition"
+              className="w-full border-2 border-gray-300 rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none transition"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <FiSearch className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-400 text-lg" />
           </div>
+
           <button
             onClick={() => setShowForm(true)}
-            className="bg-[#6F4D34] text-white text-[16px] font-semibold px-4 py-2 rounded-xl flex items-center"
+            className="bg-[#6F4D34] text-white text-[15px] font-semibold px-4 py-2 rounded-xl flex items-center justify-center"
           >
             <FaPlus className="mr-2" /> Add Request
           </button>
         </div>
       </div>
 
-      <div className="border-2 rounded-3xl p-0 m-0 w-full bg-white">
-        <div className="overflow-x-auto sm:overflow-x-auto overflow-x-hidden pb-4 rounded-3xl w-full max-w-full">
-          <table className="w-full text-sm text-left">
+      {/* table container */}
+      <div className="border-2 rounded-3xl w-full bg-white">
+        <div className="overflow-x-auto pb-4 rounded-3xl">
+          <table className="lg:min-w-[1100px] table-auto w-full text-sm text-left">
             <thead className="bg-[#6F4D34] text-white">
               <tr>
-                <th className="px-4 py-7 whitespace-nowrap border-r">#</th>
+                <th className="px-4 py-7 whitespace-nowrap">#</th>
                 <th className="px-4 py-2 whitespace-nowrap">Product Name</th>
                 <th className="px-4 py-2 whitespace-nowrap">Artist Name</th>
                 <th className="px-4 py-2 whitespace-nowrap">Max Budget</th>
@@ -456,10 +458,10 @@ const AddCustomRequestForm = () => {
                     <td className="px-4 py-2">
                       <button
                         className={`px-3 py-1 rounded-lg border text-sm ${req.RequestStatus === "Approved"
-                            ? "text-green-500 border-green-500 bg-white"
-                            : req.RequestStatus === "Pending"
-                              ? "text-yellow-500 border-yellow-500 bg-white"
-                              : "text-red-500 border-red-500 bg-white"
+                          ? "text-green-500 border-green-500 bg-white"
+                          : req.RequestStatus === "Pending"
+                            ? "text-yellow-500 border-yellow-500 bg-white"
+                            : "text-red-500 border-red-500 bg-white"
                           }`}
                       >
                         {req.RequestStatus || "Pending"}
@@ -468,10 +470,10 @@ const AddCustomRequestForm = () => {
                     <td className="px-4 py-2">
                       <button
                         className={`px-3 py-1 rounded-lg border text-sm ${req.BuyerStatus === "Approved"
-                            ? "text-green-500 border-green-500 bg-white"
-                            : req.BuyerStatus === "Pending"
-                              ? "text-yellow-500 border-yellow-500 bg-white"
-                              : "text-red-500 border-red-500 bg-white"
+                          ? "text-green-500 border-green-500 bg-white"
+                          : req.BuyerStatus === "Pending"
+                            ? "text-yellow-500 border-yellow-500 bg-white"
+                            : "text-red-500 border-red-500 bg-white"
                           }`}
                       >
                         {req.BuyerStatus || "Pending"}
@@ -530,7 +532,8 @@ const AddCustomRequestForm = () => {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="space-y-5 p-6">
+        <div className="w-full max-w-[1076px] mx-auto px-0 sm:px-0 lg:px-0">
+    <form onSubmit={handleSubmit} className="space-y-5 py-6">
           <h3 className="text-xl font-semibold">
             {editingId ? "Edit Custom Request" : "Add Custom Request"}
           </h3>
@@ -796,6 +799,7 @@ const AddCustomRequestForm = () => {
             </button>
           </div>
         </form>
+        </div>
       )}
 
       {showViewModal && viewRequest && (

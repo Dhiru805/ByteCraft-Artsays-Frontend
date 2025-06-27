@@ -224,94 +224,104 @@ const NotificationAndPreferences = () => {
   };
 
   return (
-    <div className="w-[1208px] mx-auto text-gray-800 text-[16px]">
-      <h2 className="text-xl text-gray-950 font-semibold mb-6">Notification and Preferences</h2>
+  <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 text-gray-800 text-[16px] space-y-6">
+    <h2 className="text-2xl font-semibold text-gray-950">Notification and Preferences</h2>
 
-      {/* Main Category Dropdown */}
-      <div className="mb-6">
-        <label className="block mb-2 font-medium">Main Category</label>
-        <Select
-          className="w-full text-gray-500"
-          value={formData.preferredArtCategories[0] || null}
-          onChange={(option) => handleCategoryChange(option, "main")}
-          options={mainCategories}
-          placeholder="Select main category..."
-        />
+    {/* Main Category */}
+    <div>
+      <label className="block mb-2 font-medium">Main Category</label>
+      <Select
+        className="w-full text-gray-700"
+        value={formData.preferredArtCategories[0] || null}
+        onChange={(option) => handleCategoryChange(option, "main")}
+        options={mainCategories}
+        placeholder="Select main category..."
+      />
+    </div>
+
+    {/* Category */}
+    <div>
+      <label className="block mb-2 font-medium">Category</label>
+      <Select
+        className="w-full text-gray-700"
+        value={formData.preferredArtCategories[1] || null}
+        onChange={(option) => handleCategoryChange(option, "category")}
+        options={categories}
+        placeholder="Select category..."
+        isDisabled={!formData.preferredArtCategories[0]}
+      />
+    </div>
+
+    {/* Subcategory */}
+    <div>
+      <label className="block mb-2 font-medium">Subcategory</label>
+      <Select
+        className="w-full text-gray-700"
+        value={formData.preferredArtCategories[2] || null}
+        onChange={(option) => handleCategoryChange(option, "subcategory")}
+        options={subCategories}
+        placeholder="Select subcategory..."
+        isDisabled={!formData.preferredArtCategories[1]}
+      />
+    </div>
+
+    {/* Newsletter */}
+    <div>
+      <label className="block mb-2 font-medium">Subscribe to Newsletters</label>
+      <div className="flex space-x-6">
+        <label className="flex items-center space-x-2">
+          <input
+            type="radio"
+            name="subscribeNewsletters"
+            value="yes"
+            checked={formData.subscribeNewsletters === "yes"}
+            onChange={handleInputChange}
+            className="accent-[#6F4D34]"
+          />
+          <span>Yes</span>
+        </label>
+        <label className="flex items-center space-x-2">
+          <input
+            type="radio"
+            name="subscribeNewsletters"
+            value="no"
+            checked={formData.subscribeNewsletters === "no"}
+            onChange={handleInputChange}
+            className="accent-[#6F4D34]"
+          />
+          <span>No</span>
+        </label>
       </div>
+    </div>
 
-      {/* Category Dropdown */}
-      <div className="mb-6">
-        <label className="block mb-2 font-medium">Category</label>
-        <Select
-          className="w-full text-gray-500"
-          value={formData.preferredArtCategories[1] || null}
-          onChange={(option) => handleCategoryChange(option, "category")}
-          options={categories}
-          placeholder="Select category..."
-          isDisabled={!formData.preferredArtCategories[0]}
-        />
-      </div>
-
-      {/* Sub Category Dropdown */}
-      <div className="mb-6">
-        <label className="block mb-2 font-medium">Subcategory</label>
-        <Select
-          className="w-full text-gray-500"
-          value={formData.preferredArtCategories[2] || null}
-          onChange={(option) => handleCategoryChange(option, "subcategory")}
-          options={subCategories}
-          placeholder="Select subcategory..."
-          isDisabled={!formData.preferredArtCategories[1]}
-        />
-      </div>
-
-      {/* Newsletter */}
-      <div className="mb-6">
-        <label className="block mb-2 font-medium">Subscribe to Newsletters</label>
-        <div className="flex space-x-6">
-          <label className="flex items-center space-x-2">
-            <input
-              type="radio"
-              name="subscribeNewsletters"
-              value="yes"
-              checked={formData.subscribeNewsletters === "yes"}
-              onChange={handleInputChange}
-            />
-            <span>Yes</span>
-          </label>
-          <label className="flex items-center space-x-2">
-            <input
-              type="radio"
-              name="subscribeNewsletters"
-              value="no"
-              checked={formData.subscribeNewsletters === "no"}
-              onChange={handleInputChange}
-            />
-            <span>No</span>
-          </label>
-        </div>
-      </div>
-
-      {/* Alerts Toggle */}
-      <div className="mb-6">
-        <label className="block mb-2 font-medium">SMS/Email Alerts for Bids & Offers</label>
+    {/* Alerts Toggle */}
+    <div>
+      <label className="block mb-2 font-medium">
+        SMS/Email Alerts for Bids & Offers
+      </label>
+      <div
+        className={`w-10 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${formData.smsEmailAlerts ? 'bg-[#6B5A5C]' : 'bg-gray-300'}`}
+        onClick={handleToggle}
+      >
         <div
-          className={`w-10 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${formData.smsEmailAlerts ? 'bg-[#6B5A5C]' : 'bg-gray-300'}`}
-          onClick={handleToggle}
-        >
-          <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${formData.smsEmailAlerts ? 'translate-x-4' : ''}`}></div>
-        </div>
+          className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${formData.smsEmailAlerts ? 'translate-x-4' : ''}`}
+        ></div>
       </div>
+    </div>
 
+    {/* Submit */}
+    <div>
       <button
-        className="bg-[#6F4D34] text-white px-9 py-2 rounded-full"
+        className="bg-[#6F4D34] text-white px-9 py-2 rounded-full disabled:opacity-60"
         onClick={handleSubmit}
         disabled={loading}
       >
         {loading ? "Updating..." : "Update"}
       </button>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default NotificationAndPreferences;
