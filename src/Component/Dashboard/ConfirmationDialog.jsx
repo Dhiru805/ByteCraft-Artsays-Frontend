@@ -64,7 +64,13 @@ blogcategory: {
   successMessage: "Blog Category successfully deleted!",
   errorMessage: "Failed to delete Blog Category.",
   idKey: "BlogCategoryId",
-}
+},
+buyerRequest: {
+  getEndpoint: (id) => `/api/delete-buyer-requests/${id}`,
+  successMessage: "Buyer request successfully deleted!",
+  errorMessage: "Failed to delete buyer request.",
+  idKey: "BuyerRequestId",
+},
 
 };
 
