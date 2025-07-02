@@ -1,6 +1,7 @@
 // src/components/productUpload/sections/BasicDetails.js
 import React from "react";
 import Select from 'react-select';
+import CreatableSelect from 'react-select/creatable';
 
 
 const BasicDetails = ({
@@ -185,32 +186,25 @@ return [...main, ...categories, ...sub].sort((a, b) => a.fullLabel.localeCompare
 
       <div className="form-group">
         <label htmlFor="subCategory">Subcategory <span style={{ color: 'red' }}>*</span></label>
-        <select
+<CreatableSelect
           id="subCategory"
           name="subCategory"
-          className="form-control"
-          value={formData.subCategory?.value || ''}
-          onChange={(e) => {
-            const selected = getSubCategoriesByCategory(formData.category?.value)
-              .find(subCat => subCat.value === e.target.value);
-            handleSelectChange('subCategory', selected);
+          className="basic-single"
+          classNamePrefix="select"
+          options={getSubCategoriesByCategory(formData.category?.value)}
+          value={formData.subCategory}
+          onChange={(selectedOption) => handleSelectChange('subCategory', selectedOption)}
+          onCreateOption={(inputValue) => {
+            const customOption = { label: inputValue, value: inputValue };
+            handleSelectChange('subCategory', customOption);
           }}
-          disabled={!formData.category || isSubmitting}
-          required
-        >
-          <option value="">
-            {formData.category ? "Select Subcategory" : "Select Category first"}
-          </option>
-          {formData.category && 
-            getSubCategoriesByCategory(formData.category.value).map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))
-          }
-        </select>
+          isDisabled={!formData.category || isSubmitting}
+          isClearable
+          isSearchable
+          placeholder="Select or enter subcategory"
+        />
       </div>
-
+      
 <div className="form-group">
   <label htmlFor="productType">Product Type <span style={{ color: 'red' }}>*</span></label>
   <select

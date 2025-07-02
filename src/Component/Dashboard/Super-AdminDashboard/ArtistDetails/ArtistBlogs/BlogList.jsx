@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../../api/getAPI";
 import useUserType from "../../../urlconfig";
+import ConfirmationDialog from "../../../ConfirmationDialog";
+
 
 const BlogList = () => {
   const [blogs, setBlogs] = useState([]);
@@ -10,6 +12,9 @@ const BlogList = () => {
   const [blogsPerPage, setBlogsPerPage] = useState(10);
   const navigate = useNavigate();
   const userType = useUserType();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedBlogToDelete, setSelectedBlogToDelete] = useState(null);
+
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -17,6 +22,7 @@ const BlogList = () => {
         const result = await getAPI("/Blog-Post/statusapproved-blogs", {}, true, false);
         if (result.data) {
           setBlogs(result.data.blogs);
+          console.log(result.data.blogs);
         }
       } catch (error) {
         console.error("Error fetching blogs:", error);
@@ -47,6 +53,12 @@ const BlogList = () => {
     setBlogsPerPage(Number(e.target.value));
     setCurrentPage(1);
   };
+
+  const openDeleteDialog = (blog) => {
+    setSelectedBlogToDelete(blog);
+    setIsDeleteDialogOpen(true);
+  };
+
 
   return (
     <div className="container-fluid">
@@ -119,6 +131,7 @@ const BlogList = () => {
                       <th>Author</th>
                       <th>Date</th>
                       <th>View</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -133,7 +146,7 @@ const BlogList = () => {
                         <tr key={blog._id}>
                           <td>{(currentPage - 1) * blogsPerPage + index + 1}</td>
                           <td>{blog.blogName}</td>
-                          <td>{blog.blogAuthor}</td>
+                          <td>{blog.uploadedBy?.name || "Unknown"}</td>
                           <td>{new Date(blog.createdAt).toLocaleDateString("en-IN")}</td>
                           <td>
                             <button
@@ -147,6 +160,25 @@ const BlogList = () => {
                               View
                             </button>
                           </td>
+                          <td>
+                            <button
+                              className="btn btn-sm btn-outline-danger mr-2"
+                              onClick={() => openDeleteDialog(blog)}
+                            >
+                              <i className="fa fa-trash"></i>
+                            </button>
+                            <button
+                              className="btn btn-sm btn-outline-primary"
+                              onClick={() =>
+                                navigate(`/super-admin/artist/blogs/blog-update/${blog.slug}`, {
+                                  state: { blogData: blog }
+                                })
+                              }
+                            >
+                              <i className="fa fa-edit"></i>
+                            </button>
+                          </td>
+
                         </tr>
                       ))
                     )}
@@ -163,9 +195,8 @@ const BlogList = () => {
 
                 <ul className="pagination d-flex justify-content-end">
                   <li
-                    className={`paginate_button page-item ${
-                      currentPage === 1 ? "disabled" : ""
-                    }`}
+                    className={`paginate_button page-item ${currentPage === 1 ? "disabled" : ""
+                      }`}
                     onClick={handlePrevious}
                   >
                     <button className="page-link">Previous</button>
@@ -174,9 +205,8 @@ const BlogList = () => {
                     <button className="page-link">{currentPage}</button>
                   </li>
                   <li
-                    className={`paginate_button page-item ${
-                      currentPage === totalPages ? "disabled" : ""
-                    }`}
+                    className={`paginate_button page-item ${currentPage === totalPages ? "disabled" : ""
+                      }`}
                     onClick={handleNext}
                   >
                     <button className="page-link">Next</button>
@@ -187,8 +217,23 @@ const BlogList = () => {
           </div>
         </div>
       </div>
+      {isDeleteDialogOpen && selectedBlogToDelete && (
+        <ConfirmationDialog
+          onClose={() => {
+            setIsDeleteDialogOpen(false);
+            setSelectedBlogToDelete(null);
+          }}
+          deleteType="blog"
+          id={selectedBlogToDelete._id}
+          onDeleted={(id) => {
+            setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog._id !== id));
+            setIsDeleteDialogOpen(false);
+            setSelectedBlogToDelete(null);
+          }}
+        />
+      )}
     </div>
   );
-};
+}
 
 export default BlogList;

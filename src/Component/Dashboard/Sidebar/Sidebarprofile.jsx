@@ -7,18 +7,18 @@ import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 
 
-const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, HandletoggleDropdown}) => {
+const Sidebarprofile = ({ user, userId, isOpen, handleToggleSidebar, HandletoggleDropdown }) => {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-  const userType = useUserType(); 
-  const BASE_URL=process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const userType = useUserType();
+  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   const { logout } = useAuth();
   const status = localStorage.getItem("status");
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        HandletoggleDropdown(); 
+        HandletoggleDropdown();
       }
     };
 
@@ -43,7 +43,7 @@ const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, Handletoggle
     {
       label: "Logout",
       icon: "bi-power",
-      action: () => handleLogout(navigate,logout),
+      action: () => handleLogout(navigate, logout),
     },
   ];
 
@@ -63,52 +63,52 @@ const Sidebarprofile = ({ user,userId, isOpen, handleToggleSidebar, Handletoggle
   ];
 
   const renderVerificationBadge = () => {
-  if (status?.toLowerCase() === "verified") {
-    return (
-      <div style={styles.verificationIconBlue} title="Verified">
-        <FaCheckCircle color="white" size={10} />
-      </div>
-    );
-  } else if (status?.toLowerCase() === "unverified") {
-    return (
-      <div style={styles.verificationIconRed} title="Unverified">
-        <FaTimesCircle color="white" size={10} />
-      </div>
-    );
-  }
-  return null;
-};
+    if (status?.toLowerCase() === "verified") {
+      return (
+        <div style={styles.verificationIconBlue} title="Verified">
+          <FaCheckCircle color="white" size={10} />
+        </div>
+      );
+    } else if (status?.toLowerCase() === "unverified") {
+      return (
+        <div style={styles.verificationIconRed} title="Unverified">
+          <FaTimesCircle color="white" size={10} />
+        </div>
+      );
+    }
+    return null;
+  };
 
-const styles = {
-  
-  verificationIconBlue: {
-    position: "absolute",
-    top: "36px",
-    left: "42px",
-    backgroundColor: "#58d0ff",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "15px",
-    height: "15px",
-    pointerEvents: "auto", 
-  },
+  const styles = {
 
-  verificationIconRed: {
-    position: "absolute",
-    top: "36px",
-    left: "42px",
-    backgroundColor: "red",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "15px",
-    height: "15px",
-    pointerEvents: "auto", 
-  },
-};
+    verificationIconBlue: {
+      position: "absolute",
+      top: "36px",
+      left: "42px",
+      backgroundColor: "#58d0ff",
+      borderRadius: "50%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      width: "15px",
+      height: "15px",
+      pointerEvents: "auto",
+    },
+
+    verificationIconRed: {
+      position: "absolute",
+      top: "36px",
+      left: "42px",
+      backgroundColor: "red",
+      borderRadius: "50%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      width: "15px",
+      height: "15px",
+      pointerEvents: "auto",
+    },
+  };
 
 
   return (
@@ -125,20 +125,19 @@ const styles = {
           {/* {user && user.profilePhoto && ( */}
           <div style={{ position: "relative", display: "inline-block", width: "65px", height: "40px" }}>
             <img
-            src={user.profilePhoto ? `${BASE_URL}${user.profilePhoto}` : DEFAULT_PROFILE_IMAGE}
-            className="rounded-circle user-photo"
-            alt="User Profile Picture"
-            style={{
-              width: '55px',
-              height: '55px',
-              objectFit: 'cover',
-              display: 'block',
-            }}
-          />
-{userType?.toLowerCase() !== "super-admin" && renderVerificationBadge()}
-            </div>
+              src={user.profilePhoto ? `${BASE_URL}${user.profilePhoto}` : DEFAULT_PROFILE_IMAGE}
+              className="rounded-circle user-photo"
+              alt="User Profile Picture"
+              style={{
+                width: '55px',
+                height: '55px',
+                objectFit: 'cover',
+                display: 'block',
+              }}
+            />
+            {userType?.toLowerCase() !== "super-admin" && renderVerificationBadge()}
+          </div>
 
-          {/* )} */}
           <div className="dropdown" ref={dropdownRef}>
             <span>Welcome,</span>
             {user ? (
@@ -148,7 +147,7 @@ const styles = {
                 data-toggle="dropdown"
                 onClick={(e) => {
                   e.stopPropagation();
-                  HandletoggleDropdown(); 
+                  HandletoggleDropdown();
                 }}
                 aria-expanded={isOpen ? "true" : "false"}
               >
@@ -158,9 +157,8 @@ const styles = {
               <strong>Guest</strong>
             )}
             <ul
-              className={`dropdown-menu dropdown-menu-right account ${
-                isOpen ? "show" : ""
-              }`}
+              className={`dropdown-menu dropdown-menu-right account ${isOpen ? "show" : ""
+                }`}
               style={{
                 position: "absolute",
                 top: isOpen ? "100%" : "80%",
@@ -172,11 +170,23 @@ const styles = {
               {sidebarItems.map((item, index) => (
                 <li key={index}>
                   {item.action ? (
-                    <a href="#!" onClick={item.action}>
+                    <a
+                      href="#!"
+                      onClick={() => {
+                        item.action();
+                        HandletoggleDropdown();
+                      }}
+                    >
                       <i className={`fa ${item.icon}`}></i> {item.label}
                     </a>
                   ) : (
-                    <Link to={item.path} state={item.state}>
+                    <Link
+                      to={item.path}
+                      state={item.state}
+                      onClick={() => {
+                        HandletoggleDropdown();
+                      }}
+                    >
                       <i className={`fa ${item.icon}`}></i> {item.label}
                     </Link>
                   )}

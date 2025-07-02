@@ -176,7 +176,7 @@ const ApprovedProduct = () => {
                                                   </button>
                                               </td> */}
                                                 <td>
-                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/${userType}/Dashboard/allproduct/productinfo/${product._id}`)}>
+                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`super-admin/product/product-info`)}>
                                                         <i className="fa fa-eye"></i>
                                                     </button>
                                                 </td>

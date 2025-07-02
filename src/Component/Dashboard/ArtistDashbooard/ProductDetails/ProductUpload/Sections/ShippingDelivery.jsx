@@ -71,7 +71,7 @@ const ShippingDelivery = ({
       </div>
 
       <div className="form-group">
-        <label htmlFor="shippingCharges">Shipping Charges (₹) *</label>
+        <label htmlFor="shippingCharges">Shipping Charges (₹) <span style={{ color: 'red' }}>*</span></label>
         <input
           type="number"
           id="shippingCharges"
@@ -89,7 +89,7 @@ const ShippingDelivery = ({
       </div>
 
       <div className="form-group">
-        <label>Estimated Delivery Time *</label>
+        <label>Estimated Delivery Time <span style={{ color: 'red' }}>*</span></label>
         {!showCustomDeliveryInput ? (
           <Select
             options={[
@@ -133,7 +133,7 @@ const ShippingDelivery = ({
       </div>
 
       <div className="form-group">
-        <label>Packaging Type *</label>
+        <label>Packaging Type <span style={{ color: 'red' }}>*</span></label>
         <Select
           options={packagingOptions}
           value={formData.packagingType}

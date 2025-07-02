@@ -16,7 +16,7 @@ const ImagesMedia = ({
     <h4 className="mb-3">Images and Media</h4>
 
     <div className="form-group">
-      <label>Upload Images (3-8 images) *</label>
+      <label>Upload Images (3-8 images) <span style={{ color: 'red' }}>*</span></label>
       <div className="d-flex flex-wrap">
         {images.map((image, index) => (
           <div

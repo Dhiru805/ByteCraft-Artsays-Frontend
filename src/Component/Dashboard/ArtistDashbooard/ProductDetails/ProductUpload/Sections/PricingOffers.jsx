@@ -16,7 +16,7 @@ const PricingOffers = ({
     <div className="row">
       <div className="col-md-6">
         <div className="form-group">
-          <label htmlFor="sellingPrice">Selling Price (₹) *</label>
+          <label htmlFor="sellingPrice">Selling Price (₹) <span style={{ color: 'red' }}>*</span></label>
           <input
             type="number"
             id="sellingPrice"
@@ -75,7 +75,7 @@ const PricingOffers = ({
       
       <div className="col-md-6">
         <div className="form-group">
-          <label>Final Price After Discount (₹) *</label>
+          <label>Final Price After Discount (₹) <span style={{ color: 'red' }}>*</span></label>
           <input
             type="text"
             className="form-control bg-light"

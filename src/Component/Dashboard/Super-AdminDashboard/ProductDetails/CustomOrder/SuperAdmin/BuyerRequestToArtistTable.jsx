@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from '../../../../ConfirmationDialog';
-import useUserType from '../../../../urlconfig';
 import { DEFAULT_PROFILE_IMAGE } from "../../../../../../Constants/ConstantsVariables";
 import { toast } from 'react-toastify';
 import putAPI from '../../../../../../api/putAPI';
@@ -182,6 +181,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                 <th>#</th>
                                                 <th>Buyer Name</th>
                                                 <th>Artist Name</th>
+                                                <th>Product Image</th>
                                                 <th>Max Budget </th>
                                                 <th>Min Budget </th>
                                                 <th>Negotiated Budget</th>
@@ -236,6 +236,22 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                                 ? `${request.Artist.id.name} ${request.Artist.id.lastName}`
                                                                 : 'N/A'}
                                                         </p>
+                                                    </td>
+                                                    <td>
+                                                        <img
+                                                            src={
+                                                                request?.Artist?.id?.profilePhoto
+                                                                    ? `${BASE_URL}${request.Artist.id.profilePhoto}`
+                                                                    : DEFAULT_PROFILE_IMAGE
+                                                            } className="rounded-circle avatar"
+                                                            alt=""
+                                                            style={{
+                                                                width: '30px',
+                                                                height: '30px',
+                                                                objectFit: 'cover',
+                                                                alignItems: 'center',
+                                                            }}
+                                                        />
                                                     </td>
                                                     <td>
                                                         {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.MaxBudget).replace(/\.00$/, '')}

@@ -21,7 +21,7 @@ const ArtworkDetails = ({
         <h4 className="mb-3">Artwork/Artifact Details</h4>
 
         <div className="form-group">
-            <label>Medium *</label>
+            <label>Medium <span style={{ color: 'red' }}>*</span></label>
             <CreatableSelect
                 options={mediumOptions}
                 value={formData.medium}
@@ -35,7 +35,7 @@ const ArtworkDetails = ({
         </div>
 
         <div className="form-group">
-            <label>Materials Used *</label>
+            <label>Materials Used <span style={{ color: 'red' }}>*</span></label>
             <CreatableSelect
                 options={materialOptions}
                 value={formData.materials}
@@ -50,7 +50,7 @@ const ArtworkDetails = ({
         </div>
 
         <div className="form-group">
-            <label htmlFor="dimensions">Dimensions *</label>
+            <label htmlFor="dimensions">Dimensions <span style={{ color: 'red' }}>*</span></label>
             <input
                 type="text"
                 id="dimensions"
@@ -81,7 +81,7 @@ const ArtworkDetails = ({
         </div>
 
         <div className="form-group">
-            <label>Year of Creation *</label>
+            <label>Year of Creation <span style={{ color: 'red' }}>*</span></label>
             <Select
                 options={yearOptions}
                 value={formData.year}
@@ -94,7 +94,7 @@ const ArtworkDetails = ({
         </div>
 
         <div className="form-group">
-            <label>Edition Type *</label>
+            <label>Edition Type <span style={{ color: 'red' }}>*</span></label>
             <Select
                 options={editionOptions}
                 value={formData.editionType}
@@ -107,7 +107,7 @@ const ArtworkDetails = ({
         </div>
 
         <div className="form-group">
-            <label>Framing Details *</label>
+            <label>Framing Details <span style={{ color: 'red' }}>*</span></label>
             <Select
                 options={framingOptions}
                 value={formData.framing}
@@ -120,7 +120,7 @@ const ArtworkDetails = ({
         </div>
 
         <div className="form-group">
-            <label htmlFor="quantity">Quantity *</label>
+            <label htmlFor="quantity">Quantity <span style={{ color: 'red' }}>*</span></label>
             <input
                 type="number"
                 id="quantity"
@@ -193,7 +193,7 @@ const ArtworkDetails = ({
                     disabled={isSubmitting}
                 />
                 <label className="form-check-label" htmlFor="isSigned">
-                    Signed by the artist *
+                    Signed by the artist <span style={{ color: 'red' }}>*</span>
                 </label>
             </div>
         </div>

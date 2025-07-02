@@ -161,6 +161,18 @@ function BlogPost() {
     try {
       await postAPI("/Blog-Post/create", formDataObj, true);
       toast.success('Blog post created successfully!');
+      localStorage.removeItem("blogPostDraft");
+      setFormData({
+  blogName: "",
+  slug: "",
+  summary: "",
+  blogImage: null,
+  category: "",
+  tags: []
+});
+setContent("");
+setTagInput("");
+setImagePreview(null);
       localStorage.removeItem(DRAFT_KEY); 
       navigate(-1);
     } catch (error) {

@@ -206,7 +206,7 @@ const TaxLegalCompliance = ({ userId }) => {
     });
 
     if (missing.length > 0) {
-        toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
+        toast.warn(`Please fill the required fields.`);
         return false;
     }
 
@@ -256,10 +256,11 @@ const TaxLegalCompliance = ({ userId }) => {
                          if (!validateRequiredFields()) return;
                         setLoading(true);
                         Promise.resolve(handleSubmit(e))
-                            .then(() => {
-                                window.location.reload();
-                            })
-                            .catch(console.error)
+.then(() => {
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000); // 2000 ms = 2 second delay
+        })                            .catch(console.error)
                             .finally(() => setLoading(false));
                     }}
                 >{loading ? "Updating..." : "Update"}</button>

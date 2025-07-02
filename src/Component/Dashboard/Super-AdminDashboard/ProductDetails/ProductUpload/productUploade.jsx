@@ -20,79 +20,6 @@ function ProductUpload() {
   const userType = useUserType();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('basic');
-
-  const [completedTabs, setCompletedTabs] = useState({ basic: false });
-
-  const validateCurrentTab = () => {
-    if (activeTab === "basic") {
-      if (!formData.productName || !formData.mainCategory || !formData.category || !formData.subCategory || !formData.productType || !formData.description) {
-        toast.error("Please fill all required fields in Basic Details");
-        return false;
-      }
-      if (formData.productType?.value === 'limited' && !formData.editionNumber) {
-        toast.error("Limited Edition Number is required");
-        return false;
-      }
-    } else if (activeTab === "images") {
-      if (images.length < 3) {
-        toast.error("Please upload at least 3 images");
-        return false;
-      }
-    } else if (activeTab === "artwork") {
-      if (!formData.medium || !formData.materials || formData.materials.length < 3 || !formData.dimensions || !formData.year || !formData.editionType || !formData.framing || !formData.quantity || !formData.condition) {
-        toast.error("Please complete required fields in Artwork Details (min 3 materials)");
-        return false;
-      }
-    } else if (activeTab === "pricing") {
-      if (!pricingData.sellingPrice) {
-        toast.error("Selling Price is required");
-        return false;
-      }
-    } else if (activeTab === "shipping") {
-      if (!formData.shippingCharges || !formData.estimatedDelivery || !formData.packagingType) {
-        toast.error("Shipping Charges, Delivery Time and Packaging Type are required");
-        return false;
-      }
-    }
-    return true;
-  };
-
-  const renderTabs = () => (
-    <ul className="nav nav-tabs mb-4">
-      <li className="nav-item">
-        <button className={`nav-link ${activeTab === 'basic' ? 'active' : ''}`} onClick={() => handleTabClick('basic')}>Basic Details</button>
-      </li>
-      {isNFTArtSelected && (
-        <li className="nav-item">
-          <button className={`nav-link ${activeTab === 'nft' ? 'active' : ''}`} onClick={() => handleTabClick('nft')}>NFT Details</button>
-        </li>
-      )}
-      {isAntiqueVintageSelected && (
-        <li className="nav-item">
-          <button className={`nav-link ${activeTab === 'antique' ? 'active' : ''}`} onClick={() => handleTabClick('antique')}>Antique/Vintage</button>
-        </li>
-      )}
-      <li className="nav-item">
-        <button className={`nav-link ${activeTab === 'images' ? 'active' : ''}`} onClick={() => handleTabClick('images')}>Images & Media</button>
-      </li>
-      <li className="nav-item">
-        <button className={`nav-link ${activeTab === 'artwork' ? 'active' : ''}`} onClick={() => handleTabClick('artwork')}>Artwork Details</button>
-      </li>
-      <li className="nav-item">
-        <button className={`nav-link ${activeTab === 'pricing' ? 'active' : ''}`} onClick={() => handleTabClick('pricing')}>Pricing</button>
-      </li>
-      <li className="nav-item">
-        <button className={`nav-link ${activeTab === 'shipping' ? 'active' : ''}`} onClick={() => handleTabClick('shipping')}>Shipping</button>
-      </li>
-      <li className="nav-item">
-        <button className={`nav-link ${activeTab === 'payout' ? 'active' : ''}`} onClick={() => handleTabClick('payout')}>Payout</button>
-      </li>
-      <li className="nav-item">
-        <button className={`nav-link ${activeTab === 'legal' ? 'active' : ''}`} onClick={() => handleTabClick('legal')}>Legal</button>
-      </li>
-    </ul>
-  );
-
   const {
     formData,
     pricingData,
@@ -707,7 +634,7 @@ const handleNextTab = () => {
                     <i className="fa fa-dashboard"></i>
                   </span>              
                   </li>
-              <li className="breadcrumb-item">
+              <li className="breadcrumb-item acrive">
                   <span onClick={() => navigate('/super-admin/product-table')} style={{ cursor: 'pointer' }}>
                     All Product
                   </span>              
@@ -835,11 +762,6 @@ const handleNextTab = () => {
                   <button
                     type="button"
                     className="btn btn-primary ms-auto"
-                    // onClick={() => {
-                    //   const tabs = ['basic', ...(isNFTArtSelected ? ['nft'] : []), ...(isAntiqueVintageSelected ? ['antique'] : []), 'images', 'artwork', 'pricing', 'shipping', 'payoutDetails', 'legal'];
-                    //   const currentIndex = tabs.indexOf(activeTab);
-                    //   setActiveTab(tabs[currentIndex + 1]);
-                    // }}
                     onClick={handleNextTab}
                     disabled={isSubmitting}
                   >

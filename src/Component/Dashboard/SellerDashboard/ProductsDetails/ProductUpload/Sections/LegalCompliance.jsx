@@ -153,12 +153,12 @@ const LegalCompliance = ({
           disabled={isSubmitting}
         />
         <label className="form-check-label" htmlFor="ownershipConfirmation">
-          I confirm I have legal rights to sell this artwork *
+          I confirm I have legal rights to sell this artwork <span style={{ color: 'red' }}>*</span>
         </label>
       </div>
 
       <div className="form-group">
-        <label>Copyright & Reproduction Rights *</label>
+        <label>Copyright & Reproduction Rights <span style={{ color: 'red' }}>*</span></label>
         <Select
           options={copyrightOptions}
           value={formData.copyrightRights}
@@ -182,7 +182,7 @@ const LegalCompliance = ({
           disabled={isSubmitting}
         />
         <label className="form-check-label" htmlFor="prohibitedItems">
-          I confirm this artwork complies with platform rules and does not contain prohibited content *
+          I confirm this artwork complies with platform rules and does not contain prohibited content <span style={{ color: 'red' }}>*</span>
         </label>
       </div>
 

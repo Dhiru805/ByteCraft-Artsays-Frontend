@@ -77,6 +77,7 @@ function BlogList() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentBlogs = filteredBlogs.slice(startIndex, startIndex + itemsPerPage)
 
+  
   return (
     <div className="container-fluid">
       <div className="block-header">

@@ -53,7 +53,7 @@ const AntiqueVintageDetails = ({
             <div className="row">
                 <div className="col-md-6">
                     <div className="form-group">
-                        <label htmlFor="originRegion">Origin / Region *</label>
+                        <label htmlFor="originRegion">Origin / Region <span style={{ color: 'red' }}>*</span></label>
                         <select
                             id="originRegion"
                             name="originRegion"
@@ -80,7 +80,7 @@ const AntiqueVintageDetails = ({
 
                 <div className="col-md-6">
                     <div className="form-group">
-                        <label htmlFor="periodEra">Period / Era *</label>
+                        <label htmlFor="periodEra">Period / Era <span style={{ color: 'red' }}>*</span></label>
                         <select
                             id="periodEra"
                             name="periodEra"
@@ -109,7 +109,7 @@ const AntiqueVintageDetails = ({
             <div className="row">
                 <div className="col-md-6">
                     <div className="form-group">
-                        <label htmlFor="antiqueCondition">Condition *</label>
+                        <label htmlFor="antiqueCondition">Condition <span style={{ color: 'red' }}>*</span></label>
                         <select
                             id="antiqueCondition"
                             name="antiqueCondition"
@@ -324,7 +324,7 @@ const AntiqueVintageDetails = ({
             </div>
 
             <div className="form-group">
-                <label htmlFor="originalReproduction">Original vs. Reproduction *</label>
+                <label htmlFor="originalReproduction">Original vs. Reproduction <span style={{ color: 'red' }}>*</span></label>
                 <select
                     id="originalReproduction"
                     name="originalReproduction"

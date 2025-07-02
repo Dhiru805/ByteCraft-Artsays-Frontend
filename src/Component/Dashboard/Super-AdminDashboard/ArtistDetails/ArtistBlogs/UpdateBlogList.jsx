@@ -122,7 +122,7 @@ function BlogUpdate() {
         formDataObj, true
       );
       toast.success('Blog post updated successfully!');
-       navigate(`/super-admin/artist/blogrequest`);
+       navigate(`/super-admin/artist/blogs`);
     } catch (error) {
       const errorMessage = error?.response?.data?.message || error.message || 'Something went wrong. Please try again.';
       toast.error(errorMessage)
@@ -159,14 +159,20 @@ function BlogUpdate() {
             <h2>Update Blog Post</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <a href="/">
+                <span
+                  onClick={() => navigate("/super-admin/dashboard")}
+                  style={{ cursor: "pointer" }}
+                >
                   <i className="fa fa-dashboard"></i>
-                </a>
+                </span>
               </li>
-               <li className="breadcrumb-item active">
-                <Link to="/super-admin/artist/blogrequest">
-                  Blogs Request
-                </Link>
+              <li className="breadcrumb-item">
+                <span
+                  onClick={() => navigate(-1)}
+                  style={{ cursor: "pointer" }}
+                >
+                  Blogs
+                </span>
               </li>
               {/* <li className="breadcrumb-item active">
                 <Link to="/super-admin/artist/blogrequest" >

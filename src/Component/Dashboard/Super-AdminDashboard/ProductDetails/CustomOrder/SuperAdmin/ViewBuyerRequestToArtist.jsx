@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 import useUserType from '../../../../urlconfig';
@@ -17,6 +17,8 @@ function ViewBuyerRequest() {
     const [artistId, setArtistId] = useState('');
     const [buyerId, setBuyerId] = useState('');
     const [image, setImage] = useState('');
+    const navigate = useNavigate();
+     
 
     useEffect(() => {
         if (request) {
@@ -24,8 +26,11 @@ function ViewBuyerRequest() {
             setProductName(request.ProductName || '');
             setDescription(request.Description || '');
             setBudget(request.Budget || '');
-            setImage(request.BuyerImage ? `/api/${request.BuyerImage}` : '');
-            setArtistId(`${request.Artist.id.name} ${request.Artist.id.lastName}`);
+const formattedImagePath = request.BuyerImage
+            ? `/api/${request.BuyerImage.replace(/\\/g, '/')}`
+            : '';
+        setImage(formattedImagePath);            
+        setArtistId(`${request.Artist.id.name} ${request.Artist.id.lastName}`);
             setBuyerId(`${request.Buyer.id.name} ${request.Buyer.id.lastName}`);
         }
     }, [request]);
@@ -38,10 +43,14 @@ function ViewBuyerRequest() {
                         <h2>View Custom Request</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
-                                <a href="/"><i className="fa fa-dashboard"></i></a>
+                                    <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+                                        <i className="fa fa-dashboard"></i>
+                                    </span>                                
                             </li>
                             <li className="breadcrumb-item active">
-                                <Link to={`/${userType}/Dashboard/customrequest`}>Custom Request</Link>
+                                    <span onClick={() => navigate(-1)} style={{ cursor: 'pointer' }}>
+                                        Seller Product Request
+                                    </span>                                
                             </li>
                             <li className="breadcrumb-item">View Custom Request</li>
                         </ul>

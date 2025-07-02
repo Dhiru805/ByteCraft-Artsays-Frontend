@@ -10,7 +10,7 @@ const BlogRequest = () => {
     const [blogs, setBlogs] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [blogsPerPage, setBlogsPerPage] = useState(5);
+    const [blogsPerPage, setBlogsPerPage] = useState(10);
     const confirm = useConfirm();
     const navigate = useNavigate();
     const [loadingBlogId, setLoadingBlogId] = useState(null);
@@ -107,7 +107,6 @@ const BlogRequest = () => {
 
             toast.error("Blog Request is Rejected");
 
-            // 🔧 Reset modal state
             setIsRejectModalOpen(false);
             setRejectionComment('');
             setSelectedArtistToReject(null);
@@ -120,7 +119,8 @@ const BlogRequest = () => {
     };
 
     const filteredBlogs = blogs.filter(blog => {
-        const matchName = blog.blogAuthor.toLowerCase().includes(searchTerm.toLowerCase());
+        const authorName = blog?.uploadedBy?.name || blog.blogAuthor;
+        const matchName = authorName.toLowerCase().includes(searchTerm.toLowerCase());
         const matchStatus = blog.blogStatus.toLowerCase().includes(searchTerm.toLowerCase());
         const matchDate = new Date(blog.createdAt).toLocaleDateString('en-IN').includes(searchTerm);
         return matchName || matchStatus || matchDate;
@@ -243,7 +243,9 @@ const BlogRequest = () => {
                                                         <h6 className="mb-0">{(currentPage - 1) * blogsPerPage + index + 1}</h6>
                                                     </td>
                                                     <td>
-                                                        <span>{blog.blogAuthor}</span>
+                                                        <span>
+                                                            {blog?.uploadedBy?.name || blog?.blogAuthor}
+                                                        </span>
                                                     </td>
                                                     <td>
                                                         <button

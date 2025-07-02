@@ -91,7 +91,7 @@ const validateRequired = () => {
     'Gender'            : profileData.gender,
     'Address Line 1'    : profileData.address?.line1,
     'Address Line 2'    : profileData.address?.line2,
-    'Pincode'          : profileData.pincode,
+    'Pincode'          : profileData.address?.pincode,
     'City'              : profileData.address?.city,
     'State/Province'    : profileData.address?.state,
     'Country'           : profileData.address?.country,

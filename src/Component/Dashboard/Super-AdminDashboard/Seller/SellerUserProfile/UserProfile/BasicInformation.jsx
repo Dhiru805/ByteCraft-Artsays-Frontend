@@ -95,6 +95,8 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
         'Birthdate'         : profileData.birthdate,
         'Gender'            : profileData.gender,
         'Address Line 1'    : profileData.address?.line1,
+    'Address Line 2'    : profileData.address?.line2,
+    'Pincode'          : profileData.address?.pincode,
         'City'              : profileData.address?.city,
         'State/Province'    : profileData.address?.state,
         'Country'           : profileData.address?.country,
@@ -246,7 +248,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
               </div>
             </div>
             <div className="form-group">
-              <label htmlFor="addressLine2">Address Line 2</label>
+              <label htmlFor="addressLine2">Address Line 2 <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -339,7 +341,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
 
 
             <div className="form-group">
-              <label htmlFor="pincode">Pincode</label>
+              <label htmlFor="pincode">Pincode <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"

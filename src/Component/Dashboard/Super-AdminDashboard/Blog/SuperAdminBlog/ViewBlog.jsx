@@ -19,6 +19,7 @@ function ArtistBlogDetails() {
       const result = await getAPI(`/Blog-Post/getblogbyid/${blogData._id}`, {}, true, false);
       if (result.data) {
         setBlogs([result.data.blog]);
+        console.log([result.data.blog]);
       }
     } catch (error) {
       console.error("Error fetching blog:", error);

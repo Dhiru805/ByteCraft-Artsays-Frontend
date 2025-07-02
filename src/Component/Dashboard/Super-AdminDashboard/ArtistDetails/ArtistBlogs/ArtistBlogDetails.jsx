@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
@@ -8,6 +9,7 @@ function ArtistBlogDetails() {
   const location = useLocation();
   const [blogData] = useState(location.state?.blogData || null);
   const [blogs, setBlogs] = useState([]);
+  const navigate = useNavigate();
 
 
   const fetchBlog = async () => {
@@ -68,10 +70,20 @@ function ArtistBlogDetails() {
             <h2>Blog Details</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <Link to="/"><i className="fa fa-dashboard"></i></Link>
+                <span
+                  onClick={() => navigate("/super-admin/dashboard")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <i className="fa fa-dashboard"></i>
+                </span>
               </li>
               <li className="breadcrumb-item">
-                <Link to={`/artist/bloglist`}>Blogs</Link>
+                <span
+                  onClick={() => navigate(-1)}
+                  style={{ cursor: "pointer" }}
+                >
+                  Blogs
+                </span>
               </li>
               <li className="breadcrumb-item">Blog Details</li>
             </ul>

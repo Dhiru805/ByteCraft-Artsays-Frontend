@@ -125,6 +125,18 @@ useEffect(() => {
       setImagePreview(null);
       navigate(`/${userType}/Dashboard/bloglist`);
       toast.success('Blog post created successfully!');
+      localStorage.removeItem("blogPostDraft");
+      setFormData({
+  blogName: "",
+  slug: "",
+  summary: "",
+  blogImage: null,
+  category: "",
+  tags: []
+});
+setContent("");
+setTagInput("");
+setImagePreview(null);
     } catch (error) {
       setSuccessMessage("");
       setErrorMessage(error.message);

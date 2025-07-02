@@ -146,6 +146,18 @@ useEffect(() => {
     try {
       await postAPI("/Blog-Post/create", formDataObj,true);
       toast.success('Blog post created successfully!');
+      localStorage.removeItem("blogPostDraft");
+      setFormData({
+  blogName: "",
+  slug: "",
+  summary: "",
+  blogImage: null,
+  category: "",
+  tags: []
+});
+setContent("");
+setTagInput("");
+setImagePreview(null);
       navigate(`/artist/bloglist`);
     } catch (error) {
        const errorMessage = error?.response?.data?.message || error.message || 'Something went wrong. Please try again.';

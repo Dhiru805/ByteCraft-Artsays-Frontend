@@ -75,7 +75,7 @@ const NFTDetails = ({
                 <div className="card-body">
                     <div className="row">
                         <div className="col-md-6 form-group">
-                            <label htmlFor="blockchainNetwork">Blockchain Network *</label>
+                            <label htmlFor="blockchainNetwork">Blockchain Network <span style={{ color: 'red' }}>*</span></label>
                             <CreatableSelect
                                 id="blockchainNetwork"
                                 name="blockchainNetwork"
@@ -97,7 +97,7 @@ const NFTDetails = ({
                         </div>
 
                         <div className="col-md-6 form-group">
-                            <label htmlFor="smartContractAddress">Smart Contract Address *</label>
+                            <label htmlFor="smartContractAddress">Smart Contract Address <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="text"
                                 id="smartContractAddress"
@@ -111,7 +111,7 @@ const NFTDetails = ({
                             />
                         </div>
                         <div className="col-md-6 form-group">
-                            <label htmlFor="tokenStandard">Token Standard *</label>
+                            <label htmlFor="tokenStandard">Token Standard <span style={{ color: 'red' }}>*</span></label>
                             <CreatableSelect
                                 id="tokenStandard"
                                 name="tokenStandard"
@@ -134,7 +134,7 @@ const NFTDetails = ({
 
                         <div className="col-md-6 form-group">
                             <label htmlFor="tokenId">
-                                Token ID *
+                                Token ID <span style={{ color: 'red' }}>*</span>
                             </label>
                             <input
                                 type="text"
@@ -150,7 +150,7 @@ const NFTDetails = ({
                         </div>
 
                         <div className="col-md-6 form-group">
-                            <label htmlFor="walletAddress">Wallet Address of Creator *</label>
+                            <label htmlFor="walletAddress">Wallet Address of Creator <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="text"
                                 id="walletAddress"
@@ -165,7 +165,7 @@ const NFTDetails = ({
                         </div>
 
                         <div className="col-md-6 form-group">
-                            <label htmlFor="royaltyPercentage">Royalty Percentage *</label>
+                            <label htmlFor="royaltyPercentage">Royalty Percentage <span style={{ color: 'red' }}>*</span></label>
                             <div className="input-group">
                                 <input
                                     type="number"
@@ -187,7 +187,7 @@ const NFTDetails = ({
                         </div>
 
                         <div className="col-md-6 form-group">
-                            <label htmlFor="mintingType">Minting Type *</label>
+                            <label htmlFor="mintingType">Minting Type <span style={{ color: 'red' }}>*</span></label>
                             <select
                                 id="mintingType"
                                 name="mintingType"
@@ -220,7 +220,7 @@ const NFTDetails = ({
                 <div className="card-body">
                     <div className="row">
                         <div className="col-md-6 form-group">
-                            <label htmlFor="licenseType">License Type *</label>
+                            <label htmlFor="licenseType">License Type <span style={{ color: 'red' }}>*</span></label>
                             <select
                                 id="licenseType"
                                 name="licenseType"
@@ -321,7 +321,7 @@ const NFTDetails = ({
                         {formData.partOfCollection && (
                             <>
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="collectionName">Collection Name *</label>
+                                    <label htmlFor="collectionName">Collection Name <span style={{ color: 'red' }}>*</span></label>
                                     <input
                                         type="text"
                                         id="collectionName"
@@ -336,7 +336,7 @@ const NFTDetails = ({
                                 </div>
 
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="editionSize">Edition Size *</label>
+                                    <label htmlFor="editionSize">Edition Size <span style={{ color: 'red' }}>*</span></label>
                                     <input
                                         type="number"
                                         id="editionSize"
@@ -351,7 +351,7 @@ const NFTDetails = ({
                                     />
                                 </div>
 
-                                {/* Address Fields */}
+                                {/* Address Fields*/}
                                 <div className="col-md-6 form-group">
                                     <label htmlFor="addressLine1">Address Line 1</label>
                                     <input
@@ -467,7 +467,7 @@ const NFTDetails = ({
                 <div className="card-body">
                     <div className="row">
                         <div className="col-md-6 form-group">
-                            <label htmlFor="rarityType">Rarity Type *</label>
+                            <label htmlFor="rarityType">Rarity Type <span style={{ color: 'red' }}>*</span></label>
                             <select
                                 id="rarityType"
                                 name="rarityType"
@@ -492,7 +492,7 @@ const NFTDetails = ({
                         </div>
 
                         <div className="col-md-6 form-group">
-                            <label htmlFor="traits">Traits & Attributes *</label>
+                            <label htmlFor="traits">Traits & Attributes <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="text"
                                 id="traits"
