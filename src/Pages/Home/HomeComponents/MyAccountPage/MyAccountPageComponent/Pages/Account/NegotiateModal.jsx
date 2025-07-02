@@ -519,7 +519,7 @@ const NegotiateModalforBuyer = ({ request, onClose, onSubmit }) => {
                 disabled={loading}
                 aria-label="Close"
               >
-               ×</button>
+                ×</button>
             </div>
             <form onSubmit={handleSubmit}>
               <div
@@ -678,7 +678,7 @@ const NegotiateModalforBuyer = ({ request, onClose, onSubmit }) => {
               <div className="modal-footer">
                 <button
                   type="button"
-                  className="btn btn-secondary"
+                  className="text-[16px] py-1 px-3 text-zinc-900 border-[1.6px] rounded-lg border-zinc-600"
                   onClick={onClose}
                   disabled={loading}
                 >
@@ -687,40 +687,33 @@ const NegotiateModalforBuyer = ({ request, onClose, onSubmit }) => {
                 {canBuyerUpdate() && (
                   <button
                     type="submit"
-                    className="btn btn-primary"
+                    className="text-[16px] py-1 px-3 text-zinc-900 border-[1.6px] rounded-lg border-zinc-600"
                     disabled={loading}
                   >
-                    {loading ? "Saving..." : "Save changes"}
+                    {loading ? "Submitting..." : "Submit"}
                   </button>
                 )}
-                {request?.BuyerStatus !== "Approved" &&
-                  request?.BuyerStatus !== "Rejected" && (
+                {/* {request?.BuyerStatus !== "Approved" &&
+                  request?.BuyerStatus !== "Rejected" &&
+                  buyerNegotiatedBudgets.length === 2 && (
                     <>
-                      <button
-                        type="button"
-                        className="btn btn-success"
-                        onClick={() => handleStatusUpdate("Approved")}
-                        disabled={loading}
-                      >
-                        Accept
-                      </button>
                       <button
                         type="button"
                         className="btn btn-danger"
                         onClick={() => setShowRejectModal(true)}
-                        disabled={loading}
                       >
                         Reject
                       </button>
                     </>
-                  )}
+                  )} */}
+
               </div>
             </form>
           </div>
         </div>
       </div>
 
-      {showRejectModal && (
+      {/* {showRejectModal && (
         <div
           className="modal fade show"
           style={{
@@ -774,7 +767,7 @@ const NegotiateModalforBuyer = ({ request, onClose, onSubmit }) => {
               <div className="modal-footer">
                 <button
                   type="button"
-                  className="btn btn-secondary"
+                  className="text-[16px] py-1 px-3 text-zinc-900 border-[1.6px] rounded-lg border-zinc-600"
                   onClick={() => setShowRejectModal(false)}
                   disabled={loading}
                 >
@@ -790,7 +783,6 @@ const NegotiateModalforBuyer = ({ request, onClose, onSubmit }) => {
                     }
                     handleStatusUpdate("Rejected", rejectComment);
                   }}
-                  disabled={loading}
                 >
                   Save Rejection
                 </button>
@@ -798,7 +790,7 @@ const NegotiateModalforBuyer = ({ request, onClose, onSubmit }) => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 };

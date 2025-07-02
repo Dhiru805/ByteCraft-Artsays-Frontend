@@ -1,21 +1,21 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NegotiateModal from "./Negotiate";
+import updateBuyerStatus from "./buyerRequestAPI";
 
 function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyerRequestStatus }) {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [selectedRequest, setSelectedRequest] = useState(null);
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-  const [searchTerm, setSearchTerm] = useState('');
-
+    const [searchTerm, setSearchTerm] = useState('');
 
     // pagination helpers 
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
 
 
-   const filteredProducts = buyerRequests.filter(request =>
+    const filteredProducts = buyerRequests.filter(request =>
         request.Buyer?.id?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         request.Buyer?.id?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -25,8 +25,8 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
     const displayedProducts = filteredProducts.slice(
         (currentPage - 1) * productsPerPage,
         currentPage * productsPerPage
-    );    
-    
+    );
+
     const handlePrevious = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
@@ -59,6 +59,18 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
     const [loadingIds, setLoadingIds] = useState([]);
 
     const [updatedRequests, setUpdatedRequests] = useState({});
+
+    const handleUpdateBuyerStatus = async (requestId) => {
+        try {
+            setLoadingIds((prev) => [...prev, requestId]);
+            const response = await updateBuyerStatus(requestId, 'Approved', 'Approved');
+            await updateBuyerStatus(requestId, 'Approved', 'Approved');
+            setLoadingIds((prev) => prev.filter((itemId) => itemId !== requestId));
+        } catch (error) {
+            console.error('Failed to update buyer status:', error);
+            setLoadingIds((prev) => prev.filter((itemId) => itemId !== requestId));
+        }
+    };
 
     return (
         <>
@@ -175,59 +187,47 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                                                 <i className="fa fa-eye"></i>
                                                             </button>
                                                             {/* Approve button logic */}
-                                                            {updatedRequests[request._id] !== 'approved' && (
-                                                                <button
-                                                                    type="button"
-                                                                    className="btn btn-sm btn-outline-success w-2 mr-2"
-                                                                    title="Approve"
-                                                                    disabled={isLoading}
-                                                                    onClick={async () => {
-                                                                        setLoadingIds((prev) => [...prev, request._id]);
-                                                                        await updateBuyerRequestStatus(request._id, 'Approved');
-                                                                        setUpdatedRequests((prev) => ({ ...prev, [request._id]: 'approved' }));
-                                                                        setLoadingIds((prev) => prev.filter((itemId) => itemId !== request._id));
-                                                                    }}
-                                                                >
-                                                                    {isLoading ? (
-                                                                        <i className="fa fa-spinner fa-spin"></i>
-                                                                    ) : (
-                                                                        <i className="fa fa-check"></i>
-                                                                    )}
-                                                                </button>
-                                                            )}
+                                                            {(request.BuyerNegotiatedBudgets.length !== 0 && request.ArtistNegotiatedBudgets.length !== 0)
+                                                                && (
+                                                                    (request.BuyerNegotiatedBudgets.length === 1 && request.ArtistNegotiatedBudgets.length === 1) || (request.BuyerNegotiatedBudgets.length === 2 && request.ArtistNegotiatedBudgets.length === 2)
+                                                                ) &&
+                                                                (request.RequestStatus === "Pending")
+                                                                && (
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-sm btn-outline-success w-2 mr-2"
+                                                                        title="Approve"
+                                                                        disabled={isLoading}
+                                                                        onClick={async () => {
+                                                                            await handleUpdateBuyerStatus(request._id);
+                                                                            setUpdatedRequests((prev) => ({
+                                                                                ...prev,
+                                                                                [request._id]: 'Approved',
+                                                                            }));
+                                                                        }}
 
-                                                            {/* Reject button logic */}
-                                                            {updatedRequests[request._id] !== 'rejected' && (
-                                                                <button
-                                                                    type="button"
-                                                                    className="btn btn-sm btn-outline-danger w-2 mr-2"
-                                                                    title="Reject"
-                                                                    disabled={isLoading}
-                                                                    onClick={async () => {
-                                                                        setLoadingIds((prev) => [...prev, request._id]);
-                                                                        await handleRejectBuyerRequest(request._id);
-                                                                        setUpdatedRequests((prev) => ({ ...prev, [request._id]: 'rejected' }));
-                                                                        setLoadingIds((prev) => prev.filter((itemId) => itemId !== request._id));
-                                                                    }}
-                                                                >
-                                                                    {isLoading ? (
-                                                                        <i className="fa fa-spinner fa-spin"></i>
-                                                                    ) : (
-                                                                        <i className="fa fa-ban"></i>
-                                                                    )}
-                                                                </button>
-                                                            )}
 
-                                                            {request.RequestStatus === 'Approved' && (
-                                                                <button
-                                                                    type="button"
-                                                                    className="btn btn-outline-secondary btn-sm"
-                                                                    title="Negotiate"
-                                                                    onClick={() => handleOpenModal(request)}
-                                                                >
-                                                                    <i className="fas fa-handshake"></i>
-                                                                </button>
-                                                            )}
+                                                                    >
+                                                                        {isLoading ? (
+                                                                            <i className="fa fa-spinner fa-spin"></i>
+                                                                        ) : (
+                                                                            <i className="fa fa-check"></i>
+                                                                        )}
+                                                                    </button>
+                                                                )}
+
+                                                            {((request.BuyerNegotiatedBudgets.length === 0 && request.ArtistNegotiatedBudgets.length === 0) || (request.BuyerNegotiatedBudgets.length === 1 && request.ArtistNegotiatedBudgets.length === 1) || (request.BuyerNegotiatedBudgets.length === 2 && request.ArtistNegotiatedBudgets.length === 2))
+                                                                && (request.RequestStatus === "Pending")
+                                                                && (
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-outline-secondary btn-sm"
+                                                                        title="Negotiate"
+                                                                        onClick={() => handleOpenModal(request)}
+                                                                    >
+                                                                        <i className="fas fa-handshake"></i>
+                                                                    </button>
+                                                                )}
                                                         </td>
                                                     </tr>
                                                 );

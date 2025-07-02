@@ -53,6 +53,7 @@ export const AccountForm = () => {
             ? `${BASE_URL}${userData.profilePhoto}`
             : DEFAULT_PROFILE_IMAGE;
           setProfileImage(profilePhotoUrl);
+          localStorage.setItem('profilePhoto', profilePhotoUrl);
         }
       } catch (error) {
         console.error('Error fetching profile:', error);
@@ -78,6 +79,42 @@ export const AccountForm = () => {
       reader.readAsDataURL(file);
     }
   };
+
+  // const handleDeleteImage = async () => {
+  //   try {
+  //     const token = localStorage.getItem('token');
+  //     const userId = localStorage.getItem('userId');
+
+  //     if (!token || !userId) {
+  //       toast.error('Please log in again.');
+  //       return;
+  //     }
+
+  //     setLoading(true);
+  //     await putAPI(
+  //       `/auth/users/${userId}`,
+  //       { profilePhoto: null },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     setProfileImage(DEFAULT_PROFILE_IMAGE);
+  //     setImageFile(null);
+
+  //     if (fileInputRef.current) {
+  //       fileInputRef.current.value = '';
+  //     }
+
+  //     toast.success('Profile image deleted successfully!');
+  //   } catch (error) {
+  //     console.error('Error deleting profile image:', error.response?.data || error.message);
+  //     toast.error(error?.response?.data?.message || 'Failed to delete profile image');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const handleDeleteImage = async () => {
     try {
@@ -106,6 +143,10 @@ export const AccountForm = () => {
         fileInputRef.current.value = '';
       }
 
+      // Update localStorage and dispatch custom event
+      localStorage.setItem('profilePhoto', DEFAULT_PROFILE_IMAGE);
+      window.dispatchEvent(new Event('profilePhotoUpdated')); // Dispatch event
+
       toast.success('Profile image deleted successfully!');
     } catch (error) {
       console.error('Error deleting profile image:', error.response?.data || error.message);
@@ -114,6 +155,89 @@ export const AccountForm = () => {
       setLoading(false);
     }
   };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   console.log('Form submitted');
+
+  //   const formData = new FormData();
+  //   formData.append('name', name);
+  //   formData.append('lastName', lastName);
+  //   formData.append('username', username);
+  //   formData.append('email', email);
+  //   formData.append('phone', phone);
+  //   formData.append('gender', gender);
+  //   formData.append('birthdate', birthdate);
+  //   formData.append('bio', bio);
+
+  //   if (imageFile) {
+  //     formData.append('profilePhoto', imageFile);
+  //   }
+  //   try {
+  //     const token = localStorage.getItem('token');
+  //     const userId = localStorage.getItem('userId');
+  //     if (!token) {
+  //       toast.error('No token found. Please log in again.');
+  //       return;
+  //     }
+  //     if (!userId) {
+  //       toast.error('User ID not found. Please log in again.');
+  //       return;
+  //     }
+  //     setLoading(true);
+  //     const res = await putAPI(
+  //       `/auth/users/${userId}`,
+  //       formData,
+  //       {
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     toast.success(res.message || 'Profile updated successfully!');
+
+  //     console.log('Updated user:', res.data.user);
+
+  //     if (res.hasError) {
+  //       toast.error(res.message);
+  //     } else {
+  //       const fetchUpdatedProfile = async () => {
+  //         try {
+  //           const updated = await getAPI(`/auth/userid/${userId}`, {}, true, false);
+  //           const user = updated.data.user;
+  //           setName(user.name || '');
+  //           setLastName(user.lastName || '');
+  //           setUsername(user.username || '');
+  //           setEmail(user.email || '');
+  //           setPhone(user.phone || '');
+  //           setGender(user.gender || 'Male');
+  //           setBio(user.bio || '');
+  //           const formattedBirthdate = user.birthdate
+  //             ? new Date(user.birthdate).toISOString().split('T')[0]
+  //             : '';
+  //           setBirthdate(formattedBirthdate);
+
+  //           const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  //           const profilePhotoUrl = user.profilePhoto
+  //             ? `${BASE_URL}${user.profilePhoto}`
+  //             : DEFAULT_PROFILE_IMAGE;
+  //           setProfileImage(profilePhotoUrl);
+  //         } catch (e) {
+  //           console.error('Error refreshing profile after update:', e);
+  //           toast.error(e?.response?.data?.message || 'Error refreshing profile');
+  //         }
+  //       };
+  //       fetchUpdatedProfile();
+  //     }
+  //   } catch (error) {
+  //     console.error('Update failed:', error.response?.data || error.message);
+  //     toast.error(error?.response?.data?.message || 'Failed to update profile');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -182,6 +306,10 @@ export const AccountForm = () => {
               ? `${BASE_URL}${user.profilePhoto}`
               : DEFAULT_PROFILE_IMAGE;
             setProfileImage(profilePhotoUrl);
+
+            // Update localStorage and dispatch custom event
+            localStorage.setItem('profilePhoto', profilePhotoUrl);
+            window.dispatchEvent(new Event('profilePhotoUpdated')); // Dispatch event
           } catch (e) {
             console.error('Error refreshing profile after update:', e);
             toast.error(e?.response?.data?.message || 'Error refreshing profile');
@@ -196,7 +324,7 @@ export const AccountForm = () => {
       setLoading(false);
     }
   };
-
+  
   return (
     <form className="w-full max-w-[1100px] mx-auto px-4 mr-0 sm:px-6 lg:px-0 space-y-6" onSubmit={handleSubmit}>
       <h3 className="text-xl font-semibold">Personal Information</h3>

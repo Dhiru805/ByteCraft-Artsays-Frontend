@@ -191,9 +191,9 @@ function ViewBuyerRequest({ request, onClose }) {
                                 <label>Description</label>
                                 <ReactQuill
                                     value={description || 'N/A'}
-                                    readOnly
                                     theme="snow"
                                     modules={{ toolbar: false }}
+                                    readOnly
                                 />
                             </div>
 
@@ -203,15 +203,22 @@ function ViewBuyerRequest({ request, onClose }) {
                                 <label className="mt-3 d-block">Negotiation By Artist</label>
                             )}
 
-                            {request?.NegiotaiteBudget && (
+                            {request.ArtistNegotiatedBudgets.length > 0 && (
                                 <div className="form-group mt-3">
-                                    <label>Negotiate Budget</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        value={request.NegiotaiteBudget || 'N/A'}
-                                        readOnly
-                                    />
+                                    {request.ArtistNegotiatedBudgets.map((budget, index) => {
+                                        const position = ["1st", "2nd", "3rd"];
+                                        return (
+                                            <div key={index} className="mb-2">
+                                                <label className="form-label">{`${position[index] || `${index + 1}th`} Negotiation`}</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={budget}
+                                                    readOnly
+                                                />
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             )}
 

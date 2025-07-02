@@ -250,7 +250,7 @@
 //       }
 
 //       const data = response.data;
-      
+
 //       if (response && response.data){
 //         toast.success(data.message || "Request created successfully!");
 //         await fetchRequests();
@@ -835,9 +835,9 @@ import React, { useState, useEffect } from "react";
 import { FiSearch } from "react-icons/fi";
 import { FaPlus } from "react-icons/fa6";
 import { GoPencil } from "react-icons/go";
-import { RiDeleteBin6Line } from "react-icons/ri";
+import { RiDeleteBin6Line, RiProhibited2Line } from "react-icons/ri";
 import { LuHandshake } from "react-icons/lu";
-import { FaEye } from "react-icons/fa";
+import { FaEye, FaCheck, FaSpinner } from "react-icons/fa";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { toast } from "react-toastify";
@@ -867,10 +867,14 @@ const AddCustomRequestForm = () => {
   const [selectedArtistName, setSelectedArtistName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectComment, setRejectComment] = useState("");
   const [viewRequest, setViewRequest] = useState(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedRequestToDelete, setSelectedRequestToDelete] = useState(null);
   const [descriptionError, setDescriptionError] = useState(false);
+  const [loading, setLoading] = useState(false);
+
 
   const [formData, setFormData] = useState({
     productName: "",
@@ -1001,10 +1005,8 @@ const AddCustomRequestForm = () => {
   };
 
   const handleDeleteConfirmed = async () => {
-    // No need to call deleteAPI here; ConfirmationDialog handles the deletion
     setIsDeleteDialogOpen(false);
     setSelectedRequestToDelete(null);
-    // Force immediate fetch to update the UI
     await fetchRequests();
   };
 
@@ -1139,6 +1141,31 @@ const AddCustomRequestForm = () => {
   const handleViewRequest = (req) => {
     setViewRequest(req);
     setShowViewModal(true);
+  };
+
+  const handleStatusUpdate = async (status, comment = "", req) => {
+    setLoading(true);
+    try {
+      const response = await putAPI(
+        `/api/update-negiotaite-Buyer-budget/${req}`,
+        {
+          rejectedcomment: comment,
+          BuyerStatus: status,
+          RequestStatus: status,
+        }
+      );
+      if (response && response.data) {
+        toast.success(`Buyer request ${status.toLowerCase()} successfully`);
+        if (showRejectModal) setShowRejectModal(false);
+      } else {
+        toast.error(response?.message || `Failed to update buyer request status`);
+      }
+    } catch (error) {
+      console.error("Error updating buyer request status:", error);
+      toast.error(error.response?.data?.message || "Error updating buyer request status");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleNegotiationSubmit = async (updatedRequest) => {
@@ -1291,26 +1318,24 @@ const AddCustomRequestForm = () => {
                     </td>
                     <td className="px-4 py-2">
                       <button
-                        className={`px-3 py-1 rounded-lg border text-sm ${
-                          req.RequestStatus === "Approved"
-                            ? "text-green-500 border-green-500 bg-white"
-                            : req.RequestStatus === "Pending"
+                        className={`px-3 py-1 rounded-lg border text-sm ${req.RequestStatus === "Approved"
+                          ? "text-green-500 border-green-500 bg-white"
+                          : req.RequestStatus === "Pending"
                             ? "text-yellow-500 border-yellow-500 bg-white"
                             : "text-red-500 border-red-500 bg-white"
-                        }`}
+                          }`}
                       >
                         {req.RequestStatus || "Pending"}
                       </button>
                     </td>
                     <td className="px-4 py-2">
                       <button
-                        className={`px-3 py-1 rounded-lg border text-sm ${
-                          req.BuyerStatus === "Approved"
-                            ? "text-green-500 border-green-500 bg-white"
-                            : req.BuyerStatus === "Pending"
+                        className={`px-3 py-1 rounded-lg border text-sm ${req.BuyerStatus === "Approved"
+                          ? "text-green-500 border-green-500 bg-white"
+                          : req.BuyerStatus === "Pending"
                             ? "text-yellow-500 border-yellow-500 bg-white"
                             : "text-red-500 border-red-500 bg-white"
-                        }`}
+                          }`}
                       >
                         {req.BuyerStatus || "Pending"}
                       </button>
@@ -1321,12 +1346,14 @@ const AddCustomRequestForm = () => {
                         className="cursor-pointer text-2xl text-cyan-600 border border-cyan-400 p-1 rounded-lg"
                         title="View"
                       />
-                      <GoPencil
-                        onClick={() => handleEditRequest(req._id)}
-                        className="cursor-pointer text-2xl text-sky-600 border border-sky-400 p-1 rounded-lg"
-                        title="Edit"
-                      />
-                      <RiDeleteBin6Line
+                      {(
+                        (req.BuyerNegotiatedBudgets.length === 0 && req.ArtistNegotiatedBudgets.length < 2 && req.RequestStatus === "Pending") &&
+                        <GoPencil
+                          onClick={() => handleEditRequest(req._id)}
+                          className="cursor-pointer text-2xl text-sky-600 border border-sky-400 p-1 rounded-lg"
+                          title="Edit"
+                        />)}
+                      {/* <RiDeleteBin6Line
                         onClick={() => openDeleteDialog(req._id)}
                         className="cursor-pointer text-2xl text-red-600 border border-red-400 p-1 rounded-lg"
                         title="Delete"
@@ -1338,16 +1365,147 @@ const AddCustomRequestForm = () => {
                           id={selectedRequestToDelete}
                           onDeleted={handleDeleteConfirmed}
                         />
-                      )}
-                      {req.RequestStatus === "Approved" && (
-                        <LuHandshake
-                          onClick={() => {
-                            setSelectedRequest(req);
-                            setShowNegotiationModal(true);
+                      )} */}
+                      {(
+                        (
+                          (req.BuyerNegotiatedBudgets.length === 0 && req.ArtistNegotiatedBudgets.length === 1) ||
+                          (req.BuyerNegotiatedBudgets.length === 1 && req.ArtistNegotiatedBudgets.length === 2) ||
+                          (req.BuyerNegotiatedBudgets.length === 2 && req.ArtistNegotiatedBudgets.length === 3)
+                        ) &&
+                        (req.RequestStatus === "Pending")
+                      ) && (
+                          loading ? (
+                              <FaSpinner 
+                                className="animate-spin text-2xl text-green-600 border border-green-400 p-1 rounded-lg"
+                                title="Loading..."
+                              />
+                            ) : (
+                              <FaCheck
+                                  onClick={() => handleStatusUpdate("Approved", "", req._id)}
+                            className="cursor-pointer text-2xl text-green-600 border border-green-400 p-1 rounded-lg"
+                            title="Accept"
+                              />
+                            )
+                        )}
+
+                      {(
+                        (
+                          (req.BuyerNegotiatedBudgets.length === 0 && req.ArtistNegotiatedBudgets.length === 1) ||
+                          (req.BuyerNegotiatedBudgets.length === 1 && req.ArtistNegotiatedBudgets.length === 2)
+                        ) &&
+                        (req.RequestStatus === "Pending")
+                      ) && (
+                          <LuHandshake
+                            onClick={() => {
+                              setSelectedRequest(req);
+                              setShowNegotiationModal(true);
+                            }}
+                            className="cursor-pointer text-2xl text-white bg-gray-500 p-1 rounded-lg"
+                            title="Negotiate"
+                          />
+                        )}
+                      {(
+                        req.BuyerNegotiatedBudgets.length === 2 &&
+                        req.ArtistNegotiatedBudgets.length === 3 &&
+                        req.RequestStatus !== "Approved" &&
+                        req.RequestStatus !== "Rejected"
+                      ) && (
+                          
+                            loading ? (
+                              <FaSpinner 
+                                className="animate-spin text-2xl text-red-600 border border-red-400 p-1 rounded-lg"
+                                title="Loading..."
+                              />
+                            ) : (
+                              <RiProhibited2Line
+                                onClick={() => setShowRejectModal(true)}
+                                className="cursor-pointer text-2xl text-red-600 border border-red-400 p-1 rounded-lg"
+                                title="Reject"
+                              />
+                            )
+                          
+                        )}
+
+
+
+                      {showRejectModal && (
+                        <div
+                          className="modal fade show"
+                          style={{
+                            display: "block",
+                            backgroundColor: "rgba(0, 0, 0, 0.5)",
+                            zIndex: 1050,
                           }}
-                          className="cursor-pointer text-2xl text-white bg-gray-500 p-1 rounded-lg"
-                          title="Negotiate"
-                        />
+                        >
+                          <div
+                            className="modal-dialog modal-dialog-scrollable"
+                            style={{
+                              maxWidth: "500px",
+                              margin: "1.75rem auto",
+                            }}
+                          >
+                            <div
+                              className="modal-content"
+                              style={{
+                                maxHeight: "80vh",
+                              }}
+                            >
+                              <div className="modal-header">
+                                <h5 className="modal-title">Reject Request</h5>
+                                <button
+                                  className="btn-close"
+                                  onClick={() => setShowRejectModal(false)}
+                                  disabled={loading}
+                                  aria-label="Close"
+                                ></button>
+                              </div>
+                              <div
+                                className="modal-body"
+                                style={{
+                                  overflowY: "auto",
+                                  maxHeight: "60vh",
+                                }}
+                              >
+                                <label htmlFor="rejectComment" className="form-label">
+                                  Rejection Comment
+                                </label>
+                                <textarea
+                                  className="form-control"
+                                  id="rejectComment"
+                                  name="rejectComment"
+                                  rows="4"
+                                  value={rejectComment}
+                                  onChange={(e) => setRejectComment(e.target.value)}
+                                  disabled={loading}
+                                />
+                              </div>
+                              <div className="modal-footer">
+                                <button
+                                  type="button"
+                                  className="text-[16px] py-1 px-3 text-zinc-900 border-[1.6px] rounded-lg border-zinc-600"
+                                  onClick={() => setShowRejectModal(false)}
+                                  disabled={loading}
+                                >
+                                  Close
+                                </button>
+                                <button
+                                  type="button"
+                                  className="btn btn-danger"
+                                  onClick={() => {
+                                    if (!rejectComment.trim()) {
+                                      toast.error("Please enter a rejection comment before saving.");
+                                      return;
+                                    }
+                                    handleStatusUpdate("Rejected", rejectComment, req._id);
+                                  }}
+                                  disabled={loading}
+                                >
+                                  {loading ? "Rejecting" : "Save Rejection"}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       )}
                     </td>
                   </tr>

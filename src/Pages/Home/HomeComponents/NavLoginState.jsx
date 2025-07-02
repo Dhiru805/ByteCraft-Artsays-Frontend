@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import { DEFAULT_PROFILE_IMAGE } from './MyAccountPage/MyAccountPageComponent/Pages/Account/constant';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import getAPI from '../../../api/getAPI'; 
+import getAPI from '../../../api/getAPI';
 
 export const NavUserState = () => {
   return (
@@ -25,36 +25,45 @@ export const NavGuestState = () => {
   const [profileImage, setProfileImage] = useState(DEFAULT_PROFILE_IMAGE);
   const dropdownRef = useRef(null);
 
+  const updateProfileImage = () => {
+    const storedImage = localStorage.getItem('profilePhoto');
+    if (storedImage) {
+      setProfileImage(storedImage);
+    } else {
+      setProfileImage(DEFAULT_PROFILE_IMAGE);
+    }
+  };
+
   // Fetch user profile and userType
   useEffect(() => {
     const storedType = localStorage.getItem('userType');
-    const storedUserId = localStorage.getItem('userId'); // Assuming userId is stored
+    const storedUserId = localStorage.getItem('userId');
     if (storedType) {
-      console.log("Detected userType:", storedType);
+      console.log('Detected userType:', storedType);
       setUserType(storedType);
     }
 
     // Fetch user profile
     const fetchUserProfile = async () => {
       if (!storedUserId) {
-        console.log("No userId found in localStorage, using default image");
+        console.log('No userId found in localStorage, using default image');
         setProfileImage(DEFAULT_PROFILE_IMAGE);
         return;
       }
 
       try {
         const response = await getAPI(`/auth/userid/${storedUserId}`, {}, true, false);
-        console.log("Profile API response:", response.data); // Debugging log
-        const profileData = response.data.user; // Access user object
-        if (profileData?.profilePhoto) {
-          setProfileImage(`http://localhost:3001${profileData.profilePhoto}`); // Use profilePhoto
-        } else {
-          console.log("No profile photo found, using default");
-          setProfileImage(DEFAULT_PROFILE_IMAGE);
-        }
+        console.log('Profile API response:', response.data);
+        const profileData = response.data.user;
+        const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE || 'http://localhost:3001';
+        const profilePhotoUrl = profileData?.profilePhoto
+          ? `${BASE_URL}${profileData.profilePhoto}`
+          : DEFAULT_PROFILE_IMAGE;
+        setProfileImage(profilePhotoUrl);
+        localStorage.setItem('profilePhoto', profilePhotoUrl); // Ensure localStorage is updated
       } catch (error) {
-        console.error("Error fetching user profile:", error.response || error);
-        toast.error("Failed to load profile image");
+        console.error('Error fetching user profile:', error.response || error);
+        toast.error('Failed to load profile image');
         setProfileImage(DEFAULT_PROFILE_IMAGE);
       }
     };
@@ -62,9 +71,19 @@ export const NavGuestState = () => {
     if (localStorage.getItem('token') && storedUserId) {
       fetchUserProfile();
     } else {
-      console.log("No token or userId found, skipping profile fetch");
+      console.log('No token or userId found, skipping profile fetch');
       setProfileImage(DEFAULT_PROFILE_IMAGE);
     }
+
+    // Listen for profile photo updates
+    window.addEventListener('profilePhotoUpdated', updateProfileImage);
+
+    // Initialize profile image
+    updateProfileImage();
+
+    return () => {
+      window.removeEventListener('profilePhotoUpdated', updateProfileImage);
+    };
   }, []);
 
   // Handle outside click
@@ -91,7 +110,9 @@ export const NavGuestState = () => {
     localStorage.removeItem('userType');
     localStorage.removeItem('email');
     localStorage.removeItem('userId');
+    localStorage.removeItem('profilePhoto'); // Clear profile photo
     setProfileImage(DEFAULT_PROFILE_IMAGE);
+    window.dispatchEvent(new Event('profilePhotoUpdated')); // Notify other components
     window.location.href = '/';
   };
 
@@ -122,13 +143,13 @@ export const NavGuestState = () => {
             <div className="flex flex-col gap-6 py-4 font-semibold">
               <nav className="flex flex-col gap-3 text-zinc-700 text-base">
                 <Link
-                  to={userType === "Buyer" ? "/my-account" : `${userType}/dashboard`}
+                  to={userType === 'Buyer' ? '/my-account' : `${userType}/dashboard`}
                   className="px-3 pb-2"
                 >
-                  {userType === "Buyer" ? "My Account" : "My Dashboard"}
+                  {userType === 'Buyer' ? 'My Account' : 'My Dashboard'}
                 </Link>
 
-                {userType === "Buyer" && (
+                {userType === 'Buyer' && (
                   <>
                     <hr className="text-[#6B4A2F]" />
                     <Link to="/wishlist" className="px-3 pb-2">

@@ -212,18 +212,30 @@ function ViewBuyerRequest() {
                                         <ReactQuill value={description} readOnly theme="snow" modules={{ toolbar: false }} />
                                     </div>
 
-                                    {request?.NegiotaiteBudget || request?.BuyerNotes ? <hr /> : null}
+                                    {request?.BuyerNegotiatedBudgets || request?.BuyerNotes ? <hr /> : null}
 
-                                    {request?.NegiotaiteBudget && request?.BuyerNotes && (
+                                    {request?.BuyerNegotiatedBudgets && request?.BuyerNotes && (
                                         <label className="mt-3 d-block">Negotiation By Buyer</label>
                                     )}
 
-                                    {request?.NegiotaiteBudget && (
-                                        <div className="form-group mt-3">
-                                            <label>Negotiate Budget</label>
-                                            <input type="text" className="form-control" value={request.NegiotaiteBudget} readOnly />
-                                        </div>
-                                    )}
+                                    {request.BuyerNegotiatedBudgets.length > 0 && (
+                                <div className="form-group mt-3">
+                                    {request.BuyerNegotiatedBudgets.map((budget, index) => {
+                                        const position = ["1st", "2nd"];
+                                        return (
+                                            <div key={index} className="mb-2">
+                                                <label className="form-label">{`${position[index] || `${index + 1}th`} Negotiation`}</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={budget}
+                                                    readOnly
+                                                />
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
 
                                     {request?.Notes && (
                                         <div className="form-group mt-3">
