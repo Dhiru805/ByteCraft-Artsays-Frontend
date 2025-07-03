@@ -21,6 +21,9 @@ function ViewBuyerRequest() {
     const [buyerId, setBuyerId] = useState('');
     const [artists, setArtists] = useState([]);
     const [image, setImage] = useState('');
+    const [currentImages, setCurrentImages] = useState();
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [showPopup, setShowPopup] = useState(false);
 
     useEffect(() => {
         const fetchArtists = async () => {
@@ -41,6 +44,13 @@ function ViewBuyerRequest() {
             setBuyerId(`${request.Buyer.id.name} ${request.Buyer.id.lastName}`);
         }
     }, [request]);
+
+    const handleImageClick = (product) => {
+        const images = [product.BuyerImage];
+        setCurrentImages(images);
+        setCurrentImageIndex(0);
+        setShowPopup(true);
+    };
 
     return (
         <div className="container-fluid">
@@ -70,15 +80,70 @@ function ViewBuyerRequest() {
                                 <div className="col-md-12 d-flex align-items-center" style={{ paddingBottom: '20px' }}>
                                     <div className="media-left m-r-20" style={{ width: '140px', height: '140px', overflow: 'hidden' }}>
                                         {image ? (
+                                            // <img
+                                            //     src={image}
+                                            //     alt="Buyer"
+                                            //     className="img-fluid rounded shadow w-100"
+                                            //     style={{ height: '100%', objectFit: 'cover' }}
+                                            // />
                                             <img
-                                                src={image}
+                                                src={`${BASE_URL}/${request.BuyerImage?.replace(/\\/g, '/')}`}
                                                 alt="Buyer"
                                                 className="img-fluid rounded shadow w-100"
+                                                onClick={() => handleImageClick(request)} //
                                                 style={{ height: '100%', objectFit: 'cover' }}
                                             />
                                         ) : (
                                             <p className="align-self-center"></p>
                                         )}
+
+                                        {
+                                            showPopup && (
+                                                <div
+                                                    onClick={() => setShowPopup(false)}
+                                                    style={{
+                                                        position: 'fixed',
+                                                        top: 0,
+                                                        left: 0,
+                                                        right: 0,
+                                                        bottom: 0,
+                                                        backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                                                        display: 'flex',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        zIndex: 1000,
+                                                    }}
+                                                >
+                                                    <div
+                                                        onClick={(e) => e.stopPropagation()}
+                                                        style={{
+                                                            position: 'relative',
+                                                            width: '500px',
+                                                            height: '600px',
+                                                            backgroundColor: '#111',
+                                                            borderRadius: '12px',
+                                                            boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',
+                                                            display: 'flex',
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center',
+                                                            overflow: 'hidden',
+                                                        }}
+                                                    >
+                                                        {/* Image */}
+                                                        <img
+                                                            src={`${BASE_URL}/${currentImages[currentImageIndex]?.replace(/\\/g, '/')}`}
+                                                            alt="Popup"
+                                                            style={{
+                                                                width: '100%',
+                                                                height: '100%',
+                                                                objectFit: 'cover',
+                                                                borderRadius: '12px',
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
                                     </div>
                                     <div className="flex-grow-1">
                                         <div className="row">
@@ -154,8 +219,8 @@ function ViewBuyerRequest() {
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group mt-4 d-flex align-items-center gap-2">
-                                                <label className="ms-2">Frame Required</label>
-                                                <div className="mx-4">
+                                                <label className="ms-2">{request?.IsFramed ? "Frame required" : "Frame not required"}</label>
+                                                {/* <div className="mx-4">
                                                     <Switch
                                                         onColor="#007bff"
                                                         offColor="#ccc"
@@ -167,7 +232,7 @@ function ViewBuyerRequest() {
                                                         checked={request?.IsFramed || false}
                                                         disabled
                                                     />
-                                                </div>
+                                                </div> */}
                                             </div>
                                         </div>
                                         <div className="col-md-6">
@@ -196,7 +261,7 @@ function ViewBuyerRequest() {
                                 </div>
 
                                 <div className="col-md-12">
-                                <div className="form-group mt-3">
+                                    <div className="form-group mt-3">
                                         <label>Comments With Refrence</label>
                                         <textarea
                                             id="comments"
@@ -219,23 +284,23 @@ function ViewBuyerRequest() {
                                     )}
 
                                     {request.BuyerNegotiatedBudgets.length > 0 && (
-                                <div className="form-group mt-3">
-                                    {request.BuyerNegotiatedBudgets.map((budget, index) => {
-                                        const position = ["1st", "2nd"];
-                                        return (
-                                            <div key={index} className="mb-2">
-                                                <label className="form-label">{`${position[index] || `${index + 1}th`} Negotiation`}</label>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    value={budget}
-                                                    readOnly
-                                                />
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            )}
+                                        <div className="form-group mt-3">
+                                            {request.BuyerNegotiatedBudgets.map((budget, index) => {
+                                                const position = ["1st", "2nd"];
+                                                return (
+                                                    <div key={index} className="mb-2">
+                                                        <label className="form-label">{`${position[index] || `${index + 1}th`} Negotiation`}</label>
+                                                        <input
+                                                            type="text"
+                                                            className="form-control"
+                                                            value={budget}
+                                                            readOnly
+                                                        />
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
 
                                     {request?.Notes && (
                                         <div className="form-group mt-3">
@@ -243,7 +308,7 @@ function ViewBuyerRequest() {
                                             <textarea className="form-control" value={request.BuyerNotes} readOnly />
                                         </div>
                                     )}
-                                      {request?.rejectedcomment && (
+                                    {request?.rejectedcomment && (
                                         <div className="form-group mt-3">
                                             <label>Rejected Comment</label>
                                             <textarea className="form-control" value={request.rejectedcomment} readOnly />

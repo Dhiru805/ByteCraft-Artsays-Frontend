@@ -120,9 +120,10 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                             <tr>
                                                 <th>#</th>
                                                 <th>Name</th>
-                                                <th>Email</th>
-                                                <th>Phone</th>
+                                                {/* <th>Email</th>
+                                                <th>Phone</th> */}
                                                 <th>Product Name</th>
+                                                <th>Buyer Negotiated Budget</th>
                                                 <th>Request Date</th>
                                                 <th>Request Status</th>
                                                 <th>Buyer Request Status</th>
@@ -152,9 +153,14 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                                                 {`${request.Buyer.id.name} ${request.Buyer.id.lastName}`}
                                                             </p>
                                                         </td>
-                                                        <td>{request.Buyer.id.email}</td>
-                                                        <td>{request.Buyer.id.phone}</td>
+                                                        {/* <td>{request.Buyer.id.email}</td>
+                                                        <td>{request.Buyer.id.phone}</td> */}
                                                         <td>{request.ProductName}</td>
+                                                        <td>
+                                                            {request.BuyerNegotiatedBudgets.length > 0
+                                                                ? `₹${request.BuyerNegotiatedBudgets[request.BuyerNegotiatedBudgets.length - 1]}`
+                                                                : '-'}
+                                                        </td>
                                                         <td>{new Date(request.createdAt).toLocaleDateString()}</td>
                                                         <td>
                                                             <button
@@ -294,8 +300,12 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
             {showModal && (
                 <NegotiateModal
                     request={selectedRequest}
-                    onClose={handleCloseModal}
-                    onSubmit={handleSaveChanges}
+                    onClose={() => {
+                        handleCloseModal();
+                        handleUpdateBuyerStatus();
+                    }}
+                    onSubmit={() => { handleSaveChanges();
+                     }}
                 />
             )}
 

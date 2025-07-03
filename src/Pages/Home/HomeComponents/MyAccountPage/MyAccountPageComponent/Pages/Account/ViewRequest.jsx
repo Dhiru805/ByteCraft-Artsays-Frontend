@@ -4,17 +4,22 @@ import ReactQuill from 'react-quill';
 import axios from 'axios';
 import Switch from "react-switch";
 
+const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+
 function ViewBuyerRequest({ request, onClose }) {
     const [productName, setProductName] = useState('');
     const [description, setDescription] = useState('');
     const [artistId, setArtistId] = useState('');
     const [artists, setArtists] = useState([]);
     const [image, setImage] = useState('');
+    const [currentImages, setCurrentImages] = useState();
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [showPopup, setShowPopup] = useState(false);
 
     useEffect(() => {
         const fetchArtists = async () => {
             try {
-                const response = await axios.get("http://localhost:3001/artist/artists");
+                const response = await axios.get("api/artist/artists");
                 setArtists(response.data);
             } catch (error) {
                 console.error("Error fetching artists:", error);
@@ -25,7 +30,7 @@ function ViewBuyerRequest({ request, onClose }) {
         if (request) {
             setProductName(request.ProductName || '');
             setDescription(request.Description || '');
-            setImage(request.BuyerImage ? `http://localhost:3001/${request.BuyerImage}` : '');
+            setImage(request.BuyerImage ? `${BASE_URL}/${request.BuyerImage}` : '');
             setArtistId(
                 request.Artist?.id
                     ? `${request.Artist.id.name || ''} ${request.Artist.id.lastName || ''}`.trim()
@@ -33,6 +38,13 @@ function ViewBuyerRequest({ request, onClose }) {
             );
         }
     }, [request]);
+
+    const handleImageClick = (product) => {
+        const images = [product.BuyerImage];
+        setCurrentImages(images);
+        setCurrentImageIndex(0);
+        setShowPopup(true);
+    };
 
     return (
         <div className="container-fluid bg-white">
@@ -52,15 +64,71 @@ function ViewBuyerRequest({ request, onClose }) {
                         <div className="col-md-12 d-flex align-items-center" style={{ paddingBottom: '20px' }}>
                             <div className="media-left m-r-20" style={{ width: '140px', height: '140px', overflow: 'hidden' }}>
                                 {image ? (
+                                    // <img
+                                    //     src={image}
+                                    //     alt="Buyer"
+                                    //     className="img-fluid rounded shadow w-100"
+                                    //     style={{ height: '100%', objectFit: 'cover' }}
+                                    // />
                                     <img
-                                        src={image}
+                                        src={`${BASE_URL}/${request.BuyerImage?.replace(/\\/g, '/')}`}
                                         alt="Buyer"
                                         className="img-fluid rounded shadow w-100"
+                                        onClick={() => handleImageClick(request)} //
                                         style={{ height: '100%', objectFit: 'cover' }}
                                     />
                                 ) : (
                                     <p className="align-self-center">No Image</p>
                                 )}
+
+                                {
+                                            showPopup && (
+                                                <div
+                                                    onClick={() => setShowPopup(false)}
+                                                    style={{
+                                                        position: 'fixed',
+                                                        top: 0,
+                                                        left: 0,
+                                                        right: 0,
+                                                        bottom: 0,
+                                                        backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                                                        display: 'flex',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        zIndex: 1000,
+                                                    }}
+                                                >
+                                                    <div
+                                                        onClick={(e) => e.stopPropagation()}
+                                                        style={{
+                                                            position: 'relative',
+                                                            width: '500px',
+                                                            height: '600px',
+                                                            backgroundColor: '#111',
+                                                            borderRadius: '12px',
+                                                            boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',
+                                                            display: 'flex',
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center',
+                                                            overflow: 'hidden',
+                                                        }}
+                                                    >
+                                                        {/* Image */}
+                                                        <img
+                                                            src={`${BASE_URL}/${currentImages[currentImageIndex]?.replace(/\\/g, '/')}`}
+                                                            alt="Popup"
+                                                            style={{
+                                                                width: '100%',
+                                                                height: '100%',
+                                                                objectFit: 'cover',
+                                                                borderRadius: '12px',
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+
                             </div>
                             <div className="flex-grow-1">
                                 <div className="row">
@@ -134,8 +202,8 @@ function ViewBuyerRequest({ request, onClose }) {
                                 </div>
                                 <div className="col-md-6">
                                     <div className="form-group mt-4 d-flex align-items-center gap-2">
-                                        <label className="ms-2">Frame Required</label>
-                                        <div className="mx-4">
+                                        <label className="ms-2">{request?.IsFramed ? "Frame required" : "Frame not required"}</label>
+                                        {/* <div className="mx-4">
                                             <Switch
                                                 onColor="#007bff"
                                                 offColor="#ccc"
@@ -147,7 +215,7 @@ function ViewBuyerRequest({ request, onClose }) {
                                                 checked={request?.IsFramed || false}
                                                 disabled
                                             />
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
                                 <div className="col-md-6">

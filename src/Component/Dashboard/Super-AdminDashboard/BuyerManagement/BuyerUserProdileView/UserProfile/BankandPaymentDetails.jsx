@@ -75,6 +75,7 @@ const BankPaymentDetails = ({ userId }) => {
                                 type="text" 
                                 className="form-control" 
                                 name="upiId" 
+                                value={formData.upiId}
                               disabled 
                             />
                         </div>

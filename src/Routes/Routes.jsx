@@ -31,8 +31,12 @@ import CustomRequest from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountP
 import NotificationAndPreferences from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/NotificationAndPreferences';
 import AccountSecurityAndAgreements from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/AccountSecurityAndAgreements';
 import MyOrders from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyOrders";
-import TrackOrder from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/TrackOrder";
 import Logout from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/Logout';
+import TrackOrder from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/TrackOrder";
+import WishListTable from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/WishListTable";
+import MyCartList from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/MyCartList";
+import CheckOut from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/CheckOut";
+import OrderCompleted from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/OrderCompleted";
 
 //----------------------------------------Error Pages-----------------------------------------//
 import PagenotFound404 from "../Pages/Error/404Error";
@@ -384,6 +388,10 @@ const AppRoutes = () => {
             <Route path="security-agreements" element={<AccountSecurityAndAgreements />} />
             <Route path="logout" element={<Logout />} />
             <Route path="track-your-order" element={<TrackOrder />} />
+            <Route path="wishlist" element={<WishListTable />} />
+            <Route path="my-cart" element={<MyCartList />} />
+            <Route path="check-out" element={<CheckOut />} />
+            <Route path="order-completed" element={<OrderCompleted />} />
           </Route>
         </Route>
       </Route>

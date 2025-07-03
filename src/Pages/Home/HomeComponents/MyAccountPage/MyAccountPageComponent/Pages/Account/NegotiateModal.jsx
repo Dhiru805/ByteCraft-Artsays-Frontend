@@ -606,8 +606,8 @@ const NegotiateModalforBuyer = ({ request, onClose, onSubmit }) => {
                   ))
                 ) : (
                   <div className="mb-3">
-                    <label className="form-label">Artist Negotiated Budgets</label>
-                    <p className="text-gray-500">No artist budgets submitted yet.</p>
+                    {/* <label className="form-label">Artist Negotiated Budgets</label>
+                    <p className="text-gray-500">No artist budgets submitted yet.</p> */}
                   </div>
                 )}
 
@@ -632,8 +632,8 @@ const NegotiateModalforBuyer = ({ request, onClose, onSubmit }) => {
                   ))
                 ) : (
                   <div className="mb-3">
-                    <label className="form-label">Buyer Negotiated Budgets</label>
-                    <p className="text-gray-500">No buyer budgets submitted yet.</p>
+                    {/* <label className="form-label">Buyer Negotiated Budgets</label>
+                    <p className="text-gray-500">No buyer budgets submitted yet.</p> */}
                   </div>
                 )}
 

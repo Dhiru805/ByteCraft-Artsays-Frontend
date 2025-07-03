@@ -1165,6 +1165,7 @@ const AddCustomRequestForm = () => {
       toast.error(error.response?.data?.message || "Error updating buyer request status");
     } finally {
       setLoading(false);
+      await fetchRequests();
     }
   };
 
@@ -1178,6 +1179,7 @@ const AddCustomRequestForm = () => {
     } finally {
       setShowNegotiationModal(false);
       setSelectedRequest(null);
+      await fetchRequests();
     }
   };
 
@@ -1262,23 +1264,23 @@ const AddCustomRequestForm = () => {
 
       {/* table container */}
       <div className="border-2 rounded-3xl w-full bg-white">
-        <div className="overflow-x-auto pb-4 rounded-3xl">
-          <table className="lg:min-w-[1100px] table-auto w-full text-sm text-left">
+        <div className="overflow-x-auto pb-4 rounded-3xl w-full">
+          <table className="lg:min-w-[1100px] table-auto w-full text-sm text-left whitespace-nowrap">
             <thead className="bg-[#6F4D34] text-white">
-              <tr>
+              <tr className="text-center">
                 <th className="px-4 py-7 whitespace-nowrap">#</th>
                 <th className="px-4 py-2 whitespace-nowrap">Product Name</th>
                 <th className="px-4 py-2 whitespace-nowrap">Artist Name</th>
-                <th className="px-4 py-2 whitespace-nowrap">Max Budget</th>
-                <th className="px-4 py-2 whitespace-nowrap">Min Budget</th>
-                <th className="px-4 py-2 whitespace-nowrap">Negotiated Budget</th>
+                {/* <th className="px-4 py-2 whitespace-nowrap">Max Budget</th>
+                <th className="px-4 py-2 whitespace-nowrap">Min Budget</th> */}
+                <th className="px-4 py-2 whitespace-nowrap">Artist Negotiated Budget</th>
                 <th className="px-4 py-2 whitespace-nowrap">Request Date</th>
                 <th className="px-4 py-2 whitespace-nowrap">Request Status</th>
                 <th className="px-4 py-2 whitespace-nowrap">Buyer Request Status</th>
                 <th className="px-4 py-2 whitespace-nowrap">Action</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="text-center">
               {filteredRequests.length > 0 ? (
                 filteredRequests.map((req, index) => (
                   <tr key={req._id} className="border-b">
@@ -1306,12 +1308,12 @@ const AddCustomRequestForm = () => {
                     <td className="px-4 py-2">
                       {req.Artist?.id?.name || ""} {req.Artist?.id?.lastName || ""}
                     </td>
-                    <td className="px-4 py-2">
+                    {/* <td className="px-4 py-2">
                       {req.MaxBudget ? `₹${req.MaxBudget}` : "—"}
                     </td>
                     <td className="px-4 py-2">
                       {req.MinBudget ? `₹${req.MinBudget}` : "—"}
-                    </td>
+                    </td> */}
                     <td className="px-4 py-2">{getLatestNegotiatedBudget(req)}</td>
                     <td className="px-4 py-2">
                       {req?.createdAt ? new Date(req.createdAt).toLocaleDateString() : "—"}
@@ -1642,7 +1644,7 @@ const AddCustomRequestForm = () => {
                   name="minBudget"
                   value={formData.minBudget}
                   onChange={handleChange}
-                  className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
+                  className="w-full border-2 border-gray-300 rounded-xl px-3 py-2 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
                 />
               </div>
               <div>
@@ -1652,7 +1654,7 @@ const AddCustomRequestForm = () => {
                   name="maxBudget"
                   value={formData.maxBudget}
                   onChange={handleChange}
-                  className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
+                  className="w-full border-2 border-gray-300 rounded-xl px-3 py-2 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
                 />
               </div>
             </div>
@@ -1667,9 +1669,9 @@ const AddCustomRequestForm = () => {
                 required
               >
                 <option value="">Select payment option</option>
-                <option value="full">Full Payment</option>
-                <option value="installment">Installment</option>
-                <option value="two-step">Two Step Payment</option>
+                <option value="Full Payment">Full Payment</option>
+                <option value="Installment">Installment</option>
+                <option value="Two Step Payment">Two Step Payment</option>
               </select>
             </div>
             <div>
@@ -1680,7 +1682,7 @@ const AddCustomRequestForm = () => {
                 value={formData.expectedDeadline}
                 onChange={handleChange}
                 min="0"
-                className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
+                className="w-full border-2 border-gray-300 rounded-xl px-3 py-2 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
               />
             </div>
             <div>
@@ -1800,6 +1802,7 @@ const AddCustomRequestForm = () => {
             onClose={() => {
               setShowViewModal(false);
               setViewRequest(null);
+              fetchRequests();
             }}
           />
         </div>
@@ -1811,6 +1814,7 @@ const AddCustomRequestForm = () => {
           onClose={() => {
             setShowNegotiationModal(false);
             setSelectedRequest(null);
+            fetchRequests();
           }}
           onSubmit={handleNegotiationSubmit}
         />

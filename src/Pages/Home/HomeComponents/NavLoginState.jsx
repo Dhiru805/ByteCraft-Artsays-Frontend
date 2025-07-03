@@ -152,11 +152,11 @@ export const NavGuestState = () => {
                 {userType === 'Buyer' && (
                   <>
                     <hr className="text-[#6B4A2F]" />
-                    <Link to="/wishlist" className="px-3 pb-2">
+                    <Link to="/my-account/wishlist" className="px-3 pb-2">
                       Wishlist
                     </Link>
                     <hr className="text-[#6B4A2F]" />
-                    <Link to="/cart" className="px-3">
+                    <Link to="/my-account/my-cart" className="px-3">
                       Cart
                     </Link>
                   </>

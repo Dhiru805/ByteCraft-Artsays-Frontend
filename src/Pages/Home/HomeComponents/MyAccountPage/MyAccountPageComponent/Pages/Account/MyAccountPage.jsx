@@ -15,7 +15,11 @@ const headingMap = {
   'security-agreements': 'Account Security and Agreements',
   'logout': 'Logout',
 
-  'track-your-order': 'Track Your Order'
+  'track-your-order': 'Track Your Order',
+  'wishlist': 'Wishlist',
+  'check-out': 'Checkout',
+  'my-cart': 'MyCart',
+  'order-completed': 'Order Completed',
 };
 
 export const AccountPage = () => {
@@ -26,6 +30,10 @@ export const AccountPage = () => {
   const heading = headingMap[path] || 'My Account';
 
   const isTrackOrder = path === 'track-your-order';
+  const isWishlist = path === 'wishlist';
+  const isCheckOut = path === 'check-out';
+  const isMyCart = path === 'my-cart';
+  const isOrderCompleted = path === 'order-completed';
 
   return (
     <>
@@ -43,7 +51,7 @@ export const AccountPage = () => {
       </div>
 
       {/* Main Layout */}
-      {!isTrackOrder ? (
+      {!(isTrackOrder || isWishlist || isOrderCompleted || isMyCart || isCheckOut) ? (
         <div className="w-full max-w-[1464px] mx-auto px-4 sm:px-8 md:px-12 lg:px-[116px] py-10 flex flex-col lg:flex-row gap-6 md:gap-8 lg:gap-[40px] bg-white">
           <div className="w-full lg:w-[300px]">
             <AccountSidebar />

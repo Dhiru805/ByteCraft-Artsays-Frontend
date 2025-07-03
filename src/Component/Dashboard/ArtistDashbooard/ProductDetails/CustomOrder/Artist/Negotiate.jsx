@@ -277,8 +277,9 @@ const NegotiateModalforartist = ({ request, onClose, onSubmit }) => {
 
       if (response && response.data) {
         toast.success(response.data.successMessage || "Buyer request updated successfully");
+        window.location.reload();
         setNewBudget("");
-        onSubmit(response.data.updatedRequest);
+        onSubmit();
       } else {
         toast.error(response?.message || "Failed to update buyer request");
       }
@@ -382,8 +383,8 @@ const NegotiateModalforartist = ({ request, onClose, onSubmit }) => {
                 ))
               ) : (
                 <div className="mb-3">
-                  <label className="form-label">Artist Negotiated Budgets</label>
-                  <p className="text-gray-500">No artist budgets submitted yet.</p>
+                  {/* <label className="form-label">Artist Negotiated Budgets</label>
+                  <p className="text-gray-500">No artist budgets submitted yet.</p> */}
                 </div>
               )}
 
@@ -401,8 +402,8 @@ const NegotiateModalforartist = ({ request, onClose, onSubmit }) => {
                 ))
               ) : (
                 <div className="mb-3">
-                  <label className="form-label">Buyer Negotiated Budgets</label>
-                  <p className="text-gray-500">No buyer budgets submitted yet.</p>
+                  {/* <label className="form-label">Buyer Negotiated Budgets</label>
+                  <p className="text-gray-500">No buyer budgets submitted yet.</p> */}
                 </div>
               )}
 
