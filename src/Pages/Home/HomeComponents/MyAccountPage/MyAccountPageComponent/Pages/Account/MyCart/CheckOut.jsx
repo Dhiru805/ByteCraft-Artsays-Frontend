@@ -5,7 +5,7 @@ const CheckOut = () => {
 
   return (
     <div className="max-w-[1464px] px-4 sm:px-6 lg:px-12 py-10">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="lg:flex lg:gap-8 gap-8">
         {/* Billing Form */}
         <div className="lg:col-span-2 w-full">
           <h2 className="text-3xl font-semibold mb-6">Billing Details</h2>
@@ -170,12 +170,12 @@ const CheckOut = () => {
               <span className="text-red-500">- $10.00</span>
             </div>
             <hr />
-            <div className="flex justify-between font-semibold text-base text-black">
+            <div className="flex justify-between text-lg text-gray-400">
               <span>Total</span>
               <span>$34.00</span>
             </div>
             <button className="w-full mt-4 bg-[#5C4033] hover:bg-[#4b3327] text-white py-2 rounded-full text-sm">
-              Proceed to Checkout
+              Proceed to Payment
             </button>
           </div>
         </div>

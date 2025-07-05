@@ -849,6 +849,9 @@ import NegotiateModal from "./NegotiateModal";
 import ViewBuyerRequest from "./ViewRequest";
 import ConfirmationDialog from "./ConfirmationDialog";
 import { DEFAULT_PROFILE_IMAGE } from './constant';
+import Select from "react-select";
+
+const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
 const AddCustomRequestForm = () => {
   const [showNegotiationModal, setShowNegotiationModal] = useState(false);
@@ -874,7 +877,16 @@ const AddCustomRequestForm = () => {
   const [selectedRequestToDelete, setSelectedRequestToDelete] = useState(null);
   const [descriptionError, setDescriptionError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [allCategories, setAllCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
 
+  const sizeOptions = [
+    { value: "A4", label: "A4" },
+    { value: "14x14", label: "14x14" },
+    { value: "A3", label: "A3" },
+    { value: "3:4", label: "3:4" },
+    { value: "14x20", label: "14x20" },
+  ];
 
   const [formData, setFormData] = useState({
     productName: "",
@@ -905,7 +917,7 @@ const AddCustomRequestForm = () => {
   useEffect(() => {
     const fetchArtists = async () => {
       try {
-        const response = await getAPI("/artist/artists");
+        const response = await getAPI("api/artist/artists");
         setArtists(response.data);
       } catch (error) {
         console.error("Error fetching artists:", error);
@@ -933,10 +945,18 @@ const AddCustomRequestForm = () => {
       setFormData({ ...formData, [name]: file });
     } else {
       const numericFields = ["expectedDeadline", "minBudget", "maxBudget"];
-      setFormData({
-        ...formData,
-        [name]: numericFields.includes(name) ? Number(value) : value,
-      });
+
+      if (name === "artType") {
+        setFormData({
+          ...formData,
+          [name]: value,
+        });
+      } else {
+        setFormData({
+          ...formData,
+          [name]: numericFields.includes(name) ? Number(value) : value,
+        });
+      }
     }
   };
 
@@ -999,21 +1019,67 @@ const AddCustomRequestForm = () => {
     }
   };
 
-  const handleDeleteCancel = () => {
-    setIsDeleteDialogOpen(false);
-    setSelectedRequestToDelete(null);
+  useEffect(() => {
+    fetchAllCategories();
+  }, []);
+
+  const fetchAllCategories = async () => {
+    try {
+      const response = await getAPI(`/api/main-category`, {}, true);
+      if (!response.hasError && Array.isArray(response.data?.data)) {
+        const mainCategories = response.data.data;
+
+        let categoryList = [];
+
+        for (const mainCat of mainCategories) {
+          const categoryResponse = await getAPI(`/api/category/${mainCat._id}`, {}, true);
+          if (!categoryResponse.hasError && Array.isArray(categoryResponse.data?.data)) {
+            const formatted = categoryResponse.data.data.map((cat) => ({
+              value: cat.id,
+              label: cat.categoryName,
+              mainCategoryId: mainCat._id,
+            }));
+            categoryList.push(...formatted);
+          }
+        }
+        setAllCategories(categoryList);
+      } else {
+        toast.error("Failed to load main categories.");
+      }
+    } catch (err) {
+      console.error("Error fetching all categories:", err);
+      toast.error("Something went wrong while fetching categories.");
+    }
   };
 
-  const handleDeleteConfirmed = async () => {
-    setIsDeleteDialogOpen(false);
-    setSelectedRequestToDelete(null);
-    await fetchRequests();
+  const handleArtTypeChange = (selectedOption) => {
+    const value = selectedOption?.label || "";
+    setFormData((prev) => ({
+      ...prev,
+      artType: value,
+    }));
+    setSelectedCategory(selectedOption?.label || "");
   };
 
-  const openDeleteDialog = (requestId) => {
-    setSelectedRequestToDelete(requestId);
-    setIsDeleteDialogOpen(true);
-  };
+  const handleSizeChange = (selectedOption) => {
+    setFormData({ ...formData, size: selectedOption?.value || "" });
+  }
+
+  // const handleDeleteCancel = () => {
+  //   setIsDeleteDialogOpen(false);
+  //   setSelectedRequestToDelete(null);
+  // };
+
+  // const handleDeleteConfirmed = async () => {
+  //   setIsDeleteDialogOpen(false);
+  //   setSelectedRequestToDelete(null);
+  //   await fetchRequests();
+  // };
+
+  // const openDeleteDialog = (requestId) => {
+  //   setSelectedRequestToDelete(requestId);
+  //   setIsDeleteDialogOpen(true);
+  // };
 
   const handleImageClick = () => {
     setShowFullImage((prev) => !prev);
@@ -1031,7 +1097,6 @@ const AddCustomRequestForm = () => {
       setDescriptionError(true);
       return;
     }
-
     setDescriptionError(false);
     setIsSubmitting(true);
 
@@ -1051,13 +1116,11 @@ const AddCustomRequestForm = () => {
     if (formData.buyerImage) {
       formPayload.append("BuyerImage", formData.buyerImage);
     }
-
     if (!artistId) {
       toast.error("Please select an artist.");
       setIsSubmitting(false);
       return;
     }
-
     const selectedArtist = artists.find((a) => a._id === artistId);
     if (!selectedArtist) {
       toast.error("Selected artist not found.");
@@ -1271,8 +1334,6 @@ const AddCustomRequestForm = () => {
                 <th className="px-4 py-7 whitespace-nowrap">#</th>
                 <th className="px-4 py-2 whitespace-nowrap">Product Name</th>
                 <th className="px-4 py-2 whitespace-nowrap">Artist Name</th>
-                {/* <th className="px-4 py-2 whitespace-nowrap">Max Budget</th>
-                <th className="px-4 py-2 whitespace-nowrap">Min Budget</th> */}
                 <th className="px-4 py-2 whitespace-nowrap">Artist Negotiated Budget</th>
                 <th className="px-4 py-2 whitespace-nowrap">Request Date</th>
                 <th className="px-4 py-2 whitespace-nowrap">Request Status</th>
@@ -1288,7 +1349,7 @@ const AddCustomRequestForm = () => {
                     <td className="px-4 py-2 flex items-center gap-2">
                       {req.BuyerImage ? (
                         <img
-                          src={`http://localhost:3001/${req.BuyerImage}`}
+                          src={`${BASE_URL}/${req.BuyerImage}`}
                           className="w-8 h-8 rounded-full object-cover"
                           alt="Buyer"
                           onError={(e) => {
@@ -1308,12 +1369,6 @@ const AddCustomRequestForm = () => {
                     <td className="px-4 py-2">
                       {req.Artist?.id?.name || ""} {req.Artist?.id?.lastName || ""}
                     </td>
-                    {/* <td className="px-4 py-2">
-                      {req.MaxBudget ? `₹${req.MaxBudget}` : "—"}
-                    </td>
-                    <td className="px-4 py-2">
-                      {req.MinBudget ? `₹${req.MinBudget}` : "—"}
-                    </td> */}
                     <td className="px-4 py-2">{getLatestNegotiatedBudget(req)}</td>
                     <td className="px-4 py-2">
                       {req?.createdAt ? new Date(req.createdAt).toLocaleDateString() : "—"}
@@ -1377,17 +1432,17 @@ const AddCustomRequestForm = () => {
                         (req.RequestStatus === "Pending")
                       ) && (
                           loading ? (
-                              <FaSpinner 
-                                className="animate-spin text-2xl text-green-600 border border-green-400 p-1 rounded-lg"
-                                title="Loading..."
-                              />
-                            ) : (
-                              <FaCheck
-                                  onClick={() => handleStatusUpdate("Approved", "", req._id)}
-                            className="cursor-pointer text-2xl text-green-600 border border-green-400 p-1 rounded-lg"
-                            title="Accept"
-                              />
-                            )
+                            <FaSpinner
+                              className="animate-spin text-2xl text-green-600 border border-green-400 p-1 rounded-lg"
+                              title="Loading..."
+                            />
+                          ) : (
+                            <FaCheck
+                              onClick={() => handleStatusUpdate("Approved", "", req._id)}
+                              className="cursor-pointer text-2xl text-green-600 border border-green-400 p-1 rounded-lg"
+                              title="Accept"
+                            />
+                          )
                         )}
 
                       {(
@@ -1407,28 +1462,24 @@ const AddCustomRequestForm = () => {
                           />
                         )}
                       {(
-                        req.BuyerNegotiatedBudgets.length === 2 &&
-                        req.ArtistNegotiatedBudgets.length === 3 &&
-                        req.RequestStatus !== "Approved" &&
-                        req.RequestStatus !== "Rejected"
+                        req.BuyerNegotiatedBudgets.length === 2 && req.ArtistNegotiatedBudgets.length === 3 &&
+                        req.RequestStatus !== "Approved" && req.RequestStatus !== "Rejected"
                       ) && (
-                          
-                            loading ? (
-                              <FaSpinner 
-                                className="animate-spin text-2xl text-red-600 border border-red-400 p-1 rounded-lg"
-                                title="Loading..."
-                              />
-                            ) : (
-                              <RiProhibited2Line
-                                onClick={() => setShowRejectModal(true)}
-                                className="cursor-pointer text-2xl text-red-600 border border-red-400 p-1 rounded-lg"
-                                title="Reject"
-                              />
-                            )
-                          
+
+                          loading ? (
+                            <FaSpinner
+                              className="animate-spin text-2xl text-red-600 border border-red-400 p-1 rounded-lg"
+                              title="Loading..."
+                            />
+                          ) : (
+                            <RiProhibited2Line
+                              onClick={() => setShowRejectModal(true)}
+                              className="cursor-pointer text-2xl text-red-600 border border-red-400 p-1 rounded-lg"
+                              title="Reject"
+                            />
+                          )
+
                         )}
-
-
 
                       {showRejectModal && (
                         <div
@@ -1571,26 +1622,30 @@ const AddCustomRequestForm = () => {
             </div>
             <div>
               <label className="block font-medium mb-1">Art Type</label>
-              <input
-                type="text"
-                name="artType"
-                value={formData.artType}
-                onChange={handleChange}
-                placeholder="e.g., Painting, Sculpture"
-                className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
+              <Select
+                options={allCategories}
+                onChange={handleArtTypeChange}
+                value={allCategories.find((cat) => cat.label === formData.artType) || null}
+                isClearable
+                isSearchable
+                placeholder="Select or type art type"
+                className="w-full"
+                classNamePrefix="react-select"
               />
             </div>
             <div>
-              <label className="block font-medium mb-1">Size</label>
-              <input
-                type="text"
-                name="size"
-                value={formData.size}
-                onChange={handleChange}
-                placeholder="e.g., A4, 24x36"
-                className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
+              <label className="block font-medium mb-1">Select Size</label>
+              <Select
+                options={sizeOptions}
+                onChange={handleSizeChange}
+                isClearable
+                isSearchable
+                placeholder="Select or type size"
+                className="w-full"
+                classNamePrefix="react-select"
               />
             </div>
+
             <div>
               <label className="block font-medium mb-1">Color Preferences</label>
               <div className="flex w-full items-center border-2 border-gray-300 rounded-xl px-2">
