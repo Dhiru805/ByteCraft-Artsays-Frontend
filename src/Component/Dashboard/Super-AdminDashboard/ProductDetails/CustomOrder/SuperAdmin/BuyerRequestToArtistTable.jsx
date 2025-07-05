@@ -12,6 +12,9 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [selectedBuyerRequestToDelete, setSelectedBuyerRequestToDelete] = useState(null);
     const [selectedRequestDescription, setSelectedRequestDescription] = useState(null);
+    const [showPopup, setShowPopup] = useState(false);
+    const [currentImages, setCurrentImages] = useState([]);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const [loadingIds, setLoadingIds] = useState([]);
     const [products, setProducts] = useState([]);
@@ -20,9 +23,9 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
     const [searchTerm, setSearchTerm] = useState('');
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
-  const confirm = useConfirm();
-  const navigate = useNavigate();
- 
+    const confirm = useConfirm();
+    const navigate = useNavigate();
+
 
     const handleDeleteCancel = () => {
         setIsDeleteDialogOpen(false);
@@ -41,7 +44,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
         setIsDeleteDialogOpen(true);
     };
 
-        const handleReject = (productId) => {
+    const handleReject = (productId) => {
         confirm(() => updateProductStatus(productId, 'Rejected'), "Are you sure you want to reject this product?");
     };
 
@@ -106,6 +109,14 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
         setProductsPerPage(Number(event.target.value));
         setCurrentPage(1);
     };
+
+    const handleImageClick = (product) => {
+        const images = [product.BuyerImage];
+        setCurrentImages(images);
+        setCurrentImageIndex(0);
+        setShowPopup(true);
+    };
+
 
 
 
@@ -181,7 +192,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                 <th>#</th>
                                                 <th>Buyer Name</th>
                                                 <th>Artist Name</th>
-                                                <th>Product Image</th>
+                                                <th>Reference Image</th>
                                                 <th>Max Budget </th>
                                                 <th>Min Budget </th>
                                                 <th>Negotiated Budget</th>
@@ -237,8 +248,38 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                                 : 'N/A'}
                                                         </p>
                                                     </td>
-                                                    <td>
+                                                    <td style={{ textAlign: 'center' }}>
                                                         <img
+                                                            src={`${BASE_URL}/${request.BuyerImage?.replace(/\\/g, '/')}`}
+                                                            className="rounded-circle avatar"
+                                                            onClick={() => handleImageClick(request)}
+                                                            style={{
+                                                                width: '30px',
+                                                                height: '30px',
+                                                                objectFit: 'cover',
+                                                                marginRight: '10px',
+                                                                cursor: 'pointer',
+                                                            }}
+                                                        />
+
+                                                        {/* <img
+                                                            src={
+                                                                request?.BuyerImage
+                                                                    ? `${BASE_URL}${request.BuyerImage}`
+                                                                    : DEFAULT_PROFILE_IMAGE
+                                                            }
+                                                            className="rounded-circle avatar"
+                                                            alt=""
+                                                            onClick={() => handleImageClick(request)}
+                                                            style={{
+                                                                width: '30px',
+                                                                height: '30px',
+                                                                objectFit: 'cover',
+                                                                marginRight: '10px',
+                                                                cursor: 'pointer'
+                                                            }}
+                                                        /> */}
+                                                        {/* <img
                                                             src={
                                                                 request?.Artist?.id?.profilePhoto
                                                                     ? `${BASE_URL}${request.Artist.id.profilePhoto}`
@@ -251,7 +292,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                                 objectFit: 'cover',
                                                                 alignItems: 'center',
                                                             }}
-                                                        />
+                                                        /> */}
                                                     </td>
                                                     <td>
                                                         {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.MaxBudget).replace(/\.00$/, '')}
@@ -260,7 +301,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                         {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.MinBudget).replace(/\.00$/, '')}
                                                     </td>
                                                     <td>
-                                                        {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.NegotiatedBudget).replace(/\.00$/, '')}
+                                                        {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.BuyerNegotiatedBudgets).replace(/\.00$/, '')}
                                                     </td>
                                                     <td>{new Date(request.createdAt).toLocaleDateString()}</td>
                                                     <td>
@@ -299,35 +340,35 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                         >
                                                             <i className="fa fa-pencil"></i>
                                                         </button> */}
-<button
-  className="btn btn-sm btn-outline-success mr-2"
-  title="Approved"
-  disabled={loadingIds.includes(request._id)}
-  onClick={async () => {
-    setLoadingIds(prev => [...prev, request._id]);
-    await updateProductStatus(request._id, 'Approved');
-    setLoadingIds(prev => prev.filter(id => id !== request._id));
-  }}
->
-  {loadingIds.includes(request._id) ? (
-    <i className="fa fa-spinner fa-spin"></i>
-  ) : (
-    <i className="fa fa-check"></i>
-  )}
-</button>
+                                                        <button
+                                                            className="btn btn-sm btn-outline-success mr-2"
+                                                            title="Approved"
+                                                            disabled={loadingIds.includes(request._id)}
+                                                            onClick={async () => {
+                                                                setLoadingIds(prev => [...prev, request._id]);
+                                                                await updateProductStatus(request._id, 'Approved');
+                                                                setLoadingIds(prev => prev.filter(id => id !== request._id));
+                                                            }}
+                                                        >
+                                                            {loadingIds.includes(request._id) ? (
+                                                                <i className="fa fa-spinner fa-spin"></i>
+                                                            ) : (
+                                                                <i className="fa fa-check"></i>
+                                                            )}
+                                                        </button>
 
-<button
-  className="btn btn-sm btn-outline-danger mr-2"
-  title="Declined"
-  disabled={loadingIds.includes(request._id)}
-  onClick={() => handleReject(request._id)}
->
-  {loadingIds.includes(request._id) ? (
-    <i className="fa fa-spinner fa-spin"></i>
-  ) : (
-    <i className="fa fa-ban"></i>
-  )}
-</button>
+                                                        <button
+                                                            className="btn btn-sm btn-outline-danger mr-2"
+                                                            title="Declined"
+                                                            disabled={loadingIds.includes(request._id)}
+                                                            onClick={() => handleReject(request._id)}
+                                                        >
+                                                            {loadingIds.includes(request._id) ? (
+                                                                <i className="fa fa-spinner fa-spin"></i>
+                                                            ) : (
+                                                                <i className="fa fa-ban"></i>
+                                                            )}
+                                                        </button>
                                                         <button
                                                             type="button"
                                                             className="btn btn-outline-danger btn-sm mr-2"
@@ -415,7 +456,55 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                     onDeleted={handleDeleteConfirmed}
                 />
             )}
+            {showPopup && (
+                <div
+                    onClick={() => setShowPopup(false)}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        zIndex: 1000,
+                    }}
+                >
+                    <div
+                        onClick={(e) => e.stopPropagation()}
+                        style={{
+                            position: 'relative',
+                            width: '500px',
+                            height: '600px',
+                            backgroundColor: '#111',
+                            borderRadius: '12px',
+                            boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            overflow: 'hidden',
+                        }}
+                    >
+                        {/* Image */}
+                        <img
+                            src={`${BASE_URL}/${currentImages[currentImageIndex]?.replace(/\\/g, '/')}`}
+                            alt="Popup"
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover',
+                                borderRadius: '12px',
+                            }}
+                        />
+                    </div>
+                </div>
+            )}
+
+
         </>
+
     );
 }
 

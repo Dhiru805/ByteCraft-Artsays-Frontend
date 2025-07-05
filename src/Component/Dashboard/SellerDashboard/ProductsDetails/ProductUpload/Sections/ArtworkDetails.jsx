@@ -199,7 +199,7 @@ const ArtworkDetails = ({
         </div>
 
         <div className="form-group">
-            <label>Condition *</label>
+            <label>Condition <span style={{ color: 'red' }}>*</span></label>
             <Select
                 options={conditionOptions}
                 value={formData.condition}

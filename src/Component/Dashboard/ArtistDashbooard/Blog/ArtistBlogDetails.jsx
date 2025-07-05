@@ -161,11 +161,11 @@ const navigate = useNavigate();
         </div>
 
         <div className="col-lg-4 col-md-12 right-box">
-          <div className="card mb-4">
-            <div className="header">
+          <div className="card mb-4 ">
+            <div className="header px-4 pt-4">
               <h2>About Author</h2>
             </div>
-            <div className="body text-center p-4">
+            <div className="body text-center px-4 pb-4 pt-2">
               <img
                 src={
                   blogs[0]?.uploadedBy?.id?.profilePhoto
@@ -182,9 +182,9 @@ const navigate = useNavigate();
                   marginBottom: '1rem'
                 }}
               />
-              <h5> {blogs[0]?.uploadedBy?.id?.name} {blogs[0]?.uploadedBy?.id?.lastName}</h5>
-              <p className="text-muted">Blog Writer</p>
-              <p>{blogs[0]?.uploadedBy?.id?.bio}</p>
+              <h5 className="mb-2"> {blogs[0]?.uploadedBy?.id?.name} {blogs[0]?.uploadedBy?.id?.lastName}</h5>
+              <p className="text-muted mb-2">Blog Writer</p>
+              <p className="mb-0">{blogs[0]?.category || "Category not specified"}</p>
             </div>
           </div>
 

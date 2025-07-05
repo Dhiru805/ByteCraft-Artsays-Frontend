@@ -139,6 +139,7 @@ const Sidebar = () => {
           { label: "Product Category", path: `/super-admin/settings/product-category` },
           { label: "Blog Category", path: `/super-admin/settings/blog-category` },
           { label: "Email Setting", path: `/super-admin/settings/email-setting` },
+          { label: "Marketing", path: `/super-admin/settings/marketing` },
         ]
       }
     ],

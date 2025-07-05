@@ -14,9 +14,9 @@ const EmailSetting = () => {
               <h2>Email Setting</h2>
               <ul className="breadcrumb">
                 <li className="breadcrumb-item">
- <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
-    <i className="fa fa-dashboard"></i>
-</span>
+                  <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+                    <i className="fa fa-dashboard"></i>
+                  </span>
                 </li>
                 <li className="breadcrumb-item">Email Setting</li>
               </ul>

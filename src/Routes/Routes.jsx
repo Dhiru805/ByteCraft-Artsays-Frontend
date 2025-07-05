@@ -16,6 +16,9 @@ import Login from "../Pages/Login/Login";
 import Register from "../Pages/Register/Register";
 import ArtistSellerRegister from "../Pages/Register/ArtistSellerRegister";
 import ForgotPassword from "../Pages/Login/Forgotpassword";
+//-----piublic routes-----//
+import PrivacyPolicy from "../Pages/PrivacyPolicy/PrivacyPolicy";
+import TermsofServices from "../Pages/Terms&Condition/TermsofServices";
 
 //----------------------------------------My Account-----------------------------------------//
 import MyAccountMainLayout from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/MyAccountMainLayout';
@@ -61,6 +64,7 @@ import SuperAdminBlogPost from "../Component/Dashboard/Super-AdminDashboard/Blog
 import SuperAdminViewBlog from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/ViewBlog";
 import SuperAdminUpdateBlog from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/UpdateBlogList";
 import SuperAdminProductInfo from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Productinfo";
+import SuperAdminMarketing from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailMarketing/Marketing/MarketingEmail";
 //-----------------------------Admin--------------------------//
 import Admin from "../Component/Dashboard/Super-AdminDashboard/Admin/Admin";
 import AdminProfile from "../Component/Dashboard/Super-AdminDashboard/Admin/Profile/UserProf";
@@ -224,6 +228,8 @@ const AppRoutes = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/artist-seller-register" element={<ArtistSellerRegister />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-services" element={<TermsofServices />} />
       </Route>
 
       {/*-------------------------------------------Super Admin Routes--------------------------------------------- */}
@@ -310,6 +316,7 @@ const AppRoutes = () => {
         <Route path="settings/email-setting" element={<EmailSettings />} />
         <Route path="settings/blog-category" element={<BlogCategory />} />
         <Route path="settings/product-category" element={<ProductCategory />} />
+        <Route path="settings/marketing" element={<SuperAdminMarketing />} />
       </Route>
 
       {/*-------------------------------------------- Artist Routes-------------------------------------------------- */}

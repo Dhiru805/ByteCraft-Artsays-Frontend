@@ -40,6 +40,7 @@ const AccountPreferences = () => {
         const formattedCategories = response.data.data.map((category) => ({
           value: category.id,
           label: category.categoryName,
+          mainCategoryId: mainCategoryId,
         }));
         setCategories(formattedCategories);
       }
@@ -55,6 +56,7 @@ const AccountPreferences = () => {
         const formattedCategories = response.data.data.map((category) => ({
           value: category.id,
           label: category.subCategoryName,
+          categoryId: categoryId,
         }));
         setSubCategories(formattedCategories);
       }
@@ -94,6 +96,7 @@ const AccountPreferences = () => {
         const categoryList = categoryResponse.data.data.map((cat) => ({
           value: cat.id,
           label: cat.categoryName,
+          mainCategoryId: preferredArtCategories[0],
         }));
         const category = categoryList.find(item => item.value === preferredArtCategories[1]);
         formattedPreferences[1] = {
@@ -105,6 +108,7 @@ const AccountPreferences = () => {
         const subCategoryList = subCategoryResponse.data.data.map((cat) => ({
           value: cat.id,
           label: cat.subCategoryName,
+          categoryId: preferredArtCategories[1],
         }));
         const subCategory = subCategoryList.find(item => item.value === preferredArtCategories[2]);
         formattedPreferences[2] = {
@@ -218,11 +222,89 @@ const AccountPreferences = () => {
     }
   };
 
+  const categoryData = {
+    mainCategories: mainCategories || [],
+    categories: categories || [],
+    subCategories: subCategories || [],
+  };
+
+  // [Updated] Flattened searchable categories with proper labels
+  const searchableCategories = React.useMemo(() => {
+    const main = categoryData.mainCategories.map(cat => ({
+      ...cat,
+      type: 'mainCategory',
+      fullLabel: cat.label
+    }));
+
+    const cats = categoryData.categories.map(cat => {
+      const mainLabel = categoryData.mainCategories.find(main => main.value === cat.mainCategoryId)?.label || '';
+      return {
+        ...cat,
+        type: 'category',
+        fullLabel: `${mainLabel} - ${cat.label}`,
+        mainCategoryId: cat.mainCategoryId
+      };
+    });
+
+    const sub = categoryData.subCategories.map(sub => {
+      const cat = categoryData.categories.find(c => c.value === sub.categoryId);
+      const mainLabel = categoryData.mainCategories.find(main => main.value === cat?.mainCategoryId)?.label || '';
+      return {
+        ...sub,
+        type: 'subCategory',
+        fullLabel: `${mainLabel} - ${cat?.label || ''} - ${sub.label}`,
+        categoryId: sub.categoryId,
+        mainCategoryId: cat?.mainCategoryId
+      };
+    });
+
+    return [...main, ...cats, ...sub].sort((a, b) => a.fullLabel.localeCompare(b.fullLabel));
+  }, [mainCategories, categories, subCategories]);
+
   return (
     <div className="body">
       <h5 className="mb-2">Notification And Preferences</h5>
       <hr className="mt-1" />
       <form>
+        <div className="form-group">
+          <label>Search Category</label>
+          <Select
+            options={searchableCategories}
+            getOptionLabel={(e) => e.fullLabel}
+            getOptionValue={(e) => e.value}
+            placeholder="Search for any category..."
+            isClearable
+            isSearchable // [Ensures dynamic typing works]
+            onChange={(selectedOption) => {
+              if (!selectedOption) return;
+
+              let mainCat = null, cat = null, subCat = null;
+
+              if (selectedOption.type === 'mainCategory') {
+                mainCat = mainCategories.find(m => m.value === selectedOption.value);
+              }
+
+              if (selectedOption.type === 'category') {
+                cat = categories.find(c => c.value === selectedOption.value);
+                mainCat = mainCategories.find(m => m.value === cat?.mainCategoryId);
+              }
+
+              if (selectedOption.type === 'subCategory') {
+                subCat = subCategories.find(s => s.value === selectedOption.value);
+                cat = categories.find(c => c.value === subCat?.categoryId);
+                mainCat = mainCategories.find(m => m.value === cat?.mainCategoryId);
+              }
+
+              setFormData((prev) => ({
+                ...prev,
+                preferredArtCategories: [mainCat, cat, subCat].filter(Boolean),
+              }));
+
+              if (mainCat) fetchCategoryData(mainCat.value);
+              if (cat) fetchSubCategoryData(cat.value);
+            }}
+          />
+        </div>
         <div className="form-group">
           <label className="mx-2">Main Category</label>
           <Select
