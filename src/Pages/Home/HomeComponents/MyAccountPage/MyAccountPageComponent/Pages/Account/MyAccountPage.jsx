@@ -25,7 +25,6 @@ const headingMap = {
 export const AccountPage = () => {
   const location = useLocation();
   const pathname = location.pathname;
-
   const path = pathname === '/my-account' ? 'my-account' : pathname.split('/').pop();
   const heading = headingMap[path] || 'My Account';
 
@@ -38,7 +37,7 @@ export const AccountPage = () => {
   return (
     <>
       {/* Top Section */}
-      <div className="h-[300px] w-full px-[5rem] bg-[#E8E8E8] flex items-center justify-center">
+      <div className="h-[300px] w-full px-4 sm:px-12 md:px-20 lg:px-[5rem] bg-[#E8E8E8] flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-4xl font-bold text-zinc-900">{heading}</h2>
           <p className="text-sm text-gray-500 mt-4">
@@ -46,13 +45,12 @@ export const AccountPage = () => {
               Home
             </Link> &gt; {heading}
           </p>
-
         </div>
       </div>
 
       {/* Main Layout */}
       {!(isTrackOrder || isWishlist || isOrderCompleted || isMyCart || isCheckOut) ? (
-        <div className="w-full max-w-[1464px] mx-auto px-4 sm:px-8 md:px-12 lg:px-[116px] py-10 flex flex-col lg:flex-row gap-6 md:gap-8 lg:gap-[40px] bg-white">
+        <div className="w-full max-w-[1464px] mx-auto px-4 sm:px-8 md:px-12 lg:px-[116px] py-10 flex flex-col lg:flex-row gap-6 md:gap-8 lg:gap-[40px] bg-white overflow-x-hidden">
           <div className="w-full lg:w-[300px]">
             <AccountSidebar />
           </div>
@@ -61,11 +59,10 @@ export const AccountPage = () => {
           </div>
         </div>
       ) : (
-        <div className="w-full max-w-[1464px] mx-auto px-4 sm:px-8 md:px-12 lg:px-[116px] py-10 bg-white">
+        <div className="w-full max-w-[1464px] mx-auto px-4 sm:px-8 md:px-12 lg:px-[116px] py-10 bg-white overflow-x-hidden">
           <Outlet />
         </div>
       )}
-
     </>
   );
 };

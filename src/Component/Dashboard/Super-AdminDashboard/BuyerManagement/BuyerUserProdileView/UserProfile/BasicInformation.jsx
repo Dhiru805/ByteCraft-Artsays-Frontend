@@ -26,6 +26,11 @@ useEffect(() => {
     img.onerror = () => setImageError(true);
   }, [previewImage]);
 
+  const selectedAddress = Array.isArray(profileData?.address)
+  ? profileData.address.find((addr) => addr._id === profileData?.selectedAddress)
+  : {};
+
+
   return (
     <div className="body">
     <h6>Profile Photo</h6>
@@ -108,7 +113,7 @@ useEffect(() => {
               className="form-control"
               id="addressLine2"
               placeholder="Address Line 2"
-              value={profileData.address?.line2}
+              value={selectedAddress.line2}
               name="address.line2"
               disabled
             />
@@ -121,7 +126,7 @@ useEffect(() => {
               className="form-control"
               id="city"
               placeholder="City"
-              value={profileData.address?.city}
+              value={selectedAddress.city}
               name="address.city"
              disabled
             />
@@ -133,7 +138,7 @@ useEffect(() => {
               className="form-control"
               id="country"
               placeholder="Country"
-              value={profileData.address?.country}
+              value={selectedAddress.country}
               name="address.country"
               disabled
             />
@@ -161,7 +166,7 @@ useEffect(() => {
               className="form-control"
               id="addressLine1"
               placeholder="Address Line 1"
-              value={profileData.address?.line1}
+              value={selectedAddress.line1}
               name="address.line1"
               disabled
             />
@@ -174,7 +179,7 @@ useEffect(() => {
               className="form-control"
               id="landmark"
               placeholder="Land Mark"
-              value={profileData.address?.landmark}
+              value={selectedAddress.landmark}
               name="address.landmark"
              disabled
             />
@@ -187,7 +192,7 @@ useEffect(() => {
               className="form-control"
               id="state"
               placeholder="State/Province"
-              value={profileData.address?.state}
+              value={selectedAddress.state}
               name="address.state"
               disabled
             />
@@ -201,7 +206,7 @@ useEffect(() => {
               className="form-control"
               id="pincode"
               placeholder="Pincode"
-              value={profileData.address?.pincode}
+              value={selectedAddress.pincode}
               name="address.pincode"
               disabled
             />

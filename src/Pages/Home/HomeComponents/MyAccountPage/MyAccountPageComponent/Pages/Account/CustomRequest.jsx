@@ -837,7 +837,7 @@ import { FaPlus } from "react-icons/fa6";
 import { GoPencil } from "react-icons/go";
 import { RiDeleteBin6Line, RiProhibited2Line } from "react-icons/ri";
 import { LuHandshake } from "react-icons/lu";
-import { FaEye, FaCheck, FaSpinner } from "react-icons/fa";
+import { FaEye, FaCheck, FaRupeeSign, FaSpinner } from "react-icons/fa";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { toast } from "react-toastify";
@@ -879,6 +879,13 @@ const AddCustomRequestForm = () => {
   const [loading, setLoading] = useState(false);
   const [allCategories, setAllCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const [fetchError, setFetchError] = useState(null);
+  const [isFetching, setIsFetching] = useState(false);
+
+  const userId = localStorage.getItem("userId");
+  const token = localStorage.getItem("token");
 
   const sizeOptions = [
     { value: "A4", label: "A4" },
@@ -902,7 +909,34 @@ const AddCustomRequestForm = () => {
     comments: "",
   });
 
-  const token = localStorage.getItem("token");
+  const fetchAddresses = async () => {
+    if (!userId) {
+      setFetchError('User not logged in. Please log in to view addresses.');
+      setIsFetching(false);
+      return;
+    }
+
+    try {
+      setIsFetching(true);
+      setFetchError(null);
+      const response = await getAPI(`/auth/userid/${userId}`);
+      console.log("Fetched user data:", response.data.user);
+      
+      if (response.data?.user?.address && Array.isArray(response.data.user.address)) {
+        setAddresses(response.data.user.address);
+        setSelectedAddressId(response.data.user.selectedAddress || null);
+      } else {
+        setAddresses([]);
+        setSelectedAddressId(null);
+      }
+    } catch (error) {
+      setFetchError('Failed to load addresses. Please try again later.');
+      toast.error('Failed to load addresses');
+      console.error('Error fetching addresses:', error);
+    } finally {
+      setIsFetching(false);
+    }
+  };
 
   const fetchRequests = async () => {
     try {
@@ -917,7 +951,7 @@ const AddCustomRequestForm = () => {
   useEffect(() => {
     const fetchArtists = async () => {
       try {
-        const response = await getAPI("api/artist/artists");
+        const response = await getAPI("/artist/artists");
         setArtists(response.data);
       } catch (error) {
         console.error("Error fetching artists:", error);
@@ -927,7 +961,8 @@ const AddCustomRequestForm = () => {
 
     fetchArtists();
     fetchRequests();
-  }, [token]);
+    fetchAddresses();
+  }, [token, userId]);
 
   const handleAddColor = () => {
     if (colorPref.trim() && !colorPreferences.includes(colorPref.trim())) {
@@ -945,19 +980,15 @@ const AddCustomRequestForm = () => {
       setFormData({ ...formData, [name]: file });
     } else {
       const numericFields = ["expectedDeadline", "minBudget", "maxBudget"];
-
-      if (name === "artType") {
-        setFormData({
-          ...formData,
-          [name]: value,
-        });
-      } else {
-        setFormData({
-          ...formData,
-          [name]: numericFields.includes(name) ? Number(value) : value,
-        });
-      }
+      setFormData({
+        ...formData,
+        [name]: numericFields.includes(name) ? Number(value) : value,
+      });
     }
+  };
+
+  const handleAddressChange = (addressId) => {
+    setSelectedAddressId(addressId);
   };
 
   const handleDescriptionChange = (value) => {
@@ -1003,6 +1034,23 @@ const AddCustomRequestForm = () => {
       setArtistId(artistId);
       setSelectedArtistName(artistName);
 
+      // Set the selected address from BuyerSelectedAddress
+      if (existingData.BuyerSelectedAddress && Object.keys(existingData.BuyerSelectedAddress).length > 0) {
+        // Find the matching address in the addresses array
+        const matchingAddress = addresses.find(addr =>
+          addr.line1 === existingData.BuyerSelectedAddress.line1 &&
+          addr.line2 === existingData.BuyerSelectedAddress.line2 &&
+          addr.landmark === existingData.BuyerSelectedAddress.landmark &&
+          addr.city === existingData.BuyerSelectedAddress.city &&
+          addr.state === existingData.BuyerSelectedAddress.state &&
+          addr.country === existingData.BuyerSelectedAddress.country &&
+          addr.pincode === existingData.BuyerSelectedAddress.pincode
+        );
+        setSelectedAddressId(matchingAddress?._id || null);
+      } else {
+        setSelectedAddressId(null);
+      }
+
       if (existingData.BuyerImage) {
         const imageUrl = `api/${existingData.BuyerImage}`;
         setImagePreview(imageUrl);
@@ -1028,20 +1076,34 @@ const AddCustomRequestForm = () => {
       const response = await getAPI(`/api/main-category`, {}, true);
       if (!response.hasError && Array.isArray(response.data?.data)) {
         const mainCategories = response.data.data;
-
         let categoryList = [];
 
         for (const mainCat of mainCategories) {
           const categoryResponse = await getAPI(`/api/category/${mainCat._id}`, {}, true);
           if (!categoryResponse.hasError && Array.isArray(categoryResponse.data?.data)) {
-            const formatted = categoryResponse.data.data.map((cat) => ({
-              value: cat.id,
-              label: cat.categoryName,
-              mainCategoryId: mainCat._id,
-            }));
-            categoryList.push(...formatted);
+            for (const cat of categoryResponse.data.data) {
+              categoryList.push({
+                value: cat.id,
+                label: cat.categoryName,
+                mainCategoryId: mainCat._id,
+                type: 'category',
+              });
+
+              const subCategoryResponse = await getAPI(`/api/sub-category/${cat.id}`, {}, true);
+              if (!subCategoryResponse.hasError && Array.isArray(subCategoryResponse.data?.data)) {
+                const subCategories = subCategoryResponse.data.data.map((subCat) => ({
+                  value: subCat.id,
+                  label: `${subCat.subCategoryName}`,
+                  mainCategoryId: mainCat._id,
+                  parentCategoryId: cat.id,
+                  type: 'sub-category',
+                }));
+                categoryList.push(...subCategories);
+              }
+            }
           }
         }
+
         setAllCategories(categoryList);
       } else {
         toast.error("Failed to load main categories.");
@@ -1063,23 +1125,7 @@ const AddCustomRequestForm = () => {
 
   const handleSizeChange = (selectedOption) => {
     setFormData({ ...formData, size: selectedOption?.value || "" });
-  }
-
-  // const handleDeleteCancel = () => {
-  //   setIsDeleteDialogOpen(false);
-  //   setSelectedRequestToDelete(null);
-  // };
-
-  // const handleDeleteConfirmed = async () => {
-  //   setIsDeleteDialogOpen(false);
-  //   setSelectedRequestToDelete(null);
-  //   await fetchRequests();
-  // };
-
-  // const openDeleteDialog = (requestId) => {
-  //   setSelectedRequestToDelete(requestId);
-  //   setIsDeleteDialogOpen(true);
-  // };
+  };
 
   const handleImageClick = () => {
     setShowFullImage((prev) => !prev);
@@ -1097,6 +1143,13 @@ const AddCustomRequestForm = () => {
       setDescriptionError(true);
       return;
     }
+
+    if (!selectedAddressId) {
+      toast.error("Please select a delivery address.");
+      setIsSubmitting(false);
+      return;
+    }
+
     setDescriptionError(false);
     setIsSubmitting(true);
 
@@ -1116,6 +1169,7 @@ const AddCustomRequestForm = () => {
     if (formData.buyerImage) {
       formPayload.append("BuyerImage", formData.buyerImage);
     }
+
     if (!artistId) {
       toast.error("Please select an artist.");
       setIsSubmitting(false);
@@ -1130,10 +1184,30 @@ const AddCustomRequestForm = () => {
 
     formPayload.append("Artist", selectedArtist._id);
 
+    // Append the selected address to the form payload
+    if (selectedAddressId) {
+      const selectedAddress = addresses.find(addr => addr._id === selectedAddressId);
+      if (selectedAddress) {
+        formPayload.append("BuyerSelectedAddress[line1]", selectedAddress.line1 || "");
+        formPayload.append("BuyerSelectedAddress[line2]", selectedAddress.line2 || "");
+        formPayload.append("BuyerSelectedAddress[landmark]", selectedAddress.landmark || "");
+        formPayload.append("BuyerSelectedAddress[city]", selectedAddress.city || "");
+        formPayload.append("BuyerSelectedAddress[state]", selectedAddress.state || "");
+        formPayload.append("BuyerSelectedAddress[country]", selectedAddress.country || "");
+        formPayload.append("BuyerSelectedAddress[pincode]", selectedAddress.pincode || "");
+      } else {
+        toast.error("Selected address not found.");
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
     try {
       let response;
       if (editingId) {
-        response = await putAPI(`/api/update-buyer-request/${editingId}`, formPayload);
+        response = await putAPI(`/api/update-buyer-request/${editingId}`, formPayload, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
       } else {
         response = await postAPI(
           "/api/buyer-request",
@@ -1170,6 +1244,7 @@ const AddCustomRequestForm = () => {
         setImagePreview(null);
         setFileType(null);
         setSelectedArtistName("");
+        setSelectedAddressId(null);
       } else {
         toast.error(data.message || "Submission failed");
       }
@@ -1197,6 +1272,7 @@ const AddCustomRequestForm = () => {
       setArtistId("");
       setSelectedArtistName("");
       setIsSubmitting(false);
+      setSelectedAddressId(null);
       await fetchRequests();
     }
   };
@@ -1267,6 +1343,7 @@ const AddCustomRequestForm = () => {
     setSelectedArtistName("");
     setImagePreview(null);
     setFileType(null);
+    setSelectedAddressId(null);
   };
 
   const modules = {
@@ -1300,10 +1377,8 @@ const AddCustomRequestForm = () => {
 
   return (
     <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 lg:px-0">
-      {/* heading section */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <h2 className="text-2xl text-gray-950 font-semibold">Custom Requests</h2>
-
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto">
           <div className="relative w-full sm:w-[200px]">
             <input
@@ -1315,7 +1390,6 @@ const AddCustomRequestForm = () => {
             />
             <FiSearch className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-400 text-lg" />
           </div>
-
           <button
             onClick={() => setShowForm(true)}
             className="bg-[#6F4D34] text-white text-[15px] font-semibold px-4 py-2 rounded-xl flex items-center justify-center"
@@ -1324,8 +1398,6 @@ const AddCustomRequestForm = () => {
           </button>
         </div>
       </div>
-
-      {/* table container */}
       <div className="border-2 rounded-3xl w-full bg-white">
         <div className="overflow-x-auto pb-4 rounded-3xl w-full">
           <table className="lg:min-w-[1100px] table-auto w-full text-sm text-left whitespace-nowrap">
@@ -1410,19 +1482,6 @@ const AddCustomRequestForm = () => {
                           className="cursor-pointer text-2xl text-sky-600 border border-sky-400 p-1 rounded-lg"
                           title="Edit"
                         />)}
-                      {/* <RiDeleteBin6Line
-                        onClick={() => openDeleteDialog(req._id)}
-                        className="cursor-pointer text-2xl text-red-600 border border-red-400 p-1 rounded-lg"
-                        title="Delete"
-                      />
-                      {isDeleteDialogOpen && selectedRequestToDelete === req._id && (
-                        <ConfirmationDialog
-                          onClose={handleDeleteCancel}
-                          deleteType="buyerRequest"
-                          id={selectedRequestToDelete}
-                          onDeleted={handleDeleteConfirmed}
-                        />
-                      )} */}
                       {(
                         (
                           (req.BuyerNegotiatedBudgets.length === 0 && req.ArtistNegotiatedBudgets.length === 1) ||
@@ -1444,7 +1503,6 @@ const AddCustomRequestForm = () => {
                             />
                           )
                         )}
-
                       {(
                         (
                           (req.BuyerNegotiatedBudgets.length === 0 && req.ArtistNegotiatedBudgets.length === 1) ||
@@ -1462,10 +1520,17 @@ const AddCustomRequestForm = () => {
                           />
                         )}
                       {(
+                        (req.RequestStatus === "Approved")
+                      ) && (
+                          <FaRupeeSign 
+                            className="cursor-pointer text-2xl text-blue-500 p-1 border rounded-lg"
+                            title="Payment"
+                          />
+                        )}
+                      {(
                         req.BuyerNegotiatedBudgets.length === 2 && req.ArtistNegotiatedBudgets.length === 3 &&
                         req.RequestStatus !== "Approved" && req.RequestStatus !== "Rejected"
                       ) && (
-
                           loading ? (
                             <FaSpinner
                               className="animate-spin text-2xl text-red-600 border border-red-400 p-1 rounded-lg"
@@ -1478,9 +1543,7 @@ const AddCustomRequestForm = () => {
                               title="Reject"
                             />
                           )
-
                         )}
-
                       {showRejectModal && (
                         <div
                           className="modal fade show"
@@ -1574,7 +1637,6 @@ const AddCustomRequestForm = () => {
           </table>
         </div>
       </div>
-
       {showForm && (
         <div className="w-full max-w-[1076px] mx-auto px-0 sm:px-0 lg:px-0">
           <form onSubmit={handleSubmit} className="space-y-5 py-6">
@@ -1645,7 +1707,35 @@ const AddCustomRequestForm = () => {
                 classNamePrefix="react-select"
               />
             </div>
-
+            <div>
+              <label className="block font-medium mb-1">Select Delivery Address</label>
+              {isFetching ? (
+                <p>Loading addresses...</p>
+              ) : fetchError ? (
+                <p className="text-red-500">{fetchError}</p>
+              ) : addresses.length > 0 ? (
+                <div className="space-y-2">
+                  {addresses.map((address) => (
+                    <div key={address._id} className="flex items-center">
+                      <input
+                        type="radio"
+                        name="selectedAddress"
+                        value={address._id}
+                        checked={selectedAddressId === address._id}
+                        onChange={() => handleAddressChange(address._id)}
+                        className="mr-2"
+                        required
+                      />
+                      <label>
+                        {address.line1}, {address.line2 ? `${address.line2}, ` : ''}{address.landmark ? `${address.landmark}, ` : ''}{address.city}, {address.state}, {address.country}, {address.pincode}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p>No addresses found. Please add an address in your profile.</p>
+              )}
+            </div>
             <div>
               <label className="block font-medium mb-1">Color Preferences</label>
               <div className="flex w-full items-center border-2 border-gray-300 rounded-xl px-2">
@@ -1849,7 +1939,6 @@ const AddCustomRequestForm = () => {
           </form>
         </div>
       )}
-
       {showViewModal && viewRequest && (
         <div className="mt-6 p-6 bg-gray-50 border-2 rounded-3xl">
           <ViewBuyerRequest
@@ -1862,7 +1951,6 @@ const AddCustomRequestForm = () => {
           />
         </div>
       )}
-
       {showNegotiationModal && selectedRequest && (
         <NegotiateModal
           request={selectedRequest}
