@@ -262,8 +262,7 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
                         onClick={(e) => e.stopPropagation()}
                         style={{
                             position: 'relative',
-                            width: '500px',
-                            height: '600px',
+                            height: '50%',
                             backgroundColor: '#111',
                             borderRadius: '12px',
                             boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import ConfirmationDialog from '../../ConfirmationDialog';
 import VerifyModal from "./VerifyModal"
 import CreateArtistModal from "./Createmodal"

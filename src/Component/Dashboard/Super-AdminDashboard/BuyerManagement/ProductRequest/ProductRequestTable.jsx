@@ -359,8 +359,7 @@ const ProductRequest = () => {
                         onClick={(e) => e.stopPropagation()}
                         style={{
                             position: 'relative',
-                            width: '500px',
-                            height: '600px',
+                            height: '50%',
                             backgroundColor: '#111',
                             borderRadius: '12px',
                             boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',

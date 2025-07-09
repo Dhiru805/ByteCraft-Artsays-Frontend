@@ -3,7 +3,7 @@ import { useConfirm } from '../../../StatusConfirm';
 import { toast } from 'react-toastify';
 import getAPI from '../../../../../api/getAPI';
 import putAPI from '../../../../../api/putAPI';
-// import ConfirmationDialog from 'ConfirmationDialog';
+import ConfirmationDialog from '../../../ConfirmationDialog';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
 import { DEFAULT_PROFILE_IMAGE } from "../../../../../Constants/ConstantsVariables";
@@ -18,6 +18,8 @@ const ProductRequest = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [currentImages, setCurrentImages] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [selectedProductToDelete, setSelectedProductToDelete] = useState(null);
 
 
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
@@ -83,6 +85,21 @@ const ProductRequest = () => {
             await updateProductStatus(productId, 'Rejected');
             setLoadingIds(prev => prev.filter(id => id !== productId));
         }, "Are you sure you want to reject this product?");
+    };
+
+    const handleDeleteCancel = () => {
+        setIsDeleteDialogOpen(false);
+        setSelectedProductToDelete(null);
+    };
+
+    const handleDeleteConfirmed = (id) => {
+        setProducts((prevProducts) => prevProducts.filter((product) => product._id !== id));
+        setIsDeleteDialogOpen(false);
+    };
+
+    const openDeleteDialog = (product) => {
+        setSelectedProductToDelete(product);
+        setIsDeleteDialogOpen(true);
     };
 
     const filteredProducts = products.filter(product =>
@@ -289,16 +306,16 @@ const ProductRequest = () => {
                                                         ) : (
                                                             <i className="fa fa-ban"></i>
                                                         )}
-                                                    </button>                                                    
-                                                    
-                                                    {/* <button
+                                                    </button>
+
+                                                    <button
                                                         type="button"
                                                         className="btn btn-outline-danger btn-sm mr-2"
                                                         title="Delete"
                                                         onClick={() => openDeleteDialog(product)}
                                                     >
                                                         <i className="fa fa-trash-o"></i>
-                                                    </button> */}
+                                                    </button>
                                                 </td>
                                             </tr>
                                         ))}
@@ -369,7 +386,7 @@ const ProductRequest = () => {
                         left: 0,
                         right: 0,
                         bottom: 0,
-                            backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                        backgroundColor: 'rgba(0, 0, 0, 0.65)',
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
@@ -380,8 +397,7 @@ const ProductRequest = () => {
                         onClick={(e) => e.stopPropagation()}
                         style={{
                             position: 'relative',
-                            width: '500px',
-                            height: '600px',
+                            height: '50%',
                             backgroundColor: '#111',
                             borderRadius: '12px',
                             boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',
@@ -444,8 +460,17 @@ const ProductRequest = () => {
                         </button>
                     </div>
                 </div>
+
             )}
-       
+            {isDeleteDialogOpen && (
+                <ConfirmationDialog
+                    onClose={handleDeleteCancel}
+                    deleteType="productRequest"
+                    id={selectedProductToDelete._id}
+                    onDeleted={handleDeleteConfirmed}
+                />
+            )}
+
         </div>
     );
 };

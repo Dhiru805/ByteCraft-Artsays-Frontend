@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import getAPI from "../../../../api/getAPI";
 import { useParams } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-import useUserType from '../urlconfig';
+import useUserType from '../../urlconfig';
 import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 function AllProduct() {
-    const { productId } = useParams();
+    // const { productId } = useParams();
+const location = useLocation();
+const { productId } = location.state || {};
     const [products, setProducts] = useState([]);
     const [selectedImages, setSelectedImages] = useState({});
     const [expanded, setExpanded] = useState({});
@@ -17,7 +20,7 @@ function AllProduct() {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const result = await getAPI(`/api/getproductbyartist/${userId}`, {}, true, false);
+                const result = await getAPI(`/api/getproductbyartist/${productId}`, {}, true, false);
                 if (result.data && result.data.data) {
                     const productData = Array.isArray(result.data.data) ? result.data.data : [result.data.data];
                     setProducts(productData);

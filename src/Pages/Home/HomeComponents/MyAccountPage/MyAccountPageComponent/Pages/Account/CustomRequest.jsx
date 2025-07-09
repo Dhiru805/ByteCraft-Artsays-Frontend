@@ -847,9 +847,8 @@ import getAPI from "../../../../../../../api/getAPI";
 import putAPI from "../../../../../../../api/putAPI";
 import NegotiateModal from "./NegotiateModal";
 import ViewBuyerRequest from "./ViewRequest";
-import ConfirmationDialog from "./ConfirmationDialog";
 import { DEFAULT_PROFILE_IMAGE } from './constant';
-import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 
 const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
@@ -904,6 +903,7 @@ const AddCustomRequestForm = () => {
     minBudget: "",
     maxBudget: "",
     paymentTerm: "",
+    installmentDuration: "",
     expectedDeadline: "",
     buyerImage: null,
     comments: "",
@@ -921,7 +921,7 @@ const AddCustomRequestForm = () => {
       setFetchError(null);
       const response = await getAPI(`/auth/userid/${userId}`);
       console.log("Fetched user data:", response.data.user);
-      
+
       if (response.data?.user?.address && Array.isArray(response.data.user.address)) {
         setAddresses(response.data.user.address);
         setSelectedAddressId(response.data.user.selectedAddress || null);
@@ -1138,6 +1138,60 @@ const AddCustomRequestForm = () => {
     tempElement.innerHTML = formData.description;
     const plainTextDescription = tempElement.innerText.trim();
 
+    if (!formData.productName.trim()) {
+      toast.error("Product name is required");
+      return;
+    }
+
+    if (!artistId) {
+      toast.error("Please select an artist");
+      return;
+    }
+
+    if (!formData.artType) {
+      toast.error("Art type is required");
+      return;
+    }
+
+    if (!formData.size) {
+      toast.error("Size is required");
+      return;
+    }
+
+    if (!formData.minBudget) {
+      toast.error("Minimum budget is required");
+      return;
+    }
+
+    if (!formData.maxBudget) {
+      toast.error("Maximum budget is required");
+      return;
+    }
+
+    if (!formData.paymentTerm) {
+      toast.error("Payment term is required");
+      return;
+    }
+
+    if (!formData.expectedDeadline) {
+      toast.error("Expected deadline is required");
+      return;
+    }
+
+    if (!formData.paymentTerm) {
+      alert("Please select a payment term.");
+      return;
+    }
+
+    if (formData.paymentTerm === "Installment" && !formData.installmentDuration) {
+      alert("Please select an installment duration.");
+      return;
+    }
+    if (!selectedAddressId) {
+      toast.error("Please select a delivery address");
+      return;
+    }
+
     if (!plainTextDescription) {
       toast.error("Description is required");
       setDescriptionError(true);
@@ -1162,6 +1216,9 @@ const AddCustomRequestForm = () => {
     formPayload.append("MinBudget", formData.minBudget);
     formPayload.append("MaxBudget", formData.maxBudget);
     formPayload.append("PaymentTerm", formData.paymentTerm);
+    if (formData.paymentTerm === "Installment") {
+  formPayload.append("InstallmentDuration", formData.installmentDuration);
+}
     formPayload.append("ExpectedDeadline", formData.expectedDeadline);
     formPayload.append("Comments", formData.comments);
     formPayload.append("ColourPreferences", JSON.stringify(colorPreferences));
@@ -1522,7 +1579,7 @@ const AddCustomRequestForm = () => {
                       {(
                         (req.RequestStatus === "Approved")
                       ) && (
-                          <FaRupeeSign 
+                          <FaRupeeSign
                             className="cursor-pointer text-2xl text-blue-500 p-1 border rounded-lg"
                             title="Payment"
                           />
@@ -1644,7 +1701,7 @@ const AddCustomRequestForm = () => {
               {editingId ? "Edit Custom Request" : "Add Custom Request"}
             </h3>
             <div>
-              <label className="block font-medium mb-1">Product Name</label>
+              <label className="block font-medium mb-1">Product Name <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="productName"
@@ -1656,7 +1713,7 @@ const AddCustomRequestForm = () => {
               />
             </div>
             <div>
-              <label className="block font-medium mb-1">Select Artist</label>
+              <label className="block font-medium mb-1">Select Artist <span className="text-red-500">*</span></label>
               <select
                 id="artistSelect"
                 name="artist"
@@ -1674,7 +1731,7 @@ const AddCustomRequestForm = () => {
                 className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
                 required
               >
-                <option value="">Select an artist</option>
+                <option value="">Select an artist <span className="text-red-500">*</span></option>
                 {artists.map((artist) => (
                   <option key={artist._id} value={artist._id}>
                     {artist.name} {artist.lastName}
@@ -1683,11 +1740,21 @@ const AddCustomRequestForm = () => {
               </select>
             </div>
             <div>
-              <label className="block font-medium mb-1">Art Type</label>
-              <Select
+              <label className="block font-medium mb-1">
+                Art Type <span className="text-red-500">*</span>
+              </label>
+              <CreatableSelect
                 options={allCategories}
-                onChange={handleArtTypeChange}
-                value={allCategories.find((cat) => cat.label === formData.artType) || null}
+                onChange={(selectedOption) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    artType: selectedOption ? selectedOption.label : "",
+                  }));
+                }}
+                value={
+                  allCategories.find((cat) => cat.label === formData.artType) ||
+                  (formData.artType ? { label: formData.artType, value: formData.artType } : null)
+                }
                 isClearable
                 isSearchable
                 placeholder="Select or type art type"
@@ -1696,10 +1763,21 @@ const AddCustomRequestForm = () => {
               />
             </div>
             <div>
-              <label className="block font-medium mb-1">Select Size</label>
-              <Select
+              <label className="block font-medium mb-1">
+                Select Size <span className="text-red-500">*</span>
+              </label>
+              <CreatableSelect
                 options={sizeOptions}
-                onChange={handleSizeChange}
+                onChange={(selectedOption) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    size: selectedOption ? selectedOption.label : "",
+                  }));
+                }}
+                value={
+                  sizeOptions.find((opt) => opt.label === formData.size) ||
+                  (formData.size ? { label: formData.size, value: formData.size } : null)
+                }
                 isClearable
                 isSearchable
                 placeholder="Select or type size"
@@ -1708,7 +1786,7 @@ const AddCustomRequestForm = () => {
               />
             </div>
             <div>
-              <label className="block font-medium mb-1">Select Delivery Address</label>
+              <label className="block font-medium mb-1">Select Delivery Address <span className="text-red-500">*</span></label>
               {isFetching ? (
                 <p>Loading addresses...</p>
               ) : fetchError ? (
@@ -1737,7 +1815,7 @@ const AddCustomRequestForm = () => {
               )}
             </div>
             <div>
-              <label className="block font-medium mb-1">Color Preferences</label>
+              <label className="block font-medium mb-1">Color Preferences </label>
               <div className="flex w-full items-center border-2 border-gray-300 rounded-xl px-2">
                 <input
                   type="text"
@@ -1772,7 +1850,7 @@ const AddCustomRequestForm = () => {
               )}
             </div>
             <div className="flex items-center space-x-3">
-              <label className="font-medium">Frame Required</label>
+              <label className="font-medium">Frame Required </label>
               <input
                 type="checkbox"
                 name="isFramed"
@@ -1783,7 +1861,7 @@ const AddCustomRequestForm = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block font-medium mb-1">Minimum Budget ($)</label>
+                <label className="block font-medium mb-1">Minimum Budget ($) <span className="text-red-500">*</span></label>
                 <input
                   type="number"
                   name="minBudget"
@@ -1793,7 +1871,7 @@ const AddCustomRequestForm = () => {
                 />
               </div>
               <div>
-                <label className="block font-medium mb-1">Maximum Budget ($)</label>
+                <label className="block font-medium mb-1">Maximum Budget ($) <span className="text-red-500">*</span></label>
                 <input
                   type="number"
                   name="maxBudget"
@@ -1803,24 +1881,45 @@ const AddCustomRequestForm = () => {
                 />
               </div>
             </div>
-            <div>
-              <label className="block font-medium mb-1">Payment Term</label>
-              <select
-                id="paymentTerm"
-                name="paymentTerm"
-                value={formData.paymentTerm}
-                onChange={handleChange}
-                className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
-                required
-              >
-                <option value="">Select payment option</option>
-                <option value="Full Payment">Full Payment</option>
-                <option value="Installment">Installment</option>
-                <option value="Two Step Payment">Two Step Payment</option>
-              </select>
-            </div>
-            <div>
-              <label className="block font-medium mb-1">Expected Deadline (days)</label>
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className={formData.paymentTerm === "Installment" ? "md:w-1/2 w-full" : "w-full"}>
+                <label className="block font-medium mb-1">Payment Term <span className="text-red-500">*</span></label>
+                <select
+                  id="paymentTerm"
+                  name="paymentTerm"
+                  value={formData.paymentTerm}
+                  onChange={handleChange}
+                  className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
+                  required
+                >
+                  <option value="">Select payment option</option>
+                  <option value="Full Payment">Full Payment</option>
+                  <option value="Installment">Installment</option>
+                  <option value="Two Step Payment">Two Step Payment</option>
+                </select>
+              </div>
+
+              {/* Show only when Installment is selected */}
+              {formData.paymentTerm === "Installment" && (
+                <div className="md:w-1/2 w-full">
+                  <label className="block font-medium mb-1">Installment Duration <span className="text-red-500">*</span></label>
+<select
+  id="installmentDuration"
+  name="installmentDuration" 
+  value={formData.installmentDuration}
+  onChange={handleChange} 
+  className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
+>
+  <option value="">Select duration</option>
+  <option value="3">3 Months</option>
+  <option value="6">6 Months</option>
+  <option value="9">9 Months</option>
+  <option value="12">12 Months</option>
+</select>
+                </div>
+              )}
+            </div>            <div>
+              <label className="block font-medium mb-1">Expected Deadline (days) <span className="text-red-500">*</span></label>
               <input
                 type="number"
                 name="expectedDeadline"
@@ -1831,7 +1930,7 @@ const AddCustomRequestForm = () => {
               />
             </div>
             <div>
-              <label className="block font-medium mb-1">Reference Image</label>
+              <label className="block font-medium mb-1">Reference Image <span className="text-red-500">*</span></label>
               <input
                 type="file"
                 name="buyerImage"
@@ -1908,7 +2007,7 @@ const AddCustomRequestForm = () => {
               ></textarea>
             </div>
             <div className="form-group mt-3">
-              <label htmlFor="description">Detailed Description</label>
+              <label htmlFor="description">Detailed Description <span className="text-red-500">*</span></label>
               <ReactQuill
                 id="description"
                 value={formData.description}

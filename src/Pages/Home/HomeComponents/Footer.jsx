@@ -81,10 +81,10 @@ const Footer = () => {
             <h3 className=" text-lg text-black-400 mb-2 ">POLICIES & LEGAL</h3>
             <ul className="gap-2 flex-col flex  text-sm text-base">
               <li>
-                <Link>Privacy Policy</Link>
+                <Link to="/privacy-policy">Privacy Policy</Link>
               </li>
               <li>
-                <Link>Terms & Conditions</Link>
+                <Link to="/terms-services">Terms & Conditions</Link>
               </li>
               <li>
                 <Link>COpyright & Licensing</Link>

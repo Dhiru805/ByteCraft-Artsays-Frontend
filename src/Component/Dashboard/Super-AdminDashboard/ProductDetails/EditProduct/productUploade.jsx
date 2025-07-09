@@ -34,6 +34,7 @@ function ProductUpload() {
     finalPrice,
     handleInputChange,
     handlePricingChange,
+    handleInstallmentDurationChange,
     handleSelectChange,
     handleMultiSelectChange,
     handleOffersChange,
@@ -196,6 +197,9 @@ function ProductUpload() {
         formDataToSend.append('offers', offer.value)
       );
       formDataToSend.append('allowInstallments', pricingData.allowInstallments);
+      
+      if (pricingData.allowInstallments && pricingData.installmentDuration) {
+      formDataToSend.append('installmentDuration', pricingData.installmentDuration.value);}
       formDataToSend.append('shippingCharges', parseFloat(formData.shippingCharges));
       formDataToSend.append('estimatedDelivery', formData.estimatedDelivery.value || formData.estimatedDelivery.label);
       formDataToSend.append('packagingType', formData.packagingType.value);
@@ -410,6 +414,7 @@ function ProductUpload() {
             isSubmitting={isSubmitting}
             handlePricingChange={handlePricingChange}
             handleOffersChange={handleOffersChange}
+            handleInstallmentDurationChange={handleInstallmentDurationChange}
             offerOptions={offerOptions}
           />
         );

@@ -631,7 +631,7 @@ const MarketingEmail = () => {
             )}
           </div>
 
-          <div className="card-footer text-end">
+          <div className="card-footer d-flex justify-content-end">
             <button
               type="submit"
               className="btn btn-primary"

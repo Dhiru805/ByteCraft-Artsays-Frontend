@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
+import { LuGavel } from "react-icons/lu";
 
 const ApprovedProduct = () => {
     const [products, setProducts] = useState([]);
@@ -198,10 +199,18 @@ const ApprovedProduct = () => {
                                                     </button>
                                                 </td> */}
                                                 <td>
-                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/super-admin/artist/allartistproduct/productdetails/${product._id}`)}>
+                                                    <button
+                                                        className="btn btn-sm btn-outline-info mr-2"
+                                                        onClick={() => navigate(`/super-admin/artist/allartistproduct/productdetails/${product._id}`)}
+                                                    >
                                                         <i className="fa fa-eye"></i>
                                                     </button>
+
+                                                    <button className="btn btn-sm btn-outline-danger ml-2"title="Bid">
+                                                        <LuGavel className="text-lg" />
+                                                    </button>
                                                 </td>
+
                                             </tr>
                                         ))}
                                     </tbody>
@@ -274,7 +283,7 @@ const ApprovedProduct = () => {
                         left: 0,
                         right: 0,
                         bottom: 0,
-                            backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                        backgroundColor: 'rgba(0, 0, 0, 0.65)',
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
@@ -285,8 +294,7 @@ const ApprovedProduct = () => {
                         onClick={(e) => e.stopPropagation()}
                         style={{
                             position: 'relative',
-                            width: '500px',
-                            height: '600px',
+                            height: '50%',
                             backgroundColor: '#111',
                             borderRadius: '12px',
                             boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',

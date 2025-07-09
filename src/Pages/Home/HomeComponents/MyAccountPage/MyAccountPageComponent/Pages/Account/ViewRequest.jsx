@@ -231,7 +231,7 @@ function ViewBuyerRequest({ request, onClose }) {
                                 </div>
                                 <div className="col-md-6">
                                     <div className="form-group">
-                                        <label>Expected Deadline</label>
+                                        <label>Expected Deadline (in days)</label>
                                         <input
                                             type="text"
                                             className="form-control"

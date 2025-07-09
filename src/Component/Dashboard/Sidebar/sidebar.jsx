@@ -82,6 +82,13 @@ const Sidebar = () => {
         ]
       },
       {
+        label: "Sponsor",
+        icon: "fa fa-bullhorn",
+        path: `#`,
+        // path: `/super-admin/sponsor`,
+        subTabs: []
+      },
+      {
         label: "Product",
         icon: "fa fa-cart-plus",
         path: `/super-admin/product-table`,

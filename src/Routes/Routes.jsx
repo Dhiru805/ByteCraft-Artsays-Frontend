@@ -140,6 +140,7 @@ import BlogDetails from "../Component/Dashboard/ArtistDashbooard/Blog/ArtistBlog
 import AllProduct from "../Component/Dashboard/ArtistDashbooard/ProductDetails/Product";
 import ProductUploade from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductUpload/productUploade';
 import CustomOrder from '../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/CustomOrderAll/Customorder';
+import ProductView from '../Component/Dashboard/ArtistDashbooard/ProductDetails/Productinfo';
 import ViewCustomRequest from '../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/Artist/ViewRequest';
 import Productpurchase from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductPurchased/ProductPurchased';
 
@@ -340,6 +341,7 @@ const AppRoutes = () => {
         <Route path="product" element={<AllProduct />} />
         <Route path="productUpload" element={<ProductUploade />} />
         <Route path="custom-order" element={<CustomOrder />} />
+        <Route path="product/view-product" element={<ProductView />} />
         <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
         <Route path="product-purchase" element={<Productpurchase />} />
       </Route>
@@ -379,8 +381,15 @@ const AppRoutes = () => {
       {/*-------------------------------------------- Website Routes-------------------------------------------------- */}
       <Route path="/" element={<WebsiteWrapper />}>
         <Route index element={<WebsiteMain />} />
-        <Route path="/my-account" element={<MyAccountMainLayout />}>
-          <Route element={<AccountPage />}>
+        <Route
+          path="/my-account"
+          element={
+            <PrivateRoute allowedRoles={["Buyer"]}>
+              <MyAccountMainLayout />
+            </PrivateRoute>
+          }
+        >          
+            <Route element={<AccountPage />}>
             <Route index element={<AccountForm />} />
             <Route path="personal-info" element={<AccountForm />} />
             <Route path="my-orders" element={<MyOrders />} />

@@ -9,7 +9,8 @@ function ViewBuyerRequest() {
     const location = useLocation();
     const userType = useUserType();
     const { state } = location || {};
-    const { request } = state || {};
+    const { request: routeRequest } = state || {};
+    const request = routeRequest || JSON.parse(sessionStorage.getItem("buyerRequest"));
 
     const [productName, setProductName] = useState('');
     const [description, setDescription] = useState('');
@@ -25,17 +26,30 @@ function ViewBuyerRequest() {
 
 
     useEffect(() => {
+        const storedRequest = JSON.parse(sessionStorage.getItem("buyerRequest"));
+
         if (request) {
-            console.log("Request Data: ", request);
+            sessionStorage.setItem("buyerRequest", JSON.stringify(request));
+
             setProductName(request.ProductName || '');
             setDescription(request.Description || '');
             setBudget(request.Budget || '');
-            const formattedImagePath = request.BuyerImage
+            const formattedImagePath = request?.BuyerImage
                 ? `/api/${request.BuyerImage.replace(/\\/g, '/')}`
                 : '';
             setImage(formattedImagePath);
             setArtistId(`${request.Artist.id.name} ${request.Artist.id.lastName}`);
             setBuyerId(`${request.Buyer.id.name} ${request.Buyer.id.lastName}`);
+        } else if (storedRequest) {
+            setProductName(storedRequest.ProductName || '');
+            setDescription(storedRequest.Description || '');
+            setBudget(storedRequest.Budget || '');
+            const formattedImagePath = storedRequest?.BuyerImage
+                ? `/api/${storedRequest.BuyerImage.replace(/\\/g, '/')}`
+                : '';
+            setImage(formattedImagePath);
+            setArtistId(`${storedRequest.Artist.id.name} ${storedRequest.Artist.id.lastName}`);
+            setBuyerId(`${storedRequest.Buyer.id.name} ${storedRequest.Buyer.id.lastName}`);
         }
     }, [request]);
 
@@ -45,9 +59,9 @@ function ViewBuyerRequest() {
         setCurrentImageIndex(0);
         setShowPopup(true);
     };
-    
+
     return (
-        <div className="container-fluid">
+         (<div className="container-fluid">
             <div className="block-header">
                 <div className="row">
                     <div className="col-lg-6 col-md-6 col-sm-12">
@@ -128,7 +142,72 @@ function ViewBuyerRequest() {
                                         </div>
                                     </div>
                                 </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Address Line 1</label>
+                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.line1 || ''} readOnly />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Address Line 2</label>
+                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.line1 || ''} readOnly />
+                                            </div>
+                                        </div>
 
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Landmark</label>
+                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.landmark || ''} readOnly />
+                                            </div>
+                                        </div>
+
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>City</label>
+                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.city || ''} readOnly />
+                                            </div>
+                                        </div>
+
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>State</label>
+                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.state || ''} readOnly />
+                                            </div>
+                                        </div>
+
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Country</label>
+                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.country || ''} readOnly />
+                                            </div>
+                                        </div>
+
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Pincode</label>
+                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.pincode || ''} readOnly />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group mt-4 d-flex align-items-center gap-2">
+                                                <label className="ms-2">Frame Required</label>
+                                                <div className="mx-4">
+                                                    <Switch
+                                                        onColor="#007bff"
+                                                        offColor="#ccc"
+                                                        uncheckedIcon={false}
+                                                        checkedIcon={false}
+                                                        height={19}
+                                                        width={36}
+                                                        handleDiameter={12}
+                                                        checked={request?.IsFramed || false}
+                                                        disabled
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                
                                 <div className="flex-grow-1 mx-3">
                                     <div className="row">
                                         <div className="col-md-6">
@@ -173,6 +252,7 @@ function ViewBuyerRequest() {
                                                 />
                                             </div>
                                         </div>
+                                        {/* Payment Term and Installment Duration side-by-side */}
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label>Payment Term</label>
@@ -184,24 +264,20 @@ function ViewBuyerRequest() {
                                                 />
                                             </div>
                                         </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group mt-4 d-flex align-items-center gap-2">
-                                                <label className="ms-2">Frame Required</label>
-                                                <div className="mx-4">
-                                                    <Switch
-                                                        onColor="#007bff"
-                                                        offColor="#ccc"
-                                                        uncheckedIcon={false}
-                                                        checkedIcon={false}
-                                                        height={19}
-                                                        width={36}
-                                                        handleDiameter={12}
-                                                        checked={request?.IsFramed || false}
-                                                        disabled
+
+                                        {request?.PaymentTerm === "Installment" && (
+                                            <div className="col-md-6">
+                                                <div className="form-group">
+                                                    <label>Installment Duration (Months)</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        value={`${request?.InstallmentDuration} Months`}
+                                                        readOnly
                                                     />
                                                 </div>
                                             </div>
-                                        </div>
+                                        )}
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label>Expected Deadline</label>
@@ -215,6 +291,7 @@ function ViewBuyerRequest() {
                                         </div>
                                     </div>
                                 </div>
+
                                 <div className="col-md-12">
                                     <div className="form-group mt-3">
                                         <label>Comments With Refrence</label>
@@ -277,6 +354,56 @@ function ViewBuyerRequest() {
                                             <textarea className="form-control" value={request.rejectedcomment} readOnly />
                                         </div>
                                     )}
+                                    {(request?.BuyerNegotiatedBudgets?.length > 0 || request?.ArtistNegotiatedBudgets?.length > 0 || request?.BuyerNotes || request?.ArtistNotes) && <hr />}
+
+                                    <div className="row">
+
+                                        {request?.ArtistNegotiatedBudgets?.length > 0 && (
+                                            <div className="col-md-6">
+                                                <label className="form-label">Artist Negotiated Budget History</label>
+                                                <div className="form-group">
+                                                    {request.ArtistNegotiatedBudgets.map((budget, index) => {
+                                                        const position = ["1st", "2nd", "3rd"];
+                                                        const label = position[index] || `${index + 1}th`;
+                                                        return (
+                                                            <div key={index} className="mb-2">
+                                                                <label className="form-label">{`${label} Negotiation`}</label>
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control"
+                                                                    value={`₹${budget}`}
+                                                                    readOnly
+                                                                />
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {request?.BuyerNegotiatedBudgets?.length > 0 && (
+                                            <div className="col-md-6">
+                                                <label className="form-label">Buyer Negotiated Budget History</label>
+                                                <div className="form-group">
+                                                    {request.BuyerNegotiatedBudgets.map((budget, index) => {
+                                                        const position = ["1st", "2nd", "3rd"];
+                                                        const label = position[index] || `${index + 1}th`;
+                                                        return (
+                                                            <div key={index} className="mb-2">
+                                                                <label className="form-label">{`${label} Negotiation`}</label>
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control"
+                                                                    value={`₹${budget}`}
+                                                                    readOnly
+                                                                />
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -303,8 +430,7 @@ function ViewBuyerRequest() {
                         onClick={(e) => e.stopPropagation()}
                         style={{
                             position: 'relative',
-                            width: '500px',
-                            height: '600px',
+                            height: '50%',
                             backgroundColor: '#111',
                             borderRadius: '12px',
                             boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',
@@ -329,6 +455,7 @@ function ViewBuyerRequest() {
                 </div>
             )}
         </div>
+        )
     );
 }
 

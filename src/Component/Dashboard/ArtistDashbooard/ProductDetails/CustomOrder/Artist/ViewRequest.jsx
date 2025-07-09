@@ -24,6 +24,9 @@ function ViewBuyerRequest() {
     const [currentImages, setCurrentImages] = useState();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [showPopup, setShowPopup] = useState(false);
+    const [localRequest, setLocalRequest] = useState(request);
+    const [buyerAddress, setBuyerAddress] = useState('');
+
 
     useEffect(() => {
         const fetchArtists = async () => {
@@ -37,11 +40,14 @@ function ViewBuyerRequest() {
         fetchArtists();
 
         if (request) {
+            console.log("Incoming Request:", request);
+            setLocalRequest(request);
             setProductName(request.ProductName || '');
             setDescription(request.Description || '');
             setBudget(request.Budget || '');
             setImage(request.BuyerImage ? `${BASE_URL}/${request.BuyerImage}` : '');
             setBuyerId(`${request.Buyer.id.name} ${request.Buyer.id.lastName}`);
+            setBuyerAddress(request.Buyer.id.address || '');
         }
     }, [request]);
 
@@ -87,10 +93,10 @@ function ViewBuyerRequest() {
                                             //     style={{ height: '100%', objectFit: 'cover' }}
                                             // />
                                             <img
-                                                src={`${BASE_URL}/${request.BuyerImage?.replace(/\\/g, '/')}`}
+                                                src={`${BASE_URL}/${localRequest?.BuyerImage?.replace(/\\/g, '/')}`}
                                                 alt="Buyer"
                                                 className="img-fluid rounded shadow w-100"
-                                                onClick={() => handleImageClick(request)} //
+                                                onClick={() => handleImageClick(localRequest)}
                                                 style={{ height: '100%', objectFit: 'cover' }}
                                             />
                                         ) : (
@@ -185,13 +191,59 @@ function ViewBuyerRequest() {
                                                         readOnly
                                                     />
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="flex-grow-1 mx-3">
                                     <div className="row">
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Address Line 1</label>
+                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.line1 || ''} readOnly />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Address Line 2</label>
+                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.line1 || ''} readOnly />
+                                            </div>
+                                        </div>
+
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Landmark</label>
+                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.landmark || ''} readOnly />
+                                            </div>
+                                        </div>
+
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>City</label>
+                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.city || ''} readOnly />
+                                            </div>
+                                        </div>
+
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>State</label>
+                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.state || ''} readOnly />
+                                            </div>
+                                        </div>
+
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Country</label>
+                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.country || ''} readOnly />
+                                            </div>
+                                        </div>
+
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Pincode</label>
+                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.pincode || ''} readOnly />
+                                            </div>
+                                        </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label>Art Type</label>
@@ -218,6 +270,17 @@ function ViewBuyerRequest() {
                                             </div>
                                         </div>
                                         <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label>Payment Term</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={request?.PaymentTerm}
+                                                    readOnly
+                                                />
+                                            </div>
+                                        </div>
+                                                                                <div className="col-md-6">
                                             <div className="form-group mt-4 d-flex align-items-center gap-2">
                                                 <label className="ms-2">{request?.IsFramed ? "Frame required" : "Frame not required"}</label>
                                                 {/* <div className="mx-4">
@@ -235,20 +298,10 @@ function ViewBuyerRequest() {
                                                 </div> */}
                                             </div>
                                         </div>
+
                                         <div className="col-md-6">
                                             <div className="form-group">
-                                                <label>Payment Term</label>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    value={request?.PaymentTerm}
-                                                    readOnly
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label>Expected Deadline</label>
+                                                <label>Expected Deadline (in days)</label>
                                                 <input
                                                     type="text"
                                                     className="form-control"
@@ -283,9 +336,9 @@ function ViewBuyerRequest() {
                                         <label className="mt-3 d-block">Negotiation By Buyer</label>
                                     )}
 
-                                    {request.BuyerNegotiatedBudgets.length > 0 && (
+                                    {request?.BuyerNegotiatedBudgets?.length > 0 && (
                                         <div className="form-group mt-3">
-                                            {request.BuyerNegotiatedBudgets.map((budget, index) => {
+                                            {request?.BuyerNegotiatedBudgets?.map((budget, index) => {
                                                 const position = ["1st", "2nd"];
                                                 return (
                                                     <div key={index} className="mb-2">

@@ -184,8 +184,9 @@ const handleImageClick = (product) => {
                                                         {product.status}
                                                     </button>
                                                 </td>
+                                                {/* /artist/product/view-product */}
                                                 <td>
-                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/artist/custom-order/view-request`, {
+                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/artist/product/view-product`, {
                                                         state: { productData: product }
                                                     })}>
                                                         <i className="fa fa-eye"></i>

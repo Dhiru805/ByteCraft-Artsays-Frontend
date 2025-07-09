@@ -558,20 +558,6 @@ const NegotiateModalforBuyer = ({ request, onClose, onSubmit }) => {
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="maxBudget" className="form-label">
-                    Max Budget
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="maxBudget"
-                    name="maxBudget"
-                    value={maxBudget}
-                    readOnly
-                  />
-                </div>
-
-                <div className="mb-3">
                   <label htmlFor="minBudget" className="form-label">
                     Min Budget
                   </label>
@@ -581,6 +567,20 @@ const NegotiateModalforBuyer = ({ request, onClose, onSubmit }) => {
                     id="minBudget"
                     name="minBudget"
                     value={minBudget}
+                    readOnly
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="maxBudget" className="form-label">
+                    Max Budget
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="maxBudget"
+                    name="maxBudget"
+                    value={maxBudget}
                     readOnly
                   />
                 </div>

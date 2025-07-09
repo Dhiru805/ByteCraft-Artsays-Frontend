@@ -104,7 +104,8 @@ export default function useProductForm() {
     marketPrice: '',
     discount: '',
     offers: [],
-    allowInstallments: false
+    allowInstallments: false,
+    installmentDuration: null
   });
 
   const [userId, setUserId] = useState('');
@@ -385,6 +386,13 @@ const fetchProfile = async () => {
     }));
   };
 
+  const handleInstallmentDurationChange = (selectedOption) => {
+    setPricingData(prev => ({
+      ...prev,
+      installmentDuration: selectedOption
+    }));
+  };
+
   const handlePricingChange = (e) => {
     const { name, value, type, checked } = e.target;
     setPricingData(prev => ({
@@ -463,6 +471,7 @@ const fetchProfile = async () => {
     packagingOptions,
     handleInputChange,
     handlePricingChange,
+    handleInstallmentDurationChange,
     handleSelectChange,
     handleMultiSelectChange,
     handleOffersChange,

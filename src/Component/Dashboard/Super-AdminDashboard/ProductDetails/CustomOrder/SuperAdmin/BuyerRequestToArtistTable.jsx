@@ -44,34 +44,34 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
         setIsDeleteDialogOpen(true);
     };
 
-    const handleReject = (productId) => {
-        confirm(() => updateProductStatus(productId, 'Rejected'), "Are you sure you want to reject this product?");
-    };
+    // const handleReject = (productId) => {
+    //     confirm(() => updateProductStatus(productId, 'Rejected'), "Are you sure you want to reject this product?");
+    // };
 
-    const updateProductStatus = async (productId, status) => {
-        try {
-            await putAPI(
-                `/api/updateproductstatus/${productId}`,
-                { status: status },
-                {},
-                true
-            );
+    // const updateProductStatus = async (productId, status) => {
+    //     try {
+    //         await putAPI(
+    //             `/api/updateproductstatus/${productId}`,
+    //             { status: status },
+    //             {},
+    //             true
+    //         );
 
-            setProducts((prevProducts) =>
-                prevProducts.map((product) =>
-                    product._id === productId ? { ...product, status: status } : product
-                )
-            );
+    //         setProducts((prevProducts) =>
+    //             prevProducts.map((product) =>
+    //                 product._id === productId ? { ...product, status: status } : product
+    //             )
+    //         );
 
-            if (status === 'Approved') {
-                toast.success('Product Request is Approved');
-            } else if (status === 'Rejected') {
-                toast.error('Product Request is Rejected');
-            }
-        } catch (error) {
-            console.error("Error updating product status:", error);
-        }
-    };
+    //         if (status === 'Approved') {
+    //             toast.success('Product Request is Approved');
+    //         } else if (status === 'Rejected') {
+    //             toast.error('Product Request is Rejected');
+    //         }
+    //     } catch (error) {
+    //         console.error("Error updating product status:", error);
+    //     }
+    // };
 
     const filteredRequests = buyerRequests.filter((request) => {
         const buyerName = request.Buyer?.id?.name && request.Buyer?.id?.lastName
@@ -116,11 +116,6 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
         setCurrentImageIndex(0);
         setShowPopup(true);
     };
-
-
-
-
-
 
     return (
         <>
@@ -193,9 +188,8 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                 <th>Buyer Name</th>
                                                 <th>Artist Name</th>
                                                 <th>Reference Image</th>
-                                                <th>Max Budget </th>
-                                                <th>Min Budget </th>
-                                                <th>Negotiated Budget</th>
+                                                <th>Buyer Negotiated Budget</th>
+                                                <th>Artist Negotiated Budget</th>
                                                 <th>Request Date</th>
                                                 <th>Request Status</th>
                                                 <th>Buyer Request Status</th>
@@ -295,13 +289,25 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                         /> */}
                                                     </td>
                                                     <td>
-                                                        {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.MaxBudget).replace(/\.00$/, '')}
+                                                        {request.BuyerNegotiatedBudgets?.length > 0
+                                                            ? new Intl.NumberFormat('en-IN', {
+                                                                style: 'currency',
+                                                                currency: 'INR'
+                                                            }).format(
+                                                                request.BuyerNegotiatedBudgets[request.BuyerNegotiatedBudgets.length - 1]
+                                                            ).replace(/\.00$/, '')
+                                                            : '—'}
                                                     </td>
+
                                                     <td>
-                                                        {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.MinBudget).replace(/\.00$/, '')}
-                                                    </td>
-                                                    <td>
-                                                        {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.BuyerNegotiatedBudgets).replace(/\.00$/, '')}
+                                                        {request.ArtistNegotiatedBudgets?.length > 0
+                                                            ? new Intl.NumberFormat('en-IN', {
+                                                                style: 'currency',
+                                                                currency: 'INR'
+                                                            }).format(
+                                                                request.ArtistNegotiatedBudgets[request.ArtistNegotiatedBudgets.length - 1]
+                                                            ).replace(/\.00$/, '')
+                                                            : '—'}
                                                     </td>
                                                     <td>{new Date(request.createdAt).toLocaleDateString()}</td>
                                                     <td>
@@ -340,7 +346,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                         >
                                                             <i className="fa fa-pencil"></i>
                                                         </button> */}
-                                                        <button
+                                                        {/* <button
                                                             className="btn btn-sm btn-outline-success mr-2"
                                                             title="Approved"
                                                             disabled={loadingIds.includes(request._id)}
@@ -368,7 +374,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                             ) : (
                                                                 <i className="fa fa-ban"></i>
                                                             )}
-                                                        </button>
+                                                        </button> */}
                                                         <button
                                                             type="button"
                                                             className="btn btn-outline-danger btn-sm mr-2"
@@ -476,8 +482,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                         onClick={(e) => e.stopPropagation()}
                         style={{
                             position: 'relative',
-                            width: '500px',
-                            height: '600px',
+                            height: '50%',
                             backgroundColor: '#111',
                             borderRadius: '12px',
                             boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',
