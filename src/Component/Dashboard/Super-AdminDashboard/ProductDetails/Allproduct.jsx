@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../urlconfig';
-import { LuGavel } from "react-icons/lu";
 
 const ApprovedProduct = () => {
     const [products, setProducts] = useState([]);
@@ -187,12 +186,7 @@ const ApprovedProduct = () => {
                                                         }}
                                                     >
                                                         <i className="fas fa-ticket-alt"></i>
-                                                    </button>
-                                                    
-                                                    <button className="btn btn-sm btn-outline-danger ml-2"title="Bid">
-                                                        <LuGavel className="text-lg" />
-                                                    </button>
-                                                
+                                                    </button>                                                
                                                 </td>
                                             </tr>
                                         ))}
