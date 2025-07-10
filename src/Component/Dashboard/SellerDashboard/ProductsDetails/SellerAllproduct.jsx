@@ -176,15 +176,24 @@ return (
 
                                               <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(product.sellingPrice)).replace(/\.00$/, '')}</td>
                                               <td>{new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
-                                              <td>
-                                                  <button className={`btn btn-sm ${product.status === 'Pending' ? 'btn-warning' : product.status === 'Approved' ? 'btn-success' : 'btn-danger'}`}>
-                                                      {product.status}
-                                                  </button>
-                                              </td>
+                                                <td>
+                                                    <button className={`btn btn-sm ${product.status === 'Pending' ? 'btn-outline-warning' : product.status === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
+                                                        {product.status}
+                                                    </button>
+                                                </td>
                                               <td>
                                                   <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/${userType}/Dashboard/allproduct/productinfo/${product._id}`)}>
                                                       <i className="fa fa-eye"></i>
                                                   </button>
+                                                    <button
+                                                        className="btn btn-sm btn-outline-danger"
+                                                        title="Bidding Pass"
+                                                        onClick={() => {
+                                                        }}
+                                                    >
+                                                        <i className="fas fa-ticket-alt"></i>
+                                                    </button>
+                                              
                                               </td>
                                           </tr>
                                       ))}

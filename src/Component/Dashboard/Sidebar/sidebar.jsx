@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Scroll } from "lucide-react";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -82,13 +83,6 @@ const Sidebar = () => {
         ]
       },
       {
-        label: "Sponsor",
-        icon: "fa fa-bullhorn",
-        path: `#`,
-        // path: `/super-admin/sponsor`,
-        subTabs: []
-      },
-      {
         label: "Product",
         icon: "fa fa-cart-plus",
         path: `/super-admin/product-table`,
@@ -113,9 +107,25 @@ const Sidebar = () => {
         subTabs: [
           { label: "All Products", path: `/super-admin/bidding/allproduct` },
           { label: "Bidded Product", path: `/super-admin/bidding/bidded-product` },
-          { label: "Transaction", path: `/super-admin/bidding/transaction` }
+          { label: "Bidding Pass", path: `#` }
         ]
       },
+      {
+        label: "Certification Services",
+         icon: "fa fa-certificate",
+        path: `#`,
+        // path: `/super-admin/sponsor`,
+        subTabs: []
+      },
+
+      {
+        label: "Sponsor",
+        icon: "fa fa-bullhorn",
+        path: `#`,
+        // path: `/super-admin/sponsor`,
+        subTabs: []
+      },
+
 
       // {
       //   label: "Transaction",
@@ -183,6 +193,31 @@ const Sidebar = () => {
         subTabs: []
 
       },
+      {
+        label: "Advertise",
+        icon: "fa fa-bullhorn",
+        path: `#`,
+        // path: `/super-admin/sponsor`,
+        subTabs: []
+      },
+      {  
+      label: "Bidding",
+        icon: "fa fa-gavel",
+        path: `#Bidding`,
+        subTabs: [
+          { label: "All Products", path: `/super-admin/bidding/allproduct` },
+          { label: "Bidded Product", path: `/super-admin/bidding/bidded-product` },
+          { label: "Bidding Pass", path: `#` }
+        ]
+      },
+            {
+        label: "Certification Services",
+         icon: "fa fa-certificate",
+        path: `#`,
+        // path: `/super-admin/sponsor`,
+        subTabs: []
+      },
+
     ],
     // ----------------------------------------------Buyer-----------------------------------------------------//
     "Buyer": [
@@ -212,8 +247,35 @@ const Sidebar = () => {
         icon: "fa fa-cart-plus",
         path: "/seller/purchased-product",
         subTabs: []
+      },    
+      {  
+        label: "Bidding",
+        icon: "fa fa-gavel",
+        path: `#Bidding`,
+        subTabs: [
+          { label: "All Products", path: `/super-admin/bidding/allproduct` },
+          { label: "Bidded Product", path: `/super-admin/bidding/bidded-product` },
+          { label: "Bidding Pass", path: `#` }
+        ]
       },
+          {
+        label: "Advertise",
+        icon: "fa fa-bullhorn",
+        path: `#`,
+        // path: `/super-admin/sponsor`,
+        subTabs: []
+      },
+      {
+        label: "Certification Services",
+        icon: "fa fa-certificate",
+        path: `#`,
+        // path: `/super-admin/sponsor`,
+        subTabs: []
+      },
+
+
     ],
+
   };
 
   useEffect(() => {

@@ -180,6 +180,15 @@ const ApprovedProduct = () => {
                                                     <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`super-admin/product/product-info`)}>
                                                         <i className="fa fa-eye"></i>
                                                     </button>
+                                                    <button
+                                                        className="btn btn-sm btn-outline-danger"
+                                                        title="Bidding Pass"
+                                                        onClick={() => {
+                                                        }}
+                                                    >
+                                                        <i className="fas fa-ticket-alt"></i>
+                                                    </button>
+                                                    
                                                     <button className="btn btn-sm btn-outline-danger ml-2"title="Bid">
                                                         <LuGavel className="text-lg" />
                                                     </button>
