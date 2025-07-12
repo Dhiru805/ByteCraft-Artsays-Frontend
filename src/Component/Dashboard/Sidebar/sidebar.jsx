@@ -107,22 +107,21 @@ const Sidebar = () => {
         subTabs: [
           { label: "All Products", path: `/super-admin/bidding/allproduct` },
           { label: "Bidded Product", path: `/super-admin/bidding/bidded-product` },
-          { label: "Bidding Pass", path: `#` }
+          { label: "Bidding Pass", path: `/super-admin/bidding/pass-table` }
         ]
       },
       {
         label: "Certification Services",
          icon: "fa fa-certificate",
         path: `#`,
-        // path: `/super-admin/sponsor`,
+        path: `/super-admin/certification`,
         subTabs: []
       },
 
       {
         label: "Sponsor",
         icon: "fa fa-bullhorn",
-        path: `#`,
-        // path: `/super-admin/sponsor`,
+        path: `/super-admin/advertise`,
         subTabs: []
       },
 
@@ -196,8 +195,7 @@ const Sidebar = () => {
       {
         label: "Advertise",
         icon: "fa fa-bullhorn",
-        path: `#`,
-        // path: `/super-admin/sponsor`,
+        path: `/artist/advertise`,
         subTabs: []
       },
       {  
@@ -205,16 +203,15 @@ const Sidebar = () => {
         icon: "fa fa-gavel",
         path: `#Bidding`,
         subTabs: [
-          { label: "All Products", path: `/super-admin/bidding/allproduct` },
-          { label: "Bidded Product", path: `/super-admin/bidding/bidded-product` },
-          { label: "Bidding Pass", path: `#` }
+          { label: "All Products", path: `/artist/bidding-products-table`},
+          { label: "Bidded Product", path: `/artist/bidded-products-table` },
+          { label: "Bidding Pass", path: `/artist/bidding-pass-table` }
         ]
       },
             {
         label: "Certification Services",
          icon: "fa fa-certificate",
-        path: `#`,
-        // path: `/super-admin/sponsor`,
+        path: `/artist/certification`,
         subTabs: []
       },
 
@@ -253,23 +250,23 @@ const Sidebar = () => {
         icon: "fa fa-gavel",
         path: `#Bidding`,
         subTabs: [
-          { label: "All Products", path: `/super-admin/bidding/allproduct` },
-          { label: "Bidded Product", path: `/super-admin/bidding/bidded-product` },
-          { label: "Bidding Pass", path: `#` }
+          { label: "All Products", path: `/seller/bidding-products-table`},
+          { label: "Bidded Product", path: `/seller/bidded-products-table` },
+          { label: "Bidding Pass", path: `/seller/bidding-pass-table` }
         ]
       },
           {
         label: "Advertise",
         icon: "fa fa-bullhorn",
         path: `#`,
-        // path: `/super-admin/sponsor`,
+        path: `/seller/advertise`,
         subTabs: []
       },
       {
         label: "Certification Services",
         icon: "fa fa-certificate",
         path: `#`,
-        // path: `/super-admin/sponsor`,
+        path: `/seller/certification`,
         subTabs: []
       },
 

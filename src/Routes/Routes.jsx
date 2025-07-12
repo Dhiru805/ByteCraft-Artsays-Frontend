@@ -65,6 +65,9 @@ import SuperAdminViewBlog from "../Component/Dashboard/Super-AdminDashboard/Blog
 import SuperAdminUpdateBlog from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/UpdateBlogList";
 import SuperAdminProductInfo from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Productinfo";
 import SuperAdminMarketing from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailMarketing/Marketing/MarketingEmail";
+import SuperAdminBiddingPass from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/BiddingPass";
+import SuperAdminArtistAdvertise from "../Component/Dashboard/Super-AdminDashboard/Advertise/Advertise";
+import SuperAdminCertification from "../Component/Dashboard/Super-AdminDashboard/Certification/Certification";
 //-----------------------------Admin--------------------------//
 import Admin from "../Component/Dashboard/Super-AdminDashboard/Admin/Admin";
 import AdminProfile from "../Component/Dashboard/Super-AdminDashboard/Admin/Profile/UserProf";
@@ -89,6 +92,7 @@ import ArtistSoldProductTable from "../Component/Dashboard/Super-AdminDashboard/
 import ArtistTransaction from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Transaction/ArtistTransaction";
 import ArtistPackagingMaterial from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/PackagingMaterial/ProductPurchasedArtist";
 import ArtistProductsDetails from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Product/ArtistProductDetails";
+import ArtistProductBidding from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Product/BiddingPass";
 
 import BuyerManagement from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/BuyerManageTable";
 import BuyerProductPurchase from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductPurchased/ProductPurchased";
@@ -109,6 +113,7 @@ import SellerTransaction from "../Component/Dashboard/Super-AdminDashboard/Selle
 import SellerPackaging from "../Component/Dashboard/Super-AdminDashboard/Seller/PackagingMaterial/ProductPurchasedSeller";
 import SellerManageProductView from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerUserProdileView/UserProf";
 import SellerManageProductEdit from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerUserProfile/UserProf";
+import SellerProductBidding from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerProducts/BiddingPass";
 
 //-----------------------------Product--------------------------//
 import ProductTableView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Product";
@@ -122,6 +127,7 @@ import ViewCustomRequestsuperadmin from "../Component/Dashboard/Super-AdminDashb
 import AllBiddingProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/AllProduct/BiddingProduct";
 import BiddedProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddedproduct/Biddedproduct";
 import BiddedProductTransaction from "../Component/Dashboard/Super-AdminDashboard/Bidding/Transaction/BiddedproductTransaction";
+import BiddingPassTable from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddingpass/Biddingpass";
 
 //-----------------------------Settings--------------------------//
 import EmailSettings from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailSetting/EmailSetting";
@@ -130,6 +136,12 @@ import ProductCategory from "../Component/Dashboard/Super-AdminDashboard/Setting
 
 //----------------------------------------Artist Components----------------------------------//
 import ArtistDashboard from "../Component/Dashboard/ArtistDashbooard/Dashboard/MainContent";
+import ArtistAdvertise from "../Component/Dashboard/ArtistDashbooard/Advertise/Advertise";
+import ArtistBiddingPass from "../Component/Dashboard/ArtistDashbooard/ProductDetails/BiddingPass";
+import ArtistBidingAllProducts from "../Component/Dashboard/ArtistDashbooard/Bidding/AllProduct/BiddingProduct";
+import ArtistBiddedProducts from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddedproduct/Biddedproduct";
+import ArtistBidPassTable from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddingpass/Biddingpass";
+import ArtistCertification from "../Component/Dashboard/ArtistDashbooard/Certification/Certification";
 //-----------------------------Blogs--------------------------//
 import BlogList from "../Component/Dashboard/ArtistDashbooard/Blog/BlogList";
 import BlogPost from "../Component/Dashboard/ArtistDashbooard/Blog/BlogPost";
@@ -143,7 +155,6 @@ import CustomOrder from '../Component/Dashboard/ArtistDashbooard/ProductDetails/
 import ProductView from '../Component/Dashboard/ArtistDashbooard/ProductDetails/Productinfo';
 import ViewCustomRequest from '../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/Artist/ViewRequest';
 import Productpurchase from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductPurchased/ProductPurchased';
-
 //----------------------------------------Buyer Components-----------------------------------//
 import BuyerDashboard from "../Component/Dashboard/BuyerDashboard/Dashboard/MainContent";
 
@@ -152,6 +163,12 @@ import SellerDashboard from "../Component/Dashboard/SellerDashboard/Dashboard/Ma
 import ViewProductDetails from "../Component/Dashboard/SellerDashboard/ProductsDetails/Product";
 import SellerProductUpload from "../Component/Dashboard/SellerDashboard/ProductsDetails/ProductUpload/productUploade";
 import SellerPurchasedProducts from "../Component/Dashboard/SellerDashboard/ProductsDetails/ProductPurchased/ProductPurchased";
+import SellerAdvertise from "../Component/Dashboard/SellerDashboard/Advertise/Advertise";
+import SellerBiddingPass from "../Component/Dashboard/SellerDashboard/ProductsDetails/BiddingPass";
+import SellerBidingAllProducts from "../Component/Dashboard/SellerDashboard/Bidding/AllProduct/BiddingProduct";
+import SellerBiddedProducts from "../Component/Dashboard/SellerDashboard/Bidding/Biddedproduct/Biddedproduct";
+import SellerBidPassTable from "../Component/Dashboard/SellerDashboard/Bidding/Biddingpass/Biddingpass";
+import SellerCertification from "../Component/Dashboard/SellerDashboard/Certification/Certification";
 
 const PrivateRoute = ({ allowedRoles, children }) => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
@@ -279,6 +296,7 @@ const AppRoutes = () => {
         <Route path="artist/management/artisteditreuqest/" element={<ProductEditRequest />} />
         <Route path="artist/allartistproduct/productdetails/:userId" element={<ArtistProductsDetails />} />
         <Route path="artist/allartistproduct/productdetails/:userId" element={<ArtistProductsDetails />} />
+        <Route path="artist/bidding-pass" element={<ArtistProductBidding />} />
 
         {/* Buyer Management */}
         <Route path="buyer/management" element={<BuyerManagement />} />
@@ -300,9 +318,11 @@ const AppRoutes = () => {
         <Route path="seller/packagingmaterial" element={<SellerPackaging />} />
         <Route path="seller/management/productdetails-view" element={<SellerManageProductView />} />
         <Route path="seller/management/productdetails-edit" element={<SellerManageProductEdit />} />
+        <Route path="seller/bidding-pass" element={<SellerProductBidding />} />
 
         {/* Product Management */}
         <Route path="product-table" element={<ProductTableView />} />
+        <Route path="product-table/bidding-pass" element={<SuperAdminBiddingPass />} />
         <Route path="customordertable" element={<CustomOrderView />} />
         <Route path="customordertable/view-request" element={<ViewCustomRequestsuperadmin />} />
         <Route path="purchasetable" element={<PurchaseTable />} />
@@ -312,12 +332,19 @@ const AppRoutes = () => {
         <Route path="bidding/allproduct" element={<AllBiddingProduct />} />
         <Route path="bidding/bidded-product" element={<BiddedProduct />} />
         <Route path="bidding/transaction" element={<BiddedProductTransaction />} />
+        <Route path="bidding/pass-table" element={<BiddingPassTable />} />
 
         {/* Settings */}
         <Route path="settings/email-setting" element={<EmailSettings />} />
         <Route path="settings/blog-category" element={<BlogCategory />} />
         <Route path="settings/product-category" element={<ProductCategory />} />
         <Route path="settings/marketing" element={<SuperAdminMarketing />} />
+        {/* Advertise Routes */}
+        <Route path="advertise" element={<SuperAdminArtistAdvertise />} />        
+        {/* Certification Routes */}
+        <Route path="certification" element={<SuperAdminCertification />} />
+
+
       </Route>
 
       {/*-------------------------------------------- Artist Routes-------------------------------------------------- */}
@@ -339,11 +366,24 @@ const AppRoutes = () => {
         <Route path="bloglist/blog-details/:slug" element={<BlogDetails />} />
         {/* Product Routes */}
         <Route path="product" element={<AllProduct />} />
+        <Route path="product/bidding-pass" element={<ArtistBiddingPass />} />
         <Route path="productUpload" element={<ProductUploade />} />
         <Route path="custom-order" element={<CustomOrder />} />
         <Route path="product/view-product" element={<ProductView />} />
         <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
         <Route path="product-purchase" element={<Productpurchase />} />
+        
+        {/* Advertise Routes */}
+        <Route path="advertise" element={<ArtistAdvertise />} />
+        
+        {/* Bidding Routes */}
+        <Route path="bidding-products-table" element={<ArtistBidingAllProducts />} />
+        <Route path="bidded-products-table" element={<ArtistBiddedProducts />} />
+        <Route path="bidding-pass-table" element={<ArtistBidPassTable />} />
+        
+        {/* Certification Routes */}
+        <Route path="certification" element={<ArtistCertification />} />
+
       </Route>
 
       {/* --------------------------------------------Buyer Routes---------------------------------------------------- */}
@@ -374,8 +414,18 @@ const AppRoutes = () => {
         <Route path="profile" element={<UserProfile />} />
         {/* Product Routes */}
         <Route path="product-details" element={<ViewProductDetails />} />
+        <Route path="product-details/bidding-pass" element={<SellerBiddingPass />} />
         <Route path="SellerProductUpload" element={<SellerProductUpload />} />
         <Route path="purchased-product" element={<SellerPurchasedProducts />} />
+        
+        {/* Advertise Routes */}
+        <Route path="advertise" element={<SellerAdvertise/>} />
+        {/* Bidding Routes */}
+        <Route path="bidding-products-table" element={<SellerBidingAllProducts />} />
+        <Route path="bidded-products-table" element={<SellerBiddedProducts />} />
+        <Route path="bidding-pass-table" element={<SellerBidPassTable />} />
+        {/* Certification Routes */}
+        <Route path="certification" element={<SellerCertification />} />
       </Route>
 
       {/*-------------------------------------------- Website Routes-------------------------------------------------- */}

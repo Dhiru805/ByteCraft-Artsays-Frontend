@@ -4,6 +4,7 @@ import getAPI from '../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../urlconfig';
 import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
+import ConfirmationDialog from '../../ConfirmationDialog';
 
 
 const ApprovedProduct = () => {
@@ -11,6 +12,8 @@ const ApprovedProduct = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [selectedProductToDelete, setSelectedProductToDelete] = useState(null);
 
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE
     const navigate = useNavigate();
@@ -87,9 +90,20 @@ const ApprovedProduct = () => {
         setCurrentImageIndex((prevIndex) => Math.min(prevIndex + 1, currentImages.length - 1));
     };
 
+    const handleDeleteCancel = () => {
+        setIsDeleteDialogOpen(false);
+        setSelectedProductToDelete(null);
+    };
 
+    const handleDeleteConfirmed = (id) => {
+        setProducts((prevProducts) => prevProducts.filter((product) => product._id !== id));
+        setIsDeleteDialogOpen(false);
+    };
 
-
+    const openDeleteDialog = (product) => {
+        setSelectedProductToDelete(product);
+        setIsDeleteDialogOpen(true);
+    };
 
     return (
         <>
@@ -195,10 +209,16 @@ const ApprovedProduct = () => {
                                                     <button
                                                         className="btn btn-sm btn-outline-danger"
                                                         title="Bidding Pass"
-                                                        onClick={() => {
-                                                        }}
-                                                    >
+                                                        onClick={() => navigate('/artist/product/bidding-pass')}>
                                                         <i className="fas fa-ticket-alt"></i>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline-danger btn-sm ml-2"
+                                                        title="Delete"
+                                                        onClick={() => openDeleteDialog(product)}
+                                                    >
+                                                        <i className="fa fa-trash-o"></i>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -281,8 +301,7 @@ const ApprovedProduct = () => {
                         onClick={(e) => e.stopPropagation()}
                         style={{
                             position: 'relative',
-                            width: '500px',
-                            height: '600px',
+                            height: '50%',
                             backgroundColor: '#111',
                             borderRadius: '12px',
                             boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',
@@ -343,8 +362,18 @@ const ApprovedProduct = () => {
                         >
                             &#10095;
                         </button>
+
                     </div>
+
                 </div>
+            )}
+            {isDeleteDialogOpen && (
+                <ConfirmationDialog
+                    onClose={handleDeleteCancel}
+                    deleteType="productRequest"
+                    id={selectedProductToDelete._id}
+                    onDeleted={handleDeleteConfirmed}
+                />
             )}
 
         </>

@@ -151,7 +151,7 @@ function ViewBuyerRequest() {
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label>Address Line 2</label>
-                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.line1 || ''} readOnly />
+                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.line2 || ''} readOnly />
                                             </div>
                                         </div>
 

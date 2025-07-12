@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../urlconfig';
+import ConfirmationDialog from '../../ConfirmationDialog';
 
 const ApprovedProduct = () => {
     const [products, setProducts] = useState([]);
@@ -13,6 +14,8 @@ const ApprovedProduct = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [currentImages, setCurrentImages] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [selectedProductToDelete, setSelectedProductToDelete] = useState(null);
 
 
     const navigate = useNavigate();
@@ -87,6 +90,20 @@ const ApprovedProduct = () => {
         setCurrentImageIndex((prevIndex) => Math.min(prevIndex + 1, currentImages.length - 1));
     };
 
+    const handleDeleteCancel = () => {
+        setIsDeleteDialogOpen(false);
+        setSelectedProductToDelete(null);
+    };
+
+    const handleDeleteConfirmed = (id) => {
+        setProducts((prevProducts) => prevProducts.filter((product) => product._id !== id));
+        setIsDeleteDialogOpen(false);
+    };
+
+    const openDeleteDialog = (product) => {
+        setSelectedProductToDelete(product);
+        setIsDeleteDialogOpen(true);
+    };
 
     return (
         <>
@@ -176,17 +193,25 @@ const ApprovedProduct = () => {
                                                   </button>
                                               </td> */}
                                                 <td>
-                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`super-admin/product/product-info`)}>
+                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/super-admin/product/product-info`)}>
                                                         <i className="fa fa-eye"></i>
                                                     </button>
                                                     <button
                                                         className="btn btn-sm btn-outline-danger"
                                                         title="Bidding Pass"
-                                                        onClick={() => {
-                                                        }}
+                                                        onClick={() => navigate(`/super-admin/product-table/bidding-pass`)}
                                                     >
                                                         <i className="fas fa-ticket-alt"></i>
-                                                    </button>                                                
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline-danger btn-sm ml-2"
+                                                        title="Delete"
+                                                        onClick={() => openDeleteDialog(product)}
+                                                    >
+                                                        <i className="fa fa-trash-o"></i>
+                                                    </button>
+
                                                 </td>
                                             </tr>
                                         ))}
@@ -257,7 +282,7 @@ const ApprovedProduct = () => {
                         left: 0,
                         right: 0,
                         bottom: 0,
-                            backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                        backgroundColor: 'rgba(0, 0, 0, 0.65)',
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
@@ -331,6 +356,14 @@ const ApprovedProduct = () => {
                         </button>
                     </div>
                 </div>
+            )}
+            {isDeleteDialogOpen && (
+                <ConfirmationDialog
+                    onClose={handleDeleteCancel}
+                    deleteType="productRequest"
+                    id={selectedProductToDelete._id}
+                    onDeleted={handleDeleteConfirmed}
+                />
             )}
 
         </>

@@ -3,13 +3,15 @@ import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
-import { LuGavel } from "react-icons/lu";
+import ConfirmationDialog from '../../../ConfirmationDialog';
 
 const ApprovedProduct = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [selectedProductToDelete, setSelectedProductToDelete] = useState(null);
 
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
@@ -89,6 +91,21 @@ const ApprovedProduct = () => {
 
     const goToNextImage = () => {
         setCurrentImageIndex((prevIndex) => Math.min(prevIndex + 1, currentImages.length - 1));
+    };
+
+        const handleDeleteCancel = () => {
+        setIsDeleteDialogOpen(false);
+        setSelectedProductToDelete(null);
+    };
+
+    const handleDeleteConfirmed = (id) => {
+        setProducts((prevProducts) => prevProducts.filter((product) => product._id !== id));
+        setIsDeleteDialogOpen(false);
+    };
+
+    const openDeleteDialog = (product) => {
+        setSelectedProductToDelete(product);
+        setIsDeleteDialogOpen(true);
     };
 
     return (
@@ -206,8 +223,20 @@ const ApprovedProduct = () => {
                                                         <i className="fa fa-eye"></i>
                                                     </button>
 
-                                                    <button className="btn btn-sm btn-outline-danger ml-2"title="Bid">
-                                                        <LuGavel className="text-lg" />
+                                                    <button
+                                                        className="btn btn-sm btn-outline-danger"
+                                                        title="Bidding Pass"
+                                                        onClick={() => navigate(`/super-admin/artist/bidding-pass`)}
+                                                    >
+                                                        <i className="fas fa-ticket-alt"></i>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline-danger btn-sm ml-2"
+                                                        title="Delete"
+                                                        onClick={() => openDeleteDialog(product)}
+                                                    >
+                                                        <i className="fa fa-trash-o"></i>
                                                     </button>
                                                 </td>
 
@@ -358,6 +387,15 @@ const ApprovedProduct = () => {
                     </div>
                 </div>
             )}
+                {isDeleteDialogOpen && (
+                <ConfirmationDialog
+                    onClose={handleDeleteCancel}
+                    deleteType="productRequest"
+                    id={selectedProductToDelete._id}
+                    onDeleted={handleDeleteConfirmed}
+                />
+            )}
+
         </div>
     );
 }

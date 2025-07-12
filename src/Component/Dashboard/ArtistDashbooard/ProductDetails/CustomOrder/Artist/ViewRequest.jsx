@@ -124,8 +124,7 @@ function ViewBuyerRequest() {
                                                         onClick={(e) => e.stopPropagation()}
                                                         style={{
                                                             position: 'relative',
-                                                            width: '500px',
-                                                            height: '600px',
+                                                            height: '50%',
                                                             backgroundColor: '#111',
                                                             borderRadius: '12px',
                                                             boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',
@@ -206,7 +205,7 @@ function ViewBuyerRequest() {
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label>Address Line 2</label>
-                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.line1 || ''} readOnly />
+                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.line2 || ''} readOnly />
                                             </div>
                                         </div>
 
