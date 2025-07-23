@@ -1,0 +1,153 @@
+.live-details-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.live-details-container h1 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-group input[type="text"],
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #9147ff;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.thumbnail-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.thumbnail-upload {
+  flex: 0 0 200px;
+}
+
+.thumbnail-label {
+  display: block;
+  cursor: pointer;
+  border: 2px dashed #ddd;
+  border-radius: 6px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.thumbnail-label:hover {
+  border-color: #9147ff;
+  background-color: #f9f5ff;
+}
+
+.thumbnail-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #9147ff;
+}
+
+.thumbnail-placeholder svg {
+  margin-bottom: 10px;
+}
+
+.thumbnail-preview {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.thumbnail-instructions {
+  flex: 1;
+  min-width: 250px;
+}
+
+.thumbnail-instructions h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.thumbnail-instructions p {
+  margin: 5px 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.next-button {
+  background-color: #9147ff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.next-button:hover {
+  background-color: #772ce8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .thumbnail-section {
+    flex-direction: column;
+  }
+  
+  .thumbnail-upload {
+    flex: 0 0 auto;
+    margin-bottom: 15px;
+  }
+  
+  .live-details-container {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .live-details-container h1 {
+    font-size: 1.5rem;
+  }
+  
+  .form-group input[type="text"],
+  .form-group textarea,
+  .form-group select {
+    padding: 10px 12px;
+  }
+}
