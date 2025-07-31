@@ -3,14 +3,38 @@ import getAPI from '../../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import ConfirmationDialog from '../../../../ConfirmationDialog';
 import useUserType from '../../../../urlconfig';
+import { useLocation } from 'react-router-dom';
 
-const Billings = ({ userId, profileData, previewImage }) => {
-  const userType = useUserType(); 
+const Blogs = ({ userId: propUserId, profileData, previewImage }) => {
+  const userType = useUserType();
   const [blogs, setBlogs] = useState([]);
   const navigate = useNavigate();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedBlogToDelete, setSelectedBlogToDelete] = useState(null);
-  const [hoveredBlogId, setHoveredBlogId] = useState(null); 
+  const [hoveredBlogId, setHoveredBlogId] = useState(null);
+  const location = useLocation();
+
+  const userId = propUserId || (() => {
+    try {
+      const storedArtist = JSON.parse(localStorage.getItem("selectedArtist"));
+      return storedArtist?._id || localStorage.getItem("selectedArtistId");
+    } catch (e) {
+      return localStorage.getItem("selectedArtistId");
+    }
+  })();
+
+  useEffect(() => {
+    const storedId = localStorage.getItem("selectedArtistId");
+
+    if (!userId && !storedId) {
+      navigate("/super-admin/artist/management");
+    }
+
+    if (!userId && storedId) {
+
+      window.location.reload();
+    }
+  }, [userId, navigate]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -24,15 +48,15 @@ const Billings = ({ userId, profileData, previewImage }) => {
     const month = date.toLocaleString('default', { month: 'long' });
     const year = date.getFullYear();
     const ordinalDay = `${day}${getOrdinalSuffix(day)}`;
-    
-    
+
+
     return `${month} ${ordinalDay}, ${year}`;
   };
-  
-  
-  
-  
-  
+
+
+
+
+
   const fetchBlog = async () => {
     try {
       const result = await getAPI(
@@ -48,14 +72,14 @@ const Billings = ({ userId, profileData, previewImage }) => {
       console.error('Error fetching blogs:', error);
     }
   };
-  
+
   useEffect(() => {
     fetchBlog();
   }, []);
-  
-  
+
+
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-  
+
   const handleDeleteCancel = () => {
     setIsDeleteDialogOpen(false);
     setSelectedBlogToDelete(null);
@@ -72,7 +96,6 @@ const Billings = ({ userId, profileData, previewImage }) => {
     setSelectedBlogToDelete(blog);
     setIsDeleteDialogOpen(true);
   };
-
 
   return (
     <>
@@ -136,32 +159,32 @@ const Billings = ({ userId, profileData, previewImage }) => {
                     </div>
                     <div className="footer p-1">
                       <ul className="stats list-inline ">
-                        <li className="list-inline-item  mb-3" 
-                        style={{ display: hoveredBlogId === blog._id ? 'block' : 'none' }}>
-                            <button
-                              className="btn btn-outline-secondary btn-sm mx-1"
-                              // onClick={() =>
-                              //   navigate(`/Dashboard/BlogRequest/view-blog/BlogDetails/${blog._id}`)
-                              // }
-                              onClick={() => navigate(`/${userType}/Dashboard/artistmanagetable/artistprofile/${userId}/blogrequestdetails/${blog._id}`, { state: {userId } })}
-                            >
-                              <i className="fa fa-eye"></i>
-                            </button>
+                        <li className="list-inline-item  mb-3"
+                          style={{ display: hoveredBlogId === blog._id ? 'block' : 'none' }}>
+                          <button
+                            className="btn btn-outline-secondary btn-sm mx-1"
+                            // onClick={() =>
+                            //   navigate(`/Dashboard/BlogRequest/view-blog/BlogDetails/${blog._id}`)
+                            // }
+                            onClick={() => navigate(`/${userType}/Dashboard/artistmanagetable/artistprofile/${userId}/blogrequestdetails/${blog._id}`, { state: { userId, artist: profileData } })}
+                          >
+                            <i className="fa fa-eye"></i>
+                          </button>
 
-                            <button
-                              // onClick={() => handleUpdateClick(blog)}
-                              onClick={() => navigate(`/${userType}/Dashboard/artistmanagetable/artistprofile/${userId}/blogrequestdetails/editblog/${blog._id}`, { state: { blog,userId } })}
-                              className="btn btn-outline-primary btn-sm mx-1"
-                            >
-                              <i className="fa fa-edit"></i>
-                            </button>
+                          <button
+                            // onClick={() => handleUpdateClick(blog)}
+                            onClick={() => navigate(`/${userType}/Dashboard/artistmanagetable/artistprofile/${userId}/blogrequestdetails/editblog/${blog._id}`, { state: { blog, userId, artist: profileData } })}
+                            className="btn btn-outline-primary btn-sm mx-1"
+                          >
+                            <i className="fa fa-edit"></i>
+                          </button>
 
-                            <button
-                              onClick={() => openDeleteDialog(blog)}
-                              className="btn btn-outline-danger btn-sm mx-1"
-                            >
-                              <i className="fa fa-trash"></i>
-                            </button>
+                          <button
+                            onClick={() => openDeleteDialog(blog)}
+                            className="btn btn-outline-danger btn-sm mx-1"
+                          >
+                            <i className="fa fa-trash"></i>
+                          </button>
                         </li>
                       </ul>
                     </div>
@@ -236,4 +259,4 @@ const Billings = ({ userId, profileData, previewImage }) => {
   );
 };
 
-export default Billings;
+export default Blogs;

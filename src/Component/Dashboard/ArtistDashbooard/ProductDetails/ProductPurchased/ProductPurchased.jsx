@@ -247,7 +247,7 @@ const ProductRequest = () => {
                                                     <td>
                                                         {productData && (
                                                             <button className="btn btn-sm btn-outline-info mr-2"
-                                                                onClick={() => navigate(`/${userType}/Dashboard/productpurchased/productview/${product._id}`)}>
+                                                                onClick={() => navigate(`/artist/purchase/view`)}>
                                                                 <i className="fa fa-eye"></i>
                                                             </button>
                                                         )}

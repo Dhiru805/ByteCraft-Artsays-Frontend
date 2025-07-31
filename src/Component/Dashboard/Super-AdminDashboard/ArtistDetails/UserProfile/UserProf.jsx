@@ -18,9 +18,39 @@ import useUserType from '../../../urlconfig'
 
 const UserProfileForm = () => {
   const userType = useUserType();
-  const location = useLocation();
-  const { artist } = location.state || {};
   const navigate = useNavigate();
+  const location = useLocation();
+  const artistFromState = location?.state?.artist || null;
+  const artistFromStorage = localStorage.getItem("selectedArtist");
+  const artist = artistFromState || (artistFromStorage && JSON.parse(artistFromStorage)) || null;
+
+  const userId =
+    artist?.['_id'] ||
+    (() => {
+      try {
+        const storedArtist = JSON.parse(localStorage.getItem('selectedArtist'));
+        return storedArtist?._id || localStorage.getItem('selectedArtistId');
+      } catch (e) {
+        return localStorage.getItem('selectedArtistId');
+      }
+    })();
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!artist || !userId) {
+        toast.error("Invalid access. Redirecting...");
+        navigate("/super-admin/artist/management");
+      }
+    }, 200);
+    return () => clearTimeout(timeout);
+  }, [artist, userId, navigate]);
+
+  useEffect(() => {
+    if (artistFromState && artistFromState._id) {
+      localStorage.setItem("selectedArtistId", artistFromState._id);
+      localStorage.setItem("selectedArtist", JSON.stringify(artistFromState));
+    }
+  }, [artistFromState]);
 
   const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
@@ -47,8 +77,6 @@ const UserProfileForm = () => {
     birthdate: '',
     website: ''
   });
-
-  const userId = artist?._id;
 
   const fetchProfile = async () => {
     try {
@@ -256,6 +284,7 @@ const UserProfileForm = () => {
                 >
                   <tab.component
                     userId={userId}
+                    artist={artist}
                     profileData={profileData}
                     previewImage={previewImage}
                     handleImageUpload={handleImageUpload}

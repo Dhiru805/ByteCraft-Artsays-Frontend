@@ -93,7 +93,7 @@ const ApprovedProduct = () => {
         setCurrentImageIndex((prevIndex) => Math.min(prevIndex + 1, currentImages.length - 1));
     };
 
-        const handleDeleteCancel = () => {
+    const handleDeleteCancel = () => {
         setIsDeleteDialogOpen(false);
         setSelectedProductToDelete(null);
     };
@@ -387,7 +387,7 @@ const ApprovedProduct = () => {
                     </div>
                 </div>
             )}
-                {isDeleteDialogOpen && (
+            {isDeleteDialogOpen && (
                 <ConfirmationDialog
                     onClose={handleDeleteCancel}
                     deleteType="productRequest"

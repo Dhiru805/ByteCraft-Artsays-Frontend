@@ -8,6 +8,7 @@ import Verification from "./Verifications"
 import putAPI from "../../../../../../api/putAPI";
 import { toast } from "react-toastify";
 import { DEFAULT_PROFILE_IMAGE } from "../../../../../../Constants/ConstantsVariables";
+import getAPI from '../../../../../../api/getAPI';
 
 
 const Settings = ({ userId, profileData, previewImage, handleImageUpload, handleChange, handleAddressChange, handleSubmit, passwordData, handlePasswordChange }) => {
@@ -21,9 +22,14 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
   const fileInputRef = useRef(null);
 
   const [imageError, setImageError] = useState(false);
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
-
+  const [isImageLoaded, setIsImageLoaded] = useState(false);  
   const actualImage = !localPreviewImage || imageError ? DEFAULT_PROFILE_IMAGE : localPreviewImage;
+
+  const [allUsernames, setAllUsernames] = useState([]);
+  const [originalUsername, setOriginalUsername] = useState('');
+  const [usernameCheckLoading, setUsernameCheckLoading] = useState(false);
+  const [usernameAvailable, setUsernameAvailable] = useState(null);
+  const usernameCheckTimeout = useRef(null);
 
   useEffect(() => {
     if (!previewImage) {
@@ -82,41 +88,84 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
       setLoading(false);
     }
   };
-const validateRequired = () => {
-  const missing = [];
-  const requiredMap = {
-    'First Name'        : profileData.name,
-    'Last Name'         : profileData.lastName,
-    'Birthdate'         : profileData.birthdate,
-    'Gender'            : profileData.gender,
-    'Address Line 1'    : profileData.address?.line1,
-    'Address Line 2'    : profileData.address?.line2,
-    'Pincode'          : profileData.address?.pincode,
-    'City'              : profileData.address?.city,
-    'State/Province'    : profileData.address?.state,
-    'Country'           : profileData.address?.country,
-    'Username'          : profileData.username,
-    'Email'             : profileData.email,
-    'Phone Number'      : profileData.phone,
-    'Bio'               : profileData.bio,
+  const validateRequired = () => {
+    const missing = [];
+    const requiredMap = {
+      'First Name': profileData.name,
+      'Last Name': profileData.lastName,
+      'Birthdate': profileData.birthdate,
+      'Gender': profileData.gender,
+      'Address Line 1': profileData.address?.line1,
+      'Address Line 2': profileData.address?.line2,
+      'Pincode': profileData.address?.pincode,
+      'City': profileData.address?.city,
+      'State/Province': profileData.address?.state,
+      'Country': profileData.address?.country,
+      'Username': profileData.username,
+      'Email': profileData.email,
+      'Phone Number': profileData.phone,
+      'Bio': profileData.bio,
+    };
+
+    Object.entries(requiredMap).forEach(([label, value]) => {
+      if (!value || String(value).trim() === '') missing.push(label);
+    });
+
+    if (missing.length) {
+      toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
+      return false;
+    }
+    return true;
   };
-
-  Object.entries(requiredMap).forEach(([label, value]) => {
-    if (!value || String(value).trim() === '') missing.push(label);
-  });
-
-  if (missing.length) {
-    toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
-    return false;
-  }
-  return true;
-};
 
   const togglePasswordVisibility = (setter, currentState) => {
     setter(!currentState);
   };
 
-  
+  useEffect(() => {
+    const fetchUsernames = async () => {
+      try {
+        const res = await getAPI('/auth/all-usernames'); 
+        setAllUsernames(res.data?.usernames || []);
+        console.log("All usernames from backend:", res.data?.usernames || []);
+      } catch (err) {
+        console.error("Failed to fetch usernames", err);
+      }
+    };
+
+    fetchUsernames();
+  }, []);
+
+
+  const handleLiveUsernameCheck = (username) => {
+    const typed = username.trim().toLowerCase();
+
+    if (!typed) {
+      setUsernameAvailable(null);
+      return;
+    }
+
+    setUsernameCheckLoading(true);
+    if (usernameCheckTimeout.current) {
+      clearTimeout(usernameCheckTimeout.current);
+    }
+
+    usernameCheckTimeout.current = setTimeout(() => {
+      const isTaken = allUsernames
+        .filter((uname) => uname && uname.trim().toLowerCase() !== originalUsername) // ignore user's current username
+        .some((uname) => uname.trim().toLowerCase() === typed);
+
+      setUsernameAvailable(!isTaken);
+      setUsernameCheckLoading(false);
+    }, 300);
+  };
+
+  useEffect(() => {
+    if (profileData.username) {
+      setOriginalUsername(profileData.username.trim().toLowerCase());
+    }
+  }, [profileData.username]);
+
   return (
     <div className="body">
       <h6>Profile Photo</h6>
@@ -367,8 +416,21 @@ const validateRequired = () => {
                 fdprocessedid="du108l"
                 name="username"
                 value={profileData.username}
-                onChange={handleChange}
+                onChange={(e) => {
+                  const lowercaseValue = e.target.value.toLowerCase();
+                  handleChange({ target: { name: e.target.name, value: lowercaseValue } });
+                  handleLiveUsernameCheck(lowercaseValue);
+                }}
               />
+              {usernameCheckLoading && (
+                <small className="text-muted">Checking availability...</small>
+              )}
+              {usernameAvailable === true && (
+                <small className="text-success">Username is available</small>
+              )}
+              {usernameAvailable === false && (
+                <small className="text-danger">Username is already taken</small>
+              )}
             </div>
             <div className="form-group">
               <label htmlFor="email">Email <span style={{ color: 'red' }}>*</span></label>
@@ -491,16 +553,24 @@ const validateRequired = () => {
         </div>
         <button type="button"
           className="btn btn-primary mx-2"
-          disabled={loading}
-          onClick={(e) => {
-             if (!validateRequired()) return;
+          disabled={loading || usernameAvailable === false}
+          onClick={async (e) => {
+            if (!validateRequired()) return;
+
             setLoading(true);
-            Promise.resolve(handleSubmit(e))
-              .then(() => {
-                 window.location.reload();
-              })
-              .catch(console.error)
-              .finally(() => setLoading(false));
+            try {
+              await handleSubmit(e); 
+
+              toast.success("Profile updated successfully!");
+              window.location.reload(); 
+            } catch (err) {
+              console.error("Update failed:", err);
+
+              const backendMsg = err?.response?.data?.message || "Failed to update profile";
+              toast.error(backendMsg);
+            } finally {
+              setLoading(false);
+            }
           }}
         >{loading ? "Updating..." : "Update"}</button>
       </div>

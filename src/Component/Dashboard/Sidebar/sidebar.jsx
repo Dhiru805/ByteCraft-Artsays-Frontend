@@ -51,7 +51,7 @@ const Sidebar = () => {
           { label: "Blogs", path: `/super-admin/artist/blogs` },
           { label: "Product Request", path: `/super-admin/artist/artistproductrequest` },
           { label: "Products", path: `/super-admin/artist/allartistproduct` },
-          { label: "Sold Product ", path: `/super-admin/artist/sold-product` },
+          { label: "Sold Product", path: `/super-admin/artist/sold-product` },
           // { label: "Transaction", path: `/super-admin/artisttransaction`},
           // { label: "Packaging Material", path: `/super-admin/artistpackagingmaterial` },
         ]
@@ -112,7 +112,7 @@ const Sidebar = () => {
       },
       {
         label: "Certification Services",
-         icon: "fa fa-certificate",
+        icon: "fa fa-certificate",
         path: `#`,
         path: `/super-admin/certification`,
         subTabs: []
@@ -186,9 +186,9 @@ const Sidebar = () => {
         subTabs: []
       },
       {
-        label: "Product Purchased",
+        label: "Product Sold",
         icon: "fa fa-cart-plus",
-        path: "/artist/product-purchase",
+        path: "/artist/purchase",
         subTabs: []
 
       },
@@ -198,19 +198,19 @@ const Sidebar = () => {
         path: `/artist/advertise`,
         subTabs: []
       },
-      {  
-      label: "Bidding",
+      {
+        label: "Bidding",
         icon: "fa fa-gavel",
         path: `#Bidding`,
         subTabs: [
-          { label: "All Products", path: `/artist/bidding-products-table`},
+          { label: "All Products", path: `/artist/bidding-products-table` },
           { label: "Bidded Product", path: `/artist/bidded-products-table` },
           { label: "Bidding Pass", path: `/artist/bidding-pass-table` }
         ]
       },
-            {
+      {
         label: "Certification Services",
-         icon: "fa fa-certificate",
+        icon: "fa fa-certificate",
         path: `/artist/certification`,
         subTabs: []
       },
@@ -244,18 +244,18 @@ const Sidebar = () => {
         icon: "fa fa-cart-plus",
         path: "/seller/purchased-product",
         subTabs: []
-      },    
-      {  
+      },
+      {
         label: "Bidding",
         icon: "fa fa-gavel",
         path: `#Bidding`,
         subTabs: [
-          { label: "All Products", path: `/seller/bidding-products-table`},
+          { label: "All Products", path: `/seller/bidding-products-table` },
           { label: "Bidded Product", path: `/seller/bidded-products-table` },
           { label: "Bidding Pass", path: `/seller/bidding-pass-table` }
         ]
       },
-          {
+      {
         label: "Advertise",
         icon: "fa fa-bullhorn",
         path: `#`,
@@ -281,7 +281,7 @@ const Sidebar = () => {
       setUserType(storedUserType);
     }
   }, []);
-  
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [location.pathname]);

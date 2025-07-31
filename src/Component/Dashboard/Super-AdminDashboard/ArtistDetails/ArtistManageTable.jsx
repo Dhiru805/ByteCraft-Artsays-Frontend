@@ -244,10 +244,11 @@ function ArtistManageTable() {
                               type="button"
                               className="btn btn-outline-primary btn-sm mr-2"
                               title="Navigate"
-                              onClick={() =>
-                                navigate("/super-admin/artist/management/artistprofileview", { state: { artist } })
-                              }
-
+                              onClick={() => {
+                                localStorage.setItem("selectedArtist", JSON.stringify(artist));
+                                localStorage.setItem("selectedArtistId", artist._id);
+                                navigate("/super-admin/artist/management/artistprofileview", { state: { artist } });
+                              }}
                             >
                               <i className="fa fa-eye"></i>
                             </button>
@@ -255,9 +256,11 @@ function ArtistManageTable() {
                               type="button"
                               className="btn btn-outline-info btn-sm mr-2"
                               title="Edit"
-                              onClick={() =>
-                                navigate("/super-admin/artist/management/artisteditreuqest/", { state: { artist } })
-                              }
+                              onClick={() => {
+                                localStorage.setItem("selectedArtist", JSON.stringify(artist));
+                                localStorage.setItem("selectedArtistId", artist._id);
+                                navigate("/super-admin/artist/management/artisteditreuqest/", { state: { artist } });
+                              }}
                             >
                               <i class="fa fa-pencil"></i>
                             </button>

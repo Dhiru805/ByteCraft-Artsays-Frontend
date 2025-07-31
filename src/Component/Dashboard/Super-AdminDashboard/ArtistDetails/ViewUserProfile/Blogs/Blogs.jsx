@@ -3,7 +3,7 @@ import getAPI from '../../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../../urlconfig';
 
-const Billings = ({ userId, profileData, previewImage }) => {
+const Blogs = ({ userId, profileData, previewImage }) => {
   const userType = useUserType(); 
   const [blogs, setBlogs] = useState([]);
   const navigate = useNavigate();
@@ -25,10 +25,6 @@ const Billings = ({ userId, profileData, previewImage }) => {
     return `${month} ${ordinalDay}, ${year}`;
   };
 
-
-
- 
-
   const fetchBlog = async () => {
     try {
       const result = await getAPI(
@@ -45,10 +41,13 @@ const Billings = ({ userId, profileData, previewImage }) => {
     }
   };
 
-  useEffect(() => {
+useEffect(() => {
+  if (userId) {
     fetchBlog();
-  }, []);
+  }
+}, [userId]);
 
+  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
 
   return (
@@ -88,7 +87,7 @@ const Billings = ({ userId, profileData, previewImage }) => {
                           className="d-block img-fluid rounded"
                           src={
                             blog.blogImage
-                              ? `http://localhost:3001/${blog.blogImage.replace(/\\/g, "/")}`
+                              ? `${BASE_URL}${blog.blogImage.replace(/\\/g, "/")}`
                               : "/placeholder.jpg"
                           }
                           alt={blog.blogName}
@@ -186,4 +185,4 @@ const Billings = ({ userId, profileData, previewImage }) => {
   );
 };
 
-export default Billings;
+export default Blogs;

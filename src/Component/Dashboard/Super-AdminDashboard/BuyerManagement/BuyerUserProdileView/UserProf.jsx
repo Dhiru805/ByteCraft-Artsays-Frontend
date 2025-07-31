@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom'; 
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Preferences from './Pereferences/Pereferences';
@@ -8,9 +8,9 @@ import Billings from './Billings/Billings';
 import Transaction from './Transaction/BuyerTransaction';
 import Customrequest from './CustomRequest/Customorder'
 import Packagingmaterial from './PackagingMaterial/ProductPurchasedBuyer'
-import SoldProduct  from './Soldproduct/SoldProduct'
-import Productpurchased  from './ProductPurchased/ProductPurchased'
-import RsellProduct  from './ResellProductRequest/ProductRequestTable'
+import SoldProduct from './Soldproduct/SoldProduct'
+import Productpurchased from './ProductPurchased/ProductPurchased'
+import RsellProduct from './ResellProductRequest/ProductRequestTable'
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import Settings from './UserProfile/BasicInformation';
@@ -20,8 +20,26 @@ const UserProfileForm = () => {
   const userType = useUserType();
   // const { userId } = useParams();
   const location = useLocation();
-  const { buyer } = location.state || {};
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+
+  const buyerFromState = location?.state?.buyer;
+  useEffect(() => {
+    if (buyerFromState && buyerFromState._id) {
+      localStorage.setItem("selectedbuyer", JSON.stringify(buyerFromState));
+      localStorage.setItem("selectedbuyerId", buyerFromState._id);
+    }
+  }, [buyerFromState]);
+
+  const buyer = JSON.parse(localStorage.getItem("selectedbuyer"));
+  const userId = buyer?._id || localStorage.getItem("selectedbuyerId");
+
+  useEffect(() => {
+    if (!buyer || !userId) {
+      toast.error("Invalid access. Redirecting...");
+      navigate("/super-admin/buyer/management");
+    }
+  }, [buyer, userId, navigate]);
+
   const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
   const [profileData, setProfileData] = useState({
     name: '',
@@ -42,7 +60,6 @@ const UserProfileForm = () => {
     website: ''
   });
 
-    const userId = buyer?._id;
 
 
   const fetchProfile = async () => {
@@ -59,7 +76,7 @@ const UserProfileForm = () => {
           address: parsedAddress,
         });
 
-const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+        const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
         const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : 'DashboardAssets/assets/images/user.png';
         setPreviewImage(profilePhotoUrl);
       }
@@ -129,9 +146,9 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
             <h2>Buyer Profile</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-<span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
-    <i className="fa fa-dashboard"></i>
-</span>
+                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+                  <i className="fa fa-dashboard"></i>
+                </span>
               </li>
               <li className="breadcrumb-item">
                 <span

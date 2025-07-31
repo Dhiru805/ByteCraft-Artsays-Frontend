@@ -20,10 +20,40 @@ const UserProfileForm = () => {
   const userType = useUserType();
   // const { userId } = useParams();
   const location = useLocation();
-  const { buyer } = location.state || {};
   const navigate = useNavigate();
   const [imageFile, setImageFile] = useState(null);
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const buyerFromState = location?.state?.buyer || null;
+  const buyerFromStorage = localStorage.getItem("selectedbuyer");
+  const buyer = buyerFromState || (buyerFromStorage && JSON.parse(buyerFromStorage)) || null;
+
+  const userId =
+    buyer?.['_id'] ||
+    (() => {
+      try {
+        const storedbuyer = JSON.parse(localStorage.getItem('selectedbuyer'));
+        return storedbuyer?._id || localStorage.getItem('selectedbuyerId');
+      } catch (e) {
+        return localStorage.getItem('selectedbuyerId');
+      }
+    })();
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!buyer || !userId) {
+        toast.error("Invalid access. Redirecting...");
+        navigate("/super-admin/buyer/management");
+      }
+    }, 200);
+    return () => clearTimeout(timeout);
+  }, [buyer, userId, navigate]);
+
+  useEffect(() => {
+    if (buyerFromState && buyerFromState._id) {
+      localStorage.setItem("selectedbuyerId", buyerFromState._id);
+      localStorage.setItem("selectedbuyer", JSON.stringify(buyerFromState));
+    }
+  }, [buyerFromState]);
 
   const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
   const [passwordData, setPasswordData] = useState({
@@ -50,15 +80,26 @@ const UserProfileForm = () => {
     website: ''
   });
 
-  const userId = buyer?._id;
-
   const fetchProfile = async () => {
     try {
       const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
+      console.log(result.data.user);
       if (result.data.user) {
         const userData = result.data.user;
         const formattedBirthdate = userData.birthdate ? new Date(userData.birthdate).toISOString().split('T')[0] : '';
-        const parsedAddress = userData.address ? (typeof userData.address === 'string' ? JSON.parse(userData.address) : userData.address) : {};
+        let parsedAddress = {};
+
+        if (Array.isArray(userData.address) && userData.address.length > 0) {
+          parsedAddress = userData.address[0];
+        } else if (typeof userData.address === 'string') {
+          try {
+            parsedAddress = JSON.parse(userData.address);
+          } catch (err) {
+            parsedAddress = {};
+          }
+        } else if (typeof userData.address === 'object') {
+          parsedAddress = userData.address;
+        }
 
         setProfileData({
           ...userData,
