@@ -49,9 +49,9 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
 
   const handleDeleteImage = async () => {
     try {
-      const token = localStorage.getItem('token');
+  
 
-      if (!token || !userId) {
+      if (!userId) {
         toast.error('Please log in again.');
         return;
       }
@@ -61,11 +61,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
       await putAPI(
         `/auth/users/${userId}`,
         { profilePhoto: null },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        
       );
 
       if (fileInputRef.current) {

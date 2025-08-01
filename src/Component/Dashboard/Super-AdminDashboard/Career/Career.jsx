@@ -3,65 +3,57 @@ import { useNavigate } from "react-router-dom";
 import getAPI from '../../../../api/getAPI';
 import ConfirmationDialog from '../../ConfirmationDialog';
 
-const Certification = () => {
+const Career = () => {
   const navigate = useNavigate();
-  const [certifications, setCertifications] = useState([]);
+  const [careers, setCareers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage, setProductsPerPage] = useState(10);
+  const [careersPerPage, setCareersPerPage] = useState(10);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedCertToDelete, setSelectedCertToDelete] = useState(null);
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const [selectedCareerToDelete, setSelectedCareerToDelete] = useState(null);
 
-  const fetchCertifications = async () => {
+  const fetchCareers = async () => {
     try {
-      const response = await getAPI("/api/get-certification");
+      const response = await getAPI("/api/get-career");
       console.log("API Response:", response);
       const data = Array.isArray(response.data.data) ? response.data.data : [];
-      setCertifications(data);
+      setCareers(data);
     } catch (error) {
-      console.error("Error fetching certifications:", error);
-      setCertifications([]);
+      console.error("Error fetching careers:", error);
+      setCareers([]);
     }
   };
 
   useEffect(() => {
-    fetchCertifications();
+    fetchCareers();
   }, []);
 
   const handleDeleteCancel = () => {
     setIsDeleteDialogOpen(false);
-    setSelectedCertToDelete(null);
+    setSelectedCareerToDelete(null);
   };
 
   const handleDeleteConfirmed = (id) => {
-    setCertifications((prevCerts) =>
-      prevCerts.filter((cert) => cert._id !== id)
-    );
+    setCareers((prevCareers) => prevCareers.filter((career) => career._id !== id));
     setIsDeleteDialogOpen(false);
   };
 
-  const openDeleteDialog = (cert) => {
-    setSelectedCertToDelete(cert);
+  const openDeleteDialog = (career) => {
+    setSelectedCareerToDelete(career);
     setIsDeleteDialogOpen(true);
   };
 
-  const filteredCertifications = certifications.filter((cert) => {
-    const fullName = cert.userId?.name && cert.userId?.lastName 
-      ? `${cert.userId.name} ${cert.userId.lastName}`.toLowerCase()
-      : '';
-    return (
-      fullName.includes(searchTerm.toLowerCase()) ||
-      (cert.productId?.productName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (cert.mainCategoryId?.mainCategoryName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (cert.certificationId?.certificationName || '').toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+  const filteredCareers = careers.filter((career) =>
+    career.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    career.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    career.workMode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    career.status.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const totalPages = Math.ceil(filteredCertifications.length / productsPerPage);
-  const displayedCertifications = filteredCertifications.slice(
-    (currentPage - 1) * productsPerPage,
-    currentPage * productsPerPage
+  const totalPages = Math.ceil(filteredCareers.length / careersPerPage);
+  const displayedCareers = filteredCareers.slice(
+    (currentPage - 1) * careersPerPage,
+    currentPage * careersPerPage
   );
 
   const handlePrevious = () => {
@@ -76,8 +68,8 @@ const Certification = () => {
     }
   };
 
-  const handleProductsPerPageChange = (event) => {
-    setProductsPerPage(Number(event.target.value));
+  const handleCareersPerPageChange = (event) => {
+    setCareersPerPage(Number(event.target.value));
     setCurrentPage(1);
   };
 
@@ -86,17 +78,17 @@ const Certification = () => {
       <div className="block-header">
         <div className="row">
           <div className="col-lg-6 col-md-6 col-sm-12">
-            <h2>Certification</h2>
+            <h2>Career</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
                 <span
-                  onClick={() => navigate('/artist/dashboard')}
+                  onClick={() => navigate('/admin/dashboard')}
                   style={{ cursor: 'pointer' }}
                 >
                   <i className="fa fa-dashboard"></i>
                 </span>
               </li>
-              <li className="breadcrumb-item">Certification</li>
+              <li className="breadcrumb-item">Career</li>
             </ul>
           </div>
           <div className="col-lg-6 col-md-6 col-sm-12">
@@ -105,7 +97,7 @@ const Certification = () => {
                 <button
                   type="button"
                   className="btn btn-secondary mr-2"
-                  onClick={() => navigate(`/super-admin/certification/create-certification`)}
+                  onClick={() => navigate(`/super-admin/career/creer-job-post`)}
                 >
                   <i className="fa fa-plus"></i>
                 </button>
@@ -122,8 +114,8 @@ const Certification = () => {
                 <label className="mb-0 mr-2">Show</label>
                 <select
                   className="form-control form-control-sm"
-                  value={productsPerPage}
-                  onChange={handleProductsPerPageChange}
+                  value={careersPerPage}
+                  onChange={handleCareersPerPageChange}
                   style={{ minWidth: '70px' }}
                 >
                   <option value="10">10</option>
@@ -162,68 +154,43 @@ const Certification = () => {
                   <thead className="thead-dark">
                     <tr>
                       <th>#</th>
-                      <th>User Type</th>
-                      <th>Name</th>
-                      <th>Product Name</th>
-                      <th>Main Category</th>
-                      <th>Certification Name</th>
-                      <th>Estimated Days</th>
-                      <th>Certification Price</th>
+                      <th>Job Title</th>
+                      <th>Department</th>
+                      <th>Work Mode</th>
+                      <th>Status</th>
                       <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {displayedCertifications.map((cert, index) => (
-                      <tr key={cert._id}>
-                        <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
-                        <td>{cert.userType || '-'}</td>
+                    {displayedCareers.map((career, index) => (
+                      <tr key={career._id}>
+                        <td>{(currentPage - 1) * careersPerPage + index + 1}</td>
+                        <td>{career.jobTitle || '-'}</td>
+                        <td>{career.department || '-'}</td>
+                        <td>{career.workMode || '-'}</td>
+                        <td>{career.status || '-'}</td>
                         <td>
-                          <img
-                            src={
-                              cert.userId?.profilePhoto && cert.userId?.profilePhoto !== "null"
-                                ? `${BASE_URL}${cert.userId.profilePhoto}`
-                                : ''
-                            }
-                            className="rounded-circle avatar"
-                            alt="Profile"
-                            style={{
-                              width: '30px',
-                              height: '30px',
-                              objectFit: 'cover',
-                              marginRight: '10px',
-                            }}
-                          />
-                          <span className="c_name">
-                            {cert.userId?.name && cert.userId?.lastName ? `${cert.userId.name} ${cert.userId.lastName}` : '-'}
-                          </span>
-                        </td>
-                        <td>
-                          <img
-                            src={
-                              cert.productId?.mainImage && cert.productId?.mainImage !== "null"
-                                ? `${BASE_URL}${cert.productId.mainImage}`
-                                : ''
-                            }
-                            alt="Product"
-                            style={{
-                              width: '30px',
-                              height: '30px',
-                              objectFit: 'cover',
-                              marginRight: '10px',
-                            }}
-                          />
-                          {cert.productId?.productName || '-'}
-                        </td>
-                        <td>{cert.mainCategoryId?.mainCategoryName || '-'}</td>
-                        <td>{cert.certificationId?.certificationName || '-'}</td>
-                        <td>{cert.estimatedDays || '-'}</td>
-                        <td>{cert.certificationPrice ? `${cert.certificationPrice}` : '-'}</td>
-                        <td>
+                          <button
+                            type="button"
+                            className="btn btn-outline-primary btn-sm mr-1"
+                            title="View"
+                              onClick={() => navigate(`/super-admin/career/view-job-post`, { state: { career } })}
+                          >
+                            <i className="fa fa-eye"></i>
+                          </button>
+                           <button
+                              type="button"
+                              className="btn btn-outline-info btn-sm mr-2"
+                              title="Edit"
+                               onClick={() => navigate(`/super-admin/career/update-job-post`, { state: { career } })}
+                            >
+                              <i className="fa fa-pencil"></i>
+                            </button>
                           <button
                             type="button"
                             className="btn btn-outline-danger btn-sm"
                             title="Delete"
-                            onClick={() => openDeleteDialog(cert)}
+                            onClick={() => openDeleteDialog(career)}
                           >
                             <i className="fa fa-trash-o"></i>
                           </button>
@@ -235,7 +202,7 @@ const Certification = () => {
               </div>
               <div className="pagination d-flex justify-content-between mt-4">
                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                  Showing {(filteredCertifications.length === 0 ? 0 : (currentPage - 1) * productsPerPage + 1)} to {Math.min(currentPage * productsPerPage, filteredCertifications.length)} of {filteredCertifications.length} entries
+                  Showing {(filteredCareers.length === 0 ? 0 : (currentPage - 1) * careersPerPage + 1)} to {Math.min(currentPage * careersPerPage, filteredCareers.length)} of {filteredCareers.length} entries
                 </span>
                 <ul className="pagination d-flex justify-content-end w-100">
                   <li
@@ -268,8 +235,8 @@ const Certification = () => {
       {isDeleteDialogOpen && (
         <ConfirmationDialog
           onClose={handleDeleteCancel}
-          deleteType="certification"
-          id={selectedCertToDelete?._id}
+          deleteType="career"
+          id={selectedCareerToDelete?._id}
           onDeleted={handleDeleteConfirmed}
         />
       )}
@@ -277,4 +244,4 @@ const Certification = () => {
   );
 };
 
-export default Certification;
+export default Career;

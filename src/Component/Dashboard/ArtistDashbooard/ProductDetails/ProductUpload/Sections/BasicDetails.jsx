@@ -12,7 +12,6 @@ const BasicDetails = ({
   handleTagKeyDown,
   removeTag,
   setInputTag,
-
   categoryData,
   productTypeOptions,
   getCategoriesByMainCategory,
@@ -24,7 +23,7 @@ const BasicDetails = ({
                          formData.subCategory?.label === "NFT Art";
 
   const filteredProductTypeOptions = isNFTArtSelected
-    ? productTypeOptions // Show all options including NFT
+    ? productTypeOptions 
     : productTypeOptions.filter(opt => opt.value !== 'nft'); 
 
 
@@ -184,7 +183,7 @@ const BasicDetails = ({
 
       <div className="form-group">
         <label htmlFor="subCategory">Subcategory <span style={{ color: 'red' }}>*</span></label>
-<CreatableSelect
+         <CreatableSelect
           id="subCategory"
           name="subCategory"
           className="basic-single"

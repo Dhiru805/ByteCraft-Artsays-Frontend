@@ -229,7 +229,7 @@ function ProductUpload() {
         }
       }
 
-      // Legal & Compliance
+ 
       formDataToSend.append('ownershipConfirmation', formData.ownershipConfirmation);
       formDataToSend.append('copyrightRights', formData.copyrightRights?.value || formData.copyrightRights?.label);
       formDataToSend.append('prohibitedItems', formData.prohibitedItems);
@@ -238,7 +238,7 @@ function ProductUpload() {
       formDataToSend.append('coaAvailable', formData.coaAvailable);
       formDataToSend.append('certificateFormat', formData.certificateFormat || 'digital'); // Add this line
 
-      // Add certificate file if exists
+  
       if (formData.certificateFile) {
         formDataToSend.append('certificateFile', formData.certificateFile);
       }
@@ -252,7 +252,7 @@ function ProductUpload() {
         }
       }
 
-      // NFT Details (only append if they exist)
+
       if (formData.blockchainNetwork) {
         formDataToSend.append('blockchainNetwork', formData.blockchainNetwork.value);
       }

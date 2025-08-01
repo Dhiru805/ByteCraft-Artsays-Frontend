@@ -25,7 +25,6 @@ const ApprovedProduct = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             const userId = localStorage.getItem('userId');
-
             try {
                 const result = await getAPI(`/api/getproductbyartist/${userId}`, {}, true, false);
                 console.log("Full API Response:", result);

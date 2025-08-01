@@ -72,6 +72,57 @@ buyerRequest: {
   idKey: "BuyerRequestId",
 },
 
+certificationsetting:{
+   getEndpoint: (id) => `/api/delete-certification-setting/${id}`,
+  successMessage: "Certification setting successfully deleted!",
+  errorMessage: "Failed to delete certification setting .",
+  idKey: "certificationsettingId",
+},
+certification: {
+    getEndpoint: (id) => `/api/delete-certification/${id}`,
+    successMessage: "Certification successfully deleted!",
+    errorMessage: "Failed to delete certification.",
+    idKey: "CertificationId",
+  },
+  faq : {
+  getEndpoint: (id) => `/api/delete-FAQ/${id}`,
+  successMessage: "FAQ successfully deleted!",
+  errorMessage: "Failed to delete FAQ.",
+  idKey: "FAQId",
+},
+career: {
+  getEndpoint: (id) => `/api/delete-career/${id}`,
+  successMessage: "Career successfully deleted!",
+  errorMessage: "Failed to delete career.",
+  idKey: "careerId",
+},
+exhibition: {
+  getEndpoint: (id) => `/api/delete-exhibition/${id}`,
+  successMessage: "Exhibitionsuccessfully deleted!",
+  errorMessage: "Failed to delete Exhibition.",
+  idKey: "exhibitionId",
+},
+autotargetingsetting:{
+  getEndpoint: (id) => `/api/delete-auto-targeting/${id}`,
+  successMessage: "Auto Targeting successfully deleted!",
+  errorMessage: "Failed to delete auto targeting.",
+  idKey: "autotargetingId",
+},
+
+grouptargetingsetting:{
+  getEndpoint: (id) => `/api/delete-group-targeting/${id}`,
+  successMessage: "Group Targeting successfully deleted!",
+  errorMessage: "Failed to delete group targeting.",
+  idKey: "grouptargetingId",
+},
+keywordtargetingsetting:{
+  getEndpoint: (id) => `/api/delete-keyword-targeting/${id}`,
+  successMessage: "Keyword Targeting successfully deleted!",
+  errorMessage: "Failed to delete keyword targeting.",
+  idKey: "keywordtargetingId",
+},
+
+
 };
 
 function ConfirmationDialog({ onClose, deleteType, id, onDeleted }) {

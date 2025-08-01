@@ -61,11 +61,6 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
       await putAPI(
         `/auth/users/${userId}`,
         { profilePhoto: null },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
       );
 
       if (fileInputRef.current) {

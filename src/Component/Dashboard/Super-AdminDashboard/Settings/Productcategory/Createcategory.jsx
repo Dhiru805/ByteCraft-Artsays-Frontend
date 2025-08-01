@@ -325,18 +325,18 @@ const AddCategory = ({ onClose, fetchSubCategoryData }) => {
                         {index === 0 ? (
                           <button
                             type="button"
-                            className="btn btn-success btn-md"
+                            className="btn btn-outline-success btn-md"
                             onClick={addRow}
                           >
-                            +
+                              <i className="fa fa-plus"></i>
                           </button>
                         ) : (
                           <button
                             type="button"
-                            className="btn btn-danger btn-md"
+                            className="btn btn-outline-danger btn-md"
                             onClick={() => removeRow(index)}
                           >
-                            -
+                            <i className="fa fa-trash-o"></i>
                           </button>
                         )}
                       </>

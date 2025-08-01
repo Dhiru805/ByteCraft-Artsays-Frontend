@@ -31,7 +31,7 @@ const Product = () => {
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
                 <span
-                  onClick={() => navigate('/artist/dashboard')}
+                  onClick={() => navigate('/seller/dashboard')}
                   style={{ cursor: 'pointer' }}
                 >
                   <i className="fa fa-dashboard"></i>
@@ -46,7 +46,7 @@ const Product = () => {
                 <button
                   type="button"
                   className="btn btn-secondary mr-2"
-                  onClick={() => navigate(`#`)}
+                  onClick={() => navigate(`/seller/certification/create-certification`)}
                 >
                   <i className="fa fa-plus"></i>
                 </button>

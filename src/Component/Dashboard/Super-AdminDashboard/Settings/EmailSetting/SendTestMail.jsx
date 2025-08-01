@@ -2,12 +2,17 @@ import React, { useState } from "react";
 import postAPI from "../../../../../api/postAPI";
 import { toast } from "react-toastify";
 
-const SendTestMail = ({ show, onClose }) => {
+const SendTestMail = ({ show, onClose,formData }) => {
   const [testEmail, setTestEmail] = useState("");
   const [sending, setSending] = useState(false);
 
   const handleTestMail = async (e) => {
     e.preventDefault();
+
+    // if (!formData.is_active) {
+    //   toast.error("Email settings are disabled. Enable them to send a test email.");
+    //   return;
+    // }
 
     if (!testEmail) {
       toast.error("Please enter a test email address.");

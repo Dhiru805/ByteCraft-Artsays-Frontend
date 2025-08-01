@@ -124,6 +124,28 @@ const Sidebar = () => {
         path: `/super-admin/advertise`,
         subTabs: []
       },
+        {
+        label: "FAQ",
+        icon: "fa fa-question-circle",
+        path: `/super-admin/faq`,
+        subTabs: []
+      },
+        {
+        label: "Career",
+        icon: "fa fa-briefcase",
+        path: `/super-admin/career`,
+        subTabs: []
+      },
+      {
+        label: "Exhibition",
+        icon: "fa fa-picture-o",
+        path: `#Exhibition`,
+        subTabs: [
+          { label: "Exhibition", path: `/super-admin/exhibition` },
+          { label: "Exhibition Request", path:`/super-admin/exhibition-request` },
+      
+        ]
+      },
 
 
       // {
@@ -147,6 +169,7 @@ const Sidebar = () => {
       //     { label: "Transaction", path: `/super-admin/packagingproducttransaction` },
       //   ]
       // },
+      
       {
         label: "Settings",
         icon: "fa fa-cog",
@@ -156,6 +179,10 @@ const Sidebar = () => {
           { label: "Blog Category", path: `/super-admin/settings/blog-category` },
           { label: "Email Setting", path: `/super-admin/settings/email-setting` },
           { label: "Marketing", path: `/super-admin/settings/marketing` },
+          { label: "Certification", path: `/super-admin/settings/certification` },
+          { label: "Default Auto Targeting", path: `/super-admin/settings/auto-targeting` },
+          { label: "Auto Targeting Group", path: `/super-admin/settings/group-targeting` },
+          { label: "Keyword Targeting", path: `/super-admin/settings/keyword-targeting` },
         ]
       }
     ],
@@ -214,6 +241,12 @@ const Sidebar = () => {
         path: `/artist/certification`,
         subTabs: []
       },
+       {
+        label: "Exhibition",
+        icon: "fa fa-picture-o",
+        path: `/artist/exhibition`,
+        subTabs: []
+      },
 
     ],
     // ----------------------------------------------Buyer-----------------------------------------------------//
@@ -269,6 +302,14 @@ const Sidebar = () => {
         path: `/seller/certification`,
         subTabs: []
       },
+      {
+        label: "Exhibition",
+        icon: "fa fa-picture-o",
+        path: `/seller/exhibition`,
+        subTabs: []
+      },
+
+      
 
 
     ],

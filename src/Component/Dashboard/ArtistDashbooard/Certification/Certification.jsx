@@ -46,7 +46,7 @@ const Product = () => {
                 <button
                   type="button"
                   className="btn btn-secondary mr-2"
-                  onClick={() => navigate(`#`)}
+                  onClick={() => navigate(`/artist/certification/create-certification`)}
                 >
                   <i className="fa fa-plus"></i>
                 </button>

@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import getAPI from "../../../../../api/getAPI";
 import postAPI from "../../../../../api/postAPI";
 import { toast } from "react-toastify";
@@ -17,10 +16,11 @@ const EmailSettingMain = () => {
     mail_encryption: "",
     mail_from_address: "",
     mail_from_name: "",
+    is_active: true, 
   });
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [loading, setLoading] = useState()
+  const [loading, setLoading] = useState(false);
   const [showData, setShowData] = useState({
     mail_driver: false,
     mail_host: false,
@@ -39,6 +39,13 @@ const EmailSettingMain = () => {
     }));
   };
 
+  const handleToggle = () => {
+    setFormData((prevData) => ({
+      ...prevData,
+      is_active: !prevData.is_active,
+    }));
+  };
+
   useEffect(() => {
     const fetchSettings = async () => {
       try {
@@ -52,15 +59,15 @@ const EmailSettingMain = () => {
           mail_encryption: response.data.mailEncryption || "",
           mail_from_address: response.data.mailFromAddress || "",
           mail_from_name: response.data.mailFromName || "",
+          is_active: response.data.isActive ?? true, // Map isActive
         };
         setFormData(mappedData);
       } catch (err) {
-        toast.error("Error fetching email settings:", err);
+        toast.error("Error fetching email settings: " + err.message);
       }
     };
     fetchSettings();
   }, []);
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,26 +77,22 @@ const EmailSettingMain = () => {
     }));
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
 
     try {
       const response = await postAPI("/api/save-email-settings", formData);
       if (response.success) {
         toast.success(response.message || "Email settings saved successfully!");
-      }
-      else {
-        toast.success(response.message || "Email settings update successfully.");
+      } else {
+        toast.success(response.message || "Email settings updated successfully.");
       }
     } catch (err) {
       console.error("Submission error:", err);
-      toast.error(
-        err.response?.data?.message || "Failed to update email settings."
-      );
+      toast.error(err.response?.data?.message || "Failed to update email settings.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -99,9 +102,20 @@ const EmailSettingMain = () => {
         <div className="row">
           <div className="col-lg-12 col-sm-12 col-md-12">
             <div className="card">
-              <div className="card-header">
-                {/* <h5> Email Setting </h5> */}
-                <h5>&ensp;</h5>
+              <div className="card-header d-flex justify-content-between align-items-center">
+                <h5>Email Setting</h5>
+                <div className="form-check form-switch">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="emailToggle"
+                    checked={formData.is_active}
+                    onChange={handleToggle}
+                  />
+                  <label className="form-check-label" htmlFor="emailToggle">
+                    {formData.is_active ? "Enabled" : "Disabled"}
+                  </label>
+                </div>
               </div>
               <div className="card-body">
                 <div className="row">
@@ -286,10 +300,7 @@ const EmailSettingMain = () => {
                   </div>
 
                   <div className="col-lg-4 col-md-6 col-sm-6 form-group">
-                    <label
-                      htmlFor="mail_from_address"
-                      className="col-form-label"
-                    >
+                    <label htmlFor="mail_from_address" className="col-form-label">
                       Mail From Address
                     </label>
                     <div className="position-relative">
@@ -361,7 +372,8 @@ const EmailSettingMain = () => {
                   <button
                     type="submit"
                     className="btn btn-primary"
-                    disabled={loading} >
+                    disabled={loading}
+                  >
                     {loading ? "Save Changes..." : "Save Changes"}
                   </button>
                 </div>
