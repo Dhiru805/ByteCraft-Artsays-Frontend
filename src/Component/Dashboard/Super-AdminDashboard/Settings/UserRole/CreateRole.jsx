@@ -313,7 +313,7 @@ const CreateRole = () => {
       setLoading(true);
 
       const endpoint = roleData
-        ? `/api/update-role/${roleData._id}`  // Adjust this based on your actual update API route
+        ? `/api/update-role/${roleData._id}`  
         : `/api/create-role`;
 
       const response = await postAPI(endpoint, sidebarPayload, true);

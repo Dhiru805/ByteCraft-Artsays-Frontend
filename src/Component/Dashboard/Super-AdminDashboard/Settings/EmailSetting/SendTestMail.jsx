@@ -33,7 +33,7 @@ const SendTestMail = ({ show, onClose,formData }) => {
         toast("Failed to send test mail.");
       }
     } catch (err) {
-      // toast.err("Failed to send test mail.");
+      toast.error("Failed to send test mail.");
     } finally {
       setSending(false);
     }
