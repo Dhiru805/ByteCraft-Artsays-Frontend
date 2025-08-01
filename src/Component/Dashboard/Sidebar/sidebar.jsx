@@ -189,6 +189,7 @@ const getDisplayPath = (path) => {
           { label: "Blog Category", path: `/super-admin/settings/blog-category` },
           { label: "Email Setting", path: `/super-admin/settings/email-setting` },
           { label: "Marketing", path: `/super-admin/settings/marketing` },
+          { label: "User Role", subtabId: "stg15", path: `/super-admin/settings/user-role` },
           { label: "Certification", path: `/super-admin/settings/certification` },
           { label: "Default Auto Targeting", path: `/super-admin/settings/auto-targeting` },
           { label: "Auto Targeting Group", path: `/super-admin/settings/group-targeting` },

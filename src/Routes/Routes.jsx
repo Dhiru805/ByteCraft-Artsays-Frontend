@@ -403,6 +403,8 @@ const AppRoutes = () => {
         <Route path="settings/auto-targeting" element={<AutoTargetingSetting />} />
         <Route path="settings/group-targeting" element={<GroupTargetingSetting/>} />
        <Route  path="settings/keyword-targeting" element={<KeywordTargetingSetting/>} />
+       <Route path="settings/user-role" element={<UserRole />} />
+        <Route path="settings/create-user-role" element={<CreateRole />} />
        
        
         {/* Advertise Routes */}
@@ -531,6 +533,8 @@ const AppRoutes = () => {
         <Route path="exhibition/create-exhibition" element={<SellerCreateExhibition/>} />  
         <Route path="exhibition/update-exhibition" element={<SellerUpdateExhibition/>} /> 
         <Route path="exhibition/view-exhibition" element={<SellerViewExhibition/>} /> 
+
+        <Route path="premium-badges" element={<SellerPremiumBages />} />
       </Route>
 
       {/*-------------------------------------------- Website Routes-------------------------------------------------- */}
