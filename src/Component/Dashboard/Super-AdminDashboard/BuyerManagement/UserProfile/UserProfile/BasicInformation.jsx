@@ -1,4 +1,4 @@
-import React, { useState,useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ArtistInfo from "./ArtistProfessionalInfo";
 import SocialMedia from "./SocialMediaPromotion";
 import BankDetails from "./BankandPaymentDetails"
@@ -17,14 +17,14 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
   const [loading, setLoading] = useState(false);
   const [localPreviewImage, setLocalPreviewImage] = useState(previewImage);
 
-  const fileInputRef = useRef(null); 
+  const fileInputRef = useRef(null);
 
   const [imageError, setImageError] = useState(false);
-  const [isImageLoaded, setIsImageLoaded] = useState(false); 
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
-const actualImage = !localPreviewImage || imageError ? DEFAULT_PROFILE_IMAGE : localPreviewImage;
+  const actualImage = !localPreviewImage || imageError ? DEFAULT_PROFILE_IMAGE : localPreviewImage;
 
- useEffect(() => {
+  useEffect(() => {
     if (!previewImage) {
       setIsImageLoaded(true);
       return;
@@ -43,11 +43,11 @@ const actualImage = !localPreviewImage || imageError ? DEFAULT_PROFILE_IMAGE : l
   }, [previewImage]);
 
   useEffect(() => {
-    setLocalPreviewImage(previewImage); 
+    setLocalPreviewImage(previewImage);
   }, [previewImage]);
 
 
-const handleDeleteImage = async () => {
+  const handleDeleteImage = async () => {
     try {
       const token = localStorage.getItem('token');
 
@@ -72,7 +72,7 @@ const handleDeleteImage = async () => {
         fileInputRef.current.value = '';
       }
 
-      setLocalPreviewImage(null); 
+      setLocalPreviewImage(null);
 
       toast.success('Profile image deleted successfully!');
     } catch (error) {
@@ -87,36 +87,36 @@ const handleDeleteImage = async () => {
     setter(!currentState);
   };
 
-    const validateRequired = () => {
-      const missing = [];
-      const requiredMap = {
-        'First Name'        : profileData.name,
-        'Last Name'         : profileData.lastName,
-        'Birthdate'         : profileData.birthdate,
-        'Gender'            : profileData.gender,
-        'Address Line 1'    : profileData.address?.line1,
-    'Address Line 2'    : profileData.address?.line2,
-    'Pincode'          : profileData.address?.pincode,
-        'City'              : profileData.address?.city,
-        'State/Province'    : profileData.address?.state,
-        'Country'           : profileData.address?.country,
-        'Username'          : profileData.username,
-        'Email'             : profileData.email,
-        'Phone Number'      : profileData.phone,
-        'Bio'               : profileData.bio,
-      };
-    
-      Object.entries(requiredMap).forEach(([label, value]) => {
-        if (!value || String(value).trim() === '') missing.push(label);
-      });
-    
-      if (missing.length) {
-        toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
-        return false;
-      }
-      return true;
+  const validateRequired = () => {
+    const missing = [];
+    const requiredMap = {
+      'First Name': profileData.name,
+      'Last Name': profileData.lastName,
+      'Birthdate': profileData.birthdate,
+      'Gender': profileData.gender,
+      'Address Line 1': profileData.address?.line1,
+      'Address Line 2': profileData.address?.line2,
+      'Pincode': profileData.address?.pincode,
+      'City': profileData.address?.city,
+      'State/Province': profileData.address?.state,
+      'Country': profileData.address?.country,
+      'Username': profileData.username,
+      'Email': profileData.email,
+      'Phone Number': profileData.phone,
+      'Bio': profileData.bio,
     };
-  
+
+    Object.entries(requiredMap).forEach(([label, value]) => {
+      if (!value || String(value).trim() === '') missing.push(label);
+    });
+
+    if (missing.length) {
+      toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
+      return false;
+    }
+    return true;
+  };
+
 
   return (
     <div className="body">
@@ -137,7 +137,7 @@ const handleDeleteImage = async () => {
             />
           )}
 
-        {isImageLoaded && actualImage !== DEFAULT_PROFILE_IMAGE && !imageError && (
+          {isImageLoaded && actualImage !== DEFAULT_PROFILE_IMAGE && !imageError && (
             <button
               onClick={handleDeleteImage}
               style={{
@@ -199,7 +199,7 @@ const handleDeleteImage = async () => {
                 className="form-control"
                 id="firstName"
                 placeholder="First Name"
-                value={profileData.name}
+                value={profileData.name || ''}
                 name="name"
                 onChange={handleChange}
               />
@@ -211,7 +211,7 @@ const handleDeleteImage = async () => {
                   name="gender"
                   value="male"
                   type="radio"
-                  checked={profileData.gender === 'male'}
+                  checked={profileData.gender?.trim().toLowerCase() === 'male'}
                   onChange={handleChange}
                 />
                 <span>
@@ -223,7 +223,7 @@ const handleDeleteImage = async () => {
                   name="gender"
                   value="female"
                   type="radio"
-                  checked={profileData.gender === 'female'}
+                  checked={profileData.gender?.trim().toLowerCase() === 'female'}
                   onChange={handleChange}
                 />
                 <span>
@@ -243,7 +243,7 @@ const handleDeleteImage = async () => {
                   id="birthdate"
                   placeholder="Birthdate"
                   name="birthdate"
-                  value={profileData.birthdate}
+                  value={profileData?.birthdate || ''}
                   onChange={handleChange}
                 />
               </div>
@@ -255,7 +255,7 @@ const handleDeleteImage = async () => {
                 className="form-control"
                 id="addressLine2"
                 placeholder="Address Line 2"
-                value={profileData.address?.line2}
+                value={profileData?.address?.line2 || ''}
                 name="address.line2"
                 onChange={handleAddressChange}
               />
@@ -268,7 +268,7 @@ const handleDeleteImage = async () => {
                 className="form-control"
                 id="city"
                 placeholder="City"
-                value={profileData.address?.city}
+                value={profileData.address?.city || ''}
                 name="address.city"
                 onChange={handleAddressChange}
               />
@@ -280,7 +280,7 @@ const handleDeleteImage = async () => {
                 className="form-control"
                 id="country"
                 placeholder="Country"
-                value={profileData.address?.country}
+                value={profileData.address?.country || ''}
                 name="address.country"
                 onChange={handleAddressChange}
               />
@@ -295,7 +295,7 @@ const handleDeleteImage = async () => {
                 className="form-control"
                 id="lastName"
                 placeholder="Last Name"
-                value={profileData.lastName}
+                value={profileData.lastName || ''}
                 name="lastName"
                 onChange={handleChange}
               />
@@ -308,7 +308,7 @@ const handleDeleteImage = async () => {
                 className="form-control"
                 id="addressLine1"
                 placeholder="Address Line 1"
-                value={profileData.address?.line1}
+                value={profileData.address?.line1 || ''}
                 name="address.line1"
                 onChange={handleAddressChange}
               />
@@ -321,7 +321,7 @@ const handleDeleteImage = async () => {
                 className="form-control"
                 id="landmark"
                 placeholder="Land Mark"
-                value={profileData.address?.landmark}
+                value={profileData.address?.landmark || ''}
                 name="address.landmark"
                 onChange={handleAddressChange}
               />
@@ -334,7 +334,7 @@ const handleDeleteImage = async () => {
                 className="form-control"
                 id="state"
                 placeholder="State/Province"
-                value={profileData.address?.state}
+                value={profileData.address?.state || ''}
                 name="address.state"
                 onChange={handleAddressChange}
               />
@@ -348,7 +348,7 @@ const handleDeleteImage = async () => {
                 className="form-control"
                 id="pincode"
                 placeholder="Pincode"
-                value={profileData.address?.pincode}
+                value={profileData.address?.pincode || ''}
                 name="address.pincode"
                 onChange={handleAddressChange}
               />
@@ -366,7 +366,7 @@ const handleDeleteImage = async () => {
                 placeholder="Username"
                 fdprocessedid="du108l"
                 name="username"
-                value={profileData.username}
+                value={profileData.username || ''}
                 onChange={handleChange}
               />
             </div>
@@ -378,7 +378,7 @@ const handleDeleteImage = async () => {
                 id="email"
                 placeholder="Email"
                 name="email"
-                value={profileData.email}
+                value={profileData?.email || ''}
                 onChange={handleChange}
                 style={{
                   backgroundImage: 'url("data:image/png',
@@ -483,7 +483,7 @@ const handleDeleteImage = async () => {
             className="form-control"
             id="bio"
             placeholder="Bio"
-            value={profileData.bio}
+            value={profileData.bio || ''}
             name="bio"
             onChange={handleChange}
             rows={3}
@@ -497,7 +497,7 @@ const handleDeleteImage = async () => {
             setLoading(true);
             Promise.resolve(handleSubmit(e))
               .then(() => {
-                 window.location.reload();
+                window.location.reload();
               })
               .catch(console.error)
               .finally(() => setLoading(false));
@@ -515,8 +515,8 @@ const handleDeleteImage = async () => {
         userId={userId}
         profileData={profileData} />
 
-        
-      <Notification 
+
+      <Notification
         userId={userId} />
 
       <Agreement

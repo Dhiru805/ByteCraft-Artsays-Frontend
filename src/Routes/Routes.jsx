@@ -16,9 +16,10 @@ import Login from "../Pages/Login/Login";
 import Register from "../Pages/Register/Register";
 import ArtistSellerRegister from "../Pages/Register/ArtistSellerRegister";
 import ForgotPassword from "../Pages/Login/Forgotpassword";
-//-----piublic routes-----//
+//-----public routes-----//
 import PrivacyPolicy from "../Pages/PrivacyPolicy/PrivacyPolicy";
 import TermsofServices from "../Pages/Terms&Condition/TermsofServices";
+import BiddingPass from "../Pages/Art-Biding/BidingPage";
 
 //----------------------------------------My Account-----------------------------------------//
 import MyAccountMainLayout from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/MyAccountMainLayout';
@@ -40,6 +41,7 @@ import WishListTable from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountP
 import MyCartList from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/MyCartList";
 import CheckOut from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/CheckOut";
 import OrderCompleted from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/OrderCompleted";
+import MyOrderView from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyOrderView";
 
 //----------------------------------------Error Pages-----------------------------------------//
 import PagenotFound404 from "../Pages/Error/404Error";
@@ -65,6 +67,8 @@ import SuperAdminViewBlog from "../Component/Dashboard/Super-AdminDashboard/Blog
 import SuperAdminUpdateBlog from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/UpdateBlogList";
 import SuperAdminProductInfo from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Productinfo";
 import SuperAdminMarketing from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailMarketing/Marketing/MarketingEmail";
+import UserRole from '../Component/Dashboard/Super-AdminDashboard/Settings/UserRole/UserRole';
+import CreateRole from '../Component/Dashboard/Super-AdminDashboard/Settings/UserRole/CreateRole';
 import SuperAdminBiddingPass from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/BiddingPass";
 import SuperAdminArtistAdvertise from "../Component/Dashboard/Super-AdminDashboard/Advertise/Advertise";
 import SuperAdminCertification from "../Component/Dashboard/Super-AdminDashboard/Certification/Certification";
@@ -105,6 +109,7 @@ import EditBlogRequest from "../Component/Dashboard/Super-AdminDashboard/ArtistD
 import ProductViewRequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ViewUserProfile/UserProf";
 import ArtistProductRequestView from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ProductRequest/ProductRequestView";
 import ArtistSoldProductTable from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/SoldProduct/SoldProduct";
+import ArtistSoldProductView from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/SoldProduct/SoldProductDetails";
 import ArtistTransaction from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Transaction/ArtistTransaction";
 import ArtistPackagingMaterial from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/PackagingMaterial/ProductPurchasedArtist";
 import ArtistProductsDetails from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Product/ArtistProductDetails";
@@ -112,6 +117,7 @@ import ArtistProductBidding from "../Component/Dashboard/Super-AdminDashboard/Ar
 
 import BuyerManagement from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/BuyerManageTable";
 import BuyerProductPurchase from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductPurchased/ProductPurchased";
+import BuyerProductPurchaseView from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductPurchased/ProductPurchasedDetails";
 import BuyerProductRequest from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductRequest/ProductRequestTable";
 import BuyerSoldProduct from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/SoldProduct/SoldProduct";
 import BuyerTransaction from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/Transaction/BuyerTransaction";
@@ -137,8 +143,9 @@ import SellerProductBidding from "../Component/Dashboard/Super-AdminDashboard/Se
 import ProductTableView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Product";
 import CustomOrderView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/CustomOrderAll/Customorder";
 import PurchaseTable from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductPurchased/ProductPurchased";
+import PurchaseTableView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductPurchased/ProductPurchasedDetails";
 import ProductUploads from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductUpload/productUploade";
-import ProductRequestView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist";
+// import ProductRequestView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist";
 import ViewCustomRequestsuperadmin from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist";
 
 //-----------------------------Bidding--------------------------//
@@ -180,6 +187,7 @@ import CustomOrder from '../Component/Dashboard/ArtistDashbooard/ProductDetails/
 import ProductView from '../Component/Dashboard/ArtistDashbooard/ProductDetails/Productinfo';
 import ViewCustomRequest from '../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/Artist/ViewRequest';
 import Productpurchase from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductPurchased/ProductPurchased';
+import ProductpurchaseView from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductPurchased/ProductPurchasedDetails';
 //----------------------------------------Buyer Components-----------------------------------//
 import BuyerDashboard from "../Component/Dashboard/BuyerDashboard/Dashboard/MainContent";
 
@@ -202,6 +210,20 @@ import SellerUpdateExhibition from "../Component/Dashboard/SellerDashboard/Exhib
 import SellerViewExhibition from "../Component/Dashboard/SellerDashboard/Exhibition/exhibitionView";
 
 
+
+
+
+//-----------------------------Artist Premium Badges--------------------------//
+
+import ArtistPremiumBages from "../Component/Dashboard/ArtistDashbooard/Badges/PremiumBadges";
+
+//-----------------------------Seller Premium Badges--------------------------//
+
+import SellerPremiumBages from "../Component/Dashboard/SellerDashboard/Badges/PremiumBadges";
+
+//-----------------------------Error 404--------------------------//
+
+import Error404Page from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/Error404';
 
 
 const PrivateRoute = ({ allowedRoles, children }) => {
@@ -282,6 +304,7 @@ const AppRoutes = () => {
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-services" element={<TermsofServices />} />
+        <Route path="/bidding" element={<BiddingPass />} />
       </Route>
 
       {/*-------------------------------------------Super Admin Routes--------------------------------------------- */}
@@ -323,6 +346,7 @@ const AppRoutes = () => {
         <Route path="artist/management/artistprofileview/" element={<ProductViewRequest />} />
         <Route path="artist/artistprofileview/:userId" element={<ProductViewRequest />} />
         <Route path="artist/soldproducts" element={<ArtistSoldProductTable />} />
+        <Route path="artist/soldproducts/view" element={<ArtistSoldProductView />} />
         <Route path="artist/artisttransaction" element={<ArtistTransaction />} />
         <Route path="artist/artistpackagingmaterial" element={<ArtistPackagingMaterial />} />
         <Route path="artist/management/productrequest/:userId" element={<ArtistProductRequestView />} />
@@ -335,6 +359,7 @@ const AppRoutes = () => {
         {/* Buyer Management */}
         <Route path="buyer/management" element={<BuyerManagement />} />
         <Route path="buyer/productpurchased" element={<BuyerProductPurchase />} />
+        <Route path="buyer/productpurchased/view" element={<BuyerProductPurchaseView />} />
         <Route path="buyer/resellproduct" element={<BuyerProductRequest />} />
         <Route path="buyer/soldproduct" element={<BuyerSoldProduct />} />
         <Route path="buyer/transaction" element={<BuyerTransaction />} />
@@ -360,6 +385,7 @@ const AppRoutes = () => {
         <Route path="customordertable" element={<CustomOrderView />} />
         <Route path="customordertable/view-request" element={<ViewCustomRequestsuperadmin />} />
         <Route path="purchasetable" element={<PurchaseTable />} />
+        <Route path="purchasetable/view" element={<PurchaseTableView />} />
         <Route path="product-upload" element={<ProductUploads />} />
 
         {/* Bidding Management */}
@@ -380,7 +406,7 @@ const AppRoutes = () => {
        
        
         {/* Advertise Routes */}
-        <Route path="advertise" element={<SuperAdminArtistAdvertise />} />        
+        <Route path="advertise" element={<SuperAdminArtistAdvertise />} />
         {/* Certification Routes */}
         <Route path="certification" element={<SuperAdminCertification />} />
         <Route path="certification/create-certification" element={<   CreateCertifications  />} />
@@ -430,8 +456,9 @@ const AppRoutes = () => {
         <Route path="custom-order" element={<CustomOrder />} />
         <Route path="product/view-product" element={<ProductView />} />
         <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
-        <Route path="product-purchase" element={<Productpurchase />} />
-        
+        <Route path="purchase" element={<Productpurchase />} />
+        <Route path="purchase/view" element={<ProductpurchaseView />} />
+
         {/* Advertise Routes */}
         <Route path="advertise" element={<ArtistAdvertise />} />
          <Route path="advertise/sponser" element={<ArtistSponser />} />
@@ -441,7 +468,7 @@ const AppRoutes = () => {
         <Route path="bidding-products-table" element={<ArtistBidingAllProducts />} />
         <Route path="bidded-products-table" element={<ArtistBiddedProducts />} />
         <Route path="bidding-pass-table" element={<ArtistBidPassTable />} />
-        
+
         {/* Certification Routes */}
         <Route path="certification" element={<ArtistCertification />} />
         <Route path="certification/create-certification" element={<  CreateArtitstCertifications />} />
@@ -451,6 +478,9 @@ const AppRoutes = () => {
         <Route path="exhibition/create-exhibition" element={<ArtistCreateExhibition/>} />  
         <Route path="exhibition/update-exhibition" element={<ArtistUpdateExhibition/>} /> 
         <Route path="exhibition/view-exhibition" element={<ArtistViewExhibition/>} /> 
+
+        {/* Premium Badges */}
+        <Route path="premium-badges" element={<ArtistPremiumBages />} />
 
       </Route>
 
@@ -485,9 +515,9 @@ const AppRoutes = () => {
         <Route path="product-details/bidding-pass" element={<SellerBiddingPass />} />
         <Route path="SellerProductUpload" element={<SellerProductUpload />} />
         <Route path="purchased-product" element={<SellerPurchasedProducts />} />
-        
+
         {/* Advertise Routes */}
-        <Route path="advertise" element={<SellerAdvertise/>} />
+        <Route path="advertise" element={<SellerAdvertise />} />
         {/* Bidding Routes */}
         <Route path="bidding-products-table" element={<SellerBidingAllProducts />} />
         <Route path="bidded-products-table" element={<SellerBiddedProducts />} />
@@ -513,11 +543,12 @@ const AppRoutes = () => {
               <MyAccountMainLayout />
             </PrivateRoute>
           }
-        >          
-            <Route element={<AccountPage />}>
+        >
+          <Route element={<AccountPage />}>
             <Route index element={<AccountForm />} />
             <Route path="personal-info" element={<AccountForm />} />
             <Route path="my-orders" element={<MyOrders />} />
+            <Route path="my-orders/view" element={<MyOrderView />} />
             <Route path="manage-address" element={<ManageAddress />} />
             <Route path="bank-payment-details" element={<BankPaymentDetails />} />
             <Route path="payment-method" element={<PaymentMethod />} />
@@ -533,6 +564,7 @@ const AppRoutes = () => {
             <Route path="my-cart" element={<MyCartList />} />
             <Route path="check-out" element={<CheckOut />} />
             <Route path="order-completed" element={<OrderCompleted />} />
+            <Route path="error404" element={<Error404Page />} />
           </Route>
         </Route>
       </Route>

@@ -21,6 +21,7 @@ const UserProfileForm = () => {
   const [profileData, setProfileData] = useState({
     name: '',
     lastName: '',
+    username: '', 
     email: '',
     phone: '',
     userType: '',

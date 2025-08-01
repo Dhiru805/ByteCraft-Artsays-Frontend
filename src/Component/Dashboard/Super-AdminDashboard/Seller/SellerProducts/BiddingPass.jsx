@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DEFAULT_PROFILE_IMAGE } from "../../../../../Constants/ConstantsVariables";
 
 const BiddingPass = () => {
   const navigate = useNavigate();
@@ -32,8 +31,7 @@ const BiddingPass = () => {
                 <button
                   type="button"
                   className="btn btn-secondary mr-2"
-                  onClick={() => navigate('/super-admin/bidding-pass/info')}
-                >
+                  onClick={() => window.open('/bidding', '_blank')}                >
                   <i className="fa fa-info-circle"></i> Pass Info
                 </button>
               </div>
@@ -41,8 +39,6 @@ const BiddingPass = () => {
           </div>
         </div>
       </div>
-
-      {/* Pass Options */}
       <div className="row mt-4">
         {[
           {
@@ -68,43 +64,48 @@ const BiddingPass = () => {
             <div
               className={`card h-100 p-3 ${selectedPass === pass.id ? 'border-info' : ''}`}
               style={{
+                minHeight: '500px',
                 borderWidth: selectedPass === pass.id ? '2px' : '1px',
                 borderStyle: 'solid',
                 transition: 'border-color 0.3s',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                userSelect: 'none'
               }}
               onClick={() => setSelectedPass(pass.id)} >
-              <div className="d-flex align-items-center mb-3">
-                <img
-                  src={DEFAULT_PROFILE_IMAGE}
-                  alt="pass icon"
-                  style={{
-                    width: '30px',
-                    height: '30px',
-                    objectFit: 'cover',
-                    marginRight: '10px',
-                  }}
-                />
-                <h6 className="mb-0">{pass.label}</h6>
-              </div>
 
-              <div className="form-check mb-3">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="biddingPass"
-                  id={pass.id}
-                  checked={selectedPass === pass.id}
-                  onChange={() => setSelectedPass(pass.id)}
-                  onClick={(e) => e.stopPropagation()} // Prevent bubbling to card
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor={pass.id}
-                  onClick={(e) => e.stopPropagation()} // Prevent bubbling
+              <div className="d-flex align-items-center mb-3">
+                <div
+                  style={{
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    border: `2px solid ${selectedPass === pass.id ? '#3BB29D' : '#3BB29D'}`,
+                    marginRight: '10px',
+                    position: 'relative',
+                    flexShrink: 0,
+                    cursor: 'pointer'
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedPass(pass.id);
+                  }}
                 >
-                  Select <strong>this</strong> pass
-                </label>
+                  {selectedPass === pass.id && (
+                    <div
+                      style={{
+                        width: '10px',
+                        height: '10px',
+                        backgroundColor: '#3BB29D',
+                        borderRadius: '50%',
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)'
+                      }}
+                    ></div>
+                  )}
+                </div>
+                <h6 className="mb-0" style={{ fontSize: '1.25rem' }}>{pass.label}</h6>
               </div>
 
               <div className="mb-3">
@@ -113,7 +114,7 @@ const BiddingPass = () => {
                 </div>
               </div>
 
-              <p className="mb-0 text-right font-weight-bold">
+              <p className="mb-0 text-right font-weight-bold" style={{ fontSize: '1.125rem' }}>
                 Price: ₹{pass.price}
               </p>
             </div>

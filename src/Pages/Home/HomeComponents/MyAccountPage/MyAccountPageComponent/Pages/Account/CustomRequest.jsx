@@ -882,6 +882,9 @@ const AddCustomRequestForm = () => {
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [fetchError, setFetchError] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [currentImages, setCurrentImages] = useState([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
@@ -997,6 +1000,8 @@ const AddCustomRequestForm = () => {
 
   const handleEditRequest = async (id) => {
     try {
+      setShowViewModal(false);
+      setViewRequest(null);
       const response = await getAPI("/api/get-buyer-request");
       const allRequests = response.data.buyerRequests;
 
@@ -1034,9 +1039,7 @@ const AddCustomRequestForm = () => {
       setArtistId(artistId);
       setSelectedArtistName(artistName);
 
-      // Set the selected address from BuyerSelectedAddress
       if (existingData.BuyerSelectedAddress && Object.keys(existingData.BuyerSelectedAddress).length > 0) {
-        // Find the matching address in the addresses array
         const matchingAddress = addresses.find(addr =>
           addr.line1 === existingData.BuyerSelectedAddress.line1 &&
           addr.line2 === existingData.BuyerSelectedAddress.line2 &&
@@ -1127,9 +1130,9 @@ const AddCustomRequestForm = () => {
     setFormData({ ...formData, size: selectedOption?.value || "" });
   };
 
-  const handleImageClick = () => {
-    setShowFullImage((prev) => !prev);
-  };
+  // const handleImageClick = () => {
+  //   setShowFullImage((prev) => !prev);
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -1217,8 +1220,8 @@ const AddCustomRequestForm = () => {
     formPayload.append("MaxBudget", formData.maxBudget);
     formPayload.append("PaymentTerm", formData.paymentTerm);
     if (formData.paymentTerm === "Installment") {
-  formPayload.append("InstallmentDuration", formData.installmentDuration);
-}
+      formPayload.append("InstallmentDuration", formData.installmentDuration);
+    }
     formPayload.append("ExpectedDeadline", formData.expectedDeadline);
     formPayload.append("Comments", formData.comments);
     formPayload.append("ColourPreferences", JSON.stringify(colorPreferences));
@@ -1335,6 +1338,8 @@ const AddCustomRequestForm = () => {
   };
 
   const handleViewRequest = (req) => {
+    setShowForm(false);
+    setEditingId(null);
     setViewRequest(req);
     setShowViewModal(true);
   };
@@ -1432,6 +1437,13 @@ const AddCustomRequestForm = () => {
     req.ProductName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleImageClick = (imagePath) => {
+    const fullPath = `${BASE_URL}/${imagePath}`;
+    setCurrentImages([fullPath]);
+    setCurrentImageIndex(0);
+    setShowPopup(true);
+  };
+
   return (
     <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 lg:px-0">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -1448,8 +1460,11 @@ const AddCustomRequestForm = () => {
             <FiSearch className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-400 text-lg" />
           </div>
           <button
-            onClick={() => setShowForm(true)}
-            className="bg-[#6F4D34] text-white text-[15px] font-semibold px-4 py-2 rounded-xl flex items-center justify-center"
+            onClick={() => {
+              setShowForm(true);
+              setShowViewModal(false);
+              setViewRequest(null);
+            }} className="bg-[#6F4D34] text-white text-[15px] font-semibold px-4 py-2 rounded-xl flex items-center justify-center"
           >
             <FaPlus className="mr-2" /> Add Request
           </button>
@@ -1481,6 +1496,7 @@ const AddCustomRequestForm = () => {
                           src={`${BASE_URL}/${req.BuyerImage}`}
                           className="w-8 h-8 rounded-full object-cover"
                           alt="Buyer"
+                          onClick={() => handleImageClick(req.BuyerImage)}
                           onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = DEFAULT_PROFILE_IMAGE;
@@ -1903,19 +1919,19 @@ const AddCustomRequestForm = () => {
               {formData.paymentTerm === "Installment" && (
                 <div className="md:w-1/2 w-full">
                   <label className="block font-medium mb-1">Installment Duration <span className="text-red-500">*</span></label>
-<select
-  id="installmentDuration"
-  name="installmentDuration" 
-  value={formData.installmentDuration}
-  onChange={handleChange} 
-  className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
->
-  <option value="">Select duration</option>
-  <option value="3">3 Months</option>
-  <option value="6">6 Months</option>
-  <option value="9">9 Months</option>
-  <option value="12">12 Months</option>
-</select>
+                  <select
+                    id="installmentDuration"
+                    name="installmentDuration"
+                    value={formData.installmentDuration}
+                    onChange={handleChange}
+                    className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
+                  >
+                    <option value="">Select duration</option>
+                    <option value="3">3 Months</option>
+                    <option value="6">6 Months</option>
+                    <option value="9">9 Months</option>
+                    <option value="12">12 Months</option>
+                  </select>
                 </div>
               )}
             </div>            <div>
@@ -2061,6 +2077,54 @@ const AddCustomRequestForm = () => {
           onSubmit={handleNegotiationSubmit}
         />
       )}
+      {
+        showPopup && (
+          <div
+            onClick={() => setShowPopup(false)}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.65)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 1000,
+            }}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                position: 'relative',
+                width: '500px',
+                height: '600px',
+                backgroundColor: '#111',
+                borderRadius: '12px',
+                boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                overflow: 'hidden',
+              }}
+            >
+              {/* Image */}
+              <img
+                src={currentImages[currentImageIndex]}
+                alt="Popup"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '12px',
+                }}
+              />
+            </div>
+          </div>
+        )
+      }
+
     </div>
   );
 };

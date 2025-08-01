@@ -343,7 +343,9 @@ const UserAccount = () => {
                 <a href="#">Change Password?</a>
               </li>
               <li>
-                <a href="#">Privacy &amp; Policy</a>
+                <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">
+                  Privacy &amp; Policy
+                </a>
               </li>
               <li className="menu-heading">BILLING</li>
               <li>

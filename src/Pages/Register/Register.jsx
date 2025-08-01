@@ -500,7 +500,11 @@ const Register = () => {
                   }}
                 />
                 <label className="form-check-label text-dark fst-italic" htmlFor="acceptTerms" style={{ fontSize: '1rem', fontStyle: 'italic' }}>
-                  I accept Terms and Conditions
+                  I accept&nbsp;      
+                  <a href="/terms-services" target="_blank" rel="noopener noreferrer" style={{ color: '#6b4f36', textDecoration: 'underline' }}>
+                    Terms & Conditions
+                  </a> 
+                  <span style={{ color: 'red' }}> *</span>
                 </label>
               </div>
             </div>

@@ -11,10 +11,12 @@ const ArtworkPricingDetails = ({ userId }) => {
         typeOfSeller: [],
         categoryOfArt: [],
         artStyleSpecialization: [],
-        experienceInSellingArt: ''
+        experienceInSellingArt: '',
+        paymentMethod: [],
+        commissionTerm: [],
     });
     const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchDetails = async () => {
@@ -33,6 +35,8 @@ const ArtworkPricingDetails = ({ userId }) => {
                         typeOfSeller: artworkData.typeOfSeller || [],
                         categoryOfArt: artworkData.categoryOfArt || [],
                         artStyleSpecialization: artworkData.artStyleSpecialization || [],
+                        paymentMethod: artworkData.paymentMethod || [],
+                        commissionTerm: artworkData.commissionTerm || [],
                         experienceInSellingArt: artworkData.experienceInSellingArt || ''
                     });
                 } else {
@@ -89,7 +93,7 @@ const ArtworkPricingDetails = ({ userId }) => {
                 : []
         }));
     };
-    
+
 
     const handleSingleSelectChange = (selectedOption, field) => {
         setFormData(prevData => ({
@@ -130,35 +134,48 @@ const ArtworkPricingDetails = ({ userId }) => {
         { value: 'professional', label: 'Professional' },
     ];
 
-  const validateRequiredFields = () => {
-    const missing = [];
+    const commisionOptions = [
+        { value: 'fixed pricing', label: 'Fixed pricing' },
+        { value: 'negotiable', label: 'Negotiable' },
+        { value: 'hourly rate', label: 'Hourly rate' },
+    ];
 
-    const requiredMap = {
-        'Type of Seller'            : formData.typeOfSeller,
-        'Category of Art'           : formData.categoryOfArt,
-        'Art Style Specialization'  : formData.artStyleSpecialization,
-        'Experience in Selling Art' : formData.experienceInSellingArt,
-        'Sample Artwork'            : formData.sampleArtwork
+    const paymentMethodOptions = [
+        { value: 'bank transfer', label: 'Bank transfer' },
+        { value: 'upi', label: 'Upi' },
+    ];
+
+    const validateRequiredFields = () => {
+        const missing = [];
+
+        const requiredMap = {
+            'Type of Seller': formData.typeOfSeller,
+            'Category of Art': formData.categoryOfArt,
+            'Art Style Specialization': formData.artStyleSpecialization,
+            'Experience in Selling Art': formData.experienceInSellingArt,
+            'Sample Artwork': formData.sampleArtwork,
+            'Commission Terms': formData.commissionTerm,
+            'Payment Method': formData.paymentMethod
+        };
+
+        Object.entries(requiredMap).forEach(([label, value]) => {
+            if (
+                value === null ||
+                value === '' ||
+                (Array.isArray(value) && value.length === 0)
+            ) {
+                missing.push(label);
+            }
+        });
+
+        if (missing.length > 0) {
+            toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
+            return false;
+        }
+
+        return true;
     };
 
-    Object.entries(requiredMap).forEach(([label, value]) => {
-        if (
-            value === null || 
-            value === '' || 
-            (Array.isArray(value) && value.length === 0)
-        ) {
-            missing.push(label);
-        }
-    });
-
-    if (missing.length > 0) {
-        toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
-        return false;
-    }
-
-    return true;
-};
-  
     return (
         <div className="body">
             <h5 className="mb-2">Artwork And Selling Details</h5>
@@ -238,20 +255,49 @@ const ArtworkPricingDetails = ({ userId }) => {
                         )}
                     </div>
                 </div>
-        <button type="button"
-          className="btn btn-primary mx-2"
-          disabled={loading}
-          onClick={(e) => {
-            if (!validateRequiredFields()) return;
-            setLoading(true);
-            Promise.resolve(handleSubmit(e))
-              .then(() => {
-                 window.location.reload();
-              })
-              .catch(console.error)
-              .finally(() => setLoading(false));
-          }}
-        >{loading ? "Updating..." : "Update"}</button>
+                <div className="row clearfix">
+                    <div className="col-lg-6 col-md-12">
+                        <div className="form-group">
+                            <label>Commission Terms <span style={{ color: 'red' }}>*</span></label>
+                            <Select
+                                isMulti
+                                options={commisionOptions}
+                                value={formData.commissionTerm?.map(value => ({ value, label: value.charAt(0).toUpperCase() + value.slice(1) }))}
+                                onChange={(selectedOptions) => handleChange(selectedOptions, 'commissionTerm')}
+                                classNamePrefix="select"
+                            />
+                        </div>
+                    </div>
+                    <div className="col-lg-6 col-md-12">
+                        <div className="form-group">
+                            <label>Preferred Payment Method  <span style={{ color: 'red' }}>*</span></label>
+                            <CreatableSelect
+                                isMulti
+                                options={paymentMethodOptions}
+                                value={formData.paymentMethod?.map(value => ({ value, label: value.charAt(0).toUpperCase() + value.slice(1) }))}
+                                onChange={(selectedOptions) => handleChange(selectedOptions, 'paymentMethod')}
+                                classNamePrefix="select"
+                            />
+
+                        </div>
+                    </div>
+
+
+                </div>
+                <button type="button"
+                    className="btn btn-primary mx-2"
+                    disabled={loading}
+                    onClick={(e) => {
+                        if (!validateRequiredFields()) return;
+                        setLoading(true);
+                        Promise.resolve(handleSubmit(e))
+                            .then(() => {
+                                window.location.reload();
+                            })
+                            .catch(console.error)
+                            .finally(() => setLoading(false));
+                    }}
+                >{loading ? "Updating..." : "Update"}</button>
             </form>
             {isModalOpen && (
                 <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }} tabIndex="-1">

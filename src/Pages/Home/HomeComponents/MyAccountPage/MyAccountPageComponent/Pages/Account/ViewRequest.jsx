@@ -57,6 +57,11 @@ function ViewBuyerRequest({ request, onClose }) {
                     Close
                 </button>
             </div>
+            {request?.orderId && (
+                <h3 className="text-lg font-bold text-blue-600 mb-3">
+                    Order ID: <span className="text-zinc-900">{request.orderId}</span>
+                </h3>
+            )}
 
             <div className="card">
                 <div className="body">
@@ -82,52 +87,52 @@ function ViewBuyerRequest({ request, onClose }) {
                                 )}
 
                                 {
-                                            showPopup && (
-                                                <div
-                                                    onClick={() => setShowPopup(false)}
+                                    showPopup && (
+                                        <div
+                                            onClick={() => setShowPopup(false)}
+                                            style={{
+                                                position: 'fixed',
+                                                top: 0,
+                                                left: 0,
+                                                right: 0,
+                                                bottom: 0,
+                                                backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                zIndex: 1000,
+                                            }}
+                                        >
+                                            <div
+                                                onClick={(e) => e.stopPropagation()}
+                                                style={{
+                                                    position: 'relative',
+                                                    width: '500px',
+                                                    height: '600px',
+                                                    backgroundColor: '#111',
+                                                    borderRadius: '12px',
+                                                    boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    overflow: 'hidden',
+                                                }}
+                                            >
+                                                {/* Image */}
+                                                <img
+                                                    src={`${BASE_URL}/${currentImages[currentImageIndex]?.replace(/\\/g, '/')}`}
+                                                    alt="Popup"
                                                     style={{
-                                                        position: 'fixed',
-                                                        top: 0,
-                                                        left: 0,
-                                                        right: 0,
-                                                        bottom: 0,
-                                                        backgroundColor: 'rgba(0, 0, 0, 0.65)',
-                                                        display: 'flex',
-                                                        justifyContent: 'center',
-                                                        alignItems: 'center',
-                                                        zIndex: 1000,
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        objectFit: 'cover',
+                                                        borderRadius: '12px',
                                                     }}
-                                                >
-                                                    <div
-                                                        onClick={(e) => e.stopPropagation()}
-                                                        style={{
-                                                            position: 'relative',
-                                                            width: '500px',
-                                                            height: '600px',
-                                                            backgroundColor: '#111',
-                                                            borderRadius: '12px',
-                                                            boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',
-                                                            display: 'flex',
-                                                            justifyContent: 'center',
-                                                            alignItems: 'center',
-                                                            overflow: 'hidden',
-                                                        }}
-                                                    >
-                                                        {/* Image */}
-                                                        <img
-                                                            src={`${BASE_URL}/${currentImages[currentImageIndex]?.replace(/\\/g, '/')}`}
-                                                            alt="Popup"
-                                                            style={{
-                                                                width: '100%',
-                                                                height: '100%',
-                                                                objectFit: 'cover',
-                                                                borderRadius: '12px',
-                                                            }}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            )
-                                        }
+                                                />
+                                            </div>
+                                        </div>
+                                    )
+                                }
 
                             </div>
                             <div className="flex-grow-1">

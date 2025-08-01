@@ -1,149 +1,262 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { FaChevronDown } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { FaChevronDown, FaEye } from 'react-icons/fa';
+import getAPI from '../../../../../../../api/getAPI';
+import { DEFAULT_PROFILE_IMAGE } from './constant';
+import MyOrderView from './MyOrderView';
+import { useNavigate } from 'react-router-dom';
 
 const MyOrders = () => {
-    const orders = [
-        {
-            id: 'SDGT1254FD',
-            paymentMethod: 'Paypal',
-            transactionId: 'TR5425SFE',
-            deliveryDate: '29 June 2023',
-            status: 'Accepted',
-            items: [
-                { name: 'img', price: 44.00, image: '/img1.jpg' },
-                { name: 'img', price: 44.00, image: '/img2.jpg' },
-                { name: 'img', price: 44.00, image: '/img3.jpg' }
-            ]
-        },
-        {
-            id: 'SDGT1254FD',
-            paymentMethod: 'Paypal',
-            transactionId: 'TR5425SFE',
-            deliveryDate: '29 June 2023',
-            status: 'Delivered',
-            total: 44.00,
-            items: [
-                { name: 'img', price: 44.00, image: '/img3.jpg' }
-            ]
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const [showPopup, setShowPopup] = useState(false);
+  const [currentImages, setCurrentImages] = useState([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const navigate = useNavigate();
+
+  const orders = [
+    {
+      id: 'SDGT1254FD',
+      paymentMethod: 'Paypal',
+      transactionId: 'TR5425SFE',
+      deliveryDate: '29 June 2023',
+      status: 'Accepted',
+      items: [
+        { name: 'img', price: 44.0, image: '/img1.jpg' },
+        { name: 'img', price: 44.0, image: '/img2.jpg' },
+        { name: 'img', price: 44.0, image: '/img3.jpg' },
+      ],
+    },
+    {
+      id: 'SDGT1254FD',
+      paymentMethod: 'Paypal',
+      transactionId: 'TR5425SFE',
+      deliveryDate: '29 June 2023',
+      status: 'Delivered',
+      total: 44.0,
+      items: [{ name: 'img', price: 44.0, image: '/img3.jpg' }],
+    },
+  ];
+
+  useEffect(() => {
+    const fetchApprovedProducts = async () => {
+      try {
+        const response = await getAPI('/api/getapprovedbuyerrequests');
+        if (Array.isArray(response.data.data)) {
+          setProducts(response.data.data);
+        } else {
+          setProducts([]);
         }
-    ];
+        console.log('Approved products:', response.data.data);
+      } catch (error) {
+        console.error('Failed to fetch approved products:', error);
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchApprovedProducts();
+  }, []);
 
-    return (
-        <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 lg:px-0 space-y-6">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                <h2 className="text-xl font-semibold">Orders ({orders.length})</h2>
+  return (
+    <>
+      <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 lg:px-0 space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <h2 className="text-xl font-semibold">Orders ({orders.length})</h2>
 
-                <div className="text-sm flex items-center gap-2">
-                    <label htmlFor="sort" className="font-medium text-gray-700">
-                        Sort by:
-                    </label>
-                    <div className="relative">
-                        <select
-                            id="sort"
-                            className="appearance-none border border-gray-300 rounded-full pl-6 pr-10 py-2 text-sm text-gray-700 transition"
-                        >
-                            <option value="">All</option>
-                        </select>
-                        <FaChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 text-xs pointer-events-none" />
-                    </div>
-                </div>
+          <div className="text-sm flex items-center gap-2">
+            <label htmlFor="sort" className="font-medium text-gray-700">
+              Sort by:
+            </label>
+            <div className="relative">
+              <select
+                id="sort"
+                className="appearance-none border border-gray-300 rounded-full pl-6 pr-10 py-2 text-sm text-gray-700 transition"
+              >
+                <option value="">All</option>
+              </select>
+              <FaChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 text-xs pointer-events-none" />
             </div>
-
-            {/* Order Cards */}
-            {orders.map((order, index) => (
-                <div key={index} className="bg-white rounded-2xl border mb-6 overflow-hidden">
-                    {/* Order Header */}
-                    <div className="bg-[#6F4D34] text-white grid grid-cols-1 md:grid-cols-4 gap-4 p-4 text-sm font-semibold">
-                        <div className="border-b md:border-b-0 md:border-r md:pr-4">
-                            Order ID<br />
-                            <span className="font-normal">#{order.id}</span>
-                        </div>
-                        <div className="border-b md:border-b-0 md:border-r md:pl-4 md:pr-4">
-                            Payment Method<br />
-                            <span className="font-normal">{order.paymentMethod}</span>
-                        </div>
-                        <div className="border-b md:border-b-0 md:border-r md:pl-4 md:pr-4">
-                            Transaction ID<br />
-                            <span className="font-normal">{order.transactionId}</span>
-                        </div>
-                        <div className="md:pl-4">
-                            {order.status === 'Delivered' ? 'Delivery Date' : 'Estimated Delivery Date'}<br />
-                            <span className="font-normal">{order.deliveryDate}</span>
-                        </div>
-                    </div>
-
-                    {/* Order Items */}
-                    <div className="p-4 space-y-4">
-                        {order.items.map((item, idx) => (
-                            <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
-                                <div className="flex gap-3 items-center">
-                                    <img
-                                        src={item.image || '/placeholder.jpg'}
-                                        alt={item.name}
-                                        className="w-16 h-16 object-cover rounded-lg border border-gray-200 p-[2px] shrink-0"
-                                    />
-                                    <div>
-                                        <p className="font-medium">{item.name}</p>
-                                        <p className="text-xs text-gray-500">1 Qty.</p>
-                                    </div>
-                                </div>
-                                <p className="text-sm font-semibold">${item.price.toFixed(2)}</p>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Status and Action Buttons */}
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 px-4 pb-4">
-                        <div className="flex items-center gap-3">
-                            <span
-                                className={`text-xs px-3 py-1 rounded-full ${
-                                    order.status === 'Accepted'
-                                        ? 'bg-orange-100 text-orange-500 border border-orange-500'
-                                        : order.status === 'Delivered'
-                                        ? 'bg-red-100 text-[#6F4D34] border border-[#6F4D34]'
-                                        : 'bg-gray-100 text-gray-600'
-                                }`}
-                            >
-                                {order.status}
-                            </span>
-                            <p className="text-sm">Your Order has been {order.status}</p>
-                        </div>
-                    </div>
-
-                    {/* Footer Buttons */}
-                    <div className="px-4 pb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        {/* Left Side Buttons */}
-                        <div className="flex flex-wrap gap-3">
-                            {order.status === 'Accepted' && (
-                                <Link to="/my-account/track-your-order">
-                                    <button className="bg-[#6F4D34] text-white px-4 py-2 rounded-full text-sm">
-                                        Track Order
-                                    </button>
-                                </Link>
-                            )}
-                            {order.status === 'Delivered' && (
-                                <button className="bg-[#6F4D34] text-white px-4 py-2 rounded-full text-sm">
-                                    Add Review
-                                </button>
-                            )}
-                            <button className="border border-[#6F4D34] text-[#6F4D34] px-4 py-2 rounded-full text-sm">
-                                Invoice
-                            </button>
-                        </div>
-
-                        {/* Right Side Cancel Button */}
-                        {order.status === 'Accepted' && (
-                            <div className="flex justify-end">
-                                <button className="text-red-500 text-sm font-semibold">Cancel Order</button>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            ))}
+          </div>
         </div>
-    );
+
+        {!loading && products.length === 0 && (
+          <p className="text-center text-gray-500">You don’t have any orders yet.</p>
+        )}
+
+        {!selectedOrder &&
+          products.map((item, index) => {
+            const deliveryDate = new Date(item.createdAt);
+            const deliveryDateStr = deliveryDate.toLocaleDateString();
+            const imageUrl = item.BuyerImage
+              ? `${BASE_URL}/${item.BuyerImage.replace(/\\/g, '/')}`
+              : DEFAULT_PROFILE_IMAGE;
+            const price = item.ArtistNegotiatedBudgets?.[0] || '0';
+            const isDelivered = item.Status?.toLowerCase() === 'delivered';
+            const returnPolicyDays = 10;
+
+            const currentDate = new Date();
+            const diffInDays = Math.floor(
+              (currentDate - deliveryDate) / (1000 * 60 * 60 * 24)
+            );
+            let actionType = '';
+            if (!isDelivered) {
+              actionType = 'cancel';
+            } else if (diffInDays <= returnPolicyDays) {
+              actionType = 'return';
+            } else {
+              actionType = 'chat';
+            }
+
+            return (
+              <div
+                key={item._id || index}
+                onClick={() => navigate('/my-account/my-orders/view', { state: { order: item } })}
+                className="block hover:no-underline cursor-pointer"
+              >
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden transition hover:shadow-md">
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 bg-[#6F4D34] text-white text-sm font-medium p-3">
+                    <div className="sm:border-r border-white/40">
+                      Order ID<br />
+                      <span className="font-normal text-sm">#{item.orderId || 'N/A'}</span>
+                    </div>
+                    <div className="sm:border-r border-white/40">
+                      Payment Method<br />
+                      <span className="font-normal text-sm">{item.PaymentTerm || 'N/A'}</span>
+                    </div>
+                    <div className="sm:border-r border-white/40">
+                      Artist<br />
+                      <span className="font-normal text-sm">
+                        {item.Artist?.name || item.Artist?.id || 'Unknown'}
+                      </span>
+                    </div>
+                    <div>
+                      Delivered on<br />
+                      <span className="font-normal text-sm">{deliveryDateStr}</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 flex flex-col sm:flex-row items-center justify-between gap-3 border-b">
+                    <div className="flex items-center gap-3 flex-1">
+                      <img
+                        src={imageUrl}
+                        alt={item.ProductName}
+                        className="w-16 h-16 object-cover rounded-lg border"
+                      />
+                      <div>
+                        <p className="text-sm font-semibold truncate max-w-[200px]">
+                          {item.ProductName || 'Untitled Product'}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Size: {item.Size || 'Free'} | Frame: {item.IsFramed ? 'Yes' : 'No'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex-1 text-center">
+                      <p className="text-base font-semibold text-gray-800">₹{price}</p>
+                    </div>
+
+                    <div className="flex-1 text-right">
+                      <p className="text-green-600 text-xs font-medium">
+                        {isDelivered ? `Delivered on ${deliveryDateStr}` : 'Not yet delivered'}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {isDelivered ? 'Your item has been delivered' : 'Awaiting delivery'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap sm:flex-nowrap justify-between items-center gap-2 px-3 py-3">
+                    <div className="flex gap-2">
+                      <button className="text-blue-600 text-sm font-medium border border-blue-500 px-4 py-1.5 rounded-full hover:bg-blue-50 transition">
+                        Rate & Review Product
+                      </button>
+                      <button className="text-[#6F4D34] text-sm border border-[#6F4D34] px-4 py-1.5 rounded-full hover:bg-[#6F4D34]/10 transition">
+                        Download Invoice
+                      </button>
+                    </div>
+
+                    {actionType === 'cancel' && (
+                      <button className="text-red-600 text-sm font-medium border border-red-500 px-4 py-1.5 rounded-full hover:bg-red-100 transition">
+                        Cancel Order
+                      </button>
+                    )}
+                    {actionType === 'return' && (
+                      <button className="text-blue-600 text-sm font-medium border border-blue-500 px-4 py-1.5 rounded-full hover:bg-blue-50 transition">
+                        Return Product
+                      </button>
+                    )}
+                    {actionType === 'chat' && (
+                      <button className="text-[#6F4D34] text-sm font-medium border border-[#6F4D34] px-4 py-1.5 rounded-full bg-[#6F4D34]/5 hover:bg-[#6F4D34]/10 transition">
+                        Chat with Us
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+
+        {selectedOrder && (
+          <div className="mt-8">
+            <button
+              onClick={() => setSelectedOrder(null)}
+              className="mb-4 text-sm text-blue-600 hover:underline"
+            >
+              ← Back to Orders
+            </button>
+            <MyOrderView orderData={selectedOrder} />
+          </div>
+        )}
+      </div>
+
+      {showPopup && (
+        <div
+          onClick={() => setShowPopup(false)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.65)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'relative',
+              height: '50%',
+              backgroundColor: '#111',
+              borderRadius: '12px',
+              boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              overflow: 'hidden',
+            }}
+          >
+            <img
+              src={currentImages[currentImageIndex]}
+              alt="Popup"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                borderRadius: '12px',
+              }}
+            />
+          </div>
+        </div>
+      )}
+    </>
+  );
 };
 
 export default MyOrders;

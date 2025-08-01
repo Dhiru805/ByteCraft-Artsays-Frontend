@@ -41,6 +41,12 @@ const Sidebarprofile = ({ user, userId, isOpen, handleToggleSidebar, Handletoggl
       state: { _id: userId }
     },
     {
+      label: "Badges",
+      icon: "bi-gem",
+      path: `/${userType ? userType.toLowerCase() : "user"}/premium-badges`,
+      state: { _id: userId }
+    },
+    {
       label: "Logout",
       icon: "bi-power",
       action: () => handleLogout(navigate, logout),

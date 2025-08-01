@@ -371,7 +371,7 @@ const ProductRequest = () => {
                     </div>
                 </div>
             )}
-             {isDeleteDialogOpen && (
+            {isDeleteDialogOpen && (
                 <ConfirmationDialog
                     onClose={handleDeleteCancel}
                     deleteType="productRequest"
@@ -381,7 +381,7 @@ const ProductRequest = () => {
             )}
 
         </div>
- );
+    );
 }
 
 

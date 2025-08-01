@@ -3,17 +3,16 @@ import { useLocation, Link } from "react-router-dom";
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 import useUserType from '../../../../urlconfig';
-import Switch from "react-switch";
 import getAPI from "../../../../../../api/getAPI";
 
-const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
 function ViewBuyerRequest() {
     const location = useLocation();
     const userType = useUserType();
     const { state } = location || {};
     const { request } = state || {};
-
+    
+    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
     const [productName, setProductName] = useState('');
     const [description, setDescription] = useState('');

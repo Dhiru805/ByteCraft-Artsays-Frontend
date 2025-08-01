@@ -371,7 +371,7 @@ const Login = () => {
         password,
       }, true);
 
-      const { token, userType, email, userId, status } = res.data;
+      const { token, userType, email, userId, status, userrole } = res.data;
       console.log('Login API response:', { token, userType, email, userId, status });
 
       if (!token || !userType) {
@@ -388,6 +388,7 @@ const Login = () => {
       localStorage.setItem('email', email);
       localStorage.setItem('userId', userId);
       localStorage.setItem('status', normalizedStatus);
+      localStorage.setItem('userrole', userrole);
 
       console.log('localStorage after login:', {
         token: localStorage.getItem('token'),

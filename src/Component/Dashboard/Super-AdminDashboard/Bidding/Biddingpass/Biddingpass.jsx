@@ -1,43 +1,28 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-// import getAPI from '../../../../api/getAPI';  
-import useUserType from '../../../urlconfig';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const Product = () => {
+const BiddingPass = () => {
   const navigate = useNavigate();
-  const userType = useUserType();
-
-  // const [products, setProducts] = useState([]);
-
-  // useEffect(() => {
-  //   const fetchProducts = async () => {
-  //     const userId = localStorage.getItem('userId');
-  //     try {
-  //       const result = await getAPI(`/api/getproductbyartist/${userId}`, {}, true, false);
-  //       setProducts(result.data.data);
-  //     } catch (error) {
-  //       console.error("Error fetching products:", error);
-  //     }
-  //   };
-  //   fetchProducts();
-  // }, []);
+  const [selectedPass, setSelectedPass] = useState('monthly');
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid mt-3">
       <div className="block-header">
         <div className="row">
           <div className="col-lg-6 col-md-6 col-sm-12">
-            <h2>Bidding Pass Table</h2>
+            <h2>Choose Bidding Pass</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <span
-                  onClick={() => navigate('/artist/dashboard')}
-                  style={{ cursor: 'pointer' }}
-                >
+                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
                   <i className="fa fa-dashboard"></i>
                 </span>
               </li>
-              <li className="breadcrumb-item">Bidding Pass Table</li>
+              <li className="breadcrumb-item active">
+                <span onClick={() => navigate(-1)} style={{ cursor: 'pointer' }}>
+                  All Product
+                </span>
+              </li>
+              <li className="breadcrumb-item">Bidding Pass</li>
             </ul>
           </div>
           <div className="col-lg-6 col-md-6 col-sm-12">
@@ -46,80 +31,98 @@ const Product = () => {
                 <button
                   type="button"
                   className="btn btn-secondary mr-2"
-                  onClick={() => navigate(`#`)}
-                >
-                  <i className="fa fa-plus"></i>
+                  onClick={() => window.open('/bidding', '_blank')}                >
+                  <i className="fa fa-info-circle"></i> Pass Info
                 </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div className="row clearfix">
-        <div className="col-lg-12">
-          <div className="card">
-            <div className="header d-flex justify-content-between align-items-center">
-              <div className="d-none d-md-flex align-items-center mb-2 mb-md-0">
-                <label className="mb-0 mr-2">Show</label>
-                <select
-                  className="form-control form-control-sm"
-                  style={{ minWidth: '70px' }}
+      <div className="row mt-4">
+        {[
+          {
+            id: 'one-time',
+            label: 'One-Time Pass',
+            description: 'Access to 1 bidding session for a single product. No expiration.',
+            price: 99
+          },
+          {
+            id: 'monthly',
+            label: 'Monthly Pass',
+            description: 'Unlimited bidding access for 30 days from purchase.',
+            price: 249
+          },
+          {
+            id: 'annual',
+            label: 'Annual Pass',
+            description: 'Full year of unlimited bidding on all eligible products.',
+            price: 999
+          }
+        ].map(pass => (
+          <div className="col-md-4 mb-4" key={pass.id}>
+            <div
+              className={`card h-100 p-3 ${selectedPass === pass.id ? 'border-info' : ''}`}
+              style={{
+                minHeight: '500px',
+                borderWidth: selectedPass === pass.id ? '2px' : '1px',
+                borderStyle: 'solid',
+                transition: 'border-color 0.3s',
+                cursor: 'pointer',
+                userSelect: 'none'
+              }}
+              onClick={() => setSelectedPass(pass.id)} >
+
+              <div className="d-flex align-items-center mb-3">
+                <div
+                  style={{
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    border: `2px solid ${selectedPass === pass.id ? '#3BB29D' : '#3BB29D'}`,
+                    marginRight: '10px',
+                    position: 'relative',
+                    flexShrink: 0,
+                    cursor: 'pointer'
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedPass(pass.id);
+                  }}
                 >
-                  <option value="10">10</option>
-                  <option value="25">25</option>
-                  <option value="50">50</option>
-                  <option value="100">100</option>
-                </select>
-                <label className="mb-0 ml-2">entries</label>
+                  {selectedPass === pass.id && (
+                    <div
+                      style={{
+                        width: '10px',
+                        height: '10px',
+                        backgroundColor: '#3BB29D',
+                        borderRadius: '50%',
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)'
+                      }}
+                    ></div>
+                  )}
+                </div>
+                <h6 className="mb-0" style={{ fontSize: '1.25rem' }}>{pass.label}</h6>
               </div>
-              <div className="w-100 w-md-auto d-flex justify-content-end">
-                <div className="input-group" style={{ maxWidth: '150px' }}>
-                  <input
-                    type="text"
-                    className="form-control form-control-sm"
-                    placeholder="Search"
-                  />
-                  <i
-                    className="fa fa-search"
-                    style={{
-                      position: 'absolute',
-                      right: '10px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      pointerEvents: 'none',
-                    }}
-                  ></i>
+
+              <div className="mb-3">
+                <div className="border p-2 text-muted rounded small bg-light">
+                  {pass.description}
                 </div>
               </div>
-            </div>
 
-            {/* Table */}
-            <div className="body">
-              <div className="table-responsive">
-                <table className="table table-hover">
-                  <thead className="thead-dark">
-                    <tr>
-                      <th>#</th>
-                      <th>Name</th>
-                      <th>Product Name</th>
-                      <th>Market Price</th>
-                      <th>Selling Price</th>
-                      <th>Date</th>
-                      <th>Status</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-
-                  </tbody>
-                </table>
-              </div>
+              <p className="mb-0 text-right font-weight-bold" style={{ fontSize: '1.125rem' }}>
+                Price: ₹{pass.price}
+              </p>
             </div>
           </div>
-        </div>
+        ))}
       </div>
     </div>
   );
 };
 
-export default Product;
+export default BiddingPass;

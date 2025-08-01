@@ -73,17 +73,17 @@ const Customorder = () => {
                 {},
                 true
             );
-            fetchBuyerRequests();      
-            fetchBuyerRequestsdata(); 
+            fetchBuyerRequests();
+            fetchBuyerRequestsdata();
             fetchBuyerRequestsAdmin();
-            
+
             setBuyerRequests((prevRequests) =>
                 prevRequests.map((request) =>
                     request._id === requestId ? { ...request, RequestStatus: status } : request
                 )
             );
-            
-    
+
+
             if (status === 'Approved') {
                 toast.success('Buyer Request is Approved');
             } else if (status === 'Rejected') {
@@ -103,12 +103,12 @@ const Customorder = () => {
     return (
         <>
             <CustomorderHeader />
-                <CustomOrderRequestArtist
-                    buyerRequests={buyerRequestsdata}
-                    handleRejectBuyerRequest={handleRejectBuyerRequest}
-                    updateBuyerRequestStatus={updateBuyerRequestStatus}
-                    setBuyerRequests={setBuyerRequestsdata}
-                />
+            <CustomOrderRequestArtist
+                buyerRequests={buyerRequestsdata}
+                handleRejectBuyerRequest={handleRejectBuyerRequest}
+                updateBuyerRequestStatus={updateBuyerRequestStatus}
+                setBuyerRequests={setBuyerRequestsdata}
+            />
         </>
     );
 };

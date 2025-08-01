@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import {  useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ViewBlogRequest from "./BlogRequest/ViewBlogRequest"
@@ -12,7 +12,6 @@ import Transaction from './Transaction/Transaction';
 import SoldProduct from './SoldProduct/SoldProduct'
 import Packagingmaterial from './PackagingMaterial/ProductPurchasedArtist'
 import getAPI from '../../../../../api/getAPI';
-import { Link } from 'react-router-dom';
 import Settings from './UserProfile/BasicInformation';
 import useUserType from '../../../urlconfig'
 
@@ -20,8 +19,26 @@ import useUserType from '../../../urlconfig'
 const UserProfileForm = () => {
   const userType = useUserType();
   const location = useLocation();
-  const { artist } = location.state || {};
-  const navigate = useNavigate();
+const navigate = useNavigate();
+
+const artistFromState = location?.state?.artist;
+  useEffect(() => {
+    if (artistFromState && artistFromState._id) {
+      localStorage.setItem("selectedArtist", JSON.stringify(artistFromState));
+      localStorage.setItem("selectedArtistId", artistFromState._id);
+    }
+  }, [artistFromState]);
+
+  const artist = JSON.parse(localStorage.getItem("selectedArtist"));
+  const userId = artist?._id || localStorage.getItem("selectedArtistId");
+
+  useEffect(() => {
+    if (!artist || !userId) {
+      toast.error("Invalid access. Redirecting...");
+      navigate("/super-admin/artist/management");
+    }
+  }, [artist, userId, navigate]);
+  
   const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
   const [profileData, setProfileData] = useState({
     name: '',
@@ -41,9 +58,6 @@ const UserProfileForm = () => {
     birthdate: '',
     website: ''
   });
-
-  const userId = artist?._id;
-
 
   const fetchProfile = async () => {
     try {
@@ -76,7 +90,7 @@ const UserProfileForm = () => {
     }
   }, [userId]);
 
-  const [activeTab, setActiveTab] = useState('Settings');
+const [activeTab, setActiveTab] = useState('Settings');
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -86,26 +100,31 @@ const UserProfileForm = () => {
     }
   }, [location]);
 
-  const handleTabClick = (tabName) => {
+ const handleTabClick = (tabName) => {
     setActiveTab(tabName);
-    navigate({
-      pathname: location.pathname,
-      search: `?tab=${tabName}`,
-    });
+navigate(
+  {
+    pathname: location.pathname,
+    search: `?tab=${tabName}`,
+  },
+  {
+    state: { artist }, 
+  }
+);
   };
+  
+  // const handleAddressChange = (e) => {
+  //   const { name, value } = e.target;
+  //   const [, subKey] = name.split('.');
 
-  const handleAddressChange = (e) => {
-    const { name, value } = e.target;
-    const [, subKey] = name.split('.');
-
-    setProfileData((prevState) => ({
-      ...prevState,
-      address: {
-        ...prevState.address,
-        [subKey]: value
-      }
-    }));
-  };
+  //   setProfileData((prevState) => ({
+  //     ...prevState,
+  //     address: {
+  //       ...prevState.address,
+  //       [subKey]: value
+  //     }
+  //   }));
+  // };
 
 
   const tabs = [
@@ -175,6 +194,7 @@ const UserProfileForm = () => {
                 >
                   <tab.component
                     userId={userId}
+                    artist={artist}
                     profileData={profileData}
                     previewImage={previewImage}
                   />

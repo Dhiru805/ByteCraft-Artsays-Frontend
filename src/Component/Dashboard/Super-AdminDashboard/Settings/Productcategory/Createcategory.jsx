@@ -87,28 +87,38 @@ const AddCategory = ({ onClose, fetchSubCategoryData }) => {
     console.log("Set loading to true");
     try {
       for (const row of categoryRows) {
-        let subCategoryData = {};
+        if (isNaN(row.commission) || Number(row.commission) < 0) {
+        toast.error("Please enter a valid positive number for commission.");
+        setLoading(false);
+        return;
+      }
+      const commissionTerm = parseFloat(row.commission);
+      
+        let subCategoryData = {
+        subCategoryName: row.subCategoryName,
+        commissionTerm,
+      };
 
         if (row.mainCategoryId && row.categoryId) {
           subCategoryData = {
-            subCategoryName: row.subCategoryName,
-            categoryId: row.categoryId,
-            mainCategoryId: row.mainCategoryId,
-          };
+          ...subCategoryData,
+          categoryId: row.categoryId,
+          mainCategoryId: row.mainCategoryId,
+        };
           await postAPI("/api/sub-category", subCategoryData, {}, true);
         } else if (row.mainCategoryId && !row.categoryId) {
           subCategoryData = {
-            subCategoryName: row.subCategoryName,
-            categoryName: row.categoryName,
-            mainCategoryId: row.mainCategoryId,
-          };
-          await postAPI("/api/sub-category-without-category-id", subCategoryData, {}, true);
-        } else if (!row.mainCategoryId && !row.categoryId) {
-          subCategoryData = {
-            subCategoryName: row.subCategoryName,
-            categoryName: row.categoryName,
-            mainCategoryName: row.mainCategoryName,
-          };
+          ...subCategoryData,
+          categoryName: row.categoryName,
+          mainCategoryId: row.mainCategoryId,
+        };
+        await postAPI("/api/sub-category-without-category-id", subCategoryData, {}, true);
+      } else if (!row.mainCategoryId && !row.categoryId) {
+        subCategoryData = {
+        ...subCategoryData,
+        categoryName: row.categoryName,
+        mainCategoryName: row.mainCategoryName,
+      };
           await postAPI("/api/sub-category-without-ids", subCategoryData, {}, true);
         }
       }
@@ -143,7 +153,7 @@ const AddCategory = ({ onClose, fetchSubCategoryData }) => {
 
   return (
     <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-      <div className="modal-dialog modal-lg">
+      <div className="modal-dialog modal-xl ">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Add Product Category</h5>
@@ -158,168 +168,137 @@ const AddCategory = ({ onClose, fetchSubCategoryData }) => {
           <div className="modal-body">
             <form onSubmit={handleSubmit}>
               {categoryRows.map((row, index) => (
-                <div className="row mb-2" key={index}>
-                  <div className="col-md-4">
+                <div className="row mb-3" key={index}>
+                  {/* Main Category */}
+                  <div className="col-lg-3 col-md-6">
+                    <label className="form-label">Main Category</label>
                     {showOtherFields ? (
-                      <>
-                        <label htmlFor={`mainCategory-${index}`} className="form-label">
-                          Main Category
-                        </label>
-                        <CreatableSelect
-                          id={`mainCategory-${index}`}
-                          options={mainCategoryOptions}
-                          value={
-                            row.mainCategoryId
-                              ? mainCategoryOptions.find(opt => opt.value === row.mainCategoryId)
-                              : row.mainCategoryName
-                                ? { value: null, label: row.mainCategoryName }
-                                : null
-                          }
-                          onChange={(selectedOption) => {
-                            if (selectedOption) {
-                              if (selectedOption.__isNew__) {
-                                handleMainCategoryChange(index, null, selectedOption.label);
-                              } else {
-                                handleMainCategoryChange(index, selectedOption.value);
-                              }
+                      <CreatableSelect
+                        options={mainCategoryOptions}
+                        value={
+                          row.mainCategoryId
+                            ? mainCategoryOptions.find(opt => opt.value === row.mainCategoryId)
+                            : row.mainCategoryName
+                              ? { value: null, label: row.mainCategoryName }
+                              : null
+                        }
+                        onChange={(selectedOption) => {
+                          if (selectedOption) {
+                            if (selectedOption.__isNew__) {
+                              handleMainCategoryChange(index, null, selectedOption.label);
                             } else {
-                              handleMainCategoryChange(index, "");
+                              handleMainCategoryChange(index, selectedOption.value);
                             }
-                          }}
-                          isClearable
-                          placeholder="Select or create..."
-                          formatCreateLabel={(inputValue) => `Create "${inputValue}"`}
-                          noOptionsMessage={() => "Type to create new main category"}
-                          className="react-select-container"
-                          classNamePrefix="react-select"
-                        />
-                      </>
-                    ) : (
-                      <>
-                        <label htmlFor={`mainCategoryId-${index}`} className="form-label">
-                          Main Category
-                        </label>
-                        <select
-                          required
-                          className="form-control"
-                          id={`mainCategoryId-${index}`}
-                          value={row.mainCategoryId || ""}
-                          onChange={(e) =>
-                            handleMainCategoryChange(index, e.target.value)
+                          } else {
+                            handleMainCategoryChange(index, "");
                           }
-                        >
-                          <option value="">Select Main Category</option>
-                          {mainCategories.map((mainCategory) => (
-                            <option
-                              key={mainCategory._id}
-                              value={mainCategory._id}
-                            >
-                              {mainCategory.mainCategoryName}
-                            </option>
-                          ))}
-                        </select>
-                      </>
+                        }}
+                        isClearable
+                        placeholder="Select or create..."
+                        classNamePrefix="react-select"
+                      />
+                    ) : (
+                      <select
+                        required
+                        className="form-control"
+                        value={row.mainCategoryId || ""}
+                        onChange={(e) => handleMainCategoryChange(index, e.target.value)}
+                      >
+                        <option value="">Select Main Category</option>
+                        {mainCategories.map((mainCategory) => (
+                          <option key={mainCategory._id} value={mainCategory._id}>
+                            {mainCategory.mainCategoryName}
+                          </option>
+                        ))}
+                      </select>
                     )}
                   </div>
 
-                  <div className="col-md-4">
+                  {/* Category */}
+                  <div className="col-lg-3 col-md-6">
+                    <label className="form-label">Category</label>
                     {showOtherFields ? (
-                      <>
-                        <label htmlFor={`category-${index}`} className="form-label">
-                          Category
-                        </label>
-                        <CreatableSelect
-                          id={`category-${index}`}
-                          options={getCategoryOptions(row)}
-                          value={
-                            row.categoryId
-                              ? getCategoryOptions(row).find(opt => opt.value === row.categoryId)
-                              : row.categoryName
-                                ? { value: null, label: row.categoryName }
-                                : null
-                          }
-                          onChange={(selectedOption) => {
-                            if (selectedOption) {
-                              if (selectedOption.__isNew__) {
-                                handleRowChange(index, "categoryName", selectedOption.label);
-                                handleRowChange(index, "categoryId", "");
-                              } else {
-                                handleRowChange(index, "categoryId", selectedOption.value);
-                                handleRowChange(index, "categoryName", "");
-                              }
-                            } else {
+                      <CreatableSelect
+                        options={getCategoryOptions(row)}
+                        value={
+                          row.categoryId
+                            ? getCategoryOptions(row).find(opt => opt.value === row.categoryId)
+                            : row.categoryName
+                              ? { value: null, label: row.categoryName }
+                              : null
+                        }
+                        onChange={(selectedOption) => {
+                          if (selectedOption) {
+                            if (selectedOption.__isNew__) {
+                              handleRowChange(index, "categoryName", selectedOption.label);
                               handleRowChange(index, "categoryId", "");
+                            } else {
+                              handleRowChange(index, "categoryId", selectedOption.value);
                               handleRowChange(index, "categoryName", "");
                             }
-                          }}
-                          isClearable
-                          placeholder="Select or create..."
-                          formatCreateLabel={(inputValue) => `Create "${inputValue}"`}
-                          noOptionsMessage={() => "Type to create new category"}
-                          className="react-select-container"
-                          classNamePrefix="react-select"
-                        />
-                      </>
-                    ) : !showOtherFields && row.mainCategoryId && row.categories.length > 0 ? (
-                      <>
-                        <label htmlFor={`categoryId-${index}`} className="form-label">
-                          Category
-                        </label>
-                        <select
-                          required
-                          className="form-control"
-                          id={`categoryId-${index}`}
-                          value={row.categoryId || ""}
-                          onChange={(e) =>
-                            handleRowChange(index, "categoryId", e.target.value)
+                          } else {
+                            handleRowChange(index, "categoryId", "");
+                            handleRowChange(index, "categoryName", "");
                           }
-                        >
-                          <option value="">Select Category</option>
-                          {row.categories.map((category) => (
-                            <option key={category.id} value={category.id}>
-                              {category.categoryName}
-                            </option>
-                          ))}
-                        </select>
-                      </>
+                        }}
+                        isClearable
+                        placeholder="Select or create..."
+                        classNamePrefix="react-select"
+                      />
+                    ) : row.mainCategoryId && row.categories?.length > 0 ? (
+                      <select
+                        required
+                        className="form-control"
+                        value={row.categoryId || ""}
+                        onChange={(e) => handleRowChange(index, "categoryId", e.target.value)}
+                      >
+                        <option value="">Select Category</option>
+                        {row.categories.map((category) => (
+                          <option key={category.id} value={category.id}>
+                            {category.categoryName}
+                          </option>
+                        ))}
+                      </select>
                     ) : (
-                      <>
-                        <label htmlFor={`categoryName-${index}`} className="form-label">
-                          Category
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          id={`categoryName-${index}`}
-                          value={row.categoryName}
-                          onChange={(e) =>
-                            handleRowChange(index, "categoryName", e.target.value)
-                          }
-                          required
-                          placeholder="Enter category name"
-                        />
-                      </>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={row.categoryName}
+                        onChange={(e) => handleRowChange(index, "categoryName", e.target.value)}
+                        required
+                        placeholder="Enter category name"
+                      />
                     )}
                   </div>
-                  <div className="col-md-3">
-                    <label htmlFor={`subCategoryName-${index}`} className="form-label">
-                      Sub Category
-                    </label>
+
+                  {/* Sub Category */}
+                  <div className="col-lg-3 col-md-6">
+                    <label className="form-label">Sub Category</label>
                     <input
                       type="text"
                       className="form-control"
-                      id={`subCategoryName-${index}`}
                       value={row.subCategoryName}
-                      onChange={(e) =>
-                        handleRowChange(index, "subCategoryName", e.target.value)
-                      }
+                      onChange={(e) => handleRowChange(index, "subCategoryName", e.target.value)}
                       required
                       placeholder="Enter sub category"
                     />
                   </div>
 
+                  {/* Commission */}
+                  <div className="col-lg-2 col-md-6">
+                    <label className="form-label">Commission</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={row.commission || ""}
+                      onChange={(e) => handleRowChange(index, "commission", e.target.value)}
+                      required
+                      placeholder="Enter commission"
+                    />
+                  </div>
 
-                  <div className="col-md-1 d-flex align-items-end">
+                  {/* + / - Button */}
+                  <div className="col-lg-1 col-md-2 col-sm-2 w-sm:space-y-2 d-flex align-items-end w-4 h-4">
                     {!showOtherFields && (
                       <>
                         {index === 0 ? (
@@ -342,8 +321,10 @@ const AddCategory = ({ onClose, fetchSubCategoryData }) => {
                       </>
                     )}
                   </div>
+                  
                 </div>
               ))}
+
 
               <div className="d-flex justify-content-between mt-3 mx-2">
                 <button

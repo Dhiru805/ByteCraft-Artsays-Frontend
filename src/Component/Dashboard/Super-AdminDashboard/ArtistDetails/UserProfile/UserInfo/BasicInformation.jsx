@@ -85,33 +85,33 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
   const validateRequired = () => {
     const missing = [];
     const requiredMap = {
-      'First Name'        : profileData.name,
-      'Last Name'         : profileData.lastName,
-      'Birthdate'         : profileData.birthdate,
-      'Gender'            : profileData.gender,
-      'Address Line 1'    : profileData.address?.line1,
-    'Address Line 2'    : profileData.address?.line2,
-    'Pincode'          : profileData.address?.pincode,
-      'City'              : profileData.address?.city,
-      'State/Province'    : profileData.address?.state,
-      'Country'           : profileData.address?.country,
-      'Username'          : profileData.username,
-      'Email'             : profileData.email,
-      'Phone Number'      : profileData.phone,
-      'Bio'               : profileData.bio,
+      'First Name': profileData.name,
+      'Last Name': profileData.lastName,
+      'Birthdate': profileData.birthdate,
+      'Gender': profileData.gender,
+      'Address Line 1': profileData.address?.line1,
+      'Address Line 2': profileData.address?.line2,
+      'Pincode': profileData.address?.pincode,
+      'City': profileData.address?.city,
+      'State/Province': profileData.address?.state,
+      'Country': profileData.address?.country,
+      'Username': profileData.username,
+      'Email': profileData.email,
+      'Phone Number': profileData.phone,
+      'Bio': profileData.bio,
     };
-  
+
     Object.entries(requiredMap).forEach(([label, value]) => {
       if (!value || String(value).trim() === '') missing.push(label);
     });
-  
+
     if (missing.length) {
       toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
       return false;
     }
     return true;
   };
-  
+
 
   return (
     <div className="body">
@@ -493,7 +493,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
             setLoading(true);
             Promise.resolve(handleSubmit(e))
               .then(() => {
-                 window.location.reload();
+                window.location.reload();
               })
               .catch(console.error)
               .finally(() => setLoading(false));
