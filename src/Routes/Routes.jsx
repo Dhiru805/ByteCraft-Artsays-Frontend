@@ -67,6 +67,8 @@ import SuperAdminViewBlog from "../Component/Dashboard/Super-AdminDashboard/Blog
 import SuperAdminUpdateBlog from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/UpdateBlogList";
 import SuperAdminProductInfo from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Productinfo";
 import SuperAdminMarketing from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailMarketing/Marketing/MarketingEmail";
+import UserRole from '../Component/Dashboard/Super-AdminDashboard/Settings/UserRole/UserRole';
+import CreateRole from '../Component/Dashboard/Super-AdminDashboard/Settings/UserRole/CreateRole';
 import SuperAdminBiddingPass from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/BiddingPass";
 import SuperAdminArtistAdvertise from "../Component/Dashboard/Super-AdminDashboard/Advertise/Advertise";
 import SuperAdminCertification from "../Component/Dashboard/Super-AdminDashboard/Certification/Certification";
@@ -175,6 +177,20 @@ import SellerBidingAllProducts from "../Component/Dashboard/SellerDashboard/Bidd
 import SellerBiddedProducts from "../Component/Dashboard/SellerDashboard/Bidding/Biddedproduct/Biddedproduct";
 import SellerBidPassTable from "../Component/Dashboard/SellerDashboard/Bidding/Biddingpass/Biddingpass";
 import SellerCertification from "../Component/Dashboard/SellerDashboard/Certification/Certification";
+
+
+//-----------------------------Artist Premium Badges--------------------------//
+
+import ArtistPremiumBages from "../Component/Dashboard/ArtistDashbooard/Badges/PremiumBadges";
+
+//-----------------------------Seller Premium Badges--------------------------//
+
+import SellerPremiumBages from "../Component/Dashboard/SellerDashboard/Badges/PremiumBadges";
+
+//-----------------------------Error 404--------------------------//
+
+import Error404Page from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/Error404';
+
 
 const PrivateRoute = ({ allowedRoles, children }) => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
@@ -349,6 +365,8 @@ const AppRoutes = () => {
         <Route path="settings/blog-category" element={<BlogCategory />} />
         <Route path="settings/product-category" element={<ProductCategory />} />
         <Route path="settings/marketing" element={<SuperAdminMarketing />} />
+        <Route path="settings/user-role" element={<UserRole />} />
+        <Route path="settings/create-user-role" element={<CreateRole />} />
         {/* Advertise Routes */}
         <Route path="advertise" element={<SuperAdminArtistAdvertise />} />
         {/* Certification Routes */}
@@ -395,6 +413,9 @@ const AppRoutes = () => {
         {/* Certification Routes */}
         <Route path="certification" element={<ArtistCertification />} />
 
+        {/* Premium Badges */}
+        <Route path="premium-badges" element={<ArtistPremiumBages />} />
+
       </Route>
 
       {/* --------------------------------------------Buyer Routes---------------------------------------------------- */}
@@ -437,6 +458,9 @@ const AppRoutes = () => {
         <Route path="bidding-pass-table" element={<SellerBidPassTable />} />
         {/* Certification Routes */}
         <Route path="certification" element={<SellerCertification />} />
+
+         {/* Premium Badges */}
+        <Route path="premium-badges" element={<SellerPremiumBages />} />
       </Route>
 
       {/*-------------------------------------------- Website Routes-------------------------------------------------- */}
@@ -470,6 +494,7 @@ const AppRoutes = () => {
             <Route path="my-cart" element={<MyCartList />} />
             <Route path="check-out" element={<CheckOut />} />
             <Route path="order-completed" element={<OrderCompleted />} />
+            <Route path="error404" element={<Error404Page />} />
           </Route>
         </Route>
       </Route>

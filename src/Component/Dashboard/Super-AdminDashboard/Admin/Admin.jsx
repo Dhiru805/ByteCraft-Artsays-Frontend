@@ -121,7 +121,8 @@ function AdminManageTable() {
                                                 <th>#</th>
                                                 <th>Name</th>
                                                 <th>Email</th>
-                                                <th>Phone</th>
+                                                <th>User Role</th>
+                                                {/* <th>Phone</th> */}
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -149,7 +150,8 @@ function AdminManageTable() {
                                                                 <p className="c_name">{admin.name} {admin.lastName}</p>
                                                             </td>
                                                             <td>{admin.email}</td>
-                                                            <td>{admin.phone}</td>
+                                                            <td>{admin.userrole}</td>
+                                                            {/* <td>{admin.phone}</td> */}
                                                             <td>
                                                                 <button
                                                                     type="button"

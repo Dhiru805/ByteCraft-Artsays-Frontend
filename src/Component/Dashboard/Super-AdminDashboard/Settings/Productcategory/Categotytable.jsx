@@ -14,7 +14,7 @@ const CategoryTable = ({
   const [deleteType, setDeleteType] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5); 
+  const [itemsPerPage, setItemsPerPage] = useState(5);   
 
   const sortedSubCategories = [...subCategories].sort((a, b) => {
     const mainCatCompare = a.mainCategoryName.localeCompare(b.mainCategoryName);
@@ -38,6 +38,7 @@ const CategoryTable = ({
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+console.log("SubCategories response:", subCategories);
 
   const openDeleteDialog = (subCategory) => {
     setSelectedSubCategory(subCategory);
@@ -134,6 +135,7 @@ const CategoryTable = ({
                       <th>Main Category</th>
                       <th>Category</th>
                       <th>Sub Category</th>
+                      <th>Commission Term</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -151,6 +153,7 @@ const CategoryTable = ({
                           <td>{subCategory.mainCategoryName}</td>
                           <td>{subCategory.categoryName}</td>
                           <td>{subCategory.subCategoryName}</td>
+                          <td>{subCategory.commissionTerm ?? "NA"} </td>
                           <td>
                             <button
                               type="button"

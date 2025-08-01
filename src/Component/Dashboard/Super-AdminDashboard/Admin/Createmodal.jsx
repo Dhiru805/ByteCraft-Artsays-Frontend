@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import postAPI from "../../../../api/postAPI";
+import getAPI from "../../../../api/getAPI";
 
 const CreateAdminModal = ({ onClose, fetchAdmins }) => {
   const [formData, setFormData] = useState({
@@ -11,10 +12,28 @@ const CreateAdminModal = ({ onClose, fetchAdmins }) => {
     confirmPassword: "",
     userType: "Super-Admin",
     role: "super-admin", 
+    userrole: "",
+
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading, setLoading]=useState(false);
+  const [loading, setLoading] = useState(false);
+  const [roleOptions, setRoleOptions] = useState([]);
+
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await getAPI("/api/get-all-role");
+
+        setRoleOptions(response.data || []);
+      } catch (error) {
+        console.error("Error fetching roles:", error);
+      }
+    };
+
+    fetchRoles();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,24 +47,24 @@ const CreateAdminModal = ({ onClose, fetchAdmins }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true)
-    
+
     for (const key in formData) {
       if (!formData[key]) {
         toast.error("Please fill in all fields");
         return;
       }
     }
-    
+
     if (!isValidEmail(formData.email)) {
       toast.error("Invalid email format");
       return;
     }
-    
+
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
-    
+
     try {
       const response = await postAPI("/auth/createuser", formData);
       toast.success(response.data.message);
@@ -54,7 +73,7 @@ const CreateAdminModal = ({ onClose, fetchAdmins }) => {
     } catch (error) {
       console.error("Error response:", error);
       toast.error(error.response?.data?.message || "An unexpected error occurred");
-    }finally{
+    } finally {
       setLoading(false)
     }
   };
@@ -86,13 +105,13 @@ const CreateAdminModal = ({ onClose, fetchAdmins }) => {
               <div className="form-group position-relative">
                 <label>Password</label>
                 <div className="input-group">
-                  <input 
-                    type={showPassword ? "text" : "password"} 
-                    className="form-control" 
-                    name="password" 
-                    value={formData.password} 
-                    onChange={handleChange} 
-                    required 
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    className="form-control"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
                   />
                   <div className="input-group-append">
                     <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
@@ -104,13 +123,13 @@ const CreateAdminModal = ({ onClose, fetchAdmins }) => {
               <div className="form-group position-relative">
                 <label>Confirm Password</label>
                 <div className="input-group">
-                  <input 
-                    type={showConfirmPassword ? "text" : "password"} 
-                    className="form-control" 
-                    name="confirmPassword" 
-                    value={formData.confirmPassword} 
-                    onChange={handleChange} 
-                    required 
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    className="form-control"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    required
                   />
                   <div className="input-group-append">
                     <span className="input-group-text" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
@@ -119,15 +138,33 @@ const CreateAdminModal = ({ onClose, fetchAdmins }) => {
                   </div>
                 </div>
               </div>
+              <div className="form-group">
+                <label>User Role</label>
+                <select
+                  className="form-control"
+                  name="userrole"
+                  value={formData.userrole}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select Role</option>
+                  {roleOptions.map((role) => (
+                    <option key={role._id} value={role.role}>
+                      {role.role}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={onClose}>
                   Cancel
                 </button>
-                <button 
-                type="submit" 
-                className="btn btn-primary"
-                disabled={loading}>
-                 {loading?"Creating.....":"Create Admin"} 
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={loading}>
+                  {loading ? "Creating....." : "Create Admin"}
                 </button>
               </div>
             </form>
