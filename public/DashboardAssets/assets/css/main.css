@@ -2779,7 +2779,7 @@ html.fullscreen-bg #wrapper {
   box-shadow: inset -2px -2px 8px 0 var(--box-shadow-light);
   position: fixed;
   left: 0;
-  padding: 0 20px;
+  padding: 0px 20px 20px 20px;
   z-index: 11;
   border-right: 1px solid var(--border-color);
   overflow-y: scroll;
