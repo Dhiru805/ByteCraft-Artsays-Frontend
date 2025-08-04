@@ -183,6 +183,7 @@ const Sidebar = () => {
       // },
 
       {
+        label: "Settings",
         tabId: "stg1",
         label: "Settings",
         icon: "fa fa-cog",
