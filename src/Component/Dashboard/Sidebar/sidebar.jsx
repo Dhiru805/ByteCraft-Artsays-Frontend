@@ -184,6 +184,7 @@ const Sidebar = () => {
 
       {
         tabId: "stg1",
+        label: "Settings",
         icon: "fa fa-cog",
         path: `#Settings`,
         subTabs: [

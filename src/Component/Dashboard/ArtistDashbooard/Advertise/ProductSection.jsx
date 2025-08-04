@@ -1,5 +1,3 @@
-import React from 'react';
-
 const ProductSection = ({
   activeTab,
   setActiveTab,
@@ -18,7 +16,10 @@ const ProductSection = ({
   setCurrentPage,
   productsPerPage,
   BASE_URL,
-  setShowTargetingSection, 
+  setShowTargetingSection,
+  setShowCampaignBidding,
+  setShowBidAdjustment,
+  onUpdateSelectedProducts, 
 }) => {
   const filteredProducts = availableProducts
     .filter(
@@ -32,47 +33,55 @@ const ProductSection = ({
     .sort((a, b) => {
       switch (sortBy) {
         case "newest":
-          return new Date(b.createdAt) - new Date(a.createdAt);
+          return new Date(b.createdAt) - new Date(a.createdAt)
         case "oldest":
-          return new Date(a.createdAt) - new Date(b.createdAt);
+          return new Date(a.createdAt) - new Date(a.createdAt)
         case "price-low":
-          return (a.finalPrice || 0) - (b.finalPrice || 0);
+          return (a.finalPrice || 0) - (b.finalPrice || 0)
         case "price-high":
-          return (b.finalPrice || 0) - (a.finalPrice || 0);
+          return (b.finalPrice || 0) - (a.finalPrice || 0)
         default:
-          return 0;
+          return 0
       }
-    });
+    })
 
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage)
+  const indexOfLastProduct = currentPage * productsPerPage
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct)
 
   const handleAddProduct = (product) => {
-    setAvailableProducts((prev) => prev.filter((p) => p._id !== product._id));
-    setSelectedProducts((prev) => [...prev, product]);
-  };
+    setAvailableProducts((prev) => prev.filter((p) => p._id !== product._id))
+    const newSelected = [...selectedProducts, product]
+    setSelectedProducts(newSelected)
+    onUpdateSelectedProducts(newSelected.map((p) => p._id)) 
+  }
 
   const handleRemoveProduct = (product) => {
-    setSelectedProducts((prev) => prev.filter((p) => p._id !== product._id));
-    setAvailableProducts((prev) => [...prev, product]);
-  };
+    const newSelected = selectedProducts.filter((p) => p._id !== product._id)
+    setSelectedProducts(newSelected)
+    setAvailableProducts((prev) => [...prev, product])
+    onUpdateSelectedProducts(newSelected.map((p) => p._id)) 
+  }
 
   const handleAddAllOnPage = () => {
-    setSelectedProducts((prev) => [...prev, ...currentProducts]);
-    setAvailableProducts((prev) => prev.filter((p) => !currentProducts.find((fp) => fp._id === p._id)));
-  };
+    const newSelected = [...selectedProducts, ...currentProducts]
+    setSelectedProducts(newSelected)
+    setAvailableProducts((prev) => prev.filter((p) => !currentProducts.find((fp) => fp._id === p._id)))
+    onUpdateSelectedProducts(newSelected.map((p) => p._id)) 
+  }
 
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+    setCurrentPage(pageNumber)
+  }
 
   const handleAddToCampaign = () => {
     if (selectedProducts.length > 0) {
-      setShowTargetingSection(true); 
+      setShowTargetingSection(true)
+      setShowCampaignBidding(true)
+      setShowBidAdjustment(true)
     }
-  };
+  }
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("en-IN", {
@@ -80,8 +89,8 @@ const ProductSection = ({
       currency: "INR",
     })
       .format(price)
-      .replace(/\.00$/, "");
-  };
+      .replace(/\.00$/, "")
+  }
 
   const ProductCard = ({ product, onAdd, onRemove, isSelected }) => (
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm mb-4">
@@ -127,7 +136,7 @@ const ProductSection = ({
         </div>
       </div>
     </div>
-  );
+  )
 
   const HelpPopover = () => (
     <div className="position-relative">
@@ -193,7 +202,7 @@ const ProductSection = ({
         </div>
       )}
     </div>
-  );
+  )
 
   return (
     <div className="card">
@@ -293,18 +302,15 @@ const ProductSection = ({
                   ) : (
                     <div>
                       {currentProducts.map((product) => (
-                        <ProductCard
-                          key={product._id}
-                          product={product}
-                          onAdd={() => handleAddProduct(product)}
-                        />
+                        <ProductCard key={product._id} product={product} onAdd={() => handleAddProduct(product)} />
                       ))}
                     </div>
                   )}
                   {filteredProducts.length > 0 && (
                     <div className="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
                       <span className="text-muted mr-3" style={{ fontSize: "14px" }}>
-                        {indexOfFirstProduct + 1}-{Math.min(indexOfLastProduct, filteredProducts.length)} of {filteredProducts.length} results
+                        {indexOfFirstProduct + 1}-{Math.min(indexOfLastProduct, filteredProducts.length)} of{" "}
+                        {filteredProducts.length} results
                       </span>
                       <div className="btn-group">
                         <button
@@ -335,8 +341,7 @@ const ProductSection = ({
                   )}
                   {!loading && filteredProducts.length === 0 && availableProducts.length === 0 && (
                     <div className="text-center py-5 text-muted">
-                      <p>All products have been added</p>
-                      <small>Check the selected products panel</small>
+                      <p>No Product Found</p>
                     </div>
                   )}
                   {!loading && filteredProducts.length === 0 && availableProducts.length > 0 && (
@@ -392,7 +397,7 @@ const ProductSection = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ProductSection;
+export default ProductSection
