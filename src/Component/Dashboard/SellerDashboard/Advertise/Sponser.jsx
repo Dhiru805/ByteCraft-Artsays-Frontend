@@ -302,7 +302,6 @@ function Sponser() {
       try {
         setLoading(true)
         const result = await getAPI(`/api/get-productfor-campagine/${userId}`, {}, true, false)
-
         if (result && result.data && Array.isArray(result.data.data)) {
           setProducts(result.data.data)
           setAvailableProducts(result.data.data)
@@ -384,7 +383,7 @@ function Sponser() {
         toast.error(response.message)
       } else {
         toast.success("Campaign saved successfully!");
-        navigate("/artist/advertise")
+        navigate("/seller/advertise")
       }
     } catch (error) {
       const errMsg = error.response?.data?.message || "Failed to save campaign."
@@ -411,7 +410,7 @@ function Sponser() {
         toast.error(response.message);
       } else {
         toast.success("Campaign saved as draft!");
-        navigate("/artist/advertise")
+        navigate("/seller/advertise")
       }
     } catch (error) {
       const errMsg = error.response?.data?.message || "Failed to save draft.";
@@ -428,7 +427,7 @@ function Sponser() {
             <h2>{selectedCampaignType === "profile" ? "Sponsored Profile" : "Products"}</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <a href="/">
+                <a href="/seller/dashboard">
                   <i className="fa fa-dashboard"></i>
                 </a>
               </li>

@@ -45,6 +45,7 @@ const MyOrders = () => {
         const response = await getAPI('/api/getapprovedbuyerrequests');
         if (Array.isArray(response.data.data)) {
           setProducts(response.data.data);
+          console.log(response.data.data);
         } else {
           setProducts([]);
         }
@@ -93,7 +94,8 @@ const MyOrders = () => {
               ? `${BASE_URL}/${item.BuyerImage.replace(/\\/g, '/')}`
               : DEFAULT_PROFILE_IMAGE;
             const price = item.ArtistNegotiatedBudgets?.[0] || '0';
-            const isDelivered = item.Status?.toLowerCase() === 'delivered';
+            const isDelivered = item.Status?.toLowerCase() === 'Delivered';
+            const isCancelled = item.OrderStatus === 'Cancelled';
             const returnPolicyDays = 10;
 
             const currentDate = new Date();
@@ -154,41 +156,67 @@ const MyOrders = () => {
                       </div>
                     </div>
 
-                    <div className="flex-1 text-center">
-                      <p className="text-base font-semibold text-gray-800">₹{price}</p>
+ <div className="flex-1 text-center">
+                      {!isCancelled && (
+                        <p className="text-base font-semibold text-gray-800">₹{price}</p>
+                      )}
                     </div>
 
                     <div className="flex-1 text-right">
-                      <p className="text-green-600 text-xs font-medium">
-                        {isDelivered ? `Delivered on ${deliveryDateStr}` : 'Not yet delivered'}
+                      <p className={`text-xs font-medium ${isCancelled ? 'text-red-600' : 'text-green-600'}`}>
+                        {isCancelled
+                          ? 'Order Cancelled'
+                          : isDelivered
+                          ? `Delivered on ${deliveryDateStr}`
+                          : 'Not yet delivered'}
                       </p>
                       <p className="text-xs text-gray-500">
-                        {isDelivered ? 'Your item has been delivered' : 'Awaiting delivery'}
+                        {isCancelled
+                          ? 'This order has been cancelled.'
+                          : isDelivered
+                          ? 'Your item has been delivered'
+                          : 'Awaiting delivery'}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex flex-wrap sm:flex-nowrap justify-between items-center gap-2 px-3 py-3">
                     <div className="flex gap-2">
-                      <button className="text-blue-600 text-sm font-medium border border-blue-500 px-4 py-1.5 rounded-full hover:bg-blue-50 transition">
-                        Rate & Review Product
-                      </button>
-                      <button className="text-[#6F4D34] text-sm border border-[#6F4D34] px-4 py-1.5 rounded-full hover:bg-[#6F4D34]/10 transition">
-                        Download Invoice
-                      </button>
+                      {/* ✅ Hide Rate & Review and Download Invoice if cancelled */}
+                      {!isCancelled && (
+                        <>
+                          <button
+                            className="text-blue-600 text-sm font-medium border border-blue-500 px-4 py-1.5 rounded-full hover:bg-blue-50 transition"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate('/my-account/my-orders/view', {
+                                state: { order: item, scrollToReview: true }
+                              });
+                            }}
+                          >
+                            Rate & Review Product
+                          </button>
+                          <button className="text-[#6F4D34] text-sm border border-[#6F4D34] px-4 py-1.5 rounded-full hover:bg-[#6F4D34]/10 transition">
+                            Download Invoice
+                          </button>
+                        </>
+                      )}
                     </div>
 
-                    {actionType === 'cancel' && (
-                      <button className="text-red-600 text-sm font-medium border border-red-500 px-4 py-1.5 rounded-full hover:bg-red-100 transition">
+                    {isCancelled ? (
+                      <button className="text-red-600 text-sm font-medium border border-red-500 px-4 py-1.5 rounded-full bg-red-50 cursor-not-allowed" disabled>
+                        Order Cancelled
+                      </button>
+                    ) : actionType === 'cancel' ? (
+                      <button 
+                      className="text-red-600 text-sm font-medium border border-red-500 px-4 py-1.5 rounded-full hover:bg-red-100 transition">
                         Cancel Order
                       </button>
-                    )}
-                    {actionType === 'return' && (
+                    ) : actionType === 'return' ? (
                       <button className="text-blue-600 text-sm font-medium border border-blue-500 px-4 py-1.5 rounded-full hover:bg-blue-50 transition">
                         Return Product
                       </button>
-                    )}
-                    {actionType === 'chat' && (
+                    ) : (
                       <button className="text-[#6F4D34] text-sm font-medium border border-[#6F4D34] px-4 py-1.5 rounded-full bg-[#6F4D34]/5 hover:bg-[#6F4D34]/10 transition">
                         Chat with Us
                       </button>
@@ -197,9 +225,8 @@ const MyOrders = () => {
                 </div>
               </div>
             );
-          })}
-
-        {selectedOrder && (
+          })}        
+          {selectedOrder && (
           <div className="mt-8">
             <button
               onClick={() => setSelectedOrder(null)}

@@ -121,6 +121,12 @@ keywordtargetingsetting:{
   errorMessage: "Failed to delete keyword targeting.",
   idKey: "keywordtargetingId",
 },
+campaign: {
+  getEndpoint: (id) => `/api/campaigns/${id}`,
+  successMessage: "Campaign deleted successfully!",
+  errorMessage: "Failed to delete campaign.",
+  idKey: "CampaignId",
+},
 
 
 };

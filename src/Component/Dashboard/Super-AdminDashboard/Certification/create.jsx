@@ -68,7 +68,7 @@ function CreateCertification() {
         try {
           const response = await getAPI(`/api/products-by-user?userId=${formData.userId}`, {}, true);
           if (!response.hasError) {
-  setProducts(response.data.data);
+            setProducts(response.data.data);
             setFormData((prev) => ({ ...prev, productId: "", mainCategories: [], certifications: [] }));
             const categories = [...new Set(response.data.data.map((product) => product.mainCategory._id))];
             setMainCategories(categories);
@@ -174,7 +174,7 @@ function CreateCertification() {
           certificationId: certId,
           certificationProvider: formData.certificationProvider,
           estimatedDays: cert ? cert.estimatedDays : 0,
-          certificationPrice: 99, 
+          certificationPrice: 99,
         };
       });
 
@@ -204,7 +204,7 @@ function CreateCertification() {
 
   const selectedProduct = products.find((product) => product._id === formData.productId);
 
- 
+
   const userOptions = users.map((user) => ({
     value: user._id,
     label: `${user.name} ${user.lastName || ""}`,
@@ -289,7 +289,7 @@ function CreateCertification() {
                     <label>Product Details</label>
                     <div className="d-flex align-items-center">
                       <img
-                     src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedProduct.mainImage}`}
+                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedProduct.mainImage}`}
                         alt={selectedProduct.productName}
                         className="img-thumbnail mr-3"
                         style={{ maxWidth: "100px", maxHeight: "100px" }}

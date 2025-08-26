@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "../Navbar/Navbar";
 import Sidebar from "../Sidebar/LeftSide";
 import RightIconBar from "../RightIconBar/RightIconBar";
@@ -7,6 +7,14 @@ import { Outlet } from 'react-router-dom';
 import ScrollToTop from "../ScrollToTop/ScrollToTop";
 
 const Dashboard = () => {
+ useEffect(() => {
+    if (!sessionStorage.getItem("reloaded")) {
+      sessionStorage.setItem("reloaded", "true");
+      window.location.reload();
+    }
+  }, []);
+
+
   return (
     <div id="wrapper">
       <ScrollToTop/>

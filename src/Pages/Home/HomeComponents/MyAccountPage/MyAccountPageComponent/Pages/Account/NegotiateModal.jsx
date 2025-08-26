@@ -618,7 +618,7 @@ const NegotiateModalforBuyer = ({ request, onClose, onSubmit }) => {
                         htmlFor={`buyerNegotiatedBudget${index}`}
                         className="form-label"
                       >
-                        {`Buyer Negotiated Budget ${index + 1}`}
+                        {`Buyer Negotiated Budget ${index + 1}`}  
                       </label>
                       <input
                         type="number"
@@ -644,7 +644,7 @@ const NegotiateModalforBuyer = ({ request, onClose, onSubmit }) => {
                       className="form-label"
                     >
                       {`Buyer Negotiated Budget ${buyerNegotiatedBudgets.length + 1}`}
-                    </label>
+                    </label> <span className="text-danger"> *</span>
                     <input
                       type="number"
                       className="form-control"
@@ -661,7 +661,7 @@ const NegotiateModalforBuyer = ({ request, onClose, onSubmit }) => {
 
                 <div className="mb-3">
                   <label htmlFor="notes" className="form-label">
-                    Notes
+                    Notes  <span className="text-danger"> *</span>
                   </label>
                   <textarea
                     className="form-control"

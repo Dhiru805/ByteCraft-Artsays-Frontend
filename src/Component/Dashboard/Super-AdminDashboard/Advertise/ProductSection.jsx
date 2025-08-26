@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react";
+import getAPI from "../../../../api/getAPI";
 
 const ProductSection = ({
   activeTab,
@@ -11,7 +12,6 @@ const ProductSection = ({
   setSearchQuery,
   sortBy,
   setSortBy,
-  loading,
   showHelp,
   setShowHelp,
   currentPage,
@@ -23,17 +23,20 @@ const ProductSection = ({
   setShowBidAdjustment,
   onUpdateSelectedProducts,
   initialSelectedProducts = [],
-  onProductSelectionChange
+  onProductSelectionChange,
+  userId
 }) => {
   const filteredProducts = availableProducts
-    .filter(
-      (product) =>
-        product.productName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.userId?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.userId?.lastName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.medium?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.materials?.some((material) => material.toLowerCase().includes(searchQuery.toLowerCase())),
-        )
+.filter(
+  (product) =>
+    product.productName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.userId?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.userId?.lastName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.medium?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.materials?.some((material) =>
+      material.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+)
     .sort((a, b) => {
       switch (sortBy) {
         case "newest":
@@ -54,6 +57,44 @@ const ProductSection = ({
   const indexOfLastProduct = currentPage * productsPerPage
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct)
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!userId) {
+      setAvailableProducts([]);
+      return;
+    }
+
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+
+        const result = await getAPI(`/api/products-by-user?userId=${userId}`, {}, true);
+        console.log("📦 Raw product fetch response:", result);
+
+        let productData = [];
+        if (Array.isArray(result?.data)) {
+          productData = result.data;
+        } else if (Array.isArray(result?.data?.data)) {
+          productData = result.data.data;
+        } else if (Array.isArray(result)) {
+          productData = result;
+        }
+
+        setAvailableProducts(productData);
+        console.log("✅ Products for userId:", userId, productData);
+      } catch (error) {
+        console.error("❌ Error fetching products:", error);
+        setAvailableProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [userId, setAvailableProducts]);
+
+
 
   useEffect(() => {
     setSelectedProducts(initialSelectedProducts)

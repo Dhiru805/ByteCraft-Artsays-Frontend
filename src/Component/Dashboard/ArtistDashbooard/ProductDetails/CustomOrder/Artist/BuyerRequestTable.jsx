@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NegotiateModal from "./Negotiate";
 import updateBuyerStatus from "./buyerRequestAPI";
+import { toast } from "react-toastify"; 
 
 function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyerRequestStatus }) {
     const navigate = useNavigate();
@@ -65,9 +66,13 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
             setLoadingIds((prev) => [...prev, requestId]);
             const response = await updateBuyerStatus(requestId, 'Approved', 'Approved');
             await updateBuyerStatus(requestId, 'Approved', 'Approved');
+    window.location.reload();
+            toast.success("Product Request has been Approved!");
+
             setLoadingIds((prev) => prev.filter((itemId) => itemId !== requestId));
         } catch (error) {
             console.error('Failed to update buyer status:', error);
+                  toast.error("Failed to approve request!"); 
             setLoadingIds((prev) => prev.filter((itemId) => itemId !== requestId));
         }
     };
@@ -209,6 +214,7 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                                                             disabled={isLoading}
                                                                             onClick={async () => {
                                                                                 await handleUpdateBuyerStatus(request._id);
+                                                                            
                                                                                 setUpdatedRequests((prev) => ({
                                                                                     ...prev,
                                                                                     [request._id]: 'Approved',
