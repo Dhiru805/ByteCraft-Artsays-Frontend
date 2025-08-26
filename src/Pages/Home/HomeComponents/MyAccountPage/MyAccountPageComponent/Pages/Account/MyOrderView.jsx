@@ -15,6 +15,10 @@ const OrderView = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const [showPopup, setShowPopup] = useState(false);
+  const [currentImages, setCurrentImages] = useState([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
 
   const order = location.state?.order;
   const isDelivered = order.OrderStatus === 'Delivered';
@@ -25,15 +29,13 @@ const OrderView = () => {
   const canCancel = order.OrderStatus !== 'Delivered';
   const [hasSubmittedReview, setHasSubmittedReview] = useState(false);
 
-const orderId = order?.orderId;
+  const orderId = order?.orderId;
   const [orderStatus, setOrderStatus] = useState(null);
   const [statusHistory, setStatusHistory] = useState([]);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
   const [cancelComment, setCancelComment] = useState("");
   const [loadingCancel, setLoadingCancel] = useState(false);
-
-//done
 
   const [reviewTitle, setReviewTitle] = useState('');
   const [reviewDescription, setReviewDescription] = useState('');
@@ -225,6 +227,19 @@ const orderId = order?.orderId;
     setUploadedFiles((prevFiles) => prevFiles.filter((_, i) => i !== indexToDelete));
   };
 
+  const handleImageClick = (imageUrl) => {
+    setCurrentImages([imageUrl]); // just wrap the single image in an array
+    setCurrentImageIndex(0);
+    setShowPopup(true);
+  };
+
+  const goToPreviousImage = () => {
+    setCurrentImageIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+  };
+
+  const goToNextImage = () => {
+    setCurrentImageIndex((prevIndex) => Math.min(prevIndex + 1, currentImages.length - 1));
+  };
 
   return (
 
@@ -240,7 +255,11 @@ const orderId = order?.orderId;
         </button>
         <div className="bg-white rounded-2xl border border-[#EBEBEB] p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="w-24 h-24 rounded-xl overflow-hidden border bg-gray-100 flex-shrink-0">
-            <img src={imageUrl} alt={order.ProductName} className="w-full h-full object-cover" />
+            <img
+              onClick={() => handleImageClick(imageUrl)}
+              src={imageUrl}
+              alt={order.ProductName}
+              className="w-full h-full object-cover" />
           </div>
           <div className="flex-1 space-y-1">
             <h1 className="text-lg sm:text-2xl font-bold text-gray-800">{order.ProductName}</h1>
@@ -258,120 +277,120 @@ const orderId = order?.orderId;
         <div className="bg-white rounded-2xl border border-[#EBEBEB] p-4 sm:p-6 relative">
           <h3 className="text-lg font-semibold text-gray-800 mb-4 sm:mb-6">Delivery Status</h3>
 
- {order.OrderStatus === "Cancelled" ? (
-    <div className="flex flex-col items-center justify-center gap-6">
-      
-      <div className="w-full sm:w-2/3 text-center py-8 px-4">
-        <p className="text-2xl font-bold text-red-600">Order Cancelled</p>
-        <p className="text-sm text-gray-600 mt-2">
-          This order has been cancelled and is no longer in progress.
-        </p>
-      </div>
+          {order.OrderStatus === "Cancelled" ? (
+            <div className="flex flex-col items-center justify-center gap-6">
 
-      <button className="bg-[#6F4D34] text-white px-5 py-2 rounded-lg hover:bg-[#5b3f2a] transition text-sm font-semibold">
-        Chat with Us
-      </button>
-    </div>
-  ) : (
-    <>
-          <div className="relative flex flex-col sm:flex-row items-center sm:px-2 gap-6 sm:gap-0">
-            {/* Horizontal line for tablet/desktop */}
-            <div className="absolute top-2 left-0 right-0 h-1 bg-gray-300 z-0 hidden sm:block" />
-            {/* Vertical line for mobile */}
-            <div className="absolute left-1 top-0 bottom-0 w-[2px] bg-gray-300 z-0 sm:hidden" />
+              <div className="w-full sm:w-2/3 text-center py-8 px-4">
+                <p className="text-2xl font-bold text-red-600">Order Cancelled</p>
+                <p className="text-sm text-gray-600 mt-2">
+                  This order has been cancelled and is no longer in progress.
+                </p>
+              </div>
 
-            {statusUpdates.map((status, index) => {
-              const isCurrent = index < currentStepIndex;
-              const isActive = index === currentStepIndex;
+              <button className="bg-[#6F4D34] text-white px-5 py-2 rounded-lg hover:bg-[#5b3f2a] transition text-sm font-semibold">
+                Chat with Us
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="relative flex flex-col sm:flex-row items-center sm:px-2 gap-6 sm:gap-0">
+                {/* Horizontal line for tablet/desktop */}
+                <div className="absolute top-2 left-0 right-0 h-1 bg-gray-300 z-0 hidden sm:block" />
+                {/* Vertical line for mobile */}
+                <div className="absolute left-1 top-0 bottom-0 w-[2px] bg-gray-300 z-0 sm:hidden" />
 
-              return (
-                <div
-                  key={index}
-                  className="relative z-10 flex flex-col sm:flex-1 sm:items-center sm:text-center min-w-[80px] w-full sm:w-auto"
-                >
-                  {/* Mobile layout */}
-                  <div className="flex md:hidden items-start gap-3 relative w-full">
+                {statusUpdates.map((status, index) => {
+                  const isCurrent = index < currentStepIndex;
+                  const isActive = index === currentStepIndex;
 
-                    <div className={`w-3 h-3 rounded-full mt-1 flex-shrink-0
+                  return (
+                    <div
+                      key={index}
+                      className="relative z-10 flex flex-col sm:flex-1 sm:items-center sm:text-center min-w-[80px] w-full sm:w-auto"
+                    >
+                      {/* Mobile layout */}
+                      <div className="flex md:hidden items-start gap-3 relative w-full">
+
+                        <div className={`w-3 h-3 rounded-full mt-1 flex-shrink-0
                     ${isCurrent ? 'bg-[#6F4D34] border-2 border-[#6F4D34]' : 'bg-gray-300'}`}>
-                    </div>
+                        </div>
 
-                    <div className="flex flex-col text-left">
-                      <p className={`text-[10px] leading-tight ${isCurrent ? 'text-[#6F4D34] font-medium' : 'text-gray-500'}`}>
-                        {status.label}
-                      </p>
-                      <span className="text-[9px] text-gray-400">{status.date}</span>
-                    </div>
-                  </div>
+                        <div className="flex flex-col text-left">
+                          <p className={`text-[10px] leading-tight ${isCurrent ? 'text-[#6F4D34] font-medium' : 'text-gray-500'}`}>
+                            {status.label}
+                          </p>
+                          <span className="text-[9px] text-gray-400">{status.date}</span>
+                        </div>
+                      </div>
 
-                  {/* Desktop layout */}
-                  <div className="hidden md:flex flex-col items-center text-center flex-1 min-w-[80px]">
+                      {/* Desktop layout */}
+                      <div className="hidden md:flex flex-col items-center text-center flex-1 min-w-[80px]">
 
-                    <div className={`w-4 h-4 rounded-full border-2 mb-2 mt-0.5
+                        <div className={`w-4 h-4 rounded-full border-2 mb-2 mt-0.5
                     ${isCurrent ? 'bg-[#6F4D34] border-[#6F4D34]' : 'bg-white border-gray-300'}`}>
+                        </div>
+
+                        <p className={`text-xs ${isCurrent ? 'text-[#6F4D34] font-medium' : 'text-gray-500'}`}>
+                          {status.label}
+                        </p>
+                        <span className="text-[11px] text-gray-400">{status.date}</span>
+                      </div>
                     </div>
+                  );
+                })}
 
-                    <p className={`text-xs ${isCurrent ? 'text-[#6F4D34] font-medium' : 'text-gray-500'}`}>
-                      {status.label}
-                    </p>
-                    <span className="text-[11px] text-gray-400">{status.date}</span>
-                  </div>
-                </div>
-              );
-            })}
+                {/* Horizontal progress (desktop only) */}
+                <div
+                  className="absolute top-2 left-0 h-1 bg-[#6F4D34] z-10 transition-all duration-500 hidden sm:block"
+                  style={{
+                    width: `${(currentStepIndex === statusUpdates.length
+                      ? 100
+                      : (currentStepIndex / (statusUpdates.length)) * 100)}%`,
+                  }}
+                />
 
-            {/* Horizontal progress (desktop only) */}
-            <div
-              className="absolute top-2 left-0 h-1 bg-[#6F4D34] z-10 transition-all duration-500 hidden sm:block"
-              style={{
-                width: `${(currentStepIndex === statusUpdates.length
-                  ? 100
-                  : (currentStepIndex / (statusUpdates.length)) * 100)}%`,
-              }}
-            />
+                {/*  Vertical progress mobile only */}
+                <div
+                  className="absolute left-1 top-0 bg-[#6F4D34] z-10 transition-all duration-500 sm:hidden"
+                  style={{
+                    height: `${(currentStepIndex === statusUpdates.length
+                      ? 100
+                      : (currentStepIndex / (statusUpdates.length)) * 100)}%`,
+                    width: "2px",
+                  }}
+                />
+              </div>
 
-            {/*  Vertical progress mobile only */}
-            <div
-              className="absolute left-1 top-0 bg-[#6F4D34] z-10 transition-all duration-500 sm:hidden"
-              style={{
-                height: `${(currentStepIndex === statusUpdates.length
-                  ? 100
-                  : (currentStepIndex / (statusUpdates.length)) * 100)}%`,
-                width: "2px",
-              }}
-            />
-          </div>
+              <div className="absolute top-4 right-4 hidden sm:block">
+                <button className="text-xs sm:text-sm bg-[#6F4D34] text-white px-3 py-1.5 rounded-lg hover:bg-[#5b3f2a] transition whitespace-nowrap">
+                  Download Invoice
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-5 mt-6">
+                {canCancel && (
+                  <button
+                    onClick={() => setShowCancelModal(true)}
+                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition text-sm font-semibold"
+                  >
+                    Cancel Order
+                  </button>
+                )}
+                {isDelivered && isWithinReturnWindow && (
+                  <button className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition text-sm font-semibold">
+                    Return Order
+                  </button>
+                )}
+                <button className="bg-[#6F4D34] text-white px-4 py-2 rounded-lg hover:bg-[#5b3f2a] transition text-sm font-semibold">
+                  Chat with Us
+                </button>
 
-          <div className="absolute top-4 right-4 hidden sm:block">
-            <button className="text-xs sm:text-sm bg-[#6F4D34] text-white px-3 py-1.5 rounded-lg hover:bg-[#5b3f2a] transition whitespace-nowrap">
-              Download Invoice
-            </button>
-          </div>
- <div className="flex flex-wrap gap-5 mt-6">
-        {canCancel && (
-          <button
-            onClick={() => setShowCancelModal(true)}
-            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition text-sm font-semibold"
-          >
-            Cancel Order
-          </button>
-        )}
-        {isDelivered && isWithinReturnWindow && (
-          <button className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition text-sm font-semibold">
-            Return Order
-          </button>
-        )}
-        <button className="bg-[#6F4D34] text-white px-4 py-2 rounded-lg hover:bg-[#5b3f2a] transition text-sm font-semibold">
-          Chat with Us
-        </button>
-
-        <button className="sm:hidden bg-[#6F4D34] text-white px-4 py-2 rounded-lg hover:bg-[#5b3f2a] transition text-sm font-semibold">
-          Download Invoice
-        </button>
-      </div>
-    </>
-  )}
-</div>
+                <button className="sm:hidden bg-[#6F4D34] text-white px-4 py-2 rounded-lg hover:bg-[#5b3f2a] transition text-sm font-semibold">
+                  Download Invoice
+                </button>
+              </div>
+            </>
+          )}
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white rounded-2xl p-4 sm:p-6 border border-[#EBEBEB]">
             <h4 className="text-md font-semibold text-gray-800 mb-4">Delivery Details</h4>
@@ -480,6 +499,7 @@ const orderId = order?.orderId;
                         </div>
 
                         <img
+                         onClick={() => handleImageClick(file.previewUrl || URL.createObjectURL(file))}
                           src={file.previewUrl || URL.createObjectURL(file)}
                           alt={`Preview ${index + 1}`}
                           className="w-full h-[100px] object-cover rounded-md border"
@@ -515,67 +535,112 @@ const orderId = order?.orderId;
           </div>
         </div>
       </div>
-{showCancelModal && (
-  <AnimatePresence>
-    <motion.div
-      className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md"
-      >
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Cancel Order</h2>
+      {showCancelModal && (
+        <AnimatePresence>
+          <motion.div
+            className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md"
+            >
+              <h2 className="text-lg font-semibold text-gray-800 mb-4">Cancel Order</h2>
 
-        {/* Reason Dropdown */}
-        <label className="block text-sm font-medium text-gray-700 mb-1">Reason</label>
-        <select
-          value={cancelReason}
-          onChange={(e) => setCancelReason(e.target.value)}
-          className="w-full border rounded-lg px-3 py-2 mb-3 text-sm"
+              {/* Reason Dropdown */}
+              <label className="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+              <select
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                className="w-full border rounded-lg px-3 py-2 mb-3 text-sm"
+              >
+                <option value="">-- Select a reason --</option>
+                <option value="Ordered by mistake">Ordered by mistake</option>
+                <option value="Found a better price">Found a better price</option>
+                <option value="Shipping time too long">Shipping time too long</option>
+                <option value="Other">Other</option>
+              </select>
+
+              {/* Comment Box */}
+              <label className="block text-sm font-medium text-gray-700 mb-1">Comment</label>
+              <textarea
+                rows="3"
+                value={cancelComment}
+                onChange={(e) => setCancelComment(e.target.value)}
+                placeholder="Add any details (optional)"
+                className="w-full border rounded-lg px-3 py-2 text-sm mb-4"
+              ></textarea>
+
+              {/* Buttons */}
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setShowCancelModal(false)}
+                  className="px-4 py-2 rounded-lg border text-sm"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={handleCancelOrder}
+                  disabled={loadingCancel}
+                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 text-sm font-semibold disabled:opacity-50"
+                >
+                  {loadingCancel ? "Cancelling..." : "Confirm Cancel"}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        </AnimatePresence>
+      )}
+
+      {showPopup && (
+        <div
+          onClick={() => setShowPopup(false)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
         >
-          <option value="">-- Select a reason --</option>
-          <option value="Ordered by mistake">Ordered by mistake</option>
-          <option value="Found a better price">Found a better price</option>
-          <option value="Shipping time too long">Shipping time too long</option>
-          <option value="Other">Other</option>
-        </select>
-
-        {/* Comment Box */}
-        <label className="block text-sm font-medium text-gray-700 mb-1">Comment</label>
-        <textarea
-          rows="3"
-          value={cancelComment}
-          onChange={(e) => setCancelComment(e.target.value)}
-          placeholder="Add any details (optional)"
-          className="w-full border rounded-lg px-3 py-2 text-sm mb-4"
-        ></textarea>
-
-        {/* Buttons */}
-        <div className="flex justify-end gap-3">
-          <button
-            onClick={() => setShowCancelModal(false)}
-            className="px-4 py-2 rounded-lg border text-sm"
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'relative',
+              height: '70%',
+              backgroundColor: '#111',
+              borderRadius: '12px',
+              boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              overflow: 'hidden',
+            }}
           >
-            Close
-          </button>
-          <button
-            onClick={handleCancelOrder}
-            disabled={loadingCancel}
-            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 text-sm font-semibold disabled:opacity-50"
-          >
-            {loadingCancel ? "Cancelling..." : "Confirm Cancel"}
-          </button>
+            <img
+              src={currentImages[currentImageIndex]}
+              alt="Popup"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                borderRadius: '12px',
+              }}
+            />
+          </div>
         </div>
-      </motion.div>
-    </motion.div>
-  </AnimatePresence>
-)}
+      )}
+
     </div>
   );
 };
