@@ -1,0 +1,302 @@
+[
+    {
+        "id": 1,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/art-hp-spotlight_blackartist-0701.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product1.html",
+        "newPrice": "68.00",
+        "oldPrice": "80.50",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    },
+    {
+        "id": 2,
+        "title": "Product12",
+        "imageUrl": "artimages/art-hp-spotlight_blackartist-0701.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product2.html",
+        "newPrice": "58.00",
+        "hotOffer": "",
+        "hotOfferClass": ""
+    },
+    {
+        "id": 3,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/art-lp-styleguide_boc_fineart-0601.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product3.html",
+        "newPrice": "60.00",
+        "oldPrice": "",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    },
+    {
+        "id": 4,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/product3.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product1.html",
+        "newPrice": "68.00",
+        "oldPrice": "80.50",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    },
+    {
+        "id": 5,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/product2.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product2.html",
+        "newPrice": "58.00",
+        "hotOffer": "",
+        "hotOfferClass": ""
+    },
+    {
+        "id": 6,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/product1.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product3.html",
+        "newPrice": "60.00",
+        "oldPrice": "",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    },
+    {
+        "id": 7,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/art-lp-styleguide_boc_fineart-0601.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product3.html",
+        "newPrice": "60.00",
+        "oldPrice": "",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    },
+    {
+        "id": 8,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/art-hp-spotlight_blackartist-0701.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product1.html",
+        "newPrice": "68.00",
+        "oldPrice": "80.50",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    },
+    {
+        "id": 9,
+        "title": "Product12",
+        "imageUrl": "artimages/art-hp-spotlight_blackartist-0701.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product2.html",
+        "newPrice": "58.00",
+        "hotOffer": "",
+        "hotOfferClass": ""
+    },
+    {
+        "id": 10,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/art-lp-styleguide_boc_fineart-0601.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product3.html",
+        "newPrice": "60.00",
+        "oldPrice": "",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    },
+    {
+        "id": 11,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/product3.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product1.html",
+        "newPrice": "68.00",
+        "oldPrice": "80.50",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    },
+    {
+        "id": 12,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/product2.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product2.html",
+        "newPrice": "58.00",
+        "hotOffer": "",
+        "hotOfferClass": ""
+    },
+    {
+        "id": 13,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/product4.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product3.html",
+        "newPrice": "60.00",
+        "oldPrice": "",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    },
+    {
+        "id": 14,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/art-lp-styleguide_boc_fineart-0601.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product3.html",
+        "newPrice": "60.00",
+        "oldPrice": "",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    },
+    {
+        "id": 15,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/art-hp-spotlight_blackartist-0701.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product1.html",
+        "newPrice": "68.00",
+        "oldPrice": "80.50",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    },
+    {
+        "id": 16,
+        "title": "Product12",
+        "imageUrl": "artimages/art-hp-spotlight_blackartist-0701.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product2.html",
+        "newPrice": "58.00",
+        "hotOffer": "",
+        "hotOfferClass": ""
+    },
+    {
+        "id": 17,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/art-lp-styleguide_boc_fineart-0601.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product3.html",
+        "newPrice": "60.00",
+        "oldPrice": "",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    },
+    {
+        "id": 18,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/product3.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product1.html",
+        "newPrice": "68.00",
+        "oldPrice": "80.50",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    },
+    {
+        "id": 19,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/product2.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product2.html",
+        "newPrice": "58.00",
+        "hotOffer": "",
+        "hotOfferClass": ""
+    },
+    {
+        "id": 20,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/product1.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product3.html",
+        "newPrice": "60.00",
+        "oldPrice": "",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    },
+    {
+        "id": 21,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/art-lp-styleguide_boc_fineart-0601.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product3.html",
+        "newPrice": "60.00",
+        "oldPrice": "",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    },
+    {
+        "id": 22,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/art-hp-spotlight_blackartist-0701.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product1.html",
+        "newPrice": "68.00",
+        "oldPrice": "80.50",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    },
+    {
+        "id": 23,
+        "title": "Product12",
+        "imageUrl": "artimages/art-hp-spotlight_blackartist-0701.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product2.html",
+        "newPrice": "58.00",
+        "hotOffer": "",
+        "hotOfferClass": ""
+    },
+    {
+        "id": 24,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/art-lp-styleguide_boc_fineart-0601.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product3.html",
+        "newPrice": "60.00",
+        "oldPrice": "",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    },
+    {
+        "id": 25,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/product3.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product1.html",
+        "newPrice": "68.00",
+        "oldPrice": "80.50",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    },
+    {
+        "id": 26,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/product2.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product2.html",
+        "newPrice": "58.00",
+        "hotOffer": "",
+        "hotOfferClass": ""
+    },
+    {
+        "id": 27,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/product1.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product3.html",
+        "newPrice": "60.00",
+        "oldPrice": "",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    },
+    {
+        "id": 28,
+        "title": "Pellentesque aliquet",
+        "imageUrl": "artimages/art-lp-styleguide_boc_fineart-0601.webp",
+        "imageAlt": "image description",
+        "detailUrl": "shop-detail-product3.html",
+        "newPrice": "60.00",
+        "oldPrice": "",
+        "hotOffer": "HOT",
+        "hotOfferClass": "hotOffer"
+    }
+]
