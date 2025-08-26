@@ -130,6 +130,20 @@ const Sidebar = () => {
         subTabs: []
       },
       {
+        label: "Challenges",
+        tabId: "clg1",
+        icon: "fa-solid fa-trophy",
+        path: `#Challenges`,
+        subTabs: [
+          {
+            label: "Challenges",
+            subtabId: "clg11",
+            path: `/super-admin/challenges`,
+          },
+          { label: "Challenges Entries", subtabId: "clg12", path: `/super-admin/challenges-entries` },
+        ],
+      },
+      {
         label: "Sponsor",
         tabId: "spr1",
         icon: "fa fa-bullhorn",
@@ -158,30 +172,30 @@ const Sidebar = () => {
 
         ]
       },
-
-
-      // {
-      //   label: "Transaction",
-      //   icon: "fa fa-credit-card",
-      //   path: `/super-admin/alltransaction`,
-      //   subTabs: [
-      //     // { label: "All Transaction", path: `/${userType}/Dashboard/alltransaction` },
-      //     // { label: "Product Transaction", path: `#` },
-      //     // { label: "Resell Product Transacticon", path: `#` },
-      //     // { label: "Bidding Transaction", path: `#` }
-      //   ]
-      // },
-      // {
-      //   label: "Packaging Material",
-      //   icon: "fa fa-archive",
-      //   path: `#Packaging Material`,
-      //   subTabs: [
-      //     { label: "Product", path: `/super-admin/packagingmaterialproduct`},
-      //     { label: "Product Purchased", path: `/super-admin/packagingproductpurchased` },
-      //     { label: "Transaction", path: `/super-admin/packagingproducttransaction` },
-      //   ]
-      // },
-
+      {
+        label: "Website CMS",
+        tabId: "wcms1",
+        icon: "fa fa-cog",
+        path: `#website-cms`,
+        subTabs: [
+          { label: "Homepage", subtabId: "wcms11", path: `` },
+          { label: "About Us", subtabId: "wcms12", path: `` },
+          { label: "Store", subtabId: "wcms13", path: `` },
+          { label: "Bid", subtabId: "wcms14", path: `` },
+          { label: "How to Buy", subtabId: "wcms15", path: `` },
+          { label: "How to Sell", subtabId: "wcms16", path: `` },
+          { label: "Discover Artists", subtabId: "wcms17", path: `` },
+          { label: "Celebrity Collections", subtabId: "wcms18", path: `` },
+          { label: "Challenges", subtabId: "wcms19", path: `` },
+          { label: "Blogs", subtabId: "wcms19", path: `` },
+          { label: "Policys", subtabId: "wcms19", path: `` },
+          { label: "Commissions", subtabId: "wcms19", path: `` },
+          { label: "Licensing", subtabId: "wcms19", path: `` },
+          { label: "Social Media", subtabId: "wcms19", path: `` },
+          { label: "Collections", subtabId: "wcms19", path: `` },
+          { label: "Career", subtabId: "wcms19", path: `` },
+        ],
+      },
       {
         label: "Settings",
         tabId: "stg1",
