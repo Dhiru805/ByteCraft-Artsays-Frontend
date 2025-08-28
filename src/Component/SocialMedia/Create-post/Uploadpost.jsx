@@ -39,39 +39,46 @@ const Uploadpost = () => {
   }, [userId]);
 
   const uploadPost = async () => {
-    if (images.length === 0) {
-      toast.error("Please select an image before posting.");
-      return;
+  if (images.length === 0) {
+    toast.error("Please select an image before posting.");
+    return;
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append("userId", userId);
+    formData.append("caption", description);
+    formData.append("location", locationInput);
+
+    // Append collaborators (array)
+    collaborators.forEach((c) => formData.append("collaborators", c._id));
+
+    // Append images (array of files)
+    images.forEach((file) => formData.append("images", file));
+
+    console.log(images);
+
+    const res = await postAPI(
+      "/api/social-media/create-post",
+      formData,
+      true,  // include params
+      true,  // private (requires token)
+      { "Content-Type": "multipart/form-data" } // headers override
+    );
+
+    if (res && !res.hasError) {
+      toast.success("Post uploaded successfully!");
+      navigate("/social-media/profile");
+      console.log(res.data.post);
+    } else {
+      toast.error(res?.message || "Failed to upload post");
     }
+  } catch (error) {
+    console.error("Error uploading post:", error);
+    toast.error(error?.response?.data?.message || "Something went wrong");
+  }
+};
 
-    const payload = {
-      userId,
-      caption: description,
-      location: locationInput,
-      collaborators: collaborators.map((c) => c._id),
-      image: images, // currently sending only first image (schema allows one image)
-    };
-
-    try {
-      const res = await postAPI(
-        "/api/social-media/create-post",
-        payload,
-        true, // include params
-        true // private (requires token)
-      );
-
-      if (res && !res.hasError) {
-        toast.success("Post uploaded successfully!");
-        navigate("/social-media/profile"); // Redirect to home or another page
-        console.log(res.data.post);
-      } else {
-        toast.error(res?.message || "Failed to upload post");
-      }
-    } catch (error) {
-      console.error("Error uploading post:", error);
-      toast.error(error?.response?.data?.message || "Something went wrong");
-    }
-  };
 
   const location = useLocation();
   const passedImages = useMemo(() => {
@@ -205,11 +212,14 @@ const Uploadpost = () => {
                   <i className="ri-arrow-left-s-line text-white bg-[#000000CC] opacity-80 rounded-full"></i>
                 </button>
 
-                <img
-                  src={images[currentImageIndex]}
-                  alt="post"
-                  className="object-contain h-full w-full object-cover rounded-bl-lg"
-                />
+               <img
+  src={images[currentImageIndex] instanceof File 
+    ? URL.createObjectURL(images[currentImageIndex]) 
+    : images[currentImageIndex]}
+  alt="post"
+  className="object-contain h-full w-full object-cover rounded-bl-lg"
+/>
+
 
                 <button
                   onClick={handleNext}
@@ -392,13 +402,14 @@ const Uploadpost = () => {
                 className="relative w-22 h-22 rounded overflow-hidden"
               >
                 <img
-                  src={img}
-                  alt={`thumbnail-${index}`}
-                  className={`w-[150px] h-[150px] object-cover rounded cursor-pointer ${
-                    currentImageIndex === index ? "ring-2 ring-[#6E4E37]" : ""
-                  }`}
-                  onClick={() => setCurrentImageIndex(index)}
-                />
+  src={img instanceof File ? URL.createObjectURL(img) : img}
+  alt={`thumbnail-${index}`}
+  className={`w-[150px] h-[150px] object-cover rounded cursor-pointer ${
+    currentImageIndex === index ? "ring-2 ring-[#6E4E37]" : ""
+  }`}
+  onClick={() => setCurrentImageIndex(index)}
+/>
+
                 <button
                   className="absolute top-0 right-0 text-black text-xs p-1 rounded-full"
                   onClick={() => handleRemoveImage(index)}

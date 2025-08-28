@@ -572,7 +572,7 @@ const NavBar = () => {
         <a href="/" className="navbar-brand-h mb-0 h1">
           Artsays
         </a>
-        <a className="nav-link-h btn-started-h ms-2" href="/">
+        <a className="nav-link-h btn-started-h ms-2" href="/login">
           GET STARTED
         </a>
       </nav>

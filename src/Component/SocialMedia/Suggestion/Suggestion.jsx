@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import getAPI from "../../../../src/api/getAPI";
+import postAPI from "../../../../src/api/postAPI";
 import "../Sidebar/Side-post-sugg.css";
 import "../Create-post/Post.css";
 
@@ -12,29 +13,50 @@ const Suggestion = () => {
     "https://images.pexels.com/photos/1585325/pexels-photo-1585325.jpeg?cs=srgb&dl=pexels-steve-1585325.jpg&fm=jpg",
     "https://i0.wp.com/montessorifromtheheart.com/wp-content/uploads/2023/03/Straw-Print-Flower-Painting-Craft.jpg?resize=1080%2C1350&ssl=1",
   ];
+const userId = localStorage.getItem("userId");
+  useEffect(() => {
+    const fetchSuggestedUsers = async () => {
+      try {
+        
+        if (!userId) return;
 
- useEffect(() => {
-  const fetchSuggestedUsers = async () => {
-    try {
-      const userId = localStorage.getItem("userId");
-      if (!userId) return; 
+        const res = await getAPI(
+          `/api/social-media/suggested-users?userId=${userId}`,
+          {},
+          false,
+          true
+        );
 
-      const res = await getAPI(
-        `/api/social-media/suggested-users?userId=${userId}`, 
-        {}, 
-        false, 
-        true
-      );
-      console.log("Suggested Users Response:", res);  
+        setUsers(res?.data?.suggestedUsers || []);
+      } catch (error) {
+        console.error("Error fetching suggested users:", error);
+      }
+    };
 
-      setUsers(res?.data?.suggestedUsers || []);
-    } catch (error) {
-      console.error("Error fetching suggested users:", error);
+    fetchSuggestedUsers();
+  }, []);
+
+// ✅ Handle Follow / Unfollow
+const handleFollowToggle = async (targetUserId, isFollowing) => {
+  try {
+    if (isFollowing) {
+      
+      await postAPI(`/api/social-media/unfollow/${targetUserId}`, { userId }, true, true);
+    } else {
+      
+      await postAPI(`/api/social-media/follow/${targetUserId}`, { userId }, true, true);
     }
-  };
 
-  fetchSuggestedUsers();
-}, []); 
+    // Update UI after follow/unfollow
+    setUsers((prev) =>
+      prev.map((user) =>
+        user._id === targetUserId ? { ...user, isFollowing: !isFollowing } : user
+      )
+    );
+  } catch (error) {
+    console.error("Error following/unfollowing user:", error);
+  }
+};
 
 
   return (
@@ -61,10 +83,23 @@ const Suggestion = () => {
 
           {/* Buttons */}
           <div className="flex flex-row gap-1 items-center sm:ml-auto">
-            <button className="bg-[#6F4D34] hover:bg-gray-200 text-white text-[11px] sm:text-sm px-2 py-[5px] rounded-lg border border-gray-300 font-semibold transition-colors duration-300 whitespace-nowrap">
-              Follow
+            <button
+              className={`${
+                user.isFollowing
+                  ? "bg-gray-200 text-black"
+                  : "bg-[#6F4D34] text-white"
+              } text-[11px] sm:text-sm px-2 py-[5px] rounded-lg border border-gray-300 font-semibold transition-colors duration-300 whitespace-nowrap`}
+              onClick={() => handleFollowToggle(user._id, user.isFollowing)}
+            >
+              {user.isFollowing ? "Unfollow" : "Follow"}
             </button>
-            <button className="text-[#6E4E37] text-xl leading-none">
+            <button
+    className="text-[#6E4E37] text-xl leading-none"
+    onClick={() =>
+      setUsers((prev) => prev.filter((u) => u._id !== user._id))
+    }
+  >
+
               <i className="ri-close-line"></i>
             </button>
           </div>
