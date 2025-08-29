@@ -429,7 +429,6 @@ const Register = () => {
                   width: '200px',
                   height: '40px',
                   borderRadius: '20px',
-                  backgroundColor: '#f0e6db',
                   border: '1px solid #6b4f36',
                   cursor: 'pointer',
                 }}
@@ -442,9 +441,10 @@ const Register = () => {
                     height: '36px',
                     borderRadius: '18px',
                     backgroundColor: '#6b4f36',
+                    fontWeight: 'bold',
                     color: 'white',
                     left: isBusiness ? '100px' : '0',
-                    transform: isBusiness ? 'translateX(-4px)' : 'translateX(4px)',
+                    transform: isBusiness ? 'translateX(-4px)' : 'translateX(2px)',
                     transition: 'all 0.3s ease',
                     zIndex: 2,
                   }}
@@ -456,12 +456,13 @@ const Register = () => {
                   style={{
                     zIndex: 1,
                     fontSize: '0.9rem',
+                    fontWeight: 'bold',
                   }}
                 >
-                  <span style={{ color: !isBusiness ? 'white' : '#6b4f36', fontWeight: !isBusiness ? 'bold' : 'normal' }}>
+                  <span style={{ color: !isBusiness ? 'white' : '#6b4f36' }}>
                     Artist
                   </span>
-                  <span style={{ color: isBusiness ? 'white' : '#6b4f36', fontWeight: isBusiness ? 'bold' : 'normal' }}>
+                  <span style={{ color: isBusiness ? 'white' : '#6b4f36' }}>
                     Seller
                   </span>
                 </div>
