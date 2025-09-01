@@ -14,7 +14,7 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
     // pagination helpers 
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
-
+ console.log("Buyer Requests:", buyerRequests);
 
     const filteredProducts = buyerRequests.filter(request =>
         request.Buyer?.id?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -66,7 +66,7 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
             setLoadingIds((prev) => [...prev, requestId]);
             const response = await updateBuyerStatus(requestId, 'Approved', 'Approved');
             await updateBuyerStatus(requestId, 'Approved', 'Approved');
-    window.location.reload();
+            window.location.reload();
             toast.success("Product Request has been Approved!");
 
             setLoadingIds((prev) => prev.filter((itemId) => itemId !== requestId));

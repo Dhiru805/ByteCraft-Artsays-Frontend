@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
@@ -26,6 +25,17 @@ const NegotiateModalforartist = ({ request, onClose, onSubmit }) => {
     : [];
 
   const [newBudget, setNewBudget] = useState("");
+  const [customCreationDays, setCustomCreationDays] = useState(""); 
+  const [isCustomCreationDays, setIsCustomCreationDays] = useState(false); 
+  const [isYesClicked, setIsYesClicked] = useState(false); 
+  const [showYesNoButtons, setShowYesNoButtons] = useState(true);
+
+
+  const latestBuyerDays =
+    request?.BuyerEstimatedCreationDaysHistory?.length > 0
+      ? request.BuyerEstimatedCreationDaysHistory[request.BuyerEstimatedCreationDaysHistory.length - 1]
+      : null;
+
 
   const canArtistUpdate = () => {
     const totalUpdates = artistNegotiatedBudgets.length + buyerNegotiatedBudgets.length;
@@ -44,7 +54,7 @@ const NegotiateModalforartist = ({ request, onClose, onSubmit }) => {
 
     const parsedBudget = parseFloat(newBudget);
     if (isNaN(parsedBudget)) {
-      toast.error("Please enter a valid number");
+      toast.error("Please enter a valid number for the budget");
       return;
     }
 
@@ -64,6 +74,7 @@ const NegotiateModalforartist = ({ request, onClose, onSubmit }) => {
           MinBudget: minBudget,
           NegotiatedBudget: parsedBudget,
           Notes: notes,
+          EstimatedCreationDays: isCustomCreationDays ? customCreationDays : request?.ExpectedDeadline, // Send custom or default days
         }
       );
 
@@ -75,7 +86,6 @@ const NegotiateModalforartist = ({ request, onClose, onSubmit }) => {
         setTimeout(() => {
           window.location.reload();
         }, 1000);
-
       } else {
         toast.error(response?.message || "Failed to update buyer request");
       }
@@ -165,57 +175,137 @@ const NegotiateModalforartist = ({ request, onClose, onSubmit }) => {
                 />
               </div>
 
-              {artistNegotiatedBudgets.length > 0 ? (
-                artistNegotiatedBudgets.map((budget, index) => (
-                  <div className="mb-3" key={`artist-${index}`}>
-                    <label className="form-label">{`Artist Negotiated Budget ${index + 1}`}</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={budget}
-                      readOnly
-                    />
+              {artistNegotiatedBudgets.length > 0 || buyerNegotiatedBudgets.length > 0 ? (
+                [...Array(Math.max(artistNegotiatedBudgets.length, buyerNegotiatedBudgets.length))].map((_, index) => (
+                  <div key={index} className="mb-3">
+                    <div className="row">
+
+                      {artistNegotiatedBudgets[index] && (
+                        <div className="col">
+                          <label className="form-label">{`Artist Negotiation ${index + 1}`}</label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            value={artistNegotiatedBudgets[index]}
+                            readOnly
+                          />
+                        </div>
+                      )}
+
+                      {request?.ArtistEstimatedCreationDaysHistory?.[index] && (
+                        <div className="col">
+                          <label className="form-label">Estimated Creation Days</label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            value={request?.ArtistEstimatedCreationDaysHistory?.[index] || ""}
+                            readOnly
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="row mt-3">
+                      {buyerNegotiatedBudgets[index] && (
+                        <div className="col">
+                          <label className="form-label">{`Buyer Negotiation ${index + 1}`}</label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            value={buyerNegotiatedBudgets[index]}
+                            readOnly
+                          />
+                        </div>
+                      )}
+
+                      {request?.BuyerEstimatedCreationDaysHistory?.[index + 1] && (
+                        <div className="col">
+                          <label className="form-label">Estimated Creation Days</label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            value={request?.BuyerEstimatedCreationDaysHistory?.[index + 1] || ""}
+                            readOnly
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ))
+              
               ) : (
-                <div className="mb-3">
-                  {/* <label className="form-label">Artist Negotiated Budgets</label>
-                  <p className="text-gray-500">No artist budgets submitted yet.</p> */}
-                </div>
+                <div className="mb-3">{/* No artist or buyer budgets yet */}</div>
               )}
 
-              {buyerNegotiatedBudgets.length > 0 ? (
-                buyerNegotiatedBudgets.map((budget, index) => (
-                  <div className="mb-3" key={`buyer-${index}`}>
-                    <label className="form-label">{`Buyer Negotiated Budget ${index + 1}`}</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={budget}
-                      readOnly
-                    />
-                  </div>
-                ))
-              ) : (
-                <div className="mb-3">
-                  {/* <label className="form-label">Buyer Negotiated Budgets</label>
-                  <p className="text-gray-500">No buyer budgets submitted yet.</p> */}
-                </div>
-              )}
-
+              {/* Custom Creation Days */}
               {canArtistUpdate() && (
                 <div className="mb-3">
-                  <label className="form-label">
-                    Artist Negotiated Budget {artistNegotiatedBudgets.length + 1} <span className="text-danger"> *</span>
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    placeholder="Enter Negotiated Budget"
-                    value={newBudget}
-                    onChange={(e) => setNewBudget(e.target.value)}
-                    required
-                  />
+                  {/* Artist Budget Input */}
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Artist Negotiated Budget {artistNegotiatedBudgets.length + 1}{" "}
+                      <span className="text-danger">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      placeholder="Enter Negotiated Budget"
+                      value={newBudget}
+                      onChange={(e) => setNewBudget(e.target.value)}
+                      required
+                      min={minBudget}
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label d-block">
+                      Do you agree with the buyer’s estimated creation time of{" "}
+                      <strong>{latestBuyerDays || "N/A"} days</strong>
+                    </label>
+
+                    <div className="d-flex gap-2">
+                      <button
+                        type="button"
+                        className={`btn btn-outline-success btn-sm ${!isCustomCreationDays ? "active" : ""}`}
+                        onClick={() => {
+                          setIsCustomCreationDays(false);
+                          setShowYesNoButtons(false);
+                        }}
+                      >
+                        Yes
+                      </button>
+                      <button
+                        type="button"
+                        className={`btn btn-outline-danger ml-2 btn-sm ${isCustomCreationDays ? "active" : ""}`}
+                        onClick={() => {
+                          setIsCustomCreationDays(true);
+                          setShowYesNoButtons(false);
+                        }}
+                      >
+                        No
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label">
+                      {isCustomCreationDays ? "Enter Your Estimated Creation Days" : "Buyer’s Estimated Creation Days"}
+                      <span className="text-danger">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={
+                        isCustomCreationDays
+                          ? customCreationDays
+                          : latestBuyerDays || ""
+                      }
+                      placeholder="Enter custom days"
+                      disabled={!isCustomCreationDays}
+                      onChange={(e) => setCustomCreationDays(e.target.value)}
+                      required
+                    />
+                  </div>
                 </div>
               )}
 
@@ -230,6 +320,7 @@ const NegotiateModalforartist = ({ request, onClose, onSubmit }) => {
                 ></textarea>
               </div>
             </div>
+
             <div className="modal-footer">
               <button
                 type="button"
