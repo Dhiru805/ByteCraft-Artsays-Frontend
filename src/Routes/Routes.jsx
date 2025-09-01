@@ -89,6 +89,10 @@ import ViewExhibitionRequest from "../Component/Dashboard/Super-AdminDashboard/E
 import AutoTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/DefaultAutoTargeting/DefaultAutoTargeting';
 import GroupTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/AutoTargetingGroup/GroupTargetingSetting';
 import KeywordTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/KeywordTargeting/KeywordTargetingSetting';
+
+import Challenges from  "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/challenges";
+import CreateChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/create";
+import ChallengesEntries from '../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/challengesEntries';
 //-----------------------------Admin--------------------------//
 import Admin from "../Component/Dashboard/Super-AdminDashboard/Admin/Admin";
 import AdminProfile from "../Component/Dashboard/Super-AdminDashboard/Admin/Profile/UserProf";
@@ -439,6 +443,11 @@ const AppRoutes = () => {
     <Route path="exhibition-request" element={<ExhibitionRequest/>} />
     <Route path="exhibition-request/update-exhibition" element={<UpdateExhibitionRequest/>} /> 
     <Route path="exhibition-request/view-exhibition" element={<ViewExhibitionRequest/>} /> 
+
+    {/* Challenges */}
+     <Route path="challenges" element={<Challenges/>} />  
+     <Route path="challenges/create-Challenges" element={<CreateChallenges/>} />  
+     <Route path="challenges-entries" element={<ChallengesEntries/>} />
      
 
       </Route>
