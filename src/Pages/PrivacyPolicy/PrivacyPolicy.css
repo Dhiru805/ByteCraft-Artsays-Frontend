@@ -1,0 +1,81 @@
+.privacy-container {
+    display: flex;
+    margin: 0 auto;
+    width: 95%;
+  }
+  
+  .privacy-sidebar {
+    width: 20%;
+    padding: 20px;
+    background-color: #f8f9fa; /* Light background color */
+    color: #343a40;
+    height: 100vh;
+    position: sticky;
+    text-align: center;
+    top: 0;
+    border-right: 2px solid #e9ecef; /* Added border for separation */
+  }
+  
+  .privacy-sidebar ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .privacy-sidebar li {
+    margin: 15px 0; /* Increased spacing for better readability */
+    cursor: pointer;
+    font-size: 18px; /* Larger font size */
+    transition: font-size 0.3s, color 0.3s; /* Smooth transition effect */
+  }
+  
+  .privacy-sidebar li:hover {
+    text-decoration: underline;
+    color: #007bff; /* Changed hover color to a bright blue */
+  }
+  
+  .privacy-sidebar li.active {
+    font-size: 22px; /* Increased font size when clicked */
+    background-color: #e9ecef; /* Light background for active item */
+    border-radius: 5px; /* Rounded corners for a button-like effect */
+    padding: 10px; /* Added padding to make it look more button-like */
+  }
+  
+  .privacy-content {
+    width: 80%;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Enhanced box shadow for more depth */
+    border-radius: 8px; /* Rounded corners for a softer look */
+    overflow-y: auto;
+  }
+  
+  h1 {
+    color: #343a40;
+  }
+  
+  h2 {
+    /* color: #6c757d; */
+    /* margin-top: 20px; */
+  }
+  
+  @media (max-width: 768px) {
+    .privacy-container {
+      flex-direction: column;
+      padding: 130px 5px;
+    }
+  
+    .privacy-sidebar {
+      width: 100%;
+      height: auto;
+      padding: 10px;
+      border-right: none; /* Remove the border on smaller screens */
+      border-bottom: 2px solid #e9ecef; /* Border on bottom instead */
+    }
+  
+    .privacy-content {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px; /* Add space between sidebar and content */
+    }
+  }
+  
