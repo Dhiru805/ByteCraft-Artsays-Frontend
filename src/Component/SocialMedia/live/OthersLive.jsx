@@ -156,9 +156,8 @@ const sponsor = {
 
 const OthersLive = () => {
    const [showChat, setShowChat]=useState(true);
-
-const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-const dropdownRef = useRef(null);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
 
 useEffect(() => {
   const handleClickOutside = (event) => {
@@ -186,8 +185,8 @@ useEffect(() => {
             <i class="ri-skip-forward-fill"></i>
             <i class="ri-volume-up-fill"></i>
             <span className=" text-[#E56500] w-4 h-4">
-  •
-</span>
+              •
+            </span>
 
             <span>Live</span>
             </div>
@@ -209,9 +208,9 @@ useEffect(() => {
           <div className="flex items-center gap-2 text-[19px] font-medium">
             <i className="ri-more-fill text-xl" />
             <i
-  className="ri-close-line text-xl"
-  onClick={() => setShowChat(prev => !prev)}
-/>
+              className="ri-close-line text-xl"
+              onClick={() => setShowChat(prev => !prev)}
+            />
 
           </div>
         </header>
@@ -225,15 +224,14 @@ useEffect(() => {
                 className="w-10 h-10 rounded-full flex-shrink-0"
               />
               <div className="flex gap-1 text-[14px] text-[#000000]">
-  <div className="flex items-center gap-1 whitespace-nowrap">
-    <span className="font-semibold">{item.username}</span>
-    <span>:</span>
-  </div>
-  <p className="font-medium flex-1 min-w-0 break-words">
-    {item.comment}
-  </p>
-</div>
-
+                <div className="flex items-center gap-1 whitespace-nowrap">
+                  <span className="font-semibold">{item.username}</span>
+                  <span>:</span>
+                </div>
+                <p className="font-medium flex-1 min-w-0 break-words">
+                  {item.comment}
+                </p>
+              </div>
             </div>
           ))}
         </main>
@@ -259,7 +257,7 @@ useEffect(() => {
         </div>
       </div>
       )}
-        {/* viideo deatail segment */}
+        {/* video detail segment */}
         <div className="w-full  flex flex-col gap-4">
           <h1 className="text-[#000000] text-[20px] font-bold">
             {liveDetail.title}
@@ -324,13 +322,13 @@ useEffect(() => {
         {
           showChat===false && 
           <button
-  type="button"
-  className="w-full text-center text-lg rounded-full font-bold bg-[#FEE2CC] p-1"
-  onClick={() => setShowChat(prev => !prev)}
-  aria-label="Toggle chat"
->
-  {showChat ? "Hide Chat" : "Show Chat"}
-</button>
+            type="button"
+            className="w-full text-center text-lg rounded-full font-bold bg-[#FEE2CC] p-1"
+            onClick={() => setShowChat(prev => !prev)}
+            aria-label="Toggle chat"
+          >
+            {showChat ? "Hide Chat" : "Show Chat"}
+          </button>
 
         }
         {/* description section */}
@@ -423,9 +421,9 @@ useEffect(() => {
       
             />
            <i
-  className="ri-close-line text-xl"
-  onClick={() => setShowChat(prev => !prev)}
-/>
+          className="ri-close-line text-xl"
+          onClick={() => setShowChat(prev => !prev)}
+        />
 
           </div>
           {/* Dropdown Menu */}
@@ -471,15 +469,14 @@ useEffect(() => {
                 className="w-10 h-10 rounded-full flex-shrink-0"
               />
               <div className="flex gap-1 text-[14px] text-[#000000]">
-  <div className="flex items-center gap-1 whitespace-nowrap">
-    <span className="font-semibold">{item.username}</span>
-    <span>:</span>
-  </div>
-  <p className="font-medium flex-1 min-w-0 break-words">
-    {item.comment}
-  </p>
-</div>
-
+                <div className="flex items-center gap-1 whitespace-nowrap">
+                  <span className="font-semibold">{item.username}</span>
+                  <span>:</span>
+                </div>
+                <p className="font-medium flex-1 min-w-0 break-words">
+                  {item.comment}
+                </p>
+              </div>
             </div>
           ))}
         </main>

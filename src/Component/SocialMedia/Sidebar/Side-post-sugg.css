@@ -150,7 +150,7 @@ body {
   right: 0;
   background-color: #4a372b;
   z-index: 1000;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0px 10px rgb(0, 0, 0);
 }
 
 .nav-items-s {
@@ -286,6 +286,9 @@ body {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  position: sticky;
+  z-index: 1;
+  top: 0;
 }
 
 .profile-pic {
