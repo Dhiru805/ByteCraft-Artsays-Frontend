@@ -7,129 +7,145 @@ import { useNavigate } from "react-router-dom";
 
 const Customization = () => {
   const [formData, setFormData] = useState({
-  userId: localStorage.getItem("userId"),
-  title: "",
-  description: "",
-  category: "",
-  thumbnail: null,
-  paidPromotion: false,
-  tags: [],
-  language: "",
-  license: "Standard YouTube License",
-  allowEmbedding: false,
-  comments: {
-    comments: true,
-    sortBy: "top",
-  },
-  customization: {
+    userId: localStorage.getItem("userId"),
+    title: "",
+    description: "",
+    category: "",
+    thumbnail: null,
+    paidPromotion: false,
+    tags: [],
+    language: "",
+    license: "Standard YouTube License",
+    allowEmbedding: false,
     comments: {
-      liveChat: false,
-      liveChatReplay: false,
-      liveChatSummary: false,
+      comments: true,
+      sortBy: "top",
     },
-    participantModes: {
-      anyone: false,
-      subscribers: false,
-      liveCommentary: false,
+    customization: {
+      comments: {
+        liveChat: false,
+        liveChatReplay: false,
+        liveChatSummary: false,
+      },
+      participantModes: {
+        anyone: false,
+        subscribers: false,
+        liveCommentary: false,
+      },
+      reactions: {
+        liveReactions: false,
+      },
     },
-    reactions: {
-      liveReactions: false,
-    },
-  },
-});
+    streamKey: "",
+  });
   const [activeTab, setActiveTab] = useState("details");
   const [tagInput, setTagInput] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef(null);
-  const [categories, setCategories ] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const navigate = useNavigate();
 
-// list of languages
-const languages = [
-  { code: "af", name: "Afrikaans" },
-  { code: "sq", name: "Albanian" },
-  { code: "ar", name: "Arabic" },
-  { code: "hy", name: "Armenian" },
-  { code: "eu", name: "Basque" },
-  { code: "bn", name: "Bengali" },
-  { code: "bg", name: "Bulgarian" },
-  { code: "ca", name: "Catalan" },
-  { code: "zh", name: "Chinese (Mandarin)" },
-  { code: "hr", name: "Croatian" },
-  { code: "cs", name: "Czech" },
-  { code: "da", name: "Danish" },
-  { code: "nl", name: "Dutch" },
-  { code: "en", name: "English" },
-  { code: "et", name: "Estonian" },
-  { code: "fi", name: "Finnish" },
-  { code: "fr", name: "French" },
-  { code: "de", name: "German" },
-  { code: "el", name: "Greek" },
-  { code: "gu", name: "Gujarati" },
-  { code: "he", name: "Hebrew" },
-  { code: "hi", name: "Hindi" },
-  { code: "hu", name: "Hungarian" },
-  { code: "is", name: "Icelandic" },
-  { code: "id", name: "Indonesian" },
-  { code: "ga", name: "Irish" },
-  { code: "it", name: "Italian" },
-  { code: "ja", name: "Japanese" },
-  { code: "ko", name: "Korean" },
-  { code: "la", name: "Latin" },
-  { code: "lv", name: "Latvian" },
-  { code: "lt", name: "Lithuanian" },
-  { code: "mk", name: "Macedonian" },
-  { code: "ms", name: "Malay" },
-  { code: "mt", name: "Maltese" },
-  { code: "no", name: "Norwegian" },
-  { code: "fa", name: "Persian" },
-  { code: "pl", name: "Polish" },
-  { code: "pt", name: "Portuguese" },
-  { code: "ro", name: "Romanian" },
-  { code: "ru", name: "Russian" },
-  { code: "sr", name: "Serbian" },
-  { code: "sk", name: "Slovak" },
-  { code: "sl", name: "Slovenian" },
-  { code: "es", name: "Spanish" },
-  { code: "sw", name: "Swahili" },
-  { code: "sv", name: "Swedish" },
-  { code: "ta", name: "Tamil" },
-  { code: "th", name: "Thai" },
-  { code: "te", name: "Telugu" },
-  { code: "tr", name: "Turkish" },
-  { code: "uk", name: "Ukrainian" },
-  { code: "ur", name: "Urdu" },
-  { code: "vi", name: "Vietnamese" },
-];
 
-// Fetch categories from backend  
-  useEffect(() => {
-  const fetchCategories = async () => {
-    try {
-      const response = await getAPI("/api/main-category", true); 
-      if (!response.hasError) {
-        setCategories(response.data.data);
-      } else {
-        console.error(`Failed to fetch categories:, ${response.message}`);
-      }
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
+  const generateStreamKey = () => {
+    const array = new Uint8Array(16);
+    window.crypto.getRandomValues(array);
+    const streamKey = Array.from(array, (byte) =>
+      byte.toString(11).padStart(2, "0")
+    ).join("");
+    return streamKey;
   };
 
-  fetchCategories();
-}, []);
 
-// Filter languages based on search term
-const filteredLanguages = languages.filter((lang) =>
-  lang.name.toLowerCase().includes(searchTerm.toLowerCase())
-);
+  useEffect(() => {
+    const streamKey = generateStreamKey();
+    setFormData((prev) => ({ ...prev, streamKey }));
+  }, []);
 
-// Handle click outside to close dropdown
+  const languages = [
+    { code: "af", name: "Afrikaans" },
+    { code: "sq", name: "Albanian" },
+    { code: "ar", name: "Arabic" },
+    { code: "hy", name: "Armenian" },
+    { code: "eu", name: "Basque" },
+    { code: "bn", name: "Bengali" },
+    { code: "bg", name: "Bulgarian" },
+    { code: "ca", name: "Catalan" },
+    { code: "zh", name: "Chinese (Mandarin)" },
+    { code: "hr", name: "Croatian" },
+    { code: "cs", name: "Czech" },
+    { code: "da", name: "Danish" },
+    { code: "nl", name: "Dutch" },
+    { code: "en", name: "English" },
+    { code: "et", name: "Estonian" },
+    { code: "fi", name: "Finnish" },
+    { code: "fr", name: "French" },
+    { code: "de", name: "German" },
+    { code: "el", name: "Greek" },
+    { code: "gu", name: "Gujarati" },
+    { code: "he", name: "Hebrew" },
+    { code: "hi", name: "Hindi" },
+    { code: "hu", name: "Hungarian" },
+    { code: "is", name: "Icelandic" },
+    { code: "id", name: "Indonesian" },
+    { code: "ga", name: "Irish" },
+    { code: "it", name: "Italian" },
+    { code: "ja", name: "Japanese" },
+    { code: "ko", name: "Korean" },
+    { code: "la", name: "Latin" },
+    { code: "lv", name: "Latvian" },
+    { code: "lt", name: "Lithuanian" },
+    { code: "mk", name: "Macedonian" },
+    { code: "ms", name: "Malay" },
+    { code: "mt", name: "Maltese" },
+    { code: "no", name: "Norwegian" },
+    { code: "fa", name: "Persian" },
+    { code: "pl", name: "Polish" },
+    { code: "pt", name: "Portuguese" },
+    { code: "ro", name: "Romanian" },
+    { code: "ru", name: "Russian" },
+    { code: "sr", name: "Serbian" },
+    { code: "sk", name: "Slovak" },
+    { code: "sl", name: "Slovenian" },
+    { code: "es", name: "Spanish" },
+    { code: "sw", name: "Swahili" },
+    { code: "sv", name: "Swedish" },
+    { code: "ta", name: "Tamil" },
+    { code: "th", name: "Thai" },
+    { code: "te", name: "Telugu" },
+    { code: "tr", name: "Turkish" },
+    { code: "uk", name: "Ukrainian" },
+    { code: "ur", name: "Urdu" },
+    { code: "vi", name: "Vietnamese" },
+  ];
+
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getAPI("/api/main-category", true);
+        if (!response.hasError) {
+          setCategories(response.data.data);
+        } else {
+          console.error(`Failed to fetch categories:, ${response.message}`);
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+
+  const filteredLanguages = languages.filter((lang) =>
+    lang.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -141,7 +157,7 @@ const filteredLanguages = languages.filter((lang) =>
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // handle input changes
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -149,7 +165,7 @@ const filteredLanguages = languages.filter((lang) =>
       [name]: type === "checkbox" ? checked : value,
     }));
   };
-  
+
   const handleNestedChange = (section, key, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -177,7 +193,7 @@ const filteredLanguages = languages.filter((lang) =>
   }, [thumbnailPreview]);
 
   const handleTags = (e) => {
-    if ((e.key === "," || e.key === 'Enter') && tagInput.trim() !== "") {
+    if ((e.key === "," || e.key === "Enter") && tagInput.trim() !== "") {
       e.preventDefault();
       setFormData((prev) => ({
         ...prev,
@@ -194,13 +210,13 @@ const filteredLanguages = languages.filter((lang) =>
     }));
   };
 
-  //Image handle Code
+
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
       if (!validImageTypes.includes(file.type)) {
-        alert('Please upload a valid image file (JPEG, PNG, or GIF).');
+        alert("Please upload a valid image file (JPEG, PNG, or GIF).");
         return;
       }
       setIsLoading(true);
@@ -211,7 +227,7 @@ const filteredLanguages = languages.filter((lang) =>
         setIsLoading(false);
       };
       reader.onerror = () => {
-        alert('Failed to read the file. Please try again.');
+        alert("Failed to read the file. Please try again.");
         setIsLoading(false);
       };
       reader.readAsDataURL(file);
@@ -226,12 +242,10 @@ const filteredLanguages = languages.filter((lang) =>
     };
   }, [imagePreview]);
 
-
   const handleSubmit = async (e) => {
     setIsLoading(true);
 
     try {
-      // ✅ Required fields validation
       const requiredFields = [
         { field: formData.title, name: "Title" },
         { field: formData.description, name: "Description" },
@@ -241,6 +255,7 @@ const filteredLanguages = languages.filter((lang) =>
         { field: formData.comments.comments, name: "Comments" },
         { field: formData.comments.sortBy, name: "SortBy" },
         { field: formData.tags.length > 0, name: "Tags" },
+        { field: formData.streamKey, name: "Stream Key" },
       ];
 
       const missingFields = requiredFields
@@ -253,9 +268,8 @@ const filteredLanguages = languages.filter((lang) =>
         return;
       }
 
-      // ✅ Build FormData
+
       const submissionData = new FormData();
-      console.log(formData);
       submissionData.append("userId", formData.userId);
       submissionData.append("title", formData.title.trim());
       submissionData.append("description", formData.description.trim());
@@ -267,6 +281,7 @@ const filteredLanguages = languages.filter((lang) =>
       submissionData.append("tags", JSON.stringify(formData.tags));
       submissionData.append("comments", JSON.stringify(formData.comments));
       submissionData.append("customization", JSON.stringify(formData.customization));
+      submissionData.append("streamKey", formData.streamKey);
 
       if (formData.thumbnail) {
         submissionData.append("thumbnail", formData.thumbnail);
@@ -276,12 +291,12 @@ const filteredLanguages = languages.filter((lang) =>
         console.log(`${key}: ${value instanceof File ? value.name : value}`);
       }
 
-      // ✅ API call
+  
       let response;
       if (formData._id) {
         response = await postAPI("/api/social-media/update-live", submissionData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+          headers: { "Content-Type": "multipart/form-data" },
+        });
       } else {
         response = await postAPI(
           "/api/social-media/create-live",
@@ -293,7 +308,7 @@ const filteredLanguages = languages.filter((lang) =>
       if (response.data?.success) {
         toast.success(formData._id ? "Live updated successfully!" : "Live created successfully!");
         setThumbnailPreview(null);
-        navigate("/social-media/my-live");
+        navigate(`/social-media/my-live/${response.data.streamKey}`);
       } else {
         toast.error(response.data?.message || "Something went wrong");
       }
@@ -304,7 +319,6 @@ const filteredLanguages = languages.filter((lang) =>
       setIsLoading(false);
     }
   };
-
   return (
     <div className="lg:w-[56%] w-full sm:mx-auto sm:border-[0.5px] sm:border-[#48372D]  bg-white flex flex-col sm:h-[80vh] sm:rounded-t-xl sm:rounded-b-xl">
       {/* Header Tabs */}
