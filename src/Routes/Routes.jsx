@@ -611,10 +611,8 @@ const AppRoutes = () => {
             <Route path="error404" element={<Error404Page />} />
           </Route>
         </Route>
-      </Route>
 
-
-{/*-------------------------------------------- Website Routes----------------------------------------- */}
+        {/*-------------------------------------------- Website Routes----------------------------------------- */}
       <Route path="/store" element={<Store />} />
       <Route path="/bid" element={<Bid />} />
       <Route path="/artist-card" element={<Artist />} />
@@ -635,6 +633,10 @@ const AppRoutes = () => {
 
 
       
+
+      </Route>
+
+
 
       {/*-------------------------------------------- Root Route - Auto Redirect----------------------------------------- */}
       <Route
