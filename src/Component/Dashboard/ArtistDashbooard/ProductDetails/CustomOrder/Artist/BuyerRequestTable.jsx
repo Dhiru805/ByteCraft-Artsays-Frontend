@@ -11,7 +11,6 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
     const [searchTerm, setSearchTerm] = useState('');
 
-    // pagination helpers 
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
     console.log("Buyer Requests:", buyerRequests);
@@ -88,7 +87,6 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                     <div className="col-lg-12">
                         <div className="card">
                             <div className="header d-flex justify-content-between align-items-center">
-                                {/* <h2>Buyer Request List</h2> */}
                                 <div className="d-none d-md-flex align-items-center mb-2 mb-md-0">
                                     <label className="mb-0 mr-2">Show</label>
                                     <select
@@ -99,7 +97,6 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                         onChange={handleProductsPerPageChange}
                                         style={{ minWidth: '70px' }}
                                     >
-                                        {/* <option value="5">5</option> */}
                                         <option value="10">10</option>
                                         <option value="25">25</option>
                                         <option value="50">50</option>
@@ -130,8 +127,6 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                             <tr>
                                                 <th>#</th>
                                                 <th>Name</th>
-                                                {/* <th>Email</th>
-                                                <th>Phone</th> */}
                                                 <th>Product Name</th>
                                                 <th>Buyer Negotiated Budget</th>
                                                 <th>Request Date</th>
@@ -149,8 +144,6 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                                             <h6 className="mb-0">{index + 1}</h6>
                                                         </td>
                                                         <td>{`${request.Buyer.id.name} ${request.Buyer.id.lastName}`}</td>
-                                                        {/* <td>{request.Buyer.id.email}</td>
-                                                        <td>{request.Buyer.id.phone}</td> */}
                                                         <td>
                                                             <img
                                                                 src={`${BASE_URL}/${request.BuyerImage?.replace(/\\/g, '/')}`}
@@ -219,11 +212,6 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                                                             disabled={isLoading}
                                                                             onClick={async () => {
                                                                                 await handleUpdateBuyerStatus(request._id);
-
-                                                                                // setUpdatedRequests((prev) => ({
-                                                                                //     ...prev,
-                                                                                //     [request._id]: 'Approved',
-                                                                                // }));
                                                                             }}
                                                                         >
                                                                             {isLoading ? (

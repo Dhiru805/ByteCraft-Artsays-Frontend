@@ -252,7 +252,6 @@ function ViewBuyerRequest() {
                                                 />
                                             </div>
                                         </div>
-                                        {/* Payment Term and Installment Duration side-by-side */}
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label>Payment Term</label>
@@ -409,7 +408,7 @@ function ViewBuyerRequest() {
                                                     {request.BuyerNegotiatedBudgets.map((budget, index) => {
                                                         const position = ["1st", "2nd", "3rd"];
                                                         const label = position[index] || `${index + 1}th`;
-                                                        const estimatedCreationDays = request.BuyerEstimatedCreationDaysHistory[index +1];
+                                                        const estimatedCreationDays = request.BuyerEstimatedCreationDaysHistory[index + 1];
 
                                                         return (
                                                             <div key={index} className="row mb-2">

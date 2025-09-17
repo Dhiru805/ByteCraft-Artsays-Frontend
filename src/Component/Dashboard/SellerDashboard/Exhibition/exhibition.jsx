@@ -145,7 +145,7 @@ const ExhibitionTable = () => {
                       right: "10px",
                       top: "50%",
                       transform: "translateY(-50%)",
-                       pointerEvents: 'none',
+                      pointerEvents: 'none',
                     }}
                   ></i>
                 </div>
@@ -161,6 +161,8 @@ const ExhibitionTable = () => {
                       <th>Type</th>
                       <th>Hosted By</th>
                       <th>Start Date</th>
+                      <th>Status</th>
+
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -173,6 +175,12 @@ const ExhibitionTable = () => {
                         <td>{exhibition.hostedBy || "-"}</td>
                         <td>{new Date(exhibition.startDate).toLocaleDateString() || "-"}</td>
                         <td>
+                          <button className={`btn btn-sm  ${exhibition.status === 'Pending' ? 'btn-outline-warning' : exhibition.status === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
+                            {exhibition.status}
+                          </button>
+                        </td>
+
+                        <td>
                           <button
                             type="button"
                             className="btn btn-outline-primary btn-sm mr-1"
@@ -183,24 +191,30 @@ const ExhibitionTable = () => {
                           >
                             <i className="fa fa-eye"></i>
                           </button>
-                          <button
-                            type="button"
-                            className="btn btn-outline-info btn-sm mr-2"
-                            title="Edit"
-                            onClick={() =>
-                              navigate(`/seller/exhibition/update-exhibition`, { state: { exhibition } })
-                            }
-                          >
-                            <i className="fa fa-pencil"></i>
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-outline-danger btn-sm"
-                            title="Delete"
-                            onClick={() => openDeleteDialog(exhibition)}
-                          >
-                            <i className="fa fa-trash-o"></i>
-                          </button>
+                          {exhibition.status !== "Approved" && exhibition.status !== "Rejected" && (
+                            <>
+
+                              <button
+                                type="button"
+                                className="btn btn-outline-info btn-sm mr-2"
+                                title="Edit"
+                                onClick={() =>
+                                  navigate(`/seller/exhibition/update-exhibition`, { state: { exhibition } })
+                                }
+                              >
+                                <i className="fa fa-pencil"></i>
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-outline-danger btn-sm"
+                                title="Delete"
+                                onClick={() => openDeleteDialog(exhibition)}
+                              >
+                                <i className="fa fa-trash-o"></i>
+                              </button>
+                            </>
+                          )}
+
                         </td>
                       </tr>
                     ))}

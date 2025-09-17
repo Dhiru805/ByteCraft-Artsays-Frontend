@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import getAPI from '../../../../api/getAPI';
+import postAPI from '../../../../api/postAPI';
 import ConfirmationDialog from '../../ConfirmationDialog';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Career = () => {
   const navigate = useNavigate();
@@ -72,6 +75,43 @@ const Career = () => {
     setCareersPerPage(Number(event.target.value));
     setCurrentPage(1);
   };
+
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [selectedCareerForStatus, setSelectedCareerForStatus] = useState(null);
+  const [newStatus, setNewStatus] = useState("");
+
+  const openStatusModal = (career) => {
+    setSelectedCareerForStatus(career);
+    setNewStatus(career.status || "");
+    setIsStatusModalOpen(true);
+  };
+
+  const closeStatusModal = () => {
+    setIsStatusModalOpen(false);
+    setSelectedCareerForStatus(null);
+    setNewStatus("");
+  };
+
+const handleStatusUpdate = async () => {
+  if (!newStatus || !selectedCareerForStatus) return;
+
+  try {
+    const response = await postAPI(`/api/update-career-status/${selectedCareerForStatus._id}`, {
+      status: newStatus,
+    });
+
+    if (response?.data?.hasError) {
+      toast.error(response.data.message || "Failed to update status.");
+    } else {
+      toast.success("Status updated successfully!");
+      await fetchCareers();
+      closeStatusModal();
+    }
+  } catch (error) {
+    console.error("Status update error:", error);
+    toast.error("An error occurred while updating the status.");
+  }
+};
 
   return (
     <div className="container-fluid">
@@ -174,18 +214,27 @@ const Career = () => {
                             type="button"
                             className="btn btn-outline-primary btn-sm mr-1"
                             title="View"
-                              onClick={() => navigate(`/super-admin/career/view-job-post`, { state: { career } })}
+                            onClick={() => navigate(`/super-admin/career/view-job-post`, { state: { career } })}
                           >
                             <i className="fa fa-eye"></i>
                           </button>
-                           <button
-                              type="button"
-                              className="btn btn-outline-info btn-sm mr-2"
-                              title="Edit"
-                               onClick={() => navigate(`/super-admin/career/update-job-post`, { state: { career } })}
-                            >
-                              <i className="fa fa-pencil"></i>
-                            </button>
+                          <button
+                            type="button"
+                            className="btn btn-outline-info btn-sm mr-2"
+                            title="Edit"
+                            onClick={() => navigate(`/super-admin/career/update-job-post`, { state: { career } })}
+                          >
+                            <i className="fa fa-pencil"></i>
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-outline-warning btn-sm mr-2"
+                            title="Update Status"
+                            onClick={() => openStatusModal(career)}
+                          >
+                            <i className="fa fa-refresh"></i>
+                          </button>
+
                           <button
                             type="button"
                             className="btn btn-outline-danger btn-sm"
@@ -240,6 +289,45 @@ const Career = () => {
           onDeleted={handleDeleteConfirmed}
         />
       )}
+
+      {isStatusModalOpen && selectedCareerForStatus && (
+        <div className="modal d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Update Job Status</h5>
+                <button type="button" className="close" onClick={closeStatusModal}>
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <p><strong>Job Title:</strong> {selectedCareerForStatus.jobTitle}</p>
+                <div className="form-group">
+                  <label htmlFor="newStatus">Select New Status</label>
+                  <select
+                    id="newStatus"
+                    className="form-control"
+                    value={newStatus}
+                    onChange={(e) => setNewStatus(e.target.value)}
+                  >
+                    <option value="">Select Status</option>
+                    <option value="Open">Open</option>
+                    <option value="Closed">Closed</option>
+                    <option value="Paused">Paused</option>
+                    <option value="Draft">Draft</option>
+                  </select>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={closeStatusModal}>Cancel</button>
+                <button type="button" className="btn btn-primary" onClick={handleStatusUpdate}>Update Status</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+<ToastContainer position="top-right" autoClose={3000} />
+
     </div>
   );
 };

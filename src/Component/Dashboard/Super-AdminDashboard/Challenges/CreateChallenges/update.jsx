@@ -1,21 +1,73 @@
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import postAPI from "../../../../../api/postAPI";
+import putAPI from "../../../../../api/putAPI";
+import getAPI from "../../../../../api/getAPI";
 import { Helmet } from 'react-helmet';
 
-
-function Challenges() {
+function UpdateChallenges() {
   const navigate = useNavigate();
   const [imagePreview, setImagePreview] = useState(null);
   const [formValues, setFormValues] = useState({});
   const [bannerFile, setBannerFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [tags, setTags] = useState([]);
+  const location = useLocation();
   const [currentImages, setCurrentImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showPopup, setShowPopup] = useState(false);
+
+  const challengeId = location.state?.id;
+
+  const handleImageClick = (imageUrl) => {
+    const images = [imageUrl];
+    setCurrentImages(images);
+    setCurrentImageIndex(0);
+    setShowPopup(true);
+  };
+
+  useEffect(() => {
+    if (!challengeId) {
+      toast.error("No challenge ID provided.");
+      navigate("/super-admin/challenges");
+      return;
+    }
+
+    const fetchChallenge = async () => {
+      try {
+        const res = await getAPI(`/api/getchallengebyid/${challengeId}`);
+        const { challenge } = res.data;
+
+        setFormValues({
+          title: challenge.title || '',
+          type: challenge.type || '',
+          summary: challenge.description || '',
+          startDate: challenge.startDate || '',
+          endDate: challenge.endDate || '',
+          submissionDeadline: challenge.submissionDeadline || '',
+          entryFee: challenge.entryFee || '',
+          prizeDetails: challenge.prizeDetails || '',
+          judgingCriteria: challenge.judgingCriteria || '',
+          maxParticipants: challenge.maxParticipants || '',
+          status: challenge.status || '',
+          tagsInput: '',
+        });
+
+        setTags(challenge.tags || []);
+
+        // Handle image preview URL here
+        if (challenge.bannerImage) {
+          setImagePreview(challenge.bannerImage);  // Make sure to use the full URL returned from the server
+        }
+      } catch (error) {
+        toast.error("Failed to fetch challenge data.");
+        navigate("/super-admin/challenges");
+      }
+    };
+
+    fetchChallenge();
+  }, [challengeId]);
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -36,14 +88,6 @@ function Challenges() {
       [name]: value,
     }));
   };
-
-  const handleImageClick = (imageUrl) => {
-    const images = [imageUrl];
-    setCurrentImages(images);
-    setCurrentImageIndex(0);
-    setShowPopup(true);
-  };
-
 
   const handleTagInputChange = (e) => {
     const value = e.target.value;
@@ -81,10 +125,11 @@ function Challenges() {
       return;
     }
 
-    const requiresFullValidation = actionType === "live" || actionType === "closed";
+    let requiredFieldsFilled = true;
 
-    if (requiresFullValidation) {
-      const requiredFieldsFilled =
+    // Validation for Live and Closed challenges: All fields are required.
+    if (actionType !== "draft") {
+      requiredFieldsFilled =
         formValues.title &&
         formValues.type &&
         formValues.summary &&
@@ -98,11 +143,15 @@ function Challenges() {
         formValues.status &&
         tags.length > 0 &&
         bannerFile;
+    } else {
+      // For Draft, only the essential fields and status should be validated.
+      requiredFieldsFilled =
+        formValues.title && formValues.type && formValues.status;
+    }
 
-      if (!requiredFieldsFilled) {
-        toast.error("Please fill all required fields before submitting.");
-        return;
-      }
+    if (!requiredFieldsFilled) {
+      toast.error("Please fill all required fields before submitting.");
+      return;
     }
 
     const formData = new FormData();
@@ -120,6 +169,8 @@ function Challenges() {
 
     if (actionType === "draft") {
       formData.append("status", "draft");
+    } else if (actionType === "closed") {
+      formData.append("status", "closed");
     } else {
       formData.append("status", formValues.status || "live");
     }
@@ -132,11 +183,14 @@ function Challenges() {
     setLoading(true);
 
     try {
-      const res = await postAPI(`/api/create/${userId}`, formData);
+      const res = await putAPI(`/api/update/${challengeId}`, formData);
+
       toast.success(
         actionType === "draft"
           ? "Challenge saved as draft!"
-          : "Challenge created successfully!"
+          : actionType === "closed"
+            ? "Challenge closed successfully!"
+            : "Challenge updated successfully!"
       );
       navigate("/super-admin/challenges");
     } catch (error) {
@@ -150,31 +204,28 @@ function Challenges() {
     }
   };
 
-
   return (
     <>
       <Helmet>
-        <title>{formValues.title ? `${formValues.title} | Create Challenge` : 'Create Challenge | Admin Panel'}</title>
+        <title>{formValues.title ? `${formValues.title} | Update Challenge` : 'Update Challenge | Admin Panel'}</title>
         <meta
           name="description"
           content={
             formValues.summary
               ? formValues.summary
-              : "Create a new challenge with title, theme, rules, entry fee, prizes, and more."
+              : "Update an existing challenge with title, theme, rules, entry fee, prizes, and more."
           }
         />
-        <meta name="keywords" content={tags.length ? tags.join(', ') : "challenge, create, competition, admin"} />
+        <meta name="keywords" content={tags.length ? tags.join(', ') : "challenge, update, competition, admin"} />
         <meta name="author" content="Admin" />
-
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={formValues.title || "Create New Challenge"} />
-        <meta property="og:description" content={formValues.summary || "Launch a new challenge for users to participate in."} />
+        <meta property="og:title" content={formValues.title || "Update Challenge"} />
+        <meta property="og:description" content={formValues.summary || "Update an existing challenge for users to participate in."} />
         <meta property="og:url" content={window.location.href} />
         {imagePreview && <meta property="og:image" content={imagePreview} />}
-
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={formValues.title || "Create Challenge"} />
-        <meta name="twitter:description" content={formValues.summary || "Start a new challenge now!"} />
+        <meta name="twitter:title" content={formValues.title || "Update Challenge"} />
+        <meta name="twitter:description" content={formValues.summary || "Update a challenge now!"} />
         {imagePreview && <meta name="twitter:image" content={imagePreview} />}
       </Helmet>
 
@@ -182,7 +233,7 @@ function Challenges() {
         <div className="block-header">
           <div className="row">
             <div className="col-lg-6 col-md-6 col-sm-12">
-              <h2>Create Challenges</h2>
+              <h2>Update Challenge</h2>
               <ul className="breadcrumb">
                 <li className="breadcrumb-item">
                   <a href="/">
@@ -190,9 +241,9 @@ function Challenges() {
                   </a>
                 </li>
                 <li className="breadcrumb-item active">
-                  <Link to="/super-admin/exhibition">Challenges</Link>
+                  <Link to="/super-admin/challenges">Challenges</Link>
                 </li>
-                <li className="breadcrumb-item">Create Challenges</li>
+                <li className="breadcrumb-item">Update Challenge</li>
               </ul>
             </div>
           </div>
@@ -214,6 +265,7 @@ function Challenges() {
                         name="title"
                         className="form-control"
                         placeholder="Enter Exhibition Title"
+                        value={formValues.title || ""}
                         onChange={handleChange}
                       />
                     </div>
@@ -225,6 +277,7 @@ function Challenges() {
                         id="type"
                         name="type"
                         className="form-control show-tick"
+                        value={formValues.type || ""}
                         onChange={handleChange}
                       >
                         <option value="">Select Type</option>
@@ -234,6 +287,7 @@ function Challenges() {
                       </select>
                     </div>
                   </div>
+
                   <div className="form-group">
                     <label htmlFor="summary">
                       Challenge Description <span className="text-danger">*</span>
@@ -244,9 +298,11 @@ function Challenges() {
                       className="form-control"
                       placeholder="Enter challenge description"
                       rows="3"
+                      value={formValues.summary || ""}
                       onChange={handleChange}
                     />
                   </div>
+
                   <div className="row">
                     <div className="col-md-4 form-group">
                       <label htmlFor="startDate">
@@ -257,6 +313,7 @@ function Challenges() {
                         id="startDate"
                         name="startDate"
                         className="form-control"
+                        value={formValues.startDate || ""}
                         onChange={handleChange}
                       />
                     </div>
@@ -269,6 +326,7 @@ function Challenges() {
                         id="endDate"
                         name="endDate"
                         className="form-control"
+                        value={formValues.endDate || ""}
                         onChange={handleChange}
                       />
                     </div>
@@ -281,10 +339,12 @@ function Challenges() {
                         id="submissionDeadline"
                         name="submissionDeadline"
                         className="form-control"
+                        value={formValues.submissionDeadline || ""}
                         onChange={handleChange}
                       />
                     </div>
                   </div>
+
                   <div className="row">
                     <div className="col-md-6 form-group">
                       <label htmlFor="entryFee">
@@ -295,6 +355,7 @@ function Challenges() {
                         id="entryFee"
                         name="entryFee"
                         className="form-control"
+                        value={formValues.entryFee || ""}
                         onChange={handleChange}
                       />
                     </div>
@@ -307,10 +368,12 @@ function Challenges() {
                         id="prizeDetails"
                         name="prizeDetails"
                         className="form-control"
+                        value={formValues.prizeDetails || ""}
                         onChange={handleChange}
                       />
                     </div>
                   </div>
+
                   <div className="row">
                     <div className="col-md-6 form-group">
                       <label htmlFor="judgingCriteria">
@@ -321,6 +384,7 @@ function Challenges() {
                         id="judgingCriteria"
                         name="judgingCriteria"
                         className="form-control"
+                        value={formValues.judgingCriteria || ""}
                         onChange={handleChange}
                       />
                     </div>
@@ -333,6 +397,7 @@ function Challenges() {
                         id="maxParticipants"
                         name="maxParticipants"
                         className="form-control"
+                        value={formValues.maxParticipants || ""}
                         onChange={handleChange}
                       />
                     </div>
@@ -443,7 +508,6 @@ function Challenges() {
                           />
                         </div>
                       )}
-
                     </div>
 
                     <div className="col-md-6 form-group">
@@ -454,8 +518,8 @@ function Challenges() {
                         id="status"
                         name="status"
                         className="form-control show-tick"
-                        onChange={handleChange}
                         value={formValues.status || ""}
+                        onChange={handleChange}
                       >
                         <option value="">Select Status</option>
                         <option value="live">Live</option>
@@ -481,7 +545,7 @@ function Challenges() {
                       disabled={loading}
                       style={{ width: "48%" }}
                     >
-                      {loading ? "Creating Challenge..." : "Create Challenge"}
+                      {loading ? "Updating Challenge..." : "Update Challenge"}
                     </button>
                   </div>
                 </form>
@@ -493,4 +557,5 @@ function Challenges() {
     </>
   );
 }
-export default Challenges;
+
+export default UpdateChallenges;

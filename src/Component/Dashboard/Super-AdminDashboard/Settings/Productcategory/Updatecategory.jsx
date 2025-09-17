@@ -19,6 +19,7 @@ const EditSubCategoryModal = ({
     subCategoryName: "",
     categoryId: "",
     mainCategoryId: "",
+    commission: "",
   });
 
 
@@ -73,6 +74,7 @@ const EditSubCategoryModal = ({
     if (subCategory) {
       setFormData({
         subCategoryName: subCategory.subCategoryName || "",
+        commission: subCategory.commissionTerm || "",
       });
       setMainCategoryId(subCategory.mainCategoryId || "");
       setCategoryId(subCategory.categoryId || "");
@@ -116,6 +118,7 @@ const EditSubCategoryModal = ({
           subCategoryName: formData.subCategoryName,
           categoryId,
           mainCategoryId,
+          commissionTerm: Number(formData.commission),
         },
         {},
         true
@@ -141,7 +144,7 @@ const EditSubCategoryModal = ({
 
   return (
     <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-      <div className="modal-dialog modal-lg">
+      <div className="modal-dialog modal-xl">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Update Subcategory</h5>
@@ -157,81 +160,99 @@ const EditSubCategoryModal = ({
               &#x2715;
             </button>
           </div>
-          <form onSubmit={handleUpdate}>
-            <div className="row mb-2 ml-2">
-              <div className="col-md-4">
-                <div className="mb-3">
-                  <label className="form-label">Main Category</label>
-                  <select
-                    className="form-control"
-                    value={mainCategoryId}
-                    onChange={handleMainCategoryChange}
-                    required
-                  >
-                    <option value="">Select Main Category</option>
-                    {mainCategories.map((mainCategory) => (
-                      <option
-                        key={mainCategory._id}
-                        value={mainCategory._id}
-                      >
-                        {mainCategory.mainCategoryName}
-                      </option>
-                    ))}
-                  </select>
+          <div className="modal-body">
+            <form onSubmit={handleUpdate}>
+              <div className="row mb-2 ml-2">
+                <div className="col-md-3">
+                  <div className="mb-3">
+                    <label className="form-label">Main Category</label>
+                    <select
+                      className="form-control"
+                      value={mainCategoryId}
+                      onChange={handleMainCategoryChange}
+                      required
+                    >
+                      <option value="">Select Main Category</option>
+                      {mainCategories.map((mainCategory) => (
+                        <option key={mainCategory._id} value={mainCategory._id}>
+                          {mainCategory.mainCategoryName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div className="mb-3">
+                    <label className="form-label">Category</label>
+                    <select
+                      className="form-control"
+                      value={categoryId}
+                      onChange={handleCategoryChange}
+                      required
+                    >
+                      <option value="">Select Category</option>
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {category.categoryName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div className="mb-3">
+                    <label className="form-label">Sub Category Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="subCategoryName"
+                      value={formData.subCategoryName}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div className="mb-3">
+                    <label className="form-label">Commission (%)</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      name="commission"
+                      value={formData.commission}
+                      onChange={handleChange}
+                      required
+                      min="0"
+                      step="0.01"
+                      placeholder="Enter commission"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="col-md-4">
-                <div className="mb-3">
-                  <label className="form-label">Category</label>
-                  <select
-                    className="form-control"
-                    value={categoryId}
-                    onChange={handleCategoryChange}
-                    required
-                  >
-                    <option value="">Select Category</option>
-                    {categories.map((category) => (
-                      <option key={category.id} value={category.id}>
-                        {category.categoryName}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
 
-              <div className="col-md-3">
-                <div className="mb-3">
-                  <label className="form-label">Sub Category Name</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="subCategoryName"
-                    value={formData.subCategoryName}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={onClose}
+                >
+                  Close
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={loading}
+                >
+                  {loading ? "Updating..." : "Update"}
+                </button>
               </div>
-            </div>
+            </form>
+          </div>
 
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={onClose}
-              >
-                Close
-              </button>
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={loading}
-              >
-                {loading ? "Updating..." : "Update"}
-              </button>
-            </div>
-          </form>
         </div>
       </div>
     </div>

@@ -20,6 +20,7 @@ import ForgotPassword from "../Pages/Login/Forgotpassword";
 import PrivacyPolicy from "../Pages/PrivacyPolicy/PrivacyPolicy";
 import TermsofServices from "../Pages/Terms&Condition/TermsofServices";
 import BiddingPass from "../Pages/Art-Biding/BidingPage";
+// import Challenge from "../Pages/Challenges/Challenge";
 
 //----------------------------------------My Account-----------------------------------------//
 import MyAccountMainLayout from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/MyAccountMainLayout';
@@ -92,6 +93,8 @@ import KeywordTargetingSetting from '../Component/Dashboard/Super-AdminDashboard
 
 import Challenges from  "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/challenges";
 import CreateChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/create";
+import UpdateChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/update";
+import ViewChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/challengeview";
 import ChallengesEntries from '../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/challengesEntries';
 //-----------------------------Admin--------------------------//
 import Admin from "../Component/Dashboard/Super-AdminDashboard/Admin/Admin";
@@ -312,9 +315,10 @@ const AppRoutes = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/artist-seller-register" element={<ArtistSellerRegister />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        {/* <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-services" element={<TermsofServices />} />
         <Route path="/bidding" element={<BiddingPass />} />
+        <Route path="/challenge" element={<Challenge />} /> */}
       </Route>
 
       {/*-------------------------------------------Super Admin Routes--------------------------------------------- */}
@@ -447,6 +451,8 @@ const AppRoutes = () => {
     {/* Challenges */}
      <Route path="challenges" element={<Challenges/>} />  
      <Route path="challenges/create-Challenges" element={<CreateChallenges/>} />  
+     <Route path="challenges/update-Challenges" element={<UpdateChallenges />} />
+     <Route path="challenges/view-Challenges" element={<ViewChallenges />} />
      <Route path="challenges-entries" element={<ChallengesEntries/>} />
      
 
@@ -594,6 +600,11 @@ const AppRoutes = () => {
             <Route path="error404" element={<Error404Page />} />
           </Route>
         </Route>
+                {/* <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-services" element={<TermsofServices />} />
+        <Route path="/bidding" element={<BiddingPass />} /> */}
+        {/* <Route path="/challenge" element={<Challenge />} /> */}
+
       </Route>
 
       {/*-------------------------------------------- Root Route - Auto Redirect----------------------------------------- */}

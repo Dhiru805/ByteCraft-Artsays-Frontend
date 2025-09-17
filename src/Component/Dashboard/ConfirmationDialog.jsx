@@ -127,7 +127,12 @@ campaign: {
   errorMessage: "Failed to delete campaign.",
   idKey: "CampaignId",
 },
-
+challenge: {
+    getEndpoint: (id) => `/api/deleteChallenge/${id}`,
+    successMessage: "Challenge successfully deleted!",
+    errorMessage: "Failed to delete challenge.",
+    idKey: "ChallengeId",
+  },
 
 };
 

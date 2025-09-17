@@ -85,12 +85,6 @@ function ViewBuyerRequest() {
                                 <div className="col-md-12 d-flex align-items-center" style={{ paddingBottom: '20px' }}>
                                     <div className="media-left m-r-20" style={{ width: '140px', height: '140px', overflow: 'hidden' }}>
                                         {image ? (
-                                            // <img
-                                            //     src={image}
-                                            //     alt="Buyer"
-                                            //     className="img-fluid rounded shadow w-100"
-                                            //     style={{ height: '100%', objectFit: 'cover' }}
-                                            // />
                                             <img
                                                 src={`${BASE_URL}/${localRequest?.BuyerImage?.replace(/\\/g, '/')}`}
                                                 alt="Buyer"
