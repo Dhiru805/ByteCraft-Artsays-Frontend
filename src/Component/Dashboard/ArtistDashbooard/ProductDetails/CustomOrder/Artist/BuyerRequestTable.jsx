@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NegotiateModal from "./Negotiate";
 import updateBuyerStatus from "./buyerRequestAPI";
-import { toast } from "react-toastify"; 
+import { toast } from "react-toastify";
 
 function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyerRequestStatus }) {
     const navigate = useNavigate();
@@ -14,7 +14,7 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
     // pagination helpers 
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
- console.log("Buyer Requests:", buyerRequests);
+    console.log("Buyer Requests:", buyerRequests);
 
     const filteredProducts = buyerRequests.filter(request =>
         request.Buyer?.id?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -64,15 +64,19 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
     const handleUpdateBuyerStatus = async (requestId) => {
         try {
             setLoadingIds((prev) => [...prev, requestId]);
-            const response = await updateBuyerStatus(requestId, 'Approved', 'Approved');
-            await updateBuyerStatus(requestId, 'Approved', 'Approved');
-            window.location.reload();
+
+            const response = await updateBuyerStatus(requestId);
+
             toast.success("Product Request has been Approved!");
+            window.location.reload();
+            setUpdatedRequests((prev) => ({
+                ...prev,
+                [requestId]: "Approved",
+            }));
 
             setLoadingIds((prev) => prev.filter((itemId) => itemId !== requestId));
         } catch (error) {
-            console.error('Failed to update buyer status:', error);
-                  toast.error("Failed to approve request!"); 
+            toast.error("Failed to approve request!");
             setLoadingIds((prev) => prev.filter((itemId) => itemId !== requestId));
         }
     };
@@ -109,6 +113,7 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                             type="text"
                                             className="form-control form-control-sm"
                                             placeholder="Search"
+                                            onChange={(e) => setSearchTerm(e.target.value)}
                                         />
                                         <div className="input-group-append">
                                             <button className="btn btn-sm btn-outline-secondary">
@@ -130,7 +135,7 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                                 <th>Product Name</th>
                                                 <th>Buyer Negotiated Budget</th>
                                                 <th>Request Date</th>
-                                                <th>Request Status</th>
+                                                <th>Artist Request Status</th>
                                                 <th>Buyer Request Status</th>
                                                 <th>Action</th>
                                             </tr>
@@ -143,9 +148,12 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                                         <td>
                                                             <h6 className="mb-0">{index + 1}</h6>
                                                         </td>
+                                                        <td>{`${request.Buyer.id.name} ${request.Buyer.id.lastName}`}</td>
+                                                        {/* <td>{request.Buyer.id.email}</td>
+                                                        <td>{request.Buyer.id.phone}</td> */}
                                                         <td>
                                                             <img
-                                                                src={`${BASE_URL}${request.Buyer?.id?.profilePhoto}`}
+                                                                src={`${BASE_URL}/${request.BuyerImage?.replace(/\\/g, '/')}`}
                                                                 className="rounded-circle avatar"
                                                                 alt="Profile"
                                                                 style={{
@@ -155,12 +163,9 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                                                 }}
                                                             />
                                                             <p className="c_name">
-                                                                {`${request.Buyer.id.name} ${request.Buyer.id.lastName}`}
+                                                                {request.ProductName}
                                                             </p>
                                                         </td>
-                                                        {/* <td>{request.Buyer.id.email}</td>
-                                                        <td>{request.Buyer.id.phone}</td> */}
-                                                        <td>{request.ProductName}</td>
                                                         <td>
                                                             {request.BuyerNegotiatedBudgets.length > 0
                                                                 ? `₹${request.BuyerNegotiatedBudgets[request.BuyerNegotiatedBudgets.length - 1]}`
@@ -214,11 +219,11 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                                                             disabled={isLoading}
                                                                             onClick={async () => {
                                                                                 await handleUpdateBuyerStatus(request._id);
-                                                                            
-                                                                                setUpdatedRequests((prev) => ({
-                                                                                    ...prev,
-                                                                                    [request._id]: 'Approved',
-                                                                                }));
+
+                                                                                // setUpdatedRequests((prev) => ({
+                                                                                //     ...prev,
+                                                                                //     [request._id]: 'Approved',
+                                                                                // }));
                                                                             }}
                                                                         >
                                                                             {isLoading ? (

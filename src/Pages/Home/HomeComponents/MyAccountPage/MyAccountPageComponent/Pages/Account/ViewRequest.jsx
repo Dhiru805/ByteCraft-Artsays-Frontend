@@ -270,30 +270,90 @@ function ViewBuyerRequest({ request, onClose }) {
                                 />
                             </div>
 
-                            {(request?.NegiotaiteBudget || request?.Notes || request?.rejectedcomment) && <hr />}
+                            {/* {(request?.NegiotaiteBudget || request?.Notes || request?.rejectedcomment) && <hr />} */}
 
-                            {(request?.NegiotaiteBudget || request?.Notes) && (
-                                <label className="mt-3 d-block">Negotiation By Artist</label>
-                            )}
+                                    <div className="row">
+                                        {request?.ArtistNegotiatedBudgets?.length > 0 && (
+                                            <div className="col-md-6">
+                                                <label className="form-label">Artist Negotiated Budget History</label>
+                                                <div className="form-group">
+                                                    <div className="row font-weight-bold mb-2">
+                                                        <div className="col-md-6">Negotiation</div>
+                                                        <div className="col-md-6">Estimated Creation Days</div>
+                                                    </div>
+                                                    {request.ArtistNegotiatedBudgets.map((budget, index) => {
+                                                        const position = ["1st", "2nd", "3rd"];
+                                                        const label = position[index] || `${index + 1}th`;
+                                                        const estimatedCreationDays = request.ArtistEstimatedCreationDaysHistory[index];
 
-                            {request.ArtistNegotiatedBudgets.length > 0 && (
-                                <div className="form-group mt-3">
-                                    {request.ArtistNegotiatedBudgets.map((budget, index) => {
-                                        const position = ["1st", "2nd", "3rd"];
-                                        return (
-                                            <div key={index} className="mb-2">
-                                                <label className="form-label">{`${position[index] || `${index + 1}th`} Negotiation`}</label>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    value={budget}
-                                                    readOnly
-                                                />
+                                                        return (
+                                                            <div key={index} className="row mb-2">
+                                                                <div className="col-md-6">
+                                                                    <input
+                                                                        type="text"
+                                                                        className="form-control"
+                                                                        value={`${label} Negotiation: ₹${budget}`}
+                                                                        readOnly
+                                                                        disabled
+                                                                    />
+                                                                </div>
+                                                                <div className="col-md-6">
+                                                                    <input
+                                                                        type="text"
+                                                                        className="form-control"
+                                                                        value={`${estimatedCreationDays || "N/A"} Days`}
+                                                                        readOnly
+                                                                        disabled
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
                                             </div>
-                                        );
-                                    })}
-                                </div>
-                            )}
+
+                                        )}
+
+                                        {request?.BuyerNegotiatedBudgets?.length > 0 && (
+                                            <div className="col-md-6">
+                                                <label className="form-label">Buyer Negotiated Budget History</label>
+                                                <div className="form-group">
+                                                    <div className="row font-weight-bold mb-2">
+                                                        <div className="col-md-6">Negotiation</div>
+                                                        <div className="col-md-6">Estimated Creation Days</div>
+                                                    </div>
+                                                    {request.BuyerNegotiatedBudgets.map((budget, index) => {
+                                                        const position = ["1st", "2nd", "3rd"];
+                                                        const label = position[index] || `${index + 1}th`;
+                                                        const estimatedCreationDays = request.BuyerEstimatedCreationDaysHistory[index +1];
+
+                                                        return (
+                                                            <div key={index} className="row mb-2">
+                                                                <div className="col-md-6">
+                                                                    <input
+                                                                        type="text"
+                                                                        className="form-control"
+                                                                        value={`${label} Negotiation: ₹${budget}`}
+                                                                        readOnly
+                                                                        disabled
+                                                                    />
+                                                                </div>
+                                                                <div className="col-md-6">
+                                                                    <input
+                                                                        type="text"
+                                                                        className="form-control"
+                                                                        value={`${estimatedCreationDays || "N/A"} Days`}
+                                                                        readOnly
+                                                                        disabled
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
 
                             {request?.Notes && (
                                 <div className="form-group mt-3">

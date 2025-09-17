@@ -61,7 +61,7 @@ function ViewBuyerRequest() {
     };
 
     return (
-         (<div className="container-fluid">
+        (<div className="container-fluid">
             <div className="block-header">
                 <div className="row">
                     <div className="col-lg-6 col-md-6 col-sm-12">
@@ -142,72 +142,72 @@ function ViewBuyerRequest() {
                                         </div>
                                     </div>
                                 </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label>Address Line 1</label>
-                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.line1 || ''} readOnly />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label>Address Line 2</label>
-                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.line2 || ''} readOnly />
-                                            </div>
-                                        </div>
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label>Address Line 1</label>
+                                        <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.line1 || ''} readOnly />
+                                    </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label>Address Line 2</label>
+                                        <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.line2 || ''} readOnly />
+                                    </div>
+                                </div>
 
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label>Landmark</label>
-                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.landmark || ''} readOnly />
-                                            </div>
-                                        </div>
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label>Landmark</label>
+                                        <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.landmark || ''} readOnly />
+                                    </div>
+                                </div>
 
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label>City</label>
-                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.city || ''} readOnly />
-                                            </div>
-                                        </div>
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label>City</label>
+                                        <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.city || ''} readOnly />
+                                    </div>
+                                </div>
 
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label>State</label>
-                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.state || ''} readOnly />
-                                            </div>
-                                        </div>
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label>State</label>
+                                        <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.state || ''} readOnly />
+                                    </div>
+                                </div>
 
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label>Country</label>
-                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.country || ''} readOnly />
-                                            </div>
-                                        </div>
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label>Country</label>
+                                        <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.country || ''} readOnly />
+                                    </div>
+                                </div>
 
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label>Pincode</label>
-                                                <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.pincode || ''} readOnly />
-                                            </div>
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label>Pincode</label>
+                                        <input type="text" className="form-control" value={request?.BuyerSelectedAddress?.pincode || ''} readOnly />
+                                    </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="form-group mt-4 d-flex align-items-center gap-2">
+                                        <label className="ms-2">Frame Required</label>
+                                        <div className="mx-4">
+                                            <Switch
+                                                onColor="#007bff"
+                                                offColor="#ccc"
+                                                uncheckedIcon={false}
+                                                checkedIcon={false}
+                                                height={19}
+                                                width={36}
+                                                handleDiameter={12}
+                                                checked={request?.IsFramed || false}
+                                                disabled
+                                            />
                                         </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group mt-4 d-flex align-items-center gap-2">
-                                                <label className="ms-2">Frame Required</label>
-                                                <div className="mx-4">
-                                                    <Switch
-                                                        onColor="#007bff"
-                                                        offColor="#ccc"
-                                                        uncheckedIcon={false}
-                                                        checkedIcon={false}
-                                                        height={19}
-                                                        width={36}
-                                                        handleDiameter={12}
-                                                        checked={request?.IsFramed || false}
-                                                        disabled
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                
+                                    </div>
+                                </div>
+
                                 <div className="flex-grow-1 mx-3">
                                     <div className="row">
                                         <div className="col-md-6">
@@ -357,46 +357,80 @@ function ViewBuyerRequest() {
                                     {(request?.BuyerNegotiatedBudgets?.length > 0 || request?.ArtistNegotiatedBudgets?.length > 0 || request?.BuyerNotes || request?.ArtistNotes) && <hr />}
 
                                     <div className="row">
-
                                         {request?.ArtistNegotiatedBudgets?.length > 0 && (
                                             <div className="col-md-6">
                                                 <label className="form-label">Artist Negotiated Budget History</label>
                                                 <div className="form-group">
+                                                    <div className="row font-weight-bold mb-2">
+                                                        <div className="col-md-6">Negotiation</div>
+                                                        <div className="col-md-6">Estimated Creation Days</div>
+                                                    </div>
                                                     {request.ArtistNegotiatedBudgets.map((budget, index) => {
                                                         const position = ["1st", "2nd", "3rd"];
                                                         const label = position[index] || `${index + 1}th`;
+                                                        const estimatedCreationDays = request.ArtistEstimatedCreationDaysHistory[index];
+
                                                         return (
-                                                            <div key={index} className="mb-2">
-                                                                <label className="form-label">{`${label} Negotiation`}</label>
-                                                                <input
-                                                                    type="text"
-                                                                    className="form-control"
-                                                                    value={`₹${budget}`}
-                                                                    readOnly
-                                                                />
+                                                            <div key={index} className="row mb-2">
+                                                                <div className="col-md-6">
+                                                                    <input
+                                                                        type="text"
+                                                                        className="form-control"
+                                                                        value={`${label} Negotiation:          ₹${budget}`}
+                                                                        readOnly
+                                                                        disabled
+                                                                    />
+                                                                </div>
+                                                                <div className="col-md-6">
+                                                                    <input
+                                                                        type="text"
+                                                                        className="form-control"
+                                                                        value={`${estimatedCreationDays || "N/A"} Days`}
+                                                                        readOnly
+                                                                        disabled
+                                                                    />
+                                                                </div>
                                                             </div>
                                                         );
                                                     })}
                                                 </div>
                                             </div>
+
                                         )}
 
                                         {request?.BuyerNegotiatedBudgets?.length > 0 && (
                                             <div className="col-md-6">
                                                 <label className="form-label">Buyer Negotiated Budget History</label>
                                                 <div className="form-group">
+                                                    <div className="row font-weight-bold mb-2">
+                                                        <div className="col-md-6">Negotiation</div>
+                                                        <div className="col-md-6">Estimated Creation Days</div>
+                                                    </div>
                                                     {request.BuyerNegotiatedBudgets.map((budget, index) => {
                                                         const position = ["1st", "2nd", "3rd"];
                                                         const label = position[index] || `${index + 1}th`;
+                                                        const estimatedCreationDays = request.BuyerEstimatedCreationDaysHistory[index +1];
+
                                                         return (
-                                                            <div key={index} className="mb-2">
-                                                                <label className="form-label">{`${label} Negotiation`}</label>
-                                                                <input
-                                                                    type="text"
-                                                                    className="form-control"
-                                                                    value={`₹${budget}`}
-                                                                    readOnly
-                                                                />
+                                                            <div key={index} className="row mb-2">
+                                                                <div className="col-md-6">
+                                                                    <input
+                                                                        type="text"
+                                                                        className="form-control"
+                                                                        value={`${label} Negotiation:          ₹${budget}`}
+                                                                        readOnly
+                                                                        disabled
+                                                                    />
+                                                                </div>
+                                                                <div className="col-md-6">
+                                                                    <input
+                                                                        type="text"
+                                                                        className="form-control"
+                                                                        value={`${estimatedCreationDays || "N/A"} Days`}
+                                                                        readOnly
+                                                                        disabled
+                                                                    />
+                                                                </div>
                                                             </div>
                                                         );
                                                     })}

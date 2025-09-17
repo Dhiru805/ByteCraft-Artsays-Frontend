@@ -647,7 +647,7 @@ const AddCustomRequestForm = () => {
                 <th className="px-4 py-2 whitespace-nowrap">Artist Name</th>
                 <th className="px-4 py-2 whitespace-nowrap">Artist Negotiated Budget</th>
                 <th className="px-4 py-2 whitespace-nowrap">Request Date</th>
-                <th className="px-4 py-2 whitespace-nowrap">Request Status</th>
+                <th className="px-4 py-2 whitespace-nowrap">Artist Request Status</th>
                 <th className="px-4 py-2 whitespace-nowrap">Buyer Request Status</th>
                 <th className="px-4 py-2 whitespace-nowrap">Action</th>
               </tr>
