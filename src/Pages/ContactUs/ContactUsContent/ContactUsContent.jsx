@@ -119,7 +119,7 @@ const ContactUsContent = () => {
               {/* <!-- Contact --> */}
               <div className="py-2">
                 <label class="block font-semibold text-gray-800 mb-1">
-                  Contact
+                  Contact Number
                 </label>
                 <input
                   type="tel"

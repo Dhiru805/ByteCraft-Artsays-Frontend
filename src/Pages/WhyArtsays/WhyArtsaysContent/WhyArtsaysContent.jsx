@@ -1,7 +1,7 @@
 import "../../store/products/product.css";
 import React, { useState } from "react";
 
-const CommissionContent = () => {
+const WhyArtsaysContent = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   return (
@@ -31,7 +31,7 @@ const CommissionContent = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3">
         {/* title */}
         <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
-          From Browse to Buy
+          Benefits of Choosing Artsays
         </h1>
         <button className="hidden md:block flex-1 bg-red-500 text-white py-2 px-6 rounded-full font-semibold shadow buy-now">
           Discover New Arrivals
@@ -52,7 +52,7 @@ const CommissionContent = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6 my-3">
         {/* Sidebar Filters (hidden on mobile, toggleable) */}
         <aside className="rounded-xl filter-sidebar content-center justify-items-center bg-transparent">
-          <img src="/herosectionimg/how1.svg" alt="" />
+          <img src="/herosectionimg/why.svg" alt="" />
         </aside>
 
         {/* <!-- Product Grid --> */}
@@ -77,4 +77,4 @@ const CommissionContent = () => {
     </div>
   );
 };
-export default CommissionContent;
+export default WhyArtsaysContent;
