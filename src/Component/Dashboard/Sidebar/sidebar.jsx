@@ -117,6 +117,17 @@ const Sidebar = () => {
         // path: `/super-admin/sponsor`,
         subTabs: []
       },
+      // ----------------------------------------------Community CMS-----------------------------------------------------//
+            {
+        label: "Community CMS",
+        icon: "fa fa-tag",
+        path: `#Community-CMS`,
+        subTabs: [
+          { label: " Policies", path: `/super-admin/community-cms/policies` },
+          { label: "Verification badge", path: `/super-admin/community-cms/verification-badge` },
+         
+        ]
+      },
 
       {
         label: "Sponsor",

@@ -7,9 +7,12 @@ const Createpost = () => {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    const fileURLs = files.map((file) => URL.createObjectURL(file));
-     if (fileURLs.length > 0) {
-       navigate("/social-media/upload-post", { state: { images: fileURLs } });
+     const fileData = files.map((file) => ({
+    file,
+    preview: URL.createObjectURL(file), // for showing in carousel
+  }));
+     if (fileData.length > 0) {
+       navigate("/social-media/upload-post", { state: { images: fileData } });
      }
   };
 

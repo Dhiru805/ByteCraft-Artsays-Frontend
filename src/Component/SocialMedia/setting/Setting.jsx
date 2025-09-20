@@ -26,7 +26,6 @@ import {
   RiQuestionLine,
   RiShieldUserLine,
 } from "react-icons/ri";
-import { FaUser } from "react-icons/fa6";
 import { FiEdit, FiChevronDown } from "react-icons/fi";
 
 import { MdVerified } from "react-icons/md";
@@ -34,19 +33,17 @@ import { FaRegClock } from "react-icons/fa";
 import { RiShieldStarFill } from "react-icons/ri";
 import { FaCircleCheck } from "react-icons/fa6";
 import { IoPaperPlaneOutline } from "react-icons/io5";
+import deleteAPI from "../../../api/deleteAPI";
+import { Navigate } from "react-router-dom";
+
 
 const items = [
   { key: "edit-profile", label: "Edit Profile", icon: <FaRegCircleUser /> },
   { key: "notifications", label: "Notifications", icon: <FiBell /> },
   { key: "products", label: "Products", icon: <LuArchive /> },
   { key: "membership", label: "Membership", icon: <FaUserGroup /> },
-  { key: "tags-mentions", label: "Tags and Mentions", icon: <GoMention /> },
+  { key: "collaboration-mentions", label: "Collaboration and Mentions", icon: <GoMention /> },
   { key: "comments", label: "Comments", icon: <FaRegComment /> },
-  {
-    key: "creator-controls",
-    label: "Creator Controls",
-    icon: <RiBarChartBoxLine />,
-  },
   { key: "blocked", label: "Blocked", icon: <RiProhibitedLine /> },
   { key: "verified", label: "Verified", icon: <RiVerifiedBadgeLine /> },
   { key: "help", label: "Help", icon: <RiQuestionLine /> },
@@ -55,7 +52,6 @@ const items = [
     label: "Privacy Center",
     icon: <RiShieldUserLine />,
   },
-  { key: "account-status", label: "Account Status", icon: <FaUser /> },
 ];
 
 
@@ -172,41 +168,7 @@ const userId = localStorage.getItem("userId");
 const [profile, setProfile] = useState(null);
 const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const handleResize = () => {
 
-      const fetchProfile = async () => {
-    try {
-      console.log("Fetching profile for userId:", userId);
-      const res = await getAPI(`/api/social-media/profile/${userId}`, {}, false, true);
-      if (res?.data?.profile) {
-        setProfile(res.data.profile);
-         console.log(res.data.profile); 
-      }
-    } catch (error) {
-      console.error(" Error fetching profile:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  if (userId) fetchProfile();
-
-      if (window.innerWidth >= 1024) {
-        setActive("edit-profile");
-      } else {
-        setActive(""); // or some mobile default
-      }
-    };
-
-    // Run once on mount
-    handleResize();
-
-    // Optional: Update on resize too
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, [userId]);
   // profile panel
 
   const [name, setName] = useState(profile?.firstName || "");
@@ -216,6 +178,7 @@ const [loading, setLoading] = useState(true);
   const [profilePhoto, setProfilePhoto] = useState(profile?.profilePhoto || "");
   const [showSuggestion, setShowSuggestion] = useState();
   const [toggleEnable, setToggleEnable] = useState(false);
+  const [deleteAccount, setDeleteAccount] = useState(false);
 
   useEffect(() => {
   if (profile) {
@@ -229,26 +192,52 @@ const [loading, setLoading] = useState(true);
   const bioMax = 150;
   const remaining = bioMax - bio.length;
 
- const handleSubmit = async (e) => {
+  const [profilePhotoFile, setProfilePhotoFile] = useState(null);
+
+const handlePhotoChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    setProfilePhotoFile(file); // save actual file
+    setProfilePhoto(URL.createObjectURL(file)); // preview
+  }
+};
+
+
+const Delete=()=>{
+  const userId = localStorage.getItem("userId");
+  const del = deleteAPI(`/api/social-media/delete-account/${userId}`, true, true);
+  if(del && !del.hasError){
+    toast.success("Account deleted successfully");
+    localStorage.clear();
+    Navigate("/");
+  }
+  else{
+    toast.error("Failed to delete account");
+  }
+}
+const handleSubmit = async (e) => {
   e.preventDefault();
 
-  const userId = localStorage.getItem("userId"); 
+  const userId = localStorage.getItem("userId");
 
-  const payload = {
-    userId,        
-    name,
-    username,
-    website,
-    bio,
-    profilePhoto,
-  };
+  const formData = new FormData();
+  formData.append("userId", userId);
+  formData.append("name", name);
+  formData.append("username", username);
+  formData.append("website", website);
+  formData.append("bio", bio);
 
+  if (profilePhotoFile) {
+    formData.append("profilePhoto", profilePhotoFile); // actual file
+  }
+  console.log("Submitting profile update:", formData);
   try {
     const res = await putAPI(
-      `/api/social-media/profile/update`, 
-      payload,
-      true,  
-      true  
+      `/api/social-media/profile/update`,
+      formData,
+      true,  // auth
+      true,  // multipart
+      { "Content-Type": "multipart/form-data" } // header
     );
 
     if (res && !res.hasError) {
@@ -266,13 +255,6 @@ const [loading, setLoading] = useState(true);
   }
 };
 
-const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setProfilePhoto(URL.createObjectURL(file)); // preview
-      // Later send file to backend with FormData in handleSubmit
-    }
-  };
 
   // notification panel
   const [phonePaused, setPhonePaused] = useState(false);
@@ -322,27 +304,152 @@ const handlePhotoChange = (e) => {
     setMemberships((prev) => prev.filter((m) => m.id !== id));
   };
 
-  // taga and mention panel
-  const [tagsSetting, setTagsSetting] = useState("everyone"); // or 'following' / 'none'
+  // collaboration and mention panel
+  const [collaborationSetting, setCollaborationSetting] = useState("everyone"); // or 'following' / 'none'
   const [manualApprove, setManualApprove] = useState(false);
   const [mentionSetting, setMentionSetting] = useState("everyone");
+  useEffect(() => {
+  const fetchSettings = async () => {
+    try {
+      const userId = localStorage.getItem("userId"); 
+      const res = await getAPI(
+        `/api/social-media/settings/collab-mention/${userId}`,
+        {},
+        true,
+        true
+      );
+
+      if (res?.data?.success) {
+        setCollaborationSetting(res.data.collaborationSettings?.allowFrom || "everyone");
+        setManualApprove(res.data.collaborationSettings?.manualApprove || false);
+        setMentionSetting(res.data.mentionSettings?.allowFrom || "everyone");
+      }
+    } catch (error) {
+      console.error("Error fetching settings:", error);
+    }
+  };
+
+  fetchSettings();
+}, []);
+
+const updateSettings = async (updates) => {
+  try {
+    const userId = localStorage.getItem("userId");
+
+    const res = await putAPI(
+      "/api/social-media/settings/collab-mention",
+      { userId, ...updates },
+      true,
+      true
+    );
+
+    if (!res.success) {
+      console.error("Failed to update settings:", res.message);
+    }
+  } catch (error) {
+    console.error("Error updating settings:", error);
+  }
+};
+
 
   // comment panel
-  const [commentToggle, setCommentToggle] = useState(false);
+  const [commentSettings, setCommentSettings] = useState({
+  allowCommentsFrom: "everyone",
+  allowGifComments: true,
+});
+  const handleSettingsChange = async (field, value) => {
+    const userId = localStorage.getItem("userId");
+  try {
+    const body = { 
+      userId, 
+      allowCommentsFrom: field === "allowCommentsFrom" ? value : commentSettings.allowCommentsFrom,
+      allowGifComments: field === "allowGifComments" ? value : commentSettings.allowGifComments,
+    };
+
+    const res = await putAPI("/api/social-media/comment-settings", body, true, true); // if using axios.put wrap with postAPI
+    setCommentSettings(res.data.commentSettings);
+  } catch (err) {
+    console.error("Error updating comment settings:", err);
+  }
+};
+
 
   // help panel
 
-  // account status panel
-  const [accountToggleEnable, setAccountToggleEnable] = useState(false);
-  const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
-  const [accountDeleted, setAccountDeleted] = useState(false);
+
 
   // verified panel
   const [showMasterPopup, setShowMasterPopup] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
-  // creator control panel
-  const [activeCreatorPanel, setActiveCreatorPanel] = useState(null);
+
+
+
+
+    useEffect(() => {
+    const handleResize = () => {
+
+      const fetchProfile = async () => {
+    try {
+      console.log("Fetching profile for userId:", userId);
+      const res = await getAPI(`/api/social-media/profile/${userId}`, {}, false, true);
+      if (res?.data?.profile) {
+        setProfile(res.data.profile);
+         console.log(res.data.profile); 
+            if (res.data.profile.commentSettings) {
+            setCommentSettings(res.data.profile.commentSettings);
+          }
+      }
+    } catch (error) {
+      console.error(" Error fetching profile:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  if (userId) fetchProfile();
+
+      if (window.innerWidth >= 1024) {
+        setActive("edit-profile");
+      } else {
+        setActive(""); // or some mobile default
+      }
+    };
+
+    // Run once on mount
+    handleResize();
+
+    // Optional: Update on resize too
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, [userId]);
+
+  // ✅ Unblock user function
+const handleUnblock = async (targetUserId) => {
+  const userId = localStorage.getItem("userId"); // logged-in user id
+  try {
+    const res = await putAPI(
+      "/api/social-media/block-unblock", 
+      { userId, targetUserId }, // 👈 send both IDs
+      true, // private API
+      true
+    );
+
+    if (res?.data?.success) {
+      // ✅ Update state after unblock
+      setProfile((prev) => ({
+        ...prev,
+        blocked: prev.blocked.filter((u) => u._id !== targetUserId),
+      }));
+
+      console.log("User unblocked:", targetUserId);
+    }
+  } catch (err) {
+    console.error("Error unblocking user:", err);
+  }
+};
+
 
   return (
     <div className="lg:w-[78%] w-full lg:mx-auto mx-0 flex flex-row lg:px-1">
@@ -353,10 +460,28 @@ const handlePhotoChange = (e) => {
       >
         {/* Edit Profile panel */}
         {active === "edit-profile" && (
-          <div className="w-full lg:mt-4">
+          <div className="w-full lg:mt-4 bg-white  lg:rounded-xl lg:border lg:border-gray-200 lg:shadow-sm lg:p-6  space-y-6">
+            {deleteAccount && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md
+        h-[30vh] flex flex-col justify-between items-center gap-4">
+          <div className="flex flex-col items-center justify-between gap-4 ">
+          <h1 className="text-[24px] font-bold text-[#000000]">Delete Account</h1>
+        <p>Are you sure </p>
+        </div>
+        <div className="flex items-center justify-between w-full px-6">
+          <button className="bg-gray-100 text-[#000000] text-lg px-4 py-2 rounded-lg"
+          onClick={() => setDeleteAccount(false)}>Cancel</button>
+          <button className="bg-red-500 text-gray-100 text-lg px-4 py-2 rounded-lg"
+          onClick={Delete()}>Delete</button>
+        </div>
+        
+        </div>
+        </div>
+      )}
       <form
         onSubmit={handleSubmit}
-        className="bg-white lg:rounded-xl lg:border lg:border-gray-200 lg:shadow-sm lg:p-6 lg:space-y-6 space-y-3"
+        className="  lg:space-y-6 space-y-3"
       >
         {/* Header */}
         <div className="flex items-center gap-1 outline-none">
@@ -369,7 +494,11 @@ const handlePhotoChange = (e) => {
         <div className="flex items-center justify-between bg-[#f1f4f8] rounded-lg overflow-hidden h-16">
           <div className="flex items-center ml-2">
             <img
-              src={profilePhoto}
+             src={
+    profilePhoto?.startsWith("blob:")
+      ? profilePhoto // show preview
+      : `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profilePhoto}` // show from backend
+  }
               alt="avatar"
               className="w-16 h-16 rounded-full object-cover"
             />
@@ -496,6 +625,8 @@ const handlePhotoChange = (e) => {
           </button>
         </div>
       </form>
+       <button className="w-full bg-[#4f3823] text-white text-2xl font-semibold rounded-xl py-3 mx-8 mx-auto"
+              onClick={() => setDeleteAccount(true)}>Delete Account</button>
     </div>
         )}
 
@@ -753,6 +884,7 @@ const handlePhotoChange = (e) => {
                 </button>
               </div>
             </form>
+            
           </div>
         )}
 
@@ -1042,221 +1174,298 @@ const handlePhotoChange = (e) => {
           </div>
         )}
 
-        {/* Tags and mention panel */}
-        {active === "tags-mentions" && (
-          <div className="w-full lg:mt-8 bg-white rounded-xl lg:border lg:border-gray-200 lg:shadow-sm py-3">
-            <div className="flex items-center gap-1 lg:px-4">
-              {lgActive && (
-                <button
-                  className="text-[24px] font-bold text-[#000000]"
-                  onClick={() => setLgActive(false)}
-                >
-                  <i class="ri-arrow-left-s-line"></i>
-                </button>
-              )}
-              <h1 className="text-[24px] font-bold text-[#000000]">
-                Tags and Mentions
-              </h1>
-            </div>
-            <div className=" p-6 space-y-6">
-              {/* Who can tag you */}
-              <div className="space-y-2">
-                <div className="text-[16px] font-semibold">Who can tag you</div>
-                <div className="text-sm text-gray-600">
-                  Choose who can tag you in their photos and videos. When people
-                  try to tag you, they'll see if you don't allow tags from
-                  everyone.
-                </div>
+       {/* collaboration and mention panel */}
+{active === "collaboration-mentions" && (
+  <div className="w-full lg:mt-8 bg-white rounded-xl lg:border lg:border-gray-200 lg:shadow-sm py-3">
+    <div className="flex items-center gap-1 lg:px-4">
+      {lgActive && (
+        <button
+          className="text-[24px] font-bold text-[#000000]"
+          onClick={() => setLgActive(false)}
+        >
+          <i class="ri-arrow-left-s-line"></i>
+        </button>
+      )}
+      <h1 className="text-[24px] font-bold text-[#000000]">
+        Collaboration and Mentions
+      </h1>
+    </div>
+    <div className=" p-6 space-y-6">
+      {/* Who can Collaborate with you */}
+      <div className="space-y-2">
+        <div className="text-[16px] font-semibold">Who can Collaborate with you</div>
+        <div className="text-sm text-gray-600">
+          Choose who can Collaborate with you in their photos and videos. When people
+          try to collaborate with you, they'll see if you don't allow collaboration from
+          everyone.
+        </div>
 
-                {/* Tags radio */}
-                <div className="mt-2">
-                  <div className="font-medium mb-1">Tags</div>
-                  <div className="flex flex-col gap-1 pl-2">
-                    <label className="flex items-center gap-2 text-sm cursor-pointer">
-                      <input
-                        type="radio"
-                        name="tags"
-                        value="everyone"
-                        checked={tagsSetting === "everyone"}
-                        onChange={() => setTagsSetting("everyone")}
-                      />
-                      <span>Allow tags from everyone</span>
-                    </label>
-                    <label className="flex items-center gap-2 text-sm cursor-pointer">
-                      <input
-                        type="radio"
-                        name="tags"
-                        value="following"
-                        checked={tagsSetting === "following"}
-                        onChange={() => setTagsSetting("following")}
-                      />
-                      <span>Allow tags from people you follow</span>
-                    </label>
-                    <label className="flex items-center gap-2 text-sm cursor-pointer">
-                      <input
-                        type="radio"
-                        name="tags"
-                        value="none"
-                        checked={tagsSetting === "none"}
-                        onChange={() => setTagsSetting("none")}
-                      />
-                      <span>Don't allow tags</span>
-                    </label>
-                  </div>
-                </div>
-
-                {/* Manually approve tags */}
-                <div className="flex items-center justify-between mt-4">
-                  <div>
-                    <div className="font-medium">Manually approve tags</div>
-                  </div>
-                  <label className="inline-flex items-center cursor-pointer">
-                    <div className="relative">
-                      <input
-                        type="checkbox"
-                        checked={manualApprove}
-                        onChange={() => setManualApprove((m) => !m)}
-                        className="sr-only"
-                      />
-                      <div
-                        className={`w-14 h-7 rounded-full transition ${
-                          manualApprove ? "bg-[#4f3823]" : "bg-gray-300"
-                        }`}
-                      ></div>
-                      <div
-                        className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-gray-100 shadow transform transition ${
-                          manualApprove ? "translate-x-7" : "translate-x-0"
-                        }`}
-                      ></div>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              {/* Who can @mention you */}
-              <div className="space-y-2 mt-6">
-                <div className="text-[16px] font-semibold">
-                  Who can @mention you
-                </div>
-                <div className="text-sm text-gray-600">
-                  Choose who can @mention you to link your account in their
-                  stories, notes, comments, live videos, and captions. When
-                  people try to @mention you, they'll see if you don't allow
-                  @mentions.
-                </div>
-
-                {/* Mention radio */}
-                <div className="mt-2">
-                  <div className="font-medium mb-1">Mention</div>
-                  <div className="flex flex-col gap-1 pl-2">
-                    <label className="flex items-center gap-2 text-sm cursor-pointer">
-                      <input
-                        type="radio"
-                        name="mention"
-                        value="everyone"
-                        checked={mentionSetting === "everyone"}
-                        onChange={() => setMentionSetting("everyone")}
-                      />
-                      <span>Allow tags from everyone</span>
-                    </label>
-                    <label className="flex items-center gap-2 text-sm cursor-pointer">
-                      <input
-                        type="radio"
-                        name="mention"
-                        value="following"
-                        checked={mentionSetting === "following"}
-                        onChange={() => setMentionSetting("following")}
-                      />
-                      <span>Allow tags from people you follow</span>
-                    </label>
-                    <label className="flex items-center gap-2 text-sm cursor-pointer">
-                      <input
-                        type="radio"
-                        name="mention"
-                        value="none"
-                        checked={mentionSetting === "none"}
-                        onChange={() => setMentionSetting("none")}
-                      />
-                      <span>Don't allow tags</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
+        {/* Collaboration radio */}
+        <div className="mt-2">
+          <div className="font-medium mb-1">Collaboration</div>
+          <div className="flex flex-col gap-1 pl-2">
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input
+                type="radio"
+                name="collaboration"
+                value="everyone"
+                checked={collaborationSetting === "everyone"}
+                onChange={() => {
+                  setCollaborationSetting("everyone");
+                  updateSettings({
+                    collaborationSettings: { allowFrom: "everyone", manualApprove },
+                  });
+                }}
+              />
+              <span>Allow collaboration from everyone</span>
+            </label>
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input
+                type="radio"
+                name="collaboration"
+                value="following"
+                checked={collaborationSetting === "following"}
+                onChange={() => {
+                  setCollaborationSetting("following");
+                  updateSettings({
+                    collaborationSettings: { allowFrom: "following", manualApprove },
+                  });
+                }}
+              />
+              <span>Allow collaboration from people you follow</span>
+            </label>
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input
+                type="radio"
+                name="collaboration"
+                value="none"
+                checked={collaborationSetting === "none"}
+                onChange={() => {
+                  setCollaborationSetting("none");
+                  updateSettings({
+                    collaborationSettings: { allowFrom: "none", manualApprove },
+                  });
+                }}
+              />
+              <span>Don't allow collaboration</span>
+            </label>
           </div>
-        )}
+        </div>
 
-        {/* comments  panel */}
-        {active === "comments" && (
-          <div className="w-full lg:mt-4 ">
-            <div className="w-full flex flex-col gap-5 rounded-xl lg:border-[1px] lg:border-[#48372D] h-[90vh] shadow-sm lg:py-4 px-1">
-              <div className="flex items-center gap-1 lg:px-5 px-2">
-                {lgActive && (
-                  <button
-                    className="text-[24px] font-bold text-[#000000]"
-                    onClick={() => setLgActive(false)}
-                  >
-                    <i class="ri-arrow-left-s-line"></i>
-                  </button>
-                )}
-                <h1 className="text-[24px] font-bold text-[#000000]">
-                  Comments
-                </h1>
-              </div>
-              <div className="flex flex-col gap-5 px-9 ">
-                <div>
-                  <div className="text-[16px] font-semibold mb-2 text-[#000000]">
-                    Allow comments from
-                  </div>
-                  <div className="flex flex-col gap-1 pl-2 text-[14px] font-medium text-[#000000]">
-                    <label className="flex items-center gap-2 text-sm cursor-pointer">
-                      <input type="radio" name="Comment-allow" />
-                      <span>Everyone</span>
-                    </label>
-                    <label className="flex items-center gap-2  cursor-pointer">
-                      <input type="radio" name="Comment-allow" />
-                      <span>People you follow</span>
-                    </label>
-                    <label className="flex items-center gap-2  cursor-pointer">
-                      <input type="radio" name="Comment-allow" />
-                      <span>Your follower</span>
-                    </label>
-                    <label className="flex items-center gap-2  cursor-pointer">
-                      <input type="radio" name="Comment-allow" />
-                      <span>People you follow and your followers</span>
-                    </label>
-                  </div>
-                </div>
-                <div className="flex justify-between ">
-                  <div className="text-[16px] font-semibold text-[#000000]">
-                    Allow GIF comments
-                  </div>
-                  <label className="inline-flex items-center cursor-pointer">
-                    <div className="relative">
-                      <input
-                        type="checkbox"
-                        checked={commentToggle}
-                        onChange={() => setCommentToggle((s) => !s)}
-                        className="sr-only"
-                      />
-                      <div
-                        className={`w-10 h-5 rounded-full transition ${
-                          commentToggle ? "bg-[#4f3823]" : "bg-gray-300"
-                        }`}
-                      ></div>
-                      <div
-                        className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-gray-100 shadow transform transition ${
-                          commentToggle ? "translate-x-5" : "translate-x-0"
-                        }`}
-                      ></div>
-                    </div>
-                  </label>
-                  <div className="lg:flex hidden"></div>
-                </div>
-              </div>
-            </div>
+        {/* Manually approve collaboration */}
+        <div className="flex items-center justify-between mt-4">
+          <div>
+            <div className="font-medium">Manually approve collaboration</div>
           </div>
+          <label className="inline-flex items-center cursor-pointer">
+            <div className="relative">
+              <input
+                type="checkbox"
+                checked={manualApprove}
+                onChange={() => {
+                  const newVal = !manualApprove;
+                  setManualApprove(newVal);
+                  updateSettings({
+                    collaborationSettings: { allowFrom: collaborationSetting, manualApprove: newVal },
+                  });
+                }}
+                className="sr-only"
+              />
+              <div
+                className={`w-14 h-7 rounded-full transition ${
+                  manualApprove ? "bg-[#4f3823]" : "bg-gray-300"
+                }`}
+              ></div>
+              <div
+                className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-gray-100 shadow transform transition ${
+                  manualApprove ? "translate-x-7" : "translate-x-0"
+                }`}
+              ></div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      {/* Who can @mention you */}
+      <div className="space-y-2 mt-6">
+        <div className="text-[16px] font-semibold">
+          Who can @mention you
+        </div>
+        <div className="text-sm text-gray-600">
+          Choose who can @mention you to link your account in their
+          stories, notes, comments, live videos, and captions. When
+          people try to @mention you, they'll see if you don't allow
+          @mentions.
+        </div>
+
+        {/* Mention radio */}
+        <div className="mt-2">
+          <div className="font-medium mb-1">Mention</div>
+          <div className="flex flex-col gap-1 pl-2">
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input
+                type="radio"
+                name="mention"
+                value="everyone"
+                checked={mentionSetting === "everyone"}
+                onChange={() => {
+                  setMentionSetting("everyone");
+                  updateSettings({ mentionSettings: { allowFrom: "everyone" } });
+                }}
+              />
+              <span>Allow mention from everyone</span>
+            </label>
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input
+                type="radio"
+                name="mention"
+                value="following"
+                checked={mentionSetting === "following"}
+                onChange={() => {
+                  setMentionSetting("following");
+                  updateSettings({ mentionSettings: { allowFrom: "following" } });
+                }}
+              />
+              <span>Allow mention from people you follow</span>
+            </label>
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input
+                type="radio"
+                name="mention"
+                value="none"
+                checked={mentionSetting === "none"}
+                onChange={() => {
+                  setMentionSetting("none");
+                  updateSettings({ mentionSettings: { allowFrom: "none" } });
+                }}
+              />
+              <span>Don't allow mention</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+
+      {/* comments panel */}
+{active === "comments" && (
+  <div className="w-full lg:mt-4 ">
+    <div className="w-full flex flex-col gap-5 rounded-xl lg:border-[1px] lg:border-[#48372D] h-[90vh] shadow-sm lg:py-4 px-1">
+      
+      {/* Header */}
+      <div className="flex items-center gap-1 lg:px-5 px-2">
+        {lgActive && (
+          <button
+            className="text-[24px] font-bold text-[#000000]"
+            onClick={() => setLgActive(false)}
+          >
+            <i className="ri-arrow-left-s-line"></i>
+          </button>
         )}
+        <h1 className="text-[24px] font-bold text-[#000000]">Comments</h1>
+      </div>
+
+      {/* Settings */}
+      <div className="flex flex-col gap-5 px-9">
+        {/* Allow comments from */}
+        <div>
+          <div className="text-[16px] font-semibold mb-2 text-[#000000]">
+            Allow comments from
+          </div>
+          <div className="flex flex-col gap-1 pl-2 text-[14px] font-medium text-[#000000]">
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input
+                type="radio"
+                name="Comment-allow"
+                checked={commentSettings.allowCommentsFrom === "everyone"}
+                onChange={() =>
+                  handleSettingsChange("allowCommentsFrom", "everyone")
+                }
+              />
+              <span>Everyone</span>
+            </label>
+
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="Comment-allow"
+                checked={commentSettings.allowCommentsFrom === "following"}
+                onChange={() =>
+                  handleSettingsChange("allowCommentsFrom", "following")
+                }
+              />
+              <span>People you follow</span>
+            </label>
+
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="Comment-allow"
+                checked={commentSettings.allowCommentsFrom === "followers"}
+                onChange={() =>
+                  handleSettingsChange("allowCommentsFrom", "followers")
+                }
+              />
+              <span>Your followers</span>
+            </label>
+
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="Comment-allow"
+                checked={commentSettings.allowCommentsFrom === "mutual"}
+                onChange={() =>
+                  handleSettingsChange("allowCommentsFrom", "mutual")
+                }
+              />
+              <span>People you follow and your followers</span>
+            </label>
+          </div>
+        </div>
+
+        {/* Allow GIF comments */}
+        <div className="flex justify-between">
+          <div className="text-[16px] font-semibold text-[#000000]">
+            Allow GIF comments
+          </div>
+          <label className="inline-flex items-center cursor-pointer">
+            <div className="relative">
+              <input
+                type="checkbox"
+                checked={commentSettings.allowGifComments}
+                onChange={() =>
+                  handleSettingsChange(
+                    "allowGifComments",
+                    !commentSettings.allowGifComments
+                  )
+                }
+                className="sr-only"
+              />
+              <div
+                className={`w-10 h-5 rounded-full transition ${
+                  commentSettings.allowGifComments
+                    ? "bg-[#4f3823]"
+                    : "bg-gray-300"
+                }`}
+              ></div>
+              <div
+                className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-gray-100 shadow transform transition ${
+                  commentSettings.allowGifComments
+                    ? "translate-x-5"
+                    : "translate-x-0"
+                }`}
+              ></div>
+            </div>
+          </label>
+          <div className="lg:flex hidden"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
 
         {/* blocked panel */}
         {active === "blocked" && (
@@ -1280,14 +1489,14 @@ const handlePhotoChange = (e) => {
                   You can block people anytime from their profiles.
                 </h2>
                 <div className="w-full flex flex-col gap-3">
-                  {blockedUser.map((item) => (
+                  {profile?.blocked?.map((item) => (
                     <div
-                      key={item.id}
+                      key={item._id}
                       className="w-full flex justify-between items-center"
                     >
                       <div className="flex gap-2">
                         <img
-                          src={item.profilePic}
+                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.profilePhoto}`}
                           alt="profile pic"
                           className="w-11 h-11 rounded-full"
                         />
@@ -1296,11 +1505,12 @@ const handlePhotoChange = (e) => {
                             {item.username}
                           </h1>
                           <div className="text-sm text-[#000000] font-medium">
-                            {item.occupation} • {item.location}
+                            {item.role} 
                           </div>
                         </div>
                       </div>
-                      <button className="px-3 py-1.5 bg-[#F4F6F8] text-[14px] font-bold text-[#48372D]">
+                      <button className="px-3 py-1.5 bg-[#F4F6F8] text-[14px] font-bold text-[#48372D]"
+                      onClick={() => handleUnblock(item._id)}>
                         Unblock
                       </button>
                     </div>
@@ -1661,104 +1871,7 @@ const handlePhotoChange = (e) => {
           </div>
         )}
 
-        {/* Account status panel */}
-        {active === "account-status" && (
-          <div className="w-full flex flex-col gap-1 lg:border-[1px] lg:border-[#48372D] rounded-xl h-[90vh]">
-            <div className="lg:w-[97%] w-full mx-auto p-4">
-              <div className="flex items-center gap-1">
-                {lgActive && (
-                  <button
-                    className="text-[24px] font-bold text-[#000000]"
-                    onClick={() => setLgActive(false)}
-                  >
-                    <i class="ri-arrow-left-s-line"></i>
-                  </button>
-                )}
-                <h1 className="text-[24px] font-bold text-[#000000]">
-                  Account Status
-                </h1>
-              </div>
-            </div>
-            <div className="flex  w-[95%] mx-auto p-4 justify-between">
-              <div className="text-[20px] text-[#000000] font-semibold">
-                active
-              </div>
-              <label className="inline-flex items-center cursor-pointer">
-                <div className="relative">
-                  <input
-                    type="checkbox"
-                    checked={accountToggleEnable}
-                    onChange={() => setAccountToggleEnable((s) => !s)}
-                    className="sr-only"
-                  />
-                  <div
-                    className={`w-10 h-5 rounded-full transition ${
-                      accountToggleEnable ? "bg-[#4f3823]" : "bg-gray-300"
-                    }`}
-                  ></div>
-                  <div
-                    className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-gray-100 shadow transform transition ${
-                      accountToggleEnable ? "translate-x-5" : "translate-x-0"
-                    }`}
-                  ></div>
-                </div>
-              </label>
-            </div>
-            <div className="w-[95%] mx-auto p-4">
-              <button
-                className={`${
-                  deleteButtonClicked ? "hidden" : "flex"
-                } text-[20px] font-semibold text-[#000000] outline-none cursor-pointer`}
-                onClick={() => setDeleteButtonClicked(!deleteButtonClicked)}
-              >
-                Delete Account
-              </button>
-              {deleteButtonClicked && (
-                <div className="flex justify-center rounded-lg h-46">
-                  {accountDeleted && (
-                    <div className=" h-46 w-50 flex items-center justify-center bg-gray-100">
-                      <h1 className="h-full text-[24px] text-[#000000] font-bold">
-                        Account Deleted
-                      </h1>
-                    </div>
-                  )}
-                  <div
-                    className={`${
-                      accountDeleted
-                        ? "hidden transition duration-500"
-                        : "flex flex-col "
-                    } gap-7 items-center bg-gray-100 p-4 w-100  rounded-lg`}
-                  >
-                    <div className="flex flex-col items-center gap-4">
-                      <h1 className="text-[21px] font-semibold text-[#000000]">
-                        Delete Account
-                      </h1>
-                      <p className="text-[16px] font-medium text-[#000000]">
-                        Are you sure
-                      </p>
-                    </div>
-                    <div className="flex flex-row justify-between items-center w-full ">
-                      <button
-                        className="text-[16px] text-[#000000] font-medium bg-gray-100 px-4 py-1.5 border-[1px] border-[#000000] outline-none cursor-pointer"
-                        onClick={() =>
-                          setDeleteButtonClicked(!deleteButtonClicked)
-                        }
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        className="text-[16px] text-white font-medium bg-red-500 px-4 py-1.5 outline-none cursor-pointer"
-                        onClick={() => setAccountDeleted(!accountDeleted)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+     
 
         {/* Privacy center panel */}
         {active === "privacy-center" && (
@@ -1864,70 +1977,6 @@ const handlePhotoChange = (e) => {
           </div>
         )}
 
-        {/* creator control panel */}
-        {active === "creator-controls" && (
-          <>
-            {/* Panel list (hidden if a sub-panel is active) */}
-            {!activeCreatorPanel && (
-              <div className="w-full lg:mt-8 lg:border-[1px] lg:border-[#48372D] h-[90vh] rounded-xl lg:shadow-sm lg:px-7 lg:py-4">
-                <div className="flex items-center gap-1 mb-4">
-                  {lgActive && (
-                    <button
-                      className="text-[24px] font-bold text-[#000000]"
-                      onClick={() => setLgActive(false)}
-                    >
-                      <i class="ri-arrow-left-s-line"></i>
-                    </button>
-                  )}
-                  <h1 className="sm:text-[24px] text-[21px] font-bold text-[#000000] ">
-                    Creator Tools and Console
-                  </h1>
-                </div>
-
-                <ul className="space-y-2 px-3">
-                  {creatorItems.map((item, index) => (
-                    <li
-                      key={index}
-                      onClick={() => setActiveCreatorPanel(item.key)}
-                      className="cursor-pointer text-[16px] text-[#000000] font-medium py-1 hover:underline hover:font-bold hover:text-[17px]"
-                    >
-                      {item.label}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Sub panel (shown if a creator item is selected) */}
-            {activeCreatorPanel && (
-              <div className="w-full h-[90vh] lg:border-[1px] lg:border-[#48372D] rounded-xl lg:shadow-sm ">
-                <button
-                  onClick={() => setActiveCreatorPanel(null)}
-                  className="text-xl  font-bold"
-                >
-                  <i class="ri-close-line"></i>
-                </button>
-
-                {activeCreatorPanel === "ad-payments" && <AdPayments />}
-                {activeCreatorPanel === "branded-content" && <BrandedContent />}
-                {activeCreatorPanel === "partnership-ads" && <PartnershipAds />}
-                {activeCreatorPanel === "faq" && <Faq />}
-                {activeCreatorPanel === "welcome-message" && <WelcomeMessage />}
-                {activeCreatorPanel === "minimum-age" && <MinimumAge />}
-                {activeCreatorPanel === "monetization-status" && (
-                  <MonetizationStatus />
-                )}
-                {activeCreatorPanel === "view-counts" && <ViewCounts />}
-                {activeCreatorPanel === "add-professional" && (
-                  <AddProfessional />
-                )}
-                {activeCreatorPanel === "appointments" && (
-                  <AppointmentRequests />
-                )}
-              </div>
-            )}
-          </>
-        )}
       </div>
 
       {/* Sidebar */}

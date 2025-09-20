@@ -169,6 +169,12 @@ import MyLive from '../Pages/socialMedia/MyLive';
 import Live from '../Pages/socialMedia/Live';
 import Test from '../Pages/socialMedia/Test';
 import Settings from '../Pages/socialMedia/Settings';
+import SuggestedProfile from '../Pages/socialMedia/SuggestedProfile';
+import Policies from '../Component/Dashboard/Super-AdminDashboard/Community CMS/Policies';
+import VerificationBadge from '../Component/Dashboard/Super-AdminDashboard/Community CMS/VerificationBadge';
+import CreatePolicies from '../Component/Dashboard/Super-AdminDashboard/Community CMS/policy/CreatePolicies';
+import EditPolicy from '../Component/Dashboard/Super-AdminDashboard/Community CMS/policy/EditPolicy';
+import ViewPolicy from '../Component/Dashboard/Super-AdminDashboard/Community CMS/policy/ViewPolicy';
 
 const PrivateRoute = ({ allowedRoles, children }) => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
@@ -330,6 +336,15 @@ const AppRoutes = () => {
         <Route path="bidding/bidded-product" element={<BiddedProduct />} />
         <Route path="bidding/transaction" element={<BiddedProductTransaction />} />
 
+        {/* Community CMS */}
+        <Route path="community-cms/policies" element={<Policies />} />
+        <Route path="community-cms/policies/create" element={<CreatePolicies />} />
+        <Route path="community-cms/policies/edit" element={<EditPolicy />} />
+        <Route path="community-cms/policies/view" element={<ViewPolicy />} />
+        <Route path="community-cms/verification-badge" element={<VerificationBadge />} />
+
+
+
         {/* Settings */}
         <Route path="settings/email-setting" element={<EmailSettings />} />
         <Route path="settings/blog-category" element={<BlogCategory />} />
@@ -427,8 +442,8 @@ const AppRoutes = () => {
             <Route path="order-completed" element={<OrderCompleted />} />
           </Route>
         </Route>
-      </Route>
 
+        
       {/* ----------------------------------------------------social media Route ----------------------------------------------- */}
 
 <Route path="/social-media" element={<Homee />} />
@@ -438,6 +453,7 @@ const AppRoutes = () => {
 <Route path="/social-media/create-post" element={<CreatePost />} />
 <Route path="/social-media/upload-post" element={<UploadPost />} />
 <Route path="/social-media/profile" element={<SocialProfile />} />
+<Route path="/social-media/profile/suggestion" element={<SuggestedProfile />} />
 <Route path='/social-media/profile/promote-profile' element={<PromoteProfile/>}/>
 <Route path='/social-media/profile/promote-post' element={<PromotePost/>}/>
 <Route path='/social-media/create-live' element={<CreateLive/>}/>
@@ -445,6 +461,10 @@ const AppRoutes = () => {
 <Route path='/social-media/live' element={<Live/>}/>
 <Route path='/social-media/test' element={<Test/>}/>
 <Route path='/social-media/setting' element={<Settings/>}/>
+
+
+
+      </Route>
 
 
       {/*-------------------------------------------- Root Route - Auto Redirect----------------------------------------- */}
