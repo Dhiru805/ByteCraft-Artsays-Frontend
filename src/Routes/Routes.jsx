@@ -49,7 +49,8 @@ import PagenotFound404 from "../Pages/Error/404Error";
 import UnauthorizedAccess from "../Pages/Error/403Error";
 
 //----------------------------------------WebsiteRoutes-----------------------------------------//
-import WebsiteMain from "../Pages/Home/Home";
+// import WebsiteMain from "../Pages/Home/Home";
+import WebsiteMain from "../Pages/Homepage/Homepage";
 
 //----------------------------------------User Profile---------------------------------------//
 import UserProfile from "../Component/Dashboard/UserProfile/UserInfo";
@@ -223,7 +224,7 @@ import Store from "../Pages/store/store";
 import Bid from "../Pages/Bid/bid";
 import Artist from "../Pages/Artist/artist";
 import Celebrity from "../Pages/Celebrity/celebrity";
-import CelebrityCollections from "../Pages/Celebrity/celebrityCollections"
+import CelebrityCollections from "../Pages/Celebrity/celebrityCollections";
 import TermsPolicy from "../Pages/Terms&Policy/Terms&Policy";
 import Commission from "../Pages/CommissionWork/CommissionWork";
 import LicensingPartner from "../Pages/LicensingPartner/LicensingPartner";
@@ -236,18 +237,7 @@ import Career from "../Pages/Career/Career";
 import JobRoles from "../Pages/Career/JobRoles";
 import WhyArtsays from "../Pages/WhyArtsays/WhyArtsays";
 import Challenge from "../Pages/Challenges/Challenges";
-
-
-
-
-
-
-
-
-
-
-
-
+import AboutUs from "../Pages/AboutUs/AboutUs";
 
 //-----------------------------Artist Premium Badges--------------------------//
 
@@ -316,24 +306,39 @@ const PublicRoute = ({ children }) => {
   return children ? children : <Outlet />;
 };
 
+// const WebsiteWrapper = () => {
+//   const [showAnimation, setShowAnimation] = useState(true);
+//   const location = useLocation();
+
+//   useEffect(() => {
+//     if (location.pathname === "/") {
+//       const timer = setTimeout(() => {
+//         setShowAnimation(false);
+//       }, 6000); // Preloader duration (6 seconds)
+//       return () => clearTimeout(timer);
+//     } else {
+//       setShowAnimation(false); // Skip preloader for other routes
+//     }
+//   }, [location.pathname]);
+
+//   return showAnimation && location.pathname === "/" ? (
+//     <PreloaderAnimation />
+//   ) : (
+//     <WebsiteLayout>
+//       <Outlet />
+//     </WebsiteLayout>
+//   );
+// };
+
+//without animation funtion
 const WebsiteWrapper = () => {
-  const [showAnimation, setShowAnimation] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname === "/") {
-      const timer = setTimeout(() => {
-        setShowAnimation(false);
-      }, 6000); // Preloader duration (6 seconds)
-      return () => clearTimeout(timer);
-    } else {
-      setShowAnimation(false); // Skip preloader for other routes
-    }
   }, [location.pathname]);
 
-  return showAnimation && location.pathname === "/" ? (
-    <PreloaderAnimation />
-  ) : (
+
+  return (
     <WebsiteLayout>
       <Outlet />
     </WebsiteLayout>
@@ -822,7 +827,10 @@ const AppRoutes = () => {
         <Route path="/bid" element={<Bid />} />
         <Route path="/artist-card" element={<Artist />} />
         <Route path="/celebrity" element={<Celebrity />} />
-        <Route path="/celebrity-collections" element={<CelebrityCollections />} />
+        <Route
+          path="/celebrity-collections"
+          element={<CelebrityCollections />}
+        />
         <Route path="/policy" element={<TermsPolicy />} />
         <Route path="/commission" element={<Commission />} />
         <Route path="/licensing-partner" element={<LicensingPartner />} />
@@ -835,15 +843,7 @@ const AppRoutes = () => {
         <Route path="/career-content" element={<JobRoles />} />
         <Route path="/why-artsays" element={<WhyArtsays />} />
         <Route path="/challenges" element={<Challenge />} />
-
-
-
-
-
-
-
-
-
+        <Route path="/about-us" element={<AboutUs />} />
       </Route>
 
       {/*-------------------------------------------- Root Route - Auto Redirect----------------------------------------- */}

@@ -459,7 +459,7 @@ const CelebrityCard = () => {
               {/* Button */}
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <a
+                  <button
                     href="#"
                     className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
                   >
@@ -467,7 +467,7 @@ const CelebrityCard = () => {
                     <span className="text-white text-lg">
                       <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
                     </span>
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
@@ -499,7 +499,7 @@ const CelebrityCard = () => {
               {/* Button */}
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <a
+                  <button
                     href="#"
                     className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
                   >
@@ -507,7 +507,7 @@ const CelebrityCard = () => {
                     <span className="text-white text-lg">
                       <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
                     </span>
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
@@ -539,7 +539,7 @@ const CelebrityCard = () => {
               {/* Button */}
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <a
+                  <button
                     href="#"
                     className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
                   >
@@ -547,7 +547,7 @@ const CelebrityCard = () => {
                     <span className="text-white text-lg">
                       <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
                     </span>
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
@@ -579,7 +579,7 @@ const CelebrityCard = () => {
               {/* Button */}
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <a
+                  <button
                     href="#"
                     className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
                   >
@@ -587,7 +587,7 @@ const CelebrityCard = () => {
                     <span className="text-white text-lg">
                       <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
                     </span>
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
@@ -619,7 +619,7 @@ const CelebrityCard = () => {
               {/* Button */}
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <a
+                  <button
                     href="#"
                     className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
                   >
@@ -627,7 +627,7 @@ const CelebrityCard = () => {
                     <span className="text-white text-lg">
                       <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
                     </span>
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
@@ -659,7 +659,7 @@ const CelebrityCard = () => {
               {/* Button */}
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <a
+                  <button
                     href="#"
                     className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
                   >
@@ -667,7 +667,7 @@ const CelebrityCard = () => {
                     <span className="text-white text-lg">
                       <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
                     </span>
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
@@ -699,7 +699,7 @@ const CelebrityCard = () => {
               {/* Button */}
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <a
+                  <button
                     href="#"
                     className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
                   >
@@ -707,7 +707,7 @@ const CelebrityCard = () => {
                     <span className="text-white text-lg">
                       <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
                     </span>
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
@@ -739,7 +739,7 @@ const CelebrityCard = () => {
               {/* Button */}
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <a
+                  <button
                     href="#"
                     className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
                   >
@@ -747,7 +747,7 @@ const CelebrityCard = () => {
                     <span className="text-white text-lg">
                       <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
                     </span>
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
