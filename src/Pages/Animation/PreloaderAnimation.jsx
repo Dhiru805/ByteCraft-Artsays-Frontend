@@ -66,7 +66,7 @@ export default function PreloaderAnimation() {
               animate={{ opacity: 0 }}
               transition={{ delay: 3.2, duration: 0.6 }}
             >
-              {["Pioneering", "Creative", "Excellence"].map((word, index) => (
+              {["When Art Speaks,", "Value Grows", ""].map((word, index) => (
                 <motion.p
                   key={word}
                   initial={{ opacity: 0, y: 30 }}
@@ -78,7 +78,7 @@ export default function PreloaderAnimation() {
                   }}
                   style={{
                     fontSize: isMobile ? "24px" : "44px",
-                    fontWeight: word === "Creative" ? 700 : 100,
+                    fontWeight: word === "Value Grows" ? 700 : 100,
                     color: "#d1d5db",
                     margin: isMobile ? "0 0 10px 0" : "0 10px",
                     whiteSpace: "nowrap",
