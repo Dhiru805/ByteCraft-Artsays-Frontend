@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../api/getAPI";
 import deleteAPI from "../../../../api/deleteAPI";
 import { toast } from "react-toastify";
-import PolicyConfirmationDialog from "./policy/PolicyConformationDialogue";
+import ConfirmationDialog from "../../ConfirmationDialog";
 
 function Policies() {
   const [policies, setPolicies] = useState([]);
@@ -54,20 +54,19 @@ function Policies() {
     setSelectedPolicyToDelete(null);
   };
 
-  const handleDeleteConfirmed = async (id) => {
-    try {
-      await deleteAPI(`/api/social-policies/${id}`, {}, true);
-      setPolicies((prevPolicies) =>
-        prevPolicies.filter((policy) => policy._id !== id)
-      );
-      toast.success("Policy deleted successfully");
-    } catch (error) {
-      console.error("Error deleting policy:", error);
-      toast.error("Failed to delete policy");
-    } finally {
-      setIsDeleteDialogOpen(false);
-    }
-  };
+const handleDeleteConfirmed = async (id) => {
+  try {
+    await deleteAPI(`/api/social-policies/${id}`, {}, true);
+
+    fetchPolicies(); // 👈 refetch fresh list
+  } catch (error) {
+    console.error("Error deleting policy:", error);
+    
+  } finally {
+    setIsDeleteDialogOpen(false);
+  }
+};
+
 
   const openDeleteDialog = (policy) => {
     setSelectedPolicyToDelete(policy);
@@ -246,8 +245,9 @@ function Policies() {
       </div>
 
       {isDeleteDialogOpen && (
-        <PolicyConfirmationDialog
+        <ConfirmationDialog
           onClose={handleDeleteCancel}
+          deleteType="policy"   // 👈 added
           id={selectedPolicyToDelete._id}
           onDeleted={() => handleDeleteConfirmed(selectedPolicyToDelete._id)}
         />

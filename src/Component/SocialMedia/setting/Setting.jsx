@@ -102,61 +102,9 @@ const initialMemberships = [
   },
 ];
 
-const blockedUser = [
-  {
-    id: 1,
-    username: "abcde.academy",
-    profilePic:
-      "https://static.vecteezy.com/system/resources/previews/002/002/403/non_2x/man-with-beard-avatar-character-isolated-icon-free-vector.jpg",
-    occupation: "ABCDE  ",
-    location: "Aristia Bachelor Collective Digital Education",
-  },
-  {
-    id: 2,
-    username: "abcde.academy",
-    profilePic:
-      "https://static.vecteezy.com/system/resources/previews/002/002/403/non_2x/man-with-beard-avatar-character-isolated-icon-free-vector.jpg",
-    occupation: "ABCDE  ",
-    location: "Aristia Bachelor Collective Digital Education",
-  },
-  {
-    id: 3,
-    username: "abcde.academy",
-    profilePic:
-      "https://static.vecteezy.com/system/resources/previews/002/002/403/non_2x/man-with-beard-avatar-character-isolated-icon-free-vector.jpg",
-    occupation: "ABCDE  ",
-    location: "Aristia Bachelor Collective Digital Education",
-  },
-  {
-    id: 4,
-    username: "abcde.academy",
-    profilePic:
-      "https://static.vecteezy.com/system/resources/previews/002/002/403/non_2x/man-with-beard-avatar-character-isolated-icon-free-vector.jpg",
-    occupation: "ABCDE  ",
-    location: "Aristia Bachelor Collective Digital Education",
-  },
-  {
-    id: 5,
-    username: "abcde.academy",
-    profilePic:
-      "https://static.vecteezy.com/system/resources/previews/002/002/403/non_2x/man-with-beard-avatar-character-isolated-icon-free-vector.jpg",
-    occupation: "ABCDE  ",
-    location: "Aristia Bachelor Collective Digital Education",
-  },
-];
 
-const creatorItems = [
-  { label: "Ad payments", key: "ad-payments" },
-  { label: "Branded content", key: "branded-content" },
-  { label: "Partnership ads", key: "partnership-ads" },
-  { label: "Frequently asked questions", key: "faq" },
-  { label: "Welcome message", key: "welcome-message" },
-  { label: "Minimum age", key: "minimum-age" },
-  { label: "Monetization status", key: "monetization-status" },
-  { label: "View counts on profile", key: "view-counts" },
-  { label: "Add new professional account", key: "add-professional" },
-  { label: "Appointment requests", key: "appointments" },
-];
+
+
 
 const Setting = () => {
   // main
@@ -254,6 +202,29 @@ const handleSubmit = async (e) => {
     toast.error(errorMessage);
   }
 };
+// privacy center panel
+  const [policies, setPolicies] = useState([]);
+  const [selectedPolicy, setSelectedPolicy] = useState(null);
+
+    // Fetch published policies
+  useEffect(() => {
+    const fetchPolicies = async () => {
+      try {
+        const res = await getAPI("/api/social-policies/published", {}, true);
+        const fetchedPolicies = res.data.data || [];
+        setPolicies(fetchedPolicies);
+
+        // Auto select first policy if available
+        if (fetchedPolicies.length > 0) {
+          setSelectedPolicy(fetchedPolicies[0]);
+        }
+      } catch (err) {
+        console.error("Error fetching published policies:", err);
+      }
+    };
+
+    fetchPolicies();
+  }, []);
 
 
   // notification panel
@@ -1873,109 +1844,76 @@ const handleUnblock = async (targetUserId) => {
 
      
 
-        {/* Privacy center panel */}
-        {active === "privacy-center" && (
-          <div className="w-full lg:mt-8 flex flex-col lg:border-[1px]  lg:border-[#48372D] lg:px-1 lg:rounded-xl lg:py-3 lg:px-3">
-            <div className="flex flex-col gap-4 ">
-              <div className="flex items-center gap-1">
-                {lgActive && (
-                  <button
-                    className="text-[24px] font-bold text-[#000000]"
-                    onClick={() => setLgActive(false)}
-                  >
-                    <i class="ri-arrow-left-s-line"></i>
-                  </button>
-                )}
-                <div className="text-[24px] font-bold ">Privacy Center</div>
-              </div>
-              <div className="text-[20px] font-semibold mb-2">
-                Privacy Policy
+            {/* Privacy center panel */}
+      {active === "privacy-center" && (
+        <div className="w-full lg:mt-8 flex flex-col lg:border-[1px] lg:border-[#48372D] lg:px-1 lg:rounded-xl lg:py-3 lg:px-3">
+          <div className="flex flex-col gap-4 ">
+            <div className="flex items-center gap-1">
+              {lgActive && (
+                <button
+                  className="text-[24px] font-bold text-[#000000]"
+                  onClick={() => setLgActive(false)}
+                >
+                  <i className="ri-arrow-left-s-line"></i>
+                </button>
+              )}
+              <div className="text-[24px] font-bold ">Privacy Center</div>
+            </div>
+            <div className="text-[20px] font-semibold mb-2">
+              Privacy Policy
+            </div>
+          </div>
+
+          <div className="flex w-full lg:flex-row flex-col gap-2">
+            {/* Left TOC */}
+            <div className="lg:w-[25%] w-full">
+              <div className="w-full bg-white space-y-4">
+                <nav className="flex flex-col justify-end gap-2 text-sm">
+                  {policies.map((policy) => (
+                    <div
+                      key={policy._id}
+                      className={`cursor-pointer pl-1 ${
+                        selectedPolicy?._id === policy._id
+                          ? "text-black font-semibold"
+                          : "text-[#444] hover:underline"
+                      }`}
+                      onClick={() => setSelectedPolicy(policy)}
+                    >
+                      {policy.question}
+                    </div>
+                  ))}
+                </nav>
               </div>
             </div>
-            <div className="flex w-full lg:flex-row flex-col gap-2">
-              {" "}
-              {/* Left TOC */}
-              <div className="lg:w-[25%] w-full">
-                <div className="w-full bg-white   space-y-4">
-                  <nav className="flex flex-col justify-end gap-2 text-sm">
-                    {[
-                      "What is the Privacy Policy and what does it cover?",
-                      "What information do we collect?",
-                      "How do we use your information?",
-                      "How is your information shared on Meta Products or with integrated partners?",
-                      "How do we share information with third parties?",
-                      "How do the Meta Companies work together?",
-                      "How can you manage or delete your information and exercise your rights?",
-                      "How long do we keep your information?",
-                      "How do we transfer information?",
-                      "How do we respond to legal requests, comply with applicable law and prevent harm?",
-                    ].map((title, i) => (
-                      <div
-                        key={i}
-                        className="cursor-pointer text-[#444] hover:underline pl-1"
-                        // you can wire up onClick to scroll to section if expanded
-                      >
-                        {title}
-                      </div>
-                    ))}
-                  </nav>
-                </div>
-              </div>
-              <div className="w-[1px] bg-[#000000] mx-3"></div>
-              {/* Main content */}
-              <div className="flex-1">
-                <div className="bg-white     space-y-6">
+
+            <div className="w-[1px] bg-[#000000] mx-3"></div>
+
+            {/* Main content */}
+            <div className="flex-1">
+              <div className="bg-white space-y-6">
+                {selectedPolicy ? (
                   <div className="flex flex-col gap-4">
                     <h1 className="text-[22px] font-semibold">
-                      What is the Privacy Policy and what does it cover?
+                      {selectedPolicy.question}
                     </h1>
                     <div className="text-xs text-gray-500">
-                      Effective June 16, 2025 | View printable version | See
-                      previous versions
+                      Effective{" "}
+                      {new Date(selectedPolicy.createdAt).toLocaleDateString()}
                     </div>
-                    <div className="space-y-4 text-sm text-[#1f1f1f] bg-[#F4F6F8]">
-                      <p>
-                        We want you to understand what information we collect,
-                        and how we use and share it. That’s why we encourage you
-                        to read our Privacy Policy. This helps you use our
-                        products in the way that’s right for you.
-                      </p>
-                      <p>
-                        In the Privacy Policy, we explain how we collect, use,
-                        share, retain and transfer information. We also let you
-                        know your rights. Each section of this Policy includes
-                        helpful examples and simpler language to make our
-                        practices easier to understand. We’ve also added links
-                        to resources where you can learn more about the privacy
-                        topics that interest you.
-                      </p>
-                      <p>
-                        It’s important to us that you know how to control your
-                        privacy, so we also show you where you can manage your
-                        information in the settings of the products you use. You
-                        can update these settings to shape your experience.
-                      </p>
+                    <div className="space-y-4 text-sm text-[#1f1f1f] bg-[#F4F6F8] p-3 rounded">
+                      <p>{selectedPolicy.description}</p>
                     </div>
                   </div>
-
-                  {/* Accordion / secondary items */}
-                  <div className="flex flex-col w-full">
-                    <div className=" rounded-t-xl p-3 border-[1px] border-[#000000]">
-                      <div className="text-[16px] text-[#000000] font-medium">
-                        What Products does this Policy cover?
-                      </div>
-                    </div>
-                    <div className="p-3 rounded-b-xl border-[1px] border-[#000000]">
-                      <div className="text-[16px] text-[#000000] font-medium">
-                        Learn more in Privacy Center about managing your privacy
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                ) : (
+                  <p className="text-gray-500 text-sm">
+                    No published policies available.
+                  </p>
+                )}
               </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
       </div>
 

@@ -10,6 +10,13 @@ const DELETE_CONFIG = {
     errorMessage: "Failed to delete super-admin.",
     idKey: "AdminId",
   },
+    // ... other configs ...
+  policy: {
+    getEndpoint: (id) => `/api/social-policies/${id}`, // 👈 correct API route
+    successMessage: "Policy successfully deleted!",
+    errorMessage: "Failed to delete Policy.",
+    idKey: "PolicyId",
+  },
   
   blog: {
     getEndpoint: (id) => `/Blog-Post/${id}`,
