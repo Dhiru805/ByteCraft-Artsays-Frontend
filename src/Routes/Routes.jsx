@@ -306,44 +306,44 @@ const PublicRoute = ({ children }) => {
   return children ? children : <Outlet />;
 };
 
-// const WebsiteWrapper = () => {
-//   const [showAnimation, setShowAnimation] = useState(true);
-//   const location = useLocation();
-
-//   useEffect(() => {
-//     if (location.pathname === "/") {
-//       const timer = setTimeout(() => {
-//         setShowAnimation(false);
-//       }, 6000); // Preloader duration (6 seconds)
-//       return () => clearTimeout(timer);
-//     } else {
-//       setShowAnimation(false); // Skip preloader for other routes
-//     }
-//   }, [location.pathname]);
-
-//   return showAnimation && location.pathname === "/" ? (
-//     <PreloaderAnimation />
-//   ) : (
-//     <WebsiteLayout>
-//       <Outlet />
-//     </WebsiteLayout>
-//   );
-// };
-
-//without animation funtion
 const WebsiteWrapper = () => {
+  const [showAnimation, setShowAnimation] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
+    if (location.pathname === "/") {
+      const timer = setTimeout(() => {
+        setShowAnimation(false);
+      }, 6000); // Preloader duration (6 seconds)
+      return () => clearTimeout(timer);
+    } else {
+      setShowAnimation(false); // Skip preloader for other routes
+    }
   }, [location.pathname]);
 
-
-  return (
+  return showAnimation && location.pathname === "/" ? (
+    <PreloaderAnimation />
+  ) : (
     <WebsiteLayout>
       <Outlet />
     </WebsiteLayout>
   );
 };
+
+//without animation funtion
+// const WebsiteWrapper = () => {
+//   const location = useLocation();
+
+//   useEffect(() => {
+//   }, [location.pathname]);
+
+
+//   return (
+//     <WebsiteLayout>
+//       <Outlet />
+//     </WebsiteLayout>
+//   );
+// };
 
 const AppRoutes = () => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
