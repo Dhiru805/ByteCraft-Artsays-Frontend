@@ -171,10 +171,12 @@ import Test from '../Pages/socialMedia/Test';
 import Settings from '../Pages/socialMedia/Settings';
 import SuggestedProfile from '../Pages/socialMedia/SuggestedProfile';
 import Policies from '../Component/Dashboard/Super-AdminDashboard/Community CMS/Policies';
-import VerificationBadge from '../Component/Dashboard/Super-AdminDashboard/Community CMS/VerificationBadge';
+import VerificationBadge from '../Component/Dashboard/Super-AdminDashboard/Community CMS/verificationBadge/VerificationBadge';
 import CreatePolicies from '../Component/Dashboard/Super-AdminDashboard/Community CMS/policy/CreatePolicies';
 import EditPolicy from '../Component/Dashboard/Super-AdminDashboard/Community CMS/policy/EditPolicy';
 import ViewPolicy from '../Component/Dashboard/Super-AdminDashboard/Community CMS/policy/ViewPolicy';
+import EditVerificationBadge from '../Component/Dashboard/Super-AdminDashboard/Community CMS/verificationBadge/EditVerificationBadge';
+import CreateVerificationBadge from '../Component/Dashboard/Super-AdminDashboard/Community CMS/verificationBadge/CreateBadge';
 
 const PrivateRoute = ({ allowedRoles, children }) => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
@@ -342,6 +344,8 @@ const AppRoutes = () => {
         <Route path="community-cms/policies/edit" element={<EditPolicy />} />
         <Route path="community-cms/policies/view" element={<ViewPolicy />} />
         <Route path="community-cms/verification-badge" element={<VerificationBadge />} />
+        <Route path="community-cms/verification-badge/edit" element={<EditVerificationBadge />} />
+        <Route path="community-cms/verification-badge/create" element={<CreateVerificationBadge />} />
 
 
 

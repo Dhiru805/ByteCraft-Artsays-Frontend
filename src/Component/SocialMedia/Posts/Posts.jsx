@@ -259,6 +259,14 @@ const Post = () => {
                       <div className="flex flex-col">
                         <span className="font-semibold text-sm">
                           {activePost.user?.username}
+                           {activePost.user.verified?.length > 0 && (
+    <img
+      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user.verified[activePost.user.verified.length - 1]?.badgeImage}`}
+      className="inline-block ml-1 w-5 h-5 object-contain"
+      alt={activePost.user.verified[activePost.user.verified.length - 1]?.badgeName || "badge"}
+      title={activePost.user.verified[activePost.user.verified.length - 1]?.badgeName}
+    />
+  )}
                         </span>
                         <span className="text-xs text-gray-500">
                           {activePost.location || ""}
@@ -279,6 +287,14 @@ const Post = () => {
                       />
                       <span className="font-semibold text-sm">
                         {activePost.user?.username}
+                         {activePost.user.verified?.length > 0 && (
+    <img
+      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user.verified[activePost.user.verified.length - 1]?.badgeImage}`}
+      className="inline-block ml-1 w-5 h-5 object-contain"
+      alt={activePost.user.verified[activePost.user.verified.length - 1]?.badgeName || "badge"}
+      title={activePost.user.verified[activePost.user.verified.length - 1]?.badgeName}
+    />
+  )}
                       </span>
                     </div>
                     {/* Caption */}
@@ -412,6 +428,14 @@ const Post = () => {
                 <div className="">
                   <span className="font-semibold text-[16px] block">
                     {activePost.user?.username}
+                     {activePost.user.verified?.length > 0 && (
+    <img
+      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user.verified[activePost.user.verified.length - 1]?.badgeImage}`}
+      className="inline-block ml-1 w-6 h-6 object-contain"
+      alt={activePost.user.verified[activePost.user.verified.length - 1]?.badgeName || "badge"}
+      title={activePost.user.verified[activePost.user.verified.length - 1]?.badgeName}
+    />
+  )}
                   </span>
                   <p className="whitespace-pre-wrap break-words break-all text-sm">
                     {activePost.caption}
@@ -508,6 +532,14 @@ const Post = () => {
                   onClick={() => goToProfile(post.user._id)}
                 >
                   {post.user.username}
+                        {post.user.verified?.length > 0 && (
+    <img
+      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.user.verified[post.user.verified.length - 1]?.badgeImage}`}
+      className="inline-block ml-1 w-6 h-6 object-contain"
+      alt={post.user.verified[post.user.verified.length - 1]?.badgeName || "badge"}
+      title={post.user.verified[post.user.verified.length - 1]?.badgeName}
+    />
+  )}
                 </h3>
                 <p className="text-xs font-light">
                   . {new Date(post.createdAt).toLocaleTimeString()}
@@ -671,7 +703,14 @@ const Post = () => {
               {/* Description */}
               <div>
                 <p className="text-[12px] mt-0.5 font-semibold break-all whitespace-normal w-full">
-                  {post.user.username} . {post.caption}
+                  {post.user.username} {post.user.verified?.length > 0 && (
+    <img
+      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.user.verified[post.user.verified.length - 1]?.badgeImage}`}
+      className="inline-block ml-1 w-5 h-5 object-contain"
+      alt={post.user.verified[post.user.verified.length - 1]?.badgeName || "badge"}
+      title={post.user.verified[post.user.verified.length - 1]?.badgeName}
+    />
+  )} . {post.caption}
                 </p>
               </div>
 
@@ -701,6 +740,14 @@ const Post = () => {
               />
               <span className="text-sm font-medium text-gray-800">
                 {user.username}
+                      {user.verified?.length > 0 && (
+    <img
+      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.verified[user.verified.length - 1]?.badgeImage}`}
+      className="inline-block ml-1 w-6 h-6 object-contain"
+      alt={user.verified[user.verified.length - 1]?.badgeName || "badge"}
+      title={user.verified[user.verified.length - 1]?.badgeName}
+    />
+  )}
               </span>
               <span className="text-xs text-gray-500">{user.role}</span>
             </div>

@@ -705,6 +705,14 @@ const handleSelectMentionProfile = (username) => {
         <div className="flex flex-col">
           <span className="font-semibold text-[16px] text-[#000000]">
             {profile?.username}
+                  {profile.verified?.length > 0 && (
+    <img
+      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]?.badgeImage}`}
+      className="inline-block ml-1 w-6 h-6 object-contain"
+      alt={profile.verified[profile.verified.length - 1]?.badgeName || "badge"}
+      title={profile.verified[profile.verified.length - 1]?.badgeName}
+    />
+  )}
           </span>
           <span className="text-xs text-gray-500">
             {activePost.location}
@@ -726,6 +734,14 @@ const handleSelectMentionProfile = (username) => {
         />
         <span className="font-semibold text-[16px] text-[#000000]">
           {profile?.username}
+                     {profile.verified?.length > 0 && (
+    <img
+      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]?.badgeImage}`}
+      className="inline-block ml-1 w-6 h-6 object-contain"
+      alt={profile.verified[profile.verified.length - 1]?.badgeName || "badge"}
+      title={profile.verified[profile.verified.length - 1]?.badgeName}
+    />
+  )}
         </span>
       </div>
 
@@ -1035,6 +1051,14 @@ const handleSelectMentionProfile = (username) => {
               <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-semibold text-[#000000]">
                   {profile.username}
+                   {profile.verified?.length > 0 && (
+    <img
+      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]?.badgeImage}`}
+      className="inline-block ml-1 w-6 h-6 object-contain"
+      alt={profile.verified[profile.verified.length - 1]?.badgeName || "badge"}
+      title={profile.verified[profile.verified.length - 1]?.badgeName}
+    />
+  )}
                 </h1>
                 {/* button only enables when this profile is mine */}
                 {isMyProfile ? (
@@ -1225,6 +1249,14 @@ const handleSelectMentionProfile = (username) => {
 
                 <h1 className="text-3xl font-semibold text-[#000000]">
                   {profile.username}
+                        {profile.verified?.length > 0 && (
+    <img
+      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]?.badgeImage}`}
+      className="inline-block ml-1 w-6 h-6 object-contain"
+      alt={profile.verified[profile.verified.length - 1]?.badgeName || "badge"}
+      title={profile.verified[profile.verified.length - 1]?.badgeName}
+    />
+  )}
                 </h1>
               </div>
               <div className="flex gap-2 items-center relative" ref={menuRef}>
