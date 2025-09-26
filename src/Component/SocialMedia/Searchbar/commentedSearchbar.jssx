@@ -1,0 +1,443 @@
+     
+      {/* Suggested Users */}
+<div className="flex flex-col gap-3">
+  {suggestedUsers.map((user) => (
+    <div
+      key={user.id}
+      className="sgu flex justify-between lg:py-3 lg:px-2 sm:p-1 p-[2px] items-center bg-[#FEE2CC] rounded-xl"
+    >
+      <div className="flex items-center lg:gap-6 sm:gap-5 gap-2 w-full">
+        <img
+          src={user.profilePic}
+          alt={user.name}
+          className="lg:w-[80px] lg:h-[80px] w-[65px] h-[65px] rounded-full border object-cover"
+        />
+        <div className="flex flex-col">
+          {user.Verified ? (
+            <div className="flex items-center sm:gap-2 gap-1">
+              <div className="lg:text-[22px] sm:text-[21] text-[19px] font-semibold text-[#000000]">
+                {user.name}
+              </div>
+              <div className="text-[#000000] h-full flex items-center lg:text-xl sm:text-[18px] text:lg">
+                <MdVerified className="inline text-blue-500" />
+              </div>
+            </div>
+          ) : (
+            <span className="lg:text-[22px] sm:text-[21] text-[19px] font-semibold text-[#000000]">
+              {user.name}
+            </span>
+          )}
+          <span className="lg:text-base sm:text-[14px] text-[12px] font-normal txt">{user.position}</span>
+          <span className="lg:text-base sm:text-[14px]  text-[12px] font-normal txt">{user.city}</span>
+        </div>
+      </div>
+      <div className="flex items-center sm:mr-3 mr-[6px]">
+        <button className="bg-[#48372D] text-[#FEE2CC] font-medium text-base sm:px-4 sm:py-2 px-2 py-1 rounded-lg">
+          Follow
+        </button>
+      </div>
+    </div>
+  ))}
+</div>
+     
+      {/* Art Grid */}
+      {/* <div className="art-grid ">
+        {purchaseArt.map((art) => (
+          <div key={art.id} className="art relative rounded-xl ">
+            <img
+              src={art.image}
+              alt="Art"
+              className="w-full h-60 object-cover rounded-2xl" */}
+            {/* /> */}
+            {/* Overlay Header */}
+            {/* <div className="absolute top-0 left-0 w-full bg-[#000000BF] bg-opacity-50 text-white flex justify-between items-center px-2 py-2.5 text-xs">
+              <span className="font-medium text-lg">{art.username}</span>
+              <div className="flex gap-2 items-center text-lg">
+                <i className="ri-shopping-cart-2-fill text-[#FB5934]"></i>
+                <i
+                  className="ri-more-fill cursor-pointer"
+                  onClick={() =>
+                    setActiveMenuId((prev) => (prev === art.id ? null : art.id))
+                  }
+                ></i>
+              </div>
+            </div> */}
+
+            {/* Dropdown Menu */}
+            {/* {activeMenuId === art.id && (
+              <div
+                ref={menuRef}
+                className="absolute top-2 right-1 flex flex-col items-center  z-10 bg-white text-black text-sm rounded-xl  shadow-lg  w-32"
+              >
+                <button className=" bg-gray-100 w-full px-4 py-2  hover:bg-gray-400 rounded-t-lg ">
+                  Report
+                </button>
+                 <hr className="w-full border-t border-gray-800" />
+                <button className="bg-gray-100 w-full px-4 py-2  hover:bg-gray-400">
+                  Save
+                </button>
+                 <hr className="w-full border-t border-gray-800" />
+                <button className=" bg-gray-100 w-full px-4 py-2  hover:bg-gray-400">
+                  Go to post
+                </button>
+                 <hr className="w-full border-t border-gray-800" />
+                <button className=" bg-gray-100 w-full px-4 py-2  hover:bg-gray-400 rounded-b-lg">
+                  Share
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div> */}
+
+      {/* video bar */}
+ <div>
+      {/* Suggested Videos */}
+  <div className="flex flex-col gap-3">
+  {suggestedVideo.map((item) => (
+    <div
+      key={item.id}
+      className="vid bg-[#FEE2CC] rounded-xl p-2 flex sm:flex-row flex-col w-full gap-3.5 relative"
+    >
+      {/* Thumbnail and Play Button Overlay */}
+     <div className="relative w-full sm:w-[350px] h-48 sm:h-56 rounded-lg overflow-hidden">
+  <img
+    src={`https://img.youtube.com/vi/SsnKbRSMCNw/hqdefault.jpg`}
+    alt="video"
+    className="w-full h-full object-cover rounded-lg"
+  />
+
+  {/* Play Button Centered */}
+  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+    <i className="ri-play-circle-fill text-white text-5xl sm:text-6xl opacity-90" />
+  </div>
+
+  {/* LIVE or NEW Label */}
+  {item.isLive ? (
+    <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-md flex items-center gap-1">
+      <BsBroadcast className='text-lg'/> LIVE
+    </div>
+  ) : null}
+
+  {/* Duration Label */}
+  {item.duration && (
+    <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-[2px] rounded">
+      {item.duration}
+    </div>
+  )}
+</div>
+
+     
+
+     
+
+<div className='flex items-center gap-2'>
+   <span className='text-[#000000] text-sm'>{item.views} views</span>
+   <span className="text-[#000000] text-lg">•</span>
+   <span className='text-[#000000] text-sm'>{item.timing}</span>
+</div>
+<div className='flex items-center gap-3'>
+ <img
+          src={item.profilePic}
+          alt={item.username}
+          className="w-[34px] h-[34px]  rounded-full object-cover"
+        />
+        <span className='text-[#000000] text-[15px]'>{item.username}</span>
+
+</div>
+<div className="text-sm text-[#0000000]">{item.about}</div>
+
+{item.state === 'new' ? (
+    <div className=" bg-[#6E4E37] text-white text-sm font-medium px-2 py-1 rounded-md">
+      NEW
+    </div>
+  ) : null}
+         
+      </div>
+    </div>
+  ))}
+</div>
+
+      </div>
+
+
+const purchaseArt = [
+  {
+    id: 1,
+    username: 'nelson_deloy',
+    image:
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHKpNAnotdZoCP1iBPj3P1ZOQmzRyiEH99LA&s',
+  },
+  {
+    id: 2,
+    username: 'nelson_deloy',
+    image:
+      'https://cdn.shopify.com/s/files/1/2663/8918/files/a_2_254285bb-28ce-4294-b1f8-0e207b9c76a5.jpg?v=1735175174',
+  },
+  {
+    id: 3,
+    username: 'nelson_deloy',
+    image:
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7gEg42AQ-6ROYp3fqylmcyov9GE9bARqSAu_mr57V7Ohvfn_CHdqm4NaFZW_xIrNI28Y&usqp=CAU',
+  },
+  {
+    id: 4,
+    username: 'nelson_deloy',
+    image:
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2Z69I0Wb7noLFUHTQ0mLaGp50NlXxpacs3w&s',
+  },
+  {
+    id: 5,
+    username: 'nelson_deloy',
+    image:
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdZaDaT_QSBM2l3abTsOzRCp-qVvwFXIVmqw&s',
+  },
+  {
+    id: 6,
+    username: 'nelson_deloy',
+    image:
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShxHmdVfKWsT70dH1VEiyv94HvHUDmaYQ98hI_x-1ddpKFvwB7lmNwPPtgspaLtewpP3g&usqp=CAU',
+  },
+  {
+    id: 7,
+    username: 'nelson_deloy',
+    image:
+      'https://www.shutterstock.com/image-photo/panoramic-view-picturesque-valley-morning-260nw-2462509707.jpg',
+  },
+  {
+    id: 8,
+    username: 'nelson_deloy',
+    image:
+      'https://www.shutterstock.com/image-photo/panoramic-view-picturesque-valley-morning-260nw-2462509707.jpg',
+  },
+];
+
+const suggestedUsers = [
+  {
+    id: 1,
+    position: 'Art Enthusiast, HOD of Art Department',
+    name: 'James Patel',
+    profilePic:
+      'https://www.shareicon.net/data/512x512/2016/05/24/770137_man_512x512.png',
+    city: 'London',
+    Verified: true,
+  },
+  {
+    id: 2,
+    position: 'Art Enthusiast, HOD of Art Department',
+    name: 'Anandi Ghosh',
+    profilePic:
+      'https://static.vecteezy.com/system/resources/previews/002/002/403/non_2x/man-with-beard-avatar-character-isolated-icon-free-vector.jpg',
+    city: 'Mumbai',
+    Verified: false,
+  },
+];
+
+const suggestedVideo = [
+  {
+    id:1,
+    username:"theOneWierdo",
+    title:"Lorem ipsum dolor sit amet",
+    profilePic:"https://images.stockcake.com/public/5/6/5/56590034-bda7-4c40-b92f-61149b436e66_large/peaceful-profile-portrait-stockcake.jpg",
+    about:"Lorem ipsum dolor sit amet, consectetur adipiscing elit adipiscing......",
+    views:"2M",
+    duration:"30:15",
+    timing:"streamed 1w ago",
+    isLive:false,
+    state:"new",
+  },
+  {
+    id:2,
+    username:"theOneWierdo",
+    title:"Lorem ipsum dolor sit amet",
+    profilePic:"https://images.stockcake.com/public/5/6/5/56590034-bda7-4c40-b92f-61149b436e66_large/peaceful-profile-portrait-stockcake.jpg",
+    about:"Lorem ipsum dolor sit amet, consectetur adipiscing elit adipiscing......",
+    views:"12M",
+    duration:"30:15",
+    timing:"streamed 1w ago",
+    isLive:false,
+    state:"new",
+
+  },
+  {
+    id:3,
+    username:"theOneWierdo",
+    title:"Lorem ipsum dolor sit amet",
+    profilePic:"https://images.stockcake.com/public/5/6/5/56590034-bda7-4c40-b92f-61149b436e66_large/peaceful-profile-portrait-stockcake.jpg",
+    about:"Lorem ipsum dolor sit amet, consectetur adipiscing elit adipiscing......",
+    views:"11M",
+    duration:"",
+    timing:"streaming Now",
+    isLive:true,
+    state:"new",
+
+  },
+];
+     {/* viedeo */}
+ <div>
+      {/* Suggested Videos */}
+    <div className="flex flex-col gap-3">
+  {suggestedVideo.map((item) => (
+    <div
+      key={item.id}
+      className="vid bg-[#FEE2CC] rounded-xl p-2 flex sm:flex-row flex-col w-full gap-3.5 relative"
+    >
+      {/* Thumbnail and Play Button Overlay */}
+     <div className="relative w-full sm:w-[350px] h-48 sm:h-56 rounded-lg overflow-hidden">
+  <img
+    src={`https://img.youtube.com/vi/SsnKbRSMCNw/hqdefault.jpg`}
+    alt="video"
+    className="w-full h-full object-cover rounded-lg"
+  />
+
+  {/* Play Button Centered */}
+  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+    <i className="ri-play-circle-fill text-white text-5xl sm:text-6xl opacity-90" />
+  </div>
+
+  {/* LIVE or NEW Label */}
+  {item.isLive ? (
+    <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-md flex items-center gap-1">
+      <BsBroadcast className='text-lg'/> LIVE
+    </div>
+  ) : null}
+
+  {/* Duration Label */}
+  {item.duration && (
+    <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-[2px] rounded">
+      {item.duration}
+    </div>
+  )}
+</div>
+
+     
+
+      {/* Video Details */}
+      <div className="flex flex-col items-start sm:gap-1">
+      <div className="flex flex-row vdo-head justify-between gap-3">
+  <div className="text-xl font-bold vdo-title text-[#000000] w-full break-words  ">
+    {item.title}
+  </div>
+  <div className="relative vdo-dot ">
+    <i
+      className="ri-more-fill sm:text-3xl text-xl text-[#000000] font-bold cursor-pointer hover:text-gray-300"
+      onClick={() =>
+        setOpenDropdownId((prev) => (prev === item.id ? null : item.id))
+      }
+    ></i>
+
+    {/* Dropdown Menu */}
+    {openDropdownId === item.id && (
+      <div className="absolute right-0 sm:top-6 top-6 vid-drop z-[999] flex flex-col items-center   bg-white text-black text-sm rounded-xl  shadow-lg  w-40" ref={dropdownRef}>
+ <button className=" w-full sm:px-4 sm:py-2 px-2 py-1 hover:bg-gray-100 rounded-t-lg "
+ onClick={() => setOpenDropdownId(null)}>
+                  Add to Queue
+                </button>
+                 <hr className="w-[75%] mx-auto border-t  border-gray-800" />
+                <button className=" w-full sm:px-4 sm:py-2 px-2 py-1  hover:bg-gray-300"
+                onClick={() => setOpenDropdownId(null)}>
+                  Save
+                </button>
+                 <hr className="w-[75%] mx-auto border-t border-gray-800" />
+                <button className="  w-full sm:px-4 sm:py-2 px-2 py-1  hover:bg-gray-300"
+                onClick={() => setOpenDropdownId(null)}>
+                  Share
+                </button>
+                 <hr className="w-[75%] mx-auto border-t border-gray-800" />
+                <button className="  w-full sm:px-4 sm:py-2 px-2 py-1  hover:bg-gray-300 rounded-b-lg"
+                onClick={() => setOpenDropdownId(null)}>
+                  report
+                </button>
+      </div>
+    )}
+  </div>
+</div>
+
+<div className='flex items-center gap-2'>
+   <span className='text-[#000000] text-sm'>{item.views} views</span>
+   <span className="text-[#000000] text-lg">•</span>
+   <span className='text-[#000000] text-sm'>{item.timing}</span>
+</div>
+<div className='flex items-center gap-3'>
+ <img
+          src={item.profilePic}
+          alt={item.username}
+          className="w-[34px] h-[34px]  rounded-full object-cover"
+        />
+        <span className='text-[#000000] text-[15px]'>{item.username}</span>
+
+</div>
+<div className="text-sm text-[#0000000]">{item.about}</div>
+
+{item.state === 'new' ? (
+    <div className=" bg-[#6E4E37] text-white text-sm font-medium px-2 py-1 rounded-md">
+      NEW
+    </div>
+  ) : null}
+         
+      </div>
+    </div>
+  ))}
+</div>
+
+      </div>
+const suggestedVideo = [
+  {
+    id:1,
+    username:"theOneWierdo",
+    title:"Lorem ipsum dolor sit amet",
+    profilePic:"https://images.stockcake.com/public/5/6/5/56590034-bda7-4c40-b92f-61149b436e66_large/peaceful-profile-portrait-stockcake.jpg",
+    about:"Lorem ipsum dolor sit amet, consectetur adipiscing elit adipiscing......",
+    views:"2M",
+    duration:"30:15",
+    timing:"streamed 1w ago",
+    isLive:false,
+    state:"new",
+  },
+  {
+    id:2,
+    username:"theOneWierdo",
+    title:"Lorem ipsum dolor sit amet",
+    profilePic:"https://images.stockcake.com/public/5/6/5/56590034-bda7-4c40-b92f-61149b436e66_large/peaceful-profile-portrait-stockcake.jpg",
+    about:"Lorem ipsum dolor sit amet, consectetur adipiscing elit adipiscing......",
+    views:"12M",
+    duration:"30:15",
+    timing:"streamed 1w ago",
+    isLive:false,
+    state:"new",
+
+  },
+  {
+    id:3,
+    username:"theOneWierdo",
+    title:"Lorem ipsum dolor sit amet",
+    profilePic:"https://images.stockcake.com/public/5/6/5/56590034-bda7-4c40-b92f-61149b436e66_large/peaceful-profile-portrait-stockcake.jpg",
+    about:"Lorem ipsum dolor sit amet, consectetur adipiscing elit adipiscing......",
+    views:"11M",
+    duration:"",
+    timing:"streaming Now",
+    isLive:true,
+    state:"new",
+
+  },
+];
+const suggestionForUser = [
+  {
+    id: 1,
+    position: 'Art Enthusiast, HOD of Art Department',
+    name: 'James Patel',
+    profilePic:
+      'https://www.shareicon.net/data/512x512/2016/05/24/770137_man_512x512.png',
+    city: 'London',
+    Verified: true,
+  },
+  {
+    id: 2,
+    position: 'Art Enthusiast, HOD of Art Department',
+    name: 'Anandi Ghosh',
+    profilePic:
+      'https://static.vecteezy.com/system/resources/previews/002/002/403/non_2x/man-with-beard-avatar-character-isolated-icon-free-vector.jpg',
+    city: 'Mumbai',
+    Verified: false,
+  },
+];

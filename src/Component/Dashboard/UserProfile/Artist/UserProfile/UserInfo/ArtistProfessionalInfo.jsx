@@ -4,14 +4,8 @@ import { toast } from 'react-toastify';
 import CreatableSelect from 'react-select/creatable';
 import putAPI from '../../../../../../api/putAPI';
 
-const predefinedArtCategories = [
-    { value: 'Mandala', label: 'Mandala' },
-    { value: 'Abstract', label: 'Abstract' },
-    { value: 'Watercolor', label: 'Watercolor' },
-    { value: 'Digital', label: 'Digital' },
-];
 
-
+ 
 const predefinedMediumUsed = [
     { value: 'Canvas', label: 'Canvas' },
     { value: 'Acrylic', label: 'Acrylic' },
@@ -46,6 +40,7 @@ const ArtistInfo = ({ userId, loading }) => {
                         mediumUsed: response.data.mediumUsed.length ? response.data.mediumUsed[0].split(',') : [],
                         achievements: response.data.achievements.length ? response.data.achievements[0].split(',') : [],
                     });
+                    console.log("Artist details fetched successfully:", response.data);
                 }
             } catch (error) {
                 console.log("Fetch attempt completed");
@@ -56,6 +51,23 @@ const ArtistInfo = ({ userId, loading }) => {
             fetchArtistData();
         }
     }, [userId]);
+    const [mainCategories, setMainCategories] = useState([]);
+    useEffect(() => {
+    const fetchMainCategories = async () => {
+      try {
+        const response = await getAPI("/api/main-category", true);
+        if (!response.hasError) {
+          setMainCategories(response.data.data);
+          console.log("Main Categories fetched successfully:", response.data.data);
+        } else {
+          toast.error(`Failed to fetch Main Categories: ${response.message}`);
+        }
+      } catch (error) {
+        toast.error("An error occurred while fetching main categories.");
+      }
+    };
+    fetchMainCategories();
+  }, []);
 
     const capitalize = (text) => {
         return text
@@ -73,27 +85,41 @@ const ArtistInfo = ({ userId, loading }) => {
 
     const [load, setLoad] = useState(false);
 
-
+console.log(formData)
     const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            const url = `/auth/updateartistdetails/${userId}`;
-            const result = await putAPI(url, {
-                ...formData,
-                artCategories: formData.artCategories.join(','),
-                mediumUsed: formData.mediumUsed.join(','),
-                achievements: formData.achievements.join(','),
+    event.preventDefault();
+    console.log("Form data to be submitted:", formData);
+    try {
+        // First update artist details
+        const url = `/auth/updateartistdetails/${userId}`;
+        const result = await putAPI(url, {
+            ...formData,
+            mediumUsed: formData.mediumUsed.join(','),
+            achievements: formData.achievements.join(','),
+        });
+
+        if (result) {
+            toast.success('Artist details updated successfully');
+            
+            // ✅ Now call set-artist-categories API
+            const categoryResult = await putAPI("/api/set-artist-categories", {
+                userId,
+                artCategories: formData.artCategories, // send as array of IDs
             });
 
-            if (result) {
-                toast.success('Artist details updated successfully');
+            if (!categoryResult.hasError) {
+                toast.success("Artist categories updated successfully");
             } else {
-                toast.error('Failed to update artist details');
+                toast.error("Failed to update artist categories");
             }
-        } catch (error) {
-            toast.error('Error updating artist details');
+        } else {
+            toast.error('Failed to update artist details');
         }
-    };
+    } catch (error) {
+        toast.error('Error updating artist details');
+    }
+};
+
 
     const validateRequiredFields = () => {
     const missing = [];
@@ -129,19 +155,27 @@ const ArtistInfo = ({ userId, loading }) => {
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
                             <label htmlFor="artCategories">Art Categories/Styles <span style={{ color: 'red' }}>*</span></label>
-                            <CreatableSelect
-                                isMulti
-                                options={predefinedArtCategories.map(item => ({
-                                    value: capitalize(item.value),
-                                    label: capitalize(item.label)
-                                }))}
-                                value={formData.artCategories.map(item => ({
-                                    value: capitalize(item),
-                                    label: capitalize(item)
-                                }))}
-                                onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'artCategories')}
-                                classNamePrefix="select"
-                            />
+                           <CreatableSelect
+  isMulti
+  options={mainCategories.map(item => ({
+    value: item._id, 
+    label: capitalize(item?.mainCategoryName),
+  }))}
+  value={formData.artCategories.map(catId => {
+    const matched = mainCategories.find(cat => cat._id === catId);
+    return matched
+      ? { value: matched._id, label: capitalize(matched.mainCategoryName) }
+      : { value: catId, label: catId }; 
+  })}
+  onChange={(selectedOptions) =>
+    setFormData(prev => ({
+      ...prev,
+      artCategories: selectedOptions.map(opt => opt.value), 
+    }))
+  }
+  classNamePrefix="select"
+/>
+
 
                         </div>
 

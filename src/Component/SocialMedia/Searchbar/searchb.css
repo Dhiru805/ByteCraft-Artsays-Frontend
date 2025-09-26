@@ -8,21 +8,7 @@
 .vid {
     border-left: 14px solid #E56500;
 }
-.art-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-}
-.art {
-    
-    
-    flex: 1 0 calc(auto);
-    max-height: fit-content;
-    width: auto;
-    position: relative;
-    border-radius: 8px;
-    overflow: hidden;
-}
+
 @media (max-width:492px) {
     .sgu {
     border-left: 11px solid #E56500;

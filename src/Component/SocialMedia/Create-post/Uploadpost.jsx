@@ -53,15 +53,20 @@ const Uploadpost = () => {
     // Append collaborators (array)
     collaborators.forEach((c) => formData.append("collaborators", c._id));
 
-    // Append images (array of files)
-    images.forEach((file) => formData.append("images", file));
+     images.forEach((img) => {
+  formData.append("images", img.file); // ✅ append real File
+});
 
+    console.log("FormData contents:");
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
     console.log(images);
 
     const res = await postAPI(
       "/api/social-media/create-post",
       formData,
-      true,  // include params
+      false,  
       true,  // private (requires token)
       { "Content-Type": "multipart/form-data" } // headers override
     );
@@ -82,7 +87,7 @@ const Uploadpost = () => {
 
   const location = useLocation();
   const passedImages = useMemo(() => {
-    return location.state?.images || [];
+    return location.state?.images|| [];
   }, [location.state?.images]);
 
   const [images, setImages] = useState(passedImages);
@@ -90,10 +95,13 @@ const Uploadpost = () => {
 
   // Form states
   const [description, setDescription] = useState("");
+  const [descMentionSuggestions, setDescMentionSuggestions] = useState([]);
+  const [showDescMentions, setShowDescMentions] = useState(false);
   const [locationInput, setLocationInput] = useState("");
   const [collaborators, setCollaborators] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
+
   useEffect(() => {
     const fetchSuggestions = async () => {
       if (searchQuery.trim().length < 2) {
@@ -103,7 +111,7 @@ const Uploadpost = () => {
 
       try {
         const res = await getAPI(
-          `/api/social-media/collaborator?query=${searchQuery}`,
+          `/api/social-media/collaborator?query=${searchQuery}&userId=${userId}`,
           {},
           false,
           true
@@ -155,6 +163,7 @@ const Uploadpost = () => {
       setImages(passedImages);
       setCurrentImageIndex(0);
     }
+    
   }, [passedImages]);
 
   // Carousel
@@ -184,6 +193,42 @@ const Uploadpost = () => {
 
     setImages(updatedImages);
   };
+  // Handle description input change
+// inside handleDescriptionChange
+const handleDescriptionChange = async (e) => {
+  const userId = localStorage.getItem("userId");
+  const value = e.target.value;
+  setDescription(value);
+
+  const words = value.split(/\s+/);
+  const lastWord = words[words.length - 1];
+
+  if (lastWord.startsWith("@") && lastWord.length > 1) {
+    const query = lastWord; // ✅ keep the "@"
+
+    try {
+      const res = await getAPI(`/api/social-media/mention?q=${query}`, {}, true);
+      if (res?.data?.users) {
+        setDescMentionSuggestions(res.data.users);
+        setShowDescMentions(true);
+      }
+    } catch (err) {
+      console.error("Error fetching mentions for description:", err);
+    }
+  } else {
+    setShowDescMentions(false);
+  }
+};
+
+
+const handleSelectDescMention = (username) => {
+  const words = description.split(/\s+/);
+  words[words.length - 1] = `@${username}`; // ✅ ensure the @ is preserved
+  setDescription(words.join(" ") + " ");
+  setShowDescMentions(false);
+};
+
+
 
   return (
     <div className="flex justify-between w-full">
@@ -213,9 +258,9 @@ const Uploadpost = () => {
                 </button>
 
                <img
-  src={images[currentImageIndex] instanceof File 
-    ? URL.createObjectURL(images[currentImageIndex]) 
-    : images[currentImageIndex]}
+  src={images[currentImageIndex].preview instanceof File 
+    ? URL.createObjectURL(images[currentImageIndex].preview) 
+    : images[currentImageIndex].preview}
   alt="post"
   className="object-contain h-full w-full object-cover rounded-bl-lg"
 />
@@ -238,29 +283,53 @@ const Uploadpost = () => {
             {/* Profile */}
             <div className="w-full flex items-center justify-start gap-3">
               <img
-                src={profile?.profilePhoto}
+                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`}
                 className="w-[65px] rounded-full"
                 alt="Profile"
               />
               <p className="text-lg font-medium">{profile?.username}</p>
               <MdVerified className="inline text-blue-500 text-lg" />
             </div>
-            {/* Post Description */}
-            <div className="w-full bg-[#F0EDEB] h-40 flex flex-col items-center justify-between rounded-lg py-2 px-2">
-              <input
-                type="text"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full border-none bg-transparent outline-none my-2 mx-2 overflow-scroll"
-                placeholder="Post Description "
-              />
-              <div className="w-full flex items-center justify-between px-2">
-                <i className="ri-emoji-sticker-line text-sm"></i>
-                <p className="text-sm font-medium text-gray-800">
-                  {description.length}/2000
-                </p>
-              </div>
-            </div>
+           {/* Post Description */}
+<div className="w-full bg-[#F0EDEB] h-40 flex flex-col items-center justify-between rounded-lg py-2 px-2 relative">
+  <textarea
+    value={description}
+    onChange={handleDescriptionChange}
+    className="w-full h-full border-none bg-transparent outline-none resize-none my-2 mx-2 overflow-y-auto"
+    placeholder="Post Description"
+    maxLength={2000}
+  />
+
+  {/* Mentions dropdown (below textarea) */}
+  {showDescMentions && descMentionSuggestions.length > 0 && (
+    <div className="absolute top-full left-0 mt-1 w-full lg:bg-white bg-[#FAF9F6] border rounded-md shadow-md z-50 max-h-40 overflow-y-auto">
+      {descMentionSuggestions.map((user) => (
+        <div
+          key={user._id}
+          onClick={() => handleSelectDescMention(user.username)}
+          className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
+        >
+          <img
+            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`}
+            alt={user.username}
+            className="w-8 h-8 rounded-full"
+          />
+          <span className="text-sm font-medium text-gray-800">{user.username}</span>
+          <span className="text-xs text-gray-500">{user.role}</span>
+        </div>
+      ))}
+    </div>
+  )}
+
+  <div className="w-full flex items-center justify-between px-2">
+    <i className="ri-emoji-sticker-line text-sm"></i>
+    <p className="text-sm font-medium text-gray-800">
+      {description.length}/2000
+    </p>
+  </div>
+</div>
+
+
             {/* Location */}
             <div className="w-full bg-[#F0EDEB] flex flex-col px-2 rounded-lg relative">
               <input
@@ -299,11 +368,11 @@ const Uploadpost = () => {
                 className="w-full border-none bg-transparent outline-none my-2 mx-2 overflow-scroll placeholder:text-[#1F1E1E] placeholder:font-medium text-sm"
                 placeholder="Search Collaborators"
               />
-              <i className="ri-at-line absolute right-2 top-3 text-lg text-[#1F1E1E]"></i>
+             
 
               {/* Suggestions Dropdown */}
               {suggestions.length > 0 && (
-                <div className="absolute top-12 left-0 w-full bg-white rounded shadow-md max-h-40 overflow-y-auto z-20">
+                <div className="absolute top-12 left-0 w-full lg:bg-white bg-[#F0EDEB] rounded shadow-md max-h-40 overflow-y-auto z-20">
                   {suggestions.map((user) => (
                     <div
                       key={user._id}
@@ -317,7 +386,7 @@ const Uploadpost = () => {
                       }}
                     >
                       <img
-                        src={user?.profilePhoto}
+                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`}
                         alt={user?.username}
                         className="w-8 h-8 rounded-full mr-2"
                       />
@@ -355,32 +424,7 @@ const Uploadpost = () => {
               </div>
             </div>
             {/* Share To */}{" "}
-            <div className="w-full bg-[#F0EDEB] flex flex-col items-center justify-between px-2 rounded-lg">
-              {" "}
-              <p className="text-lg font-medium">Share to</p>{" "}
-              {/* Example Items (same as yours) */}{" "}
-              <div className="w-full flex items-center justify-between p-1 rounded-lg">
-                {" "}
-                <div className="flex items-center">
-                  {" "}
-                  <img
-                    src="https://img.freepik.com/premium-vector/male-face-avatar-icon-set-flat-design-social-media-profiles_1281173-3806.jpg?w=740"
-                    className="w-[35px] rounded-full"
-                    alt="Profile"
-                  />{" "}
-                  <div className="flex flex-col ml-2">
-                    {" "}
-                    <div className="flex items-center justify-between">
-                      {" "}
-                      <p className="text-sm font-medium">Vikas Khanna</p>{" "}
-                      <MdVerified className="inline text-blue-500 ml-1" />{" "}
-                    </div>{" "}
-                    <p className="text-sm font-light">Threads . Private</p>{" "}
-                  </div>{" "}
-                </div>{" "}
-                <i className="ri-add-large-line text-lg text-[#1F1E1E] font-semibold"></i>{" "}
-              </div>{" "}
-            </div>
+            
             {/* Post Button */}
             <div className="w-full flex items-center justify-end">
               <input
@@ -402,7 +446,7 @@ const Uploadpost = () => {
                 className="relative w-22 h-22 rounded overflow-hidden"
               >
                 <img
-  src={img instanceof File ? URL.createObjectURL(img) : img}
+  src={img instanceof File ? URL.createObjectURL(img.preview) : img.preview}
   alt={`thumbnail-${index}`}
   className={`w-[150px] h-[150px] object-cover rounded cursor-pointer ${
     currentImageIndex === index ? "ring-2 ring-[#6E4E37]" : ""

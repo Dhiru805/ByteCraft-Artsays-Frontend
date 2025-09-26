@@ -12,7 +12,7 @@ const Homee = () => {
      </header>
 
       {/* Main layout: Sidebar | Post | Suggestion */}
-      <main className='flex  flex-row lg:gap-4 lg:w-[96%] mx-auto'>
+      <main className='flex l flex-row lg:gap-4 lg:w-[96%] mx-auto'>
         <Sidebar />
         <Post />
         <Suggestion />

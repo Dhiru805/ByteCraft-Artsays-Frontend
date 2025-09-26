@@ -25,7 +25,7 @@ const Sidebar = () => {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
-
+  
   const items = [
     { key: "home", icon: "house-fill", label: "Home" , link:"/social-media/"},
     { key: "search", icon: "search", label: "Search", link:"/social-media/search" },
@@ -45,9 +45,9 @@ const Sidebar = () => {
       <div className={`sidebar-container-s ${isPinned ? "pinned" : ""} w-[22%] mx-auto`}>
         <div className="sidebar-icons-s">
           {items.map((item, idx) => (
-           <Link to={`${item.link}`} key={item.key}><div
+           <Link to={`${item.link}` } key={item.key}><div
               key={item.key}
-              className={`icon-wrapper-s ${isActive(item.link) ? "active" : ""} ${idx === 7 ? "mt-auto" : ""}`}
+              className={`icon-wrapper-s ${isActive(item.link) ? "active" : ""} ${idx === 7 ? "" : ""}`}
             >
               <i className={` bi-${item.icon}`}></i>
             </div></Link> 
@@ -62,7 +62,7 @@ const Sidebar = () => {
             <Link to={`${item.link}`} key={item.key}>
             <div
               key={item.key}
-              className={`label-wrapper-s ${isActive(item.link) ? "active" : ""} ${idx === 8 ? "mt-auto" : ""}`}
+              className={`label-wrapper-s ${isActive(item.link) ? "active" : ""} ${idx === 8 ? "" : ""}`}
               
             >
               <i className={` bi-${item.icon}`}></i>

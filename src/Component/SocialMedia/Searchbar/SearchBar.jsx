@@ -1,88 +1,13 @@
-/* eslint-disable no-unused-vars */
-import React, { useState, useEffect, useRef } from 'react';
-import './searchb.css';
-import { TiCamera } from 'react-icons/ti';
-import { IoMic } from 'react-icons/io5';
-import { MdVerified } from 'react-icons/md';
+
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import getAPI from "../../../api/getAPI";
+import postAPI from "../../../api/postAPI";
+import deleteAPI from "../../../api/deleteAPI";
+import "./searchb.css";
+import { IoMic } from "react-icons/io5";
+import { MdVerified } from "react-icons/md";
 import { BsBroadcast } from "react-icons/bs";
-
-const recentSearches = [
-  { id: 1, searches: 'Office decor art' },
-  { id: 2, searches: 'trending art' },
-];
-
-const purchaseArt = [
-  {
-    id: 1,
-    username: 'nelson_deloy',
-    image:
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHKpNAnotdZoCP1iBPj3P1ZOQmzRyiEH99LA&s',
-  },
-  {
-    id: 2,
-    username: 'nelson_deloy',
-    image:
-      'https://cdn.shopify.com/s/files/1/2663/8918/files/a_2_254285bb-28ce-4294-b1f8-0e207b9c76a5.jpg?v=1735175174',
-  },
-  {
-    id: 3,
-    username: 'nelson_deloy',
-    image:
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7gEg42AQ-6ROYp3fqylmcyov9GE9bARqSAu_mr57V7Ohvfn_CHdqm4NaFZW_xIrNI28Y&usqp=CAU',
-  },
-  {
-    id: 4,
-    username: 'nelson_deloy',
-    image:
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2Z69I0Wb7noLFUHTQ0mLaGp50NlXxpacs3w&s',
-  },
-  {
-    id: 5,
-    username: 'nelson_deloy',
-    image:
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdZaDaT_QSBM2l3abTsOzRCp-qVvwFXIVmqw&s',
-  },
-  {
-    id: 6,
-    username: 'nelson_deloy',
-    image:
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShxHmdVfKWsT70dH1VEiyv94HvHUDmaYQ98hI_x-1ddpKFvwB7lmNwPPtgspaLtewpP3g&usqp=CAU',
-  },
-  {
-    id: 7,
-    username: 'nelson_deloy',
-    image:
-      'https://www.shutterstock.com/image-photo/panoramic-view-picturesque-valley-morning-260nw-2462509707.jpg',
-  },
-  {
-    id: 8,
-    username: 'nelson_deloy',
-    image:
-      'https://www.shutterstock.com/image-photo/panoramic-view-picturesque-valley-morning-260nw-2462509707.jpg',
-  },
-];
-
-const suggestedUsers = [
-  {
-    id: 1,
-    position: 'Art Enthusiast, HOD of Art Department',
-    name: 'James Patel',
-    profilePic:
-      'https://www.shareicon.net/data/512x512/2016/05/24/770137_man_512x512.png',
-    city: 'London',
-    Verified: true,
-  },
-  {
-    id: 2,
-    position: 'Art Enthusiast, HOD of Art Department',
-    name: 'Anandi Ghosh',
-    profilePic:
-      'https://static.vecteezy.com/system/resources/previews/002/002/403/non_2x/man-with-beard-avatar-character-isolated-icon-free-vector.jpg',
-    city: 'Mumbai',
-    Verified: false,
-  },
-];
-
 const suggestedVideo = [
   {
     id:1,
@@ -123,8 +48,20 @@ const suggestedVideo = [
 
   },
 ];
-
 const SearchBar = () => {
+  
+  const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+  const [suggestedUsers, setSuggestedUsers] = useState([]);
+  const [suggestedPosts, setSuggestedPosts] = useState([]);
+  const [suggestedTags, setSuggestedTags] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [showPostGrid, setShowPostGrid] = useState(false);
+
+  const [recentSearches, setRecentSearches] = useState([]);
+  const [suggestionForUser, setSuggestionForUser] = useState([]);
+
+  const userId = localStorage.getItem("userId");
     const [openDropdownId, setOpenDropdownId] = useState(null);
     const dropdownRef = useRef(null);
   
@@ -154,144 +91,339 @@ const SearchBar = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleFollowToggle = async (targetUserId, isFollowing) => {
+  try {
+    if (isFollowing) {
+      await postAPI(`/api/social-media/unfollow/${targetUserId}`, { userId }, true, true);
+    } else {
+      await postAPI(`/api/social-media/follow/${targetUserId}`, { userId }, true, true);
+    }
+
+    // ✅ Update UI instantly
+    setSuggestionForUser((prevUsers) =>
+      prevUsers.map((u) =>
+        u._id === targetUserId ? { ...u, isFollowing: !isFollowing } : u
+      )
+    );
+  } catch (error) {
+    console.error("Error following/unfollowing user:", error);
+  }
+};
+
+  // ✅ Fetch recent searches + suggested users on mount
+  useEffect(() => {
+    const fetchRecentAndSuggestions = async () => {
+      const userId = localStorage.getItem("userId");
+      try {
+        const recent = await getAPI(`/api/social-media/recent-searches/${userId}`, {}, true, true);
+        setRecentSearches(recent.data.recentSearches || []);
+        setSuggestionForUser(recent.data.searchBarSuggestedUsers || []);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      }
+    };
+    if (userId) fetchRecentAndSuggestions();
+  }, [userId]);
+
+  // ✅ Handle search input
+  const handleSearch = async (e) => {
+    const value = e.target.value;
+    setQuery(value);
+
+    if (!value.trim()) {
+      setSuggestedUsers([]);
+      setSuggestedPosts([]);
+      setSuggestedTags([]);
+      setShowDropdown(false);
+      return;
+    }
+
+    try {
+      const userId = localStorage.getItem("userId");
+const endpoint = `/api/social-media/search?q=${encodeURIComponent(value)}&userId=${encodeURIComponent(userId)}`;
+const res = await getAPI(endpoint, {}, true, true);
+
+      const result = res.data || res;
+
+      setSuggestedUsers([]);
+      setSuggestedTags([]);
+      setSuggestedPosts([]);
+
+      if (result.type === "users" && result.users) setSuggestedUsers(result.users);
+      if (result.type === "hashtags" && result.tags) setSuggestedTags(result.tags);
+      if (result.type === "posts" && result.posts) setSuggestedPosts(result.posts);
+
+      setShowDropdown((result.users?.length > 0 || result.tags?.length > 0) ?? false);
+    } catch (err) {
+      console.error("Search error:", err);
+      setShowDropdown(false);
+    }
+  };
+
+  // ✅ Add to recent + suggested (server handles both now)
+  const addRecentSearch = async (label, refId, type, tag = null) => {
+    try {
+      const body = { userId, type, refId, label, tag };
+      const res = await postAPI("/api/social-media/recent-searches/add", body, true, true);
+
+      setRecentSearches(res.data.recentSearches || []);
+      setSuggestionForUser(res.data.searchBarSuggestedUsers || []);
+    } catch (err) {
+      console.error("Error adding recent search:", err);
+    }
+  };
+// ✅ Remove one recent (server cleans both lists)
+const removeRecentSearch = async (searchId) => {
+  const userId = localStorage.getItem("userId");
+  try {
+    const res = await deleteAPI(
+      `/api/social-media/recent-searches/${userId}/${searchId}`, // 👈 use params, not body
+      {},
+      true,
+      true
+    );
+
+    setRecentSearches(res.data.recentSearches || []);
+    setSuggestionForUser(res.data.searchBarSuggestedUsers || []);
+  } catch (err) {
+    console.error("Error removing recent search:", err);
+  }
+};
+
+// ✅ Clear all recents + suggestions
+const clearAllRecent = async () => {
+  const userId = localStorage.getItem("userId");
+  try {
+    const res = await deleteAPI(
+      `/api/social-media/recent-searches/${userId}/clear`, // 👈 use params, not body
+      {},
+      true,
+      true
+    );
+
+    setRecentSearches(res.data.recentSearches || []);
+    setSuggestionForUser(res.data.searchBarSuggestedUsers || []);
+  } catch (err) {
+    console.error("Error clearing recents:", err);
+  }
+};
+
+  // ✅ handle user click
+  const handleUserClick = (user) => {
+    addRecentSearch(user.username, user._id, "user");
+    setShowDropdown(false);
+    navigate("/social-media/profile", { state: { userId: user._id } });
+  };
+
+  // ✅ handle hashtag click
+  const handleHashtagClick = async (tag) => {
+
+    try {
+      const hashtag = `#${tag}`;  // full hashtag string
+    setQuery(hashtag);
+      const endpoint = `/api/social-media/search?tag=${tag}`;
+      const res = await getAPI(endpoint, {}, true, true);
+      const result = res.data || res;
+
+      addRecentSearch(`#${tag}`, tag, "hashtag", tag);
+
+      setSuggestedPosts(result.posts || []);
+      setSuggestedUsers([]);
+      setSuggestedTags([]);
+      setShowDropdown(false);
+      setShowPostGrid(true);
+    } catch (err) {
+      console.error("Hashtag posts fetch error:", err);
+    }
+  };
+
   return (
-    <div className="lg:w-[56%] w-full max-w-6xl mx-auto flex flex-col lg:gap-6 sm:gap-5 gap-3 sm:mt-6 mt-3 sm:px-4 px-2">
+    <div className="lg:w-[56%] w-full max-w-6xl mx-auto flex flex-col gap-3 sm:mt-6 mt-3 sm:px-4 px-2">
       {/* Search Bar */}
-      <div className="bg-[#FDE8D3] px-4 py-2 sm:px-2 rounded-xl flex items-center justify-between">
-        <div className="flex items-center w-full gap-3">
-          <i className="ri-search-line text-xl font-bold text-[#000000]"></i>
-          <input
-            type="text"
-            placeholder="Search"
-            className="bg-transparent ml-2 w-full text-gray-900 outline-none font-medium placeholder:text-[#000000CC] text-base"
-          />
+      <div className="relative w-full">
+        <div className="bg-[#FDE8D3] px-4 py-2 rounded-xl flex items-center justify-between">
+          <div className="flex items-center w-full gap-3">
+            <i className="ri-search-line text-xl font-bold text-[#000000]"></i>
+            <input
+              type="text"
+              value={query}
+              onChange={handleSearch}
+              placeholder="Search or type #tag"
+              className="bg-transparent ml-2 w-full text-gray-900 outline-none font-medium text-base"
+            />
+          </div>
+          <div className="flex items-center gap-3 text-xl text-[#6E4E37]">
+            <IoMic className="text-3xl" />
+          </div>
         </div>
-        <div className="flex items-center gap-3 text-xl text-[#6E4E37]">
-          <i className="text-3xl">
-            <TiCamera />
-          </i>
-          <i className="text-3xl">
-            <IoMic />
-          </i>
-        </div>
+
+        {/* Dropdown */}
+        {showDropdown && (suggestedUsers.length > 0 || suggestedTags.length > 0) && (
+          <div className="absolute inset-0 top-full left-0 w-full h-[calc(100vh-70px)] bg-white z-[9999] overflow-y-auto p-3">
+            {/* Tags */}
+            {suggestedTags.length > 0 && (
+              <div className="flex flex-col gap-2 mb-3">
+                <p className="text-gray-500 text-sm font-medium">Hashtags</p>
+                {suggestedTags.map((tag, index) => (
+                  <div
+                    key={index}
+                    onClick={() => handleHashtagClick(tag)}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#F5F5F5] cursor-pointer hover:bg-[#EDEDED]"
+                  >
+                    <span className="text-blue-500 font-bold">#{tag}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Users */}
+            {suggestedUsers.length > 0 && (
+              <div className="flex flex-col gap-3">
+                {suggestedUsers.map((user) => (
+                  <div
+                    key={user._id}
+                    className="flex items-center gap-3 bg-[#FEE2CC] rounded-xl p-2 cursor-pointer border-l-[7px] border-l-red-500"
+                    onClick={() => handleUserClick(user)}
+                  >
+                    <img
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`}
+                      alt={user?.username}
+                      className="w-12 h-12 rounded-full object-cover border"
+                    />
+                    <div>
+                      <p className="font-semibold text-black flex items-center gap-1">
+                        {user?.username}
+                        {user.verified && <MdVerified className="text-blue-500 text-lg" />}
+                      </p>
+                      <p className="text-sm text-gray-700">{user.city || user.bio}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Recent Searches */}
-      <div>
-        <div className="flex justify-between items-center lg:mb-3 mb-2">
-          <h3 className="text-lg font-medium text-[#000000]">Recent searches</h3>
-          <button className="text-lg font-medium text-[#6F4D34]">Clear all</button>
-        </div>
-        <div className="flex lg:gap-4 gap-3 flex-wrap">
-          {recentSearches.map((item) => (
-            <div
-              key={item.id}
-              className="txt bg-[#ECE6E6] lg:px-3 lg:py-2.5 sm:p-1.5 p-1.5 rounded-xl font-medium lg:text-lg sm:text-[16px] text-sm text-[#000000] flex items-center gap-2"
-            >
-              {item.searches}
-              <button className="text-[#000000] ml-2 text-xs hover:text-red-500">
-                X
-              </button>
+    {/* Recent Searches */}
+<div>
+  <div className="flex justify-between items-center mb-2">
+    <h3 className="text-lg font-medium text-[#000000]">Recent searches</h3>
+    <button className="text-lg font-medium text-[#6F4D34]" onClick={clearAllRecent}>
+      Clear all
+    </button>
+  </div>
+  <div className="flex flex-wrap gap-3">
+    {recentSearches.map((item) => (
+      <div
+        key={item._id}
+        className="txt bg-[#ECE6E6] px-3 py-2 rounded-xl font-medium text-sm text-[#000000] flex items-center gap-2"
+      >
+        <span
+          className="cursor-pointer"
+          onClick={() => {
+            if (item.type === "user") {
+              navigate("/social-media/profile", { state: { userId: item.refId } });
+            } else if (item.type === "hashtag") {
+              handleHashtagClick(item.tag);
+            }
+          }}
+        >
+          {item.label}
+        </span>
+        <button
+          className="text-[#000000] text-xs hover:text-red-500"
+          onClick={() => removeRecentSearch(item._id)}
+        >
+          X
+        </button>
+      </div>
+    ))}
+  </div>
+</div>
+
+
+      {/* Full-page Post Grid */}
+      {showPostGrid && suggestedPosts.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3">
+          {suggestedPosts.map((post) => (
+            <div key={post._id} className="relative">
+              <img
+                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
+                alt="post"
+                className="w-full h-40 sm:h-52 object-cover rounded-lg"
+              />
+              <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
+                {post.caption}
+              </div>
             </div>
           ))}
         </div>
-      </div>
+      )}
 
-    {/* Suggested Users */}
+     {/* Suggested Users */}
 <div className="flex flex-col gap-3">
-  {suggestedUsers.map((user) => (
+  {suggestionForUser.map((user) => (
     <div
-      key={user.id}
-      className="sgu flex justify-between lg:py-3 lg:px-2 sm:p-1 p-[2px] items-center bg-[#FEE2CC] rounded-xl"
+      key={user._id}
+      className="sgu flex justify-between items-center bg-[#FEE2CC] rounded-xl p-2"
     >
-      <div className="flex items-center lg:gap-6 sm:gap-5 gap-2 w-full">
+      <div className="flex items-center gap-3 w-full">
         <img
-          src={user.profilePic}
-          alt={user.name}
-          className="lg:w-[80px] lg:h-[80px] w-[65px] h-[65px] rounded-full border object-cover"
+          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`}
+          alt={user?.username}
+          onClick={() => handleUserClick(user)}
+          className="w-14 h-14 lg:w-16 lg:h-16 rounded-full border object-cover cursor-pointer"
         />
         <div className="flex flex-col">
-          {user.Verified ? (
-            <div className="flex items-center sm:gap-2 gap-1">
-              <div className="lg:text-[22px] sm:text-[21] text-[19px] font-semibold text-[#000000]">
-                {user.name}
-              </div>
-              <div className="text-[#000000] h-full flex items-center lg:text-xl sm:text-[18px] text:lg">
-                <MdVerified className="inline text-blue-500" />
-              </div>
-            </div>
-          ) : (
-            <span className="lg:text-[22px] sm:text-[21] text-[19px] font-semibold text-[#000000]">
-              {user.name}
-            </span>
-          )}
-          <span className="lg:text-base sm:text-[14px] text-[12px] font-normal txt">{user.position}</span>
-          <span className="lg:text-base sm:text-[14px]  text-[12px] font-normal txt">{user.city}</span>
+          <span
+            className="lg:text-[20px] text-lg font-medium text-[#000000] cursor-pointer"
+            onClick={() => handleUserClick(user)}
+          >
+            {user.username}
+          </span>
+          <span className="text-sm text-gray-600">{user.role}</span>
         </div>
       </div>
-      <div className="flex items-center sm:mr-3 mr-[6px]">
-        <button className="bg-[#48372D] text-[#FEE2CC] font-medium text-base sm:px-4 sm:py-2 px-2 py-1 rounded-lg">
-          Follow
+
+      <div className="flex items-center gap-2">
+        {/* Follow/Unfollow Toggle */}
+        <button
+          onClick={() => handleFollowToggle(user._id, user.isFollowing)}
+          className={`${
+            user.isFollowing
+              ? "bg-gray-300 text-[#48372D]"
+              : "bg-[#48372D] text-[#FEE2CC]"
+          } sm:text-[17px] text-[16px] rounded-lg px-3 py-1 font-bold`}
+        >
+          {user.isFollowing ? "Unfollow" : "Follow"}
+        </button>
+
+        {/* Remove from Suggested */}
+        <button
+          onClick={() =>
+            deleteAPI(
+              `/api/social-media/searchbar-suggested/${userId}/${user._id}`, // 👈 param-based
+              {},
+              true,
+              true
+            ).then((res) => {
+              setSuggestionForUser(res.data.suggestedUsers || []);
+            })
+          }
+          className="text-[#000000] sm:px-3 sm:py-1 rounded-lg text-2xl font-semibold"
+        >
+          <i className="ri-close-line"></i>
         </button>
       </div>
     </div>
   ))}
+
+
+
 </div>
 
-
-      {/* Art Grid */}
-      {/* <div className="art-grid ">
-        {purchaseArt.map((art) => (
-          <div key={art.id} className="art relative rounded-xl ">
-            <img
-              src={art.image}
-              alt="Art"
-              className="w-full h-60 object-cover rounded-2xl" */}
-            {/* /> */}
-            {/* Overlay Header */}
-            {/* <div className="absolute top-0 left-0 w-full bg-[#000000BF] bg-opacity-50 text-white flex justify-between items-center px-2 py-2.5 text-xs">
-              <span className="font-medium text-lg">{art.username}</span>
-              <div className="flex gap-2 items-center text-lg">
-                <i className="ri-shopping-cart-2-fill text-[#FB5934]"></i>
-                <i
-                  className="ri-more-fill cursor-pointer"
-                  onClick={() =>
-                    setActiveMenuId((prev) => (prev === art.id ? null : art.id))
-                  }
-                ></i>
-              </div>
-            </div> */}
-
-            {/* Dropdown Menu */}
-            {/* {activeMenuId === art.id && (
-              <div
-                ref={menuRef}
-                className="absolute top-2 right-1 flex flex-col items-center  z-10 bg-white text-black text-sm rounded-xl  shadow-lg  w-32"
-              >
-                <button className=" bg-gray-100 w-full px-4 py-2  hover:bg-gray-400 rounded-t-lg ">
-                  Report
-                </button>
-                 <hr className="w-full border-t border-gray-800" />
-                <button className="bg-gray-100 w-full px-4 py-2  hover:bg-gray-400">
-                  Save
-                </button>
-                 <hr className="w-full border-t border-gray-800" />
-                <button className=" bg-gray-100 w-full px-4 py-2  hover:bg-gray-400">
-                  Go to post
-                </button>
-                 <hr className="w-full border-t border-gray-800" />
-                <button className=" bg-gray-100 w-full px-4 py-2  hover:bg-gray-400 rounded-b-lg">
-                  Share
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
-      </div> */}
-
-      {/* video bar */}
-
-      <div>
+  <div>
       {/* Suggested Videos */}
 <div className="flex flex-col gap-3">
   {suggestedVideo.map((item) => (

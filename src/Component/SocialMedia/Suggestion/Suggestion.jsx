@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import getAPI from "../../../../src/api/getAPI";
+import { toast } from 'react-toastify';
 import postAPI from "../../../../src/api/postAPI";
 import "../Sidebar/Side-post-sugg.css";
 import "../Create-post/Post.css";
 
+
 const Suggestion = () => {
   const [users, setUsers] = useState([]);
   const [activeAdIndex, setActiveAdIndex] = useState(0);
+  const [mainCategories, setMainCategories] = useState([]);
 
   const adImages = [
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3oql1QTjEkuSfZYyT2Rxsxb_CNSSjwUeyXg&s",
@@ -14,6 +17,65 @@ const Suggestion = () => {
     "https://i0.wp.com/montessorifromtheheart.com/wp-content/uploads/2023/03/Straw-Print-Flower-Painting-Craft.jpg?resize=1080%2C1350&ssl=1",
   ];
 const userId = localStorage.getItem("userId");
+ const userType= localStorage.getItem("userType");
+
+ // helper: normalize array -> [ids]
+const toIdArray = (arr) =>
+  Array.isArray(arr)
+    ? arr.map(x => (typeof x === "string" ? x : x?._id)).filter(Boolean)
+    : [];
+
+// helper: avoid needless setState loops
+const sameIds = (a, b) => {
+  if (a.length !== b.length) return false;
+  const sa = [...a].sort().join(",");
+  const sb = [...b].sort().join(",");
+  return sa === sb;
+};
+
+
+
+useEffect(() => {
+  if (!userId || !userType) return;
+
+  let cancelled = false;
+  (async () => {
+    try {
+      if (userType === "Seller") {
+        const res = await getAPI(`/auth/getsellartwork/${userId}`);
+        const ids = toIdArray(res?.data?.artwork?.categoryOfArt);
+        if (!cancelled) {
+          setMainCategories(prev => (sameIds(prev, ids) ? prev : ids));
+        }
+      } else if (userType === "Artist") {
+        const res = await getAPI(`/auth/getartistdetails/${userId}`);
+        const ids = toIdArray(res?.data?.artCategories);
+        if (!cancelled) {
+          setMainCategories(prev => (sameIds(prev, ids) ? prev : ids));
+        }
+      } else if (userType === "Buyer") {
+        const res = await getAPI(`/auth/getpreferences/${userId}`);
+        const first = res?.data?.data?.preferredArtCategories?.[0]; 
+  const ids = first ? toIdArray([first]) : [];
+  if (!cancelled) {
+    setMainCategories(prev => (sameIds(prev, ids) ? prev : ids));
+  }
+      }
+    } catch (err) {
+      console.error("Error loading categories:", err);
+      toast.error("Failed to load categories");
+    }
+  })();
+
+  return () => { cancelled = true; };
+}, [userId, userType,mainCategories]);
+
+// optional: see the **updated** value
+// useEffect(() => {
+//   console.log("mainCategories (IDs):", mainCategories);
+// }, [mainCategories]);
+
+
   useEffect(() => {
     const fetchSuggestedUsers = async () => {
       try {
@@ -22,11 +84,13 @@ const userId = localStorage.getItem("userId");
 
         const res = await getAPI(
           `/api/social-media/suggested-users?userId=${userId}`,
-          {},
-          false,
-          true
+          {
+          userId,
+          userType,
+          mainCategories, // can be array, backend should handle it
+        }
         );
-
+        // console.log("Suggested users fetched:", res?.data?.suggestedUsers);
         setUsers(res?.data?.suggestedUsers || []);
       } catch (error) {
         console.error("Error fetching suggested users:", error);
@@ -36,7 +100,7 @@ const userId = localStorage.getItem("userId");
     fetchSuggestedUsers();
   }, []);
 
-// ✅ Handle Follow / Unfollow
+
 const handleFollowToggle = async (targetUserId, isFollowing) => {
   try {
     if (isFollowing) {
@@ -71,7 +135,7 @@ const handleFollowToggle = async (targetUserId, isFollowing) => {
           {/* Avatar + Name */}
           <div className="flex items-center gap-2">
             <img
-              src={user.profilePhoto || "https://via.placeholder.com/150"}
+              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}` || "https://via.placeholder.com/150"}
               alt="avatar"
               className="rounded-full w-9 h-9 object-cover"
             />
