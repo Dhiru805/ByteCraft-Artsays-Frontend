@@ -441,8 +441,8 @@ const AppRoutes = () => {
 <Route path='/social-media/profile/promote-profile' element={<PromoteProfile/>}/>
 <Route path='/social-media/profile/promote-post' element={<PromotePost/>}/>
 <Route path='/social-media/create-live' element={<CreateLive/>}/>
-<Route path='/social-media/my-live' element={<MyLive/>}/>
-<Route path='/social-media/live' element={<Live/>}/>
+<Route path='/social-media/:streamKey/:username' element={<MyLive/>}/>
+<Route path='/social-media/live/:streamKey' element={<Live/>}/>
 <Route path='/social-media/test' element={<Test/>}/>
 <Route path='/social-media/setting' element={<Settings/>}/>
 

@@ -179,8 +179,40 @@ const suggestedUser = [
 const Profile = () => {
 const userId = localStorage.getItem("userId");
 const [profile, setProfile] = useState(null);
+const [liveData, setLiveData] = useState(null);
 const [isMyProfile, setIsMyProfile] = useState(false);
 const [loading, setLoading] = useState(true);
+
+// Fetch profile data
+const fetchProfile = async () => {
+  try {
+    console.log("Fetching profile for userId:", userId);
+    const res = await getAPI(`/api/social-media/profile/${userId}`, {}, false, true);
+    if (res?.data?.profile) {
+      setProfile(res.data.profile);
+      setIsMyProfile(userId === String(res?.data?.profile?._id));
+       console.log(res.data.profile); 
+    }
+  } catch (error) {
+    console.error(" Error fetching profile:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+// Fetch live data
+const fetchLiveData = async () => {
+  try {
+    console.log("Fetching live data for userId:", userId);
+    const res = await getAPI(`/api/social-media/live/${userId}`, {}, false, true);
+    if (res?.data?.liveData) {
+      setLiveData(res.data.liveData);
+      console.log("Live data:", res.data.liveData);
+    }
+  } catch (error) {
+    console.error("Error fetching live data:", error);
+  }
+};
 
 useEffect(() => {
   const handleClickOutside = (event) => {
@@ -190,30 +222,26 @@ useEffect(() => {
   };
   document.addEventListener("mousedown", handleClickOutside);
 
-  const fetchProfile = async () => {
-    try {
-      console.log("Fetching profile for userId:", userId);
-      const res = await getAPI(`/api/social-media/profile/${userId}`, {}, false, true);
-      if (res?.data?.profile) {
-        setProfile(res.data.profile);
-        setIsMyProfile(userId === String(res?.data?.profile?._id));
-         console.log(res.data.profile); 
-      }
-    } catch (error) {
-      console.error(" Error fetching profile:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (userId) fetchProfile();
+  if (userId) {
+    fetchProfile();
+    fetchLiveData();
+  }
 
   return () => {
     document.removeEventListener("mousedown", handleClickOutside);
   };
 }, [userId]);
 
+// Refresh live data every 5 seconds to keep live status updated
+useEffect(() => {
+  if (userId) {
+    const interval = setInterval(() => {
+      fetchLiveData();
+    }, 5000); // Refresh every 5 seconds
 
+    return () => clearInterval(interval);
+  }
+}, [userId]);
 
   const [onPosts, setOnPosts] = useState(true);
   const [onSave, setOnSave] = useState(false);
@@ -407,19 +435,21 @@ useEffect(() => {
       { profile ?
         (<div className="hidden sm:flex items-start gap-6 lg:gap-6 w-full sm:mb-2">
         <div className="relative w-20 h-20 sm:w-[186px] sm:h-[186px] shrink-0">
-          {user.live ? (
-            <div className="p-[3px] sm:p-[6px] rounded-full bg-gradient-to-r from-[#6E300C] via-[#F1620E] to-[#6E300C] w-full h-full">
-              <div className="w-full h-full bg-white rounded-full overflow-hidden">
-                <img
-                  src={profile.profilePhoto}
-                  alt={profile.username}
-                  className="w-full h-full object-cover rounded-full"
-                />
+          {liveData?.live?.isLive ? (
+            <Link to={`/social-media/live`} className="relative inline-block w-full h-full">
+              <div className="w-full h-full p-[3px] sm:p-[6px] rounded-full bg-gradient-to-r from-[#F1620E] via-[#FF3B30] to-[#F1620E]">
+                <div className="w-full h-full bg-white rounded-full overflow-hidden">
+                  <img
+                    src={profile.profilePhoto}
+                    alt={profile.username}
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </div>
               </div>
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-1/2 px-2 py-0.5 text-white text-xl sm:text-sm font-semibold bg-gradient-to-r from-[#F1620E] to-[#72320C] rounded-tl-[10px] rounded-tr-[10px]">
+              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2 py-0.5 text-white text-xs sm:text-sm font-semibold bg-gradient-to-r from-[#F1620E] to-[#72320C] rounded-full">
                 LIVE
               </div>
-            </div>
+            </Link>
           ) : (
             <img
               src={profile.profilePhoto}
@@ -580,8 +610,8 @@ useEffect(() => {
         (<div className="sm:hidden flex flex-col  gap-3 lg:gap-8 w-full ">
         <div className="flex items-center justify-between">
           <div className="flex justify-between gap-2 items-center">
-            {user.live ? (
-              <div className="relative w-[90px] h-[90px] p-[4px] bg-gradient-to-r from-[#6E300C] via-[#F1620E] to-[#6E300C] rounded-full overflow-visible">
+            {liveData?.live?.isLive ? (
+              <Link to={`/social-media/live`} className="relative w-[90px] h-[90px] p-[4px] bg-gradient-to-r from-[#6E300C] via-[#F1620E] to-[#6E300C] rounded-full overflow-visible">
                 <img
                   src={profile.profilePhoto}
                   className="w-full h-full rounded-full object-cover"
@@ -590,7 +620,7 @@ useEffect(() => {
                 <div className="absolute bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 text-white text-[10px] font-semibold bg-gradient-to-r from-[#F1620E] to-[#72320C] rounded-tl-[10px] rounded-tr-[10px]">
                   LIVE
                 </div>
-              </div>
+              </Link>
             ) : (
               <img
                 src={profile.profilePhoto}
