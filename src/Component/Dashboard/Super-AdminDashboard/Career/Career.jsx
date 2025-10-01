@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import getAPI from '../../../../api/getAPI';
 import ConfirmationDialog from '../../ConfirmationDialog';
 
 const Career = () => {
+
   const navigate = useNavigate();
+
   const [careers, setCareers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -106,6 +108,7 @@ const Career = () => {
           </div>
         </div>
       </div>
+      
       <div className="row clearfix">
         <div className="col-lg-12">
           <div className="card">

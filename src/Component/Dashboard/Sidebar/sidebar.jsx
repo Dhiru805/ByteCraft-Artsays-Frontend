@@ -91,6 +91,13 @@ const Sidebar = () => {
         ]
       },
       {
+        label: "Celebrities",
+        tabId: "cls1",
+        icon: "fas fa-user",
+        path: "/super-admin/celebraties",
+        subTabs: []
+      },
+      {
         label: "Product",
         tabId: "pdt1",
         icon: "fa fa-cart-plus",
@@ -159,8 +166,11 @@ const Sidebar = () => {
       {
         label: "Career",
         icon: "fa fa-briefcase",
-        path: `/super-admin/career`,
-        subTabs: []
+        path: '#Career',
+        subTabs: [
+          { label: "Openings", path: '/super-admin/career' },
+          { label: "Applications", path: '/super-admin/career/applications' }
+        ]
       },
       {
         label: "Exhibition",

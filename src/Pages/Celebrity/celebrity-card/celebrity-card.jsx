@@ -1,13 +1,61 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiChevronRight } from "react-icons/fi";
 import { FiChevronLeft } from "react-icons/fi";
 import { ImArrowUpRight2 } from "react-icons/im";
+import { useNavigate } from "react-router-dom";
+
+import getAPI from "../../../api/getAPI";
 
 const CelebrityCard = () => {
+
+  const navigate = useNavigate()
+
   const [showFilters, setShowFilters] = useState(false);
+  const [celebritiesData, setCelebritiesData] = useState([])
+
+  const fetchCelebritiesData = async () => {
+    try {
+
+      const response = await getAPI("/api/celebrities")
+      if (response?.hasError === false) {
+        setCelebritiesData(response?.data?.data)
+        fetchartistsData()
+      }
+      else {
+        console.log(response)
+      }
+    }
+    catch (error) {
+      console.log(error)
+    }
+  };
+
+  useEffect(() => {
+    fetchCelebritiesData()
+  }, []);
+
+  const slugify = (text) => {
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+  };
+
+  const fetchartistsData = async () => {
+    try {
+      const response = await getAPI("/artist/artists")
+      console.log(response)
+    }
+    catch (error) {
+      console.log(error)
+    }
+  };
+
 
   return (
     <div className="max-w-[1440px] mx-auto mb-4">
+
       {/* Top Section: Breadcrumb + Search */}
       <div className="w-full bg-white py-3 px-3 sm:px-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -55,6 +103,7 @@ const CelebrityCard = () => {
 
       {/* Main Layout */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6">
+
         {/* Sidebar Filters (hidden on mobile, toggleable) */}
         <aside className="hidden md:block rounded-xl filter-sidebar">
           {/* All your filter sections here (unchanged) */}
@@ -430,22 +479,61 @@ const CelebrityCard = () => {
         {/* <!-- Product Grid --> */}
         <main className="md:col-span-3">
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {/* <!-- Product Card --> */}
-            <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              {/* Top Section: Text */}
+
+            {celebritiesData.length > 0 ? (
+              celebritiesData.map((celebrity, index) => (
+                <div key={celebrity._id}
+                  className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+
+                  <div className="px-2 py-4 text-center">
+                    <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
+                      {celebrity?.artistName || ""}
+                    </h2>
+                    <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
+
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
+                      <img
+                        src="/herosectionimg/1.jpg"
+                        alt={celebrity?.artistName || ""}
+                        className="w-full h-40 sm:h-64 object-contain"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="relative hidden md:block">
+                    <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
+                      <button
+                        onClick={() => navigate(`/celebrity/${slugify(celebrity.artistName)}`, { state: { celebrity } })}
+                        className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
+                      >
+                        View Collection
+                        <span className="text-white text-lg">
+                          <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div>No celebrities data</div>
+            )}
+
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
-                {/* Name */}
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
                 </h2>
-                {/* Subtitle */}
                 <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
                   Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
                   Energy Of His Music.
                 </p>
               </div>
 
-              {/* Image */}
               <div>
                 <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
                   <img
@@ -456,10 +544,9 @@ const CelebrityCard = () => {
                 </div>
               </div>
 
-              {/* Button */}
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <a
+                  <button
                     href="#"
                     className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
                   >
@@ -467,25 +554,22 @@ const CelebrityCard = () => {
                     <span className="text-white text-lg">
                       <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
                     </span>
-                  </a>
+                  </button>
                 </div>
               </div>
-            </div>
-            <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              {/* Top Section: Text */}
+            </div> */}
+
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
-                {/* Name */}
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
                 </h2>
-                {/* Subtitle */}
                 <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
                   Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
                   Energy Of His Music.
                 </p>
               </div>
 
-              {/* Image */}
               <div>
                 <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
                   <img
@@ -496,10 +580,9 @@ const CelebrityCard = () => {
                 </div>
               </div>
 
-              {/* Button */}
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <a
+                  <button
                     href="#"
                     className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
                   >
@@ -507,25 +590,22 @@ const CelebrityCard = () => {
                     <span className="text-white text-lg">
                       <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
                     </span>
-                  </a>
+                  </button>
                 </div>
               </div>
-            </div>
-            <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              {/* Top Section: Text */}
+            </div> */}
+
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
-                {/* Name */}
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
                 </h2>
-                {/* Subtitle */}
                 <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
                   Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
                   Energy Of His Music.
                 </p>
               </div>
 
-              {/* Image */}
               <div>
                 <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
                   <img
@@ -536,10 +616,9 @@ const CelebrityCard = () => {
                 </div>
               </div>
 
-              {/* Button */}
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <a
+                  <button
                     href="#"
                     className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
                   >
@@ -547,25 +626,22 @@ const CelebrityCard = () => {
                     <span className="text-white text-lg">
                       <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
                     </span>
-                  </a>
+                  </button>
                 </div>
               </div>
-            </div>
-            <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              {/* Top Section: Text */}
+            </div> */}
+
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
-                {/* Name */}
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
                 </h2>
-                {/* Subtitle */}
                 <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
                   Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
                   Energy Of His Music.
                 </p>
               </div>
 
-              {/* Image */}
               <div>
                 <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
                   <img
@@ -576,10 +652,9 @@ const CelebrityCard = () => {
                 </div>
               </div>
 
-              {/* Button */}
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <a
+                  <button
                     href="#"
                     className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
                   >
@@ -587,25 +662,22 @@ const CelebrityCard = () => {
                     <span className="text-white text-lg">
                       <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
                     </span>
-                  </a>
+                  </button>
                 </div>
               </div>
-            </div>
-            <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              {/* Top Section: Text */}
+            </div> */}
+
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
-                {/* Name */}
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
                 </h2>
-                {/* Subtitle */}
                 <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
                   Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
                   Energy Of His Music.
                 </p>
               </div>
 
-              {/* Image */}
               <div>
                 <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
                   <img
@@ -616,10 +688,9 @@ const CelebrityCard = () => {
                 </div>
               </div>
 
-              {/* Button */}
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <a
+                  <button
                     href="#"
                     className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
                   >
@@ -627,25 +698,22 @@ const CelebrityCard = () => {
                     <span className="text-white text-lg">
                       <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
                     </span>
-                  </a>
+                  </button>
                 </div>
               </div>
-            </div>
-            <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              {/* Top Section: Text */}
+            </div> */}
+
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
-                {/* Name */}
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
                 </h2>
-                {/* Subtitle */}
                 <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
                   Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
                   Energy Of His Music.
                 </p>
               </div>
 
-              {/* Image */}
               <div>
                 <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
                   <img
@@ -656,10 +724,9 @@ const CelebrityCard = () => {
                 </div>
               </div>
 
-              {/* Button */}
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <a
+                  <button
                     href="#"
                     className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
                   >
@@ -667,25 +734,22 @@ const CelebrityCard = () => {
                     <span className="text-white text-lg">
                       <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
                     </span>
-                  </a>
+                  </button>
                 </div>
               </div>
-            </div>
-            <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              {/* Top Section: Text */}
+            </div> */}
+
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
-                {/* Name */}
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
                 </h2>
-                {/* Subtitle */}
                 <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
                   Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
                   Energy Of His Music.
                 </p>
               </div>
 
-              {/* Image */}
               <div>
                 <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
                   <img
@@ -696,10 +760,9 @@ const CelebrityCard = () => {
                 </div>
               </div>
 
-              {/* Button */}
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <a
+                  <button
                     href="#"
                     className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
                   >
@@ -707,25 +770,22 @@ const CelebrityCard = () => {
                     <span className="text-white text-lg">
                       <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
                     </span>
-                  </a>
+                  </button>
                 </div>
               </div>
-            </div>
-            <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              {/* Top Section: Text */}
+            </div> */}
+
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
-                {/* Name */}
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
                 </h2>
-                {/* Subtitle */}
                 <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
                   Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
                   Energy Of His Music.
                 </p>
               </div>
 
-              {/* Image */}
               <div>
                 <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
                   <img
@@ -736,10 +796,9 @@ const CelebrityCard = () => {
                 </div>
               </div>
 
-              {/* Button */}
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <a
+                  <button
                     href="#"
                     className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
                   >
@@ -747,11 +806,13 @@ const CelebrityCard = () => {
                     <span className="text-white text-lg">
                       <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
                     </span>
-                  </a>
+                  </button>
                 </div>
               </div>
-            </div>
+            </div> */}
+
           </div>
+
           {/* <!-- Pagination --> */}
           <div className="flex justify-center mt-6">
             <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
@@ -768,8 +829,10 @@ const CelebrityCard = () => {
               <FiChevronRight className="self-center flex-shrink-0" />
             </nav>
           </div>
+
         </main>
       </div>
+
     </div>
   );
 };
