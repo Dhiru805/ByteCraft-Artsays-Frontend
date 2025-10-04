@@ -1,630 +1,646 @@
-import React, {  useState,useEffect } from "react";
+import React, { useEffect, useState } from 'react';
 import {
-  BrowserRouter as Router,
   Routes,
   Route,
-  // useLocation,
-  Navigate
+  Navigate,
+  Outlet,
+  useLocation,
+  useNavigate
 } from "react-router-dom";
-// import Home from "../Pages/Home/Home";
-// import About from "../Pages/About/About";
-// import StoreProduct from "../Pages/Store/StoreProduct";
-// import Blog from "../Pages/Blog/Blog";
+import WebsiteLayout from "../Layouts/WebsiteLayout";
+import { useAuth } from '../AuthContext';
+import PreloaderAnimation from '../Pages/Animation/PreloaderAnimation';
+
+//----------------------------------------Auth Pages------------------------------------------//
 import Login from "../Pages/Login/Login";
 import Register from "../Pages/Register/Register";
-import ArtistSellerRegister from "../Pages/Register/ArtistSellerRegister"
+import ArtistSellerRegister from "../Pages/Register/ArtistSellerRegister";
 import ForgotPassword from "../Pages/Login/Forgotpassword";
-// import Contact from "../Pages/Contact/Contact";
-// import NotFound from "../Component/NotFound";
-// import PrivacyPolicy from "../Pages/PrivacyPolicy/PrivacyPolicy";
-// import Career from "../Pages/Career/Career";
-// import CartPage from "../Pages/Cart/CartPage";
-// import Wishlist from "../Pages/WishList/Wishlist";
-// import Partners from "../Pages/Partners/Partners";
-// import HelpPage from "../Pages/HelpCenter/HelpPage";
-// import HelpSubPage from "../Pages/HelpCenter/HelpSubPage";
-// import TermsofServices from "../Pages/TermsAndCondition/TermsofServices";
-// import FAQPage from "../Pages/FAQPage/FAQPage";
-// import Header from "../Component/Header/Header";
-// import Footer from "../Component/Footer";
-// import Biddingpage from "../Pages/Art-Biding/BidingPage";
-// import WhyChooseUs from "../Pages/WhyChooseUs/WhyChooseUs";
-// import NFTCard from "../Pages/Art-Biding/NFTCard";
-// import AllComponent from "../Pages/AllComponent";
-// import StoreDetails from "../Component/Product-Details/StoreDetails";
-// import ArtistSupport from "../Pages/Artist/ArtistSupport";
-// import NewSlider from "../Component/newSlider/NewSlider";
-import UserProfile from "../Component/Dashboard/Dashboardcomponents/UserProfile/UserInfo";
-import ArtistProfile from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/UserProfile/UserProf"
-import ArtistProfileView from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ViewUserProfile/UserProf"
-import CreateBlog from "../Component/Dashboard/Dashboardcomponents/Blog/ArtistBlog/BlogPost";
-import Dashboard from "../Component/Dashboard/Dashboard";
-import AppInbox from "../Component/Dashboard/Dashboardcomponents/Chat/AppInbox";
-import AppContact from "../Component/Dashboard/Dashboardcomponents/Chat/AppContact";
-import AppChat from "../Component/Dashboard/Dashboardcomponents/Chat/AppChat";
-// import BlogDashboard from "../Component/Dashboard/Dashboardcomponents/Blog/BlogDashboard";
-// import BlogPost from "../Component/Dashboard/Dashboardcomponents/Blog/ArtistBlog/BlogPost";
-import BlogList from "../Component/Dashboard/Dashboardcomponents/Blog/ArtistBlog/BlogList";
-import UpdateBlog from "../Component/Dashboard/Dashboardcomponents/Blog/ArtistBlog/UpdateBlogList";
-import BlogView from '../Component/Dashboard/Dashboardcomponents/Blog/SuperAdminBlog/ViewBlog';
-import BlogDetails from "../Component/Dashboard/Dashboardcomponents/Blog/SuperAdminBlog/BlogDetails";
-import ArtistBlogDetails from "../Component/Dashboard/Dashboardcomponents/Blog/ArtistBlog/ArtistBlogDetails";
-// import FileDashboard from "../Pages/Dashboard/DashBoardPages/FileDashboard";
-// import TradingPage from "../Pages/TradingPage/TradingPage";
-// import FileDocument from "../Pages/Dashboard/DashBoardPages/FileDocument";
-// import FileMedia from "../Pages/Dashboard/DashBoardPages/FileMedia";
-// import FileImages from "../Pages/Dashboard/DashBoardPages/FileImages";
-// import ForbiddonError from "../Pages/Dashboard/DashBoardPages/ForbiddonError";
-// import NotFoundError from "../Pages/Dashboard/DashBoardPages/NotFoundError";
-// import ImageGallery from "../Pages/Dashboard/DashBoardPages/ImageGallery";
-// import Invoices from "../Pages/Dashboard/DashBoardPages/Invoices";
-// import SearchResult from "../Pages/Dashboard/DashBoardPages/SearchResult";
-// import Maintenance from "../Pages/Dashboard/DashBoardPages/Maintenance";
-// import Teamboards from "../Pages/Dashboard/DashBoardPages/Teamboards";
+//-----public routes-----//
+import PrivacyPolicy from "../Pages/PrivacyPolicy/PrivacyPolicy";
+import TermsofServices from "../Pages/Terms&Condition/TermsofServices";
+import BiddingPass from "../Pages/Art-Biding/BidingPage";
 
-// import Trial from "../Pages/Trial";
-// import ArtistManagement from "../Pages/ArtistManagement";
-import ArtistManageTable from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistManageTable";
-import ArtistDetail from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistDetail";
+//----------------------------------------My Account-----------------------------------------//
+import MyAccountMainLayout from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/MyAccountMainLayout';
+import { AccountPage } from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyAccountPage';
+import { AccountForm } from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PersonaInformation';
+import ManageAddress from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/ManageAddress';
+import BankPaymentDetails from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/BankPaymentDetails';
+import PaymentMethod from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PaymentMethod';
+import PasswordManager from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PasswordManager';
+import AccountVerification from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/AccountVerification';
+import SocialMediaPromotion from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/SocialMediaPromotion';
+import CustomRequest from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/CustomRequest';
+import NotificationAndPreferences from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/NotificationAndPreferences';
+import AccountSecurityAndAgreements from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/AccountSecurityAndAgreements';
+import MyOrders from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyOrders";
+import Logout from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/Logout';
+import TrackOrder from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/TrackOrder";
+import WishListTable from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/WishListTable";
+import MyCartList from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/MyCartList";
+import CheckOut from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/CheckOut";
+import OrderCompleted from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/OrderCompleted";
+import MyOrderView from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyOrderView";
 
-import CustomOrder from "../Component/Dashboard/Dashboardcomponents/ProductDetails/CustomOrder/CustomOrderAll/Customorder";
-import CreateCustomOrder from "../Component/Dashboard/Dashboardcomponents/ProductDetails/CustomOrder/CustomOrderAll/CreateCustomOrder"
-// import BuyerRequest from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerRequest/BuyerRequest";
+//----------------------------------------Error Pages-----------------------------------------//
+import PagenotFound404 from "../Pages/Error/404Error";
+import UnauthorizedAccess from "../Pages/Error/403Error";
 
+//----------------------------------------WebsiteRoutes-----------------------------------------//
+import WebsiteMain from "../Pages/Home/Home";
 
-import UpdateCustomOrder from "../Component/Dashboard/Dashboardcomponents/ProductDetails/CustomOrder/CustomOrderAll/UpdateCustomOrder"
-import ViewCustomOrder from "../Component/Dashboard/Dashboardcomponents/ProductDetails/CustomOrder/Buyer/ViewCustomOrde"
-import ViewBuyerRequest from "../Component/Dashboard/Dashboardcomponents/ProductDetails/CustomOrder/Artist/ViewRequest";
-import ViewBuyerRequestToArtist from "../Component/Dashboard/Dashboardcomponents/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist";
+//----------------------------------------User Profile---------------------------------------//
+import UserProfile from "../Component/Dashboard/UserProfile/UserInfo";
 
+//----------------------------------------Dashboard Layouts-----------------------------------//
+import SuperAdminLayout from "../Component/Dashboard/Super-AdminDashboard/MainDashboard";
+import ArtistLayout from "../Component/Dashboard/ArtistDashbooard/MainDashboard";
+import BuyerLayout from "../Component/Dashboard/BuyerDashboard/MainDashboard";
+import SellerLayout from "../Component/Dashboard/SellerDashboard/MainDashboard";
 
-import BlogRequest from "../Component/Dashboard/Dashboardcomponents/Blog/SuperAdminBlog/BlogRequest";
+//----------------------------------------Super-Admin Components-----------------------------//
+import SuperAdminDashboard from "../Component/Dashboard/Super-AdminDashboard/Dashboard/MainContent";
+import SuperAdminBlog from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/BlogRequest";
+import SuperAdminBlogPost from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/BlogPost";
+import SuperAdminViewBlog from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/ViewBlog";
+import SuperAdminUpdateBlog from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/UpdateBlogList";
+import SuperAdminProductInfo from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Productinfo";
+import SuperAdminMarketing from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailMarketing/Marketing/MarketingEmail";
+import UserRole from '../Component/Dashboard/Super-AdminDashboard/Settings/UserRole/UserRole';
+import CreateRole from '../Component/Dashboard/Super-AdminDashboard/Settings/UserRole/CreateRole';
+import SuperAdminBiddingPass from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/BiddingPass";
+import SuperAdminArtistAdvertise from "../Component/Dashboard/Super-AdminDashboard/Advertise/Advertise";
+import SuperAdminCertification from "../Component/Dashboard/Super-AdminDashboard/Certification/Certification";
+import CreateCertifications from "../Component/Dashboard/Super-AdminDashboard/Certification/create";
+import FAQ from "../Component/Dashboard/Super-AdminDashboard/FAQ/FAQ";
+import Carrer from "../Component/Dashboard/Super-AdminDashboard/Career/Career";
+import CreateCarrer from "../Component/Dashboard/Super-AdminDashboard/Career/CreateCarrer";
+import UpdateCareer from "../Component/Dashboard/Super-AdminDashboard/Career/EditCareer";
+import ViewCareer from "../Component/Dashboard/Super-AdminDashboard/Career/CarrerView";
+import Exhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/exhibition";
+import CreateExhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/create";
+import UpdateExhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/editExhibition";
+import ViewExhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/exhibitionView";
+import ExhibitionRequest from '../Component/Dashboard/Super-AdminDashboard/Exhibition/ExhibitionRequest/exhibitionRequest';
+import UpdateExhibitionRequest from "../Component/Dashboard/Super-AdminDashboard/Exhibition/ExhibitionRequest/editExhibitionRequest";
+import ViewExhibitionRequest from "../Component/Dashboard/Super-AdminDashboard/Exhibition/ExhibitionRequest/exhibitionRequestView";
+import AutoTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/DefaultAutoTargeting/DefaultAutoTargeting';
+import GroupTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/AutoTargetingGroup/GroupTargetingSetting';
+import KeywordTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/KeywordTargeting/KeywordTargetingSetting';
+import GSTSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/GST/GST';
+//-----------------------------Admin--------------------------//
+import Admin from "../Component/Dashboard/Super-AdminDashboard/Admin/Admin";
+import AdminProfile from "../Component/Dashboard/Super-AdminDashboard/Admin/Profile/UserProf";
+//-----------------------------Artist--------------------------//
+import AdminViewProfile from "../Component/Dashboard/Super-AdminDashboard/Admin/ViewProfile/UserProf";
+import ArtistManagement from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistManageTable";
+import BlogRequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogRequest/BlogRequestTable";
+import BlogRequestView from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogRequest/Artistviewblog";
+import BlogRequestUpdate from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogRequest/UpdateBlogList";
+import BlogRequestDetails from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogRequest/Artistblogdetails";
+import ApprovedBlogs from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogs/BlogList";
+import ApprovedBlogsDetails from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogs/ArtistBlogDetails";
+import ApprovedBlogsUpdate from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ArtistBlogs/UpdateBlogList";
+import SoldProduct from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/SoldProduct/SoldProduct";
+import Artistproductrequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ProductRequest/ProductRequestTable";
+import ArtistAllProduct from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Product/AllArtistProduct";
+import ProductEditRequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/UserProfile/UserProf";
+import EditBlogRequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/UserProfile/BlogRequest/UpdateBlogList";
+import ProductViewRequest from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ViewUserProfile/UserProf";
+import ArtistProductRequestView from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/ProductRequest/ProductRequestView";
+import ArtistSoldProductTable from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/SoldProduct/SoldProduct";
+import ArtistSoldProductView from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/SoldProduct/SoldProductDetails";
+import ArtistTransaction from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Transaction/ArtistTransaction";
+import ArtistPackagingMaterial from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/PackagingMaterial/ProductPurchasedArtist";
+import ArtistProductsDetails from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Product/ArtistProductDetails";
+import ArtistProductBidding from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Product/BiddingPass";
 
-//Artist
-import ArtistBlogRequestTable from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistBlogRequest/BlogRequestTable";
-import ArtistBlogView from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistBlogRequest/Artistviewblog";
-import Artistblogdetails from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistBlogRequest/Artistblogdetails";
-import Artistblogs from"../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistBlogs/BlogList"
-import UpdateArtistblogs from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistBlogs/UpdateBlogList"
-import ArtistBlogs from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ArtistBlogs/ArtistBlogDetails"
-import ArtistProductRequest from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ProductRequest/ProductRequestTable"
-import ArtistProductRequestView from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ProductRequest/ProductRequestView"
-import AllArtistProduct from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/Product/AllArtistProduct"
-import ArtistEditProduct from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/Product/Editproduct"
-import ArtistSoldProduct from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/SoldProduct/SoldProduct"
-import ArtistSoldProductDetails from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/SoldProduct/SoldProductDetails"
-import ArtistTransaction from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/Transaction/ArtistTransaction"
-import ArtistTransactionDetails from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/Transaction/TransactionProductDetails"
-import PackagingMaterialProductpurchasedArtist from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/PackagingMaterial/ProductPurchasedArtist"
-import PackagingMaterialProductpurchasedArtistDetails from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/PackagingMaterial/Productinfo"
-import ArtistApprovedProductdetails from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/Product/ArtistProductDetails"
-import ArtistApprovedProductdetailsEdit from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/Product/Editproduct"
-import ArtistProductRequestEdit from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ProductRequest/Editproduct"
-
-//Artist Profile
-import ArtistProductDetailsProfile from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/UserProfile/Products/ArtistProductDetails";
-import ArtistProductDetailsProfileEdit from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/UserProfile/Products/Editproduct";
-import ArtistTransactionDetailsProfile from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/UserProfile/Transaction/TransactionDetails";
-import ArtistPackagingMaterialDetailsProfile from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/UserProfile/PackagingMaterial/Productinfo";
-import ArtistSoldProductDetailsProfile from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/UserProfile/SoldProduct/SoldProductDetails";
-import ArtistProductRequestDetailsProfile from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/UserProfile/ProductRequest/ProductRequestView"
-import ArtistProductRequestDetailsEditProfile from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/UserProfile/ProductRequest/Editproduct"
-import ArtistBlogRequestDetailsProfile from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/UserProfile/BlogRequest/ArtistBlogDetails"
-import ArtistBlogRequestDetailsEditProfile from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/UserProfile/BlogRequest/UpdateBlogList"
-
-//Artist Profile View
-import ArtistProductDetailsProfileView from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ViewUserProfile/Products/ArtistProductDetails";
-import ArtistTransactionDetailsProfileView from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ViewUserProfile/Transaction/TransactionDetails";
-import ArtistPackagingMaterialDetailsProfileView from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ViewUserProfile/PackagingMaterial/Productinfo";
-import ArtistSoldProductDetailsProfileView from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ViewUserProfile/SoldProduct/SoldProductDetails";
-import ArtistProductRequestDetailsProfileView from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ViewUserProfile/ProductRequest/ProductRequestView"
-import ArtistBlogRequestDetailsProfileView from "../Component/Dashboard/Dashboardcomponents/ArtistDetails/ViewUserProfile/BlogRequest/ArtistBlogDetails"
-
-//Buyer
-import BuyerProductRequest from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/ProductRequest/ProductRequestTable"
-import BuyerProductRequestView from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/ProductRequest/ProductRequestView"
-import BuyerEditProduct from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/ProductRequest/Editproduct"
-import BuyerProductPurchased from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/ProductPurchased/ProductPurchased"
-import BuyerProductPurchasedDetails from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/ProductPurchased/ProductPurchasedDetails"
-import BuyerSoldProduct from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/SoldProduct/SoldProduct"
-import BuyerSoldProductDetails from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/SoldProduct/SoldProductDetails"
-import BuyerTransaction from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/Transaction/BuyerTransaction"
-import BuyerTransactionDetails from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/Transaction/ResellTransactionProductDetails"
-import PackagingMaterialProductpurchasedBuyer from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/PackagingMaterial/ProductPurchasedBuyer"
-import PackagingMaterialProductpurchasedBuyerDetails from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/PackagingMaterial/Productinfo"
-
-//Buyer Profile 
-import BuyerProfile from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/UserProfile/UserProf"
-import BuyerManageTable from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerManageTable"
-import BuyerProductPurchasedProfile from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/UserProfile/ProductPurchased/ProductPurchasedDetails"
-import BuyerCustomRequestProfile from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/UserProfile/CustomRequest/ViewBuyerRequestToArtist"
-import BuyerTransactionProfile from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/UserProfile/Transaction/ResellTransactionProductDetails"
-import BuyerPackagingMaterialDetailsProfile from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/UserProfile/PackagingMaterial/Productinfo";
-import BuyerResellProductDetailsProfile from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/UserProfile/ResellProductRequest/ProductRequestView";
-import BuyerProductDetailsProfileEdit   from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/UserProfile/ResellProductRequest/Editproduct"
-import BuyerSoldlProductDetailsProfile from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/UserProfile/Soldproduct/SoldProductDetails";
-//Buyer Profile View
-import BuyerProfileView from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerUserProdileView/UserProf"
-import BuyerProductPurchasedProfileview from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerUserProdileView/ProductPurchased/ProductPurchasedDetails"
-import BuyerCustomRequestProfileView from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerUserProdileView/CustomRequest/ViewBuyerRequestToArtist"
-import BuyerTransactionProfileView from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerUserProdileView/Transaction/ResellTransactionProductDetails"
-import BuyerPackagingMaterialDetailsProfileView from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerUserProdileView/PackagingMaterial/Productinfo";
-import BuyerResellProductDetailsProfileView from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerUserProdileView/ResellProductRequest/ProductRequestView";
-import BuyerSoldlProductDetailsProfileView from "../Component/Dashboard/Dashboardcomponents/BuyerManagement/BuyerUserProdileView/Soldproduct/SoldProductDetails";
-//Seller
-import SellerManageTable from "../Component/Dashboard/Dashboardcomponents/Seller/SellerManageTable";
-import SellerProfile from  "../Component/Dashboard/Dashboardcomponents/Seller/SellerUserProfile/UserProf";
-import SellerProduct from "../Component/Dashboard/Dashboardcomponents/Seller/SellerProducts/SellerProduct";
-import SellerProductDetails from "../Component/Dashboard/Dashboardcomponents/Seller/SellerProducts/SellerProductDetails";
-import SellerProductDetailsEdit from "../Component/Dashboard/Dashboardcomponents/Seller/SellerProducts/Editproduct";
-
-import SellerSoldProduct from "../Component/Dashboard/Dashboardcomponents/Seller/SoldProduct/SoldProduct";
-import SellerSoldProductDetails from "../Component/Dashboard/Dashboardcomponents/Seller/SoldProduct/SoldProductDetails"
-import SellerTransaction from "../Component/Dashboard/Dashboardcomponents/Seller/Transaction/SellerTransaction"
-import SellerTransactionDetails from "../Component/Dashboard/Dashboardcomponents/Seller/Transaction/TransactionProductDetails"
-import PackagingMaterialProductpurchasedSeller from "../Component/Dashboard/Dashboardcomponents/Seller/PackagingMaterial/ProductPurchasedSeller"
-import PackagingMaterialProductpurchasedSellerDetails from "../Component/Dashboard/Dashboardcomponents/Seller/PackagingMaterial/Productinfo"
-import SellerProductRequest from "../Component/Dashboard/Dashboardcomponents/Seller/ProductRequest/ProductRequestTable"
-import SellerProductRequestDetails from "../Component/Dashboard/Dashboardcomponents/Seller/ProductRequest/ProductRequestView"
-import SellerProductRequestDetailsEdit from "../Component/Dashboard/Dashboardcomponents/Seller/ProductRequest/Editproduct"
-
-  //Seller Profile
-import SellerProductDetailsProfile from "../Component/Dashboard/Dashboardcomponents/Seller/SellerUserProfile/Products/SellerProductDetails";
-import SellerProductDetailsProfileEdit from "../Component/Dashboard/Dashboardcomponents/Seller/SellerUserProfile/Products/Editproduct";
-import SellerTransactionDetailsProfile from "../Component/Dashboard/Dashboardcomponents/Seller/SellerUserProfile/Transaction/TransactionDetails";
-import SellerPackagingMaterialDetailsProfile from "../Component/Dashboard/Dashboardcomponents/Seller/SellerUserProfile/PackagingMaterial/Productinfo";
-import SellerSoldProductDetailsProfile from "../Component/Dashboard/Dashboardcomponents/Seller/SellerUserProfile/SoldProduct/SoldProductDetails";
-  
-   //Seller Profile View
-import SellerProfileView from  "../Component/Dashboard/Dashboardcomponents/Seller/SellerUserProdileView/UserProf";
-import SellerProductDetailsProfileView from "../Component/Dashboard/Dashboardcomponents/Seller/SellerUserProdileView/Products/SellerProductDetails";
-import SellerTransactionDetailsProfileView from "../Component/Dashboard/Dashboardcomponents/Seller/SellerUserProdileView/Transaction/TransactionDetails";
-import SellerPackagingMaterialDetailsProfileView from "../Component/Dashboard/Dashboardcomponents/Seller/SellerUserProdileView/PackagingMaterial/Productinfo";
-import SellerSoldProductDetailsProfileView from "../Component/Dashboard/Dashboardcomponents/Seller/SellerUserProdileView/SoldProduct/SoldProductDetails";
-
-// import ResellPage from "../Pages/ResellPage/ResellPage";
-
-//Resell Product 
-import AllResellProduct from "../Component/Dashboard/Dashboardcomponents/ResellProduct/Allproduct/Product";
-import AllResellproductDetails from "../Component/Dashboard/Dashboardcomponents/ResellProduct/Allproduct/ResellProductinfo";
-import ResellProductPurchased from "../Component/Dashboard/Dashboardcomponents/ResellProduct/ProductPurchased/ProductPurchased";
-import ResellProductPurchasedDetails from "../Component/Dashboard/Dashboardcomponents/ResellProduct/ProductPurchased/ProductPurchasedDetails";
-import ResellProductEdit from "../Component/Dashboard/Dashboardcomponents/ResellProduct/Allproduct/Editproduct"
-import ResellTransaction from "../Component/Dashboard/Dashboardcomponents/ResellProduct/Transaction/ResellproductTransaction"
-import ResellTransactionDetails from "../Component/Dashboard/Dashboardcomponents/ResellProduct/Transaction/ResellTransactionProductDetails"
-
-//Product
-import ProductUpload from "../Component/Dashboard/Dashboardcomponents/ProductDetails/ProductUpload/productUploade";
-import AllProduct from "../Component/Dashboard/Dashboardcomponents/ProductDetails/Product"
-import ProductRequest from "../Component/Dashboard/Dashboardcomponents/ProductDetails/ProductRequest/ProductRequest"
-import ProductInfo from "../Component/Dashboard/Dashboardcomponents/ProductDetails/Productinfo";
-import ProductRequestDetails from "../Component/Dashboard/Dashboardcomponents/ProductDetails/ProductRequest/ProductRequestView"
-import ProductPurchased from "../Component/Dashboard/Dashboardcomponents/ProductDetails/ProductPurchased/ProductPurchased";
-import ProductPurchasedDetails from "../Component/Dashboard/Dashboardcomponents/ProductDetails/ProductPurchased/ProductPurchasedDetails";
-
-//Transaction
-import AllTransaction from "../Component/Dashboard/Dashboardcomponents/Transaction/AllTransaction"
-import AllTransactionDetails from "../Component/Dashboard/Dashboardcomponents/Transaction/TransactionProductDetails"
-
- // Packaging Material Routes 
- import PackagingMaterialProduct from "../Component/Dashboard/Dashboardcomponents/PackagingMaterial/Product/Product"
- import UpdatePackagingMaterialProduct from "../Component/Dashboard/Dashboardcomponents/PackagingMaterial/Product/updateproduct"
- import AddPackagingMaterialProduct from "../Component/Dashboard/Dashboardcomponents/PackagingMaterial/Product/productadd"
- import PackagingMaterialProductdetails from "../Component/Dashboard/Dashboardcomponents/PackagingMaterial/Product/Productinfo"
- import PackagingMaterialProductpurchased from "../Component/Dashboard/Dashboardcomponents/PackagingMaterial/ProductPurchased/ProductPurchased"
- import PackagingMaterialProductpurchaseddetails from "../Component/Dashboard/Dashboardcomponents/PackagingMaterial/ProductPurchased/Productinfo"
- import PackagingProductTransaction from "../Component/Dashboard/Dashboardcomponents/PackagingMaterial/Transaction/PackagingproductBuyerTransaction"
- import PackagingProductTransactiondetails from "../Component/Dashboard/Dashboardcomponents/PackagingMaterial/Transaction/Productinfo"
+import BuyerManagement from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/BuyerManageTable";
+import BuyerProductPurchase from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductPurchased/ProductPurchased";
+import BuyerProductPurchaseView from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductPurchased/ProductPurchasedDetails";
+import BuyerProductRequest from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductRequest/ProductRequestTable";
+import BuyerSoldProduct from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/SoldProduct/SoldProduct";
+import BuyerTransaction from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/Transaction/BuyerTransaction";
+import BuyerPackagingMaterial from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/PackagingMaterial/ProductPurchasedBuyer";
+import BuyermanageProductView from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/BuyerUserProdileView/UserProf";
+import BuyermanageProductEdit from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/UserProfile/UserProf";
+import BuyerResellProductView from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductRequest/ProductRequestView";
 
 
- // Bidding Routes 
- import AllBidingProduct from "../Component/Dashboard/Dashboardcomponents/Bidding/AllProduct/BiddingProduct"
- import AllBidingProductDetails from "../Component/Dashboard/Dashboardcomponents/Bidding/AllProduct/ProductRequestView"
- import BidingProductStatus from "../Component/Dashboard/Dashboardcomponents/Bidding/ProductStatus/BiddingProductStatus"
- import BidingProductStatusDetails from "../Component/Dashboard/Dashboardcomponents/Bidding/ProductStatus/ProductRequestView"
- import Biddedproduct from "../Component/Dashboard/Dashboardcomponents/Bidding/Biddedproduct/Biddedproduct"
- import BiddedproductDetails from "../Component/Dashboard/Dashboardcomponents/Bidding/Biddedproduct/ProductRequestView"
- import BiddedproductTransaction from "../Component/Dashboard/Dashboardcomponents/Bidding/Transaction/BiddedproductTransaction"
- import BiddedproductTransactionDetails from "../Component/Dashboard/Dashboardcomponents/Bidding/Transaction/BiddedproducTransactionView"
 
- //Category
- import ProductCategory from "../Component/Dashboard/Dashboardcomponents/Category/Productcategory/Category";
- import BlogCategory from "../Component/Dashboard/Dashboardcomponents/Category/Blogcategory/Category";
+//------Seller tab-----//
+import SellerManagement from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerManageTable";
+import SellerProducts from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerProducts/SellerProduct";
+import SellerProductRequest from "../Component/Dashboard/Super-AdminDashboard/Seller/ProductRequest/ProductRequestTable";
+import SellerSoldProducts from "../Component/Dashboard/Super-AdminDashboard/Seller/SoldProduct/SoldProduct";
+import SellerTransaction from "../Component/Dashboard/Super-AdminDashboard/Seller/Transaction/SellerTransaction";
+import SellerPackaging from "../Component/Dashboard/Super-AdminDashboard/Seller/PackagingMaterial/ProductPurchasedSeller";
+import SellerManageProductView from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerUserProdileView/UserProf";
+import SellerManageProductEdit from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerUserProfile/UserProf";
+import SellerProductBidding from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerProducts/BiddingPass";
 
- //Admin
- import Admin from "../Component/Dashboard/Dashboardcomponents/Admin/Admin"
- import AdminProfile  from "../Component/Dashboard/Dashboardcomponents/Admin/Profile/UserProf"
- import AdminProfileView  from "../Component/Dashboard/Dashboardcomponents/Admin/ViewProfile/UserProf"
+//-----------------------------Product--------------------------//
+import ProductTableView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Product";
+import CustomOrderView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/CustomOrderAll/Customorder";
+import PurchaseTable from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductPurchased/ProductPurchased";
+import PurchaseTableView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductPurchased/ProductPurchasedDetails";
+import ProductUploads from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductUpload/productUploade";
+// import ProductRequestView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist";
+import ViewCustomRequestsuperadmin from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist";
 
-//  const PrivateRoute = ({ children }) => {
-//   const isAuthenticated = !!localStorage.getItem("token");
-//   return isAuthenticated ? children : <Navigate to="/login" replace />;
-// };
+//-----------------------------Bidding--------------------------//
+import AllBiddingProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/AllProduct/BiddingProduct";
+import BiddedProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddedproduct/Biddedproduct";
+import BiddedProductTransaction from "../Component/Dashboard/Super-AdminDashboard/Bidding/Transaction/BiddedproductTransaction";
+import BiddingPassTable from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddingpass/Biddingpass";
+
+//-----------------------------ProductSetting--------------------------//
+import ProductType from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductType/ProductType";
+import ProductMedium from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductMedium/ProductMedium";
+import ProductMaterial from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductMaterial/ProductMaterial";
+import ProductEditionTypes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductEditionType/ProductEditionType";
+import ProductSurfaceTypes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductSurfaceType/ProductSurfaceType";
+import ProductCouponCodes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductCouponCode/ProductCouponCode";
+import ProductPackagingTypes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductPackagingType/ProductPackagingType";
+import CopyrightsRights from "../Component/Dashboard/Super-AdminDashboard/Product Setting/CopyrightsRights/CopyrightsRights";
+import BlockchainNetworks from "../Component/Dashboard/Super-AdminDashboard/Product Setting/BlockchainNetwork/BlockchainNetwork";
+import TokenStandards from "../Component/Dashboard/Super-AdminDashboard/Product Setting/TokenStandard/TokenStandard";
+import PeriodEras from "../Component/Dashboard/Super-AdminDashboard/Product Setting/PeriodEra/PeriodEra";
+//-----------------------------Settings--------------------------//
+import EmailSettings from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailSetting/EmailSetting";
+import BlogCategory from "../Component/Dashboard/Super-AdminDashboard/Settings/Blogcategory/Category";
+import ProductCategory from "../Component/Dashboard/Super-AdminDashboard/Settings/Productcategory/Category";
+import CertificationSetting from "../Component/Dashboard/Super-AdminDashboard/Settings/Certification/Certifiaction";
+
+//----------------------------------------Artist Components----------------------------------//
+import ArtistDashboard from "../Component/Dashboard/ArtistDashbooard/Dashboard/MainContent";
+import ArtistAdvertise from "../Component/Dashboard/ArtistDashbooard/Advertise/Advertise";
+import ArtistBiddingPass from "../Component/Dashboard/ArtistDashbooard/ProductDetails/BiddingPass";
+import ArtistBidingAllProducts from "../Component/Dashboard/ArtistDashbooard/Bidding/AllProduct/BiddingProduct";
+import ArtistBiddedProducts from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddedproduct/Biddedproduct";
+import ArtistBidPassTable from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddingpass/Biddingpass";
+import ArtistCertification from "../Component/Dashboard/ArtistDashbooard/Certification/Certification";
+import CreateArtitstCertifications from "../Component/Dashboard/ArtistDashbooard/Certification/create"
+import ArtistExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/exhibition";
+import ArtistCreateExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/create";
+import ArtistUpdateExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/editExhibition";
+import ArtistViewExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/exhibitionView";
+import ArtistSponser from "../Component/Dashboard/ArtistDashbooard/Advertise/Sponser";
+import ArtistProductCouponCodes from "../Component/Dashboard/ArtistDashbooard/ProductSetting/ProductCouponCode/ProductCouponCode";
+//-----------------------------Blogs--------------------------//
+import BlogList from "../Component/Dashboard/ArtistDashbooard/Blog/BlogList";
+import BlogPost from "../Component/Dashboard/ArtistDashbooard/Blog/BlogPost";
+import UpdateBlog from "../Component/Dashboard/ArtistDashbooard/Blog/UpdateBlogList";
+import BlogDetails from "../Component/Dashboard/ArtistDashbooard/Blog/ArtistBlogDetails";
+
+//-----------------------------Products Route--------------------------//
+import AllProduct from "../Component/Dashboard/ArtistDashbooard/ProductDetails/Product";
+import ProductUploade from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductUpload/productUploade';
+import CustomOrder from '../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/CustomOrderAll/Customorder';
+import ProductView from '../Component/Dashboard/ArtistDashbooard/ProductDetails/Productinfo';
+import ViewCustomRequest from '../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/Artist/ViewRequest';
+import Productpurchase from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductPurchased/ProductPurchased';
+import ProductpurchaseView from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductPurchased/ProductPurchasedDetails';
+//----------------------------------------Buyer Components-----------------------------------//
+import BuyerDashboard from "../Component/Dashboard/BuyerDashboard/Dashboard/MainContent";
+
+//----------------------------------------Seller Components----------------------------------//
+import SellerDashboard from "../Component/Dashboard/SellerDashboard/Dashboard/MainContent";
+import ViewProductDetails from "../Component/Dashboard/SellerDashboard/ProductsDetails/Product";
+import SellerProductUpload from "../Component/Dashboard/SellerDashboard/ProductsDetails/ProductUpload/productUploade";
+import SellerPurchasedProducts from "../Component/Dashboard/SellerDashboard/ProductsDetails/ProductPurchased/ProductPurchased";
+import SellerAdvertise from "../Component/Dashboard/SellerDashboard/Advertise/Advertise";
+import SellerBiddingPass from "../Component/Dashboard/SellerDashboard/ProductsDetails/BiddingPass";
+import SellerBidingAllProducts from "../Component/Dashboard/SellerDashboard/Bidding/AllProduct/BiddingProduct";
+import SellerBiddedProducts from "../Component/Dashboard/SellerDashboard/Bidding/Biddedproduct/Biddedproduct";
+import SellerBidPassTable from "../Component/Dashboard/SellerDashboard/Bidding/Biddingpass/Biddingpass";
+import SellerCertification from "../Component/Dashboard/SellerDashboard/Certification/Certification";
+import CreateSellerCertifications from "../Component/Dashboard/SellerDashboard/Certification/create"
+
+import SellerExhibition from "../Component/Dashboard/SellerDashboard/Exhibition/exhibition";
+import SellerCreateExhibition from "../Component/Dashboard/SellerDashboard/Exhibition/create";
+import SellerUpdateExhibition from "../Component/Dashboard/SellerDashboard/Exhibition/editExhibition";
+import SellerViewExhibition from "../Component/Dashboard/SellerDashboard/Exhibition/exhibitionView";
+
+import SellerProductCouponCodes from "../Component/Dashboard/SellerDashboard/ProductSetting/ProductCouponCode/ProductCouponCode";
 
 
-// const PublicRoute = ({ children }) => {
-//   const isAuthenticated = !!localStorage.getItem("token");
-//   return !isAuthenticated ? children : <Navigate to="/" />; 
-// };
 
-const AppRoutes = () => {
- 
-  const [userType, setUserType] = useState(() => localStorage.getItem("userType") || "defaultuser");
+
+
+//-----------------------------Artist Premium Badges--------------------------//
+
+import ArtistPremiumBages from "../Component/Dashboard/ArtistDashbooard/Badges/PremiumBadges";
+
+//-----------------------------Seller Premium Badges--------------------------//
+
+import SellerPremiumBages from "../Component/Dashboard/SellerDashboard/Badges/PremiumBadges";
+
+//-----------------------------Error 404--------------------------//
+
+import Error404Page from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/Error404';
+
+
+const PrivateRoute = ({ allowedRoles, children }) => {
+  const { isAuthenticated, userType, status: userStatus } = useAuth();
+  const location = useLocation();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(userType)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  if ((userType === 'Artist' || userType === 'Seller') && (userStatus === 'Unverified' || userStatus === 'Rejected') && location.pathname !== `/${userType.toLowerCase()}/profile`) {
+    return <Navigate to={`/${userType.toLowerCase()}/profile`} replace />;
+  }
+
+  return children ? children : <Outlet />;
+};
+
+const PublicRoute = ({ children }) => {
+  const { isAuthenticated, userType, status: userStatus } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const handleStorageChange = () => {
-      setUserType(localStorage.getItem("userType") || "defaultuser");
-    };
+    if (isAuthenticated && authPages.includes(location.pathname)) {
+      if ((userType === 'Artist' || userType === 'Seller') && (userStatus === 'Unverified' || userStatus === 'Rejected') && location.pathname === '/login') {
+        return;
+      }
+      const timer = setTimeout(() => {
+        navigate('/', { replace: true });
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated, userType, userStatus, location.pathname, navigate]);
 
-    window.addEventListener("storage", handleStorageChange);
+  const authPages = ['/login', '/register', '/artist-seller-register', '/forgotpassword'];
 
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
-  
-  
-  return (
-    <Router>
-      <LayoutWrapper>
-        <Routes>
-        <Route
-        path="/login"
-        element={
-          // <PublicRoute>
-            <Login />
-          // </PublicRoute>
-        }
-      />
+  return children ? children : <Outlet />;
+};
 
-<Route
-        path="/forgotpassword"
-        element={
-          // <PublicRoute>
-            <ForgotPassword />
-          // </PublicRoute>
-        }
-      />
+const WebsiteWrapper = () => {
+  const [showAnimation, setShowAnimation] = useState(true);
+  const location = useLocation();
 
-      <Route
-        path="/register"
-        element={
-          // <PublicRoute>
-            <Register />
-          // </PublicRoute>
-        }
-      />
+  useEffect(() => {
+    if (location.pathname === '/') {
+      const timer = setTimeout(() => {
+        setShowAnimation(false);
+      }, 6000);
+      return () => clearTimeout(timer);
+    } else {
+      setShowAnimation(false);
+    }
+  }, [location.pathname]);
 
-<Route
-        path="/artist-seller-register"
-        element={
-          // <PublicRoute>
-            <ArtistSellerRegister/>
-          // </PublicRoute>
-        }
-      />
-
-
-        
-        <Route path="/" element={<Login />} />
-          {/* {!isAuthenticated ? (
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          ) : ( */}
-            <>
-          {/* <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} /> */}
-          {/* <Route path="/contact" element={<Contact />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/store" element={<StoreProduct />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/wishlist" element={<Wishlist />} />
-          <Route path="/cart-page" element={<CartPage />} />
-          <Route path="/career" element={<Career />} />
-          <Route path="/partner" element={<Partners />} />
-          <Route path="/help" element={<HelpPage />} />
-          <Route path="/help/:title" element={<HelpSubPage />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/terms" element={<TermsofServices />} />
-          <Route path="/faq" element={<FAQPage />} />
-          <Route path="/art" element={<NFTCard />} />
-          <Route path="/why-artsays?" element={<WhyChooseUs />} />
-          <Route path="/product-details" element={<StoreDetails />} />
-          <Route path="/Allcom" element={<AllComponent />} /> */}
-         
-         
-          {/* <Route path="/view-blog" element={<BlogView />} /> */}
-
-          {/* <Route path="/Filedashboard" element={<FileDashboard />} />
-          <Route path="/Filedocs" element={<FileDocument />} />
-          <Route path="/Filemedia" element={<FileMedia />} />
-          <Route path="/Fileimages" element={<FileImages />} />
-          <Route path="/imagegallery" element={<ImageGallery />} />
-          <Route path="/invoice" element={<Invoices />} />
-          <Route path="/search" element={<SearchResult />} />
-          <Route path="/teamboard" element={<Teamboards />} /> */}
-
-          {/* <Route path="/create-blog" element={<BlogPost />} /> */}
-          {/* <Route path="/Bidding-page" element={<Biddingpage />} />
-          <Route path="/Trading-page" element={<TradingPage />} />
-          <Route path="/Resell-page" element={<ResellPage />} /> */}
-         
-
-          {/* <Route path="/403" element={<ForbiddonError />} />
-          <Route path="/404" element={<NotFoundError />} />
-          <Route path="/maintenance" element={<Maintenance />} />
-          <Route path="/Support" element={<ArtistSupport />} />
-          <Route path="/new-slider" element={<NewSlider />} />
-          <Route path="*" element={<NotFound />} /> */}
-           {/* <Route index element={<Dashboard />} /> */}
- <Route path={`/${userType}/Dashboard`} element={
-  // <PrivateRoute>
-  <Dashboard />
-  // </PrivateRoute>
-} 
-  >
-
-  
-  {/* Blog Routes */}
-  <Route path="BlogRequest/view-blog/BlogDetails/:slug" element={<BlogDetails />} />
-  <Route path="bloglist/blogDetails/:slug" element={<ArtistBlogDetails />} />
-  <Route path="BlogRequest" element={<BlogRequest />} />
-  <Route path="BlogRequest/view-blog/:blogId" element={<BlogView />} />
-  <Route path="bloglist" element={<BlogList />} />
-  {/* <Route path="Blogdashboard" element={<BlogDashboard />} /> */}
-  <Route path="bloglist/create-blog" element={<CreateBlog/>} />
-  <Route path="bloglist/update-blog/:id" element={<UpdateBlog/>} />
- 
-
-  {/* App Routes */}
-  <Route path="Appinbox" element={<AppInbox />} />
-  <Route path="Appcontact" element={<AppContact />} />
-  <Route path="Appchat" element={<AppChat />} />
-
-  {/* Artist Routes */}
-
-
-
-   {/* Artist Blog  */}
-  <Route path="artistblogrequest" element={<ArtistBlogRequestTable/>} />
-  <Route path="artistblogrequest/viewblog/:blogId" element={<ArtistBlogView/>} />
-  <Route path="artistblogrequest/viewblog/blogdetails/:blogId" element={<Artistblogdetails/>} />
-  <Route path="artistblogs" element={<Artistblogs />} />
-  <Route path="artistblogs/updateblog/:blogId" element={<UpdateArtistblogs />} />
-  <Route path="artistblogs/blogs/:blogId" element={<ArtistBlogs />} />
-  <Route path="artistproductrequest" element={<ArtistProductRequest/>} />
-  <Route path="artistproductrequest/artistproductview/:productId" element={<ArtistProductRequestView />} />
-  <Route path="Product-uploade/:id" element={<ProductUpload />} />
-  <Route path="allartistproduct" element={<AllArtistProduct/>} />
-  <Route path="allartistproduct/productdetails/:productId" element={< ArtistApprovedProductdetails/>} />
-  <Route path="allartistproduct/productdetails/editproduct/:productId" element={<  ArtistApprovedProductdetailsEdit />} />
-  <Route path="artistproductrequest/artistproductview/editproduct/:productId" element={<  ArtistProductRequestEdit />} />
- 
-
-  <Route path="allartistproduct/editproduct/:productId" element={<ArtistEditProduct/>} />
-  <Route path="artistsoldproduct" element={<ArtistSoldProduct/>} />
-  <Route path="artistsoldproduct/soldproductdetails/:productId" element={<ArtistSoldProductDetails />} />
-  <Route path="artisttransaction" element={<ArtistTransaction/>} />
-  <Route path="artisttransaction/transcationproductdetails/:productId" element={<ArtistTransactionDetails/>} />
-  <Route path="artistpackagingmaterial" element={<PackagingMaterialProductpurchasedArtist/>} />
-  <Route path="artistpackagingmaterial/productdetails/:productId" element={<PackagingMaterialProductpurchasedArtistDetails/>} />
-     {/* Artist ManageTable */}
-     <Route path="artistmanagetable" element={<ArtistManageTable />} />
-     <Route path="artists/:id" element={<ArtistDetail />} />
-
-   
-
-     {/* Artist Profile */}
-     <Route path="artistmanageTable/artistprofile/:userId" element={<ArtistProfile />} />
-     <Route path="artistmanagetable/artistprofile/:userId/artistproductdetails/:productId" element={<ArtistProductDetailsProfile/>} />
-     <Route path="artistmanagetable/artistprofile/:userId/artistproductdetails/editprdouct/:productId" element={<ArtistProductDetailsProfileEdit/>} />
-     <Route path="artistmanagetable/artistprofile/:userId/transactionproductdetails/:productId" element={<ArtistTransactionDetailsProfile/>}/>
-     <Route path="artistmanagetable/artistprofile/:userId/packagingproductdetails/:productId" element={<ArtistPackagingMaterialDetailsProfile/>}/>
-     <Route path="artistmanagetable/artistprofile/:userId/soldproductdetails/:productId"element={<ArtistSoldProductDetailsProfile/>}/>
-     <Route path="artistmanagetable/artistprofile/:userId/productrequestdetails/:productId"element={< ArtistProductRequestDetailsProfile/>}/>
-     <Route path="artistmanagetable/artistprofile/:userId/productrequestdetails/editproduct/:productId"element={< ArtistProductRequestDetailsEditProfile/>}/>
-     <Route path="artistmanagetable/artistprofile/:userId/blogrequestdetails/:blogId"element={< ArtistBlogRequestDetailsProfile/>}/>
-     <Route path="artistmanagetable/artistprofile/:userId/blogrequestdetails/editblog/:blogId"element={< ArtistBlogRequestDetailsEditProfile/>}/>
-
-    {/* Artist Profile View */}
-    <Route path="artistManagetable/artistprofileview/:userId" element={<ArtistProfileView />} />
-    <Route path="artistmanagetable/artistprofileview/:userId/artistproductdetails/:productId" element={<ArtistProductDetailsProfileView/>} />
-    <Route path="artistmanagetable/artistprofileview/:userId/transactionproductdetails/:productId" element={<ArtistTransactionDetailsProfileView />}/>
-    <Route path="artistmanagetable/artistprofileview/:userId/packagingproductdetails/:productId" element={<ArtistPackagingMaterialDetailsProfileView />}/>
-    <Route path="artistmanagetable/artistprofileview/:userId/soldproductdetails/:productId"element={<ArtistSoldProductDetailsProfileView />}/>
-    <Route path="artistmanagetable/artistprofileview/:userId/productrequestdetails/:productId"element={< ArtistProductRequestDetailsProfileView/>}/>
-    <Route path="artistmanagetable/artistprofileview/:userId/blogrequestdetails/:blogId"element={< ArtistBlogRequestDetailsProfileView/>}/>
-
-  {/* Buyer Routes */}
-
-  <Route path="buyermanagetable" element={<BuyerManageTable />} />
-  <Route path="buyerproductrequest" element={<BuyerProductRequest />} />
-  <Route path="buyerproductrequest/productview/:productId" element={<BuyerProductRequestView />} />
-  <Route path="buyerproductrequest/productview/editproduct/:userId" element={<BuyerEditProduct/>} />
-  <Route path="buyerproductpurchased" element={<BuyerProductPurchased/>} />
-  <Route path="buyerproductpurchased/productpurchaseddetails/:productId" element={<BuyerProductPurchasedDetails />} />
-  <Route path="buyersoldproduct" element={<BuyerSoldProduct/>} />
-  <Route path="buyersoldproduct/soldproductdetails/:productId" element={<BuyerSoldProductDetails />} />
-  <Route path="buyertransaction" element={<BuyerTransaction/>} />
-  <Route path="buyertransaction/transcationproductdetails/:productId" element={<BuyerTransactionDetails/>} />
-  <Route path="buyerpackagingmaterial" element={< PackagingMaterialProductpurchasedBuyer/>} />
-  <Route path="buyerpackagingmaterial/productdetails/:productId" element={<PackagingMaterialProductpurchasedBuyerDetails/>} />
-
-       {/* Buyer Profile */}
-
-       <Route path="buyermanagetable/buyerprofile/:userId" element={<BuyerProfile />} />
-       <Route path="buyermanagetable/buyerprofile/:userId/productdetails/:productId" element={<BuyerProductPurchasedProfile/>} />
-       <Route path="buyermanagetable/buyerprofile/:userId/viewrequesttoartist/:id" element={<BuyerCustomRequestProfile/>} />
-       <Route path="buyermanagetable/buyerprofile/:userId/transactionproductdetails/:productId" element={<BuyerTransactionProfile/>} />
-       <Route path="buyermanagetable/buyerprofile/:userId/packagingproductdetails/:productId" element={<BuyerPackagingMaterialDetailsProfile/>} />
-       <Route path="buyermanagetable/buyerprofile/:userId/resellproductdetails/:productId" element={<BuyerResellProductDetailsProfile/>} />
-       <Route path="buyermanagetable/buyerprofile/:userId/buyerproductdetails/editprdouct/:productId" element={<BuyerProductDetailsProfileEdit/>} />
-       <Route path="buyermanagetable/buyerprofile/:userId/soldproductdetails/:productId" element={<BuyerSoldlProductDetailsProfile/>} />
-
-      {/* Buyer Profile View*/}
-      <Route path="buyermanagetable/buyerprofileview/:userId" element={<BuyerProfileView/>} />
-      <Route path="buyermanagetable/buyerprofileview/:userId/productdetails/:productId" element={<BuyerProductPurchasedProfileview/>} />
-      <Route path="buyermanagetable/buyerprofileview/:userId/viewrequesttoartist/:id" element={<BuyerCustomRequestProfileView/>} />
-      <Route path="buyermanagetable/buyerprofileview/:userId/transactionproductdetails/:productId" element={<BuyerTransactionProfileView/>} />
-      <Route path="buyermanagetable/buyerprofileview/:userId/packagingproductdetails/:productId" element={<BuyerPackagingMaterialDetailsProfileView/>} />
-      <Route path="buyermanagetable/buyerprofileview/:userId/resellproductdetails/:productId" element={<BuyerResellProductDetailsProfileView/>} />
-      <Route path="buyermanagetable/buyerprofileview/:userId/soldproductdetails/:productId" element={<BuyerSoldlProductDetailsProfileView/>} />
-
-    {/* Seller Routes */}
-    <Route path="sellermanagetable" element={<SellerManageTable/>} />
-    <Route path="sellermanagetable/sellerprofile/:userId" element={<SellerProfile />} />
-    <Route path="sellerproduct" element={<SellerProduct/>} />
-    <Route path="sellerproduct/sellerproductdetails/:productId" element={<SellerProductDetails />} />
-    <Route path="sellersoldproduct" element={<SellerSoldProduct/>} />
-    <Route path="sellersoldproduct/sellersoldproductdetails/:productId" element={<SellerSoldProductDetails/>} />
-    <Route path="sellertransaction" element={<SellerTransaction/>} />
-    <Route path="sellertransaction/transcationproductdetails/:productId" element={< SellerTransactionDetails/>} />
-    <Route path="sellerpackagingmaterial" element={< PackagingMaterialProductpurchasedSeller/>} />
-    <Route path="sellerpackagingmaterial/productdetails/:productId" element={<PackagingMaterialProductpurchasedSellerDetails/>} />
-    <Route path="sellerrequest" element={<SellerProductRequest/>} />
-    <Route path="sellerrequest/prdouctdetails/:productId" element={<SellerProductRequestDetails/>} />
-    <Route path="sellerrequest/prdouctdetails/editproduct/:productId" element={<SellerProductRequestDetailsEdit/>} />
-    <Route path="sellerproduct/sellerproductdetails/edit/:productId" element={<SellerProductDetailsEdit />} />
-     
-          {/* Seller Profile */}
-      <Route path="sellermanagetable/sellerprofile/:userId/transactionproductdetails/:productId" element={<SellerTransactionDetailsProfile />} />
-      <Route path="sellermanagetable/sellerprofile/:userId/packagingproductdetails/:productId" element={<SellerPackagingMaterialDetailsProfile/>} />
-      <Route path="sellermanagetable/sellerprofile/:userId/soldproductdetails/:productId" element={<SellerSoldProductDetailsProfile/>} />
-      <Route path="sellermanagetable/sellerprofile/:userId/sellerproductdetails/:productId" element={<SellerProductDetailsProfile/>} />
-      <Route path="sellermanagetable/sellerprofile/:userId/sellerproductdetails/editprdouct/:productId" element={<SellerProductDetailsProfileEdit/>} />
-
-          {/* Seller Profile View*/}
-      <Route path="sellermanagetable/sellerprofileview/:userId" element={<SellerProfileView />} />
-      <Route path="sellermanagetable/sellerprofileview/:userId/sellerproductdetails/:productId" element={<SellerProductDetailsProfileView />} />
-      <Route path="sellermanagetable/sellerprofileview/:userId/transactionproductdetails/:productId" element={< SellerTransactionDetailsProfileView/>} />
-      <Route path="sellermanagetable/sellerprofileview/:userId/packagingproductdetails/:productId" element={<SellerPackagingMaterialDetailsProfileView/>} />
-      <Route path="sellermanagetable/sellerprofileview/:userId/soldproductdetails/:productId" element={<SellerSoldProductDetailsProfileView/>} />
-    
-    
-    {/* products Routes */}
-    <Route path="allproduct"  element={<AllProduct/>}/>
-    <Route path="allproduct/createproduct" element={<ProductUpload />} />
-    <Route path="productrequest" element={<ProductRequest />} />
-    <Route path="productrequest/productdetails/:productId" element={<ProductRequestDetails/>} />
-    <Route path="productpurchased" element={<ProductPurchased  />} />
-    <Route path="productpurchased/productview/:productId" element={<ProductPurchasedDetails/>} />
-    <Route path="allproduct/productinfo/:productId" element={<ProductInfo />} />
-    <Route path="customrequest" element={<CustomOrder />} />
-    <Route path="customrequest/createcustomrequest" element={<CreateCustomOrder />} />
-    <Route path="customrequest/updatecustomrequest/:id" element={<UpdateCustomOrder />} />
-    <Route path="customrequest/viewcustomrequest/:id" element={<ViewCustomOrder />} />
-    <Route path="customRequest/viewrequest/:id" element={<ViewBuyerRequest />} />
-    {/* <Route path="customrequesttoartist" element={<BuyerRequestToArtist />} /> */}
-    <Route path="customrequesttoartist/viewrequesttoartist/:id" element={<ViewBuyerRequestToArtist />} />
-  
-
-    {/* Resell products Routes */}
-    <Route path="allresellproduct" element={<AllResellProduct />} />
-    <Route path="allresellproduct/productdetails/:productId" element={<AllResellproductDetails />} />
-    <Route path="allresellproduct/productdetails/editproduct/:userId" element={<ResellProductEdit/>} />
-    <Route path="resellproductpurchased" element={<ResellProductPurchased  />} />
-    <Route path="resellproductpurchased/productview/:productId" element={<ResellProductPurchasedDetails/>} />
-    <Route path="reselltransaction" element={<ResellTransaction/>} />
-    <Route path="reselltransaction/transcationproductdetails/:productId" element={<ResellTransactionDetails/>} />
- 
-    {/* Transaction Routes */}
-    <Route path="alltransaction" element={<AllTransaction />} />
-    <Route path="alltransaction/transcationproductdetails/:productId" element={<AllTransactionDetails/>} />
-
-    {/* Packaging Material Routes */}
-    <Route path="packagingmaterialproduct"element={< PackagingMaterialProduct/>}/>
-    <Route path="packagingmaterialproduct/productdetails/updateproduct/:productId"element={<UpdatePackagingMaterialProduct/>}/>
-    <Route path="packagingmaterialproduct/addproduct" element={<AddPackagingMaterialProduct/>} />
-    <Route path="packagingmaterialproduct/productdetails/:productId" element={<PackagingMaterialProductdetails/>} />
-    <Route path="packagingproductpurchased"element={<PackagingMaterialProductpurchased/>}/>
-    <Route path="packagingproductpurchased/productdetails/:productId" element={<PackagingMaterialProductpurchaseddetails/>} />
-    <Route path="packagingproducttransaction"element={<  PackagingProductTransaction />}/>
-    <Route path="packagingproducttransaction/productdetails/:productId" element={<PackagingProductTransactiondetails/>} />
-    
-
-    {/* Bidding Routes */}
-    <Route path="allbiddingproduct"element={< AllBidingProduct/>}/>
-    <Route path="allbiddingproduct/productdetails/:productId" element={<AllBidingProductDetails/>} />
-    <Route path="biddingproductststus"element={< BidingProductStatus />}/>
-    <Route path="biddingproductststus/productdetails/:productId" element={<BidingProductStatusDetails/>} />
-    <Route path="biddedproduct"element={<Biddedproduct/>}/>
-    <Route path="biddedproduct/productdetails/:productId" element={<BiddedproductDetails/>} />
-    <Route path="transactionbiddedprdouct"element={<BiddedproductTransaction/>}/>
-    <Route path="transactionbiddedprdouct/productdetails/:productId" element={<BiddedproductTransactionDetails/>} />
-  
-    {/* Category Routes */}
-    <Route path="productcategory"element={< ProductCategory/>}/>
-    <Route path="blogcategory"element={< BlogCategory/>}/>
-   
-       {/* Admin*/}
-    <Route path="admin"element={< Admin/>}/>
-    <Route path="admin/adminprofile/:userId" element={<AdminProfile />} />
-    <Route path="admin/adminprofileview/:userId" element={<  AdminProfileView/>} />
-  
-  
-
-  
-    
-
-  {/* User Profile Route */}
-  <Route path="completeprofile/:userId" element={<UserProfile />} />
-</Route>
-</>
- {/* )}  */}
-
-
-
-
-          {/* <Route path="/trial" element={<Trial />} />
-          <Route path="/artist" element={<ArtistManagement />} /> */}
-            {/* <Route path="*" element={<Navigate to="/login" replace />} /> */}
-        </Routes>
-      </LayoutWrapper>
-    </Router>
+  return showAnimation && location.pathname === '/' ? (
+    <PreloaderAnimation />
+  ) : (
+    <WebsiteLayout>
+      <Outlet />
+    </WebsiteLayout>
   );
 };
 
-const LayoutWrapper = ({ children }) => {
-  // const location = useLocation(); // Now inside the Router
-  // const hideHeaderFooterRoutes = [
-  //   "/completeprofile",
-  //   "/image-edit",
-  //   "/artists/:id",
-  //   "/ArtistManageTable",//superadmin ,admin  
-  //   "/BuyerManageTable",//superadmin ,admin  
-  //   "/teamboard",//superadmin ,admin  
-  //   "/maintenance",//superadmin ,admin  
-  //   "/search",
-  //   "/invoice",
-  //   "/imagegallery",
-  //   "/Fileimages",
-  //   "/403",
-  //   "/404",
-  //   "/Filemedia",
-  //   "/Filedocs",
-  //   "/create-blog",
-  //   "/dashboardaccess",
-  //   "/Bloglist",//superadmin ,admin  
-  //   "/Filedashboard",
-  //   "/Blogdetails",
-  //   "/Blogpost",
-  //   "/Appinbox",
-  //   "/Appcontact",
-  //   "/Appchat",
-  //   "/Blogdashboard",
-  //   "/BlogRequest",    //superadmin ,admin
-  //   "/Product-uploade"
-  // ];
-  // const shouldHideHeaderFooter = hideHeaderFooterRoutes.includes(
-  //   location.pathname
-  // );
+const AppRoutes = () => {
+  const { isAuthenticated, userType, status: userStatus } = useAuth();
 
   return (
-    <>
-      {/* {!shouldHideHeaderFooter && <Header />} */}
-      {children}
-      {/* {!shouldHideHeaderFooter && <Footer />} */}
-    </>
+    <Routes>
+      {/* -------------------------------------------Public Routes------------------------------------------------- */}
+      <Route element={<PublicRoute />}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/artist-seller-register" element={<ArtistSellerRegister />} />
+        <Route path="/forgotpassword" element={<ForgotPassword />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-services" element={<TermsofServices />} />
+        <Route path="/bidding" element={<BiddingPass />} />
+      </Route>
+
+      {/*-------------------------------------------Super Admin Routes--------------------------------------------- */}
+      <Route
+        path="/super-admin"
+        element={
+          <PrivateRoute allowedRoles={["Super-Admin"]}>
+            <SuperAdminLayout />
+          </PrivateRoute>
+        }
+      >
+        <Route index element={<SuperAdminDashboard />} />
+        <Route path="dashboard" element={<SuperAdminDashboard />} />
+        <Route path="profile" element={<UserProfile />} />
+        <Route path="blog" element={<SuperAdminBlog />} />
+        <Route path="blog/create-blog" element={<SuperAdminBlogPost />} />
+        <Route path="blog/view-blog" element={<SuperAdminViewBlog />} />
+        <Route path="blog/update-blog" element={<SuperAdminUpdateBlog />} />
+        <Route path="product/product-info" element={<SuperAdminProductInfo />} />
+
+        {/* Admin Management */}
+        <Route path="admin" element={<Admin />} />
+        <Route path="admin/editprofile" element={<AdminProfile />} />
+        <Route path="admin/viewprofile" element={<AdminViewProfile />} />
+
+        {/* Artist Management */}
+        <Route path="artist/management" element={<ArtistManagement />} />
+        <Route path="artist/artist-edit" element={<ProductEditRequest />} />
+        <Route path="artist/blogrequest" element={<BlogRequest />} />
+        <Route path="artist/blogrequest/view-Blog" element={<BlogRequestView />} />
+        <Route path="artist/blogrequest/update-blog" element={<BlogRequestUpdate />} />
+        <Route path="artist/blogrequest/blog-details/:slug" element={<BlogRequestDetails />} />
+        <Route path="artist/blogs" element={<ApprovedBlogs />} />
+        <Route path="artist/blogs/blog-details/:slug" element={<ApprovedBlogsDetails />} />
+        <Route path="artist/blogs/blog-update/:slug" element={<ApprovedBlogsUpdate />} />
+        <Route path="artist/artistproductrequest" element={<Artistproductrequest />} />
+        <Route path="artist/allartistproduct" element={<ArtistAllProduct />} />
+        <Route path="artist/sold-product" element={<SoldProduct />} />
+        <Route path="artist/management/artistprofileview/" element={<ProductViewRequest />} />
+        <Route path="artist/artistprofileview/:userId" element={<ProductViewRequest />} />
+        <Route path="artist/soldproducts" element={<ArtistSoldProductTable />} />
+        <Route path="artist/soldproducts/view" element={<ArtistSoldProductView />} />
+        <Route path="artist/artisttransaction" element={<ArtistTransaction />} />
+        <Route path="artist/artistpackagingmaterial" element={<ArtistPackagingMaterial />} />
+        <Route path="artist/management/productrequest/:userId" element={<ArtistProductRequestView />} />
+        <Route path="artist/management/artisteditreuqest/update-blog" element={<EditBlogRequest />} />
+        <Route path="artist/management/artisteditreuqest/" element={<ProductEditRequest />} />
+        <Route path="artist/allartistproduct/productdetails/:userId" element={<ArtistProductsDetails />} />
+        <Route path="artist/allartistproduct/productdetails/:userId" element={<ArtistProductsDetails />} />
+        <Route path="artist/bidding-pass" element={<ArtistProductBidding />} />
+
+        {/* Buyer Management */}
+        <Route path="buyer/management" element={<BuyerManagement />} />
+        <Route path="buyer/productpurchased" element={<BuyerProductPurchase />} />
+        <Route path="buyer/productpurchased/view" element={<BuyerProductPurchaseView />} />
+        <Route path="buyer/resellproduct" element={<BuyerProductRequest />} />
+        <Route path="buyer/soldproduct" element={<BuyerSoldProduct />} />
+        <Route path="buyer/transaction" element={<BuyerTransaction />} />
+        <Route path="buyer/packagingmaterial" element={<BuyerPackagingMaterial />} />
+        <Route path="buyer/management/productview/" element={<BuyermanageProductView />} />
+        <Route path="buyer/management/productedit/" element={<BuyermanageProductEdit />} />
+        <Route path="buyer/resellproduct/productview/:userId" element={<BuyerResellProductView />} />
+
+        {/* Seller Management */}
+        <Route path="seller/management" element={<SellerManagement />} />
+        <Route path="seller/product" element={<SellerProducts />} />
+        <Route path="seller/productrequest" element={<SellerProductRequest />} />
+        <Route path="seller/soldproduct" element={<SellerSoldProducts />} />
+        <Route path="seller/transaction" element={<SellerTransaction />} />
+        <Route path="seller/packagingmaterial" element={<SellerPackaging />} />
+        <Route path="seller/management/productdetails-view" element={<SellerManageProductView />} />
+        <Route path="seller/management/productdetails-edit" element={<SellerManageProductEdit />} />
+        <Route path="seller/bidding-pass" element={<SellerProductBidding />} />
+
+        {/* Product Management */}
+        <Route path="product-table" element={<ProductTableView />} />
+        <Route path="product-table/bidding-pass" element={<SuperAdminBiddingPass />} />
+        <Route path="customordertable" element={<CustomOrderView />} />
+        <Route path="customordertable/view-request" element={<ViewCustomRequestsuperadmin />} />
+        <Route path="purchasetable" element={<PurchaseTable />} />
+        <Route path="purchasetable/view" element={<PurchaseTableView />} />
+        <Route path="product-upload" element={<ProductUploads />} />
+
+        {/* Bidding Management */}
+        <Route path="bidding/allproduct" element={<AllBiddingProduct />} />
+        <Route path="bidding/bidded-product" element={<BiddedProduct />} />
+        <Route path="bidding/transaction" element={<BiddedProductTransaction />} />
+        <Route path="bidding/pass-table" element={<BiddingPassTable />} />
+
+        {/* Product Setting */}
+        <Route path="product-settings/product-type" element={<ProductType />} />
+        <Route path="product-settings/product-medium" element={<ProductMedium />} />
+        <Route path="product-settings/product-material" element={<ProductMaterial />} />
+        <Route path="product-settings/product-edition-type" element={<ProductEditionTypes />} />
+        <Route path="product-settings/product-surface-type" element={<ProductSurfaceTypes />} />
+        <Route path="product-settings/product-coupon-code" element={<ProductCouponCodes />} />
+        <Route path="product-settings/product-packaging-type" element={<ProductPackagingTypes />} />
+        <Route path="product-settings/copyrights-rights" element={<CopyrightsRights />} />
+        <Route path="product-settings/blockchain-network" element={<BlockchainNetworks />} />
+
+
+
+        {/* Settings */}
+        <Route path="settings/email-setting" element={<EmailSettings />} />
+        <Route path="settings/blog-category" element={<BlogCategory />} />
+        <Route path="settings/product-category" element={<ProductCategory />} />
+        <Route path="settings/marketing" element={<SuperAdminMarketing />} />
+        <Route path="settings/certification" element={<CertificationSetting />} />
+        <Route path="settings/auto-targeting" element={<AutoTargetingSetting />} />
+        <Route path="settings/group-targeting" element={<GroupTargetingSetting />} />
+        <Route path="settings/keyword-targeting" element={<KeywordTargetingSetting />} />
+        <Route path="settings/user-role" element={<UserRole />} />
+        <Route path="settings/create-user-role" element={<CreateRole />} />
+        <Route path="product-settings/token-standard" element={<TokenStandards />} />
+        <Route path="product-settings/period-era" element={<PeriodEras />} />
+        <Route path="settings/gst" element={<GSTSetting  />} />
+        
+
+
+        {/* Advertise Routes */}
+        <Route path="advertise" element={<SuperAdminArtistAdvertise />} />
+        {/* Certification Routes */}
+        <Route path="certification" element={<SuperAdminCertification />} />
+        <Route path="certification/create-certification" element={<   CreateCertifications />} />
+
+        {/* FAQ Routes */}
+        <Route path="faq" element={<FAQ />} />
+        {/* Carrer */}
+        <Route path="career" element={<Carrer />} />
+        <Route path="career/creer-job-post" element={<CreateCarrer />} />
+        <Route path="career/update-job-post" element={<UpdateCareer />} />
+        <Route path="career/view-job-post" element={<ViewCareer />} />
+
+        {/* Exhibition */}
+        <Route path="exhibition" element={<Exhibition />} />
+        <Route path="exhibition/create-exhibition" element={<CreateExhibition />} />
+        <Route path="exhibition/update-exhibition" element={<UpdateExhibition />} />
+        <Route path="exhibition/view-exhibition" element={<ViewExhibition />} />
+
+        <Route path="exhibition-request" element={<ExhibitionRequest />} />
+        <Route path="exhibition-request/update-exhibition" element={<UpdateExhibitionRequest />} />
+        <Route path="exhibition-request/view-exhibition" element={<ViewExhibitionRequest />} />
+
+
+      </Route>
+
+      {/*-------------------------------------------- Artist Routes-------------------------------------------------- */}
+      <Route
+        path="/artist"
+        element={
+          <PrivateRoute allowedRoles={["Artist"]}>
+            <ArtistLayout />
+          </PrivateRoute>
+        }
+      >
+        <Route index element={<ArtistDashboard />} />
+        <Route path="dashboard" element={<ArtistDashboard />} />
+        <Route path="profile" element={<UserProfile />} />
+        {/* Blogs */}
+        <Route path="bloglist" element={<BlogList />} />
+        <Route path="bloglist/create-blog" element={<BlogPost />} />
+        <Route path="bloglist/update-blog" element={<UpdateBlog />} />
+        <Route path="bloglist/blog-details/:slug" element={<BlogDetails />} />
+        {/* Product Routes */}
+        <Route path="product" element={<AllProduct />} />
+        <Route path="product/bidding-pass" element={<ArtistBiddingPass />} />
+        <Route path="productUpload" element={<ProductUploade />} />
+        <Route path="custom-order" element={<CustomOrder />} />
+        <Route path="product/view-product" element={<ProductView />} />
+        <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
+        <Route path="purchase" element={<Productpurchase />} />
+        <Route path="purchase/view" element={<ProductpurchaseView />} />
+
+        {/* Advertise Routes */}
+        <Route path="advertise" element={<ArtistAdvertise />} />
+        <Route path="advertise/sponser" element={<ArtistSponser />} />
+
+
+        {/* Bidding Routes */}
+        <Route path="bidding-products-table" element={<ArtistBidingAllProducts />} />
+        <Route path="bidded-products-table" element={<ArtistBiddedProducts />} />
+        <Route path="bidding-pass-table" element={<ArtistBidPassTable />} />
+
+        {/* Certification Routes */}
+        <Route path="certification" element={<ArtistCertification />} />
+        <Route path="certification/create-certification" element={<  CreateArtitstCertifications />} />
+
+        {/* Exhibition */}
+        <Route path="exhibition" element={<ArtistExhibition />} />
+        <Route path="exhibition/create-exhibition" element={<ArtistCreateExhibition />} />
+        <Route path="exhibition/update-exhibition" element={<ArtistUpdateExhibition />} />
+        <Route path="exhibition/view-exhibition" element={<ArtistViewExhibition />} />
+
+        {/* Premium Badges */}
+        <Route path="premium-badges" element={<ArtistPremiumBages />} />
+       {/* Product Setting  */}
+        <Route path="products-settings/product-coupon-code" element={<ArtistProductCouponCodes />} />
+        
+
+      </Route>
+
+      {/* --------------------------------------------Buyer Routes---------------------------------------------------- */}
+      <Route
+        path="/buyer"
+        element={
+          <PrivateRoute allowedRoles={["Buyer"]}>
+            <BuyerLayout />
+          </PrivateRoute>
+        }
+      >
+        <Route index element={<BuyerDashboard />} />
+        <Route path="dashboard" element={<BuyerDashboard />} />
+        <Route path="profile" element={<UserProfile />} />
+      </Route>
+
+      {/*-------------------------------------------------- Seller Routes -----------------------------------------------*/}
+      <Route
+        path="/seller"
+        element={
+          <PrivateRoute allowedRoles={["Seller"]}>
+            <SellerLayout />
+          </PrivateRoute>
+        }
+      >
+        <Route index element={<SellerDashboard />} />
+        <Route path="dashboard" element={<SellerDashboard />} />
+        <Route path="profile" element={<UserProfile />} />
+        {/* Product Routes */}
+        <Route path="product-details" element={<ViewProductDetails />} />
+        <Route path="product-details/bidding-pass" element={<SellerBiddingPass />} />
+        <Route path="SellerProductUpload" element={<SellerProductUpload />} />
+        <Route path="purchased-product" element={<SellerPurchasedProducts />} />
+
+        {/* Advertise Routes */}
+        <Route path="advertise" element={<SellerAdvertise />} />
+        {/* Bidding Routes */}
+        <Route path="bidding-products-table" element={<SellerBidingAllProducts />} />
+        <Route path="bidded-products-table" element={<SellerBiddedProducts />} />
+        <Route path="bidding-pass-table" element={<SellerBidPassTable />} />
+        {/* Certification Routes */}
+        <Route path="certification" element={<SellerCertification />} />
+        <Route path="certification/create-certification" element={<  CreateSellerCertifications />} />
+
+        {/* Exhibition */}
+        <Route path="exhibition" element={<SellerExhibition />} />
+        <Route path="exhibition/create-exhibition" element={<SellerCreateExhibition />} />
+        <Route path="exhibition/update-exhibition" element={<SellerUpdateExhibition />} />
+        <Route path="exhibition/view-exhibition" element={<SellerViewExhibition />} />
+
+        <Route path="premium-badges" element={<SellerPremiumBages />} />
+
+         {/* Product Setting  */}
+        <Route path="products-settings/product-coupon-code" element={<SellerProductCouponCodes />} />
+      </Route>
+
+      {/*-------------------------------------------- Website Routes-------------------------------------------------- */}
+      <Route path="/" element={<WebsiteWrapper />}>
+        <Route index element={<WebsiteMain />} />
+        <Route
+          path="/my-account"
+          element={
+            <PrivateRoute allowedRoles={["Buyer"]}>
+              <MyAccountMainLayout />
+            </PrivateRoute>
+          }
+        >
+          <Route element={<AccountPage />}>
+            <Route index element={<AccountForm />} />
+            <Route path="personal-info" element={<AccountForm />} />
+            <Route path="my-orders" element={<MyOrders />} />
+            <Route path="my-orders/view" element={<MyOrderView />} />
+            <Route path="manage-address" element={<ManageAddress />} />
+            <Route path="bank-payment-details" element={<BankPaymentDetails />} />
+            <Route path="payment-method" element={<PaymentMethod />} />
+            <Route path="password-manager" element={<PasswordManager />} />
+            <Route path="account-verification" element={<AccountVerification />} />
+            <Route path="social-media-promotion" element={<SocialMediaPromotion />} />
+            <Route path="custom-request" element={<CustomRequest />} />
+            <Route path="notification-preferences" element={<NotificationAndPreferences />} />
+            <Route path="security-agreements" element={<AccountSecurityAndAgreements />} />
+            <Route path="logout" element={<Logout />} />
+            <Route path="track-your-order" element={<TrackOrder />} />
+            <Route path="wishlist" element={<WishListTable />} />
+            <Route path="my-cart" element={<MyCartList />} />
+            <Route path="check-out" element={<CheckOut />} />
+            <Route path="order-completed" element={<OrderCompleted />} />
+            <Route path="error404" element={<Error404Page />} />
+          </Route>
+        </Route>
+      </Route>
+
+      {/*-------------------------------------------- Root Route - Auto Redirect----------------------------------------- */}
+      <Route
+        index
+        element={
+          isAuthenticated ? (
+            userType === 'Super-Admin' ? (
+              <Navigate to="/super-admin/dashboard" replace />
+            ) : userType === 'Artist' ? (
+              <Navigate to={(userStatus === 'Unverified' || userStatus === 'Rejected') ? '/artist/profile' : '/artist/dashboard'} replace />
+            ) : userType === 'Buyer' ? (
+              <Navigate to="/buyer/dashboard" replace />
+            ) : userType === 'Seller' ? (
+              <Navigate to={(userStatus === 'Unverified' || userStatus === 'Rejected') ? '/seller/profile' : '/seller/dashboard'} replace />
+            ) : (
+              <WebsiteMain />
+            )
+          ) : (
+            <WebsiteMain />
+          )
+        }
+      />
+
+      {/*----------------------------------------- Error Routes-------------------------------------------------------- */}
+      <Route path="/404" element={<PagenotFound404 />} />
+      <Route path="/unauthorized" element={<UnauthorizedAccess />} />
+      <Route path="*" element={<Navigate to="/404" replace />} />
+    </Routes>
   );
 };
 
 export default AppRoutes;
+

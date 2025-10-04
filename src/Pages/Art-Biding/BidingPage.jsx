@@ -3,7 +3,7 @@ import NFTCard from './sub/NFTCard';
 import WhyChooseUs from './sub/WhyChooseUs';
 import CreativeInspiration from './sub/CreativeInspiration';
 import ImageCollection from './sub/ImageCollection';
-import FAQ from '../../Component/FAQ/FAQ';
+import FAQ from '../../Component/Dashboard/FAQ/FAQ';
 const BidingPage = () => {
 	
 	return (

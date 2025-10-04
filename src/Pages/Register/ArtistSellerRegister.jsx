@@ -3,8 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../Login/LoginStyles.css';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import axios from 'axios';
+import { FaEye, FaEyeSlash, FaCheck } from 'react-icons/fa';
+import postAPI from '../../api/postAPI';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -13,8 +13,8 @@ const Register = () => {
     emailOrPhone: '',
     password: '',
     confirmPassword: '',
-    userType: 'Artist', 
-    role: 'artist',     
+    userType: 'Artist',
+    role: 'artist',
     artistName: '',
     businessName: ''
   });
@@ -22,24 +22,53 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
-  const [isBusiness, setIsBusiness] = useState(false); 
+  const [loadingOTP, setLoadingOTP] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isBusiness, setIsBusiness] = useState(false);
+  const [showOTPField, setShowOTPField] = useState(false);
   const navigate = useNavigate();
 
+  // const handleChange = (e) => {
+  //   setFormData({
+  //     ...formData,
+  //     [e.target.id]: e.target.value
+  //   });
+  //   if (e.target.id === 'emailOrPhone' && isEmailVerified) {
+  //     setIsEmailVerified(false);
+  //     setShowOTPField(false);
+  //   }
+  // };
+
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.id]: e.target.value
-    });
-  };
+  const { id, value } = e.target;
+  let updatedValue = value;
+  
+  if (id === 'firstName' || id === 'lastName') {
+    updatedValue = value.charAt(0).toUpperCase() + value.slice(1);
+  }
+
+  setFormData({
+    ...formData,
+    [id]: updatedValue,
+  });
+
+  if (id === 'emailOrPhone' && isEmailVerified) {
+    setIsEmailVerified(false);
+    setShowOTPField(false);
+  }
+};
 
   const handleToggle = () => {
     const newIsBusiness = !isBusiness;
     setIsBusiness(newIsBusiness);
-
     setFormData({
       ...formData,
       userType: newIsBusiness ? 'Seller' : 'Artist',
-      role: newIsBusiness ? 'seller' : 'artist'
+      role: newIsBusiness ? 'seller' : 'artist',
+      artistName: newIsBusiness ? '' : formData.artistName,
+      businessName: newIsBusiness ? formData.businessName : ''
     });
   };
 
@@ -57,49 +86,98 @@ const Register = () => {
     return `+91${phone.replace(/^\+91/, '')}`;
   };
 
+  const handleSendOTP = async () => {
+    if (!isValidEmail(formData.emailOrPhone)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    try {
+      setLoadingOTP(true);
+      await postAPI('/auth/send-otp', { email: formData.emailOrPhone });
+      setShowOTPField(true);
+      toast.success("OTP sent to your email");
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to send OTP');
+    } finally {
+      setLoadingOTP(false);
+    }
+  };
+
+  const handleVerifyOTP = async () => {
+    try {
+      setLoadingOTP(true);
+      const response = await postAPI('/auth/verify-otp', {
+        email: formData.emailOrPhone,
+        otp
+      });
+
+      if (response.data.success) {
+        setIsEmailVerified(true);
+        setShowOTPField(false);
+        setOtp('');
+        toast.success("Email verified successfully");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Invalid OTP');
+    } finally {
+      setLoadingOTP(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoadingSubmit(true);
 
     const requiredFields = ['firstName', 'lastName', 'emailOrPhone', 'password', 'confirmPassword'];
     for (const field of requiredFields) {
       if (!formData[field]) {
         toast.error(`Please fill in ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+        setLoadingSubmit(false);
         return;
       }
     }
 
+    const isEmail = isValidEmail(formData.emailOrPhone);
+    const isPhone = isValidPhone(formData.emailOrPhone);
+
+    if (!isEmail && !isPhone) {
+      toast.error("Please enter a valid email or phone number (10 digits with optional +91)");
+      setLoadingSubmit(false);
+      return;
+    }
+
+    if (isEmail && !isEmailVerified) {
+      toast.error("Please verify your email before signing up");
+      setLoadingSubmit(false);
+      return;
+    }
 
     if (formData.userType === 'Artist' && !formData.artistName) {
       toast.error("Artist name is required");
+      setLoadingSubmit(false);
       return;
     }
 
     if (formData.userType === 'Seller' && !formData.businessName) {
       toast.error("Business name is required");
+      setLoadingSubmit(false);
       return;
     }
 
-    const isEmail = isValidEmail(formData.emailOrPhone);
-        const isPhone = isValidPhone(formData.emailOrPhone);
-    
-        if (!isEmail && !isPhone) {
-          toast.error("Please enter a valid email or phone number (10 digits with optional +91)");
-          return;
-        }
-
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords don't match!");
+      setLoadingSubmit(false);
       return;
     }
 
     if (!acceptTerms) {
       toast.error("You must accept the Terms and Conditions");
+      setLoadingSubmit(false);
       return;
     }
 
     try {
-  
       const payload = {
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -110,16 +188,14 @@ const Register = () => {
         userType: formData.userType,
         role: formData.role
       };
-      delete payload.emailOrPhone; 
 
-     
       if (formData.userType === 'Artist') {
         payload.artistName = formData.artistName;
       } else if (formData.userType === 'Seller') {
         payload.businessName = formData.businessName;
       }
 
-      const response = await axios.post('http://localhost:3001/auth/createuser', payload);
+      const response = await postAPI('/auth/createuser', payload);
 
       toast.success(response.data.message);
       setTimeout(() => {
@@ -128,6 +204,8 @@ const Register = () => {
     } catch (error) {
       console.error('Registration error:', error);
       toast.error(error.response?.data?.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoadingSubmit(false);
     }
   };
 
@@ -135,7 +213,6 @@ const Register = () => {
     <>
       <ToastContainer />
       <div className="container-fluid p-0 min-vh-100 d-flex flex-column flex-lg-row">
-
         <div className="col-12 col-lg-6 d-none d-lg-flex flex-column justify-content-center align-items-center p-4 p-md-5 text-white right-panel-register">
           <h2 className="fw-bold mb-3 mb-md-4 fs-2 fs-md-1">Already Signed up?</h2>
           <p className="mb-3 mb-md-4 text-center"
@@ -161,7 +238,6 @@ const Register = () => {
             Sign In
           </Link>
         </div>
-
 
         <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5">
           <h2 className="fw-bold mb-4 mb-md-3 text-dark fs-3 fs-md-1 text-center">Sign up for an Account</h2>
@@ -236,22 +312,115 @@ const Register = () => {
               }}>
                 Email/Phone
               </label>
-              <input
-                     type="text"
-                     className="form-control"
-                     id="emailOrPhone"  
-                     required
-                     value={formData.emailOrPhone}
-                     onChange={handleChange}   
-                style={{
-                  height: '48px',
-                  border: "1px solid #6b4f36",
-                  fontSize: "16px",
-                  color: "black",
-                  paddingRight: '40px'
-                }}
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="emailOrPhone"
+                  required
+                  value={formData.emailOrPhone}
+                  onChange={handleChange}
+                  style={{
+                    height: '48px',
+                    border: "1px solid #6b4f36",
+                    fontSize: "16px",
+                    color: "black",
+                    paddingRight: isValidEmail(formData.emailOrPhone) ? '80px' : '10px'
+                  }}
+                  disabled={isEmailVerified}
+                />
+                {isValidEmail(formData.emailOrPhone) && (
+                  isEmailVerified ? (
+                    <span
+                      style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        color: '#4caf50',
+                        fontSize: '18px'
+                      }}
+                    >
+                      <FaCheck />
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        border: 'none',
+                        background: "#6b4f36",
+                        color: "white",
+                        padding: '8px 12px',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '14px'
+                      }}
+                      onClick={handleSendOTP}
+                      disabled={loadingOTP}
+                    >
+                      {loadingOTP ? 'Sending...' : 'Send OTP'}
+                    </button>
+                  )
+                )}
+              </div>
             </div>
+
+            {showOTPField && !isEmailVerified && isValidEmail(formData.emailOrPhone) && (
+              <div className="mb-3 position-relative">
+                <label htmlFor="otp" className="form-label position-absolute text-dark px-2" style={{
+                  top: '-12px',
+                  left: '15px',
+                  fontStyle: 'italic',
+                  fontSize: '1rem',
+                  zIndex: '1',
+                  background: "white",
+                }}>
+                  Enter OTP
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="otp"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    placeholder="Enter 6-digit OTP"
+                    maxLength={6}
+                    style={{
+                      height: '48px',
+                      border: "1px solid #6b4f36",
+                      fontSize: "16px",
+                      color: "black",
+                      paddingRight: '80px'
+                    }}
+                  />
+                  <button
+                    type="button"
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      border: "none",
+                      background: "#6b4f36",
+                      color: "white",
+                      padding: '8px 12px',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '14px'
+                    }}
+                    onClick={handleVerifyOTP}
+                    disabled={loadingOTP || otp.length !== 6}
+                  >
+                    {loadingOTP ? 'Verifying...' : 'Verify'}
+                  </button>
+                </div>
+              </div>
+            )}
 
             <div className="mb-3">
               <div
@@ -260,7 +429,7 @@ const Register = () => {
                   width: '200px',
                   height: '40px',
                   borderRadius: '20px',
-                  backgroundColor: '#f0e6d6',
+                  backgroundColor: '#f0e6db',
                   border: '1px solid #6b4f36',
                   cursor: 'pointer',
                 }}
@@ -282,7 +451,6 @@ const Register = () => {
                 >
                   {isBusiness ? 'Seller' : 'Artist'}
                 </div>
-
                 <div
                   className="position-absolute d-flex w-100 justify-content-around px-2"
                   style={{
@@ -463,6 +631,7 @@ const Register = () => {
                   className="form-check-input me-2"
                   type="checkbox"
                   id="acceptTerms"
+                  required
                   checked={acceptTerms}
                   onChange={(e) => setAcceptTerms(e.target.checked)}
                   style={{
@@ -476,7 +645,11 @@ const Register = () => {
                   }}
                 />
                 <label className="form-check-label text-dark fst-italic" htmlFor="acceptTerms" style={{ fontSize: '1rem', fontStyle: 'italic' }}>
-                  I accept Terms and Conditions
+                  I accept&nbsp;      
+                  <a href="/terms-services" target="_blank" rel="noopener noreferrer" style={{ color: '#6b4f36', textDecoration: 'underline' }}>
+                    Terms & Conditions
+                  </a> 
+                  <span style={{ color: 'red' }}> *</span>
                 </label>
               </div>
             </div>
@@ -489,10 +662,12 @@ const Register = () => {
                 fontSize: '1.1rem',
                 height: '48px',
                 transition: 'all 0.3s ease',
-                fontStyle: 'italic'
+                fontStyle: 'italic',
+                opacity: isValidEmail(formData.emailOrPhone) && !isEmailVerified ? 0.6 : 1
               }}
+              disabled={loadingSubmit || (isValidEmail(formData.emailOrPhone) && !isEmailVerified)}
             >
-              Sign up
+              {loadingSubmit ? 'Creating account...' : 'Sign up'}
             </button>
           </form>
         </div>
