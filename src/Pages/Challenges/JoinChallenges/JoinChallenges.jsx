@@ -1,0 +1,227 @@
+import React, { useState } from "react";
+import { IoCloudUpload } from "react-icons/io5";
+
+const JoinChallenges = () => {
+  const [showFilters, setShowFilters] = useState(false);
+
+  return (
+    <div className="mb-4">
+      <div>
+        {/* Top Section: Breadcrumb + Search */}
+        <div className="w-full py-3 px-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            {/* Breadcrumb */}
+            <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
+              <a href="#" className="hover:text-red-500">
+                Home
+              </a>
+              <span>/</span>
+              <a href="#" className="hover:text-red-500">
+                Store
+              </a>
+              <span>/</span>
+              <a href="#" className="hover:text-red-500">
+                Paintings
+              </a>
+              <span>/</span>
+              <span className="font-medium text-gray-900">Abstract</span>
+            </nav>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3">
+          {/* title */}
+          <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
+            Join Challenges
+          </h1>
+        </div>
+
+        <hr className="my-3 border-dark" />
+
+        {/* Subtitle */}
+        <p className="mt-3 text-xs md:text-base font-medium text-dark leading-relaxed px-3">
+          At ArtSays, we make it simple for you to collaborate directly with
+          talented artists and bring your creative vision to life. Commissioning
+          custom artwork is a personalized process designed to give you a unique
+          piece that reflects your ideas, style, and story.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2">
+        <div className="md:p-4 content-center">
+          <div className="max-w-3xl text-[#48372D] space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold">Theme</h2>
+              <p className="mt-1">Celebrate the Spirit of Diwali Through Art</p>
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-bold">Description</h2>
+              <p className="mt-1">
+                Artists are invited to express the joy, lights, and festive
+                spirit of Diwali through their unique style — whether it&apos;s
+                painting, digital art, illustration, or photography. Show how
+                you see the festival of lights!
+              </p>
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-bold">Submission Deadline</h2>
+              <p className="mt-1">25th October 2025</p>
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-bold">Entry Charges</h2>
+              <p className="mt-1">₹199 / $5 (per artwork submission)</p>
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-bold">Prizes</h2>
+              <p className="mt-1">
+                Featured spot on ArtSays, social media shoutouts, and a digital
+                certificate.
+              </p>
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-bold">Eligibility</h2>
+              <p className="mt-1">
+                Open to all registered ArtSays creators worldwide.
+              </p>
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-bold">Rules</h2>
+              <ul className="list-decimal list-inside mt-2 space-y-1">
+                <li>
+                  Stick to the Diwali theme (lights, diyas, rangoli, joy,
+                  family, celebration).
+                </li>
+                <li>
+                  Submit original artwork only (no plagiarism or AI-generated
+                  art).
+                </li>
+                <li>
+                  Any medium is allowed (digital, traditional, photography,
+                  mixed media).
+                </li>
+                <li>Add a caption/description for context.</li>
+                <li>Keep it festive & respectful to culture.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div className="justify-center items-center border !border-[#48372D] !border-t-[20px] rounded-2xl p-4 md:!p-5">
+          <h1 className="text-2xl md:text-4xl font-bold text-[#48372D] text-center">
+            Apply Now
+          </h1>
+          <p className="text-center text-md py-2">
+            Apply As you want to join Artsays!
+          </p>
+          <br />
+          <form action="#" method="POST" class="space-y-6">
+            {/* <!-- Name --> */}
+            <div className="py-2">
+              <label class="block font-semibold text-gray-800 mb-1">Name</label>
+              <input
+                type="text"
+                placeholder="Type your Full name"
+                class="w-full bg-transparent border-b border-gray-300 focus:border-[#E56500] focus:outline-none py-2"
+              />
+            </div>
+
+            {/* <!-- Email --> */}
+            <div className="py-2">
+              <label class="block font-semibold text-gray-800 mb-1">
+                Email
+              </label>
+              <input
+                type="email"
+                placeholder="Type your Email Address"
+                class="w-full bg-transparent border-b border-gray-300 focus:border-[#E56500] focus:outline-none py-2"
+              />
+            </div>
+
+            {/* <!-- Contact --> */}
+            <div className="py-2">
+              <label class="block font-semibold text-gray-800 mb-1">
+                Contact Number
+              </label>
+              <input
+                type="tel"
+                placeholder="Type your Contact Number"
+                class="w-full bg-transparent border-b border-gray-300 focus:border-[#E56500] focus:outline-none py-2"
+              />
+            </div>
+
+            {/* <!-- Artist Username [Handel] --> */}
+            <div className="py-2">
+              <label class="block font-semibold text-gray-800 mb-1">
+                Artist Username [Handel]
+              </label>
+              <input
+                type="text"
+                placeholder="Type your Full name"
+                class="w-full bg-transparent border-b border-gray-300 focus:border-[#E56500] focus:outline-none py-2"
+              />
+            </div>
+
+            {/* <!-- Category --> */}
+            <div className="py-2">
+              <label class="block font-semibold text-gray-800 mb-1">
+                Category
+              </label>
+              <select class="w-full border-b border-gray-300 focus:border-[#E56500] focus:outline-none py-2 bg-transparent">
+                <option>Choose your Category</option>
+                <option>Painting</option>
+                <option>Mandala</option>
+                <option>Senior Devloper</option>
+              </select>
+            </div>
+
+            {/* <!-- Description of your Entry --> */}
+            <div className="py-2">
+              <label class="block font-semibold text-gray-800 mb-1">
+                Description of your Entry
+              </label>
+              <textarea
+                placeholder="Short Description of your Entry"
+                class="w-full bg-transparent border-b border-gray-300 focus:border-[#E56500] focus:outline-none py-2"
+              ></textarea>
+            </div>
+
+            {/* Upload Challenge Artwork */}
+            <div className="py-2">
+              <label className="block font-semibold text-gray-800 mb-1">
+                Upload Challenge Artwork
+              </label>
+              <div className="w-full border-b border-gray-300 py-6 text-center text-gray-500">
+                Drag photos and videos here
+                <br />
+                <span className="flex align-items-center justify-center text-blue-600 mt-3 cursor-pointer">
+                  Browse <IoCloudUpload className="ml-2 color-dark" />
+                </span>{" "}
+              </div>
+            </div>
+
+            {/* Checkbox */}
+            <div className="flex items-center py-2">
+              <input type="checkbox" className="mr-2" id="rules" />
+              <label htmlFor="rules" className="text-sm text-gray-700 mb-0">
+                I agree to the challenge rules & community guidelines.
+              </label>
+            </div>
+
+            {/* <!-- Submit --> */}
+            <div class="text-center py-2">
+              <button className="flex-1 bg-[#48372D] text-white py-2 px-6 rounded-full font-semibold shadow buy-now">
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+export default JoinChallenges;

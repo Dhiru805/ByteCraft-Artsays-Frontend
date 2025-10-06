@@ -1,0 +1,264 @@
+/* InteractiveCardComponent.css */
+.grad-container {
+  position: relative;
+}
+.grad-container::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 80%;
+  height: 70%;
+  background-image: linear-gradient(
+    120deg,
+    #6f4e37 30%,
+    #a67b5b 100%,
+    #ecb176 50%
+  );
+  filter: blur(150px); /* Adjust the blur radius as needed */
+  z-index: 1; /* Place it behind the content */
+}
+.icc-cards {
+  position: relative;
+  list-style-type: none;
+  padding: 0;
+  max-width: 24em;
+  margin: 25px auto;
+}
+
+.icc-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 365px;
+  border-radius: 30px;
+  padding: 40px;
+  background: #fed8b1; /* Updated background color */
+  /* border: 1px solid #A67B5B; Updated border color */
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+    rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+}
+
+.card-box {
+  margin: 0px;
+  height: 97%;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  border: 1px solid transparent; /* Transparent border to ensure the gradient is visible */
+}
+
+.icc-card--next {
+  z-index: 5;
+  /* Optional: Additional styling for next card */
+}
+
+.icc-card--out {
+  animation: icc-card-out 0.6s cubic-bezier(0.8, 0.2, 0.1, 0.8);
+  transform: translateY(-50px) rotate(8deg) translateX(55px) scale(0.95);
+  z-index: 1;
+  /* background:#A67B5B; Updated background color */
+}
+
+@keyframes icc-card-out {
+  0% {
+    z-index: 20;
+    transform: translateY(0px) rotate(-4deg);
+  }
+  50% {
+    transform: translateY(-120%) rotate(-5deg) translateX(-40px);
+  }
+  80% {
+    z-index: 1;
+  }
+}
+
+.icc-card--current {
+  cursor: auto;
+  user-select: auto;
+  position: relative;
+  z-index: 9;
+  opacity: 1;
+  width: 365px;
+  border-radius: 30px;
+  padding: 40px;/* Ensure padding is consistent */
+  background: #fed8b1; /* Updated background color */
+  /* border: 1px solid #A67B5B; Updated border color */
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+  rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+  rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset; /* Shadow for depth */
+  transform: rotate(-1deg) translateX(0%) scale(1); /* Maintain existing transform properties */
+  transition: transform 0.5s ease, opacity 0.5s ease; /* Ensure smooth transitions */
+  text-align: center; /* Ensure text is centered */
+}
+
+.icc-image-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.icc-main-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  transform: translateY(20%);
+}
+
+.icc-avatar-container {
+  display: flex;
+  align-items: center;
+  background: #ecb176; /* Updated background color */
+  border-radius: 50px;
+  padding: 4px;
+  margin-top: 10px;
+  /* border: 1px solid #A67B5B; Updated border color */
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+    rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+}
+
+.icc-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.icc-designation {
+  font-weight: bold;
+  color: #6f4e37; /* Updated text color */
+}
+
+.icc-clock {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.icc-time {
+  font-size: 18px;
+  height: 50px;
+  width: 50px;
+}
+
+.icc-time span {
+  display: block;
+  font-size: 12px;
+  color: #6f4e37; /* Updated text color */
+}
+
+.icc-dot{
+  font-weight: bolder;
+}
+
+.icc-bid {
+  margin-top: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #6f4e37; /* Updated text color */
+}
+
+/* Positioning cards with offset */
+.card-3 {
+  transform: translate(0px) rotateZ(20deg);
+  transform-origin: bottom left;
+}
+
+.card-2 {
+  transform: translate(0px) rotateZ(10deg);
+  transform-origin: bottom left;
+}
+
+.card-1 {
+  transform: translate(0px)rotateZ(0deg);
+  transform-origin: bottom left;
+}
+
+.bar-container {
+    width: 200px;          /* Width of the container */
+    height: 5px;           /* Height of the container */
+    margin: auto;
+    background-color: #e0e0e0; /* Background color for the container */
+    border-radius: 2.5px;  /* Rounded corners (optional) */
+    overflow: hidden;      /* Hide the overflow to keep the bar inside */
+    position: relative;    /* Position relative for absolute positioning of bar */
+}
+
+.bar {
+    width: 50px;           /* Width of the bar */
+    height: 5px;           /* Height of the bar */
+    background: linear-gradient(90deg,  #fed8b1, #ecb176, #a67b5b, #6f4e37);
+    border-radius: 2.5px;  /* Rounded corners (optional) */
+    position: absolute;    /* Position absolute for smooth animation */
+    animation: moveBar 2s linear infinite; /* Animation for moving the bar */
+}
+
+@keyframes moveBar {
+    0% {
+        left: 0;           /* Start at the beginning of the container */
+    }
+    100% {
+        left: 100%;        /* Move to the end of the container */
+    }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .icc-card {
+    width: 200px; /* Adjust width for tablets and mobile devices */
+    padding: 20px; /* Reduce padding for smaller screens */
+  }
+
+  .icc-card--current {
+    width: 200px; /* Adjust width for tablets and mobile devices */
+    padding: 20px; /* Reduce padding for smaller screens */
+  }
+
+  .icc-avatar-container {
+    padding: 2px; /* Reduce padding for smaller screens */
+  }
+
+  .card-box{
+    padding-bottom: 10px;
+  }
+
+  .icc-avatar {
+    width: 40px; /* Adjust avatar size */
+    height: 40px; /* Adjust avatar size */
+  }
+}
+
+@media (max-width: 480px) {
+  .icc-card {
+    width: 70%; /* Make card width 100% on very small screens */
+    padding: 15px; /* Further reduce padding */
+    border-radius: 20px; /* Reduce border radius for smaller screens */
+  }
+
+  .icc-card--current {
+    width: 70%; /* Make card width 100% on very small screens */
+    padding: 15px; /* Further reduce padding */
+    border-radius: 20px; /* Reduce border radius for smaller screens */
+  }
+
+  .icc-avatar-container {
+    padding: 1px; /* Further reduce padding */
+  }
+
+  .card-box{
+    padding-bottom: 10px;
+  }
+
+  .icc-avatar {
+    width: 30px; /* Adjust avatar size */
+    height: 30px; /* Adjust avatar size */
+  }
+}

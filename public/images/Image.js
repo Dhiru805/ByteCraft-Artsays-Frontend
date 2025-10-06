@@ -1,0 +1,4 @@
+const IMAGES ={
+    ChoiceImage:require('./')
+
+}
