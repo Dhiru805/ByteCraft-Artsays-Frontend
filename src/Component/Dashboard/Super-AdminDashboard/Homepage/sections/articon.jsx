@@ -17,9 +17,10 @@ const ArtIconCreate = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [sectionId, setSectionId] = useState(null);
 
   useEffect(() => {
-    const ensureHomepage = async () => {
+    const loadHomepageAndSection = async () => {
       try {
         const res = await getAPI("/api/homepage");
         let page = res.data.data?.[0];
@@ -29,11 +30,23 @@ const ArtIconCreate = () => {
           return;
         }
         setHomepageId(page._id);
+
+        const secRes = await getAPI(`/api/homepage-sections/art-icon/${page._id}`);
+        if (secRes.data?.success && secRes.data?.data) {
+          const s = secRes.data.data;
+          setSectionId(s._id);
+          setFormData({
+            heading: s.heading || "",
+            description: s.description || "",
+            buttonName: s.buttonName || "",
+            buttonLink: s.buttonLink || "",
+          });
+        }
       } catch (err) {
         toast.error(err.response?.data?.message || "Failed to load Homepage");
       }
     };
-    ensureHomepage();
+    loadHomepageAndSection();
   }, []);
 
   const handleChange = (e) => {
@@ -68,8 +81,11 @@ const ArtIconCreate = () => {
       submissionData.append("buttonName", formData.buttonName.trim());
       submissionData.append("buttonLink", formData.buttonLink.trim());
 
+      const endpoint = sectionId
+        ? `/api/homepage-sections/art-icon/update/${sectionId}`
+        : "/api/homepage-sections/art-icon/create";
       const res = await postAPI(
-        "/api/homepage-sections/art-icon/create",
+        endpoint,
         submissionData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -90,7 +106,7 @@ const ArtIconCreate = () => {
   return (
     <div className="container-fluid">
       <div className="block-header">
-        <h2>Create Art Icon Section</h2>
+        <h2>{sectionId ? "Edit Art Icon Section" : "Create Art Icon Section"}</h2>
 
         {!homepageId && <p className="text-warning">Loading Homepage, please wait...</p>}
 
@@ -151,12 +167,8 @@ const ArtIconCreate = () => {
 
             
                 <div className="d-flex align-items-center mb-3" style={{ gap: "10px" }}>
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    disabled={loading || !homepageId}
-                  >
-                    {loading ? "Creating..." : "Create Art Icon Section"}
+                  <button type="submit" className="btn btn-primary" disabled={loading || !homepageId}>
+                    {loading ? "Saving..." : sectionId ? "Update Art Icon Section" : "Create Art Icon Section"}
                   </button>
                 </div>
               </form>

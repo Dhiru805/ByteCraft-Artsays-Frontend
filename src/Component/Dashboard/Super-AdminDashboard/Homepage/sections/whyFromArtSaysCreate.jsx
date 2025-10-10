@@ -9,6 +9,7 @@ const WhyFromArtsaysCreate = () => {
   const navigate = useNavigate();
 
   const [homepageId, setHomepageId] = useState(null);
+  const [sectionId, setSectionId] = useState(null);
   const [formData, setFormData] = useState({
     heading: "",
     description: "",
@@ -20,7 +21,7 @@ const WhyFromArtsaysCreate = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const ensureHomepage = async () => {
+    const loadHomepageAndSection = async () => {
       try {
         const res = await getAPI("/api/homepage");
         let page = res.data.data?.[0];
@@ -30,11 +31,31 @@ const WhyFromArtsaysCreate = () => {
           return;
         }
         setHomepageId(page._id);
+        
+        // Fetch existing why buy artsays section
+        const sectionRes = await getAPI(`/api/homepage-sections/why-buy-artsays/${page._id}`);
+        if (sectionRes.data.success && sectionRes.data.data) {
+          const section = sectionRes.data.data;
+          setSectionId(section._id);
+          
+          setFormData({
+            heading: section.heading || "",
+            description: section.description || "",
+            buttonName: section.buttonName || "",
+            buttonLink: section.buttonLink || "",
+            cards: section.cards?.length ? section.cards.map(card => ({
+              image: null,
+              preview: card.icon || card.iconUrl || null,
+              title: card.heading || card.title || "",
+              description: card.description || ""
+            })) : []
+          });
+        }
       } catch (err) {
         toast.error(err.response?.data?.message || "Failed to load Homepage");
       }
     };
-    ensureHomepage();
+    loadHomepageAndSection();
   }, []);
 
   const validateImageFile = (file) => {
@@ -186,15 +207,19 @@ const WhyFromArtsaysCreate = () => {
         submissionData.append(`cards[${idx}][description]`, c.description.trim());
       }
 
-      const res = await postAPI("/api/homepage-sections/why-buy-artsays/create", submissionData, {
+      const endpoint = sectionId
+        ? `/api/homepage-sections/why-buy-artsays/update/${sectionId}`
+        : "/api/homepage-sections/why-buy-artsays/create";
+
+      const res = await postAPI(endpoint, submissionData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       if (res.data.success) {
-        toast.success(res.data.message || "Section created successfully!");
+        toast.success(res.data.message || "Section saved successfully!");
         navigate("/super-admin/homepage/create", { state: { reload: true } });
       } else {
-        toast.error(res.data.message || "Failed to create section");
+        toast.error(res.data.message || "Failed to save section");
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "Something went wrong");
@@ -207,7 +232,7 @@ const WhyFromArtsaysCreate = () => {
   return (
     <div className="container-fluid">
       <div className="block-header">
-        <h2>Create Why From Artsays Section</h2>
+        <h2>{sectionId ? "Edit Why From Artsays Section" : "Create Why From Artsays Section"}</h2>
 
         {!homepageId && <p className="text-warning">Loading Homepage, please wait...</p>}
 
@@ -317,7 +342,7 @@ const WhyFromArtsaysCreate = () => {
 
                 <div className="d-flex align-items-center mb-3" style={{ gap: "10px" }}>
                   <button type="submit" className="btn btn-primary" disabled={loading || !homepageId}>
-                    {loading ? "Creating..." : "Create Why From Artsays Section"}
+                    {loading ? "Saving..." : sectionId ? "Update Why From Artsays Section" : "Create Why From Artsays Section"}
                   </button>
                 </div>
               </form>

@@ -9,6 +9,7 @@ const BrowseCategoriesCreate = () => {
   const navigate = useNavigate();
 
   const [homepageId, setHomepageId] = useState(null);
+  const [sectionId, setSectionId] = useState(null);
   const [formData, setFormData] = useState({
     heading: "",
     description: "",
@@ -18,10 +19,11 @@ const BrowseCategoriesCreate = () => {
   });
 
   const [iconPreviews, setIconPreviews] = useState([null]);
+  const [existingIcons, setExistingIcons] = useState([null]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const ensureHomepage = async () => {
+    const loadHomepageAndSection = async () => {
       try {
         const res = await getAPI("/api/homepage");
         let page = res.data.data?.[0];
@@ -31,11 +33,32 @@ const BrowseCategoriesCreate = () => {
           return;
         }
         setHomepageId(page._id);
+        
+        const sectionRes = await getAPI(`/api/homepage-sections/browse-categories/${page._id}`);
+        if (sectionRes.data.success && sectionRes.data.data) {
+          const section = sectionRes.data.data;
+          setSectionId(section._id);
+          
+          setFormData({
+            heading: section.heading || "",
+            description: section.description || "",
+            buttonName: section.buttonName || "",
+            buttonLink: section.buttonLink || "",
+            tags: section.tags?.length ? section.tags.map(tag => ({
+              title: tag.title || "",
+              icon: null
+            })) : [{ title: "", icon: null }]
+          });
+          
+          const existingIconsList = section.tags?.map(tag => tag.icon || tag.iconUrl || null) || [null];
+          setExistingIcons(existingIconsList);
+          setIconPreviews(existingIconsList);
+        }
       } catch (err) {
         toast.error(err.response?.data?.message || "Failed to load Homepage");
       }
     };
-    ensureHomepage();
+    loadHomepageAndSection();
   }, []);
 
   const validateImageFile = (file, type) => {
@@ -62,6 +85,9 @@ const BrowseCategoriesCreate = () => {
         const updatedPreviews = [...iconPreviews];
         updatedPreviews[tagIdx] = URL.createObjectURL(file);
         setIconPreviews(updatedPreviews);
+        const updatedExisting = [...existingIcons];
+        updatedExisting[tagIdx] = null;
+        setExistingIcons(updatedExisting);
       } else {
         updatedTags[tagIdx][field] = value;
       }
@@ -74,11 +100,13 @@ const BrowseCategoriesCreate = () => {
   const addTag = () => {
     setFormData({ ...formData, tags: [...formData.tags, { title: "", icon: null }] });
     setIconPreviews([...iconPreviews, null]);
+    setExistingIcons([...existingIcons, null]);
   };
 
   const removeTag = (idx) => {
     setFormData({ ...formData, tags: formData.tags.filter((_, i) => i !== idx) });
     setIconPreviews(iconPreviews.filter((_, i) => i !== idx));
+    setExistingIcons(existingIcons.filter((_, i) => i !== idx));
   };
 
   const handleSubmit = async (e) => {
@@ -117,15 +145,19 @@ const BrowseCategoriesCreate = () => {
         if (tag.icon) submissionData.append(`tags[${idx}][icon]`, tag.icon);
       });
 
-      const res = await postAPI("/api/homepage-sections/browse-categories/create", submissionData, {
+      const endpoint = sectionId
+        ? `/api/homepage-sections/browse-categories/update/${sectionId}`
+        : "/api/homepage-sections/browse-categories/create";
+
+      const res = await postAPI(endpoint, submissionData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       if (res.data.success) {
-        toast.success(res.data.message || "Browse Categories section created successfully!");
+        toast.success(res.data.message || "Browse Categories section saved successfully!");
         navigate("/super-admin/homepage/create", { state: { reload: true } });
       } else {
-        toast.error(res.data.message || "Failed to create section");
+        toast.error(res.data.message || "Failed to save section");
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "Something went wrong");
@@ -137,7 +169,7 @@ const BrowseCategoriesCreate = () => {
   return (
     <div className="container-fluid">
       <div className="block-header">
-        <h2>Create Browse Categories Section</h2>
+        <h2>{sectionId ? "Edit Browse Categories Section" : "Create Browse Categories Section"}</h2>
 
         {!homepageId && <p className="text-warning">Loading Homepage, please wait...</p>}
 
@@ -178,7 +210,7 @@ const BrowseCategoriesCreate = () => {
                     <div className="form-group">
                       <label>Tag Icon *</label>
                       <input type="file" accept="image/jpeg,image/png,image/svg+xml" onChange={(e) => handleChange(e, idx, "icon")} className="form-control" required />
-                      {iconPreviews[idx] && <img src={iconPreviews[idx]} alt="Icon Preview" style={{ maxWidth: "80px", maxHeight: "80px", marginTop: "5px" }} />}
+                      {(iconPreviews[idx] || existingIcons[idx]) && <img src={iconPreviews[idx] || existingIcons[idx]} alt="Icon Preview" style={{ maxWidth: "80px", maxHeight: "80px", marginTop: "5px" }} />}
                     </div>
 
                     <button type="button" className="btn btn-danger btn-sm mt-2" onClick={() => removeTag(idx)}>Remove Tag</button>
@@ -189,7 +221,7 @@ const BrowseCategoriesCreate = () => {
               
                 <div className="d-flex align-items-center mb-3" style={{ gap: "10px" }}>
                   <button type="submit" className="btn btn-primary" disabled={loading || !homepageId}>
-                    {loading ? "Creating..." : "Create Browse Categories Section"}
+                    {loading ? "Saving..." : sectionId ? "Update Browse Categories Section" : "Create Browse Categories Section"}
                   </button>
                 </div>
               </form>

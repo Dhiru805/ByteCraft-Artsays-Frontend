@@ -21,10 +21,13 @@ const HowToBuyCreate = () => {
 
   const [imagePreviews, setImagePreviews] = useState([null]);
   const [iconPreviews, setIconPreviews] = useState([[ ]]); 
+  const [existingCardImages, setExistingCardImages] = useState([null]);
+  const [existingIcons, setExistingIcons] = useState([[ ]]);
   const [loading, setLoading] = useState(false);
+  const [sectionId, setSectionId] = useState(null);
 
   useEffect(() => {
-    const ensureHomepage = async () => {
+    const loadHomepageAndSection = async () => {
       try {
         const res = await getAPI("/api/homepage");
         let page = res.data.data?.[0];
@@ -34,11 +37,34 @@ const HowToBuyCreate = () => {
           return;
         }
         setHomepageId(page._id);
+
+        const secRes = await getAPI(`/api/homepage-sections/how-to-buy/${page._id}`);
+        if (secRes.data?.success && secRes.data?.data) {
+          const s = secRes.data.data;
+          setSectionId(s._id);
+          setFormData({
+            heading: s.heading || "",
+            description: s.description || "",
+            buttonName: s.buttonName || "",
+            buttonLink: s.buttonLink || "",
+            cards: (s.cards || []).map(c => ({
+              image: null,
+              title: c.title || c.heading || "",
+              description: c.description || "",
+              icons: (c.icons || []).map(() => null),
+            }))
+          });
+
+          setExistingCardImages((s.cards || []).map(c => c.imageUrl || c.image || null));
+          setImagePreviews((s.cards || []).map(c => c.imageUrl || c.image || null));
+          setExistingIcons((s.cards || []).map(c => (c.iconUrls || c.icons || []).map(u => u?.url || u || null)));
+          setIconPreviews((s.cards || []).map(c => (c.iconUrls || c.icons || []).map(u => u?.url || u || null)));
+        }
       } catch (err) {
         toast.error(err.response?.data?.message || "Failed to load Homepage");
       }
     };
-    ensureHomepage();
+    loadHomepageAndSection();
   }, []);
 
   const validateImageFile = (file, type) => {
@@ -64,11 +90,18 @@ const HowToBuyCreate = () => {
       if (!validateImageFile(file, "Icon")) return;
       updatedCards[cardIdx].icons[iconIdx] = file;
       updatedIconPreviews[cardIdx][iconIdx] = URL.createObjectURL(file);
+      const updatedExistingIcons = [...existingIcons];
+      if (!updatedExistingIcons[cardIdx]) updatedExistingIcons[cardIdx] = [];
+      updatedExistingIcons[cardIdx][iconIdx] = null;
+      setExistingIcons(updatedExistingIcons);
     } else if (files && files[0]) {
       const file = files[0];
       if (!validateImageFile(file, "Card Image")) return;
       updatedCards[cardIdx][field] = file;
       updatedImagePreviews[cardIdx] = URL.createObjectURL(file);
+      const updatedExisting = [...existingCardImages];
+      updatedExisting[cardIdx] = null;
+      setExistingCardImages(updatedExisting);
     } else {
       updatedCards[cardIdx][field] = value;
     }
@@ -238,8 +271,8 @@ const HowToBuyCreate = () => {
                         className="form-control"
                         required
                       />
-                      {imagePreviews[idx] && (
-                        <img src={imagePreviews[idx]} alt="Card Preview" style={{ maxWidth: "200px", maxHeight: "200px", marginTop: "5px" }} />
+                      {(imagePreviews[idx] || existingCardImages[idx]) && (
+                        <img src={imagePreviews[idx] || existingCardImages[idx]} alt="Card Preview" style={{ maxWidth: "200px", maxHeight: "200px", marginTop: "5px" }} />
                       )}
                     </div>
 
@@ -274,8 +307,8 @@ const HowToBuyCreate = () => {
                           onChange={(e) => handleChange(e, idx, "icons", i)}
                           className="form-control"
                         />
-                        {iconPreviews[idx]?.[i] && (
-                          <img src={iconPreviews[idx][i]} alt="Icon Preview" style={{ maxWidth: "60px", maxHeight: "60px", marginLeft: "5px" }} />
+                        {(iconPreviews[idx]?.[i] || existingIcons[idx]?.[i]) && (
+                          <img src={iconPreviews[idx]?.[i] || existingIcons[idx]?.[i]} alt="Icon Preview" style={{ maxWidth: "60px", maxHeight: "60px", marginLeft: "5px" }} />
                         )}
                         <button type="button" className="btn btn-danger btn-sm ml-2" onClick={() => removeIcon(idx, i)}>Remove</button>
                       </div>
@@ -291,7 +324,7 @@ const HowToBuyCreate = () => {
              
                 <div className="d-flex align-items-center mb-3" style={{ gap: "10px" }}>
                   <button type="submit" className="btn btn-primary" disabled={loading || !homepageId}>
-                    {loading ? "Creating..." : "Create How To Buy Section"}
+                    {loading ? "Saving..." : sectionId ? "Update How To Buy Section" : "Create How To Buy Section"}
                   </button>
                 </div>
               </form>

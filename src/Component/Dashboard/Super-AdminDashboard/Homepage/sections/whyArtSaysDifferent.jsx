@@ -18,9 +18,10 @@ const WhyArtsaysDifferentCreate = () => {
 
     const [loading, setLoading] = useState(false);
     const [homepageId, setHomepageId] = useState(null);
+    const [sectionId, setSectionId] = useState(null);
 
     useEffect(() => {
-        const ensureHomePage = async () => {
+        const loadHomepageAndSection = async () => {
             try {
                 const res = await getAPI("/api/homepage");
                 let page = res.data.data?.[0];
@@ -29,11 +30,34 @@ const WhyArtsaysDifferentCreate = () => {
                     page = createRes.data.data;
                 }
                 setHomepageId(page._id);
+
+                const secRes = await getAPI(`/api/homepage-sections/why-artsays-different/${page._id}`);
+                if (secRes.data?.success && secRes.data?.data) {
+                    const s = secRes.data.data;
+                    setSectionId(s._id);
+                    setHeading(s.heading || "");
+                    setDescription(s.description || "");
+                    setButtonName(s.buttonName || "");
+                    setButtonLink(s.buttonLink || "");
+
+                    const mappedCards = Array.isArray(s.cards) && s.cards.length
+                        ? s.cards.map(c => ({
+                            title: c.title || c.heading || "",
+                            description: c.description || "",
+                            hexColor: c.hexColor || c.color || "#000000",
+                            icon: null,
+                            existingIcon: c.iconUrl || c.icon || null,
+                        }))
+                        : [{ title: "", description: "", hexColor: "#000000", icon: null, existingIcon: null }];
+
+                    setCards(mappedCards);
+                    setIconPreviews(mappedCards.map(c => c.existingIcon || null));
+                }
             } catch (err) {
                 toast.error(err.response?.data?.message || "Failed to load Homepage");
             }
         };
-        ensureHomePage();
+        loadHomepageAndSection();
     }, []);
 
     const validateImageFile = (file) => {
@@ -58,6 +82,8 @@ const WhyArtsaysDifferentCreate = () => {
             if (!validateImageFile(file)) return;
             updatedCards[index][field] = file;
             updatedIconPreviews[index] = URL.createObjectURL(file);
+          
+            updatedCards[index].existingIcon = null;
         } else {
             updatedCards[index][field] = value;
         }
@@ -67,7 +93,7 @@ const WhyArtsaysDifferentCreate = () => {
     };
 
     const addCard = () => {
-        setCards([...cards, { title: "", description: "", color: "#000000", icon: null }]);
+        setCards([...cards, { title: "", description: "", hexColor: "#000000", icon: null, existingIcon: null }]);
         setIconPreviews([...iconPreviews, null]);
     };
 
@@ -112,11 +138,15 @@ const WhyArtsaysDifferentCreate = () => {
             cards.forEach((c, idx) => {
                 submissionData.append(`cards[${idx}][title]`, c.title.trim());
                 submissionData.append(`cards[${idx}][description]`, c.description.trim());
-                submissionData.append(`cards[${idx}][hexColor]`, c.hexColor.trim());
+                submissionData.append(`cards[${idx}][hexColor]`, (c.hexColor || "").trim());
                 if (c.icon) submissionData.append(`cards[${idx}][icon]`, c.icon);
             });
 
-            const res = await postAPI("/api/homepage-sections/why-artsays-different/create", submissionData, {
+            const endpoint = sectionId
+                ? `/api/homepage-sections/why-artsays-different/update/${sectionId}`
+                : "/api/homepage-sections/why-artsays-different/create";
+
+            const res = await postAPI(endpoint, submissionData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
@@ -136,7 +166,7 @@ const WhyArtsaysDifferentCreate = () => {
     return (
         <div className="container-fluid">
             <div className="block-header">
-                <h2>Create Why Artsays Section</h2>
+                <h2>{sectionId ? "Edit Why Artsays Section" : "Create Why Artsays Section"}</h2>
                 <div className="col-lg-12">
                     <div className="card">
                         <div className="body">
@@ -182,9 +212,9 @@ const WhyArtsaysDifferentCreate = () => {
 
                                         <div className="form-group">
                                             <label>Icon Image *</label>
-                                            <input type="file" accept="image/jpeg,image/png,image/svg+xml" className="form-control" onChange={(e) => handleChange(e, idx, "icon")} required />
-                                            {iconPreviews[idx] && (
-                                                <img src={iconPreviews[idx]} alt="Icon Preview" style={{ maxWidth: "80px", maxHeight: "80px", marginTop: "5px" }} />
+                                            <input type="file" accept="image/jpeg,image/png,image/svg+xml" className="form-control" onChange={(e) => handleChange(e, idx, "icon")} />
+                                            {(iconPreviews[idx] || cards[idx]?.existingIcon) && (
+                                                <img src={iconPreviews[idx] || cards[idx]?.existingIcon} alt="Icon Preview" style={{ maxWidth: "80px", maxHeight: "80px", marginTop: "5px" }} />
                                             )}
                                         </div>
 
@@ -198,7 +228,7 @@ const WhyArtsaysDifferentCreate = () => {
                                         Add Card
                                     </button>
                                     <button type="submit" className="btn btn-primary" disabled={loading}>
-                                        {loading ? "Saving..." : "Save Section"}
+                                        {loading ? "Saving..." : sectionId ? "Update Section" : "Save Section"}
                                     </button>
                                 </div>
 

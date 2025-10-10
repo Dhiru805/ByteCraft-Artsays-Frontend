@@ -16,9 +16,10 @@ const DeliveryProcessCreate = () => {
 
   const [loading, setLoading] = useState(false);
   const [aboutUsId, setAboutUsId] = useState(null);
+  const [sectionId, setSectionId] = useState(null);
 
   useEffect(() => {
-    const ensureAboutUsPage = async () => {
+    const loadAboutUsAndSection = async () => {
       try {
         const res = await getAPI("/api/about-us");
         let page = res.data.data?.[0];
@@ -28,11 +29,38 @@ const DeliveryProcessCreate = () => {
           return;
         }
         setAboutUsId(page._id);
+        
+        const sectionRes = await getAPI(`/api/about-us-sections/delivery-process/${page._id}`);
+        
+        let section = null;
+        if (sectionRes.data.success && sectionRes.data.data) {
+          section = sectionRes.data.data;
+        } else if (sectionRes.data.data) {
+          section = sectionRes.data.data;
+        }
+        
+        if (section) {
+          setSectionId(section._id);
+          
+          const mappedCards = section.steps?.length 
+            ? section.steps.map((step, index) => ({
+                step: index + 1,
+                heading: step.stepTitle || "",
+                description: step.stepDescription || ""
+              }))
+            : [{ step: 1, heading: "", description: "" }];
+          
+          setFormData({
+            mainHeading: section.heading || "", 
+            mainDescription: section.description || "", 
+            cards: mappedCards,
+          });
+        }
       } catch (err) {
         toast.error(err.response?.data?.message || "Failed to load About Us page");
       }
     };
-    ensureAboutUsPage();
+    loadAboutUsAndSection();
   }, []);
 
   const handleChange = (e, index = null, field = null) => {
@@ -90,24 +118,27 @@ const DeliveryProcessCreate = () => {
       submissionData.append("mainDescription", formData.mainDescription.trim());
       //submissionData.append("status", formData.status);
 
-      formData.cards.forEach((c, idx) => {
-        submissionData.append(`cards[${idx}][step]`, c.step);
-        submissionData.append(`cards[${idx}][heading]`, c.heading.trim());
-        submissionData.append(`cards[${idx}][description]`, c.description.trim());
+      const cardsForBackend = formData.cards.map(c => ({
+        heading: c.heading.trim(),
+        description: c.description.trim(),
+        stepImage: c.stepImage || undefined
+      }));
+      
+      submissionData.append("cards", JSON.stringify(cardsForBackend));
+
+      const endpoint = sectionId
+        ? `/api/about-us-sections/delivery-process/update/${sectionId}`
+        : "/api/about-us-sections/delivery-process/create";
+
+      const res = await postAPI(endpoint, submissionData, {
+        headers: { "Content-Type": "multipart/form-data" }
       });
 
-      const res = await postAPI(
-        "/api/about-us-sections/delivery-process/create",
-        submissionData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-
-
-      if (res.data.data) {
-        toast.success(res.data.message || "Delivery Process created successfully!");
+      if (res.data.success) {
+        toast.success(res.data.message || "Delivery Process saved successfully!");
         navigate("/super-admin/about-us/create", { state: { reload: true } });
       } else {
-        toast.error(res.data.message || "Failed to create delivery process");
+        toast.error(res.data.message || "Failed to save delivery process");
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "Something went wrong");
@@ -119,7 +150,7 @@ const DeliveryProcessCreate = () => {
   return (
     <div className="container-fluid">
       <div className="block-header">
-        <h2>Create Delivery Process</h2>
+        <h2>{sectionId ? "Edit Delivery Process" : "Create Delivery Process"}</h2>
         <div className="col-lg-12">
           <div className="card">
             <div className="body">
@@ -225,7 +256,7 @@ const DeliveryProcessCreate = () => {
 
                 <div className="d-flex align-items-center mb-3" style={{ gap: "10px" }}>
                   <button type="submit" className="btn btn-primary" disabled={loading}>
-                    {loading ? "Creating..." : "Create Delivery Process"}
+                    {loading ? "Saving..." : sectionId ? "Update Delivery Process" : "Create Delivery Process"}
                   </button>
                 </div>
               </form>

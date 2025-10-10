@@ -12,9 +12,10 @@ const HomeChallengesCreate = () => {
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [homepageId, setHomepageId] = useState(null);
+  const [sectionId, setSectionId] = useState(null);
 
   useEffect(() => {
-    const ensureHomePage = async () => {
+    const loadHomepageAndSection = async () => {
       try {
         const res = await getAPI("/api/homepage");
         let page = res.data.data?.[0];
@@ -23,11 +24,19 @@ const HomeChallengesCreate = () => {
           page = createRes.data.data;
         }
         setHomepageId(page._id);
+
+        const secRes = await getAPI(`/api/homepage-sections/challenges/${page._id}`);
+        if (secRes.data?.success && secRes.data?.data) {
+          const s = secRes.data.data;
+          setSectionId(s._id);
+          setHeading(s.heading || "");
+          setDescription(s.description || "");
+        }
       } catch (err) {
         toast.error(err.response?.data?.message || "Failed to load Homepage");
       }
     };
-    ensureHomePage();
+    loadHomepageAndSection();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -47,8 +56,11 @@ const HomeChallengesCreate = () => {
         return;
       }
 
+      const endpoint = sectionId
+        ? `/api/homepage-sections/challenges/update/${sectionId}`
+        : "/api/homepage-sections/challenges/create";
       const res = await postAPI(
-        "/api/homepage-sections/challenges/create",
+        endpoint,
         { homepageId, heading: heading.trim(), description: description.trim() }
       );
 
@@ -68,7 +80,7 @@ const HomeChallengesCreate = () => {
   return (
     <div className="container-fluid">
       <div className="block-header">
-        <h2>Create Challenges Section</h2>
+        <h2>{sectionId ? "Edit Challenges Section" : "Create Challenges Section"}</h2>
         <div className="col-lg-12">
           <div className="card">
             <div className="body">

@@ -9,6 +9,7 @@ const HeroSectionCreate = () => {
   const navigate = useNavigate();
 
   const [homepageId, setHomepageId] = useState(null);
+  const [sectionId, setSectionId] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -17,10 +18,11 @@ const HeroSectionCreate = () => {
   });
 
   const [imagePreviews, setImagePreviews] = useState([null]);
+  const [existingImages, setExistingImages] = useState([null]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const ensureHomepage = async () => {
+    const loadHomepageAndSection = async () => {
       try {
         const res = await getAPI("/api/homepage");
         let page = res.data.data?.[0];
@@ -30,11 +32,32 @@ const HeroSectionCreate = () => {
           return;
         }
         setHomepageId(page._id);
+        
+        const sectionRes = await getAPI(`/api/homepage-sections/hero/${page._id}`);
+        if (sectionRes.data.success && sectionRes.data.data) {
+          const section = sectionRes.data.data;
+          setSectionId(section._id);
+          
+          setFormData({
+            title: section.title || "",
+            description: section.description || "",
+            buttons: section.buttons?.length ? section.buttons : [{ name: "", link: "" }],
+            recurrentTitles: section.recurrentTitles?.length ? section.recurrentTitles.map(rt => ({
+              title: rt.title || "",
+              image: null,
+              duration: rt.duration || ""
+            })) : [{ title: "", image: null, duration: "" }]
+          });
+          
+          const existingImgs = section.recurrentTitles?.map(rt => rt.image || rt.imageUrl || null) || [null];
+          setExistingImages(existingImgs);
+          setImagePreviews(existingImgs);
+        }
       } catch (err) {
         toast.error(err.response?.data?.message || "Failed to load Homepage");
       }
     };
-    ensureHomepage();
+    loadHomepageAndSection();
   }, []);
 
   const validateImageFile = (file, type) => {
@@ -59,6 +82,9 @@ const HeroSectionCreate = () => {
       if (!validateImageFile(file, "Recurrent Image")) return;
       updated[idx][field] = file;
       updatedPreviews[idx] = URL.createObjectURL(file);
+      const updatedExisting = [...existingImages];
+      updatedExisting[idx] = null;
+      setExistingImages(updatedExisting);
     } else {
       updated[idx][field] = value;
     }
@@ -73,6 +99,7 @@ const HeroSectionCreate = () => {
       recurrentTitles: [...formData.recurrentTitles, { title: "", image: null, duration: "" }]
     });
     setImagePreviews([...imagePreviews, null]);
+    setExistingImages([...existingImages, null]);
   };
 
   const removeRecurrentTitle = (idx) => {
@@ -81,6 +108,7 @@ const HeroSectionCreate = () => {
       recurrentTitles: formData.recurrentTitles.filter((_, i) => i !== idx)
     });
     setImagePreviews(imagePreviews.filter((_, i) => i !== idx));
+    setExistingImages(existingImages.filter((_, i) => i !== idx));
   };
 
   const handleButtonChange = (e, idx) => {
@@ -147,15 +175,19 @@ const HeroSectionCreate = () => {
         submissionData.append(`buttons[${idx}][link]`, btn.link.trim());
       });
 
-      const res = await postAPI("/api/homepage-sections/hero/create", submissionData, {
+      const endpoint = sectionId
+        ? `/api/homepage-sections/hero/update/${sectionId}`
+        : "/api/homepage-sections/hero/create";
+
+      const res = await postAPI(endpoint, submissionData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       if (res.data.success) {
-        toast.success(res.data.message || "Hero Section created successfully!");
+        toast.success(res.data.message || "Hero Section saved successfully!");
         navigate("/super-admin/homepage/create", { state: { reload: true } });
       } else {
-        toast.error(res.data.message || "Failed to create Hero Section");
+        toast.error(res.data.message || "Failed to save Hero Section");
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "Something went wrong");
@@ -167,7 +199,7 @@ const HeroSectionCreate = () => {
   return (
     <div className="container-fluid">
       <div className="block-header">
-        <h2>Create Hero Section</h2>
+        <h2>{sectionId ? "Edit Hero Section" : "Create Hero Section"}</h2>
 
         {!homepageId && <p className="text-warning">Loading Homepage, please wait...</p>}
 
@@ -196,7 +228,7 @@ const HeroSectionCreate = () => {
                     <div className="form-group">
                       <label>Image *</label>
                       <input type="file" accept="image/jpeg,image/png,image/svg+xml" onChange={(e) => handleRecurrentChange(e, idx, "image")} className="form-control" required />
-                      {imagePreviews[idx] && <img src={imagePreviews[idx]} alt="Recurrent Preview" style={{ maxWidth: "200px", maxHeight: "200px", marginTop: "5px" }} />}
+                      {(imagePreviews[idx] || existingImages[idx]) && <img src={imagePreviews[idx] || existingImages[idx]} alt="Recurrent Preview" style={{ maxWidth: "200px", maxHeight: "200px", marginTop: "5px" }} />}
                     </div>
                     <div className="form-group">
                       <label>Duration (seconds) *</label>
@@ -220,7 +252,7 @@ const HeroSectionCreate = () => {
 
                 <div className="d-flex align-items-center mb-3" style={{ gap: "10px" }}>
                   <button type="submit" className="btn btn-primary" disabled={loading || !homepageId}>
-                    {loading ? "Creating..." : "Create Hero Section"}
+                    {loading ? "Saving..." : sectionId ? "Update Hero Section" : "Create Hero Section"}
                   </button>
                 </div>
               </form>

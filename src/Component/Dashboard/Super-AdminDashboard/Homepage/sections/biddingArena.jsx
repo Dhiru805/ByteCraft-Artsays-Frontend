@@ -16,9 +16,10 @@ const BiddingArenaCreate = () => {
     buttonLink: "",
   });
   const [loading, setLoading] = useState(false);
+  const [sectionId, setSectionId] = useState(null);
 
   useEffect(() => {
-    const ensureHomepage = async () => {
+    const loadHomepageAndSection = async () => {
       try {
         const res = await getAPI("/api/homepage");
         let page = res.data.data?.[0];
@@ -28,11 +29,23 @@ const BiddingArenaCreate = () => {
           return;
         }
         setHomepageId(page._id);
+
+        const secRes = await getAPI(`/api/homepage-sections/bidding-arena/${page._id}`);
+        if (secRes.data?.success && secRes.data?.data) {
+          const s = secRes.data.data;
+          setSectionId(s._id);
+          setFormData({
+            heading: s.heading || "",
+            description: s.description || "",
+            buttonName: s.buttonName || "",
+            buttonLink: s.buttonLink || "",
+          });
+        }
       } catch (err) {
         toast.error(err.response?.data?.message || "Failed to load Homepage");
       }
     };
-    ensureHomepage();
+    loadHomepageAndSection();
   }, []);
 
   const handleChange = (e) => {
@@ -68,7 +81,10 @@ const BiddingArenaCreate = () => {
         buttonLink: formData.buttonLink.trim(),
       };
 
-      const res = await postAPI("/api/homepage-sections/bidding-arena/create", submissionData);
+      const endpoint = sectionId
+        ? `/api/homepage-sections/bidding-arena/update/${sectionId}`
+        : "/api/homepage-sections/bidding-arena/create";
+      const res = await postAPI(endpoint, submissionData);
 
       if (res.data.success) {
         toast.success(res.data.message || "Bidding Arena section created!");
@@ -86,7 +102,7 @@ const BiddingArenaCreate = () => {
   return (
     <div className="container-fluid">
       <div className="block-header">
-        <h2>Create Bidding Arena Section</h2>
+        <h2>{sectionId ? "Edit Bidding Arena Section" : "Create Bidding Arena Section"}</h2>
 
         {!homepageId && <p className="text-warning">Loading Homepage, please wait...</p>}
 
@@ -148,7 +164,7 @@ const BiddingArenaCreate = () => {
           
                 <div className="d-flex align-items-center mb-3" style={{ gap: "10px" }}>
                   <button type="submit" className="btn btn-primary" disabled={loading || !homepageId}>
-                    {loading ? "Creating..." : "Create Bidding Arena Section"}
+                    {loading ? "Saving..." : sectionId ? "Update Bidding Arena Section" : "Create Bidding Arena Section"}
                   </button>
                 </div>
               </form>
