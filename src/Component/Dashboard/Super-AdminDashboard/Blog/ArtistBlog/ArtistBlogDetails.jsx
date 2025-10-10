@@ -149,6 +149,11 @@ function ArtistBlogDetails() {
       {/* Dynamic Metadata */}
       {blogs.length > 0 && (
         <Helmet>
+          <meta charSet="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta name="robots" content="index, follow" />
+          <meta name="title" content={seoData.metaTitle} />
+
           <title>{`${blogs[0].blogName} | My Blog`}</title>
           <meta name="description" content={blogs[0].summary} />
           <meta name="keywords" content={blogs[0].tags.join(', ')} />

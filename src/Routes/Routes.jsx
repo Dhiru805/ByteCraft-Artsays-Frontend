@@ -48,8 +48,8 @@ import PagenotFound404 from "../Pages/Error/404Error";
 import UnauthorizedAccess from "../Pages/Error/403Error";
 
 //----------------------------------------WebsiteRoutes-----------------------------------------//
-import WebsiteMain from "../Pages/Home/Home";
-
+// import WebsiteMain from "../Pages/Home/Home";
+import WebsiteMain from "../Pages/Homepage/Homepage";
 //----------------------------------------User Profile---------------------------------------//
 import UserProfile from "../Component/Dashboard/UserProfile/UserInfo";
 
@@ -95,18 +95,52 @@ import AutoTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Se
 import GroupTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/AutoTargetingGroup/GroupTargetingSetting';
 import KeywordTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/KeywordTargeting/KeywordTargetingSetting';
 
-import ChallengesTable from '../Component/Dashboard/Super-AdminDashboard/Challenges/createChallenges/challenges';
-import ViewChallenge from '../Component/Dashboard/Super-AdminDashboard/Challenges/createChallenges/ViewChallenge';
-import UpdateChallenge from '../Component/Dashboard/Super-AdminDashboard/Challenges/createChallenges/UpdateChallenge';
-import CreateChallenge from '../Component/Dashboard/Super-AdminDashboard/Challenges/createChallenges/CreateChallenge';
-import ChallengesEntries from "../Component/Dashboard/Super-AdminDashboard/Challenges/challengesEntries/ChallengesEntries";
-import ViewChallengeApplication from '../Component/Dashboard/Super-AdminDashboard/Challenges/challengesEntries/ViewChallengeApplication';
-import UpdateChallengeApplication from '../Component/Dashboard/Super-AdminDashboard/Challenges/challengesEntries/UpdateChallengeApplication';
+import ChallengesTable from '../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/challenges';
+import ViewChallenge from '../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/ViewChallenge';
+import UpdateChallenge from '../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/UpdateChallenge';
+import CreateChallenge from '../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/CreateChallenge';
+import ChallengesEntries from "../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/challengesEntries";
+import ViewChallengeApplication from '../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/ViewChallengeApplication';
+import UpdateChallengeApplication from '../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/UpdateChallengeApplication';
 
 import Celebraties from '../Component/Dashboard/Super-AdminDashboard/Celebraties/Celebraties';
 import CreateCelebraties from '../Component/Dashboard/Super-AdminDashboard/Celebraties/CreateCelebraties';
 import ViewCelebrity from '../Component/Dashboard/Super-AdminDashboard/Celebraties/ViewCelebrity';
 import UpdateCelebrity from '../Component/Dashboard/Super-AdminDashboard/Celebraties/UpdateCelebrity';
+
+//----------------------------------------Homepage Super-Admin Dashboard----------------------------------------------------------- 
+import Homepage from "../Component/Dashboard/Super-AdminDashboard/Homepage/table";
+import CreateHomepage from "../Component/Dashboard/Super-AdminDashboard/Homepage/create";
+
+//Hero Section
+import CreateHero from "../Component/Dashboard/Super-AdminDashboard/Homepage/sections/Hero";
+
+//Browse categories
+import CreateCategories from "../Component/Dashboard/Super-AdminDashboard/Homepage/sections/browseCategoriesCreate";
+
+//Why Buy From Artsays
+import CreateWhyBuyArtsays from "../Component/Dashboard/Super-AdminDashboard/Homepage/sections/whyFromArtSaysCreate";
+
+//Bidding Arena
+import CreateBiddingArena from "../Component/Dashboard/Super-AdminDashboard/Homepage/sections/biddingArena";
+
+//How To Buy
+import CreateHowToBuyHomepage from "../Component/Dashboard/Super-AdminDashboard/Homepage/sections/howToBuyCreate";
+
+//Discover Artist
+import CreateDiscoverArtist from "../Component/Dashboard/Super-AdminDashboard/Homepage/sections/discoverArtist";
+
+//Why Artsays is Different
+import CreateWhyArtsaysDifferent from "../Component/Dashboard/Super-AdminDashboard/Homepage/sections/whyArtSaysDifferent";
+
+//Challenges
+import CreateChallengesHomepage from "../Component/Dashboard/Super-AdminDashboard/Homepage/sections/homeChallenges";
+
+//Art Icon
+import CreateArtIcon from "../Component/Dashboard/Super-AdminDashboard/Homepage/sections/articon";
+
+//How to Sell
+import CreateHowToSellHomepage from "../Component/Dashboard/Super-AdminDashboard/Homepage/sections/howToSellCreate";
 
 //-----------------------------Admin--------------------------//
 import Admin from "../Component/Dashboard/Super-AdminDashboard/Admin/Admin";
@@ -496,6 +530,42 @@ const AppRoutes = () => {
         <Route path='celebraties/create' element={<CreateCelebraties />} />
         <Route path='celebraties/view-celebrity' element={<ViewCelebrity />} />
         <Route path='celebraties/update-celebrity' element={<UpdateCelebrity />} />
+
+
+        {/* Homepage Admin Routes*/}
+        <Route path="homepage" element={<Homepage />} />
+        <Route path="homepage/create" element={<CreateHomepage />} />
+
+        {/* Hero Section */}
+        <Route path="/super-admin/homepage/hero/create" element={<CreateHero />} />
+
+        {/* Browse Categories */}
+        <Route path="/super-admin/homepage/browse-categories/create" element={<CreateCategories />} />
+
+        {/* Why Buy From Artsays */}
+        <Route path="/super-admin/homepage/why-buy-artsays/create" element={<CreateWhyBuyArtsays />} />
+
+        {/* Bidding Arena */}
+        <Route path="/super-admin/homepage/bidding-arena/create" element={<CreateBiddingArena />} />
+
+        {/* How To Buy */}
+        <Route path="/super-admin/homepage/how-to-buy/create" element={<CreateHowToBuyHomepage />} />
+
+        {/* Discover Artist */}
+        <Route path="/super-admin/homepage/discover-artist/create" element={<CreateDiscoverArtist />} />
+
+        {/* Why Artsays is Different */}
+        <Route path="/super-admin/homepage/why-artsays-different/create" element={<CreateWhyArtsaysDifferent />} />
+
+        {/* Challenges */}
+        <Route path="/super-admin/homepage/challenges/create" element={<CreateChallengesHomepage />} />
+
+        {/* Art Icon */}
+        <Route path="/super-admin/homepage/art-icon/create" element={<CreateArtIcon />} />
+
+        {/* How to Sell */}
+        <Route path="/super-admin/homepage/how-to-sell/create" element={<CreateHowToSellHomepage />} />
+
       </Route>
 
       {/*-------------------------------------------- Artist Routes-------------------------------------------------- */}
