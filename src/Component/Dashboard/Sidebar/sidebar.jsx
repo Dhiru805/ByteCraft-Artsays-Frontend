@@ -125,6 +125,9 @@ const Sidebar = () => {
         subTabs: [
           { label: " Policies", path: `/super-admin/community-cms/policies` },
           { label: "Verification badge", path: `/super-admin/community-cms/verification-badge` },
+          { label: "Reports", path: `/super-admin/community-cms/reports` },
+          { label: "Sponsors", path: `/super-admin/community-cms/sponsors` },
+          { label: "Purchase Badge", path: `/super-admin/community-cms/purchase-badge` },
          
         ]
       },

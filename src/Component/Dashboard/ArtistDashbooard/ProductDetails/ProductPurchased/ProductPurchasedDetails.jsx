@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import getAPI from "../../../../../api/getAPI";
 import { useParams } from "react-router-dom";
-import useUserType from "../../urlconfig";
-import { Link } from "react-router-dom";
+import useUserType from "../../../urlconfig";
+import { Link, useNavigate } from "react-router-dom";
 
 function AllProduct() {
     const { productId } = useParams();
@@ -11,6 +11,7 @@ function AllProduct() {
     const [expanded, setExpanded] = useState({});
     const [activeTab, setActiveTab] = useState("description");
     const userType = useUserType();
+  const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProduct = async () => {

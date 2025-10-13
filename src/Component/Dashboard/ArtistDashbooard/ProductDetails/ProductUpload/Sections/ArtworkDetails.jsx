@@ -1,8 +1,9 @@
+
+
 import React from "react";
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { Tooltip } from 'react-tooltip';
-
 const ArtworkDetails = ({
     formData,
     isSubmitting,
@@ -13,6 +14,7 @@ const ArtworkDetails = ({
     yearOptions,
     surfaceTypeOptions,
     conditionOptions,
+    culturalRegionOptions,
     handleSelectChange,
     handleMultiSelectChange,
     handleInputChange
@@ -50,23 +52,56 @@ const ArtworkDetails = ({
         </div>
 
         <div className="form-group">
-            <label htmlFor="dimensions">Dimensions <span style={{ color: 'red' }}>*</span></label>
-            <input
-                type="text"
-                id="dimensions"
-                name="dimensions"
-                className="form-control"
-                placeholder="e.g., 24 x 36 inches or 60 x 90 cm"
-                value={formData.dimensions}
-                onChange={handleInputChange}
-                required
-                disabled={isSubmitting}
-            />
-            <small className="text-muted">Mention in inches/cm (e.g., 24 x 36 inches)</small>
+            <label>Dimensions <span style={{ color: 'red' }}>*</span></label>
+            <div className="row">
+                <div className="col">
+                    <input
+                        type="number"
+                        id="width"
+                        name="width"
+                        className="form-control"
+                        placeholder="Width (e.g., 24 inches/cm)"
+                        step="0.01"
+                        value={formData.width}
+                        onChange={handleInputChange}
+                        required
+                        disabled={isSubmitting}
+                    />
+                </div>
+                <div className="col">
+                    <input
+                        type="number"
+                        id="height"
+                        name="height"
+                        className="form-control"
+                        placeholder="Height (e.g., 36 inches/cm)"
+                        step="0.01"
+                        value={formData.height}
+                        onChange={handleInputChange}
+                        required
+                        disabled={isSubmitting}
+                    />
+                </div>
+                <div className="col">
+                    <input
+                        type="number"
+                        id="depth"
+                        name="depth"
+                        className="form-control"
+                        placeholder="Depth (e.g., 2 inches/cm)"
+                        step="0.01"
+                        value={formData.depth}
+                        onChange={handleInputChange}
+                        required
+                        disabled={isSubmitting}
+                    />
+                </div>
+            </div>
+            <small className="text-muted">Mention in inches/cm (e.g., 24 x 36 x 2 inches)</small>
         </div>
 
         <div className="form-group">
-            <label htmlFor="weight">Weight (g)</label>
+            <label>Weight (g)</label>
             <input
                 type="number"
                 id="weight"
@@ -79,6 +114,24 @@ const ArtworkDetails = ({
                 disabled={isSubmitting}
             />
         </div>
+
+        {(formData.medium?.value?.toLowerCase() === 'print' || formData.medium?.value?.toLowerCase() === 'poster') && (
+            <div className="form-group">
+                <label>Print Resolution <span style={{ color: 'red' }}>*</span></label>
+                <input
+                    type="text"
+                    id="printResolution"
+                    name="printResolution"
+                    className="form-control"
+                    placeholder="Enter print resolution (e.g., 300 DPI)"
+                    value={formData.printResolution}
+                    onChange={handleInputChange}
+                    required
+                    disabled={isSubmitting}
+                />
+                <small className="text-muted">Specify resolution (e.g., 300 DPI)</small>
+            </div>
+        )}
 
         <div className="form-group">
             <label>Year of Creation <span style={{ color: 'red' }}>*</span></label>
@@ -120,7 +173,7 @@ const ArtworkDetails = ({
         </div>
 
         <div className="form-group">
-            <label htmlFor="quantity">Quantity <span style={{ color: 'red' }}>*</span></label>
+            <label>Quantity <span style={{ color: 'red' }}>*</span></label>
             <input
                 type="number"
                 id="quantity"
@@ -146,16 +199,14 @@ const ArtworkDetails = ({
                     <i
                         className="fa fa-info-circle ml-2"
                         data-tooltip-id="hsn-tooltip"
-                    // data-tooltip-content="HSN code for taxation purposes.\nClick for more details."
                     />
                 </a>
             </label>
             <Tooltip id="hsn-tooltip">
                 <span>HSN code for taxation purposes.</span>
                 <br />
-                <span>...Click for more details.</span>
+                <span>Click for more details.</span>
             </Tooltip>
-
             <input
                 type="text"
                 id="hsnCode"
@@ -182,6 +233,107 @@ const ArtworkDetails = ({
         </div>
 
         <div className="form-group">
+            <label>Cultural Region</label>
+            <CreatableSelect
+                options={culturalRegionOptions}
+                value={formData.culturalRegion}
+                onChange={(selected) => handleSelectChange('culturalRegion', selected)}
+                placeholder="Select or create cultural region"
+                isSearchable
+                formatCreateLabel={(inputValue) => `Add "${inputValue}"`}
+                isDisabled={isSubmitting}
+            />
+        </div>
+
+        <div className="form-group">
+            <label>Biological Material</label>
+            <input
+                type="text"
+                id="biologicalMaterial"
+                name="biologicalMaterial"
+                className="form-control"
+                placeholder="Enter biological material"
+                value={formData.biologicalMaterial}
+                onChange={handleInputChange}
+                disabled={isSubmitting}
+            />
+        </div>
+
+        <div className="form-group">
+            <label>Functional Use <span style={{ color: 'red' }}>*</span></label>
+            <Select
+                options={[
+                    { value: 'yes', label: 'Yes' },
+                    { value: 'no', label: 'No' }
+                ]}
+                value={formData.functionalUse}
+                onChange={(selected) => handleSelectChange('functionalUse', selected)}
+                placeholder="Select Functional Use"
+                isSearchable
+                required
+                isDisabled={isSubmitting}
+            />
+        </div>
+
+        <div className="form-group">
+            <label>Material Source</label>
+            <input
+                type="text"
+                id="materialSource"
+                name="materialSource"
+                className="form-control"
+                placeholder="Enter material source"
+                value={formData.materialSource}
+                onChange={handleInputChange}
+                disabled={isSubmitting}
+            />
+        </div>
+
+        <div className="form-group">
+            <label>Craft Technique (Optional)</label>
+            <input
+                type="text"
+                id="craftTechnique"
+                name="craftTechnique"
+                className="form-control"
+                placeholder="Enter craft technique"
+                value={formData.craftTechnique}
+                onChange={handleInputChange}
+                disabled={isSubmitting}
+            />
+        </div>
+
+            <div className="form-group">
+            <label>Tool Usage</label>
+            <CreatableSelect
+                value={formData.toolUsage}
+                onChange={(selected) => handleMultiSelectChange('toolUsage', selected)}
+                placeholder="Select or create tools used"
+                isMulti
+                isSearchable
+                formatCreateLabel={(inputValue) => `Add "${inputValue}"`}
+                isDisabled={isSubmitting}
+            />
+        </div>
+
+
+        <div className="form-group">
+            <label>Handmade <span style={{ color: 'red' }}>*</span></label>
+            <Select
+                options={[
+                    { value: 'yes', label: 'Yes' },
+                    { value: 'no', label: 'No' }
+                ]}
+                value={formData.handmade}
+                onChange={(selected) => handleSelectChange('handmade', selected)}
+                placeholder="Select Handmade Option"
+                isSearchable
+                required
+                isDisabled={isSubmitting}
+            />
+        </div>
+
+        <div className="form-group">
             <div className="form-check">
                 <input
                     type="checkbox"
@@ -198,6 +350,24 @@ const ArtworkDetails = ({
             </div>
         </div>
 
+      <div className="form-group">
+            <div className="form-check">
+                <input
+                    type="checkbox"
+                    id="isResinCovered" 
+                    name="isResinCovered" 
+                    className="form-check-input"
+                    checked={formData.isResinCovered || false}
+                    onChange={handleInputChange}
+                    disabled={isSubmitting}
+                />
+                <label className="form-check-label" htmlFor="isResinCovered">
+                    Covered with resign?
+                </label>
+                <small className="text-muted d-block">(Check if the artwork is coated with resign)</small>
+            </div>
+        </div>
+
         <div className="form-group">
             <label>Condition <span style={{ color: 'red' }}>*</span></label>
             <Select
@@ -211,19 +381,21 @@ const ArtworkDetails = ({
             />
         </div>
 
-        <div className="form-group">
-            <label htmlFor="provenance">Provenance & History</label>
-            <textarea
-                id="provenance"
-                name="provenance"
-                className="form-control"
-                placeholder="Enter background, exhibitions, previous sales, etc."
-                rows="4"
-                value={formData.provenance}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-            />
-        </div>
+        {formData.condition?.value?.toLowerCase() === 'resale' && (
+            <div className="form-group">
+                <label htmlFor="provenance">Provenance & History</label>
+                <textarea
+                    id="provenance"
+                    name="provenance"
+                    className="form-control"
+                    placeholder="Enter background, exhibitions, previous sales, etc."
+                    rows="4"
+                    value={formData.provenance}
+                    onChange={handleInputChange}
+                    disabled={isSubmitting}
+                />
+            </div>
+        )}
 
         <hr className="my-4" />
     </>

@@ -127,64 +127,6 @@ photographed by #siddharth
     },
   ],
 };
-const suggestedUser = [
-  {
-    id: 1,
-    username: "abd109abd",
-    profession: "Art",
-    profilePic:
-      "https://media.istockphoto.com/id/1682296067/photo/happy-studio-portrait-or-professional-man-real-estate-agent-or-asian-businessman-smile-for.jpg?s=612x612&w=0&k=20&c=9zbG2-9fl741fbTWw5fNgcEEe4ll-JegrGlQQ6m54rg=",
-  },
-  {
-    id: 2,
-    username: "abd109abd",
-    profession: "Sculpture Art",
-    profilePic:
-      "https://media.istockphoto.com/id/1135476604/photo/portrait-of-handsome-young-man-with-crossed-arms.jpg?s=612x612&w=0&k=20&c=AffDDGYHeYW_394lHCjsmbUxhbpxza_ex8A-OsDM2GY=",
-  },
-  {
-    id: 3,
-    username: "abd109abd",
-    profession: "Interior Design",
-    profilePic:
-      "https://media.istockphoto.com/id/1682296067/photo/happy-studio-portrait-or-professional-man-real-estate-agent-or-asian-businessman-smile-for.jpg?s=612x612&w=0&k=20&c=9zbG2-9fl741fbTWw5fNgcEEe4ll-JegrGlQQ6m54rg=",
-  },
-  {
-    id: 4,
-    username: "abd109abd",
-    profession: "Art Fan Club",
-    profilePic:
-      "https://images.ctfassets.net/h6goo9gw1hh6/2sNZtFAWOdP1lmQ33VwRN3/24e953b920a9cd0ff2e1d587742a2472/1-intro-photo-final.jpg?w=1200&h=992&fl=progressive&q=70&fm=jpg",
-  },
-  {
-    id: 5,
-    username: "abd109abd",
-    profession: "Art",
-    profilePic:
-      "https://media.istockphoto.com/id/1682296067/photo/happy-studio-portrait-or-professional-man-real-estate-agent-or-asian-businessman-smile-for.jpg?s=612x612&w=0&k=20&c=9zbG2-9fl741fbTWw5fNgcEEe4ll-JegrGlQQ6m54rg=",
-  },
-  {
-    id: 6,
-    username: "abd109abd",
-    profession: "Sculpture Art",
-    profilePic:
-      "https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D",
-  },
-  {
-    id: 7,
-    username: "abd109abd",
-    profession: "Interior Design",
-    profilePic:
-      "https://media.istockphoto.com/id/1135476604/photo/portrait-of-handsome-young-man-with-crossed-arms.jpg?s=612x612&w=0&k=20&c=AffDDGYHeYW_394lHCjsmbUxhbpxza_ex8A-OsDM2GY=",
-  },
-  {
-    id: 8,
-    username: "abd109abd",
-    profession: "Art Fan Club",
-    profilePic:
-      "https://images.ctfassets.net/h6goo9gw1hh6/2sNZtFAWOdP1lmQ33VwRN3/24e953b920a9cd0ff2e1d587742a2472/1-intro-photo-final.jpg?w=1200&h=992&fl=progressive&q=70&fm=jpg",
-  },
-];
 
 const Profile = () => {
   const location = useLocation();
@@ -200,7 +142,7 @@ const Profile = () => {
   const [mentionSuggestions, setMentionSuggestions] = useState([]);
   const [showMentions, setShowMentions] = useState(false);
   const [canComment, setCanComment] = useState(false);
-
+  const [products, setProducts]=useState([]);
 
  // helper: normalize array -> [ids]
 const toIdArray = (arr) =>
@@ -298,7 +240,9 @@ const sameIds = (a, b) => {
   }
   return false;
 };
+const postProduct=()=>{
 
+};
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -352,6 +296,25 @@ console.log(isMyProfile);
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [viewedUserId, loggedInUserId]);
+  
+ useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        // ✅ correct query param: ?userId=value
+        const res = await getAPI(`/api/get-profileproduct?userId=${viewedUserId}`);
+
+        // ✅ handle different response formats safely
+        const data = res?.data?.data || res?.data || [];
+        setProducts(data);
+      } catch (error) {
+        console.error("Error fetching profile products:", error);
+      }
+    };
+
+    if (profile?.postProductsEnabled) {
+      fetchProduct();
+    }
+  }, [viewedUserId, profile]);
   const [openComment, setOpenComment] = useState(false);
   const [onPosts, setOnPosts] = useState(true);
   const [onSave, setOnSave] = useState(false);
@@ -360,7 +323,13 @@ console.log(isMyProfile);
   const [showMenu, setShowMenu] = useState(false);
   const [follow, setFollow] = useState(false);
   const [suggestionOn, setSuggestionOn] = useState(false);
-  
+  const [isCancelling, setIsCancelling] = useState(false);
+    useEffect(() => {
+    if (location.state?.onItem === true) {
+      setOnItem(true);
+      setOnPosts(false);
+    }
+  }, [location.state]);
   const handleFollowToggle = async (targetUserId, isFollowing) => {
     const userId = localStorage.getItem("userId");
   try {
@@ -612,6 +581,46 @@ const handleSelectMentionProfile = (username) => {
 };
 
 
+  const cancelPromotion = async (postId) => {
+  const userId = localStorage.getItem("userId");
+  if (!postId || !userId) return toast.error("Missing post ID or user ID");
+
+  try {
+    setIsCancelling(true);
+    const res = await postAPI("/api/social-media/posts/promote/cancel", { postId, userId }, true, true);
+
+    if (res?.data?.success) {
+      toast.success("Promotion cancelled successfully!");
+
+      // 🧠 Update promotion status in profile.posts
+      setProfile((prev) => {
+        if (!prev) return prev;
+        const updatedPosts = prev.posts.map((p) =>
+          p._id === postId
+            ? {
+                ...p,
+                isPromoted: false,
+                promotionDetails: {
+                  ...p.promotionDetails,
+                  status: "completed",
+                },
+              }
+            : p
+        );
+        return { ...prev, posts: updatedPosts };
+      });
+    } else {
+      toast.error(res?.data?.message || "Failed to cancel promotion");
+    }
+  } catch (error) {
+    toast.error("Server error while cancelling promotion");
+    console.error(error);
+  } finally {
+    setIsCancelling(false);
+  }
+  };
+
+
   return (
     <div
       className={`${
@@ -809,13 +818,26 @@ const handleSelectMentionProfile = (username) => {
       </div>
 
       <div className="flex items-center gap-3">
-        {isMyProfile && (
-          <Link to={"/social-media/profile/promote-post"}>
+        {isMyProfile && activePost.isPromoted===false  && (
+          <Link to={"/social-media/profile/promote-post"} state={{ postId: activePost._id , postImage: activePost.images[0]}}>
             <button className="px-2 py-0.5 bg-[#48372D] text-white text-base rounded-lg">
               Promote post
             </button>
           </Link>
         )}
+       {activePost.isPromoted && (
+  <button
+    className="px-2 py-0.5 bg-[#48372D] text-white text-base rounded-lg"
+    onClick={() => cancelPromotion(activePost._id)}
+    disabled={isCancelling}
+  >
+    {isCancelling ? "Cancelling..." : "Cancel Promotion"}
+  </button>
+)}
+
+
+          
+       
         {activePost?.isSaved ? (
           <FaBookmark
             className="text-[23px] text-[#000000] cursor-pointer"
@@ -1072,11 +1094,7 @@ const handleSelectMentionProfile = (username) => {
                         Edit Profile
                       </button>
                     </Link>
-                    <Link to={"/social-media/profile/promote-profile"}>
-                      <button className="hidden sm:flex px-2.5 py-1 bg-[#6F4D34] text-white rounded-md text-base">
-                        Boost Profile
-                      </button>
-                    </Link>
+                 
                     <button
                       className="text-xl"
                       onClick={() => setShowMenu((prev) => !prev)}
@@ -1085,13 +1103,12 @@ const handleSelectMentionProfile = (username) => {
                     </button>
                     {showMenu && (
                       <div className="absolute right-0 top-full flex flex-col items-center mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-md z-50">
-                        <button className="bg-gray-100 font-medium w-full px-3 py-1.5 hover:bg-gray-200 rounded-t-lg">
+                       <Link to={""}>
+                         <button className="bg-gray-100 font-medium w-full px-3 py-1.5 hover:bg-gray-200 rounded-t-lg"
+                        >
                           Setting and privacy
                         </button>
-                        <hr className="w-[80%] border-t border-gray-800" />
-                        <button className="bg-gray-100 w-full font-medium px-3 py-1.5 hover:bg-gray-200">
-                          Login activity
-                        </button>
+                       </Link>
                         <hr className="w-[80%] border-t border-gray-800" />
                         <button className="bg-gray-100 w-full font-medium px-3 py-1.5 rounded-b-lg hover:bg-gray-200">
                           Log Out
@@ -1482,7 +1499,8 @@ const handleSelectMentionProfile = (username) => {
             <FaRegBookmark className="text-2xl" />
           </button>
           )}
-          <button
+          {userType!=='Buyer'&&(
+             <button
             onClick={() => {
               setOnPosts(false);
               setOnSave(false);
@@ -1495,6 +1513,7 @@ const handleSelectMentionProfile = (username) => {
           >
             <LuArchive className="text-2xl" />
           </button>
+          )}
           <button
             onClick={() => {
               setOnPosts(false);
@@ -1576,55 +1595,81 @@ const handleSelectMentionProfile = (username) => {
   </div>
 )}
         {/* Selling Items */}
-        {/* Selling Items */}
-        {onItem && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
-            {user.sellingItem.map((item, index) => (
-              <div
-                key={index}
-                className="bg-[#FEE2CC] rounded-lg overflow-hidden text-white flex flex-col shadow-lg"
-              >
-                <div className="h-[200px] bg-[#FEE2CC]">
-                  <img
-                    src={item.img}
-                    alt={item.owner}
-                    className="h-full w-full object-contain"
-                  />
-                </div>
-                <div className=" selling-div flex flex-col justify-between min-h-[140px] bg-[#48372D]  p-4">
-                  <div className="flex flex-col justify-between">
-                    <h3 className="font-semibold text-lg">
-                      Medieval Sculpture
-                    </h3>
-                    <p className="text-sm text-[#B7B7B7] mt-1">
-                      Own the Exclusive art
-                    </p>
-                    <p className="text-[10px] text-[#B7B7B7] ">{item.about}</p>
-                  </div>
-                  <hr className="mt-4 w-[100%] mx-auto text-[#A8A8A8]" />
-                  <div className="flex justify-between items-center mt-2">
-                    <span className="text-base font-semibold text-white">
-                      ₹ 500.00
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <button className="text-sm bg-white text-[#6E4E37] sm:px-2 sm:py-[2px] p-0 rounded-md">
-                        Buy{" "}
-                        <i className="ri-shopping-cart-fill text-sm sm:text-lg"></i>
-                      </button>
-                      <button className="bg-[#2B211B] rounded-full">
-                        {" "}
-                        <i className="ri-bookmark-line text-lg text-white p-1"></i>
-                      </button>
-                      <button className="bg-[#2B211B] rounded-full">
-                        <i className="ri-bookmark-line text-lg text-white p-1"></i>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+      {/* Selling Items */}
+{userType !== "Buyer" && onItem && (
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
+    {products.length > 0 ? (
+      products.map((item, index) => (
+        <div
+          key={index}
+          className="bg-[#FEE2CC] rounded-lg overflow-hidden text-white flex flex-col shadow-lg"
+        >
+          {/* Image Section */}
+          <div className="h-[200px] bg-[#FEE2CC]">
+            <img
+              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.mainImage}`}
+              alt={item.productName}
+              className="h-full w-full object-contain"
+            />
           </div>
-        )}
+
+          {/* Content Section */}
+          <div className="selling-div flex flex-col justify-between min-h-[140px] bg-[#48372D] p-4">
+            <div className="flex flex-col justify-between">
+              <h3 className="font-semibold text-lg truncate">
+                {item.productName}
+              </h3>
+              <p className="text-[10px] text-[#B7B7B7] mt-1 line-clamp-2">
+                {item.description}
+              </p>
+            </div>
+
+            <hr className="mt-4 w-full text-[#A8A8A8]" />
+
+            {/* ✅ Price Section with old crossed-out price */}
+            <div className="flex justify-between items-center mt-2">
+              <div className="flex flex-col">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-base font-semibold text-white">
+                    ₹ {item.finalPrice?.toLocaleString("en-IN") || 0}
+                  </span>
+                  {item.marketPrice && (
+                    <span className="text-sm text-gray-300 line-through">
+                      ₹ {item.sellingPrice?.toLocaleString("en-IN")}
+                    </span>
+                  )}
+                </div>
+
+                {item.discount > 0 && (
+                  <span className="text-xs text-green-400 font-medium mt-[2px]">
+                    Save {item.discount}% off
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2">
+               
+                  <button className="text-sm bg-white text-[#6E4E37] px-3 py-[2px] rounded-md font-medium hover:bg-[#f8f8f8] transition">
+                    View
+                  </button>
+                 {isMyProfile&& (
+                  <button className="text-sm bg-white text-[#6E4E37] px-3 py-[2px] rounded-md font-medium hover:bg-[#f8f8f8] transition"
+                  onClick={()=>(postProduct({productId:item._id,image:item.mainImage,name:item.productName,bio:item.description,price:item.finalPrice}))}>
+                    Post
+                  </button>
+                 )}
+              </div>
+            </div>
+          </div>
+        </div>
+      ))
+    ) : (
+      <p className="text-center text-gray-600 col-span-full">
+        No approved products found.
+      </p>
+    )}
+  </div>
+)}
 
         {/* Tagged */}
         {onTag && (
