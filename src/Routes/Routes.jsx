@@ -51,7 +51,6 @@ import UnauthorizedAccess from "../Pages/Error/403Error";
 //----------------------------------------WebsiteRoutes-----------------------------------------//
 // import WebsiteMain from "../Pages/Home/Home";
 import WebsiteMain from "../Pages/Homepage/Homepage";
-
 //----------------------------------------User Profile---------------------------------------//
 import UserProfile from "../Component/Dashboard/UserProfile/UserInfo";
 
@@ -346,7 +345,7 @@ import Store from "../Pages/store/store";
 import Bid from "../Pages/Bid/bid";
 import Artist from "../Pages/Artist/artist";
 import Celebrity from "../Pages/Celebrity/celebrity";
-import CelebrityCollections from "../Pages/Celebrity/celebrityCollections";
+//import CelebrityCollections from "../Pages/Celebrity/celebrityCollections";
 import TermsPolicy from "../Pages/Terms&Policy/Terms&Policy";
 import Commission from "../Pages/CommissionWork/CommissionWork";
 import HowToBid from "../Pages/HowToBid/HowToBidWork";
@@ -362,6 +361,21 @@ import Career from "../Pages/Career/Career"
 import WhyArtsays from "../Pages/WhyArtsays/WhyArtsays";
 import Challenge from "../Pages/Challenges/Challenges";
 import AboutUs from "../Pages/AboutUs/AboutUs";
+import CelebrityContent from '../Pages/Celebrity/celebrityContent/celebrityContent';
+import TermsPolicy from "../Pages/Terms&Policy/Terms&Policy";
+import Commission from "../Pages/CommissionWork/CommissionWork";
+import LicensingPartner from "../Pages/LicensingPartner/LicensingPartner"
+import AffiliateProgram from "../Pages/AffiliateProgram/AffiliateProgram"
+import ContactUs from "../Pages/ContactUs/ContactUs"
+import HowToBuy from "../Pages/HowToBuy/HowToBuy"
+import HowToSell from "../Pages/HowToSell/HowToSell"
+import Collections from "../Pages/Collections/Collections"
+import Career from "../Pages/Career/Career"
+import JobRoles from '../Pages/Career/JobRoles';
+import Blogs from '../Pages/blogs/Blogs';
+import BlogCardDetails from "../Pages/blogDetails/BlogCardDetails";
+import ChallengesContent from "../Pages/Challenges/ChallengesContent/ChallengesContent";
+import JoinChallenges from '../Pages/Challenges/JoinChallenges/JoinChallenges';
 
 //-----------------------------Artist Premium Badges--------------------------//
 
@@ -686,6 +700,19 @@ const AppRoutes = () => {
         <Route path="affiliate-bp" element={<AffiliateBPTable />} />
         <Route path="affiliate-bp/create" element={<CreateAffiliateBP />} />
         <Route path="affiliate-bp/update" element={<UpdateAffiliateBP />} />
+        <Route path="challenges" element={<ChallengesTable />} />
+        <Route path="challenges/create-challenge" element={<CreateChallenge />} />
+        <Route path='challenges/view-challenge' element={<ViewChallenge />} />
+        <Route path='challenges/update-challenge' element={<UpdateChallenge />} />
+        <Route path="challenges-entries" element={<ChallengesEntries />} />
+        <Route path='challenges/view-application' element={<ViewChallengeApplication />} />
+        <Route path='challenges/update-application' element={<UpdateChallengeApplication />} />
+
+        {/* Celebraties */}
+        <Route path="celebraties" element={<Celebraties />} />
+        <Route path='celebraties/create' element={<CreateCelebraties />} />
+        <Route path='celebraties/view-celebrity' element={<ViewCelebrity />} />
+        <Route path='celebraties/update-celebrity' element={<UpdateCelebrity />} />
 
 
         {/* Homepage Admin Routes*/}
@@ -794,45 +821,26 @@ const AppRoutes = () => {
         <Route path="advertise" element={<ArtistAdvertise />} />
         <Route path="advertise/sponser" element={<ArtistSponser />} />
 
+
         {/* Bidding Routes */}
-        <Route
-          path="bidding-products-table"
-          element={<ArtistBidingAllProducts />}
-        />
-        <Route
-          path="bidded-products-table"
-          element={<ArtistBiddedProducts />}
-        />
+        <Route path="bidding-products-table" element={<ArtistBidingAllProducts />} />
+        <Route path="bidded-products-table" element={<ArtistBiddedProducts />} />
         <Route path="bidding-pass-table" element={<ArtistBiddingTable />} />
-        <Route
-          path="bidding-pass-table/bidding-pass"
-          element={<ArtistBiddingTablePass />}
-        />
+        <Route path="bidding-pass-table/bidding-pass" element={<ArtistBiddingTablePass />} />
 
         {/* Certification Routes */}
         <Route path="certification" element={<ArtistCertification />} />
-        <Route
-          path="certification/create-certification"
-          element={<CreateArtitstCertifications />}
-        />
+        <Route path="certification/create-certification" element={<  CreateArtitstCertifications />} />
 
         {/* Exhibition */}
         <Route path="exhibition" element={<ArtistExhibition />} />
-        <Route
-          path="exhibition/create-exhibition"
-          element={<ArtistCreateExhibition />}
-        />
-        <Route
-          path="exhibition/update-exhibition"
-          element={<ArtistUpdateExhibition />}
-        />
-        <Route
-          path="exhibition/view-exhibition"
-          element={<ArtistViewExhibition />}
-        />
+        <Route path="exhibition/create-exhibition" element={<ArtistCreateExhibition />} />
+        <Route path="exhibition/update-exhibition" element={<ArtistUpdateExhibition />} />
+        <Route path="exhibition/view-exhibition" element={<ArtistViewExhibition />} />
 
         {/* Premium Badges */}
         <Route path="premium-badges" element={<ArtistPremiumBages />} />
+
       </Route>
 
       {/* --------------------------------------------Buyer Routes---------------------------------------------------- */}
@@ -863,10 +871,7 @@ const AppRoutes = () => {
         <Route path="profile" element={<UserProfile />} />
         {/* Product Routes */}
         <Route path="product-details" element={<ViewProductDetails />} />
-        <Route
-          path="product-details/bidding-pass"
-          element={<SellerBiddingPass />}
-        />
+        <Route path="product-details/bidding-pass" element={<SellerBiddingPass />} />
         <Route path="SellerProductUpload" element={<SellerProductUpload />} />
         <Route path="purchased-product" element={<SellerPurchasedProducts />} />
 
@@ -952,10 +957,11 @@ const AppRoutes = () => {
         <Route path="/bid" element={<Bid />} />
         <Route path="/artist-card" element={<Artist />} />
         <Route path="/celebrity" element={<Celebrity />} />
-        <Route
-          path="/celebrity-collections"
-          element={<CelebrityCollections />}
-        />
+        {/* <Route */}
+           {/* path="/celebrity-collections"
+           element={<CelebrityCollections />}
+         /> */}
+        <Route path='/celebrity/:slug' element={<CelebrityContent />} />
         <Route path="/policy" element={<TermsPolicy />} />
         <Route path="/commission" element={<Commission />} />
         <Route path="/how-to-bid" element={<HowToBid />} />
@@ -967,10 +973,19 @@ const AppRoutes = () => {
         <Route path="/how-to-sell" element={<HowToSell />} />
         <Route path="/how-to-resell" element={<HowToResell />} />
         <Route path="/collections" element={<Collections />} />
-        <Route path="/career" element={<Career />} />
+        {/* <Route path="/career" element={<Career />} /> */}
         <Route path="/why-artsays" element={<WhyArtsays />} />
-        <Route path="/challenges" element={<Challenge />} />
+        {/* <Route path="/challenges" element={<Challenge />} /> */}
         <Route path="/about-us" element={<AboutUs />} />
+
+        <Route path="/career" element={<Career />} />
+        <Route path='/careers/:slug' element={<JobRoles />} />
+
+        <Route path='/blogs' element={<Blogs />} />
+        <Route path='/blog/:blogId' element={<BlogCardDetails />} />
+
+        <Route path='/challenge' element={<ChallengesContent />} />
+        <Route path='/challenge/:theme' element={<JoinChallenges />} />
 
       </Route>
 

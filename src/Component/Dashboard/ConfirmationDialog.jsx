@@ -209,6 +209,13 @@ autotargetingsetting:{
   idKey: "autotargetingId",
 },
 
+homepageSection: {
+ getEndpoint: (id) => `/api/homepage/delete/${id}`,
+  successMessage: "Successfully deleted!",
+  errorMessage: "Failed to delete.",
+ idKey: "HomePageId",
+},
+
 grouptargetingsetting:{
   getEndpoint: (id) => `/api/delete-group-targeting/${id}`,
   successMessage: "Group Targeting successfully deleted!",

@@ -577,7 +577,6 @@ const BiddingArena = () => {
                   </span>
                 )}
               </p>
-
               <div className="grid items-center gap-1 mt-2">
                 <span className="text-red-500 font-semibold text-md sm:text-lg">
                   Starting Price: ₹{card.startingPrice}

@@ -284,5 +284,4 @@ const LicensingPartnerContent = () => {
     </div>
   );
 };
-
 export default LicensingPartnerContent;

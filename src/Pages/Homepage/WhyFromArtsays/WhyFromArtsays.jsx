@@ -187,7 +187,6 @@
 
 
 
-
 import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
 import { LiaCoinsSolid } from "react-icons/lia";

@@ -1,5 +1,9 @@
 import "../../store/products/product.css";
 import React, { useState } from "react";
+<<<<<<< HEAD
+=======
+import { FaStar, FaShoppingCart } from "react-icons/fa";
+>>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
 import { MdVerified } from "react-icons/md";
 import { FiChevronRight } from "react-icons/fi";
 import { FiChevronLeft } from "react-icons/fi";

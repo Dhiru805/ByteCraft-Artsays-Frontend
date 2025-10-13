@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import React from 'react';
+=======
+>>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
 import CelebrityContent from './celebrityContent/celebrityContent';
 
 const CelebrityCollections = () => {

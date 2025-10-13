@@ -1,10 +1,20 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from "react";
+=======
+import { useEffect, useState } from "react";
+>>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
 import { useNavigate } from "react-router-dom";
 import getAPI from '../../../../api/getAPI';
 import ConfirmationDialog from '../../ConfirmationDialog';
 
 const Career = () => {
+<<<<<<< HEAD
   const navigate = useNavigate();
+=======
+
+  const navigate = useNavigate();
+
+>>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
   const [careers, setCareers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -106,6 +116,10 @@ const Career = () => {
           </div>
         </div>
       </div>
+<<<<<<< HEAD
+=======
+      
+>>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
       <div className="row clearfix">
         <div className="col-lg-12">
           <div className="card">

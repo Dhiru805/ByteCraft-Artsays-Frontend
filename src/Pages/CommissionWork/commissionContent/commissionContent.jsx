@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // import "../../store/products/product.css";
 // import React, { useState } from "react";
 
@@ -324,12 +325,46 @@ const CommissionContent = () => {
             <span className="font-medium text-gray-900">Commission</span>
           </nav>
 
+=======
+import "../../store/products/product.css";
+import React, { useState } from "react";
+
+const CommissionContent = () => {
+  const [showFilters, setShowFilters] = useState(false);
+
+  return (
+    <div className="max-w-[1440px] mx-auto mb-4">
+      {/* Top Section: Breadcrumb + Search */}
+      <div className="w-full py-3 px-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          {/* Breadcrumb */}
+          <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
+            <a href="#" className="hover:text-red-500">
+              Home
+            </a>
+            <span>/</span>
+            <a href="#" className="hover:text-red-500">
+              Store
+            </a>
+            <span>/</span>
+            <a href="#" className="hover:text-red-500">
+              Paintings
+            </a>
+            <span>/</span>
+            <span className="font-medium text-gray-900">Abstract</span>
+          </nav>
+
+          {/* Search Bar */}
+>>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
           <div className="relative w-full sm:w-64">
             <input
               type="text"
               placeholder="Search"
+<<<<<<< HEAD
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+=======
+>>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               className="w-full pl-10 pr-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400"
             />
             <svg
@@ -350,6 +385,7 @@ const CommissionContent = () => {
         </div>
       </div>
 
+<<<<<<< HEAD
       <h1 className="text-sm md:text-4xl font-bold text-orange-500 px-3">
         {pageData.webpageHeading}
       </h1>
@@ -402,9 +438,84 @@ const CommissionContent = () => {
             </main>
           </div>
         ))}
+=======
+      {/* title */}
+      <h1 className="text-sm md:text-4xl font-bold text-orange-500 px-3">
+        How to Commission Art works
+      </h1>
+
+      <hr className="my-3 border-dark" />
+
+      {/* Subtitle */}
+      <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+        At ArtSays, we make it simple for you to collaborate directly with
+        talented artists and bring your creative vision to life. Commissioning
+        custom artwork is a personalized process designed to give you a unique
+        piece that reflects your ideas, style, and story.
+      </p>
+
+      {/* Main Layout */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6 mt-3">
+        {/* Sidebar Filters (hidden on mobile, toggleable) */}
+        <aside className="rounded-xl filter-sidebar content-center">
+          <img src="/herosectionimg/Audit-pana 1.png" alt="" />
+        </aside>
+
+        {/* <!-- Product Grid --> */}
+        <main className="md:col-span-3 content-center">
+          <div>
+            {/* title */}
+            <h1 className="text-sm md:text-xl font-bold text-orange-500">
+              1. Submit Your Request
+            </h1>
+            <hr className="my-3 border-dark" />
+            {/* Subtitle */}
+            <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
+              Fill out the Commission Request Form with details about your
+              concept, size, medium, and budget. <br />
+              Provide references or inspiration images (optional) to help the
+              artist understand your vision.
+            </p>
+            <button className="flex-1 bg-red-500 text-white py-2 px-3 mt-2 rounded-full font-semibold shadow buy-now">
+              Commission Form
+            </button>
+          </div>
+        </main>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6 mt-3">
+        {/* <!-- Product Grid --> */}
+        <main className="md:col-span-3 content-center text-right !order-2 md:!order-1">
+          <div>
+            {/* title */}
+            <h1 className="text-sm md:text-xl font-bold text-orange-500">
+              1. Submit Your Request
+            </h1>
+            <hr className="my-3 border-dark" />
+            {/* Subtitle */}
+            <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
+              Fill out the Commission Request Form with details about your
+              concept, size, medium, and budget. <br />
+              Provide references or inspiration images (optional) to help the
+              artist understand your vision.
+            </p>
+            <button className="flex-1 bg-red-500 text-white py-2 px-3 mt-2 rounded-full font-semibold shadow buy-now">
+              Commission Form
+            </button>
+          </div>
+        </main>
+
+        {/* Sidebar Filters (hidden on mobile, toggleable) */}
+        <aside className="rounded-xl filter-sidebar content-center !order-1 md:!order-2">
+          <img src="/herosectionimg/Audit-pana 1.png" alt="" />
+        </aside>
+>>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
       </div>
     </div>
   );
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
 export default CommissionContent;
