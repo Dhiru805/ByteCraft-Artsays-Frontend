@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import postAPI from "../../api/postAPI";
 import getAPI from "../../api/getAPI";
+import putAPI from "../../api/putAPI";
 
-const EditLiveModal = ({ onClose, liveData, fetchLives, liveDetail }) => {
+const EditLiveModal = ({ onClose, liveDetail, fetchLive}) => {
   const [formData, setFormData] = useState({
+  _id: liveDetail._id,
   userId: localStorage.getItem("userId"),
   title: liveDetail.title,
   description: liveDetail.description,
@@ -16,10 +17,11 @@ const EditLiveModal = ({ onClose, liveData, fetchLives, liveDetail }) => {
     sortBy: liveDetail.comments.sortBy,
   },
   privacy: liveDetail.privacy,
+  streamKey: liveDetail.streamKey
 });
 
   const [thumbnail, setThumbnail] = useState(null); 
-  const [preview, setPreview] = useState(liveData?.thumbnail || ""); // preview existing/new
+  const [preview, setPreview] = useState(liveDetail?.thumbnail ? `http://localhost:3001/${liveDetail?.thumbnail?.replace(/\\/g, "/")}` : ""); // preview existing/new
   const [loading, setLoading] = useState(false);
   const [categories, setCategories ] = useState([]);
   const [tagInput, setTagInput] = useState("");
@@ -46,14 +48,15 @@ const EditLiveModal = ({ onClose, liveData, fetchLives, liveDetail }) => {
   useEffect(() => {
   const fetchLiveDetails = async () => {
     try {
-      const userId = liveData?.userId?._id || liveData?.userId;
-        if (!userId) {
+      // const userId = liveDetail?.userId?._id || liveDetail?.userId;
+      const streamKey = liveDetail?.live?.streamKey;
+        if (!streamKey) {
           console.error("No valid userId provided");
           toast.error("Invalid user ID");
           return;
         }
-        console.log(userId);
-      const response = await getAPI(`/api/social-media/live/${userId}`, true);
+        console.log(streamKey);
+      const response = await getAPI(`/api/social-media/live/${streamKey}`, true);
 
       if (!response.hasError && response.data?.data) {
         const live = Array.isArray(response.data.data)
@@ -61,6 +64,7 @@ const EditLiveModal = ({ onClose, liveData, fetchLives, liveDetail }) => {
         : response.data.data;
         if(live){
             setFormData({
+            _id: live._id,
             userId: live.userId,
             title: live.title || "",
             description: live.description || "",
@@ -74,7 +78,13 @@ const EditLiveModal = ({ onClose, liveData, fetchLives, liveDetail }) => {
             privacy: live.privacy || "Public",
           });
 
-          setPreview(live.thumbnail || "");
+          // Set preview to fully-qualified URL if thumbnail exists
+          if (live.thumbnail) {
+            const normalized = String(live.thumbnail).replace(/\\\\/g, "/");
+            setPreview(`http://localhost:3001/${normalized}`);
+          } else {
+            setPreview("");
+          }
         }
       }
       console.log(response)
@@ -84,10 +94,10 @@ const EditLiveModal = ({ onClose, liveData, fetchLives, liveDetail }) => {
     }
   };
 
-  if (liveData?.userId) {
+  if (liveDetail?.userId) {
     fetchLiveDetails();
   }
-}, [liveData]);
+}, [liveDetail]);
 
 
   // Handle text/checkbox/select changes
@@ -144,20 +154,42 @@ const EditLiveModal = ({ onClose, liveData, fetchLives, liveDetail }) => {
     setLoading(true);
 
     try {
+        const requiredFields = [
+          { field: formData.title, name: "Title" },
+          { field: formData.description, name: "Description" },
+          { field: formData.category, name: "Category" },
+          { field: formData.thumbnail, name: "Thumbnail" },
+          { field: formData.comments.comments, name: "Comments" },
+          { field: formData.comments.sortBy, name: "SortBy" },
+          { field: formData.tags.length > 0, name: "Tags" },
+        ];
+         
+        const missingFields = requiredFields
+          .filter(({ field }) => !field || (typeof field === "string" && !field.trim()))
+          .map(({ name }) => name);
+         
+          if (missingFields.length > 0) {
+           toast.error(`Please fill the required fields: ${missingFields.join(", ")}`);
+            return;
+        }
+
         const payload = new FormData();
+        payload.append("userId", formData.userId);
         payload.append("title", formData.title.trim());
         payload.append("category", formData.category.trim());
         payload.append("description", formData.description.trim());
-        payload.append("tags", JSON.stringify(formData.tags));
-        payload.append("comments", JSON.stringify(formData.comments));
+        payload.append("tags", JSON.stringify(formData.tags || []));
+        payload.append("comments", JSON.stringify(formData.comments || {}));
         payload.append("live", JSON.stringify({ privacy: formData.privacy }));
 
         if (thumbnail) {
         payload.append("thumbnail", thumbnail); 
+        } else {
+          payload.append("thumbnail", formData.thumbnail);
         }
 
-        const response = await postAPI(
-        `/api/social-media/update-live/${liveData._id}`,
+        const response = await putAPI(
+        `/api/social-media/update-live/${liveDetail._id}`,
         payload,
         {},
         true
@@ -165,7 +197,7 @@ const EditLiveModal = ({ onClose, liveData, fetchLives, liveDetail }) => {
 
         if (response.data?.success) {
         toast.success("Live details updated!");
-        fetchLives(); 
+        fetchLive(); 
         onClose();   
         } else {
         toast.error(response.message || "Error updating live");
@@ -177,7 +209,6 @@ const EditLiveModal = ({ onClose, liveData, fetchLives, liveDetail }) => {
         setLoading(false);
     }
     };
-
 
   return (
     <div
