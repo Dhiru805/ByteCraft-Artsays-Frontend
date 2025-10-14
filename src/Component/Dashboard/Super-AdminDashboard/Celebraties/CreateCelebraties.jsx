@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import getAPI from "../../../../api/getAPI";
 import Select from "react-select";
 
-function CreateCelebraties() {
+function CreateCelebrities() {
 
     const navigate = useNavigate()
 
@@ -77,7 +77,7 @@ function CreateCelebraties() {
                 })
                 setProfilePicture(null)
                 setPreviewImage(null)
-                navigate("/super-admin/celebraties")
+                navigate("/super-admin/celebrities")
             }
             else {
                 console.log(response)
@@ -272,4 +272,4 @@ function CreateCelebraties() {
     )
 }
 
-export default CreateCelebraties;
+export default CreateCelebrities;

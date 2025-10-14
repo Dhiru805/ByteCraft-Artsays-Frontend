@@ -42,7 +42,7 @@ const JoinArtsays = () => {
       {/* Subtitle */}
       <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
         At Artsays, we’re building more than just a platform — we’re shaping the
-        future of how art is shared, discovered, and celebrated.  We believe in
+        future of how art is shared, discovered, and celebrated. We believe in
         creativity, collaboration, and growth. If you’re passionate about
         design, technology, and empowering artists worldwide, this is your
         place.

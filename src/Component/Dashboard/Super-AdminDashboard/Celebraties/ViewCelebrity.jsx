@@ -21,7 +21,7 @@ function ViewCelebrity() {
                                 </a>
                             </li>
                             <li className="breadcrumb-item active">
-                                <Link to="/super-admin/celebraties" className="text-decoration-none">Celebrities</Link>
+                                <Link to="/super-admin/celebrities" className="text-decoration-none">Celebrities</Link>
                             </li>
                             <li className="breadcrumb-item">View Celebrity</li>
                         </ul>

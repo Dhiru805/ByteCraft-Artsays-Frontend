@@ -80,6 +80,11 @@ import Carrer from "../Component/Dashboard/Super-AdminDashboard/Career/Career";
 import CreateCarrer from "../Component/Dashboard/Super-AdminDashboard/Career/CreateCarrer";
 import UpdateCareer from "../Component/Dashboard/Super-AdminDashboard/Career/EditCareer";
 import ViewCareer from "../Component/Dashboard/Super-AdminDashboard/Career/CarrerView";
+
+import CarrerTable from "../Component/Dashboard/Super-AdminDashboard/Career/applications/Applications";
+import UpdateCareerApp from "../Component/Dashboard/Super-AdminDashboard/Career/applications/UpdateApplication";
+import ViewCareerApp from "../Component/Dashboard/Super-AdminDashboard/Career/applications/ViewApplication";
+
 import Exhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/exhibition";
 import CreateExhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/create";
 import UpdateExhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/editExhibition";
@@ -105,6 +110,11 @@ import How_To_Sell from "../Component/Dashboard/Super-AdminDashboard/HowToSell/s
 import CreateHowToSell from "../Component/Dashboard/Super-AdminDashboard/HowToSell/create";
 import UpdateHowToSell from "../Component/Dashboard/Super-AdminDashboard/HowToSell/edit";
 //import ViewHowToSell from "../Component/Dashboard/Super-AdminDashboard/HowToSell/view";
+
+import Celebrities from '../Component/Dashboard/Super-AdminDashboard/Celebraties/Celebraties';
+import CreateCelebrities from '../Component/Dashboard/Super-AdminDashboard/Celebraties/CreateCelebraties';
+import ViewCelebrity from '../Component/Dashboard/Super-AdminDashboard/Celebraties/ViewCelebrity';
+import UpdateCelebrity from '../Component/Dashboard/Super-AdminDashboard/Celebraties/UpdateCelebrity';
 
 import How_To_Resell from "../Component/Dashboard/Super-AdminDashboard/HowToResell/resellTable";
 import CreateHowToResell from "../Component/Dashboard/Super-AdminDashboard/HowToResell/create";
@@ -215,7 +225,16 @@ import UpdateTestimonials from "../Component/Dashboard/Super-AdminDashboard/Abou
 
 import Challenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/challenges";
 import CreateChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/create";
+//import ChallengesEntries from "../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/challengesEntries";
+
+import ChallengesTable from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/challenges";
+import CreateChallenge from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/CreateChallenge";
+import ViewChallenge from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/ViewChallenge";
+import UpdateChallenge from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/UpdateChallenge";
 import ChallengesEntries from "../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/challengesEntries";
+import ViewChallengeApplication from "../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/ViewChallengeApplication";
+import UpdateChallengeApplication from "../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/UpdateChallengeApplication";
+
 //-----------------------------Admin--------------------------//
 import Admin from "../Component/Dashboard/Super-AdminDashboard/Admin/Admin";
 import AdminProfile from "../Component/Dashboard/Super-AdminDashboard/Admin/Profile/UserProf";
@@ -362,15 +381,15 @@ import WhyArtsays from "../Pages/WhyArtsays/WhyArtsays";
 import Challenge from "../Pages/Challenges/Challenges";
 import AboutUs from "../Pages/AboutUs/AboutUs";
 import CelebrityContent from '../Pages/Celebrity/celebrityContent/celebrityContent';
-import TermsPolicy from "../Pages/Terms&Policy/Terms&Policy";
-import Commission from "../Pages/CommissionWork/CommissionWork";
-import LicensingPartner from "../Pages/LicensingPartner/LicensingPartner"
-import AffiliateProgram from "../Pages/AffiliateProgram/AffiliateProgram"
-import ContactUs from "../Pages/ContactUs/ContactUs"
-import HowToBuy from "../Pages/HowToBuy/HowToBuy"
-import HowToSell from "../Pages/HowToSell/HowToSell"
-import Collections from "../Pages/Collections/Collections"
-import Career from "../Pages/Career/Career"
+//import TermsPolicy from "../Pages/Terms&Policy/Terms&Policy";
+//import Commission from "../Pages/CommissionWork/CommissionWork";
+//import LicensingPartner from "../Pages/LicensingPartner/LicensingPartner"
+//import AffiliateProgram from "../Pages/AffiliateProgram/AffiliateProgram"
+//import ContactUs from "../Pages/ContactUs/ContactUs"
+// import HowToBuy from "../Pages/HowToBuy/HowToBuy"
+// import HowToSell from "../Pages/HowToSell/HowToSell"
+// import Collections from "../Pages/Collections/Collections"
+// import Career from "../Pages/Career/Career"
 import JobRoles from '../Pages/Career/JobRoles';
 import Blogs from '../Pages/blogs/Blogs';
 import BlogCardDetails from "../Pages/blogDetails/BlogCardDetails";
@@ -622,6 +641,11 @@ const AppRoutes = () => {
         <Route path="career/update-job-post" element={<UpdateCareer />} />
         <Route path="career/view-job-post" element={<ViewCareer />} />
 
+        {/* Career Applications */}
+        <Route path="career/applications" element={<CarrerTable />} />
+        <Route path="career/applications/update-job-post" element={<UpdateCareerApp />} />
+        <Route path="career/applications/view-job-post" element={<ViewCareerApp />} />
+
         {/* Exhibition */}
         <Route path="exhibition" element={<Exhibition />} />
         <Route path="exhibition/create-exhibition" element={<CreateExhibition />} />
@@ -700,6 +724,8 @@ const AppRoutes = () => {
         <Route path="affiliate-bp" element={<AffiliateBPTable />} />
         <Route path="affiliate-bp/create" element={<CreateAffiliateBP />} />
         <Route path="affiliate-bp/update" element={<UpdateAffiliateBP />} />
+
+        {/* Challenges */}
         <Route path="challenges" element={<ChallengesTable />} />
         <Route path="challenges/create-challenge" element={<CreateChallenge />} />
         <Route path='challenges/view-challenge' element={<ViewChallenge />} />
@@ -709,10 +735,10 @@ const AppRoutes = () => {
         <Route path='challenges/update-application' element={<UpdateChallengeApplication />} />
 
         {/* Celebraties */}
-        <Route path="celebraties" element={<Celebraties />} />
-        <Route path='celebraties/create' element={<CreateCelebraties />} />
-        <Route path='celebraties/view-celebrity' element={<ViewCelebrity />} />
-        <Route path='celebraties/update-celebrity' element={<UpdateCelebrity />} />
+        <Route path="celebrities" element={<Celebrities />} />
+        <Route path='celebrities/create' element={<CreateCelebrities />} />
+        <Route path='celebrities/view-celebrity' element={<ViewCelebrity />} />
+        <Route path='celebrities/update-celebrity' element={<UpdateCelebrity />} />
 
 
         {/* Homepage Admin Routes*/}

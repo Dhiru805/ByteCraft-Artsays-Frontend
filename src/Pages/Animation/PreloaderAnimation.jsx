@@ -66,11 +66,7 @@ export default function PreloaderAnimation() {
               animate={{ opacity: 0 }}
               transition={{ delay: 3.2, duration: 0.6 }}
             >
-<<<<<<< HEAD
               {["When Art Speaks,", "Value Grows", ""].map((word, index) => (
-=======
-              {["Pioneering", "Creative", "Excellence"].map((word, index) => (
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
                 <motion.p
                   key={word}
                   initial={{ opacity: 0, y: 30 }}
@@ -82,11 +78,7 @@ export default function PreloaderAnimation() {
                   }}
                   style={{
                     fontSize: isMobile ? "24px" : "44px",
-<<<<<<< HEAD
                     fontWeight: word === "Value Grows" ? 700 : 100,
-=======
-                    fontWeight: word === "Creative" ? 700 : 100,
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
                     color: "#d1d5db",
                     margin: isMobile ? "0 0 10px 0" : "0 10px",
                     whiteSpace: "nowrap",

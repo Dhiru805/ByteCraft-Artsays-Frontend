@@ -126,6 +126,13 @@ whyartsays: {
   idKey: "WhyArtSaysId",
 },
 
+challenge: {
+ getEndpoint: (id) => `/api/deleteChallenge/${id}`,
+  successMessage: "Successfully deleted!",
+  errorMessage: "Failed to delete.",
+  idKey: "ChallengesId",
+},
+
 licensing: {
   getEndpoint: (id) => `/api/licensing/delete/${id}`,
   successMessage: "Successfully deleted!",

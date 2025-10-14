@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-import React, { useState } from "react";
-import { IoCloudUpload } from "react-icons/io5";
-
-const JoinChallenges = () => {
-  const [showFilters, setShowFilters] = useState(false);
-
-  return (
-    <div className="mb-4">
-=======
 import { useEffect, useState } from "react";
 import { IoCloudUpload } from "react-icons/io5";
 import { useLocation } from "react-router-dom";
@@ -116,7 +106,6 @@ const JoinChallenges = () => {
   return (
     <div className="mb-4">
 
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
       <div>
         {/* Top Section: Breadcrumb + Search */}
         <div className="w-full py-3 px-3">
@@ -159,102 +148,50 @@ const JoinChallenges = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2">
-<<<<<<< HEAD
-=======
 
         {/* Challenge details */}
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
         <div className="md:p-4 content-center">
           <div className="max-w-3xl text-[#48372D] space-y-6">
             <div>
               <h2 className="text-2xl font-bold">Theme</h2>
-<<<<<<< HEAD
-              <p className="mt-1">Celebrate the Spirit of Diwali Through Art</p>
-=======
               <p className="mt-1">{challengeDetails?.title || "Challenge Title"}</p>
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
             </div>
 
             <div>
               <h2 className="text-2xl font-bold">Description</h2>
               <p className="mt-1">
-<<<<<<< HEAD
-                Artists are invited to express the joy, lights, and festive
-                spirit of Diwali through their unique style — whether it&apos;s
-                painting, digital art, illustration, or photography. Show how
-                you see the festival of lights!
-=======
                 {challengeDetails?.description || "Challenge description"}
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               </p>
             </div>
 
             <div>
               <h2 className="text-2xl font-bold">Submission Deadline</h2>
-<<<<<<< HEAD
-              <p className="mt-1">25th October 2025</p>
-=======
               <p className="mt-1">
                 {challengeDetails?.submissionDeadline ? format(new Date(challengeDetails.submissionDeadline), "do MMMM, yyyy") : "N/A"}
               </p>
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
             </div>
 
             <div>
               <h2 className="text-2xl font-bold">Entry Charges</h2>
-<<<<<<< HEAD
-              <p className="mt-1">₹199 / $5 (per artwork submission)</p>
-=======
               <p className="mt-1">{challengeDetails?.entryFee || "Entry fees"}</p>
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
             </div>
 
             <div>
               <h2 className="text-2xl font-bold">Prizes</h2>
               <p className="mt-1">
-<<<<<<< HEAD
-                Featured spot on ArtSays, social media shoutouts, and a digital
-                certificate.
-=======
                 {challengeDetails?.prizeDetails || "Prize details"}
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               </p>
             </div>
 
             <div>
               <h2 className="text-2xl font-bold">Eligibility</h2>
               <p className="mt-1">
-<<<<<<< HEAD
-                Open to all registered ArtSays creators worldwide.
-=======
                 {challengeDetails?.judgingCriteria || "Eligibility criteria"}
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               </p>
             </div>
 
             <div>
               <h2 className="text-2xl font-bold">Rules</h2>
-<<<<<<< HEAD
-              <ul className="list-decimal list-inside mt-2 space-y-1">
-                <li>
-                  Stick to the Diwali theme (lights, diyas, rangoli, joy,
-                  family, celebration).
-                </li>
-                <li>
-                  Submit original artwork only (no plagiarism or AI-generated
-                  art).
-                </li>
-                <li>
-                  Any medium is allowed (digital, traditional, photography,
-                  mixed media).
-                </li>
-                <li>Add a caption/description for context.</li>
-                <li>Keep it festive & respectful to culture.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-=======
               {challengeDetails && (
                 <div
                   dangerouslySetInnerHTML={{ __html: challengeDetails.rules }}
@@ -267,7 +204,6 @@ const JoinChallenges = () => {
         </div>
 
         {/* Application details */}
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
         <div className="justify-center items-center border !border-[#48372D] !border-t-[20px] rounded-2xl p-4 md:!p-5">
           <h1 className="text-2xl md:text-4xl font-bold text-[#48372D] text-center">
             Apply Now
@@ -276,12 +212,8 @@ const JoinChallenges = () => {
             Apply As you want to join Artsays!
           </p>
           <br />
-<<<<<<< HEAD
-          <form action="#" method="POST" class="space-y-6">
-=======
           <form class="space-y-6" onSubmit={handleSubmitApplication}>
 
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
             {/* <!-- Name --> */}
             <div className="py-2">
               <label class="block font-semibold text-gray-800 mb-1">Name</label>
@@ -289,13 +221,10 @@ const JoinChallenges = () => {
                 type="text"
                 placeholder="Type your Full name"
                 class="w-full bg-transparent border-b border-gray-300 focus:border-[#E56500] focus:outline-none py-2"
-<<<<<<< HEAD
-=======
                 name="fullName"
                 value={applicationData.fullName}
                 onChange={handleApplicationData}
                 required
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               />
             </div>
 
@@ -308,13 +237,10 @@ const JoinChallenges = () => {
                 type="email"
                 placeholder="Type your Email Address"
                 class="w-full bg-transparent border-b border-gray-300 focus:border-[#E56500] focus:outline-none py-2"
-<<<<<<< HEAD
-=======
                 name="email"
                 value={applicationData.email}
                 onChange={handleApplicationData}
                 required
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               />
             </div>
 
@@ -327,13 +253,10 @@ const JoinChallenges = () => {
                 type="tel"
                 placeholder="Type your Contact Number"
                 class="w-full bg-transparent border-b border-gray-300 focus:border-[#E56500] focus:outline-none py-2"
-<<<<<<< HEAD
-=======
                 name="contactNumber"
                 value={applicationData.contactNumber}
                 onChange={handleApplicationData}
                 required
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               />
             </div>
 
@@ -346,13 +269,10 @@ const JoinChallenges = () => {
                 type="text"
                 placeholder="Type your Full name"
                 class="w-full bg-transparent border-b border-gray-300 focus:border-[#E56500] focus:outline-none py-2"
-<<<<<<< HEAD
-=======
                 name="userName"
                 value={applicationData.userName}
                 onChange={handleApplicationData}
                 required
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               />
             </div>
 
@@ -361,16 +281,6 @@ const JoinChallenges = () => {
               <label class="block font-semibold text-gray-800 mb-1">
                 Category
               </label>
-<<<<<<< HEAD
-              <select class="w-full border-b border-gray-300 focus:border-[#E56500] focus:outline-none py-2 bg-transparent">
-                <option>Choose your Category</option>
-                <option>Painting</option>
-                <option>Mandala</option>
-                <option>Senior Devloper</option>
-              </select>
-            </div>
-
-=======
               <select className="w-full border-b border-gray-300 focus:border-[#E56500] focus:outline-none py-2 bg-transparent"
                 onChange={handleApplicationData} value={applicationData.category} name="category">
                 <option value="" disabled>Choose your Category</option>
@@ -396,7 +306,6 @@ const JoinChallenges = () => {
               />
             </div>
 
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
             {/* <!-- Description of your Entry --> */}
             <div className="py-2">
               <label class="block font-semibold text-gray-800 mb-1">
@@ -405,15 +314,11 @@ const JoinChallenges = () => {
               <textarea
                 placeholder="Short Description of your Entry"
                 class="w-full bg-transparent border-b border-gray-300 focus:border-[#E56500] focus:outline-none py-2"
-<<<<<<< HEAD
-              ></textarea>
-=======
                 name="description"
                 value={applicationData.description}
                 onChange={handleApplicationData}
                 required
               />
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
             </div>
 
             {/* Upload Challenge Artwork */}
@@ -421,33 +326,21 @@ const JoinChallenges = () => {
               <label className="block font-semibold text-gray-800 mb-1">
                 Upload Challenge Artwork
               </label>
-<<<<<<< HEAD
-              <div className="w-full border-b border-gray-300 py-6 text-center text-gray-500">
-=======
 
               {/* <label className="w-full border-b border-gray-300 py-6 text-center text-gray-500" htmlFor="work-upload">
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
                 Drag photos and videos here
                 <br />
                 <span className="flex align-items-center justify-center text-blue-600 mt-3 cursor-pointer">
                   Browse <IoCloudUpload className="ml-2 color-dark" />
-<<<<<<< HEAD
-                </span>{" "}
-              </div>
-=======
                 </span>
               </label> */}
 
               <input type="file" accept=".pdf,.doc,.docx" onChange={handleWorkFile} />
 
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
             </div>
 
             {/* Checkbox */}
             <div className="flex items-center py-2">
-<<<<<<< HEAD
-              <input type="checkbox" className="mr-2" id="rules" />
-=======
               <input
                 type="checkbox"
                 className="mr-2"
@@ -457,18 +350,13 @@ const JoinChallenges = () => {
                 onChange={handleApplicationData}
                 required
               />
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <label htmlFor="rules" className="text-sm text-gray-700 mb-0">
                 I agree to the challenge rules & community guidelines.
               </label>
             </div>
 
             {/* <!-- Submit --> */}
-<<<<<<< HEAD
-            <div class="text-center py-2">
-=======
             <div class="text-center py-2" type="submit">
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <button className="flex-1 bg-[#48372D] text-white py-2 px-6 rounded-full font-semibold shadow buy-now">
                 Submit
               </button>

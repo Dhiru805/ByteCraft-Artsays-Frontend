@@ -6,7 +6,7 @@ import deleteAPI from "../../../../api/deleteAPI";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-function Celebraties() {
+function Celebrities() {
 
     const navigate = useNavigate()
 
@@ -109,7 +109,7 @@ function Celebraties() {
             <div className="block-header">
                 <div className="row">
                     <div className="col-lg-6 col-md-6 col-sm-12">
-                        <h2>Celebraties</h2>
+                        <h2>Celebrities</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
                                 <span
@@ -128,7 +128,7 @@ function Celebraties() {
                                 <button
                                     type="button"
                                     className="btn btn-secondary mr-2"
-                                    onClick={() => navigate("/super-admin/celebraties/create")}
+                                    onClick={() => navigate("/super-admin/celebrities/create")}
                                 >
                                     <i className="fa fa-plus"></i>
                                 </button>
@@ -211,7 +211,7 @@ function Celebraties() {
                                                             type="button"
                                                             className="btn btn-outline-primary btn-sm"
                                                             title="View"
-                                                            onClick={() => navigate("/super-admin/celebraties/view-celebrity", { state: { celebrity } })}
+                                                            onClick={() => navigate("/super-admin/celebrities/view-celebrity", { state: { celebrity } })}
                                                         >
                                                             <i className="fa fa-eye"></i>
                                                         </button>
@@ -219,7 +219,7 @@ function Celebraties() {
                                                             type="button"
                                                             className="btn btn-outline-info btn-sm mx-2"
                                                             title="Edit"
-                                                            onClick={() => navigate("/super-admin/celebraties/update-celebrity", { state: { celebrity } })}
+                                                            onClick={() => navigate("/super-admin/celebrities/update-celebrity", { state: { celebrity } })}
                                                         >
                                                             <i className="fa fa-pencil"></i>
                                                         </button>
@@ -235,7 +235,7 @@ function Celebraties() {
                                                 </tr>
                                             ))
                                         ) : (
-                                            <tr>No celebraties found</tr>
+                                            <tr>No Celebrities found</tr>
                                         )}
                                     </tbody>
                                 </table>
@@ -293,4 +293,4 @@ function Celebraties() {
     )
 }
 
-export default Celebraties;
+export default Celebrities;

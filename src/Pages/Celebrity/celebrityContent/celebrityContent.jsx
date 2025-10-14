@@ -1,21 +1,12 @@
-<<<<<<< HEAD
-import React, { useState } from "react";
-=======
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
 import { FiChevronRight } from "react-icons/fi";
 import { FiChevronLeft } from "react-icons/fi";
 import { ImArrowUpRight2 } from "react-icons/im";
 import { MdVerified } from "react-icons/md";
 import { FaStar, FaShoppingCart } from "react-icons/fa";
 import { Heart } from "lucide-react";
-<<<<<<< HEAD
-
-const CelebrityContent = () => {
-  const [showFilters, setShowFilters] = useState(false);
-=======
 import "./CelebrityContent.css";
 import getAPI from "../../../api/getAPI";
 
@@ -41,7 +32,6 @@ const CelebrityContent = () => {
   useEffect(() => {
     if (celebrity.artistId) fetchCelebrityDetails()
   }, [celebrity]);
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
 
   return (
     <div className="max-w-[1440px] mx-auto mb-4">
@@ -72,11 +62,7 @@ const CelebrityContent = () => {
         <div className="content-center">
           <div className="flex justify-between">
             <h2 className="text-lg md:text-5xl text-dark font-bold">
-<<<<<<< HEAD
-              Sonam Kapoor
-=======
               {celebrity?.artistName || ""}
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
             </h2>
             <button className="bg-red-500 text-white text-md px-3 py-1 rounded-xl font-semibold shadow buy-now">
               Follow
@@ -85,46 +71,21 @@ const CelebrityContent = () => {
           <div className="py-3">
             <h2 className="text-sm md:text-3xl font-bold text-dark">About</h2>
             <p className="text-xs md:text-lg text-dark leading-normal py-2">
-              Known for her iconic fashion statements, Sonam Kapoor has always
+              {/* Known for her iconic fashion statements, Sonam Kapoor has always
               seen art as an extension of her personality. Her collection
               bridges traditional Indian craftsmanship with contemporary global
               styles. From investing in young Indian painters to acquiring
               pieces from European modernists, Sonam curates with a
-              storyteller’s eye.
+              storyteller’s eye. */}
+              {celebrityDetails?.description
+                ? celebrityDetails.description
+                : "No description available for this artist."}
             </p>
           </div>
           <div className="py-3">
             <h2 className="text-sm md:text-3xl font-bold text-dark">
               Highlights of her journey:
             </h2>
-<<<<<<< HEAD
-            <p className="text-xs md:text-lg text-dark leading-normal py-2">
-              Known for her iconic fashion statements, Sonam Kapoor has always
-              seen art as an extension of her personality. Her collection
-              bridges traditional Indian craftsmanship with contemporary global
-              styles. From investing in young Indian painters to acquiring
-              pieces from European modernists, Sonam curates with a
-              storyteller’s eye.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-            <div className="border rounded-2xl px-2 py-3 hover:shadow-2xl">
-                <h2 className="text-[#48372D] font-bold text-lg text-center">78</h2>
-                <hr className="my-2 border-dark mx-5" />
-              <h6 className="text-[#48372D] text-lg font-semibold text-center">Artwork Collected</h6>
-            </div>
-            <div className="border rounded-2xl px-2 py-3 hover:shadow-2xl">
-                <h2 className="text-[#48372D] font-bold text-lg text-center">12+</h2>
-                <hr className="my-2 border-dark mx-5" />
-              <h6 className="text-[#48372D] text-lg font-semibold text-center">Years Active in Art</h6>
-            </div>
-            <div className="border rounded-2xl px-2 py-3 hover:shadow-2xl">
-                <h2 className="text-[#48372D] font-bold text-lg text-center">9</h2>
-                <hr className="my-2 border-dark mx-5" />
-              <h6 className="text-[#48372D] text-lg font-semibold text-center">Exhibitions Featured</h6>
-            </div>
-            
-=======
             {celebrity && (
               <div
                 dangerouslySetInnerHTML={{ __html: celebrity.highlightsOfJourney }}
@@ -151,17 +112,12 @@ const CelebrityContent = () => {
               <h6 className="text-[#48372D] text-lg font-semibold text-center">Exhibitions Featured</h6>
             </div>
 
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
           </div>
         </div>
         <div className="content-center">
           <img
-<<<<<<< HEAD
-            src="/herosectionimg/1.jpg"
-=======
             src={celebrity?.profilePicture || "/herosectionimg/1.jpg"}
             alt={celebrity?.artistName || ""}
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
             className="w-full h-40 sm:h-[600px] object-contain border bg-[#EBEBEB] rounded-t-2xl product-img"
           />
         </div>
@@ -709,3 +665,6 @@ const CelebrityContent = () => {
   );
 };
 export default CelebrityContent;
+
+
+

@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-import React from "react";
-
-const OpenRoles = () => {
-=======
 import { useEffect, useState } from "react";
 import getAPI from "../../../api/getAPI";
 import { useNavigate } from "react-router-dom";
@@ -37,7 +32,6 @@ function OpenRoles() {
       .replace(/^-+|-+$/g, '')
   };
 
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
   return (
     <div className="max-w-[1440px] mx-auto mb-4 px-3">
       {/* Title Row */}
@@ -61,11 +55,6 @@ function OpenRoles() {
       {/* Roles Section */}
       <div className="my-5">
         <main>
-<<<<<<< HEAD
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:!gap-6">
-            {/* Product Card */}
-            <div className="w-full border !border-t-[20px] !border-[#FB5934] rounded-2xl shadow-xl p-2 md:!p-4 hover:shadow-2xl transition">
-=======
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:!gap-6">
 
             {jobs.length > 0 ?
@@ -92,7 +81,6 @@ function OpenRoles() {
             {/* Product Card */}
 
             {/* <div className="w-full border !border-t-[20px] !border-[#FB5934] rounded-2xl shadow-xl p-2 md:!p-4 hover:shadow-2xl transition">
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <p className="text-md text-red-500">Internship</p>
               <h2 className="text-lg sm:text-xl text-gray-900 font-bold mt-1">
                 Content Writer
@@ -110,14 +98,9 @@ function OpenRoles() {
                   Apply Now
                 </button>
               </div>
-<<<<<<< HEAD
-            </div>
-            <div className="w-full border !border-t-[20px] !border-[#FB5934] rounded-2xl shadow-xl p-2 md:!p-4 hover:shadow-2xl transition">
-=======
             </div> */}
 
             {/* <div className="w-full border !border-t-[20px] !border-[#FB5934] rounded-2xl shadow-xl p-2 md:!p-4 hover:shadow-2xl transition">
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <p className="text-md text-red-500">Internship</p>
               <h2 className="text-lg sm:text-xl text-gray-900 font-bold mt-1">
                 Content Writer
@@ -135,14 +118,9 @@ function OpenRoles() {
                   Apply Now
                 </button>
               </div>
-<<<<<<< HEAD
-            </div>
-            <div className="w-full border !border-t-[20px] !border-[#FB5934] rounded-2xl shadow-xl p-2 md:!p-4 hover:shadow-2xl transition">
-=======
             </div> */}
 
             {/* <div className="w-full border !border-t-[20px] !border-[#FB5934] rounded-2xl shadow-xl p-2 md:!p-4 hover:shadow-2xl transition">
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <p className="text-md text-red-500">Internship</p>
               <h2 className="text-lg sm:text-xl text-gray-900 font-bold mt-1">
                 Content Writer
@@ -160,14 +138,9 @@ function OpenRoles() {
                   Apply Now
                 </button>
               </div>
-<<<<<<< HEAD
-            </div>
-            <div className="w-full border !border-t-[20px] !border-[#FB5934] rounded-2xl shadow-xl p-2 md:!p-4 hover:shadow-2xl transition">
-=======
             </div> */}
 
             {/* <div className="w-full border !border-t-[20px] !border-[#FB5934] rounded-2xl shadow-xl p-2 md:!p-4 hover:shadow-2xl transition">
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <p className="text-md text-red-500">Internship</p>
               <h2 className="text-lg sm:text-xl text-gray-900 font-bold mt-1">
                 Content Writer
@@ -185,12 +158,8 @@ function OpenRoles() {
                   Apply Now
                 </button>
               </div>
-<<<<<<< HEAD
-            </div>
-=======
             </div> */}
 
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
           </div>
         </main>
       </div>

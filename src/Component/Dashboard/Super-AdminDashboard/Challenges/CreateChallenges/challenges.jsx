@@ -11,6 +11,7 @@ const ChallengesTable = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [deleteType, setDeleteType] = useState("");
   const [productsPerPage, setProductsPerPage] = useState(10);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedChallengeToDelete, setSelectedChallengeToDelete] = useState(null);
@@ -71,6 +72,7 @@ const ChallengesTable = () => {
   const openDeleteDialog = (challenge) => {
     setSelectedChallengeToDelete(challenge);
     setIsDeleteDialogOpen(true);
+    setDeleteType("challenge");
   };
 
   const handlePrevious = () => {
@@ -115,7 +117,7 @@ const ChallengesTable = () => {
                 <button
                   type="button"
                   className="btn btn-secondary mr-2"
-                  onClick={() => navigate("/super-admin/challenges/create-challenge")}
+                  onClick={() => navigate("/super-admin/challenges/create-Challenge")}
                 >
                   <i className="fa fa-plus"></i>
                 </button>
@@ -305,9 +307,10 @@ const ChallengesTable = () => {
       {isDeleteDialogOpen && (
         <ConfirmationDialog
           onClose={handleDeleteCancel}
-          deleteType="challenge"
+          deleteType={deleteType}
           id={selectedChallengeToDelete?._id}
-          onDeleted={() => fetchChallenges()}
+          //onDeleted={() => fetchChallenges()}
+          onDeleted={handleDeleteConfirmed}
         />
       )}
     </div>

@@ -17,7 +17,7 @@ const ArtIconCreate = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  // const [sectionId, setSectionId] = useState(null);
+  const [sectionId, setSectionId] = useState(null);
 
   // useEffect(() => {
   //   const loadHomepageAndSection = async () => {

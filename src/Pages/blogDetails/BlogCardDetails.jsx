@@ -198,7 +198,7 @@ function BlogCardDetails() {
                     <meta charSet="utf-8" />
                     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                     <meta name="robots" content="index, follow" />
-                    <meta name="title" content={seoData.metaTitle} />
+                    <meta name="title" content={blogDetails.blogTitle} />
                     <title>{blogDetails.blogName || 'My Blog'}</title>
                     <meta name="description" content={blogDetails.summary} />
                     <meta name="keywords" content={blogDetails.tags.join(', ')} />

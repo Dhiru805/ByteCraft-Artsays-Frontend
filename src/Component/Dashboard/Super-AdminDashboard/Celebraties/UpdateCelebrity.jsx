@@ -106,7 +106,7 @@ function UpdateCelebrity() {
 
             if(response?.hasError === false){
                 toast.success(response.message)
-                navigate("/super-admin/celebraties")
+                navigate("/super-admin/celebrities")
             }
             else{
                 console.log(response)
@@ -135,7 +135,7 @@ function UpdateCelebrity() {
                                 </a>
                             </li>
                             <li className="breadcrumb-item active">
-                                <Link to="/super-admin/celebraties" className="text-decoration-none">Celebrities</Link>
+                                <Link to="/super-admin/celebrities/update-celebrity" className="text-decoration-none">Celebrities</Link>
                             </li>
                             <li className="breadcrumb-item">Update Celebrity</li>
                         </ul>

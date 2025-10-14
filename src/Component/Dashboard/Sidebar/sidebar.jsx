@@ -94,7 +94,7 @@ const Sidebar = () => {
         label: "Celebrities",
         tabId: "cls1",
         icon: "fas fa-user",
-        path: "/super-admin/celebraties",
+        path: "/super-admin/celebrities",
         subTabs: []
       },
       {

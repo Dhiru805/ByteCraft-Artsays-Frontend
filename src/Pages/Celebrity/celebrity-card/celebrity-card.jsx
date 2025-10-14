@@ -1,15 +1,3 @@
-<<<<<<< HEAD
-import React, { useState } from "react";
-import { FiChevronRight } from "react-icons/fi";
-import { FiChevronLeft } from "react-icons/fi";
-import { ImArrowUpRight2 } from "react-icons/im";
-
-const CelebrityCard = () => {
-  const [showFilters, setShowFilters] = useState(false);
-
-  return (
-    <div className="max-w-[1440px] mx-auto mb-4">
-=======
 import { useState, useEffect } from "react";
 import { FiChevronRight } from "react-icons/fi";
 import { FiChevronLeft } from "react-icons/fi";
@@ -68,7 +56,6 @@ const CelebrityCard = () => {
   return (
     <div className="max-w-[1440px] mx-auto mb-4">
 
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
       {/* Top Section: Breadcrumb + Search */}
       <div className="w-full bg-white py-3 px-3 sm:px-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -116,10 +103,6 @@ const CelebrityCard = () => {
 
       {/* Main Layout */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6">
-<<<<<<< HEAD
-=======
-
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
         {/* Sidebar Filters (hidden on mobile, toggleable) */}
         <aside className="hidden md:block rounded-xl filter-sidebar">
           {/* All your filter sections here (unchanged) */}
@@ -495,17 +478,6 @@ const CelebrityCard = () => {
         {/* <!-- Product Grid --> */}
         <main className="md:col-span-3">
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-<<<<<<< HEAD
-            {/* <!-- Product Card --> */}
-            <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              {/* Top Section: Text */}
-              <div className="px-2 py-4 text-center">
-                {/* Name */}
-                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
-                  Rohan Malhotra
-                </h2>
-                {/* Subtitle */}
-=======
 
             {celebritiesData.length > 0 ? (
               celebritiesData.map((celebrity, index) => (
@@ -555,17 +527,12 @@ const CelebrityCard = () => {
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
                 </h2>
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
                 <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
                   Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
                   Energy Of His Music.
                 </p>
               </div>
 
-<<<<<<< HEAD
-              {/* Image */}
-=======
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <div>
                 <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
                   <img
@@ -576,10 +543,6 @@ const CelebrityCard = () => {
                 </div>
               </div>
 
-<<<<<<< HEAD
-              {/* Button */}
-=======
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
                   <button
@@ -593,17 +556,6 @@ const CelebrityCard = () => {
                   </button>
                 </div>
               </div>
-<<<<<<< HEAD
-            </div>
-            <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              {/* Top Section: Text */}
-              <div className="px-2 py-4 text-center">
-                {/* Name */}
-                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
-                  Rohan Malhotra
-                </h2>
-                {/* Subtitle */}
-=======
             </div> */}
 
             {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
@@ -611,17 +563,12 @@ const CelebrityCard = () => {
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
                 </h2>
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
                 <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
                   Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
                   Energy Of His Music.
                 </p>
               </div>
 
-<<<<<<< HEAD
-              {/* Image */}
-=======
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <div>
                 <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
                   <img
@@ -632,10 +579,6 @@ const CelebrityCard = () => {
                 </div>
               </div>
 
-<<<<<<< HEAD
-              {/* Button */}
-=======
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
                   <button
@@ -649,17 +592,6 @@ const CelebrityCard = () => {
                   </button>
                 </div>
               </div>
-<<<<<<< HEAD
-            </div>
-            <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              {/* Top Section: Text */}
-              <div className="px-2 py-4 text-center">
-                {/* Name */}
-                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
-                  Rohan Malhotra
-                </h2>
-                {/* Subtitle */}
-=======
             </div> */}
 
             {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
@@ -667,17 +599,12 @@ const CelebrityCard = () => {
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
                 </h2>
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
                 <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
                   Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
                   Energy Of His Music.
                 </p>
               </div>
 
-<<<<<<< HEAD
-              {/* Image */}
-=======
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <div>
                 <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
                   <img
@@ -688,10 +615,6 @@ const CelebrityCard = () => {
                 </div>
               </div>
 
-<<<<<<< HEAD
-              {/* Button */}
-=======
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
                   <button
@@ -705,17 +628,6 @@ const CelebrityCard = () => {
                   </button>
                 </div>
               </div>
-<<<<<<< HEAD
-            </div>
-            <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              {/* Top Section: Text */}
-              <div className="px-2 py-4 text-center">
-                {/* Name */}
-                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
-                  Rohan Malhotra
-                </h2>
-                {/* Subtitle */}
-=======
             </div> */}
 
             {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
@@ -723,17 +635,12 @@ const CelebrityCard = () => {
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
                 </h2>
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
                 <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
                   Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
                   Energy Of His Music.
                 </p>
               </div>
 
-<<<<<<< HEAD
-              {/* Image */}
-=======
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <div>
                 <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
                   <img
@@ -744,10 +651,6 @@ const CelebrityCard = () => {
                 </div>
               </div>
 
-<<<<<<< HEAD
-              {/* Button */}
-=======
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
                   <button
@@ -761,17 +664,6 @@ const CelebrityCard = () => {
                   </button>
                 </div>
               </div>
-<<<<<<< HEAD
-            </div>
-            <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              {/* Top Section: Text */}
-              <div className="px-2 py-4 text-center">
-                {/* Name */}
-                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
-                  Rohan Malhotra
-                </h2>
-                {/* Subtitle */}
-=======
             </div> */}
 
             {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
@@ -779,17 +671,12 @@ const CelebrityCard = () => {
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
                 </h2>
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
                 <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
                   Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
                   Energy Of His Music.
                 </p>
               </div>
 
-<<<<<<< HEAD
-              {/* Image */}
-=======
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <div>
                 <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
                   <img
@@ -800,10 +687,6 @@ const CelebrityCard = () => {
                 </div>
               </div>
 
-<<<<<<< HEAD
-              {/* Button */}
-=======
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
                   <button
@@ -817,17 +700,6 @@ const CelebrityCard = () => {
                   </button>
                 </div>
               </div>
-<<<<<<< HEAD
-            </div>
-            <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              {/* Top Section: Text */}
-              <div className="px-2 py-4 text-center">
-                {/* Name */}
-                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
-                  Rohan Malhotra
-                </h2>
-                {/* Subtitle */}
-=======
             </div> */}
 
             {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
@@ -835,17 +707,12 @@ const CelebrityCard = () => {
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
                 </h2>
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
                 <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
                   Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
                   Energy Of His Music.
                 </p>
               </div>
 
-<<<<<<< HEAD
-              {/* Image */}
-=======
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <div>
                 <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
                   <img
@@ -856,10 +723,6 @@ const CelebrityCard = () => {
                 </div>
               </div>
 
-<<<<<<< HEAD
-              {/* Button */}
-=======
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
                   <button
@@ -873,17 +736,6 @@ const CelebrityCard = () => {
                   </button>
                 </div>
               </div>
-<<<<<<< HEAD
-            </div>
-            <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              {/* Top Section: Text */}
-              <div className="px-2 py-4 text-center">
-                {/* Name */}
-                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
-                  Rohan Malhotra
-                </h2>
-                {/* Subtitle */}
-=======
             </div> */}
 
             {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
@@ -891,17 +743,12 @@ const CelebrityCard = () => {
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
                 </h2>
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
                 <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
                   Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
                   Energy Of His Music.
                 </p>
               </div>
 
-<<<<<<< HEAD
-              {/* Image */}
-=======
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <div>
                 <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
                   <img
@@ -912,10 +759,6 @@ const CelebrityCard = () => {
                 </div>
               </div>
 
-<<<<<<< HEAD
-              {/* Button */}
-=======
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
                   <button
@@ -929,17 +772,6 @@ const CelebrityCard = () => {
                   </button>
                 </div>
               </div>
-<<<<<<< HEAD
-            </div>
-            <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              {/* Top Section: Text */}
-              <div className="px-2 py-4 text-center">
-                {/* Name */}
-                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
-                  Rohan Malhotra
-                </h2>
-                {/* Subtitle */}
-=======
             </div> */}
 
             {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
@@ -947,17 +779,12 @@ const CelebrityCard = () => {
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
                 </h2>
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
                 <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
                   Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
                   Energy Of His Music.
                 </p>
               </div>
 
-<<<<<<< HEAD
-              {/* Image */}
-=======
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <div>
                 <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
                   <img
@@ -968,10 +795,6 @@ const CelebrityCard = () => {
                 </div>
               </div>
 
-<<<<<<< HEAD
-              {/* Button */}
-=======
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
               <div className="relative hidden md:block">
                 <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
                   <button
@@ -985,15 +808,10 @@ const CelebrityCard = () => {
                   </button>
                 </div>
               </div>
-<<<<<<< HEAD
-            </div>
-          </div>
-=======
             </div> */}
 
           </div>
 
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
           {/* <!-- Pagination --> */}
           <div className="flex justify-center mt-6">
             <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
@@ -1010,15 +828,10 @@ const CelebrityCard = () => {
               <FiChevronRight className="self-center flex-shrink-0" />
             </nav>
           </div>
-<<<<<<< HEAD
-        </main>
-      </div>
-=======
 
         </main>
       </div>
 
->>>>>>> 295168fa465d90b112a64d9087dfe678537dbcd5
     </div>
   );
 };

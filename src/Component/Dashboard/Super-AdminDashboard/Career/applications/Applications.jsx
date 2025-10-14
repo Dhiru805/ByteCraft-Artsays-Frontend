@@ -155,12 +155,12 @@ function Applications() {
                                                     <td>
                                                         <button className="btn btn-outline-primary btn-sm mr-2"
                                                             title="View"
-                                                            onClick={() => navigate('/super-admin/career/view-application', { state: { applicant } })}>
+                                                            onClick={() => navigate('/super-admin/career/applications/view-job-post', { state: { applicant } })}>
                                                             <i className="fa fa-eye"></i>
                                                         </button>
                                                         <button className="btn btn-outline-info btn-sm"
                                                             title="Edit"
-                                                            onClick={() => navigate('/super-admin/career/update-application', { state: { applicant } })}>
+                                                            onClick={() => navigate('/super-admin/career/applications/update-job-post', { state: { applicant } })}>
                                                             <i className="fa fa-pencil"></i>
                                                         </button>
                                                     </td>
