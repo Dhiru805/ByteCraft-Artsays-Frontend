@@ -17,6 +17,8 @@ const CelebrityContent = () => {
 
   const [showFilters, setShowFilters] = useState(false);
   const [celebrityDetails, setCelebrityDetails] = useState({})
+  const [userProfile, setUserProfile] = useState(null)
+  const [artistProDetails, setArtistProDetails] = useState(null)
 
   const fetchCelebrityDetails = async () => {
     try {
@@ -29,8 +31,35 @@ const CelebrityContent = () => {
     }
   };
 
+  const fetchUserProfile = async () => {
+    try {
+      // Public fetch (no auth header), matching existing usage elsewhere
+      const result = await getAPI(`/auth/userid/${celebrity.artistId}`, {}, true, false)
+      if (result?.data?.user) {
+        setUserProfile(result.data.user)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const fetchArtistProfessionalDetails = async () => {
+    try {
+      const result = await getAPI(`/auth/getartistdetails/${celebrity.artistId}`, {}, true, false)
+      if (result?.data) {
+        setArtistProDetails(result.data)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
-    if (celebrity.artistId) fetchCelebrityDetails()
+    if (celebrity.artistId) {
+      fetchCelebrityDetails()
+      fetchUserProfile()
+      fetchArtistProfessionalDetails()
+    }
   }, [celebrity]);
 
   return (
@@ -77,9 +106,10 @@ const CelebrityContent = () => {
               styles. From investing in young Indian painters to acquiring
               pieces from European modernists, Sonam curates with a
               storyteller’s eye. */}
-              {celebrityDetails?.description
-                ? celebrityDetails.description
-                : "No description available for this artist."}
+              {artistProDetails?.description
+                || userProfile?.description
+                || celebrityDetails?.description
+                || "No description available for this artist."}
             </p>
           </div>
           <div className="py-3">
