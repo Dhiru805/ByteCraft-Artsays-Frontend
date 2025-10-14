@@ -42,6 +42,13 @@ function LifeAtArtsays() {
     if (jobId) fetchCareersById();
   }, [jobId]);
 
+  // Keep jobPosition in sync once job details are loaded
+  useEffect(() => {
+    if (jobData?.jobTitle) {
+      setFormData(prev => ({ ...prev, jobPosition: jobData.jobTitle }))
+    }
+  }, [jobData?.jobTitle])
+
   // Handle form data input
   const handleFormData = (e) => {
     const { name, value, type, checked } = e.target;

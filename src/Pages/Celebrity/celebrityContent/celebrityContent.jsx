@@ -33,7 +33,6 @@ const CelebrityContent = () => {
 
   const fetchUserProfile = async () => {
     try {
-      // Public fetch (no auth header), matching existing usage elsewhere
       const result = await getAPI(`/auth/userid/${celebrity.artistId}`, {}, true, false)
       if (result?.data?.user) {
         setUserProfile(result.data.user)

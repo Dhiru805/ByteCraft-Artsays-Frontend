@@ -78,7 +78,7 @@ const JoinChallenges = () => {
     formData.append("works", works)
 
     try {
-      const response = await postAPI("/api/join-challenge", formData)
+      const response = await postAPI("/api/join-challenge", formData, {}, false)
 
       if (response?.hasError === false) {
         toast.success(response?.message)
@@ -346,7 +346,7 @@ const JoinChallenges = () => {
                 className="mr-2"
                 id="rules"
                 name="guidelines"
-                value={applicationData.guidelines}
+                checked={applicationData.guidelines}
                 onChange={handleApplicationData}
                 required
               />
@@ -368,3 +368,6 @@ const JoinChallenges = () => {
   );
 };
 export default JoinChallenges;
+
+
+

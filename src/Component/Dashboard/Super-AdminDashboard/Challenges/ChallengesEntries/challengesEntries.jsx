@@ -39,10 +39,11 @@ const ChallengesEntries = () => {
 
   // Filtering applications by user searches
   const filteredApplications = applications.filter((application) =>
-    application.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    application.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    application.contactNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    application.jobPosition.toLowerCase().includes(searchTerm.toLowerCase())
+    (application.fullName || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (application.email || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (application.contactNumber || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (application.category || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (application.challenge || "").toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const totalPages = Math.ceil(filteredApplications.length / applicationsPerPage)
@@ -140,52 +141,40 @@ const ChallengesEntries = () => {
                       <th>#</th>
                       <th>Name</th>
                       <th>Email</th>
-                      <th>Category</th>
-                      <th>Entry Fee</th>
-                      <th>Action</th>
+                      <th>Contact Number</th>
+                      <th>Challenge</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
-                  {/* <tbody>
-                    {displayedExhibitions.map((exhibition, index) => (
-                      <tr key={exhibition._id}>
-                        <td>{(currentPage - 1) * exhibitionsPerPage + index + 1}</td>
-                        <td>{exhibition.title || "-"}</td>
-                        <td>{exhibition.type || "-"}</td>
-                        <td>{exhibition.hostedBy || "-"}</td>
-                        <td>{new Date(exhibition.startDate).toLocaleDateString() || "-"}</td>
-                        <td>
-                          <button
-                            type="button"
-                            className="btn btn-outline-primary btn-sm mr-1"
-                            title="View"
-                            onClick={() =>
-                              navigate(`/super-admin/exhibition/view-exhibition`, { state: { exhibition } })
-                            }
-                          >
-                            <i className="fa fa-eye"></i>
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-outline-info btn-sm mr-2"
-                            title="Edit"
-                            onClick={() =>
-                              navigate(`/super-admin/exhibition/update-exhibition`, { state: { exhibition } })
-                            }
-                          >
-                            <i className="fa fa-pencil"></i>
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-outline-danger btn-sm"
-                            title="Delete"
-                            onClick={() => openDeleteDialog(exhibition)}
-                          >
-                            <i className="fa fa-trash-o"></i>
-                          </button>
-                        </td>
+                  <tbody>
+                    {filteredApplications.length > 0 ? (
+                      displayedApplications.map((application, index) => (
+                        <tr key={application._id}>
+                          <td>{(currentPage - 1) * applicationsPerPage + index + 1}</td>
+                          <td>{application.fullName || '_'}</td>
+                          <td>{application.email || '_'}</td>
+                          <td>{application.contactNumber || '_'}</td>
+                          <td>{application.challenge || '_'}</td>
+                          <td>
+                            <button className="btn btn-outline-primary btn-sm mr-2"
+                              title="View"
+                              onClick={() => navigate('/super-admin/challenges/view-application', { state: { applicantion: application } })}>
+                              <i className="fa fa-eye"></i>
+                            </button>
+                            <button className="btn btn-outline-info btn-sm"
+                              title="Update"
+                              onClick={() => navigate('/super-admin/challenges/update-application', { state: { applicantion: application } })}>
+                              <i className="fa fa-pencil"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="6" className="text-center">No applications</td>
                       </tr>
-                    ))}
-                  </tbody> */}
+                    )}
+                  </tbody>
                 </table>
               </div>
               {/* <div className="pagination d-flex justify-content-between mt-4">
