@@ -24,7 +24,6 @@ function LifeAtArtsays() {
   const [message, setMessage] = useState("")
 
 
-  // Fetch job details by ID
   const fetchCareersById = async () => {
     try {
       const response = await getAPI(`/api/get-career/${jobId}`);
@@ -42,25 +41,21 @@ function LifeAtArtsays() {
     if (jobId) fetchCareersById();
   }, [jobId]);
 
-  // Keep jobPosition in sync once job details are loaded
   useEffect(() => {
     if (jobData?.jobTitle) {
       setFormData(prev => ({ ...prev, jobPosition: jobData.jobTitle }))
     }
   }, [jobData?.jobTitle])
 
-  // Handle form data input
   const handleFormData = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({ ...formData, [name]: type === "checkbox" ? checked : value })
   }
 
-  // Handle resume upload
   const handleResume = (e) => {
     setResume(e.target.files[0])
   }
 
-  // Handle form data submit
   const handleFormSubmit = async (e) => {
     e.preventDefault()
 
@@ -107,10 +102,9 @@ function LifeAtArtsays() {
 
   return (
     <div className="max-w-[1440px] mx-auto mb-4">
-      {/* Top Section: Breadcrumb + Search */}
       <div className="w-full py-3 px-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          {/* Breadcrumb */}
+       
           <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
             <a href="#" className="hover:text-red-500">
               Home
