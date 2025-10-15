@@ -188,6 +188,12 @@ const Sidebar = () => {
         path: `/super-admin/enquiry`,
         subTabs: []
       },
+       {
+        label: "ArtSays Gallery",
+        icon: "fa fa-image",
+        path: `/super-admin/artsays-gallery`,
+        subTabs: []
+      },
       {
         label: "Website CMS",
         tabId: "wcms1",
@@ -214,7 +220,7 @@ const Sidebar = () => {
           { label: "Commissions", subtabId: "wcms19", path: `/super-admin/commission` },
           { label: "Licensing", subtabId: "wcms19", path: `/super-admin/licensing` },
           { label: "Social Media", subtabId: "wcms19", path: `` },
-          { label: "Collections", subtabId: "wcms19", path: `` },
+          { label: "CMS Artsays Gallery", subtabId: "wcms19", path: `/super-admin/CMS-artsays-gallery` },
           { label: "Contact Us", subtabId: "wcms19", path: `/super-admin/contactus` },
           { label: "Career", subtabId: "wcms19", path: `` },
         ],

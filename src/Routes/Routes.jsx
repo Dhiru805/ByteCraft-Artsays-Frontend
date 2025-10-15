@@ -120,6 +120,13 @@ import How_To_Resell from "../Component/Dashboard/Super-AdminDashboard/HowToRese
 import CreateHowToResell from "../Component/Dashboard/Super-AdminDashboard/HowToResell/create";
 import UpdateHowToResell from "../Component/Dashboard/Super-AdminDashboard/HowToResell/edit";
 
+import Gallery from "../Component/Dashboard/Super-AdminDashboard/ArtsaysGallery/table";
+import CreateGallery from "../Component/Dashboard/Super-AdminDashboard/ArtsaysGallery/create";
+import UpdateGallery from "../Component/Dashboard/Super-AdminDashboard/ArtsaysGallery/edit";
+
+import ArtsaysGalleryTable  from "../Component/Dashboard/Super-AdminDashboard/CMSArtsaysGallery/table";
+import ArtsaysGalleryCreate  from "../Component/Dashboard/Super-AdminDashboard/CMSArtsaysGallery/create";
+import ArtsaysGalleryEdit  from "../Component/Dashboard/Super-AdminDashboard/CMSArtsaysGallery/edit";
 
 import WhyArtSays from "../Component/Dashboard/Super-AdminDashboard/WhyArtSays/whyTable";
 import CreateWhyArtSays from "../Component/Dashboard/Super-AdminDashboard/WhyArtSays/create";
@@ -667,6 +674,16 @@ const AppRoutes = () => {
         <Route path="contactus/update" element={<UpdateContactUsEntry />} />      {/* Update entry */}
 
 
+        {/* Artsays Gallery Routes */}
+        <Route path="artsays-gallery" element={<Gallery />} />
+        <Route path="artsays-gallery/create" element={<CreateGallery />} />
+        <Route path="artsays-gallery/update/:id" element={<UpdateGallery />} />
+
+        {/* Artsays Gallery CMS Routes */}
+        <Route path="CMS-artsays-gallery" element={<ArtsaysGalleryTable />} />
+        <Route path="CMS-artsays-gallery/create" element={<ArtsaysGalleryCreate />} />
+        <Route path="CMS-artsays-gallery/edit/:id" element={<ArtsaysGalleryEdit />} />
+
         {/* Enquiries */}
         <Route path="enquiry" element={<EnquiryTable />} />
         <Route path="enquiry/view" element={<ViewEnquiry />} />
@@ -984,7 +1001,7 @@ const AppRoutes = () => {
         <Route path="/artist-card" element={<Artist />} />
         <Route path="/celebrity" element={<Celebrity />} />
         {/* <Route */}
-           {/* path="/celebrity-collections"
+        {/* path="/celebrity-collections"
            element={<CelebrityCollections />}
          /> */}
         <Route path='/celebrity/:slug' element={<CelebrityContent />} />

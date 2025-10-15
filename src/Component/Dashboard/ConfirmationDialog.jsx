@@ -201,7 +201,18 @@ enquiry: {
   errorMessage: "Failed to delete.",
   idKey: "EnquiryId",
 },
-
+artsaysgallery: {
+  getEndpoint: (id) => `/api/artsays-gallery/delete/${id}`,
+  successMessage: "Successfully deleted!",
+  errorMessage: "Failed to delete.",
+  idKey: "ArtsaysGalleryId",
+},
+cmsartsaysgallery: {
+  getEndpoint: (id) => `/api/CMS-artsays-gallery/delete/${id}`,
+  successMessage: "Successfully deleted!",
+  errorMessage: "Failed to delete.",
+  idKey: "CMSArtsaysGalleryId",
+},
 contactus:{
   getEndpoint: (id) => `/api/contactus/delete/${id}`,
   successMessage: "Successfully deleted!",
