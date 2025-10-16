@@ -48,7 +48,7 @@ function ArtsaysGalleryEdit() {
       const response = await putAPI(`/api/CMS-artsays-gallery/update/${id}`, payload);
       if (response?.hasError === false) {
         toast.success(response?.message || "Gallery updated successfully!");
-        navigate("/super-admin/CMS-artsays-gallery");
+        navigate("/super-admin/CMS-art-gallery");
       } else {
         toast.error(response?.message || "Failed to update gallery");
       }

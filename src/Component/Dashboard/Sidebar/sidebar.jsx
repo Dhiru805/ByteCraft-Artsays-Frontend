@@ -220,7 +220,7 @@ const Sidebar = () => {
           { label: "Commissions", subtabId: "wcms19", path: `/super-admin/commission` },
           { label: "Licensing", subtabId: "wcms19", path: `/super-admin/licensing` },
           { label: "Social Media", subtabId: "wcms19", path: `` },
-          { label: "CMS Artsays Gallery", subtabId: "wcms19", path: `/super-admin/CMS-artsays-gallery` },
+          { label: "CMS Artsays Gallery", subtabId: "wcms19", path: `/super-admin/CMS-art-gallery` },
           { label: "Contact Us", subtabId: "wcms19", path: `/super-admin/contactus` },
           { label: "Career", subtabId: "wcms19", path: `` },
         ],

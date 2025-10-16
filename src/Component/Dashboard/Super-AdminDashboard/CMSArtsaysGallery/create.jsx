@@ -22,7 +22,7 @@ function ArtsaysGalleryCreate() {
       const response = await postAPI("/api/CMS-artsays-gallery/create", payload);
       if (response?.hasError === false) {
         toast.success(response?.message || "Gallery created successfully!");
-        navigate("/super-admin/CMS-artsays-gallery");
+        navigate("/super-admin/CMS-art-gallery");
       } else {
         toast.error(response?.message || "Failed to create gallery");
       }

@@ -207,7 +207,7 @@ artsaysgallery: {
   errorMessage: "Failed to delete.",
   idKey: "ArtsaysGalleryId",
 },
-cmsartsaysgallery: {
+cmsartgallery: {
   getEndpoint: (id) => `/api/CMS-artsays-gallery/delete/${id}`,
   successMessage: "Successfully deleted!",
   errorMessage: "Failed to delete.",

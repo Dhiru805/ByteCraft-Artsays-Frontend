@@ -680,9 +680,9 @@ const AppRoutes = () => {
         <Route path="artsays-gallery/update/:id" element={<UpdateGallery />} />
 
         {/* Artsays Gallery CMS Routes */}
-        <Route path="CMS-artsays-gallery" element={<ArtsaysGalleryTable />} />
-        <Route path="CMS-artsays-gallery/create" element={<ArtsaysGalleryCreate />} />
-        <Route path="CMS-artsays-gallery/edit/:id" element={<ArtsaysGalleryEdit />} />
+        <Route path="CMS-art-gallery" element={<ArtsaysGalleryTable />} />
+        <Route path="CMS-art-gallery/create" element={<ArtsaysGalleryCreate />} />
+        <Route path="CMS-art-gallery/edit/:id" element={<ArtsaysGalleryEdit />} />
 
         {/* Enquiries */}
         <Route path="enquiry" element={<EnquiryTable />} />
