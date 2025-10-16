@@ -142,7 +142,6 @@ function ArtGalleryCMS() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedGalleryToDelete, setSelectedGalleryToDelete] = useState(null);
 
-  // Fetch data from backend
   const fetchGalleryData = async () => {
     try {
       const response = await getAPI("/api/CMS-artsays-gallery");
@@ -160,7 +159,6 @@ function ArtGalleryCMS() {
     fetchGalleryData();
   }, []);
 
-  // Search filter
   const filteredGallery = galleryData.filter((item) =>
     item.title?.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -184,7 +182,6 @@ function ArtGalleryCMS() {
     setCurrentPage(1);
   };
 
-  // Delete confirmation handlers
   const openDeleteDialog = (gallery) => {
     setSelectedGalleryToDelete(gallery);
     setIsDeleteDialogOpen(true);
@@ -215,7 +212,6 @@ function ArtGalleryCMS() {
 
   return (
     <div className="container-fluid">
-      {/* Header Section */}
       <div className="block-header">
         <div className="row">
           <div className="col-lg-6 col-md-6 col-sm-12">
@@ -233,7 +229,6 @@ function ArtGalleryCMS() {
             </ul>
           </div>
 
-          {/* Add Button */}
           <div className="col-lg-6 col-md-6 col-sm-12">
             <div className="d-flex flex-row-reverse">
               <div className="page_action">
@@ -250,11 +245,9 @@ function ArtGalleryCMS() {
         </div>
       </div>
 
-      {/* Table Section */}
       <div className="row clearfix">
         <div className="col-lg-12">
           <div className="card">
-            {/* Top controls */}
             <div className="header d-flex justify-content-between align-items-center">
               <div className="d-none d-md-flex align-items-center mb-2 mb-md-0">
                 <label className="mb-0 mr-2">Show</label>
@@ -272,7 +265,6 @@ function ArtGalleryCMS() {
                 <label className="mb-0 ml-2">entries</label>
               </div>
 
-              {/* Search box */}
               <div className="w-100 w-md-auto d-flex justify-content-end">
                 <div className="input-group" style={{ maxWidth: "180px" }}>
                   <input
@@ -296,7 +288,6 @@ function ArtGalleryCMS() {
               </div>
             </div>
 
-            {/* Table */}
             <div className="body">
               <div className="table-responsive">
                 <table className="table table-hover">
@@ -362,7 +353,6 @@ function ArtGalleryCMS() {
                 </table>
               </div>
 
-              {/* Pagination */}
               <div className="pagination d-flex justify-content-between mt-4">
                 <span className="d-none d-sm-inline-block text-truncate w-100 mx-1">
                   Showing{" "}

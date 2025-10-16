@@ -89,11 +89,11 @@ function Curations() {
 
   return (
     <div className="container-fluid">
-      {/* Header */}
+     
       <div className="block-header">
         <div className="row">
           <div className="col-lg-6 col-md-6 col-sm-12">
-            <h2>Artsays Gallery</h2>
+            <h2>Art Gallery</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
                 <span
@@ -103,11 +103,10 @@ function Curations() {
                   <i className="fa fa-dashboard"></i>
                 </span>
               </li>
-              <li className="breadcrumb-item">Artsays Gallery</li>
+              <li className="breadcrumb-item">Art Gallery</li>
             </ul>
           </div>
 
-          {/* Add button */}
           <div className="col-lg-6 col-md-6 col-sm-12">
             <div className="d-flex flex-row-reverse">
               <div className="page_action">
@@ -124,11 +123,9 @@ function Curations() {
         </div>
       </div>
 
-      {/* Table Section */}
       <div className="row clearfix">
         <div className="col-lg-12">
           <div className="card">
-            {/* Search + Page control */}
             <div className="header d-flex justify-content-between align-items-center">
               <div className="d-none d-md-flex align-items-center mb-2 mb-md-0">
                 <label className="mb-0 mr-2">Show</label>
@@ -169,7 +166,6 @@ function Curations() {
               </div>
             </div>
 
-            {/* Table */}
             <div className="body">
               <div className="table-responsive">
                 <table className="table table-hover">
@@ -227,7 +223,6 @@ function Curations() {
                 </table>
               </div>
 
-              {/* Pagination */}
               <div className="pagination d-flex justify-content-between mt-4">
                 <span className="d-none d-sm-inline-block text-truncate w-100 mx-1">
                   Showing{" "}

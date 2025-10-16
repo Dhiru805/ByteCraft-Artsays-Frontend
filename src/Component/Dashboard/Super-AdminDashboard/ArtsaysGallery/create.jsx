@@ -8,8 +8,8 @@ import getAPI from "../../../../api/getAPI";
 function CreateCuration() {
   const navigate = useNavigate();
 
-  const [userType, setUserType] = useState(""); // Seller or Artist
-  const [userOptions, setUserOptions] = useState([]); // Dropdown list (artists/sellers)
+  const [userType, setUserType] = useState(""); 
+  const [userOptions, setUserOptions] = useState([]); 
   const [selectedUser, setSelectedUser] = useState(null);
   const [curator, setCurator] = useState("");
 
@@ -72,38 +72,30 @@ function CreateCuration() {
 
   return (
     <div className="container-fluid">
-      {/* Header */}
+    
       <div className="block-header">
         <div className="row">
           <div className="col-lg-6 col-md-6 col-sm-12">
-            <h2>Create Curation</h2>
+            <h2>Create Art Gallery</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
                 <a href="/">
                   <i className="fa fa-dashboard"></i>
                 </a>
               </li>
-              <li className="breadcrumb-item active">
-                <Link
-                  to="/super-admin/curations"
-                  className="text-decoration-none"
-                >
-                  Curations
-                </Link>
-              </li>
-              <li className="breadcrumb-item">Create Curation</li>
+             
+              <li className="breadcrumb-item">Create</li>
             </ul>
           </div>
         </div>
       </div>
 
-      {/* Form */}
       <div className="row clearfix">
         <div className="col-lg-12">
           <div className="card">
             <div className="body">
               <form onSubmit={handleSubmit}>
-                {/* Select User Type */}
+               
                 <div className="row">
                   <div className="col-md-6 form-group">
                     <label>Select Type</label>
@@ -127,7 +119,6 @@ function CreateCuration() {
                   </div>
                 </div>
 
-                {/* Conditional dropdown (Artist/Seller Names) */}
                 {userType && (
                   <div className="row mt-3">
                     <div className="col-md-6 form-group">
@@ -149,7 +140,6 @@ function CreateCuration() {
                   </div>
                 )}
 
-                {/* Curator Field */}
                 {userType && (
                   <div className="row mt-3">
                     <div className="col-md-6 form-group">
@@ -166,11 +156,10 @@ function CreateCuration() {
                   </div>
                 )}
 
-                {/* Submit Button */}
                 {userType && (
                   <div className="mt-4">
                     <button type="submit" className="btn btn-success">
-                      Create Curation
+                      Create Art Gallery
                     </button>
                   </div>
                 )}

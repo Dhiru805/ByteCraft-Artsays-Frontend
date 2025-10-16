@@ -65,7 +65,7 @@ function ArtsaysGalleryEdit() {
   return (
     <div className="container-fluid">
       <div className="block-header">
-        <h2>Edit Artsays Gallery</h2>
+        <h2>Edit Art Gallery CMS</h2>
       </div>
 
       <div className="card">

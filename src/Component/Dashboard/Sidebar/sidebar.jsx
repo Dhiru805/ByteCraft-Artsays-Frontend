@@ -189,7 +189,7 @@ const Sidebar = () => {
         subTabs: []
       },
        {
-        label: "ArtSays Gallery",
+        label: "Art Gallery",
         icon: "fa fa-image",
         path: `/super-admin/artsays-gallery`,
         subTabs: []
@@ -220,7 +220,7 @@ const Sidebar = () => {
           { label: "Commissions", subtabId: "wcms19", path: `/super-admin/commission` },
           { label: "Licensing", subtabId: "wcms19", path: `/super-admin/licensing` },
           { label: "Social Media", subtabId: "wcms19", path: `` },
-          { label: "CMS Artsays Gallery", subtabId: "wcms19", path: `/super-admin/CMS-art-gallery` },
+          { label: "CMS Art Gallery", subtabId: "wcms19", path: `/super-admin/CMS-art-gallery` },
           { label: "Contact Us", subtabId: "wcms19", path: `/super-admin/contactus` },
           { label: "Career", subtabId: "wcms19", path: `` },
         ],

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link , useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import postAPI from "../../../../api/postAPI";
 
@@ -35,7 +35,8 @@ function ArtsaysGalleryCreate() {
   return (
     <div className="container-fluid">
       <div className="block-header">
-        <h2>Create Artsays Gallery</h2>
+        <h2>Create Art Gallery CMS</h2>
+       
       </div>
 
       <div className="card">

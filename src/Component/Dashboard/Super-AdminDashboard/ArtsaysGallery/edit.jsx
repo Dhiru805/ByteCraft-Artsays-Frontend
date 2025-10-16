@@ -239,13 +239,12 @@ function UpdateGallery() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const [userType, setUserType] = useState(""); // Seller or Artist
-  const [userOptions, setUserOptions] = useState([]); // Dropdown list
+  const [userType, setUserType] = useState("");
+  const [userOptions, setUserOptions] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [curator, setCurator] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Fetch users based on type
   const fetchUsers = async (type) => {
     try {
       const response = await getAPI(`/api/users-by-type?userType=${type}`);
@@ -262,7 +261,6 @@ function UpdateGallery() {
     }
   };
 
-  // Fetch gallery data by ID
   const fetchGalleryData = async () => {
     try {
       const response = await getAPI(`/api/artsays-gallery/${id}`);
@@ -272,7 +270,6 @@ function UpdateGallery() {
         setUserType(data.type);
         setCurator(data.curator || "");
 
-        // Fetch users for this type and set selectedUser after users are loaded
         await fetchUsers(data.type);
 
         setSelectedUser({
@@ -295,7 +292,6 @@ function UpdateGallery() {
     fetchGalleryData();
   }, [id]);
 
-  // Only fetch users when type changes manually
   useEffect(() => {
     if (!loading && userType) {
       fetchUsers(userType);
@@ -342,11 +338,11 @@ function UpdateGallery() {
 
   return (
     <div className="container-fluid">
-      {/* Header */}
+      
       <div className="block-header">
         <div className="row">
           <div className="col-lg-6 col-md-6 col-sm-12">
-            <h2>Edit Artsays Gallery</h2>
+            <h2>Edit Art Gallery</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
                 <a href="/">
@@ -355,22 +351,20 @@ function UpdateGallery() {
               </li>
               <li className="breadcrumb-item active">
                 <Link to="/super-admin/artsays-gallery" className="text-decoration-none">
-                  Artsays Gallery
+                  Art Gallery
                 </Link>
               </li>
-              <li className="breadcrumb-item">Edit Gallery</li>
+              <li className="breadcrumb-item">Edit Art Gallery</li>
             </ul>
           </div>
         </div>
       </div>
-
-      {/* Form */}
       <div className="row clearfix">
         <div className="col-lg-12">
           <div className="card">
             <div className="body">
               <form onSubmit={handleSubmit}>
-                {/* Select Type */}
+               
                 <div className="row">
                   <div className="col-md-6 form-group">
                     <label>Select Type</label>
@@ -388,7 +382,6 @@ function UpdateGallery() {
                   </div>
                 </div>
 
-                {/* Select User */}
                 {userType && (
                   <div className="row mt-3">
                     <div className="col-md-6 form-group">
@@ -406,7 +399,6 @@ function UpdateGallery() {
                   </div>
                 )}
 
-                {/* Curator */}
                 {userType && (
                   <div className="row mt-3">
                     <div className="col-md-6 form-group">
@@ -423,11 +415,10 @@ function UpdateGallery() {
                   </div>
                 )}
 
-                {/* Submit */}
                 {userType && (
                   <div className="mt-4">
                     <button type="submit" className="btn btn-success">
-                      Update Gallery
+                      Update Art Gallery
                     </button>
                   </div>
                 )}
