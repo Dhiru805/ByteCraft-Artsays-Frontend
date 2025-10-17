@@ -316,7 +316,7 @@ function UpdateGallery() {
       const response = await putAPI(`/api/artsays-gallery/update/${id}`, payload);
       if (response?.hasError === false) {
         toast.success(response?.message || "Gallery updated successfully!");
-        navigate("/super-admin/artsays-gallery");
+        navigate("/super-admin/art-gallery");
       } else {
         toast.error(response?.message || "Failed to update gallery");
       }
@@ -350,7 +350,7 @@ function UpdateGallery() {
                 </a>
               </li>
               <li className="breadcrumb-item active">
-                <Link to="/super-admin/artsays-gallery" className="text-decoration-none">
+                <Link to="/super-admin/art-gallery" className="text-decoration-none">
                   Art Gallery
                 </Link>
               </li>

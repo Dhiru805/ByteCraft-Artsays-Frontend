@@ -62,7 +62,7 @@ function Curations() {
   const openDeleteDialog = (curation) => {
     setSelectedCurationToDelete(curation);
     setIsDeleteDialogOpen(true);
-    setDeleteType("cmsartsaysgallery");
+    setDeleteType("artsaysgallery");
   };
 
   const handleDeleteCancel = () => {
@@ -113,7 +113,7 @@ function Curations() {
                 <button
                   type="button"
                   className="btn btn-secondary mr-2"
-                  onClick={() => navigate("/super-admin/artsays-gallery/create")}
+                  onClick={() => navigate("/super-admin/art-gallery/create")}
                 >
                   <i className="fa fa-plus"></i>
                 </button>
@@ -195,7 +195,7 @@ function Curations() {
                               title="Edit"
                               onClick={() =>
                                 navigate(
-                                  `/super-admin/artsays-gallery/update/${curation._id}`
+                                  `/super-admin/art-gallery/update/${curation._id}`
                                 )
                               }
                             >

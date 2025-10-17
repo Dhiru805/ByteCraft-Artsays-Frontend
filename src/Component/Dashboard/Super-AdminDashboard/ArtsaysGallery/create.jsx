@@ -60,7 +60,7 @@ function CreateCuration() {
         setUserType("");
         setSelectedUser(null);
         setCurator("");
-        navigate("/super-admin/artsays-gallery");
+        navigate("/super-admin/art-gallery");
       } else {
         console.log(response);
       }

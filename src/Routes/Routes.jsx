@@ -382,7 +382,7 @@ import ContactUs from "../Pages/ContactUs/ContactUs"
 import HowToBuy from "../Pages/HowToBuy/HowToBuy"
 import HowToSell from "../Pages/HowToSell/HowToSell"
 import HowToResell from "../Pages/HowToResell/HowToResell"
-import Collections from "../Pages/Collections/Collections"
+import ArtGallery from "../Pages/ArtGallery/ArtGallery";
 import Career from "../Pages/Career/Career"
 import WhyArtsays from "../Pages/WhyArtsays/WhyArtsays";
 import Challenge from "../Pages/Challenges/Challenges";
@@ -675,9 +675,9 @@ const AppRoutes = () => {
 
 
         {/* Artsays Gallery Routes */}
-        <Route path="artsays-gallery" element={<Gallery />} />
-        <Route path="artsays-gallery/create" element={<CreateGallery />} />
-        <Route path="artsays-gallery/update/:id" element={<UpdateGallery />} />
+        <Route path="art-gallery" element={<Gallery />} />
+        <Route path="art-gallery/create" element={<CreateGallery />} />
+        <Route path="art-gallery/update/:id" element={<UpdateGallery />} />
 
         {/* Artsays Gallery CMS Routes */}
         <Route path="CMS-art-gallery" element={<ArtsaysGalleryTable />} />
@@ -1015,7 +1015,7 @@ const AppRoutes = () => {
         <Route path="/how-to-buy" element={<HowToBuy />} />
         <Route path="/how-to-sell" element={<HowToSell />} />
         <Route path="/how-to-resell" element={<HowToResell />} />
-        <Route path="/collections" element={<Collections />} />
+        <Route path="/art-gallery" element={<ArtGallery />} />
         {/* <Route path="/career" element={<Career />} /> */}
         <Route path="/why-artsays" element={<WhyArtsays />} />
         {/* <Route path="/challenges" element={<Challenge />} /> */}

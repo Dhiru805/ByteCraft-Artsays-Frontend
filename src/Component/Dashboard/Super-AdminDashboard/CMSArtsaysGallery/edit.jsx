@@ -17,7 +17,7 @@ function ArtsaysGalleryEdit() {
     try {
       const response = await getAPI(`/api/CMS-artsays-gallery/${id}`);
       if (response?.hasError === false) {
-        const data = response.data.data;
+        const data = response.data;
         setTitle(data.title);
         setDescription(data.description);
         setStatus(data.status || "draft");
@@ -43,9 +43,13 @@ function ArtsaysGalleryEdit() {
       return;
     }
 
+    console.log("UPDATE - Sending payload:", { title, description, status });
+    console.log("UPDATE - Status type:", typeof status, "Value:", status);
+
     try {
       const payload = { title, description, status };
       const response = await putAPI(`/api/CMS-artsays-gallery/update/${id}`, payload);
+      console.log("UPDATE - API Response:", response);
       if (response?.hasError === false) {
         toast.success(response?.message || "Gallery updated successfully!");
         navigate("/super-admin/CMS-art-gallery");
@@ -53,7 +57,7 @@ function ArtsaysGalleryEdit() {
         toast.error(response?.message || "Failed to update gallery");
       }
     } catch (error) {
-      console.log(error);
+      console.log("UPDATE - Error:", error);
       toast.error("Error updating gallery");
     }
   };

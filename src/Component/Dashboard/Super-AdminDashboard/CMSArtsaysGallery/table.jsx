@@ -145,18 +145,31 @@ function ArtGalleryCMS() {
   const fetchGalleryData = async () => {
     try {
       const response = await getAPI("/api/CMS-artsays-gallery");
+      console.log("TABLE - API Response:", response);
       if (response?.hasError === false) {
-        setGalleryData(response?.data?.data || []);
+        const data = response?.data || [];
+        console.log("TABLE - Gallery data:", data);
+        setGalleryData(data);
       } else {
-        console.log(response);
+        console.log("TABLE - Error response:", response);
       }
     } catch (error) {
-      console.log(error);
+      console.log("TABLE - Error:", error);
     }
   };
 
   useEffect(() => {
     fetchGalleryData();
+  }, []);
+
+  // Refresh data when window regains focus (after navigation)
+  useEffect(() => {
+    const handleFocus = () => {
+      fetchGalleryData();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
   }, []);
 
   const filteredGallery = galleryData.filter((item) =>
@@ -307,7 +320,7 @@ function ArtGalleryCMS() {
                             {(currentPage - 1) * galleriesPerPage + index + 1}
                           </td>
                           <td>{gallery.title}</td>
-                          <td>
+                          {/* <td>
                             <span
                               className={`badge ${
                                 gallery.status === "published"
@@ -317,7 +330,15 @@ function ArtGalleryCMS() {
                             >
                               {gallery.status}
                             </span>
-                          </td>
+                          </td> */}
+
+                          <td>
+                          {gallery.status === "published" ? (
+                            <span className="badge badge-success">Published</span>
+                          ) : (
+                            <span className="badge badge-secondary">Draft</span>
+                          )}
+                        </td>
                           <td>
                             <button
                               type="button"

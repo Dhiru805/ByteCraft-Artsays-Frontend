@@ -17,9 +17,13 @@ function ArtsaysGalleryCreate() {
       return;
     }
 
+    console.log("CREATE - Sending payload:", { title, description, status });
+    console.log("CREATE - Status type:", typeof status, "Value:", status);
+
     try {
       const payload = { title, description, status };
       const response = await postAPI("/api/CMS-artsays-gallery/create", payload);
+      console.log("CREATE - API Response:", response);
       if (response?.hasError === false) {
         toast.success(response?.message || "Gallery created successfully!");
         navigate("/super-admin/CMS-art-gallery");
@@ -27,7 +31,7 @@ function ArtsaysGalleryCreate() {
         toast.error(response?.message || "Failed to create gallery");
       }
     } catch (error) {
-      console.log(error);
+      console.log("CREATE - Error:", error);
       toast.error("Error creating gallery");
     }
   };

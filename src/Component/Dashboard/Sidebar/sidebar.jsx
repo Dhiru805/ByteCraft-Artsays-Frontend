@@ -191,7 +191,7 @@ const Sidebar = () => {
        {
         label: "Art Gallery",
         icon: "fa fa-image",
-        path: `/super-admin/artsays-gallery`,
+        path: `/super-admin/art-gallery`,
         subTabs: []
       },
       {
