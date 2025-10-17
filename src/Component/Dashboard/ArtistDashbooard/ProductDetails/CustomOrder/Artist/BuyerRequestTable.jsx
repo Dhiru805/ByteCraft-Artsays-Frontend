@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NegotiateModal from "./Negotiate";
 import updateBuyerStatus from "./buyerRequestAPI";
-import { toast } from "react-toastify"; 
+import { toast } from "react-toastify";
 
 function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyerRequestStatus }) {
     const navigate = useNavigate();
@@ -11,10 +11,9 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
     const [searchTerm, setSearchTerm] = useState('');
 
-    // pagination helpers 
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
-
+    console.log("Buyer Requests:", buyerRequests);
 
     const filteredProducts = buyerRequests.filter(request =>
         request.Buyer?.id?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -64,15 +63,19 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
     const handleUpdateBuyerStatus = async (requestId) => {
         try {
             setLoadingIds((prev) => [...prev, requestId]);
-            const response = await updateBuyerStatus(requestId, 'Approved', 'Approved');
-            await updateBuyerStatus(requestId, 'Approved', 'Approved');
-    window.location.reload();
+
+            const response = await updateBuyerStatus(requestId);
+
             toast.success("Product Request has been Approved!");
+            window.location.reload();
+            setUpdatedRequests((prev) => ({
+                ...prev,
+                [requestId]: "Approved",
+            }));
 
             setLoadingIds((prev) => prev.filter((itemId) => itemId !== requestId));
         } catch (error) {
-            console.error('Failed to update buyer status:', error);
-                  toast.error("Failed to approve request!"); 
+            toast.error("Failed to approve request!");
             setLoadingIds((prev) => prev.filter((itemId) => itemId !== requestId));
         }
     };
@@ -84,7 +87,6 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                     <div className="col-lg-12">
                         <div className="card">
                             <div className="header d-flex justify-content-between align-items-center">
-                                {/* <h2>Buyer Request List</h2> */}
                                 <div className="d-none d-md-flex align-items-center mb-2 mb-md-0">
                                     <label className="mb-0 mr-2">Show</label>
                                     <select
@@ -95,7 +97,6 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                         onChange={handleProductsPerPageChange}
                                         style={{ minWidth: '70px' }}
                                     >
-                                        {/* <option value="5">5</option> */}
                                         <option value="10">10</option>
                                         <option value="25">25</option>
                                         <option value="50">50</option>
@@ -109,6 +110,7 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                             type="text"
                                             className="form-control form-control-sm"
                                             placeholder="Search"
+                                            onChange={(e) => setSearchTerm(e.target.value)}
                                         />
                                         <div className="input-group-append">
                                             <button className="btn btn-sm btn-outline-secondary">
@@ -125,12 +127,10 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                             <tr>
                                                 <th>#</th>
                                                 <th>Name</th>
-                                                {/* <th>Email</th>
-                                                <th>Phone</th> */}
                                                 <th>Product Name</th>
                                                 <th>Buyer Negotiated Budget</th>
                                                 <th>Request Date</th>
-                                                <th>Request Status</th>
+                                                <th>Artist Request Status</th>
                                                 <th>Buyer Request Status</th>
                                                 <th>Action</th>
                                             </tr>
@@ -143,9 +143,10 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                                         <td>
                                                             <h6 className="mb-0">{index + 1}</h6>
                                                         </td>
+                                                        <td>{`${request.Buyer.id.name} ${request.Buyer.id.lastName}`}</td>
                                                         <td>
                                                             <img
-                                                                src={`${BASE_URL}${request.Buyer?.id?.profilePhoto}`}
+                                                                src={`${BASE_URL}/${request.BuyerImage?.replace(/\\/g, '/')}`}
                                                                 className="rounded-circle avatar"
                                                                 alt="Profile"
                                                                 style={{
@@ -161,6 +162,9 @@ function BuyerManageTable({ buyerRequests, handleRejectBuyerRequest, updateBuyer
                                                         {/* <td>{request.Buyer.id.email}</td>
                                                         <td>{request.Buyer.id.phone}</td> */}
                                                         <td>{request.ProductName}</td>
+                                                                {/* {request.ProductName}
+                                                            </p>
+                                                        </td> */}
                                                         <td>
                                                             {request.BuyerNegotiatedBudgets.length > 0
                                                                 ? `₹${request.BuyerNegotiatedBudgets[request.BuyerNegotiatedBudgets.length - 1]}`

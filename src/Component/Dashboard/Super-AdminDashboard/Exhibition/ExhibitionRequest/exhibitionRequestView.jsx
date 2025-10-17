@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const ViewExhibitionRequest= () => {
+const ViewExhibitionRequest = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const exhibition = state?.exhibition;
@@ -51,6 +51,16 @@ const ViewExhibitionRequest= () => {
   });
   const [coverBannerPreview, setCoverBannerPreview] = useState(null);
   const [logoPreview, setLogoPreview] = useState(null);
+  const [currentImages, setCurrentImages] = useState([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showPopup, setShowPopup] = useState(false);
+
+  const handleImageClick = (imageUrl) => {
+    const images = [imageUrl];
+    setCurrentImages(images);
+    setCurrentImageIndex(0);
+    setShowPopup(true);
+  };
 
   useEffect(() => {
     if (!exhibition) {
@@ -371,10 +381,56 @@ const ViewExhibitionRequest= () => {
                     <label htmlFor="coverBanner">Cover Banner</label>
                     {coverBannerPreview && (
                       <div className="mt-2">
+                        {showPopup && (
+                          <div
+                            onClick={() => setShowPopup(false)}
+                            style={{
+                              position: 'fixed',
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              zIndex: 1000,
+                            }}
+                          >
+                            <div
+                              onClick={(e) => e.stopPropagation()}
+                              style={{
+                                position: 'relative',
+                                height: '50%',
+                                backgroundColor: '#111',
+                                borderRadius: '12px',
+                                boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                overflow: 'hidden',
+                              }}
+                            >
+                              <img
+                                src={currentImages[currentImageIndex]?.replace(/\\/g, '/')}
+                                alt="Popup"
+                                style={{
+                                  width: '100%',
+                                  height: '100%',
+                                  objectFit: 'cover',
+                                  borderRadius: '12px',
+                                }}
+                              />
+                            </div>
+                          </div>
+                        )}
+
                         <img
                           src={coverBannerPreview}
                           alt="Cover Banner Preview"
                           style={{ maxWidth: "200px", maxHeight: "200px", objectFit: "contain" }}
+                          onClick={() => handleImageClick(coverBannerPreview)}
+
                         />
                       </div>
                     )}
@@ -387,6 +443,8 @@ const ViewExhibitionRequest= () => {
                           src={logoPreview}
                           alt="Logo Preview"
                           style={{ maxWidth: "200px", maxHeight: "200px", objectFit: "contain" }}
+                          onClick={() => handleImageClick(logoPreview)}
+
                         />
                       </div>
                     )}

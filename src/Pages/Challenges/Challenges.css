@@ -1,0 +1,81 @@
+/* === Container === */
+.challenges-container {
+  text-align: left;  
+  max-width: 1440px;  
+  margin-left: auto; 
+  margin-right: auto; 
+  padding-left: 0;  
+  padding-right: 0;  
+  padding-top: 0;   
+  padding-bottom: 0;   
+  font-family: 'Poppins', sans-serif; 
+}
+
+/* === Heading === */
+.challenges-heading {
+  font-size: 3.5rem;  
+  font-weight: 700;   
+  color: #FB5935;  
+  margin-top: 1rem;   
+  margin-bottom: 0.01rem;  
+  letter-spacing: -0.5px; 
+  font-family: 'Poppins', sans-serif; 
+}
+
+/* === Subheading === */
+.challenges-subheading {
+  font-size: 1.25rem;  
+  color: #7e583c;     
+  font-weight: 600;    
+  max-width: 30rem;    
+  margin-bottom: 1.5rem; 
+  line-height: 1.5;    
+  font-family: 'Poppins', sans-serif; 
+}
+
+/* === Challenge List Wrapper === */
+.challenge-list {
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+  margin-bottom: 80px;
+}
+
+/* === Responsive: Tablet (≤768px) === */
+@media (max-width: 768px) {
+  .challenges-heading {
+    font-size: 2.5rem;
+    text-align: center;
+  }
+
+  .challenges-subheading {
+    font-size: 1rem;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .challenges-container {
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* === Responsive: Mobile (≤480px) === */
+@media (max-width: 480px) {
+  .challenges-heading {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+
+  .challenges-subheading {
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .challenges-container {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}

@@ -132,7 +132,6 @@ const ChallengesEntries = () => {
                 </div>
               </div>
             </div>
-
             <div className="body">
               <div className="table-responsive">
                 <table className="table table-hover">

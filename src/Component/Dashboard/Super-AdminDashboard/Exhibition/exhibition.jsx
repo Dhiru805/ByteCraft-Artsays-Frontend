@@ -13,28 +13,39 @@ const ExhibitionTable = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedExhibitionToDelete, setSelectedExhibitionToDelete] = useState(null);
 
-  const fetchExhibitions = async () => {
-    try {
-      const userType = localStorage.getItem("userType");
-      if (!userType) {
-        toast.error("User type not found. Please log in again.");
-        navigate("/login");
-        return;
-      }
-
-      const response = await getAPI(`/api/get-exhibition/${userType}`);
-      const data = Array.isArray(response.data.data) ? response.data.data : [];
-      setExhibitions(data);
-    } catch (error) {
-      console.error("Error fetching exhibitions:", error);
-      toast.error(error.response?.data?.message || "Failed to fetch exhibitions");
-      setExhibitions([]);
-    }
-  };
 
   useEffect(() => {
-    fetchExhibitions();
+    const fetchAllExhibitions = async () => {
+      try {
+        const userType = localStorage.getItem("userType");
+        if (!userType) {
+          toast.error("User type not found. Please log in again.");
+          navigate("/login");
+          return;
+        }
+
+        const superAdminRes = await getAPI(`/api/get-exhibition/${userType}`);
+        const superAdminData = Array.isArray(superAdminRes.data.data) ? superAdminRes.data.data : [];
+
+        const artistSellerRes = await getAPI(`/api/get-exhibition-artistseller`);
+        const artistSellerData = Array.isArray(artistSellerRes.data.data) ? artistSellerRes.data.data : [];
+        const approvedArtistSellerExhibitions = artistSellerData.filter(
+          exhibition => exhibition.status === "Approved"
+        );
+
+        const combinedExhibitions = [...superAdminData, ...approvedArtistSellerExhibitions];
+
+        setExhibitions(combinedExhibitions);
+      } catch (error) {
+        console.error("Error fetching exhibitions:", error);
+        toast.error(error.response?.data?.message || "Failed to fetch exhibitions");
+        setExhibitions([]);
+      }
+    };
+
+    fetchAllExhibitions();
   }, []);
+
 
   const handleDeleteCancel = () => {
     setIsDeleteDialogOpen(false);
@@ -146,7 +157,7 @@ const ExhibitionTable = () => {
                       right: "10px",
                       top: "50%",
                       transform: "translateY(-50%)",
-                       pointerEvents: 'none',
+                      pointerEvents: 'none',
                     }}
                   ></i>
                 </div>

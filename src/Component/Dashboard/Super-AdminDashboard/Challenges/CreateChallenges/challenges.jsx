@@ -94,7 +94,6 @@ const ChallengesTable = () => {
 
   return (
     <div className="container-fluid">
-
       <div className="block-header">
         <div className="row">
           <div className="col-lg-6 col-md-6 col-sm-12">

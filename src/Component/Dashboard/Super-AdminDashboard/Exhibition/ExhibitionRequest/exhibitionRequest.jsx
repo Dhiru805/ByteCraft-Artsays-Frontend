@@ -254,13 +254,12 @@ const ExhibitionRequestTable = () => {
                         </td>
                         <td>
                           <button
-                            className={`btn btn-sm ${
-                              exhibition.status === "Pending"
+                            className={`btn btn-sm ${exhibition.status === "Pending"
                                 ? "btn-outline-warning"
                                 : exhibition.status === "Approved"
-                                ? "btn-outline-success"
-                                : "btn-outline-danger"
-                            }`}
+                                  ? "btn-outline-success"
+                                  : "btn-outline-danger"
+                              }`}
                           >
                             {exhibition.status}
                           </button>
@@ -298,7 +297,8 @@ const ExhibitionRequestTable = () => {
                           >
                             <i className="fa fa-trash-o"></i>
                           </button>
-                          {exhibition.status !== "Approved" && (
+                          {exhibition.status !== "Approved" && exhibition.status !== "Rejected" && (
+
                             <button
                               type="button"
                               className="btn btn-outline-success btn-sm mr-1"
@@ -345,9 +345,8 @@ const ExhibitionRequestTable = () => {
                 </span>
                 <ul className="pagination d-flex justify-content-end w-100">
                   <li
-                    className={`paginate_button page-item ${
-                      currentPage === 1 ? "disabled" : ""
-                    }`}
+                    className={`paginate_button page-item ${currentPage === 1 ? "disabled" : ""
+                      }`}
                     onClick={handlePrevious}
                   >
                     <button className="page-link">Previous</button>
@@ -356,9 +355,8 @@ const ExhibitionRequestTable = () => {
                     (pageNumber) => (
                       <li
                         key={pageNumber}
-                        className={`paginate_button page-item ${
-                          currentPage === pageNumber ? "active" : ""
-                        }`}
+                        className={`paginate_button page-item ${currentPage === pageNumber ? "active" : ""
+                          }`}
                         onClick={() => setCurrentPage(pageNumber)}
                       >
                         <button className="page-link">{pageNumber}</button>
@@ -366,9 +364,8 @@ const ExhibitionRequestTable = () => {
                     )
                   )}
                   <li
-                    className={`paginate_button page-item ${
-                      currentPage === totalPages ? "disabled" : ""
-                    }`}
+                    className={`paginate_button page-item ${currentPage === totalPages ? "disabled" : ""
+                      }`}
                     onClick={handleNext}
                   >
                     <button className="page-link">Next</button>

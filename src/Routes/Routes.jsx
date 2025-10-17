@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from "react";
-
+import React, { useEffect, useState } from 'react';
 import {
   Routes,
   Route,
   Navigate,
   Outlet,
   useLocation,
-  useNavigate,
+  useNavigate
 } from "react-router-dom";
 import WebsiteLayout from "../Layouts/WebsiteLayout";
-import { useAuth } from "../AuthContext";
-import PreloaderAnimation from "../Pages/Animation/PreloaderAnimation";
+import { useAuth } from '../AuthContext';
+import PreloaderAnimation from '../Pages/Animation/PreloaderAnimation';
 
 //----------------------------------------Auth Pages------------------------------------------//
 import Login from "../Pages/Login/Login";
@@ -21,22 +20,23 @@ import ForgotPassword from "../Pages/Login/Forgotpassword";
 import PrivacyPolicy from "../Pages/PrivacyPolicy/PrivacyPolicy";
 import TermsofServices from "../Pages/Terms&Condition/TermsofServices";
 import BiddingPass from "../Pages/Art-Biding/BidingPage";
+// import Challenge from "../Pages/Challenges/Challenge";
 
 //----------------------------------------My Account-----------------------------------------//
-import MyAccountMainLayout from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/MyAccountMainLayout";
-import { AccountPage } from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyAccountPage";
-import { AccountForm } from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PersonaInformation";
-import ManageAddress from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/ManageAddress";
-import BankPaymentDetails from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/BankPaymentDetails";
-import PaymentMethod from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PaymentMethod";
-import PasswordManager from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PasswordManager";
-import AccountVerification from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/AccountVerification";
-import SocialMediaPromotion from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/SocialMediaPromotion";
-import CustomRequest from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/CustomRequest";
-import NotificationAndPreferences from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/NotificationAndPreferences";
-import AccountSecurityAndAgreements from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/AccountSecurityAndAgreements";
+import MyAccountMainLayout from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/MyAccountMainLayout';
+import { AccountPage } from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyAccountPage';
+import { AccountForm } from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PersonaInformation';
+import ManageAddress from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/ManageAddress';
+import BankPaymentDetails from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/BankPaymentDetails';
+import PaymentMethod from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PaymentMethod';
+import PasswordManager from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PasswordManager';
+import AccountVerification from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/AccountVerification';
+import SocialMediaPromotion from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/SocialMediaPromotion';
+import CustomRequest from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/CustomRequest';
+import NotificationAndPreferences from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/NotificationAndPreferences';
+import AccountSecurityAndAgreements from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/AccountSecurityAndAgreements';
 import MyOrders from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyOrders";
-import Logout from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/Logout";
+import Logout from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/Logout';
 import TrackOrder from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/TrackOrder";
 import WishListTable from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/WishListTable";
 import MyCartList from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/MyCartList";
@@ -68,8 +68,8 @@ import SuperAdminViewBlog from "../Component/Dashboard/Super-AdminDashboard/Blog
 import SuperAdminUpdateBlog from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/UpdateBlogList";
 import SuperAdminProductInfo from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Productinfo";
 import SuperAdminMarketing from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailMarketing/Marketing/MarketingEmail";
-import UserRole from "../Component/Dashboard/Super-AdminDashboard/Settings/UserRole/UserRole";
-import CreateRole from "../Component/Dashboard/Super-AdminDashboard/Settings/UserRole/CreateRole";
+import UserRole from '../Component/Dashboard/Super-AdminDashboard/Settings/UserRole/UserRole';
+import CreateRole from '../Component/Dashboard/Super-AdminDashboard/Settings/UserRole/CreateRole';
 import SuperAdminBiddingPass from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/BiddingPass";
 import SuperAdminArtistAdvertise from "../Component/Dashboard/Super-AdminDashboard/Advertise/Advertise";
 import SuperAdminArtistSponsor from "../Component/Dashboard/Super-AdminDashboard/Advertise/Sponser";
@@ -242,6 +242,23 @@ import ChallengesEntries from "../Component/Dashboard/Super-AdminDashboard/Chall
 import ViewChallengeApplication from "../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/ViewChallengeApplication";
 import UpdateChallengeApplication from "../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/UpdateChallengeApplication";
 
+import ViewCareer  from "../Component/Dashboard/Super-AdminDashboard/Career/CarrerView";
+import Exhibition from  "../Component/Dashboard/Super-AdminDashboard/Exhibition/exhibition";
+import CreateExhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/create";
+import UpdateExhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/editExhibition";
+import ViewExhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/exhibitionView";
+import ExhibitionRequest from '../Component/Dashboard/Super-AdminDashboard/Exhibition/ExhibitionRequest/exhibitionRequest';
+import UpdateExhibitionRequest from "../Component/Dashboard/Super-AdminDashboard/Exhibition/ExhibitionRequest/editExhibitionRequest";
+import ViewExhibitionRequest from "../Component/Dashboard/Super-AdminDashboard/Exhibition/ExhibitionRequest/exhibitionRequestView";
+import AutoTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/DefaultAutoTargeting/DefaultAutoTargeting';
+import GroupTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/AutoTargetingGroup/GroupTargetingSetting';
+import KeywordTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/KeywordTargeting/KeywordTargetingSetting';
+
+import Challenges from  "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/challenges";
+import CreateChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/create";
+import UpdateChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/update";
+import ViewChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/challengeview";
+import ChallengesEntries from '../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/challengesEntries';
 //-----------------------------Admin--------------------------//
 import Admin from "../Component/Dashboard/Super-AdminDashboard/Admin/Admin";
 import AdminProfile from "../Component/Dashboard/Super-AdminDashboard/Admin/Profile/UserProf";
@@ -322,12 +339,12 @@ import ArtistBiddedProducts from "../Component/Dashboard/ArtistDashbooard/Biddin
 import ArtistBiddingTable from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddingpass/BiddingTable";
 import ArtistBiddingTablePass from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddingpass/Biddingpass";
 import ArtistCertification from "../Component/Dashboard/ArtistDashbooard/Certification/Certification";
-import CreateArtitstCertifications from "../Component/Dashboard/ArtistDashbooard/Certification/create";
-import ArtistExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/exhibition";
+import CreateArtitstCertifications from "../Component/Dashboard/ArtistDashbooard/Certification/create"
+import ArtistExhibition from  "../Component/Dashboard/ArtistDashbooard/Exhibition/exhibition";
 import ArtistCreateExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/create";
 import ArtistUpdateExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/editExhibition";
 import ArtistViewExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/exhibitionView";
-import ArtistSponser from "../Component/Dashboard/ArtistDashbooard/Advertise/Sponser";
+import ArtistSponser from  "../Component/Dashboard/ArtistDashbooard/Advertise/Sponser"
 //-----------------------------Blogs--------------------------//
 import BlogList from "../Component/Dashboard/ArtistDashbooard/Blog/BlogList";
 import BlogPost from "../Component/Dashboard/ArtistDashbooard/Blog/BlogPost";
@@ -336,12 +353,12 @@ import BlogDetails from "../Component/Dashboard/ArtistDashbooard/Blog/ArtistBlog
 
 //-----------------------------Products Route--------------------------//
 import AllProduct from "../Component/Dashboard/ArtistDashbooard/ProductDetails/Product";
-import ProductUploade from "../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductUpload/productUploade";
-import CustomOrder from "../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/CustomOrderAll/Customorder";
-import ProductView from "../Component/Dashboard/ArtistDashbooard/ProductDetails/Productinfo";
-import ViewCustomRequest from "../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/Artist/ViewRequest";
-import Productpurchase from "../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductPurchased/ProductPurchased";
-import ProductpurchaseView from "../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductPurchased/ProductPurchasedDetails";
+import ProductUploade from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductUpload/productUploade';
+import CustomOrder from '../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/CustomOrderAll/Customorder';
+import ProductView from '../Component/Dashboard/ArtistDashbooard/ProductDetails/Productinfo';
+import ViewCustomRequest from '../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/Artist/ViewRequest';
+import Productpurchase from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductPurchased/ProductPurchased';
+import ProductpurchaseView from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductPurchased/ProductPurchasedDetails';
 
 //----------------------------------------Buyer Components-----------------------------------//
 import BuyerDashboard from "../Component/Dashboard/BuyerDashboard/Dashboard/MainContent";
@@ -359,9 +376,9 @@ import SellerBiddedProducts from "../Component/Dashboard/SellerDashboard/Bidding
 import SellerBidTable from "../Component/Dashboard/SellerDashboard/Bidding/Biddingpass/BiddingTable";
 import SellerBidPassTable from "../Component/Dashboard/SellerDashboard/Bidding/Biddingpass/Biddingpass";
 import SellerCertification from "../Component/Dashboard/SellerDashboard/Certification/Certification";
-import CreateSellerCertifications from "../Component/Dashboard/SellerDashboard/Certification/create";
+import CreateSellerCertifications from "../Component/Dashboard/SellerDashboard/Certification/create"
 
-import SellerExhibition from "../Component/Dashboard/SellerDashboard/Exhibition/exhibition";
+import SellerExhibition from  "../Component/Dashboard/SellerDashboard/Exhibition/exhibition";
 import SellerCreateExhibition from "../Component/Dashboard/SellerDashboard/Exhibition/create";
 import SellerUpdateExhibition from "../Component/Dashboard/SellerDashboard/Exhibition/editExhibition";
 import SellerViewExhibition from "../Component/Dashboard/SellerDashboard/Exhibition/exhibitionView";
@@ -626,12 +643,12 @@ const AppRoutes = () => {
         <Route path="settings/marketing" element={<SuperAdminMarketing />} />
         <Route path="settings/certification" element={<CertificationSetting />} />
         <Route path="settings/auto-targeting" element={<AutoTargetingSetting />} />
-        <Route path="settings/group-targeting" element={<GroupTargetingSetting />} />
-        <Route path="settings/keyword-targeting" element={<KeywordTargetingSetting />} />
-        <Route path="settings/user-role" element={<UserRole />} />
+        <Route path="settings/group-targeting" element={<GroupTargetingSetting/>} />
+       <Route  path="settings/keyword-targeting" element={<KeywordTargetingSetting/>} />
+       <Route path="settings/user-role" element={<UserRole />} />
         <Route path="settings/create-user-role" element={<CreateRole />} />
-
-
+       
+       
         {/* Advertise Routes */}
         <Route path="advertise" element={<SuperAdminArtistAdvertise />} />
         <Route path="advertise/sponser" element={<SuperAdminArtistSponsor />} />
@@ -852,10 +869,7 @@ const AppRoutes = () => {
         <Route path="productUpload" element={<ProductUploade />} />
         <Route path="custom-order" element={<CustomOrder />} />
         <Route path="product/view-product" element={<ProductView />} />
-        <Route
-          path="custom-order/view-request"
-          element={<ViewCustomRequest />}
-        />
+        <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
         <Route path="purchase" element={<Productpurchase />} />
         <Route path="purchase/view" element={<ProductpurchaseView />} />
         <Route path="product-purchase" element={<Productpurchase />} />
@@ -863,8 +877,8 @@ const AppRoutes = () => {
         {/* Advertise Routes */}
         <Route path="advertise" element={<ArtistAdvertise />} />
         <Route path="advertise/sponser" element={<ArtistSponser />} />
-
-
+        
+        
         {/* Bidding Routes */}
         <Route path="bidding-products-table" element={<ArtistBidingAllProducts />} />
         <Route path="bidded-products-table" element={<ArtistBiddedProducts />} />
@@ -876,10 +890,10 @@ const AppRoutes = () => {
         <Route path="certification/create-certification" element={<  CreateArtitstCertifications />} />
 
         {/* Exhibition */}
-        <Route path="exhibition" element={<ArtistExhibition />} />
-        <Route path="exhibition/create-exhibition" element={<ArtistCreateExhibition />} />
-        <Route path="exhibition/update-exhibition" element={<ArtistUpdateExhibition />} />
-        <Route path="exhibition/view-exhibition" element={<ArtistViewExhibition />} />
+        <Route path="exhibition" element={<ArtistExhibition/>} />  
+        <Route path="exhibition/create-exhibition" element={<ArtistCreateExhibition/>} />  
+        <Route path="exhibition/update-exhibition" element={<ArtistUpdateExhibition/>} /> 
+        <Route path="exhibition/view-exhibition" element={<ArtistViewExhibition/>} /> 
 
         {/* Premium Badges */}
         <Route path="premium-badges" element={<ArtistPremiumBages />} />
@@ -923,40 +937,19 @@ const AppRoutes = () => {
         <Route path="advertise/sponser" element={<SellerSponser />} />
 
         {/* Bidding Routes */}
-        <Route
-          path="bidding-products-table"
-          element={<SellerBidingAllProducts />}
-        />
-        <Route
-          path="bidded-products-table"
-          element={<SellerBiddedProducts />}
-        />
+        <Route path="bidding-products-table" element={<SellerBidingAllProducts />} />
+        <Route path="bidded-products-table" element={<SellerBiddedProducts />} />
         <Route path="bidding-pass-table" element={<SellerBidTable />} />
-        <Route
-          path="bidding-pass-table/bidding-pass"
-          element={<SellerBidPassTable />}
-        />
+        <Route path="bidding-pass-table/bidding-pass" element={<SellerBidPassTable />} />
         {/* Certification Routes */}
         <Route path="certification" element={<SellerCertification />} />
-        <Route
-          path="certification/create-certification"
-          element={<CreateSellerCertifications />}
-        />
+        <Route path="certification/create-certification" element={<  CreateSellerCertifications />} />
 
-        {/* Exhibition */}
-        <Route path="exhibition" element={<SellerExhibition />} />
-        <Route
-          path="exhibition/create-exhibition"
-          element={<SellerCreateExhibition />}
-        />
-        <Route
-          path="exhibition/update-exhibition"
-          element={<SellerUpdateExhibition />}
-        />
-        <Route
-          path="exhibition/view-exhibition"
-          element={<SellerViewExhibition />}
-        />
+         {/* Exhibition */}
+        <Route path="exhibition" element={<SellerExhibition/>} />  
+        <Route path="exhibition/create-exhibition" element={<SellerCreateExhibition/>} />  
+        <Route path="exhibition/update-exhibition" element={<SellerUpdateExhibition/>} /> 
+        <Route path="exhibition/view-exhibition" element={<SellerViewExhibition/>} /> 
 
         <Route path="premium-badges" element={<SellerPremiumBages />} />
       </Route>
@@ -1037,28 +1030,14 @@ const AppRoutes = () => {
         index
         element={
           isAuthenticated ? (
-            userType === "Super-Admin" ? (
+            userType === 'Super-Admin' ? (
               <Navigate to="/super-admin/dashboard" replace />
-            ) : userType === "Artist" ? (
-              <Navigate
-                to={
-                  userStatus === "Unverified" || userStatus === "Rejected"
-                    ? "/artist/profile"
-                    : "/artist/dashboard"
-                }
-                replace
-              />
-            ) : userType === "Buyer" ? (
+            ) : userType === 'Artist' ? (
+              <Navigate to={(userStatus === 'Unverified' || userStatus === 'Rejected') ? '/artist/profile' : '/artist/dashboard'} replace />
+            ) : userType === 'Buyer' ? (
               <Navigate to="/buyer/dashboard" replace />
-            ) : userType === "Seller" ? (
-              <Navigate
-                to={
-                  userStatus === "Unverified" || userStatus === "Rejected"
-                    ? "/seller/profile"
-                    : "/seller/dashboard"
-                }
-                replace
-              />
+            ) : userType === 'Seller' ? (
+              <Navigate to={(userStatus === 'Unverified' || userStatus === 'Rejected') ? '/seller/profile' : '/seller/dashboard'} replace />
             ) : (
               <WebsiteMain />
             )

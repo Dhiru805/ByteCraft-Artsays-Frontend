@@ -5,7 +5,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CreatableSelect from 'react-select/creatable';
-import putAPI from "../../../../api/putAPI"; 
+import putAPI from "../../../../api/putAPI";
 
 function CareerEdit() {
   const navigate = useNavigate();
@@ -67,16 +67,16 @@ function CareerEdit() {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
       const input = type === "required" ? requiredSkillInput.trim() :
-                    type === "preferred" ? preferredSkillInput.trim() :
-                    educationInput.trim();
+        type === "preferred" ? preferredSkillInput.trim() :
+          educationInput.trim();
       const array = type === "required" ? formData.requiredSkills :
-                    type === "preferred" ? formData.preferredSkills :
-                    formData.education;
+        type === "preferred" ? formData.preferredSkills :
+          formData.education;
       if (input && !array.includes(input)) {
         setFormData({
           ...formData,
           [type === "required" ? "requiredSkills" :
-           type === "preferred" ? "preferredSkills" : "education"]: [...array, input],
+            type === "preferred" ? "preferredSkills" : "education"]: [...array, input],
         });
         if (type === "required") setRequiredSkillInput("");
         else if (type === "preferred") setPreferredSkillInput("");
@@ -87,12 +87,12 @@ function CareerEdit() {
 
   const removeSkill = (index, type) => {
     const array = type === "required" ? formData.requiredSkills :
-                  type === "preferred" ? formData.preferredSkills :
-                  formData.education;
+      type === "preferred" ? formData.preferredSkills :
+        formData.education;
     setFormData({
       ...formData,
       [type === "required" ? "requiredSkills" :
-       type === "preferred" ? "preferredSkills" : "education"]: array.filter((_, i) => i !== index),
+        type === "preferred" ? "preferredSkills" : "education"]: array.filter((_, i) => i !== index),
     });
   };
 
@@ -490,6 +490,7 @@ function CareerEdit() {
                       onChange={handleChange}
                       className="form-control"
                       required
+                      readOnly
                     />
                   </div>
                   <div className="col-md-6 form-group">

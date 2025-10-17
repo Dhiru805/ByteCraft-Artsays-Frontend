@@ -39,20 +39,29 @@ function CareerPost() {
       try {
         const draft = JSON.parse(saved);
         if (draft.formData || draft.rolesResponsibilities) {
+          const normalizedDate = new Date(draft.formData?.publishDate).toISOString().split("T")[0];
           setFormData(prev => ({
             ...prev,
             ...draft.formData,
+            publishDate: normalizedDate,
             education: Array.isArray(draft.formData?.education) ? draft.formData.education : [],
             requiredSkills: Array.isArray(draft.formData?.requiredSkills) ? draft.formData.requiredSkills : [],
             preferredSkills: Array.isArray(draft.formData?.preferredSkills) ? draft.formData.preferredSkills : [],
           }));
           setRolesResponsibilities(draft.rolesResponsibilities || "");
+          return;
         }
       } catch (err) {
         console.warn("Failed to parse draft:", err);
         toast.warn("Failed to load saved draft.");
       }
     }
+
+    const today = new Date().toISOString().split("T")[0];
+    setFormData(prev => ({
+      ...prev,
+      publishDate: today,
+    }));
   }, []);
 
 
@@ -89,16 +98,16 @@ function CareerPost() {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
       const input = type === "required" ? requiredSkillInput.trim() :
-                    type === "preferred" ? preferredSkillInput.trim() :
-                    educationInput.trim();
+        type === "preferred" ? preferredSkillInput.trim() :
+          educationInput.trim();
       const array = type === "required" ? formData.requiredSkills :
-                    type === "preferred" ? formData.preferredSkills :
-                    formData.education;
+        type === "preferred" ? formData.preferredSkills :
+          formData.education;
       if (input && !array.includes(input)) {
         setFormData({
           ...formData,
           [type === "required" ? "requiredSkills" :
-           type === "preferred" ? "preferredSkills" : "education"]: [...array, input],
+            type === "preferred" ? "preferredSkills" : "education"]: [...array, input],
         });
         if (type === "required") setRequiredSkillInput("");
         else if (type === "preferred") setPreferredSkillInput("");
@@ -109,12 +118,12 @@ function CareerPost() {
 
   const removeSkill = (index, type) => {
     const array = type === "required" ? formData.requiredSkills :
-                  type === "preferred" ? formData.preferredSkills :
-                  formData.education;
+      type === "preferred" ? formData.preferredSkills :
+        formData.education;
     setFormData({
       ...formData,
       [type === "required" ? "requiredSkills" :
-       type === "preferred" ? "preferredSkills" : "education"]: array.filter((_, i) => i !== index),
+        type === "preferred" ? "preferredSkills" : "education"]: array.filter((_, i) => i !== index),
     });
   };
 
@@ -408,7 +417,6 @@ function CareerPost() {
                         className="border-0 flex-grow-1 px-2"
                         style={{ outline: 'none', minWidth: '100px' }}
                         placeholder="Type skills and press enter or comma"
-                 
                       />
                     </div>
                     <small className="form-text text-muted">
@@ -447,7 +455,6 @@ function CareerPost() {
                         className="border-0 flex-grow-1 px-2"
                         style={{ outline: 'none', minWidth: '100px' }}
                         placeholder="Type preferred skills and press enter or comma"
-               
                       />
                     </div>
                     <small className="form-text text-muted">
@@ -488,7 +495,6 @@ function CareerPost() {
                         className="border-0 flex-grow-1 px-2"
                         style={{ outline: 'none', minWidth: '100px' }}
                         placeholder="Type education requirements and press enter or comma"
-                  
                       />
                     </div>
                     <small className="form-text text-muted">
@@ -534,9 +540,8 @@ function CareerPost() {
                       id="publishDate"
                       name="publishDate"
                       value={formData.publishDate}
-                      onChange={handleChange}
                       className="form-control"
-                      required
+                      disabled
                     />
                   </div>
                   <div className="col-md-6 form-group">
