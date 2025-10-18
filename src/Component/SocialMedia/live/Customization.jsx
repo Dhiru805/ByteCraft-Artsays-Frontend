@@ -267,7 +267,6 @@ const Customization = () => {
   }, [formData.userId]);
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
   setIsLoading(true);
  
   try {

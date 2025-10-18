@@ -149,16 +149,31 @@ const Sidebar = () => {
       //     // { label: "Bidding Transaction", path: `#` }
       //   ]
       // },
-      // {
-      //   label: "Packaging Material",
-      //   icon: "fa fa-archive",
-      //   path: `#Packaging Material`,
-      //   subTabs: [
-      //     { label: "Product", path: `/super-admin/packagingmaterialproduct`},
-      //     { label: "Product Purchased", path: `/super-admin/packagingproductpurchased` },
-      //     { label: "Transaction", path: `/super-admin/packagingproducttransaction` },
-      //   ]
-      // },
+
+      {
+        label: "Packaging Material",
+        icon: "fa fa-archive",
+        path: `#Packaging Material`,
+        subTabs: [
+          { label: "Material", path: `/super-admin/packaging-material/material`},
+          { label: "Order", path: `/super-admin/packaging-material/order` },
+          // { label: "Transaction", path: `/super-admin/packagingproducttransaction` },
+        ]
+      },
+      {
+        label: "Packaging Material Setting",
+        icon: "fa fa-cog",
+        path: `#Packaging Material Setting`,
+        subTabs: [
+          {label: "Material Name", path:`/super-admin/packaging-material-setting/material-name`},
+          {label: "Material Size", path:`/super-admin/packaging-material-setting/material-size`},
+          {label: "Capacity", path:`/super-admin/packaging-material-setting/capacity`},
+          {label: "Stamp", path:`/super-admin/packaging-material-setting/stamp`},
+          {label: "Stickers", path:`/super-admin/packaging-material-setting/stickers`},
+          {label: "Vouchers", path:`/super-admin/packaging-material-setting/vouchers`},
+          {label: "Card", path:`/super-admin/packaging-material-setting/card`}
+        ]
+      },
       {
         label: "Settings",
         icon: "fa fa-cog",
@@ -221,14 +236,20 @@ const Sidebar = () => {
           { label: "Bidding Pass", path: `#` }
         ]
       },
-            {
+
+      {
         label: "Certification Services",
          icon: "fa fa-certificate",
         path: `#`,
         // path: `/super-admin/sponsor`,
         subTabs: []
       },
-
+      {
+        label: "Packaging Material",
+        icon: "fa fa-archive",
+        path: "/artist/packaging-material",
+        subTabs: []
+      },
     ],
     // ----------------------------------------------Buyer-----------------------------------------------------//
     "Buyer": [
@@ -283,8 +304,12 @@ const Sidebar = () => {
         // path: `/super-admin/sponsor`,
         subTabs: []
       },
-
-
+      {
+        label: "Packaging Material",
+        icon: "fa fa-archive",
+        path: "/seller/packaging-material",
+        subTabs: []
+      },
     ],
 
   };

@@ -70,6 +70,8 @@ const MyLive = () => {
 
 const peerConnectionsRef = useRef({}); // Store peer connections for multiple viewers
 const [ isConnecting, setIsConnecting ] = useState(false);
+const [streamer, setStreamer] = useState(null);
+const [streamerMessage, setStreamerMessage] = useState("");
 
 // Socket setup for streamer
 useEffect(() => {
@@ -949,6 +951,38 @@ const formatDuration = (milliseconds) => {
   const handleEditClick = () => setShowModal(true);
   const handleModalClose = () => setShowModal(false);
 
+  useEffect(() => {
+    if (socketRef.current) {
+      socketRef.current.emit("joinRoom", liveDetail?.live?.streamKey);
+
+      socketRef.current.on("receiveMessage", (msg) => {
+        setLiveDetail((prev) => ({
+          ...prev,
+          live: {
+            ...prev.live,
+            chatMessages: [...(prev.live.chatMessages || []), msg]
+          }
+        }));
+      });
+
+      return () => {
+        if (socketRef.current) {
+          socketRef.current.off("receiveMessage");
+        }
+      };
+    }
+  }, [liveDetail?.live?.streamKey])
+
+  const handleStreamerSend = () => {
+    if (socketRef.current && streamerMessage.trim()) {
+      socketRef.current.emit("sendMessage", {
+        streamKey: liveDetail?.live?.streamKey,
+        message: streamerMessage,
+      });
+      setStreamerMessage("");
+    }
+  };
+
   return (
     <div className="flex flex-col bg-white">
       <header className="w-full">
@@ -1086,6 +1120,9 @@ const formatDuration = (milliseconds) => {
                       type="text"
                       className="border-none placeholder:text-[18px] placeholder:text-[#AF8065] flex-1 outline-none text-[#000000]"
                       placeholder="Add a Comment"
+                      value={streamerMessage}
+                      onChange={(e) => setStreamerMessage(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleStreamerSend()}
                     />
                     <MdOutlineEmojiEmotions className="text-xl" />
                   </div>

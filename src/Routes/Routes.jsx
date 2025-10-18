@@ -65,6 +65,23 @@ import SuperAdminViewBlog from "../Component/Dashboard/Super-AdminDashboard/Blog
 import SuperAdminUpdateBlog from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/UpdateBlogList";
 import SuperAdminProductInfo from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Productinfo";
 import SuperAdminMarketing from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailMarketing/Marketing/MarketingEmail";
+
+//------------------------------PackagingMaterial--------------------------------//
+import Material from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/Material";
+import ViewMaterial from '../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/viewMaterial';
+import UpdateMaterial from '../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/UpdateMaterial';
+import Order from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/Order/Order";
+import OrderView from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/Order/OrderView";
+
+//------------------------------PackagingMaterialSettings--------------------------------//
+import MaterialName from '../Component/Dashboard/Super-AdminDashboard/PackagingMaterialSettings/MaterialName';
+import MaterialSize from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterialSettings/MaterialSize";
+import Capacity from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterialSettings/Capacity";
+import Stamp from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterialSettings/Stamp";
+import Stickers from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterialSettings/Stickers";
+import Vouchers from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterialSettings/Vouchers";
+import Card from '../Component/Dashboard/Super-AdminDashboard/PackagingMaterialSettings/Card';
+
 //-----------------------------Admin--------------------------//
 import Admin from "../Component/Dashboard/Super-AdminDashboard/Admin/Admin";
 import AdminProfile from "../Component/Dashboard/Super-AdminDashboard/Admin/Profile/UserProf";
@@ -100,6 +117,10 @@ import BuyermanageProductView from "../Component/Dashboard/Super-AdminDashboard/
 import BuyermanageProductEdit from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/UserProfile/UserProf";
 import BuyerResellProductView from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductRequest/ProductRequestView";
 
+import OrderMaterial from '../Component/Dashboard/ArtistDashbooard/PackagingMaterial/OrderMaterial';
+import CreateOrder from '../Component/Dashboard/ArtistDashbooard/PackagingMaterial/CreateOrder';
+import UpdateOrder from '../Component/Dashboard/ArtistDashbooard/PackagingMaterial/UpdateOrder';
+import ViewOrder from '../Component/Dashboard/ArtistDashbooard/PackagingMaterial/ViewOrder';
 //------Seller tab-----//
 import SellerManagement from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerManageTable";
 import SellerProducts from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerProducts/SellerProduct";
@@ -153,6 +174,10 @@ import SellerDashboard from "../Component/Dashboard/SellerDashboard/Dashboard/Ma
 import ViewProductDetails from "../Component/Dashboard/SellerDashboard/ProductsDetails/Product";
 import SellerProductUpload from "../Component/Dashboard/SellerDashboard/ProductsDetails/ProductUpload/productUploade";
 import SellerPurchasedProducts from "../Component/Dashboard/SellerDashboard/ProductsDetails/ProductPurchased/ProductPurchased";
+import OrderMaterialSeller from '../Component/Dashboard/SellerDashboard/PackageMaterial/OrderMaterialSeller';
+import CreateMaterialOrder from '../Component/Dashboard/SellerDashboard/PackageMaterial/createMaterialOrder';
+import UpdateMaterialOrder from '../Component/Dashboard/SellerDashboard/PackageMaterial/UpdateMaterialOrder';
+import ViewMaterialOrder from '../Component/Dashboard/SellerDashboard/PackageMaterial/ViewMaterialOrder';
 
 //----------------------------------------Social Media----------------------------------//
 import Homee from '../Pages/socialMedia/Homee';
@@ -177,6 +202,10 @@ import EditPolicy from '../Component/Dashboard/Super-AdminDashboard/Community CM
 import ViewPolicy from '../Component/Dashboard/Super-AdminDashboard/Community CMS/policy/ViewPolicy';
 import EditVerificationBadge from '../Component/Dashboard/Super-AdminDashboard/Community CMS/verificationBadge/EditVerificationBadge';
 import CreateVerificationBadge from '../Component/Dashboard/Super-AdminDashboard/Community CMS/verificationBadge/CreateBadge';
+import EdprowiseInvoice from '../Pages/Invoice/EdprowiseInvoice';
+import Invoice from '../Pages/Invoice/Invoice';
+import CreateMaterial from '../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/CreateMaterial';
+
 
 const PrivateRoute = ({ allowedRoles, children }) => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
@@ -338,6 +367,14 @@ const AppRoutes = () => {
         <Route path="bidding/bidded-product" element={<BiddedProduct />} />
         <Route path="bidding/transaction" element={<BiddedProductTransaction />} />
 
+        {/* Packaging Material */}
+        <Route path="packaging-material/material" element={<Material />}/>
+        <Route path='packaging-material/create-packaging-material' element={<CreateMaterial />}/>
+        <Route path='packaging-material/material/view/:id' element={<ViewMaterial />}/>
+        <Route path='packaging-material/material/edit/:id' element={<UpdateMaterial />}/>
+        <Route path="packaging-material/order" element={<Order />}/>
+        <Route path="packaging-material/order/view/:id" element={<OrderView />}/>
+
         {/* Community CMS */}
         <Route path="community-cms/policies" element={<Policies />} />
         <Route path="community-cms/policies/create" element={<CreatePolicies />} />
@@ -347,7 +384,14 @@ const AppRoutes = () => {
         <Route path="community-cms/verification-badge/edit" element={<EditVerificationBadge />} />
         <Route path="community-cms/verification-badge/create" element={<CreateVerificationBadge />} />
 
-
+        {/*PackagingMaterialSettings */}
+        <Route path='packaging-material-setting/material-name' element={<MaterialName />}/>
+        <Route path='packaging-material-setting/material-size' element={<MaterialSize />}/>
+        <Route path='packaging-material-setting/capacity' element={<Capacity />}/>
+        <Route path='packaging-material-setting/stamp' element={<Stamp />}/>
+        <Route path='packaging-material-setting/stickers' element={<Stickers />}/>
+        <Route path='packaging-material-setting/vouchers' element={<Vouchers />}/>
+        <Route path='packaging-material-setting/card' element={<Card />}/>
 
         {/* Settings */}
         <Route path="settings/email-setting" element={<EmailSettings />} />
@@ -380,6 +424,11 @@ const AppRoutes = () => {
         <Route path="product/view-product" element={<ProductView />} />
         <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
         <Route path="product-purchase" element={<Productpurchase />} />
+        {/* Packaging Material */}
+        <Route path='packaging-material' element={<OrderMaterial />}/>
+        <Route path='packaging-material/create' element={<CreateOrder />}/>
+        <Route path='packaging-material/edit/:id' element={<UpdateOrder />}/>
+        <Route path='packaging-material/view/:id' element={<ViewOrder />}/>
       </Route>
 
       {/* --------------------------------------------Buyer Routes---------------------------------------------------- */}
@@ -412,6 +461,10 @@ const AppRoutes = () => {
         <Route path="product-details" element={<ViewProductDetails />} />
         <Route path="SellerProductUpload" element={<SellerProductUpload />} />
         <Route path="purchased-product" element={<SellerPurchasedProducts />} />
+        <Route path='packaging-material' element={<OrderMaterialSeller />}/>
+        <Route path='packaging-material/create' element={<CreateMaterialOrder />}/>
+        <Route path='packaging-material/edit/:id' element={<UpdateMaterialOrder />}/>
+        <Route path='packaging-material/view/:id' element={<ViewMaterialOrder />}/>
       </Route>
 
       {/*-------------------------------------------- Website Routes-------------------------------------------------- */}
@@ -466,8 +519,8 @@ const AppRoutes = () => {
 <Route path='/social-media/test' element={<Test/>}/>
 <Route path='/social-media/setting' element={<Settings/>}/>
 
-
-
+<Route path="/invoice" element={<EdprowiseInvoice />} />
+<Route path='/invoice1' element={<Invoice />}/>
       </Route>
 
 

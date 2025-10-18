@@ -299,12 +299,14 @@ const sameIds = (a, b) => {
   return false;
 };
 
-// Refresh live data every 5 seconds to keep live status updated
-useEffect(() => {
-  if (userId) {
-    const interval = setInterval(() => {
-      fetchLiveData();
-    }, 5000); // Refresh every 5 seconds
+// // Refresh live data every 5 seconds to keep live status updated
+// useEffect(() => {
+//   const userId = localStorage.getItem("userId");
+//   if (userId) {
+//     const interval = setInterval(() => {
+//       fetchLiveData();
+//     }, 5000); // Refresh every 5 seconds
+//   }},[]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {

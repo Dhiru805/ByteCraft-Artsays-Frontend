@@ -15,120 +15,6 @@ import Hls from "hls.js";
 const user = {
   following:1234,
 }
-const topChat = [
-  // {
-  //   id: 1,
-  //   username: "sunnyvibes101",
-  //   profilePic:
-  //     "https://static.vecteezy.com/system/resources/previews/002/002/403/non_2x/man-with-beard-avatar-character-isolated-icon-free-vector.jpg",
-  //   comment: "Omg finally caught you liveee 👀🔥",
-  // },
-  // {
-  //   id: 2,
-  //   username: "makeupbyzara",
-  //   profilePic:
-  //     "https://t4.ftcdn.net/jpg/11/66/06/77/360_F_1166067709_2SooAuPWXp20XkGev7oOT7nuK1VThCsN.jpg",
-  //   comment: "This fit is giving main character ✨",
-  // },
-  // {
-  //   id: 3,
-  //   username: "aesthetic.rush",
-  //   profilePic:
-  //     "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740",
-  //   comment: "okay but why is this live so aesthetic",
-  // },
-  // {
-  //   id: 4,
-  //   username: "sunnyvibes101",
-  //   profilePic:
-  //     "https://static.vecteezy.com/system/resources/previews/024/183/502/non_2x/male-avatar-portrait-of-a-young-man-with-a-beard-illustration-of-male-character-in-modern-color-style-vector.jpg",
-  //   comment: " Omg finally caught you liveee 👀🔥",
-  // },
-  // {
-  //   id: 5,
-  //   username: "skincarebabe__",
-  //   profilePic:
-  //     "https://static.vecteezy.com/system/resources/previews/005/897/735/non_2x/avatar-bearded-brown-haired-man-in-a-sweater-portrait-of-a-brutal-man-geologist-snowboarder-skier-student-partner-sales-manager-for-advice-bots-support-illustration-flat-vector.jpg",
-  //   comment: "DROP THE SKINCARE ROUTINEEEE",
-  // },
-  // {
-  //   id: 6,
-  //   username: "cosmocraft",
-  //   profilePic:
-  //     "https://png.pngtree.com/png-vector/20220817/ourmid/pngtree-cartoon-man-avatar-with-beard-vector-ilustration-png-image_6110777.png",
-  //   comment: "Why is nobody talking about the background 😳",
-  // },
-  // {
-  //   id: 7,
-  //   username: "pinkpixels",
-  //   profilePic:
-  //     "https://static.vecteezy.com/system/resources/thumbnails/002/002/257/small_2x/beautiful-woman-avatar-character-icon-free-vector.jpg",
-  //   comment: "this live feels illegal to watch 😩💅",
-  // },
-  // {
-  //   id: 8,
-  //   username: "heyyitskaran",
-  //   profilePic:
-  //     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKEwDTsw5qeyPzAFFLuPAJaeE3Q4YxSz6v0Q&s",
-  //   comment: "can you pin this comment 🫶",
-  // },
-  // {
-  //   id: 9,
-  //   username: "sunnyvibes101",
-  //   profilePic:
-  //     "https://static.vecteezy.com/system/resources/previews/002/002/403/non_2x/man-with-beard-avatar-character-isolated-icon-free-vector.jpg",
-  //   comment: "Omg finally caught you liveee 👀🔥",
-  // },
-  // {
-  //   id: 10,
-  //   username: "makeupbyzara",
-  //   profilePic:
-  //     "https://t4.ftcdn.net/jpg/11/66/06/77/360_F_1166067709_2SooAuPWXp20XkGev7oOT7nuK1VThCsN.jpg",
-  //   comment: "This fit is giving main character ✨",
-  // },
-  // {
-  //   id: 11,
-  //   username: "aesthetic.rush",
-  //   profilePic:
-  //     "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740",
-  //   comment: "okay but why is this live so aesthetic",
-  // },
-  // {
-  //   id: 12,
-  //   username: "sunnyvibes101",
-  //   profilePic:
-  //     "https://static.vecteezy.com/system/resources/previews/024/183/502/non_2x/male-avatar-portrait-of-a-young-man-with-a-beard-illustration-of-male-character-in-modern-color-style-vector.jpg",
-  //   comment: " Omg finally caught you liveee 👀🔥",
-  // },
-  // {
-  //   id: 13,
-  //   username: "skincarebabe__",
-  //   profilePic:
-  //     "https://static.vecteezy.com/system/resources/previews/005/897/735/non_2x/avatar-bearded-brown-haired-man-in-a-sweater-portrait-of-a-brutal-man-geologist-snowboarder-skier-student-partner-sales-manager-for-advice-bots-support-illustration-flat-vector.jpg",
-  //   comment: "DROP THE SKINCARE ROUTINEEEE",
-  // },
-  // {
-  //   id: 14,
-  //   username: "cosmocraft",
-  //   profilePic:
-  //     "https://png.pngtree.com/png-vector/20220817/ourmid/pngtree-cartoon-man-avatar-with-beard-vector-ilustration-png-image_6110777.png",
-  //   comment: "Why is nobody talking about the background 😳",
-  // },
-  // {
-  //   id: 15,
-  //   username: "pinkpixels",
-  //   profilePic:
-  //     "https://static.vecteezy.com/system/resources/thumbnails/002/002/257/small_2x/beautiful-woman-avatar-character-icon-free-vector.jpg",
-  //   comment: "this live feels illegal to watch 😩💅",
-  // },
-  // {
-  //   id: 16,
-  //   username: "heyyitskaran",
-  //   profilePic:
-  //     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKEwDTsw5qeyPzAFFLuPAJaeE3Q4YxSz6v0Q&s",
-  //   comment: "can you pin this comment 🫶",
-  // },
-];
 
 const ad = {
   name: "Art Masterclass - Water Color",
@@ -144,6 +30,7 @@ const sponsor = {
 };
 
 const OthersLive = () => {
+  const [topChat, setTopChat] = useState([]);
   const [showChat, setShowChat]=useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -1957,7 +1844,47 @@ const handleConnectionError = (error, context) => {
     }
   }
 }, [videoElement, liveDetail?.live?.streamUrl]);
-   
+
+useEffect(() => {
+  if (!socketRef.current || !liveDetail?.live?.streamKey) return;
+
+  socketRef.current.emit("joinRoom", liveDetail?.live?.streamKey);
+
+  const handleReceiveMessage = (msg) => {
+    setTopChat((prev) => [...prev, {
+      id: msg._id,
+      username: msg.user.username,
+      profilePic: msg.user.profilePhoto,
+      comment: msg.message
+    }]);
+  };
+
+  socketRef.current.on("receiveMessage", handleReceiveMessage);
+
+  return () => {
+    if (socketRef.current) {
+      socketRef.current.off("receiveMessage", handleReceiveMessage);
+    }
+  };
+}, [liveDetail?.live?.streamKey]);
+
+const handleSend = () => {
+  if (!socketRef.current || !inputText.trim()) return;
+
+  const userId = localStorage.getItem("userId");
+  if (!userId) {
+    toast.error("Please log in to send messages");
+    return;
+  }
+
+  socketRef.current.emit("sendMessage", {
+    streamKey,
+    userId,
+    message: inputText,
+  });
+  setInputText("");
+};
+
   return (
     <div className="lg:w-[78%] w-full lg:mx-auto mx-0 flex flex-col lg:flex-row px-1 ">
       <div className={`${showChat ? "lg:w-[70%]" : "lg:w-full"} w-full lg:px-2 flex flex-col gap-4`}>
