@@ -206,6 +206,14 @@ import EdprowiseInvoice from '../Pages/Invoice/EdprowiseInvoice';
 import Invoice from '../Pages/Invoice/Invoice';
 import CreateMaterial from '../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/CreateMaterial';
 
+import Reports from '../Component/Dashboard/Super-AdminDashboard/Community CMS/reports/Reports';
+import ViewReports from '../Component/Dashboard/Super-AdminDashboard/Community CMS/reports/ViewReports';
+import PreviewReport from '../Component/Dashboard/Super-AdminDashboard/Community CMS/reports/PreviewReport';
+import Sponsors from '../Component/Dashboard/Super-AdminDashboard/Community CMS/Sponsors/Sponsors';
+import ViewSponsors from '../Component/Dashboard/Super-AdminDashboard/Community CMS/Sponsors/ViewSponsors';
+import PurchaseBadge from '../Component/Dashboard/Super-AdminDashboard/Community CMS/PurchaseBadge/PurchaseBadge';
+import ShowPurchasedBadge from '../Component/Dashboard/Super-AdminDashboard/Community CMS/PurchaseBadge/ShowPurchasedBadge';
+import ProductViewing from '../Component/SocialMedia/Profile/ProductView';
 
 const PrivateRoute = ({ allowedRoles, children }) => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
@@ -383,6 +391,15 @@ const AppRoutes = () => {
         <Route path="community-cms/verification-badge" element={<VerificationBadge />} />
         <Route path="community-cms/verification-badge/edit" element={<EditVerificationBadge />} />
         <Route path="community-cms/verification-badge/create" element={<CreateVerificationBadge />} />
+        <Route path="community-cms/reports" element={<Reports />} />
+        <Route path="community-cms/reports/view" element={<ViewReports />} />
+        <Route path ="community-cms/reports/view/preview" element={<PreviewReport />} />  
+        <Route path ="community-cms/sponsors" element={<Sponsors />} />
+        <Route path ="community-cms/sponsors/view" element={<ViewSponsors />} />
+        <Route path ="community-cms/purchase-badge" element={<PurchaseBadge />} />
+        <Route path ="community-cms/purchase-badge/show" element={<ShowPurchasedBadge />} />
+
+        
 
         {/*PackagingMaterialSettings */}
         <Route path='packaging-material-setting/material-name' element={<MaterialName />}/>
@@ -510,6 +527,7 @@ const AppRoutes = () => {
 <Route path="/social-media/create-post" element={<CreatePost />} />
 <Route path="/social-media/upload-post" element={<UploadPost />} />
 <Route path="/social-media/profile" element={<SocialProfile />} />
+<Route path="/social-media/profile/product-view" element={<ProductViewing/>} />
 <Route path="/social-media/profile/suggestion" element={<SuggestedProfile />} />
 <Route path='/social-media/profile/promote-profile' element={<PromoteProfile/>}/>
 <Route path='/social-media/profile/promote-post' element={<PromotePost/>}/>
