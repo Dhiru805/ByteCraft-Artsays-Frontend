@@ -34,6 +34,7 @@ import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { toast } from "react-toastify";
 import axiosInstance from "../../api/axiosConfig";
+import NavBar from "../Home/HomeComponents/NavBar";
 
 import Hero from "./Hero/Hero";
 import BrowseCategories from "./BrowseCategories/BrowseCategories";
@@ -111,6 +112,7 @@ const Homepage = () => {
         <meta name="twitter:description" content={seoData.metaDescription} />
         <meta name="twitter:image" content={seoData.metaImage} />
       </Helmet>
+        <NavBar />
 
       <Hero />
       <BrowseCategories />
