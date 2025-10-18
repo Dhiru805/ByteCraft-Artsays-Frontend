@@ -46,6 +46,7 @@ const ArtistInfo = ({ userId, loading }) => {
                         mediumUsed: response.data.mediumUsed.length ? response.data.mediumUsed[0].split(',') : [],
                         achievements: response.data.achievements.length ? response.data.achievements[0].split(',') : [],
                     });
+                    console.log("Artist details fetched successfully:", response.data);
                 }
             } catch (error) {
                 console.log("Fetch attempt completed");
@@ -56,6 +57,23 @@ const ArtistInfo = ({ userId, loading }) => {
             fetchArtistData();
         }
     }, [userId]);
+    const [mainCategories, setMainCategories] = useState([]);
+    useEffect(() => {
+        const fetchMainCategories = async () => {
+            try {
+                const response = await getAPI("/api/main-category", true);
+                if (!response.hasError) {
+                    setMainCategories(response.data.data);
+                    console.log("Main Categories fetched successfully:", response.data.data);
+                } else {
+                    toast.error(`Failed to fetch Main Categories: ${response.message}`);
+                }
+            } catch (error) {
+                toast.error("An error occurred while fetching main categories.");
+            }
+        };
+        fetchMainCategories();
+    }, []);
 
     const capitalize = (text) => {
         return text
@@ -73,20 +91,33 @@ const ArtistInfo = ({ userId, loading }) => {
 
     const [load, setLoad] = useState(false);
 
-
+    console.log(formData)
     const handleSubmit = async (event) => {
         event.preventDefault();
+        console.log("Form data to be submitted:", formData);
         try {
+            // First update artist details
             const url = `/auth/updateartistdetails/${userId}`;
             const result = await putAPI(url, {
                 ...formData,
-                artCategories: formData.artCategories.join(','),
                 mediumUsed: formData.mediumUsed.join(','),
                 achievements: formData.achievements.join(','),
             });
 
             if (result) {
                 toast.success('Artist details updated successfully');
+
+                // ✅ Now call set-artist-categories API
+                const categoryResult = await putAPI("/api/set-artist-categories", {
+                    userId,
+                    artCategories: formData.artCategories, // send as array of IDs
+                });
+
+                if (!categoryResult.hasError) {
+                    toast.success("Artist categories updated successfully");
+                } else {
+                    toast.error("Failed to update artist categories");
+                }
             } else {
                 toast.error('Failed to update artist details');
             }
@@ -95,29 +126,30 @@ const ArtistInfo = ({ userId, loading }) => {
         }
     };
 
+
     const validateRequiredFields = () => {
-    const missing = [];
-    const requiredMap = {
-        'Art Categories'      : formData.artCategories.length,
-        'Medium Used'         : formData.mediumUsed.length,
-        'Years of Experience' : formData.yearsOfExperience,
-        'Portfolio Link'      : formData.portfolioLink,
-        'Achievements'        : formData.achievements.length
-    };
+        const missing = [];
+        const requiredMap = {
+            'Art Categories': formData.artCategories.length,
+            'Medium Used': formData.mediumUsed.length,
+            'Years of Experience': formData.yearsOfExperience,
+            'Portfolio Link': formData.portfolioLink,
+            'Achievements': formData.achievements.length
+        };
 
-    Object.entries(requiredMap).forEach(([label, value]) => {
-        if (!value || String(value).trim?.() === '' || value === 0) {
-            missing.push(label);
+        Object.entries(requiredMap).forEach(([label, value]) => {
+            if (!value || String(value).trim?.() === '' || value === 0) {
+                missing.push(label);
+            }
+        });
+
+        if (missing.length > 0) {
+            toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
+            return false;
         }
-    });
 
-    if (missing.length > 0) {
-        toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
-        return false;
-    }
-
-    return true;
-};
+        return true;
+    };
 
 
     return (
@@ -131,18 +163,24 @@ const ArtistInfo = ({ userId, loading }) => {
                             <label htmlFor="artCategories">Art Categories/Styles <span style={{ color: 'red' }}>*</span></label>
                             <CreatableSelect
                                 isMulti
-                                options={predefinedArtCategories.map(item => ({
-                                    value: capitalize(item.value),
-                                    label: capitalize(item.label)
+                                options={mainCategories.map(item => ({
+                                    value: item._id,
+                                    label: capitalize(item?.mainCategoryName),
                                 }))}
-                                value={formData.artCategories.map(item => ({
-                                    value: capitalize(item),
-                                    label: capitalize(item)
-                                }))}
-                                onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'artCategories')}
+                                value={formData.artCategories.map(catId => {
+                                    const matched = mainCategories.find(cat => cat._id === catId);
+                                    return matched
+                                        ? { value: matched._id, label: capitalize(matched.mainCategoryName) }
+                                        : { value: catId, label: catId };
+                                })}
+                                onChange={(selectedOptions) =>
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        artCategories: selectedOptions.map(opt => opt.value),
+                                    }))
+                                }
                                 classNamePrefix="select"
                             />
-
                         </div>
 
                         <div className="form-group">

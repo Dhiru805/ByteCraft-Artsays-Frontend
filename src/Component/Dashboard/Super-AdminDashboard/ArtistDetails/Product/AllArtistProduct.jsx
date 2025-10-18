@@ -4,6 +4,7 @@ import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
 import ConfirmationDialog from '../../../ConfirmationDialog';
+import { LuGavel } from "react-icons/lu";
 
 const ApprovedProduct = () => {
     const [products, setProducts] = useState([]);

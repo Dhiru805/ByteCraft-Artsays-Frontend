@@ -123,6 +123,7 @@ function AdminManageTable() {
                                                 <th>Email</th>
                                                 <th>User Role</th>
                                                 {/* <th>Phone</th> */}
+                                                <th>Phone</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -152,6 +153,7 @@ function AdminManageTable() {
                                                             <td>{admin.email}</td>
                                                             <td>{admin.userrole}</td>
                                                             {/* <td>{admin.phone}</td> */}
+                                                            <td>{admin.phone}</td>
                                                             <td>
                                                                 <button
                                                                     type="button"

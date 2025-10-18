@@ -10,6 +10,13 @@ const DELETE_CONFIG = {
     errorMessage: "Failed to delete super-admin.",
     idKey: "AdminId",
   },
+    // ... other configs ...
+  policy: {
+    getEndpoint: (id) => `/api/social-policies/${id}`, // 👈 correct API route
+    successMessage: "Policy successfully deleted!",
+    errorMessage: "Failed to delete Policy.",
+    idKey: "PolicyId",
+  },
   
   blog: {
     getEndpoint: (id) => `/Blog-Post/${id}`,
@@ -259,6 +266,66 @@ challenge: {
     idKey: "ChallengeId",
   },
 
+materialCard: {
+  getEndpoint: (id) => `/api/packaging-material-setting/material-card/delete/${id}`,
+  successMessage: "material card successfully deleted!",
+  errorMessage: "Failed to delete material card.",
+  idKey: "MaterialCardId",
+},
+materialCapacity: {
+  getEndpoint: (id) => `/api/packaging-material-setting/material-capacity/delete/${id}`,
+  successMessage: "material capacity successfully deleted!",
+  errorMessage: "Failed to delete material capacity.",
+  idKey: "MaterialCapacityId",
+},
+materialName: {
+  getEndpoint: (id) => `/api/packaging-material-setting/material-name/delete/${id}`,
+  successMessage: "material name successfully deleted!",
+  errorMessage: "Failed to delete material name.",
+  idKey: "MaterialNameId",
+},
+materialSize: {
+  getEndpoint: (id) => `/api/packaging-material-setting/material-size/delete/${id}`,
+  successMessage: "material size successfully deleted!",
+  errorMessage: "Failed to delete material size.",
+  idKey: "MaterialSizeId",
+},
+materialStamp: {
+  getEndpoint: (id) => `/api/packaging-material-setting/material-stamp/delete/${id}`,
+  successMessage: "material stamp successfully deleted!",
+  errorMessage: "Failed to delete material stamp.",
+  idKey: "MaterialStampId",
+},
+materialStickers: {
+  getEndpoint: (id) => `/api/packaging-material-setting/material-stickers/delete/${id}`,
+  successMessage: "material sticker successfully deleted!",
+  errorMessage: "Failed to delete material sticker.",
+  idKey: "MaterialStickerId",
+},
+materialVouchers: {
+  getEndpoint: (id) => `/api/packaging-material-setting/material-vouchers/delete/${id}`,
+  successMessage: "material voucher successfully deleted!",
+  errorMessage: "Failed to delete material voucher.",
+  idKey: "MaterialVoucherId",
+},
+packageMaterial: {
+  getEndpoint: (id) => `/api/package-material/material/delete/${id}`,
+  successMessage: "material successfully deleted!",
+  errorMessage: "Failed to delete material.",
+  idKey: "MaterialId",
+},
+sellerOrder: {
+  getEndpoint: (id) => `/api/package-material/seller/order/delete/${id}`,
+  successMessage: "order successfully deleted!",
+  errorMessage: "Failed to delete order.",
+  idKey: "OrderId",
+},
+artistOrder: {
+  getEndpoint: (id) => `/api/package-material/order/delete/${id}`,
+  successMessage: "order successfully deleted!",
+  errorMessage: "Failed to delete order.",
+  idKey: "OrderId",
+}
 };
 
 function ConfirmationDialog({ onClose, deleteType, id, onDeleted }) {

@@ -1,0 +1,44 @@
+.txt {
+    color: #000000 !important;
+}
+
+.sgu {
+    border-left: 14px solid #E56500;
+}
+.vid {
+    border-left: 14px solid #E56500;
+}
+
+@media (max-width:492px) {
+    .sgu {
+    border-left: 11px solid #E56500;
+   
+}
+.vid {
+    border-left: none;
+}
+}
+/* .titl {
+    display: flex !important;
+    justify-content: end !important;
+    gap:50px
+} */
+
+.vid-drop {
+    padding: 4% !important;
+}
+.vdo-head {
+    display: flex !important;
+    
+    justify-content: space-between !important;
+   
+}
+@media screen and (min-width:500px) {
+    .vdo-head {
+    display: flex !important;
+    
+    justify-content: space-between !important;
+    gap:130px !important;
+   
+}
+}

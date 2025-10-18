@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useState, useEffect } from "react";
 import getAPI from "../../../../../api/getAPI";
 import postAPI from "../../../../../api/postAPI";
 import { toast } from "react-toastify";
@@ -372,8 +373,7 @@ const EmailSettingMain = () => {
                   <button
                     type="submit"
                     className="btn btn-primary"
-                    disabled={loading}
-                  >
+                    disabled={loading} >
                     {loading ? "Save Changes..." : "Save Changes"}
                   </button>
                 </div>

@@ -1,7 +1,8 @@
-// src/components/productUpload/sections/NFTDetails.js
-import React, { useState, useEffect } from "react";
-import CreatableSelect from 'react-select/creatable';
 
+import { useState, useEffect, useMemo } from "react";
+import getAPI from "../../../../../../api/getAPI";
+import { toast } from 'react-toastify';
+import CreatableSelect from 'react-select/creatable';
 
 const NFTDetails = ({
     formData,
@@ -10,43 +11,67 @@ const NFTDetails = ({
     handleSelectChange,
     profileData
 }) => {
-   
+    const [blockchain, setBlockchain] = useState([]);
+    const [tokenStandard, setTokenStandard] = useState([]);
 
-    const blockchainOptions = [
-        { value: 'ethereum', label: 'Ethereum' },
-        { value: 'polygon', label: 'Polygon' },
-        { value: 'solana', label: 'Solana' },
-        { value: 'tezos', label: 'Tezos' },
-        { value: 'bnb', label: 'BNB Chain' },
-        { value: 'flow', label: 'Flow' }
-    ];
+    const fetchBlockchain = async () => {
+        try {
+            const response = await getAPI("/api/getblockchainnetworks"); 
+            const validBlockchain = response.data.filter(
+                chain => chain.name && typeof chain.name === 'string'
+            );
+            setBlockchain(validBlockchain);
+            if (!validBlockchain.length) {
+                toast.error('No valid blockchain data found');
+            }
+        } catch (error) {
+            console.error("Error fetching blockchain:", error);
+            toast.error('Failed to load blockchain data');
+        }
+    };
 
-    const tokenStandardOptions = [
-        { value: 'erc721', label: 'ERC-721' },
-        { value: 'erc1155', label: 'ERC-1155' },
-        { value: 'spl', label: 'SPL (Solana)' },
-        { value: 'bep721', label: 'BEP-721' },
-        { value: 'fa2', label: 'FA2 (Tezos)' }
-    ];
+    useEffect(() => {
+        fetchBlockchain();
+    }, []);
+
+    const blockchainOptions = useMemo(() => {
+        return blockchain.map((chain) => ({
+            value: chain.name,
+            label: chain.name
+        }));
+    }, [blockchain]);
+
+    const fetchTokenStandard = async () => {
+        try {
+            const response = await getAPI("/api/gettokenstandards"); 
+            const validTokenStandard = response.data.filter(
+                token => token.name && typeof token.name === "string"
+            );
+            setTokenStandard(validTokenStandard);
+            if (!validTokenStandard.length) {
+                toast.error("No valid token standard found");
+            }
+        } catch (error) {
+            console.error("Error fetching token standard:", error);
+            toast.error("Failed to load token standard");
+        }
+    };
+
+    useEffect(() => {
+        fetchTokenStandard();
+    }, []);
+
+    const tokenStandardOptions = useMemo(() => {
+        return tokenStandard.map((token) => ({
+            value: token.name,
+            label: token.name,
+        }));
+    }, [tokenStandard]);
 
     const mintingTypeOptions = [
         { value: 'pre_minted', label: 'Pre-Minted' },
         { value: 'lazy', label: 'Lazy Minting' }
     ];
-
-    // const sellingMethodOptions = [
-    //     { value: 'fixed', label: 'Fixed Price' },
-    //     { value: 'auction', label: 'Auction' },
-    //     { value: 'offers', label: 'Open for Offers' }
-    // ];
-
-    // const currencyOptions = [
-    //     { value: 'eth', label: 'ETH' },
-    //     { value: 'matic', label: 'MATIC' },
-    //     { value: 'sol', label: 'SOL' },
-    //     { value: 'usdt', label: 'USDT' },
-    //     { value: 'usdc', label: 'USDC' }
-    // ];
 
     const licenseTypeOptions = [
         { value: 'personal', label: 'Personal Use Only' },
@@ -62,8 +87,6 @@ const NFTDetails = ({
         { value: 'legendary', label: 'Legendary' }
     ];
 
-   
-
     return (
         <>
             <h4 className="mb-3">NFT & Digital Art Listings</h4>
@@ -75,7 +98,7 @@ const NFTDetails = ({
                 <div className="card-body">
                     <div className="row">
                         <div className="col-md-6 form-group">
-                            <label htmlFor="blockchainNetwork">Blockchain Network <span style={{ color: 'red' }}>*</span></label>
+                            <label htmlFor="blockchainNetwork">Blockchain Network <span className="text-danger">*</span></label>
                             <CreatableSelect
                                 id="blockchainNetwork"
                                 name="blockchainNetwork"
@@ -97,7 +120,7 @@ const NFTDetails = ({
                         </div>
 
                         <div className="col-md-6 form-group">
-                            <label htmlFor="smartContractAddress">Smart Contract Address <span style={{ color: 'red' }}>*</span></label>
+                            <label htmlFor="smartContractAddress">Smart Contract Address <span className="text-danger">*</span></label>
                             <input
                                 type="text"
                                 id="smartContractAddress"
@@ -111,7 +134,7 @@ const NFTDetails = ({
                             />
                         </div>
                         <div className="col-md-6 form-group">
-                            <label htmlFor="tokenStandard">Token Standard <span style={{ color: 'red' }}>*</span></label>
+                            <label htmlFor="tokenStandard">Token Standard <span className="text-danger">*</span></label>
                             <CreatableSelect
                                 id="tokenStandard"
                                 name="tokenStandard"
@@ -133,9 +156,7 @@ const NFTDetails = ({
                         </div>
 
                         <div className="col-md-6 form-group">
-                            <label htmlFor="tokenId">
-                                Token ID <span style={{ color: 'red' }}>*</span>
-                            </label>
+                            <label htmlFor="tokenId">Token ID <span className="text-danger">*</span></label>
                             <input
                                 type="text"
                                 id="tokenId"
@@ -150,7 +171,7 @@ const NFTDetails = ({
                         </div>
 
                         <div className="col-md-6 form-group">
-                            <label htmlFor="walletAddress">Wallet Address of Creator <span style={{ color: 'red' }}>*</span></label>
+                            <label htmlFor="walletAddress">Wallet Address of Creator <span className="text-danger">*</span></label>
                             <input
                                 type="text"
                                 id="walletAddress"
@@ -165,7 +186,7 @@ const NFTDetails = ({
                         </div>
 
                         <div className="col-md-6 form-group">
-                            <label htmlFor="royaltyPercentage">Royalty Percentage <span style={{ color: 'red' }}>*</span></label>
+                            <label htmlFor="royaltyPercentage">Royalty Percentage <span className="text-danger">*</span></label>
                             <div className="input-group">
                                 <input
                                     type="number"
@@ -187,7 +208,7 @@ const NFTDetails = ({
                         </div>
 
                         <div className="col-md-6 form-group">
-                            <label htmlFor="mintingType">Minting Type <span style={{ color: 'red' }}>*</span></label>
+                            <label htmlFor="mintingType">Minting Type <span className="text-danger">*</span></label>
                             <select
                                 id="mintingType"
                                 name="mintingType"
@@ -220,7 +241,7 @@ const NFTDetails = ({
                 <div className="card-body">
                     <div className="row">
                         <div className="col-md-6 form-group">
-                            <label htmlFor="licenseType">License Type <span style={{ color: 'red' }}>*</span></label>
+                            <label htmlFor="licenseType">License Type <span className="text-danger">*</span></label>
                             <select
                                 id="licenseType"
                                 name="licenseType"
@@ -265,6 +286,51 @@ const NFTDetails = ({
                             </label>
                         </div>
 
+                        {formData.ipfsStorage && (
+                            <>
+                                <div className="col-md-6 form-group">
+                                    <label htmlFor="ipfsLink">IPFS Link <span className="text-danger">*</span></label>
+                                    <input
+                                        type="text"
+                                        id="ipfsLink"
+                                        name="ipfsLink"
+                                        className="form-control"
+                                        placeholder="Enter IPFS link (e.g., ipfs://...)"
+                                        value={formData.ipfsLink || ''}
+                                        onChange={handleInputChange}
+                                        disabled={isSubmitting}
+                                        required
+                                    />
+                                </div>
+                                <div className="col-md-6 form-group">
+                                    <label htmlFor="softwareVersion">Software Version</label>
+                                    <input
+                                        type="text"
+                                        id="softwareVersion"
+                                        name="softwareVersion"
+                                        className="form-control"
+                                        placeholder="e.g., v1.0.0"
+                                        value={formData.softwareVersion || ''}
+                                        onChange={handleInputChange}
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
+                                <div className="col-md-6 form-group">
+                                    <label htmlFor="fileFormat">File Format</label>
+                                    <input
+                                        type="text"
+                                        id="fileFormat"
+                                        name="fileFormat"
+                                        className="form-control"
+                                        placeholder="e.g., PNG, MP4"
+                                        value={formData.fileFormat || ''}
+                                        onChange={handleInputChange}
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
+                            </>
+                        )}
+
                         <div className="col-md-6 form-group">
                             <label className="d-flex align-items-center">
                                 <span className="mr-2">Unlockable Content?</span>
@@ -286,6 +352,23 @@ const NFTDetails = ({
                                 </div>
                             </label>
                         </div>
+
+                        {formData.unlockableContent && (
+                            <div className="col-md-6 form-group">
+                                <label htmlFor="unlockableContentLink">Unlockable Content Link <span className="text-danger">*</span></label>
+                                <input
+                                    type="text"
+                                    id="unlockableContentLink"
+                                    name="unlockableContentLink"
+                                    className="form-control"
+                                    placeholder="Enter link to unlockable content (e.g., https://...)"
+                                    value={formData.unlockableContentLink || ''}
+                                    onChange={handleInputChange}
+                                    disabled={isSubmitting}
+                                    required
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -321,7 +404,7 @@ const NFTDetails = ({
                         {formData.partOfCollection && (
                             <>
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="collectionName">Collection Name <span style={{ color: 'red' }}>*</span></label>
+                                    <label htmlFor="collectionName">Collection Name <span className="text-danger">*</span></label>
                                     <input
                                         type="text"
                                         id="collectionName"
@@ -336,7 +419,7 @@ const NFTDetails = ({
                                 </div>
 
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="editionSize">Edition Size <span style={{ color: 'red' }}>*</span></label>
+                                    <label htmlFor="editionSize">Edition Size <span className="text-danger">*</span></label>
                                     <input
                                         type="number"
                                         id="editionSize"
@@ -351,7 +434,6 @@ const NFTDetails = ({
                                     />
                                 </div>
 
-                                {/* Address Fields <span*/}
                                 <div className="col-md-6 form-group">
                                     <label htmlFor="addressLine1">Address Line 1</label>
                                     <input
@@ -363,7 +445,6 @@ const NFTDetails = ({
                                         value={formData.addressLine1 || profileData.address?.line1 || ''}
                                         onChange={handleInputChange}
                                         disabled={isSubmitting}
-                                    
                                     />
                                 </div>
 
@@ -396,7 +477,7 @@ const NFTDetails = ({
                                 </div>
 
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="city">City </label>
+                                    <label htmlFor="city">City</label>
                                     <input
                                         type="text"
                                         id="city"
@@ -406,12 +487,11 @@ const NFTDetails = ({
                                         value={formData.city || profileData.address?.city || ''}
                                         onChange={handleInputChange}
                                         disabled={isSubmitting}
-                                        
                                     />
                                 </div>
 
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="state">State/Province </label>
+                                    <label htmlFor="state">State/Province</label>
                                     <input
                                         type="text"
                                         id="state"
@@ -421,12 +501,11 @@ const NFTDetails = ({
                                         value={formData.state || profileData.address?.state || ''}
                                         onChange={handleInputChange}
                                         disabled={isSubmitting}
-                                        
                                     />
                                 </div>
 
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="country">Country </label>
+                                    <label htmlFor="country">Country</label>
                                     <input
                                         type="text"
                                         id="country"
@@ -436,12 +515,11 @@ const NFTDetails = ({
                                         value={formData.country || profileData.address?.country || ''}
                                         onChange={handleInputChange}
                                         disabled={isSubmitting}
-                                        
                                     />
                                 </div>
 
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="pincode">Pincode/Zipcode </label>
+                                    <label htmlFor="pincode">Pincode/Zipcode</label>
                                     <input
                                         type="text"
                                         id="pincode"
@@ -451,7 +529,6 @@ const NFTDetails = ({
                                         value={formData.pincode || profileData.address?.pincode || ''}
                                         onChange={handleInputChange}
                                         disabled={isSubmitting}
-                                        r
                                     />
                                 </div>
                             </>
@@ -467,7 +544,7 @@ const NFTDetails = ({
                 <div className="card-body">
                     <div className="row">
                         <div className="col-md-6 form-group">
-                            <label htmlFor="rarityType">Rarity Type <span style={{ color: 'red' }}>*</span></label>
+                            <label htmlFor="rarityType">Rarity Type <span className="text-danger">*</span></label>
                             <select
                                 id="rarityType"
                                 name="rarityType"
@@ -492,7 +569,7 @@ const NFTDetails = ({
                         </div>
 
                         <div className="col-md-6 form-group">
-                            <label htmlFor="traits">Traits & Attributes <span style={{ color: 'red' }}>*</span></label>
+                            <label htmlFor="traits">Traits & Attributes <span className="text-danger">*</span></label>
                             <input
                                 type="text"
                                 id="traits"

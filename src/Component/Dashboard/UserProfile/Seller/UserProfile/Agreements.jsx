@@ -5,7 +5,7 @@ import getAPI from '../../../../../api/getAPI';
 
 const AccountSecurityAgreement = ({ userId }) => {
     const [formData, setFormData] = useState({});
-  const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const checkboxLabels = {
         agreeTerms: "Agree to Terms & Conditions, Privacy Policy",
@@ -13,24 +13,24 @@ const AccountSecurityAgreement = ({ userId }) => {
         agreeNoFakeArtwork: "Agree to No Fake Artwork Policy"
     };
 
-const validateRequiredAgreements = () => {
-    const missing = [];
-    const requiredMap = {
-        'Terms & Conditions'   : formData.agreeTerms,
-        'Commission Fees'      : formData.agreeCommissionFees,
-        'No Fake Artwork'      : formData.agreeNoFakeArtwork,
+    const validateRequiredAgreements = () => {
+        const missing = [];
+        const requiredMap = {
+            'Terms & Conditions': formData.agreeTerms,
+            'Commission Fees': formData.agreeCommissionFees,
+            'No Fake Artwork': formData.agreeNoFakeArtwork,
+        };
+
+        Object.entries(requiredMap).forEach(([label, value]) => {
+            if (!value) missing.push(label);
+        });
+
+        if (missing.length) {
+            toast.warn(`Please agree to: ${missing.join(', ')}`);
+            return false;
+        }
+        return true;
     };
-
-    Object.entries(requiredMap).forEach(([label, value]) => {
-        if (!value) missing.push(label);
-    });
-
-    if (missing.length) {
-        toast.warn(`Please agree to: ${missing.join(', ')}`);
-        return false;
-    }
-    return true;
-};
 
     useEffect(() => {
         const fetchAgreementDetails = async () => {
@@ -69,7 +69,7 @@ const validateRequiredAgreements = () => {
         event.preventDefault();
 
         const allSelected = Object.keys(checkboxLabels).every(key => formData[key]);
-        
+
         if (!allSelected) {
             toast.warn('Please agree to all agreements.');
             return;
@@ -98,68 +98,68 @@ const validateRequiredAgreements = () => {
             <h5 className="mb-2">Account Security And Agreements</h5>
             <hr className="mt-1" />
             <form onSubmit={handleSubmit}>
-<div className="form-group">
-  <input 
-    type="checkbox" 
-    name="agreeTerms" 
-    checked={!!formData.agreeTerms} 
-    onChange={handleChange} 
-  />
-  <label className="mx-2">
-    I agree to&nbsp;
-    <a
-      href="/terms-services"
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{ color: '#6b4f36', textDecoration: 'underline' }}
-    >
-      Terms & Conditions
-    </a>
-    &nbsp;and&nbsp;
-    <a
-      href="/privacy-policy"
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{ color: '#6b4f36', textDecoration: 'underline' }}
-    >
-      Privacy Policy
-    </a>
-    <span style={{ color: 'red' }}> *</span>
-  </label>
-</div>
                 <div className="form-group">
-                    <input 
-                        type="checkbox" 
-                        name="agreeCommissionFees" 
-                        checked={!!formData.agreeCommissionFees} 
-                        onChange={handleChange} 
-                        
+                    <input
+                        type="checkbox"
+                        name="agreeTerms"
+                        checked={!!formData.agreeTerms}
+                        onChange={handleChange}
+                    />
+                    <label className="mx-2">
+                        I agree to&nbsp;
+                        <a
+                            href="/terms-services"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: '#6b4f36', textDecoration: 'underline' }}
+                        >
+                            Terms & Conditions
+                        </a>
+                        &nbsp;and&nbsp;
+                        <a
+                            href="/privacy-policy"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: '#6b4f36', textDecoration: 'underline' }}
+                        >
+                            Privacy Policy
+                        </a>
+                        <span style={{ color: 'red' }}> *</span>
+                    </label>
+                </div>
+                <div className="form-group">
+                    <input
+                        type="checkbox"
+                        name="agreeCommissionFees"
+                        checked={!!formData.agreeCommissionFees}
+                        onChange={handleChange}
+
                     />
                     <label className="mx-2">{checkboxLabels.agreeCommissionFees} <span style={{ color: 'red' }}>*</span></label>
                 </div>
                 <div className="form-group">
-                    <input 
-                        type="checkbox" 
-                        name="agreeNoFakeArtwork" 
-                        checked={!!formData.agreeNoFakeArtwork} 
-                        onChange={handleChange} 
+                    <input
+                        type="checkbox"
+                        name="agreeNoFakeArtwork"
+                        checked={!!formData.agreeNoFakeArtwork}
+                        onChange={handleChange}
                     />
                     <label className="mx-2">{checkboxLabels.agreeNoFakeArtwork} <span style={{ color: 'red' }}>*</span></label>
                 </div>
-        <button type="button"
-          className="btn btn-primary mx-2"
-          disabled={loading}
-          onClick={(e) => {
-            if (!validateRequiredAgreements()) return;
-            setLoading(true);
-            Promise.resolve(handleSubmit(e))
-              .then(() => {
-                 window.location.reload();
-              })
-              .catch(console.error)
-              .finally(() => setLoading(false));
-          }}
-        >{loading ? "Updating..." : "Update"}</button>
+                <button type="button"
+                    className="btn btn-primary mx-2"
+                    disabled={loading}
+                    onClick={(e) => {
+                        if (!validateRequiredAgreements()) return;
+                        setLoading(true);
+                        Promise.resolve(handleSubmit(e))
+                            .then(() => {
+                                window.location.reload();
+                            })
+                            .catch(console.error)
+                            .finally(() => setLoading(false));
+                    }}
+                >{loading ? "Updating..." : "Update"}</button>
             </form>
         </div>
     );

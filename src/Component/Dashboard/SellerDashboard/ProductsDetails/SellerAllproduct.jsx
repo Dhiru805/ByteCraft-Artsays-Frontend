@@ -6,8 +6,6 @@ import useUserType from '../../urlconfig';
 import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
 import ConfirmationDialog from '../../ConfirmationDialog';
 
-
-
 const ApprovedProduct = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -77,7 +75,6 @@ const ApprovedProduct = () => {
         setCurrentImageIndex(0);
         setShowPopup(true);
     };
-
 
     const goToPreviousImage = () => {
         setCurrentImageIndex((prevIndex) => Math.max(prevIndex - 1, 0));

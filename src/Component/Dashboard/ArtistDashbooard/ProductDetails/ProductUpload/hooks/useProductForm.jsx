@@ -15,6 +15,7 @@ export default function useProductForm() {
     subCategories: []
   });
   const [formData, setFormData] = useState({
+    //----------------Basic Details---------------------------------//
     productName: '',
     description: '',
     mainCategory: null,
@@ -22,14 +23,41 @@ export default function useProductForm() {
     subCategory: null,
     productType: null,
     editionNumber: '',
+    targetedAudience: '',
+    inspirationSource: '',
+
+    //----------------Artwork  Details---------------------------------//
     medium: null,
     materials: [],
-    dimensions: '',
+        dimensions: '',
+    width: '',
+    height: '',
+    depth: '',
     weight: '',
+    printResolution: '',
     year: null,
     editionType: null,
     framing: null,
+        iframeLink: '',
+    quantity: '',
+    hsnCode: '',
+    surfaceType: null,
+    culturalRegion: null,
+    biologicalMaterial: '',
+    functionalUse: null,
+    materialSource: '',
+    craftTechnique: '',
+    // toolUsage: [],
+    handmade: null,
+    isSigned: false,
+    isResinCovered: false,
+    condition: null,
+    provenance: '',
+
+
+    //----------------Image and Media ---------------------------------//
     iframeLink: '',
+    //----------------Shipping and delivery---------------------------------//
     shippingCharges: '',
     estimatedDelivery: null,
     packagingType: null,
@@ -41,6 +69,10 @@ export default function useProductForm() {
     isSigned: false,
     condition: null,
     provenance: '',
+    handlingTime: null,
+    returnPolicy: null,
+    exportRestriction: false,
+    //----------------Payout and details---------------------------------//
 
     autoCancelOrder: false,
     giftWrapping: false,
@@ -85,17 +117,42 @@ export default function useProductForm() {
     rarityType: null,
     traits: '',
 
-    originRegion: null,
-    periodEra: null,
-    antiqueCondition: null,
     restorationHistory: '',
     provenanceHistory: '',
     engravingMarkings: '',
     patinaWear: '',
     isHandmade: false,
-    originalReproduction: null,
     museumExhibitionHistory: '',
     customEngravingAvailable: false,
+   originRegion: null,
+    periodEra: null,
+    antiqueCondition: null,
+    conservationStatus: null,
+    originalReproduction: null,
+    maintenanceRequired: null,
+
+
+    restorationHistory: '',
+    provenanceHistory: '',
+    culturalSignificance: '',
+    appraisalDetails: '',
+    addressLine1: '',
+    addressLine2: '',
+    landmark: '',
+    city: '',
+    state: '',
+    country: '',
+    pincode: '',
+    engravingMarkings: '',
+    patinaWear: '',
+    museumExhibitionHistory: '',
+
+
+    restorationDocumentation: null,
+    certification: null,
+
+    isHandmade: false,
+    customEngravingAvailable: false
 
   });
 
@@ -105,7 +162,9 @@ export default function useProductForm() {
     discount: '',
     offers: [],
     allowInstallments: false,
-    installmentDuration: null
+    installmentDuration: null,
+    includeGst: false,
+    gstPercentage: 0
   });
 
   const [userId, setUserId] = useState('');
@@ -129,12 +188,35 @@ export default function useProductForm() {
     }
   }, []);
 
-  const productTypeOptions = [
-    { value: 'original', label: 'Original Artwork' },
-    { value: 'limited', label: 'Limited Edition Print' },
-    { value: 'open', label: 'Open Edition Print' },
-    { value: 'nft', label: 'NFT' }
-  ];
+  const [productTypes, setProductTypes] = useState([]);
+
+  const fetchProductTypes = async () => {
+    try {
+      const response = await getAPI("/api/getproducttype");
+      const validTypes = response.data.filter(
+        type => type.name && typeof type.name === 'string'
+      );
+      setProductTypes(validTypes);
+      if (!validTypes.length) {
+        toast.error('No valid product types found');
+      }
+    } catch (error) {
+      console.error("Error fetching product types:", error);
+      toast.error('Failed to load product types');
+    }
+  };
+
+  useEffect(() => {
+    fetchProductTypes();
+  }, []);
+
+
+  const productTypeOptions = useMemo(() => {
+    return productTypes.map((type) => ({
+      value: type.name,
+      label: type.name
+    }));
+  }, [productTypes]);
 
   const fetchCategoryData = async () => {
     try {
@@ -216,57 +298,118 @@ export default function useProductForm() {
   const [profileData, setProfileData] = useState({ address: {} });
   useEffect(() => {
     if (userId) {
-        fetchProfile();
+      fetchProfile();
     }
-}, [userId]);
+  }, [userId]);
 
-const fetchProfile = async () => {
+  const fetchProfile = async () => {
     try {
-        const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
-        if (result.data.user) {
-            const userData = result.data.user;
-            const formattedBirthdate = userData.birthdate ? new Date(userData.birthdate).toISOString().split('T')[0] : '';
-            const parsedAddress = userData.address ? (typeof userData.address === 'string' ? JSON.parse(userData.address) : userData.address) : {};
+      const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
+      if (result.data.user) {
+        const userData = result.data.user;
+        const formattedBirthdate = userData.birthdate ? new Date(userData.birthdate).toISOString().split('T')[0] : '';
+        const parsedAddress = userData.address ? (typeof userData.address === 'string' ? JSON.parse(userData.address) : userData.address) : {};
 
-            setProfileData({
-                ...userData,
-                birthdate: formattedBirthdate,
-                address: parsedAddress,
-            });
-        }
+        setProfileData({
+          ...userData,
+          birthdate: formattedBirthdate,
+          address: parsedAddress,
+        });
+      }
     } catch (error) {
-        console.error('Error fetching profile:', error);
+      console.error('Error fetching profile:', error);
     }
-};
+  };
 
 
 
-  const mediumOptions = [
-    { value: 'oil', label: 'Oil' },
-    { value: 'acrylic', label: 'Acrylic' },
-    { value: 'watercolor', label: 'Watercolor' },
-    { value: 'clay', label: 'Clay' },
-    { value: 'bronze', label: 'Bronze' },
-    { value: 'wood', label: 'Wood' },
-    { value: 'digital', label: 'Digital' }
-  ];
+  const [productMediums, setProductMediums] = useState([]);
 
-  const materialOptions = [
-    { value: 'canvas', label: 'Canvas' },
-    { value: 'charcoal', label: 'Charcoal' },
-    { value: 'ink', label: 'Ink' },
-    { value: 'resin', label: 'Resin' },
-    { value: 'metal', label: 'Metal' },
-    { value: 'paper', label: 'Paper' },
-    { value: 'stone', label: 'Stone' },
-    { value: 'glass', label: 'Glass' }
-  ];
+  const fetchProductMediums = async () => {
+    try {
+      const response = await getAPI("/api/getproductmedium");
+      const validMediums = response.data.filter(
+        medium => medium.name && typeof medium.name === 'string'
+      );
+      setProductMediums(validMediums);
+      if (!validMediums.length) {
+        toast.error('No valid product mediums found');
+      }
+    } catch (error) {
+      console.error("Error fetching product mediums:", error);
+      toast.error('Failed to load product mediums');
+    }
+  };
 
-  const editionOptions = [
-    { value: 'original', label: 'Original' },
-    { value: 'limited', label: 'Limited Edition' },
-    { value: 'open', label: 'Open Edition' }
-  ];
+  useEffect(() => {
+    fetchProductMediums();
+  }, []);
+
+  const mediumOptions = useMemo(() => {
+    return productMediums.map((medium) => ({
+      value: medium.name,
+      label: medium.name
+    }));
+  }, [productMediums]);
+
+  const [productMaterials, setProductMaterials] = useState([]);
+
+  const fetchProductMaterials = async () => {
+    try {
+      const response = await getAPI("/api/getproductmaterials");
+      const validMaterials = response.data.filter(
+        material => material.name && typeof material.name === 'string'
+      );
+      setProductMaterials(validMaterials);
+      if (!validMaterials.length) {
+        toast.error('No valid product materials found');
+      }
+    } catch (error) {
+      console.error("Error fetching product materials:", error);
+      toast.error('Failed to load product materials');
+    }
+  };
+
+  useEffect(() => {
+    fetchProductMaterials();
+  }, []);
+
+  const materialOptions = useMemo(() => {
+    return productMaterials.map((material) => ({
+      value: material.name,
+      label: material.name
+    }));
+  }, [productMaterials]);
+
+
+  const [productEditions, setProductEditions] = useState([]);
+
+  const fetchProductEditions = async () => {
+    try {
+      const response = await getAPI("/api/getproducteditiontypes");
+      const validEditions = response.data.filter(
+        edition => edition.name && typeof edition.name === "string"
+      );
+      setProductEditions(validEditions);
+      if (!validEditions.length) {
+        toast.error("No valid product editions found");
+      }
+    } catch (error) {
+      console.error("Error fetching product editions:", error);
+      toast.error("Failed to load product editions");
+    }
+  };
+
+  useEffect(() => {
+    fetchProductEditions();
+  }, []);
+
+  const editionOptions = useMemo(() => {
+    return productEditions.map((edition) => ({
+      value: edition.name,
+      label: edition.name,
+    }));
+  }, [productEditions]);
 
   const framingOptions = [
     { value: 'framed', label: 'Framed' },
@@ -274,13 +417,35 @@ const fetchProfile = async () => {
     { value: 'rolled', label: 'Rolled Canvas' }
   ];
 
-  const surfaceTypeOptions = [
-    { value: 'canvas', label: 'Canvas' },
-    { value: 'paper', label: 'Paper' },
-    { value: 'metal', label: 'Metal' },
-    { value: 'wood', label: 'Wood' },
-    { value: 'digital', label: 'Digital' }
-  ];
+
+  const [surfaceTypes, setSurfaceTypes] = useState([]);
+
+  const fetchSurfaceTypes = async () => {
+    try {
+      const response = await getAPI("/api/getproductsurfacetypes");
+      const validSurfaceTypes = response.data.filter(
+        surface => surface.name && typeof surface.name === "string"
+      );
+      setSurfaceTypes(validSurfaceTypes);
+      if (!validSurfaceTypes.length) {
+        toast.error("No valid surface types found");
+      }
+    } catch (error) {
+      console.error("Error fetching surface types:", error);
+      toast.error("Failed to load surface types");
+    }
+  };
+
+  useEffect(() => {
+    fetchSurfaceTypes();
+  }, []);
+
+  const surfaceTypeOptions = useMemo(() => {
+    return surfaceTypes.map((surface) => ({
+      value: surface.name,
+      label: surface.name,
+    }));
+  }, [surfaceTypes]);
 
   const conditionOptions = [
     { value: 'new', label: 'New' },

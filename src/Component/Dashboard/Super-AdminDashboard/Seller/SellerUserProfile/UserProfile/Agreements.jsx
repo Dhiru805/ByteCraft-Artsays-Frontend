@@ -75,60 +75,60 @@ const AccountSecurityAgreement = ({ userId }) => {
         }
     };
 
-        const validateRequiredAgreements = () => {
-            const missing = [];
-            const requiredMap = {
-                'Terms & Conditions'   : formData.agreeTerms,
-                'Commission Fees'      : formData.agreeCommissionFees,
-                'No Fake Artwork'      : formData.agreeNoFakeArtwork,
-            };
-        
-            Object.entries(requiredMap).forEach(([label, value]) => {
-                if (!value) missing.push(label);
-            });
-        
-            if (missing.length) {
-                toast.warn(`Please agree to: ${missing.join(', ')}`);
-                return false;
-            }
-            return true;
+    const validateRequiredAgreements = () => {
+        const missing = [];
+        const requiredMap = {
+            'Terms & Conditions': formData.agreeTerms,
+            'Commission Fees': formData.agreeCommissionFees,
+            'No Fake Artwork': formData.agreeNoFakeArtwork,
         };
-    
+
+        Object.entries(requiredMap).forEach(([label, value]) => {
+            if (!value) missing.push(label);
+        });
+
+        if (missing.length) {
+            toast.warn(`Please agree to: ${missing.join(', ')}`);
+            return false;
+        }
+        return true;
+    };
+
 
     return (
         <div className="body">
             <h5 className="mb-2">Account Security And Agreements</h5>
             <hr className="mt-1" />
             <form onSubmit={handleSubmit}>
-<div className="form-group">
-  <input 
-    type="checkbox" 
-    name="agreeTerms" 
-    checked={!!formData.agreeTerms} 
-    onChange={handleChange} 
-  />
-  <label className="mx-2">
-    I agree to&nbsp;
-    <a
-      href="/terms-services"
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{ color: '#6b4f36', textDecoration: 'underline' }}
-    >
-      Terms & Conditions
-    </a>
-    &nbsp;and&nbsp;
-    <a
-      href="/privacy-policy"
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{ color: '#6b4f36', textDecoration: 'underline' }}
-    >
-      Privacy Policy
-    </a>
-    <span style={{ color: 'red' }}> *</span>
-  </label>
-</div>
+                <div className="form-group">
+                    <input
+                        type="checkbox"
+                        name="agreeTerms"
+                        checked={!!formData.agreeTerms}
+                        onChange={handleChange}
+                    />
+                    <label className="mx-2">
+                        I agree to&nbsp;
+                        <a
+                            href="/terms-services"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: '#6b4f36', textDecoration: 'underline' }}
+                        >
+                            Terms & Conditions
+                        </a>
+                        &nbsp;and&nbsp;
+                        <a
+                            href="/privacy-policy"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: '#6b4f36', textDecoration: 'underline' }}
+                        >
+                            Privacy Policy
+                        </a>
+                        <span style={{ color: 'red' }}> *</span>
+                    </label>
+                </div>
                 <div className="form-group">
                     <input
                         type="checkbox"

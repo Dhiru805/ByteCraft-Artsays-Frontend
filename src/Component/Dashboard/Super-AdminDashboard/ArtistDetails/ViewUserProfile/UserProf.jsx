@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {  useLocation, useNavigate } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ViewBlogRequest from "./BlogRequest/ViewBlogRequest"
@@ -12,6 +12,7 @@ import Transaction from './Transaction/Transaction';
 import SoldProduct from './SoldProduct/SoldProduct'
 import Packagingmaterial from './PackagingMaterial/ProductPurchasedArtist'
 import getAPI from '../../../../../api/getAPI';
+import { Link } from 'react-router-dom';
 import Settings from './UserProfile/BasicInformation';
 import useUserType from '../../../urlconfig'
 
@@ -58,6 +59,9 @@ const artistFromState = location?.state?.artist;
     birthdate: '',
     website: ''
   });
+
+  const userId = artist?._id;
+
 
   const fetchProfile = async () => {
     try {
@@ -113,6 +117,27 @@ navigate(
 );
   };
   
+  // const handleAddressChange = (e) => {
+  //   const { name, value } = e.target;
+  //   const [, subKey] = name.split('.');
+
+  //   setProfileData((prevState) => ({
+  //     ...prevState,
+  //     address: {
+  //       ...prevState.address,
+  //       [subKey]: value
+  //     }
+  //   }));
+  // };
+  
+  // const handleTabClick = (tabName) => {
+  //   setActiveTab(tabName);
+  //   navigate({
+  //     pathname: location.pathname,
+  //     search: `?tab=${tabName}`,
+  //   });
+  // };
+
   // const handleAddressChange = (e) => {
   //   const { name, value } = e.target;
   //   const [, subKey] = name.split('.');

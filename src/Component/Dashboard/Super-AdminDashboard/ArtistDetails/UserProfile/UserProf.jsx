@@ -213,7 +213,6 @@ const UserProfileForm = () => {
     }
   };
 
-
   const tabs = [
     { name: 'Settings', component: Settings },
     { name: 'Blogs', component: Blogs },
@@ -235,11 +234,18 @@ const UserProfileForm = () => {
             <h2>Artist Profile</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <a href="index.html">
-                  <i className="fa fa-dashboard" />
-                </a>
+                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+                  <i className="fa fa-dashboard"></i>
+                </span>
               </li>
-              <li className="breadcrumb-item"><Link to={`/${userType}/Dashboard/artistmanagetable`}>ArtistManageTable</Link></li>
+              <li className="breadcrumb-item">
+                <span
+                  onClick={() => navigate('/super-admin/artist/management')}
+                  style={{ cursor: 'pointer' }}
+                >
+                  ArtistManageTable
+                </span>
+              </li>
               <li className="breadcrumb-item">Artist Profile</li>
             </ul>
           </div>

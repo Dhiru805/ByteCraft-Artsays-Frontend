@@ -47,24 +47,20 @@ const CreateAdminModal = ({ onClose, fetchAdmins }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true)
-
     for (const key in formData) {
       if (!formData[key]) {
         toast.error("Please fill in all fields");
         return;
       }
     }
-
     if (!isValidEmail(formData.email)) {
       toast.error("Invalid email format");
       return;
     }
-
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
-
     try {
       const response = await postAPI("/auth/createuser", formData);
       toast.success(response.data.message);

@@ -429,6 +429,7 @@ const Register = () => {
                   width: '200px',
                   height: '40px',
                   borderRadius: '20px',
+                  backgroundColor: '#f0e6db',
                   border: '1px solid #6b4f36',
                   cursor: 'pointer',
                 }}
@@ -456,13 +457,12 @@ const Register = () => {
                   style={{
                     zIndex: 1,
                     fontSize: '0.9rem',
-                    fontWeight: 'bold',
                   }}
                 >
-                  <span style={{ color: !isBusiness ? 'white' : '#6b4f36' }}>
+                  <span style={{ color: !isBusiness ? 'white' : '#6b4f36', fontWeight: !isBusiness ? 'bold' : 'normal' }}>
                     Artist
                   </span>
-                  <span style={{ color: isBusiness ? 'white' : '#6b4f36' }}>
+                  <span style={{ color: isBusiness ? 'white' : '#6b4f36', fontWeight: isBusiness ? 'bold' : 'normal' }}>
                     Seller
                   </span>
                 </div>

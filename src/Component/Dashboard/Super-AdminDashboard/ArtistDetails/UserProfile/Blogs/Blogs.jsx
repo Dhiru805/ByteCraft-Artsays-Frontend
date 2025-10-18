@@ -53,10 +53,6 @@ const Blogs = ({ userId: propUserId, profileData, previewImage }) => {
     return `${month} ${ordinalDay}, ${year}`;
   };
 
-
-
-
-
   const fetchBlog = async () => {
     try {
       const result = await getAPI(

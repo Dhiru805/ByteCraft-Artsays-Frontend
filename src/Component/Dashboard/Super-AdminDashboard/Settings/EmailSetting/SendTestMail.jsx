@@ -34,6 +34,7 @@ const SendTestMail = ({ show, onClose,formData }) => {
       }
     } catch (err) {
       toast.error("Failed to send test mail.");
+      // toast.err("Failed to send test mail.");
     } finally {
       setSending(false);
     }

@@ -36,4 +36,8 @@ const ErrorPage = () => {
   );
 };
 
+<<<<<<< HEAD
 export default ErrorPage;
+=======
+export default Error404Page;
+>>>>>>> 2e123ac2939c70d8f31b038f5b25a32635d59460

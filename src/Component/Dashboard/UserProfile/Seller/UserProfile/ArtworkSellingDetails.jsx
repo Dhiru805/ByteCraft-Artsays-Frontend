@@ -52,22 +52,29 @@ const ArtworkPricingDetails = ({ userId }) => {
     const ensureBase64Format = (base64String) => {
         return base64String.startsWith("data:image") ? base64String : `data:image/jpeg;base64,${base64String}`;
     };
+const handleSubmit = async (event) => {
+  event.preventDefault();
+  try {
+    const url = `/auth/updatesellartwork/${userId}`;
+    const result = await putAPI(url, formData);
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            const url = `/auth/updatesellartwork/${userId}`;
-            const result = await putAPI(url, formData);
-            if (result) {
-                toast.success('Artwork details updated successfully');
-            } else {
-                toast.error('Failed to update artwork details');
-            }
-        } catch (error) {
-            console.error("Error updating artwork details:", error);
-            toast.error('Error updating artwork details');
-        }
-    };
+    if (result) {
+      
+      await putAPI("/api/set-artist-categories", {
+        userId,
+        artCategories: formData.categoryOfArt, // sending IDs
+      });
+
+      toast.success("Artwork details updated successfully");
+    } else {
+      toast.error("Failed to update artwork details");
+    }
+  } catch (error) {
+    console.error("Error updating artwork details:", error);
+    toast.error("Error updating artwork details");
+  }
+};
+
 
 
     const handleFileChange = (event) => {
@@ -94,7 +101,6 @@ const ArtworkPricingDetails = ({ userId }) => {
         }));
     };
 
-
     const handleSingleSelectChange = (selectedOption, field) => {
         setFormData(prevData => ({
             ...prevData,
@@ -111,14 +117,23 @@ const ArtworkPricingDetails = ({ userId }) => {
         { value: 'collector', label: 'Collector' },
         { value: 'business', label: 'Business' },
     ];
-
-    const categoryOptions = [
-        { value: 'painting', label: 'Painting' },
-        { value: 'sculpture', label: 'Sculpture' },
-        { value: 'photography', label: 'Photography' },
-        { value: 'digital', label: 'Digital Art' },
-        { value: 'handicrafts', label: 'Handicrafts' }
-    ];
+    const [mainCategories, setMainCategories] = useState([]);
+    useEffect(() => {
+    const fetchMainCategories = async () => {
+      try {
+        const response = await getAPI("/api/main-category", true);
+        if (!response.hasError) {
+          setMainCategories(response.data.data);
+          console.log("Main Categories fetched successfully:", response.data.data);
+        } else {
+          toast.error(`Failed to fetch Main Categories: ${response.message}`);
+        }
+      } catch (error) {
+        toast.error("An error occurred while fetching main categories.");
+      }
+    };
+    fetchMainCategories();
+  }, []);
 
     const artStyleOptions = [
         { value: 'abstract', label: 'Abstract' },
