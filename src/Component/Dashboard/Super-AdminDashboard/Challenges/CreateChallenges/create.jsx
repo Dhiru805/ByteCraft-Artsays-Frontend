@@ -152,7 +152,7 @@ function Challenges() {
 
 
   return (
-    <>
+    <div>
       <Helmet>
         <title>{formValues.title ? `${formValues.title} | Create Challenge` : 'Create Challenge | Admin Panel'}</title>
         <meta

@@ -60,7 +60,7 @@ const artistFromState = location?.state?.artist;
     website: ''
   });
 
-  const userId = artist?._id;
+  // const userId = artist?._id;
 
 
   const fetchProfile = async () => {

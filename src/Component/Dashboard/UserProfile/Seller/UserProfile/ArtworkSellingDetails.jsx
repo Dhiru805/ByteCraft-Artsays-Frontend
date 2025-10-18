@@ -52,28 +52,28 @@ const ArtworkPricingDetails = ({ userId }) => {
     const ensureBase64Format = (base64String) => {
         return base64String.startsWith("data:image") ? base64String : `data:image/jpeg;base64,${base64String}`;
     };
-const handleSubmit = async (event) => {
-  event.preventDefault();
-  try {
-    const url = `/auth/updatesellartwork/${userId}`;
-    const result = await putAPI(url, formData);
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        try {
+            const url = `/auth/updatesellartwork/${userId}`;
+            const result = await putAPI(url, formData);
 
-    if (result) {
-      
-      await putAPI("/api/set-artist-categories", {
-        userId,
-        artCategories: formData.categoryOfArt, // sending IDs
-      });
+            if (result) {
 
-      toast.success("Artwork details updated successfully");
-    } else {
-      toast.error("Failed to update artwork details");
-    }
-  } catch (error) {
-    console.error("Error updating artwork details:", error);
-    toast.error("Error updating artwork details");
-  }
-};
+                await putAPI("/api/set-artist-categories", {
+                    userId,
+                    artCategories: formData.categoryOfArt, // sending IDs
+                });
+
+                toast.success("Artwork details updated successfully");
+            } else {
+                toast.error("Failed to update artwork details");
+            }
+        } catch (error) {
+            console.error("Error updating artwork details:", error);
+            toast.error("Error updating artwork details");
+        }
+    };
 
 
 
@@ -119,21 +119,21 @@ const handleSubmit = async (event) => {
     ];
     const [mainCategories, setMainCategories] = useState([]);
     useEffect(() => {
-    const fetchMainCategories = async () => {
-      try {
-        const response = await getAPI("/api/main-category", true);
-        if (!response.hasError) {
-          setMainCategories(response.data.data);
-          console.log("Main Categories fetched successfully:", response.data.data);
-        } else {
-          toast.error(`Failed to fetch Main Categories: ${response.message}`);
-        }
-      } catch (error) {
-        toast.error("An error occurred while fetching main categories.");
-      }
-    };
-    fetchMainCategories();
-  }, []);
+        const fetchMainCategories = async () => {
+            try {
+                const response = await getAPI("/api/main-category", true);
+                if (!response.hasError) {
+                    setMainCategories(response.data.data);
+                    console.log("Main Categories fetched successfully:", response.data.data);
+                } else {
+                    toast.error(`Failed to fetch Main Categories: ${response.message}`);
+                }
+            } catch (error) {
+                toast.error("An error occurred while fetching main categories.");
+            }
+        };
+        fetchMainCategories();
+    }, []);
 
     const artStyleOptions = [
         { value: 'abstract', label: 'Abstract' },
@@ -213,13 +213,55 @@ const handleSubmit = async (event) => {
                             <label>Category of Art <span style={{ color: 'red' }}>*</span></label>
                             <CreatableSelect
                                 isMulti
-                                options={categoryOptions}
-                                value={formData.categoryOfArt.map(value => ({ value, label: value.charAt(0).toUpperCase() + value.slice(1) }))}
-                                onChange={(selectedOptions) => handleChange(selectedOptions, 'categoryOfArt')}
+                                options={mainCategories.map(item => ({
+                                    value: item._id,
+                                    label: item.mainCategoryName,
+                                }))}
+                                value={formData.categoryOfArt.map(catId => {
+                                    const matched = mainCategories.find(cat => cat._id === catId);
+                                    return matched
+                                        ? { value: matched._id, label: matched.mainCategoryName }
+                                        : { value: catId, label: catId }; // fallback
+                                })}
+                                onChange={(selectedOptions) =>
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        categoryOfArt: selectedOptions.map(opt => opt.value),
+                                    }))
+                                }
                                 classNamePrefix="select"
                             />
                         </div>
                     </div>
+
+                    {/* <div className="col-lg-6 col-md-12">
+                        <div className="form-group">
+                            <label>Category of Art <span style={{ color: 'red' }}>*</span></label>
+                            <CreatableSelect
+    isMulti
+    options={mainCategories.map(item => ({
+      value: item._id,
+      label: item.mainCategoryName,
+    }))}
+    value={formData.categoryOfArt.map(catId => {
+      const matched = mainCategories.find(cat => cat._id === catId);
+      return matched
+        ? { value: matched._id, label: matched.mainCategoryName }
+        : { value: catId, label: catId }; // fallback
+    })}
+    onChange={(selectedOptions) =>
+      setFormData(prev => ({
+        ...prev,
+        categoryOfArt: selectedOptions.map(opt => opt.value),
+      }))
+    }
+    classNamePrefix="select"
+  />
+                        </div>
+                    </div>
+
+
+                </div> */}
 
 
                 </div>

@@ -211,10 +211,6 @@ const BiddingPass = () => {
                     {pass.label}
                   </label>
                 </div>
-<<<<<<< HEAD
-=======
-
->>>>>>> 2e123ac2939c70d8f31b038f5b25a32635d59460
                 <ul className={`pricing body text-center ${isActive ? 'active' : ''}`}>
                   <li>{pass.description}</li>
                   <li>Responsive Design</li>

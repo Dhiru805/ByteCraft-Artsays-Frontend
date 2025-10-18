@@ -242,23 +242,23 @@ import ChallengesEntries from "../Component/Dashboard/Super-AdminDashboard/Chall
 import ViewChallengeApplication from "../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/ViewChallengeApplication";
 import UpdateChallengeApplication from "../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/UpdateChallengeApplication";
 
-import ViewCareer from "../Component/Dashboard/Super-AdminDashboard/Career/CarrerView";
-import Exhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/exhibition";
-import CreateExhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/create";
-import UpdateExhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/editExhibition";
-import ViewExhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/exhibitionView";
-import ExhibitionRequest from '../Component/Dashboard/Super-AdminDashboard/Exhibition/ExhibitionRequest/exhibitionRequest';
-import UpdateExhibitionRequest from "../Component/Dashboard/Super-AdminDashboard/Exhibition/ExhibitionRequest/editExhibitionRequest";
-import ViewExhibitionRequest from "../Component/Dashboard/Super-AdminDashboard/Exhibition/ExhibitionRequest/exhibitionRequestView";
-import AutoTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/DefaultAutoTargeting/DefaultAutoTargeting';
-import GroupTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/AutoTargetingGroup/GroupTargetingSetting';
-import KeywordTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/KeywordTargeting/KeywordTargetingSetting';
+// import ViewCareer from "../Component/Dashboard/Super-AdminDashboard/Career/CarrerView";
+// import Exhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/exhibition";
+// import CreateExhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/create";
+// import UpdateExhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/editExhibition";
+// import ViewExhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/exhibitionView";
+// import ExhibitionRequest from '../Component/Dashboard/Super-AdminDashboard/Exhibition/ExhibitionRequest/exhibitionRequest';
+// import UpdateExhibitionRequest from "../Component/Dashboard/Super-AdminDashboard/Exhibition/ExhibitionRequest/editExhibitionRequest";
+// import ViewExhibitionRequest from "../Component/Dashboard/Super-AdminDashboard/Exhibition/ExhibitionRequest/exhibitionRequestView";
+// import AutoTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/DefaultAutoTargeting/DefaultAutoTargeting';
+// import GroupTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/AutoTargetingGroup/GroupTargetingSetting';
+// import KeywordTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/KeywordTargeting/KeywordTargetingSetting';
 
-import Challenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/challenges";
-import CreateChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/create";
-import UpdateChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/update";
-import ViewChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/challengeview";
-import ChallengesEntries from '../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/challengesEntries';
+// import Challenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/challenges";
+// import CreateChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/create";
+// import UpdateChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/update";
+// import ViewChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/challengeview";
+// import ChallengesEntries from '../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/challengesEntries';
 
 //------------------------------PackagingMaterial--------------------------------//
 import Material from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/Material";
