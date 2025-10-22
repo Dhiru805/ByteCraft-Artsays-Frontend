@@ -151,7 +151,7 @@ const UserAccount = () => {
   }, []);
 
   const fonts = [
-    { label: "Nunito Google Font", value: "font-nunito" },
+    { label: "Poppins", value: "poppins" },
     { label: "Ubuntu Font", value: "font-ubuntu" },
     { label: "Raleway Google Font", value: "font-raleway" },
     { label: "IBM Plex Google Font", value: "font-IBMplex" },
@@ -287,7 +287,7 @@ const UserAccount = () => {
             />
 
 
-            <a
+            {/* <a
               href="https://themeforest.net/item/iconic-boostrap-admin-dashboard-html-template/33511081"
               target="_blank"
               rel="noopener noreferrer"
@@ -302,7 +302,7 @@ const UserAccount = () => {
               className="btn btn-block btn-secondary"
             >
               View portfolio
-            </a>
+            </a> */}
           </div>
         </div>
       </div>

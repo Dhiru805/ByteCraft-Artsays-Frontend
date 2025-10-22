@@ -22,7 +22,7 @@ const SettingsPanel = ({
 }) => {
   return (
     <div>
-      <h6>Choose Skin</h6>
+      {/* <h6>Choose Skin</h6>
       <ul className="choose-skin list-unstyled">
         {["purple", "blue", "cyan", "green", "orange", "blush", "red"].map((color, index) => (
           <li
@@ -35,7 +35,7 @@ const SettingsPanel = ({
             <div className={color}></div>
           </li>
         ))}
-      </ul>
+      </ul> */}
 
       <ul className="list-unstyled font_setting mt-3">
         {fonts.map((font, index) => (
@@ -54,6 +54,9 @@ const SettingsPanel = ({
           </li>
         ))}
       </ul>
+
+      <hr />
+
 
       <ul className="list-unstyled mt-3">
         <li className="d-flex align-items-center mb-2">
@@ -101,8 +104,7 @@ const SettingsPanel = ({
         </li>
       </ul>
 
-      <hr />
-      <h6>General Settings</h6>
+      {/* <h6>General Settings</h6>
       <ul className="setting-list list-unstyled">
         <li>
           <label className="fancy-checkbox">
@@ -134,7 +136,7 @@ const SettingsPanel = ({
             <span>Location Permission</span>
           </label>
         </li>
-      </ul>
+      </ul>  */}
     </div>
   );
 };

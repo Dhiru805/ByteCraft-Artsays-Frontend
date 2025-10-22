@@ -1731,6 +1731,9 @@ body {
 body.font-nunito {
   font-family: "Nunito", sans-serif;
 }
+body.poppins {
+  font-family: "Poppins", sans-serif;
+}
 body.font-ubuntu {
   font-family: "Ubuntu", sans-serif;
 }
@@ -2894,7 +2897,7 @@ html.fullscreen-bg #wrapper {
   border: none;
   box-shadow: 0px 2px 20px 0px var(--box-shadow);
   padding: 15px;
-  background: var(--dark-color);
+  background: #FEF6CC;
   border-radius: 0.55rem;
 }
 .user-account .dropdown .dropdown-menu li.divider {
@@ -2904,7 +2907,7 @@ html.fullscreen-bg #wrapper {
 .user-account .dropdown .dropdown-menu a {
   padding: 10px;
   font-size: 14px;
-  color: var(--font-light);
+  color: var(--dark-color);
 }
 .user-account .dropdown .dropdown-menu a:hover {
   color: var(--primary-color);
