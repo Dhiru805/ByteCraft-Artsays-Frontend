@@ -86,7 +86,7 @@ useEffect(() => {
                         </div>
                     </div>
                     <div className="col-lg-3 col-md-6 col-sm-6">
-                        <div className="card top_widget bg-info">
+                        <div className="card top_widget secondary-bg">
                             <div className="body">
                                 <div className="icon bg-light"><i className="fa fa-users"></i> </div>
                                 <div className="content text-light">

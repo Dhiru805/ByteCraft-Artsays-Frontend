@@ -212,20 +212,15 @@ const UserAccount = () => {
       />
       <div className="sidebar-scroll">
 
-        <ul className="nav nav-tabs">
+        <ul className="nav nav-tabs justify-content-between align-items-center">
           <li className="nav-item">
-            <a className="nav-link active" data-toggle="tab" href="#menu">
+            <a className="nav-link active" data-toggle="tab" href="#menu" style={{ padding: "13px 20px" }}>
               Menu
             </a>
           </li>
           <li className="nav-item">
             <a className="nav-link" data-toggle="tab" href="#setting">
               <i class="fa fa-cog" aria-hidden="true"></i>
-            </a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" data-toggle="tab" href="#question">
-              <i class="fa fa-question-circle" aria-hidden="true"></i>
             </a>
           </li>
         </ul>
@@ -308,61 +303,6 @@ const UserAccount = () => {
             >
               View portfolio
             </a>
-          </div>
-          <div className="tab-pane" id="question">
-            <form>
-              <div className="input-group">
-                <div className="input-group-prepend">
-                  <span className="input-group-text">
-                    <i className="icon-magnifier"></i>
-                  </span>
-                </div>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Search..."
-                />
-              </div>
-            </form>
-            <ul className="list-unstyled question">
-              <li className="menu-heading">HOW-TO</li>
-              <li>
-                <a href="#">How to Create Campaign</a>
-              </li>
-              <li>
-                <a href="#">Boost Your Sales</a>
-              </li>
-              <li>
-                <a href="#">Website Analytics</a>
-              </li>
-              <li className="menu-heading">ACCOUNT</li>
-              <li>
-                <a href="#">Create New Account</a>
-              </li>
-              <li>
-                <a href="#">Change Password?</a>
-              </li>
-              <li>
-                <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">
-                  Privacy &amp; Policy
-                </a>
-              </li>
-              <li className="menu-heading">BILLING</li>
-              <li>
-                <a href="#">Payment info</a>
-              </li>
-              <li>
-                <a href="#">Auto-Renewal</a>
-              </li>
-              <li className="menu-button mt-3">
-                <a
-                  href="https://wrraptheme.com/templates/iconic/docs/index.html"
-                  className="btn btn-primary btn-block"
-                >
-                  Documentation
-                </a>
-              </li>
-            </ul>
           </div>
         </div>
       </div>
