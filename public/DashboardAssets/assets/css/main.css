@@ -3677,6 +3677,7 @@ select.form-control:not([size]):not([multiple]) {
 }
 .block-header h2 {
   font-size: 20px;
+  font-weight: bold;
 }
 .block-header .breadcrumb {
   background: transparent;
@@ -8983,4 +8984,7 @@ ul.list-connected-app > li:last-child .connected-app {
 }
 .ql-toolbar.ql-snow {
   border-radius: 15px;
+}
+.modal {
+  align-content: center !important;
 }
