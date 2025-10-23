@@ -40,30 +40,39 @@ const UpdateCommission = () => {
         articles:
           page.articles?.length > 0
             ? page.articles.map((a) => ({
-                articleHeading: a.articleHeading || "",
-                articleContent: a.articleContent || "",
-                bannerImage: null,
-                existingBanner: a.bannerImage || null,
-                buttonName: a.buttonName || "",
-                buttonPath: a.buttonPath || "",
-              }))
+              articleHeading: a.articleHeading || "",
+              articleContent: a.articleContent || "",
+              bannerImage: null,
+              existingBanner: a.bannerImage || null,
+              buttonName: a.buttonName || "",
+              buttonPath: a.buttonPath || "",
+            }))
             : [
-                {
-                  articleHeading: "",
-                  articleContent: "",
-                  bannerImage: null,
-                  existingBanner: null,
-                  buttonName: "",
-                  buttonPath: "",
-                },
-              ],
+              {
+                articleHeading: "",
+                articleContent: "",
+                bannerImage: null,
+                existingBanner: null,
+                buttonName: "",
+                buttonPath: "",
+              },
+            ],
       });
+
+      // setBannerPreviews(
+      //   page.articles?.map((a) =>
+      //     a.bannerImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${a.bannerImage}` : null
+      //   ) || [null]
+      // );
 
       setBannerPreviews(
         page.articles?.map((a) =>
-          a.bannerImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${a.bannerImage}` : null
+          a.bannerImage || a.existingBanner
+            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${a.bannerImage || a.existingBanner}`
+            : null
         ) || [null]
       );
+
     }
   }, [page, navigate]);
 
