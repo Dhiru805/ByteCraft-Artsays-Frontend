@@ -33,12 +33,12 @@
 //           return;
 //         }
 //         setHomepageId(page._id);
-        
+
 //         const sectionRes = await getAPI(`/api/homepage-sections/browse-categories/${page._id}`);
 //         if (sectionRes.data.success && sectionRes.data.data) {
 //           const section = sectionRes.data.data;
 //           setSectionId(section._id);
-          
+
 //           setFormData({
 //             heading: section.heading || "",
 //             description: section.description || "",
@@ -49,7 +49,7 @@
 //               icon: null
 //             })) : [{ title: "", icon: null }]
 //           });
-          
+
 //           const existingIconsList = section.tags?.map(tag => tag.icon || tag.iconUrl || null) || [null];
 //           setExistingIcons(existingIconsList);
 //           setIconPreviews(existingIconsList);
@@ -179,7 +179,7 @@
 //           <div className="card">
 //             <div className="body">
 //               <form onSubmit={handleSubmit} encType="multipart/form-data">
-                
+
 //                 <div className="form-group">
 //                   <label>Heading *</label>
 //                   <input type="text" name="heading" value={formData.heading} onChange={handleChange} className="form-control" required />
@@ -200,7 +200,7 @@
 //                   <input type="text" name="buttonLink" value={formData.buttonLink} onChange={handleChange} className="form-control" required />
 //                 </div>
 
-             
+
 //                 <h4>Tags</h4>
 //                 {formData.tags.map((tag, idx) => (
 //                   <div key={idx} className="border mb-3 p-3 rounded shadow">
@@ -220,7 +220,7 @@
 //                 ))}
 //                 <button type="button" className="btn btn-secondary mb-3" onClick={addTag}>Add Tag</button>
 
-              
+
 //                 <div className="d-flex align-items-center mb-3" style={{ gap: "10px" }}>
 //                   <button type="submit" className="btn btn-primary" disabled={loading || !homepageId}>
 //                     {loading ? "Saving..." : sectionId ? "Update Browse Categories Section" : "Create Browse Categories Section"}
@@ -273,12 +273,12 @@ const BrowseCategoriesCreate = () => {
           return;
         }
         setHomepageId(page._id);
-        
+
         const sectionRes = await getAPI(`/api/homepage-sections/browse-categories/${page._id}`);
         if (sectionRes.data.success && sectionRes.data.data) {
           const section = sectionRes.data.data;
           setSectionId(section._id);
-          
+
           setFormData({
             heading: section.heading || "",
             description: section.description || "",
@@ -289,10 +289,25 @@ const BrowseCategoriesCreate = () => {
               icon: null
             })) : [{ title: "", icon: null }]
           });
-          
-          const existingIconsList = section.tags?.map(tag => tag.icon || tag.iconUrl || null) || [null];
+
+          // const existingIconsList = section.tags?.map(tag => tag.icon || tag.iconUrl || null) || [null];
+          // setExistingIcons(existingIconsList);
+          // setIconPreviews(existingIconsList);
+
+          const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE || "http://localhost:3001";
+
+          const existingIconsList =
+            section.tags?.map(tag =>
+              tag.icon
+                ? `${BASE_URL}/${tag.icon}`
+                : tag.iconUrl
+                  ? `${BASE_URL}/${tag.iconUrl}`
+                  : null
+            ) || [null];
+
           setExistingIcons(existingIconsList);
           setIconPreviews(existingIconsList);
+
         }
       } catch (err) {
         toast.error(err.response?.data?.message || "Failed to load Homepage");
@@ -421,7 +436,7 @@ const BrowseCategoriesCreate = () => {
           <div className="card">
             <div className="body">
               <form onSubmit={handleSubmit} encType="multipart/form-data">
-                
+
                 <div className="form-group">
                   <label>Heading *</label>
                   <input type="text" name="heading" value={formData.heading} onChange={handleChange} className="form-control" required />
@@ -442,7 +457,7 @@ const BrowseCategoriesCreate = () => {
                   <input type="text" name="buttonLink" value={formData.buttonLink} onChange={handleChange} className="form-control" required />
                 </div>
 
-             
+
                 <h4>Tags</h4>
                 {formData.tags.map((tag, idx) => (
                   <div key={idx} className="border mb-3 p-3 rounded shadow">
@@ -462,7 +477,7 @@ const BrowseCategoriesCreate = () => {
                 ))}
                 <button type="button" className="btn btn-secondary mb-3" onClick={addTag}>Add Tag</button>
 
-              
+
                 <div className="d-flex align-items-center mb-3" style={{ gap: "10px" }}>
                   <button type="submit" className="btn btn-primary" disabled={loading || !homepageId}>
                     {loading ? "Saving..." : sectionId ? "Update Browse Categories Section" : "Create Browse Categories Section"}

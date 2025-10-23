@@ -208,7 +208,7 @@
 //           <div className="card">
 //             <div className="body">
 //               <form onSubmit={handleSubmit} encType="multipart/form-data">
-             
+
 //                 <div className="form-group">
 //                   <label>Heading *</label>
 //                   <input
@@ -233,7 +233,7 @@
 //                   />
 //                 </div>
 
-                
+
 //                 <div className="form-group">
 //                   <label>Button Name *</label>
 //                   <input
@@ -246,7 +246,7 @@
 //                   />
 //                 </div>
 
-               
+
 //                 <div className="form-group">
 //                   <label>Button Link *</label>
 //                   <input
@@ -321,7 +321,7 @@
 //                 ))}
 //                 <button type="button" className="btn btn-secondary mb-3" onClick={addCard}>Add Card</button>
 
-             
+
 //                 <div className="d-flex align-items-center mb-3" style={{ gap: "10px" }}>
 //                   <button type="submit" className="btn btn-primary" disabled={loading || !homepageId}>
 //                     {loading ? "Saving..." : sectionId ? "Update How To Buy Section" : "Create How To Buy Section"}
@@ -361,9 +361,9 @@ const HowToBuyCreate = () => {
   });
 
   const [imagePreviews, setImagePreviews] = useState([null]);
-  const [iconPreviews, setIconPreviews] = useState([[ ]]); 
+  const [iconPreviews, setIconPreviews] = useState([[]]);
   const [existingCardImages, setExistingCardImages] = useState([null]);
-  const [existingIcons, setExistingIcons] = useState([[ ]]);
+  const [existingIcons, setExistingIcons] = useState([[]]);
   const [loading, setLoading] = useState(false);
   const [sectionId, setSectionId] = useState(null);
 
@@ -396,10 +396,40 @@ const HowToBuyCreate = () => {
             }))
           });
 
-          setExistingCardImages((s.cards || []).map(c => c.imageUrl || c.image || null));
-          setImagePreviews((s.cards || []).map(c => c.imageUrl || c.image || null));
-          setExistingIcons((s.cards || []).map(c => (c.iconUrls || c.icons || []).map(u => u?.url || u || null)));
-          setIconPreviews((s.cards || []).map(c => (c.iconUrls || c.icons || []).map(u => u?.url || u || null)));
+          // setExistingCardImages((s.cards || []).map(c => c.imageUrl || c.image || null));
+          // setImagePreviews((s.cards || []).map(c => c.imageUrl || c.image || null));
+          // setExistingIcons((s.cards || []).map(c => (c.iconUrls || c.icons || []).map(u => u?.url || u || null)));
+          // setIconPreviews((s.cards || []).map(c => (c.iconUrls || c.icons || []).map(u => u?.url || u || null)));
+          const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE || "http://localhost:3001";
+
+          setExistingCardImages(
+            (s.cards || []).map(c =>
+              c.image ? `${BASE_URL}/${c.image}` : null
+            )
+          );
+
+          setImagePreviews(
+            (s.cards || []).map(c =>
+              c.image ? `${BASE_URL}/${c.image}` : null
+            )
+          );
+
+          setExistingIcons(
+            (s.cards || []).map(c =>
+              (c.icons || []).map(icon =>
+                icon ? `${BASE_URL}/${icon}` : null
+              )
+            )
+          );
+
+          setIconPreviews(
+            (s.cards || []).map(c =>
+              (c.icons || []).map(icon =>
+                icon ? `${BASE_URL}/${icon}` : null
+              )
+            )
+          );
+
         }
       } catch (err) {
         toast.error(err.response?.data?.message || "Failed to load Homepage");
@@ -549,7 +579,7 @@ const HowToBuyCreate = () => {
           <div className="card">
             <div className="body">
               <form onSubmit={handleSubmit} encType="multipart/form-data">
-             
+
                 <div className="form-group">
                   <label>Heading *</label>
                   <input
@@ -574,7 +604,7 @@ const HowToBuyCreate = () => {
                   />
                 </div>
 
-                
+
                 <div className="form-group">
                   <label>Button Name *</label>
                   <input
@@ -587,7 +617,7 @@ const HowToBuyCreate = () => {
                   />
                 </div>
 
-               
+
                 <div className="form-group">
                   <label>Button Link *</label>
                   <input
@@ -662,7 +692,7 @@ const HowToBuyCreate = () => {
                 ))}
                 <button type="button" className="btn btn-secondary mb-3" onClick={addCard}>Add Card</button>
 
-             
+
                 <div className="d-flex align-items-center mb-3" style={{ gap: "10px" }}>
                   <button type="submit" className="btn btn-primary" disabled={loading || !homepageId}>
                     {loading ? "Saving..." : sectionId ? "Update How To Buy Section" : "Create How To Buy Section"}

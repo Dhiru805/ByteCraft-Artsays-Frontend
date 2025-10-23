@@ -296,7 +296,11 @@ const WhyArtsaysDifferentCreate = () => {
                             description: c.description || "",
                             hexColor: c.hexColor || c.color || "#000000",
                             icon: null,
-                            existingIcon: c.iconUrl || c.icon || null,
+                            //existingIcon: c.iconUrl || c.icon || null,
+                            existingIcon: c.icon
+                                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE || "http://localhost:3001"}/${c.icon}`
+                                : null,
+
                         }))
                         : [{ title: "", description: "", hexColor: "#000000", icon: null, existingIcon: null }];
 
@@ -403,7 +407,7 @@ const WhyArtsaysDifferentCreate = () => {
             const res = await postAPI("/api/homepage-sections/why-artsays-different/create", submissionData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
-            
+
             if (res.data.data) {
                 toast.success(res.data.message || "Why Artsays section saved successfully!");
                 navigate("/super-admin/homepage/create", { state: { reload: true } });

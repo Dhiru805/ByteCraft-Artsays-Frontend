@@ -396,7 +396,6 @@ const WhyFromArtsaysCreate = () => {
         }
         setHomepageId(page._id);
 
-        // Fetch existing why buy artsays section
         const sectionRes = await getAPI(`/api/homepage-sections/why-buy-artsays/${page._id}`);
         if (sectionRes.data.success && sectionRes.data.data) {
           const section = sectionRes.data.data;
@@ -409,7 +408,10 @@ const WhyFromArtsaysCreate = () => {
             buttonLink: section.buttonLink || "",
             cards: section.cards?.length ? section.cards.map(card => ({
               image: null,
-              preview: card.icon || card.iconUrl || null,
+              //preview: card.icon || card.iconUrl || null,
+              preview: card.icon
+          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${card.icon}`
+          : null,
               title: card.heading || card.title || "",
               description: card.description || ""
             })) : []

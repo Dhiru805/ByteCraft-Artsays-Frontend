@@ -32,12 +32,12 @@
 //           return;
 //         }
 //         setHomepageId(page._id);
-        
+
 //         const sectionRes = await getAPI(`/api/homepage-sections/hero/${page._id}`);
 //         if (sectionRes.data.success && sectionRes.data.data) {
 //           const section = sectionRes.data.data;
 //           setSectionId(section._id);
-          
+
 //           setFormData({
 //             title: section.title || "",
 //             description: section.description || "",
@@ -48,7 +48,7 @@
 //               duration: rt.duration || ""
 //             })) : [{ title: "", image: null, duration: "" }]
 //           });
-          
+
 //           const existingImgs = section.recurrentTitles?.map(rt => rt.image || rt.imageUrl || null) || [null];
 //           setExistingImages(existingImgs);
 //           setImagePreviews(existingImgs);
@@ -210,7 +210,7 @@
 //           <div className="card">
 //             <div className="body">
 //               <form onSubmit={handleSubmit} encType="multipart/form-data">
-               
+
 //                 <div className="form-group">
 //                   <label>Title *</label>
 //                   <input type="text" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} className="form-control" required />
@@ -242,7 +242,7 @@
 //                 ))}
 //                 <button type="button" className="btn btn-secondary mb-3" onClick={addRecurrentTitle}>Add Recurrent Title</button>
 
-              
+
 //                 <h4>Buttons</h4>
 //                 {formData.buttons.map((btn, idx) => (
 //                   <div key={idx} className="form-group d-flex gap-2">
@@ -303,12 +303,12 @@ const HeroSectionCreate = () => {
           return;
         }
         setHomepageId(page._id);
-        
+
         const sectionRes = await getAPI(`/api/homepage-sections/hero/${page._id}`);
         if (sectionRes.data.success && sectionRes.data.data) {
           const section = sectionRes.data.data;
           setSectionId(section._id);
-          
+
           setFormData({
             title: section.title || "",
             description: section.description || "",
@@ -319,10 +319,23 @@ const HeroSectionCreate = () => {
               duration: rt.duration || ""
             })) : [{ title: "", image: null, duration: "" }]
           });
-          
-          const existingImgs = section.recurrentTitles?.map(rt => rt.image || rt.imageUrl || null) || [null];
+
+          // const existingImgs = section.recurrentTitles?.map(rt => rt.image || rt.imageUrl || null) || [null];
+          // setExistingImages(existingImgs);
+          // setImagePreviews(existingImgs);
+
+          const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE || "http://localhost:3001";
+
+          const existingImgs =
+            section.recurrentTitles?.map(rt =>
+              rt.image ? `${BASE_URL}/${rt.image}` :
+                rt.imageUrl ? `${BASE_URL}/${rt.imageUrl}` :
+                  null
+            ) || [null];
+
           setExistingImages(existingImgs);
           setImagePreviews(existingImgs);
+
         }
       } catch (err) {
         toast.error(err.response?.data?.message || "Failed to load Homepage");
@@ -353,7 +366,7 @@ const HeroSectionCreate = () => {
       if (!validateImageFile(file, "Recurrent Image")) return;
       updated[idx][field] = file;
       updatedPreviews[idx] = URL.createObjectURL(file);
-      
+
       updatedExisting[idx] = null;
       setExistingImages(updatedExisting);
     } else {
@@ -474,7 +487,7 @@ const HeroSectionCreate = () => {
           <div className="card">
             <div className="body">
               <form onSubmit={handleSubmit} encType="multipart/form-data">
-               
+
                 <div className="form-group">
                   <label>Title *</label>
                   <input type="text" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} className="form-control" required />
@@ -506,7 +519,7 @@ const HeroSectionCreate = () => {
                 ))}
                 <button type="button" className="btn btn-secondary mb-3" onClick={addRecurrentTitle}>Add Recurrent Title</button>
 
-              
+
                 <h4>Buttons</h4>
                 {formData.buttons.map((btn, idx) => (
                   <div key={idx} className="form-group d-flex gap-2">
