@@ -237,8 +237,9 @@ const ArtIconCreate = () => {
           setFormData({
             heading: s.heading || "",
             description: s.description || "",
-            buttonName: s.buttonName || "",
+            buttonName: s.buttonName || "", 
             buttonLink: s.buttonLink || "",
+            
           });
         }
       } catch (err) {
