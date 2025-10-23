@@ -46,6 +46,20 @@ const Sidebarprofile = ({ user, userId, isOpen, handleToggleSidebar, Handletoggl
       path: `/${userType ? userType.toLowerCase() : "user"}/premium-badges`,
       state: { _id: userId }
     },
+     ...(userType && ["artist", "seller", "buyer"].includes(userType.toLowerCase()) ? [{
+    label: "Wallet",
+    icon: "bi-wallet",
+    path: `/${userType.toLowerCase()}/wallet`,
+    state: { _id: userId }
+  }] : []),
+
+    ...(userType?.toLowerCase() === "super-admin" ? [{
+    label: "Wallet Management",
+    icon: "bi-wallet-fill",
+    path: `/${userType.toLowerCase()}/wallet-management`,
+    state: { _id: userId }
+  }] : []),
+   
     {
       label: "Logout",
       icon: "bi-power",

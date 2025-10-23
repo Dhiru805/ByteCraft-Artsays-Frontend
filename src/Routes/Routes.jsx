@@ -60,6 +60,13 @@ import ArtistLayout from "../Component/Dashboard/ArtistDashbooard/MainDashboard"
 import BuyerLayout from "../Component/Dashboard/BuyerDashboard/MainDashboard";
 import SellerLayout from "../Component/Dashboard/SellerDashboard/MainDashboard";
 
+//----------------------------------------Wallet-----------------------------------//
+import WalletDashboard from "../Component/Dashboard/Super-AdminDashboard/wallet/walletDashboard";
+import AdminWalletManagement from "../Component/Dashboard/Super-AdminDashboard/wallet/AdminWalletManagement";
+import BuyerWallet from "../Component/Dashboard/BuyerDashboard/Wallet/BuyerWallet";
+import ArtistSellerWallet from "../Component/Dashboard/ArtistDashbooard/Wallet/ArtistSellerWallet";
+import SellerWallet from "../Component/Dashboard/SellerDashboard/Wallet/SellerWallet";
+
 //----------------------------------------Super-Admin Components-----------------------------//
 import SuperAdminDashboard from "../Component/Dashboard/Super-AdminDashboard/Dashboard/MainContent";
 import SuperAdminBlog from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/BlogRequest";
@@ -921,6 +928,10 @@ const AppRoutes = () => {
         <Route path="about-us/testimonials/edit" element={<UpdateTestimonials />} />
 
 
+        {/*-------------------------------------------- wallet Routes under super-ADMIN-------------------------------------------------- */}
+        {/* Wallet Routes */}
+        <Route path="wallet" element={<WalletDashboard />} />
+        <Route path="wallet-management" element={<AdminWalletManagement />} />
       </Route>
 
       {/*-------------------------------------------- Artist Routes-------------------------------------------------- */}
@@ -981,6 +992,9 @@ const AppRoutes = () => {
         <Route path='packaging-material/create' element={<CreateOrder />} />
         <Route path='packaging-material/edit/:id' element={<UpdateOrder />} />
         <Route path='packaging-material/view/:id' element={<ViewOrder />} />
+        
+        {/* Wallet */}
+        <Route path="wallet" element={<ArtistSellerWallet />} />
       </Route>
 
       {/* --------------------------------------------Buyer Routes---------------------------------------------------- */}
@@ -995,6 +1009,9 @@ const AppRoutes = () => {
         <Route index element={<BuyerDashboard />} />
         <Route path="dashboard" element={<BuyerDashboard />} />
         <Route path="profile" element={<UserProfile />} />
+        
+        {/* Wallet */}
+        <Route path="wallet" element={<BuyerWallet />} />
       </Route>
 
       {/*-------------------------------------------------- Seller Routes -----------------------------------------------*/}
@@ -1041,6 +1058,9 @@ const AppRoutes = () => {
         <Route path='packaging-material/create' element={<CreateMaterialOrder />} />
         <Route path='packaging-material/edit/:id' element={<UpdateMaterialOrder />} />
         <Route path='packaging-material/view/:id' element={<ViewMaterialOrder />} />
+        
+        {/* Wallet */}
+        <Route path="wallet" element={<SellerWallet />} />
       </Route>
 
       {/*-------------------------------------------- Website Routes-------------------------------------------------- */}
