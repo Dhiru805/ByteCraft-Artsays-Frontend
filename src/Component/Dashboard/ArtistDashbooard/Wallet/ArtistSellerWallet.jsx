@@ -992,3 +992,4 @@ const ArtistSellerWallet = () => {
 };
 
 export default ArtistSellerWallet;
+

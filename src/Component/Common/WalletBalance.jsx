@@ -95,3 +95,4 @@ const WalletBalance = ({ userId, userType }) => {
 };
 
 export default WalletBalance;
+

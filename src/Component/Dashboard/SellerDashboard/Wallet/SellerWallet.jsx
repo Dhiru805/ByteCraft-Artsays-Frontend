@@ -946,3 +946,4 @@ const SellerWallet = () => {
 };
 
 export default SellerWallet;
+

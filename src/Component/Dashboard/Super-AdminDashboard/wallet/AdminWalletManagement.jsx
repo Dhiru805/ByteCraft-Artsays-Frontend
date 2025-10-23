@@ -1563,109 +1563,143 @@ const AdminWalletManagement = () => {
 
       {/* User Destination & Method Table */}
       {/* User Destination & Method Table */}
-<div className="row clearfix mb-4">
-  <div className="col-sm-12">
-    <div className="card">
-      <div className="header"><h2>User Destination & Method</h2></div>
-      <div className="body">
-        {/* Select User */}
-        <div className="row mb-3">
-          <div className="col-md-4">
-            <select
-              className="form-control"
-              value={selectedUserForDestination}
-              onChange={e => {
-                const userId = e.target.value;
-                setSelectedUserForDestination(userId);
-                fetchUserDestination(userId);
-              }}
-            >
-              <option value="">Select User</option>
-              {wallets.map(wallet => (
-                <option key={wallet._id} value={wallet.userId}>
-                  {wallet.name} {wallet.lastName}
-                </option>
-              ))}
-            </select>
+      <div className="row clearfix mb-4">
+        <div className="col-sm-12">
+          <div className="card">
+            <div className="header"><h2>User Destination & Method</h2></div>
+            <div className="body">
+              {/* Select User */}
+              <div className="row mb-3">
+                <div className="col-md-4">
+                  <select
+                    className="form-control"
+                    value={selectedUserForDestination}
+                    onChange={e => {
+                      const userId = e.target.value;
+                      setSelectedUserForDestination(userId);
+                      fetchUserDestination(userId);
+                    }}
+                  >
+                    <option value="">Select User</option>
+                    {wallets.map(wallet => (
+                      <option key={wallet._id} value={wallet.userId}>
+                        {wallet.name} {wallet.lastName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Destination Table */}
+              {selectedUserForDestination ? (
+                userDestinationData && (
+                  Array.isArray(userDestinationData)
+                    ? userDestinationData.length > 0
+                    : Object.keys(userDestinationData).length > 0
+                ) ? (
+                  <div className="table-responsive">
+                    <table className="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>Serial No</th>
+                          <th>Name</th>
+                          <th>Method</th>
+                          <th>Destination</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Array.isArray(userDestinationData)
+                          ? userDestinationData.map((record, idx) => (
+                            <tr key={idx}>
+                              <td>{idx + 1}</td>
+                              <td>{record.name || "-"}</td>
+                              <td>{record.method || "-"}</td>
+                              {/* <td>
+                                {typeof record.destination === "string"
+                                  ? record.destination
+                                  : record.destination && typeof record.destination === "object"
+                                    ? (
+                                      <div className="d-flex flex-column gap-1">
+                                        {record.destination.bankName && <span>Bank: {record.destination.bankName}</span>}
+                                        {record.destination.accountNo && <span>Acc: {record.destination.accountNo}</span>}
+                                        {record.destination.ifsc && <span>IFSC: {record.destination.ifsc}</span>}
+                                        {record.destination.upiId && <span>UPI: {record.destination.upiId}</span>}
+                                        {record.destination.phone && <span>Phone: {record.destination.phone}</span>}
+                                      </div>
+                                    )
+                                    : "-"}
+                              </td> */}
+                              <td>
+                                {typeof record.destination === "string"
+                                  ? record.destination
+                                  : record.destination && typeof record.destination === "object"
+                                    ? (
+                                      <div className="d-flex flex-column gap-1">
+                                        {record.destination.name && <span>Name: {record.destination.name}</span>}
+                                        {record.destination.bankName && <span>Bank: {record.destination.bankName}</span>}
+                                        {record.destination.accountNumber && <span>Acc: {record.destination.accountNumber}</span>}
+                                        {record.destination.ifsc && <span>IFSC: {record.destination.ifsc}</span>}
+                                        {record.destination.upiId && <span>UPI: {record.destination.upiId}</span>}
+                                        {record.destination.purpose && <span>Purpose: {record.destination.purpose}</span>}
+                                      </div>
+                                    )
+                                    : "-"}
+                              </td>
+
+                            </tr>
+                          ))
+                          : Object.entries(userDestinationData).map(([key, record], idx) => (
+                            <tr key={idx}>
+                              <td>{idx + 1}</td>
+                              <td>{record.name || "-"}</td>
+                              <td>{record.method || "-"}</td>
+                              {/* <td>
+                            {typeof record.destination === "string"
+                              ? record.destination
+                              : record.destination && typeof record.destination === "object"
+                              ? (
+                                <div className="d-flex flex-column gap-1">
+                                  {record.destination.bankName && <span>Bank: {record.destination.bankName}</span>}
+                                  {record.destination.accountNo && <span>Acc: {record.destination.accountNo}</span>}
+                                  {record.destination.ifsc && <span>IFSC: {record.destination.ifsc}</span>}
+                                  {record.destination.upiId && <span>UPI: {record.destination.upiId}</span>}
+                                  {record.destination.phone && <span>Phone: {record.destination.phone}</span>}
+                                </div>
+                              )
+                              : "-"}
+                          </td> */}
+                              <td>
+                                {typeof record.destination === "string"
+                                  ? record.destination
+                                  : record.destination && typeof record.destination === "object"
+                                    ? (
+                                      <div className="d-flex flex-column gap-1">
+                                        {record.destination.name && <span>Name: {record.destination.name}</span>}
+                                        {record.destination.bankName && <span>Bank: {record.destination.bankName}</span>}
+                                        {record.destination.accountNumber && <span>Acc: {record.destination.accountNumber}</span>}
+                                        {record.destination.ifsc && <span>IFSC: {record.destination.ifsc}</span>}
+                                        {record.destination.upiId && <span>UPI: {record.destination.upiId}</span>}
+                                        {record.destination.purpose && <span>Purpose: {record.destination.purpose}</span>}
+                                      </div>
+                                    )
+                                    : "-"}
+                              </td>
+
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p>No destination data found for this user.</p>
+                )
+              ) : (
+                <p>Select a user to see destination data.</p>
+              )}
+            </div>
           </div>
         </div>
-
-        {/* Destination Table */}
-        {selectedUserForDestination ? (
-          userDestinationData && (
-            Array.isArray(userDestinationData)
-              ? userDestinationData.length > 0
-              : Object.keys(userDestinationData).length > 0
-          ) ? (
-            <div className="table-responsive">
-              <table className="table table-bordered">
-                <thead>
-                  <tr>
-                    <th>Serial No</th>
-                    <th>Name</th>
-                    <th>Method</th>
-                    <th>Destination</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Array.isArray(userDestinationData)
-                    ? userDestinationData.map((record, idx) => (
-                        <tr key={idx}>
-                          <td>{idx + 1}</td>
-                          <td>{record.name || "-"}</td>
-                          <td>{record.method || "-"}</td>
-                          <td>
-                            {typeof record.destination === "string"
-                              ? record.destination
-                              : record.destination && typeof record.destination === "object"
-                              ? (
-                                <div className="d-flex flex-column gap-1">
-                                  {record.destination.bankName && <span>Bank: {record.destination.bankName}</span>}
-                                  {record.destination.accountNo && <span>Acc: {record.destination.accountNo}</span>}
-                                  {record.destination.ifsc && <span>IFSC: {record.destination.ifsc}</span>}
-                                  {record.destination.upiId && <span>UPI: {record.destination.upiId}</span>}
-                                  {record.destination.phone && <span>Phone: {record.destination.phone}</span>}
-                                </div>
-                              )
-                              : "-"}
-                          </td>
-                        </tr>
-                      ))
-                    : Object.entries(userDestinationData).map(([key, record], idx) => (
-                        <tr key={idx}>
-                          <td>{idx + 1}</td>
-                          <td>{record.name || "-"}</td>
-                          <td>{record.method || "-"}</td>
-                          <td>
-                            {typeof record.destination === "string"
-                              ? record.destination
-                              : record.destination && typeof record.destination === "object"
-                              ? (
-                                <div className="d-flex flex-column gap-1">
-                                  {record.destination.bankName && <span>Bank: {record.destination.bankName}</span>}
-                                  {record.destination.accountNo && <span>Acc: {record.destination.accountNo}</span>}
-                                  {record.destination.ifsc && <span>IFSC: {record.destination.ifsc}</span>}
-                                  {record.destination.upiId && <span>UPI: {record.destination.upiId}</span>}
-                                  {record.destination.phone && <span>Phone: {record.destination.phone}</span>}
-                                </div>
-                              )
-                              : "-"}
-                          </td>
-                        </tr>
-                      ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <p>No destination data found for this user.</p>
-          )
-        ) : (
-          <p>Select a user to see destination data.</p>
-        )}
       </div>
-    </div>
-  </div>
-</div>
 
 
 
