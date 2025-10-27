@@ -6,6 +6,7 @@ const links = [
   { name: 'Manage Address', path: 'manage-address' },
   { name: 'Bank Payment Details', path: 'bank-payment-details' },
   { name: 'Payment Method', path: 'payment-method' },
+  { name: 'Wallet', path: 'buyer-wallet' },
   { name: 'Password Manager', path: 'password-manager' },
   { name: 'Account Verification', path: 'account-verification' },
   { name: 'Social Media Promotion', path: 'social-media-promotion' },

@@ -1011,7 +1011,7 @@ const AppRoutes = () => {
         <Route path="profile" element={<UserProfile />} />
         
         {/* Wallet */}
-        <Route path="wallet" element={<BuyerWallet />} />
+        {/* <Route path="wallet" element={<BuyerWallet />} /> */}
       </Route>
 
       {/*-------------------------------------------------- Seller Routes -----------------------------------------------*/}
@@ -1082,6 +1082,7 @@ const AppRoutes = () => {
             <Route path="manage-address" element={<ManageAddress />} />
             <Route path="bank-payment-details" element={<BankPaymentDetails />} />
             <Route path="payment-method" element={<PaymentMethod />} />
+             <Route path="buyer-wallet" element={<BuyerWallet />} />
             <Route path="password-manager" element={<PasswordManager />} />
             <Route path="account-verification" element={<AccountVerification />} />
             <Route path="social-media-promotion" element={<SocialMediaPromotion />} />

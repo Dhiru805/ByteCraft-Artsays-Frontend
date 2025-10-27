@@ -202,7 +202,17 @@ const HomeChallenges = () => {
 
         const detailedRes = await getAPI("/api/getchallengedata");
         if (detailedRes?.hasError === false) {
-          setDetailedChallenges(detailedRes?.data?.challenges || []);
+          const allChallenges = detailedRes?.data?.challenges || [];
+          // Filter for live challenges only
+          const liveChallenges = allChallenges.filter(challenge => challenge.status === "live");
+          // Sort by createdAt descending to get the latest challenge first
+          const sortedChallenges = liveChallenges.sort((a, b) => {
+            const dateA = new Date(a.createdAt);
+            const dateB = new Date(b.createdAt);
+            return dateB - dateA;
+          });
+          // Use only the latest live challenge for homepage
+          setDetailedChallenges(sortedChallenges.length > 0 ? [sortedChallenges[0]] : []);
         }
         
         else {

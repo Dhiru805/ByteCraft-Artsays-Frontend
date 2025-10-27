@@ -922,7 +922,7 @@ const SellerWallet = () => {
               </table>
             </div>
             {/* Pagination Controls */}
-            <div className="d-flex justify-content-center align-items-center mt-3 px-3 py-3">
+            <div className="d-flex justify-content-end align-items-center mt-3 px-3 py-3">
               <ul className="pagination mb-0">
                 <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
                   <button className="page-link" onClick={() => setPage(prev => Math.max(prev - 1, 1))}>&laquo;</button>
@@ -946,4 +946,6 @@ const SellerWallet = () => {
 };
 
 export default SellerWallet;
+
+
 
