@@ -643,7 +643,9 @@ const HowToBuyCreate = () => {
                         required
                       />
                       {(imagePreviews[idx] || existingCardImages[idx]) && (
-                        <img src={imagePreviews[idx] || existingCardImages[idx]} alt="Card Preview" style={{ maxWidth: "200px", maxHeight: "200px", marginTop: "5px" }} />
+                        <img src={imagePreviews[idx] || existingCardImages[idx]}
+                         alt="Card Preview"
+                         style={{ maxWidth: "200px", maxHeight: "200px", marginTop: "5px" }} />
                       )}
                     </div>
 

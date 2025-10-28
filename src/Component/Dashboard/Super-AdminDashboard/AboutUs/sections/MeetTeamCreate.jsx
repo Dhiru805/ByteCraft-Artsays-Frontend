@@ -317,14 +317,25 @@ const MeetTeamCreate = () => {
           const section = sectionRes.data.data;
           setSectionId(section._id);
 
+          // const members = section.teamMembers?.length
+          //   ? section.teamMembers.map(m => ({
+          //       name: m.name,
+          //       role: m.role,
+          //       description: m.description,
+          //       image: null,
+          //       existingImage: m.imageUrl || m.image || null,
+          //     }))
+          //   : [{ name: "", role: "", description: "", image: null, existingImage: null }];
           const members = section.teamMembers?.length
             ? section.teamMembers.map(m => ({
-                name: m.name,
-                role: m.role,
-                description: m.description,
-                image: null,
-                existingImage: m.imageUrl || m.image || null,
-              }))
+              name: m.name,
+              role: m.role,
+              description: m.description,
+              image: null,
+              existingImage: m.image
+                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${m.image}`
+                : m.imageUrl || null,
+            }))
             : [{ name: "", role: "", description: "", image: null, existingImage: null }];
 
           setFormData({
