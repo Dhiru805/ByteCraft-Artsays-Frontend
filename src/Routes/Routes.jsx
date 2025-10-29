@@ -351,6 +351,8 @@ import BiddedProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/B
 import BiddedProductTransaction from "../Component/Dashboard/Super-AdminDashboard/Bidding/Transaction/BiddedproductTransaction";
 import BiddingTable from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddingpass/BiddingTable";
 import BiddingTablePass from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddingpass/Biddingpass";
+import PassOrderTable from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddingpass/PassOrderTable";
+import CreatePassType from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddingpass/CreatePassType";
 
 //-----------------------------Settings--------------------------//
 import EmailSettings from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailSetting/EmailSetting";
@@ -683,7 +685,9 @@ const AppRoutes = () => {
         <Route path="bidding/bidded-product" element={<BiddedProduct />} />
         <Route path="bidding/transaction" element={<BiddedProductTransaction />} />
         <Route path="bidding/pass-table" element={<BiddingTable />} />
+        <Route path="bidding/pass-table/create" element={<CreatePassType />} />
         <Route path="bidding/pass-table/bidding-pass" element={<BiddingTablePass />} />
+        <Route path="bidding/pass-order-table" element={<PassOrderTable />} />
 
         {/* Packaging Material */}
         <Route path="packaging-material/material" element={<Material />} />
