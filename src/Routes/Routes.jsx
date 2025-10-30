@@ -368,6 +368,7 @@ import ArtistBidingAllProducts from "../Component/Dashboard/ArtistDashbooard/Bid
 import ArtistBiddedProducts from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddedproduct/Biddedproduct";
 import ArtistBiddingTable from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddingpass/BiddingTable";
 import ArtistBiddingTablePass from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddingpass/Biddingpass";
+import ArtistBiddingTablePassUpgrade from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddingpass/UpgradePass";
 import ArtistCertification from "../Component/Dashboard/ArtistDashbooard/Certification/Certification";
 import CreateArtitstCertifications from "../Component/Dashboard/ArtistDashbooard/Certification/create"
 import ArtistExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/exhibition";
@@ -405,6 +406,7 @@ import SellerBidingAllProducts from "../Component/Dashboard/SellerDashboard/Bidd
 import SellerBiddedProducts from "../Component/Dashboard/SellerDashboard/Bidding/Biddedproduct/Biddedproduct";
 import SellerBidTable from "../Component/Dashboard/SellerDashboard/Bidding/Biddingpass/BiddingTable";
 import SellerBidPassTable from "../Component/Dashboard/SellerDashboard/Bidding/Biddingpass/Biddingpass";
+import SellerBidPassUpgrade from "../Component/Dashboard/SellerDashboard/Bidding/Biddingpass/UpgradePass";
 import SellerCertification from "../Component/Dashboard/SellerDashboard/Certification/Certification";
 import CreateSellerCertifications from "../Component/Dashboard/SellerDashboard/Certification/create"
 
@@ -976,6 +978,7 @@ const AppRoutes = () => {
         <Route path="bidded-products-table" element={<ArtistBiddedProducts />} />
         <Route path="bidding-pass-table" element={<ArtistBiddingTable />} />
         <Route path="bidding-pass-table/bidding-pass" element={<ArtistBiddingTablePass />} />
+        <Route path="bidding-pass-table/upgrade" element={<ArtistBiddingTablePassUpgrade />} />
 
         {/* Certification Routes */}
         <Route path="certification" element={<ArtistCertification />} />
@@ -1045,6 +1048,7 @@ const AppRoutes = () => {
         <Route path="bidded-products-table" element={<SellerBiddedProducts />} />
         <Route path="bidding-pass-table" element={<SellerBidTable />} />
         <Route path="bidding-pass-table/bidding-pass" element={<SellerBidPassTable />} />
+        <Route path="bidding-pass-table/upgrade" element={<SellerBidPassUpgrade />} />
         {/* Certification Routes */}
         <Route path="certification" element={<SellerCertification />} />
         <Route path="certification/create-certification" element={<  CreateSellerCertifications />} />

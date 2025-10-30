@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import getAPI from '../../../../../api/getAPI';
 import postAPI from '../../../../../api/postAPI';
+import putAPI from '../../../../../api/putAPI';
 import { toast } from 'react-toastify';
 
 const BiddingPass = () => {
@@ -10,7 +11,18 @@ const BiddingPass = () => {
   const [hasActive, setHasActive] = useState(false);
   const [selectedPass, setSelectedPass] = useState(null);
   const userId = localStorage.getItem('userId');
-  
+  const [upgradeMode, setUpgradeMode] = useState(false);
+  const [currentPassId, setCurrentPassId] = useState(null);
+  const [currentPassPrice, setCurrentPassPrice] = useState(null);
+  const [activeOrderId, setActiveOrderId] = useState(null);
+
+  const parsePrice = (value) => {
+    if (value == null) return null;
+    if (typeof value === 'number') return value;
+    const num = String(value).replace(/[^0-9.]/g, '');
+    const parsed = parseFloat(num);
+    return isNaN(parsed) ? null : parsed;
+  };
 
   useEffect(() => {
     const load = async () => {
@@ -19,9 +31,17 @@ const BiddingPass = () => {
           getAPI('/api/bidding/passes', {}, true),
           getAPI(`/api/bidding/pass-orders/my?userId=${userId}`, {}, true)
         ]);
-        setPasses(Array.isArray(p?.data?.data) ? p.data.data : []);
-        const active = Array.isArray(o?.data?.data) && o.data.data.some(x => x.active);
-        setHasActive(!!active);
+        const list = Array.isArray(p?.data?.data) ? p.data.data : [];
+        setPasses(list);
+        const orders = Array.isArray(o?.data?.data) ? o.data.data : [];
+        const activeOrder = orders.find(x => x && x.active);
+        const activePassId = activeOrder && (activeOrder.passId || activeOrder.pass || activeOrder.pass_id || activeOrder.passID);
+        const activePass = list.find(pp => pp && (pp._id === activePassId || pp.id === activePassId));
+        const price = activePass ? parsePrice(activePass.pricing) : null;
+        setCurrentPassId(activePass ? (activePass._id || activePass.id) : null);
+        setCurrentPassPrice(price);
+        setActiveOrderId(activeOrder ? (activeOrder._id || activeOrder.id) : null);
+        setHasActive(!!activeOrder);
       } catch {
         setPasses([]);
       }
@@ -29,9 +49,18 @@ const BiddingPass = () => {
     load();
   }, []);
 
+  // const purchase = async () => {
+  //   if (!selectedPass) { toast.info('Select a pass'); return; }
+  //   if (hasActive) { toast.info('You already have an active pass.'); return; }
+  //   try {
+  //     const res = await postAPI('/api/bidding/pass-orders', { passId: selectedPass, userId }, {}, true);
+  //     if (!res?.hasError) { toast.success('Pass purchased'); navigate('/seller/bidding-pass-table'); } else { toast.error(res?.message || 'Failed'); }
+  //   } catch { toast.error('Failed'); }
+  // };
+
   const purchase = async () => {
     if (!selectedPass) { toast.info('Select a pass'); return; }
-    if (hasActive) { toast.info('You already have an active pass.'); return; }
+    if (hasActive && !upgradeMode) { toast.info('You already have an active pass.'); return; }
     try {
       const res = await postAPI('/api/bidding/pass-orders', { passId: selectedPass, userId }, {}, true);
       if (!res?.hasError) { toast.success('Pass purchased'); navigate('/seller/bidding-pass-table'); } else { toast.error(res?.message || 'Failed'); }
@@ -60,7 +89,15 @@ const BiddingPass = () => {
       </div>
 
       <div className="row clearfix">
-        {passes.map((pass, index) => {
+        {(() => {
+          const visiblePasses = (upgradeMode && currentPassPrice != null)
+            ? passes.filter(pp => {
+                const price = parsePrice(pp?.pricing);
+                const id = pp?._id || pp?.id;
+                return (price != null && price > currentPassPrice) && (id !== currentPassId);
+              })
+            : passes;
+          return visiblePasses.map((pass, index) => {
           const isActive = selectedPass === pass._id;
           return (
             <div key={pass._id || index} className="col-lg-4 col-md-6 col-sm-12 mb-4">
@@ -93,7 +130,7 @@ const BiddingPass = () => {
               </div>
             </div>
           );
-        })}
+        }); })()}
       </div>
 
       

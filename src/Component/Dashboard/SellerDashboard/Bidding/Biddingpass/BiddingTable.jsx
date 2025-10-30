@@ -22,6 +22,7 @@ const BiddingTable = () => {
 
     useEffect(() => { fetchOrders(); }, []);
 
+    const hasActive = orders.some(o => o && o.active);
     const filtered = orders.filter(o => (o.pass?.name || '').toLowerCase().includes(searchTerm.toLowerCase()));
     const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
 
@@ -56,13 +57,39 @@ const BiddingTable = () => {
                     <div className="col-lg-6 col-md-6 col-sm-12">
                         <div className="d-flex flex-row-reverse">
                             <div className="page_action">
-                                <button
+                                {/* <button
                                     type="button"
                                     className="btn btn-secondary mr-2"
                                     onClick={() => navigate(`/seller/bidding-pass-table/bidding-pass`)}
+                                    disabled={hasActive ? true : false}
                                 > Order
                                     <i className="fa fa-plus"></i>
                                 </button>
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary mr-2"
+                                    onClick={() => navigate(`/seller/bidding-pass-table/upgrade`)}
+                                    disabled={hasActive ? false : true}
+                                > Upgrade
+                                    <i className="fa fa-arrow-up"></i>
+                                </button> */}
+                                {hasActive ? (
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary mr-2"
+                                        onClick={() => navigate(`/seller/bidding-pass-table/upgrade`)}
+                                    > Upgrade
+                                        <i className="fa fa-arrow-up"></i>
+                                    </button>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary mr-2"
+                                        onClick={() => navigate(`/seller/bidding-pass-table/bidding-pass`)}
+                                    > Order
+                                        <i className="fa fa-plus"></i>
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>

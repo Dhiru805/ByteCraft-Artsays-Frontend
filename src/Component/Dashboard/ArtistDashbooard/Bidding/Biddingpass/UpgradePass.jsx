@@ -5,23 +5,40 @@ import postAPI from '../../../../../api/postAPI';
 import putAPI from '../../../../../api/putAPI';
 import { toast } from 'react-toastify';
 
-const BiddingPass = () => {
+const UpgradePass = () => {
   const navigate = useNavigate();
   const [passes, setPasses] = useState([]);
-  const [hasActive, setHasActive] = useState(false);
   const [selectedPass, setSelectedPass] = useState(null);
-  const userId = localStorage.getItem('userId');
-  const [upgradeMode, setUpgradeMode] = useState(false);
   const [currentPassId, setCurrentPassId] = useState(null);
   const [currentPassPrice, setCurrentPassPrice] = useState(null);
   const [activeOrderId, setActiveOrderId] = useState(null);
+  const userId = localStorage.getItem('userId');
 
   const parsePrice = (value) => {
     if (value == null) return null;
     if (typeof value === 'number') return value;
-    const num = String(value).replace(/[^0-9.]/g, '');
-    const parsed = parseFloat(num);
+    const str = String(value);
+    const match = str.match(/[0-9]+(?:\.[0-9]+)?/);
+    if (!match) return null;
+    const parsed = parseFloat(match[0]);
     return isNaN(parsed) ? null : parsed;
+  };
+
+  const getPassPrice = (passObj) => {
+    if (!passObj) return null;
+    return parsePrice(passObj.pricing ?? passObj.price ?? passObj.amount);
+  };
+
+  const deriveCurrentPrice = (list, activeOrder, activePass) => {
+    let price = activePass ? getPassPrice(activePass) : null;
+    if (price == null && activeOrder && activeOrder.pass && typeof activeOrder.pass === 'object') {
+      price = getPassPrice(activeOrder.pass);
+    }
+    if (price == null && activeOrder && activeOrder.pass && typeof activeOrder.pass === 'object') {
+      const byName = list.find(pp => (pp?.name || '').toLowerCase() === (activeOrder.pass.name || '').toLowerCase());
+      if (byName) price = getPassPrice(byName);
+    }
+    return price;
   };
 
   useEffect(() => {
@@ -36,12 +53,11 @@ const BiddingPass = () => {
         const orders = Array.isArray(o?.data?.data) ? o.data.data : [];
         const activeOrder = orders.find(x => x && x.active);
         const activePassId = activeOrder && (activeOrder.passId || activeOrder.pass || activeOrder.pass_id || activeOrder.passID);
-        const activePass = list.find(pp => pp && (pp._id === activePassId || pp.id === activePassId));
-        const price = activePass ? parsePrice(activePass.pricing) : null;
+        const activePass = list.find(pp => pp && (pp._id === activePassId || pp.id === activePassId)) || (activeOrder && typeof activeOrder.pass === 'object' ? activeOrder.pass : null);
+        const price = deriveCurrentPrice(list, activeOrder, activePass);
         setCurrentPassId(activePass ? (activePass._id || activePass.id) : null);
         setCurrentPassPrice(price);
         setActiveOrderId(activeOrder ? (activeOrder._id || activeOrder.id) : null);
-        setHasActive(!!activeOrder);
       } catch {
         setPasses([]);
       }
@@ -49,55 +65,43 @@ const BiddingPass = () => {
     load();
   }, []);
 
-  // const purchase = async () => {
-  //   if (!selectedPass) { toast.info('Select a pass'); return; }
-  //   if (hasActive) { toast.info('You already have an active pass.'); return; }
-  //   try {
-  //     const res = await postAPI('/api/bidding/pass-orders', { passId: selectedPass, userId }, {}, true);
-  //     if (!res?.hasError) { toast.success('Pass purchased'); navigate('/artist/bidding-pass-table'); } else { toast.error(res?.message || 'Failed'); }
-  //   } catch { toast.error('Failed'); }
-  // };
-
-  const purchase = async () => {
+  const confirmUpgrade = async () => {
     if (!selectedPass) { toast.info('Select a pass'); return; }
-    if (hasActive && !upgradeMode) { toast.info('You already have an active pass.'); return; }
+    if (!activeOrderId) { toast.error('No active pass to upgrade'); return; }
     try {
+      const deactivate = await putAPI(`/api/bidding/pass-orders/${activeOrderId}/status`, { active: false }, {}, true);
+      if (deactivate?.hasError) { toast.error(deactivate?.message || 'Failed to deactivate current pass'); return; }
       const res = await postAPI('/api/bidding/pass-orders', { passId: selectedPass, userId }, {}, true);
-      if (!res?.hasError) { toast.success('Pass purchased'); navigate('/artist/bidding-pass-table'); } else { toast.error(res?.message || 'Failed'); }
+      if (!res?.hasError) { toast.success('Pass upgraded'); navigate('/artist/bidding-pass-table'); } else { toast.error(res?.message || 'Failed'); }
     } catch { toast.error('Failed'); }
   };
 
-  
+  const visiblePasses = (() => {
+    const list = Array.isArray(passes) ? passes : [];
+    return list.filter(pp => {
+      const price = getPassPrice(pp);
+      const id = pp?._id || pp?.id;
+      const byPrice = (currentPassPrice != null && price != null && price > currentPassPrice);
+      return (id !== currentPassId) && byPrice;
+    });
+  })();
 
   return (
     <div className="container-fluid mt-3">
       <div className="block-header">
         <div className="row">
           <div className="col-lg-6 col-md-6 col-sm-12">
-            <h2>Choose Bidding Pass</h2>
-            <ul className="breadcrumb">
-              <li className="breadcrumb-item">
-                <span onClick={() => navigate('/artist/dashboard')} style={{ cursor: 'pointer' }}>
-                  <i className="fa fa-dashboard"></i>
-                </span>
-              </li>
-              <li className="breadcrumb-item">Bidding Pass</li>
-            </ul>
+            <h2>Upgrade Bidding Pass</h2>
           </div>
-          <div className="col-lg-6 col-md-6 col-sm-12"></div>
         </div>
       </div>
 
       <div className="row clearfix">
-        {(() => {
-          const visiblePasses = (upgradeMode && currentPassPrice != null)
-            ? passes.filter(pp => {
-                const price = parsePrice(pp?.pricing);
-                const id = pp?._id || pp?.id;
-                return (price != null && price > currentPassPrice) && (id !== currentPassId);
-              })
-            : passes;
-          return visiblePasses.map((pass, index) => {
+        {visiblePasses.length === 0 ? (
+          <div className="col-12">
+            <div className="alert alert-info" role="alert">You have the latest plan.</div>
+          </div>
+        ) : visiblePasses.map((pass, index) => {
           const isActive = selectedPass === pass._id;
           return (
             <div key={pass._id || index} className="col-lg-4 col-md-6 col-sm-12 mb-4">
@@ -106,7 +110,6 @@ const BiddingPass = () => {
                   <input type="radio" name="passPlan" checked={isActive} onChange={() => setSelectedPass(pass._id)} className="form-check-input" style={{ width: '20px', height: '20px', marginLeft: '1px', cursor: 'pointer' }} />
                   <label className="form-check-label fw-bold mb-0" style={{ fontSize: '2rem', marginLeft: '50px', cursor: 'pointer' }}>{pass.name}</label>
                 </div>
-
                 <ul className={`pricing body ${isActive ? 'active' : ''}`}>
                   <li><strong>Validity:</strong> {pass.validityPeriod || '-'}</li>
                   <li><strong>Product Upload Limit:</strong> {pass.productUploadLimit || '-'}</li>
@@ -130,18 +133,18 @@ const BiddingPass = () => {
               </div>
             </div>
           );
-        }); })()}
+        })}
       </div>
 
-      
-
       <div className="pt-2 pb-4">
-        <button type="button" className="btn btn-secondary" disabled={hasActive || !selectedPass} onClick={purchase}>
-          <i className="bi-gem pr-1"></i> {hasActive ? 'Active pass in use' : 'Purchase Pass'}
+        <button type="button" className="btn btn-secondary" disabled={!selectedPass} onClick={confirmUpgrade}>
+          <i className="bi-gem pr-1"></i> Confirm Upgrade
         </button>
       </div>
     </div>
   );
 };
 
-export default BiddingPass;
+export default UpgradePass;
+
+
