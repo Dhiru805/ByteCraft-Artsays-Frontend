@@ -189,8 +189,9 @@ const PassOrderTable = () => {
                               className="btn btn-sm btn-danger"
                               onClick={() => deleteOrder(o._id)}
                             >
-                              Delete
+                              <i className="bi bi-trash"></i>
                             </button>
+                            
                           </td>
                         </tr>
                       ))

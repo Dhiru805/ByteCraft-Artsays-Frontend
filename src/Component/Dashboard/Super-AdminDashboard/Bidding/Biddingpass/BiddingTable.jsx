@@ -262,6 +262,8 @@ const BiddingTable = () => {
                               {pass.active ? "Active" : "Inactive"}
                             </span>
                           </td>
+                        
+
                           <td>
                             <button
                               className={`btn btn-sm ${
@@ -273,23 +275,40 @@ const BiddingTable = () => {
                             >
                               {pass.active ? "Deactivate" : "Activate"}
                             </button>
-                            <button
-                              className="btn btn-sm btn-danger mr-2"
-                              onClick={() => deletePass(pass._id)}
+                            {/* <button
+                              className={`btn btn-sm ${
+                                pass.active ? "btn-warning" : "btn-success"
+                              } mr-2`}
+                              onClick={() =>
+                                togglePassActive(pass._id, pass.active)
+                              }
                             >
-                              Delete
-                            </button>
+                              {pass.active ? (
+                                <i className="bi bi-slash-circle-fill text-danger"></i> 
+                              ) : (
+                                <i className="bi bi-check-circle-fill"></i> 
+                              )}
+                            </button> */}
+
                             <button
-                              className="btn btn-sm btn-primary"
+                              className="btn btn-sm btn-primary mr-2"
                               onClick={() =>
                                 navigate(
                                   `/super-admin/bidding/pass-table/edit/${pass._id}`
                                 )
                               }
                             >
-                              Edit
+                              <i className="bi bi-pencil"></i>
+                            </button>
+
+                            <button
+                              className="btn btn-sm btn-danger mr-2"
+                              onClick={() => deletePass(pass._id)}
+                            >
+                              <i className="bi bi-trash"></i>
                             </button>
                           </td>
+                         
                         </tr>
                       ))
                     )}
