@@ -690,6 +690,7 @@ const AppRoutes = () => {
         <Route path="bidding/pass-table/create" element={<CreatePassType />} />
         <Route path="bidding/pass-table/bidding-pass" element={<BiddingTablePass />} />
         <Route path="bidding/pass-order-table" element={<PassOrderTable />} />
+        <Route path="bidding/pass-table/edit/:id" element={<CreatePassType />} />
 
         {/* Packaging Material */}
         <Route path="packaging-material/material" element={<Material />} />
