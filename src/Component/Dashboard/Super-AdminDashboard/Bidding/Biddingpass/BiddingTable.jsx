@@ -245,12 +245,12 @@ const BiddingTable = () => {
                         <tr key={pass._id || idx}>
                           <td>{(currentPage - 1) * itemsPerPage + idx + 1}</td>
                           <td>{pass.name}</td>
-                          <td>{pass.validityPeriod}</td>
+                          <td>{pass.validityPeriod} days</td>
                           <td>{pass.productUploadLimit}</td>
                           <td>{pass.basePriceRange}</td>
                           <td>{pass.bidVisibility}</td>
                           <td>{pass.supportPriority}</td>
-                          <td>{pass.pricing}</td>
+                          <td>₹{pass.pricing}</td>
                           <td>
                             <span
                               className={`badge ${
@@ -262,7 +262,6 @@ const BiddingTable = () => {
                               {pass.active ? "Active" : "Inactive"}
                             </span>
                           </td>
-                        
 
                           <td>
                             <button
@@ -308,7 +307,6 @@ const BiddingTable = () => {
                               <i className="bi bi-trash"></i>
                             </button>
                           </td>
-                         
                         </tr>
                       ))
                     )}
