@@ -742,7 +742,7 @@ const BrowseCategories = () => {
 
       <hr className="my-3 border-dark" />
 
-      <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+      <p className="mt-3 text-xs md:text-lg font-medium text-black leading-relaxed px-3">
         {data.description}
       </p>
 

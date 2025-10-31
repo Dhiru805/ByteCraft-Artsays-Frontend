@@ -112,7 +112,7 @@ const Homepage = () => {
         <meta name="twitter:description" content={seoData.metaDescription} />
         <meta name="twitter:image" content={seoData.metaImage} />
       </Helmet>
-        <NavBar />
+        {/* <NavBar /> */}
 
       <Hero />
       <BrowseCategories />
