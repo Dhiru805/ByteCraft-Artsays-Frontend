@@ -155,13 +155,13 @@
 //           <div className="card">
 //             <div className="body">
 //               <form onSubmit={handleSubmit} encType="multipart/form-data">
-           
+
 //                 <div className="form-group">
 //                   <label>Heading *</label>
 //                   <input type="text" name="heading" value={formData.heading} onChange={handleChange} className="form-control" required />
 //                 </div>
 
-              
+
 //                 <div className="form-group">
 //                   <label>Description *</label>
 //                   <textarea name="description" value={formData.description} onChange={handleChange} className="form-control" rows={4} required />
@@ -175,7 +175,7 @@
 //                   </select>
 //                 </div> */}
 
-                
+
 //                 {formData.cards.map((c, idx) => (
 //                   <div key={idx} className="border mb-3 p-2 rounded shadow">
 //                     <div className="form-group">
@@ -705,16 +705,27 @@ const OurValuesCreate = () => {
           const s = sectionRes.data.data;
           setSectionId(s._id);
 
+          // const cards = s.cards?.length
+          //   ? s.cards.map(c => ({
+          //       cardTitle: c.cardTitle,
+          //       cardImage: null,
+          //       //existingCardImage: c.cardImageUrl || c.cardImage || null,
+          //       existingCardImage: c.cardImageUrl ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${c.cardImageUrl}` : c.cardImage || null
+
+          //     }))
+          //   : [{ cardTitle: "", cardImage: null, existingCardImage: null }];
           const cards = s.cards?.length
             ? s.cards.map(c => ({
-                cardTitle: c.cardTitle,
-                cardImage: null,
-                //existingCardImage: c.cardImageUrl || c.cardImage || null,
-                existingCardImage: c.cardImageUrl ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${c.cardImageUrl}` : c.cardImage || null
-
-              }))
+              cardTitle: c.cardTitle,
+              cardImage: null,
+              existingCardImage:
+                c.cardImageUrl
+                  ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${c.cardImageUrl}`
+                  : c.cardImage
+                    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${c.cardImage}`
+                    : null,
+            }))
             : [{ cardTitle: "", cardImage: null, existingCardImage: null }];
-
           setFormData({
             heading: s.heading || "",
             description: s.description || "",
@@ -755,7 +766,7 @@ const OurValuesCreate = () => {
         if (!validateImageFile(file, "Card Image")) return;
 
         updatedCards[index][field] = file;
-        updatedCards[index].existingCardImage = null; 
+        updatedCards[index].existingCardImage = null;
         updatedPreviews[index] = URL.createObjectURL(file);
       } else {
         updatedCards[index][field] = value;
@@ -821,11 +832,11 @@ const OurValuesCreate = () => {
 
       const res = sectionId
         ? await axiosInstance.post(`/api/about-us-sections/our-values/update/${sectionId}`, submissionData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          })
+          headers: { "Content-Type": "multipart/form-data" },
+        })
         : await axiosInstance.post("/api/about-us-sections/our-values/create", submissionData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          });
+          headers: { "Content-Type": "multipart/form-data" },
+        });
 
       if (res.data.success) {
         toast.success(res.data.message || "Our Values section saved successfully!");

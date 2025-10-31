@@ -85,7 +85,7 @@ const BiddingPass = () => {
           </div>
         </div>
       </div>
-      {/* Select User Type */}
+     
 <div className="form-group mb-3">
   <label>Select User Type</label>
   <select
@@ -134,7 +134,6 @@ const BiddingPass = () => {
                 style={{ cursor: 'pointer' }}
                 onClick={() => setSelectedPass(index)}
               >
-                {/* Radio button top-left inside card */}
                 <div className="d-flex justify-content-between align-items-center px-4 pt-4 pb-2">
                   <input
                     type="radio"

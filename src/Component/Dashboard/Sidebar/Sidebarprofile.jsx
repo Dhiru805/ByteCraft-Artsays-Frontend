@@ -53,12 +53,12 @@ const Sidebarprofile = ({ user, userId, isOpen, handleToggleSidebar, Handletoggl
     state: { _id: userId }
   }] : []),
 
-    ...(userType?.toLowerCase() === "super-admin" ? [{
-    label: "Wallet Management",
-    icon: "bi-wallet-fill",
-    path: `/${userType.toLowerCase()}/wallet-management`,
-    state: { _id: userId }
-  }] : []),
+  //   ...(userType?.toLowerCase() === "super-admin" ? [{
+  //   label: "Wallet Management",
+  //   icon: "bi-wallet-fill",
+  //   path: `/${userType.toLowerCase()}/wallet-management`,
+  //   state: { _id: userId }
+  // }] : []),
    
     {
       label: "Logout",

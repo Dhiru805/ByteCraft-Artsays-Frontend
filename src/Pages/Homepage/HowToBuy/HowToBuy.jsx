@@ -221,6 +221,7 @@ const HowToBuy = () => {
       try {
         const pageRes = await getAPI("/api/homepage/published");
         const homepage = pageRes.data.data;
+        
         if (!homepage?._id) throw new Error("No published homepage found");
 
         const sectionRes = await getAPI(

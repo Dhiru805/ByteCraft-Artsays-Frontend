@@ -399,7 +399,7 @@ const handleToggle = () => {
                           <a className="dropdown-item-h" onClick={() => navigate("/my-account/my-orders")}>
                             <i className="fas fa-box me-2" /> Orders
                           </a>
-                          <a className="dropdown-item-h" href="/">
+                          <a className="dropdown-item-h" onClick={() => navigate("/my-account/buyer-wallet")}>
                             <i className="fas fa-wallet me-2" /> Wallet
                           </a>
                           <a className="dropdown-item-h" href="/">

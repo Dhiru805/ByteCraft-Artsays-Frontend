@@ -351,6 +351,8 @@ import BiddedProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/B
 import BiddedProductTransaction from "../Component/Dashboard/Super-AdminDashboard/Bidding/Transaction/BiddedproductTransaction";
 import BiddingTable from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddingpass/BiddingTable";
 import BiddingTablePass from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddingpass/Biddingpass";
+import PassOrderTable from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddingpass/PassOrderTable";
+import CreatePassType from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddingpass/CreatePassType";
 
 //-----------------------------Settings--------------------------//
 import EmailSettings from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailSetting/EmailSetting";
@@ -366,6 +368,7 @@ import ArtistBidingAllProducts from "../Component/Dashboard/ArtistDashbooard/Bid
 import ArtistBiddedProducts from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddedproduct/Biddedproduct";
 import ArtistBiddingTable from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddingpass/BiddingTable";
 import ArtistBiddingTablePass from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddingpass/Biddingpass";
+import ArtistBiddingTablePassUpgrade from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddingpass/UpgradePass";
 import ArtistCertification from "../Component/Dashboard/ArtistDashbooard/Certification/Certification";
 import CreateArtitstCertifications from "../Component/Dashboard/ArtistDashbooard/Certification/create"
 import ArtistExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/exhibition";
@@ -403,6 +406,7 @@ import SellerBidingAllProducts from "../Component/Dashboard/SellerDashboard/Bidd
 import SellerBiddedProducts from "../Component/Dashboard/SellerDashboard/Bidding/Biddedproduct/Biddedproduct";
 import SellerBidTable from "../Component/Dashboard/SellerDashboard/Bidding/Biddingpass/BiddingTable";
 import SellerBidPassTable from "../Component/Dashboard/SellerDashboard/Bidding/Biddingpass/Biddingpass";
+import SellerBidPassUpgrade from "../Component/Dashboard/SellerDashboard/Bidding/Biddingpass/UpgradePass";
 import SellerCertification from "../Component/Dashboard/SellerDashboard/Certification/Certification";
 import CreateSellerCertifications from "../Component/Dashboard/SellerDashboard/Certification/create"
 
@@ -687,7 +691,10 @@ const AppRoutes = () => {
         <Route path="bidding/bidded-product" element={<BiddedProduct />} />
         <Route path="bidding/transaction" element={<BiddedProductTransaction />} />
         <Route path="bidding/pass-table" element={<BiddingTable />} />
+        <Route path="bidding/pass-table/create" element={<CreatePassType />} />
         <Route path="bidding/pass-table/bidding-pass" element={<BiddingTablePass />} />
+        <Route path="bidding/pass-order-table" element={<PassOrderTable />} />
+        <Route path="bidding/pass-table/edit/:id" element={<CreatePassType />} />
 
         {/* Packaging Material */}
         <Route path="packaging-material/material" element={<Material />} />
@@ -976,6 +983,7 @@ const AppRoutes = () => {
         <Route path="bidded-products-table" element={<ArtistBiddedProducts />} />
         <Route path="bidding-pass-table" element={<ArtistBiddingTable />} />
         <Route path="bidding-pass-table/bidding-pass" element={<ArtistBiddingTablePass />} />
+        <Route path="bidding-pass-table/upgrade" element={<ArtistBiddingTablePassUpgrade />} />
 
         {/* Certification Routes */}
         <Route path="certification" element={<ArtistCertification />} />
@@ -1015,7 +1023,7 @@ const AppRoutes = () => {
         <Route path="profile" element={<UserProfile />} />
         
         {/* Wallet */}
-        <Route path="wallet" element={<BuyerWallet />} />
+        {/* <Route path="wallet" element={<BuyerWallet />} /> */}
       </Route>
 
       {/*-------------------------------------------------- Seller Routes -----------------------------------------------*/}
@@ -1045,6 +1053,7 @@ const AppRoutes = () => {
         <Route path="bidded-products-table" element={<SellerBiddedProducts />} />
         <Route path="bidding-pass-table" element={<SellerBidTable />} />
         <Route path="bidding-pass-table/bidding-pass" element={<SellerBidPassTable />} />
+        <Route path="bidding-pass-table/upgrade" element={<SellerBidPassUpgrade />} />
         {/* Certification Routes */}
         <Route path="certification" element={<SellerCertification />} />
         <Route path="certification/create-certification" element={<  CreateSellerCertifications />} />
@@ -1086,6 +1095,7 @@ const AppRoutes = () => {
             <Route path="manage-address" element={<ManageAddress />} />
             <Route path="bank-payment-details" element={<BankPaymentDetails />} />
             <Route path="payment-method" element={<PaymentMethod />} />
+             <Route path="buyer-wallet" element={<BuyerWallet />} />
             <Route path="password-manager" element={<PasswordManager />} />
             <Route path="account-verification" element={<AccountVerification />} />
             <Route path="social-media-promotion" element={<SocialMediaPromotion />} />
