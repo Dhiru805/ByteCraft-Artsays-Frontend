@@ -1,0 +1,37 @@
+[
+    {
+        "id": 1,
+        "imageUrl": "images/img59.jpg",
+        "imageAlt": "image description"
+    },
+    {
+        "id": 2,
+        "imageUrl": "images/img60.jpg",
+        "imageAlt": "image description"
+    },
+    {
+        "id": 3,
+        "imageUrl": "images/img61.jpg",
+        "imageAlt": "image description"
+    },
+    {
+        "id": 4,
+        "imageUrl": "images/img62.jpg",
+        "imageAlt": "image description"
+    },
+    {
+        "id": 5,
+        "imageUrl": "images/img63.jpg",
+        "imageAlt": "image description"
+    },
+    {
+        "id": 6,
+        "imageUrl": "images/img64.jpg",
+        "imageAlt": "image description"
+    },
+    {
+        "id": 7,
+        "imageUrl": "images/img62.jpg",
+        "imageAlt": "image description"
+    }
+]
