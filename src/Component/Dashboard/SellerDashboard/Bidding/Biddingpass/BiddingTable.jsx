@@ -411,14 +411,16 @@ const BiddingTable = () => {
                     <tr>
                       <th>#</th>
                       <th>Pass</th>
+                      <th>Price</th>
                       <th>Purchased On</th>
+                      <th>Validity</th>
                       <th>Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {paginated.length === 0 ? (
                       <tr>
-                        <td colSpan="4" className="text-center">
+                        <td colSpan="6" className="text-center">
                           No data available
                         </td>
                       </tr>
@@ -428,13 +430,42 @@ const BiddingTable = () => {
                           <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                           <td>{order.pass?.name}</td>
                           <td>
+                            ₹
+                            {order.pass?.pricing ??
+                              order.pass?.price ??
+                              order.pass?.amount ??
+                              "-"}
+                          </td>
+                          <td>
                             {order.createdAt
-                              ? new Date(order.createdAt).toLocaleDateString("en-IN", {
+                              ? new Date(order.createdAt).toLocaleString("en-IN", {
                                   year: "numeric",
                                   month: "long",
                                   day: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
                                 })
                               : "-"}
+                          </td>
+                          <td>
+                            {(() => {
+                              const purchaseDate = new Date(order.createdAt);
+                              const validity =
+                                parseInt(
+                                  order.pass?.validityPeriod ??
+                                    order.pass?.validity ??
+                                    order.pass?.duration ??
+                                    30, // Default to 30days if not found
+                                  10
+                                ) || 30;
+
+                              const now = new Date();
+                              const diffDays = Math.floor(
+                                (now - purchaseDate) / (1000 * 60 * 60 * 24)
+                              );
+                              const remaining = Math.max(validity - diffDays, 0);
+                              return remaining > 0 ? `${remaining} days left` : "Expired";
+                            })()}
                           </td>
                           <td>
                             <span

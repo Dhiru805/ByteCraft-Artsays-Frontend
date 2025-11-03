@@ -200,7 +200,7 @@
 //                                 validity - diffDays,
 //                                 0
 //                               );
-//                               return `${remaining} days left`;
+//                               return remaining > 0 ? `${remaining} days left` : "Expired";
 //                             })()}
 //                           </td>
 
@@ -516,7 +516,7 @@ const PassOrderTable = () => {
                       <th>Role</th>
                       <th>Pass</th>
                       <th>Price</th>
-                      <th>Purchased On</th>
+                      <th className="text-center">Purchased On</th>
                       <th>Validity</th>
                       <th>Status</th>
                       <th>Action</th>
@@ -543,7 +543,7 @@ const PassOrderTable = () => {
                               o.pass?.amount ??
                               "-"}
                           </td>
-                          <td>
+                          <td className="text-center">
                             {o.createdAt
                               ? new Date(o.createdAt).toLocaleString()
                               : "-"}
@@ -556,18 +556,16 @@ const PassOrderTable = () => {
                                   o.pass?.validityPeriod ??
                                     o.pass?.validity ??
                                     o.pass?.duration ??
-                                    0,
+                                    30, // Default to 30days if not found
                                   10
-                                ) || 0;
-
-                              if (!validity) return "-";
+                                ) || 30;
 
                               const now = new Date();
                               const diffDays = Math.floor(
                                 (now - purchaseDate) / (1000 * 60 * 60 * 24)
                               );
                               const remaining = Math.max(validity - diffDays, 0);
-                              return `${remaining} days left`;
+                              return remaining > 0 ? `${remaining} days left` : "Expired";
                             })()}
                           </td>
                           <td>
