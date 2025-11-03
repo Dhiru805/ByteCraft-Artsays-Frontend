@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Routes,
   Route,
   Navigate,
   Outlet,
   useLocation,
-  useNavigate
+  useNavigate,
 } from "react-router-dom";
 import WebsiteLayout from "../Layouts/WebsiteLayout";
-import { useAuth } from '../AuthContext';
-import PreloaderAnimation from '../Pages/Animation/PreloaderAnimation';
+import { useAuth } from "../AuthContext";
+import PreloaderAnimation from "../Pages/Animation/PreloaderAnimation";
 
 //----------------------------------------Auth Pages------------------------------------------//
 import Login from "../Pages/Login/Login";
@@ -23,20 +23,20 @@ import BiddingPass from "../Pages/Art-Biding/BidingPage";
 // import Challenge from "../Pages/Challenges/Challenge";
 
 //----------------------------------------My Account-----------------------------------------//
-import MyAccountMainLayout from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/MyAccountMainLayout';
-import { AccountPage } from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyAccountPage';
-import { AccountForm } from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PersonaInformation';
-import ManageAddress from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/ManageAddress';
-import BankPaymentDetails from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/BankPaymentDetails';
-import PaymentMethod from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PaymentMethod';
-import PasswordManager from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PasswordManager';
-import AccountVerification from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/AccountVerification';
-import SocialMediaPromotion from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/SocialMediaPromotion';
-import CustomRequest from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/CustomRequest';
-import NotificationAndPreferences from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/NotificationAndPreferences';
-import AccountSecurityAndAgreements from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/AccountSecurityAndAgreements';
+import MyAccountMainLayout from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/MyAccountMainLayout";
+import { AccountPage } from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyAccountPage";
+import { AccountForm } from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PersonaInformation";
+import ManageAddress from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/ManageAddress";
+import BankPaymentDetails from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/BankPaymentDetails";
+import PaymentMethod from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PaymentMethod";
+import PasswordManager from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/PasswordManager";
+import AccountVerification from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/AccountVerification";
+import SocialMediaPromotion from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/SocialMediaPromotion";
+import CustomRequest from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/CustomRequest";
+import NotificationAndPreferences from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/NotificationAndPreferences";
+import AccountSecurityAndAgreements from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/AccountSecurityAndAgreements";
 import MyOrders from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyOrders";
-import Logout from '../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/Logout';
+import Logout from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/Logout";
 import TrackOrder from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/TrackOrder";
 import WishListTable from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/WishListTable";
 import MyCartList from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/MyCartList";
@@ -75,8 +75,8 @@ import SuperAdminViewBlog from "../Component/Dashboard/Super-AdminDashboard/Blog
 import SuperAdminUpdateBlog from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/UpdateBlogList";
 import SuperAdminProductInfo from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Productinfo";
 import SuperAdminMarketing from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailMarketing/Marketing/MarketingEmail";
-import UserRole from '../Component/Dashboard/Super-AdminDashboard/Settings/UserRole/UserRole';
-import CreateRole from '../Component/Dashboard/Super-AdminDashboard/Settings/UserRole/CreateRole';
+import UserRole from "../Component/Dashboard/Super-AdminDashboard/Settings/UserRole/UserRole";
+import CreateRole from "../Component/Dashboard/Super-AdminDashboard/Settings/UserRole/CreateRole";
 import SuperAdminBiddingPass from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/BiddingPass";
 import SuperAdminArtistAdvertise from "../Component/Dashboard/Super-AdminDashboard/Advertise/Advertise";
 import SuperAdminArtistSponsor from "../Component/Dashboard/Super-AdminDashboard/Advertise/Sponser";
@@ -103,9 +103,9 @@ import AutoTargetingSetting from "../Component/Dashboard/Super-AdminDashboard/Se
 import GroupTargetingSetting from "../Component/Dashboard/Super-AdminDashboard/Settings/AutoTargetingGroup/GroupTargetingSetting";
 import KeywordTargetingSetting from "../Component/Dashboard/Super-AdminDashboard/Settings/KeywordTargeting/KeywordTargetingSetting";
 
-import PolicyTable from '../Component/Dashboard/Super-AdminDashboard/Policys/PolicyTable';
-import CreatePolicy from '../Component/Dashboard/Super-AdminDashboard/Policys/createPolicy';
-import UpdatePolicy from '../Component/Dashboard/Super-AdminDashboard/Policys/editPolicy';
+import PolicyTable from "../Component/Dashboard/Super-AdminDashboard/Policys/PolicyTable";
+import CreatePolicy from "../Component/Dashboard/Super-AdminDashboard/Policys/createPolicy";
+import UpdatePolicy from "../Component/Dashboard/Super-AdminDashboard/Policys/editPolicy";
 //import ViewPolicy from '../Component/Dashboard/Super-AdminDashboard/Policys/PolicyView';
 
 import How_To_Buy from "../Component/Dashboard/Super-AdminDashboard/HowToBuy/buyTable";
@@ -118,10 +118,10 @@ import CreateHowToSell from "../Component/Dashboard/Super-AdminDashboard/HowToSe
 import UpdateHowToSell from "../Component/Dashboard/Super-AdminDashboard/HowToSell/edit";
 //import ViewHowToSell from "../Component/Dashboard/Super-AdminDashboard/HowToSell/view";
 
-import Celebrities from '../Component/Dashboard/Super-AdminDashboard/Celebraties/Celebraties';
-import CreateCelebrities from '../Component/Dashboard/Super-AdminDashboard/Celebraties/CreateCelebraties';
-import ViewCelebrity from '../Component/Dashboard/Super-AdminDashboard/Celebraties/ViewCelebrity';
-import UpdateCelebrity from '../Component/Dashboard/Super-AdminDashboard/Celebraties/UpdateCelebrity';
+import Celebrities from "../Component/Dashboard/Super-AdminDashboard/Celebraties/Celebraties";
+import CreateCelebrities from "../Component/Dashboard/Super-AdminDashboard/Celebraties/CreateCelebraties";
+import ViewCelebrity from "../Component/Dashboard/Super-AdminDashboard/Celebraties/ViewCelebrity";
+import UpdateCelebrity from "../Component/Dashboard/Super-AdminDashboard/Celebraties/UpdateCelebrity";
 
 import How_To_Resell from "../Component/Dashboard/Super-AdminDashboard/HowToResell/resellTable";
 import CreateHowToResell from "../Component/Dashboard/Super-AdminDashboard/HowToResell/create";
@@ -159,16 +159,18 @@ import AffiliateBPTable from "../Component/Dashboard/Super-AdminDashboard/Affili
 import CreateAffiliateBP from "../Component/Dashboard/Super-AdminDashboard/Affiliatebp/create";
 import UpdateAffiliateBP from "../Component/Dashboard/Super-AdminDashboard/Affiliatebp/edit";
 
-
 import ContactUsEntries from "../Component/Dashboard/Super-AdminDashboard/ContactUs/table";
 import CreateContactUsEntry from "../Component/Dashboard/Super-AdminDashboard/ContactUs/create";
 import UpdateContactUsEntry from "../Component/Dashboard/Super-AdminDashboard/ContactUs/edit";
 
+import CertificateTable from "../Component/Dashboard/Super-AdminDashboard/CertificateCMS/table";
+import CreateCertificate from "../Component/Dashboard/Super-AdminDashboard/CertificateCMS/create";
+import EditCertificate from "../Component/Dashboard/Super-AdminDashboard/CertificateCMS/edit";
 
 import EnquiryTable from "../Component/Dashboard/Super-AdminDashboard/Enquiry/table";
 import ViewEnquiry from "../Component/Dashboard/Super-AdminDashboard/Enquiry/view";
 
-//----------------------------------------Homepage Super-Admin Dashboard----------------------------------------------------------- 
+//----------------------------------------Homepage Super-Admin Dashboard-----------------------------------------------------------
 import Homepage from "../Component/Dashboard/Super-AdminDashboard/Homepage/table";
 import CreateHomepage from "../Component/Dashboard/Super-AdminDashboard/Homepage/create";
 
@@ -202,7 +204,7 @@ import CreateArtIcon from "../Component/Dashboard/Super-AdminDashboard/Homepage/
 //How to Sell
 import CreateHowToSellHomepage from "../Component/Dashboard/Super-AdminDashboard/Homepage/sections/howToSellCreate";
 
-//----------------------------------------About Us Super-Admin Dashboard----------------------------------------------------------- 
+//----------------------------------------About Us Super-Admin Dashboard-----------------------------------------------------------
 // Main About Us
 import Aboutus from "../Component/Dashboard/Super-AdminDashboard/AboutUs/AboutUsTable";
 import CreateAboutUs from "../Component/Dashboard/Super-AdminDashboard/AboutUs/AboutUsCreate";
@@ -236,7 +238,6 @@ import UpdateMeetTeam from "../Component/Dashboard/Super-AdminDashboard/AboutUs/
 import CreateTestimonials from "../Component/Dashboard/Super-AdminDashboard/AboutUs/sections/TestimonialsCreate";
 import UpdateTestimonials from "../Component/Dashboard/Super-AdminDashboard/AboutUs/sections/TestimonialsEdit";
 
-
 import Challenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/challenges";
 import CreateChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/create";
 //import ChallengesEntries from "../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/challengesEntries";
@@ -269,19 +270,19 @@ import UpdateChallengeApplication from "../Component/Dashboard/Super-AdminDashbo
 
 //------------------------------PackagingMaterial--------------------------------//
 import Material from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/Material";
-import ViewMaterial from '../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/viewMaterial';
-import UpdateMaterial from '../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/UpdateMaterial';
+import ViewMaterial from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/viewMaterial";
+import UpdateMaterial from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/UpdateMaterial";
 import Order from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/Order/Order";
 import OrderView from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/Order/OrderView";
 
 //------------------------------PackagingMaterialSettings--------------------------------//
-import MaterialName from '../Component/Dashboard/Super-AdminDashboard/PackagingMaterialSettings/MaterialName';
+import MaterialName from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterialSettings/MaterialName";
 import MaterialSize from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterialSettings/MaterialSize";
 import Capacity from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterialSettings/Capacity";
 import Stamp from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterialSettings/Stamp";
 import Stickers from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterialSettings/Stickers";
 import Vouchers from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterialSettings/Vouchers";
-import Card from '../Component/Dashboard/Super-AdminDashboard/PackagingMaterialSettings/Card';
+import Card from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterialSettings/Card";
 
 //-----------------------------Admin--------------------------//
 import Admin from "../Component/Dashboard/Super-AdminDashboard/Admin/Admin";
@@ -321,10 +322,10 @@ import BuyermanageProductView from "../Component/Dashboard/Super-AdminDashboard/
 import BuyermanageProductEdit from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/UserProfile/UserProf";
 import BuyerResellProductView from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductRequest/ProductRequestView";
 
-import OrderMaterial from '../Component/Dashboard/ArtistDashbooard/PackagingMaterial/OrderMaterial';
-import CreateOrder from '../Component/Dashboard/ArtistDashbooard/PackagingMaterial/CreateOrder';
-import UpdateOrder from '../Component/Dashboard/ArtistDashbooard/PackagingMaterial/UpdateOrder';
-import ViewOrder from '../Component/Dashboard/ArtistDashbooard/PackagingMaterial/ViewOrder';
+import OrderMaterial from "../Component/Dashboard/ArtistDashbooard/PackagingMaterial/OrderMaterial";
+import CreateOrder from "../Component/Dashboard/ArtistDashbooard/PackagingMaterial/CreateOrder";
+import UpdateOrder from "../Component/Dashboard/ArtistDashbooard/PackagingMaterial/UpdateOrder";
+import ViewOrder from "../Component/Dashboard/ArtistDashbooard/PackagingMaterial/ViewOrder";
 //------Seller tab-----//
 import SellerManagement from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerManageTable";
 import SellerProducts from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerProducts/SellerProduct";
@@ -370,12 +371,12 @@ import ArtistBiddingTable from "../Component/Dashboard/ArtistDashbooard/Bidding/
 import ArtistBiddingTablePass from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddingpass/Biddingpass";
 import ArtistBiddingTablePassUpgrade from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddingpass/UpgradePass";
 import ArtistCertification from "../Component/Dashboard/ArtistDashbooard/Certification/Certification";
-import CreateArtitstCertifications from "../Component/Dashboard/ArtistDashbooard/Certification/create"
+import CreateArtitstCertifications from "../Component/Dashboard/ArtistDashbooard/Certification/create";
 import ArtistExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/exhibition";
 import ArtistCreateExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/create";
 import ArtistUpdateExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/editExhibition";
 import ArtistViewExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/exhibitionView";
-import ArtistSponser from "../Component/Dashboard/ArtistDashbooard/Advertise/Sponser"
+import ArtistSponser from "../Component/Dashboard/ArtistDashbooard/Advertise/Sponser";
 //-----------------------------Blogs--------------------------//
 import BlogList from "../Component/Dashboard/ArtistDashbooard/Blog/BlogList";
 import BlogPost from "../Component/Dashboard/ArtistDashbooard/Blog/BlogPost";
@@ -384,12 +385,12 @@ import BlogDetails from "../Component/Dashboard/ArtistDashbooard/Blog/ArtistBlog
 
 //-----------------------------Products Route--------------------------//
 import AllProduct from "../Component/Dashboard/ArtistDashbooard/ProductDetails/Product";
-import ProductUploade from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductUpload/productUploade';
-import CustomOrder from '../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/CustomOrderAll/Customorder';
-import ProductView from '../Component/Dashboard/ArtistDashbooard/ProductDetails/Productinfo';
-import ViewCustomRequest from '../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/Artist/ViewRequest';
-import Productpurchase from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductPurchased/ProductPurchased';
-import ProductpurchaseView from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductPurchased/ProductPurchasedDetails';
+import ProductUploade from "../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductUpload/productUploade";
+import CustomOrder from "../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/CustomOrderAll/Customorder";
+import ProductView from "../Component/Dashboard/ArtistDashbooard/ProductDetails/Productinfo";
+import ViewCustomRequest from "../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/Artist/ViewRequest";
+import Productpurchase from "../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductPurchased/ProductPurchased";
+import ProductpurchaseView from "../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductPurchased/ProductPurchasedDetails";
 
 //----------------------------------------Buyer Components-----------------------------------//
 import BuyerDashboard from "../Component/Dashboard/BuyerDashboard/Dashboard/MainContent";
@@ -408,7 +409,7 @@ import SellerBidTable from "../Component/Dashboard/SellerDashboard/Bidding/Biddi
 import SellerBidPassTable from "../Component/Dashboard/SellerDashboard/Bidding/Biddingpass/Biddingpass";
 import SellerBidPassUpgrade from "../Component/Dashboard/SellerDashboard/Bidding/Biddingpass/UpgradePass";
 import SellerCertification from "../Component/Dashboard/SellerDashboard/Certification/Certification";
-import CreateSellerCertifications from "../Component/Dashboard/SellerDashboard/Certification/create"
+import CreateSellerCertifications from "../Component/Dashboard/SellerDashboard/Certification/create";
 
 import SellerExhibition from "../Component/Dashboard/SellerDashboard/Exhibition/exhibition";
 import SellerCreateExhibition from "../Component/Dashboard/SellerDashboard/Exhibition/create";
@@ -424,19 +425,19 @@ import Celebrity from "../Pages/Celebrity/celebrity";
 import TermsPolicy from "../Pages/Terms&Policy/Terms&Policy";
 import Commission from "../Pages/CommissionWork/CommissionWork";
 import HowToBid from "../Pages/HowToBid/HowToBidWork";
-import LicensingPartner from "../Pages/LicensingPartner/LicensingPartner"
-import AffiliateProgram from "../Pages/AffiliateProgram/AffiliateProgram"
-import AffiliateBP from "../Pages/AffiliateBrandPartner/AffiliateBP"
-import ContactUs from "../Pages/ContactUs/ContactUs"
-import HowToBuy from "../Pages/HowToBuy/HowToBuy"
-import HowToSell from "../Pages/HowToSell/HowToSell"
-import HowToResell from "../Pages/HowToResell/HowToResell"
+import LicensingPartner from "../Pages/LicensingPartner/LicensingPartner";
+import AffiliateProgram from "../Pages/AffiliateProgram/AffiliateProgram";
+import AffiliateBP from "../Pages/AffiliateBrandPartner/AffiliateBP";
+import ContactUs from "../Pages/ContactUs/ContactUs";
+import HowToBuy from "../Pages/HowToBuy/HowToBuy";
+import HowToSell from "../Pages/HowToSell/HowToSell";
+import HowToResell from "../Pages/HowToResell/HowToResell";
 import ArtGallery from "../Pages/ArtGallery/ArtGallery";
-import Career from "../Pages/Career/Career"
+import Career from "../Pages/Career/Career";
 import WhyArtsays from "../Pages/WhyArtsays/WhyArtsays";
 import Challenge from "../Pages/Challenges/Challenges";
 import AboutUs from "../Pages/AboutUs/AboutUs";
-import CelebrityContent from '../Pages/Celebrity/celebrityContent/celebrityContent';
+import CelebrityContent from "../Pages/Celebrity/celebrityContent/celebrityContent";
 //import TermsPolicy from "../Pages/Terms&Policy/Terms&Policy";
 //import Commission from "../Pages/CommissionWork/CommissionWork";
 //import LicensingPartner from "../Pages/LicensingPartner/LicensingPartner"
@@ -446,16 +447,16 @@ import CelebrityContent from '../Pages/Celebrity/celebrityContent/celebrityConte
 // import HowToSell from "../Pages/HowToSell/HowToSell"
 // import Collections from "../Pages/Collections/Collections"
 // import Career from "../Pages/Career/Career"
-import JobRoles from '../Pages/Career/JobRoles';
-import Blogs from '../Pages/blogs/Blogs';
+import JobRoles from "../Pages/Career/JobRoles";
+import Blogs from "../Pages/blogs/Blogs";
 import BlogCardDetails from "../Pages/blogDetails/BlogCardDetails";
 import ChallengesContent from "../Pages/Challenges/ChallengesContent/ChallengesContent";
-import JoinChallenges from '../Pages/Challenges/JoinChallenges/JoinChallenges';
-import ProductDetails from '../Pages/ProductDetails/ProductDetails';
-import BidDetails from '../Pages/BidDetails/BidDetails';
-import Certification from '../Pages/Certification/Certification';
-import Insurance from '../Pages/Insurance/Insurance';
-import Partner from '../Pages/Partner/Partner';
+import JoinChallenges from "../Pages/Challenges/JoinChallenges/JoinChallenges";
+import ProductDetails from "../Pages/ProductDetails/ProductDetails";
+import BidDetails from "../Pages/BidDetails/BidDetails";
+import Certification from "../Pages/Certification/Certification";
+import Insurance from "../Pages/Insurance/Insurance";
+import Partner from "../Pages/Partner/Partner";
 
 //-----------------------------Artist Premium Badges--------------------------//
 
@@ -469,46 +470,46 @@ import SellerPremiumBages from "../Component/Dashboard/SellerDashboard/Badges/Pr
 
 import Error404Page from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/Error404";
 // import { Store } from 'lucide-react';
-import OrderMaterialSeller from '../Component/Dashboard/SellerDashboard/PackageMaterial/OrderMaterialSeller';
-import CreateMaterialOrder from '../Component/Dashboard/SellerDashboard/PackageMaterial/createMaterialOrder';
-import UpdateMaterialOrder from '../Component/Dashboard/SellerDashboard/PackageMaterial/UpdateMaterialOrder';
-import ViewMaterialOrder from '../Component/Dashboard/SellerDashboard/PackageMaterial/ViewMaterialOrder';
+import OrderMaterialSeller from "../Component/Dashboard/SellerDashboard/PackageMaterial/OrderMaterialSeller";
+import CreateMaterialOrder from "../Component/Dashboard/SellerDashboard/PackageMaterial/createMaterialOrder";
+import UpdateMaterialOrder from "../Component/Dashboard/SellerDashboard/PackageMaterial/UpdateMaterialOrder";
+import ViewMaterialOrder from "../Component/Dashboard/SellerDashboard/PackageMaterial/ViewMaterialOrder";
 
 //----------------------------------------Social Media----------------------------------//
-import Homee from '../Pages/socialMedia/Homee';
-import Notification from '../Pages/socialMedia/Notification';
-import Search from '../Pages/socialMedia/Search';
-import Explore from '../Pages/socialMedia/Explore';
-import CreatePost from '../Pages/socialMedia/CreatePost';
-import UploadPost from '../Pages/socialMedia/UploadPost';
-import SocialProfile from '../Pages/socialMedia/SocialProfile';
-import PromoteProfile from '../Pages/socialMedia/PromoteProfile';
-import PromotePost from '../Pages/socialMedia/PromotePost';
-import CreateLive from '../Pages/socialMedia/CreateLive';
-import MyLive from '../Pages/socialMedia/MyLive';
-import Live from '../Pages/socialMedia/Live';
-import Test from '../Pages/socialMedia/Test';
-import Settings from '../Pages/socialMedia/Settings';
-import SuggestedProfile from '../Pages/socialMedia/SuggestedProfile';
-import Policies from '../Component/Dashboard/Super-AdminDashboard/Community CMS/Policies';
-import VerificationBadge from '../Component/Dashboard/Super-AdminDashboard/Community CMS/verificationBadge/VerificationBadge';
-import CreatePolicies from '../Component/Dashboard/Super-AdminDashboard/Community CMS/policy/CreatePolicies';
-import EditPolicy from '../Component/Dashboard/Super-AdminDashboard/Community CMS/policy/EditPolicy';
-import ViewPolicy from '../Component/Dashboard/Super-AdminDashboard/Community CMS/policy/ViewPolicy';
-import EditVerificationBadge from '../Component/Dashboard/Super-AdminDashboard/Community CMS/verificationBadge/EditVerificationBadge';
-import CreateVerificationBadge from '../Component/Dashboard/Super-AdminDashboard/Community CMS/verificationBadge/CreateBadge';
-import EdprowiseInvoice from '../Pages/Invoice/EdprowiseInvoice';
-import Invoice from '../Pages/Invoice/Invoice';
-import CreateMaterial from '../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/CreateMaterial';
+import Homee from "../Pages/socialMedia/Homee";
+import Notification from "../Pages/socialMedia/Notification";
+import Search from "../Pages/socialMedia/Search";
+import Explore from "../Pages/socialMedia/Explore";
+import CreatePost from "../Pages/socialMedia/CreatePost";
+import UploadPost from "../Pages/socialMedia/UploadPost";
+import SocialProfile from "../Pages/socialMedia/SocialProfile";
+import PromoteProfile from "../Pages/socialMedia/PromoteProfile";
+import PromotePost from "../Pages/socialMedia/PromotePost";
+import CreateLive from "../Pages/socialMedia/CreateLive";
+import MyLive from "../Pages/socialMedia/MyLive";
+import Live from "../Pages/socialMedia/Live";
+import Test from "../Pages/socialMedia/Test";
+import Settings from "../Pages/socialMedia/Settings";
+import SuggestedProfile from "../Pages/socialMedia/SuggestedProfile";
+import Policies from "../Component/Dashboard/Super-AdminDashboard/Community CMS/Policies";
+import VerificationBadge from "../Component/Dashboard/Super-AdminDashboard/Community CMS/verificationBadge/VerificationBadge";
+import CreatePolicies from "../Component/Dashboard/Super-AdminDashboard/Community CMS/policy/CreatePolicies";
+import EditPolicy from "../Component/Dashboard/Super-AdminDashboard/Community CMS/policy/EditPolicy";
+import ViewPolicy from "../Component/Dashboard/Super-AdminDashboard/Community CMS/policy/ViewPolicy";
+import EditVerificationBadge from "../Component/Dashboard/Super-AdminDashboard/Community CMS/verificationBadge/EditVerificationBadge";
+import CreateVerificationBadge from "../Component/Dashboard/Super-AdminDashboard/Community CMS/verificationBadge/CreateBadge";
+import EdprowiseInvoice from "../Pages/Invoice/EdprowiseInvoice";
+import Invoice from "../Pages/Invoice/Invoice";
+import CreateMaterial from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/CreateMaterial";
 
-import Reports from '../Component/Dashboard/Super-AdminDashboard/Community CMS/reports/Reports';
-import ViewReports from '../Component/Dashboard/Super-AdminDashboard/Community CMS/reports/ViewReports';
-import PreviewReport from '../Component/Dashboard/Super-AdminDashboard/Community CMS/reports/PreviewReport';
-import Sponsors from '../Component/Dashboard/Super-AdminDashboard/Community CMS/Sponsors/Sponsors';
-import ViewSponsors from '../Component/Dashboard/Super-AdminDashboard/Community CMS/Sponsors/ViewSponsors';
-import PurchaseBadge from '../Component/Dashboard/Super-AdminDashboard/Community CMS/PurchaseBadge/PurchaseBadge';
-import ShowPurchasedBadge from '../Component/Dashboard/Super-AdminDashboard/Community CMS/PurchaseBadge/ShowPurchasedBadge';
-import ProductViewing from '../Component/SocialMedia/Profile/ProductView';
+import Reports from "../Component/Dashboard/Super-AdminDashboard/Community CMS/reports/Reports";
+import ViewReports from "../Component/Dashboard/Super-AdminDashboard/Community CMS/reports/ViewReports";
+import PreviewReport from "../Component/Dashboard/Super-AdminDashboard/Community CMS/reports/PreviewReport";
+import Sponsors from "../Component/Dashboard/Super-AdminDashboard/Community CMS/Sponsors/Sponsors";
+import ViewSponsors from "../Component/Dashboard/Super-AdminDashboard/Community CMS/Sponsors/ViewSponsors";
+import PurchaseBadge from "../Component/Dashboard/Super-AdminDashboard/Community CMS/PurchaseBadge/PurchaseBadge";
+import ShowPurchasedBadge from "../Component/Dashboard/Super-AdminDashboard/Community CMS/PurchaseBadge/ShowPurchasedBadge";
+import ProductViewing from "../Component/SocialMedia/Profile/ProductView";
 
 const PrivateRoute = ({ allowedRoles, children }) => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
@@ -522,7 +523,11 @@ const PrivateRoute = ({ allowedRoles, children }) => {
     return <Navigate to="/unauthorized" replace />;
   }
 
-  if ((userType === 'Artist' || userType === 'Seller') && (userStatus === 'Unverified' || userStatus === 'Rejected') && location.pathname !== `/${userType.toLowerCase()}/profile`) {
+  if (
+    (userType === "Artist" || userType === "Seller") &&
+    (userStatus === "Unverified" || userStatus === "Rejected") &&
+    location.pathname !== `/${userType.toLowerCase()}/profile`
+  ) {
     return <Navigate to={`/${userType.toLowerCase()}/profile`} replace />;
   }
 
@@ -536,17 +541,26 @@ const PublicRoute = ({ children }) => {
 
   useEffect(() => {
     if (isAuthenticated && authPages.includes(location.pathname)) {
-      if ((userType === 'Artist' || userType === 'Seller') && (userStatus === 'Unverified' || userStatus === 'Rejected') && location.pathname === '/login') {
+      if (
+        (userType === "Artist" || userType === "Seller") &&
+        (userStatus === "Unverified" || userStatus === "Rejected") &&
+        location.pathname === "/login"
+      ) {
         return;
       }
       const timer = setTimeout(() => {
-        navigate('/', { replace: true });
+        navigate("/", { replace: true });
       }, 100);
       return () => clearTimeout(timer);
     }
   }, [isAuthenticated, userType, userStatus, location.pathname, navigate]);
 
-  const authPages = ['/login', '/register', '/artist-seller-register', '/forgotpassword'];
+  const authPages = [
+    "/login",
+    "/register",
+    "/artist-seller-register",
+    "/forgotpassword",
+  ];
 
   return children ? children : <Outlet />;
 };
@@ -556,7 +570,7 @@ const WebsiteWrapper = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname === '/') {
+    if (location.pathname === "/") {
       const timer = setTimeout(() => {
         setShowAnimation(false);
       }, 6000); // Preloader duration (6 seconds)
@@ -566,7 +580,7 @@ const WebsiteWrapper = () => {
     }
   }, [location.pathname]);
 
-  return showAnimation && location.pathname === '/' ? (
+  return showAnimation && location.pathname === "/" ? (
     <PreloaderAnimation />
   ) : (
     <WebsiteLayout>
@@ -581,7 +595,6 @@ const WebsiteWrapper = () => {
 
 //   useEffect(() => {
 //   }, [location.pathname]);
-
 
 //   return (
 //     <WebsiteLayout>
@@ -600,7 +613,10 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/bidding" element={<BiddingPass />} />
-        <Route path="/artist-seller-register" element={<ArtistSellerRegister />} />
+        <Route
+          path="/artist-seller-register"
+          element={<ArtistSellerRegister />}
+        />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-services" element={<TermsofServices />} />
@@ -622,137 +638,280 @@ const AppRoutes = () => {
         <Route path="blog/create-blog" element={<SuperAdminBlogPost />} />
         <Route path="blog/view-blog" element={<SuperAdminViewBlog />} />
         <Route path="blog/update-blog" element={<SuperAdminUpdateBlog />} />
-        <Route path="product/product-info" element={<SuperAdminProductInfo />} />
-
+        <Route
+          path="product/product-info"
+          element={<SuperAdminProductInfo />}
+        />
         {/* Admin Management */}
         <Route path="admin" element={<Admin />} />
         <Route path="admin/editprofile" element={<AdminProfile />} />
         <Route path="admin/viewprofile" element={<AdminViewProfile />} />
-
         {/* Artist Management */}
         <Route path="artist/management" element={<ArtistManagement />} />
         <Route path="artist/artist-edit" element={<ProductEditRequest />} />
         <Route path="artist/blogrequest" element={<BlogRequest />} />
-        <Route path="artist/blogrequest/view-Blog" element={<BlogRequestView />} />
-        <Route path="artist/blogrequest/update-blog" element={<BlogRequestUpdate />} />
-        <Route path="artist/blogrequest/blog-details/:slug" element={<BlogRequestDetails />} />
+        <Route
+          path="artist/blogrequest/view-Blog"
+          element={<BlogRequestView />}
+        />
+        <Route
+          path="artist/blogrequest/update-blog"
+          element={<BlogRequestUpdate />}
+        />
+        <Route
+          path="artist/blogrequest/blog-details/:slug"
+          element={<BlogRequestDetails />}
+        />
         <Route path="artist/blogs" element={<ApprovedBlogs />} />
-        <Route path="artist/blogs/blog-details/:slug" element={<ApprovedBlogsDetails />} />
-        <Route path="artist/blogs/blog-update/:slug" element={<ApprovedBlogsUpdate />} />
-        <Route path="artist/artistproductrequest" element={<Artistproductrequest />} />
+        <Route
+          path="artist/blogs/blog-details/:slug"
+          element={<ApprovedBlogsDetails />}
+        />
+        <Route
+          path="artist/blogs/blog-update/:slug"
+          element={<ApprovedBlogsUpdate />}
+        />
+        <Route
+          path="artist/artistproductrequest"
+          element={<Artistproductrequest />}
+        />
         <Route path="artist/allartistproduct" element={<ArtistAllProduct />} />
         <Route path="artist/sold-product" element={<SoldProduct />} />
-        <Route path="artist/management/artistprofileview/" element={<ProductViewRequest />} />
-        <Route path="artist/artistprofileview/:userId" element={<ProductViewRequest />} />
-        <Route path="artist/soldproducts" element={<ArtistSoldProductTable />} />
-        <Route path="artist/soldproducts/view" element={<ArtistSoldProductView />} />
-        <Route path="artist/artisttransaction" element={<ArtistTransaction />} />
-        <Route path="artist/artistpackagingmaterial" element={<ArtistPackagingMaterial />} />
-        <Route path="artist/management/productrequest/:userId" element={<ArtistProductRequestView />} />
-        <Route path="artist/management/artisteditreuqest/update-blog" element={<EditBlogRequest />} />
-        <Route path="artist/management/artisteditreuqest/" element={<ProductEditRequest />} />
-        <Route path="artist/allartistproduct/productdetails/:userId" element={<ArtistProductsDetails />} />
-        <Route path="artist/allartistproduct/productdetails/:userId" element={<ArtistProductsDetails />} />
+        <Route
+          path="artist/management/artistprofileview/"
+          element={<ProductViewRequest />}
+        />
+        <Route
+          path="artist/artistprofileview/:userId"
+          element={<ProductViewRequest />}
+        />
+        <Route
+          path="artist/soldproducts"
+          element={<ArtistSoldProductTable />}
+        />
+        <Route
+          path="artist/soldproducts/view"
+          element={<ArtistSoldProductView />}
+        />
+        <Route
+          path="artist/artisttransaction"
+          element={<ArtistTransaction />}
+        />
+        <Route
+          path="artist/artistpackagingmaterial"
+          element={<ArtistPackagingMaterial />}
+        />
+        <Route
+          path="artist/management/productrequest/:userId"
+          element={<ArtistProductRequestView />}
+        />
+        <Route
+          path="artist/management/artisteditreuqest/update-blog"
+          element={<EditBlogRequest />}
+        />
+        <Route
+          path="artist/management/artisteditreuqest/"
+          element={<ProductEditRequest />}
+        />
+        <Route
+          path="artist/allartistproduct/productdetails/:userId"
+          element={<ArtistProductsDetails />}
+        />
+        <Route
+          path="artist/allartistproduct/productdetails/:userId"
+          element={<ArtistProductsDetails />}
+        />
         <Route path="artist/bidding-pass" element={<ArtistProductBidding />} />
-
         {/* Buyer Management */}
         <Route path="buyer/management" element={<BuyerManagement />} />
-        <Route path="buyer/productpurchased" element={<BuyerProductPurchase />} />
-        <Route path="buyer/productpurchased/view" element={<BuyerProductPurchaseView />} />
+        <Route
+          path="buyer/productpurchased"
+          element={<BuyerProductPurchase />}
+        />
+        <Route
+          path="buyer/productpurchased/view"
+          element={<BuyerProductPurchaseView />}
+        />
         <Route path="buyer/resellproduct" element={<BuyerProductRequest />} />
         <Route path="buyer/soldproduct" element={<BuyerSoldProduct />} />
         <Route path="buyer/transaction" element={<BuyerTransaction />} />
-        <Route path="buyer/packagingmaterial" element={<BuyerPackagingMaterial />} />
-        <Route path="buyer/management/productview/" element={<BuyermanageProductView />} />
-        <Route path="buyer/management/productedit/" element={<BuyermanageProductEdit />} />
-        <Route path="buyer/resellproduct/productview/:userId" element={<BuyerResellProductView />} />
-
+        <Route
+          path="buyer/packagingmaterial"
+          element={<BuyerPackagingMaterial />}
+        />
+        <Route
+          path="buyer/management/productview/"
+          element={<BuyermanageProductView />}
+        />
+        <Route
+          path="buyer/management/productedit/"
+          element={<BuyermanageProductEdit />}
+        />
+        <Route
+          path="buyer/resellproduct/productview/:userId"
+          element={<BuyerResellProductView />}
+        />
         {/* Seller Management */}
         <Route path="seller/management" element={<SellerManagement />} />
         <Route path="seller/product" element={<SellerProducts />} />
-        <Route path="seller/productrequest" element={<SellerProductRequest />} />
+        <Route
+          path="seller/productrequest"
+          element={<SellerProductRequest />}
+        />
         <Route path="seller/soldproduct" element={<SellerSoldProducts />} />
         <Route path="seller/transaction" element={<SellerTransaction />} />
         <Route path="seller/packagingmaterial" element={<SellerPackaging />} />
-        <Route path="seller/management/productdetails-view" element={<SellerManageProductView />} />
-        <Route path="seller/management/productdetails-edit" element={<SellerManageProductEdit />} />
+        <Route
+          path="seller/management/productdetails-view"
+          element={<SellerManageProductView />}
+        />
+        <Route
+          path="seller/management/productdetails-edit"
+          element={<SellerManageProductEdit />}
+        />
         <Route path="seller/bidding-pass" element={<SellerProductBidding />} />
-
         {/* Product Management */}
         <Route path="product-table" element={<ProductTableView />} />
-        <Route path="product-table/bidding-pass" element={<SuperAdminBiddingPass />} />
+        <Route
+          path="product-table/bidding-pass"
+          element={<SuperAdminBiddingPass />}
+        />
         <Route path="customordertable" element={<CustomOrderView />} />
-        <Route path="customordertable/view-request" element={<ViewCustomRequestsuperadmin />} />
+        <Route
+          path="customordertable/view-request"
+          element={<ViewCustomRequestsuperadmin />}
+        />
         <Route path="purchasetable" element={<PurchaseTable />} />
         <Route path="purchasetable/view" element={<PurchaseTableView />} />
         <Route path="product-upload" element={<ProductUploads />} />
-
         {/* Bidding Management */}
         <Route path="bidding/allproduct" element={<AllBiddingProduct />} />
         <Route path="bidding/bidded-product" element={<BiddedProduct />} />
-        <Route path="bidding/transaction" element={<BiddedProductTransaction />} />
+        <Route
+          path="bidding/transaction"
+          element={<BiddedProductTransaction />}
+        />
         <Route path="bidding/pass-table" element={<BiddingTable />} />
         <Route path="bidding/pass-table/create" element={<CreatePassType />} />
-        <Route path="bidding/pass-table/bidding-pass" element={<BiddingTablePass />} />
+        <Route
+          path="bidding/pass-table/bidding-pass"
+          element={<BiddingTablePass />}
+        />
         <Route path="bidding/pass-order-table" element={<PassOrderTable />} />
-        <Route path="bidding/pass-table/edit/:id" element={<CreatePassType />} />
-
+        <Route
+          path="bidding/pass-table/edit/:id"
+          element={<CreatePassType />}
+        />
         {/* Packaging Material */}
         <Route path="packaging-material/material" element={<Material />} />
-        <Route path='packaging-material/create-packaging-material' element={<CreateMaterial />} />
-        <Route path='packaging-material/material/view/:id' element={<ViewMaterial />} />
-        <Route path='packaging-material/material/edit/:id' element={<UpdateMaterial />} />
+        <Route
+          path="packaging-material/create-packaging-material"
+          element={<CreateMaterial />}
+        />
+        <Route
+          path="packaging-material/material/view/:id"
+          element={<ViewMaterial />}
+        />
+        <Route
+          path="packaging-material/material/edit/:id"
+          element={<UpdateMaterial />}
+        />
         <Route path="packaging-material/order" element={<Order />} />
-        <Route path="packaging-material/order/view/:id" element={<OrderView />} />
-
+        <Route
+          path="packaging-material/order/view/:id"
+          element={<OrderView />}
+        />
         {/* Community CMS */}
         <Route path="community-cms/policies" element={<Policies />} />
-        <Route path="community-cms/policies/create" element={<CreatePolicies />} />
+        <Route
+          path="community-cms/policies/create"
+          element={<CreatePolicies />}
+        />
         <Route path="community-cms/policies/edit" element={<EditPolicy />} />
         <Route path="community-cms/policies/view" element={<ViewPolicy />} />
-        <Route path="community-cms/verification-badge" element={<VerificationBadge />} />
-        <Route path="community-cms/verification-badge/edit" element={<EditVerificationBadge />} />
-        <Route path="community-cms/verification-badge/create" element={<CreateVerificationBadge />} />
+        <Route
+          path="community-cms/verification-badge"
+          element={<VerificationBadge />}
+        />
+        <Route
+          path="community-cms/verification-badge/edit"
+          element={<EditVerificationBadge />}
+        />
+        <Route
+          path="community-cms/verification-badge/create"
+          element={<CreateVerificationBadge />}
+        />
         <Route path="community-cms/reports" element={<Reports />} />
         <Route path="community-cms/reports/view" element={<ViewReports />} />
-        <Route path="community-cms/reports/view/preview" element={<PreviewReport />} />
+        <Route
+          path="community-cms/reports/view/preview"
+          element={<PreviewReport />}
+        />
         <Route path="community-cms/sponsors" element={<Sponsors />} />
         <Route path="community-cms/sponsors/view" element={<ViewSponsors />} />
-        <Route path="community-cms/purchase-badge" element={<PurchaseBadge />} />
-        <Route path="community-cms/purchase-badge/show" element={<ShowPurchasedBadge />} />
-
-
-
+        <Route
+          path="community-cms/purchase-badge"
+          element={<PurchaseBadge />}
+        />
+        <Route
+          path="community-cms/purchase-badge/show"
+          element={<ShowPurchasedBadge />}
+        />
         {/*PackagingMaterialSettings */}
-        <Route path='packaging-material-setting/material-name' element={<MaterialName />} />
-        <Route path='packaging-material-setting/material-size' element={<MaterialSize />} />
-        <Route path='packaging-material-setting/capacity' element={<Capacity />} />
-        <Route path='packaging-material-setting/stamp' element={<Stamp />} />
-        <Route path='packaging-material-setting/stickers' element={<Stickers />} />
-        <Route path='packaging-material-setting/vouchers' element={<Vouchers />} />
-        <Route path='packaging-material-setting/card' element={<Card />} />
-
+        <Route
+          path="packaging-material-setting/material-name"
+          element={<MaterialName />}
+        />
+        <Route
+          path="packaging-material-setting/material-size"
+          element={<MaterialSize />}
+        />
+        <Route
+          path="packaging-material-setting/capacity"
+          element={<Capacity />}
+        />
+        <Route path="packaging-material-setting/stamp" element={<Stamp />} />
+        <Route
+          path="packaging-material-setting/stickers"
+          element={<Stickers />}
+        />
+        <Route
+          path="packaging-material-setting/vouchers"
+          element={<Vouchers />}
+        />
+        <Route path="packaging-material-setting/card" element={<Card />} />
         {/* Settings */}
         <Route path="settings/email-setting" element={<EmailSettings />} />
         <Route path="settings/blog-category" element={<BlogCategory />} />
         <Route path="settings/product-category" element={<ProductCategory />} />
         <Route path="settings/marketing" element={<SuperAdminMarketing />} />
-        <Route path="settings/certification" element={<CertificationSetting />} />
-        <Route path="settings/auto-targeting" element={<AutoTargetingSetting />} />
-        <Route path="settings/group-targeting" element={<GroupTargetingSetting />} />
-        <Route path="settings/keyword-targeting" element={<KeywordTargetingSetting />} />
+        <Route
+          path="settings/certification"
+          element={<CertificationSetting />}
+        />
+        <Route
+          path="settings/auto-targeting"
+          element={<AutoTargetingSetting />}
+        />
+        <Route
+          path="settings/group-targeting"
+          element={<GroupTargetingSetting />}
+        />
+        <Route
+          path="settings/keyword-targeting"
+          element={<KeywordTargetingSetting />}
+        />
         <Route path="settings/user-role" element={<UserRole />} />
         <Route path="settings/create-user-role" element={<CreateRole />} />
-
-
         {/* Advertise Routes */}
         <Route path="advertise" element={<SuperAdminArtistAdvertise />} />
         <Route path="advertise/sponser" element={<SuperAdminArtistSponsor />} />
-
         {/* Certification Routes */}
         <Route path="certification" element={<SuperAdminCertification />} />
-        <Route path="certification/create-certification" element={<   CreateCertifications />} />
-
+        <Route
+          path="certification/create-certification"
+          element={<CreateCertifications />}
+        />
         {/* FAQ Routes */}
         <Route path="faq" element={<FAQ />} />
         {/* Career */}
@@ -760,186 +919,249 @@ const AppRoutes = () => {
         <Route path="career/creer-job-post" element={<CreateCarrer />} />
         <Route path="career/update-job-post" element={<UpdateCareer />} />
         <Route path="career/view-job-post" element={<ViewCareer />} />
-
         {/* Career Applications */}
         <Route path="career/applications" element={<CarrerTable />} />
-        <Route path="career/applications/update-job-post" element={<UpdateCareerApp />} />
-        <Route path="career/applications/view-job-post" element={<ViewCareerApp />} />
-
+        <Route
+          path="career/applications/update-job-post"
+          element={<UpdateCareerApp />}
+        />
+        <Route
+          path="career/applications/view-job-post"
+          element={<ViewCareerApp />}
+        />
         {/* Exhibition */}
         <Route path="exhibition" element={<Exhibition />} />
-        <Route path="exhibition/create-exhibition" element={<CreateExhibition />} />
-        <Route path="exhibition/update-exhibition" element={<UpdateExhibition />} />
+        <Route
+          path="exhibition/create-exhibition"
+          element={<CreateExhibition />}
+        />
+        <Route
+          path="exhibition/update-exhibition"
+          element={<UpdateExhibition />}
+        />
         <Route path="exhibition/view-exhibition" element={<ViewExhibition />} />
-
         <Route path="exhibition-request" element={<ExhibitionRequest />} />
-        <Route path="exhibition-request/update-exhibition" element={<UpdateExhibitionRequest />} />
-        <Route path="exhibition-request/view-exhibition" element={<ViewExhibitionRequest />} />
-
+        <Route
+          path="exhibition-request/update-exhibition"
+          element={<UpdateExhibitionRequest />}
+        />
+        <Route
+          path="exhibition-request/view-exhibition"
+          element={<ViewExhibitionRequest />}
+        />
         {/* Challenges */}
         <Route path="challenges" element={<Challenges />} />
-        <Route path="challenges/create-Challenges" element={<CreateChallenges />} />
+        <Route
+          path="challenges/create-Challenges"
+          element={<CreateChallenges />}
+        />
         <Route path="challenges-entries" element={<ChallengesEntries />} />
-
         {/* Contact Us*/}
-        <Route path="contactus" element={<ContactUsEntries />} />         {/* Table/List */}
-        <Route path="contactus/create" element={<CreateContactUsEntry />} />      {/* Create new entry */}
-        <Route path="contactus/update" element={<UpdateContactUsEntry />} />      {/* Update entry */}
-
-
+        <Route path="contactus" element={<ContactUsEntries />} />{" "}
+        {/* Table/List */}
+        <Route
+          path="contactus/create"
+          element={<CreateContactUsEntry />}
+        />{" "}
+        {/* Create new entry */}
+        <Route
+          path="contactus/update"
+          element={<UpdateContactUsEntry />}
+        />{" "}
+        {/* Update entry */}
         {/* Artsays Gallery Routes */}
         <Route path="art-gallery" element={<Gallery />} />
         <Route path="art-gallery/create" element={<CreateGallery />} />
         <Route path="art-gallery/update/:id" element={<UpdateGallery />} />
-
         {/* Artsays Gallery CMS Routes */}
         <Route path="CMS-art-gallery" element={<ArtsaysGalleryTable />} />
-        <Route path="CMS-art-gallery/create" element={<ArtsaysGalleryCreate />} />
-        <Route path="CMS-art-gallery/edit/:id" element={<ArtsaysGalleryEdit />} />
-
+        <Route
+          path="CMS-art-gallery/create"
+          element={<ArtsaysGalleryCreate />}
+        />
+        <Route
+          path="CMS-art-gallery/edit/:id"
+          element={<ArtsaysGalleryEdit />}
+        />
         {/* Enquiries */}
         <Route path="enquiry" element={<EnquiryTable />} />
         <Route path="enquiry/view" element={<ViewEnquiry />} />
-
         {/* Policy Routes */}
         <Route path="policy" element={<PolicyTable />} />
         <Route path="policy/create-policy" element={<CreatePolicy />} />
         <Route path="policy/update-policy" element={<UpdatePolicy />} />
         {/* <Route path="policy/view-policy" element={<ViewPolicy />} /> */}
-
         {/*How_To_Buy*/}
         <Route path="how-to-buy" element={<How_To_Buy />} />
         <Route path="how-to-buy/create" element={<CreateHowToBuy />} />
         <Route path="how-to-buy/update" element={<UpdateHowToBuy />} />
         {/* <Route path="how-to-buy/view" element={<ViewHowToBuy />} />   */}
-
         {/*How_To_Sell*/}
         <Route path="how-to-sell" element={<How_To_Sell />} />
         <Route path="how-to-sell/create" element={<CreateHowToSell />} />
         <Route path="how-to-sell/update" element={<UpdateHowToSell />} />
         {/* <Route path="how-to-sell/view" element={<ViewHowToSell />} />   */}
-
         {/*How_To_Resell*/}
         <Route path="how-to-resell" element={<How_To_Resell />} />
         <Route path="how-to-resell/create" element={<CreateHowToResell />} />
         <Route path="how-to-resell/update" element={<UpdateHowToResell />} />
-
-
         {/*WhyArtSays */}
         <Route path="why-artsays" element={<WhyArtSays />} />
         <Route path="why-artsays/create" element={<CreateWhyArtSays />} />
         <Route path="why-artsays/update" element={<UpdateWhyArtSays />} />
-
         {/* Licensing Pages */}
         <Route path="licensing" element={<LicensingTable />} />
         <Route path="licensing/create" element={<CreateLicensing />} />
         <Route path="licensing/update" element={<UpdateLicensing />} />
-
         {/* Commission Pages */}
         <Route path="commission" element={<CommissionTable />} />
         <Route path="commission/create" element={<CreateCommission />} />
         <Route path="commission/update" element={<UpdateCommission />} />
-
         {/* How to Bid Pages */}
         <Route path="how-to-bid" element={<HowToBidTable />} />
         <Route path="how-to-bid/create" element={<CreateHowToBid />} />
         <Route path="how-to-bid/update" element={<UpdateHowToBid />} />
-
         {/* Affiliate Pages */}
         <Route path="affiliate" element={<AffiliateTable />} />
         <Route path="affiliate/create" element={<CreateAffiliate />} />
         <Route path="affiliate/update" element={<UpdateAffiliate />} />
-
         {/* Affiliate Pages */}
         <Route path="affiliate-bp" element={<AffiliateBPTable />} />
         <Route path="affiliate-bp/create" element={<CreateAffiliateBP />} />
         <Route path="affiliate-bp/update" element={<UpdateAffiliateBP />} />
-
         {/* Challenges */}
         <Route path="challenges" element={<ChallengesTable />} />
-        <Route path="challenges/create-challenge" element={<CreateChallenge />} />
-        <Route path='challenges/view-challenge' element={<ViewChallenge />} />
-        <Route path='challenges/update-challenge' element={<UpdateChallenge />} />
+        <Route
+          path="challenges/create-challenge"
+          element={<CreateChallenge />}
+        />
+        <Route path="challenges/view-challenge" element={<ViewChallenge />} />
+        <Route
+          path="challenges/update-challenge"
+          element={<UpdateChallenge />}
+        />
         <Route path="challenges-entries" element={<ChallengesEntries />} />
-        <Route path='challenges/view-application' element={<ViewChallengeApplication />} />
-        <Route path='challenges/update-application' element={<UpdateChallengeApplication />} />
-
+        <Route
+          path="challenges/view-application"
+          element={<ViewChallengeApplication />}
+        />
+        <Route
+          path="challenges/update-application"
+          element={<UpdateChallengeApplication />}
+        />
         {/* Celebraties */}
         <Route path="celebrities" element={<Celebrities />} />
-        <Route path='celebrities/create' element={<CreateCelebrities />} />
-        <Route path='celebrities/view-celebrity' element={<ViewCelebrity />} />
-        <Route path='celebrities/update-celebrity' element={<UpdateCelebrity />} />
-
-
+        <Route path="celebrities/create" element={<CreateCelebrities />} />
+        <Route path="celebrities/view-celebrity" element={<ViewCelebrity />} />
+        <Route
+          path="celebrities/update-celebrity"
+          element={<UpdateCelebrity />}
+        />
+        {/* Certification Website CMS */}
+        <Route path="certificate" element={<CertificateTable />} />
+        <Route path="certificate/create" element={<CreateCertificate />} />
+        <Route path="certificate/edit" element={<EditCertificate />} />
+        
         {/* Homepage Admin Routes*/}
         <Route path="homepage" element={<Homepage />} />
         <Route path="homepage/create" element={<CreateHomepage />} />
-
         {/* Hero Section */}
-        <Route path="/super-admin/homepage/hero/create" element={<CreateHero />} />
-
+        <Route
+          path="/super-admin/homepage/hero/create"
+          element={<CreateHero />}
+        />
         {/* Browse Categories */}
-        <Route path="/super-admin/homepage/browse-categories/create" element={<CreateCategories />} />
-
+        <Route
+          path="/super-admin/homepage/browse-categories/create"
+          element={<CreateCategories />}
+        />
         {/* Why Buy From Artsays */}
-        <Route path="/super-admin/homepage/why-buy-artsays/create" element={<CreateWhyBuyArtsays />} />
-
+        <Route
+          path="/super-admin/homepage/why-buy-artsays/create"
+          element={<CreateWhyBuyArtsays />}
+        />
         {/* Bidding Arena */}
-        <Route path="/super-admin/homepage/bidding-arena/create" element={<CreateBiddingArena />} />
-
+        <Route
+          path="/super-admin/homepage/bidding-arena/create"
+          element={<CreateBiddingArena />}
+        />
         {/* How To Buy */}
-        <Route path="/super-admin/homepage/how-to-buy/create" element={<CreateHowToBuyHomepage />} />
-
+        <Route
+          path="/super-admin/homepage/how-to-buy/create"
+          element={<CreateHowToBuyHomepage />}
+        />
         {/* Discover Artist */}
-        <Route path="/super-admin/homepage/discover-artist/create" element={<CreateDiscoverArtist />} />
-
+        <Route
+          path="/super-admin/homepage/discover-artist/create"
+          element={<CreateDiscoverArtist />}
+        />
         {/* Why Artsays is Different */}
-        <Route path="/super-admin/homepage/why-artsays-different/create" element={<CreateWhyArtsaysDifferent />} />
-
+        <Route
+          path="/super-admin/homepage/why-artsays-different/create"
+          element={<CreateWhyArtsaysDifferent />}
+        />
         {/* Challenges */}
-        <Route path="/super-admin/homepage/challenges/create" element={<CreateChallengesHomepage />} />
-
+        <Route
+          path="/super-admin/homepage/challenges/create"
+          element={<CreateChallengesHomepage />}
+        />
         {/* Art Icon */}
-        <Route path="/super-admin/homepage/art-icon/create" element={<CreateArtIcon />} />
-
+        <Route
+          path="/super-admin/homepage/art-icon/create"
+          element={<CreateArtIcon />}
+        />
         {/* How to Sell */}
-        <Route path="/super-admin/homepage/how-to-sell/create" element={<CreateHowToSellHomepage />} />
-
+        <Route
+          path="/super-admin/homepage/how-to-sell/create"
+          element={<CreateHowToSellHomepage />}
+        />
         {/* About us Admin Routes*/}
         {/* About Us */}
         <Route path="about-us" element={<Aboutus />} />
         <Route path="about-us/create" element={<CreateAboutUs />} />
         <Route path="about-us/edit" element={<UpdateAboutUs />} />
-
         {/* Who We Are */}
         <Route path="about-us/who-we-are/create" element={<CreateWhoWeAre />} />
         <Route path="about-us/who-we-are/edit" element={<UpdateWhoWeAre />} />
-
         {/* What We Do */}
         <Route path="about-us/what-we-do/create" element={<CreateWhatWeDo />} />
         <Route path="about-us/what-we-do/edit" element={<UpdateWhatWeDo />} />
-
         {/* Mission & Vision */}
-        <Route path="about-us/mission-vision/create" element={<CreateMissionVision />} />
-        <Route path="about-us/mission-vision/edit" element={<UpdateMissionVision />} />
-
+        <Route
+          path="about-us/mission-vision/create"
+          element={<CreateMissionVision />}
+        />
+        <Route
+          path="about-us/mission-vision/edit"
+          element={<UpdateMissionVision />}
+        />
         {/* Our Values */}
-        <Route path="about-us/our-values/create" element={<CreateOurValues />} />
+        <Route
+          path="about-us/our-values/create"
+          element={<CreateOurValues />}
+        />
         <Route path="about-us/our-values/edit" element={<UpdateOurValues />} />
-
         {/* Delivery Process */}
-        <Route path="about-us/delivery-process/create" element={<CreateDeliveryProcess />} />
-        <Route path="about-us/delivery-process/edit" element={<UpdateDeliveryProcess />} />
-
+        <Route
+          path="about-us/delivery-process/create"
+          element={<CreateDeliveryProcess />}
+        />
+        <Route
+          path="about-us/delivery-process/edit"
+          element={<UpdateDeliveryProcess />}
+        />
         {/* Meet The Team */}
         <Route path="about-us/meet-team/create" element={<CreateMeetTeam />} />
         <Route path="about-us/meet-team/edit" element={<UpdateMeetTeam />} />
-
         {/* Testimonials */}
-        <Route path="about-us/testimonials/create" element={<CreateTestimonials />} />
-        <Route path="about-us/testimonials/edit" element={<UpdateTestimonials />} />
-
-
+        <Route
+          path="about-us/testimonials/create"
+          element={<CreateTestimonials />}
+        />
+        <Route
+          path="about-us/testimonials/edit"
+          element={<UpdateTestimonials />}
+        />
         {/*-------------------------------------------- wallet Routes under super-ADMIN-------------------------------------------------- */}
         {/* Wallet Routes */}
         <Route path="wallet" element={<WalletDashboard />} />
@@ -969,7 +1191,10 @@ const AppRoutes = () => {
         <Route path="productUpload" element={<ProductUploade />} />
         <Route path="custom-order" element={<CustomOrder />} />
         <Route path="product/view-product" element={<ProductView />} />
-        <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
+        <Route
+          path="custom-order/view-request"
+          element={<ViewCustomRequest />}
+        />
         <Route path="purchase" element={<Productpurchase />} />
         <Route path="purchase/view" element={<ProductpurchaseView />} />
         <Route path="product-purchase" element={<Productpurchase />} />
@@ -978,34 +1203,57 @@ const AppRoutes = () => {
         <Route path="advertise" element={<ArtistAdvertise />} />
         <Route path="advertise/sponser" element={<ArtistSponser />} />
 
-
         {/* Bidding Routes */}
-        <Route path="bidding-products-table" element={<ArtistBidingAllProducts />} />
-        <Route path="bidded-products-table" element={<ArtistBiddedProducts />} />
+        <Route
+          path="bidding-products-table"
+          element={<ArtistBidingAllProducts />}
+        />
+        <Route
+          path="bidded-products-table"
+          element={<ArtistBiddedProducts />}
+        />
         <Route path="bidding-pass-table" element={<ArtistBiddingTable />} />
-        <Route path="bidding-pass-table/bidding-pass" element={<ArtistBiddingTablePass />} />
-        <Route path="bidding-pass-table/upgrade" element={<ArtistBiddingTablePassUpgrade />} />
+        <Route
+          path="bidding-pass-table/bidding-pass"
+          element={<ArtistBiddingTablePass />}
+        />
+        <Route
+          path="bidding-pass-table/upgrade"
+          element={<ArtistBiddingTablePassUpgrade />}
+        />
 
         {/* Certification Routes */}
         <Route path="certification" element={<ArtistCertification />} />
-        <Route path="certification/create-certification" element={<  CreateArtitstCertifications />} />
+        <Route
+          path="certification/create-certification"
+          element={<CreateArtitstCertifications />}
+        />
 
         {/* Exhibition */}
         <Route path="exhibition" element={<ArtistExhibition />} />
-        <Route path="exhibition/create-exhibition" element={<ArtistCreateExhibition />} />
-        <Route path="exhibition/update-exhibition" element={<ArtistUpdateExhibition />} />
-        <Route path="exhibition/view-exhibition" element={<ArtistViewExhibition />} />
+        <Route
+          path="exhibition/create-exhibition"
+          element={<ArtistCreateExhibition />}
+        />
+        <Route
+          path="exhibition/update-exhibition"
+          element={<ArtistUpdateExhibition />}
+        />
+        <Route
+          path="exhibition/view-exhibition"
+          element={<ArtistViewExhibition />}
+        />
 
         {/* Premium Badges */}
         <Route path="premium-badges" element={<ArtistPremiumBages />} />
 
         <Route path="product-purchase" element={<Productpurchase />} />
         {/* Packaging Material */}
-        <Route path='packaging-material' element={<OrderMaterial />} />
-        <Route path='packaging-material/create' element={<CreateOrder />} />
-        <Route path='packaging-material/edit/:id' element={<UpdateOrder />} />
-        <Route path='packaging-material/view/:id' element={<ViewOrder />} />
-        
+        <Route path="packaging-material" element={<OrderMaterial />} />
+        <Route path="packaging-material/create" element={<CreateOrder />} />
+        <Route path="packaging-material/edit/:id" element={<UpdateOrder />} />
+        <Route path="packaging-material/view/:id" element={<ViewOrder />} />
+
         {/* Wallet */}
         <Route path="wallet" element={<ArtistSellerWallet />} />
       </Route>
@@ -1022,7 +1270,7 @@ const AppRoutes = () => {
         <Route index element={<BuyerDashboard />} />
         <Route path="dashboard" element={<BuyerDashboard />} />
         <Route path="profile" element={<UserProfile />} />
-        
+
         {/* Wallet */}
         {/* <Route path="wallet" element={<BuyerWallet />} /> */}
       </Route>
@@ -1041,7 +1289,10 @@ const AppRoutes = () => {
         <Route path="profile" element={<UserProfile />} />
         {/* Product Routes */}
         <Route path="product-details" element={<ViewProductDetails />} />
-        <Route path="product-details/bidding-pass" element={<SellerBiddingPass />} />
+        <Route
+          path="product-details/bidding-pass"
+          element={<SellerBiddingPass />}
+        />
         <Route path="SellerProductUpload" element={<SellerProductUpload />} />
         <Route path="purchased-product" element={<SellerPurchasedProducts />} />
 
@@ -1050,29 +1301,62 @@ const AppRoutes = () => {
         <Route path="advertise/sponser" element={<SellerSponser />} />
 
         {/* Bidding Routes */}
-        <Route path="bidding-products-table" element={<SellerBidingAllProducts />} />
-        <Route path="bidded-products-table" element={<SellerBiddedProducts />} />
+        <Route
+          path="bidding-products-table"
+          element={<SellerBidingAllProducts />}
+        />
+        <Route
+          path="bidded-products-table"
+          element={<SellerBiddedProducts />}
+        />
         <Route path="bidding-pass-table" element={<SellerBidTable />} />
-        <Route path="bidding-pass-table/bidding-pass" element={<SellerBidPassTable />} />
-        <Route path="bidding-pass-table/upgrade" element={<SellerBidPassUpgrade />} />
+        <Route
+          path="bidding-pass-table/bidding-pass"
+          element={<SellerBidPassTable />}
+        />
+        <Route
+          path="bidding-pass-table/upgrade"
+          element={<SellerBidPassUpgrade />}
+        />
         {/* Certification Routes */}
         <Route path="certification" element={<SellerCertification />} />
-        <Route path="certification/create-certification" element={<  CreateSellerCertifications />} />
+        <Route
+          path="certification/create-certification"
+          element={<CreateSellerCertifications />}
+        />
 
         {/* Exhibition */}
         <Route path="exhibition" element={<SellerExhibition />} />
-        <Route path="exhibition/create-exhibition" element={<SellerCreateExhibition />} />
-        <Route path="exhibition/update-exhibition" element={<SellerUpdateExhibition />} />
-        <Route path="exhibition/view-exhibition" element={<SellerViewExhibition />} />
+        <Route
+          path="exhibition/create-exhibition"
+          element={<SellerCreateExhibition />}
+        />
+        <Route
+          path="exhibition/update-exhibition"
+          element={<SellerUpdateExhibition />}
+        />
+        <Route
+          path="exhibition/view-exhibition"
+          element={<SellerViewExhibition />}
+        />
 
         <Route path="premium-badges" element={<SellerPremiumBages />} />
         <Route path="SellerProductUpload" element={<SellerProductUpload />} />
         <Route path="purchased-product" element={<SellerPurchasedProducts />} />
-        <Route path='packaging-material' element={<OrderMaterialSeller />} />
-        <Route path='packaging-material/create' element={<CreateMaterialOrder />} />
-        <Route path='packaging-material/edit/:id' element={<UpdateMaterialOrder />} />
-        <Route path='packaging-material/view/:id' element={<ViewMaterialOrder />} />
-        
+        <Route path="packaging-material" element={<OrderMaterialSeller />} />
+        <Route
+          path="packaging-material/create"
+          element={<CreateMaterialOrder />}
+        />
+        <Route
+          path="packaging-material/edit/:id"
+          element={<UpdateMaterialOrder />}
+        />
+        <Route
+          path="packaging-material/view/:id"
+          element={<ViewMaterialOrder />}
+        />
+
         {/* Wallet */}
         <Route path="wallet" element={<SellerWallet />} />
       </Route>
@@ -1094,15 +1378,30 @@ const AppRoutes = () => {
             <Route path="my-orders" element={<MyOrders />} />
             <Route path="my-orders/view" element={<MyOrderView />} />
             <Route path="manage-address" element={<ManageAddress />} />
-            <Route path="bank-payment-details" element={<BankPaymentDetails />} />
+            <Route
+              path="bank-payment-details"
+              element={<BankPaymentDetails />}
+            />
             <Route path="payment-method" element={<PaymentMethod />} />
-             <Route path="buyer-wallet" element={<BuyerWallet />} />
+            <Route path="buyer-wallet" element={<BuyerWallet />} />
             <Route path="password-manager" element={<PasswordManager />} />
-            <Route path="account-verification" element={<AccountVerification />} />
-            <Route path="social-media-promotion" element={<SocialMediaPromotion />} />
+            <Route
+              path="account-verification"
+              element={<AccountVerification />}
+            />
+            <Route
+              path="social-media-promotion"
+              element={<SocialMediaPromotion />}
+            />
             <Route path="custom-request" element={<CustomRequest />} />
-            <Route path="notification-preferences" element={<NotificationAndPreferences />} />
-            <Route path="security-agreements" element={<AccountSecurityAndAgreements />} />
+            <Route
+              path="notification-preferences"
+              element={<NotificationAndPreferences />}
+            />
+            <Route
+              path="security-agreements"
+              element={<AccountSecurityAndAgreements />}
+            />
             <Route path="logout" element={<Logout />} />
             <Route path="track-your-order" element={<TrackOrder />} />
             <Route path="wishlist" element={<WishListTable />} />
@@ -1121,7 +1420,7 @@ const AppRoutes = () => {
         {/* path="/celebrity-collections"
            element={<CelebrityCollections />}
          /> */}
-        <Route path='/celebrity/:slug' element={<CelebrityContent />} />
+        <Route path="/celebrity/:slug" element={<CelebrityContent />} />
         <Route path="/policy" element={<TermsPolicy />} />
         <Route path="/commission" element={<Commission />} />
         <Route path="/how-to-bid" element={<HowToBid />} />
@@ -1139,20 +1438,19 @@ const AppRoutes = () => {
         <Route path="/about-us" element={<AboutUs />} />
 
         <Route path="/career" element={<Career />} />
-        <Route path='/careers/:slug' element={<JobRoles />} />
+        <Route path="/careers/:slug" element={<JobRoles />} />
 
-        <Route path='/blogs' element={<Blogs />} />
-        <Route path='/blog/:blogId' element={<BlogCardDetails />} />
+        <Route path="/blogs" element={<Blogs />} />
+        <Route path="/blog/:blogId" element={<BlogCardDetails />} />
 
-        <Route path='/challenge' element={<ChallengesContent />} />
-        <Route path='/challenge/:theme' element={<JoinChallenges />} />
+        <Route path="/challenge" element={<ChallengesContent />} />
+        <Route path="/challenge/:theme" element={<JoinChallenges />} />
 
-        <Route path='/product-details' element={<ProductDetails />} />
-        <Route path='/bid-details' element={<BidDetails />} />
-        <Route path='/certification' element={<Certification />} />
-        <Route path='/insurance' element={<Insurance />} />
-        <Route path='/partner' element={<Partner />} />
-
+        <Route path="/product-details" element={<ProductDetails />} />
+        <Route path="/bid-details" element={<BidDetails />} />
+        <Route path="/certification" element={<Certification />} />
+        <Route path="/insurance" element={<Insurance />} />
+        <Route path="/partner" element={<Partner />} />
 
         {/* ----------------------------------------------------social media Route ----------------------------------------------- */}
 
@@ -1163,19 +1461,30 @@ const AppRoutes = () => {
         <Route path="/social-media/create-post" element={<CreatePost />} />
         <Route path="/social-media/upload-post" element={<UploadPost />} />
         <Route path="/social-media/profile" element={<SocialProfile />} />
-        <Route path="/social-media/profile/product-view" element={<ProductViewing />} />
-        <Route path="/social-media/profile/suggestion" element={<SuggestedProfile />} />
-        <Route path='/social-media/profile/promote-profile' element={<PromoteProfile />} />
-        <Route path='/social-media/profile/promote-post' element={<PromotePost />} />
-        <Route path='/social-media/create-live' element={<CreateLive />} />
-        <Route path='/social-media/:streamKey/:username' element={<MyLive />} />
-        <Route path='/social-media/live/:streamKey' element={<Live />} />
-        <Route path='/social-media/test' element={<Test />} />
-        <Route path='/social-media/setting' element={<Settings />} />
+        <Route
+          path="/social-media/profile/product-view"
+          element={<ProductViewing />}
+        />
+        <Route
+          path="/social-media/profile/suggestion"
+          element={<SuggestedProfile />}
+        />
+        <Route
+          path="/social-media/profile/promote-profile"
+          element={<PromoteProfile />}
+        />
+        <Route
+          path="/social-media/profile/promote-post"
+          element={<PromotePost />}
+        />
+        <Route path="/social-media/create-live" element={<CreateLive />} />
+        <Route path="/social-media/:streamKey/:username" element={<MyLive />} />
+        <Route path="/social-media/live/:streamKey" element={<Live />} />
+        <Route path="/social-media/test" element={<Test />} />
+        <Route path="/social-media/setting" element={<Settings />} />
 
         <Route path="/invoice" element={<EdprowiseInvoice />} />
-        <Route path='/invoice1' element={<Invoice />} />
-
+        <Route path="/invoice1" element={<Invoice />} />
       </Route>
 
       {/*-------------------------------------------- Root Route - Auto Redirect----------------------------------------- */}
@@ -1183,14 +1492,28 @@ const AppRoutes = () => {
         index
         element={
           isAuthenticated ? (
-            userType === 'Super-Admin' ? (
+            userType === "Super-Admin" ? (
               <Navigate to="/super-admin/dashboard" replace />
-            ) : userType === 'Artist' ? (
-              <Navigate to={(userStatus === 'Unverified' || userStatus === 'Rejected') ? '/artist/profile' : '/artist/dashboard'} replace />
-            ) : userType === 'Buyer' ? (
+            ) : userType === "Artist" ? (
+              <Navigate
+                to={
+                  userStatus === "Unverified" || userStatus === "Rejected"
+                    ? "/artist/profile"
+                    : "/artist/dashboard"
+                }
+                replace
+              />
+            ) : userType === "Buyer" ? (
               <Navigate to="/buyer/dashboard" replace />
-            ) : userType === 'Seller' ? (
-              <Navigate to={(userStatus === 'Unverified' || userStatus === 'Rejected') ? '/seller/profile' : '/seller/dashboard'} replace />
+            ) : userType === "Seller" ? (
+              <Navigate
+                to={
+                  userStatus === "Unverified" || userStatus === "Rejected"
+                    ? "/seller/profile"
+                    : "/seller/dashboard"
+                }
+                replace
+              />
             ) : (
               <WebsiteMain />
             )

@@ -91,6 +91,14 @@ certification: {
     errorMessage: "Failed to delete certification.",
     idKey: "CertificationId",
   },
+
+certificateCMS: {
+    getEndpoint: (id) => `/api/certificate/delete/${id}`,
+    successMessage: "Certification successfully deleted!",
+    errorMessage: "Failed to delete certification.",
+    idKey: "CertificateCMSId",
+  },
+
   faq : {
   getEndpoint: (id) => `/api/delete-FAQ/${id}`,
   successMessage: "FAQ successfully deleted!",
