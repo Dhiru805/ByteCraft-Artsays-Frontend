@@ -274,6 +274,13 @@ challenge: {
     idKey: "ChallengeId",
   },
 
+partner: {
+    getEndpoint: (id) => `/api/partner/delete/${id}`,
+    successMessage: "Partner Page successfully deleted!",
+    errorMessage: "Failed to delete Partner Page",
+    idKey: "PartnerId",
+  },
+
 materialCard: {
   getEndpoint: (id) => `/api/packaging-material-setting/material-card/delete/${id}`,
   successMessage: "material card successfully deleted!",

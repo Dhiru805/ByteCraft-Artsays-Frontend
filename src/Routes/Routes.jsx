@@ -167,6 +167,10 @@ import CertificateTable from "../Component/Dashboard/Super-AdminDashboard/Certif
 import CreateCertificate from "../Component/Dashboard/Super-AdminDashboard/CertificateCMS/create";
 import EditCertificate from "../Component/Dashboard/Super-AdminDashboard/CertificateCMS/edit";
 
+import PartnerTable from "../Component/Dashboard/Super-AdminDashboard/PartnerPage/table";
+import CreatePartner from "../Component/Dashboard/Super-AdminDashboard/PartnerPage/create";
+import EditPartner from "../Component/Dashboard/Super-AdminDashboard/PartnerPage/edit";
+
 import EnquiryTable from "../Component/Dashboard/Super-AdminDashboard/Enquiry/table";
 import ViewEnquiry from "../Component/Dashboard/Super-AdminDashboard/Enquiry/view";
 
@@ -1061,7 +1065,12 @@ const AppRoutes = () => {
         <Route path="certificate" element={<CertificateTable />} />
         <Route path="certificate/create" element={<CreateCertificate />} />
         <Route path="certificate/edit" element={<EditCertificate />} />
-        
+
+        {/* Partner Page Website CMS */}
+        <Route path="partner" element={<PartnerTable />} />
+        <Route path="partner/create" element={<CreatePartner />} />
+        <Route path="partner/edit" element={<EditPartner />} />
+
         {/* Homepage Admin Routes*/}
         <Route path="homepage" element={<Homepage />} />
         <Route path="homepage/create" element={<CreateHomepage />} />
