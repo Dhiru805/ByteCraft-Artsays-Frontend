@@ -281,6 +281,12 @@ partner: {
     idKey: "PartnerId",
   },
 
+  insurance: {
+    getEndpoint: (id) => `/api/insurance/delete/${id}`,
+    successMessage: "Insurance Page successfully deleted!",
+    errorMessage: "Failed to delete Insurance Page",
+    idKey: "InsuranceId",
+  },
 materialCard: {
   getEndpoint: (id) => `/api/packaging-material-setting/material-card/delete/${id}`,
   successMessage: "material card successfully deleted!",

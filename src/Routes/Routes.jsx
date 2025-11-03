@@ -171,6 +171,10 @@ import PartnerTable from "../Component/Dashboard/Super-AdminDashboard/PartnerPag
 import CreatePartner from "../Component/Dashboard/Super-AdminDashboard/PartnerPage/create";
 import EditPartner from "../Component/Dashboard/Super-AdminDashboard/PartnerPage/edit";
 
+import InsuranceTable from "../Component/Dashboard/Super-AdminDashboard/Insurance/table";
+import CreateInsurance from "../Component/Dashboard/Super-AdminDashboard/Insurance/create";
+import EditInsurance from "../Component/Dashboard/Super-AdminDashboard/Insurance/edit";
+
 import EnquiryTable from "../Component/Dashboard/Super-AdminDashboard/Enquiry/table";
 import ViewEnquiry from "../Component/Dashboard/Super-AdminDashboard/Enquiry/view";
 
@@ -1070,6 +1074,11 @@ const AppRoutes = () => {
         <Route path="partner" element={<PartnerTable />} />
         <Route path="partner/create" element={<CreatePartner />} />
         <Route path="partner/edit" element={<EditPartner />} />
+
+        {/* Insurance Website CMS */}
+        <Route path="insurance" element={<InsuranceTable />} />
+        <Route path="insurance/create" element={<CreateInsurance />} />
+        <Route path="insurance/edit" element={<EditInsurance />} />
 
         {/* Homepage Admin Routes*/}
         <Route path="homepage" element={<Homepage />} />
