@@ -10,10 +10,6 @@ const installmentOptions = [
 const PricingOffers = ({
     pricingData,
     finalPrice,
-    isSubmitting,
-    handlePricingChange,
-    handleInstallmentDurationChange,
-    mainCategoryId,
 }) => {
     const [gstPercentage] = useState(pricingData.gstPercentage || 0);
     const [insuranceSettings] = useState(null);

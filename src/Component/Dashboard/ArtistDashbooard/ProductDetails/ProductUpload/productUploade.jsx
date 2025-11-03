@@ -839,6 +839,7 @@ const validateAntiqueFields = (formData) => {
             handleMultiSelectChange={handleMultiSelectChange}
             handleInputChange={handleInputChange}
             mainCategoryId={formData.mainCategory?.value}
+            
           />
         );
       case 'pricing':
@@ -852,6 +853,7 @@ const validateAntiqueFields = (formData) => {
             handleInstallmentDurationChange={handleInstallmentDurationChange}
             offerOptions={offerOptions}
             mainCategoryId={formData.mainCategory?.value}
+                subCategoryId={formData.subCategory?.value}
           />
         );
       case 'shipping':

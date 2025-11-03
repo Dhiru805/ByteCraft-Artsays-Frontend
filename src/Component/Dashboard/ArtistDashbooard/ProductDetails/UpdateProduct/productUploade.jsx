@@ -395,6 +395,7 @@
               handleInstallmentDurationChange={handleInstallmentDurationChange}
               offerOptions={offerOptions}
               mainCategoryId={formData.mainCategory?.value}
+              subCategoryId={formData.subCategory?.value}
             />
           );
         case 'shipping':
