@@ -455,6 +455,7 @@ import ProductDetails from '../Pages/ProductDetails/ProductDetails';
 import BidDetails from '../Pages/BidDetails/BidDetails';
 import Certification from '../Pages/Certification/Certification';
 import Insurance from '../Pages/Insurance/Insurance';
+import Partner from '../Pages/Partner/Partner';
 
 //-----------------------------Artist Premium Badges--------------------------//
 
@@ -1150,6 +1151,7 @@ const AppRoutes = () => {
         <Route path='/bid-details' element={<BidDetails />} />
         <Route path='/certification' element={<Certification />} />
         <Route path='/insurance' element={<Insurance />} />
+        <Route path='/partner' element={<Partner />} />
 
 
         {/* ----------------------------------------------------social media Route ----------------------------------------------- */}

@@ -1,20 +1,24 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
+
 const Footer = () => {
 
   return (
-    <footer className="  w-full bg-black-900 ">
-      <div className="max-w-[1440px] mx-auto px-[80px] pt-[20px]">
-        <section className="h-[100px]   flex flex-row items-center justify-between">
-          <img src="/assets/home/flogo.svg" alt="logo" />
-          <u className="w-[40%] text-base">
+    <footer className="  w-full bg-[#111111] ">
+      <div className="max-w-[1440px] mx-auto py-8">
+        <section className="flex flex-row items-center justify-between px-4 py-4 bg-[#000000] rounded-xl">
+          <div>
+            <h1 className="text-5xl text-[#FB5934] font-windhavi pb-3"><a href="/">Artsays</a></h1>
+            <p className="text-lg text-white">When Art Speaks, Value Grows</p>
+          </div>
+          <p className="w-[70%] text-md text-white text-end">
             Artsays is powered by 100% authenticity, transparency, and innovation,
             ensuring a secure marketplace for curated artworks, rare artifacts,
             and seamless transactions.
-          </u>
+          </p>
         </section>
 
-        <section className=" border-black-400 border-y-2 py-4 ">
+        <section className="py-4 ">
           <section className="flex flex-row   justify-between">
             <section>
               <h3 className="text-center text-lg text-black-400 mb-2 ">

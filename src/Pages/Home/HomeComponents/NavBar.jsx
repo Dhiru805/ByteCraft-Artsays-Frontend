@@ -324,7 +324,7 @@ const handleToggle = () => {
                   <i className="fas fa-shopping-cart" />
                 </a> : (Usertype === "Artist" || Usertype === "Super-Admin") ?
                 <a className="nav-link-h me-3" href="/blog">
-                  Blog
+                  BLOG
                 </a> : (!isLoggedIn) ? <a className="nav-link-h icon-link-h me-3" href="/">
                   <i className="fas fa-shopping-cart" />
                 </a> : null}

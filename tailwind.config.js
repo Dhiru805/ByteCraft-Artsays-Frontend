@@ -41,6 +41,9 @@ module.exports = {
       fontFamily: {
         oswald: ["Oswald", "sans-serif"],
       },
+      fontFamily: {
+        windhavi: ['Windhavi', 'sans-serif'],
+      },
     },
   },
   plugins: [],
