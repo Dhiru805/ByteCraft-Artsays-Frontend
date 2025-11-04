@@ -807,6 +807,151 @@
 // export default ArtGalleryContent;
 
 
+// import React, { useEffect, useState } from "react";
+
+// const ArtGalleryContent = () => {
+//   const [page, setPage] = useState(null);
+//   const [products, setProducts] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState("");
+
+//   useEffect(() => {
+//     const fetchGalleryData = async () => {
+//       setLoading(true);
+//       setError("");
+
+//       try {
+//         const base = process.env.REACT_APP_API_URL || "http://localhost:3001";
+
+//         const cmsRes = await fetch(`${base}/api/CMS-artsays-gallery/published`);
+//         const cmsData = await cmsRes.json();
+
+//         if (!cmsData?.success || !cmsData?.data) {
+//           setPage(null);
+//           setError(cmsData?.message || "No published gallery found.");
+//           setLoading(false);
+//           return;
+//         }
+
+//         setPage(cmsData.data);
+
+//         const allGalleryRes = await fetch(`${base}/api/artsays-gallery`);
+//         const allGalleryData = await allGalleryRes.json();
+
+//         if (!allGalleryData?.success || !allGalleryData?.data || allGalleryData.data.length === 0) {
+//           setProducts([]);
+//           return;
+//         }
+
+//         const latestEntry = allGalleryData.data.reduce((latest, current) => {
+//           const latestTime = new Date(latest.updatedAt || latest.createdAt).getTime();
+//           const currentTime = new Date(current.updatedAt || current.createdAt).getTime();
+//           return currentTime > latestTime ? current : latest;
+//         });
+
+//         const { userType, userId } = latestEntry;
+
+//         const userRes = await fetch(`${base}/api/artsays-gallery/${userId}`);
+//         const userData = await userRes.json();
+
+//         if (!userData?.success || !userData?.data) {
+//           setProducts([]);
+//           return;
+//         }
+
+//         let productsRes;
+//         if (userType === "Artist") {
+//           productsRes = await fetch(`${base}/api/getartistproductbyid/${userId}`);
+//         } else if (userType === "Seller") {
+//           productsRes = await fetch(`${base}/api/getsellerproductbyid/${userId}`);
+//         }
+
+//         if (productsRes) {
+//           const productsData = await productsRes.json();
+//           setProducts(productsData?.success && productsData?.data ? productsData.data : []);
+//         }
+//       } catch (err) {
+//         console.error("Error fetching gallery or products:", err);
+//         setError("Failed to load gallery or products.");
+//         setProducts([]);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchGalleryData();
+//   }, []);
+
+//   return (
+//     <div className="max-w-[1440px] mx-auto mb-4">
+//       <div className="w-full py-3 px-3">
+//         <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
+//           <a href="#" className="hover:text-red-500">Home</a>
+//           <span>/</span>
+//           <a href="#" className="hover:text-red-500">Store</a>
+//           <span>/</span>
+//           <a href="#" className="hover:text-red-500">Paintings</a>
+//           <span>/</span>
+//           <span className="font-medium text-gray-900">Abstract</span>
+//         </nav>
+//       </div>
+
+//       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3 px-3">
+//         <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34]">
+//           {loading ? "Loading..." : page ? page.title : "Art Gallery"}
+//         </h1>
+//       </div>
+
+//       <hr className="my-3 border-dark" />
+
+//       <div className="px-3">
+//         {loading ? (
+//           <p className="mt-3 text-xs md:text-base text-gray-600">Loading description...</p>
+//         ) : error ? (
+//           <p className="mt-3 text-xs md:text-base text-red-600">{error}</p>
+//         ) : page ? (
+//           <>
+//             <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
+//               {page.description}
+//             </p>
+
+//             <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+//               {products.length > 0 ? (
+//                 products.map((product) => (
+//                   <div key={product._id} className="border p-3 rounded shadow">
+//                     <h2 className="font-semibold">{product.name}</h2>
+//                     <p className="text-sm text-gray-600">{product.description}</p>
+//                     <p className="font-medium">${product.price}</p>
+//                   </div>
+//                 ))
+//               ) : (
+//                 <p className="text-gray-600">No products available.</p>
+//               )}
+//             </div>
+//           </>
+//         ) : (
+//           <p className="mt-3 text-xs md:text-base text-gray-600">
+//             No published Art Gallery available.
+//           </p>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ArtGalleryContent;
+
+
+
+
+
+
+
+
+
+
+
+
 import React, { useEffect, useState } from "react";
 
 const ArtGalleryContent = () => {
@@ -826,6 +971,8 @@ const ArtGalleryContent = () => {
         const cmsRes = await fetch(`${base}/api/CMS-artsays-gallery/published`);
         const cmsData = await cmsRes.json();
 
+        console.log("CMS Response:", cmsData);
+
         if (!cmsData?.success || !cmsData?.data) {
           setPage(null);
           setError(cmsData?.message || "No published gallery found.");
@@ -833,19 +980,32 @@ const ArtGalleryContent = () => {
           return;
         }
 
-        setPage(cmsData.data);
+        setPage({
+          title: cmsData.data.title || "",
+          description: cmsData.data.description || "",
+          sectionTitle: cmsData.data.sectionTitle || "",
+          sectionDescription: cmsData.data.sectionDescription || "",
+        });
 
         const allGalleryRes = await fetch(`${base}/api/artsays-gallery`);
         const allGalleryData = await allGalleryRes.json();
 
-        if (!allGalleryData?.success || !allGalleryData?.data || allGalleryData.data.length === 0) {
+        if (
+          !allGalleryData?.success ||
+          !allGalleryData?.data ||
+          allGalleryData.data.length === 0
+        ) {
           setProducts([]);
           return;
         }
 
         const latestEntry = allGalleryData.data.reduce((latest, current) => {
-          const latestTime = new Date(latest.updatedAt || latest.createdAt).getTime();
-          const currentTime = new Date(current.updatedAt || current.createdAt).getTime();
+          const latestTime = new Date(
+            latest.updatedAt || latest.createdAt
+          ).getTime();
+          const currentTime = new Date(
+            current.updatedAt || current.createdAt
+          ).getTime();
           return currentTime > latestTime ? current : latest;
         });
 
@@ -861,14 +1021,20 @@ const ArtGalleryContent = () => {
 
         let productsRes;
         if (userType === "Artist") {
-          productsRes = await fetch(`${base}/api/getartistproductbyid/${userId}`);
+          productsRes = await fetch(
+            `${base}/api/getartistproductbyid/${userId}`
+          );
         } else if (userType === "Seller") {
-          productsRes = await fetch(`${base}/api/getsellerproductbyid/${userId}`);
+          productsRes = await fetch(
+            `${base}/api/getsellerproductbyid/${userId}`
+          );
         }
 
         if (productsRes) {
           const productsData = await productsRes.json();
-          setProducts(productsData?.success && productsData?.data ? productsData.data : []);
+          setProducts(
+            productsData?.success && productsData?.data ? productsData.data : []
+          );
         }
       } catch (err) {
         console.error("Error fetching gallery or products:", err);
@@ -884,13 +1050,20 @@ const ArtGalleryContent = () => {
 
   return (
     <div className="max-w-[1440px] mx-auto mb-4">
+    
       <div className="w-full py-3 px-3">
         <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-          <a href="#" className="hover:text-red-500">Home</a>
+          <a href="#" className="hover:text-red-500">
+            Home
+          </a>
           <span>/</span>
-          <a href="#" className="hover:text-red-500">Store</a>
+          <a href="#" className="hover:text-red-500">
+            Store
+          </a>
           <span>/</span>
-          <a href="#" className="hover:text-red-500">Paintings</a>
+          <a href="#" className="hover:text-red-500">
+            Paintings
+          </a>
           <span>/</span>
           <span className="font-medium text-gray-900">Abstract</span>
         </nav>
@@ -906,7 +1079,9 @@ const ArtGalleryContent = () => {
 
       <div className="px-3">
         {loading ? (
-          <p className="mt-3 text-xs md:text-base text-gray-600">Loading description...</p>
+          <p className="mt-3 text-xs md:text-base text-gray-600">
+            Loading description...
+          </p>
         ) : error ? (
           <p className="mt-3 text-xs md:text-base text-red-600">{error}</p>
         ) : page ? (
@@ -920,7 +1095,9 @@ const ArtGalleryContent = () => {
                 products.map((product) => (
                   <div key={product._id} className="border p-3 rounded shadow">
                     <h2 className="font-semibold">{product.name}</h2>
-                    <p className="text-sm text-gray-600">{product.description}</p>
+                    <p className="text-sm text-gray-600">
+                      {product.description}
+                    </p>
                     <p className="font-medium">${product.price}</p>
                   </div>
                 ))
@@ -928,6 +1105,22 @@ const ArtGalleryContent = () => {
                 <p className="text-gray-600">No products available.</p>
               )}
             </div>
+            <br/>
+            <br/>
+            <br/>
+           
+            {page.sectionTitle && (
+              <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34]">
+                {page.sectionTitle}
+              </h1>
+            )}
+            <hr className="my-3 border-dark" />
+           
+            {page.sectionDescription && (
+              <p className="mt-2 text-sm md:text-base text-gray-700 leading-relaxed">
+                {page.sectionDescription}
+              </p>
+            )}
           </>
         ) : (
           <p className="mt-3 text-xs md:text-base text-gray-600">
