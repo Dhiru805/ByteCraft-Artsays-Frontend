@@ -212,15 +212,7 @@
 
 //   return (
 //     <div className="max-w-[1440px] mx-auto py-4">
-//       <h1 className="text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
-//         Success Stories
-//       </h1>
-//       <hr className="my-3 border-dark" />
-//       <p className="mt-3 text-xs md:text-lg font-medium text-black leading-relaxed px-3">
-//         Safeguard your creativity, confidence, and investment — every brushstroke matters.
-//       </p>
-
-//       <div className="relative w-full overflow-hidden">
+//    <div className="relative w-full overflow-hidden">
 //         <div
 //           ref={sliderRef}
 //           className="flex gap-6 px-3 sm:px-6 my-3 overflow-x-scroll scroll-smooth scrollbar-hide select-none cursor-grab active:cursor-grabbing"
