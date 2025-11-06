@@ -141,8 +141,8 @@ const PartnerTable = () => {
                     <tr>
                       <th>#</th>
                       <th>Main Heading</th>
-                      <th>Button Name</th>
-                      <th>Cards</th>
+                      {/* <th>Button Name</th> */}
+                      {/* <th>Section 1 Cards</th> */}
                       <th>Status</th>
                       <th>Action</th>
                     </tr>
@@ -152,8 +152,8 @@ const PartnerTable = () => {
                       <tr key={page._id}>
                         <td>{(currentPage - 1) * pagesPerPage + idx + 1}</td>
                         <td>{page.mainHeading || "-"}</td>
-                        <td>{page.buttonName || "-"}</td>
-                        <td>{page.cards?.length || 0}</td>
+                        {/* <td>{page.buttonName || "-"}</td> */}
+                        {/* <td>{page.cards?.length || 0}</td> */}
                         <td>
                           {page.status === "published" ? (
                             <span className="badge badge-success">

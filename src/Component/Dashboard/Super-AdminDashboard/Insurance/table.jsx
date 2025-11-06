@@ -145,6 +145,7 @@ const InsuranceTable = () => {
                       <th>Section 3 Heading</th>
                       <th>Section 1 Cards</th>
                       <th>Section 2 Cards</th>
+                      <th>Section 3 Cards</th>
                       <th>Status</th>
                       <th>Action</th>
                     </tr>
@@ -158,6 +159,7 @@ const InsuranceTable = () => {
                         <td>{page.section3Heading || "-"}</td>
                         <td>{page.section1Cards?.length || 0}</td>
                         <td>{page.section2Cards?.length || 0}</td>
+                        <td>{page.section3Cards?.length || 0}</td>
                         <td>
                           {page.status === "published" ? (
                             <span className="badge badge-success">Published</span>
