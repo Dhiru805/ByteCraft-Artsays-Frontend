@@ -121,13 +121,14 @@
   
   /* Optional: Change color when active */
   .faq-icon.active.plus {
-    background-color: #FED8B1; /* Change color for active plus */
+    background-color: #FED8B1;     /*Change color for active plus*/
   }
   
   .faq-icon.active.minus {
-    background-color: #FF8C00; /* Change color for active minus */
+    background-color: #FF8C00;      /*Change color for active minus*/
   }
-  
+
+
   /* Responsive Design */
   @media (max-width: 768px) {
     .faq-container {

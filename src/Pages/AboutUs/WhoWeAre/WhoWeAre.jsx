@@ -127,9 +127,8 @@ const WhoWeAre = () => {
           {data.stats?.map((s, idx) => (
             <div
               key={idx}
-              className={`content-center justify-items-center ${
-                idx < 3 ? "md:border-r-2 md:border-[#6F4D34]" : ""
-              }`}
+              className={`content-center justify-items-center ${idx < 3 ? "md:border-r-2 md:border-[#6F4D34]" : ""
+                }`}
             >
               <h1 className="text-3xl md:text-6xl font-bold text-[#6F4D34] px-3">
                 {s.number}

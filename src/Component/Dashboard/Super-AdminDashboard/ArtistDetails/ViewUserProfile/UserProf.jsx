@@ -20,9 +20,9 @@ import useUserType from '../../../urlconfig'
 const UserProfileForm = () => {
   const userType = useUserType();
   const location = useLocation();
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
-const artistFromState = location?.state?.artist;
+  const artistFromState = location?.state?.artist;
   useEffect(() => {
     if (artistFromState && artistFromState._id) {
       localStorage.setItem("selectedArtist", JSON.stringify(artistFromState));
@@ -39,7 +39,7 @@ const artistFromState = location?.state?.artist;
       navigate("/super-admin/artist/management");
     }
   }, [artist, userId, navigate]);
-  
+
   const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
   const [profileData, setProfileData] = useState({
     name: '',
@@ -94,7 +94,7 @@ const artistFromState = location?.state?.artist;
     }
   }, [userId]);
 
-const [activeTab, setActiveTab] = useState('Settings');
+  const [activeTab, setActiveTab] = useState('Settings');
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -104,19 +104,19 @@ const [activeTab, setActiveTab] = useState('Settings');
     }
   }, [location]);
 
- const handleTabClick = (tabName) => {
+  const handleTabClick = (tabName) => {
     setActiveTab(tabName);
-navigate(
-  {
-    pathname: location.pathname,
-    search: `?tab=${tabName}`,
-  },
-  {
-    state: { artist }, 
-  }
-);
+    navigate(
+      {
+        pathname: location.pathname,
+        search: `?tab=${tabName}`,
+      },
+      {
+        state: { artist },
+      }
+    );
   };
-  
+
   // const handleAddressChange = (e) => {
   //   const { name, value } = e.target;
   //   const [, subKey] = name.split('.');
@@ -129,7 +129,7 @@ navigate(
   //     }
   //   }));
   // };
-  
+
   // const handleTabClick = (tabName) => {
   //   setActiveTab(tabName);
   //   navigate({
@@ -165,8 +165,84 @@ navigate(
     { name: 'Preferences', component: Preferences },
   ];
 
+
+  // const handleExport = () => {
+  //   try {
+  //     const a = profileData || artist;
+
+  //     if (!a || Object.keys(a).length === 0) {
+  //       toast.error("No profile data to export");
+  //       return;
+  //     }
+
+
+  //     const csvHeaders = [
+  //       " Name",
+  //       "Email",
+  //       "Role",
+  //       "Phone",
+  //       "Address",
+  //       "PAN No",
+  //       "Aadhaar Number",
+  //       "Bank Account Number"
+  //     ];
+
+
+  //     const address = a.address
+  //       ? [
+  //         a.address.line1,
+  //         a.address.line2,
+  //         a.address.city,
+  //         a.address.state,
+  //         a.address.country,
+  //         a.address.pincode
+  //       ]
+  //         .filter(Boolean)
+  //         .join(", ")
+  //       : "";
+
+
+  //     const csvRow = [
+  //       a.name || a.username || "",
+  //       a.email || "",
+  //       a.userType || a.role || "",
+  //       a.phone || "",
+  //       address,
+  //       a.panNumber || a.pan || "",
+  //       a.aadhaarNumber || a.adhar || "",
+  //       a.bankAccountNumber || a.bankAccount || ""
+  //     ];
+
+  //     //  Generate CSV
+  //     const csvString = "\uFEFF" + csvHeaders.join(",") + "\n" + csvRow.join(",");
+
+  //     //   download
+  //     const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+  //     const url = URL.createObjectURL(blob);
+  //     const link = document.createElement("a");
+  //     link.href = url;
+
+  //     //  Artist-based file name
+  //     const fileName = `${(a.name || "artist").replace(/\s+/g, "_")}_profile.csv`;
+  //     link.setAttribute("download", fileName);
+
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
+  //     URL.revokeObjectURL(url);
+  //   } catch (error) {
+  //     console.error("Export failed:", error);
+  //     toast.error("Failed to export artist details");
+  //   }
+  // };
+
+
+
+
   return (
+
     <div className="container-fluid">
+
       <div className="block-header">
         <div className="row">
           <div className="col-lg-6 col-md-6 col-sm-12">
@@ -190,6 +266,20 @@ navigate(
           </div>
         </div>
       </div>
+
+      
+      {/*  Export Button  */}
+      {/* <div className="d-flex justify-content-end align-items-start mt-8 mb-2 pe-3">
+        <button
+          onClick={handleExport}
+          className="btn btn-success btn-sm d-flex align-items-center gap-2"
+        >
+          <i className="fa fa-download"></i> Export
+        </button>
+      </div> */}
+
+
+
 
       <div className="row clearfix">
         <div className="col-lg-12">

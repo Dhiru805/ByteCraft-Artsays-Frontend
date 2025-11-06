@@ -345,6 +345,7 @@ import BiddedProductTransaction from "../Component/Dashboard/Super-AdminDashboar
 import BiddingTable from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddingpass/BiddingTable";
 import BiddingTablePass from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddingpass/Biddingpass";
 
+
 //-----------------------------Settings--------------------------//
 import EmailSettings from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailSetting/EmailSetting";
 import BlogCategory from "../Component/Dashboard/Super-AdminDashboard/Settings/Blogcategory/Category";
@@ -494,6 +495,7 @@ import PurchaseBadge from '../Component/Dashboard/Super-AdminDashboard/Community
 import ShowPurchasedBadge from '../Component/Dashboard/Super-AdminDashboard/Community CMS/PurchaseBadge/ShowPurchasedBadge';
 import ProductViewing from '../Component/SocialMedia/Profile/ProductView';
 
+
 const PrivateRoute = ({ allowedRoles, children }) => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
   const location = useLocation();
@@ -588,6 +590,8 @@ const AppRoutes = () => {
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-services" element={<TermsofServices />} />
+
+       
       </Route>
 
       {/*-------------------------------------------Super Admin Routes--------------------------------------------- */}
@@ -677,6 +681,7 @@ const AppRoutes = () => {
         <Route path="bidding/transaction" element={<BiddedProductTransaction />} />
         <Route path="bidding/pass-table" element={<BiddingTable />} />
         <Route path="bidding/pass-table/bidding-pass" element={<BiddingTablePass />} />
+
 
         {/* Packaging Material */}
         <Route path="packaging-material/material" element={<Material />} />

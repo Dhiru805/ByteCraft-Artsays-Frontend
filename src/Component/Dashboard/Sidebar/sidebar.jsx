@@ -13,12 +13,18 @@ const Sidebar = () => {
   const [roleData, setRoleData] = useState({});
   const [fetchedTabs, setFetchedTabs] = useState([]);
   const [userType, setUserType] = useState(null);
+  const [initialLoad, setInitialLoad] = useState(true);
+  const [hasLoaded, setHasLoaded] = useState(false);
+  const [activeSubTab, setActiveSubTab] = useState(null);
+
 
   const userrole = localStorage.getItem('userrole');
 
   const roleAliases = {
     "Super-Admin": userrole ? userrole.toLowerCase() : "super-admin",
   };
+
+
 
   const getDisplayPath = (path) => {
     const alias = roleAliases[userrole] || userrole?.toLowerCase();
@@ -74,6 +80,7 @@ const Sidebar = () => {
         tabId: "att1",
         icon: "fa fa-paint-brush",
         path: `#artist-management`,
+        basePath: "/super-admin/artist",  //Common prefix for all Artist sub-routes
         subTabs: [
           { label: "Management", subtabId: "att11", path: `/super-admin/artist/management` },
           { label: "Blog Request", subtabId: "att12", path: `/super-admin/artist/blogrequest` },
@@ -81,15 +88,15 @@ const Sidebar = () => {
           { label: "Product Request", subtabId: "att14", path: `/super-admin/artist/artistproductrequest` },
           { label: "Products", subtabId: "att15", path: `/super-admin/artist/allartistproduct` },
           { label: "Sold Product", subtabId: "att16", path: `/super-admin/artist/sold-product` }
-        // icon: "fa fa-paint-brush",
-        // path: `#artist-management`,
-        // subTabs: [
-        //   { label: "Management", path: `/super-admin/artist/management` },
-        //   { label: "Blog Request", path: `/super-admin/artist/blogrequest` },
-        //   { label: "Blogs", path: `/super-admin/artist/blogs` },
-        //   { label: "Product Request", path: `/super-admin/artist/artistproductrequest` },
-        //   { label: "Products", path: `/super-admin/artist/allartistproduct` },
-        //   { label: "Sold Product ", path: `/super-admin/artist/sold-product` },
+          // icon: "fa fa-paint-brush",
+          // path: `#artist-management`,
+          // subTabs: [
+          //   { label: "Management", path: `/super-admin/artist/management` },
+          //   { label: "Blog Request", path: `/super-admin/artist/blogrequest` },
+          //   { label: "Blogs", path: `/super-admin/artist/blogs` },
+          //   { label: "Product Request", path: `/super-admin/artist/artistproductrequest` },
+          //   { label: "Products", path: `/super-admin/artist/allartistproduct` },
+          //   { label: "Sold Product ", path: `/super-admin/artist/sold-product` },
           // { label: "Transaction", path: `/super-admin/artisttransaction`},
           // { label: "Packaging Material", path: `/super-admin/artistpackagingmaterial` },
         ]
@@ -99,18 +106,19 @@ const Sidebar = () => {
         tabId: "byr1",
         icon: "fa-handshake",
         path: `#Buyer-management`,
+        basePath: "/super-admin/buyer",
         subTabs: [
           { label: "Management", subtabId: "byr11", path: `/super-admin/buyer/management` },
           { label: "Product Purchased", subtabId: "byr12", path: `/super-admin/buyer/productpurchased` },
           { label: "Resell Product Request", subtabId: "byr13", path: `/super-admin/buyer/resellproduct` },
           { label: "Sold Product", subtabId: "byr14", path: `/super-admin/buyer/soldproduct` }
-        // icon: "fa-handshake",
-        // path: `#Buyer-management`,
-        // subTabs: [
-        //   { label: "Management", path: `/super-admin/buyer/management` },
-        //   { label: "Product Purchased", path: `/super-admin/buyer/productpurchased` },
-        //   { label: "Resell Product Request", path: `/super-admin/buyer/resellproduct` },
-        //   { label: "Sold Product", path: `/super-admin/buyer/soldproduct` },
+          // icon: "fa-handshake",
+          // path: `#Buyer-management`,
+          // subTabs: [
+          //   { label: "Management", path: `/super-admin/buyer/management` },
+          //   { label: "Product Purchased", path: `/super-admin/buyer/productpurchased` },
+          //   { label: "Resell Product Request", path: `/super-admin/buyer/resellproduct` },
+          //   { label: "Sold Product", path: `/super-admin/buyer/soldproduct` },
           // { label: "Transaction", path: `/super-admin/buyertransaction` },
           // { label: "Packaging Material", path: `/super-admin/buyerpackagingmaterial` },
         ]
@@ -120,6 +128,7 @@ const Sidebar = () => {
         tabId: "slr1",
         icon: "fa fa-tag",
         path: `#Seller-management`,
+        basePath: "/super-admin/seller",
         subTabs: [
           { label: "Management", subtabId: "slr11", path: `/super-admin/seller/management` },
           { label: "Products", subtabId: "slr12", path: `/super-admin/seller/product` },
@@ -146,6 +155,7 @@ const Sidebar = () => {
         tabId: "cor1",
         icon: "fa fa-cart-plus",
         path: `/super-admin/customordertable`,
+
         subTabs: []
       },
       {
@@ -153,6 +163,7 @@ const Sidebar = () => {
         tabId: "ptp1",
         icon: "fa fa-cart-plus",
         path: `/super-admin/purchasetable`,
+
         subTabs: []
       },
       {
@@ -160,6 +171,7 @@ const Sidebar = () => {
         tabId: "bdg1",
         icon: "fa fa-gavel",
         path: `#Bidding`,
+        basePath: "/super-admin/bidding",
         subTabs: [
           { label: "All Products", subtabId: "bdg11", path: `/super-admin/bidding/allproduct` },
           { label: "Bidded Product", subtabId: "bdg12", path: `/super-admin/bidding/bidded-product` },
@@ -171,6 +183,7 @@ const Sidebar = () => {
         tabId: "csv1",
         icon: "fa fa-certificate",
         path: `/super-admin/certification`,
+
         subTabs: []
       },
       {
@@ -178,6 +191,8 @@ const Sidebar = () => {
         tabId: "clg1",
         icon: "fa-solid fa-trophy",
         path: `#Challenges`,
+        basePath: "/super-admin/challenges",
+
         subTabs: [
           {
             label: "Challenges",
@@ -204,6 +219,7 @@ const Sidebar = () => {
         label: "Career",
         icon: "fa fa-briefcase",
         path: '#Career',
+        basePath: "/super-admin/career",
         subTabs: [
           { label: "Openings", path: '/super-admin/career' },
           { label: "Applications", path: '/super-admin/career/applications' }
@@ -213,6 +229,7 @@ const Sidebar = () => {
         label: "Exhibition",
         icon: "fa fa-picture-o",
         path: `#Exhibition`,
+        basePath: "/super-admin/exhibition",
         subTabs: [
           { label: "Exhibition", path: `/super-admin/exhibition` },
           { label: "Exhibition Request", path: `/super-admin/exhibition-request` },
@@ -225,10 +242,11 @@ const Sidebar = () => {
         path: `/super-admin/enquiry`,
         subTabs: []
       },
-       {
+      {
         label: "Art Gallery",
         icon: "fa fa-image",
         path: `/super-admin/art-gallery`,
+
         subTabs: []
       },
       {
@@ -239,8 +257,8 @@ const Sidebar = () => {
         subTabs: [
           { label: "Homepage", subtabId: "wcms11", path: `/super-admin/homepage` },
           { label: "About Us", subtabId: "wcms12", path: `/super-admin/about-us` },
-           { label: "Affiliate", subtabId: "wcms19", path: `/super-admin/affiliate` },
-           { label: "Affiliate-Brand Partner", subtabId: "wcms19", path: `/super-admin/affiliate-bp` },
+          { label: "Affiliate", subtabId: "wcms19", path: `/super-admin/affiliate` },
+          { label: "Affiliate-Brand Partner", subtabId: "wcms19", path: `/super-admin/affiliate-bp` },
           { label: "Store", subtabId: "wcms13", path: `` },
           { label: "Bid", subtabId: "wcms14", path: `` },
           { label: "How to Bid", subtabId: "wcms15", path: `/super-admin/how-to-bid` },
@@ -268,6 +286,7 @@ const Sidebar = () => {
         label: "Settings",
         icon: "fa fa-cog",
         path: `#Settings`,
+        basePath: "/super-admin/settings",
         subTabs: [
           { label: "Product Category", subtabId: "stg11", path: `/super-admin/settings/product-category` },
           { label: "Blog Category", subtabId: "stg12", path: `/super-admin/settings/blog-category` },
@@ -281,17 +300,18 @@ const Sidebar = () => {
         ],
       },
       // ----------------------------------------------Community CMS-----------------------------------------------------//
-            {
+      {
         label: "Community CMS",
         icon: "fa fa-tag",
         path: `#Community-CMS`,
+        basePath: "/super-admin/community-cms",
         subTabs: [
           { label: " Policies", path: `/super-admin/community-cms/policies` },
           { label: "Verification badge", path: `/super-admin/community-cms/verification-badge` },
           { label: "Reports", path: `/super-admin/community-cms/reports` },
           { label: "Sponsors", path: `/super-admin/community-cms/sponsors` },
           { label: "Purchase Badge", path: `/super-admin/community-cms/purchase-badge` },
-         
+
         ]
       },
 
@@ -313,8 +333,9 @@ const Sidebar = () => {
         label: "Packaging Material",
         icon: "fa fa-archive",
         path: `#Packaging Material`,
+        basePath: "/super-admin/packaging-material",
         subTabs: [
-          { label: "Material", path: `/super-admin/packaging-material/material`},
+          { label: "Material", path: `/super-admin/packaging-material/material` },
           { label: "Order", path: `/super-admin/packaging-material/order` },
           // { label: "Transaction", path: `/super-admin/packagingproducttransaction` },
         ]
@@ -323,14 +344,15 @@ const Sidebar = () => {
         label: "Packaging Material Setting",
         icon: "fa fa-cog",
         path: `#Packaging Material Setting`,
+        basePath: "/super-admin/packaging-material-setting",
         subTabs: [
-          {label: "Material Name", path:`/super-admin/packaging-material-setting/material-name`},
-          {label: "Material Size", path:`/super-admin/packaging-material-setting/material-size`},
-          {label: "Capacity", path:`/super-admin/packaging-material-setting/capacity`},
-          {label: "Stamp", path:`/super-admin/packaging-material-setting/stamp`},
-          {label: "Stickers", path:`/super-admin/packaging-material-setting/stickers`},
-          {label: "Vouchers", path:`/super-admin/packaging-material-setting/vouchers`},
-          {label: "Card", path:`/super-admin/packaging-material-setting/card`}
+          { label: "Material Name", path: `/super-admin/packaging-material-setting/material-name` },
+          { label: "Material Size", path: `/super-admin/packaging-material-setting/material-size` },
+          { label: "Capacity", path: `/super-admin/packaging-material-setting/capacity` },
+          { label: "Stamp", path: `/super-admin/packaging-material-setting/stamp` },
+          { label: "Stickers", path: `/super-admin/packaging-material-setting/stickers` },
+          { label: "Vouchers", path: `/super-admin/packaging-material-setting/vouchers` },
+          { label: "Card", path: `/super-admin/packaging-material-setting/card` }
         ]
       },
     ],
@@ -460,7 +482,7 @@ const Sidebar = () => {
         path: `/seller/exhibition`,
         subTabs: []
       },
-  {
+      {
         label: "Packaging Material",
         icon: "fa fa-archive",
         path: "/seller/packaging-material",
@@ -549,21 +571,71 @@ const Sidebar = () => {
   }, []);
 
 
-  useEffect(() => {
-    const activeTabs = fetchedTabs.reduce((acc, item) => {
-      const isParentMatch = location.pathname.startsWith(item.path);
-      const isSubTabMatch = item.subTabs?.some(subTab => location.pathname === subTab.path);
-      const isActive = isParentMatch || isSubTabMatch;
-      acc[item.label] = isActive;
-      if (isActive) setExpandedTab(item.label);
-      return acc;
-    }, {});
-    setIsActive(activeTabs);
-  }, [location.pathname, fetchedTabs]);
+  // useEffect(() => {
+  //   const activeTabs = fetchedTabs.reduce((acc, item) => {
+  //     const isParentMatch = location.pathname.startsWith(item.path);
+  //     const isSubTabMatch = item.subTabs?.some(subTab => location.pathname === subTab.path);
+  //     const isActive = isParentMatch || isSubTabMatch;
+  //     acc[item.label] = isActive;
+  //     if (isActive) setExpandedTab(item.label);
+  //     return acc;
+  //   }, {});
+  //   setIsActive(activeTabs);
+  // }, [location.pathname, fetchedTabs]);
+
+
+  // useEffect(() => {
+  //   const activeTabs = fetchedTabs.reduce((acc, item) => {
+  //     const parentPath = item.basePath || item.path;
+  //     const isParentMatch = location.pathname.startsWith(parentPath);
+  //     const isSubTabMatch = item.subTabs?.some(subTab =>
+  //       location.pathname.startsWith(subTab.path)
+  //     );
+  //     const isActive = isParentMatch || isSubTabMatch;
+  //     acc[item.label] = isActive;
+
+
+  //     if (isActive) {
+  //       setExpandedTab(item.label);
+  //     }
+
+  //     return acc;
+  //   }, {});
+  //   setIsActive(activeTabs);
+  // }, [location.pathname, fetchedTabs]);
+
+
+
+  // const handleTabToggle = (label) => {
+  //   setExpandedTab(prev => (prev === label ? null : label));
+  // };
 
   const handleTabToggle = (label) => {
     setExpandedTab(prev => (prev === label ? null : label));
+    setIsActive(prev => {
+      const reset = Object.keys(prev).reduce((acc, key) => {
+        acc[key] = false;
+        return acc;
+      }, {});
+      return { ...reset, [label]: true };
+    });
+    setActiveSubTab(null); // Reset subtab highlight
   };
+
+  const handleSubTabClick = (path, parentLabel) => {
+    setActiveSubTab(path); // Track by path
+    setExpandedTab(parentLabel);
+    setIsActive(prev => {
+      const reset = Object.keys(prev).reduce((acc, key) => {
+        acc[key] = false;
+        return acc;
+      }, {});
+      return { ...reset, [parentLabel]: true };
+    });
+  };
+
+
+
 
   //       // path: `/super-admin/sponsor`,
   //       subTabs: []
@@ -584,7 +656,7 @@ const Sidebar = () => {
   //     setUserType(storedUserType);
   //   }
   // }, []);
-  
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [location.pathname]);
@@ -606,36 +678,66 @@ const Sidebar = () => {
   //           {tab.subTabs.length > 0 && (
   //             <ul className={`collapse ${expandedTab === tab.label ? 'in' : ''}`}>
   //               {tab.subTabs.map((subTab, subIndex) => (
+
   const menuItems = userType ? menuConfig[userType] || [] : [];
 
-  useEffect(() => {
-    if (userType) {
-      const items = menuConfig[userType] || [];
-      const activeTabs = items.reduce((acc, item) => {
-        const isParentMatch = location.pathname.startsWith(item.path);
-        const isSubTabMatch = item.subTabs.some(subTab => location.pathname === subTab.path);
-        const isActive = isParentMatch || isSubTabMatch;
-        acc[item.label] = isActive;
+  // useEffect(() => {
+  //   if (userType) {
+  //     const items = menuConfig[userType] || [];
+  //     const activeTabs = items.reduce((acc, item) => {
+  //       const isParentMatch = location.pathname.startsWith(item.path);
+  //       const isSubTabMatch = item.subTabs.some(subTab => location.pathname === subTab.path);
+  //       const isActive = isParentMatch || isSubTabMatch;
+  //       acc[item.label] = isActive;
 
-        if (isActive) {
-          setExpandedTab(item.label);
-        }
+  //       if (isActive) {
+  //         setExpandedTab(item.label);
+  //       }
 
-        return acc;
-      }, {});
-      setIsActive(activeTabs);
-    }
-  }, [location.pathname, userType]);
+  //       return acc;
+  //     }, {});
+  //     setIsActive(activeTabs);
+  //   }
+  // }, [location.pathname, userType]);
 
 
   // const handleTabToggle = (label) => {
   //   setExpandedTab(prevTab => (prevTab === label ? null : label));
   // };
 
+
   return (
+    // <nav id="left-sidebar-nav" className="sidebar-nav">
+    //   <ul id="main-menu" className="metismenu">
+    //     {menuItems.map((item, index) => (
+    //       <li key={index} className={`menu-item ${isActive[item.label] ? 'active' : ''}`}>
+    //         <Link
+    //           to={item.path}
+    //           onClick={() => handleTabToggle(item.label)}
+    //           className={item.subTabs.length ? 'has-arrow' : ''}
+    //         >
+    //           <i className={`fa ${item.icon}`}></i>
+    //           <span>{item.label}</span>
+    //         </Link>
+    //         {item.subTabs.length > 0 && (
+    //           <ul className={`collapse ${expandedTab === item.label ? 'in' : ''}`}>
+    //             {item.subTabs.map((subTab, subIndex) => (
+    //               <li
+    //                 key={subIndex}
+    //                 className={location.pathname === subTab.path ? 'active' : ''}
+    //               >
+    //                 <Link to={subTab.path}>{subTab.label}</Link>
+    //               </li>
+    //             ))}
+    //           </ul>
+    //         )}
+    //       </li>
+    //     ))}
+    //   </ul>
+    // </nav>
     <nav id="left-sidebar-nav" className="sidebar-nav">
       <ul id="main-menu" className="metismenu">
-        {menuItems.map((item, index) => (
+        {fetchedTabs.map((item, index) => (          // Changed: Use fetchedTabs instead of menuItems
           <li key={index} className={`menu-item ${isActive[item.label] ? 'active' : ''}`}>
             <Link
               to={item.path}
@@ -650,10 +752,13 @@ const Sidebar = () => {
                 {item.subTabs.map((subTab, subIndex) => (
                   <li
                     key={subIndex}
-                    className={location.pathname === subTab.path ? 'active' : ''}
+                    className={activeSubTab === subTab.path ? 'active' : ''}
                   >
-                    <Link to={subTab.path}>{subTab.label}</Link>
+                    <Link to={subTab.path} onClick={() => handleSubTabClick(subTab.path, item.label)}>
+                      {subTab.label}
+                    </Link>
                   </li>
+
                 ))}
               </ul>
             )}
@@ -661,8 +766,9 @@ const Sidebar = () => {
         ))}
       </ul>
     </nav>
+
   );
-    };
+};
 
 export default Sidebar;
 

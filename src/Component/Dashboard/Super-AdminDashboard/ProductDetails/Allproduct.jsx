@@ -192,17 +192,18 @@ const ApprovedProduct = () => {
                                                       {product.status}
                                                   </button>
                                               </td> */}
+
                                                 <td>
                                                     <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/super-admin/product/product-info`)}>
                                                         <i className="fa fa-eye"></i>
                                                     </button>
-                                                    <button
+                                                    {/* <button
                                                         className="btn btn-sm btn-outline-danger"
                                                         title="Bidding Pass"
                                                         onClick={() => navigate(`/super-admin/product-table/bidding-pass`)}
                                                     >
                                                         <i className="fas fa-ticket-alt"></i>
-                                                    </button>
+                                                    </button> */}
                                                     <button
                                                         type="button"
                                                         className="btn btn-outline-danger btn-sm ml-2"

@@ -6,6 +6,10 @@ import CreateBuyerModal from "./Createmodal";
 import useUserType from '../../urlconfig';
 import getAPI from "../../../../api/getAPI";
 import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
+import * as XLSX from "xlsx-js-style";
+import { saveAs } from "file-saver";
+
+
 
 function BuyerManageTable() {
   const [buyers, setBuyers] = useState([]);
@@ -104,6 +108,96 @@ function BuyerManageTable() {
     setProductsPerPage(Number(event.target.value));
     setCurrentPage(1);
   };
+  console.log(buyers);
+
+
+  //EXPORT--
+
+  const handleExport = () => {
+    if (!buyers || buyers.length === 0) {
+      alert("No buyer data available to export.");
+      return;
+    }
+
+    // Define headings
+    const headings = [
+      [
+        "First Name",
+        "Last Name",
+        "Address Line 1",
+        "Address Line 2",
+        "Land Mark",
+        "City",
+        "State/Province",
+        "Country",
+        "Pincode",
+        "Email",
+        "Phone Number",
+        "Role",
+        "ID Type",
+        "ID Number",
+        "Bank Name",
+        "Account Number",
+        "IFSC Code",
+        "UPI ID",
+      ],
+    ];
+
+    // Map buyer data
+    const rows = buyers.map(a => [
+      a.name || "",
+      a.lastName || "",
+      a.address?.[0]?.line1 || "",
+      a.address?.[0]?.line2 || "",
+      a.address?.[0]?.landmark || "",
+      a.address?.[0]?.city || "",
+      a.address?.[0]?.state || "",
+      a.address?.[0]?.country || "",
+      a.address?.[0]?.pincode || "",
+      a.email || "",
+      a.phone || "",
+      a.role || "",
+      a.verification?.documentType || "",
+      a.verification?.documentNumber || "",
+      a.bankDetails?.bankName || "",
+      a.bankDetails?.accountNumber || "",
+      a.bankDetails?.ifscCode || "",
+      a.bankDetails?.upiId || ""
+    ]);
+
+    // Combine headings + rows
+    const worksheetData = [...headings, ...rows];
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+
+    // Style header row
+    const headingStyle = {
+      font: { bold: true, color: { rgb: "FFFFFF" } },
+      fill: { fgColor: { rgb: "4472C4" } },
+      alignment: { horizontal: "center", vertical: "center" },
+      border: {
+        top: { style: "thin", color: { rgb: "000000" } },
+        bottom: { style: "thin", color: { rgb: "000000" } },
+        left: { style: "thin", color: { rgb: "000000" } },
+        right: { style: "thin", color: { rgb: "000000" } },
+      },
+    };
+
+    const headerRange = XLSX.utils.decode_range(worksheet["!ref"]);
+    for (let col = headerRange.s.c; col <= headerRange.e.c; col++) {
+      const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
+      if (worksheet[cellAddress]) worksheet[cellAddress].s = headingStyle;
+    }
+
+    worksheet["!cols"] = Array(headings[0].length).fill({ wch: 24 });
+
+    // Create workbook
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Buyers");
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+
+    saveAs(blob, "buyer_details.xlsx");
+  };
 
   return (
     <>
@@ -180,6 +274,10 @@ function BuyerManageTable() {
                       }}
                     ></i>
                   </div>
+                  {/* Export Button */}
+                  <button className="btn btn-success btn-sm ml-2" onClick={handleExport}>
+                    <i className="fa fa-download mr-1"></i> Export
+                  </button>
                 </div>
               </div>
               <div className="body">
