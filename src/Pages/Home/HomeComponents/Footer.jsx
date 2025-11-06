@@ -12,33 +12,35 @@ const Footer = () => {
       {/* Top Section */}
       <div className="max-w-[1440px] mx-auto py-10 space-y-4">
         {/* Header */}
-        <section className="flex flex-row items-center justify-between px-4 py-4 bg-[#000000] rounded-xl">
-          <div>
-            <h1 className="text-5xl text-[#FB5934] font-windhavi pb-3">
+        <section className="flex flex-col md:flex-row items-center justify-between px-4 md:px-4 py-4 bg-[#000000] rounded-xl gap-4">
+          <div className="text-left w-full md:w-1/3">
+            <h1 className="text-4xl sm:text-5xl text-[#FB5934] font-windhavi pb-2 sm:pb-3">
               <Link to="/">Artsays</Link>
             </h1>
-            <p className="text-lg text-white">
+            <p className="text-base sm:text-lg text-white">
               When Art Speaks, Value Grows
             </p>
           </div>
-          <p className="w-[70%] text-md text-white text-end">
+
+          <p className="md:w-2/3 text-sm sm:text-md text-white text-start md:text-end leading-relaxed">
             Artsays is a global art marketplace connecting artists, collectors,
             and galleries. Discover original paintings, sculptures, and digital
             art — authenticated, insured, and delivered with care.
           </p>
         </section>
 
+
         {/* Middle Content */}
-        <section className="flex gap-4">
+        <section className="flex flex-col md:flex-row gap-4">
           <div className="w-full md:w-2/5 flex flex-col gap-4">
-            <div className="bg-[#000000] rounded-2xl p-6">
-              <div className="flex items-center bg-transparent border border-gray-500 rounded-full px-2 py-2 w-full mx-auto">
+            <div className="bg-[#000000] text-start rounded-2xl p-6">
+              <div className="flex flex-col md:flex-col lg:flex-row items-center bg-transparent border border-gray-500 rounded-xl lg:!rounded-full px-2 py-2 w-full mx-auto">
                 <input
                   type="email"
                   placeholder="abc@gmail.com"
                   className="flex-1 bg-transparent outline-none text-gray-300 placeholder-gray-400 text-lg px-3"
                 />
-                <button className="bg-[#FB5934] hover:bg-[#ffffff] !text-[#000000] font-semibold text-lg px-6 py-2 rounded-full shadow-md transition-all duration-300">
+                <button className="w-full lg:w-auto bg-[#FB5934] hover:bg-[#ffffff] !text-[#000000] font-semibold text-lg px-6 py-2 rounded-xl lg:rounded-full shadow-md transition-all duration-300 !mt-3 md:!mt-3 lg:!mt-0">
                   Subscribe
                 </button>
               </div>
@@ -114,18 +116,18 @@ const Footer = () => {
               </ul>
 
             </div>
-            <div className="bg-[#000000] rounded-2xl p-6">
+            <div className="bg-[#000000] rounded-2xl p-6 text-start">
               <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold pb-2 mb-3">
                 PARTNER WITH US
               </h3>
 
-              <ul className="custom-bullet list-none text-sm flex gap-3">
+              <ul className="custom-bullet list-none text-sm flex flex-col md:flex-row gap-3">
                 <li>Become a Gallery Partner</li>
                 <li>Corporate Art Solutions</li>
               </ul>
             </div>
           </div>
-          <div className="w-full md:w-3/5 bg-[#000000] rounded-2xl p-6">
+          <div className="w-full md:w-3/5 bg-[#000000] rounded-2xl text-start p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* ABOUT */}
               <div>
@@ -200,7 +202,7 @@ const Footer = () => {
                 <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold pb-2 mb-3">
                   SECURE PAYMENTS & TRUST BADGES
                 </h3>
-                <ul className="custom-bullet list-none text-sm flex gap-3">
+                <ul className="custom-bullet list-none text-sm flex flex-col sm:flex-row gap-3">
                   <li>100% Safe Transactions</li>
                   <li>Verified Artworks & Sellers</li>
                   <li>Visa, MasterCard, PayPal, UPI, Net Banking</li>
@@ -209,7 +211,7 @@ const Footer = () => {
                 <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold mt-3 pb-2 mb-3">
                   ARTSAYS PROMISE
                 </h3>
-                <ul className="custom-bullet list-none text-sm flex gap-3">
+                <ul className="custom-bullet list-none text-sm flex flex-col sm:flex-row gap-3">
                   <li>Authenticity verified for every artwork</li>
                   <li>24/7 artist & buyer support</li>
                   <li>Transparent pricing & zero hidden charges</li>
@@ -221,7 +223,7 @@ const Footer = () => {
         </section>
 
         {/* CATEGORIES */}
-        <section className="bg-[#000000] rounded-2xl p-6">
+        <section className="bg-[#000000] rounded-2xl p-6 text-start">
           <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold pb-2 mb-3">
             CATEGORIES
           </h3>
