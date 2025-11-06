@@ -1,179 +1,274 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
+import { FaFacebookF } from "react-icons/fa";
+import { FaInstagram } from "react-icons/fa";
+import { FaLinkedinIn } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+import { FaYoutube } from "react-icons/fa";
 
 const Footer = () => {
-
   return (
-    <footer className="  w-full bg-[#111111] ">
-      <div className="max-w-[1440px] mx-auto py-8">
+    <footer className="w-full bg-[#111111] text-gray-300">
+      {/* Top Section */}
+      <div className="max-w-[1440px] mx-auto py-10 space-y-4">
+        {/* Header */}
         <section className="flex flex-row items-center justify-between px-4 py-4 bg-[#000000] rounded-xl">
           <div>
-            <h1 className="text-5xl text-[#FB5934] font-windhavi pb-3"><a href="/">Artsays</a></h1>
-            <p className="text-lg text-white">When Art Speaks, Value Grows</p>
+            <h1 className="text-5xl text-[#FB5934] font-windhavi pb-3">
+              <Link to="/">Artsays</Link>
+            </h1>
+            <p className="text-lg text-white">
+              When Art Speaks, Value Grows
+            </p>
           </div>
           <p className="w-[70%] text-md text-white text-end">
-            Artsays is powered by 100% authenticity, transparency, and innovation,
-            ensuring a secure marketplace for curated artworks, rare artifacts,
-            and seamless transactions.
+            Artsays is a global art marketplace connecting artists, collectors,
+            and galleries. Discover original paintings, sculptures, and digital
+            art — authenticated, insured, and delivered with care.
           </p>
         </section>
 
-        <section className="py-4 ">
-          <section className="flex flex-row   justify-between">
-            <section>
-              <h3 className="text-center text-lg text-black-400 mb-2 ">
-                SHOP BY CATEGORY
+        {/* Middle Content */}
+        <section className="flex gap-4">
+          <div className="w-full md:w-2/5 flex flex-col gap-4">
+            <div className="bg-[#000000] rounded-2xl p-6">
+              <div className="flex items-center bg-transparent border border-gray-500 rounded-full px-2 py-2 w-full mx-auto">
+                <input
+                  type="email"
+                  placeholder="abc@gmail.com"
+                  className="flex-1 bg-transparent outline-none text-gray-300 placeholder-gray-400 text-lg px-3"
+                />
+                <button className="bg-[#FB5934] hover:bg-[#ffffff] !text-[#000000] font-semibold text-lg px-6 py-2 rounded-full shadow-md transition-all duration-300">
+                  Subscribe
+                </button>
+              </div>
+              <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold mt-8 pb-2 mb-3">
+                CONTACT US
               </h3>
-              <ul className="gap-2 flex-col flex  text-sm text-base">
+              <ul className="space-y-3 text-sm">
                 <li>
-                  <Link>Paintings</Link>
-                </li>
-                <li>
-                  <Link>Sculptures</Link>
-                </li>
-                <li>
-                  <Link>Artifacts</Link>
-                </li>
-                <li>
-                  <Link>Handmade Crafts</Link>
+                  <table>
+                    <tbody>
+                      <tr className="align-top">
+                        <td className="pr-3">
+                          <img src="/assets/footer/call.svg" alt="call" className="w-5 h-5" />
+                        </td>
+                        <td className="text-white">+91 8668 36 7265</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </li>
 
                 <li>
-                  <Link>Bidding Deals</Link>
-                </li>
-              </ul>
-            </section>
-            <section className="">
-              <h3 className=" text-lg text-black-400 mb-2 ">EXPLORE</h3>
-              <ul className="gap-2 flex-col flex  text-sm text-base">
-                <li>
-                  <Link>Filter</Link>
-                </li>
-                <li>
-                  <Link>Featured Collections</Link>
-                </li>
-                <li>
-                  <Link>Artist Profiles</Link>
-                </li>
-                <li>
-                  <Link>Authentication Badge</Link>
+                  <table>
+                    <tbody>
+                      <tr className="align-top">
+                        <td className="pr-3">
+                          <img src="/assets/footer/mail.svg" alt="mail" className="w-5 h-5" />
+                        </td>
+                        <td className="text-white">contact@artsays.in</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </li>
 
                 <li>
-                  <Link>Wishlist & Saved Items</Link>
+                  <table>
+                    <tbody>
+                      <tr className="align-top">
+                        <td className="pr-3">
+                          <img
+                            src="/assets/footer/location.svg"
+                            alt="location"
+                            className="w-5 h-5"
+                          />
+                        </td>
+                        <td className="text-white leading-snug">
+                          Pune, Pimpri Chinchwad, Maharashtra, India
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </li>
               </ul>
-            </section>
-            <section>
-              <h3 className=" text-lg text-black-400 mb-2 ">HEPL CENTER</h3>
-              <ul className="gap-2 flex-col flex  text-sm text-base">
-                <li>
-                  <Link>FAQs</Link>
+
+              <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold mt-8 pb-2 mb-3">
+                FOLLOW US
+              </h3>
+              <ul className="flex gap-10 text-xl">
+                <li className="flex items-center gap-2">
+                  <FaFacebookF />
                 </li>
-                <li>
-                  <Link>Shipping & Returns</Link>
+                <li className="flex items-center gap-2">
+                  <FaInstagram />
                 </li>
-                <li>
-                  <Link>Order Tracking</Link>
+                <li className="flex items-start gap-2">
+                  <FaLinkedinIn />
                 </li>
-                <li>
-                  <Link>Payment Methods</Link>
+                <li className="flex items-start gap-2">
+                  <FaXTwitter />
                 </li>
-              </ul>
-            </section>
-            <section>
-              <h3 className=" text-lg text-black-400 mb-2 ">POLICIES & LEGAL</h3>
-              <ul className="gap-2 flex-col flex  text-sm text-base">
-                <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">
-                  Privacy Policy
-                </a>
-                <a href="/terms-services" target="_blank" rel="noopener noreferrer">
-                  Terms & Conditions
-                </a>
-                <li>
-                  <Link>COpyright & Licensing</Link>
+                <li className="flex items-start gap-2">
+                  <FaYoutube />
                 </li>
               </ul>
-            </section>
-            <section className="flex-[0.5] ">
-              <h3 className=" text-lg text-black-400 mb-2 ">CONTACT US</h3>
-              <ul className="gap-4 flex-col flex  text-sm text-base">
-                <li className="flex flex-row gap-2 items-center ">
-                  <img src="/assets/footer/call.svg" alt="" />
-                  <p>+91 8668367265</p>
-                </li>
-                <li className="flex flex-row gap-4 items-center ">
-                  <img src="/assets/footer/mail.svg" alt="" />
-                  <p>contact@bytecarftstudios.in</p>
-                </li>
-                <li className="flex flex-row gap-4 items-center ">
-                  <img src="/assets/footer/location.svg" alt="" />
-                  <p>
-                    F Wing, Park Connect, Hinjawadi Phase 1, Pune,
-                    Pimpri-Chinchwad, Maharashtra 411057
-                  </p>
-                </li>
-                <li className="flex flex-row gap-6 items-center ml-1 ">
-                  <Link>
-                    <img src="/assets/footer/fb.svg" alt="facebook" />
-                  </Link>
-                  <Link>
-                    <img src="/assets/footer/x.svg" alt="twitter" />
-                  </Link>
-                  <Link>
-                    <img src="/assets/footer/ln.svg" alt="linkedin" />
-                  </Link>
-                  <Link>
-                    <img src="/assets/footer/insta.svg" alt="instagram" />
-                  </Link>
-                </li>
+
+            </div>
+            <div className="bg-[#000000] rounded-2xl p-6">
+              <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold pb-2 mb-3">
+                PARTNER WITH US
+              </h3>
+
+              <ul className="custom-bullet list-none text-sm flex gap-3">
+                <li>Become a Gallery Partner</li>
+                <li>Corporate Art Solutions</li>
               </ul>
-            </section>
-          </section>
-          <section className="">
-            <h3 className=" text-lg text-black-400 mb-2 ">
-              Secure Payments & Trust Badges
-            </h3>
-            <ul className="list-disc flex gap-4 text-base flex-row  list-inside">
-              <li>Fast performance</li>
-              <li>Responsive design</li>
-              <li>SEO-friendly</li>
-            </ul>
-          </section>
+            </div>
+          </div>
+          <div className="w-full md:w-3/5 bg-[#000000] rounded-2xl p-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {/* ABOUT */}
+              <div>
+                <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold pb-2 mb-3">
+                  ABOUT ARTSAYS
+                </h3>
+                <ul className="space-y-2 text-sm">
+                  <li><Link to="/about">About us</Link></li>
+                  <li><Link to="/contact">Contact Us</Link></li>
+                  <li><Link to="/careers">Careers</Link></li>
+                  <li><Link to="/why-artsays">Why Artsays Different</Link></li>
+                  <li><Link to="/benefits">Benefits of Choosing Artsays</Link></li>
+                  <li><Link to="/blog">Blog / Art Journal</Link></li>
+                </ul>
+              </div>
+
+              {/* FOR BUYERS */}
+              <div>
+                <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold pb-2 mb-3">
+                  FOR BUYERS
+                </h3>
+                <ul className="space-y-2 text-sm">
+                  <li><Link to="/store">Store</Link></li>
+                  <li><Link to="/gallery">Art Gallery</Link></li>
+                  <li><Link to="/bidding">Bidding</Link></li>
+                  <li><Link to="/artists">Discover Artists</Link></li>
+                  <li><Link to="/challenges">Challenges</Link></li>
+                  <li><Link to="/how-to-buy">How to Buy</Link></li>
+                  <li><Link to="/icons">Art Icons</Link></li>
+                  <li><Link to="/certificates">Certificates</Link></li>
+                  <li><Link to="/insurance">Insurance</Link></li>
+                </ul>
+              </div>
+
+              {/* FOR ARTISTS */}
+              <div>
+                <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold pb-2 mb-3">
+                  FOR ARTISTS
+                </h3>
+                <ul className="space-y-2 text-sm">
+                  <li><Link to="/why-artsays">Why Artsays</Link></li>
+                  <li><Link to="/careers">Careers</Link></li>
+                  <li><Link to="/how-to-sell">How to Sell</Link></li>
+                  <li><Link to="/blog">Blog / Art Journal</Link></li>
+                  <li><Link to="/affiliate">Affiliate Program</Link></li>
+                  <li><Link to="/partnerships">Partnerships</Link></li>
+                  <li><Link to="/commission">Commission</Link></li>
+                </ul>
+              </div>
+
+              {/* HELP CENTER */}
+              <div>
+                <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold pb-2 mb-3">
+                  HELP CENTER
+                </h3>
+                <ul className="space-y-2 text-sm">
+                  <li><Link to="/faqs">FAQs</Link></li>
+                  <li><Link to="/privacy-policy">Privacy Policy</Link></li>
+                  <li><Link to="/terms">Terms of Use</Link></li>
+                  <li><Link to="/shipping">Shipping & Returns</Link></li>
+                  <li><Link to="/copyright">Copyright & Licensing</Link></li>
+                  <li><Link to="/order-tracking">Order Tracking</Link></li>
+                  <li><Link to="/payment-methods">Payment Methods</Link></li>
+                  <li><Link to="/refund-policy">Refund Policy</Link></li>
+                </ul>
+              </div>
+            </div>
+
+            <div>
+              {/* TRUST & PROMISE */}
+              <div className="pt-3">
+                <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold pb-2 mb-3">
+                  SECURE PAYMENTS & TRUST BADGES
+                </h3>
+                <ul className="custom-bullet list-none text-sm flex gap-3">
+                  <li>100% Safe Transactions</li>
+                  <li>Verified Artworks & Sellers</li>
+                  <li>Visa, MasterCard, PayPal, UPI, Net Banking</li>
+                </ul>
+
+                <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold mt-3 pb-2 mb-3">
+                  ARTSAYS PROMISE
+                </h3>
+                <ul className="custom-bullet list-none text-sm flex gap-3">
+                  <li>Authenticity verified for every artwork</li>
+                  <li>24/7 artist & buyer support</li>
+                  <li>Transparent pricing & zero hidden charges</li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
         </section>
 
-        <section className="flex flex-row justify-between text-xs text-base py-4 ">
-          <span className="flex-row flex  items-center gap-2">
+        {/* CATEGORIES */}
+        <section className="bg-[#000000] rounded-2xl p-6">
+          <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold pb-2 mb-3">
+            CATEGORIES
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-y-2 text-sm">
+            {[
+              "Painting",
+              "Sculpture",
+              "Digital Art",
+              "Artifact",
+              "Handmade Crafts",
+              "Photography",
+            ].map((category, i) =>
+              Array(8)
+                .fill(null)
+                .map((_, idx) => (
+                  <p key={`${category}-${idx}`} className="text-white">
+                    {category}
+                  </p>
+                ))
+            )}
+          </div>
+        </section>
+
+        {/* Bottom Bar */}
+        <section className="flex flex-col md:flex-row justify-between items-center text-xs text-white gap-3 bg-[#000000] rounded-2xl p-6">
+          <div className="flex items-center gap-2">
             <img
-              className="w-4 h-4 rounded-full "
-              src="assets/footer/ind.png"
-              alt=""
-            />{" "}
-            India | English(UK) |₹(INR)
-          </span>
-          <ul className="flex flex-row flex-0.7 gap-4 ">
-            <li>
-              <Link>© 2025 Artsays, Inc</Link>
-            </li>
-            <li>
-              <Link>Terms of use</Link>
-            </li>
-            <li>
-              <Link>Privacy</Link>
-            </li>
-            <li>
-              <Link>Interst-based ads</Link>
-            </li>
-            <li>
-              <Link>Local Shops</Link>
-            </li>
-            <li>
-              <Link>Region</Link>
-            </li>
-          </ul>
+              className="w-5 h-5 rounded-full"
+              src="/assets/footer/ind.png"
+              alt="India"
+            />
+            India | English (UK) | ₹ (INR)
+          </div>
+          <div className="text-center md:text-right">
+            © 2025 Artsays Pvt. Ltd. All rights reserved. | Designed for Global
+            Artists & Collectors |{" "}
+            <Link to="/terms" className="hover:text-[#FB5934]">
+              Terms
+            </Link>{" "}
+            •{" "}
+            <Link to="/privacy" className="hover:text-[#FB5934]">
+              Privacy
+            </Link>{" "}
+            • Cookies • Accessibility
+          </div>
         </section>
       </div>
-
     </footer>
   );
 };
