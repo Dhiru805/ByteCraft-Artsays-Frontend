@@ -305,18 +305,50 @@ export default function useProductForm(product = null) {
   }, [pricingData.sellingPrice, pricingData.discount]);
 
 
-  const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length + images.length > 8) {
-      toast.error("Maximum 8 images allowed");
-      return;
-    }
-    const valid = files.filter((f) => f.type.startsWith("image/") && f.size <= 5 * 1024 * 1024);
-    if (valid.length < files.length) toast.error("Invalid files (max 5MB, image only)");
-    const newImgs = valid.map((f) => ({ file: f, preview: URL.createObjectURL(f) }));
-    setImages((prev) => [...prev, ...newImgs]);
+  // const handleImageUpload = (e) => {
+  //   const files = Array.from(e.target.files);
+  //   if (files.length + images.length > 8) {
+  //     toast.error("Maximum 8 images allowed");
+  //     return;
+  //   }
+  //   const valid = files.filter((f) => f.type.startsWith("image/") && f.size <= 5 * 1024 * 1024);
+  //   if (valid.length < files.length) toast.error("Invalid files (max 5MB, image only)");
+  //   const newImgs = valid.map((f) => ({ file: f, preview: URL.createObjectURL(f) }));
+  //   setImages((prev) => [...prev, ...newImgs]);
+  //   e.target.value = "";
+  // };
+
+const handleImageUpload = (e) => {
+  const files = Array.from(e.target.files);
+
+
+  if (images.length + files.length > 8) {
+    toast.error(`You can upload up to 8 images total`);
     e.target.value = "";
-  };
+    return;
+  }
+
+
+  const valid = files.filter(
+    (f) => f.type.startsWith("image/") && f.size <= 5 * 1024 * 1024
+  );
+  if (valid.length < files.length)
+    toast.error("Some files are invalid (only images under 5MB allowed)");
+
+
+  const newImgs = valid.map((f) => ({
+    file: f,
+    preview: URL.createObjectURL(f),
+    isExisting: false,
+  }));
+
+
+  setImages((prev) => [...prev, ...newImgs]);
+
+
+  e.target.value = "";
+};
+
 
   const handleRemoveImage = (idx) => {
     if (images.length <= 3) {
@@ -374,6 +406,13 @@ export default function useProductForm(product = null) {
     setFormData((prev) => ({ ...prev, materials: opts }));
   };
 
+   const handleMultiSelecttoolChange = (field, selectedOptions) => {
+   setFormData(prev => ({
+     ...prev,
+     [field]: selectedOptions || []   
+   }));
+ };
+
   const handleOffersChange = (opts) => {
     setPricingData((prev) => ({ ...prev, offers: opts }));
   };
@@ -413,6 +452,7 @@ export default function useProductForm(product = null) {
       inspirationSource: p.inspirationSource || "",
       medium: mapDbToSelectOption(p.medium) || null,
       materials: mapDbToSelectOption(p.materials) || [],
+      toolUsage: mapDbToSelectOption(p.toolUsage) || [],
       width: p.dimensions?.width?.toString() || "",
       height: p.dimensions?.height?.toString() || "",
       depth: p.dimensions?.depth?.toString() || "",
@@ -451,6 +491,8 @@ export default function useProductForm(product = null) {
       ownershipConfirmation: !!p.ownershipConfirmation,
       certificateType: mapDbToSelectOption(p.certificateType) || null,
       certificateFile: p.certificateFile || null,
+      certification:p.certification|| null,
+      restorationDocumentation:p.restorationDocumentation|| null,
       coaFile: p.coaFile || null,
       coaPreview: null,
       issuerName: p.issuerName || "",
@@ -473,7 +515,11 @@ export default function useProductForm(product = null) {
       mintingType: mapDbToSelectOption(p.mintingType) || null,
       licenseType: mapDbToSelectOption(p.licenseType) || null,
       ipfsStorage: !!p.ipfsStorage,
+      ipfsLink: p.ipfsLink || "",
+      softwareVersion: p.softwareVersion || "",
+      fileFormat: p.fileFormat || "",
       unlockableContent: !!p.unlockableContent,
+      unlockableContentLink: p.unlockableContentLink || "",
       partOfCollection: !!p.partOfCollection,
       collectionName: p.collectionName || "",
       editionSize: p.editionSize?.toString() || "",
@@ -509,32 +555,77 @@ export default function useProductForm(product = null) {
     const existingImages = [];
 
 
+    // if (p.mainImage) {
+    //   const mainImageUrl = `${API_URL}${p.mainImage.startsWith('/') ? '' : '/'}${p.mainImage}`.replace(
+    //     /([^:]\/)\/+/g,
+    //     '$1'
+    //   );
+    //   existingImages.push({
+    //     file: null,
+    //     preview: mainImageUrl,
+    //     isExisting: true,
+    //   });
+    // }
+
+
+    // if (p.otherImages?.length) {
+    //   p.otherImages.forEach((url) => {
+    //     const fullUrl = `${API_URL}${url.startsWith('/') ? '' : '/'}${url}`.replace(
+    //       /([^:]\/)\/+/g,
+    //       '$1'
+    //     );
+    //     existingImages.push({
+    //       file: null,
+    //       preview: fullUrl,
+    //       isExisting: true,
+    //     });
+    //   });
+    // }
+
     if (p.mainImage) {
-      const mainImageUrl = `${API_URL}${p.mainImage.startsWith('/') ? '' : '/'}${p.mainImage}`.replace(
-        /([^:]\/)\/+/g,
-        '$1'
-      );
-      existingImages.push({
-        file: null,
-        preview: mainImageUrl,
-        isExisting: true,
-      });
-    }
+    const mainImageUrl = `${API_URL}${p.mainImage.startsWith("/") ? "" : "/"}${p.mainImage}`.replace(
+      /([^:]\/)\/+/g,
+      "$1"
+    );
+    existingImages.push({
+      file: null,
+      preview: mainImageUrl,
+      isExisting: true,
+      isMain: true, 
+    });
+  }
+
+  
+if (p.otherImages?.length) {
+  const seen = new Set(); // to avoid duplicates
+
+  p.otherImages.forEach((url) => {
+    if (!url) return;
+
+    let cleanUrl = url.replace(/^http:\/\/localhost:3001\/http:\/\/localhost:3001\//, "/");
+
+   
+    cleanUrl = cleanUrl.replace(/^http:\/\/localhost:3001\//, "/");
 
 
-    if (p.otherImages?.length) {
-      p.otherImages.forEach((url) => {
-        const fullUrl = `${API_URL}${url.startsWith('/') ? '' : '/'}${url}`.replace(
-          /([^:]\/)\/+/g,
-          '$1'
-        );
-        existingImages.push({
-          file: null,
-          preview: fullUrl,
-          isExisting: true,
-        });
-      });
-    }
+    cleanUrl = cleanUrl.replace(/([^:]\/)\/+/g, "$1");
+
+    const fullUrl = `${API_URL}${cleanUrl.startsWith("/") ? "" : "/"}${cleanUrl}`;
+
+
+    if (seen.has(fullUrl)) return;
+    seen.add(fullUrl);
+
+    existingImages.push({
+      file: null,
+      preview: fullUrl,
+      isExisting: true,
+      isMain: false,
+    });
+  });
+}
+
+  setImages(existingImages);
 
     setImages(existingImages);
 
@@ -586,6 +677,7 @@ export default function useProductForm(product = null) {
     handleInstallmentDurationChange,
     handleSelectChange,
     handleMultiSelectChange,
+    handleMultiSelecttoolChange,
     handleOffersChange,
     handleTagKeyDown,
     removeTag,

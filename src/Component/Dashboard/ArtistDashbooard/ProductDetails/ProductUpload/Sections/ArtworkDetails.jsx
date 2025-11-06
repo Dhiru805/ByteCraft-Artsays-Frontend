@@ -17,6 +17,7 @@ const ArtworkDetails = ({
     culturalRegionOptions,
     handleSelectChange,
     handleMultiSelectChange,
+    handleMultiSelecttoolChange,
     handleInputChange
 }) => (
     <>
@@ -309,8 +310,9 @@ const ArtworkDetails = ({
         <div className="form-group">
             <label>Tool Usage</label>
             <CreatableSelect
+                options={[]}
                 value={formData.toolUsage}
-                onChange={(selected) => handleMultiSelectChange('toolUsage', selected)}
+                onChange={(selected) => handleMultiSelecttoolChange('toolUsage', selected)}
                 placeholder="Select or create tools used"
                 isMulti
                 isSearchable

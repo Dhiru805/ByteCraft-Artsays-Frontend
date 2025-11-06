@@ -156,14 +156,23 @@ const PricingOffers = ({
         }
     }, [subCategoryId]);
 
+    // useEffect(() => {
+    //     if (pricingData.includeGst) {
+    //         setGstPercentage(0);
+    //         handlePricingChange({ target: { name: "gstPercentage", value: 0 } });
+    //     } else {
+    //         fetchSubGSTData();
+    //     }
+    // }, [pricingData.includeGst]);
+
     useEffect(() => {
-        if (pricingData.includeGst) {
-            setGstPercentage(0);
-            handlePricingChange({ target: { name: "gstPercentage", value: 0 } });
-        } else {
-            fetchSubGSTData();
-        }
-    }, [pricingData.includeGst]);
+    if (pricingData.includeGst) {
+        setGstPercentage(pricingData.gstPercentage || 0);
+    } else {
+
+        fetchSubGSTData();
+    }
+}, [pricingData.includeGst, pricingData.gstPercentage, mainCategoryId]);
 
 
     const validateMarketPrice = (market, selling) => {
@@ -379,7 +388,7 @@ const PricingOffers = ({
                     GST Percentage (%) <span style={{ color: "red" }}>*</span>
                 </label>
                 <input
-                    type="number"
+                    // type="number"
                     id="gstPercentage"
                     name="gstPercentage"
                     className="form-control"

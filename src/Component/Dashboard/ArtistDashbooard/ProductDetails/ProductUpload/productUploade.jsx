@@ -37,6 +37,7 @@ function ProductUpload() {
     handleInstallmentDurationChange,
     handleSelectChange,
     handleMultiSelectChange,
+    handleMultiSelecttoolChange,
     handleOffersChange,
     handleTagKeyDown,
     removeTag,
@@ -406,7 +407,7 @@ function ProductUpload() {
   //   }
   // };
 
-const validateAntiqueFields = (formData) => {
+  const validateAntiqueFields = (formData) => {
     const errors = {};
     if (!formData.originRegion) {
       errors.originRegion = 'Origin/Region is required';
@@ -465,9 +466,10 @@ const validateAntiqueFields = (formData) => {
     if (formData.weight) {
       formDataToSend.append('weight', parseFloat(formData.weight));
     }
-    if (formData.printResolution && (formData.medium?.value?.toLowerCase() === 'print' || formData.medium?.value?.toLowerCase() === 'poster')) {
-      formDataToSend.append('printResolution', formData.printResolution);
-    }
+    // if (formData.printResolution && (formData.medium?.value?.toLowerCase() === 'print' || formData.medium?.value?.toLowerCase() === 'poster' || formData.medium?.value?.toLowerCase() === 'print and poster')) {
+    //   formDataToSend.append('printResolution', formData.printResolution);
+    // }
+    formDataToSend.append('printResolution', formData.printResolution ||"");
     formDataToSend.append('year', formData.year?.value || '');
     formDataToSend.append('editionType', formData.editionType?.value || '');
     formDataToSend.append('framing', formData.framing?.value || '');
@@ -550,9 +552,9 @@ const validateAntiqueFields = (formData) => {
     }
 
     // ---------------------------------------------Legal & Compliance---------------------------------------------
-    formDataToSend.append('ownershipConfirmation', !!formData.ownershipConfirmation);
+    formDataToSend.append('ownershipConfirmation', formData.ownershipConfirmation || false);
     formDataToSend.append('copyrightRights', formData.copyrightRights?.value || formData.copyrightRights?.label || '');
-    formDataToSend.append('prohibitedItems', !!formData.prohibitedItems);
+    formDataToSend.append('prohibitedItems',formData.prohibitedItems);
     formDataToSend.append('artistSignature', !!formData.artistSignature);
     formDataToSend.append('signatureType', formData.signatureType || '');
     formDataToSend.append('coaAvailable', !!formData.coaAvailable);
@@ -596,7 +598,15 @@ const validateAntiqueFields = (formData) => {
       formDataToSend.append('licenseType', formData.licenseType.value);
     }
     formDataToSend.append('ipfsStorage', formData.ipfsStorage || false);
+    if (formData.ipfsStorage) {
+      formDataToSend.append('ipfsLink', formData.ipfsLink?.trim() || '');
+      formDataToSend.append('softwareVersion', formData.softwareVersion?.trim() || '');
+      formDataToSend.append('fileFormat', formData.fileFormat?.trim() || '');
+    }
     formDataToSend.append('unlockableContent', formData.unlockableContent || false);
+    if (formData.unlockableContent) {
+      formDataToSend.append('unlockableContentLink', formData.unlockableContentLink?.trim() || '');
+    }
     formDataToSend.append('partOfCollection', formData.partOfCollection || false);
     formDataToSend.append('collectionName', formData.collectionName || '');
     if (formData.partOfCollection) {
@@ -667,14 +677,14 @@ const validateAntiqueFields = (formData) => {
     setIsSubmitting(true);
     try {
       const formDataToSend = prepareFormData('Drafted');
-      
+
       const response = await postAPI('/api/cropImage', formDataToSend, {}, true);
       toast.success('Product saved as draft successfully!');
       navigate(`/artist/product`);
     } catch (error) {
       console.error('Error saving draft:', error);
       const errorMessage = error.response?.data?.message || 'Failed to save draft';
-      
+
       if (error.response?.data?.details) {
         error.response.data.details.forEach(detail => {
           toast.error(detail);
@@ -739,7 +749,7 @@ const validateAntiqueFields = (formData) => {
 
     try {
       const formDataToSend = prepareFormData('Pending');
-      
+
       const response = await postAPI('/api/cropImage', formDataToSend, {}, true);
       toast.success('Product created successfully!');
       navigate(`/artist/product`);
@@ -801,7 +811,7 @@ const validateAntiqueFields = (formData) => {
         return (
           <AntiqueVintageDetails
             formData={formData}
-            setFormData={setFormData} 
+            setFormData={setFormData}
             isSubmitting={isSubmitting}
             handleInputChange={handleInputChange}
             handleSelectChange={handleSelectChange}
@@ -837,9 +847,10 @@ const validateAntiqueFields = (formData) => {
             conditionOptions={conditionOptions}
             handleSelectChange={handleSelectChange}
             handleMultiSelectChange={handleMultiSelectChange}
+            handleMultiSelecttoolChange={handleMultiSelecttoolChange}
             handleInputChange={handleInputChange}
             mainCategoryId={formData.mainCategory?.value}
-            
+
           />
         );
       case 'pricing':
@@ -853,7 +864,7 @@ const validateAntiqueFields = (formData) => {
             handleInstallmentDurationChange={handleInstallmentDurationChange}
             offerOptions={offerOptions}
             mainCategoryId={formData.mainCategory?.value}
-                subCategoryId={formData.subCategory?.value}
+            subCategoryId={formData.subCategory?.value}
           />
         );
       case 'shipping':
@@ -1333,7 +1344,7 @@ const validateAntiqueFields = (formData) => {
                 )}
               </div> */}
 
-                  <div className="d-flex justify-content-between mt-4">
+              <div className="d-flex justify-content-between mt-4">
                 {activeTab !== 'basic' && (
                   <button
                     type="button"
@@ -1348,7 +1359,7 @@ const validateAntiqueFields = (formData) => {
                     Previous
                   </button>
                 )}
-                
+
                 <div className="ms-auto">
                   {/* Save as Draft Button - Shows on every tab */}
                   <button
@@ -1359,7 +1370,7 @@ const validateAntiqueFields = (formData) => {
                   >
                     {isSubmitting ? 'Saving...' : 'Save as Draft'}
                   </button>
-                  
+
                   {activeTab !== 'legal' ? (
                     <button
                       type="button"
@@ -1379,7 +1390,7 @@ const validateAntiqueFields = (formData) => {
                     </button>
                   )}
                 </div>
-                </div>
+              </div>
             </form>
           </div>
         </div>

@@ -11,13 +11,13 @@ const LegalCompliance = ({
   handleSelectChange,
   setFormData,
 }) => {
-  const [showCOAFields, setShowCOAFields] = useState(formData.coaAvailable || false);
+  const [showCOAFields, setShowCOAFields] = useState(formData.coaAvailable );
   const [certificateFile, setCertificateFile] = useState(null);
   const [certificatePreview, setCertificatePreview] = useState(null);
   const [certificateType, setCertificateType] = useState("digital");
 
   useEffect(() => {
-    setShowCOAFields(formData.coaAvailable || false);
+    setShowCOAFields(formData.coaAvailable );
   }, [formData.coaAvailable]);
 
   const buildUrl = (path) => {
@@ -150,7 +150,7 @@ const LegalCompliance = ({
           id="ownershipConfirmation"
           name="ownershipConfirmation"
           className="form-check-input"
-          checked={formData.ownershipConfirmation || false}
+          checked={formData.ownershipConfirmation }
           onChange={handleInputChange}
           disabled={true}
         />
@@ -181,7 +181,7 @@ const LegalCompliance = ({
           id="prohibitedItems"
           name="prohibitedItems"
           className="form-check-input"
-          checked={formData.prohibitedItems || false}
+          checked={formData.prohibitedItems }
           onChange={handleInputChange}
           disabled={true}
         />
@@ -200,7 +200,7 @@ const LegalCompliance = ({
               id="artistSignature"
               name="artistSignature"
               className="custom-control-input"
-              checked={formData.artistSignature || false}
+              checked={formData.artistSignature }
               onChange={handleArtistSignatureChange}
               disabled={true}
             />
@@ -308,7 +308,7 @@ const LegalCompliance = ({
               id="coaAvailable"
               name="coaAvailable"
               className="custom-control-input"
-              checked={formData.coaAvailable || false}
+              checked={formData.coaAvailable }
               onChange={handleCOAToggle}
               disabled={true}
             />
@@ -478,7 +478,7 @@ const LegalCompliance = ({
             id="ethicalSourcing"
             name="ethicalSourcing"
             className="form-check-input"
-            checked={formData.ethicalSourcing || false}
+            checked={formData.ethicalSourcing }
             onChange={handleInputChange}
             disabled={true}
           />

@@ -1,9 +1,6 @@
-
-
-
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import getAPI from "../../../../../../api/getAPI";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 const AntiqueVintageDetails = ({
     formData,
@@ -11,15 +8,18 @@ const AntiqueVintageDetails = ({
     isSubmitting,
     handleInputChange,
     handleSelectChange,
-    profileData
+    profileData,
 }) => {
+
+
+
     const originOptions = [
-        { value: 'france', label: 'France' },
-        { value: 'japan', label: 'Japan' },
-        { value: 'india', label: 'India' },
-        { value: 'china', label: 'China' },
-        { value: 'uk', label: 'United Kingdom' },
-        { value: 'usa', label: 'United States' },
+        { value: "france", label: "France" },
+        { value: "japan", label: "Japan" },
+        { value: "india", label: "India" },
+        { value: "china", label: "China" },
+        { value: "uk", label: "United Kingdom" },
+        { value: "usa", label: "United States" },
     ];
 
     const [periodEra, setPeriodEra] = useState([]);
@@ -28,15 +28,13 @@ const AntiqueVintageDetails = ({
         try {
             const response = await getAPI("/api/getperioderas");
             const validPeriodEra = response.data.filter(
-                era => era.name && typeof era.name === 'string'
+                (era) => era.name && typeof era.name === "string"
             );
             setPeriodEra(validPeriodEra);
-            if (!validPeriodEra.length) {
-                toast.error('No valid period era found');
-            }
+            if (!validPeriodEra.length) toast.error("No valid period era found");
         } catch (error) {
             console.error("Error fetching period era:", error);
-            toast.error('Failed to load period era');
+            toast.error("Failed to load period era");
         }
     };
 
@@ -44,97 +42,138 @@ const AntiqueVintageDetails = ({
         fetchPeriodEra();
     }, []);
 
-    const periodEraOptions = useMemo(() => {
-        return periodEra.map((era) => ({
-            value: era.name,
-            label: era.name
-        }));
-    }, [periodEra]);
+    const periodEraOptions = useMemo(
+        () =>
+            periodEra.map((era) => ({
+                value: era.name,
+                label: era.name,
+            })),
+        [periodEra]
+    );
 
     const conditionOptions = [
-        { value: 'new', label: 'New' },
-        { value: 'excellent', label: 'Excellent' },
-        { value: 'good', label: 'Good' },
-        { value: 'fair', label: 'Fair' },
-        { value: 'poor', label: 'Poor' },
+        { value: "new", label: "New" },
+        { value: "excellent", label: "Excellent" },
+        { value: "good", label: "Good" },
+        { value: "fair", label: "Fair" },
+        { value: "poor", label: "Poor" },
     ];
 
     const originalReproductionOptions = [
-        { value: 'original', label: 'Original' },
-        { value: 'replica', label: 'Replica' },
-        { value: 'reproduction', label: 'Reproduction' },
+        { value: "original", label: "Original" },
+        { value: "replica", label: "Replica" },
+        { value: "reproduction", label: "Reproduction" },
     ];
 
     const conservationStatusOptions = [
-        { value: 'restored', label: 'Restored' },
-        { value: 'original', label: 'Original Condition' },
+        { value: "restored", label: "Restored" },
+        { value: "original", label: "Original Condition" },
     ];
 
     const maintenanceRequiredOptions = [
-        { value: 'yes', label: 'Yes' },
-        { value: 'no', label: 'No' },
+        { value: "yes", label: "Yes" },
+        { value: "no", label: "No" },
     ];
+
+
 
 
     const handleFileChange = (e) => {
         const { name, files } = e.target;
-        if (files && files[0]) {
-            const file = files[0];
+        if (!files?.[0]) return;
 
+        const file = files[0];
+        const allowed = ["image/jpeg", "image/png", "image/gif", "application/pdf"];
 
-            if (name === 'restorationDocumentation' && !['image/jpeg', 'image/png', 'image/gif', 'application/pdf'].includes(file.type)) {
-                toast.error('Please upload a valid image (JPEG, PNG, GIF) or PDF file for restoration documentation.');
-                e.target.value = '';
-                return;
-            }
-
-            if (name === 'certification' && !['image/jpeg', 'image/png', 'image/gif', 'application/pdf'].includes(file.type)) {
-                toast.error('Please upload a valid image (JPEG, PNG, GIF) or PDF file for certification.');
-                e.target.value = '';
-                return;
-            }
-
-
-            if (file.size > 5 * 1024 * 1024) {
-                toast.error('File size should not exceed 5MB.');
-                e.target.value = '';
-                return;
-            }
-
-
-            setFormData(prev => ({
-                ...prev,
-                [name]: file
-            }));
+        if (
+            (name === "restorationDocumentation" || name === "certification") &&
+            !allowed.includes(file.type)
+        ) {
+            toast.error("Please upload a valid image (JPEG, PNG, GIF) or PDF file.");
+            e.target.value = "";
+            return;
         }
+
+        if (file.size > 5 * 1024 * 1024) {
+            toast.error("File size should not exceed 5 MB.");
+            e.target.value = "";
+            return;
+        }
+
+
+        setFormData((prev) => ({
+            ...prev,
+            [name]: file,
+            [`${name}Preview`]: URL.createObjectURL(file),
+        }));
     };
+
+
+
+
+    const renderNewFilePreview = (file, previewUrl, label) => {
+        if (!file) return null;
+
+        const isPdf = file.type === "application/pdf";
+
+        return (
+            <div className="mt-2 d-flex align-items-center flex-wrap">
+                <small className="text-muted mr-2">{file.name}</small>
+
+                {previewUrl && (
+                    <>
+                        {isPdf ? (
+                            <a
+                                href={previewUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn btn-sm btn-primary"
+                            >
+                                View PDF
+                            </a>
+                        ) : (
+                            <img
+                                src={previewUrl}
+                                alt={label}
+                                className="img-thumbnail ml-2"
+                                style={{ maxWidth: "120px" }}
+                            />
+                        )}
+                    </>
+                )}
+            </div>
+        );
+    };
+
+
+
 
     return (
         <>
             <h4 className="mb-3">Antique & Vintage Details</h4>
 
+            { }
             <div className="row">
                 <div className="col-md-6">
                     <div className="form-group">
-                        <label htmlFor="originRegion">Origin / Region <span style={{ color: 'red' }}>*</span></label>
+                        <label htmlFor="originRegion">
+                            Origin / Region <span style={{ color: "red" }}>*</span>
+                        </label>
                         <select
                             id="originRegion"
                             name="originRegion"
                             className="form-control"
-                            value={formData.originRegion?.value || ''}
+                            value={formData.originRegion?.value || ""}
                             onChange={(e) => {
-                                const selected = originOptions.find(
-                                    opt => opt.value === e.target.value
-                                );
-                                handleSelectChange('originRegion', selected);
+                                const selected = originOptions.find((opt) => opt.value === e.target.value);
+                                handleSelectChange("originRegion", selected);
                             }}
                             disabled={isSubmitting}
-                         
                         >
                             <option value="">Select Origin/Region</option>
-                            {originOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
+                            {originOptions.map((o) => (
+                                <option key={o.value} value={o.value}>
+                                    {o.label}
                                 </option>
                             ))}
                         </select>
@@ -143,25 +182,24 @@ const AntiqueVintageDetails = ({
 
                 <div className="col-md-6">
                     <div className="form-group">
-                        <label htmlFor="periodEra">Period / Era <span style={{ color: 'red' }}>*</span></label>
+                        <label htmlFor="periodEra">
+                            Period / Era <span style={{ color: "red" }}>*</span>
+                        </label>
                         <select
                             id="periodEra"
                             name="periodEra"
                             className="form-control"
-                            value={formData.periodEra?.value || ''}
+                            value={formData.periodEra?.value || ""}
                             onChange={(e) => {
-                                const selected = periodEraOptions.find(
-                                    opt => opt.value === e.target.value
-                                );
-                                handleSelectChange('periodEra', selected);
+                                const selected = periodEraOptions.find((opt) => opt.value === e.target.value);
+                                handleSelectChange("periodEra", selected);
                             }}
                             disabled={isSubmitting}
-                         
                         >
                             <option value="">Select Period/Era</option>
-                            {periodEraOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
+                            {periodEraOptions.map((o) => (
+                                <option key={o.value} value={o.value}>
+                                    {o.label}
                                 </option>
                             ))}
                         </select>
@@ -169,28 +207,28 @@ const AntiqueVintageDetails = ({
                 </div>
             </div>
 
+            { }
             <div className="row">
                 <div className="col-md-6">
                     <div className="form-group">
-                        <label htmlFor="antiqueCondition">Condition <span style={{ color: 'red' }}>*</span></label>
+                        <label htmlFor="antiqueCondition">
+                            Condition <span style={{ color: "red" }}>*</span>
+                        </label>
                         <select
                             id="antiqueCondition"
                             name="antiqueCondition"
                             className="form-control"
-                            value={formData.antiqueCondition?.value || ''}
+                            value={formData.antiqueCondition?.value || ""}
                             onChange={(e) => {
-                                const selected = conditionOptions.find(
-                                    opt => opt.value === e.target.value
-                                );
-                                handleSelectChange('antiqueCondition', selected);
+                                const selected = conditionOptions.find((opt) => opt.value === e.target.value);
+                                handleSelectChange("antiqueCondition", selected);
                             }}
                             disabled={isSubmitting}
-                         
                         >
                             <option value="">Select Condition</option>
-                            {conditionOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
+                            {conditionOptions.map((o) => (
+                                <option key={o.value} value={o.value}>
+                                    {o.label}
                                 </option>
                             ))}
                         </select>
@@ -199,25 +237,26 @@ const AntiqueVintageDetails = ({
 
                 <div className="col-md-6">
                     <div className="form-group">
-                        <label htmlFor="conservationStatus">Conservation Status <span style={{ color: 'red' }}>*</span></label>
+                        <label htmlFor="conservationStatus">
+                            Conservation Status <span style={{ color: "red" }}>*</span>
+                        </label>
                         <select
                             id="conservationStatus"
                             name="conservationStatus"
                             className="form-control"
-                            value={formData.conservationStatus?.value || ''}
+                            value={formData.conservationStatus?.value || ""}
                             onChange={(e) => {
                                 const selected = conservationStatusOptions.find(
-                                    opt => opt.value === e.target.value
+                                    (opt) => opt.value === e.target.value
                                 );
-                                handleSelectChange('conservationStatus', selected);
+                                handleSelectChange("conservationStatus", selected);
                             }}
                             disabled={isSubmitting}
-                         
                         >
                             <option value="">Select Conservation Status</option>
-                            {conservationStatusOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
+                            {conservationStatusOptions.map((o) => (
+                                <option key={o.value} value={o.value}>
+                                    {o.label}
                                 </option>
                             ))}
                         </select>
@@ -225,21 +264,23 @@ const AntiqueVintageDetails = ({
                 </div>
             </div>
 
-            {formData.conservationStatus?.value === 'restored' && (
+            { }
+            {formData.conservationStatus?.value === "restored" && (
                 <div className="row">
                     <div className="col-md-12">
                         <div className="form-group">
-                            <label htmlFor="restorationHistory">Restoration History <span style={{ color: 'red' }}>*</span></label>
+                            <label htmlFor="restorationHistory">
+                                Restoration History <span style={{ color: "red" }}>*</span>
+                            </label>
                             <textarea
                                 id="restorationHistory"
                                 name="restorationHistory"
                                 className="form-control"
                                 placeholder="Details about any restorations, modifications, or repairs"
                                 rows="3"
-                                value={formData.restorationHistory || ''}
+                                value={formData.restorationHistory || ""}
                                 onChange={handleInputChange}
                                 disabled={isSubmitting}
-                             
                             />
                         </div>
                     </div>
@@ -247,7 +288,7 @@ const AntiqueVintageDetails = ({
                     <div className="col-md-12">
                         <div className="form-group">
                             <label htmlFor="restorationDocumentation">
-                                Restoration Documentation <span style={{ color: 'red' }}>*</span>
+                                Restoration Documentation <span style={{ color: "red" }}>*</span>
                             </label>
                             <input
                                 type="file"
@@ -257,18 +298,18 @@ const AntiqueVintageDetails = ({
                                 accept="image/jpeg,image/png,image/gif,application/pdf"
                                 onChange={handleFileChange}
                                 disabled={isSubmitting}
-                             
                             />
-                            {formData.restorationDocumentation && (
-                                <small className="form-text text-muted">
-                                    {formData.restorationDocumentation.name}
-                                </small>
+                            {renderNewFilePreview(
+                                formData.restorationDocumentation,
+                                formData.restorationDocumentationPreview,
+                                "Restoration Doc"
                             )}
                         </div>
                     </div>
                 </div>
             )}
 
+            { }
             <div className="form-group">
                 <label htmlFor="provenanceHistory">Provenance (Ownership History)</label>
                 <textarea
@@ -277,7 +318,7 @@ const AntiqueVintageDetails = ({
                     className="form-control"
                     placeholder="List of previous owners, museums, or galleries"
                     rows="3"
-                    value={formData.provenanceHistory || ''}
+                    value={formData.provenanceHistory || ""}
                     onChange={handleInputChange}
                     disabled={isSubmitting}
                 />
@@ -291,7 +332,7 @@ const AntiqueVintageDetails = ({
                     className="form-control"
                     placeholder="Describe any cultural or historical significance"
                     rows="3"
-                    value={formData.culturalSignificance || ''}
+                    value={formData.culturalSignificance || ""}
                     onChange={handleInputChange}
                     disabled={isSubmitting}
                 />
@@ -305,12 +346,13 @@ const AntiqueVintageDetails = ({
                     className="form-control"
                     placeholder="Details of any professional appraisals or valuations"
                     rows="3"
-                    value={formData.appraisalDetails || ''}
+                    value={formData.appraisalDetails || ""}
                     onChange={handleInputChange}
                     disabled={isSubmitting}
                 />
             </div>
 
+            { }
             <h5 className="mt-4 mb-3">Current Location</h5>
             <div className="row">
                 <div className="col-md-6">
@@ -322,13 +364,12 @@ const AntiqueVintageDetails = ({
                             name="addressLine1"
                             className="form-control"
                             placeholder="Street address, P.O. box"
-                            value={formData.addressLine1 || profileData.address?.line1 || ''}
+                            value={formData.addressLine1 || profileData.address?.line1 || ""}
                             onChange={handleInputChange}
                             disabled={isSubmitting}
                         />
                     </div>
                 </div>
-
                 <div className="col-md-6">
                     <div className="form-group">
                         <label htmlFor="addressLine2">Address Line 2</label>
@@ -338,13 +379,12 @@ const AntiqueVintageDetails = ({
                             name="addressLine2"
                             className="form-control"
                             placeholder="Apartment, suite, unit, building, floor"
-                            value={formData.addressLine2 || profileData.address?.line2 || ''}
+                            value={formData.addressLine2 || profileData.address?.line2 || ""}
                             onChange={handleInputChange}
                             disabled={isSubmitting}
                         />
                     </div>
                 </div>
-
                 <div className="col-md-6">
                     <div className="form-group">
                         <label htmlFor="landmark">Landmark</label>
@@ -354,13 +394,12 @@ const AntiqueVintageDetails = ({
                             name="landmark"
                             className="form-control"
                             placeholder="Nearby recognizable location"
-                            value={formData.landmark || profileData.address?.landmark || ''}
+                            value={formData.landmark || profileData.address?.landmark || ""}
                             onChange={handleInputChange}
                             disabled={isSubmitting}
                         />
                     </div>
                 </div>
-
                 <div className="col-md-6">
                     <div className="form-group">
                         <label htmlFor="city">City</label>
@@ -370,13 +409,12 @@ const AntiqueVintageDetails = ({
                             name="city"
                             className="form-control"
                             placeholder="City name"
-                            value={formData.city || profileData.address?.city || ''}
+                            value={formData.city || profileData.address?.city || ""}
                             onChange={handleInputChange}
                             disabled={isSubmitting}
                         />
                     </div>
                 </div>
-
                 <div className="col-md-6">
                     <div className="form-group">
                         <label htmlFor="state">State/Province</label>
@@ -386,13 +424,12 @@ const AntiqueVintageDetails = ({
                             name="state"
                             className="form-control"
                             placeholder="State or province"
-                            value={formData.state || profileData.address?.state || ''}
+                            value={formData.state || profileData.address?.state || ""}
                             onChange={handleInputChange}
                             disabled={isSubmitting}
                         />
                     </div>
                 </div>
-
                 <div className="col-md-6">
                     <div className="form-group">
                         <label htmlFor="country">Country</label>
@@ -402,13 +439,12 @@ const AntiqueVintageDetails = ({
                             name="country"
                             className="form-control"
                             placeholder="Country name"
-                            value={formData.country || profileData.address?.country || ''}
+                            value={formData.country || profileData.address?.country || ""}
                             onChange={handleInputChange}
                             disabled={isSubmitting}
                         />
                     </div>
                 </div>
-
                 <div className="col-md-6">
                     <div className="form-group">
                         <label htmlFor="pincode">Pincode/Zipcode</label>
@@ -418,7 +454,7 @@ const AntiqueVintageDetails = ({
                             name="pincode"
                             className="form-control"
                             placeholder="Postal code"
-                            value={formData.pincode || profileData.address?.pincode || ''}
+                            value={formData.pincode || profileData.address?.pincode || ""}
                             onChange={handleInputChange}
                             disabled={isSubmitting}
                         />
@@ -426,6 +462,7 @@ const AntiqueVintageDetails = ({
                 </div>
             </div>
 
+            { }
             <h5 className="mt-4 mb-3">Detailed Product Attributes</h5>
 
             <div className="row">
@@ -438,7 +475,7 @@ const AntiqueVintageDetails = ({
                             className="form-control"
                             placeholder="Details about any unique engravings, stamps, or markings"
                             rows="3"
-                            value={formData.engravingMarkings || ''}
+                            value={formData.engravingMarkings || ""}
                             onChange={handleInputChange}
                             disabled={isSubmitting}
                         />
@@ -454,7 +491,7 @@ const AntiqueVintageDetails = ({
                             className="form-control"
                             placeholder="Visible aging effects (e.g., rust, fading, cracks)"
                             rows="3"
-                            value={formData.patinaWear || ''}
+                            value={formData.patinaWear || ""}
                             onChange={handleInputChange}
                             disabled={isSubmitting}
                         />
@@ -462,10 +499,13 @@ const AntiqueVintageDetails = ({
                 </div>
             </div>
 
+            { }
             <div className="row">
                 <div className="col-md-6">
                     <div className="form-group">
-                        <label htmlFor="certification">Certification Document <span style={{ color: 'red' }}>*</span></label>
+                        <label htmlFor="certification">
+                            Certification Document <span style={{ color: "red" }}>*</span>
+                        </label>
                         <input
                             type="file"
                             id="certification"
@@ -474,12 +514,11 @@ const AntiqueVintageDetails = ({
                             accept="image/jpeg,image/png,image/gif,application/pdf"
                             onChange={handleFileChange}
                             disabled={isSubmitting}
-                         
                         />
-                        {formData.certification && (
-                            <small className="form-text text-muted">
-                                {formData.certification.name}
-                            </small>
+                        {renderNewFilePreview(
+                            formData.certification,
+                            formData.certificationPreview,
+                            "Certification"
                         )}
                     </div>
                 </div>
@@ -487,7 +526,9 @@ const AntiqueVintageDetails = ({
                 <div className="col-md-6">
                     <div className="form-group">
                         <label className="d-flex align-items-center">
-                            <span className="mr-2">Is this item handmade? <span style={{ color: 'red' }}>*</span></span>
+                            <span className="mr-2">
+                                Is this item handmade? <span style={{ color: "red" }}>*</span>
+                            </span>
                             <div className="custom-control custom-switch">
                                 <input
                                     type="checkbox"
@@ -496,10 +537,11 @@ const AntiqueVintageDetails = ({
                                     className="custom-control-input"
                                     checked={formData.isHandmade || false}
                                     onChange={(e) =>
-                                        handleInputChange({ target: { name: "isHandmade", value: e.target.checked } })
+                                        handleInputChange({
+                                            target: { name: "isHandmade", value: e.target.checked },
+                                        })
                                     }
                                     disabled={isSubmitting}
-                                 
                                 />
                                 <label className="custom-control-label" htmlFor="isHandmade">
                                     {formData.isHandmade ? "Yes" : "No"}
@@ -510,31 +552,34 @@ const AntiqueVintageDetails = ({
                 </div>
             </div>
 
+            { }
             <div className="form-group">
-                <label htmlFor="originalReproduction">Original vs. Reproduction <span style={{ color: 'red' }}>*</span></label>
+                <label htmlFor="originalReproduction">
+                    Original vs. Reproduction <span style={{ color: "red" }}>*</span>
+                </label>
                 <select
                     id="originalReproduction"
                     name="originalReproduction"
                     className="form-control"
-                    value={formData.originalReproduction?.value || ''}
+                    value={formData.originalReproduction?.value || ""}
                     onChange={(e) => {
                         const selected = originalReproductionOptions.find(
-                            opt => opt.value === e.target.value
+                            (opt) => opt.value === e.target.value
                         );
-                        handleSelectChange('originalReproduction', selected);
+                        handleSelectChange("originalReproduction", selected);
                     }}
                     disabled={isSubmitting}
-                 
                 >
                     <option value="">Select</option>
-                    {originalReproductionOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                            {option.label}
+                    {originalReproductionOptions.map((o) => (
+                        <option key={o.value} value={o.value}>
+                            {o.label}
                         </option>
                     ))}
                 </select>
             </div>
 
+            { }
             <div className="form-group">
                 <label htmlFor="museumExhibitionHistory">Museum / Exhibition History</label>
                 <textarea
@@ -543,34 +588,36 @@ const AntiqueVintageDetails = ({
                     className="form-control"
                     placeholder="If displayed in any exhibitions or museums"
                     rows="3"
-                    value={formData.museumExhibitionHistory || ''}
+                    value={formData.museumExhibitionHistory || ""}
                     onChange={handleInputChange}
                     disabled={isSubmitting}
                 />
             </div>
 
+            { }
             <div className="row">
                 <div className="col-md-6">
                     <div className="form-group">
-                        <label htmlFor="maintenanceRequired">Maintenance Required <span style={{ color: 'red' }}>*</span></label>
+                        <label htmlFor="maintenanceRequired">
+                            Maintenance Required <span style={{ color: "red" }}>*</span>
+                        </label>
                         <select
                             id="maintenanceRequired"
                             name="maintenanceRequired"
                             className="form-control"
-                            value={formData.maintenanceRequired?.value || ''}
+                            value={formData.maintenanceRequired?.value || ""}
                             onChange={(e) => {
                                 const selected = maintenanceRequiredOptions.find(
-                                    opt => opt.value === e.target.value
+                                    (opt) => opt.value === e.target.value
                                 );
-                                handleSelectChange('maintenanceRequired', selected);
+                                handleSelectChange("maintenanceRequired", selected);
                             }}
                             disabled={isSubmitting}
-                         
                         >
                             <option value="">Select Maintenance Requirement</option>
-                            {maintenanceRequiredOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
+                            {maintenanceRequiredOptions.map((o) => (
+                                <option key={o.value} value={o.value}>
+                                    {o.label}
                                 </option>
                             ))}
                         </select>
@@ -578,6 +625,7 @@ const AntiqueVintageDetails = ({
                 </div>
             </div>
 
+            { }
             <h5 className="mt-4 mb-3">Special Features & Add-Ons</h5>
             <div className="form-group">
                 <label className="d-flex align-items-center">
@@ -591,10 +639,7 @@ const AntiqueVintageDetails = ({
                             checked={formData.customEngravingAvailable || false}
                             onChange={(e) =>
                                 handleInputChange({
-                                    target: {
-                                        name: "customEngravingAvailable",
-                                        value: e.target.checked,
-                                    },
+                                    target: { name: "customEngravingAvailable", value: e.target.checked },
                                 })
                             }
                             disabled={isSubmitting}

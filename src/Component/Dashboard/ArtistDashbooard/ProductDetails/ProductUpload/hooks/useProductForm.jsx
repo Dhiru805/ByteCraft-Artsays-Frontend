@@ -45,7 +45,7 @@ export default function useProductForm() {
     functionalUse: null,
     materialSource: '',
     craftTechnique: '',
-    // toolUsage: [],
+    toolUsage: [],
     handmade: null,
     isSigned: false,
     isResinCovered: false,
@@ -566,6 +566,12 @@ export default function useProductForm() {
       materials: selectedOptions
     }));
   };
+   const handleMultiSelecttoolChange = (field, selectedOptions) => {
+   setFormData(prev => ({
+     ...prev,
+     [field]: selectedOptions || []   
+   }));
+ };
 
   const handleOffersChange = (selectedOptions) => {
     setPricingData(prev => ({
@@ -624,6 +630,7 @@ export default function useProductForm() {
     handleInstallmentDurationChange,
     handleSelectChange,
     handleMultiSelectChange,
+    handleMultiSelecttoolChange,
     handleOffersChange,
     handleTagKeyDown,
     removeTag,

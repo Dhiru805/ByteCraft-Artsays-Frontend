@@ -38,6 +38,7 @@
       handleInstallmentDurationChange,
       handleSelectChange,
       handleMultiSelectChange,
+      handleMultiSelecttoolChange,
       handleOffersChange,
       handleTagKeyDown,
       removeTag,
@@ -101,9 +102,9 @@
       fd.append("height", formData.height || "");
       fd.append("depth", formData.depth || "");
       if (formData.weight) fd.append("weight", parseFloat(formData.weight));
-      if (formData.printResolution && ["print", "poster"].includes(formData.medium?.value?.toLowerCase())) {
-        fd.append("printResolution", formData.printResolution);
-      }
+
+      fd.append('printResolution', formData.printResolution ||"");
+    
       fd.append("year", formData.year?.value || "");
       fd.append("editionType", formData.editionType?.value || "");
       fd.append("framing", formData.framing?.value || "");
@@ -115,6 +116,11 @@
       fd.append("functionalUse", formData.functionalUse?.value || "");
       if (formData.materialSource) fd.append("materialSource", formData.materialSource);
       if (formData.craftTechnique) fd.append("craftTechnique", formData.craftTechnique);
+       if (formData.toolUsage) {
+      formData.toolUsage.forEach((t) =>
+        fd.append('toolUsage', t.value || t.label)
+      );
+    }
       fd.append("handmade", formData.handmade?.value || "");
       fd.append("isSigned", formData.isSigned || false);
       fd.append("isResinCovered", formData.isResinCovered || false);
@@ -129,6 +135,12 @@
         if (img.file) fd.append("images", img.file);
         else if (img.isExisting) fd.append("existingImages", img.preview);
       });
+
+//       images.forEach((img) => {
+//   if (img.file) formData.append("images", img.file);
+//   else if (img.isExisting) formData.append("existingImages[]", img.preview);
+// });
+
 
       // Pricing
       fd.append("sellingPrice", parseFloat(pricingData.sellingPrice) || 0);
@@ -163,25 +175,22 @@
         }
       }
 
-      // // Legal
-      // fd.append("ownershipConfirmation", !!formData.ownershipConfirmation);
-      // fd.append("copyrightRights", formData.copyrightRights?.value || "");
-      // fd.append("prohibitedItems", !!formData.prohibitedItems);
-      // fd.append("artistSignature", !!formData.artistSignature);
-      // fd.append("signatureType", formData.signatureType || "");
-      // fd.append("coaAvailable", !!formData.coaAvailable);
-      // fd.append("certificateFormat", formData.certificateFormat || "digital");
+           // ---------------------------------------------Legal & Compliance---------------------------------------------
+      fd.append("ownershipConfirmation", !!formData.ownershipConfirmation);
+      fd.append("copyrightRights", formData.copyrightRights?.value || "");
+      fd.append("prohibitedItems", !!formData.prohibitedItems);
+      fd.append("artistSignature", !!formData.artistSignature);
+      fd.append("signatureType", formData.signatureType || "");
+      fd.append("coaAvailable", !!formData.coaAvailable);
+      fd.append("certificateFormat", formData.certificateFormat || "digital");
 
-
-
-      // ---------------------------------------------Legal & Compliance---------------------------------------------
-    fd.append('ownershipConfirmation', !!formData.ownershipConfirmation);
-    fd.append('copyrightRights', formData.copyrightRights?.value || formData.copyrightRights?.label || '');
-    fd.append('prohibitedItems', !!formData.prohibitedItems);
-    fd.append('artistSignature', !!formData.artistSignature);
-    fd.append('signatureType', formData.signatureType || '');
-    fd.append('coaAvailable', !!formData.coaAvailable);
-    fd.append('certificateFormat', formData.certificateFormat || 'digital');
+    // fd.append('ownershipConfirmation', formData.ownershipConfirmation);
+    // fd.append('copyrightRights', formData.copyrightRights?.value || formData.copyrightRights?.label || '');
+    // fd.append('prohibitedItems', formData.prohibitedItems);
+    // fd.append('artistSignature', formData.artistSignature);
+    // fd.append('signatureType', formData.signatureType || '');
+    // fd.append('coaAvailable', formData.coaAvailable);
+    // fd.append('certificateFormat', formData.certificateFormat || 'digital');
 
       // File uploads
       if (formData.certificateFile) {
@@ -212,8 +221,16 @@
       fd.append("royaltyPercentage", formData.royaltyPercentage || 0);
       if (formData.mintingType) fd.append("mintingType", formData.mintingType.value);
       if (formData.licenseType) fd.append("licenseType", formData.licenseType.value);
-      fd.append("ipfsStorage", formData.ipfsStorage || false);
-      fd.append("unlockableContent", formData.unlockableContent || false);
+     fd.append('ipfsStorage', formData.ipfsStorage || false);
+    if (formData.ipfsStorage) {
+      fd.append('ipfsLink', formData.ipfsLink?.trim() || '');
+      fd.append('softwareVersion', formData.softwareVersion?.trim() || '');
+      fd.append('fileFormat', formData.fileFormat?.trim() || '');
+    }
+    fd.append('unlockableContent', formData.unlockableContent || false);
+    if (formData.unlockableContent) {
+      fd.append('unlockableContentLink', formData.unlockableContentLink?.trim() || '');
+    }
       fd.append("partOfCollection", formData.partOfCollection || false);
       fd.append("collectionName", formData.collectionName || "");
       if (formData.partOfCollection) fd.append("editionSize", parseInt(formData.editionSize) || 1);
@@ -226,6 +243,9 @@
       if (formData.antiqueCondition) fd.append("antiqueCondition", formData.antiqueCondition.value);
       if (formData.conservationStatus) fd.append("conservationStatus", formData.conservationStatus.value);
       fd.append("restorationHistory", formData.restorationHistory || "");
+       if (formData.restorationDocumentation) {
+      fd.append('restorationDocumentation', formData.restorationDocumentation);
+    }
       fd.append("provenanceHistory", formData.provenanceHistory || "");
       fd.append("culturalSignificance", formData.culturalSignificance || "");
       fd.append("appraisalDetails", formData.appraisalDetails || "");
@@ -236,6 +256,9 @@
       fd.append("museumExhibitionHistory", formData.museumExhibitionHistory || "");
       if (formData.maintenanceRequired) fd.append("maintenanceRequired", formData.maintenanceRequired.value);
       fd.append("customEngravingAvailable", formData.customEngravingAvailable || false);
+      if (formData.certification) {
+      fd.append('certification', formData.certification);
+    }
 
       // Address
       fd.append("addressLine1", formData.addressLine1 || profileData.address?.line1 || "");
@@ -380,6 +403,7 @@
               conditionOptions={conditionOptions}
               handleSelectChange={handleSelectChange}
               handleMultiSelectChange={handleMultiSelectChange}
+              handleMultiSelecttoolChange={handleMultiSelecttoolChange}
               handleInputChange={handleInputChange}
               mainCategoryId={formData.mainCategory?.value}
             />
