@@ -113,7 +113,7 @@ function ProductUpload() {
         console.log("Final Payload:", dataToSend);
 
         try {
-            const response = await fetch(`http://localhost:3001/api/updateproduct/${productId}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/updateproduct/${productId}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

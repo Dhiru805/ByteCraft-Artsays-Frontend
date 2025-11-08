@@ -51,7 +51,7 @@ function BlogUpdate() {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/api/getblogcategory");
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/getblogcategory`);
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -118,7 +118,7 @@ function BlogUpdate() {
     formDataObj.append("blogDescription", content);
 
     try {
-      const response = await fetch(`http://localhost:3001/Blog-Post/update/${id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/Blog-Post/update/${id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -294,7 +294,7 @@ function BlogUpdate() {
                   {(imagePreview || existingImage) && (
                     <div className="mt-2">
                       <img 
-                        src={imagePreview || `http://localhost:3001/${existingImage}`} 
+                        src={imagePreview || `${process.env.REACT_APP_API_URL}/${existingImage}`} 
                         alt="Preview" 
                         className="img-thumbnail" 
                         style={{ maxHeight: '200px' }}

@@ -71,7 +71,7 @@ const Examples = () => {
             {/* Main Layout */}
             <div className="p-5 justify-items-center">
                 {data?.certificateSection?.image ? (
-                    <img src={`http://localhost:3001/${data.certificateSection.image}`} alt="Certificate Example" />
+                    <img src={`${process.env.REACT_APP_API_URL}/${data.certificateSection.image}`} alt="Certificate Example" />
                 ) : (
                     <img src="/herosectionimg/certificate.svg" alt="" />
                 )}

@@ -33,7 +33,7 @@ function BuyerRequest() {
   useEffect(() => {
     const fetchArtists = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/artist/artists");
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/artist/artists`);
         setArtists(response.data);
       } catch (error) {
         console.error("Error fetching artists:", error);
@@ -100,7 +100,7 @@ function BuyerRequest() {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/api/buyer-request', {
+      const response = await fetch('${process.env.REACT_APP_API_URL}/api/buyer-request', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

@@ -101,7 +101,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                                                     </td>
                                                     <td>
                                                         <img
-                                                            src={`http://localhost:3001/${request.BuyerImage}`}
+                                                            src={`${process.env.REACT_APP_API_URL}/${request.BuyerImage}`}
                                                             className="rounded-circle avatar"
                                                             alt=""
                                                             style={{

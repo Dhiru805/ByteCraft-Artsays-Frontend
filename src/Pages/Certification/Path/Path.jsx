@@ -186,7 +186,7 @@ const Path = () => {
                                         </main>
 
                                         <aside className="md:col-span-2 rounded-xl filter-sidebar flex justify-center items-center bg-transparent">
-                                            {card.image && <img src={`http://localhost:3001/${card.image}`} alt={card.title} />}
+                                            {card.image && <img src={`${process.env.REACT_APP_API_URL}/${card.image}`} alt={card.title} />}
                                         </aside>
                                     </div>
                                 </div>
@@ -194,7 +194,7 @@ const Path = () => {
                                 {data.section2.cards[index + 1] && (
                                     <div className="w-full md:w-2/6 border border-gray-700 rounded-2xl p-4 mb-6 md:mb-0">
                                         <aside className="rounded-xl flex justify-center items-center bg-transparent mb-3">
-                                            {data.section2.cards[index + 1].image && <img src={`http://localhost:3001/${data.section2.cards[index + 1].image}`} alt={data.section2.cards[index + 1].title} />}
+                                            {data.section2.cards[index + 1].image && <img src={`${process.env.REACT_APP_API_URL}/${data.section2.cards[index + 1].image}`} alt={data.section2.cards[index + 1].title} />}
                                         </aside>
                                         <main className="content-end">
                                             <div>
@@ -214,7 +214,7 @@ const Path = () => {
                             <>
                                 <div className="w-full md:w-2/6 border border-gray-700 rounded-2xl p-4 mb-6 md:mb-0">
                                     <aside className="rounded-xl flex justify-center items-center bg-transparent mb-3">
-                                        {card.image && <img src={`http://localhost:3001/${card.image}`} alt={card.title} />}
+                                        {card.image && <img src={`${process.env.REACT_APP_API_URL}/${card.image}`} alt={card.title} />}
                                     </aside>
                                     <main className="content-end">
                                         <div>
@@ -244,7 +244,7 @@ const Path = () => {
                                             </main>
 
                                             <aside className="md:col-span-2 rounded-xl filter-sidebar flex justify-center items-center bg-transparent">
-                                                {data.section2.cards[index + 1].image && <img src={`http://localhost:3001/${data.section2.cards[index + 1].image}`} alt={data.section2.cards[index + 1].title} />}
+                                                {data.section2.cards[index + 1].image && <img src={`${process.env.REACT_APP_API_URL}/${data.section2.cards[index + 1].image}`} alt={data.section2.cards[index + 1].title} />}
                                             </aside>
                                         </div>
                                     </div>

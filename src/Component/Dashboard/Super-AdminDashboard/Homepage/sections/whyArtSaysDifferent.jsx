@@ -298,7 +298,7 @@ const WhyArtsaysDifferentCreate = () => {
                             icon: null,
                             //existingIcon: c.iconUrl || c.icon || null,
                             existingIcon: c.icon
-                                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE || "http://localhost:3001"}/${c.icon}`
+                                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE || `${process.env.REACT_APP_API_URL}`}/${c.icon}`
                                 : null,
 
                         }))

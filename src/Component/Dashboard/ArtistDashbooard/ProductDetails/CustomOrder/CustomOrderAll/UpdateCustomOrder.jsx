@@ -384,7 +384,7 @@ function UpdateBuyerRequest() {
                     <div className="mb-3">
                       <div className="image-container" style={{ position: 'relative', display: 'inline-block' }}>
                         <img
-                          src={`http://localhost:3001/${existingImage}`}
+                          src={`${process.env.REACT_APP_API_URL}/${existingImage}`}
                           alt="Current reference"
                           style={{
                             maxWidth: '200px',

@@ -437,7 +437,7 @@ $(function () {
       if (userId) {
         // Fetch existing product data
         $.ajax({
-          url: `http://localhost:3001/api/getproduct/${userId}`,
+          url: `${process.env.REACT_APP_API_URL}/api/getproduct/${userId}`,
           type: "GET",
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`,
@@ -581,7 +581,7 @@ $(function () {
         console.log("Updating Data:", formData);
     
         $.ajax({
-          url: `http://localhost:3001/api/editcropImage/${userId}`,
+          url: `${process.env.REACT_APP_API_URL}/api/editcropImage/${userId}`,
           type: "PUT",
           contentType: "application/json",
           data: JSON.stringify(formData),

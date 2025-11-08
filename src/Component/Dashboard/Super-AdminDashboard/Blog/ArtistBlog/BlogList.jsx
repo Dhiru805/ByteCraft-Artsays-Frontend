@@ -15,7 +15,7 @@ function BlogList() {
 
   const fetchBlog = async () => {
     try {
-      const result = await getAPI("http://localhost:3001/Blog-Post/user-blogs", {}, true, false);
+      const result = await getAPI(`${process.env.REACT_APP_API_URL}/Blog-Post/user-blogs`, {}, true, false);
       if (result.data) {
         setBlogs(result.data.blogs);
       }
@@ -127,7 +127,7 @@ function BlogList() {
                           <img
                             src={
                               blog.blogImage
-                                ? `http://localhost:3001/${blog.blogImage.replace(/\\/g, "/")}`
+                                ? `${process.env.REACT_APP_API_URL}/${blog.blogImage.replace(/\\/g, "/")}`
                                 : "/placeholder.jpg"
                             }
                             className="rounded-circle"

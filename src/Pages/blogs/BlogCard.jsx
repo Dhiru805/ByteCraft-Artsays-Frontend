@@ -15,7 +15,7 @@ function BlogCard({ blog }) {
         <div className="flex cursor-pointer" onClick={handleChangeURL}>
             <div className="flex flex-col w-full border-2 border-[#6F4D34] bg-[#fff] rounded-[20px] lg:rounded-[25px] overflow-hidden">
                 <div className="w-full h-[140px] lg:h-[200px] bg-gray-100 rounded-[20px] lg:rounded-[25px] relative z-10" id="blogGrid_imageCont">
-                    <img src={blog ? `http://localhost:3001/${blog.blogImage.replace(/\\/g, "/")}` : blog1} alt="Blog image" className="w-full h-100 object-cover"
+                    <img src={blog ? `${process.env.REACT_APP_API_URL}/${blog.blogImage.replace(/\\/g, "/")}` : blog1} alt="Blog image" className="w-full h-100 object-cover"
                         onError={(e) => e.currentTarget.src = blog1} />
                     <button className="absolute bottom-2 right-2 bg-[#fff] p-2 rounded-full focus:outline-0">
                         <ThumbsUp className="w-4 h-4 md:w-5 md:h-5 text-[#000]" />

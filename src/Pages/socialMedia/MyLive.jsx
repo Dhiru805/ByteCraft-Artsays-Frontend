@@ -75,7 +75,7 @@ const [streamerMessage, setStreamerMessage] = useState("");
 
 // Socket setup for streamer
 useEffect(() => {
-  const socket = io(process.env.REACT_APP_API_BASE || "http://localhost:3001", { 
+  const socket = io(process.env.REACT_APP_API_BASE, { 
     transports: ["websocket", "polling"],
     timeout: 5000
   });
@@ -321,7 +321,7 @@ const initializePeerConnection = (viewerSocketId) => {
       try { socketRef.current.disconnect(); } catch (_) {}
       socketRef.current = null;
     }
-    const socket = io(process.env.REACT_APP_API_BASE || "http://localhost:3001", { transports: ["websocket"] });
+    const socket = io(process.env.REACT_APP_API_BASE, { transports: ["websocket"] });
     socketRef.current = socket;
 
     // Join room and request like status
@@ -1012,7 +1012,7 @@ const formatDuration = (milliseconds) => {
                 />
               ) : (
                   <img
-                    src={liveDetail?.thumbnail ? `http://localhost:3001/${String(liveDetail.thumbnail).replace(/\\/g, "/")}` : ""}
+                    src={liveDetail?.thumbnail ? `${process.env.REACT_APP_API_URL}/${String(liveDetail.thumbnail).replace(/\\/g, "/")}` : ""}
                     alt={`Thumbnail for ${liveDetail?.title}`}
                     className="w-full h-full object-cover rounded-lg"
                   />

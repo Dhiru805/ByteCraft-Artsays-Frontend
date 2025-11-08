@@ -12,14 +12,14 @@ const AccountVerification = ({ userId }) => {
     useEffect(() => {
         const fetchVerificationData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/auth/verificationdetails/${userId}`);
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/auth/verificationdetails/${userId}`);
                 const data = response.data.verification;
     
                 if (data) {
                     setVerificationType(data.documentType || '');  
                     setDocNumber(data.documentNumber || ''); 
                     if (data.documentFile) {  
-                        setFilePreview(`http://localhost:3001/${data.documentFile}`);
+                        setFilePreview(`${process.env.REACT_APP_API_URL}/${data.documentFile}`);
                         setFileType(data.documentFile.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg');
                     }
                 }

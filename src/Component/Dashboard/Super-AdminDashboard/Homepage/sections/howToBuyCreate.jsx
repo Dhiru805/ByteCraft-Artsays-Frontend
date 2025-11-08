@@ -400,7 +400,7 @@ const HowToBuyCreate = () => {
           // setImagePreviews((s.cards || []).map(c => c.imageUrl || c.image || null));
           // setExistingIcons((s.cards || []).map(c => (c.iconUrls || c.icons || []).map(u => u?.url || u || null)));
           // setIconPreviews((s.cards || []).map(c => (c.iconUrls || c.icons || []).map(u => u?.url || u || null)));
-          const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE || "http://localhost:3001";
+          const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE || `${process.env.REACT_APP_API_URL}`;
 
           setExistingCardImages(
             (s.cards || []).map(c =>

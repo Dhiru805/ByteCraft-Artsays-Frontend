@@ -28,7 +28,7 @@ function BlogPost() {
 
   const fetchCategories = async () => {
     try {
-        const response = await axios.get("http://localhost:3001/api/getblogcategory");
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/getblogcategory`);
         setCategories(response.data);
     } catch (error) {
         console.error("Error fetching categories:", error);
@@ -98,7 +98,7 @@ useEffect(() => {
     formDataObj.append("blogDescription", content);
 
     try {
-      const response = await fetch("http://localhost:3001/Blog-Post/create", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/Blog-Post/create`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

@@ -88,7 +88,7 @@ const Billings = ({ userId, profileData, previewImage }) => {
                           className="d-block img-fluid rounded"
                           src={
                             blog.blogImage
-                              ? `http://localhost:3001/${blog.blogImage.replace(/\\/g, "/")}`
+                              ? `${process.env.REACT_APP_API_URL}/${blog.blogImage.replace(/\\/g, "/")}`
                               : "/placeholder.jpg"
                           }
                           alt={blog.blogName}

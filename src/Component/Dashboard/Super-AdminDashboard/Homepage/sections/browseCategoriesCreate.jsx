@@ -294,7 +294,7 @@ const BrowseCategoriesCreate = () => {
           // setExistingIcons(existingIconsList);
           // setIconPreviews(existingIconsList);
 
-          const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE || "http://localhost:3001";
+          const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
           const existingIconsList =
             section.tags?.map(tag =>

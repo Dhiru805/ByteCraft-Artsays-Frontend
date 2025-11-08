@@ -684,7 +684,7 @@
 //       setError("");
 
 //       try {
-//         const base = process.env.REACT_APP_API_URL || "http://localhost:3001";
+//         const base = process.env.REACT_APP_API_URL || "${process.env.REACT_APP_API_URL}";
 
 //         const cmsRes = await fetch(`${base}/api/CMS-artsays-gallery/published`);
 //         const cmsData = await cmsRes.json();
@@ -821,7 +821,7 @@
 //       setError("");
 
 //       try {
-//         const base = process.env.REACT_APP_API_URL || "http://localhost:3001";
+//         const base = process.env.REACT_APP_API_URL || "${process.env.REACT_APP_API_URL}";
 
 //         const cmsRes = await fetch(`${base}/api/CMS-artsays-gallery/published`);
 //         const cmsData = await cmsRes.json();
@@ -966,7 +966,7 @@ const ArtGalleryContent = () => {
       setError("");
 
       try {
-        const base = process.env.REACT_APP_API_URL || "http://localhost:3001";
+        const base = process.env.REACT_APP_API_URL;
 
         const cmsRes = await fetch(`${base}/api/CMS-artsays-gallery/published`);
         const cmsData = await cmsRes.json();

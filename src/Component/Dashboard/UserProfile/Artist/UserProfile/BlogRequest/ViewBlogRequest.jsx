@@ -38,7 +38,7 @@ const Billings = ({ userId, profileData, previewImage }) => {
   const updateBlogStatus = async (blogId, status) => {
     try {
       await putAPI(
-        `http://localhost:3001/Blog-Post/update-status/${blogId}`,
+        `${process.env.REACT_APP_API_URL}/Blog-Post/update-status/${blogId}`,
         { blogStatus: status },
         {},
         true
@@ -67,7 +67,7 @@ const Billings = ({ userId, profileData, previewImage }) => {
   const fetchBlog = async () => {
     try {
       const result = await getAPI(
-        `http://localhost:3001/Blog-Post/blogs/user/${userId}`,
+        `${process.env.REACT_APP_API_URL}/Blog-Post/blogs/user/${userId}`,
         {},
         true,
         false
@@ -156,7 +156,7 @@ const Billings = ({ userId, profileData, previewImage }) => {
                           className="d-block img-fluid rounded"
                           src={
                             blog.blogImage
-                              ? `http://localhost:3001/${blog.blogImage.replace(/\\/g, "/")}`
+                              ? `${process.env.REACT_APP_API_URL}/${blog.blogImage.replace(/\\/g, "/")}`
                               : "/placeholder.jpg"
                           }
                           alt={blog.blogName}

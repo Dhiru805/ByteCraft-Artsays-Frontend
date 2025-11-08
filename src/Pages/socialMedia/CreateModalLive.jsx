@@ -21,7 +21,7 @@ const EditLiveModal = ({ onClose, liveDetail, fetchLive}) => {
 });
 
   const [thumbnail, setThumbnail] = useState(null); 
-  const [preview, setPreview] = useState(liveDetail?.thumbnail ? `http://localhost:3001/${liveDetail?.thumbnail?.replace(/\\/g, "/")}` : ""); // preview existing/new
+  const [preview, setPreview] = useState(liveDetail?.thumbnail ? `${process.env.REACT_APP_API_URL}/${liveDetail?.thumbnail?.replace(/\\/g, "/")}` : ""); // preview existing/new
   const [loading, setLoading] = useState(false);
   const [categories, setCategories ] = useState([]);
   const [tagInput, setTagInput] = useState("");
@@ -81,7 +81,7 @@ const EditLiveModal = ({ onClose, liveDetail, fetchLive}) => {
           // Set preview to fully-qualified URL if thumbnail exists
           if (live.thumbnail) {
             const normalized = String(live.thumbnail).replace(/\\\\/g, "/");
-            setPreview(`http://localhost:3001/${normalized}`);
+            setPreview(`${process.env.REACT_APP_API_URL}/${normalized}`);
           } else {
             setPreview("");
           }

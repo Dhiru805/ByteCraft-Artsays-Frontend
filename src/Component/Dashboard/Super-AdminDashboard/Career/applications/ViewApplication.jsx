@@ -90,7 +90,7 @@ function ViewApplication() {
                                 <div className="col-md-6">
                                     <label>Resume</label>
                                     <div>
-                                        <a href={`http://localhost:3001/uploads/careerApplications/${application?.resume}`}
+                                        <a href={`${process.env.REACT_APP_API_URL}/uploads/careerApplications/${application?.resume}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="btn btn-sm btn-outline-primary"

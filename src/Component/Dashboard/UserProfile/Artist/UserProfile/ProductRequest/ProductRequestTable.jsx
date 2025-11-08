@@ -12,7 +12,7 @@ const ProductRequest = ({userId}) => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
-    const BASE_URL = 'http://localhost:3001';
+    const BASE_URL = '${process.env.REACT_APP_API_URL}';
   
  
     const confirm = useConfirm();
@@ -23,7 +23,7 @@ const ProductRequest = ({userId}) => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const result = await getAPI(`http://localhost:3001/api/getartistproductbyid/${userId}`, {}, true, false);
+                const result = await getAPI(`${process.env.REACT_APP_API_URL}/api/getartistproductbyid/${userId}`, {}, true, false);
                 console.log("Full API Response:", result);
                 console.log("Data Type:", typeof result.data);
 
@@ -47,7 +47,7 @@ const ProductRequest = ({userId}) => {
     const updateProductStatus = async (productId, status) => {
         try {
             await putAPI(
-                `http://localhost:3001/api/updateproductstatus/${productId}`,
+                `${process.env.REACT_APP_API_URL}/api/updateproductstatus/${productId}`,
                 { status: status },
                 {},
                 true

@@ -71,7 +71,7 @@ const handleSaveChanges = (updatedData) => {
                                                 </td>
                                                 <td>
                                                     <img
-                                                        src={`http://localhost:3001${request.Buyer.id.profilePhoto}`}
+                                                        src={`${process.env.REACT_APP_API_URL}${request.Buyer.id.profilePhoto}`}
                                                         className="rounded-circle avatar"
                                                         alt=""
                                                         style={{

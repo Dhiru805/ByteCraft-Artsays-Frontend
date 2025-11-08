@@ -19,7 +19,7 @@ const UpdateModal = ({ request, onClose, onSubmit }) => {
     e.preventDefault();
     try {
       const response = await putAPI(
-        `http://localhost:3001/api/update-negiotaite-budget/${request._id}`,
+        `${process.env.REACT_APP_API_URL}/api/update-negiotaite-budget/${request._id}`,
         {
           ProductName: request?.ProductName || "",
           Description: request?.Description || "",

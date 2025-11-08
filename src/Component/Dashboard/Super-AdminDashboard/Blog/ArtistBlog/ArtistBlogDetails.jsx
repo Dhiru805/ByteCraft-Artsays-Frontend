@@ -12,7 +12,7 @@
 
 //   const fetchBlog = async () => {
 //     try {
-//       const result = await getAPI(`http://localhost:3001/Blog-Post/getblogbyid/${blogId}`, {}, true, false);
+//       const result = await getAPI(`${process.env.REACT_APP_API_URL}/Blog-Post/getblogbyid/${blogId}`, {}, true, false);
 //       if (result.data) {
 //         setBlogs([result.data.blog]);
 //       }
@@ -55,7 +55,7 @@
 //                     className="d-block img-fluid"
 //                     src={
 //                       blogs[0].blogImage
-//                         ? `http://localhost:3001/${blogs[0].blogImage.replace(/\\/g, "/")}`
+//                         ? `${process.env.REACT_APP_API_URL}/${blogs[0].blogImage.replace(/\\/g, "/")}`
 //                         : "/placeholder.jpg"
 //                     }
 //                     alt={blogs[0].blogName}
@@ -128,7 +128,7 @@ function ArtistBlogDetails() {
 
   const fetchBlog = async () => {
     try {
-      const result = await getAPI(`http://localhost:3001/Blog-Post/getblogbyid/${blogId}`, {}, true, false);
+      const result = await getAPI(`${process.env.REACT_APP_API_URL}/Blog-Post/getblogbyid/${blogId}`, {}, true, false);
       if (result.data) {
         setBlogs([result.data.blog]);
       }
@@ -162,7 +162,7 @@ function ArtistBlogDetails() {
           {blogs[0].blogImage && (
             <meta
               property="og:image"
-              content={`http://localhost:3001/${blogs[0].blogImage.replace(/\\/g, "/")}`}
+              content={`${process.env.REACT_APP_API_URL}/${blogs[0].blogImage.replace(/\\/g, "/")}`}
             />
           )}
 
@@ -173,7 +173,7 @@ function ArtistBlogDetails() {
           {blogs[0].blogImage && (
             <meta
               name="twitter:image"
-              content={`http://localhost:3001/${blogs[0].blogImage.replace(/\\/g, "/")}`}
+              content={`${process.env.REACT_APP_API_URL}/${blogs[0].blogImage.replace(/\\/g, "/")}`}
             />
           )}
         </Helmet>
@@ -220,7 +220,7 @@ function ArtistBlogDetails() {
                   <div className="img-post mb-4">
                     <img
                       className="img-fluid rounded"
-                      src={`http://localhost:3001/${blogs[0].blogImage.replace(/\\/g, "/")}`}
+                      src={`${process.env.REACT_APP_API_URL}/${blogs[0].blogImage.replace(/\\/g, "/")}`}
                       alt={blogs[0].blogName}
                       style={{ maxHeight: '500px', objectFit: 'cover', width: '100%' }}
                     />
@@ -284,7 +284,7 @@ function ArtistBlogDetails() {
               <img
                 src={
                   blogs[0]?.uploadedBy?.id?.profilePhoto
-                    ? `http://localhost:3001${blogs[0].uploadedBy.id.profilePhoto.replace(/\\/g, "/")}`
+                    ? `${process.env.REACT_APP_API_URL}${blogs[0].uploadedBy.id.profilePhoto.replace(/\\/g, "/")}`
                     : "/default-profile.jpg"
                 }
                 alt="Author"

@@ -7,7 +7,7 @@ const ProductRequest = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
-    const BASE_URL = 'http://localhost:3001';
+    const BASE_URL = '${process.env.REACT_APP_API_URL}';
   
     const navigate = useNavigate();
     const userType = useUserType(); 
@@ -33,7 +33,7 @@ const ProductRequest = () => {
 
         const fetchProducts = async () => {
             try {
-                const result = await getAPI(`http://localhost:3001/api/getsellerproductbyid/${userId}`, {}, true, false);
+                const result = await getAPI(`${process.env.REACT_APP_API_URL}/api/getsellerproductbyid/${userId}`, {}, true, false);
                 console.log("Full API Response:", result);
                 console.log("Data Type:", typeof result.data);
 

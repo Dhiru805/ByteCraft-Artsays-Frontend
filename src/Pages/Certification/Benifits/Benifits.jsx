@@ -161,7 +161,7 @@ const Benifits = () => {
             src={
               card.image.startsWith("http")
                 ? card.image
-                : `http://localhost:3001/${card.image}`
+                : `${process.env.REACT_APP_API_URL}/${card.image}`
             }
             alt={card.title}
             className="h-full w-auto max-w-[90%] object-contain transition-all duration-300"

@@ -53,7 +53,7 @@ const HeroSectionCreate = () => {
           // setExistingImages(existingImgs);
           // setImagePreviews(existingImgs);
 
-          const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE || "http://localhost:3001";
+          const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE || `${process.env.REACT_APP_API_URL}`;
           const existingImgs = (section.recurrentTitles || []).map(rt =>
             rt.image ? `${BASE_URL}/${rt.image}` : (rt.imageUrl ? `${BASE_URL}/${rt.imageUrl}` : null)
           );

@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 function UpdateApplication() {
 
-    const backendURL = 'http://localhost:3001/uploads/careerApplications'
+    const backendURL = '${process.env.REACT_APP_API_URL}/uploads/careerApplications'
     const location = useLocation()
     const application = location?.state?.applicant;
     const navigate = useNavigate()

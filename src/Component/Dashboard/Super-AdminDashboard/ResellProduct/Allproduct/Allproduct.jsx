@@ -38,7 +38,7 @@ const ProductRequest = () => {
         const fetchProducts = async () => {
             try {
                 const result = await getAPI(
-                    `http://localhost:3001/api/getallresellproduct/${encodeURIComponent(userId)}`,
+                    `${process.env.REACT_APP_API_URL}/api/getallresellproduct/${encodeURIComponent(userId)}`,
                     {}, 
                     true, 
                     false
@@ -76,7 +76,7 @@ const ProductRequest = () => {
     //     const type = product?.buyerId ? "buyerResell" : "cropImage";
     //     try {
     //         await putAPI(
-    //             `http://localhost:3001/api/updateproductrequeststatus/${productId}/${type}`,
+    //             `${process.env.REACT_APP_API_URL}/api/updateproductrequeststatus/${productId}/${type}`,
     //             { status: status },
     //             {},
     //             true

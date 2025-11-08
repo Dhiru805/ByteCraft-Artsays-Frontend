@@ -1163,7 +1163,7 @@ useEffect(() => {
       };
 
       // Connect to socket
-      const socket = io(process.env.REACT_APP_API_BASE || "http://localhost:3001", {
+      const socket = io(process.env.REACT_APP_API_BASE, {
         transports: ["websocket", "polling"],
         timeout: 5000,
         forceNew: true
@@ -1345,7 +1345,7 @@ const diagnoseNetwork = async () => {
   
   // Test socket connectivity
   try {
-    const testSocket = io(process.env.REACT_APP_API_BASE || "http://localhost:3001", { 
+    const testSocket = io(process.env.REACT_APP_API_BASE, { 
       transports: ["websocket"],
       timeout: 5000
     });
@@ -1714,7 +1714,7 @@ const handleConnectionError = (error, context) => {
     if (!liveDetail?.live?.isLive || !streamKey) return;
     // Import socket.io-client if not global
     const io = window.io || require("socket.io-client").io;
-    const socket = io(process.env.REACT_APP_API_BASE || "http://localhost:3001", { transports: ["websocket"] });
+    const socket = io(process.env.REACT_APP_API_BASE || `${process.env.REACT_APP_API_URL}`, { transports: ["websocket"] });
     socketRef.current = socket;
     const roomName = `live-room-${streamKey}`;
     const userId = localStorage.getItem("userId") || `viewer-${Math.random()}`;
@@ -1899,7 +1899,7 @@ const handleSend = () => {
                 controls={isFullscreen}
                 muted={isMuted}
                 playsInline
-                poster={liveDetail?.live?.isLive ? "" : (liveDetail?.thumbnail ? `http://localhost:3001/${String(liveDetail.thumbnail).replace(/\\/g, "/")}` : "")}
+                poster={liveDetail?.live?.isLive ? "" : (liveDetail?.thumbnail ? `${process.env.REACT_APP_API_URL}/${String(liveDetail.thumbnail).replace(/\\/g, "/")}` : "")}
                 crossOrigin="anonymous"
                 preload="metadata"
               >

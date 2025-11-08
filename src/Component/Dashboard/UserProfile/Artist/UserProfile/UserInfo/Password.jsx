@@ -34,7 +34,7 @@ const UserProfileForm = ({ userId, email, phoneNumber, username }) => {
                 phoneNumber: PhoneNumber,
                 username: Username  
             };
-            const url = `http://localhost:3001/auth/users/${userId}`;
+            const url = `${process.env.REACT_APP_API_URL}/auth/users/${userId}`;
             const result = await putAPI(url, payload);
 
             if (result.hasError) {

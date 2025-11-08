@@ -38,7 +38,7 @@ useEffect(() => {
 if (!userId) return; 
 const fetchProducts = async () => {
     try {
-        const result = await getAPI(`http://localhost:3001/api/get-alltransactionbyartistid/${encodeURIComponent(userId)}`, {}, true, false);
+        const result = await getAPI(`${process.env.REACT_APP_API_URL}/api/get-alltransactionbyartistid/${encodeURIComponent(userId)}`, {}, true, false);
         console.log("Full API Response:", result);
         console.log("Data Type:", typeof result.data);
 

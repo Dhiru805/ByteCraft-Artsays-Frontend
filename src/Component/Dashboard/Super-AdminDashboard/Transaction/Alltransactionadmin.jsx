@@ -16,7 +16,7 @@ const Transaction = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const result = await getAPI("http://localhost:3001/api/get-alltransaction", {}, true, false);
+                const result = await getAPI(`${process.env.REACT_APP_API_URL}/api/get-alltransaction`, {}, true, false);
                 console.log("Full API Response:", result);
 
                 let combinedProducts = [];

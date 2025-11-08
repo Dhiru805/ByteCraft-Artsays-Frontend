@@ -475,7 +475,7 @@ $(function () {
 
       // Send to backend
       $.ajax({
-        url: "http://localhost:3001/api/cropImage",
+        url: `${process.env.REACT_APP_API_URL}/api/cropImage`,
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify(formData),

@@ -14,7 +14,7 @@ const PackagingProduct = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const result = await getAPI("http://localhost:3001/api/getallproduct", {}, true, false);
+                const result = await getAPI(`${process.env.REACT_APP_API_URL}/api/getallproduct`, {}, true, false);
                 console.log("Full API Response:", result);
     
                 // Check if the response contains the expected data

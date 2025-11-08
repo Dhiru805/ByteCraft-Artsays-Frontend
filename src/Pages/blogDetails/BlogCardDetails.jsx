@@ -247,7 +247,7 @@ function BlogCardDetails() {
                         </div>
                         <div className="w-full">
                             <div className="aspect-[16/9] w-full lg:w-full">
-                                <img src={blogDetails ? `http://localhost:3001/${blogDetails.blogImage}` : blog1}
+                                <img src={blogDetails ? `${process.env.REACT_APP_API_URL}/${blogDetails.blogImage}` : blog1}
                                     alt="Blog" className="w-full h-full object-cover rounded"
                                     onError={(e) => e.currentTarget.src = blog1} />
                             </div>
@@ -279,7 +279,7 @@ function BlogCardDetails() {
                     <div className="col-span-12 md:col-span-3 lg:col-span-3 xl:col-span-2 space-y-4 order-1 md:!order-2">
 
                         <div className="w-full bg-[#48372D] rounded-lg p-3 text-white flex flex-col justify-center items-center text-center">
-                            <img src={userDetails ? `http://localhost:3001/${userDetails.profilePhoto}` : artist}
+                            <img src={userDetails ? `${process.env.REACT_APP_API_URL}/${userDetails.profilePhoto}` : artist}
                                 alt="Artist image" id="artist-image"
                                 onError={(e) => e.currentTarget.src = artist} />
                             <div>

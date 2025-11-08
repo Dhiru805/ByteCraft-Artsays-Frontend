@@ -70,7 +70,7 @@ function UpdateBlog() {
     formDataObj.append("blogDescription", content);
 
     try {
-      const response = await fetch(`http://localhost:3001/Blog-Post/update/${blog._id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/Blog-Post/update/${blog._id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -196,7 +196,7 @@ function UpdateBlog() {
                     {blog.blogImage && (
                       <div className="mt-2">
                         <img
-                          src={`http://localhost:3001/${blog.blogImage.replace(/\\/g, "/")}`}
+                          src={`${process.env.REACT_APP_API_URL}/${blog.blogImage.replace(/\\/g, "/")}`}
                           alt="Current"
                           style={{ maxWidth: "150px", maxHeight: "150px" }}
                         />

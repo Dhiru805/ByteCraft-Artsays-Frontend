@@ -14,7 +14,7 @@ const SoldProduct = ({ userId }) => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const result = await getAPI(`http://localhost:3001/api/getartistsoldproductbyid/${userId}`, {}, true, false);
+                const result = await getAPI(`${process.env.REACT_APP_API_URL}/api/getartistsoldproductbyid/${userId}`, {}, true, false);
                 console.log("Full API Response:", result);
 
                 if (result && result.data && Array.isArray(result.data)) {

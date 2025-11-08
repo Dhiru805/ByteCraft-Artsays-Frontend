@@ -17,7 +17,7 @@ const ProductPurchased = ({userId}) => {
     
         const fetchProducts = async () => {
             try {
-                const url = `http://localhost:3001/api/getartist-purchasedproductbyid/${userId}`;
+                const url = `${process.env.REACT_APP_API_URL}/api/getartist-purchasedproductbyid/${userId}`;
                 console.log("Fetching URL:", url); 
     
                 const result = await getAPI(url, {}, true, false);

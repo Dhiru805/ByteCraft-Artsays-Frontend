@@ -38,7 +38,7 @@ function UpdateBuyerRequest() {
   useEffect(() => {
     const fetchArtists = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/artist/artists");
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/artist/artists`);
         setArtists(response.data);
       } catch (error) {
         console.error("Error fetching artists:", error);
@@ -120,7 +120,7 @@ function UpdateBuyerRequest() {
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/api/update-buyer-request/${id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/update-buyer-request/${id}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -383,7 +383,7 @@ function UpdateBuyerRequest() {
                     <div className="mb-3">
                       <div className="image-container" style={{ position: 'relative', display: 'inline-block' }}>
                         <img
-                          src={`http://localhost:3001/${existingImage}`}
+                          src={`${process.env.REACT_APP_API_URL}/${existingImage}`}
                           alt="Current reference"
                           style={{
                             maxWidth: '200px',

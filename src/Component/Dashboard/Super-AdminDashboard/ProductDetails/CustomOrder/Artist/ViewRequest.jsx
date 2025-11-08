@@ -22,7 +22,7 @@ function ViewBuyerRequest() {
     useEffect(() => {
         const fetchArtists = async () => {
             try {
-                const response = await axios.get("http://localhost:3001/artist/artists");
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/artist/artists`);
                 setArtists(response.data);
             } catch (error) {
                 console.error("Error fetching artists:", error);
@@ -34,7 +34,7 @@ function ViewBuyerRequest() {
             setProductName(request.ProductName || '');
             setDescription(request.Description || '');
             setBudget(request.Budget || '');
-            setImage(request.BuyerImage ? `http://localhost:3001/${request.BuyerImage}` : '');
+            setImage(request.BuyerImage ? `${process.env.REACT_APP_API_URL}/${request.BuyerImage}` : '');
             setBuyerId(`${request.Buyer.id.name} ${request.Buyer.id.lastName}`);
         }
     }, [request]);
