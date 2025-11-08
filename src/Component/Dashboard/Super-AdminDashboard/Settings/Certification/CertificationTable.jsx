@@ -402,7 +402,7 @@ const CertificationTable = ({
                   ></i>
                 </div>
 
-                {/* ✅ Import Button */}
+                {/*  Import Button */}
                 <button
                   type="button"
                   className="btn btn-outline-success btn-sm ml-2"
@@ -511,7 +511,7 @@ const CertificationTable = ({
         fetchSubCertificationData={fetchSubCertificationData}
       />
 
-      {/* ✅ Import Modal */}
+      {/*  Import Modal */}
       <Modal show={isImportModalOpen} onHide={() => setIsImportModalOpen(false)} centered>
         <div className="p-4">
           <h5 className="mb-3">Import Certifications</h5>
