@@ -326,7 +326,7 @@
         const fd = prepareFormData("Drafted");
         await putAPI(`/api/update-products/${product._id}`, fd, {}, true);
         toast.success("Saved as draft");
-        navigate("/artist/product");
+        navigate("/seller/product");
       } catch (err) {
         toast.error(err.response?.data?.message || "Save failed");
       } finally {
@@ -371,7 +371,7 @@
         const fd = prepareFormData("Pending");
         await putAPI(`/api/update-products/${product._id}`, fd, {}, true);
         toast.success("Product updated!");
-        navigate("/artist/product");
+        navigate("/seller/product");
       } catch (err) {
         toast.error(err.response?.data?.message || "Update failed");
       } finally {
@@ -895,7 +895,7 @@
               <h2>Create Product</h2>
               <ul className="breadcrumb">
                 <li className="breadcrumb-item">
-                  <span onClick={() => navigate('/artist/dashboard')} style={{ cursor: 'pointer' }}>
+                  <span onClick={() => navigate('/seller/dashboard')} style={{ cursor: 'pointer' }}>
                     <i className="fa fa-dashboard"></i>
                   </span>
                 </li>

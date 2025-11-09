@@ -267,8 +267,8 @@ const ArtworkDetails = ({
             <label>Functional Use <span style={{ color: 'red' }}>*</span></label>
             <Select
                 options={[
-                    { value: 'yes', label: 'Yes' },
-                    { value: 'no', label: 'No' }
+                    { value: 'Yes', label: 'Yes' },
+                    { value: 'No', label: 'No' }
                 ]}
                 value={formData.functionalUse}
                 onChange={(selected) => handleSelectChange('functionalUse', selected)}
@@ -326,8 +326,8 @@ const ArtworkDetails = ({
             <label>Handmade <span style={{ color: 'red' }}>*</span></label>
             <Select
                 options={[
-                    { value: 'yes', label: 'Yes' },
-                    { value: 'no', label: 'No' }
+                    { value: 'Yes', label: 'Yes' },
+                    { value: 'No', label: 'No' }
                 ]}
                 value={formData.handmade}
                 onChange={(selected) => handleSelectChange('handmade', selected)}

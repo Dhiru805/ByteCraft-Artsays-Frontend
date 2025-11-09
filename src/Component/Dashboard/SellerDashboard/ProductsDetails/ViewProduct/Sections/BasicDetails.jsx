@@ -79,44 +79,8 @@ const BasicDetails = ({
           placeholder="Enter Product Name"
           value={formData.productName}
           onChange={handleInputChange}
-       
+         readOnly
           disabled={isSubmitting}
-        />
-      </div>
-      <div className="form-group">
-        <label>Search Category</label>
-        <Select
-          options={searchableCategories}
-          getOptionLabel={e => e.fullLabel}
-          getOptionValue={e => e.value}
-          placeholder="Search for any category..."
-          isClearable
-          onChange={(selectedOption) => {
-            if (!selectedOption) return;
-
-            const selected = selectedOption;
-            let mainCat = null, cat = null, subCat = null;
-
-            if (selected.type === 'mainCategory') {
-              mainCat = categoryData.mainCategories.find(m => m.value === selected.value);
-            }
-
-            if (selected.type === 'category') {
-              cat = categoryData.categories.find(c => c.value === selected.value);
-              mainCat = categoryData.mainCategories.find(m => m.value === cat?.mainCategoryId);
-            }
-
-            if (selected.type === 'subCategory') {
-              subCat = categoryData.subCategories.find(s => s.value === selected.value);
-              cat = categoryData.categories.find(c => c.value === subCat?.categoryId);
-              mainCat = categoryData.mainCategories.find(m => m.value === cat?.mainCategoryId);
-            }
-
-            handleSelectChange('mainCategory', mainCat || null);
-            handleSelectChange('category', cat || null);
-            handleSelectChange('subCategory', subCat || null);
-          }}
-          isDisabled={isSubmitting}
         />
       </div>
       <div className="form-group">
@@ -135,6 +99,7 @@ const BasicDetails = ({
             handleSelectChange('subCategory', null);
           }}
           disabled={isSubmitting}
+            readOnly
        
         >
           <option value="">Select Main Category</option>
@@ -159,7 +124,8 @@ const BasicDetails = ({
             handleSelectChange('category', selected);
             handleSelectChange('subCategory', null);
           }}
-          disabled={!formData.mainCategory || isSubmitting}
+          disabled
+            readOnly
        
         >
           <option value="">
@@ -189,10 +155,11 @@ const BasicDetails = ({
             const customOption = { label: inputValue, value: inputValue };
             handleSelectChange('subCategory', customOption);
           }}
-          isDisabled={!formData.category || isSubmitting}
+          isDisabled
           isClearable
           isSearchable
           placeholder="Select or enter subcategory"
+            readOnly
         />
       </div>
 
@@ -213,7 +180,7 @@ const BasicDetails = ({
             }
           }}
        
-          disabled={isSubmitting || isNFTArtSelected}
+          disabled
         >
           <option value="">Select Product Type</option>
           {filteredProductTypeOptions.map((option) => (
@@ -239,7 +206,7 @@ const BasicDetails = ({
             value={formData.editionNumber}
             onChange={handleInputChange}
             required={formData.productType?.value === 'Limited Edition'}
-            disabled={isSubmitting}
+            disabled
             min="1"
           />
         </div>
@@ -257,6 +224,7 @@ const BasicDetails = ({
           onChange={handleInputChange}
        
           disabled={isSubmitting}
+            readOnly
         />
       </div>
 
@@ -271,6 +239,7 @@ const BasicDetails = ({
           value={formData.targetedAudience || ''}
           onChange={handleInputChange}
           disabled={isSubmitting}
+            readOnly
        
         />
       </div>
@@ -286,6 +255,7 @@ const BasicDetails = ({
           value={formData.inspirationSource || ''}
           onChange={handleInputChange}
           disabled={isSubmitting}
+            readOnly
        
         />
       </div>
@@ -321,7 +291,7 @@ const BasicDetails = ({
             onChange={(e) => setInputTag(e.target.value)}
             onKeyDown={handleTagKeyDown}
             disabled={isSubmitting}
-         
+             readOnly
           />
         </div>
       </div>

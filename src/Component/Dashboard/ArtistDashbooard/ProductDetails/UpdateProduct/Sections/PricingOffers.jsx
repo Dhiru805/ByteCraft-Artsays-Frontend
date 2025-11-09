@@ -5,8 +5,8 @@ import Select from "react-select";
 import getAPI from "../../../../../../api/getAPI";
 
 const installmentOptions = [
-    { value: "yearly", label: "1 Year" },
-    { value: "lifetime", label: "Lifetime" },
+       { value: "Yearly", label: "Yearly" },
+    { value: "Lifetime", label: "Lifetime" },
 ];
 
 const PricingOffers = ({

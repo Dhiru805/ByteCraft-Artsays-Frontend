@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from "react";
 import getAPI from "../../../../../../api/getAPI";
 import { toast } from 'react-toastify';
@@ -98,29 +97,28 @@ const NFTDetails = ({
                 <div className="card-body">
                     <div className="row">
                         <div className="col-md-6 form-group">
-                            <label htmlFor="blockchainNetwork">Blockchain Network <span className="text-danger">*</span></label>
+                            <label>Blockchain Network <span className="text-danger">*</span></label>
                             <CreatableSelect
                                 id="blockchainNetwork"
                                 name="blockchainNetwork"
                                 options={blockchainOptions}
                                 value={formData.blockchainNetwork || null}
-                                onChange={(selected) => handleSelectChange('blockchainNetwork', selected)}
-                                isDisabled={isSubmitting}
-                             
-                                isSearchable={true}
-                                placeholder="Select or type to search..."
+                                onChange={() => {}}
+                                isDisabled={true}
+                                isSearchable={false}
+                                placeholder="—"
                                 className="basic-multi-select"
                                 classNamePrefix="select"
-                                isClearable
-                                onCreateOption={(inputValue) => {
-                                    const newOption = { label: inputValue, value: inputValue };
-                                    handleSelectChange('blockchainNetwork', newOption);
+                                isClearable={false}
+                                styles={{
+                                    control: (base) => ({ ...base, backgroundColor: '#e9ecef', opacity: 0.7 }),
+                                    singleValue: (base) => ({ ...base, color: '#495057' })
                                 }}
                             />
                         </div>
 
                         <div className="col-md-6 form-group">
-                            <label htmlFor="smartContractAddress">Smart Contract Address <span className="text-danger">*</span></label>
+                            <label>Smart Contract Address <span className="text-danger">*</span></label>
                             <input
                                 type="text"
                                 id="smartContractAddress"
@@ -128,35 +126,34 @@ const NFTDetails = ({
                                 className="form-control"
                                 placeholder="0x..."
                                 value={formData.smartContractAddress || ''}
-                                onChange={handleInputChange}
-                             
-                                disabled={isSubmitting}
+                                disabled={true}
+                                style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                             />
                         </div>
+
                         <div className="col-md-6 form-group">
-                            <label htmlFor="tokenStandard">Token Standard <span className="text-danger">*</span></label>
+                            <label>Token Standard <span className="text-danger">*</span></label>
                             <CreatableSelect
                                 id="tokenStandard"
                                 name="tokenStandard"
-                                className="basic-multi-select"
-                                classNamePrefix="select"
                                 options={tokenStandardOptions}
                                 value={formData.tokenStandard || null}
-                                onChange={(selected) => handleSelectChange('tokenStandard', selected)}
-                                isDisabled={isSubmitting}
-                             
-                                isSearchable={true}
-                                isClearable
-                                placeholder="Select or type to add a token standard..."
-                                onCreateOption={(inputValue) => {
-                                    const newOption = { label: inputValue, value: inputValue };
-                                    handleSelectChange('tokenStandard', newOption);
+                                onChange={() => {}}
+                                isDisabled={true}
+                                isSearchable={false}
+                                isClearable={false}
+                                placeholder="—"
+                                className="basic-multi-select"
+                                classNamePrefix="select"
+                                styles={{
+                                    control: (base) => ({ ...base, backgroundColor: '#e9ecef', opacity: 0.7 }),
+                                    singleValue: (base) => ({ ...base, color: '#495057' })
                                 }}
                             />
                         </div>
 
                         <div className="col-md-6 form-group">
-                            <label htmlFor="tokenId">Token ID <span className="text-danger">*</span></label>
+                            <label>Token ID <span className="text-danger">*</span></label>
                             <input
                                 type="text"
                                 id="tokenId"
@@ -164,14 +161,13 @@ const NFTDetails = ({
                                 className="form-control"
                                 placeholder="Unique identifier"
                                 value={formData.tokenId || ''}
-                                onChange={handleInputChange}
-                                disabled={isSubmitting}
-                             
+                                disabled={true}
+                                style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                             />
                         </div>
 
                         <div className="col-md-6 form-group">
-                            <label htmlFor="walletAddress">Wallet Address of Creator <span className="text-danger">*</span></label>
+                            <label>Wallet Address of Creator <span className="text-danger">*</span></label>
                             <input
                                 type="text"
                                 id="walletAddress"
@@ -179,14 +175,13 @@ const NFTDetails = ({
                                 className="form-control"
                                 placeholder="0x..."
                                 value={formData.walletAddress || ''}
-                                onChange={handleInputChange}
-                             
-                                disabled={isSubmitting}
+                                disabled={true}
+                                style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                             />
                         </div>
 
                         <div className="col-md-6 form-group">
-                            <label htmlFor="royaltyPercentage">Royalty Percentage <span className="text-danger">*</span></label>
+                            <label>Royalty Percentage <span className="text-danger">*</span></label>
                             <div className="input-group">
                                 <input
                                     type="number"
@@ -195,11 +190,10 @@ const NFTDetails = ({
                                     className="form-control"
                                     placeholder="e.g., 10"
                                     value={formData.royaltyPercentage || ''}
-                                    onChange={handleInputChange}
-                                 
-                                    disabled={isSubmitting}
+                                    disabled={true}
                                     min="0"
                                     max="50"
+                                    style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                                 />
                                 <div className="input-group-append">
                                     <span className="input-group-text">%</span>
@@ -208,32 +202,22 @@ const NFTDetails = ({
                         </div>
 
                         <div className="col-md-6 form-group">
-                            <label htmlFor="mintingType">Minting Type <span className="text-danger">*</span></label>
+                            <label>Minting Type <span className="text-danger">*</span></label>
                             <select
                                 id="mintingType"
                                 name="mintingType"
                                 className="form-control"
                                 value={formData.mintingType?.value || ''}
-                                onChange={(e) => {
-                                    const selected = mintingTypeOptions.find(
-                                        opt => opt.value === e.target.value
-                                    );
-                                    handleSelectChange('mintingType', selected);
-                                }}
-                                disabled={isSubmitting}
-                             
+                                disabled={true}
+                                style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                             >
-                                <option value="">Select Minting Type</option>
-                                {mintingTypeOptions.map((option) => (
-                                    <option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                ))}
+                                <option value="">{formData.mintingType?.label || '—'}</option>
                             </select>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div className="card mb-4">
                 <div className="card-header">
                     <h5>Licensing & Usage Rights</h5>
@@ -241,29 +225,19 @@ const NFTDetails = ({
                 <div className="card-body">
                     <div className="row">
                         <div className="col-md-6 form-group">
-                            <label htmlFor="licenseType">License Type <span className="text-danger">*</span></label>
+                            <label>License Type <span className="text-danger">*</span></label>
                             <select
                                 id="licenseType"
                                 name="licenseType"
                                 className="form-control"
                                 value={formData.licenseType?.value || ''}
-                                onChange={(e) => {
-                                    const selected = licenseTypeOptions.find(
-                                        opt => opt.value === e.target.value
-                                    );
-                                    handleSelectChange('licenseType', selected);
-                                }}
-                                disabled={isSubmitting}
-                             
+                                disabled={true}
+                                style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                             >
-                                <option value="">Select License Type</option>
-                                {licenseTypeOptions.map((option) => (
-                                    <option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                ))}
+                                <option value="">{formData.licenseType?.label || '—'}</option>
                             </select>
                         </div>
+
                         <div className="form-group">
                             <label className="d-flex align-items-center">
                                 <span className="mr-2">IPFS Storage Link:</span>
@@ -274,10 +248,7 @@ const NFTDetails = ({
                                         name="ipfsStorage"
                                         className="custom-control-input"
                                         checked={formData.ipfsStorage || false}
-                                        onChange={(e) =>
-                                            handleInputChange({ target: { name: "ipfsStorage", value: e.target.checked } })
-                                        }
-                                        disabled={isSubmitting}
+                                        disabled={true}
                                     />
                                     <label className="custom-control-label" htmlFor="ipfsStorage">
                                         {formData.ipfsStorage ? "Yes" : "No"}
@@ -289,21 +260,20 @@ const NFTDetails = ({
                         {formData.ipfsStorage && (
                             <>
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="ipfsLink">IPFS Link <span className="text-danger">*</span></label>
+                                    <label>IPFS Link <span className="text-danger">*</span></label>
                                     <input
                                         type="text"
                                         id="ipfsLink"
                                         name="ipfsLink"
                                         className="form-control"
-                                        placeholder="Enter IPFS link (e.g., ipfs://...)"
+                                        placeholder="Enter IPFS link"
                                         value={formData.ipfsLink || ''}
-                                        onChange={handleInputChange}
-                                        disabled={isSubmitting}
-                                     
+                                        disabled={true}
+                                        style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                                     />
                                 </div>
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="softwareVersion">Software Version</label>
+                                    <label>Software Version</label>
                                     <input
                                         type="text"
                                         id="softwareVersion"
@@ -311,12 +281,12 @@ const NFTDetails = ({
                                         className="form-control"
                                         placeholder="e.g., v1.0.0"
                                         value={formData.softwareVersion || ''}
-                                        onChange={handleInputChange}
-                                        disabled={isSubmitting}
+                                        disabled={true}
+                                        style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                                     />
                                 </div>
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="fileFormat">File Format</label>
+                                    <label>File Format</label>
                                     <input
                                         type="text"
                                         id="fileFormat"
@@ -324,8 +294,8 @@ const NFTDetails = ({
                                         className="form-control"
                                         placeholder="e.g., PNG, MP4"
                                         value={formData.fileFormat || ''}
-                                        onChange={handleInputChange}
-                                        disabled={isSubmitting}
+                                        disabled={true}
+                                        style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                                     />
                                 </div>
                             </>
@@ -341,10 +311,7 @@ const NFTDetails = ({
                                         name="unlockableContent"
                                         className="custom-control-input"
                                         checked={formData.unlockableContent || false}
-                                        onChange={(e) =>
-                                            handleInputChange({ target: { name: "unlockableContent", value: e.target.checked } })
-                                        }
-                                        disabled={isSubmitting}
+                                        disabled={true}
                                     />
                                     <label className="custom-control-label" htmlFor="unlockableContent">
                                         {formData.unlockableContent ? "Yes" : "No"}
@@ -355,17 +322,16 @@ const NFTDetails = ({
 
                         {formData.unlockableContent && (
                             <div className="col-md-6 form-group">
-                                <label htmlFor="unlockableContentLink">Unlockable Content Link <span className="text-danger">*</span></label>
+                                <label>Unlockable Content Link <span className="text-danger">*</span></label>
                                 <input
                                     type="text"
                                     id="unlockableContentLink"
                                     name="unlockableContentLink"
                                     className="form-control"
-                                    placeholder="Enter link to unlockable content (e.g., https://...)"
+                                    placeholder="Enter link to unlockable content"
                                     value={formData.unlockableContentLink || ''}
-                                    onChange={handleInputChange}
-                                    disabled={isSubmitting}
-                                 
+                                    disabled={true}
+                                    style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                                 />
                             </div>
                         )}
@@ -389,10 +355,7 @@ const NFTDetails = ({
                                         name="partOfCollection"
                                         className="custom-control-input"
                                         checked={formData.partOfCollection || false}
-                                        onChange={(e) =>
-                                            handleInputChange({ target: { name: "partOfCollection", value: e.target.checked } })
-                                        }
-                                        disabled={isSubmitting}
+                                        disabled={true}
                                     />
                                     <label className="custom-control-label" htmlFor="partOfCollection">
                                         {formData.partOfCollection ? "Yes" : "No"}
@@ -404,7 +367,7 @@ const NFTDetails = ({
                         {formData.partOfCollection && (
                             <>
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="collectionName">Collection Name <span className="text-danger">*</span></label>
+                                    <label>Collection Name <span className="text-danger">*</span></label>
                                     <input
                                         type="text"
                                         id="collectionName"
@@ -412,72 +375,70 @@ const NFTDetails = ({
                                         className="form-control"
                                         placeholder="e.g., Crypto Punks"
                                         value={formData.collectionName || ''}
-                                        onChange={handleInputChange}
-                                        disabled={isSubmitting}
-                                     
+                                        disabled={true}
+                                        style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                                     />
                                 </div>
 
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="editionSize">Edition Size <span className="text-danger">*</span></label>
+                                    <label>Edition Size <span className="text-danger">*</span></label>
                                     <input
                                         type="number"
                                         id="editionSize"
                                         name="editionSize"
                                         className="form-control"
-                                        placeholder="Total number of items in collection"
+                                        placeholder="Total number of items"
                                         value={formData.editionSize || ''}
-                                        onChange={handleInputChange}
-                                        disabled={isSubmitting}
-                                     
+                                        disabled={true}
+                                        style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                                         min="1"
                                     />
                                 </div>
 
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="addressLine1">Address Line 1</label>
+                                    <label>Address Line 1</label>
                                     <input
                                         type="text"
                                         id="addressLine1"
                                         name="addressLine1"
                                         className="form-control"
-                                        placeholder="Street address, P.O. box"
+                                        placeholder="Street address"
                                         value={formData.addressLine1 || profileData.address?.line1 || ''}
-                                        onChange={handleInputChange}
-                                        disabled={isSubmitting}
+                                        disabled={true}
+                                        style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                                     />
                                 </div>
 
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="addressLine2">Address Line 2</label>
+                                    <label>Address Line 2</label>
                                     <input
                                         type="text"
                                         id="addressLine2"
                                         name="addressLine2"
                                         className="form-control"
-                                        placeholder="Apartment, suite, unit, building, floor"
+                                        placeholder="Apartment, suite"
                                         value={formData.addressLine2 || profileData.address?.line2 || ''}
-                                        onChange={handleInputChange}
-                                        disabled={isSubmitting}
+                                        disabled={true}
+                                        style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                                     />
                                 </div>
 
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="landmark">Landmark</label>
+                                    <label>Landmark</label>
                                     <input
                                         type="text"
                                         id="landmark"
                                         name="landmark"
                                         className="form-control"
-                                        placeholder="Nearby recognizable location"
+                                        placeholder="Nearby location"
                                         value={formData.landmark || profileData.address?.landmark || ''}
-                                        onChange={handleInputChange}
-                                        disabled={isSubmitting}
+                                        disabled={true}
+                                        style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                                     />
                                 </div>
 
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="city">City</label>
+                                    <label>City</label>
                                     <input
                                         type="text"
                                         id="city"
@@ -485,13 +446,13 @@ const NFTDetails = ({
                                         className="form-control"
                                         placeholder="City name"
                                         value={formData.city || profileData.address?.city || ''}
-                                        onChange={handleInputChange}
-                                        disabled={isSubmitting}
+                                        disabled={true}
+                                        style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                                     />
                                 </div>
 
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="state">State/Province</label>
+                                    <label>State/Province</label>
                                     <input
                                         type="text"
                                         id="state"
@@ -499,13 +460,13 @@ const NFTDetails = ({
                                         className="form-control"
                                         placeholder="State or province"
                                         value={formData.state || profileData.address?.state || ''}
-                                        onChange={handleInputChange}
-                                        disabled={isSubmitting}
+                                        disabled={true}
+                                        style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                                     />
                                 </div>
 
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="country">Country</label>
+                                    <label>Country</label>
                                     <input
                                         type="text"
                                         id="country"
@@ -513,13 +474,13 @@ const NFTDetails = ({
                                         className="form-control"
                                         placeholder="Country name"
                                         value={formData.country || profileData.address?.country || ''}
-                                        onChange={handleInputChange}
-                                        disabled={isSubmitting}
+                                        disabled={true}
+                                        style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                                     />
                                 </div>
 
                                 <div className="col-md-6 form-group">
-                                    <label htmlFor="pincode">Pincode/Zipcode</label>
+                                    <label>Pincode/Zipcode</label>
                                     <input
                                         type="text"
                                         id="pincode"
@@ -527,8 +488,8 @@ const NFTDetails = ({
                                         className="form-control"
                                         placeholder="Postal code"
                                         value={formData.pincode || profileData.address?.pincode || ''}
-                                        onChange={handleInputChange}
-                                        disabled={isSubmitting}
+                                        disabled={true}
+                                        style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                                     />
                                 </div>
                             </>
@@ -544,42 +505,30 @@ const NFTDetails = ({
                 <div className="card-body">
                     <div className="row">
                         <div className="col-md-6 form-group">
-                            <label htmlFor="rarityType">Rarity Type <span className="text-danger">*</span></label>
+                            <label>Rarity Type <span className="text-danger">*</span></label>
                             <select
                                 id="rarityType"
                                 name="rarityType"
                                 className="form-control"
                                 value={formData.rarityType?.value || ''}
-                                onChange={(e) => {
-                                    const selected = rarityOptions.find(
-                                        opt => opt.value === e.target.value
-                                    );
-                                    handleSelectChange('rarityType', selected);
-                                }}
-                                disabled={isSubmitting}
-                             
+                                disabled={true}
+                                style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                             >
-                                <option value="">Select Rarity Type</option>
-                                {rarityOptions.map((option) => (
-                                    <option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                ))}
+                                <option value="">{formData.rarityType?.label || '—'}</option>
                             </select>
                         </div>
 
                         <div className="col-md-6 form-group">
-                            <label htmlFor="traits">Traits & Attributes <span className="text-danger">*</span></label>
+                            <label>Traits & Attributes <span className="text-danger">*</span></label>
                             <input
                                 type="text"
                                 id="traits"
                                 name="traits"
                                 className="form-control"
-                                placeholder="E.g., Background, Eyes, Accessories"
+                                placeholder="E.g., Background, Eyes"
                                 value={formData.traits || ''}
-                                onChange={handleInputChange}
-                                disabled={isSubmitting}
-                             
+                                disabled={true}
+                                style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
                             />
                         </div>
                     </div>

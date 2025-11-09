@@ -475,7 +475,7 @@ $(function () {
 
       // Send to backend
       $.ajax({
-        url: "http://localhost:3001/api/addproduct",
+        url: `${process.env.REACT_APP_API_URL}/api/addproduct`,
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify(formData),

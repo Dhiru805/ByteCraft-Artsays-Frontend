@@ -7,46 +7,22 @@ const PayoutDetails = ({
   handleInputChange,
   setFormData
 }) => {
-  const [showGiftWrapOptions, setShowGiftWrapOptions] = useState(formData.giftWrapping);
-  const [showGiftWrapCost, setShowGiftWrapCost] = useState(formData.giftWrappingCost);
-
-  const handleGiftWrapToggle = (e) => {
-    const isChecked = e.target.checked;
-    setFormData(prev => ({
-      ...prev,
-      giftWrapping: isChecked,
-      giftWrappingCustomMessage: isChecked ? prev.giftWrappingCustomMessage : '',
-      giftWrappingCost: isChecked ? prev.giftWrappingCost : false,
-      giftWrappingCostAmount: isChecked ? prev.giftWrappingCostAmount : ''
-    }));
-    setShowGiftWrapOptions(isChecked);
-    if (!isChecked) setShowGiftWrapCost(false);
-  };
-
-  const handleGiftWrapCostToggle = (e) => {
-    const isChecked = e.target.checked;
-    setFormData(prev => ({
-      ...prev,
-      giftWrappingCost: isChecked,
-      giftWrappingCostAmount: isChecked ? prev.giftWrappingCostAmount : ''
-    }));
-    setShowGiftWrapCost(isChecked);
-  };
-
-
+  // Preserve conditional rendering based on current formData
+  const [showGiftWrapOptions] = useState(formData.giftWrapping);
+  const [showGiftWrapCost] = useState(formData.giftWrappingCost);
 
   return (
     <>
       <h4 className="mb-3">Payout Details</h4>
+
       <div className="form-group form-check">
         <input
           type="checkbox"
           id="autoCancelOrder"
           name="autoCancelOrder"
           className="form-check-input"
-          checked={formData.autoCancelOrder}
-          onChange={handleInputChange}
-          disabled={isSubmitting}
+          checked={formData.autoCancelOrder || false}
+          disabled={true}
         />
         <label className="form-check-label" htmlFor="autoCancelOrder">
           Auto order cancellation
@@ -59,9 +35,8 @@ const PayoutDetails = ({
           id="giftWrapping"
           name="giftWrapping"
           className="form-check-input"
-          checked={formData.giftWrapping}
-          onChange={handleGiftWrapToggle}
-          disabled={isSubmitting}
+          checked={formData.giftWrapping || false}
+          disabled={true}
         />
         <label className="form-check-label" htmlFor="giftWrapping">
           Gift wrapping
@@ -76,11 +51,11 @@ const PayoutDetails = ({
               id="giftWrappingCustomMessage"
               name="giftWrappingCustomMessage"
               className="form-control"
-              placeholder="Enter custom message for gift wrapping"
-              value={formData.giftWrappingCustomMessage}
-              onChange={handleInputChange}
-              disabled={isSubmitting}
+              placeholder="No custom message"
+              value={formData.giftWrappingCustomMessage || ''}
+              disabled={true}
               rows={3}
+              style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
             />
           </div>
 
@@ -90,9 +65,8 @@ const PayoutDetails = ({
               id="giftWrappingCost"
               name="giftWrappingCost"
               className="form-check-input"
-              checked={formData.giftWrappingCost}
-              onChange={handleGiftWrapCostToggle}
-              disabled={isSubmitting}
+              checked={formData.giftWrappingCost || false}
+              disabled={true}
             />
             <label className="form-check-label" htmlFor="giftWrappingCost">
               Extra cost for wrapping
@@ -101,23 +75,26 @@ const PayoutDetails = ({
 
           {showGiftWrapCost && (
             <div className="form-group">
-              <label htmlFor="giftWrappingCostAmount">Wrapping cost amount (₹)<span style={{ color: 'red' }}>*</span></label>
+              <label htmlFor="giftWrappingCostAmount">
+                Wrapping cost amount (₹)<span style={{ color: 'red' }}>*</span>
+              </label>
               <input
                 type="number"
                 id="giftWrappingCostAmount"
                 name="giftWrappingCostAmount"
                 className="form-control"
-                placeholder="Enter wrapping cost amount"
+                placeholder="No cost set"
                 min="0"
                 step="0.01"
-                value={formData.giftWrappingCostAmount}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
+                value={formData.giftWrappingCostAmount || ''}
+                disabled={true}
+                style={{ backgroundColor: '#e9ecef', opacity: 0.7 }}
               />
             </div>
           )}
         </>
       )}
+
       <hr className="my-4" />
     </>
   );

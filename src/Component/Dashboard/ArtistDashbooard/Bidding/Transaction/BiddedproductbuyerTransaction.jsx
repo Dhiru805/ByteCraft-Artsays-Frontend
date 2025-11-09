@@ -35,7 +35,7 @@ const BiddedProduct = () => {
         if (!userId) return;  
         const fetchProducts = async () => {
             try {
-                const result = await getAPI(`http://localhost:3001/api/getbiddedproductbybuyerid/${encodeURIComponent(userId)}`, {}, true, false);
+                const result = await getAPI(`/api/getbiddedproductbybuyerid/${encodeURIComponent(userId)}`, {}, true, false);
                 console.log("Full API Response:", result);
                 console.log("Data Type:", typeof result.data);
 

@@ -18,16 +18,16 @@ const LegalCompliance = ({
   const [coaCertificateType, setCOACertificateType] = useState('digital');
 
   const copyrightOptions = [
-    { value: 'full_rights', label: 'Buyer has full reproduction/resale rights' },
-    { value: 'personal_use', label: 'Buyer can use personally but not reproduce/resell' },
-    { value: 'no_rights', label: 'No reproduction/resale rights granted' }
+    { value: 'Buyer has full reproduction/resale rights', label: 'Buyer has full reproduction/resale rights' },
+    { value: 'Buyer can use personally but not reproduce/resell', label: 'Buyer can use personally but not reproduce/resell' },
+    { value: 'No reproduction/resale rights granted', label: 'No reproduction/resale rights granted' }
   ];
 
   const certificateTypeOptions = [
-    { value: 'artist_signed', label: 'Artist Signed' },
-    { value: 'third_party', label: 'Third-Party Certified' },
-    { value: 'museum', label: 'Museum-Approved' },
-    { value: 'gallery', label: 'Gallery-Certified' }
+    { value: 'Artist Signed', label: 'Artist Signed' },
+    { value: 'Third-Party Certified', label: 'Third-Party Certified' },
+    { value: 'Museum-Approved', label: 'Museum-Approved' },
+    { value: 'Gallery-Certified', label: 'Gallery-Certified' }
   ];
 
   const commercialUseOptions = [

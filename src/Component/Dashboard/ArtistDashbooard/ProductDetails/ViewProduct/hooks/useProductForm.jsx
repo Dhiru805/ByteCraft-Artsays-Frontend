@@ -259,15 +259,15 @@ export default function useProductForm(product = null) {
   const surfaceTypeOptions = useMemo(() => surfaceTypes.map((s) => ({ value: s.name, label: s.name })), [surfaceTypes]);
 
   const framingOptions = [
-    { value: "framed", label: "Framed" },
-    { value: "unframed", label: "Unframed" },
-    { value: "rolled", label: "Rolled Canvas" },
+    { value: "Framed", label: "Framed" },
+    { value: "Unframed", label: "Unframed" },
+    { value: "Rolled Canvas", label: "Rolled Canvas" },
   ];
 
   const conditionOptions = [
-    { value: "new", label: "New" },
-    { value: "resale", label: "Resale" },
-    { value: "pre_owned", label: "Pre-owned" },
+    { value: "New", label: "New" },
+    { value: "Resale", label: "Resale" },
+    { value: "Pre_owned", label: "Pre-owned" },
   ];
 
   const offerOptions = [
@@ -291,10 +291,10 @@ export default function useProductForm(product = null) {
   ];
 
   const packagingOptions = [
-    { value: "secure_box", label: "Secure box" },
-    { value: "wooden_crate", label: "Wooden crate" },
-    { value: "tube", label: "Tube" },
-    { value: "bubble_wrap", label: "Bubble wrap" },
+    { value: 'Secure box', label: 'Secure box' },
+    { value: 'Wooden crate', label: 'Wooden crate' },
+    { value: 'Tube', label: 'Tube' },
+    { value: 'Bubble wrap', label: 'Bubble wrap' }
   ];
 
   const finalPrice = useMemo(() => {
@@ -340,7 +340,6 @@ const handleImageUpload = (e) => {
     file: f,
     preview: URL.createObjectURL(f),
     isExisting: false,
-    
   }));
 
 
@@ -433,7 +432,7 @@ const handleImageUpload = (e) => {
     if (!product || !categoryData.mainCategories.length) return;
 
     const p = product;
-    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+    const API_URL = process.env.REACT_APP_API_URL ;
 
 
     setFormData((prev) => ({
@@ -598,7 +597,7 @@ const handleImageUpload = (e) => {
 
   
 if (p.otherImages?.length) {
-  const seen = new Set(); 
+  const seen = new Set(); // to avoid duplicates
 
   p.otherImages.forEach((url) => {
     if (!url) return;

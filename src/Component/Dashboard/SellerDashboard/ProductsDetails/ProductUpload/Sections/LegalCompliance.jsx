@@ -1,3 +1,5 @@
+
+
 import React, { useState } from "react";
 import Select from 'react-select';
 import { toast } from "react-toastify";
@@ -9,28 +11,41 @@ const LegalCompliance = ({
   handleSelectChange,
   setFormData
 }) => {
-  const [showCOAFields, setShowCOAFields] = useState(formData.coaAvailable || false);
+  const [showCOAFields, setShowCOAFields] = useState(formData.coaAvailable );
   const [certificateFile, setCertificateFile] = useState(null);
   const [certificatePreview, setCertificatePreview] = useState(null);
   const [certificateType, setCertificateType] = useState('digital');
+  const [coaCertificateType, setCOACertificateType] = useState('digital');
 
   const copyrightOptions = [
-    { value: 'full_rights', label: 'Buyer has full reproduction/resale rights' },
-    { value: 'personal_use', label: 'Buyer can use personally but not reproduce/resell' },
-    { value: 'no_rights', label: 'No reproduction/resale rights granted' }
+    { value: 'Buyer has full reproduction/resale rights', label: 'Buyer has full reproduction/resale rights' },
+    { value: 'Buyer can use personally but not reproduce/resell', label: 'Buyer can use personally but not reproduce/resell' },
+    { value: 'No reproduction/resale rights granted', label: 'No reproduction/resale rights granted' }
   ];
 
   const certificateTypeOptions = [
-    { value: 'artist_signed', label: 'Artist Signed' },
-    { value: 'third_party', label: 'Third-Party Certified' },
-    { value: 'museum', label: 'Museum-Approved' },
-    { value: 'gallery', label: 'Gallery-Certified' }
+    { value: 'Artist Signed', label: 'Artist Signed' },
+    { value: 'Third-Party Certified', label: 'Third-Party Certified' },
+    { value: 'Museum-Approved', label: 'Museum-Approved' },
+    { value: 'Gallery-Certified', label: 'Gallery-Certified' }
+  ];
+
+  const commercialUseOptions = [
+    { value: 'Yes', label: 'Yes' },
+    { value: 'No', label: 'No' }
   ];
 
   const handleCOAToggle = (e) => {
     const isChecked = e.target.checked;
     setShowCOAFields(isChecked);
     handleInputChange(e);
+    if (!isChecked) {
+      setCOACertificateType('digital');
+      setFormData(prev => ({
+        ...prev,
+        coaCertificateFormat: 'digital'
+      }));
+    }
   };
 
   const handleCertificateUpload = (e) => {
@@ -45,7 +60,7 @@ const LegalCompliance = ({
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      alert('File size should be less than 5MB');
+      toast.warn("File size should be less than 5MB");
       return;
     }
 
@@ -121,11 +136,18 @@ const LegalCompliance = ({
     }));
   };
 
-  // Handle artist signature toggle
+  const toggleCOACertificateType = () => {
+    const newType = coaCertificateType === 'digital' ? 'physical' : 'digital';
+    setCOACertificateType(newType);
+    setFormData(prev => ({
+      ...prev,
+      coaCertificateFormat: newType
+    }));
+  };
+
   const handleArtistSignatureChange = (e) => {
     handleInputChange(e);
     if (!e.target.checked) {
-      // Reset certificate fields when signature is turned off
       setCertificateType('digital');
       setCertificateFile(null);
       setCertificatePreview(null);
@@ -147,9 +169,9 @@ const LegalCompliance = ({
           id="ownershipConfirmation"
           name="ownershipConfirmation"
           className="form-check-input"
-          checked={formData.ownershipConfirmation || false}
+          checked={formData.ownershipConfirmation}
           onChange={handleInputChange}
-          required
+       
           disabled={isSubmitting}
         />
         <label className="form-check-label" htmlFor="ownershipConfirmation">
@@ -165,7 +187,7 @@ const LegalCompliance = ({
           onChange={(selected) => handleSelectChange('copyrightRights', selected)}
           placeholder="Select copyright terms"
           isSearchable
-          required
+       
           isDisabled={isSubmitting}
         />
       </div>
@@ -176,9 +198,9 @@ const LegalCompliance = ({
           id="prohibitedItems"
           name="prohibitedItems"
           className="form-check-input"
-          checked={formData.prohibitedItems || false}
+          checked={formData.prohibitedItems }
           onChange={handleInputChange}
-          required
+       
           disabled={isSubmitting}
         />
         <label className="form-check-label" htmlFor="prohibitedItems">
@@ -195,7 +217,7 @@ const LegalCompliance = ({
               id="artistSignature"
               name="artistSignature"
               className="custom-control-input"
-              checked={formData.artistSignature || false}
+              checked={formData.artistSignature }
               onChange={handleArtistSignatureChange}
               disabled={isSubmitting}
             />
@@ -206,7 +228,6 @@ const LegalCompliance = ({
         </label>
       </div>
 
-      {/* Only show certificate section if artist signature is enabled */}
       {formData.artistSignature && (
         <>
           <div className="form-group">
@@ -286,7 +307,7 @@ const LegalCompliance = ({
               id="coaAvailable"
               name="coaAvailable"
               className="custom-control-input"
-              checked={formData.coaAvailable || false}
+              checked={formData.coaAvailable }
               onChange={handleCOAToggle}
               disabled={isSubmitting}
             />
@@ -295,10 +316,42 @@ const LegalCompliance = ({
             </label>
           </div>
         </label>
+        {!formData.coaAvailable && (
+          <div className="mt-2">
+            <a
+              href="https://example.com/purchase-coa"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary"
+            >
+              Purchase a Certificate of Authenticity
+            </a>
+          </div>
+        )}
       </div>
 
       {showCOAFields && (
-        <div className="coa-fields">
+        <div className="coa-fields coa-fields border p-3 rounded bg-light">
+          {/* <div className="form-group">
+            <label className="d-flex align-items-center">
+              <span className="mr-2">COA Certificate Type:</span>
+              <div className="custom-control custom-switch">
+                <input
+                  type="checkbox"
+                  id="coaCertificateTypeToggle"
+                  name="coaCertificateTypeToggle"
+                  className="custom-control-input"
+                  checked={coaCertificateType === 'digital'}
+                  onChange={toggleCOACertificateType}
+                  disabled={isSubmitting}
+                />
+                <label className="custom-control-label" htmlFor="coaCertificateTypeToggle">
+                  {coaCertificateType === 'digital' ? 'Digital' : 'Physical'}
+                </label>
+              </div>
+            </label>
+          </div> */}
+
           <div className="form-group">
             <label>COA Type</label>
             <Select
@@ -378,6 +431,54 @@ const LegalCompliance = ({
           </div>
         </div>
       )}
+
+      <div className="license-usage-rights-section">
+        <h4 className="mb-3">License & Usage Rights</h4>
+
+        <div className="form-group">
+          <label>Commercial Use Allowed? <span style={{ color: 'red' }}>*</span></label>
+          <Select
+            options={commercialUseOptions}
+            value={formData.commercialUse}
+            onChange={(selected) => handleSelectChange('commercialUse', selected)}
+            placeholder="Select commercial use option"
+            isSearchable
+         
+            isDisabled={isSubmitting}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="royaltyTerms">Royalty Terms (if applicable)</label>
+          <input
+            type="text"
+            id="royaltyTerms"
+            name="royaltyTerms"
+            className="form-control"
+            placeholder="Enter royalty terms (e.g., percentage for resale, licensing fees)"
+            value={formData.royaltyTerms}
+            onChange={handleInputChange}
+            disabled={isSubmitting}
+          />
+          <small className="text-muted">Specify any royalty terms, e.g., percentage for resale, licensing fees</small>
+        </div>
+
+        <div className="form-group form-check">
+          <input
+            type="checkbox"
+            id="ethicalSourcing"
+            name="ethicalSourcing"
+            className="form-check-input"
+            checked={formData.ethicalSourcing }
+            onChange={handleInputChange}
+            disabled={isSubmitting}
+          />
+          <label className="form-check-label" htmlFor="ethicalSourcing">
+            I confirm this artwork was sourced ethically
+          </label>
+          <small className="text-muted d-block">Check to confirm ethical sourcing practices were followed</small>
+        </div>
+      </div>
 
       <hr className="my-4" />
     </div>

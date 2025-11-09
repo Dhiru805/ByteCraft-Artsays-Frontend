@@ -314,7 +314,7 @@ const Sidebar = () => {
       {
         label: "Product",
         icon: "fa fa-cart-plus",
-        path: "/seller/product-details",
+        path: "/seller/product",
         subTabs: []
       },
       {

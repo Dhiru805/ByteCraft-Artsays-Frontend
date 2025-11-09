@@ -226,7 +226,8 @@ import SellerUpdateExhibition from "../Component/Dashboard/SellerDashboard/Exhib
 import SellerViewExhibition from "../Component/Dashboard/SellerDashboard/Exhibition/exhibitionView";
 
 import SellerProductCouponCodes from "../Component/Dashboard/SellerDashboard/ProductSetting/ProductCouponCode/ProductCouponCode";
-
+import UpdateProductSeller from "../Component/Dashboard/SellerDashboard/ProductsDetails/UpdateProduct/productUploade";
+import ProductViewSeller from '../Component/Dashboard/SellerDashboard/ProductsDetails/UpdateProduct/productUploade';
 
 
 
@@ -492,7 +493,8 @@ const AppRoutes = () => {
         <Route path="product" element={<AllProduct />} />
         <Route path="product/bidding-pass" element={<ArtistBiddingPass />} />
         <Route path="product/product-upload" element={<ProductUploade />} />
-         <Route path="product/update-product" element={<UpdateProductArtist/>} />
+        <Route path="product/update-product" element={<UpdateProductArtist/>} />
+        <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
         <Route path="custom-order" element={<CustomOrder />} />
         <Route path="product/view-product" element={<ProductViewArtist/>} />
         <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
@@ -554,9 +556,12 @@ const AppRoutes = () => {
         <Route path="dashboard" element={<SellerDashboard />} />
         <Route path="profile" element={<UserProfile />} />
         {/* Product Routes */}
-        <Route path="product-details" element={<ViewProductDetails />} />
+        <Route path="product" element={<ViewProductDetails />} />
         <Route path="product-details/bidding-pass" element={<SellerBiddingPass />} />
-        <Route path="SellerProductUpload" element={<SellerProductUpload />} />
+        <Route path="product/product-upload" element={<SellerProductUpload />} />
+        <Route path="product/update-product" element={<UpdateProductSeller/>} />
+           <Route path="product/view-product" element={<ProductViewSeller/>} />
+        <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
         <Route path="purchased-product" element={<SellerPurchasedProducts />} />
 
         {/* Advertise Routes */}

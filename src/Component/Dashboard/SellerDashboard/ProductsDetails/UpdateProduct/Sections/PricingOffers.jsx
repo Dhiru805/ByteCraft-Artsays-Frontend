@@ -5,8 +5,8 @@ import Select from "react-select";
 import getAPI from "../../../../../../api/getAPI";
 
 const installmentOptions = [
-    { value: "yearly", label: "1 Year" },
-    { value: "lifetime", label: "Lifetime" },
+       { value: "Yearly", label: "Yearly" },
+    { value: "Lifetime", label: "Lifetime" },
 ];
 
 const PricingOffers = ({
@@ -16,6 +16,7 @@ const PricingOffers = ({
     handlePricingChange,
     handleInstallmentDurationChange,
     mainCategoryId,
+    subCategoryId
 }) => {
 
     const [gstPercentage, setGstPercentage] = useState(pricingData.gstPercentage || 0);
@@ -28,6 +29,12 @@ const PricingOffers = ({
     const [isLoadingInsurance, setIsLoadingInsurance] = useState(false);
     const [insuranceError, setInsuranceError] = useState(null);
 
+    const [subcategory, setsubcategory] = useState(null);
+    const [isLoadingsubcategory, setIsLoadingsubcategory] = useState(false);
+    const [subcategoryError, setsubcategoryError] = useState(null);
+
+
+    console.log("Sub CategoryId Is :-", subCategoryId)
 
     const fetchSubGSTData = async () => {
         if (!mainCategoryId) {
@@ -105,7 +112,6 @@ const PricingOffers = ({
         }
     };
 
-
     useEffect(() => {
         if (mainCategoryId) {
             fetchSubGSTData();
@@ -113,14 +119,60 @@ const PricingOffers = ({
         }
     }, [mainCategoryId]);
 
-    useEffect(() => {
-        if (pricingData.includeGst) {
-            setGstPercentage(0);
-            handlePricingChange({ target: { name: "gstPercentage", value: 0 } });
-        } else {
-            fetchSubGSTData();
+    const fetchsubcategoryData = async () => {
+        //   if (!subCategoryId) return;
+
+        setIsLoadingsubcategory(true);
+        setsubcategoryError(null);
+
+        try {
+            const response = await getAPI("/api/sub-category", {}, true);
+            console.log("Subcategory API response:", response.data.data);
+
+            if (!response.hasError && response.data && Array.isArray(response.data.data)) {
+
+                const setting = response.data.data.find(
+                    (s) => s.subCategoryId === subCategoryId
+                );
+                setsubcategory(setting || null);
+                console.log("Setting", setting)
+            } else {
+                setsubcategoryError("Invalid subcategory response");
+            }
+        } catch (err) {
+            setsubcategoryError("Failed to fetch sub category");
+        } finally {
+            setIsLoadingsubcategory(false);
         }
-    }, [pricingData.includeGst]);
+    };
+
+
+
+
+
+    useEffect(() => {
+        if (subCategoryId) {
+            fetchsubcategoryData();
+        }
+    }, [subCategoryId]);
+
+    // useEffect(() => {
+    //     if (pricingData.includeGst) {
+    //         setGstPercentage(0);
+    //         handlePricingChange({ target: { name: "gstPercentage", value: 0 } });
+    //     } else {
+    //         fetchSubGSTData();
+    //     }
+    // }, [pricingData.includeGst]);
+
+    useEffect(() => {
+    if (pricingData.includeGst) {
+        setGstPercentage(pricingData.gstPercentage || 0);
+    } else {
+
+        fetchSubGSTData();
+    }
+}, [pricingData.includeGst, pricingData.gstPercentage, mainCategoryId]);
 
 
     const validateMarketPrice = (market, selling) => {
@@ -180,15 +232,21 @@ const PricingOffers = ({
     const finalPriceWithEverything = priceWithGst + (insuranceInfo?.total || 0);
 
 
+    const commissionAmount = useMemo(() => {
+        if (!subcategory?.commissionTerm || !finalPriceWithEverything) return 0;
+        return (finalPriceWithEverything * Number(subcategory.commissionTerm)) / 100;
+    }, [finalPriceWithEverything, subcategory?.commissionTerm]);
+
     return (
         <>
             <h4 className="mb-3">Pricing & Offers</h4>
 
-            {(isLoadingGST || isLoadingInsurance) && (
-                <div className="alert alert-info">Loading settings…</div>
+            {(isLoadingGST || isLoadingInsurance || isLoadingsubcategory) && (
+                <div className="alert alert-info">Loading …</div>
             )}
             {gstError && <div className="alert alert-danger">{gstError}</div>}
             {insuranceError && <div className="alert alert-danger">{insuranceError}</div>}
+            {subcategoryError && <div className="alert alert-danger">{subcategoryError}</div>}
 
             { }
             <div className="row">
@@ -210,7 +268,7 @@ const PricingOffers = ({
                                 handlePricingChange(e);
                                 validateMarketPrice(pricingData.marketPrice, e.target.value);
                             }}
-                            required
+
                             disabled={isSubmitting}
                         />
                     </div>
@@ -240,15 +298,18 @@ const PricingOffers = ({
             </div>
 
             { }
-            {!pricingData.includeGst && gstPercentage > 0 && (
+
+            {subcategory?.commissionTerm != null && (
                 <div className="alert alert-info mt-2">
-                    <strong>GST Note:</strong> The final price includes a GST amount of ₹
-                    {gstAmount.toFixed(2)} ({gstPercentage}% of ₹{finalPrice.toFixed(2)} base price),
-                    resulting in ₹{priceWithGst.toFixed(2)}.
+                    <strong>Commission Term Note:</strong> The Commission amount is ₹
+                    <strong>{commissionAmount.toFixed(2)}</strong> (
+                    {subcategory.commissionTerm}% of ₹{finalPriceWithEverything.toFixed(2)} base price)
                 </div>
             )}
 
             { }
+
+           
             <div className="row">
                 <div className="col-md-6">
                     <div className="form-group">
@@ -267,7 +328,9 @@ const PricingOffers = ({
                             disabled={isSubmitting}
                         />
                     </div>
+               
                 </div>
+                
 
                 <div className="col-md-6">
                     <div className="form-group">
@@ -291,6 +354,16 @@ const PricingOffers = ({
                     </div>
                 </div>
             </div>
+      { }
+            {!pricingData.includeGst && gstPercentage > 0 && (
+                <div className="alert alert-info mt-2">
+                    <strong>GST Note:</strong> The final price includes a GST amount of ₹
+                    {gstAmount.toFixed(2)} ({gstPercentage}% of ₹{finalPrice.toFixed(2)} base price),
+                    resulting in ₹{priceWithGst.toFixed(2)}.
+                </div>
+            )}
+
+            { }
 
             { }
             <div className="form-group form-check">
@@ -307,6 +380,7 @@ const PricingOffers = ({
                     Include GST in Pricing
                 </label>
             </div>
+            
 
             { }
             <div className="form-group" style={{ paddingLeft: 0, marginLeft: 0 }}>
@@ -314,7 +388,7 @@ const PricingOffers = ({
                     GST Percentage (%) <span style={{ color: "red" }}>*</span>
                 </label>
                 <input
-                    type="number"
+                    // type="number"
                     id="gstPercentage"
                     name="gstPercentage"
                     className="form-control"
@@ -329,7 +403,7 @@ const PricingOffers = ({
                         handlePricingChange({ target: { name: "gstPercentage", value: val || 0 } });
                     }}
                     disabled={!pricingData.includeGst || isSubmitting}
-                    required
+
                 />
                 <small className="text-muted">
                     {pricingData.includeGst
@@ -337,6 +411,8 @@ const PricingOffers = ({
                         : "GST percentage is automatically set based on the main category."}
                 </small>
             </div>
+
+            
 
             { }
             <div className="form-group form-check">
@@ -358,7 +434,7 @@ const PricingOffers = ({
             {pricingData.allowInstallments && (
                 <div className="form-group" style={{ paddingLeft: 0, marginLeft: 0 }}>
                     <label htmlFor="installmentDuration">
-                        Installment Option <span style={{ color: "red" }}>*</span>
+                        Insurance Option <span style={{ color: "red" }}>*</span>
                     </label>
                     <Select
                         id="installmentDuration"
@@ -370,7 +446,7 @@ const PricingOffers = ({
                     />
                     <small>
                         <a href="/installment-details" target="_blank" rel="noopener noreferrer">
-                            View Installment Details
+                            View Insurance Details
                         </a>
                     </small>
                 </div>

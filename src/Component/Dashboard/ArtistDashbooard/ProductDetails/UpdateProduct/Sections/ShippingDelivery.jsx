@@ -63,8 +63,8 @@ const ShippingDelivery = ({
   };
 
   const returnPolicyOptions = [
-    { value: 'returnable', label: 'Returnable' },
-    { value: 'non-returnable', label: 'Non-returnable' }
+    { value: 'Returnable', label: 'Returnable' },
+    { value: 'Non-returnable', label: 'Non-returnable' }
   ];
 
   const handlingTimeOptions = [
