@@ -255,8 +255,4 @@ function AllProduct() {
     );
 }
 
-<<<<<<< HEAD
 export default AllProduct;
-=======
-export default AllProduct;
->>>>>>> 51dcaf1e4c94f817cac3b27402a23fd737bdb29a

@@ -380,17 +380,17 @@ import TokenStandards from "../Component/Dashboard/Super-AdminDashboard/Product 
 import PeriodEras from "../Component/Dashboard/Super-AdminDashboard/Product Setting/PeriodEra/PeriodEra";
 
 //-----------------------------ProductSetting--------------------------//
-import ProductType from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductType/ProductType";
-import ProductMedium from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductMedium/ProductMedium";
-import ProductMaterial from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductMaterial/ProductMaterial";
-import ProductEditionTypes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductEditionType/ProductEditionType";
-import ProductSurfaceTypes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductSurfaceType/ProductSurfaceType";
-import ProductCouponCodes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductCouponCode/ProductCouponCode";
-import ProductPackagingTypes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductPackagingType/ProductPackagingType";
-import CopyrightsRights from "../Component/Dashboard/Super-AdminDashboard/Product Setting/CopyrightsRights/CopyrightsRights";
-import BlockchainNetworks from "../Component/Dashboard/Super-AdminDashboard/Product Setting/BlockchainNetwork/BlockchainNetwork";
-import TokenStandards from "../Component/Dashboard/Super-AdminDashboard/Product Setting/TokenStandard/TokenStandard";
-import PeriodEras from "../Component/Dashboard/Super-AdminDashboard/Product Setting/PeriodEra/PeriodEra";
+// import ProductType from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductType/ProductType";
+// import ProductMedium from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductMedium/ProductMedium";
+// import ProductMaterial from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductMaterial/ProductMaterial";
+// import ProductEditionTypes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductEditionType/ProductEditionType";
+// import ProductSurfaceTypes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductSurfaceType/ProductSurfaceType";
+// import ProductCouponCodes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductCouponCode/ProductCouponCode";
+// import ProductPackagingTypes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductPackagingType/ProductPackagingType";
+// import CopyrightsRights from "../Component/Dashboard/Super-AdminDashboard/Product Setting/CopyrightsRights/CopyrightsRights";
+// import BlockchainNetworks from "../Component/Dashboard/Super-AdminDashboard/Product Setting/BlockchainNetwork/BlockchainNetwork";
+// import TokenStandards from "../Component/Dashboard/Super-AdminDashboard/Product Setting/TokenStandard/TokenStandard";
+// import PeriodEras from "../Component/Dashboard/Super-AdminDashboard/Product Setting/PeriodEra/PeriodEra";
 
 //-----------------------------Settings--------------------------//
 import EmailSettings from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailSetting/EmailSetting";

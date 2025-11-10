@@ -213,10 +213,6 @@ const UserProfileForm = () => {
     }
   };
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 51dcaf1e4c94f817cac3b27402a23fd737bdb29a
   const tabs = [
     { name: 'Settings', component: Settings },
     { name: 'Blogs', component: Blogs },

@@ -117,10 +117,6 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
     return true;
   };
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 51dcaf1e4c94f817cac3b27402a23fd737bdb29a
   return (
     <div className="body">
       <h6>Profile Photo</h6>
