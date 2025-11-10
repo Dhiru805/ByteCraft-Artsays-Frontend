@@ -45,7 +45,6 @@ const MyOrders = () => {
         const response = await getAPI('/api/getapprovedbuyerrequests');
         if (Array.isArray(response.data.data)) {
           setProducts(response.data.data);
-          console.log(response.data.data);
         } else {
           setProducts([]);
         }

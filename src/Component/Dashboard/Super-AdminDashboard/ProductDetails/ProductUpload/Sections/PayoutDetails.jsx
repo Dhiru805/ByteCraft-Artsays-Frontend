@@ -101,7 +101,7 @@ const PayoutDetails = ({
 
           {showGiftWrapCost && (
             <div className="form-group">
-              <label htmlFor="giftWrappingCostAmount">Wrapping cost amount (₹)</label>
+              <label htmlFor="giftWrappingCostAmount">Wrapping cost amount (₹)<span style={{ color: 'red' }}>*</span></label>
               <input
                 type="number"
                 id="giftWrappingCostAmount"

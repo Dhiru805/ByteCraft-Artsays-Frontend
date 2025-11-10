@@ -29,7 +29,6 @@ export default function useProductForm() {
     //----------------Artwork  Details---------------------------------//
     medium: null,
     materials: [],
-        dimensions: '',
     width: '',
     height: '',
     depth: '',
@@ -38,7 +37,6 @@ export default function useProductForm() {
     year: null,
     editionType: null,
     framing: null,
-        iframeLink: '',
     quantity: '',
     hsnCode: '',
     surfaceType: null,
@@ -47,7 +45,7 @@ export default function useProductForm() {
     functionalUse: null,
     materialSource: '',
     craftTechnique: '',
-    // toolUsage: [],
+    toolUsage: [],
     handmade: null,
     isSigned: false,
     isResinCovered: false,
@@ -117,13 +115,6 @@ export default function useProductForm() {
     rarityType: null,
     traits: '',
 
-    restorationHistory: '',
-    provenanceHistory: '',
-    engravingMarkings: '',
-    patinaWear: '',
-    isHandmade: false,
-    museumExhibitionHistory: '',
-    customEngravingAvailable: false,
    originRegion: null,
     periodEra: null,
     antiqueCondition: null,
@@ -412,9 +403,9 @@ export default function useProductForm() {
   }, [productEditions]);
 
   const framingOptions = [
-    { value: 'framed', label: 'Framed' },
-    { value: 'unframed', label: 'Unframed' },
-    { value: 'rolled', label: 'Rolled Canvas' }
+    { value: 'Framed', label: 'Framed' },
+    { value: 'Unframed', label: 'Unframed' },
+    { value: 'Rolled Canvas', label: 'Rolled Canvas' }
   ];
 
 
@@ -448,9 +439,9 @@ export default function useProductForm() {
   }, [surfaceTypes]);
 
   const conditionOptions = [
-    { value: 'new', label: 'New' },
-    { value: 'resale', label: 'Resale' },
-    { value: 'pre_owned', label: 'Pre-owned' }
+    { value: 'New', label: 'New' },
+    { value: 'Resale', label: 'Resale' },
+    { value: 'Pre_owned', label: 'Pre-owned' }
   ];
 
   const offerOptions = [
@@ -581,6 +572,12 @@ export default function useProductForm() {
       materials: selectedOptions
     }));
   };
+   const handleMultiSelecttoolChange = (field, selectedOptions) => {
+   setFormData(prev => ({
+     ...prev,
+     [field]: selectedOptions || []   
+   }));
+ };
 
   const handleOffersChange = (selectedOptions) => {
     setPricingData(prev => ({
@@ -610,10 +607,10 @@ export default function useProductForm() {
   ];
 
   const packagingOptions = [
-    { value: 'secure_box', label: 'Secure box' },
-    { value: 'wooden_crate', label: 'Wooden crate' },
-    { value: 'tube', label: 'Tube' },
-    { value: 'bubble_wrap', label: 'Bubble wrap' }
+    { value: 'Secure box', label: 'Secure box' },
+    { value: 'Wooden crate', label: 'Wooden crate' },
+    { value: 'Tube', label: 'Tube' },
+    { value: 'Bubble wrap', label: 'Bubble wrap' }
   ];
 
   return {
@@ -639,6 +636,7 @@ export default function useProductForm() {
     handleInstallmentDurationChange,
     handleSelectChange,
     handleMultiSelectChange,
+    handleMultiSelecttoolChange,
     handleOffersChange,
     handleTagKeyDown,
     removeTag,

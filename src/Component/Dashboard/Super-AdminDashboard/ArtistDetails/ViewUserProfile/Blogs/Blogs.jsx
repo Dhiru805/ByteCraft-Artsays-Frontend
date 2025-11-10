@@ -185,4 +185,8 @@ useEffect(() => {
   );
 };
 
+<<<<<<< HEAD
 export default Blogs;
+=======
+export default Blogs;
+>>>>>>> 51dcaf1e4c94f817cac3b27402a23fd737bdb29a

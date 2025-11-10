@@ -115,7 +115,6 @@
 // //           </div>
 // //         </div>
 
-
 // //       </div>
 // //     </div>
 // //   )
@@ -262,6 +261,9 @@ useEffect(() => {
     setBiddingStrategy(newStrategy)
     onUpdateBiddingStrategy(newStrategy)
   }
+  useEffect(() => {
+    onUpdateBiddingStrategy(biddingStrategy)
+  }, [biddingStrategy, onUpdateBiddingStrategy])
 
   const InfoIcon = ({ tooltip }) => (
     <span

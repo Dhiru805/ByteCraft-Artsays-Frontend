@@ -346,7 +346,103 @@ artistOrder: {
   successMessage: "order successfully deleted!",
   errorMessage: "Failed to delete order.",
   idKey: "OrderId",
-}
+},
+
+producttype: {
+  getEndpoint: (id) => `/api/deleteproducttype/${id}`,
+  successMessage: "Product Type successfully deleted!",
+  errorMessage: "Failed to delete Product Type.",
+  idKey: "ProductTypeId",
+},
+productmedium: {
+  getEndpoint: (id) => `/api/deleteproductmedium/${id}`,
+  successMessage: "Product Medium successfully deleted!",
+  errorMessage: "Failed to delete Product Medium.",
+  idKey: "ProductMediumId",
+},
+
+productmaterial: {
+  getEndpoint: (id) => `/api/deleteproductmaterial/${id}`,
+  successMessage: "Product Material successfully deleted!",
+  errorMessage: "Failed to delete Product Material.",
+  idKey: "ProductMaterialId",
+},
+
+producteditiontype: {
+  getEndpoint: (id) => `/api/deleteproducteditiontype/${id}`,
+  successMessage: "Product Edition Type successfully deleted!",
+  errorMessage: "Failed to delete Product Edition Type.",
+  idKey: "ProductEditionTypesId",
+},
+productsurfacetype: {
+  getEndpoint: (id) => `/api/deleteproductsurfacetype/${id}`,
+  successMessage: "Product Surface Type successfully deleted!",
+  errorMessage: "Failed to delete Product Surface Type.",
+  idKey: "ProductEditionTypesId",
+},
+productcouponcode: {
+  getEndpoint: (id) => `/api/deleteproductcouponcode/${id}`,
+  successMessage: "Product Coupon Code successfully deleted!",
+  errorMessage: "Failed to delete Product Coupon Code.",
+  idKey: "ProductCouponCodeId",
+},
+productpackagingtype: {
+  getEndpoint: (id) => `/api/deleteproductpackagingtype/${id}`,
+  successMessage: "Product Packaging Type successfully deleted!",
+  errorMessage: "Failed to delete Product Packaging Type.",
+  idKey: "ProductPackagingTypeId",
+},
+copyrightsrights: {
+  getEndpoint: (id) => `/api/deletecopyrightsrights/${id}`,
+  successMessage: "Copyrights Rights successfully deleted!",
+  errorMessage: "Failed to delete Copyrights Rights.",
+  idKey: "CopyrightsRightsId",
+},
+periodera: {
+  getEndpoint: (id) => `/api/deleteperiodera/${id}`,
+  successMessage: "Period/Era successfully deleted!",
+  errorMessage: "Failed to delete Period/Era.",
+  idKey: "PeriodEraId",
+},
+blockchainnetwork: {
+  getEndpoint: (id) => `/api/deleteblockchainnetwork/${id}`,
+  successMessage: "Blockchain Network successfully deleted!",
+  errorMessage: "Failed to delete Blockchain Network.",
+  idKey: "BlockchainNetworkId",
+},
+tokenstandard: {
+  getEndpoint: (id) => `/api/deletetokenstandard/${id}`,
+  successMessage: "Token Standard successfully deleted!",
+  errorMessage: "Failed to delete Token Standard.",
+  idKey: "TokenStandardId",
+},
+certification: {
+    getEndpoint: (id) => `/api/delete-certification/${id}`,
+    successMessage: "Certification successfully deleted!",
+    errorMessage: "Failed to delete certification.",
+    idKey: "CertificationId",
+  },
+gstsetting: {
+    getEndpoint: (id) => `/api/delete-gst-setting/${id}`,
+    successMessage: "GST setting successfully deleted!",
+    errorMessage: "Failed to delete GST setting.",
+    idKey: "GSTSettingId",
+},
+insurancesetting: {
+  getEndpoint: (id) => `/api/delete-insurance-setting/${id}`,
+  successMessage: "Insurance Setting successfully deleted!",
+  errorMessage: "Failed to delete insurance setting.",
+  idKey: "insuranceSettingId",
+},
+shippingaddress:{
+  getEndpoint: (id) => `/api/delete-address/${id}`,
+  successMessage: "Shipping address successfully deleted!",
+  errorMessage: "Failed to delete shipping address.",
+  idKey: "shippingaddressId",
+},
+
+
+
 };
 
 function ConfirmationDialog({ onClose, deleteType, id, onDeleted }) {

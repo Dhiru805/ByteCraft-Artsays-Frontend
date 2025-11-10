@@ -46,7 +46,6 @@ const ArtistInfo = ({ userId, loading }) => {
                         mediumUsed: response.data.mediumUsed.length ? response.data.mediumUsed[0].split(',') : [],
                         achievements: response.data.achievements.length ? response.data.achievements[0].split(',') : [],
                     });
-                    console.log("Artist details fetched successfully:", response.data);
                 }
             } catch (error) {
                 console.log("Fetch attempt completed");

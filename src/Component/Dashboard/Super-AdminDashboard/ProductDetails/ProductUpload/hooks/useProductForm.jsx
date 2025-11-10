@@ -21,6 +21,8 @@ export default function useProductForm() {
     category: null,
     subCategory: null,
     productType: null,
+
+    
     editionNumber: '',
     medium: null,
     materials: [],
@@ -129,12 +131,35 @@ export default function useProductForm() {
     }
   }, []);
 
-  const productTypeOptions = [
-    { value: 'original', label: 'Original Artwork' },
-    { value: 'limited', label: 'Limited Edition Print' },
-    { value: 'open', label: 'Open Edition Print' },
-    { value: 'nft', label: 'NFT' }
-  ];
+    const [productTypes, setProductTypes] = useState([]);
+    
+ const fetchProductTypes = async () => {
+    try {
+      const response = await getAPI("/api/getproducttype");
+      const validTypes = response.data.filter(
+        type => type.name && typeof type.name === 'string'
+      );
+      setProductTypes(validTypes);
+      if (!validTypes.length) {
+        toast.error('No valid product types found');
+      }
+    } catch (error) {
+      console.error("Error fetching product types:", error);
+      toast.error('Failed to load product types');
+    }
+  };
+
+  useEffect(() => {
+    fetchProductTypes();
+  }, []);
+
+
+  const productTypeOptions = useMemo(() => {
+    return productTypes.map((type) => ({
+      value: type.name, 
+      label: type.name 
+    }));
+  }, [productTypes]);
 
   const fetchCategoryData = async () => {
     try {
@@ -241,32 +266,94 @@ const fetchProfile = async () => {
 
 
 
-  const mediumOptions = [
-    { value: 'oil', label: 'Oil' },
-    { value: 'acrylic', label: 'Acrylic' },
-    { value: 'watercolor', label: 'Watercolor' },
-    { value: 'clay', label: 'Clay' },
-    { value: 'bronze', label: 'Bronze' },
-    { value: 'wood', label: 'Wood' },
-    { value: 'digital', label: 'Digital' }
-  ];
+  const [productMediums, setProductMediums] = useState([]);
 
-  const materialOptions = [
-    { value: 'canvas', label: 'Canvas' },
-    { value: 'charcoal', label: 'Charcoal' },
-    { value: 'ink', label: 'Ink' },
-    { value: 'resin', label: 'Resin' },
-    { value: 'metal', label: 'Metal' },
-    { value: 'paper', label: 'Paper' },
-    { value: 'stone', label: 'Stone' },
-    { value: 'glass', label: 'Glass' }
-  ];
+const fetchProductMediums = async () => {
+  try {
+    const response = await getAPI("/api/getproductmedium"); 
+    const validMediums = response.data.filter(
+      medium => medium.name && typeof medium.name === 'string'
+    );
+    setProductMediums(validMediums);
+    if (!validMediums.length) {
+      toast.error('No valid product mediums found');
+    }
+  } catch (error) {
+    console.error("Error fetching product mediums:", error);
+    toast.error('Failed to load product mediums');
+  }
+};
 
-  const editionOptions = [
-    { value: 'original', label: 'Original' },
-    { value: 'limited', label: 'Limited Edition' },
-    { value: 'open', label: 'Open Edition' }
-  ];
+useEffect(() => {
+  fetchProductMediums();
+}, []);
+
+const mediumOptions = useMemo(() => {
+  return productMediums.map((medium) => ({
+    value: medium.name,
+    label: medium.name
+  }));
+}, [productMediums]);
+
+const [productMaterials, setProductMaterials] = useState([]);
+
+const fetchProductMaterials = async () => {
+  try {
+    const response = await getAPI("/api/getproductmaterials"); 
+    const validMaterials = response.data.filter(
+      material => material.name && typeof material.name === 'string'
+    );
+    setProductMaterials(validMaterials);
+    if (!validMaterials.length) {
+      toast.error('No valid product materials found');
+    }
+  } catch (error) {
+    console.error("Error fetching product materials:", error);
+    toast.error('Failed to load product materials');
+  }
+};
+
+useEffect(() => {
+  fetchProductMaterials();
+}, []);
+
+const materialOptions = useMemo(() => {
+  return productMaterials.map((material) => ({
+    value: material.name,
+    label: material.name
+  }));
+}, [productMaterials]);
+
+
+  const [productEditions, setProductEditions] = useState([]);
+
+const fetchProductEditions = async () => {
+  try {
+    const response = await getAPI("/api/getproducteditiontypes"); 
+    const validEditions = response.data.filter(
+      edition => edition.name && typeof edition.name === "string"
+    );
+    setProductEditions(validEditions);
+    if (!validEditions.length) {
+      toast.error("No valid product editions found");
+    }
+  } catch (error) {
+    console.error("Error fetching product editions:", error);
+    toast.error("Failed to load product editions");
+  }
+};
+
+useEffect(() => {
+  fetchProductEditions();
+}, []);
+
+const editionOptions = useMemo(() => {
+  return productEditions.map((edition) => ({
+    value: edition.name,
+    label: edition.name,
+  }));
+}, [productEditions]);
+
 
   const framingOptions = [
     { value: 'framed', label: 'Framed' },
@@ -274,13 +361,35 @@ const fetchProfile = async () => {
     { value: 'rolled', label: 'Rolled Canvas' }
   ];
 
-  const surfaceTypeOptions = [
-    { value: 'canvas', label: 'Canvas' },
-    { value: 'paper', label: 'Paper' },
-    { value: 'metal', label: 'Metal' },
-    { value: 'wood', label: 'Wood' },
-    { value: 'digital', label: 'Digital' }
-  ];
+ const [surfaceTypes, setSurfaceTypes] = useState([]);
+
+const fetchSurfaceTypes = async () => {
+  try {
+    const response = await getAPI("/api/getproductsurfacetypes"); 
+    const validSurfaceTypes = response.data.filter(
+      surface => surface.name && typeof surface.name === "string"
+    );
+    setSurfaceTypes(validSurfaceTypes);
+    if (!validSurfaceTypes.length) {
+      toast.error("No valid surface types found");
+    }
+  } catch (error) {
+    console.error("Error fetching surface types:", error);
+    toast.error("Failed to load surface types");
+  }
+};
+
+useEffect(() => {
+  fetchSurfaceTypes();
+}, []);
+
+const surfaceTypeOptions = useMemo(() => {
+  return surfaceTypes.map((surface) => ({
+    value: surface.name,
+    label: surface.name,
+  }));
+}, [surfaceTypes]);
+
 
   const conditionOptions = [
     { value: 'new', label: 'New' },
@@ -444,12 +553,35 @@ const fetchProfile = async () => {
     { value: '10-14', label: '10-14 days' },
   ];
 
-  const packagingOptions = [
-    { value: 'secure_box', label: 'Secure box' },
-    { value: 'wooden_crate', label: 'Wooden crate' },
-    { value: 'tube', label: 'Tube' },
-    { value: 'bubble_wrap', label: 'Bubble wrap' }
-  ];
+  const [packagingTypes, setPackagingTypes] = useState([]);
+
+const fetchPackagingTypes = async () => {
+  try {
+    const response = await getAPI("/api/getproductpackagingtypes"); 
+    const validTypes = response.data.filter(
+      type => type.name && typeof type.name === "string"
+    );
+    setPackagingTypes(validTypes);
+    if (!validTypes.length) {
+      toast.error("No valid packaging types found");
+    }
+  } catch (error) {
+    console.error("Error fetching packaging types:", error);
+    toast.error("Failed to load packaging types");
+  }
+};
+
+useEffect(() => {
+  fetchPackagingTypes();
+}, []);
+
+const packagingOptions = useMemo(() => {
+  return packagingTypes.map((type) => ({
+    value: type.name,
+    label: type.name,
+  }));
+}, [packagingTypes]);
+
 
   return {
     formData,

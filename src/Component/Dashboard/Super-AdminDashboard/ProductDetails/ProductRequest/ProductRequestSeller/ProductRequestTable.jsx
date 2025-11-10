@@ -33,7 +33,11 @@ const ProductRequest = () => {
 
         const fetchProducts = async () => {
             try {
+<<<<<<< HEAD
                 const result = await getAPI(`${process.env.REACT_APP_API_URL}/api/getsellerproductbyid/${userId}`, {}, true, false);
+=======
+                const result = await getAPI(`http://localhost:3001/api/getsellerproductbyid/${userId}`, {}, true, false);
+>>>>>>> 51dcaf1e4c94f817cac3b27402a23fd737bdb29a
                 console.log("Full API Response:", result);
                 console.log("Data Type:", typeof result.data);
 

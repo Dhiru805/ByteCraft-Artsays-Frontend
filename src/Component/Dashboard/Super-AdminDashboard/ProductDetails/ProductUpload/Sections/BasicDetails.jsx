@@ -1,8 +1,6 @@
-// src/components/productUpload/sections/BasicDetails.js
 import React from "react";
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
-
 
 const BasicDetails = ({
   formData,
@@ -13,64 +11,59 @@ const BasicDetails = ({
   handleTagKeyDown,
   removeTag,
   setInputTag,
-
   categoryData,
   productTypeOptions,
   getCategoriesByMainCategory,
   getSubCategoriesByCategory,
   handleSelectChange
 }) => {
-
-  const isNFTArtSelected = formData.category?.label === "NFT Art" || 
-                         formData.subCategory?.label === "NFT Art";
+  const isNFTArtSelected = formData.category?.label === "NFT Art" ||
+    formData.subCategory?.label === "NFT Art";
 
   const filteredProductTypeOptions = isNFTArtSelected
-    ? productTypeOptions // Show all options including NFT
-    : productTypeOptions.filter(opt => opt.value !== 'nft'); 
-
+    ? productTypeOptions
+    : productTypeOptions.filter(opt => opt.value !== 'NFT');
 
   React.useEffect(() => {
-    if (isNFTArtSelected && formData.productType?.value !== 'nft') {
-      const nftOption = productTypeOptions.find(opt => opt.value === 'nft');
+    if (isNFTArtSelected && formData.productType?.value !== 'NFT') {
+      const nftOption = productTypeOptions.find(opt => opt.value === 'NFT');
       if (nftOption) {
         handleSelectChange('productType', nftOption);
       }
     }
   }, [isNFTArtSelected, formData.productType, productTypeOptions, handleSelectChange]);
 
-// Inside BasicDetails.jsx
-const searchableCategories = React.useMemo(() => {
-  const main = categoryData.mainCategories.map(cat => ({
-    ...cat,
-    type: 'mainCategory',
-    fullLabel: cat.label
-  }));
-
-  const categories = categoryData.categories.map(cat => {
-    const mainLabel = categoryData.mainCategories.find(main => main.value === cat.mainCategoryId)?.label;
-    return {
+  const searchableCategories = React.useMemo(() => {
+    const main = categoryData.mainCategories.map(cat => ({
       ...cat,
-      type: 'category',
-      fullLabel: `${mainLabel} - ${cat.label}`,
-      mainCategoryId: cat.mainCategoryId
-    };
-  });
+      type: 'mainCategory',
+      fullLabel: cat.label
+    }));
 
-  const sub = categoryData.subCategories.map(sub => {
-    const cat = categoryData.categories.find(c => c.value === sub.categoryId);
-    const mainLabel = categoryData.mainCategories.find(main => main.value === cat?.mainCategoryId)?.label;
-    return {
-      ...sub,
-      type: 'subCategory',
-      fullLabel: `${mainLabel} - ${cat?.label} - ${sub.label}`,
-      categoryId: sub.categoryId,
-      mainCategoryId: cat?.mainCategoryId
-    };
-  });
+    const categories = categoryData.categories.map(cat => {
+      const mainLabel = categoryData.mainCategories.find(main => main.value === cat.mainCategoryId)?.label;
+      return {
+        ...cat,
+        type: 'category',
+        fullLabel: `${mainLabel} - ${cat.label}`,
+        mainCategoryId: cat.mainCategoryId
+      };
+    });
 
-return [...main, ...categories, ...sub].sort((a, b) => a.fullLabel.localeCompare(b.fullLabel));
-}, [categoryData]);
+    const sub = categoryData.subCategories.map(sub => {
+      const cat = categoryData.categories.find(c => c.value === sub.categoryId);
+      const mainLabel = categoryData.mainCategories.find(main => main.value === cat?.mainCategoryId)?.label;
+      return {
+        ...sub,
+        type: 'subCategory',
+        fullLabel: `${mainLabel} - ${cat?.label} - ${sub.label}`,
+        categoryId: sub.categoryId,
+        mainCategoryId: cat?.mainCategoryId
+      };
+    });
 
+    return [...main, ...categories, ...sub].sort((a, b) => a.fullLabel.localeCompare(b.fullLabel));
+  }, [categoryData]);
 
   return (
     <>
@@ -102,32 +95,30 @@ return [...main, ...categories, ...sub].sort((a, b) => a.fullLabel.localeCompare
             if (!selectedOption) return;
 
             const selected = selectedOption;
-
             let mainCat = null, cat = null, subCat = null;
 
-         
             if (selected.type === 'mainCategory') {
-              mainCat = categoryData.mainCategories.find(m => m.value === selected.value); 
+              mainCat = categoryData.mainCategories.find(m => m.value === selected.value);
             }
 
             if (selected.type === 'category') {
-              cat = categoryData.categories.find(c => c.value === selected.value); 
-              mainCat = categoryData.mainCategories.find(m => m.value === cat?.mainCategoryId); 
+              cat = categoryData.categories.find(c => c.value === selected.value);
+              mainCat = categoryData.mainCategories.find(m => m.value === cat?.mainCategoryId);
             }
 
             if (selected.type === 'subCategory') {
-              subCat = categoryData.subCategories.find(s => s.value === selected.value); 
-              cat = categoryData.categories.find(c => c.value === subCat?.categoryId); 
-              mainCat = categoryData.mainCategories.find(m => m.value === cat?.mainCategoryId); 
+              subCat = categoryData.subCategories.find(s => s.value === selected.value);
+              cat = categoryData.categories.find(c => c.value === subCat?.categoryId);
+              mainCat = categoryData.mainCategories.find(m => m.value === cat?.mainCategoryId);
             }
 
-            handleSelectChange('mainCategory', mainCat || null); 
-            handleSelectChange('category', cat || null);         
-            handleSelectChange('subCategory', subCat || null);   
+            handleSelectChange('mainCategory', mainCat || null);
+            handleSelectChange('category', cat || null);
+            handleSelectChange('subCategory', subCat || null);
           }}
           isDisabled={isSubmitting}
         />
-      </div>      
+      </div>
       <div className="form-group">
         <label htmlFor="mainCategory">Main Category <span style={{ color: 'red' }}>*</span></label>
         <select
@@ -174,7 +165,7 @@ return [...main, ...categories, ...sub].sort((a, b) => a.fullLabel.localeCompare
           <option value="">
             {formData.mainCategory ? "Select Category" : "Select Main Category first"}
           </option>
-          {formData.mainCategory && 
+          {formData.mainCategory &&
             getCategoriesByMainCategory(formData.mainCategory.value).map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -186,7 +177,7 @@ return [...main, ...categories, ...sub].sort((a, b) => a.fullLabel.localeCompare
 
       <div className="form-group">
         <label htmlFor="subCategory">Subcategory <span style={{ color: 'red' }}>*</span></label>
-<CreatableSelect
+        <CreatableSelect
           id="subCategory"
           name="subCategory"
           className="basic-single"
@@ -204,50 +195,50 @@ return [...main, ...categories, ...sub].sort((a, b) => a.fullLabel.localeCompare
           placeholder="Select or enter subcategory"
         />
       </div>
-      
-<div className="form-group">
-  <label htmlFor="productType">Product Type <span style={{ color: 'red' }}>*</span></label>
-  <select
-    id="productType"
-    name="productType"
-    className="form-control"
-    value={formData.productType?.value || ''}
-    onChange={(e) => {
-      const selected = productTypeOptions.find(
-        opt => opt.value === e.target.value
-      );
-      handleSelectChange('productType', selected);
-      if (selected?.value !== 'limited') {
-        handleInputChange({ target: { name: 'editionNumber', value: '' } });
-      }
-    }}
-    disabled={isSubmitting || isNFTArtSelected}
-    required
-  >
-    <option value="">Select Product Type</option>
-    {productTypeOptions.map((option) => (
-      <option key={option.value} value={option.value}>
-        {option.label}
-      </option>
-    ))}
-  </select>
-  {isNFTArtSelected && (
-    <small className="text-muted">NFT product type is automatically selected for NFT Art</small>
-  )}
-</div>
 
-      {formData.productType?.value === 'limited' && (
+      <div className="form-group">
+        <label htmlFor="productType">Product Type <span style={{ color: 'red' }}>*</span></label>
+        <select
+          id="productType"
+          name="productType"
+          className="form-control"
+          value={formData.productType?.value || ''}
+          onChange={(e) => {
+            const selected = productTypeOptions.find(
+              opt => opt.value === e.target.value
+            );
+            handleSelectChange('productType', selected);
+            if (selected?.value !== 'Limited Edition') {
+              handleInputChange({ target: { name: 'editionNumber', value: '' } });
+            }
+          }}
+          required
+          disabled={isSubmitting || isNFTArtSelected}
+        >
+          <option value="">Select Product Type</option>
+          {filteredProductTypeOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        {isNFTArtSelected && (
+          <small className="text-muted">NFT product type is automatically selected for NFT Art</small>
+        )}
+      </div>
+
+      {formData.productType?.value === 'Limited Edition' && (
         <div className="form-group">
-          <label htmlFor="editionNumber">Limited Edition Number <span style={{ color: 'red' }}>*</span></label>
+          <label htmlFor="editionNumber">Limited Edition Quantity <span style={{ color: 'red' }}>*</span></label>
           <input
             type="number"
             id="editionNumber"
             name="editionNumber"
             className="form-control"
-            placeholder="Enter edition number"
+            placeholder="Enter limited edition quantity"
             value={formData.editionNumber}
             onChange={handleInputChange}
-            required={formData.productType?.value === 'limited'}
+            required={formData.productType?.value === 'Limited Edition'}
             disabled={isSubmitting}
             min="1"
           />
@@ -270,7 +261,37 @@ return [...main, ...categories, ...sub].sort((a, b) => a.fullLabel.localeCompare
       </div>
 
       <div className="form-group">
-        <label htmlFor="tags">Tags</label>
+        <label htmlFor="targetedAudience">Targeted Audience <span style={{ color: 'red' }}>*</span></label>
+        <textarea
+          id="targetedAudience"
+          name="targetedAudience"
+          className="form-control"
+          placeholder="Describe the target audience for this product"
+          rows="3"
+          value={formData.targetedAudience || ''}
+          onChange={handleInputChange}
+          disabled={isSubmitting}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="inspirationSource">Inspiration Source <span style={{ color: 'red' }}>*</span></label>
+        <textarea
+          id="inspirationSource"
+          name="inspirationSource"
+          className="form-control"
+          placeholder="Describe the inspiration or source for this product"
+          rows="3"
+          value={formData.inspirationSource || ''}
+          onChange={handleInputChange}
+          disabled={isSubmitting}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="tags">Keyword/Tags <span style={{ color: 'red' }}>*</span></label>
         <div
           className="d-flex flex-wrap align-items-center form-control p-2"
           style={{ minHeight: '44px' }}
@@ -300,6 +321,7 @@ return [...main, ...categories, ...sub].sort((a, b) => a.fullLabel.localeCompare
             onChange={(e) => setInputTag(e.target.value)}
             onKeyDown={handleTagKeyDown}
             disabled={isSubmitting}
+            required
           />
         </div>
       </div>

@@ -50,7 +50,6 @@ export const NavGuestState = () => {
         setProfileImage(DEFAULT_PROFILE_IMAGE);
         return;
       }
-
       try {
         const response = await getAPI(`/auth/userid/${storedUserId}`, {}, true, false);
         console.log('Profile API response:', response.data);
@@ -99,7 +98,6 @@ export const NavGuestState = () => {
     } else {
       document.removeEventListener('mousedown', handleClickOutside);
     }
-
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -162,7 +160,6 @@ export const NavGuestState = () => {
                   </>
                 )}
               </nav>
-
               <div className="flex flex-col gap-2">
                 <button
                   className="border-2 border-[#6F4D34] rounded text-[#6F4D34] py-2 mx-3 hover:bg-[#6F4D34] hover:text-[#ffffff] transition ease-300"

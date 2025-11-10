@@ -109,4 +109,3 @@ const BiddingPass = () => {
 };
 
 export default BiddingPass;
-

@@ -50,7 +50,6 @@ const AccountSecurityAgreement = ({ userId }) => {
         event.preventDefault();
 
         const allSelected = Object.keys(checkboxLabels).every(key => formData[key]);
-
         if (!allSelected) {
             toast.warn('Please agree to all agreements.');
             return;
@@ -92,7 +91,6 @@ const AccountSecurityAgreement = ({ userId }) => {
         }
         return true;
     };
-
     return (
         <div className="body">
             <h5 className="mb-2">Account Security And Agreements</h5>

@@ -1941,7 +1941,6 @@ const TargetingSection = ({
   const [showTargetingHelp, setShowTargetingHelp] = useState(false)
   const [validationErrors, setValidationErrors] = useState({})
 
-
   const [manualTargetingType, setManualTargetingType] = useState("keyword")
   const [selectedKeywords, setSelectedKeywords] = useState(initialSelectedKeywords || [])
   const [keywordFilters, setKeywordFilters] = useState({

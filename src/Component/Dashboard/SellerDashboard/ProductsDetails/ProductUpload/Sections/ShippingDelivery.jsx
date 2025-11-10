@@ -11,6 +11,8 @@ const ShippingDelivery = ({
 }) => {
   const [showCustomDeliveryInput, setShowCustomDeliveryInput] = useState(false);
   const [customDeliveryValue, setCustomDeliveryValue] = useState('');
+  const [showCustomHandlingInput, setShowCustomHandlingInput] = useState(false);
+  const [customHandlingValue, setCustomHandlingValue] = useState('');
 
   const handleDeliveryChange = (selectedOption) => {
     if (selectedOption.value === 'custom') {
@@ -31,6 +33,25 @@ const ShippingDelivery = ({
     });
   };
 
+  const handleHandlingChange = (selectedOption) => {
+    if (selectedOption.value === 'custom') {
+      setShowCustomHandlingInput(true);
+      handleSelectChange('handlingTime', { value: '', label: '' });
+    } else {
+      setShowCustomHandlingInput(false);
+      handleSelectChange('handlingTime', selectedOption);
+    }
+  };
+
+  const handleCustomHandlingChange = (e) => {
+    const value = e.target.value;
+    setCustomHandlingValue(value);
+    handleSelectChange('handlingTime', { 
+      value: value, 
+      label: value 
+    });
+  };
+
   const handleSelfShippingToggle = (e) => {
     handleInputChange({
       target: {
@@ -39,6 +60,18 @@ const ShippingDelivery = ({
       }
     });
   };
+
+  const returnPolicyOptions = [
+    { value: 'Returnable', label: 'Returnable' },
+    { value: 'Non-returnable', label: 'Non-returnable' }
+  ];
+
+  const handlingTimeOptions = [
+    { value: '1-2 days', label: '1-2  days' },
+    { value: '3-5 days', label: '3-5  days' },
+    { value: '5-7 days', label: '5-7  days' },
+    { value: 'custom', label: 'Custom handling time...' }
+  ];
 
   return (
     <>
@@ -82,10 +115,51 @@ const ShippingDelivery = ({
           step="0.01"
           value={formData.shippingCharges}
           onChange={handleInputChange}
-          required
+       
           disabled={isSubmitting}
         />
         <small className="text-muted">Enter 0 for free shipping</small>
+      </div>
+
+      <div className="form-group">
+        <label>Estimated Handling Time <span style={{ color: 'red' }}>*</span></label>
+        {!showCustomHandlingInput ? (
+          <Select
+            options={handlingTimeOptions}
+            value={formData.handlingTime}
+            onChange={handleHandlingChange}
+            placeholder="Select handling time"
+            isSearchable
+         
+            isDisabled={isSubmitting}
+          />
+        ) : (
+          <div className="input-group">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter custom handling time (e.g., '2-3 days')"
+              value={customHandlingValue}
+              onChange={handleCustomHandlingChange}
+           
+              disabled={isSubmitting}
+            />
+            <div className="input-group-append">
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={() => {
+                  setShowCustomHandlingInput(false);
+                  setCustomHandlingValue('');
+                  handleSelectChange('handlingTime', null);
+                }}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="form-group">
@@ -100,7 +174,7 @@ const ShippingDelivery = ({
             onChange={handleDeliveryChange}
             placeholder="Select delivery time"
             isSearchable
-            required
+         
             isDisabled={isSubmitting}
           />
         ) : (
@@ -111,7 +185,7 @@ const ShippingDelivery = ({
               placeholder="Enter custom delivery time (e.g., '2-3 weeks')"
               value={customDeliveryValue}
               onChange={handleCustomDeliveryChange}
-              required
+           
               disabled={isSubmitting}
             />
             <div className="input-group-append">
@@ -140,7 +214,20 @@ const ShippingDelivery = ({
           onChange={(selected) => handleSelectChange('packagingType', selected)}
           placeholder="Select packaging type"
           isSearchable
-          required
+       
+          isDisabled={isSubmitting}
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Return Policy <span style={{ color: 'red' }}>*</span></label>
+        <Select
+          options={returnPolicyOptions}
+          value={formData.returnPolicy}
+          onChange={(selected) => handleSelectChange('returnPolicy', selected)}
+          placeholder="Select return policy"
+          isSearchable
+       
           isDisabled={isSubmitting}
         />
       </div>
@@ -159,6 +246,22 @@ const ShippingDelivery = ({
           Include insurance coverage
         </label>
         <small className="text-muted d-block">(Recommended for high-value items)</small>
+      </div>
+
+      <div className="form-group form-check">
+        <input
+          type="checkbox"
+          id="exportRestriction"
+          name="exportRestriction"
+          className="form-check-input"
+          checked={formData.exportRestriction || false}
+          onChange={handleInputChange}
+          disabled={isSubmitting}
+        />
+        <label className="form-check-label" htmlFor="exportRestriction">
+          Export Restrictions Apply
+        </label>
+        <small className="text-muted d-block">(Check if this item is subject to export controls or restrictions)</small>
       </div>
 
       <hr className="my-4" />

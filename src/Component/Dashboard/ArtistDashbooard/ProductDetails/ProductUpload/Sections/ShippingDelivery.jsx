@@ -62,8 +62,8 @@ const ShippingDelivery = ({
   };
 
   const returnPolicyOptions = [
-    { value: 'returnable', label: 'Returnable' },
-    { value: 'non-returnable', label: 'Non-returnable' }
+    { value: 'Returnable', label: 'Returnable' },
+    { value: 'Non-returnable', label: 'Non-returnable' }
   ];
 
   const handlingTimeOptions = [
@@ -115,7 +115,7 @@ const ShippingDelivery = ({
           step="0.01"
           value={formData.shippingCharges}
           onChange={handleInputChange}
-          required
+       
           disabled={isSubmitting}
         />
         <small className="text-muted">Enter 0 for free shipping</small>
@@ -130,7 +130,7 @@ const ShippingDelivery = ({
             onChange={handleHandlingChange}
             placeholder="Select handling time"
             isSearchable
-            required
+         
             isDisabled={isSubmitting}
           />
         ) : (
@@ -141,7 +141,7 @@ const ShippingDelivery = ({
               placeholder="Enter custom handling time (e.g., '2-3 days')"
               value={customHandlingValue}
               onChange={handleCustomHandlingChange}
-              required
+           
               disabled={isSubmitting}
             />
             <div className="input-group-append">
@@ -174,7 +174,7 @@ const ShippingDelivery = ({
             onChange={handleDeliveryChange}
             placeholder="Select delivery time"
             isSearchable
-            required
+         
             isDisabled={isSubmitting}
           />
         ) : (
@@ -185,7 +185,7 @@ const ShippingDelivery = ({
               placeholder="Enter custom delivery time (e.g., '2-3 weeks')"
               value={customDeliveryValue}
               onChange={handleCustomDeliveryChange}
-              required
+           
               disabled={isSubmitting}
             />
             <div className="input-group-append">
@@ -214,7 +214,7 @@ const ShippingDelivery = ({
           onChange={(selected) => handleSelectChange('packagingType', selected)}
           placeholder="Select packaging type"
           isSearchable
-          required
+       
           isDisabled={isSubmitting}
         />
       </div>
@@ -227,7 +227,7 @@ const ShippingDelivery = ({
           onChange={(selected) => handleSelectChange('returnPolicy', selected)}
           placeholder="Select return policy"
           isSearchable
-          required
+       
           isDisabled={isSubmitting}
         />
       </div>

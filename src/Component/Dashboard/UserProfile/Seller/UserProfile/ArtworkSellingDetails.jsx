@@ -76,7 +76,6 @@ const ArtworkPricingDetails = ({ userId }) => {
     };
 
 
-
     const handleFileChange = (event) => {
         const file = event.target.files[0];
 

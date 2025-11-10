@@ -77,7 +77,7 @@ const BasicDetails = ({
           placeholder="Enter Product Name"
           value={formData.productName}
           onChange={handleInputChange}
-          required
+       
           disabled={isSubmitting}
         />
       </div>
@@ -133,7 +133,7 @@ const BasicDetails = ({
             handleSelectChange('subCategory', null);
           }}
           disabled={isSubmitting}
-          required
+       
         >
           <option value="">Select Main Category</option>
           {categoryData.mainCategories.map((option) => (
@@ -158,7 +158,7 @@ const BasicDetails = ({
             handleSelectChange('subCategory', null);
           }}
           disabled={!formData.mainCategory || isSubmitting}
-          required
+       
         >
           <option value="">
             {formData.mainCategory ? "Select Category" : "Select Main Category first"}
@@ -210,7 +210,7 @@ const BasicDetails = ({
               handleInputChange({ target: { name: 'editionNumber', value: '' } });
             }
           }}
-          required
+       
           disabled={isSubmitting || isNFTArtSelected}
         >
           <option value="">Select Product Type</option>
@@ -253,7 +253,7 @@ const BasicDetails = ({
           rows="3"
           value={formData.description}
           onChange={handleInputChange}
-          required
+       
           disabled={isSubmitting}
         />
       </div>
@@ -269,7 +269,7 @@ const BasicDetails = ({
           value={formData.targetedAudience || ''}
           onChange={handleInputChange}
           disabled={isSubmitting}
-          required
+       
         />
       </div>
 
@@ -284,7 +284,7 @@ const BasicDetails = ({
           value={formData.inspirationSource || ''}
           onChange={handleInputChange}
           disabled={isSubmitting}
-          required
+       
         />
       </div>
 
@@ -319,7 +319,7 @@ const BasicDetails = ({
             onChange={(e) => setInputTag(e.target.value)}
             onKeyDown={handleTagKeyDown}
             disabled={isSubmitting}
-            required
+         
           />
         </div>
       </div>

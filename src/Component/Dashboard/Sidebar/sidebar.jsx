@@ -46,6 +46,7 @@ const Sidebar = () => {
     "Super-Admin": [
       {
         label: "Dashboard",
+        tabId: "dbd1",
         icon: "fa-dashboard",
         path: "/super-admin/dashboard",
         subTabs: []
@@ -243,6 +244,24 @@ const Sidebar = () => {
           subTabs: []
   },
   {
+        label: "Product Settings",
+        icon: "fa fa-cog",
+        path: `#Settings`,
+        subTabs: [
+          { label: "Product Type", path: `/super-admin/product-settings/product-type` },
+          { label: "Product Medium", path: `/super-admin/product-settings/product-medium` },
+          { label: "Product Materia ", path: `/super-admin/product-settings/product-material` },
+          { label: "Product Edition Type", path: `/super-admin/product-settings/product-edition-type` },
+          { label: "Product Surface Type", path: `/super-admin/product-settings/product-surface-type` },
+          { label: "Product Coupon Code", path: `/super-admin/product-settings/product-coupon-code` },
+          { label: "Product Packaging Type", path: `/super-admin/product-settings/product-packaging-type` },
+          { label: "Copyrights Rights", path: `/super-admin/product-settings/copyrights-rights` },
+          { label: "Period/Era", path: `/super-admin/product-settings/period-era` },
+          { label: "Blockchain Network", path: `/super-admin/product-settings/blockchain-network` },
+          { label: "Token Standard", path: `/super-admin/product-settings/token-standard` },
+        ]
+      },
+  {
     label: "Website CMS",
       tabId: "wcms1",
         icon: "fa fa-cog",
@@ -289,6 +308,8 @@ const Sidebar = () => {
                 { label: "Marketing", subtabId: "stg14", path: `/super-admin/settings/marketing` },
                 { label: "User Role", subtabId: "stg15", path: `/super-admin/settings/user-role` },
                 { label: "Certification", path: `/super-admin/settings/certification` },
+                { label: "GST", path: `/super-admin/settings/GST` },
+          { label: "Insurance", path: `/super-admin/settings/insurance` },
                 { label: "Default Auto Targeting", path: `/super-admin/settings/auto-targeting` },
                 { label: "Auto Targeting Group", path: `/super-admin/settings/group-targeting` },
                 { label: "Keyword Targeting", path: `/super-admin/settings/keyword-targeting` },
@@ -436,7 +457,7 @@ const Sidebar = () => {
       {
         label: "Product",
         icon: "fa fa-cart-plus",
-        path: "/seller/product-details",
+        path: "/seller/product",
         subTabs: []
       },
       {
@@ -479,6 +500,14 @@ const Sidebar = () => {
         icon: "fa fa-archive",
         path: "/seller/packaging-material",
         subTabs: []
+      },
+   {
+        label: "Product Settings",
+        icon: "fa fa-cog",
+        path: `#Settings`,
+        subTabs: [
+          { label: "Product Coupon Code", path: `/seller/products-settings/product-coupon-code` },
+        ]
       },
 
 

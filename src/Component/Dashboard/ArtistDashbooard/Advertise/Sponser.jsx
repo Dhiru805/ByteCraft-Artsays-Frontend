@@ -57,7 +57,6 @@
 //   }, []);
 
 
-
 //   const handleCampaignTypeSelect = (type) => {
 //     setSelectedCampaignType(type);
 //     setShowCampaignTypeSelection(false);
@@ -78,7 +77,6 @@
 //       toast.error(response.message); 
 //     } else {
 //       toast.success('Campaign saved successfully!'); 
-
 //     }
 //   } catch (error) {
 //     console.error("Error saving campaign:", error);
@@ -86,7 +84,6 @@
 //     toast.error(errMsg);
 //   }
 //   };
-
 
 
 //   return (
@@ -503,7 +500,6 @@ function Sponser() {
                   onUpdateBiddingStrategy={handleUpdateBiddingStrategy}
                 />
               )}
-
               {showBidAdjustment && (
                 <BidAdjustment
                   initialBidAdjustments={campaignData.bidAdjustments}

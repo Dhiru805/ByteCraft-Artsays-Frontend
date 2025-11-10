@@ -44,6 +44,7 @@ import CheckOut from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageCo
 import OrderCompleted from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/OrderCompleted";
 import MyOrderView from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyOrderView";
 
+
 //----------------------------------------Error Pages-----------------------------------------//
 import PagenotFound404 from "../Pages/Error/404Error";
 import UnauthorizedAccess from "../Pages/Error/403Error";
@@ -275,6 +276,8 @@ import UpdateChallengeApplication from "../Component/Dashboard/Super-AdminDashbo
 // import UpdateChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/update";
 // import ViewChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/challengeview";
 // import ChallengesEntries from '../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/challengesEntries';
+import GSTSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/GST/GST';
+import InsuranceSetting  from '../Component/Dashboard/Super-AdminDashboard/Settings/Insurance/InsuranceSetting'
 
 //------------------------------PackagingMaterial--------------------------------//
 import Material from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/Material";
@@ -363,6 +366,32 @@ import BiddingTablePass from "../Component/Dashboard/Super-AdminDashboard/Biddin
 import PassOrderTable from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddingpass/PassOrderTable";
 import CreatePassType from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddingpass/CreatePassType";
 
+//-----------------------------ProductSetting--------------------------//
+import ProductType from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductType/ProductType";
+import ProductMedium from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductMedium/ProductMedium";
+import ProductMaterial from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductMaterial/ProductMaterial";
+import ProductEditionTypes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductEditionType/ProductEditionType";
+import ProductSurfaceTypes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductSurfaceType/ProductSurfaceType";
+import ProductCouponCodes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductCouponCode/ProductCouponCode";
+import ProductPackagingTypes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductPackagingType/ProductPackagingType";
+import CopyrightsRights from "../Component/Dashboard/Super-AdminDashboard/Product Setting/CopyrightsRights/CopyrightsRights";
+import BlockchainNetworks from "../Component/Dashboard/Super-AdminDashboard/Product Setting/BlockchainNetwork/BlockchainNetwork";
+import TokenStandards from "../Component/Dashboard/Super-AdminDashboard/Product Setting/TokenStandard/TokenStandard";
+import PeriodEras from "../Component/Dashboard/Super-AdminDashboard/Product Setting/PeriodEra/PeriodEra";
+
+//-----------------------------ProductSetting--------------------------//
+import ProductType from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductType/ProductType";
+import ProductMedium from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductMedium/ProductMedium";
+import ProductMaterial from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductMaterial/ProductMaterial";
+import ProductEditionTypes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductEditionType/ProductEditionType";
+import ProductSurfaceTypes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductSurfaceType/ProductSurfaceType";
+import ProductCouponCodes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductCouponCode/ProductCouponCode";
+import ProductPackagingTypes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductPackagingType/ProductPackagingType";
+import CopyrightsRights from "../Component/Dashboard/Super-AdminDashboard/Product Setting/CopyrightsRights/CopyrightsRights";
+import BlockchainNetworks from "../Component/Dashboard/Super-AdminDashboard/Product Setting/BlockchainNetwork/BlockchainNetwork";
+import TokenStandards from "../Component/Dashboard/Super-AdminDashboard/Product Setting/TokenStandard/TokenStandard";
+import PeriodEras from "../Component/Dashboard/Super-AdminDashboard/Product Setting/PeriodEra/PeriodEra";
+
 //-----------------------------Settings--------------------------//
 import EmailSettings from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailSetting/EmailSetting";
 import BlogCategory from "../Component/Dashboard/Super-AdminDashboard/Settings/Blogcategory/Category";
@@ -385,6 +414,9 @@ import ArtistCreateExhibition from "../Component/Dashboard/ArtistDashbooard/Exhi
 import ArtistUpdateExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/editExhibition";
 import ArtistViewExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/exhibitionView";
 import ArtistSponser from "../Component/Dashboard/ArtistDashbooard/Advertise/Sponser";
+import ArtistProductCouponCodes from "../Component/Dashboard/ArtistDashbooard/ProductSetting/ProductCouponCode/ProductCouponCode";
+import UpdateProductArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/UpdateProduct/productUploade"
+import ProductViewArtist from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/productUploade';
 //-----------------------------Blogs--------------------------//
 import BlogList from "../Component/Dashboard/ArtistDashbooard/Blog/BlogList";
 import BlogPost from "../Component/Dashboard/ArtistDashbooard/Blog/BlogPost";
@@ -465,6 +497,9 @@ import BidDetails from "../Pages/BidDetails/BidDetails";
 import Certification from "../Pages/Certification/Certification";
 import Insurance from "../Pages/Insurance/Insurance";
 import Partner from "../Pages/Partner/Partner";
+import SellerProductCouponCodes from "../Component/Dashboard/SellerDashboard/ProductSetting/ProductCouponCode/ProductCouponCode";
+import UpdateProductSeller from "../Component/Dashboard/SellerDashboard/ProductsDetails/UpdateProduct/productUploade";
+import ProductViewSeller from '../Component/Dashboard/SellerDashboard/ProductsDetails/UpdateProduct/productUploade';
 
 //-----------------------------Artist Premium Badges--------------------------//
 
@@ -810,6 +845,17 @@ const AppRoutes = () => {
           path="bidding/pass-table/edit/:id"
           element={<CreatePassType />}
         />
+        {/* Product Setting */}
+        <Route path="product-settings/product-type" element={<ProductType />} />
+        <Route path="product-settings/product-medium" element={<ProductMedium />} />
+        <Route path="product-settings/product-material" element={<ProductMaterial />} />
+        <Route path="product-settings/product-edition-type" element={<ProductEditionTypes />} />
+        <Route path="product-settings/product-surface-type" element={<ProductSurfaceTypes />} />
+        <Route path="product-settings/product-coupon-code" element={<ProductCouponCodes />} />
+        <Route path="product-settings/product-packaging-type" element={<ProductPackagingTypes />} />
+        <Route path="product-settings/copyrights-rights" element={<CopyrightsRights />} />
+        <Route path="product-settings/blockchain-network" element={<BlockchainNetworks />} />
+
         {/* Packaging Material */}
         <Route path="packaging-material/material" element={<Material />} />
         <Route
@@ -911,6 +957,10 @@ const AppRoutes = () => {
         />
         <Route path="settings/user-role" element={<UserRole />} />
         <Route path="settings/create-user-role" element={<CreateRole />} />
+        <Route path="product-settings/token-standard" element={<TokenStandards />} />
+        <Route path="product-settings/period-era" element={<PeriodEras />} />
+        <Route path="settings/gst" element={<GSTSetting  />} />
+         <Route path="settings/insurance" element={<InsuranceSetting  />} />
         {/* Advertise Routes */}
         <Route path="advertise" element={<SuperAdminArtistAdvertise />} />
         <Route path="advertise/sponser" element={<SuperAdminArtistSponsor />} />
@@ -1206,7 +1256,9 @@ const AppRoutes = () => {
         {/* Product Routes */}
         <Route path="product" element={<AllProduct />} />
         <Route path="product/bidding-pass" element={<ArtistBiddingPass />} />
-        <Route path="productUpload" element={<ProductUploade />} />
+        <Route path="product/product-upload" element={<ProductUploade />} />
+        <Route path="product/update-product" element={<UpdateProductArtist/>} />
+        <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
         <Route path="custom-order" element={<CustomOrder />} />
         <Route path="product/view-product" element={<ProductView />} />
         <Route
@@ -1265,6 +1317,8 @@ const AppRoutes = () => {
         {/* Premium Badges */}
         <Route path="premium-badges" element={<ArtistPremiumBages />} />
 
+        <Route path="products-settings/product-coupon-code" element={<ArtistProductCouponCodes />} />
+
         <Route path="product-purchase" element={<Productpurchase />} />
         {/* Packaging Material */}
         <Route path="packaging-material" element={<OrderMaterial />} />
@@ -1311,6 +1365,10 @@ const AppRoutes = () => {
           path="product-details/bidding-pass"
           element={<SellerBiddingPass />}
         />
+        <Route path="product/product-upload" element={<SellerProductUpload />} />
+        <Route path="product/update-product" element={<UpdateProductSeller/>} />
+        <Route path="product/view-product" element={<ProductViewSeller/>} />
+        <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
         <Route path="SellerProductUpload" element={<SellerProductUpload />} />
         <Route path="purchased-product" element={<SellerPurchasedProducts />} />
 
@@ -1359,6 +1417,7 @@ const AppRoutes = () => {
         />
 
         <Route path="premium-badges" element={<SellerPremiumBages />} />
+        <Route path="products-settings/product-coupon-code" element={<SellerProductCouponCodes />} />
         <Route path="SellerProductUpload" element={<SellerProductUpload />} />
         <Route path="purchased-product" element={<SellerPurchasedProducts />} />
         <Route path="packaging-material" element={<OrderMaterialSeller />} />

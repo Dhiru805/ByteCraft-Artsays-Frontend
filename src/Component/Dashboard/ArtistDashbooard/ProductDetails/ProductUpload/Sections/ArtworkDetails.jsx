@@ -1,3 +1,5 @@
+
+
 import React from "react";
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
@@ -15,6 +17,7 @@ const ArtworkDetails = ({
     culturalRegionOptions,
     handleSelectChange,
     handleMultiSelectChange,
+    handleMultiSelecttoolChange,
     handleInputChange
 }) => (
     <>
@@ -29,7 +32,7 @@ const ArtworkDetails = ({
                 placeholder="Select or create medium"
                 isSearchable
                 formatCreateLabel={(inputValue) => `Add "${inputValue}"`}
-                required
+             
                 isDisabled={isSubmitting}
             />
         </div>
@@ -44,7 +47,7 @@ const ArtworkDetails = ({
                 isMulti
                 isSearchable
                 formatCreateLabel={(inputValue) => `Add "${inputValue}"`}
-                required
+             
                 isDisabled={isSubmitting}
             />
         </div>
@@ -62,7 +65,7 @@ const ArtworkDetails = ({
                         step="0.01"
                         value={formData.width}
                         onChange={handleInputChange}
-                        required
+                     
                         disabled={isSubmitting}
                     />
                 </div>
@@ -76,7 +79,7 @@ const ArtworkDetails = ({
                         step="0.01"
                         value={formData.height}
                         onChange={handleInputChange}
-                        required
+                     
                         disabled={isSubmitting}
                     />
                 </div>
@@ -90,7 +93,7 @@ const ArtworkDetails = ({
                         step="0.01"
                         value={formData.depth}
                         onChange={handleInputChange}
-                        required
+                     
                         disabled={isSubmitting}
                     />
                 </div>
@@ -112,24 +115,27 @@ const ArtworkDetails = ({
                 disabled={isSubmitting}
             />
         </div>
-
-        {(formData.medium?.value?.toLowerCase() === 'print' || formData.medium?.value?.toLowerCase() === 'poster') && (
-            <div className="form-group">
-                <label>Print Resolution <span style={{ color: 'red' }}>*</span></label>
-                <input
-                    type="text"
-                    id="printResolution"
-                    name="printResolution"
-                    className="form-control"
-                    placeholder="Enter print resolution (e.g., 300 DPI)"
-                    value={formData.printResolution}
-                    onChange={handleInputChange}
-                    required
-                    disabled={isSubmitting}
-                />
-                <small className="text-muted">Specify resolution (e.g., 300 DPI)</small>
-            </div>
-        )}
+        {(
+            formData.mainCategory?.label === "Print" ||
+            formData.mainCategory?.label === "Poster" ||
+            formData.mainCategory?.label === "Print and Poster"
+        ) && (
+                <div className="form-group">
+                    <label>Print Resolution <span style={{ color: 'red' }}>*</span></label>
+                    <input
+                        type="text"
+                        id="printResolution"
+                        name="printResolution"
+                        className="form-control"
+                        placeholder="Enter print resolution (e.g., 300 DPI)"
+                        value={formData.printResolution || ''}
+                        onChange={handleInputChange}
+                     
+                        disabled={isSubmitting}
+                    />
+                    <small className="text-muted">Specify resolution (e.g., 300 DPI)</small>
+                </div>
+            )}
 
         <div className="form-group">
             <label>Year of Creation <span style={{ color: 'red' }}>*</span></label>
@@ -139,7 +145,7 @@ const ArtworkDetails = ({
                 onChange={(selected) => handleSelectChange('year', selected)}
                 placeholder="Select Year"
                 isSearchable
-                required
+             
                 isDisabled={isSubmitting}
             />
         </div>
@@ -152,7 +158,7 @@ const ArtworkDetails = ({
                 onChange={(selected) => handleSelectChange('editionType', selected)}
                 placeholder="Select Edition Type"
                 isSearchable
-                required
+             
                 isDisabled={isSubmitting}
             />
         </div>
@@ -165,7 +171,7 @@ const ArtworkDetails = ({
                 onChange={(selected) => handleSelectChange('framing', selected)}
                 placeholder="Select Framing Option"
                 isSearchable
-                required
+             
                 isDisabled={isSubmitting}
             />
         </div>
@@ -181,7 +187,7 @@ const ArtworkDetails = ({
                 min="1"
                 value={formData.quantity}
                 onChange={handleInputChange}
-                required
+             
                 disabled={isSubmitting}
             />
         </div>
@@ -261,14 +267,14 @@ const ArtworkDetails = ({
             <label>Functional Use <span style={{ color: 'red' }}>*</span></label>
             <Select
                 options={[
-                    { value: 'yes', label: 'Yes' },
-                    { value: 'no', label: 'No' }
+                    { value: 'Yes', label: 'Yes' },
+                    { value: 'No', label: 'No' }
                 ]}
                 value={formData.functionalUse}
                 onChange={(selected) => handleSelectChange('functionalUse', selected)}
                 placeholder="Select Functional Use"
                 isSearchable
-                required
+             
                 isDisabled={isSubmitting}
             />
         </div>
@@ -301,11 +307,12 @@ const ArtworkDetails = ({
             />
         </div>
 
-            <div className="form-group">
+        <div className="form-group">
             <label>Tool Usage</label>
             <CreatableSelect
+                options={[]}
                 value={formData.toolUsage}
-                onChange={(selected) => handleMultiSelectChange('toolUsage', selected)}
+                onChange={(selected) => handleMultiSelecttoolChange('toolUsage', selected)}
                 placeholder="Select or create tools used"
                 isMulti
                 isSearchable
@@ -319,14 +326,14 @@ const ArtworkDetails = ({
             <label>Handmade <span style={{ color: 'red' }}>*</span></label>
             <Select
                 options={[
-                    { value: 'yes', label: 'Yes' },
-                    { value: 'no', label: 'No' }
+                    { value: 'Yes', label: 'Yes' },
+                    { value: 'No', label: 'No' }
                 ]}
                 value={formData.handmade}
                 onChange={(selected) => handleSelectChange('handmade', selected)}
                 placeholder="Select Handmade Option"
                 isSearchable
-                required
+             
                 isDisabled={isSubmitting}
             />
         </div>
@@ -348,12 +355,12 @@ const ArtworkDetails = ({
             </div>
         </div>
 
-      <div className="form-group">
+        <div className="form-group">
             <div className="form-check">
                 <input
                     type="checkbox"
-                    id="isResinCovered" 
-                    name="isResinCovered" 
+                    id="isResinCovered"
+                    name="isResinCovered"
                     className="form-check-input"
                     checked={formData.isResinCovered || false}
                     onChange={handleInputChange}
@@ -374,7 +381,7 @@ const ArtworkDetails = ({
                 onChange={(selected) => handleSelectChange('condition', selected)}
                 placeholder="Select condition"
                 isSearchable
-                required
+             
                 isDisabled={isSubmitting}
             />
         </div>

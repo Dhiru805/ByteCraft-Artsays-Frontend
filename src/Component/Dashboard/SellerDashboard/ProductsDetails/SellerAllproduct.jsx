@@ -1,30 +1,32 @@
-
 import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../urlconfig';
 import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
 import ConfirmationDialog from '../../ConfirmationDialog';
+import ShippingAddressModal from './ShippingAddressModal';
+
 
 const ApprovedProduct = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [selectedProductToDelete, setSelectedProductToDelete] = useState(null);
+    const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
+    const [selectedProductId, setSelectedProductId] = useState(null);
+
+    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const navigate = useNavigate();
+    const userType = useUserType();
     const [showPopup, setShowPopup] = useState(false);
     const [currentImages, setCurrentImages] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    const [selectedProductToDelete, setSelectedProductToDelete] = useState(null);
-
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE
-    const navigate = useNavigate();
-    const userType = useUserType();
 
     useEffect(() => {
         const fetchProducts = async () => {
             const userId = localStorage.getItem('userId');
-
             try {
                 const result = await getAPI(`/api/getsellerproductbyid/${userId}`, {}, true, false);
                 console.log("Full API Response:", result);
@@ -46,22 +48,31 @@ const ApprovedProduct = () => {
     }, []);
 
 
+    const handleEdit = (product) => {
+        navigate(`/seller/product/update-product`, {
+            state: { productData: product }
+        });
+    };
 
     const filteredProducts = products.filter(product =>
+        product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.userId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
-    const displayedProducts = filteredProducts.slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage);
+    const displayedProducts = filteredProducts.slice(
+        (currentPage - 1) * productsPerPage,
+        currentPage * productsPerPage
+    );
 
     const handlePrevious = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
 
     const handleNext = () => {
-        if (currentPage < totalPages) setCurrentPage(currentPage + 1); // UPDATED
+        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
     };
 
     const handleProductsPerPageChange = (event) => {
@@ -99,8 +110,10 @@ const ApprovedProduct = () => {
         setIsDeleteDialogOpen(true);
     };
 
-
-
+    const openShippingModal = (productId) => {
+        setSelectedProductId(productId);
+        setIsShippingModalOpen(true);
+    };
 
     return (
         <>
@@ -118,7 +131,6 @@ const ApprovedProduct = () => {
                                     onChange={handleProductsPerPageChange}
                                     style={{ minWidth: '70px' }}
                                 >
-                                    {/* <option value="5">5</option> */}
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
@@ -159,17 +171,17 @@ const ApprovedProduct = () => {
                                             <th>Market Price</th>
                                             <th>Selling Price</th>
                                             <th>Date</th>
-                                            <th>Status</th    >
+                                            <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {/* product.mainImage */}
                                         {displayedProducts.map((product, index) => (
                                             <tr key={product._id}>
                                                 <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
                                                 <td>
-                                                    {product.userId.name} {product.userId.lastName}</td>
+                                                    {product.userId.name} {product.userId.lastName}
+                                                </td>
                                                 <td>
                                                     <img
                                                         src={product.mainImage ? `${BASE_URL}${product.mainImage}` : DEFAULT_PROFILE_IMAGE}
@@ -183,11 +195,10 @@ const ApprovedProduct = () => {
                                                             marginRight: '10px',
                                                             cursor: 'pointer'
                                                         }}
-                                                    />{product.productName}</td>
-
+                                                    />
+                                                    {product.productName}
+                                                </td>
                                                 <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(product.marketPrice)).replace(/\.00$/, '')}</td>
-
-
                                                 <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(product.sellingPrice)).replace(/\.00$/, '')}</td>
                                                 <td>{new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
                                                 <td>
@@ -196,25 +207,44 @@ const ApprovedProduct = () => {
                                                     </button>
                                                 </td>
                                                 <td>
-                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/${userType}/Dashboard/allproduct/productinfo/${product._id}`)}>
+                                                    <button
+                                                        className="btn btn-sm btn-outline-info mr-2"
+                                                        onClick={() => navigate(`/seller/product/view-product`, {
+                                                            state: { productData: product }
+                                                        })}
+                                                    >
                                                         <i className="fa fa-eye"></i>
                                                     </button>
+
                                                     <button
-                                                        className="btn btn-sm btn-outline-danger"
+                                                        className="btn btn-sm btn-outline-warning mr-2"
+                                                        onClick={() => handleEdit(product)}
+                                                        title="Edit Product"
+                                                    >
+                                                        <i className="fa fa-edit"></i>
+                                                    </button>
+                                                    <button
+                                                        className="btn btn-sm btn-outline-primary mr-2"
+                                                        onClick={() => openShippingModal(product._id)}
+                                                        title="Manage Shipping Addresses"
+                                                    >
+                                                        <i className="fa fa-map-marker"></i>
+                                                    </button>
+                                                    <button
+                                                        className="btn btn-sm btn-outline-danger mr-2"
                                                         title="Bidding Pass"
-                                                        onClick={() => navigate(`/seller/product-details/bidding-pass`)}
+                                                        onClick={() => navigate('/seller/product/bidding-pass')}
                                                     >
                                                         <i className="fas fa-ticket-alt"></i>
                                                     </button>
                                                     <button
                                                         type="button"
-                                                        className="btn btn-outline-danger btn-sm ml-2"
+                                                        className="btn btn-outline-danger btn-sm"
                                                         title="Delete"
                                                         onClick={() => openDeleteDialog(product)}
                                                     >
                                                         <i className="fa fa-trash-o"></i>
                                                     </button>
-
                                                 </td>
                                             </tr>
                                         ))}
@@ -225,7 +255,6 @@ const ApprovedProduct = () => {
                                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
                                     Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
                                 </span>
-
                                 <ul className="pagination d-flex justify-content-end w-100">
                                     <li
                                         className={`paginate_button page-item ${currentPage === 1 ? 'disabled' : ''}`}
@@ -233,7 +262,6 @@ const ApprovedProduct = () => {
                                     >
                                         <button className="page-link">Previous</button>
                                     </li>
-
                                     {Array.from({ length: totalPages }, (_, index) => index + 1)
                                         .filter((pageNumber) => pageNumber === currentPage)
                                         .map((pageNumber, index, array) => {
@@ -252,7 +280,6 @@ const ApprovedProduct = () => {
                                                     </React.Fragment>
                                                 );
                                             }
-
                                             return (
                                                 <li
                                                     key={pageNumber}
@@ -263,7 +290,6 @@ const ApprovedProduct = () => {
                                                 </li>
                                             );
                                         })}
-
                                     <li
                                         className={`paginate_button page-item ${currentPage === totalPages ? 'disabled' : ''}`}
                                         onClick={handleNext}
@@ -306,7 +332,6 @@ const ApprovedProduct = () => {
                             overflow: 'hidden',
                         }}
                     >
-                        {/* Left Arrow */}
                         <button
                             onClick={goToPreviousImage}
                             style={{
@@ -325,8 +350,6 @@ const ApprovedProduct = () => {
                         >
                             &#10094;
                         </button>
-
-                        {/* Image */}
                         <img
                             src={`${BASE_URL}${currentImages[currentImageIndex]}`}
                             alt="Popup"
@@ -337,8 +360,6 @@ const ApprovedProduct = () => {
                                 borderRadius: '12px',
                             }}
                         />
-
-                        {/* Right Arrow */}
                         <button
                             onClick={goToNextImage}
                             style={{
@@ -368,9 +389,13 @@ const ApprovedProduct = () => {
                     onDeleted={handleDeleteConfirmed}
                 />
             )}
-
+            <ShippingAddressModal
+                isOpen={isShippingModalOpen}
+                onClose={() => setIsShippingModalOpen(false)}
+                productId={selectedProductId}
+            />
         </>
     );
-}
+};
 
 export default ApprovedProduct;

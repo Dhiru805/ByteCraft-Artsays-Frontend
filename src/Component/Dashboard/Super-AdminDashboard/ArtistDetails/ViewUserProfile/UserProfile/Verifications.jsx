@@ -12,14 +12,22 @@ const AccountVerification = ({ userId }) => {
     useEffect(() => {
         const fetchVerificationData = async () => {
             try {
+<<<<<<< HEAD
                 const response = await axios.get(`${process.env.REACT_APP_API_URL}/auth/verificationdetails/${userId}`);
+=======
+                const response = await axios.get(`http://localhost:3001/auth/verificationdetails/${userId}`);
+>>>>>>> 51dcaf1e4c94f817cac3b27402a23fd737bdb29a
                 const data = response.data.verification;
     
                 if (data) {
                     setVerificationType(data.documentType || '');  
                     setDocNumber(data.documentNumber || ''); 
                     if (data.documentFile) {  
+<<<<<<< HEAD
                         setFilePreview(`${process.env.REACT_APP_API_URL}/${data.documentFile}`);
+=======
+                        setFilePreview(`http://localhost:3001/${data.documentFile}`);
+>>>>>>> 51dcaf1e4c94f817cac3b27402a23fd737bdb29a
                         setFileType(data.documentFile.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg');
                     }
                 }

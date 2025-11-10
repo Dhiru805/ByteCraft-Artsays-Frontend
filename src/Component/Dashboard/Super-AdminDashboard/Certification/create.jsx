@@ -204,7 +204,6 @@ function CreateCertification() {
 
   const selectedProduct = products.find((product) => product._id === formData.productId);
 
-
   const userOptions = users.map((user) => ({
     value: user._id,
     label: `${user.name} ${user.lastName || ""}`,
