@@ -33,7 +33,7 @@ function Product() {
                 <button
                   type="button"
                   className="btn btn-secondary mr-2"
-                  onClick={() => navigate(`/artist/productUpload`)}
+                  onClick={() => navigate(`/artist/product/product-upload`)}
                 >
                   <i className="fa fa-plus"></i> Add Product
                 </button>

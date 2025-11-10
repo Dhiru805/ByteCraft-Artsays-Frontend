@@ -457,7 +457,7 @@ const Sidebar = () => {
       {
         label: "Product",
         icon: "fa fa-cart-plus",
-        path: "/seller/product",
+        path: "/seller/product-details",
         subTabs: []
       },
       {
