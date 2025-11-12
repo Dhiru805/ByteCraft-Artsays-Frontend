@@ -1340,7 +1340,7 @@ import getAPI from "../../../api/getAPI";
 const Product = () => {
   const [products, setProducts] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
-
+const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
@@ -1766,7 +1766,7 @@ const Product = () => {
                     </span>
                   )}
                   <img
-                    src={product.mainImage}
+                    src={`${imageBaseURL}${product.mainImage}`}
                     alt={product.productName}
                     //className="h-full w-full object-contain rounded-t-2xl product-img"
                   className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
