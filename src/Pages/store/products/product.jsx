@@ -198,192 +198,192 @@
 //   </div>
 // </aside>
 
-        // {/* Mobile Sidebar Toggle */}
-        // <div className="md:hidden mb-4">
-        //   <button
-        //     onClick={() => setShowFilters(!showFilters)}
-        //     className="w-full py-2 px-4 border border-gray-300 rounded-lg text-sm font-semibold flex items-center justify-center gap-2"
-        //   >
-        //     <svg
-        //       xmlns="http://www.w3.org/2000/svg"
-        //       className="w-5 h-5"
-        //       fill="none"
-        //       viewBox="0 0 24 24"
-        //       stroke="currentColor"
-        //     >
-        //       <path
-        //         strokeLinecap="round"
-        //         strokeLinejoin="round"
-        //         strokeWidth="2"
-        //         d="M3 4h18M3 12h18M3 20h18"
-        //       />
-        //     </svg>
-        //     Filters
-        //   </button>
+//         {/* Mobile Sidebar Toggle */}
+//         <div className="md:hidden mb-4">
+//           <button
+//             onClick={() => setShowFilters(!showFilters)}
+//             className="w-full py-2 px-4 border border-gray-300 rounded-lg text-sm font-semibold flex items-center justify-center gap-2"
+//           >
+//             <svg
+//               xmlns="http://www.w3.org/2000/svg"
+//               className="w-5 h-5"
+//               fill="none"
+//               viewBox="0 0 24 24"
+//               stroke="currentColor"
+//             >
+//               <path
+//                 strokeLinecap="round"
+//                 strokeLinejoin="round"
+//                 strokeWidth="2"
+//                 d="M3 4h18M3 12h18M3 20h18"
+//               />
+//             </svg>
+//             Filters
+//           </button>
 
-        //   {/* Slide-over sidebar for mobile */}
-        //   {showFilters && (
-        //     <div className="fixed inset-0 z-50 flex">
-        //       {/* Background Overlay */}
-        //       <div
-        //         className="fixed inset-0 bg-black bg-opacity-50"
-        //         onClick={() => setShowFilters(false)}
-        //       ></div>
+//           {/* Slide-over sidebar for mobile */}
+//           {showFilters && (
+//             <div className="fixed inset-0 z-50 flex">
+//               {/* Background Overlay */}
+//               <div
+//                 className="fixed inset-0 bg-black bg-opacity-50"
+//                 onClick={() => setShowFilters(false)}
+//               ></div>
 
-        //       {/* Sidebar */}
-        //       <div className="relative bg-white w-72 max-w-full h-full shadow-xl p-5 overflow-y-auto">
-        //         <button
-        //           onClick={() => setShowFilters(false)}
-        //           className="absolute top-3 right-3 text-gray-600"
-        //         >
-        //           ✕
-        //         </button>
+//               {/* Sidebar */}
+//               <div className="relative bg-white w-72 max-w-full h-full shadow-xl p-5 overflow-y-auto">
+//                 <button
+//                   onClick={() => setShowFilters(false)}
+//                   className="absolute top-3 right-3 text-gray-600"
+//                 >
+//                   ✕
+//                 </button>
 
-        //         <h2 className="font-bold text-lg mb-3">Filter by</h2>
-        //         <hr className="mb-3 border-dark" />
+//                 <h2 className="font-bold text-lg mb-3">Filter by</h2>
+//                 <hr className="mb-3 border-dark" />
 
-        //         {/* ✅ Place the same filters here */}
-        //         {/* Sort By, Special Tags, Price, Size, Style, Medium */}
-        //         {/* Sort By */}
-        //         <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-        //           Sort By
-        //         </p>
-        //         <div className="space-y-2 mb-4">
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> New Arrivals
-        //           </label>
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Trending
-        //           </label>
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Price Low to High
-        //           </label>
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Price High to Low
-        //           </label>
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Relevance
-        //           </label>
-        //         </div>
+//                 {/* ✅ Place the same filters here */}
+//                 {/* Sort By, Special Tags, Price, Size, Style, Medium */}
+//                 {/* Sort By */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Sort By
+//                 </p>
+//                 <div className="space-y-2 mb-4">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> New Arrivals
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Trending
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Price Low to High
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Price High to Low
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Relevance
+//                   </label>
+//                 </div>
 
-        //         <hr className="mb-3 border-dark" />
+//                 <hr className="mb-3 border-dark" />
 
-        //         {/* Special Tags */}
-        //         <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-        //           Special Tags
-        //         </p>
-        //         <div className="space-y-2 mb-4">
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Limited Edition
-        //           </label>
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Bestseller
-        //           </label>
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Verified Seller
-        //           </label>
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Exclusive
-        //           </label>
-        //         </div>
+//                 {/* Special Tags */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Special Tags
+//                 </p>
+//                 <div className="space-y-2 mb-4">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Limited Edition
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Bestseller
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Verified Seller
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Exclusive
+//                   </label>
+//                 </div>
 
-        //         <hr className="mb-3 border-dark" />
+//                 <hr className="mb-3 border-dark" />
 
-        //         {/* Price */}
-        //         <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-        //           Price
-        //         </p>
-        //         <div className="flex justify-between text-xs text-gray-600 mb-1">
-        //           <span>₹295</span>
-        //           <span>₹89,700+</span>
-        //         </div>
-        //         <input
-        //           type="range"
-        //           min="295"
-        //           max="89700"
-        //           className="w-full mb-3"
-        //         />
-        //         <div className="space-y-2 mb-4 text-sm">
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Under ₹5,000
-        //           </label>
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> ₹5,000 – ₹10,000
-        //           </label>
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> ₹10,000 – ₹25,000
-        //           </label>
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Above ₹25,000
-        //           </label>
-        //         </div>
+//                 {/* Price */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Price
+//                 </p>
+//                 <div className="flex justify-between text-xs text-gray-600 mb-1">
+//                   <span>₹295</span>
+//                   <span>₹89,700+</span>
+//                 </div>
+//                 <input
+//                   type="range"
+//                   min="295"
+//                   max="89700"
+//                   className="w-full mb-3"
+//                 />
+//                 <div className="space-y-2 mb-4 text-sm">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Under ₹5,000
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> ₹5,000 – ₹10,000
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> ₹10,000 – ₹25,000
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Above ₹25,000
+//                   </label>
+//                 </div>
 
-        //         <hr className="mb-3 border-dark" />
+//                 <hr className="mb-3 border-dark" />
 
-        //         {/* Size */}
-        //         <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-        //           Size
-        //         </p>
-        //         <div className="space-y-2 mb-4">
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Small (&lt;12in)
-        //           </label>
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Medium (12–24in)
-        //           </label>
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Large (24–48in)
-        //           </label>
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Oversized (48in+)
-        //           </label>
-        //         </div>
+//                 {/* Size */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Size
+//                 </p>
+//                 <div className="space-y-2 mb-4">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Small (&lt;12in)
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Medium (12–24in)
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Large (24–48in)
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Oversized (48in+)
+//                   </label>
+//                 </div>
 
-        //         <hr className="mb-3 border-dark" />
+//                 <hr className="mb-3 border-dark" />
 
-        //         {/* Style */}
-        //         <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-        //           Style
-        //         </p>
-        //         <div className="space-y-2 mb-4">
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Abstract
-        //           </label>
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Modern
-        //           </label>
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Traditional
-        //           </label>
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Minimalist
-        //           </label>
-        //         </div>
+//                 {/* Style */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Style
+//                 </p>
+//                 <div className="space-y-2 mb-4">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Abstract
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Modern
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Traditional
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Minimalist
+//                   </label>
+//                 </div>
 
-        //         <hr className="mb-3 border-dark" />
+//                 <hr className="mb-3 border-dark" />
 
-        //         {/* Medium */}
-        //         <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-        //           Medium
-        //         </p>
-        //         <div className="space-y-2">
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Oil
-        //           </label>
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Acrylic
-        //           </label>
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Watercolor
-        //           </label>
-        //           <label className="flex items-center">
-        //             <input type="checkbox" className="mr-2" /> Mixed Media
-        //           </label>
-        //         </div>
-        //       </div>
-        //     </div>
-        //   )}
-        // </div>
+//                 {/* Medium */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Medium
+//                 </p>
+//                 <div className="space-y-2">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Oil
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Acrylic
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Watercolor
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Mixed Media
+//                   </label>
+//                 </div>
+//               </div>
+//             </div>
+//           )}
+//         </div>
 
 //          {/* <!-- Product Grid --> */}
 //         <main className="md:col-span-3">
@@ -415,12 +415,12 @@
 //                 <h2 className="text-base sm:text-lg text-dark font-semibold mt-1">
 //                   Beauty of Joseon Mandala Art By SL
 //                 </h2>
-                // <p className="text-gray-700 text-xs sm:text-sm font-medium flex items-center">
-                //   Pebble Palace Designs
-                //   <span className="ml-1 text-blue-600">
-                //     <MdVerified className="ml-1 text-blue-600 w-4 h-4" />
-                //   </span>
-                // </p>
+//                 <p className="text-gray-700 text-xs sm:text-sm font-medium flex items-center">
+//                   Pebble Palace Designs
+//                   <span className="ml-1 text-blue-600">
+//                     <MdVerified className="ml-1 text-blue-600 w-4 h-4" />
+//                   </span>
+//                 </p>
 
 //                 {/* Rating */}
 //                 <div className="flex items-center gap-2 mt-2 d-none d-md-flex">
@@ -950,46 +950,17 @@
 // };
 // export default Product;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//--------------------------WORKING CODE BEFORE RATING FETCH API INTEGRATION--------------------------
 
 // import React, { useState, useEffect } from "react";
 // import { Heart } from "lucide-react";
+// import { FaStar, FaShoppingCart } from "react-icons/fa";
 // import getAPI from "../../../api/getAPI";
 
 // const Product = () => {
 //   const [products, setProducts] = useState([]);
-//   const [editionTypes, setEditionTypes] = useState([]);
 //   const [showFilters, setShowFilters] = useState(false);
-
+// const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 //   useEffect(() => {
 //     const fetchAllProducts = async () => {
 //       try {
@@ -1010,25 +981,8 @@
 //       }
 //     };
 
-//     const fetchEditionTypes = async () => {
-//       try {
-//         const result = await getAPI("/api/getproducteditiontypes", {}, true, false);
-//         if (result && Array.isArray(result.data)) {
-//           setEditionTypes(result.data);
-//         }
-//       } catch (error) {
-//         console.error("Error fetching edition types:", error);
-//       }
-//     };
-
 //     fetchAllProducts();
-//     fetchEditionTypes();
 //   }, []);
-
-//   const getEditionLabel = (editionType) => {
-//     const type = editionTypes.find((et) => et._id === editionType);
-//     return type ? type.editionName || type.name : "";
-//   };
 
 //   return (
 //     <div className="max-w-[1440px] mx-auto mb-4">
@@ -1036,11 +990,17 @@
 //       <div className="w-full bg-white py-3 px-3 sm:px-6">
 //         <div className="flex flex-wrap items-center justify-between gap-3">
 //           <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-//             <a href="#" className="hover:text-red-500">Home</a>
+//             <a href="#" className="hover:text-red-500">
+//               Home
+//             </a>
 //             <span>/</span>
-//             <a href="#" className="hover:text-red-500">Store</a>
+//             <a href="#" className="hover:text-red-500">
+//               Store
+//             </a>
 //             <span>/</span>
-//             <a href="#" className="hover:text-red-500">Paintings</a>
+//             <a href="#" className="hover:text-red-500">
+//               Paintings
+//             </a>
 //             <span>/</span>
 //             <span className="font-medium text-gray-900">Abstract</span>
 //           </nav>
@@ -1072,7 +1032,539 @@
 //       {/* --- Main Layout --- */}
 //       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6">
 //         {/* --- Sidebar Filters --- */}
-//          <aside className="hidden md:block rounded-xl filter-sidebar">
+//         <aside className="hidden md:block rounded-xl filter-sidebar">
+//           <h2 className="font-bold text-lg mb-3">Filter by</h2>
+//           <hr className="mb-3 border-dark" />
+
+//           {/* Sort By */}
+//           <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//             Sort By
+//           </p>
+//           <div className="space-y-2 mb-4">
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> New Arrivals
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Trending
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Price Low to High
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Price High to Low
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Relevance
+//             </label>
+//           </div>
+
+//           <hr className="mb-3 border-dark" />
+
+//           {/* Special Tags */}
+//           <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//             Special Tags
+//           </p>
+//           <div className="space-y-2 mb-4">
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Limited Edition
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Bestseller
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Verified Seller
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Exclusive
+//             </label>
+//           </div>
+
+//           <hr className="mb-3 border-dark" />
+
+//           {/* Price */}
+//           <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//             Price
+//           </p>
+//           <input type="range" min="295" max="89700" className="w-full" />
+//           <div className="flex justify-between text-xs text-gray-600 mb-2">
+//             <span>₹295</span>
+//             <span>₹89,700+</span>
+//           </div>
+//           <div className="space-y-2 mb-4 text-sm">
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Under ₹5,000
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> ₹5,000 – ₹10,000
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> ₹10,000 – ₹25,000
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Above ₹25,000
+//             </label>
+//           </div>
+
+//           <hr className="mb-3 border-dark" />
+
+//           {/* Size */}
+//           <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//             Size
+//           </p>
+//           <div className="space-y-2 mb-4">
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Small (&lt;12in)
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Medium (12–24in)
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Large (24–48in)
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Oversized (48in+)
+//             </label>
+//           </div>
+
+//           <hr className="mb-3 border-dark" />
+
+//           {/* Style */}
+//           <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//             Style
+//           </p>
+//           <div className="space-y-2 mb-4">
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Abstract
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Modern
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Traditional
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Minimalist
+//             </label>
+//           </div>
+
+//           <hr className="mb-3 border-dark" />
+
+//           {/* Medium */}
+//           <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//             Medium
+//           </p>
+//           <div className="space-y-2">
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Oil
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Acrylic
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Watercolor
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Mixed Media
+//             </label>
+//           </div>
+//         </aside>
+
+//  {/* Mobile Sidebar Toggle */}
+//         <div className="md:hidden mb-4">
+//           <button
+//             onClick={() => setShowFilters(!showFilters)}
+//             className="w-full py-2 px-4 border border-gray-300 rounded-lg text-sm font-semibold flex items-center justify-center gap-2"
+//           >
+//             <svg
+//               xmlns="http://www.w3.org/2000/svg"
+//               className="w-5 h-5"
+//               fill="none"
+//               viewBox="0 0 24 24"
+//               stroke="currentColor"
+//             >
+//               <path
+//                 strokeLinecap="round"
+//                 strokeLinejoin="round"
+//                 strokeWidth="2"
+//                 d="M3 4h18M3 12h18M3 20h18"
+//               />
+//             </svg>
+//             Filters
+//           </button>
+
+//           {/* Slide-over sidebar for mobile */}
+//           {showFilters && (
+//             <div className="fixed inset-0 z-50 flex">
+//               {/* Background Overlay */}
+//               <div
+//                 className="fixed inset-0 bg-black bg-opacity-50"
+//                 onClick={() => setShowFilters(false)}
+//               ></div>
+
+//               {/* Sidebar */}
+//               <div className="relative bg-white w-72 max-w-full h-full shadow-xl p-5 overflow-y-auto">
+//                 <button
+//                   onClick={() => setShowFilters(false)}
+//                   className="absolute top-3 right-3 text-gray-600"
+//                 >
+//                   ✕
+//                 </button>
+
+//                 <h2 className="font-bold text-lg mb-3">Filter by</h2>
+//                 <hr className="mb-3 border-dark" />
+
+//                 {/* ✅ Place the same filters here */}
+//                 {/* Sort By, Special Tags, Price, Size, Style, Medium */}
+//                 {/* Sort By */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Sort By
+//                 </p>
+//                 <div className="space-y-2 mb-4">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> New Arrivals
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Trending
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Price Low to High
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Price High to Low
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Relevance
+//                   </label>
+//                 </div>
+
+//                 <hr className="mb-3 border-dark" />
+
+//                 {/* Special Tags */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Special Tags
+//                 </p>
+//                 <div className="space-y-2 mb-4">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Limited Edition
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Bestseller
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Verified Seller
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Exclusive
+//                   </label>
+//                 </div>
+
+//                 <hr className="mb-3 border-dark" />
+
+//                 {/* Price */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Price
+//                 </p>
+//                 <div className="flex justify-between text-xs text-gray-600 mb-1">
+//                   <span>₹295</span>
+//                   <span>₹89,700+</span>
+//                 </div>
+//                 <input
+//                   type="range"
+//                   min="295"
+//                   max="89700"
+//                   className="w-full mb-3"
+//                 />
+//                 <div className="space-y-2 mb-4 text-sm">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Under ₹5,000
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> ₹5,000 – ₹10,000
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> ₹10,000 – ₹25,000
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Above ₹25,000
+//                   </label>
+//                 </div>
+
+//                 <hr className="mb-3 border-dark" />
+
+//                 {/* Size */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Size
+//                 </p>
+//                 <div className="space-y-2 mb-4">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Small (&lt;12in)
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Medium (12–24in)
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Large (24–48in)
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Oversized (48in+)
+//                   </label>
+//                 </div>
+
+//                 <hr className="mb-3 border-dark" />
+
+//                 {/* Style */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Style
+//                 </p>
+//                 <div className="space-y-2 mb-4">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Abstract
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Modern
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Traditional
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Minimalist
+//                   </label>
+//                 </div>
+
+//                 <hr className="mb-3 border-dark" />
+
+//                 {/* Medium */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Medium
+//                 </p>
+//                 <div className="space-y-2">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Oil
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Acrylic
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Watercolor
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Mixed Media
+//                   </label>
+//                 </div>
+//               </div>
+//             </div>
+//           )}
+//         </div>
+
+//         {/* --- Products Grid --- */}
+//         {/* <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-5 place-items-stretch md:col-span-3"> */}
+//           <main className="md:col-span-3">
+//            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+//             {/* <!-- Product Card --> */}
+//           {products.map((product) => {
+//             const hasDiscount = product.sellingPrice < product.marketPrice;
+//             const discountPercent = hasDiscount
+//               ? Math.round(
+//                   ((product.marketPrice - product.sellingPrice) /
+//                     product.marketPrice) *
+//                     100
+//                 )
+//               : 0;
+
+//             return (
+//               <div
+//                 key={product._id}
+//                 className=" rounded-2xl shadow-md overflow-hidden flex flex-col justify-between product-card transition-transform duration-300 hover:-translate-y-1 m-3"
+//               //className="mx-auto product-card"
+//               >
+//                 {/* Image Section */}
+//                 {/* <div className="relative h-64 flex items-center justify-center p-3 bg-gray-50"> */}
+//                   <div className="relative p-img">
+//                   {product.editionType && (
+//                     <span className="absolute top-3 left-3 text-white bg-dark text-sm font-semibold px-2 py-0.5 rounded-full shadow">
+//                       {product.editionType}
+//                     </span>
+//                   )}
+//                   <img
+//                     src={`${imageBaseURL}${product.mainImage}`}
+//                     alt={product.productName}
+//                     //className="h-full w-full object-contain rounded-t-2xl product-img"
+//                   className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
+//                   />
+//                   <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
+//                     <Heart className="w-5 h-5 text-white" />
+//                   </button>
+//                 </div>
+
+//                 {/* Product Info */}
+//                 <div
+//                  //className="p-3 flex flex-col justify-between flex-grow"
+//                  className="p-3 product-info"
+//                  >
+//                   <h2
+//                     //className="text-base sm:text-lg text-dark font-semibold mt-1 line-clamp-2"
+//                     className="text-base sm:text-lg text-dark font-semibold mt-1"
+//                     title={product.productName}
+//                   >
+//                     {product.productName}
+//                   </h2>
+
+//                 <p className="text-gray-700 text-xs sm:text-sm font-medium flex items-center"title={product.productName}
+//                   >
+//                     {product.productName}
+//                 </p>
+
+//                 {/* Rating */}
+//                  <div className="flex items-center gap-2 mt-2 d-none d-md-flex">
+//                    <span className="text-sm font-bold text-orange-700">4.8</span>
+//                   <FaStar className="text-yellow-400" />
+//                    <span className="text-gray-500 text-sm">(254 Reviews)</span>
+
+//                  </div>
+
+//                   <div className="flex items-center gap-2 mt-2">
+//                     {hasDiscount && (
+//                       <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+//                         {discountPercent}% OFF
+//                       </span>
+//                     )}
+//                     {hasDiscount ? (
+//                       <>
+//                         <span className="text-gray-400 line-through">
+//                           ₹{product.marketPrice}
+//                         </span>
+//                         <span className="text-lg font-bold text-gray-900">
+//                           ₹{product.sellingPrice}
+//                         </span>
+//                       </>
+//                     ) : (
+//                       <span className="text-lg font-bold text-gray-900">
+//                         ₹{product.sellingPrice}
+//                       </span>
+//                     )}
+//                   </div>
+//                 </div>
+
+//                  <div className="p-3 product-button d-none d-md-block">
+//                 {/* Buttons */}
+//                 <div className="flex justify-between gap-3">
+//                   <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart">
+//                     Add to Cart
+//                   </button>
+//                   <button className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now">
+//                     Buy Now
+//                   </button>
+//                 </div>
+//               </div>
+//               </div>
+//             );
+//           })}
+//         </div>
+//         </main>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Product;
+
+//-----------------------------ORDER REVERSED VERSION WITH RATINGS ADDED-----------------------------
+// import React, { useState, useEffect } from "react";
+// import { Heart } from "lucide-react";
+// import { FaStar, FaShoppingCart } from "react-icons/fa";
+// import getAPI from "../../../api/getAPI";
+
+// const Product = () => {
+//   const [products, setProducts] = useState([]);
+//   const [showFilters, setShowFilters] = useState(false);
+//   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+
+//   useEffect(() => {
+//     const fetchAllProducts = async () => {
+//       try {
+//         const [res1, res2, ratingRes] = await Promise.all([
+//           getAPI("/api/getstatusapprovedproduct", {}, true, false),
+//           getAPI("/api/getstatusapprovedproductforSELLER", {}, true, false),
+//           getAPI("/api/reviews/aggregated", {}, true, false),
+//         ]);
+
+//         const products1 =
+//           res1?.data?.data?.filter((p) => p.status === "Approved") || [];
+//         const products2 =
+//           res2?.data?.data?.filter((p) => p.status === "Approved") || [];
+//         const allProducts = [...products1, ...products2].reverse();
+
+//         const ratings = ratingRes?.data?.data || [];
+//         const productsWithRatings = allProducts.map((product) => {
+//           const matchedRating = ratings.find(
+//             (r) => r.productId === product._id
+//           );
+//           return {
+//             ...product,
+//             averageRating: matchedRating?.averageRating || 0,
+//             totalReviews: matchedRating?.totalReviews || 0,
+//           };
+//         });
+
+//         setProducts(productsWithRatings);
+//       } catch (error) {
+//         console.error("Error fetching products or ratings:", error);
+//         setProducts([]);
+//       }
+//     };
+
+//     fetchAllProducts();
+//   }, []);
+
+//   return (
+//     <div className="max-w-[1440px] mx-auto mb-4">
+//       {/* --- Search and Breadcrumb --- */}
+//       <div className="w-full bg-white py-3 px-3 sm:px-6">
+//         <div className="flex flex-wrap items-center justify-between gap-3">
+//           <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
+//             <a href="#" className="hover:text-red-500">
+//               Home
+//             </a>
+//             <span>/</span>
+//             <a href="#" className="hover:text-red-500">
+//               Store
+//             </a>
+//             <span>/</span>
+//             <a href="#" className="hover:text-red-500">
+//               Paintings
+//             </a>
+//             <span>/</span>
+//             <span className="font-medium text-gray-900">Abstract</span>
+//           </nav>
+
+//           <div className="relative w-full sm:w-64">
+//             <input
+//               type="text"
+//               placeholder="Search"
+//               className="w-full pl-10 pr-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400"
+//             />
+//             <svg
+//               xmlns="http://www.w3.org/2000/svg"
+//               className="w-5 h-5 absolute left-3 top-2.5 text-gray-400"
+//               fill="none"
+//               viewBox="0 0 24 24"
+//               stroke="currentColor"
+//             >
+//               <path
+//                 strokeLinecap="round"
+//                 strokeLinejoin="round"
+//                 strokeWidth="2"
+//                 d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"
+//               />
+//             </svg>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Main Layout */}
+//       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6">
+//         {/* Sidebar Filters (hidden on mobile, toggleable) */}
+//         <aside className="hidden md:block rounded-xl filter-sidebar">
 //           {/* All your filter sections here (unchanged) */}
 //           <h2 className="font-bold text-lg mb-3">Filter by</h2>
 
@@ -1211,88 +1703,297 @@
 //           </div>
 //         </aside>
 
-//         {/* --- Products Grid --- */}
-//         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-5 place-items-stretch md:col-span-3">
-//           {products.map((product) => {
-//             const hasDiscount = product.sellingPrice < product.marketPrice;
-//             const discountPercent = hasDiscount
-//               ? Math.round(
-//                   ((product.marketPrice - product.sellingPrice) / product.marketPrice) * 100
-//                 )
-//               : 0;
+//         {/* Mobile Sidebar Toggle */}
+//         <div className="md:hidden mb-4">
+//           <button
+//             onClick={() => setShowFilters(!showFilters)}
+//             className="w-full py-2 px-4 border border-gray-300 rounded-lg text-sm font-semibold flex items-center justify-center gap-2"
+//           >
+//             <svg
+//               xmlns="http://www.w3.org/2000/svg"
+//               className="w-5 h-5"
+//               fill="none"
+//               viewBox="0 0 24 24"
+//               stroke="currentColor"
+//             >
+//               <path
+//                 strokeLinecap="round"
+//                 strokeLinejoin="round"
+//                 strokeWidth="2"
+//                 d="M3 4h18M3 12h18M3 20h18"
+//               />
+//             </svg>
+//             Filters
+//           </button>
 
-//             const editionLabel = getEditionLabel(product.editionType);
-
-//             return (
+//           {/* Slide-over sidebar for mobile */}
+//           {showFilters && (
+//             <div className="fixed inset-0 z-50 flex">
+//               {/* Background Overlay */}
 //               <div
-//                 key={product._id}
-//                 className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col justify-between product-card transition-transform duration-300 hover:-translate-y-1"
-//               >
-//                 {/* Image Section */}
-//                 <div className="relative h-64 flex items-center justify-center p-3 bg-gray-50">
-//                   {editionLabel && (
-//                     <span className="absolute top-3 left-3 text-white bg-black text-xs font-semibold px-2 py-0.5 rounded-full shadow">
-//                       {editionLabel}
-//                     </span>
-//                   )}
-//                   <img
-//                     src={product.mainImage}
-//                     alt={product.productName}
-//                     className="h-full w-full object-contain rounded-t-2xl"
-//                   />
-//                   <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
-//                     <Heart className="w-5 h-5 text-white" />
-//                   </button>
+//                 className="fixed inset-0 bg-black bg-opacity-50"
+//                 onClick={() => setShowFilters(false)}
+//               ></div>
+
+//               {/* Sidebar */}
+//               <div className="relative bg-white w-72 max-w-full h-full shadow-xl p-5 overflow-y-auto">
+//                 <button
+//                   onClick={() => setShowFilters(false)}
+//                   className="absolute top-3 right-3 text-gray-600"
+//                 >
+//                   ✕
+//                 </button>
+
+//                 <h2 className="font-bold text-lg mb-3">Filter by</h2>
+//                 <hr className="mb-3 border-dark" />
+
+//                 {/* ✅ Place the same filters here */}
+//                 {/* Sort By, Special Tags, Price, Size, Style, Medium */}
+//                 {/* Sort By */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Sort By
+//                 </p>
+//                 <div className="space-y-2 mb-4">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> New Arrivals
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Trending
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Price Low to High
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Price High to Low
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Relevance
+//                   </label>
 //                 </div>
 
-//                 {/* Product Info */}
-//                 <div className="p-3 flex flex-col justify-between flex-grow">
-//                   <h2
-//                     className="text-base sm:text-lg text-dark font-semibold mt-1 line-clamp-2"
-//                     title={product.productName}
-//                   >
-//                     {product.productName}
-//                   </h2>
+//                 <hr className="mb-3 border-dark" />
 
-//                   <div className="flex items-center gap-2 mt-2">
-//                     {hasDiscount && (
-//                       <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-//                         {discountPercent}% OFF
-//                       </span>
-//                     )}
-//                     {hasDiscount ? (
-//                       <>
-//                         <span className="text-gray-400 line-through">₹{product.marketPrice}</span>
-//                         <span className="text-lg font-bold text-gray-900">₹{product.sellingPrice}</span>
-//                       </>
-//                     ) : (
-//                      <>
-//                      <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-//                         {discountPercent}% OFF
-//                       </span>
-//                      <span className="text-gray-400 line-through">₹{product.marketPrice}</span>
-//                       <span className="text-lg font-bold text-gray-900">₹{product.sellingPrice}</span>
-//                       </>
-
-//                     )}
-//                   </div>
+//                 {/* Special Tags */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Special Tags
+//                 </p>
+//                 <div className="space-y-2 mb-4">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Limited Edition
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Bestseller
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Verified Seller
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Exclusive
+//                   </label>
 //                 </div>
 
-//                 {/* Buttons */}
-//                 <div className="p-3">
-//                   <div className="flex justify-between gap-3">
-//                     <button className="flex-1 border border-dark rounded-full text-dark py-2 font-semibold hover:bg-gray-100">
-//                       Add to Cart
-//                     </button>
-//                     <button className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow hover:bg-red-600">
-//                       Buy Now
-//                     </button>
-//                   </div>
+//                 <hr className="mb-3 border-dark" />
+
+//                 {/* Price */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Price
+//                 </p>
+//                 <div className="flex justify-between text-xs text-gray-600 mb-1">
+//                   <span>₹295</span>
+//                   <span>₹89,700+</span>
+//                 </div>
+//                 <input
+//                   type="range"
+//                   min="295"
+//                   max="89700"
+//                   className="w-full mb-3"
+//                 />
+//                 <div className="space-y-2 mb-4 text-sm">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Under ₹5,000
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> ₹5,000 – ₹10,000
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> ₹10,000 – ₹25,000
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Above ₹25,000
+//                   </label>
+//                 </div>
+
+//                 <hr className="mb-3 border-dark" />
+
+//                 {/* Size */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Size
+//                 </p>
+//                 <div className="space-y-2 mb-4">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Small (&lt;12in)
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Medium (12–24in)
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Large (24–48in)
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Oversized (48in+)
+//                   </label>
+//                 </div>
+
+//                 <hr className="mb-3 border-dark" />
+
+//                 {/* Style */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Style
+//                 </p>
+//                 <div className="space-y-2 mb-4">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Abstract
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Modern
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Traditional
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Minimalist
+//                   </label>
+//                 </div>
+
+//                 <hr className="mb-3 border-dark" />
+
+//                 {/* Medium */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Medium
+//                 </p>
+//                 <div className="space-y-2">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Oil
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Acrylic
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Watercolor
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Mixed Media
+//                   </label>
 //                 </div>
 //               </div>
-//             );
-//           })}
+//             </div>
+//           )}
 //         </div>
+
+//         {/* --- Products Grid --- */}
+//         <main className="md:col-span-3">
+//           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+//             {products.map((product) => {
+//               const hasDiscount = product.sellingPrice < product.marketPrice;
+//               const discountPercent = hasDiscount
+//                 ? Math.round(
+//                     ((product.marketPrice - product.sellingPrice) /
+//                       product.marketPrice) *
+//                       100
+//                   )
+//                 : 0;
+
+//               return (
+//                 <div
+//                   key={product._id}
+//                   className="rounded-2xl shadow-md overflow-hidden flex flex-col justify-between product-card transition-transform duration-300 hover:-translate-y-1 m-3"
+//                 >
+//                   {/* Image */}
+//                   <div className="relative p-img">
+//                     {product.editionType && (
+//                       <span className="absolute top-3 left-3 text-white bg-dark text-sm font-semibold px-2 py-0.5 rounded-full shadow">
+//                         {product.editionType}
+//                       </span>
+//                     )}
+//                     <img
+//                       src={`${imageBaseURL}${product.mainImage}`}
+//                       alt={product.productName}
+//                       className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
+//                     />
+//                     <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
+//                       <Heart className="w-5 h-5 text-white" />
+//                     </button>
+//                   </div>
+
+//                   {/* Product Info */}
+//                   <div className="p-3 product-info">
+//                     <h2
+//                       className="text-base sm:text-lg text-dark font-semibold mt-1"
+//                       title={product.productName}
+//                     >
+//                       {product.productName}
+//                     </h2>
+
+//                     <p
+//                       className="text-gray-700 text-xs sm:text-sm font-medium flex items-center"
+//                       title={product.productName}
+//                     >
+//                       {product.productName}
+//                     </p>
+
+//                     {/* ✅ Dynamic Rating */}
+//                     <div className="flex items-center gap-2 mt-2">
+//                       <span className="text-sm font-bold text-orange-700">
+//                         {product.averageRating
+//                           ? product.averageRating.toFixed(1)
+//                           : "N/A"}
+//                       </span>
+//                       <FaStar className="text-yellow-400" />
+//                       <span className="text-gray-500 text-sm">
+//                         ({product.totalReviews || 0} Reviews)
+//                       </span>
+//                     </div>
+
+//                     {/* Price */}
+//                     <div className="flex items-center gap-2 mt-2">
+//                       {hasDiscount && (
+//                         <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+//                           {discountPercent}% OFF
+//                         </span>
+//                       )}
+//                       {hasDiscount ? (
+//                         <>
+//                           <span className="text-gray-400 line-through">
+//                             ₹{product.marketPrice}
+//                           </span>
+//                           <span className="text-lg font-bold text-gray-900">
+//                             ₹{product.sellingPrice}
+//                           </span>
+//                         </>
+//                       ) : (
+//                         <span className="text-lg font-bold text-gray-900">
+//                           ₹{product.sellingPrice}
+//                         </span>
+//                       )}
+//                     </div>
+//                   </div>
+
+//                   {/* Buttons */}
+//                   <div className="p-3 product-button d-none d-md-block">
+//                     <div className="flex justify-between gap-3">
+//                       <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart">
+//                         Add to Cart
+//                       </button>
+//                       <button className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now">
+//                         Buy Now
+//                       </button>
+//                     </div>
+//                   </div>
+//                 </div>
+//               );
+//             })}
+//           </div>
+//         </main>
 //       </div>
 //     </div>
 //   );
@@ -1300,69 +2001,161 @@
 
 // export default Product;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//----------------------------IMPROVED RATING UI AND ADDED ARTIST/SELLER NAME FETCHING ALONG WITH PAGINATION----------------------------//
 
 import React, { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
+import { FaStar, FaShoppingCart } from "react-icons/fa";
+import { FiChevronRight } from "react-icons/fi";
+import { FiChevronLeft } from "react-icons/fi";
 import getAPI from "../../../api/getAPI";
 
 const Product = () => {
   const [products, setProducts] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
-const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
+
+  const indexOfLastProduct = currentPage * itemsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
+  const currentProducts = products.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
+
+  const totalPages = Math.ceil(products.length / itemsPerPage);
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const goToPrevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+  };
+
+  // useEffect(() => {
+  //   const fetchAllProducts = async () => {
+  //     try {
+  //       const [res1, res2, ratingRes] = await Promise.all([
+  //         getAPI("/api/getstatusapprovedproduct", {}, true, false),
+  //         getAPI("/api/getstatusapprovedproductforSELLER", {}, true, false),
+  //         getAPI("/api/reviews/aggregated", {}, true, false),
+  //       ]);
+
+  //       const products1 =
+  //         res1?.data?.data?.filter((p) => p.status === "Approved") || [];
+  //       const products2 =
+  //         res2?.data?.data?.filter((p) => p.status === "Approved") || [];
+
+  //       const allProducts = [
+  //         ...(products1 || []),
+  //         ...(products2 || []),
+  //       ].reverse();
+
+  //       const ratings = ratingRes?.data?.data || [];
+
+  //       const productsWithRatings = allProducts.map((product) => {
+  //         const matchedRating = ratings.find(
+  //           (r) => r.productId === product._id
+  //         );
+  //         const avg =
+  //           matchedRating && matchedRating.averageRating != null
+  //             ? Number(matchedRating.averageRating)
+  //             : null;
+  //         const reviewCount =
+  //           matchedRating?.reviewCount ?? matchedRating?.totalReviews ?? 0;
+
+  //         return {
+  //           ...product,
+  //           averageRating: avg,
+  //           reviewCount,
+  //         };
+  //       });
+
+  //       setProducts(productsWithRatings);
+  //     } catch (error) {
+  //       console.error("Error fetching products or ratings:", error);
+  //       setProducts([]);
+  //     }
+  //   };
+
+  //   fetchAllProducts();
+  // }, []);
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
-        const [res1, res2] = await Promise.all([
+        const [res1, res2, ratingRes, badgeUsersRes] = await Promise.all([
           getAPI("/api/getstatusapprovedproduct", {}, true, false),
           getAPI("/api/getstatusapprovedproductforSELLER", {}, true, false),
+          getAPI("/api/reviews/aggregated", {}, true, false),
+          getAPI("/api/admin/badges", {}, true, false),
         ]);
 
         const products1 =
           res1?.data?.data?.filter((p) => p.status === "Approved") || [];
         const products2 =
           res2?.data?.data?.filter((p) => p.status === "Approved") || [];
+        const allProducts = [
+          ...(products1 || []),
+          ...(products2 || []),
+        ].reverse();
 
-        setProducts([...products1, ...products2]);
+        const ratings = ratingRes?.data?.data || [];
+        const productsWithRatings = allProducts.map((product) => {
+          const matchedRating = ratings.find(
+            (r) => r.productId === product._id
+          );
+          const avg = matchedRating?.averageRating
+            ? Number(matchedRating.averageRating)
+            : null;
+          const reviewCount = matchedRating?.reviewCount ?? 0;
+          return { ...product, averageRating: avg, reviewCount };
+        });
+
+        const badgeUsers = badgeUsersRes?.data?.users || [];
+        const userBadgeMap = {};
+        badgeUsers.forEach((user) => {
+          userBadgeMap[user._id] = user.verified?.[0]?.badgeImage
+            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.verified[0].badgeImage}`
+            : null;
+        });
+
+        const productsWithBadges = productsWithRatings.map((p) => ({
+          ...p,
+          sellerBadgeImage: userBadgeMap[p.user?._id],
+        }));
+
+        setProducts(productsWithBadges);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Error fetching products or badges:", error);
         setProducts([]);
       }
     };
 
     fetchAllProducts();
   }, []);
+
+  const renderStars = (averageRating) => {
+    if (averageRating == null) {
+      return [1, 2, 3, 4, 5].map((s) => (
+        <FaStar key={s} className="text-gray-300" />
+      ));
+    }
+
+    const filled = Math.round(averageRating);
+    return [1, 2, 3, 4, 5].map((s) => (
+      <FaStar
+        key={s}
+        className={s <= filled ? "text-yellow-400" : "text-gray-300"}
+      />
+    ));
+  };
 
   return (
     <div className="max-w-[1440px] mx-auto mb-4">
@@ -1409,11 +2202,13 @@ const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
         </div>
       </div>
 
-      {/* --- Main Layout --- */}
+      {/* Main Layout */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6">
-        {/* --- Sidebar Filters --- */}
+        {/* Sidebar Filters (hidden on mobile, toggleable) */}
         <aside className="hidden md:block rounded-xl filter-sidebar">
+          {/* All your filter sections here (unchanged) */}
           <h2 className="font-bold text-lg mb-3">Filter by</h2>
+
           <hr className="mb-3 border-dark" />
 
           {/* Sort By */}
@@ -1549,7 +2344,7 @@ const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
           </div>
         </aside>
 
- {/* Mobile Sidebar Toggle */}
+        {/* Mobile Sidebar Toggle */}
         <div className="md:hidden mb-4">
           <button
             onClick={() => setShowFilters(!showFilters)}
@@ -1572,16 +2367,12 @@ const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
             Filters
           </button>
 
-          {/* Slide-over sidebar for mobile */}
           {showFilters && (
             <div className="fixed inset-0 z-50 flex">
-              {/* Background Overlay */}
               <div
                 className="fixed inset-0 bg-black bg-opacity-50"
                 onClick={() => setShowFilters(false)}
-              ></div>
-
-              {/* Sidebar */}
+              />
               <div className="relative bg-white w-72 max-w-full h-full shadow-xl p-5 overflow-y-auto">
                 <button
                   onClick={() => setShowFilters(false)}
@@ -1589,11 +2380,8 @@ const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
                 >
                   ✕
                 </button>
-
                 <h2 className="font-bold text-lg mb-3">Filter by</h2>
                 <hr className="mb-3 border-dark" />
-
-                {/* ✅ Place the same filters here */}
                 {/* Sort By, Special Tags, Price, Size, Style, Medium */}
                 {/* Sort By */}
                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
@@ -1736,103 +2524,187 @@ const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
           )}
         </div>
 
-        {/* --- Products Grid --- */}
-        {/* <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-5 place-items-stretch md:col-span-3"> */}
-          <main className="md:col-span-3">
-           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {/* <!-- Product Card --> */}
-          {products.map((product) => {
-            const hasDiscount = product.sellingPrice < product.marketPrice;
-            const discountPercent = hasDiscount
-              ? Math.round(
-                  ((product.marketPrice - product.sellingPrice) /
-                    product.marketPrice) *
-                    100
-                )
-              : 0;
+        {/* Products Grid */}
+        <main className="md:col-span-3">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {currentProducts.map((product) => {
+              const hasDiscount = product.sellingPrice < product.marketPrice;
+              const discountPercent = hasDiscount
+                ? Math.round(
+                    ((product.marketPrice - product.sellingPrice) /
+                      product.marketPrice) *
+                      100
+                  )
+                : 0;
 
-            return (
-              <div
-                key={product._id}
-                className=" rounded-2xl shadow-md overflow-hidden flex flex-col justify-between product-card transition-transform duration-300 hover:-translate-y-1 m-3"
-              //className="mx-auto product-card"
-              >
-                {/* Image Section */}
-                {/* <div className="relative h-64 flex items-center justify-center p-3 bg-gray-50"> */}
-                  <div className="relative p-img">
-                  {product.editionType && (
-                    <span className="absolute top-3 left-3 text-white bg-dark text-sm font-semibold px-2 py-0.5 rounded-full shadow">
-                      {product.editionType}
-                    </span>
-                  )}
-                  <img
-                    src={`${imageBaseURL}${product.mainImage}`}
-                    alt={product.productName}
-                    //className="h-full w-full object-contain rounded-t-2xl product-img"
-                  className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
-                  />
-                  <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
-                    <Heart className="w-5 h-5 text-white" />
-                  </button>
-                </div>
+              const average = product.averageRating;
+              const reviewCount = product.reviewCount ?? 0;
 
-                {/* Product Info */}
+              return (
                 <div
-                 //className="p-3 flex flex-col justify-between flex-grow"
-                 className="p-3 product-info"
-                 >
-                  <h2
-                    //className="text-base sm:text-lg text-dark font-semibold mt-1 line-clamp-2"
-                    className="text-base sm:text-lg text-dark font-semibold mt-1"
-                    title={product.productName}
-                  >
-                    {product.productName}
-                  </h2>
-
-                <p className="text-gray-700 text-xs sm:text-sm font-medium flex items-center"title={product.productName}
-                  >
-                    {product.productName}
-                </p>
-
-
-                  <div className="flex items-center gap-2 mt-2">
-                    {hasDiscount && (
-                      <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                        {discountPercent}% OFF
+                  key={product._id}
+                  className="rounded-2xl shadow-md overflow-hidden flex flex-col justify-between product-card transition-transform duration-300 hover:-translate-y-1 m-3"
+                >
+                  {/* Image */}
+                  <div className="relative p-img">
+                    {product.editionType && (
+                      <span className="absolute top-3 left-3 text-white bg-dark text-sm font-semibold px-2 py-0.5 rounded-full shadow">
+                        {product.editionType}
                       </span>
                     )}
-                    {hasDiscount ? (
-                      <>
-                        <span className="text-gray-400 line-through">
-                          ₹{product.marketPrice}
+                    <img
+                      src={`${imageBaseURL}${product.mainImage}`}
+                      alt={product.productName}
+                      className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
+                    />
+                    <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
+                      <Heart className="w-5 h-5 text-white" />
+                    </button>
+                  </div>
+
+                  {/* Product Info */}
+                  <div className="p-3 product-info">
+                    <h2
+                      className="text-base sm:text-lg text-dark font-semibold mt-1"
+                      title={product.productName}
+                    >
+                      {product.productName}
+                    </h2>
+
+                    {/* Artist name from populated userId */}
+                    <p
+                      className="text-gray-700 text-xs sm:text-sm font-medium flex items-center"
+                      title={`${product.userId?.name ?? ""} ${
+                        product.userId?.lastName ?? ""
+                      }`}
+                    >
+                      {product.userId?.name ||
+                        product.userId?.firstName ||
+                        "Unknown"}{" "}
+                      {product.userId?.lastName ? product.userId.lastName : ""}
+                    </p>
+
+                    
+                    {/*badges*/}
+                    <span className="font-semibold">
+                      {product.user?.username}
+                    </span>
+                    {product.sellerBadgeImage && (
+                      <img
+                        src={product.sellerBadgeImage}
+                        alt="badge"
+                        className="w-5 h-5 object-contain"
+                      />
+                    )}
+
+                    {/* Rating */}
+                    {average == null || reviewCount === 0 ? (
+                      <div className="flex items-center gap-2 mt-2 text-gray-500 italic">
+                        No rating available, be the first to review!
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="text-sm font-bold text-orange-700">
+                          {Number(average).toFixed(1)}
                         </span>
+                        <div className="flex items-center">
+                          {renderStars(average)}
+                        </div>
+                        <span className="text-gray-500 text-sm">
+                          ({reviewCount}{" "}
+                          {reviewCount === 1 ? "Review" : "Reviews"})
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Price */}
+                    <div className="flex items-center gap-2 mt-2">
+                      {hasDiscount && (
+                        <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                          {discountPercent}% OFF
+                        </span>
+                      )}
+                      {hasDiscount ? (
+                        <>
+                          <span className="text-gray-400 line-through">
+                            ₹{product.marketPrice}
+                          </span>
+                          <span className="text-lg font-bold text-gray-900">
+                            ₹{product.sellingPrice}
+                          </span>
+                        </>
+                      ) : (
                         <span className="text-lg font-bold text-gray-900">
                           ₹{product.sellingPrice}
                         </span>
-                      </>
-                    ) : (
-                      <span className="text-lg font-bold text-gray-900">
-                        ₹{product.sellingPrice}
-                      </span>
-                    )}
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Buttons */}
+                  <div className="p-3 product-button d-none d-md-block">
+                    <div className="flex justify-between gap-3">
+                      <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart">
+                        <FaShoppingCart /> Add to Cart
+                      </button>
+                      <button className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now">
+                        Buy Now
+                      </button>
+                    </div>
                   </div>
                 </div>
+              );
+            })}
+          </div>
+          {/* Pagination */}
+          <div className="flex justify-center mt-6">
+            <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
+              {/* Previous */}
+              <button
+                onClick={goToPrevPage}
+                disabled={currentPage === 1}
+                className={`px-2 sm:px-3 py-1 flex items-center ${
+                  currentPage === 1
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:text-red-500"
+                }`}
+              >
+                <FiChevronLeft className="self-center flex-shrink-0" />
+                <span className="ml-1">Previous</span>
+              </button>
 
-                 <div className="p-3 product-button d-none d-md-block">
-                {/* Buttons */}
-                <div className="flex justify-between gap-3">
-                  <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart">
-                    Add to Cart
+              {/* Page numbers */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (page) => (
+                  <button
+                    key={page}
+                    onClick={() => goToPage(page)}
+                    className={`px-2 sm:px-3 py-1 rounded ${
+                      currentPage === page
+                        ? "border border-dark text-dark"
+                        : "hover:text-red-500"
+                    }`}
+                  >
+                    {page}
                   </button>
-                  <button className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now">
-                    Buy Now
-                  </button>
-                </div>
-              </div>
-              </div>
-            );
-          })}
-        </div>
+                )
+              )}
+
+              {/* Next */}
+              <button
+                onClick={goToNextPage}
+                disabled={currentPage === totalPages}
+                className={`px-2 sm:px-3 py-1 flex items-center ${
+                  currentPage === totalPages
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:text-red-500"
+                }`}
+              >
+                <span className="mr-1">Next</span>
+                <FiChevronRight className="self-center flex-shrink-0" />
+              </button>
+            </nav>
+          </div>
         </main>
       </div>
     </div>
