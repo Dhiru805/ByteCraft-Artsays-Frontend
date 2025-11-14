@@ -1,0 +1,168 @@
+/* .filter-sidebar {
+  background: #fff;
+  border-radius: 10px;
+}
+.p-img {
+    background-color: #EBEBEB;
+    border-radius: 30px;
+}
+.product-card {
+    border: 1px solid #EBEBEB;
+    border-radius: 30px;
+    background-color: #EBEBEB;
+    font-family: poppins;
+}
+.product-img {
+    border-radius: 30px;
+}
+.product-info{
+    border-radius: 0px 0px 30px 30px;
+    background-color: #ffffff;
+}
+.product-button{
+    background-color: #EBEBEB;
+    border-radius: 0px 0px 30px 30px;
+}
+.add-cart:hover {
+    color: white !important;
+    background: #ef4444 !important;
+    border: #EBEBEB !important;
+}
+.buy-now:hover {
+    background: transparent;
+    color: black !important;
+    border: 1px solid black;
+}
+.product-card:hover .discount-badge .timer {
+  max-width: 150px;
+  opacity: 1;
+}
+.discount-badge {
+  display: inline-flex;
+  align-items: center;
+  background: #ff4d4d;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: bold;
+  border-radius: 20px;
+  padding: 4px 10px;
+  transition: padding-right 0.3s ease, width 0.3s ease;
+  white-space: nowrap;
+}
+.discount-badge .timer {
+  display: inline-block;
+  max-width: 0;
+  opacity: 0;
+  transition: max-width 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-left: 5px;
+} */
+
+/* Hide scrollbar but keep scroll functionality */
+/* .scrollbar-hide::-webkit-scrollbar {
+  display: none;
+} */
+
+/* .scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  /* scrollbar-width: none; Firefox */
+/* } */ 
+
+/* .clip-path-custom {
+    clip-path: polygon(12% 0%, 100% 0%, 100% 100%, 12% 100%, 0% 50%);
+    border-radius: 0 10px 10px 0;
+  } */
+
+
+
+.filter-sidebar {
+  background: #fff;
+  border-radius: 10px;
+}
+.p-img {
+    background-color: #EBEBEB;
+    border-radius: 30px;
+}
+.product-card {
+    border: 1px solid #EBEBEB;
+    border-radius: 30px;
+    background-color: #EBEBEB;
+    font-family: poppins;
+}
+.product-img {
+    border-radius: 30px;
+}
+.product-info{
+    border-radius: 0px 0px 30px 30px;
+    background-color: #ffffff;
+}
+.product-button{
+    background-color: #EBEBEB;
+    border-radius: 0px 0px 30px 30px;
+}
+.add-cart:hover {
+    color: white !important;
+    background: #ef4444 !important;
+    border: #EBEBEB !important;
+}
+.buy-now:hover {
+    background: transparent;
+    color: black !important;
+    border: 1px solid black;
+}
+.product-card:hover .discount-badge .timer {
+  max-width: 150px;
+  opacity: 1;
+}
+.discount-badge {
+  display: inline-flex;
+  align-items: center;
+  background: #ff4d4d;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: bold;
+  border-radius: 20px;
+  padding: 4px 10px;
+  transition: padding-right 0.3s ease, width 0.3s ease;
+  white-space: nowrap;
+}
+.discount-badge .timer {
+  display: inline-block;
+  max-width: 0;
+  opacity: 0;
+  transition: max-width 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-left: 5px;
+}
+
+/* Hide scrollbar but keep scroll functionality */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.clip-path-custom {
+    clip-path: polygon(12% 0%, 100% 0%, 100% 100%, 12% 100%, 0% 50%);
+    border-radius: 0 10px 10px 0;
+  }
+
+  .custom-bullet li {
+  position: relative;
+  padding-left: 1.2rem;
+}
+
+.custom-bullet li::before {
+  content: "•";
+  color: #FB5934;
+  font-size: 35px;
+  position: absolute;
+  left: 2px;
+  top: -8px;
+  line-height: 1;
+}
