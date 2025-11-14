@@ -2002,7 +2002,6 @@
 // export default Product;
 
 //----------------------------IMPROVED RATING UI AND ADDED ARTIST/SELLER NAME FETCHING ALONG WITH PAGINATION----------------------------//
-
 import React, { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
 import { FaStar, FaShoppingCart } from "react-icons/fa";
@@ -2087,51 +2086,59 @@ const Product = () => {
 
   //   fetchAllProducts();
   // }, []);
+
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
-        const [res1, res2, ratingRes, badgeUsersRes] = await Promise.all([
+        const [res1, res2, ratingRes, badgeRes] = await Promise.all([
           getAPI("/api/getstatusapprovedproduct", {}, true, false),
           getAPI("/api/getstatusapprovedproductforSELLER", {}, true, false),
           getAPI("/api/reviews/aggregated", {}, true, false),
-          getAPI("/api/admin/badges", {}, true, false),
+          getAPI("/api/products/approved-with-badges", {}, true, false),
         ]);
 
         const products1 =
           res1?.data?.data?.filter((p) => p.status === "Approved") || [];
         const products2 =
           res2?.data?.data?.filter((p) => p.status === "Approved") || [];
+
         const allProducts = [
           ...(products1 || []),
           ...(products2 || []),
-        ].reverse();
+        ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
         const ratings = ratingRes?.data?.data || [];
         const productsWithRatings = allProducts.map((product) => {
           const matchedRating = ratings.find(
             (r) => r.productId === product._id
           );
+
           const avg = matchedRating?.averageRating
             ? Number(matchedRating.averageRating)
             : null;
+
           const reviewCount = matchedRating?.reviewCount ?? 0;
-          return { ...product, averageRating: avg, reviewCount };
+
+          return {
+            ...product,
+            averageRating: avg,
+            reviewCount,
+          };
         });
 
-        const badgeUsers = badgeUsersRes?.data?.users || [];
-        const userBadgeMap = {};
-        badgeUsers.forEach((user) => {
-          userBadgeMap[user._id] = user.verified?.[0]?.badgeImage
-            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.verified[0].badgeImage}`
-            : null;
+        const badgeData = badgeRes?.data?.data || [];
+
+        const finalProducts = productsWithRatings.map((p) => {
+          const match = badgeData.find((b) => b._id === p._id);
+
+          return {
+            ...p,
+            seller: match?.seller || p.seller,
+            badges: match?.badges || [],
+          };
         });
 
-        const productsWithBadges = productsWithRatings.map((p) => ({
-          ...p,
-          sellerBadgeImage: userBadgeMap[p.user?._id],
-        }));
-
-        setProducts(productsWithBadges);
+        setProducts(finalProducts);
       } catch (error) {
         console.error("Error fetching products or badges:", error);
         setProducts([]);
@@ -2570,7 +2577,7 @@ const Product = () => {
                     >
                       {product.productName}
                     </h2>
-
+<div className="flex items-center gap-1 mt-1">
                     {/* Artist name from populated userId */}
                     <p
                       className="text-gray-700 text-xs sm:text-sm font-medium flex items-center"
@@ -2584,19 +2591,15 @@ const Product = () => {
                       {product.userId?.lastName ? product.userId.lastName : ""}
                     </p>
 
-                    
                     {/*badges*/}
-                    <span className="font-semibold">
-                      {product.user?.username}
-                    </span>
-                    {product.sellerBadgeImage && (
+                    {product.badges?.map((img, index) => (
                       <img
-                        src={product.sellerBadgeImage}
-                        alt="badge"
-                        className="w-5 h-5 object-contain"
+                        key={index}
+                        src={`${imageBaseURL}${img}`}
+                        className="w-5 h-5 rounded-full"
                       />
-                    )}
-
+                    ))}
+</div>
                     {/* Rating */}
                     {average == null || reviewCount === 0 ? (
                       <div className="flex items-center gap-2 mt-2 text-gray-500 italic">
