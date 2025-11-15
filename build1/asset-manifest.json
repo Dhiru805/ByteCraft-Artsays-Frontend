@@ -1,0 +1,33 @@
+{
+  "files": {
+    "main.css": "/static/css/main.e14f3a1c.css",
+    "main.js": "/static/js/main.83a45110.js",
+    "static/css/947.61440fce.chunk.css": "/static/css/947.61440fce.chunk.css",
+    "static/js/947.47523ba4.chunk.js": "/static/js/947.47523ba4.chunk.js",
+    "static/js/453.a0e2d0e7.chunk.js": "/static/js/453.a0e2d0e7.chunk.js",
+    "static/css/680.2ea63da7.chunk.css": "/static/css/680.2ea63da7.chunk.css",
+    "static/media/remixicon.svg?t=1760071648894": "/static/media/remixicon.41a57134fda3e649a782.svg",
+    "static/media/artlogo.png": "/static/media/artlogo.f735efd95b90886809c6.png",
+    "static/media/inactive.png": "/static/media/inactive.15a34a9d5d2b308f4697.png",
+    "static/media/remixicon.eot?t=1760071648894": "/static/media/remixicon.773561f8a87b86aac767.eot",
+    "static/media/remixicon.ttf?t=1760071648894": "/static/media/remixicon.18428f6017b7c1840c7c.ttf",
+    "static/media/blog-grid-main.png": "/static/media/blog-grid-main.8f2b581f493d4524bb4e.png",
+    "static/media/remixicon.woff?t=1760071648894": "/static/media/remixicon.8cc767bead4b7f46238d.woff",
+    "static/media/remixicon.woff2?t=1760071648894": "/static/media/remixicon.355fe0cc6223710470f5.woff2",
+    "static/media/404.png": "/static/media/404.a0ab202666e909ffaf20.png",
+    "static/media/artist-image.png": "/static/media/artist-image.7844a06479d37c47f3fc.png",
+    "static/media/artwork.jpg": "/static/media/artwork.ef5fa8512e7495394d6d.jpg",
+    "static/media/blog-1.jpg": "/static/media/blog-1.666d64b22d2f2a69ad99.jpg",
+    "index.html": "/index.html",
+    "main.e14f3a1c.css.map": "/static/css/main.e14f3a1c.css.map",
+    "main.83a45110.js.map": "/static/js/main.83a45110.js.map",
+    "947.61440fce.chunk.css.map": "/static/css/947.61440fce.chunk.css.map",
+    "947.47523ba4.chunk.js.map": "/static/js/947.47523ba4.chunk.js.map",
+    "453.a0e2d0e7.chunk.js.map": "/static/js/453.a0e2d0e7.chunk.js.map",
+    "680.2ea63da7.chunk.css.map": "/static/css/680.2ea63da7.chunk.css.map"
+  },
+  "entrypoints": [
+    "static/css/main.e14f3a1c.css",
+    "static/js/main.83a45110.js"
+  ]
+}
