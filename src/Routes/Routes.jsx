@@ -493,6 +493,7 @@ import BlogCardDetails from "../Pages/blogDetails/BlogCardDetails";
 import ChallengesContent from "../Pages/Challenges/ChallengesContent/ChallengesContent";
 import JoinChallenges from "../Pages/Challenges/JoinChallenges/JoinChallenges";
 import ProductDetails from "../Pages/ProductDetails/ProductDetails";
+import ProductDetailsTemplate from "../Pages/ProductDetails/ProductDetails copy";
 import BidDetails from "../Pages/BidDetails/BidDetails";
 import Certification from "../Pages/Certification/Certification";
 import Insurance from "../Pages/Insurance/Insurance";
@@ -1523,7 +1524,8 @@ const AppRoutes = () => {
         <Route path="/challenge" element={<ChallengesContent />} />
         <Route path="/challenge/:theme" element={<JoinChallenges />} />
 
-        <Route path="/product-details" element={<ProductDetails />} />
+        <Route path="/product-details" element={<ProductDetailsTemplate />} />
+        <Route path="/product-details/:productId" element={<ProductDetails />} />
         <Route path="/bid-details" element={<BidDetails />} />
         <Route path="/certification" element={<Certification />} />
         <Route path="/insurance" element={<Insurance />} />

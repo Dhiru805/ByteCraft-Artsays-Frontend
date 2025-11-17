@@ -2001,10 +2001,11 @@
 
 // export default Product;
 
-//----------------------------IMPROVED RATING UI AND ADDED ARTIST/SELLER NAME FETCHING ALONG WITH PAGINATION----------------------------//
+//------IMPROVED RATING UI AND ADDED ARTIST/SELLER NAME FETCHING ALONG WITH PAGINATION , also added badge fetch api(uncommented one)----------------------------//
 import React, { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
 import { FaStar, FaShoppingCart } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { FiChevronRight } from "react-icons/fi";
 import { FiChevronLeft } from "react-icons/fi";
 import getAPI from "../../../api/getAPI";
@@ -2016,6 +2017,8 @@ const Product = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
+  const [likedProducts, setLikedProducts] = useState({});
+  const navigate = useNavigate();
 
   const indexOfLastProduct = currentPage * itemsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
@@ -2036,6 +2039,12 @@ const Product = () => {
 
   const goToPage = (page) => {
     setCurrentPage(page);
+  };
+  const toggleLike = (productId) => {
+    setLikedProducts((prev) => ({
+      ...prev,
+      [productId]: !prev[productId],
+    }));
   };
 
   // useEffect(() => {
@@ -2102,10 +2111,9 @@ const Product = () => {
         const products2 =
           res2?.data?.data?.filter((p) => p.status === "Approved") || [];
 
-        const allProducts = [
-          ...(products1 || []),
-          ...(products2 || []),
-        ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        const allProducts = [...(products1 || []), ...(products2 || [])].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
 
         const ratings = ratingRes?.data?.data || [];
         const productsWithRatings = allProducts.map((product) => {
@@ -2550,6 +2558,7 @@ const Product = () => {
               return (
                 <div
                   key={product._id}
+                  onClick={() => navigate(`/product-details/${product._id}`)}
                   className="rounded-2xl shadow-md overflow-hidden flex flex-col justify-between product-card transition-transform duration-300 hover:-translate-y-1 m-3"
                 >
                   {/* Image */}
@@ -2565,7 +2574,24 @@ const Product = () => {
                       className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
                     />
                     <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
-                      <Heart className="w-5 h-5 text-white" />
+                      {/* <Heart className="w-5 h-5 text-white" /> */}
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleLike(product._id);
+                        }}
+                        className="cursor-pointer"
+                      >
+                        {likedProducts[product._id] ? (
+                          <Heart
+                            size={20}
+                            className="stroke-red-500"
+                            style={{ fill: "red" }}
+                          />
+                        ) : (
+                          <Heart size={20} className="stroke-gray-500" />
+                        )}
+                      </div>
                     </button>
                   </div>
 
@@ -2577,29 +2603,31 @@ const Product = () => {
                     >
                       {product.productName}
                     </h2>
-<div className="flex items-center gap-1 mt-1">
-                    {/* Artist name from populated userId */}
-                    <p
-                      className="text-gray-700 text-xs sm:text-sm font-medium flex items-center"
-                      title={`${product.userId?.name ?? ""} ${
-                        product.userId?.lastName ?? ""
-                      }`}
-                    >
-                      {product.userId?.name ||
-                        product.userId?.firstName ||
-                        "Unknown"}{" "}
-                      {product.userId?.lastName ? product.userId.lastName : ""}
-                    </p>
+                    <div className="flex items-center gap-1 mt-1">
+                      {/* Artist name from populated userId */}
+                      <p
+                        className="text-gray-700 text-xs sm:text-sm font-medium flex items-center"
+                        title={`${product.userId?.name ?? ""} ${
+                          product.userId?.lastName ?? ""
+                        }`}
+                      >
+                        {product.userId?.name ||
+                          product.userId?.firstName ||
+                          "Unknown"}{" "}
+                        {product.userId?.lastName
+                          ? product.userId.lastName
+                          : ""}
+                      </p>
 
-                    {/*badges*/}
-                    {product.badges?.map((img, index) => (
-                      <img
-                        key={index}
-                        src={`${imageBaseURL}${img}`}
-                        className="w-5 h-5 rounded-full"
-                      />
-                    ))}
-</div>
+                      {/*badges*/}
+                      {product.badges?.map((img, index) => (
+                        <img
+                          key={index}
+                          src={`${imageBaseURL}${img}`}
+                          className="w-5 h-5 rounded-full"
+                        />
+                      ))}
+                    </div>
                     {/* Rating */}
                     {average == null || reviewCount === 0 ? (
                       <div className="flex items-center gap-2 mt-2 text-gray-500 italic">
