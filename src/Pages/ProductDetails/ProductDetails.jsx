@@ -1616,6 +1616,9 @@ import { BsTelegram } from "react-icons/bs";
 import { FaChevronCircleRight, FaChevronCircleLeft } from "react-icons/fa";
 import getAPI from "../../api/getAPI";
 
+
+const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
+
 const offersData = [
   {
     title: "Cashback",
@@ -1638,6 +1641,8 @@ const offersData = [
     offers: "2 offers",
   },
 ];
+
+
 
 const ProductDetails = () => {
   const { productId } = useParams();
@@ -1853,6 +1858,17 @@ const ProductDetails = () => {
     product?.userId?.lastName || ""
   }`.trim();
 
+
+
+
+
+
+
+
+
+
+
+
   const ProductImages = ({ imagesProp, initialImage }) => {
     const [selectedImage, setSelectedImage] = useState(
       initialImage || imagesProp[0] || "/herosectionimg/placeholder.png"
@@ -1884,18 +1900,127 @@ const ProductDetails = () => {
       </div>
     );
 
-    const Field = ({ label, value }) => {
-      if (!value || value === "N/A" || value === "") return null;
-      return (
-        <p className="text-sm">
-          <strong>{label}:</strong> {value}
-        </p>
-      );
-    };
+    // const Field = ({ label, value }) => {
+    //   if (!value || value === "N/A" || value === "") return null;
+    //   return (
+    //     <p className="text-sm">
+    //       <strong>{label}:</strong> {value}
+    //     </p>
+    //   );
+    // };
+
+// const Field = ({ label, value }) => {
+//   if (!value || value === "N/A" || value === "") return null;
+
+
+//   const values = Array.isArray(value) ? value : [value];
+
+//   const isImage = values.some((val) =>
+//     typeof val === "string" &&
+//     (val.endsWith(".jpg") ||
+//       val.endsWith(".jpeg") ||
+//       val.endsWith(".png") ||
+//       val.endsWith(".webp") ||
+//       val.endsWith(".gif"))
+//   );
+
+//   return (
+//     <div className="text-sm mb-2">
+//       <strong>{label}:</strong>
+
+//       {isImage ? (
+//         <div className="mt-2 flex gap-2 flex-wrap">
+//           {values.map((img, idx) => (
+//             <img
+//               key={idx}
+//               src={
+//                 img.startsWith("http")
+//                   ? img
+//                   : `${imageBaseURL}${img}` 
+//               }
+//               alt={label}
+//               className="w-40 h-40 object-cover rounded border"
+//             />
+//           ))}
+//         </div>
+//       ) : (
+//         <> {value}</>
+//       )}
+//     </div>
+//   );
+// };
+
+const Field = ({ label, value }) => {
+  if (!value || value === "N/A" || value === "") return null;
+
+  const values = Array.isArray(value) ? value : [value];
+
+  const isImage = values.some((val) =>
+    /\.(jpg|jpeg|png|webp|gif)$/i.test(val)
+  );
+
+  return (
+    <div className="text-sm mb-2">
+      <strong>{label}:</strong>
+
+      {isImage ? (
+        <div className="mt-2 flex gap-2 flex-wrap">
+          {values.map((img, idx) => {
+            const fullURL = img.startsWith("http")
+              ? img
+              : `${imageBaseURL}${img}`;
+
+            const dialogId = `dialog-${label.replace(/\s/g, "_")}-${idx}`;
+
+            return (
+              <div key={idx}>
+                {/* Thumbnail */}
+                <img
+                  src={fullURL}
+                  alt={label}
+                  className="w-40 h-40 object-cover rounded border cursor-pointer hover:scale-105 transition"
+                  onClick={() => {
+                    document.getElementById(dialogId).showModal();
+                  }}
+                />
+
+                {/* Popup dialog */}
+                <dialog
+                  id={dialogId}
+                  className="rounded-lg p-0 bg-transparent"
+                >
+                  <div
+                    className="fixed inset-0 breadcrumb-item active flex justify-center items-center"
+                    onClick={() => document.getElementById(dialogId).close()}
+                  >
+                    <img
+                      src={fullURL}
+                      className="max-w-[90%] max-h-[90%] rounded-lg shadow-xl"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
+                </dialog>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <> {value}</>
+      )}
+    </div>
+  );
+};
+
+
+
     const hasAnyValue = (obj) =>
       Object.values(obj).some(
         (v) => v !== undefined && v !== null && v !== "" && v !== "N/A"
       );
+
+
+
+
 
     return (
       <div className="max-w-[1440px] mx-auto font-[Poppins] bg-[#ffffff] text-[#111] p-6">
@@ -2580,49 +2705,7 @@ const ProductDetails = () => {
                       </Grid>
                     </Section>
 
-                    {/* SECTION: NFT (auto-hide if empty) */}
-                    {(product.blockchainNetwork ||
-                      product.tokenId ||
-                      product.walletAddress) && (
-                      <Section title="NFT Metadata">
-                        <Grid>
-                          <Field
-                            label="Blockchain"
-                            value={product.blockchainNetwork}
-                          />
-                          <Field
-                            label="Contract Address"
-                            value={product.smartContractAddress}
-                          />
-
-                          <Field
-                            label="Token Standard"
-                            value={product.tokenStandard}
-                          />
-                          <Field label="Token ID" value={product.tokenId} />
-
-                          <Field
-                            label="Wallet Address"
-                            value={product.walletAddress}
-                          />
-                          <Field
-                            label="Royalty %"
-                            value={product.royaltyPercentage}
-                          />
-
-                          <Field
-                            label="Minting Type"
-                            value={product.mintingType}
-                          />
-                          <Field
-                            label="IPFS Enabled"
-                            value={product.ipfsStorage ? "Yes" : "No"}
-                          />
-
-                          <Field label="IPFS Link" value={product.ipfsLink} />
-                        </Grid>
-                      </Section>
-                    )}
+                    
 
                     {/* SECTION: Address */}
                     <Section title="Seller Address">
@@ -2686,14 +2769,7 @@ const ProductDetails = () => {
                             value={product.conservationStatus}
                           />
 
-                          <Field
-                            label="Restoration History"
-                            value={product.restorationHistory}
-                          />
-                          <Field
-                            label="Restoration Documentation"
-                            value={product.restorationDocumentation}
-                          />
+                      
 
                           <Field
                             label="Provenance History"
@@ -2742,10 +2818,18 @@ const ProductDetails = () => {
                               product.customEngravingAvailable ? "Yes" : "No"
                             }
                           />
-
+                         
+                          <Field
+                            label="Restoration Documentation"
+                            value={product.restorationDocumentation}
+                          />
                           <Field
                             label="Certification"
                             value={product.certification}
+                          />
+                          <Field
+                            label="Restoration History"
+                            value={product.restorationHistory}
                           />
                         </Grid>
                       </Section>
@@ -2998,7 +3082,9 @@ const ProductDetails = () => {
             </div>
           </div>
         </div>
+        
       </div>
+      
     );
   };
 
