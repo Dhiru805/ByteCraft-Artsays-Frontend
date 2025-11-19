@@ -1886,55 +1886,6 @@ const ProductDetails = () => {
       </div>
     );
 
-    // const Field = ({ label, value }) => {
-    //   if (!value || value === "N/A" || value === "") return null;
-    //   return (
-    //     <p className="text-sm">
-    //       <strong>{label}:</strong> {value}
-    //     </p>
-    //   );
-    // };
-
-    // const Field = ({ label, value }) => {
-    //   if (!value || value === "N/A" || value === "") return null;
-
-    //   const values = Array.isArray(value) ? value : [value];
-
-    //   const isImage = values.some((val) =>
-    //     typeof val === "string" &&
-    //     (val.endsWith(".jpg") ||
-    //       val.endsWith(".jpeg") ||
-    //       val.endsWith(".png") ||
-    //       val.endsWith(".webp") ||
-    //       val.endsWith(".gif"))
-    //   );
-
-    //   return (
-    //     <div className="text-sm mb-2">
-    //       <strong>{label}:</strong>
-
-    //       {isImage ? (
-    //         <div className="mt-2 flex gap-2 flex-wrap">
-    //           {values.map((img, idx) => (
-    //             <img
-    //               key={idx}
-    //               src={
-    //                 img.startsWith("http")
-    //                   ? img
-    //                   : `${imageBaseURL}${img}`
-    //               }
-    //               alt={label}
-    //               className="w-40 h-40 object-cover rounded border"
-    //             />
-    //           ))}
-    //         </div>
-    //       ) : (
-    //         <> {value}</>
-    //       )}
-    //     </div>
-    //   );
-    // };
-
     const Field = ({ label, value }) => {
       if (!value || value === "N/A" || value === "") return null;
 
@@ -2736,7 +2687,7 @@ const ProductDetails = () => {
                         <Field label="COA Document" value={product.coaFile} />
                        
                         <Field label="Certificate Document" value={product.certificateFile} />
-                        
+
                       </Grid>
                     </Section>
 
@@ -3115,9 +3066,22 @@ const ProductDetails = () => {
     );
   };
 
-  const productReviews = reviews.filter(
-    (r) => String(r.productId?._id) === String(product?._id)
-  );
+  // const productReviews = reviews.filter(
+  //   (r) => String(r.productId?._id) === String(product?._id)
+  // );
+const productReviews = reviews.filter((review) => {
+  const buyerRequest = review.productId;
+  if (!buyerRequest) return false;
+
+  
+  const reviewProductName = buyerRequest.ProductName?.trim()?.toLowerCase();
+  const currentProductName = product.productName?.trim()?.toLowerCase();
+
+  return reviewProductName === currentProductName;
+});
+
+
+
 
   return <ProductImages imagesProp={images} initialImage={images[0]} />;
 };
