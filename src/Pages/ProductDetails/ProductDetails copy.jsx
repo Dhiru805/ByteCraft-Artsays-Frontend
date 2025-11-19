@@ -293,7 +293,7 @@ const ProductDetails = () => {
                                             Limited Edition
                                         </p>
                                     </div>
-                                    {/* <div className="p-2">
+                                    <div className="p-2">
                             <img
                                 src="/herosectionimg/original.png"
                                 alt="original"
@@ -319,7 +319,7 @@ const ProductDetails = () => {
                             <p className="text-dark text-center text-xs mt-2 rounded">
                                 Open Edition
                             </p>
-                        </div> */}
+                        </div>
                                     <div className="p-2">
                                         <img
                                             src="/herosectionimg/free delivery.png"
@@ -347,7 +347,7 @@ const ProductDetails = () => {
                                             Handmade
                                         </p>
                                     </div>
-                                    {/* <div className="p-2">
+                                    <div className="p-2">
                             <img
                                 src="/herosectionimg/glass material.png"
                                 alt="glass material"
@@ -373,7 +373,7 @@ const ProductDetails = () => {
                             <p className="text-dark text-center text-xs mt-2 rounded">
                                 Certified
                             </p>
-                        </div> */}
+                        </div>
                                 </div>
 
                                 {/* In Stocks / Details */}

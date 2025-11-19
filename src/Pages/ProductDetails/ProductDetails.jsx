@@ -1616,7 +1616,6 @@ import { BsTelegram } from "react-icons/bs";
 import { FaChevronCircleRight, FaChevronCircleLeft } from "react-icons/fa";
 import getAPI from "../../api/getAPI";
 
-
 const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 
 const offersData = [
@@ -1641,8 +1640,6 @@ const offersData = [
     offers: "2 offers",
   },
 ];
-
-
 
 const ProductDetails = () => {
   const { productId } = useParams();
@@ -1858,17 +1855,6 @@ const ProductDetails = () => {
     product?.userId?.lastName || ""
   }`.trim();
 
-
-
-
-
-
-
-
-
-
-
-
   const ProductImages = ({ imagesProp, initialImage }) => {
     const [selectedImage, setSelectedImage] = useState(
       initialImage || imagesProp[0] || "/herosectionimg/placeholder.png"
@@ -1909,118 +1895,113 @@ const ProductDetails = () => {
     //   );
     // };
 
-// const Field = ({ label, value }) => {
-//   if (!value || value === "N/A" || value === "") return null;
+    // const Field = ({ label, value }) => {
+    //   if (!value || value === "N/A" || value === "") return null;
 
+    //   const values = Array.isArray(value) ? value : [value];
 
-//   const values = Array.isArray(value) ? value : [value];
+    //   const isImage = values.some((val) =>
+    //     typeof val === "string" &&
+    //     (val.endsWith(".jpg") ||
+    //       val.endsWith(".jpeg") ||
+    //       val.endsWith(".png") ||
+    //       val.endsWith(".webp") ||
+    //       val.endsWith(".gif"))
+    //   );
 
-//   const isImage = values.some((val) =>
-//     typeof val === "string" &&
-//     (val.endsWith(".jpg") ||
-//       val.endsWith(".jpeg") ||
-//       val.endsWith(".png") ||
-//       val.endsWith(".webp") ||
-//       val.endsWith(".gif"))
-//   );
+    //   return (
+    //     <div className="text-sm mb-2">
+    //       <strong>{label}:</strong>
 
-//   return (
-//     <div className="text-sm mb-2">
-//       <strong>{label}:</strong>
+    //       {isImage ? (
+    //         <div className="mt-2 flex gap-2 flex-wrap">
+    //           {values.map((img, idx) => (
+    //             <img
+    //               key={idx}
+    //               src={
+    //                 img.startsWith("http")
+    //                   ? img
+    //                   : `${imageBaseURL}${img}`
+    //               }
+    //               alt={label}
+    //               className="w-40 h-40 object-cover rounded border"
+    //             />
+    //           ))}
+    //         </div>
+    //       ) : (
+    //         <> {value}</>
+    //       )}
+    //     </div>
+    //   );
+    // };
 
-//       {isImage ? (
-//         <div className="mt-2 flex gap-2 flex-wrap">
-//           {values.map((img, idx) => (
-//             <img
-//               key={idx}
-//               src={
-//                 img.startsWith("http")
-//                   ? img
-//                   : `${imageBaseURL}${img}` 
-//               }
-//               alt={label}
-//               className="w-40 h-40 object-cover rounded border"
-//             />
-//           ))}
-//         </div>
-//       ) : (
-//         <> {value}</>
-//       )}
-//     </div>
-//   );
-// };
+    const Field = ({ label, value }) => {
+      if (!value || value === "N/A" || value === "") return null;
 
-const Field = ({ label, value }) => {
-  if (!value || value === "N/A" || value === "") return null;
+      const values = Array.isArray(value) ? value : [value];
 
-  const values = Array.isArray(value) ? value : [value];
+      const isImage = values.some((val) =>
+        /\.(jpg|jpeg|png|webp|gif)$/i.test(val)
+      );
 
-  const isImage = values.some((val) =>
-    /\.(jpg|jpeg|png|webp|gif)$/i.test(val)
-  );
+      return (
+        <div className="text-sm mb-2">
+          <strong>{label}:</strong>
 
-  return (
-    <div className="text-sm mb-2">
-      <strong>{label}:</strong>
+          {isImage ? (
+            <div className="mt-2 flex gap-2 flex-wrap">
+              {values.map((img, idx) => {
+                const fullURL = img.startsWith("http")
+                  ? img
+                  : `${imageBaseURL}${img}`;
 
-      {isImage ? (
-        <div className="mt-2 flex gap-2 flex-wrap">
-          {values.map((img, idx) => {
-            const fullURL = img.startsWith("http")
-              ? img
-              : `${imageBaseURL}${img}`;
+                const dialogId = `dialog-${label.replace(/\s/g, "_")}-${idx}`;
 
-            const dialogId = `dialog-${label.replace(/\s/g, "_")}-${idx}`;
-
-            return (
-              <div key={idx}>
-                {/* Thumbnail */}
-                <img
-                  src={fullURL}
-                  alt={label}
-                  className="w-40 h-40 object-cover rounded border cursor-pointer hover:scale-105 transition"
-                  onClick={() => {
-                    document.getElementById(dialogId).showModal();
-                  }}
-                />
-
-                {/* Popup dialog */}
-                <dialog
-                  id={dialogId}
-                  className="rounded-lg p-0 bg-transparent"
-                >
-                  <div
-                    className="fixed inset-0 breadcrumb-item active flex justify-center items-center"
-                    onClick={() => document.getElementById(dialogId).close()}
-                  >
+                return (
+                  <div key={idx}>
+                    {/* Thumbnail */}
                     <img
                       src={fullURL}
-                      className="max-w-[90%] max-h-[90%] rounded-lg shadow-xl"
-                      onClick={(e) => e.stopPropagation()}
+                      alt={label}
+                      className="w-40 h-40 object-cover rounded border cursor-pointer hover:scale-105 transition"
+                      onClick={() => {
+                        document.getElementById(dialogId).showModal();
+                      }}
                     />
+
+                    {/* Popup dialog */}
+                    <dialog
+                      id={dialogId}
+                      className="rounded-lg p-0 bg-transparent"
+                    >
+                      <div
+                        className="fixed inset-0 breadcrumb-item active flex justify-center items-center"
+                        onClick={() =>
+                          document.getElementById(dialogId).close()
+                        }
+                      >
+                        <img
+                          src={fullURL}
+                          className="max-w-[90%] max-h-[90%] rounded-lg shadow-xl"
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      </div>
+                    </dialog>
                   </div>
-                </dialog>
-              </div>
-            );
-          })}
+                );
+              })}
+            </div>
+          ) : (
+            <> {value}</>
+          )}
         </div>
-      ) : (
-        <> {value}</>
-      )}
-    </div>
-  );
-};
-
-
+      );
+    };
 
     const hasAnyValue = (obj) =>
       Object.values(obj).some(
         (v) => v !== undefined && v !== null && v !== "" && v !== "N/A"
       );
-
-
-
-
 
     return (
       <div className="max-w-[1440px] mx-auto font-[Poppins] bg-[#ffffff] text-[#111] p-6">
@@ -2268,7 +2249,7 @@ const Field = ({ label, value }) => {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-4 pt-4">
+                <div className="flex flex-wrap gap-4 pt-4 justify-between">
                   <div className="p-2">
                     <img
                       src="/herosectionimg/free delivery.png"
@@ -2280,44 +2261,119 @@ const Field = ({ label, value }) => {
                     </p>
                   </div>
 
-                  {product.editionType === "Limited" && (
-                    <div className="p-2">
-                      <img
-                        src="/herosectionimg/limited edition.png"
-                        alt="limited"
-                        className="w-full h-10 object-contain"
-                      />
-                      <p className="text-dark text-center text-xs mt-2">
-                        Limited Edition
-                      </p>
-                    </div>
-                  )}
+                {product.editionType?.toLowerCase().includes("limited") && (
+  <div className="p-2">
+    <img
+      src="/herosectionimg/limited edition.png"
+      alt="limited"
+      className="w-full h-10 object-contain"
+    />
+    <p className="text-dark text-center text-xs mt-2">Limited Edition</p>
+  </div>
+)}
 
-                  {product.framing === "Framed" && (
-                    <div className="p-2">
-                      <img
-                        src="/herosectionimg/framed.png"
-                        alt="framed"
-                        className="w-full h-10 object-contain"
-                      />
-                      <p className="text-dark text-center text-xs mt-2">
-                        Framed
-                      </p>
-                    </div>
-                  )}
+{product.editionType?.toLowerCase().includes("original") && (
+  <div className="p-2">
+    <img
+      src="/herosectionimg/original.png"
+      alt="original"
+      className="w-full h-10 object-contain"
+    />
+    <p className="text-dark text-center text-xs mt-2 rounded">Original</p>
+  </div>
+)}
 
-                  {product.handmade === "Yes" && (
-                    <div className="p-2">
-                      <img
-                        src="/herosectionimg/handmade.png"
-                        alt="handmade"
-                        className="w-full h-10 object-contain"
-                      />
-                      <p className="text-dark text-center text-xs mt-2">
-                        Handmade
-                      </p>
-                    </div>
-                  )}
+{product.editionType?.toLowerCase().includes("premium") && (
+  <div className="p-2">
+    <img
+      src="/herosectionimg/premium.png"
+      alt="premium"
+      className="w-full h-10 object-contain"
+    />
+    <p className="text-dark text-center text-xs mt-2 rounded">Premium</p>
+  </div>
+)}
+
+{product.editionType?.toLowerCase().includes("open") && (
+  <div className="p-2">
+    <img
+      src="/herosectionimg/open edition.png"
+      alt="open edition"
+      className="w-full h-10 object-contain"
+    />
+    <p className="text-dark text-center text-xs mt-2 rounded">Open Edition</p>
+  </div>
+)}
+
+
+{product.materials?.some(mat => mat.toLowerCase() === "glass") && (
+  <div className="p-2">
+    <img
+      src="/herosectionimg/glass material.png"
+      alt="glass material"
+      className="w-full h-10 object-contain"
+    />
+    <p className="text-dark text-center text-xs mt-2 rounded">
+      Glass Material
+    </p>
+  </div>
+)}
+
+
+
+{product.framing?.toLowerCase() === "framed" && (
+  <div className="p-2">
+    <img
+      src="/herosectionimg/framed.png"
+      alt="framed"
+      className="w-full h-10 object-contain"
+    />
+    <p className="text-dark text-center text-xs mt-2">Framed</p>
+  </div>
+)}
+
+{product.framing?.toLowerCase() === "unframed" && (
+  <div className="p-2">
+    <img
+      src="/herosectionimg/framed.png"
+      alt="unframed"
+      className="w-full h-10 object-contain"
+    />
+    <p className="text-dark text-center text-xs mt-2">Unframed</p>
+  </div>
+)}
+
+{product.handmade === "Yes" && (
+  <div className="p-2">
+    <img
+      src="/herosectionimg/handmade.png"
+      alt="handmade"
+      className="w-full h-10 object-contain"
+    />
+    <p className="text-dark text-center text-xs mt-2">Handmade</p>
+  </div>
+)}
+{product.giftWrapping  && (
+  <div className="p-2">
+    <img
+      src="/herosectionimg/gifting.png"
+      alt="gifting options"
+      className="w-full h-10 object-contain"
+    />
+    <p className="text-dark text-center text-xs mt-2 rounded">Gifting Options</p>
+  </div>
+)}
+
+{product.artistSignature  && (
+  <div className="p-2">
+    <img
+      src="/herosectionimg/certified.png"
+      alt="certified"
+      className="w-full h-10 object-contain"
+    />
+    <p className="text-dark text-center text-xs mt-2 rounded">Certified</p>
+  </div>
+)}
                 </div>
 
                 {/* Mobile / small screen stock info (template) */}
@@ -2442,36 +2498,10 @@ const Field = ({ label, value }) => {
                 ))}
               </div>
 
-              <div className="py-6 text-gray-700 leading-relaxed text-sm">
+              <div className="py-6 text-gray-700 leading-relaxed text-sm whitespace-pre-wrap break-words w-full">
                 {activeTab === "description" && (
                   <p>{product.description || "No description available."}</p>
                 )}
-
-                {/* {activeTab === "details" && (
-                  <div className="space-y-2">
-                    <h2 className="text-xl font-semibold">
-                      Artwork Specifications
-                    </h2>
-                    <p>
-                      <span className="font-semibold">Material:</span>{" "}
-                      {product.medium || "N/A"}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Dimensions:</span>{" "}
-                      {product.dimensions?.width
-                        ? `${product.dimensions.width} x ${product.dimensions.height} cm`
-                        : product.dimensions || "N/A"}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Weight:</span>{" "}
-                      {product.weight ? `${product.weight}g` : "N/A"}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Care:</span> Wipe gently
-                      with a soft dry cloth
-                    </p>
-                  </div>
-                )} */}
 
                 {activeTab === "details" && (
                   <div className="space-y-10 text-sm">
@@ -2702,10 +2732,13 @@ const Field = ({ label, value }) => {
                           label="Signature Type"
                           value={product.signatureType}
                         />
+
+                        <Field label="COA Document" value={product.coaFile} />
+                       
+                        <Field label="Certificate Document" value={product.certificateFile} />
+                        
                       </Grid>
                     </Section>
-
-                    
 
                     {/* SECTION: Address */}
                     <Section title="Seller Address">
@@ -2735,8 +2768,7 @@ const Field = ({ label, value }) => {
                       antiqueCondition: product.antiqueCondition,
                       conservationStatus: product.conservationStatus,
                       restorationHistory: product.restorationHistory,
-                      restorationDocumentation:
-                        product.restorationDocumentation,
+                      restorationDocumentation: product.restorationDocumentation,
                       provenanceHistory: product.provenanceHistory,
                       culturalSignificance: product.culturalSignificance,
                       appraisalDetails: product.appraisalDetails,
@@ -2746,8 +2778,7 @@ const Field = ({ label, value }) => {
                       originalReproduction: product.originalReproduction,
                       museumExhibitionHistory: product.museumExhibitionHistory,
                       maintenanceRequired: product.maintenanceRequired,
-                      customEngravingAvailable:
-                        product.customEngravingAvailable,
+                      customEngravingAvailable: product.customEngravingAvailable,
                       certification: product.certification,
                     }) && (
                       <Section title="Antique & Vintage Details">
@@ -2768,8 +2799,6 @@ const Field = ({ label, value }) => {
                             label="Conservation Status"
                             value={product.conservationStatus}
                           />
-
-                      
 
                           <Field
                             label="Provenance History"
@@ -2818,7 +2847,7 @@ const Field = ({ label, value }) => {
                               product.customEngravingAvailable ? "Yes" : "No"
                             }
                           />
-                         
+
                           <Field
                             label="Restoration Documentation"
                             value={product.restorationDocumentation}
@@ -3082,9 +3111,7 @@ const Field = ({ label, value }) => {
             </div>
           </div>
         </div>
-        
       </div>
-      
     );
   };
 
