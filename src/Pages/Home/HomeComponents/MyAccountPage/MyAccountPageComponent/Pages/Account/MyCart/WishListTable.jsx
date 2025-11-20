@@ -114,59 +114,274 @@
 
 // export default WishlistTable;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useEffect, useState } from "react";
+// import { useParams } from "react-router-dom";
+// import getAPI from "../../../../../../../../api/getAPI";
+// import deleteAPI from "../../../../../../../../api/deleteAPI";
+// const WishlistTable = () => {
+//   const { userId } = useParams();
+//   const [wishlist, setWishlist] = useState([]);
+
+//   const fetchWishlist = async () => {
+//     try {
+//       const res = await getAPI(`/api/wishlist/${userId}`);
+
+//       setWishlist(res?.data?.wishlist || []);
+//     } catch (err) {
+//       console.log("Error loading wishlist:", err);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchWishlist();
+//   }, []);
+
+//   // REMOVE SINGLE ITEM
+//   const removeItem = async (productId) => {
+//     try {
+//     await deleteAPI("/api/wishlist/remove", {
+//     params: { userId, productId }
+// });
+
+
+//       setWishlist((prev) =>
+//         prev.filter((item) => item._id !== productId)
+//       );
+//     } catch (err) {
+//       console.log("Error removing item:", err);
+//     }
+//   };
+
+//   // CLEAR ENTIRE WISHLIST
+//   const clearWishlist = async (productId) => {
+//     try {
+//       for (const item of wishlist) {
+//         await deleteAPI("/api/wishlist/remove", {
+//     params: { userId, productId: item._id }
+// });
+//       }
+
+//       setWishlist([]);
+//     } catch (err) {
+//       console.log("Error clearing wishlist:", err);
+//     }
+//   };
+
+//   return (
+//     <div className="max-w-[1464px] w-full px-4 sm:px-6 lg:px-12 pt-10 text-lg overflow-hidden">
+//       <div className="w-full overflow-x-auto">
+//         <table className="w-full min-w-[700px] border-collapse">
+//           <thead>
+//             <tr className="bg-yellow-200 text-left">
+//               <th className="py-4 px-4 font-medium rounded-tl-xl rounded-bl-xl">
+//                 Product
+//               </th>
+//               <th className="py-4 px-4 font-medium">Price</th>
+//               <th className="py-4 px-4 font-medium">Category</th>
+//               <th className="py-4 px-4 font-medium">Status</th>
+//               <th className="py-4 px-4 rounded-tr-xl rounded-br-xl text-right" />
+//             </tr>
+//           </thead>
+
+//           <tbody>
+//             {wishlist.length === 0 ? (
+//               <tr>
+//                 <td className="py-5 px-4 text-center text-gray-600" colSpan="5">
+//                   Wishlist is empty
+//                 </td>
+//               </tr>
+//             ) : (
+//               wishlist.map((item) => (
+//                 <tr key={item._id} className="border-b">
+//                   <td className="py-4 px-4 flex items-center gap-4 min-w-[200px]">
+//                     <button
+//                       className="text-xl text-gray-600 hover:text-black"
+//                       onClick={() => removeItem(item._id)}
+//                     >
+//                       ×
+//                     </button>
+
+//                     <img
+//                       src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.mainImage}`}
+
+//                       alt="product"
+//                       className="w-12 h-12 object-cover rounded border border-gray-300 p-2"
+//                     />
+
+//                     <div className="font-semibold">
+//                       <p className="text-gray-800">{item.productName}</p>
+//                       <p className="text-xs text-gray-500">
+//                         {item.userId?.name || "Unknown Seller"}
+//                       </p>
+//                     </div>
+//                   </td>
+
+//                   <td className="py-4 px-4">₹{item.sellingPrice}</td>
+//                   <td className="py-4 px-4">{item.category || "N/A"}</td>
+//                   <td className="py-4 px-4">{item.status || "Available"}</td>
+
+//                   <td className="py-4 px-4 text-right">
+//                     <button className="bg-[#5C4033] hover:bg-[#4b3327] text-white px-4 py-2 rounded-full text-sm whitespace-nowrap">
+//                       Add to Cart
+//                     </button>
+//                   </td>
+//                 </tr>
+//               ))
+//             )}
+//           </tbody>
+//         </table>
+//       </div>
+
+//       {/* FOOTER */}
+//       <div className="flex flex-col md:flex-row md:items-center justify-between mt-6 gap-4 w-full overflow-hidden">
+//         {/* <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full md:w-auto">
+//           <label className="text-sm text-gray-600 whitespace-nowrap underline">
+//             Wishlist link:
+//           </label>
+//           <input
+//             type="text"
+//             className="border border-gray-300 text-gray-400 rounded-full px-4 py-3 text-sm w-full sm:w-80"
+//             value={`${window.location.origin}/my-account/wishlist/${userId}`}
+//             readOnly
+//           />
+//           <button
+//             className="bg-[#5C4033] hover:bg-[#4b3327] text-white text-sm rounded-full px-4 py-2"
+//             onClick={() =>
+//               navigator.clipboard.writeText(
+//                 `${window.location.origin}/my-account/wishlist/${userId}`
+//               )
+//             }
+//           >
+//             Copy Link
+//           </button>
+//         </div> */}
+
+//         <div className="flex flex-col sm:flex-row items-center gap-4 justify-end w-full md:w-auto">
+//           <button
+//             className="text-sm text-[#5C4033] underline hover:text-[#3e2c1e]"
+//             onClick={clearWishlist}
+//           >
+//             Clear Wishlist
+//           </button>
+//           <button className="bg-[#5C4033] hover:bg-[#4b3327] text-white text-sm rounded-full px-4 py-2">
+//             Add All to Cart
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default WishlistTable;
+
+
+
+
+
+
+
+
+
+
+
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import getAPI from "../../../../../../../../api/getAPI";
+import deleteAPI from "../../../../../../../../api/deleteAPI";
 
 const WishlistTable = () => {
   const { userId } = useParams();
+
   const [wishlist, setWishlist] = useState([]);
+  const [categoryData, setCategoryData] = useState({
+    mainCategories: [],
+    categories: [],
+    subCategories: [],
+  });
 
-  const fetchWishlist = async () => {
-    try {
-      const res = await getAPI(`/api/wishlist/${userId}`);
-
-      setWishlist(res?.data?.wishlist || []);
-    } catch (err) {
-      console.log("Error loading wishlist:", err);
-    }
-  };
-
+ 
   useEffect(() => {
-    fetchWishlist();
+    const fetchCategories = async () => {
+      try {
+        const res = await getAPI("/api/all-complete");
+        const data = res?.data?.data || {};
+
+        setCategoryData({
+          mainCategories: data.mainCategories || [],
+          categories: data.categories || [],
+          subCategories: data.subCategories || [],
+        });
+      } catch (err) {
+        console.log("Category load error:", err);
+      }
+    };
+
+    fetchCategories();
   }, []);
 
-  // REMOVE SINGLE ITEM
+  const getCategoryById = (id) =>
+    categoryData.categories.find((c) => String(c._id) === String(id));
+
+  useEffect(() => {
+    if (categoryData.categories.length === 0) return;
+
+    const fetchWishlist = async () => {
+      try {
+        const res = await getAPI(`/api/wishlist/${userId}`);
+        const list = res?.data?.wishlist || [];
+
+        const enriched = list.map((item) => {
+          const catObj = getCategoryById(item.category);
+          return {
+            ...item,
+            categoryName: catObj?.categoryName || "N/A",
+          };
+        });
+
+        setWishlist(enriched);
+      } catch (err) {
+        console.log("Error loading wishlist:", err);
+      }
+    };
+
+    fetchWishlist();
+  }, [categoryData]);
+
   const removeItem = async (productId) => {
     try {
-      await getAPI(
-        "/api/wishlist/remove",
-        { userId, productId },
-        true,
-        false,
-        "DELETE"
-      );
+      await deleteAPI("/api/wishlist/remove", {
+        params: { userId, productId },
+      });
 
-      setWishlist((prev) =>
-        prev.filter((item) => item._id !== productId)
-      );
+      setWishlist((prev) => prev.filter((item) => item._id !== productId));
     } catch (err) {
       console.log("Error removing item:", err);
     }
   };
 
-  // CLEAR ENTIRE WISHLIST
   const clearWishlist = async () => {
     try {
-      // remove each item from backend
-      for (const item of wishlist) {
-        await getAPI(
-          "/api/wishlist/remove",
-          { userId, productId: item._id },
-          true,
-          false,
-          "DELETE"
-        );
+      const items = [...wishlist];
+
+      for (const item of items) {
+        await deleteAPI("/api/wishlist/remove", {
+          params: { userId, productId: item._id },
+        });
       }
 
       setWishlist([]);
@@ -210,21 +425,29 @@ const WishlistTable = () => {
                     </button>
 
                     <img
-                      src={item.mainImage}
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.mainImage}`}
                       alt="product"
                       className="w-12 h-12 object-cover rounded border border-gray-300 p-2"
                     />
 
                     <div className="font-semibold">
                       <p className="text-gray-800">{item.productName}</p>
-                      <p className="text-xs text-gray-500">
-                        {item.userId?.name || "Unknown Seller"}
-                      </p>
+                    <p className="text-xs text-gray-500">
+ {item.userId
+  ? item.userId.username ||
+    `${item.userId.name || ""} ${item.userId.lastName || ""}`.trim()
+  : "Unknown Seller"}
+
+</p>
+
                     </div>
                   </td>
 
                   <td className="py-4 px-4">₹{item.sellingPrice}</td>
-                  <td className="py-4 px-4">{item.category || "N/A"}</td>
+
+                  {/* CATEGORY FIX */}
+                  <td className="py-4 px-4">{item.categoryName}</td>
+
                   <td className="py-4 px-4">{item.status || "Available"}</td>
 
                   <td className="py-4 px-4 text-right">
@@ -241,28 +464,6 @@ const WishlistTable = () => {
 
       {/* FOOTER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mt-6 gap-4 w-full overflow-hidden">
-        {/* <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full md:w-auto">
-          <label className="text-sm text-gray-600 whitespace-nowrap underline">
-            Wishlist link:
-          </label>
-          <input
-            type="text"
-            className="border border-gray-300 text-gray-400 rounded-full px-4 py-3 text-sm w-full sm:w-80"
-            value={`${window.location.origin}/my-account/wishlist/${userId}`}
-            readOnly
-          />
-          <button
-            className="bg-[#5C4033] hover:bg-[#4b3327] text-white text-sm rounded-full px-4 py-2"
-            onClick={() =>
-              navigator.clipboard.writeText(
-                `${window.location.origin}/my-account/wishlist/${userId}`
-              )
-            }
-          >
-            Copy Link
-          </button>
-        </div> */}
-
         <div className="flex flex-col sm:flex-row items-center gap-4 justify-end w-full md:w-auto">
           <button
             className="text-sm text-[#5C4033] underline hover:text-[#3e2c1e]"
