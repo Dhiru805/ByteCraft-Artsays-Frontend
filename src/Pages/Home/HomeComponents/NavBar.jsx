@@ -12,8 +12,13 @@ import { BsHammer } from "react-icons/bs";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { use } from "react";
 import { AiFillDashboard } from "react-icons/ai";
-import { Bell, FileX, Menu, User } from "lucide-react"; 
-import { RiMoneyRupeeCircleLine, RiAuctionFill, RiMapPin2Line, RiLockPasswordLine  } from "react-icons/ri";
+import { Bell, FileX, Menu, User } from "lucide-react";
+import {
+  RiMoneyRupeeCircleLine,
+  RiAuctionFill,
+  RiMapPin2Line,
+  RiLockPasswordLine,
+} from "react-icons/ri";
 import { PiHandbagBold } from "react-icons/pi";
 import { HiOutlineHeart } from "react-icons/hi";
 import { BiCart, BiLogOut } from "react-icons/bi";
@@ -33,21 +38,22 @@ const NavBar = () => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-  
+  const userId = localStorage.getItem("userId");
+
   const navigate = useNavigate();
   const location = useLocation();
 
   const isOnSocialMedia = location.pathname === "/social-media";
 
   const handleDashboardClick = (Usertype) => {
-    if (Usertype === 'Artist') {
-        navigate("/artist/dashboard");
-    } else if (Usertype === 'Super-Admin') {
-        navigate("/Super-Admin/dashboard");
-    } else if(Usertype === 'Seller') {
+    if (Usertype === "Artist") {
+      navigate("/artist/dashboard");
+    } else if (Usertype === "Super-Admin") {
+      navigate("/Super-Admin/dashboard");
+    } else if (Usertype === "Seller") {
       navigate("/seller/dashboard");
     }
-  }
+  };
 
   const handleUserIconClick = (e) => {
     e.stopPropagation();
@@ -55,30 +61,30 @@ const NavBar = () => {
   };
 
   const handleSignOut = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userType');
-    localStorage.removeItem('email');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('profilePhoto');
-    window.dispatchEvent(new Event('profilePhotoUpdated'));
-    window.location.href = '/';
+    localStorage.removeItem("token");
+    localStorage.removeItem("userType");
+    localStorage.removeItem("email");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("profilePhoto");
+    window.dispatchEvent(new Event("profilePhotoUpdated"));
+    window.location.href = "/";
   };
 
   useEffect(() => {
-  if (location.pathname.startsWith("/social-media")) {
-    setIsToggled(true);
-  } else {
-    setIsToggled(false);
-  }
+    if (location.pathname.startsWith("/social-media")) {
+      setIsToggled(true);
+    } else {
+      setIsToggled(false);
+    }
   }, [location.pathname]);
- 
-const handleToggle = () => {
-  if (isToggled) {
-    navigate("/");
-  } else {
-    navigate("/social-media");
-  }
-};
+
+  const handleToggle = () => {
+    if (isToggled) {
+      navigate("/");
+    } else {
+      navigate("/social-media");
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -158,7 +164,10 @@ const handleToggle = () => {
                 <a className="nav-link-h me-3" href="/bid">
                   BID
                 </a>
-                <a className="nav-link-h d-none d-md-inline-block me-3" href="/store">
+                <a
+                  className="nav-link-h d-none d-md-inline-block me-3"
+                  href="/store"
+                >
                   STORES
                 </a>
                 <a
@@ -174,7 +183,7 @@ const handleToggle = () => {
               <div className="col-md-2 col-12 text-center order-md-1 order-0">
                 <div className="logo-container-h">
                   <a className="logo-h" href="/">
-                    <img src="/assets/home/logo.svg"/>
+                    <img src="/assets/home/logo.svg" />
                   </a>
                   <div className="mega-menu">
                     {/* Top Header Bar */}
@@ -210,8 +219,12 @@ const handleToggle = () => {
                           <button className="sidebar-btn-m">
                             Style/Genre-Based
                           </button>
-                          <button className="sidebar-btn-m">Subject-Based</button>
-                          <button className="sidebar-btn-m">Surface-Based</button>
+                          <button className="sidebar-btn-m">
+                            Subject-Based
+                          </button>
+                          <button className="sidebar-btn-m">
+                            Surface-Based
+                          </button>
                           <button className="sidebar-btn-m">
                             Cultural/Traditional Forms
                           </button>
@@ -229,7 +242,9 @@ const handleToggle = () => {
                                   </span>
                                 </td>
                                 <td>
-                                  <span className="hover-underline">Pop Art</span>
+                                  <span className="hover-underline">
+                                    Pop Art
+                                  </span>
                                 </td>
                                 <td>
                                   <span className="hover-underline">
@@ -247,7 +262,10 @@ const handleToggle = () => {
                         </div>
                         <div className="sales-support">
                           <div id="supportText">Sales Support</div>
-                          <a href="/" style={{ textDecoration: "none", color: "white" }}>
+                          <a
+                            href="/"
+                            style={{ textDecoration: "none", color: "white" }}
+                          >
                             <span id="slider" className="align-content-center">
                               Sales Support
                             </span>
@@ -302,7 +320,7 @@ const handleToggle = () => {
             {isLoggedIn === true && (
               <div className="col-md-2 col-12 d-flex justify-content-center text-center order-md-1 order-0">
                 <a className="logo-h" href="/">
-                  <img src="/assets/home/logo.svg"/>
+                  <img src="/assets/home/logo.svg" />
                 </a>
               </div>
             )}
@@ -319,15 +337,22 @@ const handleToggle = () => {
                   />
                   <i className="ri-search-line text-2xl font-bold search-icon-h" />
                 </div>
-                {Usertype === "Buyer" ? 
-                <a className="nav-link-h icon-link-h me-3" onClick={() => navigate("/my-account/my-cart")}>
-                  <i className="fas fa-shopping-cart" />
-                </a> : (Usertype === "Artist" || Usertype === "Super-Admin") ?
-                <a className="nav-link-h me-3" href="/blog">
-                  BLOG
-                </a> : (!isLoggedIn) ? <a className="nav-link-h icon-link-h me-3" href="/">
-                  <i className="fas fa-shopping-cart" />
-                </a> : null}
+                {Usertype === "Buyer" ? (
+                  <a
+                    className="nav-link-h icon-link-h me-3"
+                    onClick={() => navigate("/my-account/my-cart")}
+                  >
+                    <i className="fas fa-shopping-cart" />
+                  </a>
+                ) : Usertype === "Artist" || Usertype === "Super-Admin" ? (
+                  <a className="nav-link-h me-3" href="/blog">
+                    BLOG
+                  </a>
+                ) : !isLoggedIn ? (
+                  <a className="nav-link-h icon-link-h me-3" href="/">
+                    <i className="fas fa-shopping-cart" />
+                  </a>
+                ) : null}
                 {isLoggedIn === false && (
                   <a className="nav-link-h btn-started-h ms-2" href="/login">
                     GET STARTED
@@ -345,28 +370,29 @@ const handleToggle = () => {
                         }}
                         onClick={handleUserIconClick}
                       >
-                        {console.log("user saved data", { 
-                          token: localStorage.getItem('token'),
-                          usertype: localStorage.getItem('usertype'),
-                          profilePhoto: localStorage.getItem('profilePhoto')
-                          }
-                      )}
+                        {console.log("user saved data", {
+                          token: localStorage.getItem("token"),
+                          usertype: localStorage.getItem("usertype"),
+                          profilePhoto: localStorage.getItem("profilePhoto"),
+                        })}
                         {console.log("BASE_URL:", BASE_URL)}
                         <img
                           src={
-                            localStorage.getItem('profilePhoto')
-                                ? `${BASE_URL}${localStorage.getItem('profilePhoto')}`
-                                : DEFAULT_PROFILE_IMAGE
-                            }
-                              className="rounded-circle avatar"
-                              alt="User Profile"
-                              style={{
-                              width: '40px',
-                              height: '40px',
-                              objectFit: 'cover',
-                              borderRadius: '50%',
-                              }}
-                            />
+                            localStorage.getItem("profilePhoto")
+                              ? `${BASE_URL}${localStorage.getItem(
+                                  "profilePhoto"
+                                )}`
+                              : DEFAULT_PROFILE_IMAGE
+                          }
+                          className="rounded-circle avatar"
+                          alt="User Profile"
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                            objectFit: "cover",
+                            borderRadius: "50%",
+                          }}
+                        />
                       </div>
                       {showDropdown && Usertype === "Buyer" && (
                         <div
@@ -381,34 +407,73 @@ const handleToggle = () => {
                           }}
                         >
                           <div className="dropdown-arrow-h" />
-                          <a className="dropdown-item-h" onClick={() => navigate("/my-account")}>
+                          <a
+                            className="dropdown-item-h"
+                            onClick={() => navigate("/my-account")}
+                          >
                             <i className="fas fa-user me-2" /> Your Account
                           </a>
-                         {!isOnSocialMedia  ?
-                          <a className="dropdown-item-h" onClick={() => navigate("/social-media")}>
-                            <img 
-                              alt="community-logo" 
-                              src={artLogo} 
-                              style={{width: '18px', height: '18px', marginRight: '2px'}}/>Switch to Community
-                          </a> :
-                          <a className="dropdown-item-h" onClick={() => navigate("/")}>
-                        
-                            <img src={AIcon} alt="Artsays-Icon" style={{width: '16px', height: '16px', marginRight: '9px'}}/>Switch to Artsays
-                          </a>
-                         }
-                          <a className="dropdown-item-h" onClick={() => navigate("/my-account/my-orders")}>
+                          {!isOnSocialMedia ? (
+                            <a
+                              className="dropdown-item-h"
+                              onClick={() => navigate("/social-media")}
+                            >
+                              <img
+                                alt="community-logo"
+                                src={artLogo}
+                                style={{
+                                  width: "18px",
+                                  height: "18px",
+                                  marginRight: "2px",
+                                }}
+                              />
+                              Switch to Community
+                            </a>
+                          ) : (
+                            <a
+                              className="dropdown-item-h"
+                              onClick={() => navigate("/")}
+                            >
+                              <img
+                                src={AIcon}
+                                alt="Artsays-Icon"
+                                style={{
+                                  width: "16px",
+                                  height: "16px",
+                                  marginRight: "9px",
+                                }}
+                              />
+                              Switch to Artsays
+                            </a>
+                          )}
+                          <a
+                            className="dropdown-item-h"
+                            onClick={() => navigate("/my-account/my-orders")}
+                          >
                             <i className="fas fa-box me-2" /> Orders
                           </a>
-                          <a className="dropdown-item-h" onClick={() => navigate("/my-account/buyer-wallet")}>
+                          <a
+                            className="dropdown-item-h"
+                            onClick={() => navigate("/my-account/buyer-wallet")}
+                          >
                             <i className="fas fa-wallet me-2" /> Wallet
                           </a>
                           <a className="dropdown-item-h" href="/">
                             <i className="fas fa-bell me-2" /> Notification
                           </a>
-                          <a className="dropdown-item-h" onClick={() => navigate("/my-account/wishlist")}>
+                          <a
+                            className="dropdown-item-h"
+                            onClick={() =>
+                              navigate(`/my-account/wishlist/${userId}`)
+                            }
+                          >
                             <i className="fas fa-heart me-2" /> Wishlist
                           </a>
-                          <div className="dropdown-item-h" onClick={handleSignOut}>
+
+                          <div
+                            className="dropdown-item-h"
+                            onClick={handleSignOut}
+                          >
                             <i className="fas fa-sign-out-alt me-2" /> Logout
                           </div>
                         </div>
@@ -426,28 +491,56 @@ const handleToggle = () => {
                           }}
                         >
                           <div className="dropdown-arrow-h" />
-                          <div className="dropdown-item-group-h"> 
-                              <a className="dropdown-item-h" onClick={() => {
-                              handleDashboardClick(Usertype);
-                            }}>
+                          <div className="dropdown-item-group-h">
+                            <a
+                              className="dropdown-item-h"
+                              onClick={() => {
+                                handleDashboardClick(Usertype);
+                              }}
+                            >
                               <i className="fas fa-tachometer-alt me-1" />
                               My Dashboard
                             </a>
-                            {!isOnSocialMedia  ?
-                          <a className="dropdown-item-h" onClick={() => navigate("/social-media")}>
-                            <img 
-                              alt="community-logo" 
-                              src={artLogo} 
-                              style={{width: '20px', height: '20px', marginRight: '2px'}}/>Switch to Community
-                          </a> :
-                          <a className="dropdown-item-h" onClick={() => navigate("/")}>
-                            <img src={AIcon} alt="Artsays-Icon" style={{width: '16px', height: '16px', marginRight: '7px'}}/>Switch to Artsays
-                          </a>
-                         }
+                            {!isOnSocialMedia ? (
+                              <a
+                                className="dropdown-item-h"
+                                onClick={() => navigate("/social-media")}
+                              >
+                                <img
+                                  alt="community-logo"
+                                  src={artLogo}
+                                  style={{
+                                    width: "20px",
+                                    height: "20px",
+                                    marginRight: "2px",
+                                  }}
+                                />
+                                Switch to Community
+                              </a>
+                            ) : (
+                              <a
+                                className="dropdown-item-h"
+                                onClick={() => navigate("/")}
+                              >
+                                <img
+                                  src={AIcon}
+                                  alt="Artsays-Icon"
+                                  style={{
+                                    width: "16px",
+                                    height: "16px",
+                                    marginRight: "7px",
+                                  }}
+                                />
+                                Switch to Artsays
+                              </a>
+                            )}
                             <a className="dropdown-item-h" href="/">
                               <i className="fas fa-bell me-2" /> Notifications
                             </a>
-                            <div className="dropdown-item-h" onClick={handleSignOut}>
+                            <div
+                              className="dropdown-item-h"
+                              onClick={handleSignOut}
+                            >
                               <i className="fas fa-sign-out-alt me-2" /> Logout
                             </div>
                           </div>
@@ -462,93 +555,113 @@ const handleToggle = () => {
         </div>
       </header>
 
-      {
-        !isLoggedIn && (
+      {!isLoggedIn && (
+        <nav className="navbar-h navbar-light-h w-full shadow-sm px-3 py-2 d-flex justify-content-between align-items-center">
+          <a href="/" className="navbar-brand-h mb-0 h1">
+            <img
+              src="/assets/home/logo.svg"
+              style={{ height: "40px", objectFit: "contain" }}
+            />
+          </a>
+          <a className="nav-link-h btn-started-h" href="/login">
+            GET STARTED
+          </a>
+        </nav>
+      )}
+      {isLoggedIn && (
+        <>
           <nav className="navbar-h navbar-light-h w-full shadow-sm px-3 py-2 d-flex justify-content-between align-items-center">
-            <a href="/" className="navbar-brand-h mb-0 h1">
-              <img src="/assets/home/logo.svg" style={{height: '40px', objectFit: 'contain'}}/>
-            </a>
-            <a className="nav-link-h btn-started-h" 
-            href="/login">
-              GET STARTED 
-            </a>
-          </nav>
-        )
-      }
-      {
-        isLoggedIn && (
-          <>
-          <nav className="navbar-h navbar-light-h w-full shadow-sm px-3 py-2 d-flex justify-content-between align-items-center">
-             <div>
-                <a href="/" className="navbar-brand-h mb-0 h1">
-                  <img src="/assets/home/logo.svg" style={{height: '40px', objectFit: 'contain'}}/>
-                </a>
+            <div>
+              <a href="/" className="navbar-brand-h mb-0 h1">
+                <img
+                  src="/assets/home/logo.svg"
+                  style={{ height: "40px", objectFit: "contain" }}
+                />
+              </a>
             </div>
             <div className="flex items-center space-x-4 cursor-pointer">
-            <Bell className="w-5 h-5 text-gray-700" />
-            <div>
-              <Menu className="w-5 h-5 text-gray-700" id="mobileToggle" onClick={() => setShowProfileMenu(!showProfileMenu)}/>
-              {
-                showProfileMenu && (
-                  <>
-                    <a className="dropdown-item-h" onClick={() => navigate("/social-media")}>
-                      <img 
-                        alt="community-logo" 
-                        src={artLogo} 
-                        tyle={{width: '20px', height: '20px', marginRight: '2px'}}/>Switch to Community
-                    </a>
-                    </>
-                )
-              }
-            </div>
-          </div>
-          </nav>
-                <div className="profile-menu-h" id="mobileSidebar">
-                <div className="profile-header-h">
-                <button className="close-btn-h" id="closeSidebar">
-                  &times;
-                </button>
-                <img
-                  src={
-                      localStorage.getItem('profilePhoto')
-                      ? `${BASE_URL}${localStorage.getItem('profilePhoto')}`
-                      : DEFAULT_PROFILE_IMAGE
-                    }
-                    className="rounded-circle avatar"
-                    alt="User Profile"
-                    style={{
-                    width: '131px',
-                    height: '131px',
-                    top: '65.89',
-                    left: '74.5',
-                    objectFit: 'cover',
-                    borderRadius: '50%',
-                    display: 'block',
-                    margin: '0 auto',
-                    }}
+              <Bell className="w-5 h-5 text-gray-700" />
+              <div>
+                <Menu
+                  className="w-5 h-5 text-gray-700"
+                  id="mobileToggle"
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
                 />
-                <div className="profile-name-container">
-                  <span className="profile-name-h">July Singh</span>
-                  <MdVerified className="verified-icon" />
-                </div> 
+                {showProfileMenu && (
+                  <>
+                    <a
+                      className="dropdown-item-h"
+                      onClick={() => navigate("/social-media")}
+                    >
+                      <img
+                        alt="community-logo"
+                        src={artLogo}
+                        tyle={{
+                          width: "20px",
+                          height: "20px",
+                          marginRight: "2px",
+                        }}
+                      />
+                      Switch to Community
+                    </a>
+                  </>
+                )}
               </div>
-             { (Usertype === "Seller" || Usertype === "Artist" || Usertype === "Super-Admin") ?
+            </div>
+          </nav>
+          <div className="profile-menu-h" id="mobileSidebar">
+            <div className="profile-header-h">
+              <button className="close-btn-h" id="closeSidebar">
+                &times;
+              </button>
+              <img
+                src={
+                  localStorage.getItem("profilePhoto")
+                    ? `${BASE_URL}${localStorage.getItem("profilePhoto")}`
+                    : DEFAULT_PROFILE_IMAGE
+                }
+                className="rounded-circle avatar"
+                alt="User Profile"
+                style={{
+                  width: "131px",
+                  height: "131px",
+                  top: "65.89",
+                  left: "74.5",
+                  objectFit: "cover",
+                  borderRadius: "50%",
+                  display: "block",
+                  margin: "0 auto",
+                }}
+              />
+              <div className="profile-name-container">
+                <span className="profile-name-h">July Singh</span>
+                <MdVerified className="verified-icon" />
+              </div>
+            </div>
+            {Usertype === "Seller" ||
+            Usertype === "Artist" ||
+            Usertype === "Super-Admin" ? (
               <div className="profile-content-h">
                 <div className="profile-item-h">
-                  <i class="bi bi-person-fill"/>
+                  <i class="bi bi-person-fill" />
                   <span>My Dashboard</span>
                 </div>
                 <div className="profile-item-h">
                   <a className="dropdown-item-h" onClick={() => navigate("/")}>
                     <span style={{ display: "flex", alignItems: "center" }}>
-                    <img 
-                      src={AIcon} 
-                      className="icon-sidebar"
-                      alt="Artsays-Icon" 
-                      style={{ width: "16px", height: "16px", marginRight: '17px', marginLeft: '4px' }} 
-                    />
-                    Switch to Artsays
-                  </span>
+                      <img
+                        src={AIcon}
+                        className="icon-sidebar"
+                        alt="Artsays-Icon"
+                        style={{
+                          width: "16px",
+                          height: "16px",
+                          marginRight: "17px",
+                          marginLeft: "4px",
+                        }}
+                      />
+                      Switch to Artsays
+                    </span>
                   </a>
                 </div>
                 <div className="profile-item-h">
@@ -571,96 +684,113 @@ const handleToggle = () => {
                   <i className="bi bi-box-arrow-left" />
                   <span>Logout</span>
                 </div>
-              </div> :
+              </div>
+            ) : (
               <div className="profile-content-h">
                 <div className="profile-item-h">
-                  <FaUser style={{ marginRight: "15px", marginLeft: '6px' }}/>
+                  <FaUser style={{ marginRight: "15px", marginLeft: "6px" }} />
                   <span>My Account</span>
                 </div>
                 <div className="profile-item-h">
                   <a className="dropdown-item-h" onClick={() => navigate("/")}>
                     <span style={{ display: "flex", alignItems: "center" }}>
-                    <img 
-                      src={AIcon} 
-                      className="icon-sidebar"
-                      alt="Artsays-Icon" 
-                      style={{ width: "16px", height: "16px", marginRight: '15px', marginLeft: '4px' }} 
-                    />
-                    Switch to Artsays
-                  </span>
+                      <img
+                        src={AIcon}
+                        className="icon-sidebar"
+                        alt="Artsays-Icon"
+                        style={{
+                          width: "16px",
+                          height: "16px",
+                          marginRight: "15px",
+                          marginLeft: "4px",
+                        }}
+                      />
+                      Switch to Artsays
+                    </span>
                   </a>
                 </div>
                 <div className="profile-item-h">
-                  <MdLibraryAdd className="icon-sidebar"/>
+                  <MdLibraryAdd className="icon-sidebar" />
                   <span>Collections</span>
                 </div>
                 <div className="profile-item-h">
-                  <RiAuctionFill className="icon-sidebar"/>
+                  <RiAuctionFill className="icon-sidebar" />
                   <span>Bid</span>
                 </div>
                 <div className="profile-item-h">
-                  <PiHandbagBold className="icon-sidebar"/>
+                  <PiHandbagBold className="icon-sidebar" />
                   <span>Store</span>
                 </div>
                 <div className="profile-item-h">
-                  <BiCart className="icon-sidebar"/>
+                  <BiCart className="icon-sidebar" />
                   <span>Cart</span>
                 </div>
                 <div className="profile-item-h">
-                  <IoWalletOutline className="icon-sidebar"/>
+                  <IoWalletOutline className="icon-sidebar" />
                   <span>Wallet</span>
                 </div>
                 <div className="profile-item-h">
-                  <IoMdNotificationsOutline className="icon-sidebar"/>
+                  <IoMdNotificationsOutline className="icon-sidebar" />
                   <span>Notification and Preferences</span>
                 </div>
-                <div className="profile-item-h">
-                  <HiOutlineHeart className="icon-sidebar"/>
+                <div
+                  className="profile-item-h"
+                  onClick={() => navigate(`/my-account/wishlist/${userId}`)}
+                >
+                  <HiOutlineHeart className="icon-sidebar" />
                   <span>Wishlist</span>
                 </div>
+
                 <div className="profile-item-h">
-                  <BsBoxSeam className="icon-sidebar"/>
+                  <BsBoxSeam className="icon-sidebar" />
                   <span>Orders</span>
                 </div>
                 <div className="profile-item-h">
-                  <RiMapPin2Line className="icon-sidebar"/>
+                  <RiMapPin2Line className="icon-sidebar" />
                   <span>Manage Address</span>
                 </div>
                 <div className="profile-item-h">
-                  <RiMoneyRupeeCircleLine className="icon-sidebar"/>
+                  <RiMoneyRupeeCircleLine className="icon-sidebar" />
                   <span>Payment Methods</span>
                 </div>
                 <div className="profile-item-h">
-                  <MdOutlineSecurity className="icon-sidebar"/>
+                  <MdOutlineSecurity className="icon-sidebar" />
                   <span>Password Manager</span>
                 </div>
                 <div className="profile-item-h">
-                  <MdVerified className="icon-sidebar"/>
+                  <MdVerified className="icon-sidebar" />
                   <span>Account Verification</span>
                 </div>
                 <div className="profile-item-h">
-                  <img src={artLogo} style={{ height: 24 }} className="icon-sidebar"/>
+                  <img
+                    src={artLogo}
+                    style={{ height: 24 }}
+                    className="icon-sidebar"
+                  />
                   <span>Social Media Promotion</span>
                 </div>
                 <div className="profile-item-h">
-                  <FaTools  className="icon-sidebar" size={20} style={{marginRight: '14px'}}/>
+                  <FaTools
+                    className="icon-sidebar"
+                    size={20}
+                    style={{ marginRight: "14px" }}
+                  />
                   <span>Custom Request</span>
                 </div>
                 <div className="profile-item-h">
-                  <RiLockPasswordLine className="icon-sidebar"/>
+                  <RiLockPasswordLine className="icon-sidebar" />
                   <span>Security and Agreements</span>
                 </div>
                 <div className="profile-item-h" onClick={handleSignOut}>
-                  <BiLogOut  className="icon-sidebar"/>
+                  <BiLogOut className="icon-sidebar" />
                   <span>Logout</span>
                 </div>
               </div>
-            }
-            </div>
+            )}
+          </div>
           <div className="overlay-h" id="overlay1" />
         </>
-        )
-      }
+      )}
     </div>
   );
 };

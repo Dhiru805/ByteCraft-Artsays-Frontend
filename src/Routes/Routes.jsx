@@ -38,6 +38,7 @@ import AccountSecurityAndAgreements from "../Pages/Home/HomeComponents/MyAccount
 import MyOrders from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyOrders";
 import Logout from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/Logout";
 import TrackOrder from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/TrackOrder";
+import WishListTableTemplate from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/WishListTable copy";
 import WishListTable from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/WishListTable";
 import MyCartList from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/MyCartList";
 import CheckOut from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/CheckOut";
@@ -1482,7 +1483,8 @@ const AppRoutes = () => {
             />
             <Route path="logout" element={<Logout />} />
             <Route path="track-your-order" element={<TrackOrder />} />
-            <Route path="wishlist" element={<WishListTable />} />
+            <Route path="wishlist" element={<WishListTableTemplate />} />
+            <Route path="wishlist/:userId" element={<WishListTable />} />
             <Route path="my-cart" element={<MyCartList />} />
             <Route path="check-out" element={<CheckOut />} />
             <Route path="order-completed" element={<OrderCompleted />} />

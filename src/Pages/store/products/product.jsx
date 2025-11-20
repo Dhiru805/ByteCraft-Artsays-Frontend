@@ -2009,11 +2009,16 @@ import { useNavigate } from "react-router-dom";
 import { FiChevronRight } from "react-icons/fi";
 import { FiChevronLeft } from "react-icons/fi";
 import getAPI from "../../../api/getAPI";
+import postAPI from "../../../api/postAPI";
+import deleteAPI from "../../../api/deleteAPI";
+import { toast } from "react-toastify";
 
 const Product = () => {
   const [products, setProducts] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+
+  const userId = localStorage.getItem("userId");
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
@@ -2045,6 +2050,35 @@ const Product = () => {
       ...prev,
       [productId]: !prev[productId],
     }));
+  };
+
+  const handleWishlist = async (productId) => {
+    if (!userId) {
+      toast.warn("You must be logged in as a buyer to use wishlist");
+      return;
+    }
+
+    const isLiked = likedProducts[productId];
+
+    try {
+      if (isLiked) {
+        await deleteAPI("/api/wishlist/remove", {
+          params: { userId, productId },
+        });
+        toast.warn("Removed from Wishlist");
+      } else {
+        await postAPI("/api/wishlist/add", { userId, productId });
+        toast.success("Added to Wishlist");
+    
+      }
+
+      setLikedProducts((prev) => ({
+        ...prev,
+        [productId]: !isLiked,
+      }));
+    } catch (err) {
+      console.error("Wishlist error:", err);
+    }
   };
 
   // useEffect(() => {
@@ -2154,6 +2188,28 @@ const Product = () => {
     };
 
     fetchAllProducts();
+  }, []);
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      if (!userId) return;
+
+      try {
+        const res = await getAPI(`/api/wishlist/${userId}`, {}, true, false);
+
+        const wishlistArray = res?.data?.wishlist || [];
+
+        const obj = {};
+        wishlistArray.forEach((item) => {
+          obj[item._id] = true;
+        });
+
+        setLikedProducts(obj);
+      } catch (error) {
+        console.log("Error loading wishlist:", error);
+      }
+    };
+
+    fetchWishlist();
   }, []);
 
   const renderStars = (averageRating) => {
@@ -2578,18 +2634,23 @@ const Product = () => {
                       <div
                         onClick={(e) => {
                           e.stopPropagation();
-                          toggleLike(product._id);
+                          handleWishlist(product._id);
                         }}
                         className="cursor-pointer"
                       >
                         {likedProducts[product._id] ? (
                           <Heart
                             size={20}
-                            className="stroke-red-500"
-                            style={{ fill: "red" }}
+                            className="stroke-white"
+                            style={{ fill: "white" }}
                           />
                         ) : (
-                          <Heart size={20} className="stroke-gray-500" />
+                          <Heart
+                            size={20}
+                            className="stroke-white"
+                            style={{ fill: "transparent" }}
+                            
+                          />
                         )}
                       </div>
                     </button>
