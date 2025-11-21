@@ -40,6 +40,7 @@ import Logout from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComp
 import TrackOrder from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/TrackOrder";
 import WishListTableTemplate from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/WishListTable copy";
 import WishListTable from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/WishListTable";
+import MyCartListTemplate from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/MyCartList copy";
 import MyCartList from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/MyCartList";
 import CheckOut from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/CheckOut";
 import OrderCompleted from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/OrderCompleted";
@@ -1485,7 +1486,8 @@ const AppRoutes = () => {
             <Route path="track-your-order" element={<TrackOrder />} />
             <Route path="wishlist" element={<WishListTableTemplate />} />
             <Route path="wishlist/:userId" element={<WishListTable />} />
-            <Route path="my-cart" element={<MyCartList />} />
+            <Route path="my-cart" element={<MyCartListTemplate />} />
+            <Route path="my-cart/:userId" element={<MyCartList />} />
             <Route path="check-out" element={<CheckOut />} />
             <Route path="order-completed" element={<OrderCompleted />} />
             <Route path="error404" element={<Error404Page />} />

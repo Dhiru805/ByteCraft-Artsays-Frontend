@@ -340,7 +340,9 @@ const NavBar = () => {
                 {Usertype === "Buyer" ? (
                   <a
                     className="nav-link-h icon-link-h me-3"
-                    onClick={() => navigate("/my-account/my-cart")}
+                    onClick={() =>
+                              navigate(`/my-account/my-cart/${userId}`)
+                            }
                   >
                     <i className="fas fa-shopping-cart" />
                   </a>

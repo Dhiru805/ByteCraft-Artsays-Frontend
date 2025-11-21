@@ -303,7 +303,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import getAPI from "../../../../../../../../api/getAPI";
 import deleteAPI from "../../../../../../../../api/deleteAPI";
-
+import postAPI from "../../../../../../../../api/postAPI";
+import { toast } from "react-toastify";
 const WishlistTable = () => {
   const { userId } = useParams();
 
@@ -389,6 +390,31 @@ const WishlistTable = () => {
       console.log("Error clearing wishlist:", err);
     }
   };
+const addToCart = async (productId) => {
+  try {
+    await postAPI(`/api/cart/addcart/${productId}`, {}, true);
+    await deleteAPI("/api/wishlist/remove", { params: { userId, productId } });
+    setWishlist((prev) => prev.filter((item) => item._id !== productId));
+    toast.success("Successfully added to cart");
+  } catch (err) {
+    console.log("Error adding to cart:", err);
+    toast.error("Failed to add to cart");
+  }
+};
+const addAllToCart = async () => {
+  try {
+    for (const item of wishlist) {
+      await postAPI(`/api/cart/addcart/${item._id}`, {}, true);
+      await deleteAPI("/api/wishlist/remove", { params: { userId, productId: item._id } });
+    }
+    setWishlist([]);
+    toast.success("All items successfully added to cart");
+  } catch (err) {
+    console.log("Error adding all items:", err);
+    toast.error("Failed to add all items to cart");
+  }
+};
+
 
   return (
     <div className="max-w-[1464px] w-full px-4 sm:px-6 lg:px-12 pt-10 text-lg overflow-hidden">
@@ -451,8 +477,11 @@ const WishlistTable = () => {
                   <td className="py-4 px-4">{item.status || "Available"}</td>
 
                   <td className="py-4 px-4 text-right">
-                    <button className="bg-[#5C4033] hover:bg-[#4b3327] text-white px-4 py-2 rounded-full text-sm whitespace-nowrap">
+                    <button 
+                    onClick={() => addToCart(item._id)}
+                    className="bg-[#5C4033] hover:bg-[#4b3327] text-white px-4 py-2 rounded-full text-sm whitespace-nowrap">
                       Add to Cart
+                      
                     </button>
                   </td>
                 </tr>
@@ -471,7 +500,9 @@ const WishlistTable = () => {
           >
             Clear Wishlist
           </button>
-          <button className="bg-[#5C4033] hover:bg-[#4b3327] text-white text-sm rounded-full px-4 py-2">
+          <button 
+          onClick={addAllToCart}
+          className="bg-[#5C4033] hover:bg-[#4b3327] text-white text-sm rounded-full px-4 py-2">
             Add All to Cart
           </button>
         </div>
