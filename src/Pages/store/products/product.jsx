@@ -2069,7 +2069,6 @@ const Product = () => {
       } else {
         await postAPI("/api/wishlist/add", { userId, productId });
         toast.success("Added to Wishlist");
-    
       }
 
       setLikedProducts((prev) => ({
@@ -2080,6 +2079,23 @@ const Product = () => {
       console.error("Wishlist error:", err);
     }
   };
+const addToCart = async (productId) => {
+  const userId = localStorage.getItem("userId");
+
+  if (!userId) {
+    toast.warn("You must be logged in to add items to cart");
+    return;
+  }
+
+  try {
+    await postAPI(`/api/cart/addcart/${productId}`, {}, true);
+
+    toast.success("Added to Cart!");
+  } catch (err) {
+    console.error("Add to cart error:", err);
+    toast.error("Failed to add to cart");
+  }
+};
 
   // useEffect(() => {
   //   const fetchAllProducts = async () => {
@@ -2649,7 +2665,6 @@ const Product = () => {
                             size={20}
                             className="stroke-white"
                             style={{ fill: "transparent" }}
-                            
                           />
                         )}
                       </div>
@@ -2736,9 +2751,16 @@ const Product = () => {
                   {/* Buttons */}
                   <div className="p-3 product-button d-none d-md-block">
                     <div className="flex justify-between gap-3">
-                      <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCart(product._id);
+                        }}
+                        className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart hover:bg-dark hover:text-white transition"
+                      >
                         <FaShoppingCart /> Add to Cart
                       </button>
+
                       <button className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now">
                         Buy Now
                       </button>
