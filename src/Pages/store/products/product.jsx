@@ -2079,23 +2079,23 @@ const Product = () => {
       console.error("Wishlist error:", err);
     }
   };
-const addToCart = async (productId) => {
-  const userId = localStorage.getItem("userId");
+  const addToCart = async (productId) => {
+    const userId = localStorage.getItem("userId");
 
-  if (!userId) {
-    toast.warn("You must be logged in to add items to cart");
-    return;
-  }
+    if (!userId) {
+      toast.warn("You must be logged in to add items to cart");
+      return;
+    }
 
-  try {
-    await postAPI(`/api/cart/addcart/${productId}`, {}, true);
+    try {
+      await postAPI(`/api/cart/addcart/${productId}`, {}, true);
 
-    toast.success("Added to Cart!");
-  } catch (err) {
-    console.error("Add to cart error:", err);
-    toast.error("Failed to add to cart");
-  }
-};
+      toast.success("Added to Cart!");
+    } catch (err) {
+      console.error("Add to cart error:", err);
+      toast.error("Failed to add to cart");
+    }
+  };
 
   // useEffect(() => {
   //   const fetchAllProducts = async () => {
@@ -2761,7 +2761,15 @@ const addToCart = async (productId) => {
                         <FaShoppingCart /> Add to Cart
                       </button>
 
-                      <button className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(
+                            `/my-account/check-out/${userId}?productId=${product._id}`
+                          );
+                        }}
+                        className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now"
+                      >
                         Buy Now
                       </button>
                     </div>

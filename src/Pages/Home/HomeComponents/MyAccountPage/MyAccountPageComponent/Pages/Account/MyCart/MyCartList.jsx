@@ -468,13 +468,14 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../../../../../api/getAPI";
 import deleteAPI from "../../../../../../../../api/deleteAPI";
 import postAPI from "../../../../../../../../api/postAPI";
 
 const MyCartList = () => {
   const { userId } = useParams();
-
+const navigate = useNavigate();
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -711,8 +712,10 @@ const grouped = cart.map(item => ({
     </span>
   </div>
 
-  <button className="w-full mt-4 bg-[#5C4033] hover:bg-[#4b3327] text-white py-2 rounded-full text-sm">
-    Proceed to Payment
+  <button 
+  onClick={() => navigate(`/my-account/check-out/${userId}`)}
+  className="w-full mt-4 bg-[#5C4033] hover:bg-[#4b3327] text-white py-2 rounded-full text-sm">
+    Proceed to Checkout
   </button>
 </div>
 
