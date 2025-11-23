@@ -44,7 +44,6 @@ import CheckOut from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageCo
 import OrderCompleted from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/OrderCompleted";
 import MyOrderView from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyOrderView";
 
-
 //----------------------------------------Error Pages-----------------------------------------//
 import PagenotFound404 from "../Pages/Error/404Error";
 import UnauthorizedAccess from "../Pages/Error/403Error";
@@ -276,8 +275,8 @@ import UpdateChallengeApplication from "../Component/Dashboard/Super-AdminDashbo
 // import UpdateChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/update";
 // import ViewChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/challengeview";
 // import ChallengesEntries from '../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/challengesEntries';
-import GSTSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/GST/GST';
-import InsuranceSetting  from '../Component/Dashboard/Super-AdminDashboard/Settings/Insurance/InsuranceSetting'
+import GSTSetting from "../Component/Dashboard/Super-AdminDashboard/Settings/GST/GST";
+import InsuranceSetting from "../Component/Dashboard/Super-AdminDashboard/Settings/Insurance/InsuranceSetting";
 
 //------------------------------PackagingMaterial--------------------------------//
 import Material from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/Material";
@@ -415,8 +414,8 @@ import ArtistUpdateExhibition from "../Component/Dashboard/ArtistDashbooard/Exhi
 import ArtistViewExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/exhibitionView";
 import ArtistSponser from "../Component/Dashboard/ArtistDashbooard/Advertise/Sponser";
 import ArtistProductCouponCodes from "../Component/Dashboard/ArtistDashbooard/ProductSetting/ProductCouponCode/ProductCouponCode";
-import UpdateProductArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/UpdateProduct/productUploade"
-import ProductViewArtist from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/productUploade';
+import UpdateProductArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/UpdateProduct/productUploade";
+import ProductViewArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/productUploade";
 //-----------------------------Blogs--------------------------//
 import BlogList from "../Component/Dashboard/ArtistDashbooard/Blog/BlogList";
 import BlogPost from "../Component/Dashboard/ArtistDashbooard/Blog/BlogPost";
@@ -499,7 +498,7 @@ import Insurance from "../Pages/Insurance/Insurance";
 import Partner from "../Pages/Partner/Partner";
 import SellerProductCouponCodes from "../Component/Dashboard/SellerDashboard/ProductSetting/ProductCouponCode/ProductCouponCode";
 import UpdateProductSeller from "../Component/Dashboard/SellerDashboard/ProductsDetails/UpdateProduct/productUploade";
-import ProductViewSeller from '../Component/Dashboard/SellerDashboard/ProductsDetails/UpdateProduct/productUploade';
+import ProductViewSeller from "../Component/Dashboard/SellerDashboard/ProductsDetails/UpdateProduct/productUploade";
 
 //-----------------------------Artist Premium Badges--------------------------//
 
@@ -553,6 +552,9 @@ import ViewSponsors from "../Component/Dashboard/Super-AdminDashboard/Community 
 import PurchaseBadge from "../Component/Dashboard/Super-AdminDashboard/Community CMS/PurchaseBadge/PurchaseBadge";
 import ShowPurchasedBadge from "../Component/Dashboard/Super-AdminDashboard/Community CMS/PurchaseBadge/ShowPurchasedBadge";
 import ProductViewing from "../Component/SocialMedia/Profile/ProductView";
+import SharePost from "../Component/SocialMedia/Posts/SharePost";
+import SinglePost from "../Component/SocialMedia/Posts/SinglePost";
+import ShareProfile from "../Component/SocialMedia/Posts/ShareProfile";
 
 const PrivateRoute = ({ allowedRoles, children }) => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
@@ -847,15 +849,38 @@ const AppRoutes = () => {
         />
         {/* Product Setting */}
         <Route path="product-settings/product-type" element={<ProductType />} />
-        <Route path="product-settings/product-medium" element={<ProductMedium />} />
-        <Route path="product-settings/product-material" element={<ProductMaterial />} />
-        <Route path="product-settings/product-edition-type" element={<ProductEditionTypes />} />
-        <Route path="product-settings/product-surface-type" element={<ProductSurfaceTypes />} />
-        <Route path="product-settings/product-coupon-code" element={<ProductCouponCodes />} />
-        <Route path="product-settings/product-packaging-type" element={<ProductPackagingTypes />} />
-        <Route path="product-settings/copyrights-rights" element={<CopyrightsRights />} />
-        <Route path="product-settings/blockchain-network" element={<BlockchainNetworks />} />
-
+        <Route
+          path="product-settings/product-medium"
+          element={<ProductMedium />}
+        />
+        <Route
+          path="product-settings/product-material"
+          element={<ProductMaterial />}
+        />
+        <Route
+          path="product-settings/product-edition-type"
+          element={<ProductEditionTypes />}
+        />
+        <Route
+          path="product-settings/product-surface-type"
+          element={<ProductSurfaceTypes />}
+        />
+        <Route
+          path="product-settings/product-coupon-code"
+          element={<ProductCouponCodes />}
+        />
+        <Route
+          path="product-settings/product-packaging-type"
+          element={<ProductPackagingTypes />}
+        />
+        <Route
+          path="product-settings/copyrights-rights"
+          element={<CopyrightsRights />}
+        />
+        <Route
+          path="product-settings/blockchain-network"
+          element={<BlockchainNetworks />}
+        />
         {/* Packaging Material */}
         <Route path="packaging-material/material" element={<Material />} />
         <Route
@@ -957,10 +982,13 @@ const AppRoutes = () => {
         />
         <Route path="settings/user-role" element={<UserRole />} />
         <Route path="settings/create-user-role" element={<CreateRole />} />
-        <Route path="product-settings/token-standard" element={<TokenStandards />} />
+        <Route
+          path="product-settings/token-standard"
+          element={<TokenStandards />}
+        />
         <Route path="product-settings/period-era" element={<PeriodEras />} />
-        <Route path="settings/gst" element={<GSTSetting  />} />
-         <Route path="settings/insurance" element={<InsuranceSetting  />} />
+        <Route path="settings/gst" element={<GSTSetting />} />
+        <Route path="settings/insurance" element={<InsuranceSetting />} />
         {/* Advertise Routes */}
         <Route path="advertise" element={<SuperAdminArtistAdvertise />} />
         <Route path="advertise/sponser" element={<SuperAdminArtistSponsor />} />
@@ -1119,17 +1147,14 @@ const AppRoutes = () => {
         <Route path="certificate" element={<CertificateTable />} />
         <Route path="certificate/create" element={<CreateCertificate />} />
         <Route path="certificate/edit" element={<EditCertificate />} />
-
         {/* Partner Page Website CMS */}
         <Route path="partner" element={<PartnerTable />} />
         <Route path="partner/create" element={<CreatePartner />} />
         <Route path="partner/edit" element={<EditPartner />} />
-
         {/* Insurance Website CMS */}
         <Route path="insurance" element={<InsuranceTable />} />
         <Route path="insurance/create" element={<CreateInsurance />} />
         <Route path="insurance/edit" element={<EditInsurance />} />
-
         {/* Homepage Admin Routes*/}
         <Route path="homepage" element={<Homepage />} />
         <Route path="homepage/create" element={<CreateHomepage />} />
@@ -1257,8 +1282,14 @@ const AppRoutes = () => {
         <Route path="product" element={<AllProduct />} />
         <Route path="product/bidding-pass" element={<ArtistBiddingPass />} />
         <Route path="product/product-upload" element={<ProductUploade />} />
-        <Route path="product/update-product" element={<UpdateProductArtist/>} />
-        <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
+        <Route
+          path="product/update-product"
+          element={<UpdateProductArtist />}
+        />
+        <Route
+          path="custom-order/view-request"
+          element={<ViewCustomRequest />}
+        />
         <Route path="custom-order" element={<CustomOrder />} />
         <Route path="product/view-product" element={<ProductView />} />
         <Route
@@ -1317,7 +1348,10 @@ const AppRoutes = () => {
         {/* Premium Badges */}
         <Route path="premium-badges" element={<ArtistPremiumBages />} />
 
-        <Route path="products-settings/product-coupon-code" element={<ArtistProductCouponCodes />} />
+        <Route
+          path="products-settings/product-coupon-code"
+          element={<ArtistProductCouponCodes />}
+        />
 
         <Route path="product-purchase" element={<Productpurchase />} />
         {/* Packaging Material */}
@@ -1365,10 +1399,19 @@ const AppRoutes = () => {
           path="product-details/bidding-pass"
           element={<SellerBiddingPass />}
         />
-        <Route path="product/product-upload" element={<SellerProductUpload />} />
-        <Route path="product/update-product" element={<UpdateProductSeller/>} />
-        <Route path="product/view-product" element={<ProductViewSeller/>} />
-        <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
+        <Route
+          path="product/product-upload"
+          element={<SellerProductUpload />}
+        />
+        <Route
+          path="product/update-product"
+          element={<UpdateProductSeller />}
+        />
+        <Route path="product/view-product" element={<ProductViewSeller />} />
+        <Route
+          path="custom-order/view-request"
+          element={<ViewCustomRequest />}
+        />
         <Route path="SellerProductUpload" element={<SellerProductUpload />} />
         <Route path="purchased-product" element={<SellerPurchasedProducts />} />
 
@@ -1417,7 +1460,10 @@ const AppRoutes = () => {
         />
 
         <Route path="premium-badges" element={<SellerPremiumBages />} />
-        <Route path="products-settings/product-coupon-code" element={<SellerProductCouponCodes />} />
+        <Route
+          path="products-settings/product-coupon-code"
+          element={<SellerProductCouponCodes />}
+        />
         <Route path="SellerProductUpload" element={<SellerProductUpload />} />
         <Route path="purchased-product" element={<SellerPurchasedProducts />} />
         <Route path="packaging-material" element={<OrderMaterialSeller />} />
@@ -1460,7 +1506,7 @@ const AppRoutes = () => {
               element={<BankPaymentDetails />}
             />
             <Route path="art-gallery" element={<ArtGallery />} />
-            
+
             <Route path="payment-method" element={<PaymentMethod />} />
             <Route path="buyer-wallet" element={<BuyerWallet />} />
             <Route path="password-manager" element={<PasswordManager />} />
@@ -1534,12 +1580,21 @@ const AppRoutes = () => {
         {/* ----------------------------------------------------social media Route ----------------------------------------------- */}
 
         <Route path="/social-media" element={<Homee />} />
+        <Route path="/social-media/sharepost/:postId" element={<SharePost />} />
+        {/* <Route path="/social-media/share-profile/:viewedUserId" element={<ShareProfile />} /> */}
+
+        <Route
+          path="/social-media/single-post/:postId"
+          element={<SinglePost />}
+        />
         <Route path="/social-media/notification" element={<Notification />} />
         <Route path="/social-media/search" element={<Search />} />
         <Route path="/social-media/explore" element={<Explore />} />
         <Route path="/social-media/create-post" element={<CreatePost />} />
         <Route path="/social-media/upload-post" element={<UploadPost />} />
-        <Route path="/social-media/profile" element={<SocialProfile />} />
+        <Route path="/social-media/profile:shareprofileid?" element={<SocialProfile />} />
+                {/* <Route path="/social-media/share-profile/:viewedUserId" element={<ShareProfile />} /> */}
+
         <Route
           path="/social-media/profile/product-view"
           element={<ProductViewing />}

@@ -8,7 +8,7 @@ import "../Create-post/Post.css";
 const Suggestion = () => {
   const [users, setUsers] = useState([]);
   const [activeAdIndex, setActiveAdIndex] = useState(0);
-  const [mainCategories, setMainCategories] = useState([]);
+  // const [mainCategories, setMainCategories] = useState([]);
 
   const adImages = [
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3oql1QTjEkuSfZYyT2Rxsxb_CNSSjwUeyXg&s",
@@ -19,61 +19,64 @@ const Suggestion = () => {
   const userType = localStorage.getItem("userType");
 
   // helper: normalize array -> [ids]
-  const toIdArray = (arr) =>
-    Array.isArray(arr)
-      ? arr.map((x) => (typeof x === "string" ? x : x?._id)).filter(Boolean)
-      : [];
+  // const toIdArray = (arr) =>
+  //   Array.isArray(arr)
+  //     ? arr.map((x) => (typeof x === "string" ? x : x?._id)).filter(Boolean)
+  //     : [];
 
   // helper: avoid needless setState loops
-  const sameIds = (a, b) => {
-    if (a.length !== b.length) return false;
-    const sa = [...a].sort().join(",");
-    const sb = [...b].sort().join(",");
-    return sa === sb;
-  };
+  // const sameIds = (a, b) => {
+  //   if (a.length !== b.length) return false;
+  //   const sa = [...a].sort().join(",");
+  //   const sb = [...b].sort().join(",");
+  //   return sa === sb;
+  // };
 
-  useEffect(() => {
-    if (!userId || !userType) return;
+  // useEffect(() => {
+  //   if (!userId || !userType) return;
 
-    let cancelled = false;
-    (async () => {
-      try {
-        if (userType === "Seller") {
-          const res = await getAPI(`/auth/getsellartwork/${userId}`);
-          const ids = toIdArray(res?.data?.artwork?.categoryOfArt);
-          if (!cancelled) {
-            setMainCategories((prev) => (sameIds(prev, ids) ? prev : ids));
-          }
-        } else if (userType === "Artist") {
-          const res = await getAPI(`/auth/getartistdetails/${userId}`);
-          const ids = toIdArray(res?.data?.artCategories);
-          if (!cancelled) {
-            setMainCategories((prev) => (sameIds(prev, ids) ? prev : ids));
-          }
-        } else if (userType === "Buyer") {
-          const res = await getAPI(`/auth/getpreferences/${userId}`);
-          const first = res?.data?.data?.preferredArtCategories?.[0];
-          const ids = first ? toIdArray([first]) : [];
-          if (!cancelled) {
-            setMainCategories((prev) => (sameIds(prev, ids) ? prev : ids));
-          }
-        }
-      } catch (err) {
-        console.error("Error loading categories:", err);
-        toast.error("Failed to load categories");
-      }
-    })();
+  //   let cancelled = false;
+  //   (async () => {
+  //     try {
+  //       if (userType === "Seller") {
+  //         const res = await getAPI(`/auth/getsellartwork/${userId}`);
+  //         console.log("get seller artwork response:", res);
+  //         const ids = toIdArray(res?.data?.artwork?.categoryOfArt);
+  //         if (!cancelled) {
+  //           setMainCategories((prev) => (sameIds(prev, ids) ? prev : ids));
+  //         }
+  //       } else if (userType === "Artist") {
+  //         const res = await getAPI(`/auth/getartistdetails/${userId}`);
+  //         console.log("get artist details response:", res);
+  //         const ids = toIdArray(res?.data?.artCategories);
+  //         if (!cancelled) {
+  //           setMainCategories((prev) => (sameIds(prev, ids) ? prev : ids));
+  //         }
+  //       } else if (userType === "Buyer") {
+  //         const res = await getAPI(`/auth/getpreferences/${userId}`);
+  //         console.log("get buyer preferences response:", res);
+  //         const first = res?.data?.data?.preferredArtCategories?.[0];
 
-    return () => {
-      cancelled = true;
-    };
-  }, [userId, userType, mainCategories]);
+  //         const ids = first ? toIdArray([first]) : [];
+  //         if (!cancelled) {
+  //           setMainCategories((prev) => (sameIds(prev, ids) ? prev : ids));
+  //         }
+  //       }
+  //     } catch (err) {
+  //       console.error("Error loading categories:", err);
+  //       toast.error("Failed to load categories");
+  //     }
+  //   })();
+
+  //   return () => {
+  //     cancelled = true;
+  //   };
+  // }, [userId, userType, mainCategories]);
 
   // optional: see the **updated** value
   // useEffect(() => {
   //   console.log("mainCategories (IDs):", mainCategories);
   // }, [mainCategories]);
-
   useEffect(() => {
     const fetchSuggestedUsers = async () => {
       try {
@@ -84,9 +87,10 @@ const Suggestion = () => {
           {
             userId,
             userType,
-            mainCategories, // can be array, backend should handle it
+            // mainCategories, // can be array, backend should handle it
           }
         );
+        console.log("Fetch suggested users response:", res);
         // console.log("Suggested users fetched:", res?.data?.suggestedUsers);
         setUsers(res?.data?.suggestedUsers || []);
       } catch (error) {
@@ -96,33 +100,47 @@ const Suggestion = () => {
 
     fetchSuggestedUsers();
   }, []);
-
   const handleFollowToggle = async (targetUserId, isFollowing) => {
     try {
+      let response;
+
       if (isFollowing) {
-        await postAPI(
+      response=  await postAPI(
           `/api/social-media/unfollow/${targetUserId}`,
           { userId },
           true,
           true
         );
       } else {
-        await postAPI(
+      response=  await postAPI(
           `/api/social-media/follow/${targetUserId}`,
           { userId },
           true,
           true
         );
-      }
 
-      // Update UI after follow/unfollow
+      }
+      // ❗ Only update UI if backend confirmed success
+       if (response?.data?.status === 200 ) {
       setUsers((prev) =>
         prev.map((user) =>
           user._id === targetUserId
-            ? { ...user, isFollowing: !isFollowing }
+            ? {
+                ...user,
+                profile: {
+                  ...user.profile,
+                  followers: isFollowing
+                    ? user.profile.followers.filter((id) => id !== userId)
+                    : [...user.profile.followers, userId],
+                },
+              }
             : user
         )
       );
+    } else {
+      console.warn("API did not respond with success, UI not updated.");
+    }
+
     } catch (error) {
       console.error("Error following/unfollowing user:", error);
     }
@@ -132,52 +150,58 @@ const Suggestion = () => {
     <div className="suggestion sticky top-0 overflow-y-auto lg:h-[90vh] hidden lg:flex lg:flex-col lg:w-[22%] px-2 mt-4">
       <h3 className="text-lg font-bold my-2 ml-1">Suggested for you</h3>
 
-      {users.map((user, index) => (
-        <div
-          key={index}
-          className="suggested flex flex-col sm:flex-row p-1 items-start sm:items-center justify-between mb-2 gap-2 border-[#6E4E37]"
-        >
-          {/* Avatar + Name */}
-          <div className="flex items-center gap-2">
-            <img
-              src={
-                `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}` ||
-                "https://via.placeholder.com/150"
-              }
-              alt="avatar"
-              className="rounded-full w-9 h-9 object-cover"
-            />
-            <div className="flex flex-col">
-              <p className="text-sm font-semibold text-gray-800">
-                {user.username}
-              </p>
-              <p className="text-[8px] text-gray-600">Suggested for you</p>
+      {users.map((user, index) => {
+        let isFollowing = Array.isArray(user?.profile?.followers)
+          ?  user.profile.followers.map(String).includes(String(userId))
+          : false;
+
+        return (
+          <div
+            key={index}
+            className="suggested flex flex-col sm:flex-row p-1 items-start sm:items-center justify-between mb-2 gap-2 border-[#6E4E37]"
+          >
+            {/* Avatar + Name */}
+            <div className="flex items-center gap-2">
+              <img
+                src={
+                  `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}` ||
+                  "https://via.placeholder.com/150"
+                }
+                alt="avatar"
+                className="rounded-full w-9 h-9 object-cover"
+              />
+              <div className="flex flex-col">
+                <p className="text-sm font-semibold text-gray-800">
+                  {user.username}
+                </p>
+                <p className="text-[8px] text-gray-600">Suggested for you</p>
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex flex-row gap-1 items-center sm:ml-auto">
+              <button
+                className={`${
+                  isFollowing
+                    ? "bg-gray-200 text-black"
+                    : "bg-[#6F4D34] text-white"
+                } text-[11px] sm:text-sm px-2 py-[5px] rounded-lg border border-gray-300 font-semibold transition-colors duration-300 whitespace-nowrap`}
+                onClick={() => handleFollowToggle(user._id, isFollowing)}
+              >
+                {isFollowing ? "Unfollow" : "Follow"}
+              </button>
+              <button
+                className="text-[#6E4E37] text-xl leading-none"
+                onClick={() =>
+                  setUsers((prev) => prev.filter((u) => u._id !== user._id))
+                }
+              >
+                <i className="ri-close-line"></i>
+              </button>
             </div>
           </div>
-
-          {/* Buttons */}
-          <div className="flex flex-row gap-1 items-center sm:ml-auto">
-            <button
-              className={`${
-                user.isFollowing
-                  ? "bg-gray-200 text-black"
-                  : "bg-[#6F4D34] text-white"
-              } text-[11px] sm:text-sm px-2 py-[5px] rounded-lg border border-gray-300 font-semibold transition-colors duration-300 whitespace-nowrap`}
-              onClick={() => handleFollowToggle(user._id, user.isFollowing)}
-            >
-              {user.isFollowing ? "Unfollow" : "Follow"}
-            </button>
-            <button
-              className="text-[#6E4E37] text-xl leading-none"
-              onClick={() =>
-                setUsers((prev) => prev.filter((u) => u._id !== user._id))
-              }
-            >
-              <i className="ri-close-line"></i>
-            </button>
-          </div>
-        </div>
-      ))}
+        );
+      })}
 
       <hr className="h-0.5 bg-gray-700 text-gray-400 border-none mt-2" />
 
