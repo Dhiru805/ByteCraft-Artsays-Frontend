@@ -59,7 +59,6 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
   const handleDeleteImage = async () => {
     try {
 
-
       if (!userId) {
         toast.error('Please log in again.');
         return;
@@ -70,7 +69,6 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
       await putAPI(
         `/auth/users/${userId}`,
         { profilePhoto: null },
-
       );
 
       if (fileInputRef.current) {
@@ -284,7 +282,6 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
                 </span>
               </label>
             </div>
-
             <div className="form-group" >
               <label htmlFor="birthdate">Birthdate <span style={{ color: 'red' }}>*</span></label>
               <div className="input-group">

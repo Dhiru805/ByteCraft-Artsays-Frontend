@@ -128,11 +128,11 @@ photographed by #siddharth
   ],
 };
 
-const Profile = () => {
+const Profile = ({shareprofileid}) => {
   const location = useLocation();
   const Navigate = useNavigate();
   const loggedInUserId = localStorage.getItem("userId"); // 👈 logged-in user
-  const userType= localStorage.getItem("userType");
+  const userType = localStorage.getItem("userType");
   const [users, setUsers] = useState([]);
   const [mainCategories, setMainCategories] = useState([]);
   const [profile, setProfile] = useState(null);
@@ -142,26 +142,34 @@ const Profile = () => {
   const [mentionSuggestions, setMentionSuggestions] = useState([]);
   const [showMentions, setShowMentions] = useState(false);
   const [canComment, setCanComment] = useState(false);
-  const [products, setProducts]=useState([]);
+  const [products, setProducts] = useState([]);
+  const [reportPopupOpen, setReportPopupOpen] = useState(false);
+  const [reportSuccess, setReportSuccess] = useState(false);
+  const [reportedUser, setReportedUser] = useState(null);
+  const [selectedReason, setSelectedReason] = useState("");
+  const [description, setDescription] = useState("");
+  const [error, setError] = useState("");
+  const [copyMsg, setCopyMsg] = useState("");
+  const [sharePost, setSharePost] = useState(false);
 
- // helper: normalize array -> [ids]
-const toIdArray = (arr) =>
-  Array.isArray(arr)
-    ? arr.map(x => (typeof x === "string" ? x : x?._id)).filter(Boolean)
-    : [];
+  // helper: normalize array -> [ids]
+  const toIdArray = (arr) =>
+    Array.isArray(arr)
+      ? arr.map((x) => (typeof x === "string" ? x : x?._id)).filter(Boolean)
+      : [];
 
-// helper: avoid needless setState loops
-const sameIds = (a, b) => {
-  if (a.length !== b.length) return false;
-  const sa = [...a].sort().join(",");
-  const sb = [...b].sort().join(",");
-  return sa === sb;
-};
+  // helper: avoid needless setState loops
+  const sameIds = (a, b) => {
+    if (a.length !== b.length) return false;
+    const sa = [...a].sort().join(",");
+    const sb = [...b].sort().join(",");
+    return sa === sb;
+  };
   // 👇 Take userId from state if available, otherwise fallback to localStorage
-  const viewedUserId = location.state?.userId || loggedInUserId;
+  const viewedUserId = location.state?.userId ||shareprofileid || loggedInUserId;
   useEffect(() => {
     if (!viewedUserId || !userType) return;
-  
+
     let cancelled = false;
     (async () => {
       try {
@@ -169,85 +177,90 @@ const sameIds = (a, b) => {
           const res = await getAPI(`/auth/getsellartwork/${viewedUserId}`);
           const ids = toIdArray(res?.data?.artwork?.categoryOfArt);
           if (!cancelled) {
-            setMainCategories(prev => (sameIds(prev, ids) ? prev : ids));
+            setMainCategories((prev) => (sameIds(prev, ids) ? prev : ids));
           }
         } else if (userType === "Artist") {
           const res = await getAPI(`/auth/getartistdetails/${viewedUserId}`);
           const ids = toIdArray(res?.data?.artCategories);
           if (!cancelled) {
-            setMainCategories(prev => (sameIds(prev, ids) ? prev : ids));
+            setMainCategories((prev) => (sameIds(prev, ids) ? prev : ids));
           }
         } else if (userType === "Buyer") {
           const res = await getAPI(`/auth/getpreferences/${viewedUserId}`);
-          const first = res?.data?.data?.preferredArtCategories?.[0]; 
-    const ids = first ? toIdArray([first]) : [];
-    if (!cancelled) {
-      setMainCategories(prev => (sameIds(prev, ids) ? prev : ids));
-    }
+          const first = res?.data?.data?.preferredArtCategories?.[0];
+          const ids = first ? toIdArray([first]) : [];
+          if (!cancelled) {
+            setMainCategories((prev) => (sameIds(prev, ids) ? prev : ids));
+          }
         }
       } catch (err) {
         console.error("Error loading categories:", err);
-       
       }
     })();
-  
-    return () => { cancelled = true; };
-  }, [viewedUserId, userType,mainCategories]);
 
-    useEffect(() => {
-      const fetchSuggestedUsers = async () => {
-        try {
+    return () => {
+      cancelled = true;
+    };
+  }, [viewedUserId, userType, mainCategories]);
 
-          if (!viewedUserId) return;
+  useEffect(() => {
+    const fetchSuggestedUsers = async () => {
+      try {
+        if (!viewedUserId) return;
 
-          const res = await getAPI(
-            `/api/social-media/suggested-user-profile?userId=${viewedUserId}`,
-            {
-              userId: viewedUserId,
-              userType,
-              mainCategories, // can be array, backend should handle it
-            }
-          );
-          // console.log("Suggested users fetched:", res?.data?.suggestedUsers);
-          setUsers(res?.data?.suggestedUsers || []);
-        } catch (error) {
-          console.error("Error fetching suggested users:", error);
-        }
-      };
-  
-      fetchSuggestedUsers();
-    }, []);
+        const res = await getAPI(
+          `/api/social-media/suggested-user-profile?userId=${viewedUserId}`,
+          {
+            userId: viewedUserId,
+            userType,
+            mainCategories, // can be array, backend should handle it
+          }
+        );
+        // console.log("Suggested users fetched:", res?.data?.suggestedUsers);
+        setUsers(res?.data?.suggestedUsers || []);
+      } catch (error) {
+        console.error("Error fetching suggested users:", error);
+      }
+    };
 
-    const canUserComment = (profile, loggedInUserId) => {
-  if (!profile || !loggedInUserId) return false;
+    fetchSuggestedUsers();
+  }, []);
 
-  const allowFrom = profile.commentSettings?.allowCommentsFrom || "everyone";
+  const canUserComment = (profile, loggedInUserId) => {
+    if (!profile || !loggedInUserId) return false;
 
-  // Self: always allowed
-  if (String(profile._id) === String(loggedInUserId)) return true;
+    const allowFrom = profile.commentSettings?.allowCommentsFrom || "everyone";
 
-  if (allowFrom === "everyone") return true;
-  if (allowFrom === "followers") {
-    return profile.followers.some((id) => String(id) === String(loggedInUserId));
-  }
-  if (allowFrom === "following") {
-    return profile.following.some((id) => String(id) === String(loggedInUserId));
-  }
-  if (allowFrom === "mutual") {
-    const isFollower = profile.followers.some((id) => String(id) === String(loggedInUserId));
-    const isFollowing = profile.following.some((id) => String(id) === String(loggedInUserId));
-    return isFollower && isFollowing;
-  }
-  return false;
-};
-const postProduct=()=>{
+    // Self: always allowed
+    if (String(profile._id) === String(loggedInUserId)) return true;
 
-};
+    if (allowFrom === "everyone") return true;
+    if (allowFrom === "followers") {
+      return profile.followers.some(
+        (id) => String(id) === String(loggedInUserId)
+      );
+    }
+    if (allowFrom === "following") {
+      return profile.following.some(
+        (id) => String(id) === String(loggedInUserId)
+      );
+    }
+    if (allowFrom === "mutual") {
+      const isFollower = profile.followers.some(
+        (id) => String(id) === String(loggedInUserId)
+      );
+      const isFollowing = profile.following.some(
+        (id) => String(id) === String(loggedInUserId)
+      );
+      return isFollower && isFollowing;
+    }
+    return false;
+  };
+  const postProduct = () => {};
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
-        
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -263,23 +276,30 @@ const postProduct=()=>{
         );
         if (res?.data?.profile) {
           setProfile(res.data.profile);
-          setCommentSettings(res.data.profile.commentSettings || { allowCommentsFrom: "everyone", allowGifComments: true });
+          setCommentSettings(
+            res.data.profile.commentSettings || {
+              allowCommentsFrom: "everyone",
+              allowGifComments: true,
+            }
+          );
 
-      // Check if logged in user can comment (frontend logic)
-      const allowed = canUserComment(res.data.profile, loggedInUserId);
-      setCanComment(allowed);
+          // Check if logged in user can comment (frontend logic)
+          const allowed = canUserComment(res.data.profile, loggedInUserId);
+          setCanComment(allowed);
           setFollow(
-  res.data.profile.followers
-    .map((id) => id.toString()) // ensure all are strings
-    .includes(String(loggedInUserId)) // ensure comparison is correct
-);
+            res.data.profile.followers
+              .map((id) => id.toString()) // ensure all are strings
+              .includes(String(loggedInUserId)) // ensure comparison is correct
+          );
 
+          const apiUserId =
+            res.data.profile.user?._id ||
+            res.data.profile.user ||
+            res.data.profile._id;
 
-         const apiUserId = res.data.profile.user?._id || res.data.profile.user || res.data.profile._id;
+          setIsMyProfile(String(loggedInUserId) === String(apiUserId));
 
-setIsMyProfile(String(loggedInUserId) === String(apiUserId));
-
-console.log(isMyProfile);
+          console.log(isMyProfile);
 
           console.log(res.data.profile);
         }
@@ -296,12 +316,14 @@ console.log(isMyProfile);
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [viewedUserId, loggedInUserId]);
-  
- useEffect(() => {
+
+  useEffect(() => {
     const fetchProduct = async () => {
       try {
         // ✅ correct query param: ?userId=value
-        const res = await getAPI(`/api/get-profileproduct?userId=${viewedUserId}`);
+        const res = await getAPI(
+          `/api/get-profileproduct?userId=${viewedUserId}`
+        );
 
         // ✅ handle different response formats safely
         const data = res?.data?.data || res?.data || [];
@@ -324,7 +346,7 @@ console.log(isMyProfile);
   const [follow, setFollow] = useState(false);
   const [suggestionOn, setSuggestionOn] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
-    useEffect(() => {
+  useEffect(() => {
     if (location.state?.onItem === true) {
       setOnItem(true);
       setOnPosts(false);
@@ -332,40 +354,45 @@ console.log(isMyProfile);
   }, [location.state]);
   const handleFollowToggle = async (targetUserId, isFollowing) => {
     const userId = localStorage.getItem("userId");
-  try {
-    if (isFollowing) {
-      
-      await postAPI(`/api/social-media/unfollow/${targetUserId}`, { userId }, true, true);
-    } else {
-      
-      await postAPI(`/api/social-media/follow/${targetUserId}`, { userId }, true, true);
-    }
+    try {
+      if (isFollowing) {
+        await postAPI(
+          `/api/social-media/unfollow/${targetUserId}`,
+          { userId },
+          true,
+          true
+        );
+      } else {
+        await postAPI(
+          `/api/social-media/follow/${targetUserId}`,
+          { userId },
+          true,
+          true
+        );
+      }
 
-    setFollow(!follow);
-    
-  } catch (error) {
-    console.error("Error following/unfollowing user:", error);
-  }
-};
-const [activeSection, setActiveSection] = useState(null); 
+      setFollow(!follow);
+    } catch (error) {
+      console.error("Error following/unfollowing user:", error);
+    }
+  };
+  const [activeSection, setActiveSection] = useState(null);
 
   const [activeIndex, setActiveIndex] = useState(null); // Replace activePost
   const reversedPosts = profile?.posts?.slice().reverse() || [];
   const reversedSaved = profile?.saved?.slice().reverse() || [];
   let activePost = null;
-
-if (activeSection === "posts") {
-  activePost = activeIndex !== null ? reversedPosts[activeIndex] : null;
-} else if (activeSection === "saved") {
-  activePost = activeIndex !== null ? reversedSaved[activeIndex] : null;
-}
+  if (activeSection === "posts") {
+    activePost = activeIndex !== null ? reversedPosts[activeIndex] : null;
+  } else if (activeSection === "saved") {
+    activePost = activeIndex !== null ? reversedSaved[activeIndex] : null;
+  }
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [menuOpenId, setMenuOpenId] = useState(null);
 
   const handleMoreClick = (id) => setMenuOpenId(id);
   const handleCancel = () => setMenuOpenId(null);
-  
   useEffect(() => {
     setActiveImageIndex(0);
   }, [activeIndex]);
@@ -440,56 +467,50 @@ if (activeSection === "posts") {
       setLike(activePost.likes?.includes(viewedUserId));
       setLikesCount(activePost.likes?.length || 0);
       setComments(activePost.comments || []);
-      
-     
     }
   }, [activePost, viewedUserId]);
-const [isSaved, setIsSaved] = useState(
-  activePost?.saved?.includes(viewedUserId) || false
-);
-const handleSave = async (postId) => {
-  try {
-    const res = await postAPI(
-      `/api/social-media/posts/${postId}/saveUnsave`,
-      { userId: viewedUserId },
-      false,
-      true
-    );
+  const [isSaved, setIsSaved] = useState(
+    activePost?.saved?.includes(viewedUserId) || false
+  );
+  const handleSave = async (postId) => {
+    try {
+      const res = await postAPI(
+        `/api/social-media/posts/${postId}/saveUnsave`,
+        { userId: viewedUserId },
+        false,
+        true
+      );
 
-    if (res && !res.hasError) {
-      setProfile((prev) => {
-        if (!prev) return prev;
+      if (res && !res.hasError) {
+        setProfile((prev) => {
+          if (!prev) return prev;
 
-        return {
-          ...prev,
-          // ✅ Update saved list from backend
-          saved: res.data.savedPosts,
+          return {
+            ...prev,
+            // ✅ Update saved list from backend
+            saved: res.data.savedPosts,
 
-          // ✅ Also update posts array so activePost reflects change
-          posts: prev.posts.map((post) =>
-            post._id === postId
-              ? { ...post, isSaved: !post.isSaved }
-              : post
-          ),
-        };
-      });
+            // ✅ Also update posts array so activePost reflects change
+            posts: prev.posts.map((post) =>
+              post._id === postId ? { ...post, isSaved: !post.isSaved } : post
+            ),
+          };
+        });
 
-      toast.success(res.data.message);
-    } else {
-      toast.error(res?.message || "Failed to save/unsave");
+        toast.success(res.data.message);
+      } else {
+        toast.error(res?.message || "Failed to save/unsave");
+      }
+    } catch (error) {
+      console.error("Error saving/unsaving post:", error);
+      toast.error("Something went wrong");
     }
-  } catch (error) {
-    console.error("Error saving/unsaving post:", error);
-    toast.error("Something went wrong");
-  }
-};
-useEffect(() => {
+  };
+  useEffect(() => {
     if (location.state?.updatedUsers) {
       setUsers(location.state.updatedUsers); // ✅ sync updated list
     }
   }, [location.state]);
-
-
 
   const handleLike = async (postId) => {
     try {
@@ -512,115 +533,149 @@ useEffect(() => {
       toast.error("Something went wrong");
     }
   };
-  
-const handleBlockUser = async () => {
-  const loggedInUserId = localStorage.getItem("userId");
-  if (!loggedInUserId || !viewedUserId) return;
 
-  try {
-    const res = await putAPI(
-      `/api/social-media/block-unblock`,
-      { userId: loggedInUserId, targetUserId: viewedUserId },
-      true,
-      true
-    );
+  const handleBlockUser = async () => {
+    const loggedInUserId = localStorage.getItem("userId");
+    if (!loggedInUserId || !viewedUserId) return;
 
-    if (res?.data?.success) {
-      console.log(res.data.message); 
-      
+    try {
+      const res = await putAPI(
+        `/api/social-media/block-unblock`,
+        { userId: loggedInUserId, targetUserId: viewedUserId },
+        true,
+        true
+      );
 
-      
-      if (res.data.isBlocked) {
-        
-        Navigate("/social-media/"); 
+      if (res?.data?.success) {
+        console.log(res.data.message);
+
+        if (res.data.isBlocked) {
+          Navigate("/social-media/");
+        }
       }
+    } catch (err) {
+      console.error("Error blocking/unblocking user:", err);
     }
-  } catch (err) {
-    console.error("Error blocking/unblocking user:", err);
-  }
-};
-// Detect "@" and fetch mention suggestions
-const handleProfileCommentChange = async (e) => {
-  e.preventDefault();
-  
-  const value = e.target.value;
-  setComment(value);
+  };
+  // Detect "@" and fetch mention suggestions
+  const handleProfileCommentChange = async (e) => {
+    e.preventDefault();
 
-  const match = value.match(/@(\w*)$/); // last word after @
-  if (match) {
-    const query = match[1];
-    if (query.length > 0) {
-      try {
-        const res = await getAPI(
-          `/api/social-media/mention?q=@${query}&userId=${loggedInUserId}`,
-          {},
-          true,
-          true
-        );
-        setMentionSuggestions(res.data.users || []);
-        setShowMentions(true);
-      } catch (err) {
-        console.error("Mention fetch error:", err);
+    const value = e.target.value;
+    setComment(value);
+
+    const match = value.match(/@(\w*)$/); // last word after @
+    if (match) {
+      const query = match[1];
+      if (query.length > 0) {
+        try {
+          const res = await getAPI(
+            `/api/social-media/mention?q=@${query}&userId=${loggedInUserId}`,
+            {},
+            true,
+            true
+          );
+          setMentionSuggestions(res.data.users || []);
+          setShowMentions(true);
+        } catch (err) {
+          console.error("Mention fetch error:", err);
+        }
+      } else {
+        setMentionSuggestions([]);
+        setShowMentions(false);
       }
     } else {
       setMentionSuggestions([]);
       setShowMentions(false);
     }
-  } else {
-    setMentionSuggestions([]);
-    setShowMentions(false);
-  }
-};
-
-// Insert mention into input
-const handleSelectMentionProfile = (username) => {
-  const newText = comment.replace(/@\w*$/, `@${username} `);
-  setComment(newText);
-  setMentionSuggestions([]);
-  setShowMentions(false);
-};
-
-
-  const cancelPromotion = async (postId) => {
-  const userId = localStorage.getItem("userId");
-  if (!postId || !userId) return toast.error("Missing post ID or user ID");
-
-  try {
-    setIsCancelling(true);
-    const res = await postAPI("/api/social-media/posts/promote/cancel", { postId, userId }, true, true);
-
-    if (res?.data?.success) {
-      toast.success("Promotion cancelled successfully!");
-
-      // 🧠 Update promotion status in profile.posts
-      setProfile((prev) => {
-        if (!prev) return prev;
-        const updatedPosts = prev.posts.map((p) =>
-          p._id === postId
-            ? {
-                ...p,
-                isPromoted: false,
-                promotionDetails: {
-                  ...p.promotionDetails,
-                  status: "completed",
-                },
-              }
-            : p
-        );
-        return { ...prev, posts: updatedPosts };
-      });
-    } else {
-      toast.error(res?.data?.message || "Failed to cancel promotion");
-    }
-  } catch (error) {
-    toast.error("Server error while cancelling promotion");
-    console.error(error);
-  } finally {
-    setIsCancelling(false);
-  }
   };
 
+  // Insert mention into input
+  const handleSelectMentionProfile = (username) => {
+    const newText = comment.replace(/@\w*$/, `@${username} `);
+    setComment(newText);
+    setMentionSuggestions([]);
+    setShowMentions(false);
+  };
 
+  const cancelPromotion = async (postId) => {
+    const userId = localStorage.getItem("userId");
+    if (!postId || !userId) return toast.error("Missing post ID or user ID");
+
+    try {
+      setIsCancelling(true);
+      const res = await postAPI(
+        "/api/social-media/posts/promote/cancel",
+        { postId, userId },
+        true,
+        true
+      );
+
+      if (res?.data?.success) {
+        toast.success("Promotion cancelled successfully!");
+
+        // 🧠 Update promotion status in profile.posts
+        setProfile((prev) => {
+          if (!prev) return prev;
+          const updatedPosts = prev.posts.map((p) =>
+            p._id === postId
+              ? {
+                  ...p,
+                  isPromoted: false,
+                  promotionDetails: {
+                    ...p.promotionDetails,
+                    status: "completed",
+                  },
+                }
+              : p
+          );
+          return { ...prev, posts: updatedPosts };
+        });
+      } else {
+        toast.error(res?.data?.message || "Failed to cancel promotion");
+      }
+    } catch (error) {
+      toast.error("Server error while cancelling promotion");
+      console.error(error);
+    } finally {
+      setIsCancelling(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (selectedReason === "Other" && description.trim() === "") {
+      setError("Please describe the issue for 'Other'");
+      return;
+    }
+    try {
+      const reporterId = localStorage.getItem("userId");
+
+      // 🧩 Construct payload for post report
+      const payload = {
+        reporterId,
+        reportedUserId: reportedUser.id, // 👈 user who owns the post
+        reason: selectedReason,
+        description,
+        reportType: "profile", // 👈 explicitly set type
+      };
+
+      const res = await postAPI("/api/reports/create", payload, true, true);
+      if (res.data.success) {
+        setReportPopupOpen(false);
+        setReportSuccess(true);
+        setSelectedReason("");
+        setDescription("");
+        setError("");
+      } else {
+        setError(res.data.message || "Failed to submit report");
+      }
+    } catch (err) {
+      console.error("Error submitting report:", err);
+      setError("Server error while submitting report");
+    }
+  };
   return (
     <div
       className={`${
@@ -632,7 +687,7 @@ const handleSelectMentionProfile = (username) => {
         <div className=" absolute inset-0 z-[9999] bg-[#000000] w-full bg-opacity-40 flex  justify-center items-center w-full">
           {/* Close Button */}
           <button
-            className="absolute lg:top-20 top-10 lg:right-40 right-10 text-4xl font-bold z-50 mt-3 lg:mr-12"
+            className="absolute lg:top-25 top-15 lg:right-40 right-5 text-4xl font-bold z-50 mt-3 lg:mr-12"
             onClick={() => setActiveIndex(null)}
           >
             <i className="ri-close-line text-[#000000]"></i>
@@ -700,220 +755,241 @@ const handleSelectMentionProfile = (username) => {
             </div>
 
             {/* Right Side (Post Content) */}
-<div className="lg:w-[40%] w-full flex flex-col justify-between gap-6 py-2 px-3 bg-[#ffffff] overflow-y-scroll ">
-  
-  {/* User Info */}
-  <div className="flex flex-col gap-6 ">
-    <div className="flex items-center justify-between relative">
-      <div className="flex items-center gap-2">
-        <img
-          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`}
-          alt="profile"
-          className="w-11 h-11 rounded-full"
-        />
-        <div className="flex flex-col">
-          <span className="font-semibold text-[16px] text-[#000000]">
-            {profile?.username}
-                  {profile.verified?.length > 0 && (
-    <img
-      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]?.badgeImage}`}
-      className="inline-block ml-1 w-6 h-6 object-contain"
-      alt={profile.verified[profile.verified.length - 1]?.badgeName || "badge"}
-      title={profile.verified[profile.verified.length - 1]?.badgeName}
-    />
-  )}
-          </span>
-          <span className="text-xs text-gray-500">
-            {activePost.location}
-          </span>
-        </div>
-      </div>
-      <button onClick={() => handleMoreClick(activePost._id)}>
-        <i className="ri-more-fill font-semibold text-2xl text-[#000000]"></i>
-      </button>
-    </div>
-
-    {/* Profile with Caption */}
-    <div className="flex flex-col hidden lg:flex">
-      <div className="flex items-center gap-2">
-        <img
-          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`}
-          alt="profile"
-          className="w-11 h-11 rounded-full"
-        />
-        <span className="font-semibold text-[16px] text-[#000000]">
-          {profile?.username}
-                     {profile.verified?.length > 0 && (
-    <img
-      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]?.badgeImage}`}
-      className="inline-block ml-1 w-6 h-6 object-contain"
-      alt={profile.verified[profile.verified.length - 1]?.badgeName || "badge"}
-      title={profile.verified[profile.verified.length - 1]?.badgeName}
-    />
-  )}
-        </span>
-      </div>
-
-      {/* Caption */}
-      <p className="my-4 text-[14px] whitespace-pre-line break-all">
-        {activePost.caption || "No caption"}
-      </p>
-
-      
-    </div>
-  </div>
-  {/* Comments */}
-      <div className="lg:flex hidden flex flex-col gap-3 overflow-y-auto max-h-auto">
-        {comments.length > 0 ? (
-          comments
-            .slice()
-            .reverse()
-            .map((comment, idx) => (
-              <div key={idx} className="flex items-start gap-2">
-                <img
-                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`}
-                  alt="profile"
-                  className="w-8 h-8 rounded-full"
-                />
-                <div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-sm font-semibold">
-                      {comment?.user?.username}
-                    </span>
-                    {comment?.user?.verified && (
-                      <i className="ri-verified-badge-fill text-blue-500 text-xs"></i>
-                    )}
+            <div className="lg:w-[40%] w-full flex flex-col justify-between gap-6 py-2 px-3 bg-[#ffffff] overflow-y-scroll ">
+              {/* User Info */}
+              <div className="flex flex-col gap-6 ">
+                <div className="flex items-center justify-between relative">
+                  <div className="flex items-center gap-2">
+                    <img
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`}
+                      alt="profile"
+                      className="w-11 h-11 rounded-full"
+                    />
+                    <div className="flex flex-col">
+                      <span className="font-semibold text-[16px] text-[#000000]">
+                        {profile?.username}
+                        {profile.verified?.length > 0 && (
+                          <img
+                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                              profile.verified[profile.verified.length - 1]
+                                ?.badgeImage
+                            }`}
+                            className="inline-block ml-1 w-6 h-6 object-contain"
+                            alt={
+                              profile.verified[profile.verified.length - 1]
+                                ?.badgeName || "badge"
+                            }
+                            title={
+                              profile.verified[profile.verified.length - 1]
+                                ?.badgeName
+                            }
+                          />
+                        )}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {activePost.location}
+                      </span>
+                    </div>
                   </div>
-                  <p className="text-sm">{comment?.text}</p>
+                  <button onClick={() => handleMoreClick(activePost._id)}>
+                    <i className="ri-more-fill font-semibold text-2xl text-[#000000]"></i>
+                  </button>
+                </div>
+
+                {/* Profile with Caption */}
+                <div className="flex flex-col hidden lg:flex">
+                  <div className="flex items-center gap-2">
+                    <img
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`}
+                      alt="profile"
+                      className="w-11 h-11 rounded-full"
+                    />
+                    <span className="font-semibold text-[16px] text-[#000000]">
+                      {profile?.username}
+                      {profile.verified?.length > 0 && (
+                        <img
+                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                            profile.verified[profile.verified.length - 1]
+                              ?.badgeImage
+                          }`}
+                          className="inline-block ml-1 w-6 h-6 object-contain"
+                          alt={
+                            profile.verified[profile.verified.length - 1]
+                              ?.badgeName || "badge"
+                          }
+                          title={
+                            profile.verified[profile.verified.length - 1]
+                              ?.badgeName
+                          }
+                        />
+                      )}
+                    </span>
+                  </div>
+
+                  {/* Caption */}
+                  <p className="my-4 text-[14px] whitespace-pre-line break-all">
+                    {activePost.caption || "No caption"}
+                  </p>
                 </div>
               </div>
-            ))
-        ) : (
-          <p className="text-gray-500 text-sm">No comments yet</p>
-        )}
-      </div>
-      {/* action and comment */}
- <div className="flex flex-col gap-4"> 
- {/* Actions + Likes */}
-  <div className="flex flex-col gap-1.5">
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-3">
-        {like ? (
-          <FaHeart
-            className="text-xl text-red-500 cursor-pointer"
-            onClick={() => handleLike(activePost._id)}
-          />
-        ) : (
-          <FaRegHeart
-            className="text-xl text-[#000000] cursor-pointer"
-            onClick={() => handleLike(activePost._id)}
-          />
-        )}
+              {/* Comments */}
+              <div className="lg:flex hidden flex flex-col gap-3 overflow-y-auto max-h-auto">
+                {comments.length > 0 ? (
+                  comments
+                    .slice()
+                    .reverse()
+                    .map((comment, idx) => (
+                      <div key={idx} className="flex items-start gap-2">
+                        <img
+                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`}
+                          alt="profile"
+                          className="w-8 h-8 rounded-full"
+                        />
+                        <div>
+                          <div className="flex items-center gap-1">
+                            <span className="text-sm font-semibold">
+                              {comment?.user?.username}
+                            </span>
+                            {comment?.user?.verified && (
+                              <i className="ri-verified-badge-fill text-blue-500 text-xs"></i>
+                            )}
+                          </div>
+                          <p className="text-sm">{comment?.text}</p>
+                        </div>
+                      </div>
+                    ))
+                ) : (
+                  <p className="text-gray-500 text-sm">No comments yet</p>
+                )}
+              </div>
+              {/* action and comment */}
+              <div className="flex flex-col gap-4">
+                {/* Actions + Likes */}
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {like ? (
+                        <FaHeart
+                          className="text-xl text-red-500 cursor-pointer"
+                          onClick={() => handleLike(activePost._id)}
+                        />
+                      ) : (
+                        <FaRegHeart
+                          className="text-xl text-[#000000] cursor-pointer"
+                          onClick={() => handleLike(activePost._id)}
+                        />
+                      )}
 
-        <FaRegComment
-          className="text-xl text-[#000000] font-medium cursor-pointer"
-          onClick={() => setOpenComment(true)}
-        />
-        <IoPaperPlaneOutline className="text-xl text-[#000000] font-medium cursor-pointer" />
-      </div>
+                      <FaRegComment
+                        className="text-xl text-[#000000] font-medium cursor-pointer"
+                        onClick={() => setOpenComment(true)}
+                      />
+                      <IoPaperPlaneOutline className="text-xl text-[#000000] font-medium cursor-pointer" />
+                    </div>
 
-      <div className="flex items-center gap-3">
-        {isMyProfile && activePost.isPromoted===false  && (
-          <Link to={"/social-media/profile/promote-post"} state={{ postId: activePost._id , postImage: activePost.images[0]}}>
-            <button className="px-2 py-0.5 bg-[#48372D] text-white text-base rounded-lg">
-              Promote post
-            </button>
-          </Link>
-        )}
-       {activePost.isPromoted && (
-  <button
-    className="px-2 py-0.5 bg-[#48372D] text-white text-base rounded-lg"
-    onClick={() => cancelPromotion(activePost._id)}
-    disabled={isCancelling}
-  >
-    {isCancelling ? "Cancelling..." : "Cancel Promotion"}
-  </button>
-)}
+                    <div className="flex items-center gap-3">
+                      {isMyProfile && activePost.isPromoted === false && (
+                        <Link
+                          to={"/social-media/profile/promote-post"}
+                          state={{
+                            postId: activePost._id,
+                            postImage: activePost.images[0],
+                          }}
+                        >
+                          <button className="px-2 py-0.5 bg-[#48372D] text-white text-base rounded-lg">
+                            Promote post
+                          </button>
+                        </Link>
+                      )}
+                      {activePost.isPromoted && (
+                        <button
+                          className="px-2 py-0.5 bg-[#48372D] text-white text-base rounded-lg"
+                          onClick={() => cancelPromotion(activePost._id)}
+                          disabled={isCancelling}
+                        >
+                          {isCancelling ? "Cancelling..." : "Cancel Promotion"}
+                        </button>
+                      )}
 
+                      {activePost?.isSaved ? (
+                        <FaBookmark
+                          className="text-[23px] text-[#000000] cursor-pointer"
+                          onClick={() => handleSave(activePost._id)}
+                        />
+                      ) : (
+                        <FaRegBookmark
+                          className="text-[23px] text-[#000000] cursor-pointer"
+                          onClick={() => handleSave(activePost._id)}
+                        />
+                      )}
+                    </div>
+                  </div>
 
-          
-       
-        {activePost?.isSaved ? (
-          <FaBookmark
-            className="text-[23px] text-[#000000] cursor-pointer"
-            onClick={() => handleSave(activePost._id)}
-          />
-        ) : (
-          <FaRegBookmark
-            className="text-[23px] text-[#000000] cursor-pointer"
-            onClick={() => handleSave(activePost._id)}
-          />
-        )}
-      </div>
-    </div>
+                  <p className="text-sm font-medium mt-1">{likesCount} likes</p>
+                  {activePost.comments.length > 0 && (
+                    <div
+                      className="lg:hidden text-[13px] font-light cursor-pointer"
+                      onClick={() => setComentPanel(true)} // ✅ open panel on click .It is only in mobile view
+                    >
+                      View all {activePost.comments.length} comments
+                    </div>
+                  )}
+                </div>
 
-    <p className="text-sm font-medium mt-1">{likesCount} likes</p>
-    {activePost.comments.length > 0 && (
-  <div
-    className="lg:hidden text-[13px] font-light cursor-pointer"
-    onClick={() => setComentPanel(true)}   // ✅ open panel on click
-  >
-    View all {activePost.comments.length} comments
-  </div>
-)}
+                {canComment ? (
+                  <div
+                    className={`${
+                      openComment ? "flex" : "hidden lg:flex"
+                    } items-center gap-2 pt-2 relative`}
+                  >
+                    {/* Suggestions dropdown */}
+                    {showMentions && mentionSuggestions.length > 0 && (
+                      <div className="absolute bottom-10 left-0 w-full bg-white border rounded-md shadow-md z-50 max-h-40 overflow-y-auto">
+                        {mentionSuggestions.map((user) => (
+                          <div
+                            key={user._id}
+                            onClick={() =>
+                              handleSelectMentionProfile(user.username)
+                            }
+                            className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
+                          >
+                            <img
+                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`}
+                              alt={user.username}
+                              className="w-8 h-8 rounded-full"
+                            />
+                            <span className="text-sm font-medium text-gray-800">
+                              {user.username}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              {user.role}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
-  </div>
-  
-
-{canComment ? (
-  <div
-    className={`${
-      openComment ? "flex" : "hidden lg:flex"
-    } items-center gap-2 pt-2 relative`}
-  >
-    {/* Suggestions dropdown */}
-    {showMentions && mentionSuggestions.length > 0 && (
-      <div className="absolute bottom-10 left-0 w-full bg-white border rounded-md shadow-md z-50 max-h-40 overflow-y-auto">
-        {mentionSuggestions.map((user) => (
-          <div
-            key={user._id}
-            onClick={() => handleSelectMentionProfile(user.username)}
-            className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
-          >
-            <img
-              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`}
-              alt={user.username}
-              className="w-8 h-8 rounded-full"
-            />
-            <span className="text-sm font-medium text-gray-800">
-              {user.username}
-            </span>
-            <span className="text-xs text-gray-500">{user.role}</span>
-          </div>
-        ))}
-      </div>
-    )}
-
-    <input
-      type="text"
-      placeholder="Add a comment..."
-      value={comment}
-      onChange={handleProfileCommentChange}  // 👈 use new handler
-      className="flex-grow outline-none text-sm placeholder:text-[14px] placeholder:text-[#696969]"
-    />
-    <button
-      className="text-[#6F4D34] font-semibold"
-      onClick={() => handleAddComment(activePost._id)}
-    >
-      Post
-    </button>
-  </div>
-) : (
-  <p className="text-gray-500 text-sm italic">Comments are restricted</p>
-)}
-  </div>
-</div>
-
+                    <input
+                      type="text"
+                      placeholder="Add a comment..."
+                      value={comment}
+                      onChange={handleProfileCommentChange} // 👈 use new handler
+                      className="flex-grow outline-none text-sm placeholder:text-[14px] placeholder:text-[#696969]"
+                    />
+                    <button
+                      className="text-[#6F4D34] font-semibold"
+                      onClick={() => handleAddComment(activePost._id)}
+                    >
+                      Post
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-gray-500 text-sm italic">
+                    Comments are restricted
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Right Arrow (next post) */}
@@ -929,115 +1005,308 @@ const handleSelectMentionProfile = (username) => {
       )}
       {/* commentpanel that only appear on small screen */}
       {activePost && commentPanel && (
-        
-          <div className="fixed inset-0 z-[9999] w-full h-full flex flex-col bg-[#ffffff] lg:hidden">
-            {/* back button with title */}
-            <div className="w-full flex items-center justify-between p-3 border-b">
-              <i
-                className="ri-arrow-left-s-line text-2xl"
-               onClick={() => setComentPanel(false)}
-              ></i>
-              <span className="font-semibold text-xl text-center">Comments</span>
-              <div></div>
+        <div className="fixed inset-0 z-[9999] w-full h-full flex flex-col bg-[#ffffff] lg:hidden">
+          {/* back button with title */}
+          <div className="w-full flex items-center justify-between p-3 border-b">
+            <i
+              className="ri-arrow-left-s-line text-2xl"
+              onClick={() => setComentPanel(false)}
+            ></i>
+            <span className="font-semibold text-xl text-center">Comments</span>
+            <div></div>
+          </div>
+
+          {/* caption with comments */}
+          <div className="flex-1 flex flex-col overflow-y-auto">
+            <div className="flex gap-2 border-b p-3">
+              <img
+                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user?.profilePhoto}`}
+                alt="profile"
+                className="w-11 h-11 rounded-full"
+              />
+              <div className="">
+                <span className="font-semibold text-[16px] block">
+                  {activePost.user?.username}
+                </span>
+                <p className="whitespace-pre-wrap break-words break-all text-sm">
+                  {activePost.caption}
+                </p>
+              </div>
             </div>
 
-            {/* caption with comments */}
-            <div className="flex-1 flex flex-col overflow-y-auto">
-              <div className="flex gap-2 border-b p-3">
-                <img
-                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user?.profilePhoto}`}
-                  alt="profile"
-                  className="w-11 h-11 rounded-full"
-                />
-                <div className="">
-                  <span className="font-semibold text-[16px] block">
-                    {activePost.user?.username}
-                  </span>
-                  <p className="whitespace-pre-wrap break-words break-all text-sm">
-                    {activePost.caption}
-                  </p>
+            {/* Comments */}
+            {/* Comments */}
+            <div className="flex flex-col gap-3 p-3">
+              {comments.length > 0 ? (
+                comments
+                  .slice()
+                  .reverse()
+                  .map((comment, idx) => (
+                    <div key={idx} className="flex items-start gap-2">
+                      <img
+                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`}
+                        alt="profile"
+                        className="w-8 h-8 rounded-full"
+                      />
+                      <div>
+                        <span className="text-[15px] font-semibold block">
+                          {comment?.user?.username}
+                        </span>
+                        <p className="text-xs break-words">{comment?.text}</p>
+                      </div>
+                    </div>
+                  ))
+              ) : (
+                <p className="text-gray-500 text-sm">No comments yet</p>
+              )}
+            </div>
+          </div>
+
+          {/* Add Comment */}
+
+          {canComment ? (
+            <div className="flex flex-col relative">
+              {/* Suggestions dropdown */}
+              {showMentions && mentionSuggestions.length > 0 && (
+                <div className="absolute bottom-12 left-0 w-full bg-[#FAF9F6] border rounded-md shadow-md z-50 max-h-60 overflow-y-auto">
+                  {mentionSuggestions.map((user) => (
+                    <div
+                      key={user._id}
+                      onClick={() => handleSelectMentionProfile(user.username)}
+                      className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
+                    >
+                      <img
+                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`}
+                        alt={user.username}
+                        className="w-8 h-8 rounded-full"
+                      />
+                      <span className="text-sm font-medium text-gray-800">
+                        {user.username}
+                      </span>
+                      <span className="text-xs text-gray-500">{user.role}</span>
+                    </div>
+                  ))}
                 </div>
+              )}
+
+              {/* Input + Post button */}
+              <div className="flex justify-between p-3 items-center gap-2 pt-2">
+                <input
+                  type="text"
+                  placeholder="Add a comment..."
+                  value={comment}
+                  onChange={handleProfileCommentChange} // 👈 same handler as large screen
+                  className="flex-grow outline-none text-sm placeholder:text-[14px] placeholder:text-[#696969]"
+                />
+                <button
+                  className="text-blue-500 text-[15px] font-semibold"
+                  onClick={() => handleAddComment(activePost._id)}
+                >
+                  Post
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-gray-500 text-sm italic p-3">
+              Comments are restricted
+            </p>
+          )}
+        </div>
+      )}
+ {/* Report Modal */}
+      {reportPopupOpen && (
+        <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
+          <div className="bg-white rounded-xl shadow-lg w-[400px] max-w-full p-5">
+            {/* Header */}
+            <div className="flex justify-between items-center border-b pb-3 mb-4">
+              <h2 className="text-lg font-semibold text-gray-800">
+                Report @{reportedUser?.username}
+              </h2>
+              <button
+                onClick={() => setReportPopupOpen(false)}
+                className="text-gray-600 hover:text-red-500 text-2xl font-bold"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Subtitle */}
+            <p className="text-sm text-gray-600 mb-4">
+              Why are you reporting this post?
+            </p>
+
+            {/* Report Form */}
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <div className="space-y-2">
+                {[
+                  "I just don't like it",
+                  "Bullying or unwanted contact",
+                  "Suicide, self-injury or eating disorders",
+                  "Violence, hate or exploitation",
+                  "Selling or promoting restricted items",
+                  "Nudity or sexual activity",
+                  "Scam, fraud or spam",
+                  "False information",
+                  "Other",
+                ].map((reason, idx) => (
+                  <label
+                    key={idx}
+                    className="flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-50"
+                  >
+                    <input
+                      type="radio"
+                      name="reportReason"
+                      value={reason}
+                      checked={selectedReason === reason}
+                      onChange={(e) => {
+                        setSelectedReason(e.target.value);
+                        setError("");
+                      }}
+                      className="text-red-500 focus:ring-red-500"
+                    />
+                    <span className="text-sm text-gray-800">{reason}</span>
+                  </label>
+                ))}
               </div>
 
-              {/* Comments */}
-              {/* Comments */}
-<div className="flex flex-col gap-3 p-3">
-  {comments.length > 0 ? (
-    comments.slice().reverse().map((comment, idx) => (
-      <div key={idx} className="flex items-start gap-2">
-        <img
-          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`}
-          alt="profile"
-          className="w-8 h-8 rounded-full"
-        />
-        <div>
-          <span className="text-[15px] font-semibold block">
-            {comment?.user?.username}
-          </span>
-          <p className="text-xs break-words">{comment?.text}</p>
-        </div>
-      </div>
-    ))
-  ) : (
-    <p className="text-gray-500 text-sm">No comments yet</p>
-  )}
-</div>
+              {/* Description */}
+              {selectedReason && (
+                <div className="mt-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {selectedReason === "Other"
+                      ? "Describe the issue (required)"
+                      : "Describe the issue (optional)"}
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Add more details..."
+                    className={`w-full p-2 border rounded-lg focus:ring-2 focus:outline-none text-sm ${
+                      error
+                        ? "border-red-500 focus:ring-red-500"
+                        : "border-gray-300 focus:ring-red-500"
+                    }`}
+                  />
+                  {error && (
+                    <p className="text-xs text-red-500 mt-1">{error}</p>
+                  )}
+                </div>
+              )}
 
+              {/* Actions */}
+              <div className="flex justify-end gap-3 mt-4">
+                <button
+                  type="button"
+                  onClick={() => setReportPopupOpen(false)}
+                  className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={!selectedReason}
+                  className={`px-4 py-2 rounded-lg text-white font-medium ${
+                    selectedReason
+                      ? "bg-red-500 hover:bg-red-600"
+                      : "bg-gray-400 cursor-not-allowed"
+                  }`}
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {/* Success Popup */}
+      {reportSuccess && reportedUser && (
+        <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
+          <div className="bg-white rounded-xl shadow-lg w-[380px] p-6 text-center">
+            {/* Success Icon */}
+            <div className="flex justify-center mb-3">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-12 w-12 text-green-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
             </div>
 
-              {/* Add Comment */}
+            {/* Title */}
+            <h3 className="text-lg font-semibold text-gray-800">
+              Thanks for letting us know
+            </h3>
+            <p className="text-gray-600 text-sm mt-1">
+              We’ve received your report about @{reportedUser.username}.
+            </p>
 
-{canComment ? (
-  <div className="flex flex-col relative">
-    {/* Suggestions dropdown */}
-    {showMentions && mentionSuggestions.length > 0 && (
-      <div className="absolute bottom-12 left-0 w-full bg-[#FAF9F6] border rounded-md shadow-md z-50 max-h-60 overflow-y-auto">
-        {mentionSuggestions.map((user) => (
-          <div
-            key={user._id}
-            onClick={() => handleSelectMentionProfile(user.username)}
-            className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
-          >
-            <img
-              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`}
-              alt={user.username}
-              className="w-8 h-8 rounded-full"
-            />
-            <span className="text-sm font-medium text-gray-800">
-              {user.username}
-            </span>
-            <span className="text-xs text-gray-500">{user.role}</span>
+            {/* Block Option */}
+            <div className="mt-4 border-t pt-4">
+              <p className="text-sm text-gray-700 mb-2">
+                Do you also want to block{" "}
+                <span className="font-semibold">@{reportedUser.username}</span>?
+              </p>
+              <div className="flex justify-center gap-3">
+                <button
+                  onClick={handleBlockUser} // ✅ hook your block API
+                  className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
+                >
+                  Block
+                </button>
+                <button
+                  onClick={() => setReportSuccess(false)}
+                  className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
           </div>
-        ))}
-      </div>
-    )}
-
-    {/* Input + Post button */}
-    <div className="flex justify-between p-3 items-center gap-2 pt-2">
-      <input
-        type="text"
-        placeholder="Add a comment..."
-        value={comment}
-        onChange={handleProfileCommentChange}  // 👈 same handler as large screen
-        className="flex-grow outline-none text-sm placeholder:text-[14px] placeholder:text-[#696969]"
-      />
-      <button
-        className="text-blue-500 text-[15px] font-semibold"
-        onClick={() => handleAddComment(activePost._id)}
-      >
-        Post
-      </button>
-    </div>
-  </div>
-) : (
-  <p className="text-gray-500 text-sm italic p-3">
-    Comments are restricted
-  </p>
-)}
-
-          </div>
+        </div>
       )}
+      {sharePost && (
+        <div className="fixed inset-0 bg-[#000000]/40 flex justify-center items-center z-[9999]">
+          <div className="bg-white w-80 rounded-xl p-4 shadow-lg relative">
+            {/* Close */}
+            <button
+              className="absolute top-2 right-2 text-xl"
+              onClick={() => setSharePost(false)}
+            >
+              <i className="ri-close-line"></i>
+            </button>
 
+            <h3 className="text-lg font-semibold mb-3">Share Post</h3>
+
+            {/* Copy Link */}
+            <button
+              className="w-full py-2 bg-gray-200 text-gray-800 rounded-lg mb-2"
+              onClick={() => {
+                const link = `${window.location.origin}/social-media/profile/${viewedUserId}`;
+                navigator.clipboard.writeText(link);
+                setCopyMsg("Link copied!");
+                setTimeout(() => setCopyMsg(""), 2000);
+              }}
+            >
+              Copy Link
+            </button>
+            {/* Success Message */}
+            {copyMsg && (
+              <p className="text-green-600 text-sm mt-1 text-center">
+                {copyMsg}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
       <div
         className={` w-full text-[#2d1b0f] flex flex-col gap-8 ${
           activePost ? "bg-black bg-opacity-50" : ""
@@ -1073,14 +1342,22 @@ const handleSelectMentionProfile = (username) => {
               <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-semibold text-[#000000]">
                   {profile.username}
-                   {profile.verified?.length > 0 && (
-    <img
-      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]?.badgeImage}`}
-      className="inline-block ml-1 w-6 h-6 object-contain"
-      alt={profile.verified[profile.verified.length - 1]?.badgeName || "badge"}
-      title={profile.verified[profile.verified.length - 1]?.badgeName}
-    />
-  )}
+                  {profile.verified?.length > 0 && (
+                    <img
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                        profile.verified[profile.verified.length - 1]
+                          ?.badgeImage
+                      }`}
+                      className="inline-block ml-1 w-6 h-6 object-contain"
+                      alt={
+                        profile.verified[profile.verified.length - 1]
+                          ?.badgeName || "badge"
+                      }
+                      title={
+                        profile.verified[profile.verified.length - 1]?.badgeName
+                      }
+                    />
+                  )}
                 </h1>
                 {/* button only enables when this profile is mine */}
                 {isMyProfile ? (
@@ -1094,7 +1371,6 @@ const handleSelectMentionProfile = (username) => {
                         Edit Profile
                       </button>
                     </Link>
-                 
                     <button
                       className="text-xl"
                       onClick={() => setShowMenu((prev) => !prev)}
@@ -1103,25 +1379,23 @@ const handleSelectMentionProfile = (username) => {
                     </button>
                     {showMenu && (
                       <div className="absolute right-0 top-full flex flex-col items-center mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-md z-50">
-                       <Link to={""}>
-                         <button className="bg-gray-100 font-medium w-full px-3 py-1.5 hover:bg-gray-200 rounded-t-lg"
-                        >
-                          Setting and privacy
-                        </button>
-                       </Link>
+                        <Link to={""}>
+                          <button className="bg-gray-100 font-medium w-full px-3 py-1.5 hover:bg-gray-200 rounded-t-lg">
+                            Setting and privacy
+                          </button>
+                        </Link>
                         <hr className="w-[80%] border-t border-gray-800" />
-                        <button className="bg-gray-100 w-full font-medium px-3 py-1.5 rounded-b-lg hover:bg-gray-200">
-                          Log Out
-                        </button>
+                        <Link to={"/social-media/logout"}>
+                          <button className="bg-gray-100 w-full font-medium px-3 py-1.5 rounded-b-lg hover:bg-gray-200">
+                            Log Out
+                          </button>
+                        </Link>
                       </div>
                     )}
                   </div>
                 ) : (
                   // 👥 Visitor sees Follow + User icon + Menu
-                  <div
-                    className="flex gap-2 items-center relative"
-                   
-                  >
+                  <div className="flex gap-2 items-center relative">
                     <button
                       onClick={() => handleFollowToggle(viewedUserId, follow)}
                       className={`px-2 py-1 rounded-md text-[16px] font-bold ${
@@ -1151,38 +1425,47 @@ const handleSelectMentionProfile = (username) => {
                       <i className="ri-more-fill"></i>
                     </button>
                     {showMenu && (
-  <div
-    className="absolute right-0 top-full flex flex-col items-center mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-md z-50"
-    onClick={(e) => e.stopPropagation()} // ✅ prevent closing when clicking inside
-  >
-    <button
-      className="bg-gray-100 font-medium w-full px-3 py-1.5 hover:bg-gray-200 rounded-t-lg"
-      onClick={() => {
-        console.log("clicked");
-        handleBlockUser();
-       // ✅ close menu manually
-      }}
-    >
-      Block
-    </button>
-    <hr className="w-[80%] border-t border-gray-800" />
-    <button className="bg-gray-100 w-full font-medium px-3 py-1.5 hover:bg-gray-200">
-      Report
-    </button>
-    <hr className="w-[80%] border-t border-gray-800" />
-    <button className="bg-gray-100 w-full font-medium px-3 py-1.5 hover:bg-gray-200">
-      Share to
-    </button>
-    <hr className="w-[80%] border-t border-gray-800" />
-    <button
-      className="bg-gray-100 w-full font-medium px-3 py-1.5 rounded-b-lg hover:bg-gray-200"
-      onClick={() => setShowMenu(false)} // ✅ close on cancel
-    >
-      Cancel
-    </button>
-  </div>
-)}
-
+                      <div
+                        className="absolute right-0 top-full flex flex-col items-center mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-md z-50"
+                        onClick={(e) => e.stopPropagation()} // ✅ prevent closing when clicking inside
+                      >
+                        <button
+                          className="bg-gray-100 font-medium w-full px-3 py-1.5 hover:bg-gray-200 rounded-t-lg"
+                          onClick={() => {
+                            console.log("clicked");
+                            handleBlockUser();
+                            // ✅ close menu manually
+                          }}
+                        >
+                          Block
+                        </button>
+                        <hr className="w-[80%] border-t border-gray-800" />
+                        <button
+                          onClick={() => {
+                            setReportedUser({
+                              id: viewedUserId,
+                              username:profile.username
+                            });
+                            setReportPopupOpen(true);
+                            setShowMenu((prev) => !prev);
+                          }}
+                          className="bg-gray-100 w-full font-medium px-3 py-1.5 hover:bg-gray-200"
+                        >
+                          Report
+                        </button>
+                        <hr className="w-[80%] border-t border-gray-800" />
+                        <button onClick={()=>setSharePost(true)} className="bg-gray-100 w-full font-medium px-3 py-1.5 hover:bg-gray-200">
+                          Share to
+                        </button>
+                        <hr className="w-[80%] border-t border-gray-800" />
+                        <button
+                          className="bg-gray-100 w-full font-medium px-3 py-1.5 rounded-b-lg hover:bg-gray-200"
+                          onClick={() => setShowMenu(false)} // ✅ close on cancel
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -1266,14 +1549,22 @@ const handleSelectMentionProfile = (username) => {
 
                 <h1 className="text-3xl font-semibold text-[#000000]">
                   {profile.username}
-                        {profile.verified?.length > 0 && (
-    <img
-      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]?.badgeImage}`}
-      className="inline-block ml-1 w-6 h-6 object-contain"
-      alt={profile.verified[profile.verified.length - 1]?.badgeName || "badge"}
-      title={profile.verified[profile.verified.length - 1]?.badgeName}
-    />
-  )}
+                  {profile.verified?.length > 0 && (
+                    <img
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                        profile.verified[profile.verified.length - 1]
+                          ?.badgeImage
+                      }`}
+                      className="inline-block ml-1 w-6 h-6 object-contain"
+                      alt={
+                        profile.verified[profile.verified.length - 1]
+                          ?.badgeName || "badge"
+                      }
+                      title={
+                        profile.verified[profile.verified.length - 1]?.badgeName
+                      }
+                    />
+                  )}
                 </h1>
               </div>
               <div className="flex gap-2 items-center relative" ref={menuRef}>
@@ -1302,13 +1593,15 @@ const handleSelectMentionProfile = (username) => {
                       </>
                     ) : (
                       <>
-                        <button className="bg-gray-100 w-full font-medium px-1 py-1 hover:bg-gray-200 rounded-t-lg"
+                        <button
+                          className="bg-gray-100 w-full font-medium px-1 py-1 hover:bg-gray-200 rounded-t-lg"
                           onClick={() => {
-        console.log("clicked");
-        handleBlockUser();
+                            console.log("clicked");
+                            handleBlockUser();
 
-       // ✅ close menu manually
-      }}>
+                            // ✅ close menu manually
+                          }}
+                        >
                           Block
                         </button>
                         <hr className="w-[80%] border-t border-gray-800" />
@@ -1320,7 +1613,10 @@ const handleSelectMentionProfile = (username) => {
                           Share to
                         </button>
                         <hr className="w-[80%] border-t border-gray-800" />
-                        <button className="bg-gray-100 w-full font-medium px-1 py-1 rounded-b-lg hover:bg-gray-200">
+                        <button
+                          onClick={() => setShowMenu(false)}
+                          className="bg-gray-100 w-full font-medium px-1 py-1 rounded-b-lg hover:bg-gray-200"
+                        >
                           Cancel
                         </button>
                       </>
@@ -1381,7 +1677,7 @@ const handleSelectMentionProfile = (username) => {
             </div>
           </div>
         ) : (
-          <p></p>
+          <p>profile loading</p>
         )}
 
         {isMyProfile ? (
@@ -1430,10 +1726,16 @@ const handleSelectMentionProfile = (username) => {
             {/* Header */}
             <div className="flex items-center justify-between px-2 mb-4">
               <p className="text-[18px] text-[#000000] ">Suggested for you</p>
-              <button className="text-[18px] text-[#000000] cursor-pointer"
-              onClick={()=>Navigate("/social-media/profile/suggestion", {
-      state: { users, viewedUserId},
-    })}>See all</button>
+              <button
+                className="text-[18px] text-[#000000] cursor-pointer"
+                onClick={() =>
+                  Navigate("/social-media/profile/suggestion", {
+                    state: { users, viewedUserId },
+                  })
+                }
+              >
+                See all
+              </button>
             </div>
 
             {/* Scrollable Suggested Users */}
@@ -1447,7 +1749,10 @@ const handleSelectMentionProfile = (username) => {
                     ×
                   </button>
                   <img
-                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}` || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"}
+                    src={
+                      `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}` ||
+                      "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"
+                    }
                     alt={user.username}
                     className="sm:w-20 sm:h-20 w-[55px] h-[55px] rounded-full object-cover mx-auto mb-2"
                   />
@@ -1458,10 +1763,13 @@ const handleSelectMentionProfile = (username) => {
                     {user.role}
                   </p>
                   <hr className="sm:mt-4 mt-2 mb-1" />
-                  <button className="block w-full sm:py-1 text-center text-[16px] font-bold text-[#48372D] "
-                  onClick={() => handleFollowToggle(user._id, user.isFollowing)}>
-                  
-                     {user.isFollowing ? "Unfollow" : "Follow"}
+                  <button
+                    className="block w-full sm:py-1 text-center text-[16px] font-bold text-[#48372D] "
+                    onClick={() =>
+                      handleFollowToggle(user._id, user.isFollowing)
+                    }
+                  >
+                    {user.isFollowing ? "Unfollow" : "Follow"}
                   </button>
                 </div>
               ))}
@@ -1486,33 +1794,33 @@ const handleSelectMentionProfile = (username) => {
           </button>
           {isMyProfile && (
             <button
-            onClick={() => {
-              setOnPosts(false);
-              setOnSave(true);
-              setOnItem(false);
-              setOnTag(false);
-            }}
-            className={`${
-              onSave ? "bg-[#48372D] text-white rounded-full  py-1 px-5" : ""
-            } p-3`}
-          >
-            <FaRegBookmark className="text-2xl" />
-          </button>
+              onClick={() => {
+                setOnPosts(false);
+                setOnSave(true);
+                setOnItem(false);
+                setOnTag(false);
+              }}
+              className={`${
+                onSave ? "bg-[#48372D] text-white rounded-full  py-1 px-5" : ""
+              } p-3`}
+            >
+              <FaRegBookmark className="text-2xl" />
+            </button>
           )}
-          {userType!=='Buyer'&&(
-             <button
-            onClick={() => {
-              setOnPosts(false);
-              setOnSave(false);
-              setOnItem(true);
-              setOnTag(false);
-            }}
-            className={`${
-              onItem ? "bg-[#48372D] text-white rounded-full  py-1 px-5" : ""
-            } p-3`}
-          >
-            <LuArchive className="text-2xl" />
-          </button>
+          {userType !== "Buyer" && (
+            <button
+              onClick={() => {
+                setOnPosts(false);
+                setOnSave(false);
+                setOnItem(true);
+                setOnTag(false);
+              }}
+              className={`${
+                onItem ? "bg-[#48372D] text-white rounded-full  py-1 px-5" : ""
+              } p-3`}
+            >
+              <LuArchive className="text-2xl" />
+            </button>
           )}
           <button
             onClick={() => {
@@ -1535,10 +1843,10 @@ const handleSelectMentionProfile = (username) => {
             {reversedPosts.map((post, index) => (
               <div
                 key={post._id}
-                 onClick={() => {
-    setActiveIndex(index);
-    setActiveSection("posts");
-  }} // ✅ use index directly
+                onClick={() => {
+                  setActiveIndex(index);
+                  setActiveSection("posts");
+                }} // ✅ use index directly
                 className="relative cursor-pointer"
               >
                 {post.images?.length > 0 ? (
@@ -1559,117 +1867,128 @@ const handleSelectMentionProfile = (username) => {
                   </div>
                 )}
 
-                {post.isMultiple && (
+                {/* {post.isMultiple && (
                   <div className="absolute top-2 left-2 bg-black/60 p-1 rounded">
                     <i className="ri-checkbox-multiple-blank-line text-white text-lg"></i>
                   </div>
-                )}
+                )} */}
               </div>
             ))}
           </div>
         )}
 
         {/* Saved */}
-  {onSave && (
-  <div className="grid grid-cols-3 gap-1 sm:gap-4 w-full relative">
-    {profile.saved?.slice().reverse().map((post, index) => (
-      <div key={post._id} className="relative">
-        <img
-           onClick={() => {
-    setActiveIndex(index);
-    setActiveSection("saved");
-  }}
-          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
-          alt={`post-${index}`}
-          className="h-[120px] sm:h-[240px] sm:w-full object-cover rounded-md cursor-pointer"
-        />
+        {onSave && (
+          <div className="grid grid-cols-3 gap-1 sm:gap-4 w-full relative">
+            {profile.saved
+              ?.slice()
+              .reverse()
+              .map((post, index) => (
+                <div key={post._id} className="relative">
+                  <img
+                    onClick={() => {
+                      setActiveIndex(index);
+                      setActiveSection("saved");
+                    }}
+                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
+                    alt={`post-${index}`}
+                    className="h-[120px] sm:h-[240px] sm:w-full object-cover rounded-md cursor-pointer"
+                  />
 
-        {/* Multi-image icon */}
-        {post.images.length > 1 && (
-          <div className="absolute top-2 right-2 bg-black/60 p-1 rounded">
-            <i className="ri-checkbox-multiple-blank-line text-gray-100 text-lg"></i>
-          </div>
-        )}
-      </div>
-    ))}
-  </div>
-)}
-        {/* Selling Items */}
-      {/* Selling Items */}
-{userType !== "Buyer" && onItem && (
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
-    {products.length > 0 ? (
-      products.map((item, index) => (
-        <div
-          key={index}
-          className="bg-[#FEE2CC] rounded-lg overflow-hidden text-white flex flex-col shadow-lg"
-        >
-          {/* Image Section */}
-          <div className="h-[200px] bg-[#FEE2CC]">
-            <img
-              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.mainImage}`}
-              alt={item.productName}
-              className="h-full w-full object-contain"
-            />
-          </div>
-
-          {/* Content Section */}
-          <div className="selling-div flex flex-col justify-between min-h-[140px] bg-[#48372D] p-4">
-            <div className="flex flex-col justify-between">
-              <h3 className="font-semibold text-lg truncate">
-                {item.productName}
-              </h3>
-              <p className="text-[10px] text-[#B7B7B7] mt-1 line-clamp-2">
-                {item.description}
-              </p>
-            </div>
-
-            <hr className="mt-4 w-full text-[#A8A8A8]" />
-
-            {/* ✅ Price Section with old crossed-out price */}
-            <div className="flex justify-between items-center mt-2">
-              <div className="flex flex-col">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-base font-semibold text-white">
-                    ₹ {item.finalPrice?.toLocaleString("en-IN") || 0}
-                  </span>
-                  {item.marketPrice && (
-                    <span className="text-sm text-gray-300 line-through">
-                      ₹ {item.sellingPrice?.toLocaleString("en-IN")}
-                    </span>
+                  {/* Multi-image icon */}
+                  {post.images.length > 1 && (
+                    <div className="absolute top-2 right-2 bg-black/60 p-1 rounded">
+                      <i className="ri-checkbox-multiple-blank-line text-gray-100 text-lg"></i>
+                    </div>
                   )}
                 </div>
-
-                {item.discount > 0 && (
-                  <span className="text-xs text-green-400 font-medium mt-[2px]">
-                    Save {item.discount}% off
-                  </span>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2">
-               
-                  <button className="text-sm bg-white text-[#6E4E37] px-3 py-[2px] rounded-md font-medium hover:bg-[#f8f8f8] transition">
-                    View
-                  </button>
-                 {isMyProfile&& (
-                  <button className="text-sm bg-white text-[#6E4E37] px-3 py-[2px] rounded-md font-medium hover:bg-[#f8f8f8] transition"
-                  onClick={()=>(postProduct({productId:item._id,image:item.mainImage,name:item.productName,bio:item.description,price:item.finalPrice}))}>
-                    Post
-                  </button>
-                 )}
-              </div>
-            </div>
+              ))}
           </div>
-        </div>
-      ))
-    ) : (
-      <p className="text-center text-gray-600 col-span-full">
-        No approved products found.
-      </p>
-    )}
-  </div>
-)}
+        )}
+        {/* Selling Items */}
+        {userType !== "Buyer" && onItem && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
+            {products.length > 0 ? (
+              products.map((item, index) => (
+                <div
+                  key={index}
+                  className="bg-[#FEE2CC] rounded-lg overflow-hidden text-white flex flex-col shadow-lg"
+                >
+                  {/* Image Section */}
+                  <div className="h-[200px] bg-[#FEE2CC]">
+                    <img
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.mainImage}`}
+                      alt={item.productName}
+                      className="h-full w-full object-contain"
+                    />
+                  </div>
+
+                  {/* Content Section */}
+                  <div className="selling-div flex flex-col justify-between min-h-[140px] bg-[#48372D] p-4">
+                    <div className="flex flex-col justify-between">
+                      <h3 className="font-semibold text-lg truncate">
+                        {item.productName}
+                      </h3>
+                      <p className="text-[10px] text-[#B7B7B7] mt-1 line-clamp-2">
+                        {item.description}
+                      </p>
+                    </div>
+
+                    <hr className="mt-4 w-full text-[#A8A8A8]" />
+
+                    {/* ✅ Price Section with old crossed-out price */}
+                    <div className="flex justify-between items-center mt-2">
+                      <div className="flex flex-col">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-base font-semibold text-white">
+                            ₹ {item.finalPrice?.toLocaleString("en-IN") || 0}
+                          </span>
+                          {item.marketPrice && (
+                            <span className="text-sm text-gray-300 line-through">
+                              ₹ {item.sellingPrice?.toLocaleString("en-IN")}
+                            </span>
+                          )}
+                        </div>
+
+                        {item.discount > 0 && (
+                          <span className="text-xs text-green-400 font-medium mt-[2px]">
+                            Save {item.discount}% off
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button className="text-sm bg-white text-[#6E4E37] px-3 py-[2px] rounded-md font-medium hover:bg-[#f8f8f8] transition">
+                          View
+                        </button>
+                        {isMyProfile && (
+                          <button
+                            className="text-sm bg-white text-[#6E4E37] px-3 py-[2px] rounded-md font-medium hover:bg-[#f8f8f8] transition"
+                            onClick={() =>
+                              postProduct({
+                                productId: item._id,
+                                image: item.mainImage,
+                                name: item.productName,
+                                bio: item.description,
+                                price: item.finalPrice,
+                              })
+                            }
+                          >
+                            Post
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-gray-600 col-span-full">
+                No approved products found.
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Tagged */}
         {onTag && (

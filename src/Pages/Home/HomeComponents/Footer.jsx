@@ -5,6 +5,8 @@ import { FaInstagram } from "react-icons/fa";
 import { FaLinkedinIn } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { FaYoutube } from "react-icons/fa";
+import { ReactComponent as Logo} from '../../../assets/logo.svg';
+import "./FooterStyle.css";
 
 const Footer = () => {
   return (
@@ -14,9 +16,7 @@ const Footer = () => {
         {/* Header */}
         <section className="flex flex-col md:flex-row items-center justify-between px-4 md:px-4 py-4 bg-[#000000] rounded-xl gap-4">
           <div className="text-left w-full md:w-1/3">
-            <h1 className="text-4xl sm:text-5xl text-[#FB5934] font-windhavi pb-2 sm:pb-3">
-              <Link to="/">Artsays</Link>
-            </h1>
+              <Link to="/"> <Logo className=" logo"/></Link>
             <p className="text-base sm:text-lg text-white">
               When Art Speaks, Value Grows
             </p>

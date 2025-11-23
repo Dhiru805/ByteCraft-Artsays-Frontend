@@ -5,7 +5,7 @@ import postAPI from "../../../api/postAPI";
 import { FaCheckCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import putAPI from "../../../api/putAPI";
-import {timeAgo} from "./../../../utils/TimeAgo.js";
+import { timeAgo } from "./../../../utils/TimeAgo.js";
 
 const Post = () => {
   const userId = localStorage.getItem("userId");
@@ -28,24 +28,19 @@ const Post = () => {
   const [selectedReason, setSelectedReason] = useState("");
   const [description, setDescription] = useState("");
   const [reportedUser, setReportedUser] = useState(null);
+  const [sharePost, setSharePost] = useState(null);
+  const [copyMsg, setCopyMsg] = useState("");
+
   const activePost = activeIndex !== null ? posts[activeIndex] : null;
   useEffect(() => {
-    if (activePost) {
-      document.body.style.overflow = "hidden"; // stop scrolling
-    } else {
-      document.body.style.overflow = "auto"; // re-enable scrolling
-    }
-    if (reportPopupOpen || tipPopupOpen) {
-      document.body.style.overflow = "hidden"; // stop scrolling
-    } else {
-      document.body.style.overflow = "auto"; // re-enable scrolling
-    }
+    const shouldLockScroll = activePost || reportPopupOpen || tipPopupOpen;
+
+    document.body.style.overflow = shouldLockScroll ? "hidden" : "auto";
 
     return () => {
-      document.body.style.overflow = "auto"; // cleanup
+      document.body.style.overflow = "auto";
     };
   }, [activePost, reportPopupOpen, tipPopupOpen]);
-
   const navigate = useNavigate(); // 👈 initialize navigate
 
   // 🔹 Navigate to profile
@@ -63,7 +58,10 @@ const Post = () => {
           true
         );
         setPosts(res.data.posts || []);
-        console.log(res.data.posts);
+        console.log(
+          "social-media/homepage?userid in posts.jsx",
+          res.data.posts
+        );
         // console.log("Fetched posts:", res.data.posts);
       } catch (err) {
         console.error("Error fetching posts:", err);
@@ -131,7 +129,6 @@ const Post = () => {
         false,
         true
       );
-
       setPosts((prev) =>
         prev.map((p) =>
           p._id === postId
@@ -190,39 +187,48 @@ const Post = () => {
     setMentionSuggestions([]);
     setShowMentions(false);
   };
-const handleFollowToggle = async (targetUserId, isFollowing) => {
-  const userId = localStorage.getItem("userId");
+  const handleFollowToggle = async (targetUserId, isFollowing) => {
+    const userId = localStorage.getItem("userId");
 
-  try {
-    // 💥 Optimistic UI update first
-    setPosts((prevPosts) =>
-      prevPosts.map((post) =>
-        post.user._id === targetUserId
-          ? { ...post, showFollowButton: isFollowing } // hide follow if just followed
-          : post
-      )
-    );
+    try {
+      // 💥 Optimistic UI update first
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.user._id === targetUserId
+            ? { ...post, showFollowButton: isFollowing } // hide follow if just followed
+            : post
+        )
+      );
 
-    // 🔹 Call API
-    if (isFollowing) {
-      await postAPI(`/api/social-media/unfollow/${targetUserId}`, { userId }, true, true);
-    } else {
-      await postAPI(`/api/social-media/follow/${targetUserId}`, { userId }, true, true);
+      // 🔹 Call API
+      if (isFollowing) {
+        await postAPI(
+          `/api/social-media/unfollow/${targetUserId}`,
+          { userId },
+          true,
+          true
+        );
+      } else {
+        await postAPI(
+          `/api/social-media/follow/${targetUserId}`,
+          { userId },
+          true,
+          true
+        );
+      }
+    } catch (error) {
+      console.error("Error following/unfollowing user:", error);
+
+      // 🔄 Revert UI on error
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.user._id === targetUserId
+            ? { ...post, showFollowButton: !isFollowing }
+            : post
+        )
+      );
     }
-
-  } catch (error) {
-    console.error("Error following/unfollowing user:", error);
-
-    // 🔄 Revert UI on error
-    setPosts((prevPosts) =>
-      prevPosts.map((post) =>
-        post.user._id === targetUserId
-          ? { ...post, showFollowButton: !isFollowing }
-          : post
-      )
-    );
-  }
-};
+  };
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -286,71 +292,70 @@ const handleFollowToggle = async (targetUserId, isFollowing) => {
       setError("Something went wrong. Try again.");
     }
   };
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (selectedReason === "Other" && description.trim() === "") {
-    setError("Please describe the issue for 'Other'");
-    return;
-  }
-
-  try {
-    const reporterId = localStorage.getItem("userId");
-
-    // 🧩 Construct payload for post report
-    const payload = {
-      reporterId,
-      reportedUserId: reportedUser.id,  // 👈 user who owns the post
-      postId: reportedUser.postId,      // 👈 post being reported
-      reason: selectedReason,
-      description,
-      reportType: "post",               // 👈 explicitly set type
-    };
-
-    const res = await postAPI("/api/reports/create", payload, true, true);
-
-    if (res.data.success) {
-      setReportPopupOpen(false);
-      setReportSuccess(true);
-      setSelectedReason("");
-      setDescription("");
-      setError("");
-    } else {
-      setError(res.data.message || "Failed to submit report");
+    if (selectedReason === "Other" && description.trim() === "") {
+      setError("Please describe the issue for 'Other'");
+      return;
     }
-  } catch (err) {
-    console.error("Error submitting report:", err);
-    setError("Server error while submitting report");
-  }
-};
 
+    try {
+      const reporterId = localStorage.getItem("userId");
+
+      // 🧩 Construct payload for post report
+      const payload = {
+        reporterId,
+        reportedUserId: reportedUser.id, // 👈 user who owns the post
+        postId: reportedUser.postId, // 👈 post being reported
+        reason: selectedReason,
+        description,
+        reportType: "post", // 👈 explicitly set type
+      };
+
+      const res = await postAPI("/api/reports/create", payload, true, true);
+
+      if (res.data.success) {
+        setReportPopupOpen(false);
+        setReportSuccess(true);
+        setSelectedReason("");
+        setDescription("");
+        setError("");
+      } else {
+        setError(res.data.message || "Failed to submit report");
+      }
+    } catch (err) {
+      console.error("Error submitting report:", err);
+      setError("Server error while submitting report");
+    }
+  };
 
   const handleBlockUser = async () => {
-  const loggedInUserId = localStorage.getItem("userId");
+    const loggedInUserId = localStorage.getItem("userId");
 
-  try {
-    const res = await putAPI(
-      `/api/social-media/block-unblock`,
-      { userId: loggedInUserId, targetUserId: reportedUser.id },
-      true,
-      true
-    );
+    try {
+      const res = await putAPI(
+        `/api/social-media/block-unblock`,
+        { userId: loggedInUserId, targetUserId: reportedUser.id },
+        true,
+        true
+      );
 
-    if (res?.data?.success) {
-      console.log(res.data.message);
+      if (res?.data?.success) {
+        console.log(res.data.message);
 
-      // ✅ Close success modal
-      setReportSuccess(false);
+        // ✅ Close success modal
+        setReportSuccess(false);
 
-      // ✅ Redirect user if blocked
-      if (res.data.isBlocked) {
-        Navigate("/social-media/");
+        // ✅ Redirect user if blocked
+        if (res.data.isBlocked) {
+          Navigate("/social-media/");
+        }
       }
+    } catch (err) {
+      console.error("Error blocking/unblocking user:", err);
     }
-  } catch (err) {
-    console.error("Error blocking/unblocking user:", err);
-  }
-};
+  };
 
   // const [reportPopupOpen, setReportPopupOpen] = useState(false);
   // const [reportSuccess, setReportSuccess] = useState(false);
@@ -467,8 +472,11 @@ const handleSubmit = async (e) => {
                         </span>
                       </div>
                     </div>
-                    <button>
-                      <i className="ri-more-fill text-2xl text-black"></i>
+                    <button
+                      onClick={() => setActiveIndex(null)}
+                      className="text-gray-600 hover:text-red-500 text-2xl font-bold"
+                    >
+                      X
                     </button>
                   </div>
                   {/* profile with caption */}
@@ -591,7 +599,6 @@ const handleSubmit = async (e) => {
                       </div>
                     )}
                   {/* Add Comment */}
-                  {/* Add Comment */}
                   {activePost.canComment ? (
                     <div className="flex gap-2 relative">
                       <input
@@ -628,7 +635,6 @@ const handleSubmit = async (e) => {
               <span className="font-semibold text-xl text-center">
                 Comments
               </span>
-              <div></div>
             </div>
 
             {/* caption with comments */}
@@ -935,178 +941,207 @@ const handleSubmit = async (e) => {
           </div>
         </div>
       )}
-     {/* Success Popup */}
-{reportSuccess && reportedUser && (
-  <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
-    <div className="bg-white rounded-xl shadow-lg w-[380px] p-6 text-center">
-      {/* Success Icon */}
-      <div className="flex justify-center mb-3">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-12 w-12 text-green-500"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 13l4 4L19 7"
-          />
-        </svg>
-      </div>
+      {/* Success Popup */}
+      {reportSuccess && reportedUser && (
+        <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
+          <div className="bg-white rounded-xl shadow-lg w-[380px] p-6 text-center">
+            {/* Success Icon */}
+            <div className="flex justify-center mb-3">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-12 w-12 text-green-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
 
-      {/* Title */}
-      <h3 className="text-lg font-semibold text-gray-800">
-        Thanks for letting us know
-      </h3>
-      <p className="text-gray-600 text-sm mt-1">
-        We’ve received your report about @{reportedUser.username}.
-      </p>
+            {/* Title */}
+            <h3 className="text-lg font-semibold text-gray-800">
+              Thanks for letting us know
+            </h3>
+            <p className="text-gray-600 text-sm mt-1">
+              We’ve received your report about @{reportedUser.username}.
+            </p>
 
-      {/* Block Option */}
-      <div className="mt-4 border-t pt-4">
-        <p className="text-sm text-gray-700 mb-2">
-          Do you also want to block{" "}
-          <span className="font-semibold">@{reportedUser.username}</span>?
-        </p>
-        <div className="flex justify-center gap-3">
-          <button
-            onClick={handleBlockUser} // ✅ hook your block API
-            className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
-          >
-            Block
-          </button>
-          <button
-            onClick={() => setReportSuccess(false)}
-            className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100"
-          >
-            Close
-          </button>
+            {/* Block Option */}
+            <div className="mt-4 border-t pt-4">
+              <p className="text-sm text-gray-700 mb-2">
+                Do you also want to block{" "}
+                <span className="font-semibold">@{reportedUser.username}</span>?
+              </p>
+              <div className="flex justify-center gap-3">
+                <button
+                  onClick={handleBlockUser} // ✅ hook your block API
+                  className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
+                >
+                  Block
+                </button>
+                <button
+                  onClick={() => setReportSuccess(false)}
+                  className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
-)}
+      )}
+      {sharePost && (
+        <div className="fixed inset-0 bg-[#000000]/40 flex justify-center items-center z-[9999]">
+          <div className="bg-white w-80 rounded-xl p-4 shadow-lg relative">
+            {/* Close */}
+            <button
+              className="absolute top-2 right-2 text-xl"
+              onClick={() => setSharePost(null)}
+            >
+              <i className="ri-close-line"></i>
+            </button>
 
+            <h3 className="text-lg font-semibold mb-3">Share Post</h3>
 
+            {/* Copy Link */}
+            <button
+              className="w-full py-2 bg-gray-200 text-gray-800 rounded-lg mb-2"
+              onClick={() => {
+                const link = `${window.location.origin}/social-media/sharepost/${sharePost._id}`;
+                navigator.clipboard.writeText(link);
+                setCopyMsg("Link copied!");
+                setTimeout(() => setCopyMsg(""), 2000);
+              }}
+            >
+              Copy Link
+            </button>
+            {/* Success Message */}
+            {copyMsg && (
+              <p className="text-green-600 text-sm mt-1 text-center">
+                {copyMsg}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
       <div className="w-full ">
         {posts.map((post) => (
           <div key={post._id} className="w-full flex flex-col mb-4 relative">
             {/* Post Header */}
             <div className="flex justify-between items-center">
-  <div className="flex gap-2 p-2 items-center">
-    <img
-      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.user.profilePhoto}`}
-      alt="profile"
-      className="h-11 w-11 rounded-full cursor-pointer"
-      onClick={() => goToProfile(post.user._id)}
-    />
+              <div className="flex gap-2 p-2 items-center">
+                <img
+                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.user.profilePhoto}`}
+                  alt="profile"
+                  className="h-11 w-11 rounded-full cursor-pointer"
+                  onClick={() => goToProfile(post.user._id)}
+                />
 
-    <div>
-      <div className="flex items-center">
-        <h3
-          className="font-extrabold cursor-pointer"
-          onClick={() => goToProfile(post.user._id)}
-        >
-          {post.user.username}
-        </h3>
+                <div>
+                  <div className="flex items-center">
+                    <h3
+                      className="font-extrabold cursor-pointer"
+                      onClick={() => goToProfile(post.user._id)}
+                    >
+                      {post.user.username}
+                    </h3>
 
-        {post.user.verified?.length > 0 && (
-          <img
-            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-              post.user.verified[post.user.verified.length - 1]?.badgeImage
-            }`}
-            className="inline-block ml-1 w-5 h-5 object-contain"
-            alt={
-              post.user.verified[post.user.verified.length - 1]?.badgeName ||
-              "badge"
-            }
-          />
-        )}
-      </div>
+                    {post.user.verified?.length > 0 && (
+                      <img
+                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                          post.user.verified[post.user.verified.length - 1]
+                            ?.badgeImage
+                        }`}
+                        className="inline-block ml-1 w-5 h-5 object-contain"
+                        alt={
+                          post.user.verified[post.user.verified.length - 1]
+                            ?.badgeName || "badge"
+                        }
+                      />
+                    )}
+                  </div>
 
-      {/* Time + Sponsored */}
-      <div className="flex items-center gap-1 text-xs font-light text-gray-500">
-        <p>• {timeAgo(post.createdAt)}</p>
-        {post.isPromoted && (
-          <span className="text-[11px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">
-            Sponsored
-          </span>
-        )}
-      </div>
-    </div>
+                  {/* Time + Sponsored */}
+                  <div className="flex items-center gap-1 text-xs font-light text-gray-500">
+                    <p>• {timeAgo(post.createdAt)}</p>
+                    {post.isPromoted && (
+                      <span className="text-[11px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">
+                        Sponsored
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
 
+              {/* CTA + Buttons */}
+              <div className="flex items-center gap-3 mr-1">
+                {post.isPromoted && (
+                  <>
+                    {post.promotionDetails?.goal === "Visit your website" &&
+                    post.user.website ? (
+                      <button
+                        onClick={() => window.open(post.user.website, "_blank")}
+                        className="buy-button"
+                      >
+                        Visit Website
+                      </button>
+                    ) : post.promotionDetails?.goal === "Visit your profile" ? (
+                      <button
+                        onClick={() => goToProfile(post.user._id)}
+                        className="buy-button"
+                      >
+                        Visit Profile
+                      </button>
+                    ) : null}
+                  </>
+                )}
+                {post.showFollowButton ? (
+                  <button
+                    onClick={() => handleFollowToggle(post.user._id, false)}
+                    className="buy-button"
+                  >
+                    Follow
+                  </button>
+                ) : (
+                  ""
+                )}
 
-  </div>
-   
-
-  {/* CTA + Buttons */}
-  <div className="flex items-center gap-3 mr-1">
-    {post.isPromoted && (
-      <>
-        {post.promotionDetails?.goal === "Visit your website" &&
-        post.user.website ? (
-          <button
-            onClick={() => window.open(post.user.website, "_blank")}
-            className="buy-button"
-          >
-            Visit Website
-          </button>
-        ) : post.promotionDetails?.goal === "Visit your profile" ? (
-          <button
-            onClick={() => goToProfile(post.user._id)}
-            className="buy-button"
-          >
-            Visit Profile
-          </button>
-        ) : null}
-      </>
-    )}
-      {post.showFollowButton ? (
-  <button
-    onClick={() => handleFollowToggle(post.user._id, false)}
-    className="buy-button"
-  >
-    Follow
-  </button>
-) : (
-  ""
-)}
-
-    <button className="buy-button">
-      Buy <i className="cart-icon ri-shopping-cart-fill"></i>
-    </button>
-    <button onClick={() => setMenuOpenId(post._id)}>
-      <i className="ri-more-fill text-lg"></i>
-    </button>
-  </div>
-</div>
-
+                <button className="buy-button">
+                  Buy <i className="cart-icon ri-shopping-cart-fill"></i>
+                </button>
+                <button onClick={() => setMenuOpenId(post._id)}>
+                  <i className="ri-more-fill text-lg"></i>
+                </button>
+              </div>
+            </div>
 
             {/* More Menu */}
             {menuOpenId === post._id && (
               <ul className="absolute flex flex-col rounded-xl items-center justify-between right-1 top-12 mt-2 w-40 bg-gray-200 border shadow-lg z-10 ">
                 {/* Pay Tip */}
-             { post.user._id !== userId && (
-             <div className="w-full flex flex-col items-center justify-center">
-                 <li
-                  className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400 rounded-t-xl"
-                  onClick={() => {
-                    setTipUser({
-                      id: post._id,
-                      receiverId: post.user._id,
-                    });
-                    setTipPopupOpen(true);
-                    setMenuOpenId(null);
-                  }}
-                >
-                  Pay Tip
-                </li>
-                <hr className="w-[75%] border-t border-gray-800" />
-             </div>
-             )}
+                {post.user._id !== userId && (
+                  <div className="w-full flex flex-col items-center justify-center">
+                    <li
+                      className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400 rounded-t-xl"
+                      onClick={() => {
+                        setTipUser({
+                          id: post._id,
+                          receiverId: post.user._id,
+                        });
+                        setTipPopupOpen(true);
+                        setMenuOpenId(null);
+                      }}
+                    >
+                      Pay Tip
+                    </li>
+                    <hr className="w-[75%] border-t border-gray-800" />
+                  </div>
+                )}
 
                 {/* Report */}
                 {post.user._id !== userId && (
@@ -1129,21 +1164,24 @@ const handleSubmit = async (e) => {
                     <hr className="w-[75%] border-t border-gray-800" />
                   </div>
                 )}
-{/* Follow / Unfollow */}
-{post.user._id !== userId && (
-  <div className="w-full flex flex-col items-center justify-center">
-    <li
-      className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
-      // pass !post.showFollowButton so the function will set showFollowButton to the new value
-      onClick={() => handleFollowToggle(post.user._id, !post.showFollowButton)}
-    >
-      {post.showFollowButton ? "follow" : "unfollow"}
-    </li>
-    <hr className="w-[75%] border-t border-gray-800" />
-  </div>
-)}
-
-
+                {/* Follow / Unfollow */}
+                {post.user._id !== userId && (
+                  <div className="w-full flex flex-col items-center justify-center">
+                    <li
+                      className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
+                      // pass !post.showFollowButton so the function will set showFollowButton to the new value
+                      onClick={() =>
+                        handleFollowToggle(
+                          post.user._id,
+                          !post.showFollowButton
+                        )
+                      }
+                    >
+                      {post.showFollowButton ? "follow" : "unfollow"}
+                    </li>
+                    <hr className="w-[75%] border-t border-gray-800" />
+                  </div>
+                )}
 
                 {/* Save / Unsave */}
                 <li
@@ -1155,10 +1193,10 @@ const handleSubmit = async (e) => {
                 <hr className="w-[75%] border-t border-gray-800" />
 
                 {/* Copy Link */}
-                <li className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400">
+                {/* <li className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400">
                   Copy Link
                 </li>
-                <hr className="w-[75%] border-t border-gray-800" />
+                <hr className="w-[75%] border-t border-gray-800" /> */}
 
                 {/* About This Account */}
                 <li
@@ -1276,7 +1314,8 @@ const handleSubmit = async (e) => {
                   <button>
                     <i className="ri-chat-3-line text-xl font-medium"></i>
                   </button>
-                  <button>
+
+                  <button onClick={() => setSharePost(post)}>
                     <i className="ri-send-plane-fill text-xl font-medium"></i>
                   </button>
                 </div>

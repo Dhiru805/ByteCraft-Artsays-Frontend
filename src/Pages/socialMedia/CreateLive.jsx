@@ -6,9 +6,9 @@ import Suggestion from '../../Component/SocialMedia/Suggestion/Suggestion';
 const CreateLive = () => {
   return (
      <div className=" flex flex-col">
-     <header className='w-full   '>
+     {/* <header className='w-full   '>
       <NavBar />
-     </header>
+     </header> */}
 
       {/* Main layout: Sidebar | Post | Suggestion */}
       <main className='flex  flex-row items-start sm:gap-4 w-full sm:w-[96%] mx-auto '>

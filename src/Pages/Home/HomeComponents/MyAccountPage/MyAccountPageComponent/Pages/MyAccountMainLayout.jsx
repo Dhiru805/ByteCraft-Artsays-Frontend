@@ -7,7 +7,7 @@ import { Outlet } from 'react-router-dom';
 const MyAccountMainLayout = () => {
   return (
     <div className=" bg-white">
-      <NavBar />
+      {/* <NavBar /> */}
       <main className="">
         <Outlet className="" />
       </main>

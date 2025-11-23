@@ -1,18 +1,23 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import getAPI from "../../../../src/api/getAPI";
 import postAPI from "../../../../src/api/postAPI";
 import Sidebar from "../Sidebar/Sidebar";
 import { MdVerified } from "react-icons/md";
-import { Link,  useLocation } from "react-router-dom"; //
+import { Link, useLocation } from "react-router-dom"; //
 import { useNavigate } from "react-router-dom";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import "./Post.css";
+const stickersArray = ["🔥", "😂", "❤️", "👍", "🎉", "😍", "😭", "👀"];
 
 const Uploadpost = () => {
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showStickers, setShowStickers] = useState(false);
+  const [stickerPos, setStickerPos] = useState({ top: 0, left: 0 });
+  const emojiBtnRef = useRef(null);
+  const stickerRef = useRef(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -39,55 +44,53 @@ const Uploadpost = () => {
   }, [userId]);
 
   const uploadPost = async () => {
-  if (images.length === 0) {
-    toast.error("Please select an image before posting.");
-    return;
-  }
+    if (images.length === 0) {
+      toast.error("Please select an image before posting.");
+      return;
+    }
 
-  try {
-    const formData = new FormData();
-    formData.append("userId", userId);
-    formData.append("caption", description);
-    formData.append("location", locationInput);
+    try {
+      const formData = new FormData();
+      formData.append("userId", userId);
+      formData.append("caption", description);
+      formData.append("location", locationInput);
 
-    // Append collaborators (array)
-    collaborators.forEach((c) => formData.append("collaborators", c._id));
+      // Append collaborators (array)
+      collaborators.forEach((c) => formData.append("collaborators", c._id));
 
-     images.forEach((img) => {
-  formData.append("images", img.file); // ✅ append real File
-});
+      images.forEach((img) => {
+        formData.append("images", img.file); // ✅ append real File
+      });
 
-    console.log("FormData contents:");
+      console.log("FormData contents:");
       for (let [key, value] of formData.entries()) {
         console.log(key, value);
       }
-    console.log(images);
+      console.log(images);
 
-    const res = await postAPI(
-      "/api/social-media/create-post",
-      formData,
-      false,  
-      true,  // private (requires token)
-      { "Content-Type": "multipart/form-data" } // headers override
-    );
+      const res = await postAPI(
+        "/api/social-media/create-post",
+        formData,
+        false,
+        true, // private (requires token)
+        { "Content-Type": "multipart/form-data" } // headers override
+      );
 
-    if (res && !res.hasError) {
-      toast.success("Post uploaded successfully!");
-      navigate("/social-media/profile");
-      console.log(res.data.post);
-    } else {
-      toast.error(res?.message || "Failed to upload post");
+      if (res && !res.hasError) {
+        toast.success("Post uploaded successfully!");
+        navigate("/social-media/profile");
+      } else {
+        toast.error(res?.message || "Failed to upload post");
+      }
+    } catch (error) {
+      console.error("Error uploading post:", error);
+      toast.error(error?.response?.data?.message || "Something went wrong");
     }
-  } catch (error) {
-    console.error("Error uploading post:", error);
-    toast.error(error?.response?.data?.message || "Something went wrong");
-  }
-};
-
+  };
 
   const location = useLocation();
   const passedImages = useMemo(() => {
-    return location.state?.images|| [];
+    return location.state?.images || [];
   }, [location.state?.images]);
 
   const [images, setImages] = useState(passedImages);
@@ -163,7 +166,6 @@ const Uploadpost = () => {
       setImages(passedImages);
       setCurrentImageIndex(0);
     }
-    
   }, [passedImages]);
 
   // Carousel
@@ -194,41 +196,71 @@ const Uploadpost = () => {
     setImages(updatedImages);
   };
   // Handle description input change
-// inside handleDescriptionChange
-const handleDescriptionChange = async (e) => {
-  const userId = localStorage.getItem("userId");
-  const value = e.target.value;
-  setDescription(value);
+  // inside handleDescriptionChange
+  const handleDescriptionChange = async (e) => {
+    const userId = localStorage.getItem("userId");
+    const value = e.target.value;
+    setDescription(value);
 
-  const words = value.split(/\s+/);
-  const lastWord = words[words.length - 1];
+    const words = value.split(/\s+/);
+    const lastWord = words[words.length - 1];
 
-  if (lastWord.startsWith("@") && lastWord.length > 1) {
-    const query = lastWord; // ✅ keep the "@"
+    if (lastWord.startsWith("@") && lastWord.length > 1) {
+      const query = lastWord; // ✅ keep the "@"
 
-    try {
-      const res = await getAPI(`/api/social-media/mention?q=${query}`, {}, true);
-      if (res?.data?.users) {
-        setDescMentionSuggestions(res.data.users);
-        setShowDescMentions(true);
+      try {
+        const res = await getAPI(
+          `/api/social-media/mention?q=${query}`,
+          {},
+          true
+        );
+        if (res?.data?.users) {
+          setDescMentionSuggestions(res.data.users);
+          setShowDescMentions(true);
+        }
+      } catch (err) {
+        console.error("Error fetching mentions for description:", err);
       }
-    } catch (err) {
-      console.error("Error fetching mentions for description:", err);
+    } else {
+      setShowDescMentions(false);
     }
-  } else {
+  };
+
+  const handleSelectDescMention = (username) => {
+    const words = description.split(/\s+/);
+    words[words.length - 1] = `@${username}`; // ✅ ensure the @ is preserved
+    setDescription(words.join(" ") + " ");
     setShowDescMentions(false);
-  }
-};
+  };
 
+  const toggleStickers = () => {
+    if (!showStickers) {
+      const rect = emojiBtnRef.current.getBoundingClientRect();
+      setStickerPos({
+        top: rect.bottom + 5, // just below the button
+        left: rect.left, // same horizontal position
+      });
+    }
+    setShowStickers(!showStickers);
+  };
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        stickerRef.current &&
+        !stickerRef.current.contains(e.target) &&
+        !emojiBtnRef.current.contains(e.target)
+      ) {
+        setShowStickers(false);
+      }
+    };
 
-const handleSelectDescMention = (username) => {
-  const words = description.split(/\s+/);
-  words[words.length - 1] = `@${username}`; // ✅ ensure the @ is preserved
-  setDescription(words.join(" ") + " ");
-  setShowDescMentions(false);
-};
-
-
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+  const handleStickerSelect = (sticker) => {
+    setDescription((prev) => prev + " " + sticker + " ");
+    setShowStickers(false);
+  };
 
   return (
     <div className="flex justify-between w-full">
@@ -241,7 +273,6 @@ const handleSelectDescMention = (username) => {
             <i className="text-[30px] ri-arrow-left-s-line text-white ml-2"></i>
           </Link>
           <p className="text-lg text-white font-medium">Create new post</p>
-          <div></div>
         </div>
 
         {/* Main Section */}
@@ -257,14 +288,15 @@ const handleSelectDescMention = (username) => {
                   <i className="ri-arrow-left-s-line text-white bg-[#000000CC] opacity-80 rounded-full"></i>
                 </button>
 
-               <img
-  src={images[currentImageIndex].preview instanceof File 
-    ? URL.createObjectURL(images[currentImageIndex].preview) 
-    : images[currentImageIndex].preview}
-  alt="post"
-  className="object-contain h-full w-full object-cover rounded-bl-lg"
-/>
-
+                <img
+                  src={
+                    images[currentImageIndex].preview instanceof File
+                      ? URL.createObjectURL(images[currentImageIndex].preview)
+                      : images[currentImageIndex].preview
+                  }
+                  alt="post"
+                  className="object-contain h-full w-full object-cover rounded-bl-lg"
+                />
 
                 <button
                   onClick={handleNext}
@@ -290,46 +322,50 @@ const handleSelectDescMention = (username) => {
               <p className="text-lg font-medium">{profile?.username}</p>
               <MdVerified className="inline text-blue-500 text-lg" />
             </div>
-           {/* Post Description */}
-<div className="w-full bg-[#F0EDEB] h-40 flex flex-col items-center justify-between rounded-lg py-2 px-2 relative">
-  <textarea
-    value={description}
-    onChange={handleDescriptionChange}
-    className="w-full h-full border-none bg-transparent outline-none resize-none my-2 mx-2 overflow-y-auto"
-    placeholder="Post Description"
-    maxLength={2000}
-  />
+            {/* Post Description */}
+            <div className="w-full bg-[#F0EDEB] h-40 flex flex-col items-center justify-between rounded-lg py-2 px-2 relative">
+              <textarea
+                value={description}
+                onChange={handleDescriptionChange}
+                className="w-full h-full border-none bg-transparent outline-none resize-none my-2 mx-2 overflow-y-auto"
+                placeholder="Post Description"
+                maxLength={2000}
+              />
 
-  {/* Mentions dropdown (below textarea) */}
-  {showDescMentions && descMentionSuggestions.length > 0 && (
-    <div className="absolute top-full left-0 mt-1 w-full lg:bg-white bg-[#FAF9F6] border rounded-md shadow-md z-50 max-h-40 overflow-y-auto">
-      {descMentionSuggestions.map((user) => (
-        <div
-          key={user._id}
-          onClick={() => handleSelectDescMention(user.username)}
-          className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
-        >
-          <img
-            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`}
-            alt={user.username}
-            className="w-8 h-8 rounded-full"
-          />
-          <span className="text-sm font-medium text-gray-800">{user.username}</span>
-          <span className="text-xs text-gray-500">{user.role}</span>
-        </div>
-      ))}
-    </div>
-  )}
+              {/* Mentions dropdown (below textarea) */}
+              {showDescMentions && descMentionSuggestions.length > 0 && (
+                <div className="absolute top-full left-0 mt-1 w-full lg:bg-white bg-[#FAF9F6] border rounded-md shadow-md z-50 max-h-40 overflow-y-auto">
+                  {descMentionSuggestions.map((user) => (
+                    <div
+                      key={user._id}
+                      onClick={() => handleSelectDescMention(user.username)}
+                      className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
+                    >
+                      <img
+                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`}
+                        alt={user.username}
+                        className="w-8 h-8 rounded-full"
+                      />
+                      <span className="text-sm font-medium text-gray-800">
+                        {user.username}
+                      </span>
+                      <span className="text-xs text-gray-500">{user.role}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
 
-  <div className="w-full flex items-center justify-between px-2">
-    <i className="ri-emoji-sticker-line text-sm"></i>
-    <p className="text-sm font-medium text-gray-800">
-      {description.length}/2000
-    </p>
-  </div>
-</div>
+              <div className="w-full flex items-center justify-between px-2">
+                {/* Sticker Button */}
+                <button ref={emojiBtnRef} onClick={toggleStickers}>
+                  <i className="ri-emoji-sticker-line text-sm"></i>
+                </button>
 
-
+                <p className="text-sm font-medium text-gray-800">
+                  {description.length}/2000
+                </p>
+              </div>
+            </div>
             {/* Location */}
             <div className="w-full bg-[#F0EDEB] flex flex-col px-2 rounded-lg relative">
               <input
@@ -368,7 +404,6 @@ const handleSelectDescMention = (username) => {
                 className="w-full border-none bg-transparent outline-none my-2 mx-2 overflow-scroll placeholder:text-[#1F1E1E] placeholder:font-medium text-sm"
                 placeholder="Search Collaborators"
               />
-             
 
               {/* Suggestions Dropdown */}
               {suggestions.length > 0 && (
@@ -423,9 +458,7 @@ const handleSelectDescMention = (username) => {
                 ))}
               </div>
             </div>
-            {/* Share To */}{" "}
-            
-            {/* Post Button */}
+            {/* Share To */} {/* Post Button */}
             <div className="w-full flex items-center justify-end">
               <input
                 type="submit"
@@ -446,13 +479,17 @@ const handleSelectDescMention = (username) => {
                 className="relative w-22 h-22 rounded overflow-hidden"
               >
                 <img
-  src={img instanceof File ? URL.createObjectURL(img.preview) : img.preview}
-  alt={`thumbnail-${index}`}
-  className={`w-[150px] h-[150px] object-cover rounded cursor-pointer ${
-    currentImageIndex === index ? "ring-2 ring-[#6E4E37]" : ""
-  }`}
-  onClick={() => setCurrentImageIndex(index)}
-/>
+                  src={
+                    img instanceof File
+                      ? URL.createObjectURL(img.preview)
+                      : img.preview
+                  }
+                  alt={`thumbnail-${index}`}
+                  className={`w-[150px] h-[150px] object-cover rounded cursor-pointer ${
+                    currentImageIndex === index ? "ring-2 ring-[#6E4E37]" : ""
+                  }`}
+                  onClick={() => setCurrentImageIndex(index)}
+                />
 
                 <button
                   className="absolute top-0 right-0 text-black text-xs p-1 rounded-full"
@@ -465,6 +502,29 @@ const handleSelectDescMention = (username) => {
           </div>
         )}
       </div>
+      {showStickers && (
+        <div
+          ref={stickerRef}
+          className="absolute bg-white shadow-lg rounded p-2 z-50"
+          style={{
+            top: stickerPos.top,
+            left: stickerPos.left,
+            position: "fixed",
+          }}
+        >
+          <div className="grid grid-cols-6 gap-2 text-xl">
+            {stickersArray.map((s, i) => (
+              <button
+                key={i}
+                onClick={() => handleStickerSelect(s)}
+                className="hover:bg-gray-100 p-1 rounded"
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

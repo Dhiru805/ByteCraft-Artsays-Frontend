@@ -28,7 +28,6 @@ import { BsBoxSeam } from "react-icons/bs";
 import { FaUser, FaChevronLeft, FaTools } from "react-icons/fa";
 import { MdOutlineSecurity, MdVerified, MdLibraryAdd } from "react-icons/md";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
-
 const NavBar = () => {
   const [showMegamenu, setShowMegamenu] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -38,12 +37,10 @@ const NavBar = () => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-  const userId = localStorage.getItem("userId");
 
   const navigate = useNavigate();
   const location = useLocation();
-
-  const isOnSocialMedia = location.pathname === "/social-media";
+  const isOnSocialMedia = location.pathname.startsWith("/social-media");
 
   const handleDashboardClick = (Usertype) => {
     if (Usertype === "Artist") {
@@ -59,7 +56,7 @@ const NavBar = () => {
     e.stopPropagation();
     setShowDropdown((prev) => !prev);
   };
-
+  //
   const handleSignOut = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userType");
@@ -124,32 +121,35 @@ const NavBar = () => {
     document.addEventListener("click", handleClickOutside);
     document.addEventListener("keydown", handleEscape);
 
-    const toggleBtn = document.getElementById("mobileToggle");
-    const sidebar = document.getElementById("mobileSidebar");
-    const closeBtn = document.getElementById("closeSidebar");
-    const overlay = document.getElementById("overlay1");
+    // const toggleBtn = document.getElementById("mobileToggle");
+    // const sidebar = document.getElementById("mobileSidebar");
+    // const closeBtn = document.getElementById("closeSidebar");
+    // const overlay = document.getElementById("overlay1");
 
-    const openSidebar = () => {
-      sidebar?.classList.add("active");
-      overlay?.classList.add("active");
-    };
+    // const openSidebar = () => {
+    //   // sidebar?.classList.add("active");
+    //   overlay?.classList.add("active");
+    //   console.log("clicked on toggle for add");
+    // };
 
-    const closeSidebar = () => {
-      sidebar?.classList.remove("active");
-      overlay?.classList.remove("active");
-    };
+    // const closeSidebar = () => {
+    //   sidebar?.classList.remove("active");
+    //   overlay?.classList.remove("active");
+    //   console.log("clicked on toggle for remove");
 
-    toggleBtn?.addEventListener("click", openSidebar);
-    closeBtn?.addEventListener("click", closeSidebar);
-    overlay?.addEventListener("click", closeSidebar);
+    // };
+
+    // toggleBtn?.addEventListener("click", openSidebar);
+    // closeBtn?.addEventListener("click", closeSidebar);
+    // overlay?.addEventListener("click", closeSidebar);
 
     return () => {
       box?.removeEventListener("click", activateSearch);
       document.removeEventListener("click", handleClickOutside);
       document.removeEventListener("keydown", handleEscape);
-      toggleBtn?.removeEventListener("click", openSidebar);
-      closeBtn?.removeEventListener("click", closeSidebar);
-      overlay?.removeEventListener("click", closeSidebar);
+      // toggleBtn?.removeEventListener("click", openSidebar);
+      // closeBtn?.removeEventListener("click", closeSidebar);
+      // overlay?.removeEventListener("click", closeSidebar);
     };
   }, [isToggled]);
 
@@ -183,7 +183,7 @@ const NavBar = () => {
               <div className="col-md-2 col-12 text-center order-md-1 order-0">
                 <div className="logo-container-h">
                   <a className="logo-h" href="/">
-                    <img src="/assets/home/logo.svg" />
+                    <img src="/assets/home/logo.svg" alt="" />
                   </a>
                   <div className="mega-menu">
                     {/* Top Header Bar */}
@@ -320,7 +320,7 @@ const NavBar = () => {
             {isLoggedIn === true && (
               <div className="col-md-2 col-12 d-flex justify-content-center text-center order-md-1 order-0">
                 <a className="logo-h" href="/">
-                  <img src="/assets/home/logo.svg" />
+                  <img src="/assets/home/logo.svg" alt="Logo" />
                 </a>
               </div>
             )}
@@ -409,69 +409,82 @@ const NavBar = () => {
                           }}
                         >
                           <div className="dropdown-arrow-h" />
-                          <a
-                            className="dropdown-item-h"
-                            onClick={() => navigate("/my-account")}
-                          >
-                            <i className="fas fa-user me-2" /> Your Account
-                          </a>
+                          <Link to="/my-account">
+                            <div
+                              className="dropdown-item-h"
+                              onClick={handleUserIconClick}
+                            >
+                              <i className="fas fa-user me-2" /> Your Account
+                            </div>
+                          </Link>
                           {!isOnSocialMedia ? (
-                            <a
-                              className="dropdown-item-h"
-                              onClick={() => navigate("/social-media")}
-                            >
-                              <img
-                                alt="community-logo"
-                                src={artLogo}
-                                style={{
-                                  width: "18px",
-                                  height: "18px",
-                                  marginRight: "2px",
-                                }}
-                              />
-                              Switch to Community
-                            </a>
+                            <Link to="/social-media">
+                              <div
+                                className="dropdown-item-h"
+                                onClick={handleUserIconClick}
+                              >
+                                <img
+                                  alt="community-logo"
+                                  src={artLogo}
+                                  style={{
+                                    width: "20px",
+                                    height: "20px",
+                                    marginRight: "2px",
+                                  }}
+                                />
+                                Switch to Community
+                              </div>
+                            </Link>
                           ) : (
-                            <a
-                              className="dropdown-item-h"
-                              onClick={() => navigate("/")}
-                            >
-                              <img
-                                src={AIcon}
-                                alt="Artsays-Icon"
-                                style={{
-                                  width: "16px",
-                                  height: "16px",
-                                  marginRight: "9px",
-                                }}
-                              />
-                              Switch to Artsays
-                            </a>
+                            <Link to="/">
+                              <div
+                                className="dropdown-item-h"
+                                onClick={handleUserIconClick}
+                              >
+                                <img
+                                  src={AIcon}
+                                  alt="Artsays-Icon"
+                                  style={{
+                                    width: "16px",
+                                    height: "16px",
+                                    marginRight: "9px",
+                                  }}
+                                />
+                                Switch to Artsays
+                              </div>
+                            </Link>
                           )}
-                          <a
+                          <Link to={"/my-account/my-orders"}>
+                            <div
+                              className="dropdown-item-h"
+                              onClick={handleUserIconClick}
+                            >
+                              <i className="fas fa-box me-2" /> Orders
+                            </div>
+                          </Link>
+                          <Link to={"/my-account/buyer-wallet"}>
+                            <div
+                              className="dropdown-item-h"
+                              onClick={handleUserIconClick}
+                            >
+                              <i className="fas fa-wallet me-2" /> Wallet
+                            </div>
+                          </Link>
+                          <Link
                             className="dropdown-item-h"
-                            onClick={() => navigate("/my-account/my-orders")}
+                            to={"/my-account/notification-preferences"}
+                            onClick={handleUserIconClick}
                           >
-                            <i className="fas fa-box me-2" /> Orders
-                          </a>
-                          <a
-                            className="dropdown-item-h"
-                            onClick={() => navigate("/my-account/buyer-wallet")}
-                          >
-                            <i className="fas fa-wallet me-2" /> Wallet
-                          </a>
-                          <a className="dropdown-item-h" href="/">
                             <i className="fas fa-bell me-2" /> Notification
-                          </a>
-                          <a
-                            className="dropdown-item-h"
-                            onClick={() =>
-                              navigate(`/my-account/wishlist/${userId}`)
-                            }
-                          >
-                            <i className="fas fa-heart me-2" /> Wishlist
-                          </a>
-
+                          </Link>
+                          <Link to={"/my-account/wishlist/${userId}"}>
+                            <div
+                              className="dropdown-item-h"
+                              onClick={handleUserIconClick}
+                            >
+                              <i className="fas fa-heart me-2" /> Wishlist
+                            </div>
+                          </Link>
                           <div
                             className="dropdown-item-h"
                             onClick={handleSignOut}
@@ -494,7 +507,7 @@ const NavBar = () => {
                         >
                           <div className="dropdown-arrow-h" />
                           <div className="dropdown-item-group-h">
-                            <a
+                            <div
                               className="dropdown-item-h"
                               onClick={() => {
                                 handleDashboardClick(Usertype);
@@ -502,11 +515,12 @@ const NavBar = () => {
                             >
                               <i className="fas fa-tachometer-alt me-1" />
                               My Dashboard
-                            </a>
+                            </div>
                             {!isOnSocialMedia ? (
-                              <a
+                              <Link
                                 className="dropdown-item-h"
-                                onClick={() => navigate("/social-media")}
+                                to={"/social-media"}
+                                onClick={handleUserIconClick}
                               >
                                 <img
                                   alt="community-logo"
@@ -518,11 +532,12 @@ const NavBar = () => {
                                   }}
                                 />
                                 Switch to Community
-                              </a>
+                              </Link>
                             ) : (
-                              <a
+                              <Link
                                 className="dropdown-item-h"
-                                onClick={() => navigate("/")}
+                                to={"/"}
+                                onClick={handleUserIconClick}
                               >
                                 <img
                                   src={AIcon}
@@ -534,11 +549,11 @@ const NavBar = () => {
                                   }}
                                 />
                                 Switch to Artsays
-                              </a>
+                              </Link>
                             )}
-                            <a className="dropdown-item-h" href="/">
+                            <Link className="dropdown-item-h" onClick={handleUserIconClick} >
                               <i className="fas fa-bell me-2" /> Notifications
-                            </a>
+                            </Link>
                             <div
                               className="dropdown-item-h"
                               onClick={handleSignOut}
@@ -563,6 +578,7 @@ const NavBar = () => {
             <img
               src="/assets/home/logo.svg"
               style={{ height: "40px", objectFit: "contain" }}
+              alt=""
             />
           </a>
           <a className="nav-link-h btn-started-h" href="/login">
@@ -577,6 +593,7 @@ const NavBar = () => {
               <a href="/" className="navbar-brand-h mb-0 h1">
                 <img
                   src="/assets/home/logo.svg"
+                  alt="Artsays Logo"
                   style={{ height: "40px", objectFit: "contain" }}
                 />
               </a>
@@ -589,31 +606,31 @@ const NavBar = () => {
                   id="mobileToggle"
                   onClick={() => setShowProfileMenu(!showProfileMenu)}
                 />
-                {showProfileMenu && (
+                {/* {
+                showProfileMenu && (
                   <>
-                    <a
-                      className="dropdown-item-h"
-                      onClick={() => navigate("/social-media")}
-                    >
-                      <img
-                        alt="community-logo"
-                        src={artLogo}
-                        tyle={{
-                          width: "20px",
-                          height: "20px",
-                          marginRight: "2px",
-                        }}
-                      />
-                      Switch to Community
+                    <a className="dropdown-item-h" onClick={() => navigate("/social-media")}>
+                      <img 
+                        alt="community-logo" 
+                        src={artLogo} 
+                        tyle={{width: '20px', height: '20px', marginRight: '2px'}}/>Switch to Community
                     </a>
-                  </>
-                )}
+                    </>
+                )
+              } */}
               </div>
             </div>
           </nav>
-          <div className="profile-menu-h" id="mobileSidebar">
+          <div
+            className={`profile-menu-h ${showProfileMenu ? "active" : ""}`}
+            id="mobileSidebar"
+          >
             <div className="profile-header-h">
-              <button className="close-btn-h" id="closeSidebar">
+              <button
+                className="close-btn-h"
+                id="closeSidebar"
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+              >
                 &times;
               </button>
               <img
@@ -644,12 +661,14 @@ const NavBar = () => {
             Usertype === "Artist" ||
             Usertype === "Super-Admin" ? (
               <div className="profile-content-h">
-                <div className="profile-item-h">
+                <div className="profile-item-h"  onClick={() => {
+                                handleDashboardClick(Usertype);
+                              }}>
                   <i class="bi bi-person-fill" />
                   <span>My Dashboard</span>
                 </div>
                 <div className="profile-item-h">
-                  <a className="dropdown-item-h" onClick={() => navigate("/")}>
+                  {/* <a className="dropdown-item-h" onClick={() => navigate("/")}>
                     <span style={{ display: "flex", alignItems: "center" }}>
                       <img
                         src={AIcon}
@@ -664,7 +683,7 @@ const NavBar = () => {
                       />
                       Switch to Artsays
                     </span>
-                  </a>
+                  </a> */}
                 </div>
                 <div className="profile-item-h">
                   <i className="bi bi-patch-check-fill" />
@@ -678,10 +697,50 @@ const NavBar = () => {
                   <i className="bi bi-question-circle" />
                   <span>Help</span>
                 </div>
-                <div className="profile-item-h">
+                <Link to={"/privacy-policy"} className="profile-item-h" onClick={() => {
+                                handleDashboardClick(Usertype);
+                              }}>
                   <i className="bi bi-shield-shaded" />
                   <span>Privacy Center</span>
-                </div>
+                </Link>
+
+                {!isOnSocialMedia ? (
+                  <Link to="/social-media">
+                    <div
+                      className="profile-item-h"
+                      onClick={() => setShowProfileMenu(!showProfileMenu)}
+                    >
+                      <img
+                        alt="community-logo"
+                        src={artLogo}
+                        style={{
+                          width: "24px",
+                          height: "24px",
+                          marginRight: "10px",
+                        }}
+                      />
+                      Switch to Community
+                    </div>
+                  </Link>
+                ) : (
+                  <Link to={"/"}>
+                    <div
+                      className="profile-item-h"
+                      onClick={() => setShowProfileMenu(!showProfileMenu)}
+                    >
+                      <img
+                        src={AIcon}
+                        alt="Artsays-Icon"
+                        style={{
+                          width: "16px",
+                          height: "16px",
+                          marginRight: "10px",
+                        }}
+                      />
+                      Switch to Artsays
+                    </div>
+                  </Link>
+                )}
                 <div className="profile-item-h" onClick={handleSignOut}>
                   <i className="bi bi-box-arrow-left" />
                   <span>Logout</span>
@@ -689,11 +748,15 @@ const NavBar = () => {
               </div>
             ) : (
               <div className="profile-content-h">
-                <div className="profile-item-h">
+                <Link
+                  className="profile-item-h"
+                  to="/my-account"
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
                   <FaUser style={{ marginRight: "15px", marginLeft: "6px" }} />
                   <span>My Account</span>
-                </div>
-                <div className="profile-item-h">
+                </Link>
+                {/* <div className="profile-item-h">
                   <a className="dropdown-item-h" onClick={() => navigate("/")}>
                     <span style={{ display: "flex", alignItems: "center" }}>
                       <img
@@ -710,79 +773,157 @@ const NavBar = () => {
                       Switch to Artsays
                     </span>
                   </a>
-                </div>
-                <div className="profile-item-h">
+                </div> */}
+                <Link to={"/my-account/art-gallery"}
+                  className="profile-item-h"
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
                   <MdLibraryAdd className="icon-sidebar" />
-                  <span>Collections</span>
-                </div>
-                <div className="profile-item-h">
+                  <span>Art Gallery</span>
+                </Link>
+                <Link to={"/bid"} className="profile-item-h" onClick={() => setShowProfileMenu(!showProfileMenu)}>
                   <RiAuctionFill className="icon-sidebar" />
                   <span>Bid</span>
-                </div>
-                <div className="profile-item-h">
+                </Link>
+                <Link to={"/store"} className="profile-item-h" onClick={() => setShowProfileMenu(!showProfileMenu)}>
                   <PiHandbagBold className="icon-sidebar" />
                   <span>Store</span>
-                </div>
-                <div className="profile-item-h">
+                </Link>
+                <Link to={"/my-account/my-cart"} className="profile-item-h" onClick={() => setShowProfileMenu(!showProfileMenu)}>
                   <BiCart className="icon-sidebar" />
                   <span>Cart</span>
-                </div>
-                <div className="profile-item-h">
+                </Link>
+                <Link
+                  className="profile-item-h"
+                  to={"/my-account/buyer-wallet"}
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
                   <IoWalletOutline className="icon-sidebar" />
                   <span>Wallet</span>
-                </div>
-                <div className="profile-item-h">
+                </Link>
+                <Link
+                  className="profile-item-h"
+                  to={"/my-account/notification-preferences"}
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
                   <IoMdNotificationsOutline className="icon-sidebar" />
                   <span>Notification and Preferences</span>
-                </div>
-                <div
+                </Link>
+                <Link
                   className="profile-item-h"
-                  onClick={() => navigate(`/my-account/wishlist/${userId}`)}
+                  to={"/my-account/wishlist"}
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
                 >
                   <HiOutlineHeart className="icon-sidebar" />
                   <span>Wishlist</span>
-                </div>
-
-                <div className="profile-item-h">
+                </Link>
+                <Link
+                  className="profile-item-h"
+                  to={"/my-account/my-orders"}
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
                   <BsBoxSeam className="icon-sidebar" />
                   <span>Orders</span>
-                </div>
-                <div className="profile-item-h">
+                </Link>
+                <Link
+                  className="profile-item-h"
+                  to={"/my-account/manage-address"}
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
                   <RiMapPin2Line className="icon-sidebar" />
                   <span>Manage Address</span>
-                </div>
-                <div className="profile-item-h">
+                </Link>
+                <Link
+                  className="profile-item-h"
+                  to={"/my-account/payment-method"}
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
                   <RiMoneyRupeeCircleLine className="icon-sidebar" />
                   <span>Payment Methods</span>
-                </div>
-                <div className="profile-item-h">
+                </Link>
+                <Link
+                  className="profile-item-h"
+                  to={"/my-account/password-manager"}
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
                   <MdOutlineSecurity className="icon-sidebar" />
                   <span>Password Manager</span>
-                </div>
-                <div className="profile-item-h">
+                </Link>
+                <Link
+                  className="profile-item-h"
+                  to={"/my-account/account-verification"}
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
                   <MdVerified className="icon-sidebar" />
                   <span>Account Verification</span>
-                </div>
-                <div className="profile-item-h">
-                  <img
-                    src={artLogo}
-                    style={{ height: 24 }}
-                    className="icon-sidebar"
-                  />
-                  <span>Social Media Promotion</span>
-                </div>
-                <div className="profile-item-h">
-                  <FaTools
-                    className="icon-sidebar"
-                    size={20}
-                    style={{ marginRight: "14px" }}
-                  />
-                  <span>Custom Request</span>
-                </div>
-                <div className="profile-item-h">
+                </Link>
+
+                <Link
+                  to={"my-account/social-media-promotion"}
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
+                  <div className="profile-item-h flex">
+                    <img
+                      src={artLogo}
+                      style={{ height: 24 }}
+                      className="icon-sidebar"
+                      alt="Artsays Logo"
+                    />
+                    <span>Social Media Promotion</span>
+                  </div>
+                </Link>
+                <Link to={"my-account/custom-request"} onClick={() => setShowProfileMenu(!showProfileMenu)}>
+                  <div className="profile-item-h">
+                    <FaTools
+                      className="icon-sidebar"
+                      size={20}
+                      style={{ marginRight: "14px" }}
+                    />
+                    <span>Custom Request</span>
+                  </div>
+                </Link>
+                <Link to={"my-account/security-agreements"} className="profile-item-h" onClick={() => setShowProfileMenu(!showProfileMenu)}>
                   <RiLockPasswordLine className="icon-sidebar" />
                   <span>Security and Agreements</span>
-                </div>
+                </Link>
+
+                {!isOnSocialMedia ? (
+                  <Link to="/social-media">
+                    <div
+                      className="profile-item-h"
+                      onClick={() => setShowProfileMenu(!showProfileMenu)}
+                    >
+                      <img
+                        alt="community-logo"
+                        src={artLogo}
+                        style={{
+                          width: "24px",
+                          height: "24px",
+                          marginRight: "10px",
+                        }}
+                      />
+                      Switch to Community
+                    </div>
+                  </Link>
+                ) : (
+                  <Link to={"/"}>
+                    <div
+                      className="profile-item-h"
+                      onClick={() => setShowProfileMenu(!showProfileMenu)}
+                    >
+                      <img
+                        src={AIcon}
+                        alt="Artsays-Icon"
+                        style={{
+                          width: "16px",
+                          height: "16px",
+                          marginRight: "10px",
+                        }}
+                      />
+                      Switch to Artsays
+                    </div>
+                  </Link>
+                )}
                 <div className="profile-item-h" onClick={handleSignOut}>
                   <BiLogOut className="icon-sidebar" />
                   <span>Logout</span>
@@ -790,7 +931,11 @@ const NavBar = () => {
               </div>
             )}
           </div>
-          <div className="overlay-h" id="overlay1" />
+          <div
+            className={`overlay-h ${showProfileMenu ? "active" : ""}`}
+            id="overlay1"
+            onClick={() => setShowProfileMenu(!showProfileMenu)}
+          />
         </>
       )}
     </div>

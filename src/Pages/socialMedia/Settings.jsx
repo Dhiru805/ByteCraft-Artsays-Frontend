@@ -5,9 +5,9 @@ import Setting from '../../Component/SocialMedia/setting/Setting';
 const Settings = () => {
   return (
     <div className=" flex flex-col">
-     <header className='w-full   '>
+     {/* <header className='w-full   '>
       <NavBar />
-     </header>
+     </header> */}
 
       {/* Main layout: Sidebar | Post | Suggestion */}
       <main className='flex  flex-row lg:bg-white  w-full mx-auto'>

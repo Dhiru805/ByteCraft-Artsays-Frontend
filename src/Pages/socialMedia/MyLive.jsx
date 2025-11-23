@@ -985,9 +985,9 @@ const formatDuration = (milliseconds) => {
 
   return (
     <div className="flex flex-col bg-white">
-      <header className="w-full">
+      {/* <header className="w-full">
         <NavBar />
-      </header>
+      </header> */}
 
       <main className="flex lg:py-5 flex-row gap-4 lg:w-[90%] w-full mx-auto lg:border-[1px] lg:border-solid lg:border-gray-800">
         <div className="w-full lg:px-4 lg:px-1 flex flex-col gap-10">

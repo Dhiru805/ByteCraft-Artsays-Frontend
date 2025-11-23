@@ -8,9 +8,9 @@ import NotificationBar from '../../Component/SocialMedia/notification/Notificati
 const Notification = () => {
   return (
     <div className=" flex flex-col">
-     <header className='w-full '>
+     {/* <header className='w-full '>
       <NavBar />
-     </header>
+     </header> */}
 
       {/* Main layout: Sidebar | Post | Suggestion */}
       <main className='flex flex-row gap-4 w-[96%] mx-auto'>

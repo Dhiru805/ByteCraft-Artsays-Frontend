@@ -47,7 +47,6 @@ import CheckOut from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageCo
 import OrderCompleted from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/OrderCompleted";
 import MyOrderView from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyOrderView";
 
-
 //----------------------------------------Error Pages-----------------------------------------//
 import PagenotFound404 from "../Pages/Error/404Error";
 import UnauthorizedAccess from "../Pages/Error/403Error";
@@ -557,6 +556,9 @@ import ViewSponsors from "../Component/Dashboard/Super-AdminDashboard/Community 
 import PurchaseBadge from "../Component/Dashboard/Super-AdminDashboard/Community CMS/PurchaseBadge/PurchaseBadge";
 import ShowPurchasedBadge from "../Component/Dashboard/Super-AdminDashboard/Community CMS/PurchaseBadge/ShowPurchasedBadge";
 import ProductViewing from "../Component/SocialMedia/Profile/ProductView";
+import SharePost from "../Component/SocialMedia/Posts/SharePost";
+import SinglePost from "../Component/SocialMedia/Posts/SinglePost";
+import ShareProfile from "../Component/SocialMedia/Posts/ShareProfile";
 
 const PrivateRoute = ({ allowedRoles, children }) => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
@@ -1123,17 +1125,14 @@ const AppRoutes = () => {
         <Route path="certificate" element={<CertificateTable />} />
         <Route path="certificate/create" element={<CreateCertificate />} />
         <Route path="certificate/edit" element={<EditCertificate />} />
-
         {/* Partner Page Website CMS */}
         <Route path="partner" element={<PartnerTable />} />
         <Route path="partner/create" element={<CreatePartner />} />
         <Route path="partner/edit" element={<EditPartner />} />
-
         {/* Insurance Website CMS */}
         <Route path="insurance" element={<InsuranceTable />} />
         <Route path="insurance/create" element={<CreateInsurance />} />
         <Route path="insurance/edit" element={<EditInsurance />} />
-
         {/* Homepage Admin Routes*/}
         <Route path="homepage" element={<Homepage />} />
         <Route path="homepage/create" element={<CreateHomepage />} />
@@ -1463,6 +1462,8 @@ const AppRoutes = () => {
               path="bank-payment-details"
               element={<BankPaymentDetails />}
             />
+            <Route path="art-gallery" element={<ArtGallery />} />
+
             <Route path="payment-method" element={<PaymentMethod />} />
             <Route path="buyer-wallet" element={<BuyerWallet />} />
             <Route path="password-manager" element={<PasswordManager />} />
@@ -1540,12 +1541,21 @@ const AppRoutes = () => {
         {/* ----------------------------------------------------social media Route ----------------------------------------------- */}
 
         <Route path="/social-media" element={<Homee />} />
+        <Route path="/social-media/sharepost/:postId" element={<SharePost />} />
+        {/* <Route path="/social-media/share-profile/:viewedUserId" element={<ShareProfile />} /> */}
+
+        <Route
+          path="/social-media/single-post/:postId"
+          element={<SinglePost />}
+        />
         <Route path="/social-media/notification" element={<Notification />} />
         <Route path="/social-media/search" element={<Search />} />
         <Route path="/social-media/explore" element={<Explore />} />
         <Route path="/social-media/create-post" element={<CreatePost />} />
         <Route path="/social-media/upload-post" element={<UploadPost />} />
-        <Route path="/social-media/profile" element={<SocialProfile />} />
+        <Route path="/social-media/profile:shareprofileid?" element={<SocialProfile />} />
+                {/* <Route path="/social-media/share-profile/:viewedUserId" element={<ShareProfile />} /> */}
+
         <Route
           path="/social-media/profile/product-view"
           element={<ProductViewing />}
