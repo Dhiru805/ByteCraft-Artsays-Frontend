@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { FaPlus } from "react-icons/fa";
 import ArtistInfo from "./ArtistProfessionalInfo";
 import SocialMedia from "./SocialMediaPromotion";
 import BankDetails from "./BankandPaymentDetails"
@@ -9,12 +10,14 @@ import putAPI from "../../../../../../api/putAPI";
 import { toast } from "react-toastify";
 import { DEFAULT_PROFILE_IMAGE } from "../../../../../../Constants/ConstantsVariables";
 import getAPI from '../../../../../../api/getAPI';
+import AddressModal from './AddressModal'
 
 
-const Settings = ({ userId, profileData, previewImage, handleImageUpload, handleChange, handleAddressChange, handleSubmit, passwordData, handlePasswordChange }) => {
+const Settings = ({ userId, profileData, previewImage, handleImageUpload, handleChange, handleAddressChange, handleSubmit, passwordData, handlePasswordChange,fetchProfile }) => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [localPreviewImage, setLocalPreviewImage] = useState(previewImage);
@@ -22,7 +25,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
   const fileInputRef = useRef(null);
 
   const [imageError, setImageError] = useState(false);
-  const [isImageLoaded, setIsImageLoaded] = useState(false);  
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
   const actualImage = !localPreviewImage || imageError ? DEFAULT_PROFILE_IMAGE : localPreviewImage;
 
   const [allUsernames, setAllUsernames] = useState([]);
@@ -55,7 +58,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
 
   const handleDeleteImage = async () => {
     try {
-  
+
 
       if (!userId) {
         toast.error('Please log in again.');
@@ -67,7 +70,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
       await putAPI(
         `/auth/users/${userId}`,
         { profilePhoto: null },
-        
+
       );
 
       if (fileInputRef.current) {
@@ -121,7 +124,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
   useEffect(() => {
     const fetchUsernames = async () => {
       try {
-        const res = await getAPI('/auth/all-usernames'); 
+        const res = await getAPI('/auth/all-usernames');
         setAllUsernames(res.data?.usernames || []);
         console.log("All usernames from backend:", res.data?.usernames || []);
       } catch (err) {
@@ -161,6 +164,10 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
       setOriginalUsername(profileData.username.trim().toLowerCase());
     }
   }, [profileData.username]);
+
+  const openShippingModal = () => {
+    setIsShippingModalOpen(true);
+  };
 
   return (
     <div className="body">
@@ -226,6 +233,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
             type="file"
             id="filePhoto"
             className="sr-only"
+            accept=".jpg,.jpeg,.png"
             onChange={handleImageUpload}
             ref={fileInputRef}
           />
@@ -276,6 +284,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
                 </span>
               </label>
             </div>
+
             <div className="form-group" >
               <label htmlFor="birthdate">Birthdate <span style={{ color: 'red' }}>*</span></label>
               <div className="input-group">
@@ -303,6 +312,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
                 value={profileData.address?.line2}
                 name="address.line2"
                 onChange={handleAddressChange}
+                disabled
               />
             </div>
 
@@ -316,6 +326,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
                 value={profileData.address?.city}
                 name="address.city"
                 onChange={handleAddressChange}
+                disabled
               />
             </div>
             <div className="form-group">
@@ -328,6 +339,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
                 value={profileData.address?.country}
                 name="address.country"
                 onChange={handleAddressChange}
+                disabled
               />
             </div>
           </div>
@@ -346,7 +358,18 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
               />
             </div>
 
-            <div className="form-group" style={{ marginTop: "63px" }}>
+            <div className="form-group d-flex justify-content-end">
+              <button
+                type="button"
+                className="btn btn-outline-primary d-flex align-items-center"
+                onClick={openShippingModal} 
+              >
+                <FaPlus className="mr-1" /> Set  Address
+              </button>
+            </div>
+
+
+            <div className="form-group" >
               <label htmlFor="addressLine1">Address Line 1 <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
@@ -356,6 +379,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
                 value={profileData.address?.line1}
                 name="address.line1"
                 onChange={handleAddressChange}
+                disabled
               />
             </div>
 
@@ -368,7 +392,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
                 placeholder="Land Mark"
                 value={profileData.address?.landmark}
                 name="address.landmark"
-                onChange={handleAddressChange}
+                disabled
               />
             </div>
 
@@ -382,6 +406,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
                 value={profileData.address?.state}
                 name="address.state"
                 onChange={handleAddressChange}
+                disabled
               />
             </div>
 
@@ -396,6 +421,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
                 value={profileData.address?.pincode}
                 name="address.pincode"
                 onChange={handleAddressChange}
+                disabled
               />
             </div>
           </div>
@@ -555,10 +581,8 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
 
             setLoading(true);
             try {
-              await handleSubmit(e); 
-
-              toast.success("Profile updated successfully!");
-              window.location.reload(); 
+              await handleSubmit(e);
+              window.location.reload();
             } catch (err) {
               console.error("Update failed:", err);
 
@@ -587,7 +611,12 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
       <Agreement
         userId={userId} />
 
-
+      <AddressModal
+        isOpen={isShippingModalOpen}
+        onClose={() => setIsShippingModalOpen(false)}
+        userId={userId}
+         fetchProfile={fetchProfile}
+      />
     </div>
   );
 };

@@ -434,11 +434,11 @@ insurancesetting: {
   errorMessage: "Failed to delete insurance setting.",
   idKey: "insuranceSettingId",
 },
-shippingaddress:{
+address:{
   getEndpoint: (id) => `/api/delete-address/${id}`,
-  successMessage: "Shipping address successfully deleted!",
-  errorMessage: "Failed to delete shipping address.",
-  idKey: "shippingaddressId",
+  successMessage: " address successfully deleted!",
+  errorMessage: "Failed to delete  address.",
+  idKey: "addressId",
 },
 
 

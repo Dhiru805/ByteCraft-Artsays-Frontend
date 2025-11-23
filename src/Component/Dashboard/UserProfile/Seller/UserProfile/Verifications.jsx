@@ -9,6 +9,7 @@ const AccountVerification = ({ userId }) => {
     const [file, setFile] = useState(null);
     const [filePreview, setFilePreview] = useState(null);
     const [fileType, setFileType] = useState('');
+   const [loading, setLoading] = useState(false);
 const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
     useEffect(() => {

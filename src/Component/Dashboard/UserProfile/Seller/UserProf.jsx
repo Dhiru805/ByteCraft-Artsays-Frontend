@@ -12,7 +12,7 @@ import Settings from './UserProfile/BasicInformation';
 const UserProfileForm = () => {
   const navigate = useNavigate();
   const [imageFile, setImageFile] = useState(null);
-  const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
+  const [previewImage, setPreviewImage] = useState('');
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -244,6 +244,7 @@ const UserProfileForm = () => {
                     handleSubmit={handleSubmit}
                     passwordData={passwordData}
                     handlePasswordChange={handlePasswordChange}
+                      fetchProfile={fetchProfile}
                   />
                 </div>
               ))}

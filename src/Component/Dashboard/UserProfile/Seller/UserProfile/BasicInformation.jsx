@@ -1,5 +1,6 @@
 import React, { useState,useEffect,useRef } from 'react';
 import BusinessProfile from "./BusinessProfile";
+import { FaPlus } from "react-icons/fa";
 import SocialMedia from "./SocialMediaPromotion";
 import BankDetails from "./BankandPaymentDetails"
 import ArtworkDetails from "./ArtworkSellingDetails"
@@ -9,9 +10,10 @@ import putAPI from "../../../../../api/putAPI";
 import { toast } from "react-toastify";
 import { DEFAULT_PROFILE_IMAGE } from "../../../../../Constants/ConstantsVariables";
 import getAPI from '../../../../../api/getAPI';
+import AddressModal from './AddressModal'
 
 
-const Settings = ({ userId, profileData, previewImage, handleImageUpload, handleChange, handleAddressChange, handleSubmit, passwordData, handlePasswordChange }) => {
+const Settings = ({ userId, profileData, previewImage, handleImageUpload, handleChange, handleAddressChange, handleSubmit, passwordData, handlePasswordChange,fetchProfile }) => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -28,6 +30,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
   const [usernameCheckLoading, setUsernameCheckLoading] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState(null);
   const usernameCheckTimeout = useRef(null);
+   const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
 
 
 const actualImage = !localPreviewImage || imageError ? DEFAULT_PROFILE_IMAGE : localPreviewImage;
@@ -169,6 +172,9 @@ const handleDeleteImage = async () => {
     }
   }, [profileData.username]);
 
+  const openShippingModal = () => {
+    setIsShippingModalOpen(true);
+  };
 
   return (
     <div className="body">
@@ -234,6 +240,7 @@ const handleDeleteImage = async () => {
             type="file"
             id="filePhoto"
             className="sr-only"
+            accept=".jpg,.jpeg,.png"
             onChange={handleImageUpload}
             ref={fileInputRef}
           />
@@ -311,6 +318,7 @@ const handleDeleteImage = async () => {
                 value={profileData.address?.line2}
                 name="address.line2"
                 onChange={handleAddressChange}
+                disabled
               />
             </div>
 
@@ -324,6 +332,7 @@ const handleDeleteImage = async () => {
                 value={profileData.address?.city}
                 name="address.city"
                 onChange={handleAddressChange}
+                disabled
               />
             </div>
             <div className="form-group">
@@ -336,6 +345,7 @@ const handleDeleteImage = async () => {
                 value={profileData.address?.country}
                 name="address.country"
                 onChange={handleAddressChange}
+                disabled
               />
             </div>
           </div>
@@ -354,7 +364,17 @@ const handleDeleteImage = async () => {
               />
             </div>
 
-            <div className="form-group" style={{ marginTop: "63px" }}>
+                 <div className="form-group d-flex justify-content-end">
+                          <button
+                            type="button"
+                            className="btn btn-outline-primary d-flex align-items-center"
+                            onClick={openShippingModal} 
+                          >
+                            <FaPlus className="mr-1" /> Set  Address
+                          </button>
+                        </div>
+
+            <div className="form-group" >
               <label htmlFor="addressLine1">Address Line 1 <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
@@ -364,6 +384,7 @@ const handleDeleteImage = async () => {
                 value={profileData.address?.line1}
                 name="address.line1"
                 onChange={handleAddressChange}
+                disabled
               />
             </div>
 
@@ -377,6 +398,7 @@ const handleDeleteImage = async () => {
                 value={profileData.address?.landmark}
                 name="address.landmark"
                 onChange={handleAddressChange}
+                disabled
               />
             </div>
 
@@ -390,6 +412,7 @@ const handleDeleteImage = async () => {
                 value={profileData.address?.state}
                 name="address.state"
                 onChange={handleAddressChange}
+                disabled
               />
             </div>
 
@@ -404,6 +427,7 @@ const handleDeleteImage = async () => {
                 value={profileData.address?.pincode}
                 name="address.pincode"
                 onChange={handleAddressChange}
+                disabled
               />
             </div>
           </div>
@@ -565,8 +589,6 @@ const handleDeleteImage = async () => {
             setLoading(true);
             try {
               await handleSubmit(e); 
-
-              toast.success("Profile updated successfully!");
               window.location.reload(); 
             } catch (err) {
               console.error("Update failed:", err);
@@ -600,7 +622,12 @@ const handleDeleteImage = async () => {
       <Agreement
         userId={userId} />
 
-
+    <AddressModal
+        isOpen={isShippingModalOpen}
+        onClose={() => setIsShippingModalOpen(false)}
+        userId={userId}
+         fetchProfile={fetchProfile}
+      />
     </div>
   );
 };

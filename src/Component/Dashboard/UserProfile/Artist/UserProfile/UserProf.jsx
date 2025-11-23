@@ -262,6 +262,8 @@ const UserProfileForm = () => {
                     passwordData={passwordData}
                     handlePasswordChange={handlePasswordChange}
                     loading={loading}
+                    fetchProfile={fetchProfile}
+                    
                   />
                 </div>
               ))}
