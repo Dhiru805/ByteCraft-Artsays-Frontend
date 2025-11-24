@@ -14,6 +14,7 @@ const MyOrders = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const navigate = useNavigate();
+const [purchasedProducts, setPurchasedProducts] = useState([]);
 
   const orders = [
     {
@@ -58,6 +59,25 @@ const MyOrders = () => {
     };
     fetchApprovedProducts();
   }, []);
+useEffect(() => {
+  const userId = localStorage.getItem("userId");
+
+  const fetchPurchasedProducts = async () => {
+    try {
+      const response = await getAPI(`/api/getbuyerpurchaseproduct/${userId}`);
+      if (Array.isArray(response.data.data)) {
+        setPurchasedProducts(response.data.data);
+      } else {
+        setPurchasedProducts([]);
+      }
+      console.log("Purchased products:", response.data.data);
+    } catch (error) {
+      console.error("Failed to fetch purchased products:", error);
+    }
+  };
+
+  fetchPurchasedProducts();
+}, []);
 
   return (
     <>
@@ -155,7 +175,7 @@ const MyOrders = () => {
                       </div>
                     </div>
 
- <div className="flex-1 text-center">
+                    <div className="flex-1 text-center">
                       {!isCancelled && (
                         <p className="text-base font-semibold text-gray-800">₹{price}</p>
                       )}
@@ -224,7 +244,96 @@ const MyOrders = () => {
                 </div>
               </div>
             );
-          })}        
+
+})} 
+{!selectedOrder &&
+  purchasedProducts.map((purchase, index) => {
+    const deliveryDate = new Date(purchase.purchaseDate);
+    const deliveryDateStr = deliveryDate.toLocaleDateString();
+
+    return (
+      <div
+        key={purchase._id || index}
+        onClick={() =>
+          navigate('/my-account/my-orders/view', {
+            state: { order: purchase }
+          })
+        }
+        className="block hover:no-underline cursor-pointer"
+      >
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden transition hover:shadow-md">
+
+          {/* Header */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 bg-[#6F4D34] text-white text-sm font-medium p-3">
+            <div className="sm:border-r border-white/40">
+              Order ID<br />
+              <span className="font-normal text-sm">
+                #{purchase.transactionId}
+              </span>
+            </div>
+
+            <div className="sm:border-r border-white/40">
+              Payment<br />
+              <span className="font-normal text-sm">
+                {purchase.paymentMethod}
+              </span>
+            </div>
+
+            <div className="sm:border-r border-white/40">
+              Quantity<br />
+              <span className="font-normal text-sm">
+                {purchase.quantity}
+              </span>
+            </div>
+
+            <div>
+              Purchased on<br />
+              <span className="font-normal text-sm">
+                {deliveryDateStr}
+              </span>
+            </div>
+          </div>
+
+          {/* Body */}
+          <div className="p-3 flex items-center gap-3 border-b">
+            <img
+              src={
+                purchase.product?.mainImage
+                  ? `${BASE_URL}${purchase.product.mainImage}`
+                  : DEFAULT_PROFILE_IMAGE
+              }
+              alt="Product"
+              className="w-16 h-16 object-cover rounded-lg border"
+            />
+
+            <div className="flex-1">
+              <p className="text-sm font-semibold">
+                {purchase.product?.productName || "Purchased Product"}
+              </p>
+
+              <p className="text-xs text-gray-600">
+                Qty: {purchase.quantity}
+              </p>
+            </div>
+
+            <p className="font-semibold text-gray-900">
+              ₹{purchase.finalPrice}
+            </p>
+          </div>
+
+          <div className="flex justify-end px-3 py-3">
+            <button className="text-[#6F4D34] text-sm font-medium border border-[#6F4D34] px-4 py-1.5 rounded-full bg-[#6F4D34]/5 hover:bg-[#6F4D34]/10 transition">
+              View Details
+            </button>
+          </div>
+
+        </div>
+      </div>
+    );
+  })}
+
+
+                 
           {selectedOrder && (
           <div className="mt-8">
             <button

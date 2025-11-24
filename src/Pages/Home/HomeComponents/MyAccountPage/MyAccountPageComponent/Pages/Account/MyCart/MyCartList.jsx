@@ -480,18 +480,35 @@ const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const fetchCart = async () => {
-    try {
-      const res = await getAPI(`/api/cart/${userId}`);
-      console.log("CART RESPONSE >>>", res.data);
-      setCart(res.data.items || []);
-    } catch (err) {
-      console.log("Cart load error:", err);
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchCart = async () => {
+  //   try {
+  //     const res = await getAPI(`/api/cart/${userId}`);
+  //     console.log("CART RESPONSE >>>", res.data);
+  //     setCart(res.data.items || []);
+  //   } catch (err) {
+  //     console.log("Cart load error:", err);
+  //     setError(true);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+const fetchCart = async () => {
+  try {
+    const res = await getAPI(`/api/cart/${userId}`);
+    console.log("CART RESPONSE >>>", res.data);
+
+    const safeItems = (res.data.items || []).filter(
+      (i) => i && i.product !== null
+    );
+
+    setCart(safeItems);
+  } catch (err) {
+    console.log("Cart load error:", err);
+    setError(true);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchCart();

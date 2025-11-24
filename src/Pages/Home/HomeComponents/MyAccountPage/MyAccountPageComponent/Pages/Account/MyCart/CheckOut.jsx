@@ -328,28 +328,24 @@
 
 // export default CheckOut;
 
-
-
-
-
-
-
-
-
 import React, { useState, useEffect } from "react";
+import postAPI from "../../../../../../../../api/postAPI";
 import getAPI from "../../../../../../../../api/getAPI";
 import { useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const CheckOut = () => {
   const userId = localStorage.getItem("userId");
   const [searchParams] = useSearchParams();
   const productId = searchParams.get("productId");
+  const navigate = useNavigate();
 
   const [deliveryAddress, setDeliveryAddress] = useState("same");
   const [userData, setUserData] = useState(null);
   const [selectedAddr, setSelectedAddr] = useState(null);
   const [cartItems, setCartItems] = useState([]);
 
+  
   const [allAddresses, setAllAddresses] = useState([]);
 
   const [formData, setFormData] = useState({
@@ -365,7 +361,6 @@ const CheckOut = () => {
     zip: "",
   });
 
-  
   const fetchProductById = async (id) => {
     try {
       const artist = await getAPI(`/artist/getproduct/${id}`);
@@ -387,6 +382,7 @@ const CheckOut = () => {
 
         setCartItems([
           {
+            productId: p._id,
             name: p.productName,
             qty: 1,
             price: p.sellingPrice,
@@ -400,12 +396,25 @@ const CheckOut = () => {
       const res = await getAPI(`/api/cart/${userId}`);
       const items = res.data?.items || [];
 
-      const grouped = items.map((item) => ({
-        name: item.product.productName,
-        qty: item.quantity,
-        price: item.product.sellingPrice,
-        subtotal: item.quantity * item.product.sellingPrice,
-      }));
+
+      // const grouped = items
+      //   .filter((item) => item && item.product)
+      //   .map((item) => ({
+      //     name: item.product.productName,
+      //     qty: item.quantity,
+      //     price: item.product.sellingPrice,
+      //     subtotal: item.quantity * item.product.sellingPrice,
+      //   }));
+
+      const grouped = items
+  .filter(item => item && item.product)
+  .map((item) => ({
+    productId: item.product._id,   
+    name: item.product.productName,
+    qty: item.quantity,
+    price: item.product.sellingPrice,
+    subtotal: item.quantity * item.product.sellingPrice,
+  }));
 
       setCartItems(grouped);
     } catch (err) {
@@ -417,60 +426,87 @@ const CheckOut = () => {
     loadOrderItems();
   }, [userId, productId]);
 
-   const loadAllAddresses = async () => {
-  try {
-    const res = await getAPI(`/auth/userid/${userId}`);
-    const user = res.data?.user;
+  const loadAllAddresses = async () => {
+    try {
+      const res = await getAPI(`/auth/userid/${userId}`);
+      const user = res.data?.user;
 
-    if (user?.address && Array.isArray(user.address)) {
-      setAllAddresses(user.address);
+      if (user?.address && Array.isArray(user.address)) {
+        setAllAddresses(user.address);
+      }
+    } catch (err) {
+      console.log("Error loading address list:", err);
     }
-  } catch (err) {
-    console.log("Error loading address list:", err);
-  }
-};
+  };
 
-useEffect(() => {
-  loadAllAddresses();
-}, [userId]);
+  useEffect(() => {
+    loadAllAddresses();
+  }, [userId]);
 
   const loadUser = async () => {
-  try {
-    const res = await getAPI(`/auth/userid/${userId}`);
-    const user = res.data?.user;
-    if (!user) return;
+    try {
+      const res = await getAPI(`/auth/userid/${userId}`);
+      const user = res.data?.user;
+      if (!user) return;
 
-    setUserData(user);
+      setUserData(user);
 
-    const addr =
-      user.address?.find((a) => a._id === user.selectedAddress) ||
-      user.address?.[0] ||
-      null;
+      const addr =
+        user.address?.find((a) => a._id === user.selectedAddress) ||
+        user.address?.[0] ||
+        null;
 
-    setSelectedAddr(addr);
+      setSelectedAddr(addr);
 
-    setFormData({
-      firstName: user.name || "",
-      lastName: user.lastName || "",
-      company: "",
-      email: user.email || "",
-      phone: user.phone || "",
-      country: addr?.country || "",
-      street: `${addr?.line1 || ""} ${addr?.line2 || ""}`,
-      city: addr?.city || "",
-      state: addr?.state || "",
-      zip: addr?.pincode || "",
-    });
-  } catch (err) {
-    console.log("Cannot Fetch Details, kindly fill manually", err);
-  }
-};
+      setFormData({
+        firstName: user.name || "",
+        lastName: user.lastName || "",
+        company: "",
+        email: user.email || "",
+        phone: user.phone || "",
+        country: addr?.country || "",
+        street: `${addr?.line1 || ""} ${addr?.line2 || ""}`,
+        city: addr?.city || "",
+        state: addr?.state || "",
+        zip: addr?.pincode || "",
+      });
+    } catch (err) {
+      console.log("Cannot Fetch Details, kindly fill manually", err);
+    }
+  };
   useEffect(() => {
     loadUser();
   }, [userId]);
 
   const changeField = (e) =>
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+const placeOrder = async () => {
+  try {
+    for (const item of cartItems) {
+      await postAPI("/api/buyerpurchase", {
+        buyer: userId,
+        product: item.productId, 
+        quantity: item.qty,
+        paymentMethod: "Cash On Delivery"
+      });
+    }
+
+    navigate(`/my-account/order-completed/${userId}`, {
+      state: {
+        order: {
+          orderId: "TEMP-" + Date.now(),
+          paymentMethod: "Cash On Delivery",
+          transactionId: "TXN" + Date.now(),
+          totalAmount: cartItems.reduce((a, b) => a + b.subtotal, 0),
+        },
+        items: cartItems,
+        productIds: cartItems.map(i => i.productId)
+      }
+    });
+  } catch (err) {
+    console.log("ORDER ERROR:", err);
+  }
+};
 
   return (
     <div className="max-w-[1464px] px-4 sm:px-6 lg:px-12 py-10">
@@ -638,7 +674,7 @@ useEffect(() => {
             </div>
 
             {/* Delivery Address */}
-             {/* <div>
+            {/* <div>
               <label className="block text-lg font-medium mb-2">
                 Delivery Address *
               </label>
@@ -665,103 +701,103 @@ useEffect(() => {
             </div> */}
 
             {/* Delivery Address */}
-<div>
-  <label className="block text-lg font-medium mb-2">
-    Delivery Address *
-  </label>
+            <div>
+              <label className="block text-lg font-medium mb-2">
+                Delivery Address *
+              </label>
 
-  {/* OPTION SELECTOR */}
-  <div className="flex flex-col sm:flex-row gap-4 mb-4">
-    <label className="flex items-center gap-2 border px-4 py-2 rounded-xl cursor-pointer">
-      <input
-        type="radio"
-        checked={deliveryAddress === "same"}
-        onChange={() => {
-          setDeliveryAddress("same");
+              {/* OPTION SELECTOR */}
+              <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                <label className="flex items-center gap-2 border px-4 py-2 rounded-xl cursor-pointer">
+                  <input
+                    type="radio"
+                    checked={deliveryAddress === "same"}
+                    onChange={() => {
+                      setDeliveryAddress("same");
 
-          if (selectedAddr) {
-            setFormData((f) => ({
-              ...f,
-              country: selectedAddr.country,
-              street: `${selectedAddr.line1} ${selectedAddr.line2}`,
-              city: selectedAddr.city,
-              state: selectedAddr.state,
-              zip: selectedAddr.pincode,
-            }));
-          }
-        }}
-      />
-      Same as shipping address
-    </label>
+                      if (selectedAddr) {
+                        setFormData((f) => ({
+                          ...f,
+                          country: selectedAddr.country,
+                          street: `${selectedAddr.line1} ${selectedAddr.line2}`,
+                          city: selectedAddr.city,
+                          state: selectedAddr.state,
+                          zip: selectedAddr.pincode,
+                        }));
+                      }
+                    }}
+                  />
+                  Same as shipping address
+                </label>
 
-    <label className="flex items-center gap-2 border px-4 py-2 rounded-xl cursor-pointer">
-      <input
-        type="radio"
-        checked={deliveryAddress === "different"}
-        onChange={() => setDeliveryAddress("different")}
-      />
-      Use a different billing address
-    </label>
-  </div>
+                <label className="flex items-center gap-2 border px-4 py-2 rounded-xl cursor-pointer">
+                  <input
+                    type="radio"
+                    checked={deliveryAddress === "different"}
+                    onChange={() => setDeliveryAddress("different")}
+                  />
+                  Use a different billing address
+                </label>
+              </div>
 
-  {/* ALL ADDRESS OPTIONS — ONLY SHOW IF 'different' IS SELECTED */}
-  {deliveryAddress === "different" && allAddresses.length > 0 && (
-    <div className="border p-4 rounded-2xl space-y-4">
-      {allAddresses.map((addr) => (
-        <div
-          key={addr._id}
-          className="flex items-start gap-3 p-3 border rounded-xl hover:bg-gray-50 cursor-pointer"
-          onClick={() => {
-            setFormData((f) => ({
-              ...f,
-              country: addr.country,
-              street: `${addr.line1} ${addr.line2}`,
-              city: addr.city,
-              state: addr.state,
-              zip: addr.pincode,
-            }));
-          }}
-        >
-          <input
-            type="radio"
-            name="addressSelect"
-            className="mt-1"
-            onChange={() => {
-              setFormData((f) => ({
-                ...f,
-                country: addr.country,
-                street: `${addr.line1} ${addr.line2}`,
-                city: addr.city,
-                state: addr.state,
-                zip: addr.pincode,
-              }));
-            }}
-          />
+              {/* ALL ADDRESS OPTIONS — ONLY SHOW IF 'different' IS SELECTED */}
+              {deliveryAddress === "different" && allAddresses.length > 0 && (
+                <div className="border p-4 rounded-2xl space-y-4">
+                  {allAddresses.map((addr) => (
+                    <div
+                      key={addr._id}
+                      className="flex items-start gap-3 p-3 border rounded-xl hover:bg-gray-50 cursor-pointer"
+                      onClick={() => {
+                        setFormData((f) => ({
+                          ...f,
+                          country: addr.country,
+                          street: `${addr.line1} ${addr.line2}`,
+                          city: addr.city,
+                          state: addr.state,
+                          zip: addr.pincode,
+                        }));
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="addressSelect"
+                        className="mt-1"
+                        onChange={() => {
+                          setFormData((f) => ({
+                            ...f,
+                            country: addr.country,
+                            street: `${addr.line1} ${addr.line2}`,
+                            city: addr.city,
+                            state: addr.state,
+                            zip: addr.pincode,
+                          }));
+                        }}
+                      />
 
-          <div>
-            <p className="font-semibold text-gray-900">
-              {addr.city}, {addr.state}, {addr.country}
-            </p>
+                      <div>
+                        <p className="font-semibold text-gray-900">
+                          {addr.city}, {addr.state}, {addr.country}
+                        </p>
 
-            <p className="text-sm text-gray-600">
-              {addr.line1}, {addr.line2}, {addr.landmark}, {addr.pincode}
-            </p>
-          </div>
-        </div>
-      ))}
-    </div>
-  )}
-</div>
-
+                        <p className="text-sm text-gray-600">
+                          {addr.line1}, {addr.line2}, {addr.landmark},{" "}
+                          {addr.pincode}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </form>
-        </div> 
+        </div>
 
         {/* ORDER SUMMARY */}
         <div className="w-full lg:w-[350px] border rounded-3xl p-4 text-lg h-fit text-gray-700">
           <h2 className="text-gray-800 text-xl font-semibold">Order Summary</h2>
           <hr className="my-2" />
 
-          <div className="space-y-2 mb-4">
+          {/* <div className="space-y-2 mb-4">
             {cartItems.map((g, i) => (
               <div key={i} className="flex justify-between text-sm">
                 <span>
@@ -770,7 +806,27 @@ useEffect(() => {
                 <span>₹{g.subtotal}</span>
               </div>
             ))}
-          </div>
+          </div> */}
+
+<div className="space-y-4 mb-4">
+  {cartItems.map((g, i) => (
+    <div 
+      key={i} 
+      className="flex justify-between items-start text-sm border-b pb-2"
+    >
+      <div>
+        <p className="font-semibold">{g.name}</p>
+        <p className="text-gray-600">MRP: ₹{g.price}</p>
+        <p className="text-gray-600">Qty: {g.qty}</p>
+      </div>
+
+      <div className="font-medium text-gray-900">
+        ₹{g.subtotal}
+      </div>
+    </div>
+  ))}
+</div>
+
 
           <hr className="my-2" />
 
@@ -784,9 +840,63 @@ useEffect(() => {
             <span>₹{cartItems.reduce((a, b) => a + b.subtotal, 0)}</span>
           </div>
 
-          <button className="w-full mt-4 bg-[#5C4033] hover:bg-[#4b3327] text-white py-2 rounded-full text-sm">
+          <button
+            // onClick={() =>
+            //   navigate(`/my-account/order-completed/${userId}`, {
+            //     state: {
+            //       order: {
+            //         orderId: "TEMP-" + Date.now(),
+            //         paymentMethod: "Cash On Delivery",
+            //         transactionId: "TXN" + Date.now(),
+            //         totalAmount: cartItems.reduce((a, b) => a + b.subtotal, 0),
+            //       },
+            //       items: cartItems,
+            //       productIds: cartItems.map(
+            //         (item, i) => item.productId || null
+            //       ),
+            //     },
+            //   })
+            // }
+
+ onClick={placeOrder}
+
+//             onClick={async () => {
+//   const totalAmount = cartItems.reduce((a, b) => a + b.subtotal + (b.shippingCharges || 0), 0);
+
+//   await postAPI("/api/buyerpurchase", {
+//     buyerId: userId,
+//     products: cartItems.map(item => ({
+//       productId: item.productId,
+//       quantity: item.qty,
+//       price: item.price,
+//       subtotal: item.subtotal,
+//       shippingCharges: item.shippingCharges || 0,
+//     })),
+//     totalAmount,
+//     paymentMethod: "Cash On Delivery",
+//     address: formData,
+//   });
+
+//   navigate(`/my-account/order-completed/${userId}`, {
+//     state: {
+//       order: {
+//         orderId: "TEMP-" + Date.now(),
+//         paymentMethod: "COD",
+//         transactionId: "TXN-" + Date.now(),
+//         totalAmount,
+//       },
+//       items: cartItems,
+//       productIds: cartItems.map(i => i.productId),
+//     },
+//   });
+// }}
+
+            className="w-full mt-4 bg-[#5C4033] hover:bg-[#4b3327] text-white py-2 rounded-full text-sm"
+          >
             Proceed to Payment
-          </button>
+          </button> 
+          
+
         </div>
       </div>
     </div>

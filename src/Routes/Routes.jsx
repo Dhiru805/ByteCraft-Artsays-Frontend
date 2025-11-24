@@ -1492,7 +1492,7 @@ const AppRoutes = () => {
             <Route path="my-cart/:userId" element={<MyCartList />} />
             <Route path="check-out" element={<CheckOutTemplate />} />
             <Route path="check-out/:userId" element={<CheckOut />} />
-            <Route path="order-completed" element={<OrderCompleted />} />
+            <Route path="order-completed/:userId" element={<OrderCompleted />} />
             <Route path="error404" element={<Error404Page />} />
           </Route>
         </Route>

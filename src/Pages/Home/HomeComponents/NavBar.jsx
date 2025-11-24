@@ -37,7 +37,8 @@ const NavBar = () => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-
+  const userId = localStorage.getItem("userId");
+  
   const navigate = useNavigate();
   const location = useLocation();
   const isOnSocialMedia = location.pathname.startsWith("/social-media");
@@ -56,7 +57,7 @@ const NavBar = () => {
     e.stopPropagation();
     setShowDropdown((prev) => !prev);
   };
-  //
+  
   const handleSignOut = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userType");
@@ -943,3 +944,4 @@ const NavBar = () => {
 };
 
 export default NavBar;
+
