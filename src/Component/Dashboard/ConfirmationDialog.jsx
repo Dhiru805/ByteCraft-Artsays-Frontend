@@ -234,7 +234,12 @@ contactus:{
   errorMessage: "Failed to delete.",
   idKey: "ContactusId",
 },
-
+addtobid:{
+  getEndpoint: (id) => `/api/bidding/products/${id}`,
+  successMessage: "Successfully deleted!",
+  errorMessage: "Failed to delete.",
+  idKey: "BidProductId",
+},
 autotargetingsetting:{
   getEndpoint: (id) => `/api/delete-auto-targeting/${id}`,
   successMessage: "Auto Targeting successfully deleted!",

@@ -471,7 +471,7 @@ const BiddingTable = () => {
                                   order.pass?.validityPeriod ??
                                     order.pass?.validity ??
                                     order.pass?.duration ??
-                                    30, // Default to 30days if not found
+                                    30, 
                                   10
                                 ) || 30;
 

@@ -148,7 +148,7 @@ const CreatePassType = () => {
     try {
       if (id) {
         // EDIT MODE
-        const res = await putAPI(`/api/bidding/passes/${id}`, formData, {}, true);
+        const res = await putAPI(`/api/bidding/passes/update/${id}`, formData, {}, true);
         if (!res?.hasError) {
           toast.success("Pass updated");
           navigate("/super-admin/bidding/pass-table");

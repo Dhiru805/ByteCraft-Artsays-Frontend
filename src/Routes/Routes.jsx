@@ -405,6 +405,8 @@ import ArtistDashboard from "../Component/Dashboard/ArtistDashbooard/Dashboard/M
 import ArtistAdvertise from "../Component/Dashboard/ArtistDashbooard/Advertise/Advertise";
 import ArtistBiddingPass from "../Component/Dashboard/ArtistDashbooard/ProductDetails/BiddingPass";
 import ArtistBidingAllProducts from "../Component/Dashboard/ArtistDashbooard/Bidding/AllProduct/BiddingProduct";
+import ArtistBidingAllProductsCreate from "../Component/Dashboard/ArtistDashbooard/Bidding/AllProduct/Create";
+import ArtistBidingAllProductsEdit from "../Component/Dashboard/ArtistDashbooard/Bidding/AllProduct/edit";
 import ArtistBiddedProducts from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddedproduct/Biddedproduct";
 import ArtistBiddingTable from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddingpass/BiddingTable";
 import ArtistBiddingTablePass from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddingpass/Biddingpass";
@@ -446,6 +448,8 @@ import SellerAdvertise from "../Component/Dashboard/SellerDashboard/Advertise/Ad
 import SellerSponser from "../Component/Dashboard/SellerDashboard/Advertise/Sponser";
 import SellerBiddingPass from "../Component/Dashboard/SellerDashboard/ProductsDetails/BiddingPass";
 import SellerBidingAllProducts from "../Component/Dashboard/SellerDashboard/Bidding/AllProduct/BiddingProduct";
+import SellerBidingAllProductsCreate from "../Component/Dashboard/SellerDashboard/Bidding/AllProduct/create";
+import SellerBidingAllProductsEdit from "../Component/Dashboard/SellerDashboard/Bidding/AllProduct/edit";
 import SellerBiddedProducts from "../Component/Dashboard/SellerDashboard/Bidding/Biddedproduct/Biddedproduct";
 import SellerBidTable from "../Component/Dashboard/SellerDashboard/Bidding/Biddingpass/BiddingTable";
 import SellerBidPassTable from "../Component/Dashboard/SellerDashboard/Bidding/Biddingpass/Biddingpass";
@@ -1282,6 +1286,14 @@ const AppRoutes = () => {
           element={<ArtistBidingAllProducts />}
         />
         <Route
+          path="bidding-products-table/create"
+          element={<ArtistBidingAllProductsCreate />}
+        />
+        <Route
+          path="bidding-products-table/edit/:id"
+          element={<ArtistBidingAllProductsEdit />}
+        />
+        <Route
           path="bidded-products-table"
           element={<ArtistBiddedProducts />}
         />
@@ -1383,6 +1395,14 @@ const AppRoutes = () => {
         <Route
           path="bidding-products-table"
           element={<SellerBidingAllProducts />}
+        />
+        <Route
+          path="bidding-products-table/create"
+          element={<SellerBidingAllProductsCreate />}
+        />
+        <Route
+          path="bidding-products-table/edit/:id"
+          element={<SellerBidingAllProductsEdit />}
         />
         <Route
           path="bidded-products-table"
