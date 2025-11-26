@@ -13,7 +13,7 @@ RUN npm install
 # Copy all project files
 COPY . .
 
-RUN npm run build
+# RUN npm run build
 
 # Expose React dev server port
 EXPOSE 3000
