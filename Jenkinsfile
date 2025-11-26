@@ -22,7 +22,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo '🐳 Building Docker image for frontend (using local build folder)...'
-                sh 'docker build --no-cache --memory=6g --cpus=2 -t artsays-frontend .'
+                sh 'docker build --no-cache --memory=6g --memory-swap=6g -t artsays-frontend .'
             }
         }
 
