@@ -9,8 +9,10 @@ RUN npm install
 
 RUN npm run build
 
+FROM nginx:alpine
+
 # Copy the pre-built React app from the repo
-COPY build /usr/share/nginx/html
+COPY --from=build /app/build /usr/share/nginx/html
 
 # Copy your custom Nginx config (if needed)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
