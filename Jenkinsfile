@@ -12,7 +12,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo '🐳 Building Docker image for frontend...'
-               sh 'docker build -t artsays-frontend -f ByteCraft-Artsays-Frontend/Dockerfile ByteCraft-Artsays-Frontend'
+                sh 'docker build -t artsays-frontend .'
             }
         }
 
@@ -29,7 +29,7 @@ pipeline {
 
                 docker run -d \
                   --name artsays-frontend-container \
-                  -p 80:80\
+                  -p 3000:3000 \
                   artsays-frontend
                 '''
             }

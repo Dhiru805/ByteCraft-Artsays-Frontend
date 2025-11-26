@@ -1,3 +1,5 @@
+# Dockerfile
+
 # Use Node image
 FROM node:18
 
@@ -10,6 +12,8 @@ RUN npm install
 
 # Copy all project files
 COPY . .
+
+RUN npm run build
 
 # Expose React dev server port
 EXPOSE 3000
