@@ -1,6 +1,10 @@
 # Use only NGINX
 FROM nginx:alpine
 
+RUN npm install
+
+RUN npm run build
+
 # Copy the pre-built React app from the repo
 COPY build /usr/share/nginx/html
 
