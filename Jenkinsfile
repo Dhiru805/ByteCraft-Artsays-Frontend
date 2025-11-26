@@ -2,26 +2,27 @@ pipeline {
     agent any
 
     stages {
+
         stage('Clean Workspace') {
             steps {
-                echo '🧹 Cleaning workspace...'
+                echo '🧹 Cleaning workspace for frontend...'
                 cleanWs()
             }
         }
 
         stage('Checkout Code') {
             steps {
-                echo '📥 Cloning code from GitHub For Frontend...'
+                echo '📥 Checking out frontend code...'
                 checkout([$class: 'GitSCM',
-                          branches: [[name: '*/anshul2.0']],  // or your branch
+                          branches: [[name: '*/anshul2.0']],
                           userRemoteConfigs: [[url: 'https://github.com/Shantanu58/ByteCraft-Artsays-Frontend.git']]])
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                echo '🐳 Building Docker image for frontend...'
-                sh 'docker build -t artsays-frontend .'
+                echo '🐳 Building Docker image for frontend (using local build folder)...'
+                sh 'docker build --no-cache -t artsays-frontend .'
             }
         }
 
@@ -29,13 +30,11 @@ pipeline {
             steps {
                 echo '🚀 Running Docker container for frontend...'
                 sh '''
-                # Stop and remove old container if exists
                 if [ $(docker ps -aq -f name=artsays-frontend-container) ]; then
                   docker stop artsays-frontend-container || true
                   docker rm artsays-frontend-container || true
                 fi
 
-                # Run new container on port 80
                 docker run -d \
                   --name artsays-frontend-container \
                   -p 80:80 \
@@ -46,11 +45,7 @@ pipeline {
     }
 
     post {
-        success {
-            echo '✅ Frontend deployed successfully!'
-        }
-        failure {
-            echo '❌ Frontend deployment failed!'
-        }
+        success { echo '✅ Frontend deployed successfully!' }
+        failure { echo '❌ Frontend deployment failed!' }
     }
 }
