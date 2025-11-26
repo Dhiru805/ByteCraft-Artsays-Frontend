@@ -12,7 +12,7 @@ RUN npm install
 COPY . .
 
 # Build the production-ready React app
-ENV NODE_OPTIONS="--max-old-space-size=8096"
+ENV NODE_OPTIONS="--max-old-space-size=6096"
 RUN npm run build
 
 
