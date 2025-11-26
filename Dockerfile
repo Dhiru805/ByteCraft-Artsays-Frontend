@@ -1,6 +1,8 @@
 # Use only NGINX
 FROM nginx:alpine
 
+WORKDIR /app
+
 RUN npm install
 
 RUN npm run build
