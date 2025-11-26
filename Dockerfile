@@ -1,22 +1,28 @@
-# Dockerfile
-
-# Use Node image
-FROM node:22
+# Stage 1: Build React app
+FROM node:22 AS build
 
 # Set working directory
 WORKDIR /app
 
-# Install dependencies
+# Copy package files and install dependencies
 COPY package*.json ./
 RUN npm install
 
-# Copy all project files
+# Copy all files and build the app
 COPY . .
+RUN npm run build
 
-# RUN npm run build
+# Stage 2: Serve with Nginx
+FROM nginx:alpine
 
-# Expose React dev server port
-EXPOSE 3000
+# Copy build output to Nginx folder
+COPY --from=build /app/build /usr/share/nginx/html
 
-# Start React dev server
-CMD ["npm", "start"]
+# Copy custom Nginx config if needed
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 80 for HTTP
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
