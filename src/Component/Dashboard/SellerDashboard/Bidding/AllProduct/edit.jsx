@@ -26,7 +26,7 @@ const EditBiddingProduct = () => {
     reservePrice: "",
     bidStart: "",
     bidEnd: "",
-    bidProdStatus: "Upcoming",
+    //bidProdStatus: "Upcoming",
     user: userId,
   });
 
@@ -52,7 +52,7 @@ const EditBiddingProduct = () => {
         reservePrice: data.reservePrice || "",
         bidStart: data.bidStart?.slice(0, 16) || "",
         bidEnd: data.bidEnd?.slice(0, 16) || "",
-        bidProdStatus: data.bidProdStatus || "Upcoming",
+        //bidProdStatus: data.bidProdStatus || "Upcoming",
         user: userId,
       });
 
@@ -272,7 +272,7 @@ const EditBiddingProduct = () => {
               </div>
 
               {/* Status */}
-              <div className="form-group">
+              {/* <div className="form-group">
                 <label>Status</label>
                 <select
                   name="bidProdStatus"
@@ -284,7 +284,7 @@ const EditBiddingProduct = () => {
                   <option value="Hot Deal">Hot Deal</option>
                   <option value="Ending Soon">Ending Soon</option>
                 </select>
-              </div>
+              </div> */}
 
               {/* Buttons */}
               <button className="btn btn-primary mt-3" onClick={handleSubmit}>

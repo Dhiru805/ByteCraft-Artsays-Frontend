@@ -693,7 +693,7 @@ const ArtistBiddingProducts = () => {
                     <th>Reserve Price</th>
                     <th>Start</th>
                     <th>End</th>
-                    <th>Status</th>
+                    {/* <th>Status</th> */}
                     <th>Edit / Delete</th>
                   </tr>
                 </thead>
@@ -731,7 +731,7 @@ const ArtistBiddingProducts = () => {
                         <td>{new Date(item.bidStart).toLocaleString()}</td>
                         <td>{new Date(item.bidEnd).toLocaleString()}</td>
 
-                        <td>
+                        {/* <td>
                           <button
                             className={`btn btn-sm ${
                               item.bidProdStatus === "Hot Deal"
@@ -743,7 +743,7 @@ const ArtistBiddingProducts = () => {
                           >
                             {item.bidProdStatus}
                           </button>
-                        </td>
+                        </td> */}
 
                         <td>
                           <button

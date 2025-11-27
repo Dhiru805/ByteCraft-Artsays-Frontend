@@ -25,7 +25,7 @@ const [showSuggestions, setShowSuggestions] = useState(false);
     reservePrice: "",
     bidStart: "",
     bidEnd: "",
-    bidProdStatus: "Upcoming",
+    //bidProdStatus: "Upcoming",
     user: userId,
   });
 
@@ -338,7 +338,7 @@ if (alreadyBidded.includes(p._id)) {
               </div>
 
               {/* Status */}
-              <div className="form-group">
+              {/* <div className="form-group">
                 <label>Status</label>
                 <select
                   name="bidProdStatus"
@@ -349,7 +349,7 @@ if (alreadyBidded.includes(p._id)) {
                   <option value="Hot Deal">Hot Deal</option>
                   <option value="Ending Soon">Ending Soon</option>
                 </select>
-              </div>
+              </div> */}
 
               <button className="btn btn-primary mt-3" onClick={handleSubmit}>
                 Finalize & Add
