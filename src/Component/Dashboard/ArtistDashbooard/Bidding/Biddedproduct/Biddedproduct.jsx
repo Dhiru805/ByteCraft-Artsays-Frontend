@@ -3,9 +3,8 @@ import ProductBiddedAdmin from "./Biddedproductadmin"
 import { useNavigate } from 'react-router-dom';
 
 
-
 const BiddedProduct = () => {
-const navigate = useNavigate();
+    const navigate = useNavigate();
 
     return (
         <div className="container-fluid">

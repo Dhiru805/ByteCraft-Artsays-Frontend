@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom'; 
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Preferences from './Preferences/Pereferences';
@@ -12,10 +12,10 @@ import { DEFAULT_PROFILE_IMAGE } from "../../../../../Constants/ConstantsVariabl
 
 const AdminUserProfileForm = () => {
   const location = useLocation();
-  const adminData = location.state?.admin; 
+  const adminData = location.state?.admin;
 
-  const navigate = useNavigate(); 
-  const [loading, setLoading]=useState(false)
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false)
   const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(DEFAULT_PROFILE_IMAGE);
   const [passwordData, setPasswordData] = useState({
@@ -41,7 +41,7 @@ const AdminUserProfileForm = () => {
     birthdate: '',
     website: ''
   });
-  
+
   const userId = adminData?._id;
 
   const fetchProfile = async () => {
@@ -135,7 +135,7 @@ const AdminUserProfileForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true)
-  
+
     try {
       const formData = new FormData();
       formData.append('name', profileData.name);
@@ -147,7 +147,7 @@ const AdminUserProfileForm = () => {
       formData.append('username', profileData.username || '');
       formData.append('email', profileData.email || '');
       formData.append('phone', profileData.phone || '');
-  
+
       if (
         passwordData.currentPassword ||
         passwordData.newPassword ||
@@ -157,11 +157,11 @@ const AdminUserProfileForm = () => {
         formData.append('newPassword', passwordData.newPassword);
         formData.append('confirmPassword', passwordData.confirmPassword);
       }
-  
+
       if (imageFile) {
         formData.append('profilePhoto', imageFile);
       }
-  
+
       const response = await putAPI(`/auth/users/${userId}`, formData, true);
       toast.success(response.message || 'Something happened')
       setPasswordData({
@@ -169,16 +169,16 @@ const AdminUserProfileForm = () => {
         newPassword: '',
         confirmPassword: '',
       });
-  
+
     } catch (error) {
       const errorMessage = error.response ? error.response.message : 'Error updating profile. Please try again.';
-      toast.error(errorMessage); 
-    }finally{
+      toast.error(errorMessage);
+    } finally {
       setLoading(false)
     }
   };
-  
-  
+
+
 
   const tabs = [
     { name: 'Settings', component: Settings },
@@ -193,11 +193,11 @@ const AdminUserProfileForm = () => {
             <h2>Admin Profile</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-<span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
-    <i className="fa fa-dashboard"></i>
-</span>
+                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+                  <i className="fa fa-dashboard"></i>
+                </span>
               </li>
-               <li className="breadcrumb-item"><Link to={`/super-admin/admin`}>Admin Management</Link></li>
+              <li className="breadcrumb-item"><Link to={`/super-admin/admin`}>Admin Management</Link></li>
               <li className="breadcrumb-item">Admin Profile</li>
             </ul>
           </div>
@@ -252,4 +252,4 @@ const AdminUserProfileForm = () => {
   );
 };
 
-export default AdminUserProfileForm ;
+export default AdminUserProfileForm;

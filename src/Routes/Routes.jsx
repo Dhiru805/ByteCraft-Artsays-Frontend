@@ -394,6 +394,7 @@ import PeriodEras from "../Component/Dashboard/Super-AdminDashboard/Product Sett
 // import TokenStandards from "../Component/Dashboard/Super-AdminDashboard/Product Setting/TokenStandard/TokenStandard";
 // import PeriodEras from "../Component/Dashboard/Super-AdminDashboard/Product Setting/PeriodEra/PeriodEra";
 
+
 //-----------------------------Settings--------------------------//
 import EmailSettings from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailSetting/EmailSetting";
 import BlogCategory from "../Component/Dashboard/Super-AdminDashboard/Settings/Blogcategory/Category";
@@ -564,6 +565,7 @@ import SharePost from "../Component/SocialMedia/Posts/SharePost";
 import SinglePost from "../Component/SocialMedia/Posts/SinglePost";
 import ShareProfile from "../Component/SocialMedia/Posts/ShareProfile";
 
+
 const PrivateRoute = ({ allowedRoles, children }) => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
   const location = useLocation();
@@ -673,6 +675,8 @@ const AppRoutes = () => {
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-services" element={<TermsofServices />} />
+
+       
       </Route>
 
       {/*-------------------------------------------Super Admin Routes--------------------------------------------- */}
@@ -865,6 +869,7 @@ const AppRoutes = () => {
         <Route path="product-settings/product-packaging-type" element={<ProductPackagingTypes />} />
         <Route path="product-settings/copyrights-rights" element={<CopyrightsRights />} />
         <Route path="product-settings/blockchain-network" element={<BlockchainNetworks />} />
+
 
         {/* Packaging Material */}
         <Route path="packaging-material/material" element={<Material />} />

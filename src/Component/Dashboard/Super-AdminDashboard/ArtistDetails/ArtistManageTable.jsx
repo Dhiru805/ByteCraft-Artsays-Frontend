@@ -6,6 +6,8 @@ import CreateArtistModal from "./Createmodal"
 import useUserType from '../../urlconfig'
 import getAPI from "../../../../api/getAPI";
 import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
+import * as XLSX from 'xlsx-js-style';
+import { saveAs } from 'file-saver';
 
 
 function ArtistManageTable() {
@@ -104,6 +106,98 @@ function ArtistManageTable() {
     setCurrentPage(1);
   };
 
+  // EXPORT LOGIC
+
+
+  const handleExport = () => {
+    if (!artists || artists.length === 0) {
+      alert("No artist data available to export.");
+      return;
+    }
+
+
+    const headings = [
+      [
+        "First Name",
+        "Last Name",
+        "Address Line 1",
+        "Address Line 2",
+        "Land Mark",
+        "City",
+        "State/Province",
+        "Country",
+        "Pincode",
+        "Email",
+        "Phone Number",
+        "Role",
+        "ID Type",
+        "ID Number",
+        "Bank Name",
+        "Account Number",
+        "IFSC Code",
+        "UPI ID"
+      ]
+    ];
+
+
+    const rows = artists.map(a => [
+      a.name || "",
+      a.lastName || "",
+      a.address?.line1 || "",
+      a.address?.line2 || "",
+      a.address?.landmark || "",
+      a.address?.city || "",
+      a.address?.state || "",
+      a.address?.country || "",
+      a.address?.pincode || "",
+      a.email || "",
+      a.phone || "",
+      a.role || "",
+      a.verification?.documentType || "",
+      a.verification?.documentNumber || "",
+      a.bankDetails?.bankName || "",
+      a.bankDetails?.accountNumber || "",
+      a.bankDetails?.ifscCode || "",
+      a.bankDetails?.upiId || ""
+    ]);
+
+
+    const worksheetData = [...headings, ...rows];
+
+
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+
+    // 5 Style headings (bold, centered, blue background)
+    const headingStyle = {
+      font: { bold: true, color: { rgb: "FFFFFF" } },
+      fill: { fgColor: { rgb: "4472C4" } }, // blue background
+      alignment: { horizontal: "center", vertical: "center" },
+      border: {
+        top: { style: "thin", color: { rgb: "000000" } },
+        bottom: { style: "thin", color: { rgb: "000000" } },
+        left: { style: "thin", color: { rgb: "000000" } },
+        right: { style: "thin", color: { rgb: "000000" } }
+      }
+    };
+
+    const headerRange = XLSX.utils.decode_range(worksheet["!ref"]);
+    for (let col = headerRange.s.c; col <= headerRange.e.c; col++) {
+      const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
+      if (worksheet[cellAddress]) worksheet[cellAddress].s = headingStyle;
+    }
+
+    //  Adjust column width
+    worksheet["!cols"] = Array(headings[0].length).fill({ wch: 20 });
+
+    // Create workbook and export file
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Artists");
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+
+    saveAs(blob, "artist_details.xlsx");
+  };
+
 
   return (
     <>
@@ -180,6 +274,13 @@ function ArtistManageTable() {
                       }}
                     ></i>
                   </div>
+
+                  {/* Export Button */}
+                  <button className="btn btn-success btn-sm ml-2" onClick={handleExport}>
+                    <i className="fa fa-download mr-1"></i> Export
+                  </button>
+
+
                 </div>
               </div>
               <div className="body">
