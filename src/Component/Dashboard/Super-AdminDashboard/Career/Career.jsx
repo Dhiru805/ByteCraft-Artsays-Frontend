@@ -93,26 +93,26 @@ const Career = () => {
     setNewStatus("");
   };
 
-const handleStatusUpdate = async () => {
-  if (!newStatus || !selectedCareerForStatus) return;
+  const handleStatusUpdate = async () => {
+    if (!newStatus || !selectedCareerForStatus) return;
 
-  try {
-    const response = await postAPI(`/api/update-career-status/${selectedCareerForStatus._id}`, {
-      status: newStatus,
-    });
+    try {
+      const response = await postAPI(`/api/update-career-status/${selectedCareerForStatus._id}`, {
+        status: newStatus,
+      });
 
-    if (response?.data?.hasError) {
-      toast.error(response.data.message || "Failed to update status.");
-    } else {
-      toast.success("Status updated successfully!");
-      await fetchCareers();
-      closeStatusModal();
+      if (response?.data?.hasError) {
+        toast.error(response.data.message || "Failed to update status.");
+      } else {
+        toast.success("Status updated successfully!");
+        await fetchCareers();
+        closeStatusModal();
+      }
+    } catch (error) {
+      console.error("Status update error:", error);
+      toast.error("An error occurred while updating the status.");
     }
-  } catch (error) {
-    console.error("Status update error:", error);
-    toast.error("An error occurred while updating the status.");
-  }
-};
+  };
 
   return (
     <div className="container-fluid">
@@ -327,7 +327,7 @@ const handleStatusUpdate = async () => {
           </div>
         </div>
       )}
-<ToastContainer position="top-right" autoClose={3000} />
+      {/* <ToastContainer position="top-right" autoClose={3000} /> */}
 
     </div>
   );

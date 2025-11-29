@@ -14,6 +14,9 @@
 //   const [filterStatus, setFilterStatus] = useState("");
 //   const [filterUser, setFilterUser] = useState("");
 //   const [filterType, setFilterType] = useState("");
+//   const [page, setPage] = useState(1);
+//   const [pageSize, setPageSize] = useState(10);
+
 
 //   const API_URL = process.env.REACT_APP_API_URL;
 
@@ -22,7 +25,7 @@
 //       const res = await axios.get(`${API_URL}/api/wallet/admin/all-wallets`);
 //       setWallets(res.data || []);
 //     } catch (err) {
-//       console.error("Error fetching wallets:", err);
+//       console.error(err);
 //     }
 //   };
 
@@ -31,34 +34,21 @@
 //       const res = await axios.get(`${API_URL}/api/wallet/admin/all-transactions`);
 //       setTransactions(res.data || []);
 //     } catch (err) {
-//       console.error("Error fetching transactions:", err);
+//       console.error(err);
 //     }
 //   };
-
-//   // const fetchWithdrawals = async () => {
-//   //   try {
-//   //     const res = await axios.get(`${API_URL}/api/wallet/withdrawals`);
-//   //     setWithdrawals(res.data || []);
-//   //   } catch (err) {
-//   //     console.error("Error fetching withdrawals:", err);
-//   //   }
-//   // };
 
 //   const fetchWithdrawals = async () => {
 //     try {
 //       const res = await axios.get(`${API_URL}/api/wallet/withdrawals`);
-//       console.log("Withdrawals response:", res.data);
 //       setWithdrawals(res.data || []);
 //     } catch (err) {
-//       console.error("Error fetching withdrawals:", err);
+//       console.error(err);
 //     }
 //   };
 
-
-
 //   const handleAdjustBalance = async () => {
 //     if (!selectedUser || !adjustAmount) return alert("Select user and enter amount");
-
 //     setIsLoading(true);
 //     try {
 //       await axios.post(`${API_URL}/api/wallet/admin/adjust/${selectedUser}`, {
@@ -66,14 +56,13 @@
 //         type: adjustType,
 //         reason: adjustReason || "Admin Adjustment"
 //       });
-
 //       toast.success("Balance adjusted successfully");
 //       await fetchWallets();
 //       await fetchTransactions();
 //       setAdjustAmount("");
 //       setAdjustReason("");
 //     } catch (err) {
-//       console.error("Error adjusting balance:", err);
+//       console.error(err);
 //       toast.error("Failed to adjust balance");
 //     } finally {
 //       setIsLoading(false);
@@ -121,13 +110,23 @@
 //     fetchWithdrawals();
 //   }, []);
 
+//   const filteredTransactions = transactions.filter(txn => {
+//     const txnUser = wallets.find(w => w.userId === txn.userId);
+//     const username = txnUser ? `${txnUser.name} ${txnUser.lastName}` : "";
+//     return (filterUser === "" || username.includes(filterUser)) &&
+//            (filterType === "" || txn.type === filterType) &&
+//            (filterStatus === "" || txn.status === filterStatus);
+//   });
+
+//   const totalPages = Math.ceil(filteredTransactions.length / pageSize);
+//   const displayedTransactions = filteredTransactions.slice((page - 1) * pageSize, page * pageSize);
+
 //   return (
 //     <div className="container-fluid">
 //       <div className="block-header mb-4">
 //         <h2>Wallet Management Dashboard</h2>
 //       </div>
 
-//       {/* Summary Cards */}
 //       <div className="row clearfix row-deck mb-4">
 //         <div className="col-lg-3 col-md-6 col-sm-6">
 //           <div className="card top_widget primary-bg">
@@ -140,7 +139,6 @@
 //             </div>
 //           </div>
 //         </div>
-
 //         <div className="col-lg-3 col-md-6 col-sm-6">
 //           <div className="card top_widget secondary-bg">
 //             <div className="body">
@@ -152,7 +150,6 @@
 //             </div>
 //           </div>
 //         </div>
-
 //         <div className="col-lg-3 col-md-6 col-sm-6">
 //           <div className="card top_widget bg-dark">
 //             <div className="body">
@@ -164,7 +161,6 @@
 //             </div>
 //           </div>
 //         </div>
-
 //         <div className="col-lg-3 col-md-6 col-sm-6">
 //           <div className="card top_widget bg-info">
 //             <div className="body">
@@ -178,7 +174,6 @@
 //         </div>
 //       </div>
 
-//       {/* Manual Balance Adjustment */}
 //       <div className="row clearfix mb-4">
 //         <div className="col-sm-12">
 //           <div className="card">
@@ -188,71 +183,31 @@
 //             <div className="body">
 //               <div className="row">
 //                 <div className="col-md-3">
-//                   <div className="form-group">
-//                     <label>Select User</label>
-//                     <select
-//                       className="form-control"
-//                       value={selectedUser || ""}
-//                       onChange={e => setSelectedUser(e.target.value)}
-//                     >
-//                       <option value="">Select User</option>
-//                       {wallets.map(wallet => (
-//                         <option key={wallet._id} value={wallet.userId}>
-//                           User {wallet.userId} (₹{wallet.balance})
-//                         </option>
-//                       ))}
-//                     </select>
-//                   </div>
+//                   <select className="form-control" value={selectedUser || ""} onChange={e => setSelectedUser(e.target.value)}>
+//                     <option value="">Select User</option>
+//                     {wallets.map(wallet => (
+//                       <option key={wallet._id} value={wallet.userId}>
+//                         {wallet.name} {wallet.lastName} (₹{wallet.balance})
+//                       </option>
+//                     ))}
+//                   </select>
 //                 </div>
 //                 <div className="col-md-2">
-//                   <div className="form-group">
-//                     <label>Type</label>
-//                     <select
-//                       className="form-control"
-//                       value={adjustType}
-//                       onChange={e => setAdjustType(e.target.value)}
-//                     >
-//                       <option value="credit">Credit</option>
-//                       <option value="debit">Debit</option>
-//                     </select>
-//                   </div>
+//                   <select className="form-control" value={adjustType} onChange={e => setAdjustType(e.target.value)}>
+//                     <option value="credit">Credit</option>
+//                     <option value="debit">Debit</option>
+//                   </select>
 //                 </div>
 //                 <div className="col-md-2">
-//                   <div className="form-group">
-//                     <label>Amount (₹)</label>
-//                     <input
-//                       type="number"
-//                       className="form-control"
-//                       placeholder="Amount"
-//                       value={adjustAmount}
-//                       onChange={e => setAdjustAmount(e.target.value)}
-//                       min="1"
-//                     />
-//                   </div>
+//                   <input type="number" className="form-control" placeholder="Amount" value={adjustAmount} onChange={e => setAdjustAmount(e.target.value)} min="1" />
 //                 </div>
 //                 <div className="col-md-3">
-//                   <div className="form-group">
-//                     <label>Reason</label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       placeholder="Reason for adjustment"
-//                       value={adjustReason}
-//                       onChange={e => setAdjustReason(e.target.value)}
-//                     />
-//                   </div>
+//                   <input type="text" className="form-control" placeholder="Reason for adjustment" value={adjustReason} onChange={e => setAdjustReason(e.target.value)} />
 //                 </div>
 //                 <div className="col-md-2">
-//                   <div className="form-group">
-//                     <label>&nbsp;</label>
-//                     <button
-//                       className="btn btn-warning btn-block"
-//                       onClick={handleAdjustBalance}
-//                       disabled={isLoading}
-//                     >
-//                       {isLoading ? 'Processing...' : 'Adjust'}
-//                     </button>
-//                   </div>
+//                   <button className="btn btn-warning btn-block" onClick={handleAdjustBalance} disabled={isLoading}>
+//                     {isLoading ? 'Processing...' : 'Adjust'}
+//                   </button>
 //                 </div>
 //               </div>
 //             </div>
@@ -260,8 +215,6 @@
 //         </div>
 //       </div>
 
-
-//       {/* All Wallets */}
 //       <div className="row clearfix mb-4">
 //         <div className="col-sm-12">
 //           <div className="card">
@@ -274,6 +227,7 @@
 //                   <tr>
 //                     <th>#</th>
 //                     <th>User ID</th>
+//                     <th>Username</th>
 //                     <th>Balance</th>
 //                     <th>Art Coins</th>
 //                     <th>Pending Withdrawal</th>
@@ -287,6 +241,7 @@
 //                     <tr key={wallet._id}>
 //                       <td>{i + 1}</td>
 //                       <td>{wallet.userId}</td>
+//                       <td>{wallet.name} {wallet.lastName}</td>
 //                       <td>₹{wallet.balance}</td>
 //                       <td>{wallet.artCoins}</td>
 //                       <td>₹{wallet.pendingWithdrawal}</td>
@@ -295,11 +250,7 @@
 //                       <td>{wallet.lastActivityAt ? new Date(wallet.lastActivityAt).toLocaleString() : 'Never'}</td>
 //                     </tr>
 //                   ))}
-//                   {wallets.length === 0 && (
-//                     <tr>
-//                       <td colSpan="8" className="text-center">No wallets found</td>
-//                     </tr>
-//                   )}
+//                   {wallets.length === 0 && <tr><td colSpan="9" className="text-center">No wallets found</td></tr>}
 //                 </tbody>
 //               </table>
 //             </div>
@@ -307,47 +258,26 @@
 //         </div>
 //       </div>
 
-
-//       {/* Recent Transactions */}
 //       <div className="row clearfix">
 //         <div className="col-sm-12">
 //           <div className="card">
-//             <div className="header d-flex justify-content-between align-items-center">
+//             <div className="header d-flex justify-content-between align-items-center mb-3">
 //               <h2>Recent Transactions</h2>
-
-//               {/* Filters */}
-//               <div className="d-flex gap-2">
-//                 {/* User filter dropdown */}
-//                 <select
-//                   className="form-control"
-//                   value={filterUser}
-//                   onChange={e => setFilterUser(e.target.value)}
-//                 >
+//               <div className="d-flex px-3" style={{ gap: '10px' }}>
+//                 <select className="form-control" style={{ width: '200px' }} value={filterUser} onChange={e => { setFilterUser(e.target.value); setPage(1); }}>
 //                   <option value="">All Users</option>
 //                   {wallets.map(wallet => (
-//                     <option key={wallet._id} value={wallet.userId}>
-//                       User {wallet.userId}
+//                     <option key={wallet._id} value={`${wallet.name} ${wallet.lastName}`}>
+//                        {wallet.name} {wallet.lastName}
 //                     </option>
 //                   ))}
 //                 </select>
-
-//                 {/* Type filter dropdown */}
-//                 <select
-//                   className="form-control"
-//                   value={filterType}
-//                   onChange={e => setFilterType(e.target.value)}
-//                 >
+//                 <select className="form-control" style={{ width: '120px' }} value={filterType} onChange={e => { setFilterType(e.target.value); setPage(1); }}>
 //                   <option value="">All Types</option>
 //                   <option value="credit">Credit</option>
 //                   <option value="debit">Debit</option>
 //                 </select>
-
-//                 {/* Status filter dropdown */}
-//                 <select
-//                   className="form-control"
-//                   value={filterStatus}
-//                   onChange={e => setFilterStatus(e.target.value)}
-//                 >
+//                 <select className="form-control" style={{ width: '120px' }} value={filterStatus} onChange={e => { setFilterStatus(e.target.value); setPage(1); }}>
 //                   <option value="">All Status</option>
 //                   <option value="success">Success</option>
 //                   <option value="pending">Pending</option>
@@ -355,13 +285,13 @@
 //                 </select>
 //               </div>
 //             </div>
-
 //             <div className="body table-responsive">
 //               <table className="table table-hover mb-0">
 //                 <thead>
 //                   <tr>
 //                     <th>#</th>
 //                     <th>User ID</th>
+//                     <th>Username</th>
 //                     <th>Type</th>
 //                     <th>Amount</th>
 //                     <th>Purpose</th>
@@ -371,50 +301,47 @@
 //                   </tr>
 //                 </thead>
 //                 <tbody>
-//                   {transactions
-//                     .filter(txn =>
-//                       (filterUser === "" || txn.userId === filterUser) &&
-//                       (filterType === "" || txn.type === filterType) &&
-//                       (filterStatus === "" || txn.status === filterStatus)
-//                     )
-//                     .map((txn, idx) => (
+//                   {displayedTransactions.map((txn, idx) => {
+//                     const user = wallets.find(w => w.userId === txn.userId);
+//                     return (
 //                       <tr key={txn._id}>
-//                         <td>{idx + 1}</td>
+//                         <td>{(page - 1) * pageSize + idx + 1}</td>
 //                         <td>{txn.userId}</td>
-//                         <td>
-//                           <span className={`badge ${txn.type === 'credit' ? 'badge-success' : 'badge-danger'}`}>
-//                             {txn.type}
-//                           </span>
-//                         </td>
+//                         <td>{user ? `${user.name} ${user.lastName}` : "Unknown"}</td>
+//                         <td><span className={`badge ${txn.type === 'credit' ? 'badge-success' : 'badge-danger'}`}>{txn.type}</span></td>
 //                         <td>₹{txn.amount}</td>
 //                         <td>{txn.purpose}</td>
 //                         <td>{txn.source}</td>
-//                         <td>
-//                           <span className={`badge ${txn.status === 'success' ? 'badge-success' :
-//                             txn.status === 'pending' ? 'badge-warning' : 'badge-danger'
-//                             }`}>
-//                             {txn.status}
-//                           </span>
-//                         </td>
+//                         <td><span className={`badge ${txn.status === 'success' ? 'badge-success' : txn.status === 'pending' ? 'badge-warning' : 'badge-danger'}`}>{txn.status}</span></td>
 //                         <td>{new Date(txn.createdAt).toLocaleString()}</td>
 //                       </tr>
-//                     ))}
-//                   {transactions.filter(txn =>
-//                     (filterUser === "" || txn.userId === filterUser) &&
-//                     (filterType === "" || txn.type === filterType) &&
-//                     (filterStatus === "" || txn.status === filterStatus)
-//                   ).length === 0 && (
-//                       <tr>
-//                         <td colSpan="8" className="text-center">No transactions found</td>
-//                       </tr>
-//                     )}
+//                     )
+//                   })}
+//                   {displayedTransactions.length === 0 && <tr><td colSpan="9" className="text-center">No transactions found</td></tr>}
 //                 </tbody>
 //               </table>
+//             </div>
+//             <div className="d-flex justify-content-between align-items-center mt-3 px-3 py-3">
+//               <div>
+//                 Show <select className="form-control d-inline-block w-auto" value={pageSize} onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}>
+//                   {[5, 10, 20, 30, 50, 100, 200, 500].map(size => <option key={size} value={size}>{size}</option>)}
+//                 </select> entries
+//               </div>
+//               <div>
+//                 <nav>
+//                   <ul className="pagination mb-0">
+//                     <li className={`page-item ${page === 1 ? 'disabled' : ''}`}><button className="page-link" onClick={() => setPage(prev => Math.max(prev - 1, 1))}>&laquo;</button></li>
+//                     {Array.from({ length: totalPages }, (_, i) => (
+//                       <li key={i} className={`page-item ${page === i + 1 ? 'active' : ''}`}><button className="page-link" onClick={() => setPage(i + 1)}>{i + 1}</button></li>
+//                     ))}
+//                     <li className={`page-item ${page === totalPages || totalPages === 0 ? 'disabled' : ''}`}><button className="page-link" onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}>&raquo;</button></li>
+//                   </ul>
+//                 </nav>
+//               </div>
 //             </div>
 //           </div>
 //         </div>
 //       </div>
-
 //     </div>
 //   );
 // };
@@ -423,10 +350,7 @@
 
 
 
-
-
-
-
+//----------------------------------------------------------
 
 
 
@@ -446,13 +370,15 @@
 //   const [adjustType, setAdjustType] = useState("credit");
 //   const [adjustReason, setAdjustReason] = useState("");
 //   const [isLoading, setIsLoading] = useState(false);
-
 //   const [filterStatus, setFilterStatus] = useState("");
 //   const [filterUser, setFilterUser] = useState("");
 //   const [filterType, setFilterType] = useState("");
-
 //   const [page, setPage] = useState(1);
+//   const [walletPage, setWalletPage] = useState(1);
 //   const [pageSize, setPageSize] = useState(10);
+//   const [selectedUserForDestination, setSelectedUserForDestination] = useState("");
+//   const [userDestinationData, setUserDestinationData] = useState(null);
+
 
 //   const API_URL = process.env.REACT_APP_API_URL;
 
@@ -461,16 +387,32 @@
 //       const res = await axios.get(`${API_URL}/api/wallet/admin/all-wallets`);
 //       setWallets(res.data || []);
 //     } catch (err) {
-//       console.error("Error fetching wallets:", err);
+//       console.error(err);
 //     }
 //   };
+
+//   const fetchUserDestination = async (userId) => {
+//     if (!userId) {
+//       setUserDestinationData(null);
+//       return;
+//     }
+
+//     try {
+//       const res = await axios.get(`${API_URL}/api/wallet/admin/user/${userId}/destination`);
+//       setUserDestinationData(res.data);
+//     } catch (err) {
+//       console.error(err);
+//       setUserDestinationData(null);
+//     }
+//   };
+
 
 //   const fetchTransactions = async () => {
 //     try {
 //       const res = await axios.get(`${API_URL}/api/wallet/admin/all-transactions`);
 //       setTransactions(res.data || []);
 //     } catch (err) {
-//       console.error("Error fetching transactions:", err);
+//       console.error(err);
 //     }
 //   };
 
@@ -479,13 +421,12 @@
 //       const res = await axios.get(`${API_URL}/api/wallet/withdrawals`);
 //       setWithdrawals(res.data || []);
 //     } catch (err) {
-//       console.error("Error fetching withdrawals:", err);
+//       console.error(err);
 //     }
 //   };
 
 //   const handleAdjustBalance = async () => {
 //     if (!selectedUser || !adjustAmount) return alert("Select user and enter amount");
-
 //     setIsLoading(true);
 //     try {
 //       await axios.post(`${API_URL}/api/wallet/admin/adjust/${selectedUser}`, {
@@ -493,14 +434,13 @@
 //         type: adjustType,
 //         reason: adjustReason || "Admin Adjustment"
 //       });
-
 //       toast.success("Balance adjusted successfully");
 //       await fetchWallets();
 //       await fetchTransactions();
 //       setAdjustAmount("");
 //       setAdjustReason("");
 //     } catch (err) {
-//       console.error("Error adjusting balance:", err);
+//       console.error(err);
 //       toast.error("Failed to adjust balance");
 //     } finally {
 //       setIsLoading(false);
@@ -548,14 +488,20 @@
 //     fetchWithdrawals();
 //   }, []);
 
-//   const filteredTransactions = transactions.filter(txn =>
-//     (filterUser === "" || txn.userId === filterUser) &&
-//     (filterType === "" || txn.type === filterType) &&
-//     (filterStatus === "" || txn.status === filterStatus)
-//   );
+//   const filteredTransactions = transactions.filter(txn => {
+//     const txnUser = wallets.find(w => w.userId === txn.userId);
+//     const username = txnUser ? `${txnUser.name} ${txnUser.lastName}` : "";
+//     return (filterUser === "" || username.includes(filterUser)) &&
+//       (filterType === "" || txn.type === filterType) &&
+//       (filterStatus === "" || txn.status === filterStatus);
+//   });
 
-//   const totalPages = Math.ceil(filteredTransactions.length / pageSize);
+//   const totalTransactionPages = Math.ceil(filteredTransactions.length / pageSize);
 //   const displayedTransactions = filteredTransactions.slice((page - 1) * pageSize, page * pageSize);
+
+//   // Pagination for wallets table
+//   const totalWalletPages = Math.ceil(wallets.length / pageSize);
+//   const displayedWallets = wallets.slice((walletPage - 1) * pageSize, walletPage * pageSize);
 
 //   return (
 //     <div className="container-fluid">
@@ -563,8 +509,9 @@
 //         <h2>Wallet Management Dashboard</h2>
 //       </div>
 
-//       {/* Summary Cards */}
+//       {/* Widgets */}
 //       <div className="row clearfix row-deck mb-4">
+//         {/* Total Wallets */}
 //         <div className="col-lg-3 col-md-6 col-sm-6">
 //           <div className="card top_widget primary-bg">
 //             <div className="body">
@@ -576,6 +523,7 @@
 //             </div>
 //           </div>
 //         </div>
+//         {/* Total Balance */}
 //         <div className="col-lg-3 col-md-6 col-sm-6">
 //           <div className="card top_widget secondary-bg">
 //             <div className="body">
@@ -587,6 +535,7 @@
 //             </div>
 //           </div>
 //         </div>
+//         {/* Pending Withdrawals */}
 //         <div className="col-lg-3 col-md-6 col-sm-6">
 //           <div className="card top_widget bg-dark">
 //             <div className="body">
@@ -598,6 +547,7 @@
 //             </div>
 //           </div>
 //         </div>
+//         {/* Total Transactions */}
 //         <div className="col-lg-3 col-md-6 col-sm-6">
 //           <div className="card top_widget bg-info">
 //             <div className="body">
@@ -615,77 +565,35 @@
 //       <div className="row clearfix mb-4">
 //         <div className="col-sm-12">
 //           <div className="card">
-//             <div className="header">
-//               <h2>Manual Balance Adjustment</h2>
-//             </div>
+//             <div className="header"><h2>Manual Balance Adjustment</h2></div>
 //             <div className="body">
 //               <div className="row">
 //                 <div className="col-md-3">
-//                   <div className="form-group">
-//                     <label>Select User</label>
-//                     <select
-//                       className="form-control"
-//                       value={selectedUser || ""}
-//                       onChange={e => setSelectedUser(e.target.value)}
-//                     >
-//                       <option value="">Select User</option>
-//                       {wallets.map(wallet => (
-//                         <option key={wallet._id} value={wallet.userId}>
-//                           User {wallet.userId} (₹{wallet.balance})
-//                         </option>
-//                       ))}
-//                     </select>
-//                   </div>
+//                   <select className="form-control" value={selectedUser || ""} onChange={e => setSelectedUser(e.target.value)}>
+//                     <option value="">Select User</option>
+//                     {wallets.map(wallet => (
+//                       <option key={wallet._id} value={wallet.userId}>
+//                         {wallet.name} {wallet.lastName} (₹{wallet.balance})
+//                       </option>
+//                     ))}
+//                   </select>
 //                 </div>
 //                 <div className="col-md-2">
-//                   <div className="form-group">
-//                     <label>Type</label>
-//                     <select
-//                       className="form-control"
-//                       value={adjustType}
-//                       onChange={e => setAdjustType(e.target.value)}
-//                     >
-//                       <option value="credit">Credit</option>
-//                       <option value="debit">Debit</option>
-//                     </select>
-//                   </div>
+//                   <select className="form-control" value={adjustType} onChange={e => setAdjustType(e.target.value)}>
+//                     <option value="credit">Credit</option>
+//                     <option value="debit">Debit</option>
+//                   </select>
 //                 </div>
 //                 <div className="col-md-2">
-//                   <div className="form-group">
-//                     <label>Amount (₹)</label>
-//                     <input
-//                       type="number"
-//                       className="form-control"
-//                       placeholder="Amount"
-//                       value={adjustAmount}
-//                       onChange={e => setAdjustAmount(e.target.value)}
-//                       min="1"
-//                     />
-//                   </div>
+//                   <input type="number" className="form-control" placeholder="Amount" value={adjustAmount} onChange={e => setAdjustAmount(e.target.value)} min="1" />
 //                 </div>
 //                 <div className="col-md-3">
-//                   <div className="form-group">
-//                     <label>Reason</label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       placeholder="Reason for adjustment"
-//                       value={adjustReason}
-//                       onChange={e => setAdjustReason(e.target.value)}
-//                     />
-//                   </div>
+//                   <input type="text" className="form-control" placeholder="Reason for adjustment" value={adjustReason} onChange={e => setAdjustReason(e.target.value)} />
 //                 </div>
 //                 <div className="col-md-2">
-//                   <div className="form-group">
-//                     <label>&nbsp;</label>
-//                     <button
-//                       className="btn btn-warning btn-block"
-//                       onClick={handleAdjustBalance}
-//                       disabled={isLoading}
-//                     >
-//                       {isLoading ? 'Processing...' : 'Adjust'}
-//                     </button>
-//                   </div>
+//                   <button className="btn btn-warning btn-block" onClick={handleAdjustBalance} disabled={isLoading}>
+//                     {isLoading ? 'Processing...' : 'Adjust'}
+//                   </button>
 //                 </div>
 //               </div>
 //             </div>
@@ -693,19 +601,18 @@
 //         </div>
 //       </div>
 
-//       {/* All Wallets */}
+//       {/* All User Wallets Table with Pagination */}
 //       <div className="row clearfix mb-4">
 //         <div className="col-sm-12">
 //           <div className="card">
-//             <div className="header">
-//               <h2>All User Wallets</h2>
-//             </div>
+//             <div className="header"><h2>All User Wallets</h2></div>
 //             <div className="body table-responsive">
 //               <table className="table table-hover mb-0">
 //                 <thead>
 //                   <tr>
 //                     <th>#</th>
 //                     <th>User ID</th>
+//                     <th>Username</th>
 //                     <th>Balance</th>
 //                     <th>Art Coins</th>
 //                     <th>Pending Withdrawal</th>
@@ -715,10 +622,11 @@
 //                   </tr>
 //                 </thead>
 //                 <tbody>
-//                   {wallets.map((wallet, i) => (
+//                   {displayedWallets.map((wallet, i) => (
 //                     <tr key={wallet._id}>
-//                       <td>{i + 1}</td>
+//                       <td>{(walletPage - 1) * pageSize + i + 1}</td>
 //                       <td>{wallet.userId}</td>
+//                       <td>{wallet.name} {wallet.lastName}</td>
 //                       <td>₹{wallet.balance}</td>
 //                       <td>{wallet.artCoins}</td>
 //                       <td>₹{wallet.pendingWithdrawal}</td>
@@ -727,74 +635,219 @@
 //                       <td>{wallet.lastActivityAt ? new Date(wallet.lastActivityAt).toLocaleString() : 'Never'}</td>
 //                     </tr>
 //                   ))}
-//                   {wallets.length === 0 && (
-//                     <tr>
-//                       <td colSpan="8" className="text-center">No wallets found</td>
-//                     </tr>
-//                   )}
+//                   {displayedWallets.length === 0 && <tr><td colSpan="9" className="text-center">No wallets found</td></tr>}
 //                 </tbody>
 //               </table>
+//             </div>
+//             <div className="d-flex justify-content-between align-items-center mt-3 px-3 py-3">
+//               <div>
+//                 Show <select className="form-control d-inline-block w-auto" value={pageSize} onChange={e => { setPageSize(Number(e.target.value)); setWalletPage(1); setPage(1); }}>
+//                   {[5, 10, 20, 30, 50, 100, 200, 500].map(size => <option key={size} value={size}>{size}</option>)}
+//                 </select> entries
+//               </div>
+//               <div>
+//                 <nav>
+//                   <ul className="pagination mb-0">
+//                     <li className={`page-item ${walletPage === 1 ? 'disabled' : ''}`}>
+//                       <button className="page-link" onClick={() => setWalletPage(prev => Math.max(prev - 1, 1))}>&laquo;</button>
+//                     </li>
+//                     {Array.from({ length: totalWalletPages }, (_, i) => (
+//                       <li key={i} className={`page-item ${walletPage === i + 1 ? 'active' : ''}`}>
+//                         <button className="page-link" onClick={() => setWalletPage(i + 1)}>{i + 1}</button>
+//                       </li>
+//                     ))}
+//                     <li className={`page-item ${walletPage === totalWalletPages || totalWalletPages === 0 ? 'disabled' : ''}`}>
+//                       <button className="page-link" onClick={() => setWalletPage(prev => Math.min(prev + 1, totalWalletPages))}>&raquo;</button>
+//                     </li>
+//                   </ul>
+//                 </nav>
+//               </div>
 //             </div>
 //           </div>
 //         </div>
 //       </div>
 
-//       {/* Recent Transactions */}
+//       {/* Pending Withdrawals Table  */}
+
+
+//       {/* User Destination & Method Table */}
+//       {/* User Destination & Method Table */}
+//       <div className="row clearfix mb-4">
+//         <div className="col-sm-12">
+//           <div className="card">
+//             <div className="header"><h2>User Destination & Method</h2></div>
+//             <div className="body">
+//               {/* Select User */}
+//               <div className="row mb-3">
+//                 <div className="col-md-4">
+//                   <select
+//                     className="form-control"
+//                     value={selectedUserForDestination}
+//                     onChange={e => {
+//                       const userId = e.target.value;
+//                       setSelectedUserForDestination(userId);
+//                       fetchUserDestination(userId);
+//                     }}
+//                   >
+//                     <option value="">Select User</option>
+//                     {wallets.map(wallet => (
+//                       <option key={wallet._id} value={wallet.userId}>
+//                         {wallet.name} {wallet.lastName}
+//                       </option>
+//                     ))}
+//                   </select>
+//                 </div>
+//               </div>
+
+//               {/* Destination Table */}
+//               {selectedUserForDestination ? (
+//                 userDestinationData && (
+//                   Array.isArray(userDestinationData)
+//                     ? userDestinationData.length > 0
+//                     : Object.keys(userDestinationData).length > 0
+//                 ) ? (
+//                   <div className="table-responsive">
+//                     <table className="table table-bordered">
+//                       <thead>
+//                         <tr>
+//                           <th>Serial No</th>
+//                           <th>Name</th>
+//                           <th>Method</th>
+//                           <th>Destination</th>
+//                         </tr>
+//                       </thead>
+//                       <tbody>
+//                         {Array.isArray(userDestinationData)
+//                           ? userDestinationData.map((record, idx) => (
+//                             <tr key={idx}>
+//                               <td>{idx + 1}</td>
+//                               <td>{record.name || "-"}</td>
+//                               <td>{record.method || "-"}</td>
+//                               {/* <td>
+//                                 {typeof record.destination === "string"
+//                                   ? record.destination
+//                                   : record.destination && typeof record.destination === "object"
+//                                     ? (
+//                                       <div className="d-flex flex-column gap-1">
+//                                         {record.destination.bankName && <span>Bank: {record.destination.bankName}</span>}
+//                                         {record.destination.accountNo && <span>Acc: {record.destination.accountNo}</span>}
+//                                         {record.destination.ifsc && <span>IFSC: {record.destination.ifsc}</span>}
+//                                         {record.destination.upiId && <span>UPI: {record.destination.upiId}</span>}
+//                                         {record.destination.phone && <span>Phone: {record.destination.phone}</span>}
+//                                       </div>
+//                                     )
+//                                     : "-"}
+//                               </td> */}
+//                               <td>
+//                                 {typeof record.destination === "string"
+//                                   ? record.destination
+//                                   : record.destination && typeof record.destination === "object"
+//                                     ? (
+//                                       <div className="d-flex flex-column gap-1">
+//                                         {record.destination.name && <span>Name: {record.destination.name}</span>}
+//                                         {record.destination.bankName && <span>Bank: {record.destination.bankName}</span>}
+//                                         {record.destination.accountNumber && <span>Acc: {record.destination.accountNumber}</span>}
+//                                         {record.destination.ifsc && <span>IFSC: {record.destination.ifsc}</span>}
+//                                         {record.destination.upiId && <span>UPI: {record.destination.upiId}</span>}
+//                                         {record.destination.purpose && <span>Purpose: {record.destination.purpose}</span>}
+//                                       </div>
+//                                     )
+//                                     : "-"}
+//                               </td>
+
+//                             </tr>
+//                           ))
+//                           : Object.entries(userDestinationData).map(([key, record], idx) => (
+//                             <tr key={idx}>
+//                               <td>{idx + 1}</td>
+//                               <td>{record.name || "-"}</td>
+//                               <td>{record.method || "-"}</td>
+//                               {/* <td>
+//                             {typeof record.destination === "string"
+//                               ? record.destination
+//                               : record.destination && typeof record.destination === "object"
+//                               ? (
+//                                 <div className="d-flex flex-column gap-1">
+//                                   {record.destination.bankName && <span>Bank: {record.destination.bankName}</span>}
+//                                   {record.destination.accountNo && <span>Acc: {record.destination.accountNo}</span>}
+//                                   {record.destination.ifsc && <span>IFSC: {record.destination.ifsc}</span>}
+//                                   {record.destination.upiId && <span>UPI: {record.destination.upiId}</span>}
+//                                   {record.destination.phone && <span>Phone: {record.destination.phone}</span>}
+//                                 </div>
+//                               )
+//                               : "-"}
+//                           </td> */}
+//                               <td>
+//                                 {typeof record.destination === "string"
+//                                   ? record.destination
+//                                   : record.destination && typeof record.destination === "object"
+//                                     ? (
+//                                       <div className="d-flex flex-column gap-1">
+//                                         {record.destination.name && <span>Name: {record.destination.name}</span>}
+//                                         {record.destination.bankName && <span>Bank: {record.destination.bankName}</span>}
+//                                         {record.destination.accountNumber && <span>Acc: {record.destination.accountNumber}</span>}
+//                                         {record.destination.ifsc && <span>IFSC: {record.destination.ifsc}</span>}
+//                                         {record.destination.upiId && <span>UPI: {record.destination.upiId}</span>}
+//                                         {record.destination.purpose && <span>Purpose: {record.destination.purpose}</span>}
+//                                       </div>
+//                                     )
+//                                     : "-"}
+//                               </td>
+
+//                             </tr>
+//                           ))}
+//                       </tbody>
+//                     </table>
+//                   </div>
+//                 ) : (
+//                   <p>No destination data found for this user.</p>
+//                 )
+//               ) : (
+//                 <p>Select a user to see destination data.</p>
+//               )}
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+
+
+
+//       {/* Recent Transactions Table  */}
 //       <div className="row clearfix">
 //         <div className="col-sm-12">
 //           <div className="card">
 //             <div className="header d-flex justify-content-between align-items-center mb-3">
 //               <h2>Recent Transactions</h2>
-
-//               {/* Filters */}
 //               <div className="d-flex px-3" style={{ gap: '10px' }}>
-//                 <select
-//                   className="form-control"
-//                   style={{ width: '150px' }}
-//                   value={filterUser}
-//                   onChange={e => { setFilterUser(e.target.value); setPage(1); }}
-//                 >
+//                 <select className="form-control" style={{ width: '200px' }} value={filterUser} onChange={e => { setFilterUser(e.target.value); setPage(1); }}>
 //                   <option value="">All Users</option>
 //                   {wallets.map(wallet => (
-//                     <option key={wallet._id} value={wallet.userId}>
-//                       User {wallet.userId}
+//                     <option key={wallet._id} value={`${wallet.name} ${wallet.lastName}`}>
+//                       {wallet.name} {wallet.lastName}
 //                     </option>
 //                   ))}
 //                 </select>
-
-//                 <select
-//                   className="form-control "
-//                   style={{ width: '120px' }}
-//                   value={filterType}
-//                   onChange={e => { setFilterType(e.target.value); setPage(1); }}
-//                 >
+//                 <select className="form-control" style={{ width: '120px' }} value={filterType} onChange={e => { setFilterType(e.target.value); setPage(1); }}>
 //                   <option value="">All Types</option>
 //                   <option value="credit">Credit</option>
 //                   <option value="debit">Debit</option>
 //                 </select>
-
-//                 <select
-//                   className="form-control"
-//                   style={{ width: '120px' }}
-//                   value={filterStatus}
-//                   onChange={e => { setFilterStatus(e.target.value); setPage(1); }}
-//                 >
+//                 <select className="form-control" style={{ width: '120px' }} value={filterStatus} onChange={e => { setFilterStatus(e.target.value); setPage(1); }}>
 //                   <option value="">All Status</option>
 //                   <option value="success">Success</option>
 //                   <option value="pending">Pending</option>
 //                   <option value="failed">Failed</option>
 //                 </select>
 //               </div>
-
 //             </div>
-
 //             <div className="body table-responsive">
 //               <table className="table table-hover mb-0">
 //                 <thead>
 //                   <tr>
 //                     <th>#</th>
 //                     <th>User ID</th>
-//                     <th>User Name</th>
+//                     <th>Username</th>
 //                     <th>Type</th>
 //                     <th>Amount</th>
 //                     <th>Purpose</th>
@@ -804,68 +857,44 @@
 //                   </tr>
 //                 </thead>
 //                 <tbody>
-//                   {displayedTransactions.map((txn, idx) => (
-//                     <tr key={txn._id}>
-//                       <td>{(page - 1) * pageSize + idx + 1}</td>
-//                       <td>{txn.userId}</td>
-//                       <td>
-//                         <span className={`badge ${txn.type === 'credit' ? 'badge-success' : 'badge-danger'}`}>
-//                           {txn.type}
-//                         </span>
-//                       </td>
-//                       <td>₹{txn.amount}</td>
-//                       <td>{txn.purpose}</td>
-//                       <td>{txn.source}</td>
-//                       <td>
-//                         <span className={`badge ${txn.status === 'success' ? 'badge-success' :
-//                           txn.status === 'pending' ? 'badge-warning' : 'badge-danger'
-//                           }`}>
-//                           {txn.status}
-//                         </span>
-//                       </td>
-//                       <td>{new Date(txn.createdAt).toLocaleString()}</td>
-//                     </tr>
-//                   ))}
-//                   {displayedTransactions.length === 0 && (
-//                     <tr>
-//                       <td colSpan="8" className="text-center">No transactions found</td>
-//                     </tr>
-//                   )}
+//                   {displayedTransactions.map((txn, idx) => {
+//                     const user = wallets.find(w => w.userId === txn.userId);
+//                     return (
+//                       <tr key={txn._id}>
+//                         <td>{(page - 1) * pageSize + idx + 1}</td>
+//                         <td>{txn.userId}</td>
+//                         <td>{user ? `${user.name} ${user.lastName}` : "Unknown"}</td>
+//                         <td><span className={`badge ${txn.type === 'credit' ? 'badge-success' : 'badge-danger'}`}>{txn.type}</span></td>
+//                         <td>₹{txn.amount}</td>
+//                         <td>{txn.purpose}</td>
+//                         <td>{txn.source}</td>
+//                         <td><span className={`badge ${txn.status === 'success' ? 'badge-success' : txn.status === 'pending' ? 'badge-warning' : 'badge-danger'}`}>{txn.status}</span></td>
+//                         <td>{new Date(txn.createdAt).toLocaleString()}</td>
+//                       </tr>
+//                     )
+//                   })}
+//                   {displayedTransactions.length === 0 && <tr><td colSpan="9" className="text-center">No transactions found</td></tr>}
 //                 </tbody>
 //               </table>
 //             </div>
-
-//             {/* Pagination Controls */}
 //             <div className="d-flex justify-content-between align-items-center mt-3 px-3 py-3">
 //               <div>
-//                 Show{" "}
-//                 <select className="form-control d-inline-block w-auto" value={pageSize} onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}>
-//                   {[5, 10, 20, 30, 50, 100, 200, 500].map(size => (
-//                     <option key={size} value={size}>{size}</option>
-//                   ))}
-//                 </select>{" "}
-//                 entries
+//                 Show <select className="form-control d-inline-block w-auto" value={pageSize} onChange={e => { setPageSize(Number(e.target.value)); setPage(1); setWalletPage(1); }}>
+//                   {[5, 10, 20, 30, 50, 100, 200, 500].map(size => <option key={size} value={size}>{size}</option>)}
+//                 </select> entries
 //               </div>
-
 //               <div>
 //                 <nav>
 //                   <ul className="pagination mb-0">
-//                     <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
-//                       <button className="page-link" onClick={() => setPage(prev => Math.max(prev - 1, 1))}>&laquo;</button>
-//                     </li>
-//                     {Array.from({ length: totalPages }, (_, i) => (
-//                       <li key={i} className={`page-item ${page === i + 1 ? 'active' : ''}`}>
-//                         <button className="page-link" onClick={() => setPage(i + 1)}>{i + 1}</button>
-//                       </li>
+//                     <li className={`page-item ${page === 1 ? 'disabled' : ''}`}><button className="page-link" onClick={() => setPage(prev => Math.max(prev - 1, 1))}>&laquo;</button></li>
+//                     {Array.from({ length: totalTransactionPages }, (_, i) => (
+//                       <li key={i} className={`page-item ${page === i + 1 ? 'active' : ''}`}><button className="page-link" onClick={() => setPage(i + 1)}>{i + 1}</button></li>
 //                     ))}
-//                     <li className={`page-item ${page === totalPages || totalPages === 0 ? 'disabled' : ''}`}>
-//                       <button className="page-link" onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}>&raquo;</button>
-//                     </li>
+//                     <li className={`page-item ${page === totalTransactionPages || totalTransactionPages === 0 ? 'disabled' : ''}`}><button className="page-link" onClick={() => setPage(prev => Math.min(prev + 1, totalTransactionPages))}>&raquo;</button></li>
 //                   </ul>
 //                 </nav>
 //               </div>
 //             </div>
-
 //           </div>
 //         </div>
 //       </div>
@@ -875,16 +904,18 @@
 
 // export default AdminWalletManagement;
 
-
-
-//---------------------------------------------------
-
+//----------------------------------------------------------------------
 
 
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { DateRange } from "react-date-range";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
+import { enUS } from "date-fns/locale";
+
 
 const AdminWalletManagement = () => {
   const [wallets, setWallets] = useState([]);
@@ -908,10 +939,21 @@ const AdminWalletManagement = () => {
   const [exportUsers, setExportUsers] = useState([]);
   const [exportUserId, setExportUserId] = useState("");
   const [roleUsers, setRoleUsers] = useState([]);
-  const [sortOrder, setSortOrder] = useState("desc");
+  const [filterAllUser, setFilterAllUser] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [filterAllUser, setFilterAllUser] = useState("");
+  const [isExporting, setIsExporting] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [walletStartDate, setWalletStartDate] = useState("");
+  const [walletEndDate, setWalletEndDate] = useState("");
+  const [dateRange, setDateRange] = useState([
+    {
+      startDate: null,
+      endDate: null,
+      key: "selection",
+    },
+  ]);
+
 
 
 
@@ -1054,18 +1096,6 @@ const AdminWalletManagement = () => {
     fetchWithdrawals();
   }, []);
 
-  useEffect(() => {
-    console.log("Effect fired with:", { startDate, endDate, sortOrder, page });
-    if (startDate && endDate) {
-      console.log("Calling fetchDateFilteredTransactions");
-      fetchDateFilteredTransactions(startDate, endDate, sortOrder);
-    } else {
-      console.log("Calling fetchTransactions");
-      fetchTransactions();
-    }
-  }, [startDate, endDate, sortOrder, page]);
-
-
 
   useEffect(() => {
     if (!filterRole) {
@@ -1075,12 +1105,11 @@ const AdminWalletManagement = () => {
     }
 
     const fetchUsersByRole = async () => {
-      console.log("fetchTransactions called");
       try {
         const res = await axios.get(`${API_URL}/api/wallet/get-users-by-role?role=${filterRole}`);
         // Only set users that belong to the selected role
         setRoleUsers(res.data.users || []);
-        setFilterUser(""); // reset selected user whenever role changes
+        setFilterUser("");
       } catch (err) {
         console.error("Failed to fetch users by role:", err);
         setRoleUsers([]);
@@ -1094,78 +1123,46 @@ const AdminWalletManagement = () => {
 
 
 
-
-  //  filtering 
-  // const filteredTransactions = transactions.filter(txn => {
-
-  //   const txnUserWallet = wallets.find(w => {
-
-  //     return w.userId === txn.userId ||
-  //       w.userId?.toString() === txn.userId?.toString() ||
-  //       String(w.userId) === String(txn.userId);
-  //   });
-
-
-  //   const username = txnUserWallet
-  //     ? `${txnUserWallet.name || ''} ${txnUserWallet.lastName || ''}`.trim()
-  //     : "";
-
-  //   const userRole = txnUserWallet?.role
-  //     ? txnUserWallet.role.toLowerCase().trim()
-  //     : "";
-
-  //   // Apply all filters
-  //   const matchesUser = filterUser === "" ||
-  //     username.toLowerCase().includes(filterUser.toLowerCase());
-
-  //   const matchesType = filterType === "" || txn.type === filterType;
-
-  //   const matchesStatus = filterStatus === "" || txn.status === filterStatus;
-
-  //   const matchesRole = filterRole === "" ||
-  //     userRole === filterRole.toLowerCase().trim();
-
-  //   return matchesUser && matchesType && matchesStatus && matchesRole;
-  // });
-
-  // const allowedRoles = ["artist", "seller", "buyer"];
-
-
-
-
-  // const filteredRoles = [...new Set(
-  //   wallets
-  //     .map(w => w.role)
-  //     .filter(role => role)
-  //     .map(role => role.toLowerCase().trim())
-  //     .filter(role => allowedRoles.includes(role))
-  // )].sort();
-
-  // const roleOptions = filteredRoles.length > 0 ? filteredRoles : allowedRoles;
-
-
-  // console.log("Available wallet roles:", wallets.map(w => ({
-  //   userId: w.userId,
-  //   role: w.role,
-  //   name: w.name
-  // })));
-
   const filteredTransactions = transactions.filter(txn => {
+
     const txnUserWallet = wallets.find(
       w => String(w.userId?._id || w.userId) === String(txn.userId)
     );
-
     if (!txnUserWallet) return false;
 
     const userRole = (txnUserWallet.role || '').toLowerCase().trim();
-    const userId = txnUserWallet.userId?._id ? String(txnUserWallet.userId._id) : String(txnUserWallet.userId);
+    const userId = String(txnUserWallet.userId?._id || txnUserWallet.userId);
+
 
     const matchesRole = !filterRole || userRole === filterRole.toLowerCase();
-    const matchesUser = !filterUser || userId === filterUser;  // Only selected user
+    const matchesUser = (!filterUser && !filterAllUser) ||
+      userId === filterUser ||
+      userId === filterAllUser;
     const matchesType = !filterType || txn.type === filterType;
     const matchesStatus = !filterStatus || txn.status === filterStatus;
 
-    return matchesRole && matchesUser && matchesType && matchesStatus;
+
+    let matchesDate = true;
+    if (startDate && endDate) {
+      const txnDate = new Date(txn.createdAt);
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      matchesDate = txnDate >= start && txnDate <= end;
+    }
+
+    return matchesRole && matchesUser && matchesType && matchesStatus && matchesDate;
+  });
+
+
+  console.log("=== Filter Debug ===");
+  console.log("Total transactions:", transactions.length);
+  console.log("Filtered transactions:", filteredTransactions.length);
+  console.log("Active filters:", {
+    role: filterRole,
+    user: filterUser,
+    allUser: filterAllUser,
+    type: filterType,
+    status: filterStatus
   });
 
 
@@ -1215,51 +1212,6 @@ const AdminWalletManagement = () => {
     }
   };
 
-  // const handleExport = async () => {
-  //   try {
-  //     const response = await fetch(`http://localhost:3001/api/export-all-wallets?role=${filterRole}`);
-  //     if (!response.ok) throw new Error("Failed to export wallets");
-
-  //     const blob = await response.blob();
-  //     const url = window.URL.createObjectURL(blob);
-  //     const a = document.createElement("a");
-  //     a.href = url;
-  //     a.download = `${filterRole || "All"}_User_Wallets.xlsx`;
-  //     document.body.appendChild(a);
-  //     a.click();
-  //     a.remove();
-  //     window.URL.revokeObjectURL(url);
-  //   } catch (error) {
-  //     console.error(error);
-  //     alert("Failed to export wallets");
-  //   }
-  // };
-
-  // const exportHandle = async () => {
-  //   try {
-  //     const response = await fetch(`http://localhost:3001/api/export-recent-transactions?role=${filterRole}`);
-  //     if (!response.ok) throw new Error("Failed to export recent transactions");
-
-  //     const blob = await response.blob();
-  //     const url = window.URL.createObjectURL(blob);
-  //     const a = document.createElement("a");
-  //     a.href = url;
-  //     a.download = `${filterRole || "All"}_Transactions.xlsx`;
-  //     document.body.appendChild(a);
-  //     a.click();
-  //     a.remove();
-  //     window.URL.revokeObjectURL(url);
-  //   } catch (error) {
-  //     console.error(error);
-  //     alert("Failed to export recent transactions");
-  //   }
-  // };
-
-
-  // 
-
-
-
 
 
   const handleExportRoleChange = async (role) => {
@@ -1280,37 +1232,122 @@ const AdminWalletManagement = () => {
     }
   };
 
-  // const handleExport = () => {
-  //   if (!exportRole && !exportUserId) {
-  //     alert("Please select a role or user to export");
-  //     return;
-  //   }
 
-  //   let url = "/api/export-recent-transactions";
-  //   const params = [];
-  //   if (exportRole) params.push(`role=${encodeURIComponent(exportRole)}`);
-  //   if (exportUserId) params.push(`userId=${encodeURIComponent(exportUserId)}`);
 
-  //   if (params.length > 0) url += "?" + params.join("&");
+  const handleExport = async () => {
+    // Get filters
+    const roleParam = filterRole.trim();
+    const userParam = filterUser.trim();
+    const allUserParam = filterAllUser.trim();
+    const selectedUserId = userParam || allUserParam;
 
-  //   window.location.href = url; // triggers Excel download
-  // };
+    // DATE RANGE FROM CALENDAR
+    const startDate = dateRange[0]?.startDate
+      ? dateRange[0].startDate.toISOString().split("T")[0]
+      : "";
+    const endDate = dateRange[0]?.endDate
+      ? dateRange[0].endDate.toISOString().split("T")[0]
+      : "";
 
-  const handleExport = () => {
-    if (!filterRole && !filterUser) {
-      alert("Please select a role or user to export");
+    // Validation
+    if (!roleParam && !selectedUserId) {
+      toast.error("Please select a role or user to export");
       return;
     }
 
-    let url = "/api/export-recent-transactions";
-    const params = [];
-    if (filterRole) params.push(`role=${encodeURIComponent(filterRole)}`);
-    if (filterUser) params.push(`userId=${encodeURIComponent(filterUser)}`);
+    if (!startDate || !endDate) {
+      toast.error("Please select a date range");
+      return;
+    }
 
-    if (params.length > 0) url += "?" + params.join("&");
+    setIsExporting(true);
 
-    window.location.href = url;
+    try {
+      // Build query params
+      const params = new URLSearchParams();
+
+      if (roleParam) params.append("role", roleParam);
+      if (selectedUserId) params.append("userId", selectedUserId);
+
+      // ADD DATE RANGE HERE
+      params.append("startDate", startDate);
+      params.append("endDate", endDate);
+
+      const url = `${API_URL}/api/wallet/admin/export-recent-transactions?${params.toString()}`;
+
+      console.log("=== Export Request ===");
+      console.log("URL:", url);
+
+      const response = await fetch(url, { method: "GET" });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Export failed");
+      }
+
+      // File download logic
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = downloadUrl;
+
+      // Filename creation
+      let filename = "Transactions";
+
+      // Add Role
+      if (roleParam) {
+        filename += `_${roleParam.charAt(0).toUpperCase() + roleParam.slice(1)}`;
+      }
+
+      // Add user name
+      if (selectedUserId) {
+        const user = wallets.find(
+          (w) => String(w.userId) === String(selectedUserId)
+        );
+        if (user) {
+          const namePart = `${user.name || ""}${user.lastName ? "_" + user.lastName : ""
+            }`.trim();
+          filename += `_${namePart}`;
+        }
+      }
+
+      // Add date range
+      filename += `_(${startDate}_to_${endDate})`;
+      filename += ".xlsx";
+
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      window.URL.revokeObjectURL(downloadUrl);
+
+      toast.success("Transactions exported successfully!");
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error(error.message || "Failed to export transactions");
+    } finally {
+      setIsExporting(false);
+    }
   };
+
+
+  const filteredWallets = wallets.filter(wallet => {
+    if (!wallet.lastActivityAt) return false;
+
+    const activityDate = new Date(wallet.lastActivityAt);
+
+    if (startDate && activityDate < new Date(startDate)) return false;
+    if (endDate && activityDate > new Date(endDate)) return false;
+
+    return true;
+  });
+
+
+  const paginatedWallets = filteredWallets.slice(
+    (walletPage - 1) * pageSize,
+    walletPage * pageSize
+  );
 
 
 
@@ -1426,19 +1463,29 @@ const AdminWalletManagement = () => {
                 <i className="fa fa-upload mr-1"></i> Export
               </button>
 
+              <div className="d-flex align-items-center" style={{ gap: "10px" }}>
+                <label className="mb-0">From:</label>
+                <input
+                  type="date"
+                  value={walletStartDate}
+                  onChange={(e) => {
+                    setWalletStartDate(e.target.value);
+                    setWalletPage(1);
+                  }}
+                />
+                <input
+                  type="date"
+                  value={walletEndDate}
+                  onChange={(e) => {
+                    setWalletEndDate(e.target.value);
+                    setWalletPage(1);
+                  }}
+                />
+
+              </div>
+
+
             </div>
-            <select
-              className="form-control"
-              style={{ width: "130px", height: "36px" }}
-              value={sortOrder}
-              onChange={e => {
-                setSortOrder(e.target.value);
-                setPage(1);
-              }}
-            >
-              <option value="desc">Newest First</option>
-              <option value="asc">Oldest First</option>
-            </select>
 
             <div className="body table-responsive">
               <table className="table table-hover mb-0">
@@ -1456,7 +1503,7 @@ const AdminWalletManagement = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {displayedWallets.map((wallet, i) => (
+                  {paginatedWallets.map((wallet, i) => (
                     <tr key={wallet._id}>
                       <td>{(walletPage - 1) * pageSize + i + 1}</td>
                       <td>{wallet.userId}</td>
@@ -1469,8 +1516,13 @@ const AdminWalletManagement = () => {
                       <td>{wallet.lastActivityAt ? new Date(wallet.lastActivityAt).toLocaleString() : 'Never'}</td>
                     </tr>
                   ))}
-                  {displayedWallets.length === 0 && <tr><td colSpan="9" className="text-center">No wallets found</td></tr>}
+                  {paginatedWallets.length === 0 && (
+                    <tr>
+                      <td colSpan="9" className="text-center">No wallets found</td>
+                    </tr>
+                  )}
                 </tbody>
+
               </table>
             </div>
             <div className="d-flex justify-content-between align-items-center mt-3 px-3 py-3">
@@ -1612,77 +1664,178 @@ const AdminWalletManagement = () => {
       <div className="row clearfix">
         <div className="col-sm-12">
           <div className="card">
-            {/* <div className="header d-flex justify-content-between align-items-center mb-3">
+
+            <div className="header d-flex justify-content-between align-items-center mb-3">
               <h2>Recent Transactions</h2>
-              <div className="d-flex px-3" style={{ gap: '10px' }}>
+
+              <div className="d-flex  px-3" style={{ gap: '10px' }}>
+                {/* Export Button */}
                 <button
                   type="button"
                   className="btn btn-outline-success btn-sm"
+                  style={{ height: '32px', minWidth: '80px' }}
                   onClick={handleExport}
+                  disabled={isExporting || (!filterRole && !filterUser && !filterAllUser)}
                 >
-                  <i className="fa fa-upload mr-1"></i> Export
+                  {isExporting ? (
+                    <>
+                      <i className="fa fa-spinner fa-spin mr-1"></i> Exporting...
+                    </>
+                  ) : (
+                    <>
+                      <i className="fa fa-upload mr-1"></i> Export
+                    </>
+                  )}
                 </button>
 
-                <div className="d-flex flex-column">
-                  <select
-                    className="form-control"
-                    style={{ width: "150px" }}
-                    value={filterRole}
-                    onChange={(e) => {
-                      setFilterRole(e.target.value);
-                      setExportRole(e.target.value);
-                      setFilterUser("");
-                      setExportUserId("");
-                    }}
-                  >
-                    <option value="">All Roles</option>
-                    {roleOptions.map(role => (
-                      <option key={role} value={role}>
-                        {role.charAt(0).toUpperCase() + role.slice(1)}
-                      </option>
-                    ))}
-                  </select>
+                {/* Date Sort */}
 
-                  {filterRole && (
-                    <select
-                      className="form-control mt-2"
-                      style={{ width: "200px" }}
-                      value={filterUser}
-                      onChange={(e) => {
-                        setFilterUser(e.target.value);
-                        setExportUserId(e.target.value);
+                <div style={{ position: "relative" }}>
+                  <button
+                    className="btn btn-outline-primary"
+                    onClick={() => setShowCalendar(!showCalendar)}
+                  >
+                    {startDate && endDate
+                      ? `${startDate} → ${endDate}`
+                      : "Select Date Range"}
+                  </button>
+
+                  {showCalendar && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        zIndex: 100,
+                        background: "white",
+                        boxShadow: "0 2px 15px rgba(0,0,0,0.2)",
                       }}
                     >
-                      <option value="">Select User</option>
-                      {wallets
-                        .filter(w => (w.role || "").toLowerCase().trim() === filterRole.toLowerCase())
-                        .map(w => {
-                          const fullName = `${w.name || ""} ${w.lastName || ""}`.trim();
-                          return (
-                            <option key={w.userId} value={w.userId}>
-                              {fullName || w.userId}
-                            </option>
-                          );
-                        })}
-                    </select>
+                      <DateRange
+                        editableDateInputs={true}
+                        moveRangeOnFirstSelection={false}
+                        ranges={dateRange}
+                        onChange={(item) => {
+                          setDateRange([item.selection]);
+
+                          const s = item.selection.startDate;
+                          const e = item.selection.endDate;
+
+                          setStartDate(s.toISOString().split("T")[0]);
+                          setEndDate(e.toISOString().split("T")[0]);
+                        }}
+                        locale={enUS}
+                      />
+
+                    </div>
                   )}
                 </div>
 
 
-                <select className="form-control" style={{ width: '200px' }} value={filterUser} onChange={e => { setFilterUser(e.target.value); setPage(1); }}>
-                  <option value="">All Users</option>
-                  {wallets.map(wallet => (
-                    <option key={wallet._id} value={`${wallet.name} ${wallet.lastName}`}>
-                      {wallet.name} {wallet.lastName}
+                {/* Role Filter */}
+                <select
+                  className="form-control"
+                  style={{ width: "120px", height: "36px" }}
+                  value={filterRole}
+                  onChange={(e) => {
+                    setFilterRole(e.target.value);
+                    setFilterUser("");
+                    setFilterAllUser("");
+                    setPage(1);
+                  }}
+                >
+                  <option value="">All Roles</option>
+                  {roleOptions.map(role => (
+                    <option key={role} value={role}>
+                      {role.charAt(0).toUpperCase() + role.slice(1)}
                     </option>
                   ))}
                 </select>
-                <select className="form-control" style={{ width: '120px' }} value={filterType} onChange={e => { setFilterType(e.target.value); setPage(1); }}>
+
+                {/* User Filter (appears when role is selected) */}
+                {filterRole && (
+                  <select
+                    className="form-control"
+                    style={{ width: "150px", height: "36px" }}
+                    value={filterUser}
+                    onChange={(e) => {
+                      setFilterUser(e.target.value);
+                      setFilterAllUser("");
+                      setPage(1);
+                    }}
+                  >
+                    <option value="">
+                      All {filterRole.charAt(0).toUpperCase() + filterRole.slice(1)}s
+                    </option>
+                    {wallets
+                      .filter(
+                        (w) => (w.role || "").toLowerCase().trim() === filterRole.toLowerCase()
+                      )
+                      .map((w) => {
+                        const fullName = `${w.name || ""} ${w.lastName || ""}`.trim();
+                        return (
+                          <option key={w.userId} value={w.userId}>
+                            {fullName.length > 0 ? fullName : w.userId}
+                          </option>
+                        );
+                      })}
+                  </select>
+
+                )}
+
+                {/* All Users Filter (independent filter) */}
+                <select
+                  className="form-control"
+                  style={{ width: '170px', height: '36px' }}
+                  value={filterAllUser}
+                  onChange={e => {
+                    const selectedUserId = e.target.value;
+                    setFilterAllUser(selectedUserId);
+
+
+                    if (selectedUserId) {
+                      setFilterRole("");
+                      setFilterUser("");
+                    }
+
+                    setPage(1);
+                  }}
+                >
+                  <option value="">All Users</option>
+                  {wallets.map(wallet => {
+                    const fullName = `${wallet.name || ""} ${wallet.lastName || ""}`.trim();
+                    return (
+                      <option key={wallet._id} value={wallet.userId}>
+                        {fullName.length > 0 ? fullName : wallet.userId}
+                      </option>
+                    );
+                  })}
+
+                </select>
+
+                {/* Transaction Type Filter */}
+                <select
+                  className="form-control"
+                  style={{ width: '120px', height: '36px' }}
+                  value={filterType}
+                  onChange={e => {
+                    setFilterType(e.target.value);
+                    setPage(1);
+                  }}
+                >
                   <option value="">All Types</option>
                   <option value="credit">Credit</option>
                   <option value="debit">Debit</option>
                 </select>
-                <select className="form-control" style={{ width: '120px' }} value={filterStatus} onChange={e => { setFilterStatus(e.target.value); setPage(1); }}>
+
+                {/* Status Filter */}
+                <select
+                  className="form-control"
+                  style={{ width: '120px', height: '36px' }}
+                  value={filterStatus}
+                  onChange={e => {
+                    setFilterStatus(e.target.value);
+                    setPage(1);
+                  }}
+                >
                   <option value="">All Status</option>
                   <option value="success">Success</option>
                   <option value="pending">Pending</option>
@@ -1868,5 +2021,8 @@ const AdminWalletManagement = () => {
 };
 
 export default AdminWalletManagement;
+
+
+
 
 

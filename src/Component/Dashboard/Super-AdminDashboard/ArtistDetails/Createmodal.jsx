@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import postAPI from "../../../../api/getAPI";
+// import postAPI from "../../../../api/getAPI";
+import postAPI from "../../../../api/postAPI";
+
+
 
 const CreateArtistModal = ({ onClose, fetchArtists }) => {
   const [formData, setFormData] = useState({
@@ -157,7 +160,7 @@ const CreateArtistModal = ({ onClose, fetchArtists }) => {
                   Cancel
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  Create Artist
+                  Save
                 </button>
               </div>
             </form>
