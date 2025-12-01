@@ -937,11 +937,14 @@ import { MdVerified } from "react-icons/md";
 import { FiChevronRight, FiChevronLeft } from "react-icons/fi";
 import { Bell } from "lucide-react";
 import getAPI from "../../../api/getAPI";   
+import { useNavigate } from "react-router-dom";
 
 const BidProduct = () => {
   const [products, setProducts] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const userId = localStorage.getItem("userId");
+  const navigate = useNavigate();
+
  const [currentPage, setCurrentPage] = useState(1);
    const itemsPerPage = 9;
    const indexOfLastProduct = currentPage * itemsPerPage;
@@ -963,6 +966,7 @@ const BidProduct = () => {
   const goToPage = (page) => {
     setCurrentPage(page);
   };
+
 
  const fetchProducts = async () => {
   try {
@@ -1451,7 +1455,14 @@ const getFinalStatus = (item) => {
               if (isEnded) buttonText = "Closed";
 
               return (
-                <div key={item._id} className="mx-auto product-card w-[300px]">
+                // <div key={item._id} className="mx-auto product-card w-[300px]">
+<div
+  key={item._id}
+ // onClick={() => navigate(`/bid-details/${item.product?._id || item.productId || item._id}`)}
+  onClick={() => navigate(`/bid-details/${item._id}`)}
+  className="mx-auto product-card w-[300px] cursor-pointer"
+>
+
 
 
                   {/* Status Badge */}
@@ -1481,7 +1492,12 @@ const getFinalStatus = (item) => {
 
 
                     {/* Bell Icon */}
-                    <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
+                    <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow"
+                       onClick={(e) => {
+                         e.stopPropagation();
+    
+                         }}
+                         >
                       <Bell className="w-5 h-5 text-white" />
                     </button>
                   </div>

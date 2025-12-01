@@ -501,6 +501,7 @@ import JoinChallenges from "../Pages/Challenges/JoinChallenges/JoinChallenges";
 import ProductDetails from "../Pages/ProductDetails/ProductDetails";
 import ProductDetailsTemplate from "../Pages/ProductDetails/ProductDetails copy";
 import BidDetails from "../Pages/BidDetails/BidDetails";
+import BidDetailsTemplate from "../Pages/BidDetails/BidDetails copy";
 import Certification from "../Pages/Certification/Certification";
 import Insurance from "../Pages/Insurance/Insurance";
 import Partner from "../Pages/Partner/Partner";
@@ -1553,7 +1554,8 @@ const AppRoutes = () => {
 
         <Route path="/product-details" element={<ProductDetailsTemplate />} />
         <Route path="/product-details/:productId" element={<ProductDetails />} />
-        <Route path="/bid-details" element={<BidDetails />} />
+        <Route path="/bid-details" element={<BidDetailsTemplate />} />
+         <Route path="/bid-details/:bidId" element={<BidDetails />} />
         <Route path="/certification" element={<Certification />} />
         <Route path="/insurance" element={<Insurance />} />
         <Route path="/partner" element={<Partner />} />
