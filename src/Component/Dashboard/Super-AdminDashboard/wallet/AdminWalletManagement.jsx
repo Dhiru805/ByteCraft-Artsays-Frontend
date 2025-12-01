@@ -953,6 +953,7 @@ const AdminWalletManagement = () => {
       key: "selection",
     },
   ]);
+  const [sortOrder, setSortOrder] = useState("desc");
 
 
 
