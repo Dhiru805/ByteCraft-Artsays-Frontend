@@ -16,7 +16,7 @@ const ForgotPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
-
+console.log("emailllllllllll",email)
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
@@ -143,7 +143,7 @@ const ForgotPassword = () => {
                   id="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value.trim())}
                   style={{ height: '48px', border: "1px solid #6b4f36", fontSize: "16px", color: "black" }}
                 />
               </div>

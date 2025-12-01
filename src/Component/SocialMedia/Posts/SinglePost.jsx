@@ -1,4 +1,3 @@
-     
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -11,6 +10,8 @@ import Suggestion from "../Suggestion/Suggestion";
 import { useNavigate } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { Helmet } from "react-helmet";
+import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 const SharePost = () => {
   const [sharePostData, setSharePostData] = useState(null);
   const [menuOpenId, setMenuOpenId] = useState(null);
@@ -36,7 +37,6 @@ const SharePost = () => {
   const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
   useEffect(() => {
-
     const fetchSinglePostData = async () => {
       try {
         const response = await getAPI(
@@ -53,7 +53,7 @@ const SharePost = () => {
     };
     fetchSinglePostData();
   }, [postId]);
-  // 🔹 Like / Unlike
+
   const handleLike = async (postId) => {
     try {
       await postAPI(
@@ -77,7 +77,6 @@ const SharePost = () => {
     const userId = localStorage.getItem("userId");
 
     try {
-      // 🔹 Call API
       if (isFollowing) {
         await postAPI(
           `/api/social-media/unfollow/${targetUserId}`,
@@ -93,7 +92,6 @@ const SharePost = () => {
           true
         );
       }
-      // 💥 Optimistic UI update first
       setSharePostData((prev) => ({
         ...prev,
         showFollowButton: !isFollowing,
@@ -101,7 +99,6 @@ const SharePost = () => {
     } catch (error) {
       console.error("Error following/unfollowing user:", error);
 
-      // 🔄 Revert UI on error
       setSharePostData((prev) => ({
         ...prev,
         showFollowButton: isFollowing,
@@ -109,7 +106,6 @@ const SharePost = () => {
     }
   };
 
-  // 🔹 Save / Unsave
   const handleSave = async (postId) => {
     try {
       await postAPI(
@@ -126,7 +122,7 @@ const SharePost = () => {
     }
   };
 
-  // ✅ Detect @ and fetch suggestions
+  //  Detect @ and fetch suggestions
   const handleChange = async (e) => {
     const value = e.target.value;
     setCommentText(value);
@@ -158,7 +154,7 @@ const SharePost = () => {
     }
   };
 
-  // 🔹 Add Comment
+  //  Add Comment
   const handleComment = async (postId) => {
     if (!commentText.trim()) return;
     try {
@@ -178,17 +174,17 @@ const SharePost = () => {
     }
   };
 
-  // 🔹 Navigate to profile
+  //  Navigate to profile
   const goToProfile = (profileUserId) => {
     navigate("/social-media/profile", {
-      state: { userId: profileUserId }, // 👈 pass post.user._id
+      state: { userId: profileUserId },
     });
   };
 
   const handleInputChange = (e) => {
     const value = e.target.value;
-    setTipAmount(value); // allow free typing
-    setError(""); // reset error while typing
+    setTipAmount(value);
+    setError("");
   };
 
   const handleInputBlur = () => {
@@ -220,7 +216,6 @@ const SharePost = () => {
     try {
       const reporterId = localStorage.getItem("userId");
 
-      // 🧩 Construct payload for post report
       const payload = {
         reporterId,
         reportedUserId: reportedUser.id, // 👈 user who owns the post
@@ -251,6 +246,7 @@ const SharePost = () => {
     setTipAmount(Number(e.target.value));
     setError("");
   };
+
   // ✅ Insert selected mention
   const handleSelectMention = (username) => {
     // Replace last @word with @username
@@ -322,7 +318,50 @@ const SharePost = () => {
   };
   return (
     <>
-      
+      {sharePostData && (
+        <Helmet>
+          <meta charSet="utf-8" />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+          />
+          <meta name="robots" content="index, follow" />
+          {/* <meta name="title" content={blogDetails.blogTitle} /> */}
+          <title>{sharePostData.user?.username}</title>
+          <meta name="description" content={sharePostData.caption} />
+          <meta name="keywords" content={sharePostData.hashtags.join(", ")} />
+          <meta
+            name="author"
+            content={`${sharePostData.user?.name} ${sharePostData.user?.lastName}`}
+          />
+
+          <meta property="og:type" content="post" />
+          <meta property="og:title" content={sharePostData.user?.username} />
+          <meta property="og:description" content={sharePostData.caption} />
+          <meta property="og:url" content={window.location.href} />
+          <meta
+            property="og:image"
+            content={
+              sharePostData.images.length > 0
+                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.images[0]}`
+                : `${DEFAULT_PROFILE_IMAGE}`
+            }
+          />
+
+          {/* <meta name="twitter:card" content="summary_large_image" /> */}
+          <meta name="twitter:title" content={sharePostData.user?.username} />
+          <meta name="twitter:description" content={sharePostData.caption} />
+          <meta
+            name="twitter:image"
+            content={
+              sharePostData.images.length > 0
+                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.images[0]}`
+                : `${DEFAULT_PROFILE_IMAGE}`
+            }
+          />
+        </Helmet>
+      )}
+
       {sharePostData && (
         <>
           <div className=" flex flex-col">
@@ -414,28 +453,29 @@ const SharePost = () => {
                                 <div className="flex flex-col">
                                   <span className="font-semibold text-sm">
                                     {sharePostData.user?.username}
-                                    {sharePostData.user.verified?.length > 0 
-                                     && (
+                                    {sharePostData.user.verified?.length >
+                                      0 && (
                                       <img
                                         src={`${
                                           process.env
                                             .REACT_APP_API_URL_FOR_IMAGE
                                         }${
                                           sharePostData.user.verified[
-                                            sharePostData.user.verified.length -1
+                                            sharePostData.user.verified.length -
+                                              1
                                           ]?.badgeImage
                                         }`}
                                         className="inline-block ml-1 w-5 h-5 object-contain"
                                         alt={
                                           sharePostData.user.verified[
-                                            sharePostData.user.verified.length -1
-                                              
+                                            sharePostData.user.verified.length -
+                                              1
                                           ]?.badgeName || "badge"
                                         }
                                         title={
                                           sharePostData.user.verified[
-                                            sharePostData.user.verified.length -1
-                                              
+                                            sharePostData.user.verified.length -
+                                              1
                                           ]?.badgeName
                                         }
                                       />

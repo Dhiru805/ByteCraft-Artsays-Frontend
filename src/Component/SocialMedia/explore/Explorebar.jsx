@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import putAPI from "../../../api/putAPI";
 import { Link } from "react-router-dom";
+
 const Explorebar = () => {
   const userId = localStorage.getItem("userId");
   const [activeMenuId, setActiveMenuId] = useState(null);
@@ -21,6 +22,7 @@ const Explorebar = () => {
 
   const menuRef = useRef(null);
   const Navigate = useNavigate();
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -47,7 +49,6 @@ const Explorebar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 🔹 Save / Unsave
   const handleSave = async (postId) => {
     try {
       await postAPI(
@@ -61,7 +62,7 @@ const Explorebar = () => {
       setPosts((prev) =>
         prev.map((p) =>
           p._id === postId
-            ? { ...p, isSaved: !p.isSaved } // 👈 toggle boolean
+            ? { ...p, isSaved: !p.isSaved } 
             : p
         )
       );

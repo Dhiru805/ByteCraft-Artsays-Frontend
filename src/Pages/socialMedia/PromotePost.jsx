@@ -50,7 +50,6 @@ const PromotePost = () => {
   const gst = (budget * 0.18).toFixed(2);
   const dailyTotal = (budget + parseFloat(gst)).toFixed(2);
 
-  // 🚀 Promote Post Function
 // 🚀 Promote Post Function
 const handleBoostPost = async () => {
   if (!postId) return toast.error("Missing post ID. Please try again.");
@@ -58,7 +57,7 @@ const handleBoostPost = async () => {
 
   const payload = {
     postId,
-    category: selectedCategory || null, // ✅ make category optional
+    category: selectedCategory || null, 
     goal,
     dailyBudget: budget,
     durationDays: days,

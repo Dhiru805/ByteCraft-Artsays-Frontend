@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import "./Profile.css";
 import { useNavigate } from "react-router-dom";
-
 import { LuArchive, LuSquareUserRound } from "react-icons/lu";
 import {
   FaBookmark,
@@ -19,10 +18,9 @@ import getAPI from "../../../../src/api/getAPI";
 import postAPI from "../../../../src/api/postAPI";
 import putAPI from "../../../../src/api/putAPI";
 import { toast } from "react-toastify";
-
-const myUser = {
-  userId: 21345,
-};
+import { FaCheckCircle } from "react-icons/fa";
+import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
+import { Helmet } from "react-helmet";
 
 const user = {
   live: false,
@@ -128,10 +126,10 @@ photographed by #siddharth
   ],
 };
 
-const Profile = ({shareprofileid}) => {
+const Profile = ({ shareprofileid }) => {
   const location = useLocation();
   const Navigate = useNavigate();
-  const loggedInUserId = localStorage.getItem("userId"); // 👈 logged-in user
+  const loggedInUserId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
   const [users, setUsers] = useState([]);
   const [mainCategories, setMainCategories] = useState([]);
@@ -151,6 +149,12 @@ const Profile = ({shareprofileid}) => {
   const [error, setError] = useState("");
   const [copyMsg, setCopyMsg] = useState("");
   const [sharePost, setSharePost] = useState(false);
+  const [shareProfile, setShareProfile] = useState(false);
+  const [collaboratedPosts, setCollaboratedPosts] = useState([]);
+  const [tipUser, setTipUser] = useState(null);
+  const [tipPopupOpen, setTipPopupOpen] = useState(false);
+  const [tipAmount, setTipAmount] = useState(40);
+  const [tipSuccess, setTipSuccess] = useState(false);
 
   // helper: normalize array -> [ids]
   const toIdArray = (arr) =>
@@ -165,12 +169,16 @@ const Profile = ({shareprofileid}) => {
     const sb = [...b].sort().join(",");
     return sa === sb;
   };
-  // 👇 Take userId from state if available, otherwise fallback to localStorage
-  const viewedUserId = location.state?.userId ||shareprofileid || loggedInUserId;
+
+  //  Take userId from state if available,or shared url otherwise fallback to localStorage
+  const viewedUserId =
+    location.state?.userId || shareprofileid || loggedInUserId;
+
   useEffect(() => {
     if (!viewedUserId || !userType) return;
 
     let cancelled = false;
+
     (async () => {
       try {
         if (userType === "Seller") {
@@ -216,7 +224,6 @@ const Profile = ({shareprofileid}) => {
             mainCategories, // can be array, backend should handle it
           }
         );
-        // console.log("Suggested users fetched:", res?.data?.suggestedUsers);
         setUsers(res?.data?.suggestedUsers || []);
       } catch (error) {
         console.error("Error fetching suggested users:", error);
@@ -226,14 +233,29 @@ const Profile = ({shareprofileid}) => {
     fetchSuggestedUsers();
   }, []);
 
+  useEffect(() => {
+    const fetchCollaboratedPost = async () => {
+      try {
+        const res = await getAPI(
+          `/api/social-media/posts/collaboratedPost?userId=${viewedUserId}`
+        );
+        setCollaboratedPosts(res.data);
+
+        console.log("response of fetch collaborated post", res);
+      } catch (error) {
+        console.error("collaboratedpost error", error.response.data.message);
+      }
+    };
+
+    if (viewedUserId) fetchCollaboratedPost();
+  }, [viewedUserId]);
+
   const canUserComment = (profile, loggedInUserId) => {
     if (!profile || !loggedInUserId) return false;
 
     const allowFrom = profile.commentSettings?.allowCommentsFrom || "everyone";
 
-    // Self: always allowed
     if (String(profile._id) === String(loggedInUserId)) return true;
-
     if (allowFrom === "everyone") return true;
     if (allowFrom === "followers") {
       return profile.followers.some(
@@ -256,6 +278,7 @@ const Profile = ({shareprofileid}) => {
     }
     return false;
   };
+
   const postProduct = () => {};
 
   useEffect(() => {
@@ -263,11 +286,11 @@ const Profile = ({shareprofileid}) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
 
     const fetchProfile = async () => {
       try {
-        console.log("Fetching profile for userId:", viewedUserId);
         const res = await getAPI(
           `/api/social-media/profile/${viewedUserId}`,
           {},
@@ -288,8 +311,8 @@ const Profile = ({shareprofileid}) => {
           setCanComment(allowed);
           setFollow(
             res.data.profile.followers
-              .map((id) => id.toString()) // ensure all are strings
-              .includes(String(loggedInUserId)) // ensure comparison is correct
+              .map((id) => id.toString())
+              .includes(String(loggedInUserId))
           );
 
           const apiUserId =
@@ -320,16 +343,15 @@ const Profile = ({shareprofileid}) => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        // ✅ correct query param: ?userId=value
         const res = await getAPI(
           `/api/get-profileproduct?userId=${viewedUserId}`
         );
 
-        // ✅ handle different response formats safely
         const data = res?.data?.data || res?.data || [];
         setProducts(data);
       } catch (error) {
         console.error("Error fetching profile products:", error);
+        toast.error(error.response.data.message);
       }
     };
 
@@ -337,6 +359,7 @@ const Profile = ({shareprofileid}) => {
       fetchProduct();
     }
   }, [viewedUserId, profile]);
+
   const [openComment, setOpenComment] = useState(false);
   const [onPosts, setOnPosts] = useState(true);
   const [onSave, setOnSave] = useState(false);
@@ -346,12 +369,14 @@ const Profile = ({shareprofileid}) => {
   const [follow, setFollow] = useState(false);
   const [suggestionOn, setSuggestionOn] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
+
   useEffect(() => {
     if (location.state?.onItem === true) {
       setOnItem(true);
       setOnPosts(false);
     }
   }, [location.state]);
+
   const handleFollowToggle = async (targetUserId, isFollowing) => {
     const userId = localStorage.getItem("userId");
     try {
@@ -376,9 +401,9 @@ const Profile = ({shareprofileid}) => {
       console.error("Error following/unfollowing user:", error);
     }
   };
-  const [activeSection, setActiveSection] = useState(null);
 
-  const [activeIndex, setActiveIndex] = useState(null); // Replace activePost
+  const [activeSection, setActiveSection] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(null);
   const reversedPosts = profile?.posts?.slice().reverse() || [];
   const reversedSaved = profile?.saved?.slice().reverse() || [];
   let activePost = null;
@@ -387,18 +412,18 @@ const Profile = ({shareprofileid}) => {
   } else if (activeSection === "saved") {
     activePost = activeIndex !== null ? reversedSaved[activeIndex] : null;
   }
-
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [menuOpenId, setMenuOpenId] = useState(null);
 
   const handleMoreClick = (id) => setMenuOpenId(id);
-  const handleCancel = () => setMenuOpenId(null);
+
   useEffect(() => {
     setActiveImageIndex(0);
   }, [activeIndex]);
-  // For swipe detection (mobile only)
+
   const [touchStartX, setTouchStartX] = useState(0);
   const [touchEndX, setTouchEndX] = useState(0);
+
   // Handle swipe start
   const handleTouchStart = (e) => {
     setTouchStartX(e.targetTouches[0].clientX);
@@ -411,8 +436,9 @@ const Profile = ({shareprofileid}) => {
   };
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState(activePost?.comments || []);
+
   const handleAddComment = async (postId) => {
-    if (!comment.trim()) return; // prevent empty comments
+    if (!comment.trim()) return;
 
     try {
       const res = await postAPI(
@@ -426,8 +452,8 @@ const Profile = ({shareprofileid}) => {
       );
 
       if (res && !res.hasError) {
-        setComments((prev) => [...prev, res.data.comment]); // add new comment
-        setComment(""); // clear input
+        setComments((prev) => [...prev, res.data.comment]);
+        setComment("");
         toast.success("Comment added");
       } else {
         toast.error(res?.message || "Failed to add comment");
@@ -440,14 +466,14 @@ const Profile = ({shareprofileid}) => {
 
   // Decide swipe direction
   const handleSwipe = () => {
-    const swipeThreshold = 50; // minimum px to count as swipe
+    const swipeThreshold = 50;
     if (touchStartX - touchEndX > swipeThreshold) {
-      // 👉 swipe left → next image
+      //  swipe left → next image
       if (activeImageIndex < activePost.images.length - 1) {
         setActiveImageIndex((prev) => prev + 1);
       }
     } else if (touchEndX - touchStartX > swipeThreshold) {
-      // 👈 swipe right → prev image
+      //  swipe right → prev image
       if (activeImageIndex > 0) {
         setActiveImageIndex((prev) => prev - 1);
       }
@@ -458,10 +484,9 @@ const Profile = ({shareprofileid}) => {
 
   const [like, setLike] = useState(false);
   const [likesCount, setLikesCount] = useState(activePost?.likes?.length || 0);
-  const [saved, setSaved] = useState(false);
   const [commentPanel, setComentPanel] = useState(false);
 
-  // 🔹 Sync like state whenever post changes
+  // Sync like state whenever post changes
   useEffect(() => {
     if (activePost) {
       setLike(activePost.likes?.includes(viewedUserId));
@@ -469,9 +494,7 @@ const Profile = ({shareprofileid}) => {
       setComments(activePost.comments || []);
     }
   }, [activePost, viewedUserId]);
-  const [isSaved, setIsSaved] = useState(
-    activePost?.saved?.includes(viewedUserId) || false
-  );
+
   const handleSave = async (postId) => {
     try {
       const res = await postAPI(
@@ -487,10 +510,8 @@ const Profile = ({shareprofileid}) => {
 
           return {
             ...prev,
-            // ✅ Update saved list from backend
             saved: res.data.savedPosts,
 
-            // ✅ Also update posts array so activePost reflects change
             posts: prev.posts.map((post) =>
               post._id === postId ? { ...post, isSaved: !post.isSaved } : post
             ),
@@ -506,9 +527,10 @@ const Profile = ({shareprofileid}) => {
       toast.error("Something went wrong");
     }
   };
+
   useEffect(() => {
     if (location.state?.updatedUsers) {
-      setUsers(location.state.updatedUsers); // ✅ sync updated list
+      setUsers(location.state.updatedUsers);
     }
   }, [location.state]);
 
@@ -522,7 +544,6 @@ const Profile = ({shareprofileid}) => {
       );
 
       if (res && !res.hasError) {
-        // ✅ Always use backend response
         setLike(res.data.likes.includes(viewedUserId));
         setLikesCount(res.data.likes.length);
       } else {
@@ -557,6 +578,7 @@ const Profile = ({shareprofileid}) => {
       console.error("Error blocking/unblocking user:", err);
     }
   };
+
   // Detect "@" and fetch mention suggestions
   const handleProfileCommentChange = async (e) => {
     e.preventDefault();
@@ -564,7 +586,7 @@ const Profile = ({shareprofileid}) => {
     const value = e.target.value;
     setComment(value);
 
-    const match = value.match(/@(\w*)$/); // last word after @
+    const match = value.match(/@(\w*)$/);
     if (match) {
       const query = match[1];
       if (query.length > 0) {
@@ -614,7 +636,7 @@ const Profile = ({shareprofileid}) => {
       if (res?.data?.success) {
         toast.success("Promotion cancelled successfully!");
 
-        // 🧠 Update promotion status in profile.posts
+        //  Update promotion status in profile.posts
         setProfile((prev) => {
           if (!prev) return prev;
           const updatedPosts = prev.posts.map((p) =>
@@ -652,13 +674,12 @@ const Profile = ({shareprofileid}) => {
     try {
       const reporterId = localStorage.getItem("userId");
 
-      // 🧩 Construct payload for post report
       const payload = {
         reporterId,
-        reportedUserId: reportedUser.id, // 👈 user who owns the post
+        reportedUserId: reportedUser.id, //  user who owns the post
         reason: selectedReason,
         description,
-        reportType: "profile", // 👈 explicitly set type
+        reportType: "profile",
       };
 
       const res = await postAPI("/api/reports/create", payload, true, true);
@@ -676,19 +697,143 @@ const Profile = ({shareprofileid}) => {
       setError("Server error while submitting report");
     }
   };
+
+  const handleSignOut = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userType");
+    localStorage.removeItem("email");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("profilePhoto");
+    window.dispatchEvent(new Event("profilePhotoUpdated"));
+    window.location.href = "/";
+  };
+
+  // ***for post***
+  const handleInputBlur = () => {
+    let value = Number(tipAmount);
+
+    if (isNaN(value)) {
+      setTipAmount(40);
+      setError("Please enter a valid number");
+      return;
+    }
+
+    if (value < 40) {
+      setTipAmount(40);
+      setError("Minimum tip is ₹40");
+    } else if (value > 1440) {
+      setTipAmount(1440);
+      setError("Maximum tip is ₹1440");
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setTipAmount(value); // allow free typing
+    setError(""); // reset error while typing
+  };
+
+  const handleSliderChange = (e) => {
+    setTipAmount(Number(e.target.value));
+    setError("");
+  };
+
+  const handleConfirm = async () => {
+    const value = Number(tipAmount);
+    if (value < 40 || value > 1440) {
+      setError("Tip must be between ₹40 and ₹1440");
+      return;
+    }
+
+    try {
+      const senderId = localStorage.getItem("userId");
+
+      const res = await postAPI("/api/tips/create", {
+        sender: senderId,
+        receiver: tipUser.receiverId, // from state
+        post: tipUser.id, // from state
+        amount: value,
+      });
+
+      if (res.data.success) {
+        setTipSuccess(true);
+        setTipPopupOpen(false);
+
+        // reset
+        setTipAmount(40);
+
+        //  Auto-hide after 2.5s if you want
+        setTimeout(() => setTipSuccess(false), 2500);
+      } else {
+        setError(res.data.message || "Failed to send tip");
+      }
+    } catch (err) {
+      console.error("Error sending tip:", err);
+      setError("Something went wrong. Try again.");
+    }
+  };
+
+  // change the url  with username
+  // useEffect(() => {
+  //   if (profile?.username) {
+  //     window.history.replaceState({}, "", `/social-media/${profile.username}`);
+  //   }
+  // }, [profile]);
   return (
     <div
       className={`${
         activePost ? "w-[80%]" : ""
       } lg:w-[56%] w-full lg:mt-8 mt-4`}
     >
+      {profile && (
+        <Helmet>
+          <meta charSet="utf-8" />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+          />
+          <meta name="robots" content="index, follow" />
+          <title>{profile.username}</title>
+          <meta name="description" content={profile.bio} />
+          {/* <meta name="keywords" content={}/> */}
+          <meta name="author" content={`${profile.firstName} ${profile.lastName}`} />
+
+          <meta property="og:type" content="profile" />
+          <meta property="og:title" content={profile.username} />
+          <meta property="og:description" content={profile.bio} />
+          <meta property="og:url" content={window.location.href} />
+          <meta
+            property="og:image"
+            content={
+              profile.profilePhoto
+                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                : `${DEFAULT_PROFILE_IMAGE}`
+            }
+          />
+
+          <meta name="twitter:title" content={profile.username} />
+          <meta name="twitter:description" content={profile.bio} />
+          <meta
+            name="twitter:image"
+            content={
+              profile.profilePhoto
+                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                : `${DEFAULT_PROFILE_IMAGE}`
+            }
+          />
+        </Helmet>
+      )}
+
       {/* Active Post Popup for all screen size*/}
       {activePost && (
         <div className=" absolute inset-0 z-[9999] bg-[#000000] w-full bg-opacity-40 flex  justify-center items-center w-full">
           {/* Close Button */}
           <button
-            className="absolute lg:top-25 top-15 lg:right-40 right-5 text-4xl font-bold z-50 mt-3 lg:mr-12"
-            onClick={() => setActiveIndex(null)}
+            className="absolute lg:top-5 top-5 lg:right-15 right-5 text-4xl font-bold z-50 mt-3 lg:mr-12"
+            onClick={() => {
+              setActiveIndex(null);
+              setMenuOpenId(null);
+            }}
           >
             <i className="ri-close-line text-[#000000]"></i>
           </button>
@@ -761,7 +906,11 @@ const Profile = ({shareprofileid}) => {
                 <div className="flex items-center justify-between relative">
                   <div className="flex items-center gap-2">
                     <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`}
+                      src={
+                        profile?.profilePhoto
+                          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                          : `${DEFAULT_PROFILE_IMAGE}`
+                      }
                       alt="profile"
                       className="w-11 h-11 rounded-full"
                     />
@@ -794,13 +943,99 @@ const Profile = ({shareprofileid}) => {
                   <button onClick={() => handleMoreClick(activePost._id)}>
                     <i className="ri-more-fill font-semibold text-2xl text-[#000000]"></i>
                   </button>
+                  {menuOpenId &&
+                    (activePost.user._id === loggedInUserId ? (
+                      <>
+                        <ul className="absolute flex flex-col rounded-xl items-center justify-between right-1 top-12 mt-2 w-40 bg-gray-200 border shadow-lg z-10">
+                          <li
+                            className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
+                            onClick={() => handleSave(activePost?._id)}
+                          >
+                            {activePost.isSaved ? "Unsave" : "Save"}
+                          </li>
+                          <hr className="w-[75%] border-t border-gray-800" />
+
+                          <hr className="w-[75%] border-t border-gray-800" />
+
+                          {/* Cancel */}
+                          <li
+                            className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400 text-red-500 rounded-b-xl"
+                            onClick={() => setMenuOpenId(null)}
+                          >
+                            Cancel
+                          </li>
+                        </ul>
+                      </>
+                    ) : (
+                      <>
+                        <ul className="absolute flex flex-col rounded-xl items-center justify-between right-1 top-12 mt-2 w-40 bg-gray-200 border shadow-lg z-10">
+                          {/* Pay Tip */}
+                          <div className="w-full flex flex-col items-center justify-center">
+                            <li
+                              className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400 rounded-t-xl"
+                              onClick={() => {
+                                setTipUser({
+                                  id: activePost._id,
+                                  receiverId: activePost.user._id,
+                                });
+                                setTipPopupOpen(true);
+                                setMenuOpenId(null);
+                              }}
+                            >
+                              Pay Tip
+                            </li>
+                            <hr className="w-[75%] border-t border-gray-800" />
+                          </div>
+
+                          {/* Report */}
+                          <div className="w-full flex flex-col items-center justify-center">
+                            <li
+                              className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
+                              onClick={() => {
+                                setReportedUser({
+                                  id: activePost.user._id,
+                                  postId: activePost._id,
+                                  username: activePost.user.username,
+                                });
+                                setReportPopupOpen(true);
+                                setMenuOpenId(null);
+                              }}
+                            >
+                              Report
+                            </li>
+
+                            <hr className="w-[75%] border-t border-gray-800" />
+                          </div>
+
+                          <li
+                            className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
+                            onClick={() => handleSave(activePost?._id)}
+                          >
+                            {activePost.isSaved ? "Unsave" : "Save"}
+                          </li>
+                          <hr className="w-[75%] border-t border-gray-800" />
+
+                          {/* Cancel */}
+                          <li
+                            className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400 text-red-500 rounded-b-xl"
+                            onClick={() => setMenuOpenId(null)}
+                          >
+                            Cancel
+                          </li>
+                        </ul>
+                      </>
+                    ))}
                 </div>
 
                 {/* Profile with Caption */}
                 <div className="flex flex-col hidden lg:flex">
                   <div className="flex items-center gap-2">
                     <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`}
+                      src={
+                        profile?.profilePhoto
+                          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                          : `${DEFAULT_PROFILE_IMAGE}`
+                      }
                       alt="profile"
                       className="w-11 h-11 rounded-full"
                     />
@@ -841,7 +1076,11 @@ const Profile = ({shareprofileid}) => {
                     .map((comment, idx) => (
                       <div key={idx} className="flex items-start gap-2">
                         <img
-                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`}
+                          src={
+                            profile?.profilePhoto
+                              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                              : `${DEFAULT_PROFILE_IMAGE}`
+                          }
                           alt="profile"
                           className="w-8 h-8 rounded-full"
                         />
@@ -884,7 +1123,10 @@ const Profile = ({shareprofileid}) => {
                         className="text-xl text-[#000000] font-medium cursor-pointer"
                         onClick={() => setOpenComment(true)}
                       />
-                      <IoPaperPlaneOutline className="text-xl text-[#000000] font-medium cursor-pointer" />
+                      <IoPaperPlaneOutline
+                        onClick={() => setSharePost(true)}
+                        className="text-xl text-[#000000] font-medium cursor-pointer"
+                      />
                     </div>
 
                     <div className="flex items-center gap-3">
@@ -954,7 +1196,11 @@ const Profile = ({shareprofileid}) => {
                             className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
                           >
                             <img
-                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`}
+                              src={
+                                profile?.profilePhoto
+                                  ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                                  : `${DEFAULT_PROFILE_IMAGE}`
+                              }
                               alt={user.username}
                               className="w-8 h-8 rounded-full"
                             />
@@ -1003,6 +1249,7 @@ const Profile = ({shareprofileid}) => {
           )}
         </div>
       )}
+
       {/* commentpanel that only appear on small screen */}
       {activePost && commentPanel && (
         <div className="fixed inset-0 z-[9999] w-full h-full flex flex-col bg-[#ffffff] lg:hidden">
@@ -1020,7 +1267,11 @@ const Profile = ({shareprofileid}) => {
           <div className="flex-1 flex flex-col overflow-y-auto">
             <div className="flex gap-2 border-b p-3">
               <img
-                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user?.profilePhoto}`}
+                src={
+                  profile?.profilePhoto
+                    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                    : `${DEFAULT_PROFILE_IMAGE}`
+                }
                 alt="profile"
                 className="w-11 h-11 rounded-full"
               />
@@ -1035,7 +1286,6 @@ const Profile = ({shareprofileid}) => {
             </div>
 
             {/* Comments */}
-            {/* Comments */}
             <div className="flex flex-col gap-3 p-3">
               {comments.length > 0 ? (
                 comments
@@ -1044,7 +1294,11 @@ const Profile = ({shareprofileid}) => {
                   .map((comment, idx) => (
                     <div key={idx} className="flex items-start gap-2">
                       <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`}
+                        src={
+                          profile?.profilePhoto
+                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                            : `${DEFAULT_PROFILE_IMAGE}`
+                        }
                         alt="profile"
                         className="w-8 h-8 rounded-full"
                       />
@@ -1063,7 +1317,6 @@ const Profile = ({shareprofileid}) => {
           </div>
 
           {/* Add Comment */}
-
           {canComment ? (
             <div className="flex flex-col relative">
               {/* Suggestions dropdown */}
@@ -1076,7 +1329,11 @@ const Profile = ({shareprofileid}) => {
                       className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
                     >
                       <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`}
+                        src={
+                          profile?.profilePhoto
+                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                            : `${DEFAULT_PROFILE_IMAGE}`
+                        }
                         alt={user.username}
                         className="w-8 h-8 rounded-full"
                       />
@@ -1113,7 +1370,8 @@ const Profile = ({shareprofileid}) => {
           )}
         </div>
       )}
- {/* Report Modal */}
+
+      {/* Report Modal */}
       {reportPopupOpen && (
         <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
           <div className="bg-white rounded-xl shadow-lg w-[400px] max-w-full p-5">
@@ -1219,6 +1477,7 @@ const Profile = ({shareprofileid}) => {
           </div>
         </div>
       )}
+
       {/* Success Popup */}
       {reportSuccess && reportedUser && (
         <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
@@ -1257,7 +1516,7 @@ const Profile = ({shareprofileid}) => {
               </p>
               <div className="flex justify-center gap-3">
                 <button
-                  onClick={handleBlockUser} // ✅ hook your block API
+                  onClick={handleBlockUser}
                   className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
                 >
                   Block
@@ -1273,7 +1532,8 @@ const Profile = ({shareprofileid}) => {
           </div>
         </div>
       )}
-      {sharePost && (
+
+      {shareProfile && (
         <div className="fixed inset-0 bg-[#000000]/40 flex justify-center items-center z-[9999]">
           <div className="bg-white w-80 rounded-xl p-4 shadow-lg relative">
             {/* Close */}
@@ -1307,6 +1567,134 @@ const Profile = ({shareprofileid}) => {
           </div>
         </div>
       )}
+
+      {sharePost && (
+        <div className="fixed inset-0 bg-[#000000]/40 flex justify-center items-center z-[9999]">
+          <div className="bg-white w-80 rounded-xl p-4 shadow-lg relative">
+            {/* Close */}
+            <button
+              className="absolute top-2 right-2 text-xl"
+              onClick={() => setSharePost(false)}
+            >
+              <i className="ri-close-line"></i>
+            </button>
+
+            <h3 className="text-lg font-semibold mb-3">Share Post</h3>
+
+            {/* Copy Link */}
+            <button
+              className="w-full py-2 bg-gray-200 text-gray-800 rounded-lg mb-2"
+              onClick={() => {
+                const link = `${window.location.origin}/social-media/single-post/${activePost._id}`;
+                navigator.clipboard.writeText(link);
+                setCopyMsg("Link copied!");
+                setTimeout(() => setCopyMsg(""), 2000);
+              }}
+            >
+              Copy Link
+            </button>
+
+            {/* Success Message */}
+            {copyMsg && (
+              <p className="text-green-600 text-sm mt-1 text-center">
+                {copyMsg}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* pay tip popup */}
+      {tipPopupOpen && (
+        <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
+          <div className="bg-white rounded-xl shadow-xl p-6 w-[400px]">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-gray-800">Pay a Tip</h2>
+              <button
+                onClick={() => setTipPopupOpen(false)}
+                className="text-gray-600 hover:text-red-500 text-2xl font-bold"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Amount Input */}
+            <div className="mb-4">
+              <label className="font-medium text-sm text-gray-700">
+                Enter Amount
+              </label>
+              <input
+                type="number"
+                min="40"
+                max="1440"
+                value={tipAmount}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                className={`w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none ${
+                  error ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+              <p className="text-xs text-gray-500 mt-1">Min ₹40 • Max ₹1,440</p>
+              {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+            </div>
+
+            {/* Slider */}
+            <div className="mb-6">
+              <p className="text-sm font-medium mb-2">
+                Tip amount: <span className="font-semibold">₹{tipAmount}</span>
+              </p>
+              <input
+                type="range"
+                min="40"
+                max="1440"
+                step="10"
+                value={tipAmount}
+                onChange={handleSliderChange}
+                className="w-full accent-red-500"
+              />
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setTipPopupOpen(false)}
+                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirm}
+                className="px-4 py-2 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600"
+              >
+                Pay ₹{tipAmount}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* tip success popup */}
+      {tipSuccess && (
+        <div className="fixed inset-0 z-[10000] bg-[#000000]/40 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-xl shadow-xl text-center w-[300px] animate-bounceIn">
+            <FaCheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-800">
+              Tip Sent Successfully!
+            </h3>
+            <p className="text-gray-600 mt-1">
+              You tipped <span className="font-bold">₹{tipAmount}</span>
+            </p>
+            <button
+              onClick={() => setTipSuccess(false)}
+              className="mt-4 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
       <div
         className={` w-full text-[#2d1b0f] flex flex-col gap-8 ${
           activePost ? "bg-black bg-opacity-50" : ""
@@ -1320,7 +1708,11 @@ const Profile = ({shareprofileid}) => {
                 <div className="p-[3px] sm:p-[6px] rounded-full bg-gradient-to-r from-[#6E300C] via-[#F1620E] to-[#6E300C] w-full h-full">
                   <div className="w-full h-full bg-white rounded-full overflow-hidden">
                     <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.profilePhoto}`}
+                      src={
+                        profile?.profilePhoto
+                          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                          : `${DEFAULT_PROFILE_IMAGE}`
+                      }
                       alt={profile.username}
                       className="w-full h-full object-cover rounded-full"
                     />
@@ -1331,7 +1723,11 @@ const Profile = ({shareprofileid}) => {
                 </div>
               ) : (
                 <img
-                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.profilePhoto}`}
+                  src={
+                    profile?.profilePhoto
+                      ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                      : `${DEFAULT_PROFILE_IMAGE}`
+                  }
                   alt={profile.username}
                   className="w-full h-full object-cover rounded-full"
                 />
@@ -1359,9 +1755,10 @@ const Profile = ({shareprofileid}) => {
                     />
                   )}
                 </h1>
+
                 {/* button only enables when this profile is mine */}
                 {isMyProfile ? (
-                  // 👤 Owner sees Edit + Boost Profile
+                  //  Owner sees Edit + Boost Profile
                   <div
                     className="flex gap-2 items-center relative"
                     ref={menuRef}
@@ -1379,22 +1776,31 @@ const Profile = ({shareprofileid}) => {
                     </button>
                     {showMenu && (
                       <div className="absolute right-0 top-full flex flex-col items-center mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-md z-50">
-                        <Link to={""}>
+                        <Link to={"/social-media/setting"}>
                           <button className="bg-gray-100 font-medium w-full px-3 py-1.5 hover:bg-gray-200 rounded-t-lg">
                             Setting and privacy
                           </button>
                         </Link>
                         <hr className="w-[80%] border-t border-gray-800" />
-                        <Link to={"/social-media/logout"}>
-                          <button className="bg-gray-100 w-full font-medium px-3 py-1.5 rounded-b-lg hover:bg-gray-200">
-                            Log Out
-                          </button>
-                        </Link>
+                        <button
+                          onClick={handleSignOut}
+                          className="bg-gray-100 w-full font-medium px-3 py-1.5 rounded-b-lg hover:bg-gray-200"
+                        >
+                          Log Out
+                        </button>
+                        <hr className="w-[80%] border-t border-gray-800" />
+
+                        <button
+                          onClick={() => setShowMenu(!showMenu)}
+                          className="bg-gray-100 w-full font-medium px-3 py-1.5 rounded-b-lg hover:bg-gray-200"
+                        >
+                          Cancel
+                        </button>
                       </div>
                     )}
                   </div>
                 ) : (
-                  // 👥 Visitor sees Follow + User icon + Menu
+                  //  Visitor sees Follow + User icon + Menu
                   <div className="flex gap-2 items-center relative">
                     <button
                       onClick={() => handleFollowToggle(viewedUserId, follow)}
@@ -1427,14 +1833,13 @@ const Profile = ({shareprofileid}) => {
                     {showMenu && (
                       <div
                         className="absolute right-0 top-full flex flex-col items-center mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-md z-50"
-                        onClick={(e) => e.stopPropagation()} // ✅ prevent closing when clicking inside
+                        onClick={(e) => e.stopPropagation()} //  prevent closing when clicking inside
                       >
                         <button
                           className="bg-gray-100 font-medium w-full px-3 py-1.5 hover:bg-gray-200 rounded-t-lg"
                           onClick={() => {
                             console.log("clicked");
                             handleBlockUser();
-                            // ✅ close menu manually
                           }}
                         >
                           Block
@@ -1444,7 +1849,7 @@ const Profile = ({shareprofileid}) => {
                           onClick={() => {
                             setReportedUser({
                               id: viewedUserId,
-                              username:profile.username
+                              username: profile.username,
                             });
                             setReportPopupOpen(true);
                             setShowMenu((prev) => !prev);
@@ -1454,13 +1859,16 @@ const Profile = ({shareprofileid}) => {
                           Report
                         </button>
                         <hr className="w-[80%] border-t border-gray-800" />
-                        <button onClick={()=>setSharePost(true)} className="bg-gray-100 w-full font-medium px-3 py-1.5 hover:bg-gray-200">
+                        <button
+                          onClick={() => setShareProfile(true)}
+                          className="bg-gray-100 w-full font-medium px-3 py-1.5 hover:bg-gray-200"
+                        >
                           Share to
                         </button>
                         <hr className="w-[80%] border-t border-gray-800" />
                         <button
                           className="bg-gray-100 w-full font-medium px-3 py-1.5 rounded-b-lg hover:bg-gray-200"
-                          onClick={() => setShowMenu(false)} // ✅ close on cancel
+                          onClick={() => setShowMenu(false)} //  close on cancel
                         >
                           Cancel
                         </button>
@@ -1531,7 +1939,11 @@ const Profile = ({shareprofileid}) => {
                 {user.live ? (
                   <div className="relative w-[90px] h-[90px] p-[4px] bg-gradient-to-r from-[#6E300C] via-[#F1620E] to-[#6E300C] rounded-full overflow-visible">
                     <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.profilePhoto}`}
+                      src={
+                        profile?.profilePhoto
+                          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                          : `${DEFAULT_PROFILE_IMAGE}`
+                      }
                       className="w-full h-full rounded-full object-cover"
                       alt="profile-pic"
                     />
@@ -1541,7 +1953,11 @@ const Profile = ({shareprofileid}) => {
                   </div>
                 ) : (
                   <img
-                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.profilePhoto}`}
+                    src={
+                      profile?.profilePhoto
+                        ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                        : `${DEFAULT_PROFILE_IMAGE}`
+                    }
                     className="w-[90px] h-[90px] rounded-full object-cover"
                     alt={profile.username}
                   />
@@ -1579,16 +1995,28 @@ const Profile = ({shareprofileid}) => {
                   <div className="absolute right-0 top-full flex flex-col items-center mt-2 w-40 bg-gray-200 rounded-md z-50">
                     {isMyProfile ? (
                       <>
-                        <button className="bg-gray-100 font-medium w-full px-1 py-1 hover:bg-gray-200 rounded-t-lg">
-                          Setting and privacy
-                        </button>
+                        <Link to={"/social-media/setting"}>
+                          <button className="bg-gray-100 font-medium w-full px-1 py-1 hover:bg-gray-200 rounded-t-lg">
+                            Setting and privacy
+                          </button>
+                        </Link>
+
                         <hr className="w-[80%] border-t border-gray-800" />
                         <button className="bg-gray-100 w-full font-medium px-1 py-1 hover:bg-gray-200">
                           Login activity
                         </button>
                         <hr className="w-[80%] border-t border-gray-800" />
-                        <button className="bg-gray-100 w-full font-medium px-1 py-1 rounded-b-lg hover:bg-gray-200">
+                        <button
+                          onClick={handleSignOut}
+                          className="bg-gray-100 w-full font-medium px-1 py-1 rounded-b-lg hover:bg-gray-200"
+                        >
                           Log Out
+                        </button>
+                        <button
+                          onClick={() => setShowMenu(!showMenu)}
+                          className="bg-gray-100 w-full font-medium px-1 py-1 rounded-b-lg hover:bg-gray-200"
+                        >
+                          Cancel
                         </button>
                       </>
                     ) : (
@@ -1605,11 +2033,24 @@ const Profile = ({shareprofileid}) => {
                           Block
                         </button>
                         <hr className="w-[80%] border-t border-gray-800" />
-                        <button className="bg-gray-100 w-full font-medium px-1 py-1 hover:bg-gray-200">
+                        <button
+                          onClick={() => {
+                            setReportedUser({
+                              id: viewedUserId,
+                              username: profile.username,
+                            });
+                            setReportPopupOpen(true);
+                            setShowMenu((prev) => !prev);
+                          }}
+                          className="bg-gray-100 w-full font-medium px-1 py-1 hover:bg-gray-200"
+                        >
                           Report
                         </button>
                         <hr className="w-[80%] border-t border-gray-800" />
-                        <button className="bg-gray-100 w-full font-medium px-1 py-1 hover:bg-gray-200">
+                        <button
+                          onClick={() => setShareProfile(true)}
+                          className="bg-gray-100 w-full font-medium px-1 py-1 hover:bg-gray-200"
+                        >
                           Share to
                         </button>
                         <hr className="w-[80%] border-t border-gray-800" />
@@ -1958,10 +2399,12 @@ const Profile = ({shareprofileid}) => {
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <button className="text-sm bg-white text-[#6E4E37] px-3 py-[2px] rounded-md font-medium hover:bg-[#f8f8f8] transition">
-                          View
-                        </button>
-                        {isMyProfile && (
+                        <Link to={`/product-details/${item._id}`}>
+                          <button className="text-sm bg-white text-[#6E4E37] px-3 py-[2px] rounded-md font-medium hover:bg-[#f8f8f8] transition">
+                            View
+                          </button>
+                        </Link>
+                        {/* {isMyProfile && (
                           <button
                             className="text-sm bg-white text-[#6E4E37] px-3 py-[2px] rounded-md font-medium hover:bg-[#f8f8f8] transition"
                             onClick={() =>
@@ -1976,7 +2419,7 @@ const Profile = ({shareprofileid}) => {
                           >
                             Post
                           </button>
-                        )}
+                        )} */}
                       </div>
                     </div>
                   </div>
@@ -1991,9 +2434,29 @@ const Profile = ({shareprofileid}) => {
         )}
 
         {/* Tagged */}
-        {onTag && (
-          <div className="text-center text-gray-500">No tagged posts</div>
-        )}
+        {onTag &&
+          (collaboratedPosts?.length !== 0 ? (
+            <div className="grid grid-cols-3 sm:gap-4 gap-1 w-full">
+              {collaboratedPosts.map((post) => (
+                <div key={post._id} className="relative cursor-pointer">
+                  {post.images?.length > 0 && (
+                    <img
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
+                      alt={`post-${post._id}`}
+                      className="sm:h-[240px] sm:w-full h-[120px] rounded-md"
+                    />
+                  )}
+                  {post.images?.length > 1 && (
+                    <div className="absolute top-2 right-2 bg-black/60 p-1 rounded">
+                      <i className="ri-checkbox-multiple-blank-line text-white text-lg"></i>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center text-gray-500">No tagged posts</div>
+          ))}
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import { FaCheckCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import putAPI from "../../../api/putAPI";
 import { timeAgo } from "./../../../utils/TimeAgo.js";
+import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables.jsx";
 
 const Post = () => {
   const userId = localStorage.getItem("userId");
@@ -30,8 +31,9 @@ const Post = () => {
   const [reportedUser, setReportedUser] = useState(null);
   const [sharePost, setSharePost] = useState(null);
   const [copyMsg, setCopyMsg] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const activePost = activeIndex !== null ? posts[activeIndex] : null;
+
   useEffect(() => {
     const shouldLockScroll = activePost || reportPopupOpen || tipPopupOpen;
 
@@ -41,36 +43,37 @@ const Post = () => {
       document.body.style.overflow = "auto";
     };
   }, [activePost, reportPopupOpen, tipPopupOpen]);
-  const navigate = useNavigate(); // 👈 initialize navigate
 
-  // 🔹 Navigate to profile
+
+  const navigate = useNavigate(); 
+
   const goToProfile = (profileUserId) => {
     navigate("/social-media/profile", {
-      state: { userId: profileUserId }, // 👈 pass post.user._id
+      state: { userId: profileUserId },
     });
   };
+
   // 🔹 Fetch homepage posts
   useEffect(() => {
     const fetchPosts = async () => {
+      setLoading(true);
       try {
         const res = await getAPI(
           `/api/social-media/homepage?userId=${userId}`,
           true
         );
-        setPosts(res.data.posts || []);
-        console.log(
-          "social-media/homepage?userid in posts.jsx",
-          res.data.posts
-        );
+        setPosts(res?.data?.posts || []);
+       
         // console.log("Fetched posts:", res.data.posts);
       } catch (err) {
         console.error("Error fetching posts:", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchPosts();
   }, [userId]);
 
-  // 🔹 Like / Unlike
   const handleLike = async (postId) => {
     try {
       await postAPI(
@@ -96,7 +99,7 @@ const Post = () => {
     }
   };
 
-  // 🔹 Save / Unsave
+
   const handleSave = async (postId) => {
     try {
       await postAPI(
@@ -106,11 +109,10 @@ const Post = () => {
         true
       );
 
-      // update `isSaved` flag directly
       setPosts((prev) =>
         prev.map((p) =>
           p._id === postId
-            ? { ...p, isSaved: !p.isSaved } // 👈 toggle boolean
+            ? { ...p, isSaved: !p.isSaved } 
             : p
         )
       );
@@ -119,7 +121,7 @@ const Post = () => {
     }
   };
 
-  // 🔹 Add Comment
+
   const handleComment = async (postId) => {
     if (!commentText.trim()) return;
     try {
@@ -141,9 +143,10 @@ const Post = () => {
       console.error("Error adding comment:", err);
     }
   };
+
   useEffect(() => {
     if (activePost) {
-      setActiveImageIndex(0); // always start at first image
+      setActiveImageIndex(0); 
     }
   }, [activePost]);
 
@@ -179,7 +182,7 @@ const Post = () => {
     }
   };
 
-  // ✅ Insert selected mention
+  // Insert selected mention
   const handleSelectMention = (username) => {
     // Replace last @word with @username
     const newText = commentText.replace(/@\w*$/, `@${username} `);
@@ -187,20 +190,21 @@ const Post = () => {
     setMentionSuggestions([]);
     setShowMentions(false);
   };
+
+
   const handleFollowToggle = async (targetUserId, isFollowing) => {
     const userId = localStorage.getItem("userId");
 
     try {
-      // 💥 Optimistic UI update first
+      //  Optimistic UI update first
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
           post.user._id === targetUserId
-            ? { ...post, showFollowButton: isFollowing } // hide follow if just followed
+            ? { ...post, showFollowButton: isFollowing } 
             : post
         )
       );
 
-      // 🔹 Call API
       if (isFollowing) {
         await postAPI(
           `/api/social-media/unfollow/${targetUserId}`,
@@ -232,8 +236,8 @@ const Post = () => {
 
   const handleInputChange = (e) => {
     const value = e.target.value;
-    setTipAmount(value); // allow free typing
-    setError(""); // reset error while typing
+    setTipAmount(value); 
+    setError(""); 
   };
 
   const handleInputBlur = () => {
@@ -258,6 +262,7 @@ const Post = () => {
     setTipAmount(Number(e.target.value));
     setError("");
   };
+
   const handleConfirm = async () => {
     const value = Number(tipAmount);
     if (value < 40 || value > 1440) {
@@ -266,12 +271,12 @@ const Post = () => {
     }
 
     try {
-      const senderId = localStorage.getItem("userId"); // 👈 from localStorage
+      const senderId = localStorage.getItem("userId"); 
 
       const res = await postAPI("/api/tips/create", {
         sender: senderId,
-        receiver: tipUser.receiverId, // from state
-        post: tipUser.id, // from state
+        receiver: tipUser.receiverId, 
+        post: tipUser.id, 
         amount: value,
       });
 
@@ -279,10 +284,8 @@ const Post = () => {
         setTipSuccess(true);
         setTipPopupOpen(false);
 
-        // reset
         setTipAmount(40);
 
-        // ✅ Auto-hide after 2.5s if you want
         setTimeout(() => setTipSuccess(false), 2500);
       } else {
         setError(res.data.message || "Failed to send tip");
@@ -292,6 +295,7 @@ const Post = () => {
       setError("Something went wrong. Try again.");
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -303,14 +307,13 @@ const Post = () => {
     try {
       const reporterId = localStorage.getItem("userId");
 
-      // 🧩 Construct payload for post report
       const payload = {
         reporterId,
-        reportedUserId: reportedUser.id, // 👈 user who owns the post
-        postId: reportedUser.postId, // 👈 post being reported
+        reportedUserId: reportedUser.id, 
+        postId: reportedUser.postId, 
         reason: selectedReason,
         description,
-        reportType: "post", // 👈 explicitly set type
+        reportType: "post", 
       };
 
       const res = await postAPI("/api/reports/create", payload, true, true);
@@ -344,10 +347,8 @@ const Post = () => {
       if (res?.data?.success) {
         console.log(res.data.message);
 
-        // ✅ Close success modal
         setReportSuccess(false);
 
-        // ✅ Redirect user if blocked
         if (res.data.isBlocked) {
           Navigate("/social-media/");
         }
@@ -360,14 +361,17 @@ const Post = () => {
   // const [reportPopupOpen, setReportPopupOpen] = useState(false);
   // const [reportSuccess, setReportSuccess] = useState(false);
 
+  if (loading) {
+    return <div>Posts are loading...</div>;
+  }
   return (
     <div className=" lg:w-[56%] w-full flex flex-col mx-auto">
       {/* Active Post Popup */}
       {activePost && (
         <div>
+
           {/* for big screen */}
           <div className="hidden lg:flex fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
-            {/* Close Button */}
             <button
               className="absolute lg:top-20 top-10 lg:right-40 right-10 text-4xl font-bold z-50"
               onClick={() => setActiveIndex(null)}
@@ -377,6 +381,7 @@ const Post = () => {
 
             {/* Popup Layout */}
             <div className="lg:bg-white w-[73%] lg:h-[72vh] h-[56vh] rounded-lg overflow-hidden flex relative lg:flex-row flex-col">
+             
               {/* Left Side (Image Viewer) */}
               <div className="w-[60%] h-full  bg-black flex items-center justify-center relative">
                 {activePost.images?.length > 0 ? (
@@ -434,12 +439,16 @@ const Post = () => {
 
               {/* Right Side (Post Content) */}
               <div className="lg:w-[40%] w-full flex flex-col justify-between gap-6 p-4 bg-[#ffffff] overflow-y-auto">
+                
                 {/* User Info */}
                 <div className="flex flex-col gap-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user?.profilePhoto}`}
+                        src={activePost.user?.profilePhoto?
+                          `${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user?.profilePhoto}` :
+                          `${DEFAULT_PROFILE_IMAGE}`
+                        }
                         alt="profile"
                         className="w-10 h-10 rounded-full"
                       />
@@ -479,11 +488,15 @@ const Post = () => {
                       X
                     </button>
                   </div>
+
                   {/* profile with caption */}
                   <div className="flex flex-col gap-3">
                     <div className="flex flex-row items-center gap-1">
                       <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user?.profilePhoto}`}
+                        src={activePost?.user?.profilePhoto?
+                          `${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user?.profilePhoto}` :
+                          `${DEFAULT_PROFILE_IMAGE}`
+                        }
                         alt="profile"
                         className="w-10 h-10 rounded-full"
                       />
@@ -511,6 +524,7 @@ const Post = () => {
                         )}
                       </span>
                     </div>
+
                     {/* Caption */}
                     <p className="text-sm">
                       {activePost.caption || "No caption"}
@@ -524,7 +538,10 @@ const Post = () => {
                     activePost.comments.map((comment, idx) => (
                       <div key={idx} className="flex items-start gap-2">
                         <img
-                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`}
+                          src={activePost.user?.profilePhoto?
+                            `${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}` :
+                            `${DEFAULT_PROFILE_IMAGE}`
+                          }
                           alt="profile"
                           className="w-8 h-8 rounded-full"
                         />
@@ -541,6 +558,7 @@ const Post = () => {
                   )}
                 </div>
                 <div className="flex flex-col gap-1.5">
+
                   {/* Actions */}
                   <div className="flex items-center justify-between ">
                     <div className="flex items-center gap-3">
@@ -572,6 +590,7 @@ const Post = () => {
                   <p className="text-sm font-medium ml-1">
                     {activePost.likes.length} likes
                   </p>
+
                   {/* Suggestions dropdown */}
                   {activePost &&
                     showMentions &&
@@ -584,7 +603,10 @@ const Post = () => {
                             className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
                           >
                             <img
-                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`}
+                              src={activePost.user?.profilePhoto?
+                                `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}` :
+                                `${DEFAULT_PROFILE_IMAGE}`
+                              }
                               alt={user.username}
                               className="w-8 h-8 rounded-full"
                             />
@@ -598,6 +620,7 @@ const Post = () => {
                         ))}
                       </div>
                     )}
+
                   {/* Add Comment */}
                   {activePost.canComment ? (
                     <div className="flex gap-2 relative">
@@ -605,7 +628,7 @@ const Post = () => {
                         type="text"
                         placeholder="Add a comment..."
                         value={commentText}
-                        onChange={handleChange} // 👈 replace with custom handler
+                        onChange={handleChange} 
                         className="flex-grow outline-none text-sm"
                       />
                       <button
@@ -624,6 +647,7 @@ const Post = () => {
               </div>
             </div>
           </div>
+
           {/* for small screen */}
           <div className="fixed inset-0 z-[9999] w-full h-full flex flex-col bg-[#ffffff] lg:hidden">
             {/* back button with title */}
@@ -641,7 +665,10 @@ const Post = () => {
             <div className="flex-1 flex flex-col overflow-y-auto">
               <div className="flex gap-2 border-b p-3">
                 <img
-                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user?.profilePhoto}`}
+                  src={activePost.user?.profilePhoto?
+                    `${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user?.profilePhoto}` :
+                    `${DEFAULT_PROFILE_IMAGE}`
+                  }
                   alt="profile"
                   className="w-11 h-11 rounded-full"
                 />
@@ -684,7 +711,10 @@ const Post = () => {
                     .map((comment, idx) => (
                       <div key={idx} className="flex items-start gap-2">
                         <img
-                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`}
+                          src={
+                            `${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}` ||
+                            `${DEFAULT_PROFILE_IMAGE}`
+                          }
                           alt="profile"
                           className="w-8 h-8 rounded-full"
                         />
@@ -701,6 +731,7 @@ const Post = () => {
                 )}
               </div>
             </div>
+
             {/* Suggestions dropdown */}
             {activePost && showMentions && mentionSuggestions.length > 0 && (
               <div className="absolute bottom-10 left-0 w-full bg-white border rounded-md shadow-md z-50 max-h-[80] overflow-y-auto">
@@ -711,7 +742,10 @@ const Post = () => {
                     className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
                   >
                     <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`}
+                      src={
+                        `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}` ||
+                        `${DEFAULT_PROFILE_IMAGE}`
+                      }
                       alt={user.username}
                       className="w-8 h-8 rounded-full"
                     />
@@ -752,6 +786,7 @@ const Post = () => {
       {tipPopupOpen && (
         <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
           <div className="bg-white rounded-xl shadow-xl p-6 w-[400px]">
+           
             {/* Header */}
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold text-gray-800">Pay a Tip</h2>
@@ -762,6 +797,7 @@ const Post = () => {
                 ×
               </button>
             </div>
+           
             {/* Amount Input */}
             <div className="mb-4">
               <label className="font-medium text-sm text-gray-700">
@@ -835,10 +871,12 @@ const Post = () => {
           </div>
         </div>
       )}
+      
       {/* Report Modal */}
       {reportPopupOpen && (
         <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
           <div className="bg-white rounded-xl shadow-lg w-[400px] max-w-full p-5">
+           
             {/* Header */}
             <div className="flex justify-between items-center border-b pb-3 mb-4">
               <h2 className="text-lg font-semibold text-gray-800">
@@ -941,10 +979,12 @@ const Post = () => {
           </div>
         </div>
       )}
+     
       {/* Success Popup */}
       {reportSuccess && reportedUser && (
         <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
           <div className="bg-white rounded-xl shadow-lg w-[380px] p-6 text-center">
+            
             {/* Success Icon */}
             <div className="flex justify-center mb-3">
               <svg
@@ -998,6 +1038,7 @@ const Post = () => {
       {sharePost && (
         <div className="fixed inset-0 bg-[#000000]/40 flex justify-center items-center z-[9999]">
           <div className="bg-white w-80 rounded-xl p-4 shadow-lg relative">
+            
             {/* Close */}
             <button
               className="absolute top-2 right-2 text-xl"
@@ -1020,6 +1061,7 @@ const Post = () => {
             >
               Copy Link
             </button>
+            
             {/* Success Message */}
             {copyMsg && (
               <p className="text-green-600 text-sm mt-1 text-center">
@@ -1032,11 +1074,15 @@ const Post = () => {
       <div className="w-full ">
         {posts.map((post) => (
           <div key={post._id} className="w-full flex flex-col mb-4 relative">
+           
             {/* Post Header */}
             <div className="flex justify-between items-center">
               <div className="flex gap-2 p-2 items-center">
                 <img
-                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.user.profilePhoto}`}
+                  src={
+                    `${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.user.profilePhoto}` ||
+                    `${DEFAULT_PROFILE_IMAGE}`
+                  }
                   alt="profile"
                   className="h-11 w-11 rounded-full cursor-pointer"
                   onClick={() => goToProfile(post.user._id)}
@@ -1123,6 +1169,7 @@ const Post = () => {
             {/* More Menu */}
             {menuOpenId === post._id && (
               <ul className="absolute flex flex-col rounded-xl items-center justify-between right-1 top-12 mt-2 w-40 bg-gray-200 border shadow-lg z-10 ">
+               
                 {/* Pay Tip */}
                 {post.user._id !== userId && (
                   <div className="w-full flex flex-col items-center justify-center">
@@ -1164,12 +1211,12 @@ const Post = () => {
                     <hr className="w-[75%] border-t border-gray-800" />
                   </div>
                 )}
+                
                 {/* Follow / Unfollow */}
                 {post.user._id !== userId && (
                   <div className="w-full flex flex-col items-center justify-center">
                     <li
                       className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
-                      // pass !post.showFollowButton so the function will set showFollowButton to the new value
                       onClick={() =>
                         handleFollowToggle(
                           post.user._id,
@@ -1380,7 +1427,10 @@ const Post = () => {
                       className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
                     >
                       <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`}
+                        src={
+                          `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}` ||
+                          `${DEFAULT_PROFILE_IMAGE}`
+                        }
                         alt={user.username}
                         className="w-8 h-8 rounded-full"
                       />

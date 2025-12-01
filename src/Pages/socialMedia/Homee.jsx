@@ -8,7 +8,6 @@ const Homee = () => {
   return (
     <div className=" flex flex-col">
      <header className='w-full   '>
-      {/* <NavBar /> */}
      </header>
 
       {/* Main layout: Sidebar | Post | Suggestion */}

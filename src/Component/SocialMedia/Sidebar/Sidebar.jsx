@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import "./Side-post-sugg.css"; 
+import "./Side-post-sugg.css";
 import { Link, useLocation } from "react-router-dom";
+import getAPI from "../../../api/getAPI";
+import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -8,11 +10,10 @@ const Sidebar = () => {
   const [isPinned, setIsPinned] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-
+  const [user, setUser] = useState({});
   const createRef = useRef(null);
-
+  const userId = localStorage.getItem("userId");
   useEffect(() => {
-    
     const handleClickOutside = (e) => {
       if (
         createRef.current &&
@@ -25,32 +26,93 @@ const Sidebar = () => {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
-  
+
   const items = [
-    { key: "home", icon: "house-fill", label: "Home" , link:"/social-media/"},
-    { key: "search", icon: "search", label: "Search", link:"/social-media/search" },
-    { key: "explore", icon: "compass", label: "Explore" , link:"/social-media/explore"},
-    { key: "notification", icon: "bell", label: "Notification" , link:"/social-media/notification"},
-    { key: "create", icon: "plus-square", label: "Create" , link:"/social-media/create-post"},
-    { key: "live", icon: "broadcast-pin", label: "Live" , link:"/social-media/create-live"},
-    { key: "profile", icon: "person", label: "Profile" , link:"/social-media/profile"},
-    { key: "saved", icon: "bookmark", label: "Saved" , link:"/social-media/saved"},
-    { key: "settings", icon: "gear", label: "Settings" , link:"/social-media/setting"},
-    { key: "logout", icon: "box-arrow-left", label: "Logout" , link:"/social-media/logout"},
+    { key: "home", icon: "house-fill", label: "Home", link: "/social-media/" },
+    {
+      key: "search",
+      icon: "search",
+      label: "Search",
+      link: "/social-media/search",
+    },
+    {
+      key: "explore",
+      icon: "compass",
+      label: "Explore",
+      link: "/social-media/explore",
+    },
+    {
+      key: "notification",
+      icon: "bell",
+      label: "Notification",
+      link: "/social-media/notification",
+    },
+    {
+      key: "create",
+      icon: "plus-square",
+      label: "Create",
+      link: "/social-media/create-post",
+    },
+    {
+      key: "live",
+      icon: "broadcast-pin",
+      label: "Live",
+      link: "/social-media/create-live",
+    },
+    {
+      key: "profile",
+      icon: "person",
+      label: "Profile",
+      link: "/social-media/profile",
+    },
+    {
+      key: "saved",
+      icon: "bookmark",
+      label: "Saved",
+      link: "/social-media/saved",
+    },
+    {
+      key: "settings",
+      icon: "gear",
+      label: "Settings",
+      link: "/social-media/setting",
+    },
+    {
+      key: "logout",
+      icon: "box-arrow-left",
+      label: "Logout",
+      link: "/social-media/logout",
+    },
   ];
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
+      setUser(result.data.user);
+    };
+    fetchUserData();
+  }, [userId]);
 
   return (
     <>
       {/* Sidebar */}
-      <div className={`sidebar-container-s ${isPinned ? "pinned" : ""} w-[22%] mx-auto`}>
+      <div
+        className={`sidebar-container-s ${
+          isPinned ? "pinned" : ""
+        } w-[22%] mx-auto`}
+      >
         <div className="sidebar-icons-s">
           {items.map((item, idx) => (
-           <Link to={`${item.link}` } key={item.key}><div
-              key={item.key}
-              className={`icon-wrapper-s ${isActive(item.link) ? "active" : ""} ${idx === 7 ? "" : ""}`}
-            >
-              <i className={` bi-${item.icon}`}></i>
-            </div></Link> 
+            <Link to={`${item.link}`} key={item.key}>
+              <div
+                key={item.key}
+                className={`icon-wrapper-s ${
+                  isActive(item.link) ? "active" : ""
+                } ${idx === 7 ? "" : ""}`}
+              >
+                <i className={` bi-${item.icon}`}></i>
+              </div>
+            </Link>
           ))}
         </div>
 
@@ -60,15 +122,15 @@ const Sidebar = () => {
           </div>
           {items.map((item, idx) => (
             <Link to={`${item.link}`} key={item.key}>
-            <div
-              key={item.key}
-              className={`label-wrapper-s ${isActive(item.link) ? "active" : ""} ${idx === 8 ? "" : ""}`}
-              
-            >
-              <i className={` bi-${item.icon}`}></i>
-              {item.label}
-              
-            </div>
+              <div
+                key={item.key}
+                className={`label-wrapper-s ${
+                  isActive(item.link) ? "active" : ""
+                } ${idx === 8 ? "" : ""}`}
+              >
+                <i className={` bi-${item.icon}`}></i>
+                {item.label}
+              </div>
             </Link>
           ))}
         </div>
@@ -80,12 +142,11 @@ const Sidebar = () => {
           {items.slice(0, 2).map((item) => (
             <Link to={`${item.link}`}>
               <li
-              key={item.key}
-              className={`nav-item-s ${isActive(item.link) ? "active" : ""}`}
-              
-            >
-              <i className={` bi-${item.icon}`}></i>
-            </li>
+                key={item.key}
+                className={`nav-item-s ${isActive(item.link) ? "active" : ""}`}
+              >
+                <i className={` bi-${item.icon}`}></i>
+              </li>
             </Link>
           ))}
 
@@ -103,30 +164,35 @@ const Sidebar = () => {
             {showCreate && (
               <div className="create-options-s flex" ref={createRef}>
                 <Link to="/social-media/create-post">
-                  <div className="create-option-s" onClick={() => console.log("Post")}> 
-                  <i className=" bi-plus-square"></i>
-                  <span>Post</span>
-                </div>
+                  <div
+                    className="create-option-s"
+                    onClick={() => console.log("Post")}
+                  >
+                    <i className=" bi-plus-square"></i>
+                    <span>Post</span>
+                  </div>
                 </Link>
                 <Link to="/social-media/create-live">
-                  <div className="create-option-s" onClick={() => console.log("Live")}> 
-                  <i className=" bi-broadcast-pin"></i>
-                  <span>Live</span>
-                </div>
+                  <div
+                    className="create-option-s"
+                    onClick={() => console.log("Live")}
+                  >
+                    <i className=" bi-broadcast-pin"></i>
+                    <span>Live</span>
+                  </div>
                 </Link>
               </div>
             )}
           </li>
 
           {items.slice(2, 3).map((item) => (
-            <Link to={`${item.link}`} >
+            <Link to={`${item.link}`}>
               <li
-              key={item.key}
-              className={`nav-item-s  ${isActive(item.link) ? "active" : ""}`}
-              
-            >
-              <i className={` bi-${item.icon}`}></i>
-            </li>
+                key={item.key}
+                className={`nav-item-s  ${isActive(item.link) ? "active" : ""}`}
+              >
+                <i className={` bi-${item.icon}`}></i>
+              </li>
             </Link>
           ))}
 
@@ -146,32 +212,46 @@ const Sidebar = () => {
         <>
           <div className="profile-menu-s open">
             <div className="profile-header-s">
-              <button className="close-btn" onClick={() => setShowProfileMenu(false)}>&times;</button>
+              <button
+                className="close-btn"
+                onClick={() => setShowProfileMenu(false)}
+              >
+                &times;
+              </button>
               <img
-                src="https://randomuser.me/api/portraits/women/44.jpg"
+                src={
+                  user?.profilePhoto
+                    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`
+                    : DEFAULT_PROFILE_IMAGE
+                }
                 alt="Profile"
                 className="profile-pic"
               />
-              <div className="profile-name-s">July Singh</div>
-              <div className="profile-category-s">Artist</div>
+              <div className="profile-name-s">
+                {user.name} {user.lastName}
+              </div>
+              <div className="profile-category-s">{user.role}</div>
             </div>
             <div className="profile-content-s">
               {items.map((item) => (
                 <Link to={`${item.link}`}>
                   <div
-                  key={item.key}
-                  className={`profile-item-s  ${isActive(item.link) ? "active" : ""}`}
-                  
-                >
-                  <i className={`bi-${item.icon}`}></i>
-                  <span>{item.label}</span>
-                </div>
+                    key={item.key}
+                    className={`profile-item-s  ${
+                      isActive(item.link) ? "active" : ""
+                    }`}
+                  >
+                    <i className={`bi-${item.icon}`}></i>
+                    <span>{item.label}</span>
+                  </div>
                 </Link>
               ))}
             </div>
           </div>
-         <div className={`overlay-s ${showProfileMenu ? "active" : ""}`} onClick={() => setShowProfileMenu(false)}></div>
-
+          <div
+            className={`overlay-s ${showProfileMenu ? "active" : ""}`}
+            onClick={() => setShowProfileMenu(false)}
+          ></div>
         </>
       )}
     </>
