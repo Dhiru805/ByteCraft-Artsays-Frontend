@@ -32,7 +32,10 @@ const Register = () => {
   let updatedValue = value;
   
   if (id === 'firstName' || id === 'lastName') {
-    updatedValue = value.charAt(0).toUpperCase() + value.slice(1);
+    updatedValue = value.charAt(0).toUpperCase() + value.slice(1).trim();
+  }
+   if (id === 'emailOrPhone' || id === 'password') {
+    updatedValue = value.trim();
   }
 
   setFormData({
@@ -165,7 +168,6 @@ const Register = () => {
       setLoadingSubmit(false);
     }
   };
-
   return (
     <>
       <ToastContainer />

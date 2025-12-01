@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
 import { timeAgo } from "../../../utils/TimeAgo";
 import postAPI from "../../../api/postAPI";
-
+import { Helmet } from "react-helmet";
+import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 const SharePost = () => {
   const [sharePostData, setSharePostData] = useState(null);
   const { postId } = useParams();
@@ -46,9 +47,52 @@ const SharePost = () => {
       console.error("Error liking/unliking:", err);
     }
   };
-
   return (
     <div className="max-w-[50%] mx-auto mt-6">
+      {sharePostData && (
+        <Helmet>
+          <meta charSet="utf-8" />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+          />
+          <meta name="robots" content="index, follow" />
+          {/* <meta name="title" content={blogDetails.blogTitle} /> */}
+          <title>{sharePostData.user?.username}</title>
+          <meta name="description" content={sharePostData.caption} />
+          <meta name="keywords" content={sharePostData.hashtags.join(", ")} />
+          <meta
+            name="author"
+            content={`${sharePostData.user?.name} ${sharePostData.user?.lastName}`}
+          />
+
+          <meta property="og:type" content="post" />
+          <meta property="og:title" content={sharePostData.user?.username} />
+          <meta property="og:description" content={sharePostData.caption} />
+          <meta property="og:url" content={window.location.href} />
+          <meta
+            property="og:image"
+            content={
+              sharePostData.images.length > 0
+                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.images[0]}`
+                : `${DEFAULT_PROFILE_IMAGE}`
+            }
+          />
+
+          {/* <meta name="twitter:card" content="summary_large_image" /> */}
+          <meta name="twitter:title" content={sharePostData.user?.username} />
+          <meta name="twitter:description" content={sharePostData.caption} />
+          <meta
+            name="twitter:image"
+            content={
+              sharePostData.images.length > 0
+                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.images[0]}`
+                : `${DEFAULT_PROFILE_IMAGE}`
+            }
+          />
+        </Helmet>
+      )}
+
       {sharePostData && (
         <div className="w-full flex flex-col mb-4 relative">
           {/* Post Header */}

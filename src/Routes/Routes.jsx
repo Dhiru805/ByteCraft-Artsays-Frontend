@@ -523,6 +523,7 @@ import ViewMaterialOrder from "../Component/Dashboard/SellerDashboard/PackageMat
 
 //----------------------------------------Social Media----------------------------------//
 import Homee from "../Pages/socialMedia/Homee";
+import Saved from "../Pages/socialMedia/Saved"
 import Notification from "../Pages/socialMedia/Notification";
 import Search from "../Pages/socialMedia/Search";
 import Explore from "../Pages/socialMedia/Explore";
@@ -558,7 +559,7 @@ import ShowPurchasedBadge from "../Component/Dashboard/Super-AdminDashboard/Comm
 import ProductViewing from "../Component/SocialMedia/Profile/ProductView";
 import SharePost from "../Component/SocialMedia/Posts/SharePost";
 import SinglePost from "../Component/SocialMedia/Posts/SinglePost";
-import ShareProfile from "../Component/SocialMedia/Posts/ShareProfile";
+import ProfileLogout from "../Pages/socialMedia/ProfileLogout";
 
 const PrivateRoute = ({ allowedRoles, children }) => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
@@ -1553,9 +1554,8 @@ const AppRoutes = () => {
         <Route path="/social-media/explore" element={<Explore />} />
         <Route path="/social-media/create-post" element={<CreatePost />} />
         <Route path="/social-media/upload-post" element={<UploadPost />} />
-        <Route path="/social-media/profile:shareprofileid?" element={<SocialProfile />} />
-                {/* <Route path="/social-media/share-profile/:viewedUserId" element={<ShareProfile />} /> */}
-
+        <Route path="/social-media/profile/:shareProfileId?" element={<SocialProfile />} />
+{/* this router for woner profile,share profile,and uselocation.state profile */}
         <Route
           path="/social-media/profile/product-view"
           element={<ProductViewing />}
@@ -1577,6 +1577,8 @@ const AppRoutes = () => {
         <Route path="/social-media/live/:streamKey" element={<Live />} />
         <Route path="/social-media/test" element={<Test />} />
         <Route path="/social-media/setting" element={<Settings />} />
+        <Route path="/social-media/saved" element={<Saved/>} />
+        <Route path="/social-media/logout" element={<ProfileLogout/>}/>
 
         <Route path="/invoice" element={<EdprowiseInvoice />} />
         <Route path="/invoice1" element={<Invoice />} />

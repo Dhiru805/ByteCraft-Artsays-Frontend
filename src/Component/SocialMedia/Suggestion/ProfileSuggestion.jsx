@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import postAPI from "../../../../src/api/postAPI"; // adjust path
+import postAPI from "../../../../src/api/postAPI"; 
 
 const ProfileSuggestion = () => {
   const location = useLocation();
@@ -9,23 +9,23 @@ const ProfileSuggestion = () => {
   const { users: initialUsers = [], viewedUserId } = location.state || {};
   const [users, setUsers] = useState(initialUsers);
 
-  // ✅ your own userId from localStorage
+  //  your own userId from localStorage
   const userId = localStorage.getItem("userId");
 
-  // ✅ Toggle Follow/Unfollow
+  //  Toggle Follow/Unfollow
   const handleFollowToggle = async (targetUserId, isFollowing) => {
     try {
       if (isFollowing) {
         await postAPI(
           `/api/social-media/unfollow/${targetUserId}`,
-          { userId }, // 👈 send your own userId
+          { userId }, //  send your own userId
           true,
           true
         );
       } else {
         await postAPI(
           `/api/social-media/follow/${targetUserId}`,
-          { userId }, // 👈 send your own userId
+          { userId }, //  send your own userId
           true,
           true
         );
@@ -42,12 +42,12 @@ const ProfileSuggestion = () => {
     }
   };
 
-  // ✅ Remove user from list
+  //  Remove user from list
   const handleRemoveUser = (id) => {
     setUsers((prev) => prev.filter((u) => u._id !== id));
   };
 
-  // ✅ Go back and send updated list
+  //  Go back and send updated list
   const handleBack = () => {
     navigate(-1, { state: { updatedUsers: users } });
   };
@@ -90,7 +90,7 @@ const ProfileSuggestion = () => {
             <p className="text-center font-semibold text-sm">{user.username}</p>
             <p className="text-center text-gray-600 text-xs">{user.role}</p>
 
-            {/* ✅ Follow / Unfollow Button */}
+            {/*  Follow / Unfollow Button */}
             <button
               className={`mt-2 px-3 py-1 rounded-lg text-sm font-semibold transition-colors duration-300 ${
                 user.isFollowing

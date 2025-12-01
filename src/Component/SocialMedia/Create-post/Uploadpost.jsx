@@ -3,10 +3,11 @@ import getAPI from "../../../../src/api/getAPI";
 import postAPI from "../../../../src/api/postAPI";
 import Sidebar from "../Sidebar/Sidebar";
 import { MdVerified } from "react-icons/md";
-import { Link, useLocation } from "react-router-dom"; //
+import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./Post.css";
+import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 const stickersArray = ["🔥", "😂", "❤️", "👍", "🎉", "😍", "😭", "👀"];
 
 const Uploadpost = () => {
@@ -96,7 +97,6 @@ const Uploadpost = () => {
   const [images, setImages] = useState(passedImages);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Form states
   const [description, setDescription] = useState("");
   const [descMentionSuggestions, setDescMentionSuggestions] = useState([]);
   const [showDescMentions, setShowDescMentions] = useState(false);
@@ -119,7 +119,6 @@ const Uploadpost = () => {
           false,
           true
         );
-
         if (res?.data?.collaborators) {
           setSuggestions(res.data.collaborators);
         }
@@ -128,7 +127,7 @@ const Uploadpost = () => {
       }
     };
 
-    const delayDebounce = setTimeout(fetchSuggestions, 300); // debounce typing
+    const delayDebounce = setTimeout(fetchSuggestions, 300);
     return () => clearTimeout(delayDebounce);
   }, [searchQuery]);
 
@@ -195,8 +194,8 @@ const Uploadpost = () => {
 
     setImages(updatedImages);
   };
+
   // Handle description input change
-  // inside handleDescriptionChange
   const handleDescriptionChange = async (e) => {
     const userId = localStorage.getItem("userId");
     const value = e.target.value;
@@ -206,7 +205,7 @@ const Uploadpost = () => {
     const lastWord = words[words.length - 1];
 
     if (lastWord.startsWith("@") && lastWord.length > 1) {
-      const query = lastWord; // ✅ keep the "@"
+      const query = lastWord;
 
       try {
         const res = await getAPI(
@@ -228,7 +227,7 @@ const Uploadpost = () => {
 
   const handleSelectDescMention = (username) => {
     const words = description.split(/\s+/);
-    words[words.length - 1] = `@${username}`; // ✅ ensure the @ is preserved
+    words[words.length - 1] = `@${username}`;
     setDescription(words.join(" ") + " ");
     setShowDescMentions(false);
   };
@@ -237,12 +236,13 @@ const Uploadpost = () => {
     if (!showStickers) {
       const rect = emojiBtnRef.current.getBoundingClientRect();
       setStickerPos({
-        top: rect.bottom + 5, // just below the button
-        left: rect.left, // same horizontal position
+        top: rect.bottom + 5,
+        left: rect.left,
       });
     }
     setShowStickers(!showStickers);
   };
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -315,13 +315,31 @@ const Uploadpost = () => {
             {/* Profile */}
             <div className="w-full flex items-center justify-start gap-3">
               <img
-                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`}
+                src={
+                  `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}` ||
+                  `${DEFAULT_PROFILE_IMAGE}`
+                }
                 className="w-[65px] rounded-full"
                 alt="Profile"
               />
               <p className="text-lg font-medium">{profile?.username}</p>
-              <MdVerified className="inline text-blue-500 text-lg" />
+              {profile.verified?.length > 0 && (
+                <img
+                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                    profile.verified[profile.verified.length - 1]?.badgeImage
+                  }`}
+                  className="inline-block ml-1 w-6 h-6 object-contain"
+                  alt={
+                    profile.verified[profile.verified.length - 1]?.badgeName ||
+                    "badge"
+                  }
+                  title={
+                    profile.verified[profile.verified.length - 1]?.badgeName
+                  }
+                />
+              )}{" "}
             </div>
+
             {/* Post Description */}
             <div className="w-full bg-[#F0EDEB] h-40 flex flex-col items-center justify-between rounded-lg py-2 px-2 relative">
               <textarea
@@ -366,6 +384,7 @@ const Uploadpost = () => {
                 </p>
               </div>
             </div>
+
             {/* Location */}
             <div className="w-full bg-[#F0EDEB] flex flex-col px-2 rounded-lg relative">
               <input
@@ -385,8 +404,8 @@ const Uploadpost = () => {
                       key={index}
                       className="p-2 cursor-pointer hover:bg-gray-200 text-sm"
                       onClick={() => {
-                        setLocationInput(loc.display_name); // fill input
-                        setLocationSuggestions([]); // close dropdown
+                        setLocationInput(loc.display_name);
+                        setLocationSuggestions([]);
                       }}
                     >
                       {loc.display_name}
@@ -395,6 +414,7 @@ const Uploadpost = () => {
                 </div>
               )}
             </div>
+
             {/* Collaborators */}
             <div className="w-full bg-[#F0EDEB] flex flex-col px-2 rounded-lg relative">
               <input
@@ -416,8 +436,8 @@ const Uploadpost = () => {
                         if (!collaborators.find((c) => c._id === user._id)) {
                           setCollaborators([...collaborators, user]);
                         }
-                        setSearchQuery(""); // clear search
-                        setSuggestions([]); // hide dropdown
+                        setSearchQuery("");
+                        setSuggestions([]);
                       }}
                     >
                       <img
@@ -458,6 +478,7 @@ const Uploadpost = () => {
                 ))}
               </div>
             </div>
+            
             {/* Share To */} {/* Post Button */}
             <div className="w-full flex items-center justify-end">
               <input

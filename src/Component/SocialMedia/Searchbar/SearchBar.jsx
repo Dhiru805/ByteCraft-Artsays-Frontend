@@ -8,6 +8,8 @@ import { IoMic } from "react-icons/io5";
 import { MdVerified } from "react-icons/md";
 import { Link } from "react-router-dom";
 // import { BsBroadcast } from "react-icons/bs";
+
+
 // const suggestedVideo = [
 //   {
 //     id: 1,
@@ -52,6 +54,7 @@ import { Link } from "react-router-dom";
 //     state: "new",
 //   },
 // ];
+
 const SearchBar = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
@@ -114,7 +117,7 @@ const SearchBar = () => {
         console.log("follow success56325412", response);
 
       }
-      // ✅ Update UI instantly
+
       setSuggestionForUser((prevUsers) =>
         prevUsers.map((u) =>
           u._id === targetUserId ? { ...u, isFollowing: !isFollowing } : u
@@ -125,7 +128,7 @@ const SearchBar = () => {
     }
   };
 
-  // ✅ Fetch recent searches + suggested users on mount
+  //  Fetch recent searches + suggested users on mount
   useEffect(() => {
     const fetchRecentAndSuggestions = async () => {
       const userId = localStorage.getItem("userId");
@@ -146,7 +149,7 @@ const SearchBar = () => {
     if (userId) fetchRecentAndSuggestions();
   }, [userId]);
 
-  // ✅ Handle search input
+  //  Handle search input
   const handleSearch = async (e) => {
     const value = e.target.value;
     setQuery(value);
@@ -165,7 +168,6 @@ const SearchBar = () => {
         value
       )}&userId=${encodeURIComponent(userId)}`;
       const res = await getAPI(endpoint, {}, true, true);
-      console.log("Search results::::::", res);
       const result = res.data || res;
 
       setSuggestedUsers([]);
@@ -190,7 +192,7 @@ const SearchBar = () => {
     }
   };
 
-  // ✅ Add to recent + suggested (server handles both now)
+  //  Add to recent + suggested (server handles both now)
   const addRecentSearch = async (label, refId, type, tag = null) => {
     try {
       const body = { userId, type, refId, label, tag };
@@ -200,14 +202,15 @@ const SearchBar = () => {
         true,
         true
       );
-      console.log("1111Response after adding recent search:", res);
+
       setRecentSearches(res.data.recentSearches || []);
       setSuggestionForUser(res.data.searchBarSuggestedUsers || []);
     } catch (err) {
       console.error("Error adding recent search:", err);
     }
   };
-  // ✅ Remove one recent (server cleans both lists)
+
+  //  Remove one recent (server cleans both lists)
   const removeRecentSearch = async (searchId) => {
     const userId = localStorage.getItem("userId");
     try {
@@ -225,12 +228,12 @@ const SearchBar = () => {
     }
   };
 
-  // ✅ Clear all recents + suggestions
+  //  Clear all recents + suggestions
   const clearAllRecent = async () => {
     const userId = localStorage.getItem("userId");
     try {
       const res = await deleteAPI(
-        `/api/social-media/recent-searches/${userId}/clear`, // 👈 use params, not body
+        `/api/social-media/recent-searches/${userId}/clear`, 
         {},
         true,
         true
@@ -243,17 +246,17 @@ const SearchBar = () => {
     }
   };
 
-  // ✅ handle user click
+  //  handle user click
   const handleUserClick = (user) => {
     addRecentSearch(user.username, user._id, "user");
     setShowDropdown(false);
     navigate("/social-media/profile", { state: { userId: user._id } });
   };
 
-  // ✅ handle hashtag click
+  //  handle hashtag click
   const handleHashtagClick = async (tag) => {
     try {
-      const hashtag = `#${tag}`; // full hashtag string
+      const hashtag = `#${tag}`; 
       setQuery(hashtag);
       const endpoint = `/api/social-media/search?tag=${tag}`;
       const res = await getAPI(endpoint, {}, true, true);
@@ -273,6 +276,7 @@ const SearchBar = () => {
 
   return (
     <div className="lg:w-[56%] w-full max-w-6xl mx-auto flex flex-col gap-3 sm:mt-6 mt-3 sm:px-4 px-2">
+
       {/* Search Bar */}
       <div className="relative w-full">
         <div className="bg-[#FDE8D3] px-4 py-2 rounded-xl flex items-center justify-between">

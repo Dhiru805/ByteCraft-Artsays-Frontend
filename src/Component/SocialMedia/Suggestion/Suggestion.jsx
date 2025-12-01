@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import postAPI from "../../../../src/api/postAPI";
 import "../Sidebar/Side-post-sugg.css";
 import "../Create-post/Post.css";
+import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 
 const Suggestion = () => {
   const [users, setUsers] = useState([]);
@@ -163,9 +164,8 @@ const Suggestion = () => {
             {/* Avatar + Name */}
             <div className="flex items-center gap-2">
               <img
-                src={
-                  `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}` ||
-                  "https://via.placeholder.com/150"
+                src={user?.profilePhoto?
+                  `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}` : `${DEFAULT_PROFILE_IMAGE}`
                 }
                 alt="avatar"
                 className="rounded-full w-9 h-9 object-cover"

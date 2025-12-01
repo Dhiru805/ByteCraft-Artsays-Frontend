@@ -25,6 +25,7 @@ import { BiCart, BiLogOut } from "react-icons/bi";
 import { IoWalletOutline } from "react-icons/io5";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { BsBoxSeam } from "react-icons/bs";
+import getAPI from "../../../api/getAPI";
 import { FaUser, FaChevronLeft, FaTools } from "react-icons/fa";
 import { MdOutlineSecurity, MdVerified, MdLibraryAdd } from "react-icons/md";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
@@ -35,13 +36,39 @@ const NavBar = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [isToggled, setIsToggled] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-
+  const [user, setUser] = useState({});
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-
+  const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
   const location = useLocation();
   const isOnSocialMedia = location.pathname.startsWith("/social-media");
-
+const [profile,setProfile]=useState({})
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try{
+      const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
+      setUser(result.data.user);
+      }catch(error){
+        console.error("Fetching user Error",error);
+      }
+    };
+  const fetchProfile = async () => {
+      try {
+        const res = await getAPI(
+          `/api/social-media/profile/${userId}`,
+          {},
+          false,
+          true
+        )
+        setProfile(res.data.profile)
+      }catch(error){
+          console.error("Fetching profile error",error)
+        }
+      }
+fetchProfile()
+    fetchUserData();
+  }, [userId]);
+  
   const handleDashboardClick = (Usertype) => {
     if (Usertype === "Artist") {
       navigate("/artist/dashboard");
@@ -108,9 +135,16 @@ const NavBar = () => {
     };
 
     const handleClickOutside = (e) => {
-      if (!e.target.closest(".dropdown")) {
-        setShowDropdown(false);
-      }
+      const isClickInsideSearch = e.target.closest(".search-box-h");
+
+    if (!isClickInsideSearch) {
+      collapseSearchBox();
+    }
+
+    const isClickInsideDropdown = e.target.closest(".dropdown");
+    if (!isClickInsideDropdown) {
+      setShowDropdown(false);
+    }
     };
 
     const handleEscape = (e) => {
@@ -152,7 +186,6 @@ const NavBar = () => {
       // overlay?.removeEventListener("click", closeSidebar);
     };
   }, [isToggled]);
-
   return (
     <div className="w-full">
       <header className="header-h">
@@ -340,9 +373,7 @@ const NavBar = () => {
                 {Usertype === "Buyer" ? (
                   <a
                     className="nav-link-h icon-link-h me-3"
-                    onClick={() =>
-                              navigate(`/my-account/my-cart/${userId}`)
-                            }
+                    onClick={() => navigate(`/my-account/my-cart/${userId}`)}
                   >
                     <i className="fas fa-shopping-cart" />
                   </a>
@@ -551,7 +582,10 @@ const NavBar = () => {
                                 Switch to Artsays
                               </Link>
                             )}
-                            <Link className="dropdown-item-h" onClick={handleUserIconClick} >
+                            <Link
+                              className="dropdown-item-h"
+                              onClick={handleUserIconClick}
+                            >
                               <i className="fas fa-bell me-2" /> Notifications
                             </Link>
                             <div
@@ -635,8 +669,8 @@ const NavBar = () => {
               </button>
               <img
                 src={
-                  localStorage.getItem("profilePhoto")
-                    ? `${BASE_URL}${localStorage.getItem("profilePhoto")}`
+                  user.profilePhoto
+                    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`
                     : DEFAULT_PROFILE_IMAGE
                 }
                 className="rounded-circle avatar"
@@ -653,58 +687,40 @@ const NavBar = () => {
                 }}
               />
               <div className="profile-name-container">
-                <span className="profile-name-h">July Singh</span>
-                <MdVerified className="verified-icon" />
+                <span className="profile-name-h">
+                  {user.name} {user.lastName}
+                </span>
+                {profile.verified?.length > 0 && (
+                  <img
+                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                      profile.verified[profile.verified.length - 1]?.badgeImage
+                    }`}
+                    className="inline-block ml-1 w-6 h-6 object-contain"
+                    alt={
+                      profile.verified[profile.verified.length - 1]
+                        ?.badgeName || "badge"
+                    }
+                    title={
+                      profile.verified[profile.verified.length - 1]?.badgeName
+                    }
+                  />
+                )}{" "}
               </div>
             </div>
             {Usertype === "Seller" ||
             Usertype === "Artist" ||
             Usertype === "Super-Admin" ? (
               <div className="profile-content-h">
-                <div className="profile-item-h"  onClick={() => {
-                                handleDashboardClick(Usertype);
-                              }}>
+                <div
+                  className="profile-item-h"
+                  onClick={() => {
+                    handleDashboardClick(Usertype);
+                  }}
+                >
                   <i class="bi bi-person-fill" />
                   <span>My Dashboard</span>
                 </div>
-                <div className="profile-item-h">
-                  {/* <a className="dropdown-item-h" onClick={() => navigate("/")}>
-                    <span style={{ display: "flex", alignItems: "center" }}>
-                      <img
-                        src={AIcon}
-                        className="icon-sidebar"
-                        alt="Artsays-Icon"
-                        style={{
-                          width: "16px",
-                          height: "16px",
-                          marginRight: "17px",
-                          marginLeft: "4px",
-                        }}
-                      />
-                      Switch to Artsays
-                    </span>
-                  </a> */}
-                </div>
-                <div className="profile-item-h">
-                  <i className="bi bi-patch-check-fill" />
-                  <span>Account Verification</span>
-                </div>
-                <div className="profile-item-h">
-                  <i className="bi bi-lock-fill" />
-                  <span>Security and Agreements</span>
-                </div>
-                <div className="profile-item-h">
-                  <i className="bi bi-question-circle" />
-                  <span>Help</span>
-                </div>
-                <Link to={"/privacy-policy"} className="profile-item-h" onClick={() => {
-                                handleDashboardClick(Usertype);
-                              }}>
-                  <i className="bi bi-shield-shaded" />
-                  <span>Privacy Center</span>
-                </Link>
-
-                {!isOnSocialMedia ? (
+                 {!isOnSocialMedia ? (
                   <Link to="/social-media">
                     <div
                       className="profile-item-h"
@@ -741,6 +757,48 @@ const NavBar = () => {
                     </div>
                   </Link>
                 )}
+                {/* <div className="profile-item-h">
+                    <a className="dropdown-item-h" onClick={() => navigate("/")}>
+                    <span style={{ display: "flex", alignItems: "center" }}>
+                      <img
+                        src={AIcon}
+                        className="icon-sidebar"
+                        alt="Artsays-Icon"
+                        style={{
+                          width: "16px",
+                          height: "16px",
+                          marginRight: "17px",
+                          marginLeft: "4px",
+                        }}
+                      />
+                      Switch to Artsays
+                    </span>
+                  </a> 
+                </div>  */}
+                <div className="profile-item-h">
+                  <i className="bi bi-patch-check-fill" />
+                  <span>Account Verification</span>
+                </div>
+                <div className="profile-item-h">
+                  <i className="bi bi-lock-fill" />
+                  <span>Security and Agreements</span>
+                </div>
+                <div className="profile-item-h">
+                  <i className="bi bi-question-circle" />
+                  <span>Help</span>
+                </div>
+                <Link
+                  to={"/privacy-policy"}
+                  className="profile-item-h"
+                  onClick={() => {
+                    handleDashboardClick(Usertype);
+                  }}
+                >
+                  <i className="bi bi-shield-shaded" />
+                  <span>Privacy Center</span>
+                </Link>
+
+               
                 <div className="profile-item-h" onClick={handleSignOut}>
                   <i className="bi bi-box-arrow-left" />
                   <span>Logout</span>
@@ -774,22 +832,35 @@ const NavBar = () => {
                     </span>
                   </a>
                 </div> */}
-                <Link to={"/my-account/art-gallery"}
+                <Link
+                  to={"/my-account/art-gallery"}
                   className="profile-item-h"
                   onClick={() => setShowProfileMenu(!showProfileMenu)}
                 >
                   <MdLibraryAdd className="icon-sidebar" />
                   <span>Art Gallery</span>
                 </Link>
-                <Link to={"/bid"} className="profile-item-h" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+                <Link
+                  to={"/bid"}
+                  className="profile-item-h"
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
                   <RiAuctionFill className="icon-sidebar" />
                   <span>Bid</span>
                 </Link>
-                <Link to={"/store"} className="profile-item-h" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+                <Link
+                  to={"/store"}
+                  className="profile-item-h"
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
                   <PiHandbagBold className="icon-sidebar" />
                   <span>Store</span>
                 </Link>
-                <Link to={"/my-account/my-cart"} className="profile-item-h" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+                <Link
+                  to={"/my-account/my-cart"}
+                  className="profile-item-h"
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
                   <BiCart className="icon-sidebar" />
                   <span>Cart</span>
                 </Link>
@@ -872,7 +943,10 @@ const NavBar = () => {
                     <span>Social Media Promotion</span>
                   </div>
                 </Link>
-                <Link to={"my-account/custom-request"} onClick={() => setShowProfileMenu(!showProfileMenu)}>
+                <Link
+                  to={"my-account/custom-request"}
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
                   <div className="profile-item-h">
                     <FaTools
                       className="icon-sidebar"
@@ -882,7 +956,11 @@ const NavBar = () => {
                     <span>Custom Request</span>
                   </div>
                 </Link>
-                <Link to={"my-account/security-agreements"} className="profile-item-h" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+                <Link
+                  to={"my-account/security-agreements"}
+                  className="profile-item-h"
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
                   <RiLockPasswordLine className="icon-sidebar" />
                   <span>Security and Agreements</span>
                 </Link>
