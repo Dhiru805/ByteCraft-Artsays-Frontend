@@ -944,6 +944,8 @@ const BidProduct = () => {
   const [showFilters, setShowFilters] = useState(false);
   const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
+const [highestLiveBid, setHighestLiveBid] = useState({});
+
 
  const [currentPage, setCurrentPage] = useState(1);
    const itemsPerPage = 9;
@@ -1000,7 +1002,8 @@ const BidProduct = () => {
 
     setProducts(finalList.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-    ));
+    ))
+    await fetchLiveHighestBids(finalList);
   } catch (err) {
     console.error("Error fetching bidding products:", err);
   }
@@ -1049,6 +1052,41 @@ const getFinalStatus = (item) => {
     }, 60000);
     return () => clearInterval(interval);
   }, []);
+const fetchLiveHighestBids = async (productsList) => {
+  try {
+    const highestMap = {};
+
+    // fetch highest for each biddingId
+    await Promise.all(
+      productsList.map(async (item) => {
+        const bidId = item._id;
+
+        const res = await getAPI(`/api/bidding/all/${bidId}`, {}, true, false)
+          .catch(() => null);
+
+        const allBids = res?.data?.bids || [];
+
+        const highestAmount =
+          allBids.length > 0
+            ? Math.max(...allBids.map((b) => b.amount))
+            : item.basePrice;
+
+        highestMap[bidId] = highestAmount;
+      })
+    );
+
+    setHighestLiveBid(highestMap);
+  } catch (err) {
+    console.log("Live bid fetch error:", err);
+  }
+};
+useEffect(() => {
+  const interval = setInterval(() => {
+    fetchLiveHighestBids(products);
+  }, 3000);
+
+  return () => clearInterval(interval);
+}, [products]);
 
   return (
     <div className="max-w-[1440px] mx-auto mb-4">
@@ -1554,7 +1592,7 @@ const getFinalStatus = (item) => {
 
                       {status !== "Upcoming" && (
                         <span className="text-green-600 font-semibold text-md">
-                          Highest Bid: ₹{item.highestBid || item.basePrice}
+                          Highest Bid: ₹{highestLiveBid[item._id] || item.basePrice}
                         </span>
                       )}
                     </div>
