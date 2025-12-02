@@ -751,7 +751,7 @@ import { ImHammer2 } from "react-icons/im";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, MapPin, ArrowRight, Heart, Zap, ShoppingCart } from "lucide-react";
 import { HiMiniPercentBadge } from "react-icons/hi2";
-
+import { toast } from "react-toastify";
 const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 
 const BidDetails = () => {
@@ -806,7 +806,10 @@ const winner = useMemo(() => {
   const top = liveBids[0];
   return {
     amount: top.amount,
-    name: top.userId?.username || top.userId?.name || "User",
+    name: top.userId?.username 
+   || `${top.userId?.name || ""} ${top.userId?.lastName || ""}`.trim()
+   || "User",
+
   };
 }, [isBidEnded, liveBids]);
 
@@ -1089,7 +1092,7 @@ const handleBidSubmit = async (amount) => {
     );
 
     if (res?.data?.success) {
-      alert("Bid submitted successfully!");
+      toast.success("Bid submitted successfully!");
 
       setManualBid("");
       setShowBidSidebar(false);
@@ -1099,7 +1102,7 @@ const handleBidSubmit = async (amount) => {
 
   } catch (err) {
     console.error(err);
-    alert("Failed to place bid!");
+    toast.error("Failed to place bid!");
   }
 };
 
@@ -1113,8 +1116,8 @@ const handleBidSubmit = async (amount) => {
       }).catch((err) => console.log("Share error", err));
     } else {
       navigator.clipboard?.writeText(window.location.href).then(
-        () => alert("Link copied to clipboard"),
-        () => alert("Share not supported")
+        () => toast.warn("Link copied to clipboard"),
+        () => toast.warn("Share not supported")
       );
     }
   };
@@ -1404,7 +1407,7 @@ const hasAnyValue = (obj) => {
               <p className="text-md">Starting Price: <strong>₹{finalData.bid.basePrice}</strong></p>
               <p className="text-md mt-2">Minimum Increment: ₹{minIncrement}</p>
 
-              <p className="text-2xl font-bold text-[#48372D] mt-3">Current Highest Bid: ₹{currentHighest}</p>
+              <p className="text-2xl font-bold text-[#48372D] mt-3">{isBidEnded ? "Final Bid" : "Current Highest Bid"}: ₹{currentHighest}</p>
 
               {/* <div className="items-center mt-4">
                 <p className="text-lg font-semibold">Place Bid</p>
@@ -1425,7 +1428,7 @@ const hasAnyValue = (obj) => {
         <button
           key={increment}
           onClick={() => {
-            if (isBidEnded) return alert("This bid has ended.");
+            if (isBidEnded) return toast.warn("This bid has ended.");
             setShowBidSidebar(true);      
             setManualBid(dynamicValue); 
           }}
@@ -1650,7 +1653,7 @@ const hasAnyValue = (obj) => {
       >
         <div className="flex flex-col">
           <span className="text-sm text-gray-900 font-semibold">
-            {bid.userId?.username || bid.userId?.name || "User"}
+            {bid.userId?.username || `${bid.userId?.name || ""} ${bid.userId?.lastName || ""}`.trim() || "User"}
           </span>
           <span className="text-xs text-gray-500">
            {formatBidTime(bid)}
@@ -1856,7 +1859,7 @@ const hasAnyValue = (obj) => {
   transition={{ duration: 0.3 }}
   onClick={() => {
     if (isBidEnded) {
-      alert("This bid has ended.");
+      toast.warn("This bid has ended.");
       return;
     }
     setShowBidSidebar(true);
@@ -1946,12 +1949,12 @@ const hasAnyValue = (obj) => {
 
   <button
     onClick={() => {
-  if (isBidEnded) return alert("This bid has ended.");
+  if (isBidEnded) return toast.warn("This bid has ended.");
 
   const amt = Number(manualBid);
-  if (!amt) return alert("Enter a valid amount");
+  if (!amt) return toast.error("Enter a valid amount");
   if (amt < currentHighest + minIncrement)
-    return alert(`Bid must be at least ₹${currentHighest + minIncrement}`);
+    return toast.error(`Bid must be at least ₹${currentHighest + minIncrement}`);
 
   setBidToConfirm(amt);
   setConfirmPopup(true);
