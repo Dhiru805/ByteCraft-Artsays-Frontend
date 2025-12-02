@@ -2021,7 +2021,7 @@ const Product = () => {
   const userId = localStorage.getItem("userId");
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 9;
+  const itemsPerPage = 12;
   const [likedProducts, setLikedProducts] = useState({});
   const navigate = useNavigate();
 

@@ -948,7 +948,7 @@ const [highestLiveBid, setHighestLiveBid] = useState({});
 
 
  const [currentPage, setCurrentPage] = useState(1);
-   const itemsPerPage = 9;
+   const itemsPerPage = 12;
    const indexOfLastProduct = currentPage * itemsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
   const currentProducts = products.slice(
