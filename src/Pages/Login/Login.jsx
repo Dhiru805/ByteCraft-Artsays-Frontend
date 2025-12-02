@@ -407,6 +407,7 @@ const Login = () => {
       localStorage.setItem("userId", userId);
       localStorage.setItem("status", normalizedStatus);
       localStorage.setItem("userrole", userrole);
+      localStorage.setItem("name", res.data.name);
 
       console.log("localStorage after login:", {
         token: localStorage.getItem("token"),

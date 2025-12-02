@@ -10,6 +10,7 @@ const EditFAQModal = ({ isOpen, onClose, faq, fetchSubFAQData }) => {
   const [isNewFaqType, setIsNewFaqType] = useState(false);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+  const [keywords, setKeywords] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -35,6 +36,7 @@ const EditFAQModal = ({ isOpen, onClose, faq, fetchSubFAQData }) => {
       setIsNewFaqType(false);
       setQuestion(faq.question || "");
       setAnswer(faq.answer || "");
+      setKeywords(faq.keywords?.join(", ") || ""); // ⭐ Load keywords
     }
   }, [faq]);
 
@@ -76,6 +78,10 @@ const EditFAQModal = ({ isOpen, onClose, faq, fetchSubFAQData }) => {
           question: question.trim(),
           answer: answer.trim(),
           faqType: faqType.trim(),
+          keywords: keywords
+            .split(",")
+            .map(k => k.trim())
+            .filter(k => k !== ""), // ⭐ Save keywords properly
         },
         {},
         true
@@ -117,9 +123,11 @@ const EditFAQModal = ({ isOpen, onClose, faq, fetchSubFAQData }) => {
               ✕
             </button>
           </div>
+
           <form onSubmit={handleUpdate}>
             <div className="row mb-2 ml-2">
-              <div className="col-md-4">
+
+              <div className="col-md-3">
                 <div className="mb-3">
                   <label className="form-label">FAQ Type</label>
                   {isNewFaqType ? (
@@ -149,7 +157,8 @@ const EditFAQModal = ({ isOpen, onClose, faq, fetchSubFAQData }) => {
                   )}
                 </div>
               </div>
-              <div className="col-md-4">
+
+              <div className="col-md-3">
                 <div className="mb-3">
                   <label className="form-label">Question</label>
                   <input
@@ -162,7 +171,8 @@ const EditFAQModal = ({ isOpen, onClose, faq, fetchSubFAQData }) => {
                   />
                 </div>
               </div>
-              <div className="col-md-4">
+
+              <div className="col-md-3">
                 <div className="mb-3">
                   <label className="form-label">Answer</label>
                   <textarea
@@ -174,7 +184,22 @@ const EditFAQModal = ({ isOpen, onClose, faq, fetchSubFAQData }) => {
                   />
                 </div>
               </div>
+              {/* ⭐ New Keywords Field */} 
+              <div className="col-md-3">
+                <div className="mb-3">
+                  <label className="form-label">Keywords (comma separated)</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={keywords}
+                    onChange={(e) => setKeywords(e.target.value)}
+                    placeholder="art, painting, gallery"
+                  />
+                </div>
+              </div>
+
             </div>
+
             <div className="modal-footer">
               <button
                 type="button"
@@ -191,6 +216,7 @@ const EditFAQModal = ({ isOpen, onClose, faq, fetchSubFAQData }) => {
                 {loading ? "Updating..." : "Update"}
               </button>
             </div>
+
           </form>
         </div>
       </div>

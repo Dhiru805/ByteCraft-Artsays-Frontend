@@ -86,6 +86,7 @@ import SuperAdminArtistSponsor from "../Component/Dashboard/Super-AdminDashboard
 import SuperAdminCertification from "../Component/Dashboard/Super-AdminDashboard/Certification/Certification";
 import CreateCertifications from "../Component/Dashboard/Super-AdminDashboard/Certification/create";
 import FAQ from "../Component/Dashboard/Super-AdminDashboard/FAQ/FAQ";
+import ArtiCMS from "../Component/Dashboard/Super-AdminDashboard/ArtiCMS/ArtiCMS";
 import Carrer from "../Component/Dashboard/Super-AdminDashboard/Career/Career";
 import CreateCarrer from "../Component/Dashboard/Super-AdminDashboard/Career/CreateCarrer";
 import UpdateCareer from "../Component/Dashboard/Super-AdminDashboard/Career/EditCareer";
@@ -988,6 +989,8 @@ const AppRoutes = () => {
         />
         {/* FAQ Routes */}
         <Route path="faq" element={<FAQ />} />
+        {/* Arti CMS */}
+       <Route path="artCMS" element={<ArtiCMS />} />
         {/* Career */}
         <Route path="career" element={<Carrer />} />
         <Route path="career/creer-job-post" element={<CreateCarrer />} />

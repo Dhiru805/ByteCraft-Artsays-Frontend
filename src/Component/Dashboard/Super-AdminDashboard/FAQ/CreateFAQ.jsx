@@ -9,7 +9,7 @@ const AddFAQ = ({ onClose, fetchSubFAQData }) => {
   const [faqTypes, setFaqTypes] = useState([]);
   const [faqType, setFaqType] = useState("");
   const [isNewFaqType, setIsNewFaqType] = useState(false);
-  const [faqRows, setFAQRows] = useState([{ question: "", answer: "" }]);
+  const [faqRows, setFAQRows] = useState([{ question: "", answer: "", keywords: "" }]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const AddFAQ = ({ onClose, fetchSubFAQData }) => {
   };
 
   const addRow = () => {
-    setFAQRows([...faqRows, { question: "", answer: "" }]);
+    setFAQRows([...faqRows, { question: "", answer: "", keywords: "" }]);
   };
 
   const removeRow = (index) => {
@@ -88,6 +88,9 @@ const AddFAQ = ({ onClose, fetchSubFAQData }) => {
         question: row.question.trim(),
         answer: row.answer.trim(),
         faqType: faqType.trim(),
+        keywords: row.keywords
+          ? row.keywords.split(",").map(k => k.trim()).filter(k => k !== "")
+          : [],
       }));
 
       const response = await postAPI("/api/create-FAQ", faqData, {}, true);
@@ -128,7 +131,7 @@ const AddFAQ = ({ onClose, fetchSubFAQData }) => {
                     </label>
                     {isNewFaqType ? (
                       <input
-                        type Jonstype="text"
+                        type="text"
                         className="form-control"
                         id="faqType"
                         value={faqType}
@@ -172,6 +175,7 @@ const AddFAQ = ({ onClose, fetchSubFAQData }) => {
                   </div>
                 </div>
               )}
+
               {step === "questions-and-answers" && (
                 <>
                   <div className="row mb-2">
@@ -181,9 +185,10 @@ const AddFAQ = ({ onClose, fetchSubFAQData }) => {
                       </p>
                     </div>
                   </div>
+
                   {faqRows.map((row, index) => (
                     <div className="row mb-2" key={index}>
-                      <div className="col-md-5">
+                      <div className="col-md-4">
                         <label htmlFor={`question-${index}`} className="form-label">
                           Question
                         </label>
@@ -197,7 +202,7 @@ const AddFAQ = ({ onClose, fetchSubFAQData }) => {
                           required
                         />
                       </div>
-                      <div className="col-md-5">
+                      <div className="col-md-4">
                         <label htmlFor={`answer-${index}`} className="form-label">
                           Answer
                         </label>
@@ -210,7 +215,20 @@ const AddFAQ = ({ onClose, fetchSubFAQData }) => {
                           required
                         />
                       </div>
-                      <div className="col-md-2 d-flex align-items-end">
+                      <div className="col-md-4">
+                        <label htmlFor={`keywords-${index}`} className="form-label">
+                          Keywords (comma separated)
+                        </label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          id={`keywords-${index}`}
+                          value={row.keywords}
+                          onChange={(e) => handleRowChange(index, "keywords", e.target.value)}
+                          placeholder="art, painting, gallery"
+                        />
+                      </div>
+                      <div className="col-md-12 d-flex justify-content-end mt-2">
                         {faqRows.length > 1 && (
                           <button
                             type="button"
@@ -232,6 +250,7 @@ const AddFAQ = ({ onClose, fetchSubFAQData }) => {
                       </div>
                     </div>
                   ))}
+
                   <div className="d-flex justify-content-end mt-3 mx-2">
                     <button
                       type="button"

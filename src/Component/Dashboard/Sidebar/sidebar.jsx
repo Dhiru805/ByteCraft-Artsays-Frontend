@@ -86,7 +86,6 @@ const Sidebar = () => {
         path: "/super-admin/blog",
         subTabs: []
       },
-
       {
         label: "Artist",
         tabId: "att1",
@@ -227,6 +226,13 @@ const Sidebar = () => {
         label: "FAQ",
         icon: "fa fa-question-circle",
         path: `/super-admin/faq`,
+        subTabs: []
+      },
+      {
+        label: "Arty CMS",
+        icon: "fa fa-cog",
+        path: `/super-admin/artCMS`,
+        basePath: "/super-admin/artCMS",
         subTabs: []
       },
       {
