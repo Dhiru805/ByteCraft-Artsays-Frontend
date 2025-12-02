@@ -1606,6 +1606,7 @@
 //  export default ProductDetails;
 
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { MdVerified } from "react-icons/md";
 import { Star } from "lucide-react";
 import { useParams } from "react-router-dom";
@@ -1615,6 +1616,8 @@ import { Heart, MapPin, ArrowRight, ShoppingCart, Zap } from "lucide-react";
 import { BsTelegram } from "react-icons/bs";
 import { FaChevronCircleRight, FaChevronCircleLeft } from "react-icons/fa";
 import getAPI from "../../api/getAPI";
+import postAPI from "../../api/postAPI";
+import { toast } from "react-toastify";
 
 const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 
@@ -1644,9 +1647,9 @@ const offersData = [
 const ProductDetails = () => {
   const { productId } = useParams();
   const id = productId;
-
+  const userId = localStorage.getItem("userId");
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
-
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -1683,7 +1686,23 @@ const ProductDetails = () => {
     "/artimages/wall3.jpg",
     "/artimages/wall4.webp",
   ];
+const addToCart = async (productId) => {
+    const userId = localStorage.getItem("userId");
 
+    if (!userId) {
+      toast.warn("You must be logged in to add items to cart");
+      return;
+    }
+
+    try {
+      await postAPI(`/api/cart/addcart/${productId}`, {}, true);
+
+      toast.success("Added to Cart!");
+    } catch (err) {
+      console.error("Add to cart error:", err);
+      toast.error("Failed to add to cart");
+    }
+  };
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -2212,119 +2231,136 @@ const ProductDetails = () => {
                     </p>
                   </div>
 
-                {product.editionType?.toLowerCase().includes("limited") && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/limited edition.png"
-      alt="limited"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2">Limited Edition</p>
-  </div>
-)}
+                  {product.editionType?.toLowerCase().includes("limited") && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/limited edition.png"
+                        alt="limited"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2">
+                        Limited Edition
+                      </p>
+                    </div>
+                  )}
 
-{product.editionType?.toLowerCase().includes("original") && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/original.png"
-      alt="original"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2 rounded">Original</p>
-  </div>
-)}
+                  {product.editionType?.toLowerCase().includes("original") && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/original.png"
+                        alt="original"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2 rounded">
+                        Original
+                      </p>
+                    </div>
+                  )}
 
-{product.editionType?.toLowerCase().includes("premium") && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/premium.png"
-      alt="premium"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2 rounded">Premium</p>
-  </div>
-)}
+                  {product.editionType?.toLowerCase().includes("premium") && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/premium.png"
+                        alt="premium"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2 rounded">
+                        Premium
+                      </p>
+                    </div>
+                  )}
 
-{product.editionType?.toLowerCase().includes("open") && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/open edition.png"
-      alt="open edition"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2 rounded">Open Edition</p>
-  </div>
-)}
+                  {product.editionType?.toLowerCase().includes("open") && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/open edition.png"
+                        alt="open edition"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2 rounded">
+                        Open Edition
+                      </p>
+                    </div>
+                  )}
 
+                  {product.materials?.some(
+                    (mat) => mat.toLowerCase() === "glass"
+                  ) && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/glass material.png"
+                        alt="glass material"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2 rounded">
+                        Glass Material
+                      </p>
+                    </div>
+                  )}
 
-{product.materials?.some(mat => mat.toLowerCase() === "glass") && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/glass material.png"
-      alt="glass material"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2 rounded">
-      Glass Material
-    </p>
-  </div>
-)}
+                  {product.framing?.toLowerCase() === "framed" && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/framed.png"
+                        alt="framed"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2">
+                        Framed
+                      </p>
+                    </div>
+                  )}
 
+                  {product.framing?.toLowerCase() === "unframed" && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/framed.png"
+                        alt="unframed"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2">
+                        Unframed
+                      </p>
+                    </div>
+                  )}
 
+                  {product.handmade === "Yes" && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/handmade.png"
+                        alt="handmade"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2">
+                        Handmade
+                      </p>
+                    </div>
+                  )}
+                  {product.giftWrapping && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/gifting.png"
+                        alt="gifting options"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2 rounded">
+                        Gifting Options
+                      </p>
+                    </div>
+                  )}
 
-{product.framing?.toLowerCase() === "framed" && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/framed.png"
-      alt="framed"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2">Framed</p>
-  </div>
-)}
-
-{product.framing?.toLowerCase() === "unframed" && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/framed.png"
-      alt="unframed"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2">Unframed</p>
-  </div>
-)}
-
-{product.handmade === "Yes" && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/handmade.png"
-      alt="handmade"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2">Handmade</p>
-  </div>
-)}
-{product.giftWrapping  && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/gifting.png"
-      alt="gifting options"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2 rounded">Gifting Options</p>
-  </div>
-)}
-
-{product.artistSignature  && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/certified.png"
-      alt="certified"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2 rounded">Certified</p>
-  </div>
-)}
+                  {product.artistSignature && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/certified.png"
+                        alt="certified"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2 rounded">
+                        Certified
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Mobile / small screen stock info (template) */}
@@ -2685,9 +2721,11 @@ const ProductDetails = () => {
                         />
 
                         <Field label="COA Document" value={product.coaFile} />
-                       
-                        <Field label="Certificate Document" value={product.certificateFile} />
 
+                        <Field
+                          label="Certificate Document"
+                          value={product.certificateFile}
+                        />
                       </Grid>
                     </Section>
 
@@ -2719,7 +2757,8 @@ const ProductDetails = () => {
                       antiqueCondition: product.antiqueCondition,
                       conservationStatus: product.conservationStatus,
                       restorationHistory: product.restorationHistory,
-                      restorationDocumentation: product.restorationDocumentation,
+                      restorationDocumentation:
+                        product.restorationDocumentation,
                       provenanceHistory: product.provenanceHistory,
                       culturalSignificance: product.culturalSignificance,
                       appraisalDetails: product.appraisalDetails,
@@ -2729,7 +2768,8 @@ const ProductDetails = () => {
                       originalReproduction: product.originalReproduction,
                       museumExhibitionHistory: product.museumExhibitionHistory,
                       maintenanceRequired: product.maintenanceRequired,
-                      customEngravingAvailable: product.customEngravingAvailable,
+                      customEngravingAvailable:
+                        product.customEngravingAvailable,
                       certification: product.certification,
                     }) && (
                       <Section title="Antique & Vintage Details">
@@ -3051,10 +3091,22 @@ const ProductDetails = () => {
                 )}
 
                 <div className="mt-3 flex flex-col gap-3">
-                  <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart">
+                  <button
+                   onClick={(e) => {
+                          e.stopPropagation();
+                          addToCart(product._id);
+                        }} 
+                  className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart">
                     <ShoppingCart size={18} /> Add to Cart
                   </button>
-                  <button className="flex items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-red-500 text-white py-2 font-semibold buy-now">
+                  <button
+                    className="flex items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-red-500 text-white py-2 font-semibold buy-now"
+                    onClick={() => {
+                      navigate(
+                        `/my-account/check-out/${userId}?productId=${product._id}`
+                      );
+                    }}
+                  >
                     <Zap size={18} /> Buy Now
                   </button>
                 </div>
@@ -3069,19 +3121,15 @@ const ProductDetails = () => {
   // const productReviews = reviews.filter(
   //   (r) => String(r.productId?._id) === String(product?._id)
   // );
-const productReviews = reviews.filter((review) => {
-  const buyerRequest = review.productId;
-  if (!buyerRequest) return false;
+  const productReviews = reviews.filter((review) => {
+    const buyerRequest = review.productId;
+    if (!buyerRequest) return false;
 
-  
-  const reviewProductName = buyerRequest.ProductName?.trim()?.toLowerCase();
-  const currentProductName = product.productName?.trim()?.toLowerCase();
+    const reviewProductName = buyerRequest.ProductName?.trim()?.toLowerCase();
+    const currentProductName = product.productName?.trim()?.toLowerCase();
 
-  return reviewProductName === currentProductName;
-});
-
-
-
+    return reviewProductName === currentProductName;
+  });
 
   return <ProductImages imagesProp={images} initialImage={images[0]} />;
 };
