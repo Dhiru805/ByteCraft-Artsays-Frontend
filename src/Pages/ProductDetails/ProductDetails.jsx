@@ -1648,6 +1648,8 @@ const ProductDetails = () => {
   const { productId } = useParams();
   const id = productId;
   const userId = localStorage.getItem("userId");
+  const userType = localStorage.getItem("userType"); 
+
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
@@ -1679,6 +1681,14 @@ const ProductDetails = () => {
     110017: "23 Aurum Lane, Sector 17, Vasant Vibe, New Delhi",
     560001: "MG Road, Bangalore, Karnataka",
   };
+
+const ensureBuyer = () => {
+  if (userType !== "Buyer") {
+    toast.warn("Only buyers can use this feature, Register as a Buyer to continue.");
+    return false;
+  }
+  return true;
+};
 
   const artworkSize = { width: 100, height: 70 };
   const roomBackgrounds = [
@@ -3094,6 +3104,7 @@ const addToCart = async (productId) => {
                   <button
                    onClick={(e) => {
                           e.stopPropagation();
+                           if (!ensureBuyer()) return;
                           addToCart(product._id);
                         }} 
                   className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart">
@@ -3102,6 +3113,7 @@ const addToCart = async (productId) => {
                   <button
                     className="flex items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-red-500 text-white py-2 font-semibold buy-now"
                     onClick={() => {
+                       if (!ensureBuyer()) return;
                       navigate(
                         `/my-account/check-out/${userId}?productId=${product._id}`
                       );

@@ -2019,6 +2019,7 @@ const Product = () => {
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   const userId = localStorage.getItem("userId");
+  const userType = localStorage.getItem("userType"); 
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
@@ -2052,11 +2053,21 @@ const Product = () => {
     }));
   };
 
+const ensureBuyer = () => {
+  if (userType !== "Buyer") {
+    toast.warn("Only buyers can use this feature, Register as a Buyer to continue.");
+    return false;
+  }
+  return true;
+};
+
+
   const handleWishlist = async (productId) => {
-    if (!userId) {
-      toast.warn("You must be logged in as a buyer to use wishlist");
-      return;
-    }
+    // if (!userId) {
+    //   toast.warn("You must be logged in as a buyer to use wishlist");
+    //   return;
+    // }
+if (!ensureBuyer()) return;
 
     const isLiked = likedProducts[productId];
 
@@ -2754,6 +2765,8 @@ const Product = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
+                           if (!ensureBuyer()) return;
+
                           addToCart(product._id);
                         }}
                         className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart hover:bg-dark hover:text-white transition"
@@ -2764,6 +2777,7 @@ const Product = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
+                           if (!ensureBuyer()) return;
                           navigate(
                             `/my-account/check-out/${userId}?productId=${product._id}`
                           );
