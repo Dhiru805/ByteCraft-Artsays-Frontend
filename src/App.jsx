@@ -6,11 +6,13 @@ import CookieConsent from "./CookieConsent/CookieConsent";
 import { CookiesProvider } from "react-cookie";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from './AuthContext';
+import ScrollToTop from "./Component/ScrollToTop";
 
 function App() {
   return (
     <React.StrictMode>
       <BrowserRouter>
+       <ScrollToTop />
         <AuthProvider>
           <CookiesProvider>
             <div className="App">

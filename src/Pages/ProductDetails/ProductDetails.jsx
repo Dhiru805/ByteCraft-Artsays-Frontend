@@ -1669,6 +1669,8 @@ const ProductDetails = () => {
   const [categoryName, setCategoryName] = useState("");
   const [subCategoryName, setSubCategoryName] = useState("");
 
+const tabRef = React.useRef(null);
+
   const [categoryData, setCategoryData] = useState({
     mainCategories: [],
     categories: [],
@@ -1822,6 +1824,19 @@ const addToCart = async (productId) => {
     setCategoryName(cat?.categoryName || "N/A");
     setSubCategoryName(subCat?.subCategoryName || "N/A");
   }, [product, categoryData]);
+
+useEffect(() => {
+  const anchor = document.getElementById("tabs-start");
+  if (!anchor) return;
+
+  const yOffset = -120; 
+  const y = anchor.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+  setTimeout(() => {
+    window.scrollTo({ top: y, behavior: "smooth" });
+  }, 50);
+}, [activeTab]);
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -2478,12 +2493,14 @@ const addToCart = async (productId) => {
             </div>
 
             {/* Tabs (left column area) */}
-            <div className="mt-12 border-b">
-              <div className="flex gap-8 text-[#48372D] font-medium text-lg border-b border-gray-200 overflow-x-auto no-scrollbar">
+            {/* <div className="mt-12 border-b"> */}
+              {/* <div className="flex gap-8 text-[#48372D] font-medium text-lg border-b border-gray-200 overflow-x-auto no-scrollbar">
                 {["description", "details", "artist", "reviews"].map((tab) => (
                   <button
                     key={tab}
-                    onClick={() => setActiveTab(tab)}
+                    onClick={() => 
+                    setActiveTab(tab)
+                  }
                     className={`pb-2 flex-shrink-0 transition-all duration-200 whitespace-nowrap ${
                       activeTab === tab
                         ? "border-b-4 border-[#48372D] font-semibold text-[#48372D]"
@@ -2493,9 +2510,32 @@ const addToCart = async (productId) => {
                     {tab.charAt(0).toUpperCase() + tab.slice(1)}
                   </button>
                 ))}
-              </div>
+              </div> */}
+{/* Tabs (left column area) */}
+<div id="tabs-start" className="mt-12 border-b">
+  <div className="flex gap-8 text-[#48372D] font-medium text-lg border-b border-gray-200 overflow-x-auto no-scrollbar">
+    {["description", "details", "artist", "reviews"].map((tab) => (
+      <button
+        key={tab}
+        onClick={() => {
+          setActiveTab(tab);
+        }}
+        className={`pb-2 flex-shrink-0 transition-all duration-200 whitespace-nowrap ${
+          activeTab === tab
+            ? "border-b-4 border-[#48372D] font-semibold text-[#48372D]"
+            : "font-semibold text-[#48372D]"
+        }`}
+      >
+        {tab.charAt(0).toUpperCase() + tab.slice(1)}
+      </button>
+    
 
-              <div className="py-6 text-gray-700 leading-relaxed text-sm whitespace-pre-wrap break-words w-full">
+    ))}
+  </div>
+
+              <div 
+              ref={tabRef}
+              className="py-6 text-gray-700 leading-relaxed text-sm whitespace-pre-wrap break-words w-full">
                 {activeTab === "description" && (
                   <p>{product.description || "No description available."}</p>
                 )}
