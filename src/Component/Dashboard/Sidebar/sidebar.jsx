@@ -213,6 +213,12 @@ const Sidebar = () => {
           subTabs: []
   },
   {
+    label: "Arty CMS",
+      icon: "fa fa-cog",
+        path: `/super-admin/artCMS`,
+          subTabs: []
+  },
+  {
     label: "Career",
       icon: "fa fa-briefcase",
         path: '#Career',

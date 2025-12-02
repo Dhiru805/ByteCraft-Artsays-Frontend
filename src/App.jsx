@@ -6,6 +6,7 @@ import CookieConsent from "./CookieConsent/CookieConsent";
 import { CookiesProvider } from "react-cookie";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from './AuthContext';
+import ChatIcon from "./Component/chatbot/ChatIcon";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
               //  pauseOnHover
               />
               <CookieConsent />
+              <ChatIcon />
             </div>
           </CookiesProvider>
         </AuthProvider>

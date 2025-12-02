@@ -105,6 +105,13 @@ certificateCMS: {
   errorMessage: "Failed to delete FAQ.",
   idKey: "FAQId",
 },
+company: {
+  getEndpoint: (id) => `/api/company-info/delete/${id}`,
+  successMessage: "Company info successfully deleted!",
+  errorMessage: "Failed to delete company.",
+  idKey: "_id",
+},
+
 
 policy : {
   getEndpoint: (id) => `/api/deletePolicy/${id}`,

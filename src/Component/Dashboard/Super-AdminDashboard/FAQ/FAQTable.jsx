@@ -24,7 +24,8 @@ const FAQTable = ({
 
   const filteredSubFAQs = sortedSubFAQs.filter(faq =>
     (faq.faqType || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-    faq.question.toLowerCase().includes(searchTerm.toLowerCase())
+    faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    faq.keywords?.join(", ").toLowerCase().includes(searchTerm.toLowerCase()) // search keywords
   );
 
   const totalPages = Math.ceil(filteredSubFAQs.length / itemsPerPage);
@@ -56,15 +57,11 @@ const FAQTable = ({
   };
 
   const handlePrevious = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
   const handleNext = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
   const handleItemsPerPageChange = (event) => {
@@ -118,6 +115,7 @@ const FAQTable = ({
                 </div>
               </div>
             </div>
+
             <div className="body">
               <div className="table-responsive">
                 <table className="table table-hover text-nowrap js-basic-example dataTable table-custom m-b-0 c_list">
@@ -127,13 +125,14 @@ const FAQTable = ({
                       <th>FAQ Type</th>
                       <th>Question</th>
                       <th>Answer</th>
+                      <th>Keywords</th> {/* ⭐ Added column */}
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {displayedSubFAQs.length === 0 ? (
                       <tr>
-                        <td colSpan="4" className="text-center">
+                        <td colSpan="6" className="text-center">
                           No FAQs available
                         </td>
                       </tr>
@@ -144,6 +143,7 @@ const FAQTable = ({
                           <td>{faq.faqType}</td>
                           <td>{faq.question}</td>
                           <td>{faq.answer}</td>
+                          <td>{faq.keywords?.join(", ")}</td> {/* ⭐ Display keywords */}
                           <td>
                             <button
                               type="button"
@@ -168,6 +168,7 @@ const FAQTable = ({
                   </tbody>
                 </table>
               </div>
+
               <div className="pagination d-flex justify-content-between mt-4">
                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
                   Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredSubFAQs.length)} of {filteredSubFAQs.length} entries
@@ -188,7 +189,7 @@ const FAQTable = ({
                           <React.Fragment key={`ellipsis-${pageNumber}`}>
                             <li className="page-item disabled"><span className="page-link">...</span></li>
                             <li
-                              key={pageNumber}
+                              key={pageNumber} 
                               className={`paginate_button page-item ${currentPage === pageNumber ? 'active' : ''}`}
                               onClick={() => setCurrentPage(pageNumber)}
                             >
@@ -211,7 +212,7 @@ const FAQTable = ({
                     className={`paginate_button page-item ${currentPage === totalPages ? 'disabled' : ''}`}
                     onClick={handleNext}
                   >
-                    <button className="page-link">Next</button>
+                    <button className="page-link">Next</button> 
                   </li>
                 </ul>
               </div>
