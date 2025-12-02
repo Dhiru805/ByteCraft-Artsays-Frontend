@@ -800,6 +800,17 @@ const [bidToConfirm, setBidToConfirm] = useState(null);
 const [liveBids, setLiveBids] = useState([]);
 const [userBid, setUserBid] = useState(null);
 
+const winner = useMemo(() => {
+  if (!isBidEnded || liveBids.length === 0) return null;
+  
+  const top = liveBids[0];
+  return {
+    amount: top.amount,
+    name: top.userId?.username || top.userId?.name || "User",
+  };
+}, [isBidEnded, liveBids]);
+
+
   const getMainCategoryById = (id) =>
     categoryData.mainCategories.find((c) => String(c._id) === String(id));
   const getCategoryById = (id) =>
@@ -1744,8 +1755,20 @@ const hasAnyValue = (obj) => {
         <img src='/herosectionimg/winner.png' alt="winner" className="w-full h-9 object-contain" />
       </div>
       <div className="ml-10">
+        {/* <p className="font-semibold text-md">Winner:</p>
+        <p className="text-xs text-gray-800">Highest bid at closing wins.</p> */}
         <p className="font-semibold text-md">Winner:</p>
-        <p className="text-xs text-gray-800">Highest bid at closing wins.</p>
+
+{!isBidEnded ? (
+  <p className="text-xs text-gray-800">Highest bid at closing wins.</p>
+) : winner ? (
+  <p className="text-xs text-green-700 font-semibold">
+    {winner.name} — ₹{winner.amount}
+  </p>
+) : (
+  <p className="text-xs text-gray-600">No bids placed.</p>
+)}
+
       </div>
     </div>
 
