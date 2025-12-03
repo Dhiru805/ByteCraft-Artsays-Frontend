@@ -407,6 +407,7 @@ const Login = () => {
       localStorage.setItem("userId", userId);
       localStorage.setItem("status", normalizedStatus);
       localStorage.setItem("userrole", userrole);
+      localStorage.setItem("name", res.data.name);
 
       console.log("localStorage after login:", {
         token: localStorage.getItem("token"),
@@ -494,7 +495,7 @@ const Login = () => {
                 id="email"
                 required
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={(e) => setInput(e.target.value.trim())}
                 style={{
                   height: "48px",
                   border: "1px solid #6b4f36",
@@ -526,7 +527,7 @@ const Login = () => {
                   id="password"
                   required
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value.trim())}
                   style={{
                     height: "48px",
                     border: "1px solid #6b4f36",

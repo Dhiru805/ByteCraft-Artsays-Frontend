@@ -333,7 +333,7 @@ import postAPI from "../../../../../../../../api/postAPI";
 import getAPI from "../../../../../../../../api/getAPI";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
+import { toast } from "react-toastify";
 const CheckOut = () => {
   const userId = localStorage.getItem("userId");
   const [searchParams] = useSearchParams();
@@ -345,7 +345,8 @@ const CheckOut = () => {
   const [selectedAddr, setSelectedAddr] = useState(null);
   const [cartItems, setCartItems] = useState([]);
 
-  
+const [paymentMethod, setPaymentMethod] = useState(null);
+
   const [allAddresses, setAllAddresses] = useState([]);
 
   const [formData, setFormData] = useState({
@@ -360,6 +361,32 @@ const CheckOut = () => {
     state: "",
     zip: "",
   });
+
+const PaymentButton = ({ value, label }) => {
+  const isSelected = paymentMethod === value;
+
+  const toggleSelect = () => {
+    if (isSelected) {
+      setPaymentMethod(null); 
+    } else {
+      setPaymentMethod(value);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={toggleSelect}
+      className={`w-full py-3 rounded-xl border text-sm font-medium transition-all
+        ${isSelected ? "bg-[#5C4033] text-white border-[#5C4033]" 
+                     : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"}
+      `}
+    >
+      {label}
+    </button>
+  );
+};
+
 
   const fetchProductById = async (id) => {
     try {
@@ -480,28 +507,137 @@ const CheckOut = () => {
 
   const changeField = (e) =>
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+
+// const placeOrder = async () => {
+//   try {
+//     for (const item of cartItems) {
+//       await postAPI("/api/buyerpurchase", {
+//         buyer: userId,
+//         product: item.productId, 
+//         quantity: item.qty,
+//         paymentMethod: "Cash On Delivery"
+//       });
+//     }
+
+    
+//     navigate(`/my-account/order-completed/${userId}`, {
+//       state: {
+//         order: {
+//           orderId: "TEMP-" + Date.now(),
+//           paymentMethod: "Cash On Delivery",
+//           transactionId: "TXN" + Date.now(),
+//           totalAmount: cartItems.reduce((a, b) => a + b.subtotal, 0),
+//         },
+//         items: cartItems,
+//         productIds: cartItems.map(i => i.productId)
+//       }
+//     });
+//   } catch (err) {
+//     console.log("ORDER ERROR:", err);
+//   }
+// };
 const placeOrder = async () => {
-  try {
-    for (const item of cartItems) {
-      await postAPI("/api/buyerpurchase", {
-        buyer: userId,
-        product: item.productId, 
-        quantity: item.qty,
-        paymentMethod: "Cash On Delivery"
-      });
+ try {
+   if (!paymentMethod) {
+  toast.error("Please select a payment method before proceeding.");
+  return;
+}
+
+    if (cartItems.length === 0) {
+      console.log("No items in cart");
+      return;
     }
+
+    const itemsWithArtist = await Promise.all(
+      cartItems.map(async (item) => {
+        try {
+          const artistRes = await getAPI(`/artist/getproduct/${item.productId}`);
+          if (artistRes?.data?.data?.creator) {
+            const art = artistRes.data.data.creator;
+            return {
+              ...item,
+              artistId: art._id,
+              artistName: art.name,
+              artistLastName: art.lastName || "",
+            };
+          }
+        } catch (e) {}
+
+        try {
+          const sellerRes = await getAPI(`/api/getproduct/${item.productId}`);
+          if (sellerRes?.data?.data?.userId) {
+            const art = sellerRes.data.data.userId;
+            return {
+              ...item,
+              artistId: art._id,
+              artistName: art.name,
+              artistLastName: art.lastName || "",
+            };
+          }
+        } catch (e) {}
+
+        return { ...item, artistId: null, artistName: "Unknown", artistLastName: "" };
+      })
+    );
+
+    const deliveryAddressObj = {
+      line1: formData.street || "",
+      line2: "",
+      landmark: "",
+      city: formData.city || "",
+      state: formData.state || "",
+      country: formData.country || "",
+      pincode: formData.zip || "",
+    };
+
+    const buyerBlock = {
+      id: userId,
+      name: `${formData.firstName} ${formData.lastName}`,
+      email: formData.email,
+    };
+
+    // let artistBlock = {};
+    // if (itemsWithArtist.length === 1) {
+    //   artistBlock = {
+    //     id: itemsWithArtist[0].artistId,
+    //     name: itemsWithArtist[0].artistName,
+    //     lastName: itemsWithArtist[0].artistLastName,
+    //   };
+    // }
+const artistBlock = {
+  id: itemsWithArtist[0].artistId,
+  name: itemsWithArtist[0].artistName,
+  lastName: itemsWithArtist[0].artistLastName,
+};
+
+    const orderPayload = {
+      buyer: buyerBlock,
+      artist: artistBlock,
+      items: itemsWithArtist.map((i) => ({
+        productId: i.productId,
+        name: i.name,
+        quantity: i.qty,
+        price: i.price,
+        subtotal: i.subtotal,
+      })),
+
+      deliveryAddress: deliveryAddressObj,
+      totalAmount: cartItems.reduce((a, b) => a + b.subtotal, 0),
+      paymentMethod: paymentMethod,
+
+    };
+
+    const response = await postAPI("/api/buyer-order-list/create", orderPayload);
+
+    const savedOrder = response?.data?.data;
+
+    console.log("ORDER SUCCESS ===> ", savedOrder);
 
     navigate(`/my-account/order-completed/${userId}`, {
       state: {
-        order: {
-          orderId: "TEMP-" + Date.now(),
-          paymentMethod: "Cash On Delivery",
-          transactionId: "TXN" + Date.now(),
-          totalAmount: cartItems.reduce((a, b) => a + b.subtotal, 0),
-        },
+        order: savedOrder,
         items: cartItems,
-        productIds: cartItems.map(i => i.productId)
-      }
+      },
     });
   } catch (err) {
     console.log("ORDER ERROR:", err);
@@ -839,6 +975,23 @@ const placeOrder = async () => {
             <span>Total Price</span>
             <span>₹{cartItems.reduce((a, b) => a + b.subtotal, 0)}</span>
           </div>
+
+<div className="mt-6">
+  <h2 className="text-xl font-semibold mb-3">Payment Method *</h2>
+
+  <div className="flex flex-col gap-3">
+    <PaymentButton value="Cash On Delivery" label="Cash On Delivery (COD)" />
+    <PaymentButton value="UPI" label="UPI" />
+    <PaymentButton value="Credit Card" label="Credit Card" />
+    <PaymentButton value="Debit Card" label="Debit Card" />
+  </div>
+
+  {paymentMethod === null && (
+    <p className="text-red-500 text-sm mt-2">Please select a payment method</p>
+  )}
+</div>
+
+
 
           <button
             // onClick={() =>
