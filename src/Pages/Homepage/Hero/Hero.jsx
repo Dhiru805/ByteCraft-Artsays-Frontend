@@ -393,7 +393,7 @@ const Hero = () => {
             </h1>
 
             <h2 className="text-4xl md:text-9xl text-center lg:!text-left font-extrabold mt-2">
-              <span className="bg-gradient-to-r from-[#48372D] to-[#FF725E] bg-clip-text text-transparent font-[Windhavi]">
+              <span className="bg-gradient-to-r from-[#48372D] to-[#FF725E] bg-clip-text text-transparent !windhavi">
                 {text}
               </span>
               <span className="inline-block w-[3px] h-[1em] bg-gradient-to-r from-[#48372D] to-[#FF725E] align-bottom animate-blink ml-1"></span>

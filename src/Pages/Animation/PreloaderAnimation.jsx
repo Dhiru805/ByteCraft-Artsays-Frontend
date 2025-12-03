@@ -171,6 +171,7 @@ export default function PreloaderAnimation() {
                     duration: 1.5,
                     ease: "easeOut",
                   }}
+                  className="windhavi"
                   style={{
                     fontSize: isMobile ? "32px" : "54px",
                     fontFamily: "Windhvi, sans-serif",

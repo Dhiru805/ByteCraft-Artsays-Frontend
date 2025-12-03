@@ -10,8 +10,8 @@ const ChatIcon = () => {
       <div
         style={{
           position: "fixed",
-          bottom: "20px",
-          right: "20px",
+          bottom: "10px",
+          right: "10px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -48,6 +48,7 @@ const ChatIcon = () => {
         <img
           src="/assets/profile/ArtyN.png"
           alt="Name"
+          className="hidden md:block"
           style={{
             width: "70px",
             objectFit: "contain"

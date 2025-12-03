@@ -279,10 +279,10 @@ export default function ChatBox({ closeBox }) {
   ];
 
   return (
-    <div className="fixed bottom-[110px] right-6 w-[360px] md:w-[420px] z-[9999]">
+    <div className="fixed bottom-[75px] md:bottom-[110px] justify-self-center md:right-6 w-[90%] md:w-[420px] z-[9999]">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-slate-900 to-slate-800 ring-1 ring-black/40">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 bg-[#48372D] to-transparent">
+        <div className="flex items-center justify-between px-2 md:px-4 py-2 md:py-3 bg-[#48372D] to-transparent">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-gradient-to-tr from-rose-500 to-amber-400 flex items-center justify-center text-white font-bold"><img
               src="/assets/profile/Arty.png"
@@ -291,7 +291,7 @@ export default function ChatBox({ closeBox }) {
               style={{ objectFit: "contain" }}
             /></div>
             <div>
-              <div className="text-sm font-semibold text-white">Arty - Artsays</div>
+              <div className="text-sm font-semibold text-white">Arty</div>
               <div className="text-xs text-white">Verified AI Assistant</div>
             </div>
           </div>
@@ -306,7 +306,7 @@ export default function ChatBox({ closeBox }) {
         </div>
 
         {/* Body */}
-        <div className="h-[420px] px-4 py-3 overflow-y-auto bg-[#ffffff]">
+        <div className="h-[300px] md:h-[420px] px-2 md:px-4 py-2 md:py-3 overflow-y-auto bg-[#ffffff]">
           <div className="flex flex-col gap-4">
             <AnimatePresence initial={false} mode="popLayout">
               {messages.map((m, idx) => {
@@ -315,7 +315,7 @@ export default function ChatBox({ closeBox }) {
                   <motion.div key={idx} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={`flex ${user ? 'justify-end' : 'justify-start'}`}>
                     <div className={`max-w-[78%] ${user ? 'text-right' : 'text-left'}`}>
                       <div
-                        className={`inline-flex items-start gap-3 p-3 rounded-2xl ${user
+                        className={`inline-flex items-start gap-3 p-2 md:p-3 rounded-2xl ${user
                           ? "bg-gradient-to-tr from-indigo-600 to-purple-600 text-white shadow-lg"
                           : "bg-white/6 backdrop-blur-sm border border-dark text-dark"
                           }`}
@@ -398,16 +398,16 @@ export default function ChatBox({ closeBox }) {
 
         {/* Suggestions */}
         {showSuggestions && (
-          <div className="px-4 py-2 border-t border-dark bg-[#ffffff] flex gap-2 flex-wrap">
+          <div className="px-2 py-2 border-t border-dark bg-[#ffffff] flex gap-2 flex-wrap">
             {suggestions.map((s) => (
-              <button key={s} onClick={() => sendMessage(s)} className="text-xs px-3 py-1 rounded-full border border-gray-300 hover:!border-gray-600 text-gray-700">{s}</button>
+              <button key={s} onClick={() => sendMessage(s)} className="text-xs px-2 py-1 rounded-full border border-gray-300 hover:!border-gray-600 text-gray-700">{s}</button>
             ))}
           </div>
         )}
 
         {/* Footer / Input */}
-        <div className="px-4 py-3 bg-[#48372D] to-transparent">
-          <form onSubmit={(e) => { e.preventDefault(); sendMessage(); }} className="flex items-center gap-3">
+        <div className="px-2 md:px-4 py-2 md:py-3 bg-[#48372D] to-transparent">
+          <form onSubmit={(e) => { e.preventDefault(); sendMessage(); }} className="flex items-center gap-2 md:gap-3">
             <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask Arty About Artworks, COA, Authentication..." className="flex-1 px-4 py-2 rounded-full bg-white/6 placeholder:text-white/50 text-dark text-sm outline-none" />
             <button type="submit" disabled={!input.trim() || isSending} className={`px-4 py-2 rounded-full text-sm font-semibold ${!input.trim() || isSending ? 'bg-[#ffffff] text-dark cursor-not-allowed' : 'bg-rose-500 text-white shadow-md'}`}>
               {isSending ? 'Working…' : 'Send'}

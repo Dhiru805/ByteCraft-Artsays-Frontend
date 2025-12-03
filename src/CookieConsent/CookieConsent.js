@@ -240,16 +240,17 @@ const CookieConsent = () => {
           <div className="backdrop-blur-3xl backdrop-saturate-200 bg-black/90 border border-white/10 rounded-2xl p-4 shadow-xl">
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0 mt-1">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#FF6B6B] via-[#7C3AED] to-[#FFD166] shadow-inner">
-                  <div className="w-full h-full bg-white/95 rounded-lg flex flex-col items-center justify-center text-sm font-bold text-[#242424]"><img
-                    src="/assets/profile/Artsays White.jpg"
-                    alt="Arty"
-                    className="rounded-xl object-cover block"
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = "/assets/profile/default-arty.png";
-                    }}
-                  /></div>
+                <div className="w-12 h-12 rounded-xl bg-[#48372D] shadow-inner">
+                  <div className="w-full h-full bg-white/95 rounded-lg flex flex-col items-center justify-center text-sm font-bold text-[#242424]">
+                    {/* Alphabet Avatar */}
+                    <div
+                      className="rounded-xl flex items-center justify-center text-4xl text-white !windhavi"
+                      style={{ fontFamily: "Windhavi" }}
+                    >
+                      A 
+                    </div>
+                  </div>
+
                 </div>
               </div>
 
@@ -279,7 +280,7 @@ const CookieConsent = () => {
                     className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-[#48372D] text-white font-bold shadow hover:scale-[1.01] active:scale-95 transition-transform"
                     type="button"
                   >
-                    Accept All - Enable COA & Bidding
+                    Accept All
                   </button>
 
                   <button
@@ -351,11 +352,11 @@ const CookieConsent = () => {
                           <div className="text-[12px] text-dark">Personalised offers & artist updates</div>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer">
-                          <input 
-                          type="checkbox"
-                          className="sr-only peer" 
-                          checked={marketingAllowed}
-                          onChange={(e) => setMarketingAllowed(e.target.checked)} />
+                          <input
+                            type="checkbox"
+                            className="sr-only peer"
+                            checked={marketingAllowed}
+                            onChange={(e) => setMarketingAllowed(e.target.checked)} />
                           <div className="w-11 h-6 bg-white/10 peer-checked:bg-[#ffffff] rounded-full peer-focus:ring-2 peer-focus:ring-[#ffffff] transition border border-dark"></div>
                           <div className={`absolute left-1 top-1 w-4 h-4 bg-dark rounded-full transition-transform peer-checked:translate-x-5`}></div>
                         </label>
