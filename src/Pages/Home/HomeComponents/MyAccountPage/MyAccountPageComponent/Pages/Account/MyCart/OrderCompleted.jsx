@@ -303,7 +303,7 @@ const OrderCompleted = () => {
 
   const [fullProducts, setFullProducts] = useState([]);
 
-  const BASE = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 
   const calculateDeliveryDate = (range) => {
     if (!range) return "N/A";
@@ -331,10 +331,12 @@ const OrderCompleted = () => {
       ];
 
       const merged = purchasedItems.map((cartItem, i) => {
-        const real = approved.find((p) => p._id === productIds[i]);
+        const pid = productIds[i];
+        const real =
+          approved.find((p) => String(p._id) === String(pid)) || null;
         return {
           ...cartItem,
-          full: real || null,
+          full: real,
         };
       });
 

@@ -759,7 +759,6 @@ useEffect(() => {
 
       console.log("Combined:", allProducts);
 
-      // Match using _id
       const matched = allProducts.find((p) =>
         productIds.includes(p._id.toString())
       );
@@ -902,6 +901,47 @@ useEffect(() => {
     }
   };
 
+  // const handleSubmitReview = async () => {
+  //   if (!reviewTitle || !reviewDescription || rating === 0) {
+  //     toast.error("Please fill out all fields and select a rating.");
+  //     return;
+  //   }
+
+  //   const imageFiles = uploadedFiles.filter((f) => f && f instanceof File);
+  //   if (imageFiles.length === 0 && uploadedFiles.length === 0) {
+  //     toast.error("Please upload at least one image.");
+  //     return;
+  //   }
+
+  //   if (uploadedFiles.length > 3) {
+  //     toast.error("You can upload a maximum of 3 images.");
+  //     return;
+  //   }
+
+  //   const formData = new FormData();
+  //   formData.append("userId", buyer?.id || buyer?._id || "");
+  //   formData.append("productId", order?._id || order?.productId || "");
+  //   formData.append("rating", rating);
+  //   formData.append("title", reviewTitle);
+  //   formData.append("description", reviewDescription);
+  //   uploadedFiles.forEach((f) => formData.append("file", f));
+
+  //   try {
+  //     const res = await postAPI("/api/reviews/submit", formData, {
+  //       headers: { "Content-Type": "multipart/form-data" },
+  //     });
+  //     if (res?.data?.success) {
+  //       toast.success("Review submitted successfully!");
+  //       setHasSubmittedReview(true);
+  //     } else {
+  //       toast.error(res?.data?.message || "Failed to submit review.");
+  //     }
+  //   } catch (err) {
+  //     console.error("submitReview err", err);
+  //     toast.error("Failed to submit review.");
+  //   }
+  // };
+
   const handleSubmitReview = async () => {
     if (!reviewTitle || !reviewDescription || rating === 0) {
       toast.error("Please fill out all fields and select a rating.");
@@ -919,9 +959,55 @@ useEffect(() => {
       return;
     }
 
+    const firstItem = order?.items?.[0];
+    let actualProductId = null;
+    let productModelForReview = "Product";
+    let productNameSnapshot =
+      firstItem?.name ||
+      firstItem?.fullProduct?.productName ||
+      firstItem?.fullProduct?.ProductName ||
+      order?.ProductName ||
+      order?.productName ||
+      "";
+
+    if (firstItem) {
+      if (firstItem.customProduct) {
+        actualProductId = firstItem.customProduct._id || firstItem.customProduct;
+        productModelForReview = "BuyerRequest";
+        productNameSnapshot =
+          productNameSnapshot ||
+          firstItem.customProduct.ProductName ||
+          firstItem.customProduct.productName ||
+          "";
+      } else if (firstItem.productId) {
+        actualProductId = firstItem.productId._id || firstItem.productId;
+        productModelForReview = "Product";
+        productNameSnapshot =
+          productNameSnapshot ||
+          firstItem.productId.productName ||
+          firstItem.productId.ProductName ||
+          "";
+      } else if (firstItem.resellProduct) {
+        actualProductId = firstItem.resellProduct._id || firstItem.resellProduct;
+        productModelForReview = "BuyerResellProduct";
+        productNameSnapshot =
+          productNameSnapshot ||
+          firstItem.resellProduct.productName ||
+          "";
+      }
+    }
+
+    if (!actualProductId) {
+      actualProductId = order?._id || order?.productId || "";
+    }
+
     const formData = new FormData();
     formData.append("userId", buyer?.id || buyer?._id || "");
-    formData.append("productId", order?._id || order?.productId || "");
+    formData.append("productId", actualProductId);
+    formData.append("productModel", productModelForReview);
+    if (productNameSnapshot) {
+      formData.append("productNameSnapshot", productNameSnapshot);
+    }
     formData.append("rating", rating);
     formData.append("title", reviewTitle);
     formData.append("description", reviewDescription);
@@ -939,7 +1025,7 @@ useEffect(() => {
       }
     } catch (err) {
       console.error("submitReview err", err);
-      toast.error("Failed to submit review.");
+      toast.error("You have already submitted a review for this product.");
     }
   };
 

@@ -472,6 +472,8 @@ import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../../../../../api/getAPI";
 import deleteAPI from "../../../../../../../../api/deleteAPI";
 import postAPI from "../../../../../../../../api/postAPI";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 const MyCartList = () => {
   const { userId } = useParams();
@@ -514,15 +516,78 @@ const fetchCart = async () => {
     fetchCart();
   }, [userId]);
 
+  // const removeItem = async (productId) => {
+  //   try {
+  //     await deleteAPI("/api/cart/remove", {
+  //       params: { userId, productId }
+  //     });
+
+  //     setCart((prev) => prev.filter((i) => i.product._id !== productId));
+  //   } catch (err) {
+  //     console.log("Remove error:", err);
+  //   }
+  // };
+
   const removeItem = async (productId) => {
+    const cartItem = cart.find((item) => item.product._id === productId);
+    const isBidWinnerItem = cartItem?.isBidWinnerItem === true;
+
+    if (isBidWinnerItem) {
+      const result = await Swal.fire({
+        title: "Remove Bid Winner Product?",
+        html: `
+          <div style="text-align: left; padding: 10px 0;">
+            <p style="margin-bottom: 15px; font-size: 16px; color: #333;">
+              <strong>⚠️ Important Notice:</strong>
+            </p>
+            <ul style="margin-left: 20px; margin-bottom: 15px; color: #555;">
+              <li style="margin-bottom: 10px;">This product cannot be recovered once removed</li>
+              <li style="margin-bottom: 10px;">It will be automatically awarded to the next highest bidder</li>
+              <li style="margin-bottom: 10px;">You will lose your winning bid status</li>
+            </ul>
+            <p style="color: #d32f2f; font-weight: bold;">
+              Are you sure you want to proceed?
+            </p>
+          </div>
+        `,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d32f2f",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, Remove It",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+        width: "500px",
+      });
+
+      if (!result.isConfirmed) {
+        return;
+      }
+    }
+
     try {
       await deleteAPI("/api/cart/remove", {
         params: { userId, productId }
       });
 
       setCart((prev) => prev.filter((i) => i.product._id !== productId));
+      
+      if (isBidWinnerItem) {
+        Swal.fire({
+          title: "Removed",
+          text: "The product has been removed and will be awarded to the next highest bidder.",
+          icon: "info",
+          timer: 3000,
+          showConfirmButton: false,
+        });
+      }
     } catch (err) {
       console.log("Remove error:", err);
+      Swal.fire({
+        title: "Error",
+        text: "Failed to remove item from cart. Please try again.",
+        icon: "error",
+      });
     }
   };
 
@@ -549,7 +614,61 @@ const fetchCart = async () => {
     }
   };
 
+  // const clearCart = async () => {
+  //   try {
+  //     for (const item of cart) {
+  //       await deleteAPI("/api/cart/remove", {
+  //         params: { userId, productId: item.product._id }
+  //       });
+  //     }
+
+  //     setCart([]);
+  //   } catch (err) {
+  //     console.log("Clear cart error:", err);
+  //   }
+  // };
+
   const clearCart = async () => {
+    const hasBidWinnerItems = cart.some((item) => item.isBidWinnerItem === true);
+
+    if (hasBidWinnerItems) {
+      const bidWinnerCount = cart.filter((item) => item.isBidWinnerItem === true).length;
+      
+      const result = await Swal.fire({
+        title: "Clear Cart?",
+        html: `
+          <div style="text-align: left; padding: 10px 0;">
+            <p style="margin-bottom: 15px; font-size: 16px; color: #333;">
+              <strong>⚠️ Important Notice:</strong>
+            </p>
+            <p style="margin-bottom: 15px; color: #555;">
+              Your cart contains <strong>${bidWinnerCount} bid winner product${bidWinnerCount > 1 ? 's' : ''}</strong>.
+            </p>
+            <ul style="margin-left: 20px; margin-bottom: 15px; color: #555;">
+              <li style="margin-bottom: 10px;">Bid winner products cannot be recovered once removed</li>
+              <li style="margin-bottom: 10px;">They will be automatically awarded to the next highest bidder</li>
+              <li style="margin-bottom: 10px;">You will lose your winning bid status for these products</li>
+            </ul>
+            <p style="color: #d32f2f; font-weight: bold;">
+              Are you sure you want to clear your entire cart?
+            </p>
+          </div>
+        `,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d32f2f",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, Clear Cart",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+        width: "500px",
+      });
+
+      if (!result.isConfirmed) {
+        return;
+      }
+    }
+
     try {
       for (const item of cart) {
         await deleteAPI("/api/cart/remove", {
@@ -558,8 +677,25 @@ const fetchCart = async () => {
       }
 
       setCart([]);
+      
+      if (hasBidWinnerItems) {
+        Swal.fire({
+          title: "Cart Cleared",
+          text: "All items have been removed. Bid winner products will be awarded to the next highest bidders.",
+          icon: "info",
+          timer: 3000,
+          showConfirmButton: false,
+        });
+      } else {
+        toast.success("Cart cleared successfully");
+      }
     } catch (err) {
       console.log("Clear cart error:", err);
+      Swal.fire({
+        title: "Error",
+        text: "Failed to clear cart. Please try again.",
+        icon: "error",
+      });
     }
   };
 

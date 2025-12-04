@@ -5,8 +5,33 @@ import "react-toastify/dist/ReactToastify.css";
 import CookieConsent from "./CookieConsent/CookieConsent";
 import { CookiesProvider } from "react-cookie";
 import { BrowserRouter } from "react-router-dom";
-import { AuthProvider } from './AuthContext';
+import { AuthProvider, useAuth } from './AuthContext';
 import ScrollToTop from "./Component/ScrollToTop";
+import WonBidPopup from "./Component/WonBidPopup/WonBidPopup";
+
+const AppContent = () => {
+  const { isAuthenticated } = useAuth();
+  const userId = localStorage.getItem("userId");
+
+  return (
+    <div className="App">
+      <Routes />
+      <ToastContainer
+      //  position="top-right"
+      //  autoClose={5000}
+      //  hideProgressBar={false}
+      //  newestOnTop={false}
+      //  closeOnClick
+      //  rtl={false}
+      //  pauseOnFocusLoss
+      //  draggable
+      //  pauseOnHover
+      />
+      <CookieConsent />
+      <WonBidPopup userId={userId} isAuthenticated={isAuthenticated} />
+    </div>
+  );
+};
 
 function App() {
   return (
@@ -15,21 +40,7 @@ function App() {
        <ScrollToTop />
         <AuthProvider>
           <CookiesProvider>
-            <div className="App">
-              <Routes />
-              <ToastContainer
-              //  position="top-right"
-              //  autoClose={5000}
-              //  hideProgressBar={false}
-              //  newestOnTop={false}
-              //  closeOnClick
-              //  rtl={false}
-              //  pauseOnFocusLoss
-              //  draggable
-              //  pauseOnHover
-              />
-              <CookieConsent />
-            </div>
+            <AppContent />
           </CookiesProvider>
         </AuthProvider>
       </BrowserRouter>

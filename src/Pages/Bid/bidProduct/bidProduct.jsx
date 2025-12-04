@@ -1056,7 +1056,6 @@ const fetchLiveHighestBids = async (productsList) => {
   try {
     const highestMap = {};
 
-    // fetch highest for each biddingId
     await Promise.all(
       productsList.map(async (item) => {
         const bidId = item._id;
@@ -1498,7 +1497,7 @@ useEffect(() => {
   key={item._id}
  // onClick={() => navigate(`/bid-details/${item.product?._id || item.productId || item._id}`)}
   onClick={() => navigate(`/bid-details/${item._id}`)}
-  className="mx-auto product-card w-[300px] cursor-pointer"
+  className="mx-auto product-card w-[300px] cursor-pointer rounded-t-2xl overflow-hidden"
 >
 
 
@@ -1520,7 +1519,7 @@ useEffect(() => {
                       alt={item.artworkName}
                       className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
                     /> */}
-<div className="w-68 h-40 sm:h-64 rounded-t-2xl bg-white flex items-center justify-center overflow-hidden">
+<div className="w-[300px] h-40 sm:h-64 rounded-t-2xl bg-grey flex items-center justify-center overflow-hidden">
   <img
     src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.product?.mainImage}`}
     alt={item.artworkName}

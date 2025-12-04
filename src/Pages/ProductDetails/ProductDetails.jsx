@@ -1605,11 +1605,10 @@
 
 //  export default ProductDetails;
 
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { MdVerified } from "react-icons/md";
 import { Star } from "lucide-react";
-import { useParams } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { HiMiniPercentBadge } from "react-icons/hi2";
 import { Heart, MapPin, ArrowRight, ShoppingCart, Zap } from "lucide-react";
@@ -1651,6 +1650,20 @@ const ProductDetails = () => {
   const userType = localStorage.getItem("userType"); 
 
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
+
+  const resolveMediaUrl = (path) => {
+    if (!path || typeof path !== "string") return "/images/placeholder.jpg";
+    if (/^https?:\/\//i.test(path) || path.startsWith("data:")) return path;
+    const normalized = path.replace(/\\/g, "/");
+    const leadingSlash = normalized.startsWith("/") ? normalized : `/${normalized}`;
+    if (imageBaseURL) {
+      const base = imageBaseURL.endsWith("/")
+        ? imageBaseURL.slice(0, -1)
+        : imageBaseURL;
+      return `${base}${leadingSlash}`;
+    }
+    return leadingSlash;
+  };
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [images, setImages] = useState([]);
@@ -1658,6 +1671,21 @@ const ProductDetails = () => {
   const [reviews, setReviews] = useState([]);
   const ratingValue = Number(product?.averageRating ?? 0);
   const reviewCount = Number(product?.reviewCount ?? 0);
+  const rawMonthlyPurchase =
+    product?.monthlyPurchaseCount ??
+    product?.monthlySales ??
+    product?.ordersCount ??
+    product?.orderCount ??
+    product?.salesCount ??
+    product?.totalOrders ??
+    0;
+  const normalizedMonthlyPurchase = Number(rawMonthlyPurchase) || 0;
+  const fallbackPurchaseCount = reviewCount > 0 ? reviewCount : 0;
+  const purchaseDisplayCount =
+    normalizedMonthlyPurchase > 0
+      ? normalizedMonthlyPurchase
+      : fallbackPurchaseCount;
+  const hasPurchaseData = purchaseDisplayCount > 0;
 
   const [quantity, setQuantity] = useState(1);
   const [protection, setProtection] = useState(true);
@@ -1698,7 +1726,7 @@ const ensureBuyer = () => {
     "/artimages/wall3.jpg",
     "/artimages/wall4.webp",
   ];
-const addToCart = async (productId) => {
+const addToCart = async (productId, desiredQty = 1) => {
     const userId = localStorage.getItem("userId");
 
     if (!userId) {
@@ -1708,6 +1736,15 @@ const addToCart = async (productId) => {
 
     try {
       await postAPI(`/api/cart/addcart/${productId}`, {}, true);
+
+      if (desiredQty > 1) {
+        await postAPI(
+          "/api/cart/update",
+          { userId, productId, quantity: desiredQty },
+          true,
+          false
+        );
+      }
 
       toast.success("Added to Cart!");
     } catch (err) {
@@ -1726,7 +1763,14 @@ const addToCart = async (productId) => {
           getAPI("/api/reviews/all-reviews", {}, true, false),
         ]);
 
-        setReviews(reviewRes?.data?.data || []);
+        const reviewPayload =
+          reviewRes?.data?.data || reviewRes?.data?.reviews || [];
+        const sortedReviews = Array.isArray(reviewPayload)
+          ? [...reviewPayload].sort(
+              (a, b) => new Date(b?.createdAt || 0) - new Date(a?.createdAt || 0)
+            )
+          : [];
+        setReviews(sortedReviews);
 
         const products1 =
           res1?.data?.data?.filter((p) => p.status === "Approved") || [];
@@ -1852,6 +1896,60 @@ useEffect(() => {
     if (sell >= market) return 0;
     return Math.round(((market - sell) / market) * 100);
   };
+
+  // const productReviews = reviews.filter(
+  //   (r) => String(r.productId?._id) === String(product?._id)
+  // );
+  // const productReviews = reviews.filter((review) => {
+  //   const buyerRequest = review.productId;
+  //   if (!buyerRequest) return false;
+
+  //   const reviewProductName = buyerRequest.ProductName?.trim()?.toLowerCase();
+  //   const currentProductName = product.productName?.trim()?.toLowerCase();
+
+  //   return reviewProductName === currentProductName;
+  // });
+
+  const productReviews = useMemo(() => {
+    if (!product || !reviews || reviews.length === 0) return [];
+
+    const currentProductIdStr = product._id?.toString() || product._id;
+    const currentProductName = (product.productName || "").trim().toLowerCase();
+
+    const filtered = reviews.filter((review) => {
+      const reviewProductId = review.productId;
+      if (!reviewProductId) return false;
+
+      const reviewProductIdStr =
+        typeof reviewProductId === "object"
+          ? reviewProductId._id?.toString() || reviewProductId.toString()
+          : reviewProductId.toString();
+
+      if (reviewProductIdStr === currentProductIdStr) {
+        return true;
+      }
+
+      const buyerRequest = typeof reviewProductId === "object" ? reviewProductId : null;
+      if (buyerRequest && buyerRequest.ProductName) {
+        const reviewProductName = buyerRequest.ProductName?.trim()?.toLowerCase();
+        if (reviewProductName && reviewProductName === currentProductName) {
+          return true;
+        }
+      }
+
+      if (review.productNameSnapshot) {
+        const snapshotName = review.productNameSnapshot.trim().toLowerCase();
+        if (snapshotName && snapshotName === currentProductName) {
+          return true;
+        }
+      }
+
+      return false;
+    });
+    return filtered.sort(
+      (a, b) => new Date(b?.createdAt || 0) - new Date(a?.createdAt || 0)
+    );
+  }, [product, reviews]);
 
   const nextSlide = () => {
     if (index < offersData.length - 3) setIndex(index + 1);
@@ -2010,7 +2108,7 @@ useEffect(() => {
             subCategoryName,
             product.productName,
           ]
-            .filter((v) => v && v !== "N/A") // remove empty + N/A
+            .filter((v) => v && v !== "N/A") 
             .join(" / ")}
         </p>
 
@@ -2209,8 +2307,14 @@ useEffect(() => {
                       </span>
 
                       <span className="text-dark text-sm ml-3">
-                        <strong>{Math.max(50, reviewCount * 10)}+</strong>{" "}
-                        bought this month
+                        {hasPurchaseData ? (
+                          <>
+                            <strong>{purchaseDisplayCount}</strong> bought this
+                            month
+                          </>
+                        ) : (
+                          <strong>Be the first to buy this month</strong>
+                        )}
                       </span>
                     </div>
                   </div>
@@ -2982,13 +3086,17 @@ useEffect(() => {
                         {/* Review Photos */}
                         {review.photos?.length > 0 && (
                           <div className="flex gap-3 mt-3">
-                            {review.photos.map((img, i) => (
-                              <img
-                                key={i}
-                                src={`${imageBaseURL}${img}`}
-                                className="w-20 h-20 rounded-lg object-cover border"
-                              />
-                            ))}
+                            {review.photos.map((img, i) => {
+                              const resolved = resolveMediaUrl(img);
+                              return (
+                                <img
+                                  key={i}
+                                  src={resolved}
+                                  className="w-20 h-20 rounded-lg object-cover border"
+                                  alt="review"
+                                />
+                              );
+                            })}
                           </div>
                         )}
                       </div>
@@ -3145,7 +3253,7 @@ useEffect(() => {
                    onClick={(e) => {
                           e.stopPropagation();
                            if (!ensureBuyer()) return;
-                          addToCart(product._id);
+                          addToCart(product._id, quantity);
                         }} 
                   className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart">
                     <ShoppingCart size={18} /> Add to Cart
@@ -3155,7 +3263,7 @@ useEffect(() => {
                     onClick={() => {
                        if (!ensureBuyer()) return;
                       navigate(
-                        `/my-account/check-out/${userId}?productId=${product._id}`
+                        `/my-account/check-out/${userId}?productId=${product._id}&quantity=${quantity}`
                       );
                     }}
                   >
@@ -3169,19 +3277,6 @@ useEffect(() => {
       </div>
     );
   };
-
-  // const productReviews = reviews.filter(
-  //   (r) => String(r.productId?._id) === String(product?._id)
-  // );
-  const productReviews = reviews.filter((review) => {
-    const buyerRequest = review.productId;
-    if (!buyerRequest) return false;
-
-    const reviewProductName = buyerRequest.ProductName?.trim()?.toLowerCase();
-    const currentProductName = product.productName?.trim()?.toLowerCase();
-
-    return reviewProductName === currentProductName;
-  });
 
   return <ProductImages imagesProp={images} initialImage={images[0]} />;
 };

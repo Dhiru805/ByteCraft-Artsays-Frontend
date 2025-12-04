@@ -331,13 +331,18 @@
 import React, { useState, useEffect } from "react";
 import postAPI from "../../../../../../../../api/postAPI";
 import getAPI from "../../../../../../../../api/getAPI";
-import { useSearchParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import deleteAPI from "../../../../../../../../api/deleteAPI";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 const CheckOut = () => {
   const userId = localStorage.getItem("userId");
   const [searchParams] = useSearchParams();
   const productId = searchParams.get("productId");
+  const quantityParam = Number(searchParams.get("quantity"));
+  const directQuantity =
+    Number.isFinite(quantityParam) && quantityParam > 0
+      ? quantityParam
+      : 1;
   const navigate = useNavigate();
 
   const [deliveryAddress, setDeliveryAddress] = useState("same");
@@ -406,14 +411,19 @@ const PaymentButton = ({ value, label }) => {
     try {
       if (productId) {
         const p = await fetchProductById(productId);
+        const availableQty = Number(p?.quantity) || 1;
+        const buyNowQty = Math.max(
+          1,
+          Math.min(directQuantity, availableQty)
+        );
 
         setCartItems([
           {
             productId: p._id,
             name: p.productName,
-            qty: 1,
+            qty: buyNowQty,
             price: p.sellingPrice,
-            subtotal: p.sellingPrice,
+            subtotal: buyNowQty * p.sellingPrice,
           },
         ]);
 
@@ -451,7 +461,7 @@ const PaymentButton = ({ value, label }) => {
 
   useEffect(() => {
     loadOrderItems();
-  }, [userId, productId]);
+  }, [userId, productId, directQuantity]);
 
   const loadAllAddresses = async () => {
     try {
@@ -633,14 +643,31 @@ const artistBlock = {
 
     console.log("ORDER SUCCESS ===> ", savedOrder);
 
+    try {
+      for (const item of cartItems) {
+        if (!item.productId) continue;
+        await deleteAPI("/api/cart/remove", {
+          params: { userId, productId: item.productId },
+        });
+      }
+    } catch (clearErr) {
+      console.log("Failed to clear cart after order:", clearErr);
+    }
+
     navigate(`/my-account/order-completed/${userId}`, {
       state: {
         order: savedOrder,
         items: cartItems,
+        productIds: cartItems.map((i) => i.productId),
       },
     });
   } catch (err) {
     console.log("ORDER ERROR:", err);
+    const message =
+      err?.response?.data?.message ||
+      err?.response?.data?.error ||
+      "Failed to place order. Please try again.";
+    toast.error(message);
   }
 };
 

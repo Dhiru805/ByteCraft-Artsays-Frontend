@@ -744,6 +744,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import getAPI from "../../api/getAPI";
 import postAPI from "../../api/postAPI"; 
+import deleteAPI from "../../api/deleteAPI"; 
 import { MdVerified } from "react-icons/md";
 import { BsTelegram } from "react-icons/bs";
 import { FaChevronCircleRight, FaChevronCircleLeft } from "react-icons/fa";
@@ -752,7 +753,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Star, MapPin, ArrowRight, Heart, Zap, ShoppingCart } from "lucide-react";
 import { HiMiniPercentBadge } from "react-icons/hi2";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
+
+const resolveMediaUrl = (path) => {
+  if (!path || typeof path !== "string") return "/images/placeholder.jpg";
+  if (/^https?:\/\//i.test(path) || path.startsWith("data:")) return path;
+  const normalized = path.replace(/\\/g, "/");
+  const leadingSlash = normalized.startsWith("/") ? normalized : `/${normalized}`;
+  if (imageBaseURL) {
+    const base = imageBaseURL.endsWith("/") ? imageBaseURL.slice(0, -1) : imageBaseURL;
+    return `${base}${leadingSlash}`;
+  }
+  return leadingSlash;
+};
 
 const BidDetails = () => {
   const { bidId } = useParams();
@@ -771,6 +785,8 @@ const [bidToConfirm, setBidToConfirm] = useState(null);
   const [activeTab, setActiveTab] = useState("description");
   const [selectedImage, setSelectedImage] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
+
+const [winnerAlertShown, setWinnerAlertShown] = useState(false);
 
   const [categoryData, setCategoryData] = useState({
     mainCategories: [],
@@ -800,16 +816,30 @@ const [bidToConfirm, setBidToConfirm] = useState(null);
 const [liveBids, setLiveBids] = useState([]);
 const [userBid, setUserBid] = useState(null);
 
+// const winner = useMemo(() => {
+//   if (!isBidEnded || liveBids.length === 0) return null;
+  
+//   const top = liveBids[0];
+//   return {
+//     amount: top.amount,
+//     name: top.userId?.username 
+//    || `${top.userId?.name || ""} ${top.userId?.lastName || ""}`.trim()
+//    || "User",
+
+//   };
+// }, [isBidEnded, liveBids]);
 const winner = useMemo(() => {
   if (!isBidEnded || liveBids.length === 0) return null;
-  
+
   const top = liveBids[0];
+
   return {
     amount: top.amount,
-    name: top.userId?.username 
-   || `${top.userId?.name || ""} ${top.userId?.lastName || ""}`.trim()
-   || "User",
-
+    userId: top.userId?._id,  
+    name:
+      top.userId?.username ||
+      `${top.userId?.name || ""} ${top.userId?.lastName || ""}`.trim() ||
+      "User",
   };
 }, [isBidEnded, liveBids]);
 
@@ -837,6 +867,134 @@ const winner = useMemo(() => {
     };
     fetchCategories();
   }, []);
+
+// useEffect(() => {
+//   if (!isBidEnded || !winner || winnerAlertShown) return;
+
+//   const userId = localStorage.getItem("userId");
+//   if (!userId) return;
+
+//   if (winner.userId === userId) {
+//     setWinnerAlertShown(true);
+
+//     toast.success(
+//       `Congratulations! You won ${finalData.bid.artworkName} at ₹${winner.amount}. It has been added to your cart.`,
+//       { autoClose: 4000 }
+//     );
+
+//     postAPI("/api/cart/add-won-bid", {
+//       userId,
+//       productId: finalData._id,
+//       bidId: finalData.bid.biddingId,
+//       amount: winner.amount
+//     });
+//   }
+// }, [isBidEnded, winner]);
+
+
+// const handleRemoveFromCart = async (productId) => {
+//   const userId = localStorage.getItem("userId");
+
+//   const res = await deleteAPI(`/api/cart/remove?userId=${userId}&productId=${productId}`, {
+//     userId,
+//     productId
+//   });
+
+//   if (res.data.success) {
+//     toast.warn(
+//       "You removed your winning bid item. It will be awarded to the next highest bidder.",
+//       { autoClose: 5000 }
+//     );
+
+//     await postAPI("/api/bidding/carry-forward", {
+//       bidId: finalData.bid.biddingId
+//     });
+//   }
+// };
+
+const handleRemoveFromCart = async (productId) => {
+  const userId = localStorage.getItem("userId");
+  
+  let isBidWinnerItem = false;
+  try {
+    const cartRes = await getAPI(`/api/cart/${userId}`, {}, true, false);
+    const cartItem = cartRes?.data?.items?.find(
+      (item) => item.product && String(item.product._id) === String(productId)
+    );
+    isBidWinnerItem = cartItem?.isBidWinnerItem === true;
+  } catch (err) {
+    console.error("Error checking cart:", err);
+  }
+
+  if (isBidWinnerItem) {
+    const result = await Swal.fire({
+      title: "Remove Bid Winner Product?",
+      html: `
+        <div style="text-align: left; padding: 10px 0;">
+          <p style="margin-bottom: 15px; font-size: 16px; color: #333;">
+            <strong>⚠️ Important Notice:</strong>
+          </p>
+          <ul style="margin-left: 20px; margin-bottom: 15px; color: #555;">
+            <li style="margin-bottom: 10px;">This product cannot be recovered once removed</li>
+            <li style="margin-bottom: 10px;">It will be automatically awarded to the next highest bidder</li>
+            <li style="margin-bottom: 10px;">You will lose your winning bid status</li>
+          </ul>
+          <p style="color: #d32f2f; font-weight: bold;">
+            Are you sure you want to proceed?
+          </p>
+        </div>
+      `,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d32f2f",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Yes, Remove It",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+      width: "500px",
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+  }
+
+  try {
+    const res = await deleteAPI(`/api/cart/remove?userId=${userId}&productId=${productId}`, {
+      userId,
+      productId
+    });
+
+    if (res.data.success) {
+      if (isBidWinnerItem) {
+        Swal.fire({
+          title: "Removed",
+          text: "The product has been removed and will be awarded to the next highest bidder.",
+          icon: "info",
+          timer: 3000,
+          showConfirmButton: false,
+        });
+
+        await postAPI("/api/bidding/carry-forward", {
+          bidId: finalData.bid.biddingId
+        });
+      } else {
+        toast.success("Item removed from cart");
+      }
+    }
+  } catch (err) {
+    console.error("Remove error:", err);
+    if (isBidWinnerItem) {
+      Swal.fire({
+        title: "Error",
+        text: "Failed to remove item from cart. Please try again.",
+        icon: "error",
+      });
+    } else {
+      toast.error("Failed to remove item from cart");
+    }
+  }
+};
 
   useEffect(() => {
     const fetchBidProduct = async () => {
@@ -877,7 +1035,14 @@ const winner = useMemo(() => {
         setProductData(matched || null);
 
         setBadgesData(badgeRes?.data?.data || []);
-        setReviews(reviewsRes?.data?.reviews || reviewsRes?.data?.data || []);
+        const reviewPayload =
+          reviewsRes?.data?.reviews || reviewsRes?.data?.data || [];
+        const sortedReviews = Array.isArray(reviewPayload)
+          ? [...reviewPayload].sort(
+              (a, b) => new Date(b?.createdAt || 0) - new Date(a?.createdAt || 0)
+            )
+          : [];
+        setReviews(sortedReviews);
 
         setLoading(false);
       } catch (err) {
@@ -905,6 +1070,32 @@ const winner = useMemo(() => {
     };
   }, [bidData, productData]);
 
+useEffect(() => {
+  if (!isBidEnded || !winner || !finalData) return;
+
+  const loggedInUser = localStorage.getItem("userId");
+  if (!loggedInUser) return;
+
+  if (localStorage.getItem(`won_${finalData._id}`)) return;
+
+  if (String(winner.userId) !== String(loggedInUser)) return;
+
+  localStorage.setItem(`won_${finalData._id}`, "true");
+
+  toast.success(
+    `Congratulations! You won ${finalData.bid.artworkName} at ₹${winner.amount}. The product is now added to your cart.`,
+    { autoClose: 4000 }
+  );
+
+  postAPI(`/api/cart/${loggedInUser}/add-won-bid`, {
+    userId: loggedInUser,
+    //productId: finalData._id,
+    productId: bidData.product?._id,
+    bidId: finalData.bid.biddingId,
+    amount: winner.amount,
+  }).catch((err) => console.error("Add-to-cart error:", err));
+
+}, [isBidEnded, winner, finalData]);
 
 useEffect(() => {
   if (!finalData?.bid?.biddingId) return;
@@ -1137,28 +1328,69 @@ const handleBidSubmit = async (amount) => {
     return badgesData.find((b) => String(b._id) === String(finalData._id)) || null;
   }, [finalData, badgesData]);
 
+  // const productReviews = useMemo(() => {
+  //   if (!finalData || !reviews) return [];
+  //   const nameA = (finalData.productName || finalData.productName?.toString() || finalData.productName || finalData.bid?.artworkName || "")
+  //     .trim()
+  //     .toLowerCase();
+
+  //   return reviews.filter((r) => {
+  //     const pid = r.productId;
+  //     if (!pid) return false;
+
+  //     const candidates = [
+  //       pid.ProductName,
+  //       pid.productName,
+  //       pid.Productname,
+  //       pid.ProductName?.toString?.(),
+  //       pid?.ProductName,
+  //     ];
+  //     const reviewName =
+  //       (pid.ProductName || pid.productName || pid.ProductName || "").toString().trim().toLowerCase();
+
+  //     return reviewName === nameA;
+  //   });
+  // }, [finalData, reviews]);
+
   const productReviews = useMemo(() => {
-    if (!finalData || !reviews) return [];
-    const nameA = (finalData.productName || finalData.productName?.toString() || finalData.productName || finalData.bid?.artworkName || "")
-      .trim()
-      .toLowerCase();
+    if (!finalData || !reviews || reviews.length === 0) return [];
 
-    return reviews.filter((r) => {
-      const pid = r.productId;
-      if (!pid) return false;
+    const currentProductId = finalData._id?.toString() || finalData._id;
+    const currentProductName = (finalData.productName || finalData.bid?.artworkName || "").trim().toLowerCase();
 
-      const candidates = [
-        pid.ProductName,
-        pid.productName,
-        pid.Productname,
-        pid.ProductName?.toString?.(),
-        pid?.ProductName,
-      ];
-      const reviewName =
-        (pid.ProductName || pid.productName || pid.ProductName || "").toString().trim().toLowerCase();
+    const filtered = reviews.filter((review) => {
+      const reviewProductId = review.productId;
+      if (!reviewProductId) return false;
 
-      return reviewName === nameA;
+      const reviewProductIdStr =
+        typeof reviewProductId === "object"
+          ? reviewProductId._id?.toString() || reviewProductId.toString()
+          : reviewProductId.toString();
+
+      if (reviewProductIdStr === currentProductId) {
+        return true;
+      }
+
+      const buyerRequest = typeof reviewProductId === "object" ? reviewProductId : null;
+      if (buyerRequest && buyerRequest.ProductName) {
+        const reviewProductName = buyerRequest.ProductName?.trim()?.toLowerCase();
+        if (reviewProductName && reviewProductName === currentProductName) {
+          return true;
+        }
+      }
+
+      if (review.productNameSnapshot) {
+        const snapshotName = review.productNameSnapshot.trim().toLowerCase();
+        if (snapshotName && snapshotName === currentProductName) {
+          return true;
+        }
+      }
+
+      return false;
     });
+    return filtered.sort(
+      (a, b) => new Date(b?.createdAt || 0) - new Date(a?.createdAt || 0)
+    );
   }, [finalData, reviews]);
 
   if (loading) return <p className="text-center py-10 text-xl font-semibold">Loading...</p>;
@@ -1692,14 +1924,34 @@ const hasAnyValue = (obj) => {
                         {review.photos?.length > 0 && (
                           <div className="flex gap-3 mt-3">
                             {review.photos.map((img, i) => {
-                              const full = img.startsWith("http") ? img : `${imageBaseURL}${img}`;
+                              const full = resolveMediaUrl(img);
                               const dialogId = `review-${review._id}-img-${i}`;
                               return (
                                 <div key={i}>
-                                  <img src={full} className="w-20 h-20 rounded-lg object-cover border cursor-pointer" onClick={() => document.getElementById(dialogId)?.showModal?.()} />
-                                  <dialog id={dialogId} className="rounded-lg p-0 bg-transparent">
-                                    <div className="fixed inset-0 flex justify-center items-center" onClick={() => document.getElementById(dialogId)?.close?.()}>
-                                      <img src={full} className="max-w-[90%] max-h-[90%] rounded-lg shadow-xl" onClick={(e) => e.stopPropagation()} />
+                                  <img
+                                    src={full}
+                                    className="w-20 h-20 rounded-lg object-cover border cursor-pointer"
+                                    alt="review"
+                                    onClick={() =>
+                                      document.getElementById(dialogId)?.showModal?.()
+                                    }
+                                  />
+                                  <dialog
+                                    id={dialogId}
+                                    className="rounded-lg p-0 bg-transparent"
+                                  >
+                                    <div
+                                      className="fixed inset-0 flex justify-center items-center"
+                                      onClick={() =>
+                                        document.getElementById(dialogId)?.close?.()
+                                      }
+                                    >
+                                      <img
+                                        src={full}
+                                        className="max-w-[90%] max-h-[90%] rounded-lg shadow-xl"
+                                        alt="review enlarged"
+                                        onClick={(e) => e.stopPropagation()}
+                                      />
                                     </div>
                                   </dialog>
                                 </div>
