@@ -2304,7 +2304,7 @@ if (!ensureBuyer()) return;
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6">
         {/* Sidebar Filters (hidden on mobile, toggleable) */}
         <aside className="hidden md:block rounded-xl filter-sidebar">
-          {/* All your filter sections here (unchanged) */}
+         
           <h2 className="font-bold text-lg mb-3">Filter by</h2>
 
           <hr className="mb-3 border-dark" />
