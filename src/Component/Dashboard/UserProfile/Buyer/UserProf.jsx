@@ -8,16 +8,17 @@ import getAPI from '../../../../api/getAPI';
 import putAPI from '../../../../api/putAPI';
 import Settings from './UserProfile/BasicInformation';
 
-
 const UserProfileForm = () => {
   const navigate = useNavigate(); 
   const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
+
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
   });
+
   const [profileData, setProfileData] = useState({
     name: '',
     lastName: '',
@@ -36,9 +37,11 @@ const UserProfileForm = () => {
     birthdate: '',
     website: ''
   });
-    const location = useLocation();
-    const userId = location.state?._id || localStorage.getItem('userId');
+
+  const location = useLocation();
+  const userId = location.state?._id || localStorage.getItem('userId');
   
+
   useEffect(() => {
     if (location.state?._id) {
       localStorage.setItem('userId', location.state._id);
@@ -50,29 +53,49 @@ const UserProfileForm = () => {
       const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
       if (result.data.user) {
         const userData = result.data.user;
-        const formattedBirthdate = userData.birthdate ? new Date(userData.birthdate).toISOString().split('T')[0] : '';
-        const parsedAddress = userData.address ? (typeof userData.address === 'string' ? JSON.parse(userData.address) : userData.address) : {};
+        const formattedBirthdate = userData.birthdate 
+          ? new Date(userData.birthdate).toISOString().split('T')[0] 
+          : '';
+        const parsedAddress = userData.address 
+          ? (typeof userData.address === 'string' ? JSON.parse(userData.address) : userData.address)
+          : {};
 
         setProfileData({
           ...userData,
           birthdate: formattedBirthdate,
-          address: parsedAddress,
+          address: parsedAddress
         });
 
         const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-        const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : 'DashboardAssets/assets/images/user.png';
+        const profilePhotoUrl = userData.profilePhoto
+          ? `${BASE_URL}${userData.profilePhoto}`
+          : 'DashboardAssets/assets/images/user.png';
+
         setPreviewImage(profilePhotoUrl);
+
+        // Remove old photo and save the current one
+        localStorage.removeItem("profilePhoto");
+        localStorage.setItem("username", userData.username || userData.name || "");
+        console.log("Fetched name:", userData.name);
+console.log("Fetched username:", userData.username);
+
+        window.dispatchEvent(new Event("usernameUpdated"));
+        localStorage.setItem("profilePhoto", profilePhotoUrl);
       }
     } catch (error) {
       console.error("Error fetching profile:", error);
       toast.error("Error fetching profile data");
     }
   };
+  
 
   useEffect(() => {
     if (userId) {
       fetchProfile();
     }
+    // Load from localStorage if available
+    const storedImage = localStorage.getItem("profilePhoto");
+    if (storedImage) setPreviewImage(storedImage);
   }, [userId]);
 
   const [activeTab, setActiveTab] = useState('Settings');
@@ -136,7 +159,6 @@ const UserProfileForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const formData = new FormData();
       formData.append('name', profileData.name);
@@ -148,39 +170,59 @@ const UserProfileForm = () => {
       formData.append('username', profileData.username || '');
       formData.append('email', profileData.email || '');
       formData.append('phone', profileData.phone || '');
-
-      if (passwordData.currentPassword || passwordData.newPassword || passwordData.confirmPassword) {
+      if (
+        passwordData.currentPassword ||
+        passwordData.newPassword ||
+        passwordData.confirmPassword
+      ) {
         formData.append('currentPassword', passwordData.currentPassword);
         formData.append('newPassword', passwordData.newPassword);
         formData.append('confirmPassword', passwordData.confirmPassword);
       }
-      
-
       if (imageFile) {
         formData.append('profilePhoto', imageFile);
       }
 
-          const response = await putAPI(`/auth/users/${userId}`, formData, {
-              'Content-Type': 'multipart/form-data',
-            });
-      
-            toast.success(response.message || 'Profile updated successfully!');
-            if (response.ok) {
-              setPasswordData({
-                currentPassword: '',
-                newPassword: '',
-                confirmPassword: '',
-              });
-             
-            }
-          } catch (error) {
-            console.error('Error updating profile:', error);
-            if (error.response?.data?.message) {
-              toast.error(error.response.data.message);
-            } else {
-              toast.error('Something went wrong. Please try again.');
-            }
-          }
+      const response = await putAPI(`/auth/users/${userId}`, formData, {
+        'Content-Type': 'multipart/form-data',
+      });
+
+      // Update image locally & navbar
+      if (response.data?.user?.profilePhoto) {
+        const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+        const fullImageUrl = `${BASE_URL}${response.data.user.profilePhoto}`;
+
+        setPreviewImage(fullImageUrl);
+
+        // Remove old image and update new one
+        localStorage.removeItem("profilePhoto");
+        localStorage.setItem("profilePhoto", fullImageUrl);
+
+        // Notify NavBar to update immediately
+        window.dispatchEvent(new Event("profilePhotoUpdated"));
+      }
+      if (response.data?.user?.name) {
+  localStorage.setItem("username", response.data.user.name);
+  window.dispatchEvent(new Event("usernameUpdated"));
+}
+
+      toast.success(response.message || 'Profile updated successfully!');
+
+      if (response.ok) {
+        setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        });
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('Something went wrong. Please try again.');
+      }
+    }
   };
 
   const tabs = [
@@ -191,65 +233,8 @@ const UserProfileForm = () => {
 
   return (
     <div className="container-fluid">
-      <div className="block-header">
-        <div className="row">
-          <div className="col-lg-6 col-md-6 col-sm-12">
-            <h2>Profile</h2>
-            <ul className="breadcrumb">
-              <li className="breadcrumb-item">
-<span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
-    <i className="fa fa-dashboard"></i>
-</span>
-              </li>
-              <li className="breadcrumb-item">Profile</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div className="row clearfix">
-        <div className="col-lg-12">
-          <div className="card">
-            <div className="body">
-              <ul className="nav nav-tabs">
-                {tabs.map((tab) => (
-                  <li className="nav-item" key={tab.name}>
-                    <a
-                      className={`nav-link ${activeTab === tab.name ? 'active' : ''}`}
-                      onClick={() => handleTabClick(tab.name)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {tab.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="tab-content">
-              {tabs.map((tab) => (
-                <div
-                  key={tab.name}
-                  className={`tab-pane ${activeTab === tab.name ? 'active' : ''}`}
-                  id={tab.name}
-                >
-                  <tab.component
-                    userId={userId}
-                    profileData={profileData}
-                    previewImage={previewImage}
-                    handleImageUpload={handleImageUpload}
-                    handleChange={handleChange}
-                    handleAddressChange={handleAddressChange}
-                    handleSubmit={handleSubmit}
-                    passwordData={passwordData}
-                    handlePasswordChange={handlePasswordChange}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Tabs and form layout */}
+      {/* ...Keep the rest of your form code as it is... */}
     </div>
   );
 };

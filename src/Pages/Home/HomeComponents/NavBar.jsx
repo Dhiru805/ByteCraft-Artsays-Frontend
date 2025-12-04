@@ -7,6 +7,7 @@ import artwork from "./artwork.jpg";
 import { NavUserState, NavGuestState } from "./NavLoginState";
 import MegaMenu from "./MegaMenu";
 
+import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import { BsHammer } from "react-icons/bs";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -35,13 +36,17 @@ const NavBar = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [isToggled, setIsToggled] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [username, setUsername] = useState("User");
+  const savedName = localStorage.getItem("username");
 
+  const [navPhoto, setNavPhoto] = useState(DEFAULT_PROFILE_IMAGE);
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   const userId = localStorage.getItem("userId");
-  
+
   const navigate = useNavigate();
   const location = useLocation();
   const isOnSocialMedia = location.pathname.startsWith("/social-media");
+  const [userName, setUserName] = useState("");
 
   const handleDashboardClick = (Usertype) => {
     if (Usertype === "Artist") {
@@ -57,7 +62,7 @@ const NavBar = () => {
     e.stopPropagation();
     setShowDropdown((prev) => !prev);
   };
-  
+
   const handleSignOut = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userType");
@@ -67,6 +72,55 @@ const NavBar = () => {
     window.dispatchEvent(new Event("profilePhotoUpdated"));
     window.location.href = "/";
   };
+
+  useEffect(() => {
+    if (!userId) return setUserName("");
+
+    const fetchUser = async () => {
+      try {
+        const BASE_URL = process.env.REACT_APP_API_URL;
+        const { data } = await axios.get(`${BASE_URL}/auth/user/${userId}`);
+
+        setUserName(data?.name || "");
+      } catch {
+        setUserName("");
+      }
+    };
+
+    fetchUser();
+  }, [userId]);
+
+  useEffect(() => {
+    const updatePhoto = () => {
+      const saved = localStorage.getItem("profilePhoto");
+      if (saved && saved !== "undefined" && saved !== "null") {
+       
+        setNavPhoto(saved);
+      } else {
+        setNavPhoto(DEFAULT_PROFILE_IMAGE);
+      }
+    };
+
+    // Call once on mount
+    updatePhoto();
+
+    // Listen for updates from profile page
+    window.addEventListener("profilePhotoUpdated", updatePhoto);
+
+    return () => {
+      window.removeEventListener("profilePhotoUpdated", updatePhoto);
+    };
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+    const storedUserType = localStorage.getItem("userType");
+    setUserType(storedUserType);
+
+    const storedName = localStorage.getItem("username") || "User"; // get from localStorage
+    setUsername(storedName);
+  }, [isToggled]);
 
   useEffect(() => {
     if (location.pathname.startsWith("/social-media")) {
@@ -122,35 +176,10 @@ const NavBar = () => {
     document.addEventListener("click", handleClickOutside);
     document.addEventListener("keydown", handleEscape);
 
-    // const toggleBtn = document.getElementById("mobileToggle");
-    // const sidebar = document.getElementById("mobileSidebar");
-    // const closeBtn = document.getElementById("closeSidebar");
-    // const overlay = document.getElementById("overlay1");
-
-    // const openSidebar = () => {
-    //   // sidebar?.classList.add("active");
-    //   overlay?.classList.add("active");
-    //   console.log("clicked on toggle for add");
-    // };
-
-    // const closeSidebar = () => {
-    //   sidebar?.classList.remove("active");
-    //   overlay?.classList.remove("active");
-    //   console.log("clicked on toggle for remove");
-
-    // };
-
-    // toggleBtn?.addEventListener("click", openSidebar);
-    // closeBtn?.addEventListener("click", closeSidebar);
-    // overlay?.addEventListener("click", closeSidebar);
-
     return () => {
       box?.removeEventListener("click", activateSearch);
       document.removeEventListener("click", handleClickOutside);
       document.removeEventListener("keydown", handleEscape);
-      // toggleBtn?.removeEventListener("click", openSidebar);
-      // closeBtn?.removeEventListener("click", closeSidebar);
-      // overlay?.removeEventListener("click", closeSidebar);
     };
   }, [isToggled]);
 
@@ -341,16 +370,14 @@ const NavBar = () => {
                 {Usertype === "Buyer" ? (
                   <a
                     className="nav-link-h icon-link-h me-3"
-                    onClick={() =>
-                              navigate(`/my-account/my-cart/${userId}`)
-                            }
+                    onClick={() => navigate(`/my-account/my-cart/${userId}`)}
                   >
                     <i className="fas fa-shopping-cart" />
                   </a>
                 ) : Usertype === "Artist" || Usertype === "Super-Admin" ? (
-                  <a className="nav-link-h me-3" href="/blog">
-                    BLOG
-                  </a>
+                 <Link className="nav-link-h me-3" to="/blog">
+  BLOG
+</Link>
                 ) : !isLoggedIn ? (
                   <a className="nav-link-h icon-link-h me-3" href="/">
                     <i className="fas fa-shopping-cart" />
@@ -380,20 +407,17 @@ const NavBar = () => {
                         })}
                         {console.log("BASE_URL:", BASE_URL)}
                         <img
-                          src={
-                            localStorage.getItem("profilePhoto")
-                              ? `${BASE_URL}${localStorage.getItem(
-                                  "profilePhoto"
-                                )}`
-                              : DEFAULT_PROFILE_IMAGE
-                          }
-                          className="rounded-circle avatar"
-                          alt="User Profile"
+                          src={navPhoto || DEFAULT_PROFILE_IMAGE}
+                          alt="User"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = DEFAULT_PROFILE_IMAGE;
+                          }}
                           style={{
                             width: "40px",
                             height: "40px",
-                            objectFit: "cover",
                             borderRadius: "50%",
+                            objectFit: "cover",
                           }}
                         />
                       </div>
@@ -552,7 +576,10 @@ const NavBar = () => {
                                 Switch to Artsays
                               </Link>
                             )}
-                            <Link className="dropdown-item-h" onClick={handleUserIconClick} >
+                            <Link
+                              className="dropdown-item-h"
+                              onClick={handleUserIconClick}
+                            >
                               <i className="fas fa-bell me-2" /> Notifications
                             </Link>
                             <div
@@ -607,18 +634,6 @@ const NavBar = () => {
                   id="mobileToggle"
                   onClick={() => setShowProfileMenu(!showProfileMenu)}
                 />
-                {/* {
-                showProfileMenu && (
-                  <>
-                    <a className="dropdown-item-h" onClick={() => navigate("/social-media")}>
-                      <img 
-                        alt="community-logo" 
-                        src={artLogo} 
-                        tyle={{width: '20px', height: '20px', marginRight: '2px'}}/>Switch to Community
-                    </a>
-                    </>
-                )
-              } */}
               </div>
             </div>
           </nav>
@@ -635,11 +650,7 @@ const NavBar = () => {
                 &times;
               </button>
               <img
-                src={
-                  localStorage.getItem("profilePhoto")
-                    ? `${BASE_URL}${localStorage.getItem("profilePhoto")}`
-                    : DEFAULT_PROFILE_IMAGE
-                }
+                src={navPhoto || DEFAULT_PROFILE_IMAGE}
                 className="rounded-circle avatar"
                 alt="User Profile"
                 style={{
@@ -652,9 +663,16 @@ const NavBar = () => {
                   display: "block",
                   margin: "0 auto",
                 }}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = DEFAULT_PROFILE_IMAGE;
+                }}
               />
+
               <div className="profile-name-container">
-                <span className="profile-name-h">July Singh</span>
+                <span className="profile-name-h">
+                  {userName ? ` ${userName}` : "Guest"}
+                </span>
                 <MdVerified className="verified-icon" />
               </div>
             </div>
@@ -662,9 +680,12 @@ const NavBar = () => {
             Usertype === "Artist" ||
             Usertype === "Super-Admin" ? (
               <div className="profile-content-h">
-                <div className="profile-item-h"  onClick={() => {
-                                handleDashboardClick(Usertype);
-                              }}>
+                <div
+                  className="profile-item-h"
+                  onClick={() => {
+                    handleDashboardClick(Usertype);
+                  }}
+                >
                   <i class="bi bi-person-fill" />
                   <span>My Dashboard</span>
                 </div>
@@ -698,9 +719,13 @@ const NavBar = () => {
                   <i className="bi bi-question-circle" />
                   <span>Help</span>
                 </div>
-                <Link to={"/privacy-policy"} className="profile-item-h" onClick={() => {
-                                handleDashboardClick(Usertype);
-                              }}>
+                <Link
+                  to={"/privacy-policy"}
+                  className="profile-item-h"
+                  onClick={() => {
+                    handleDashboardClick(Usertype);
+                  }}
+                >
                   <i className="bi bi-shield-shaded" />
                   <span>Privacy Center</span>
                 </Link>
@@ -757,40 +782,36 @@ const NavBar = () => {
                   <FaUser style={{ marginRight: "15px", marginLeft: "6px" }} />
                   <span>My Account</span>
                 </Link>
-                {/* <div className="profile-item-h">
-                  <a className="dropdown-item-h" onClick={() => navigate("/")}>
-                    <span style={{ display: "flex", alignItems: "center" }}>
-                      <img
-                        src={AIcon}
-                        className="icon-sidebar"
-                        alt="Artsays-Icon"
-                        style={{
-                          width: "16px",
-                          height: "16px",
-                          marginRight: "15px",
-                          marginLeft: "4px",
-                        }}
-                      />
-                      Switch to Artsays
-                    </span>
-                  </a>
-                </div> */}
-                <Link to={"/my-account/art-gallery"}
+               
+                <Link
+                  to={"/my-account/art-gallery"}
                   className="profile-item-h"
                   onClick={() => setShowProfileMenu(!showProfileMenu)}
                 >
                   <MdLibraryAdd className="icon-sidebar" />
                   <span>Art Gallery</span>
                 </Link>
-                <Link to={"/bid"} className="profile-item-h" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+                <Link
+                  to={"/bid"}
+                  className="profile-item-h"
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
                   <RiAuctionFill className="icon-sidebar" />
                   <span>Bid</span>
                 </Link>
-                <Link to={"/store"} className="profile-item-h" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+                <Link
+                  to={"/store"}
+                  className="profile-item-h"
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
                   <PiHandbagBold className="icon-sidebar" />
                   <span>Store</span>
                 </Link>
-                <Link to={"/my-account/my-cart"} className="profile-item-h" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+                <Link
+                  to={"/my-account/my-cart"}
+                  className="profile-item-h"
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
                   <BiCart className="icon-sidebar" />
                   <span>Cart</span>
                 </Link>
@@ -873,7 +894,10 @@ const NavBar = () => {
                     <span>Social Media Promotion</span>
                   </div>
                 </Link>
-                <Link to={"my-account/custom-request"} onClick={() => setShowProfileMenu(!showProfileMenu)}>
+                <Link
+                  to={"my-account/custom-request"}
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
                   <div className="profile-item-h">
                     <FaTools
                       className="icon-sidebar"
@@ -883,7 +907,11 @@ const NavBar = () => {
                     <span>Custom Request</span>
                   </div>
                 </Link>
-                <Link to={"my-account/security-agreements"} className="profile-item-h" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+                <Link
+                  to={"my-account/security-agreements"}
+                  className="profile-item-h"
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
                   <RiLockPasswordLine className="icon-sidebar" />
                   <span>Security and Agreements</span>
                 </Link>
@@ -944,4 +972,3 @@ const NavBar = () => {
 };
 
 export default NavBar;
-
