@@ -28,11 +28,17 @@ export const AccountPage = () => {
   const path = pathname === '/my-account' ? 'my-account' : pathname.split('/').pop();
   const heading = headingMap[path] || 'My Account';
 
-  const isTrackOrder = path === 'track-your-order';
-  const isWishlist = path === 'wishlist';
-  const isCheckOut = path === 'check-out';
-  const isMyCart = path === 'my-cart';
-  const isOrderCompleted = path === 'order-completed';
+  // const isTrackOrder = path === 'track-your-order';
+  // const isWishlist = path === 'wishlist';
+  // const isCheckOut = path === 'check-out';
+  // const isMyCart = path === 'my-cart';
+  // const isOrderCompleted = path === 'order-completed';
+const isTrackOrder = pathname.startsWith('/my-account/track-your-order');
+const isWishlist = pathname.startsWith('/my-account/wishlist');
+const isCheckOut = pathname.startsWith('/my-account/check-out');
+const isMyCart = pathname.startsWith('/my-account/my-cart');
+const isOrderCompleted = pathname.startsWith('/my-account/order-completed');
+
 
   return (
     <>
