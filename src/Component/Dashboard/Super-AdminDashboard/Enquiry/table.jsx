@@ -247,7 +247,8 @@ const [deleteEnquiry, setDeleteEnquiry] = useState(null);
   deleteType={deleteType}
   id={deleteEnquiry?._id}
   onConfirm={() => handleDeleteConfirmed(deleteEnquiry._id)}                                                                  
-/>
+/> 
+// gayatri
 
       )}
     </div>
