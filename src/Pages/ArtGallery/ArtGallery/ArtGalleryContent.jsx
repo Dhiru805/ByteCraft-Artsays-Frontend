@@ -1575,23 +1575,33 @@ const ArtGalleryContent = () => {
 
                               addToCart(product._id);
                             }}
-                            className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart hover:bg-dark hover:text-white transition"
+                            disabled={!product.quantity || product.quantity === 0}
+                            className={`flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart hover:bg-dark hover:text-white transition ${(!product.quantity || product.quantity === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}
                           >
                             <FaShoppingCart /> Add to Cart
                           </button>
 
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (!ensureBuyer()) return;
-                              navigate(
-                                `/my-account/check-out/${userId}?productId=${product._id}`
-                              );
-                            }}
-                            className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now"
-                          >
-                            Buy Now
-                          </button>
+                          {(!product.quantity || product.quantity === 0) ? (
+                            <button
+                              disabled
+                              className="flex-1 bg-gray-500 text-white py-2 rounded-full font-semibold shadow buy-now cursor-not-allowed"
+                            >
+                              Sold Out
+                            </button>
+                          ) : (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (!ensureBuyer()) return;
+                                navigate(
+                                  `/my-account/check-out/${userId}?productId=${product._id}`
+                                );
+                              }}
+                              className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now"
+                            >
+                              Buy Now
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>

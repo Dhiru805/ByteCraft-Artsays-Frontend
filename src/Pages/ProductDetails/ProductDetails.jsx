@@ -3254,21 +3254,32 @@ useEffect(() => {
                           e.stopPropagation();
                            if (!ensureBuyer()) return;
                           addToCart(product._id, quantity);
-                        }} 
-                  className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart">
+                        }}
+                   disabled={!product.quantity || product.quantity === 0}
+                   className={`flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart ${(!product.quantity || product.quantity === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
                     <ShoppingCart size={18} /> Add to Cart
                   </button>
-                  <button
-                    className="flex items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-red-500 text-white py-2 font-semibold buy-now"
-                    onClick={() => {
-                       if (!ensureBuyer()) return;
-                      navigate(
-                        `/my-account/check-out/${userId}?productId=${product._id}&quantity=${quantity}`
-                      );
-                    }}
-                  >
-                    <Zap size={18} /> Buy Now
-                  </button>
+                  {(!product.quantity || product.quantity === 0) ? (
+                    <button
+                      disabled
+                      className="flex items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-gray-500 text-white py-2 font-semibold buy-now cursor-not-allowed"
+                    >
+                      <Zap size={18} /> Sold Out
+                    </button>
+                  ) : (
+                    <button
+                      className="flex items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-red-500 text-white py-2 font-semibold buy-now"
+                      onClick={() => {
+                         if (!ensureBuyer()) return;
+                        navigate(
+                          `/my-account/check-out/${userId}?productId=${product._id}&quantity=${quantity}`
+                        );
+                      }}
+                    >
+                      <Zap size={18} /> Buy Now
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
