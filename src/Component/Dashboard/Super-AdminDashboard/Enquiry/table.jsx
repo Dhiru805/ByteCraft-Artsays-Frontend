@@ -15,7 +15,7 @@ const EnquiryTable = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedEnquiry, setSelectedEnquiry] = useState(null);
   const location = useLocation();
-
+const [deleteEnquiry, setDeleteEnquiry] = useState(null);   
   const fetchEnquiries = async () => {
     try {
       const response = await getAPI("/api/enquiry");
@@ -41,7 +41,7 @@ const EnquiryTable = () => {
 
   const handleDeleteConfirmed = async (id) => {
     try {
-      await axiosInstance.delete(`/api/enquiry/delete/${id}`);
+      await axiosInstance.delete(`/api/Enquiry/delete/${id}`);
       setEnquiries((prev) => prev.filter((e) => e._id !== id));
       toast.success("Enquiry deleted successfully!");
     } catch (error) {
@@ -49,18 +49,20 @@ const EnquiryTable = () => {
     } finally {
       setIsDeleteDialogOpen(false);
       setSelectedEnquiry(null);
+      setIsDeleteDialogOpen(false);
+    setDeleteEnquiry(null);
     }
   };
 
   const openDeleteDialog = (enquiry) => {
-    setSelectedEnquiry(enquiry);
+    setDeleteEnquiry(enquiry); 
     setIsDeleteDialogOpen(true);
     setDeleteType("enquiry");
   };
 
   const handleDeleteCancel = () => {
     setIsDeleteDialogOpen(false);
-    setSelectedEnquiry(null);
+    setDeleteEnquiry(null);
   };
 
   const filtered = enquiries.filter((e) =>
@@ -241,11 +243,12 @@ const EnquiryTable = () => {
 
       {isDeleteDialogOpen && (
         <ConfirmationDialog
-          onClose={handleDeleteCancel}
-          deleteType={deleteType}
-          id={selectedEnquiry?._id}
-          onDeleted={handleDeleteConfirmed}
-        />
+  onClose={handleDeleteCancel}
+  deleteType={deleteType}
+  id={deleteEnquiry?._id}
+  onConfirm={() => handleDeleteConfirmed(deleteEnquiry._id)}                                                                  
+/>
+
       )}
     </div>
   );

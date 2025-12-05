@@ -359,6 +359,8 @@ import PurchaseTableView from "../Component/Dashboard/Super-AdminDashboard/Produ
 import ProductUploads from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductUpload/productUploade";
 // import ProductRequestView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist";
 import ViewCustomRequestsuperadmin from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist";
+import SellerProductDetails from '../Component/Dashboard/Super-AdminDashboard/Seller/SellerProducts/SellerProductDetails';
+import ProductRequestView from '../Component/Dashboard/Super-AdminDashboard/Seller/ProductRequest/ProductRequestView';
 
 //-----------------------------Bidding--------------------------//
 import AllBiddingProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/AllProduct/BiddingProduct";
@@ -381,6 +383,8 @@ import CopyrightsRights from "../Component/Dashboard/Super-AdminDashboard/Produc
 import BlockchainNetworks from "../Component/Dashboard/Super-AdminDashboard/Product Setting/BlockchainNetwork/BlockchainNetwork";
 import TokenStandards from "../Component/Dashboard/Super-AdminDashboard/Product Setting/TokenStandard/TokenStandard";
 import PeriodEras from "../Component/Dashboard/Super-AdminDashboard/Product Setting/PeriodEra/PeriodEra";
+
+
 
 //-----------------------------ProductSetting--------------------------//
 // import ProductType from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductType/ProductType";
@@ -568,6 +572,8 @@ import SinglePost from "../Component/SocialMedia/Posts/SinglePost";
 import ProfileLogout from "../Pages/socialMedia/ProfileLogout";
 
 
+
+
 const PrivateRoute = ({ allowedRoles, children }) => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
   const location = useLocation();
@@ -690,6 +696,7 @@ const AppRoutes = () => {
           </PrivateRoute>
         }
       >
+
         <Route index element={<SuperAdminDashboard />} />
         <Route path="dashboard" element={<SuperAdminDashboard />} />
         <Route path="profile" element={<UserProfile />} />
@@ -764,6 +771,7 @@ const AppRoutes = () => {
           path="artist/management/productrequest/:userId"
           element={<ArtistProductRequestView />}
         />
+        
         <Route
           path="artist/management/artisteditreuqest/update-blog"
           element={<EditBlogRequest />}
@@ -817,6 +825,11 @@ const AppRoutes = () => {
           path="seller/productrequest"
           element={<SellerProductRequest />}
         />
+        <Route path="/super-admin/sellerproduct-request/:productId" element={<ProductRequestView />} />
+        <Route 
+    path="/super-admin/sellerproduct/:productId" 
+    element={<SellerProductDetails />} 
+/>
         <Route path="seller/soldproduct" element={<SellerSoldProducts />} />
         <Route path="seller/transaction" element={<SellerTransaction />} />
         <Route path="seller/packagingmaterial" element={<SellerPackaging />} />

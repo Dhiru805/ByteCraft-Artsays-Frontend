@@ -12,11 +12,18 @@ const DELETE_CONFIG = {
   },
     // ... other configs ...
   policy: {
-    getEndpoint: (id) => `/api/social-policies/${id}`, // 👈 correct API route
+    getEndpoint: (id) => `/api/social-policies/${id}`, // 👈 correct one
     successMessage: "Policy successfully deleted!",
     errorMessage: "Failed to delete Policy.",
     idKey: "PolicyId",
   },
+  celebrity: {
+  getEndpoint: (id) => `/api/remove-celebrity/${id}`,
+  successMessage: "Celebrity deleted successfully!",
+  errorMessage: "Failed to delete celebrity.",
+  idKey: "_id",
+},
+
   
   blog: {
     getEndpoint: (id) => `/Blog-Post/${id}`,
@@ -113,12 +120,13 @@ company: {
 },
 
 
-policy : {
-  getEndpoint: (id) => `/api/deletePolicy/${id}`,
-  successMessage: "Policy successfully deleted!",
-  errorMessage: "Failed to delete Policy.",
-  idKey: "PolicyId",
-},
+// policy : {
+//   getEndpoint: (id) => `/api/deletePolicy/${id}`,
+//   successMessage: "Policy successfully deleted!",
+//   errorMessage: "Failed to delete your Policy.",
+//   idKey: "PolicyId",
+// },
+
 
 howtobuy : {
   getEndpoint: (id) => `/api/howtobuy/delete/${id}`,
@@ -460,6 +468,8 @@ address:{
 function ConfirmationDialog({ onClose, deleteType, id, onDeleted }) {
   const handleDelete = async () => {
     const config = DELETE_CONFIG[deleteType];
+      console.log("Deleting policy ID:", id);
+console.log("DELETE URL:", config.getEndpoint(id));
 
     if (!config) {
       console.error("Invalid delete type.");

@@ -195,148 +195,113 @@ const CreateOrder = () => {
     }
     fetchMaterialCard();
   }, [])
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError(null);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+  const userId = localStorage.getItem("userId");
+  if (!userId) {
+    setError("User not logged in.");
+    setLoading(false);
+    return;
+  }
 
-    const userId = localStorage.getItem("userId");
-    if (!userId) {
-      setError("User not logged in.");
-      setLoading(false);
-      return;
-    }
-
-    console.log("UserId in handlesubmit", userId);
-
-    // Create FormData object for multipart/form-data
+  try {
     const data = new FormData();
     data.append("userId", userId);
-    data.append("material", formData.material);
-    data.append("stamp", formData.stamp);
-    data.append("stickers", formData.stickers);
-    data.append("vouchers", formData.vouchers);
-    data.append("card", formData.card);
-    data.append("quantity", formData.quantity);
-    data.append("deliveryAddress", formData.deliveryAddress);
-    data.append("totalPrice", formData.totalPrice);
 
-    try {
-      // Send POST request to backend
-      const response = await postAPI(
-        "/api/package-material/order/create",
-        data
-      );
+    // Append only if selected
+    if (formData.material) data.append("material", formData.material);
+    if (formData.stamp) data.append("stamp", formData.stamp);
+    if (formData.stickers) data.append("stickers", formData.stickers);
+    if (formData.vouchers) data.append("vouchers", formData.vouchers);
+    if (formData.card) data.append("card", formData.card);
 
-      // Handle success
-      console.log("In handleSubmit", response);
-      navigate("/artist/packaging-material"); // Redirect to material list
-    } catch (err) {
-      // Handle error
-      console.error(
-        "Error in postAPI:",
-        err.response?.data || err.message || err
-      );
-      setError(err.response?.data?.message || "Failed to create order.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    data.append("quantity", Number(formData.quantity) || 0);
+    data.append("deliveryAddress", formData.deliveryAddress || "");
+    data.append("totalPrice", Number(formData.totalPrice) || 0);
 
-  const handleDropdownChange = async (type, id) => {
+    const response = await postAPI("/api/package-material/order/create", data);
+    console.log("Order created successfully:", response);
+    navigate("/artist/packaging-material");
+  } catch (err) {
+    console.error(
+      "Error creating order:",
+      err.response?.data || err.message || err
+    );
+    setError(err.response?.data?.message || "Failed to create order.");
+  } finally {
+    setLoading(false);
+  }
+};
+const handleDropdownChange = (type, id) => {
   try {
-    const userId = localStorage.getItem("userId");
-
-    if (type === "material") {
-      setMaterialData(selectedMaterial);
-    }
-    
-    if (type === "stamp") {
-      setStampData(selectedStamp);
-    }
-
-    if (type === "sticker") {
-      setStickerData(selectedStickers);
-    }
-
-    if (type === "vouchers") {
-      setVoucherData(selectedVouchers);
-    }
-
-    if (type === "card") {
-      setCardData(selectedCard);
-    }
-
-    // Step 2: Find the selected item from respective array
     let selectedItem = null;
+    let imageUrl = null;
 
     switch (type) {
-      case "stamp":
-        selectedItem = selectedStamp.find((s) => s._id === id);
-        const stampUrl = selectedItem?.materialStampImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedItem?.materialStampImage.replace(/\\/g, "/")}` : null;
-        setStampData((prev) => ({
-          ...prev,
-          stamp: id,
-          price: selectedItem?.price || ""
-        }));
-        setMaterialStampImage(stampUrl);
-        break;
-      case "stickers":
-        selectedItem = selectedStickers.find((s) => s._id === id);
-        const stickerUrl = selectedItem?.materialStickersImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedItem?.materialStickersImage.replace(/\\/g, "/")}` : null;
-        setStickerData((prev) => ({
-          ...prev,
-          sticker: id,
-          price: selectedItem?.price || ""
-        }));
-        setMaterialStickerImage(stickerUrl);
-        break;
-      case "vouchers":
-        selectedItem = selectedVouchers.find((s) => s._id === id);
-        const VoucherUrl = selectedItem?.materialVouchersImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedItem?.materialVouchersImage.replace(/\\/g, "/")}` : null;
-        setVoucherData((prev) => ({
-          ...prev,
-          voucher: id,
-          price: selectedItem?.price || ""
-        }));
-        setMaterialVoucherImage(VoucherUrl);
-        break;
-      case "card":
-        selectedItem = selectedCard.find((s) => s._id === id);
-        const cardUrl = selectedItem?.materialCardImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedItem?.materialCardImage.replace(/\\/g, "/")}` : null;
-        setCardData((prev) => ({
-          ...prev,
-          card: id,
-          price: selectedItem?.price || ""
-        }));
-        setMaterialCardImage(cardUrl);
-        break;
       case "material":
         selectedItem = selectedMaterial.find((s) => s._id === id);
-        const imageUrl = selectedItem?.materialName?.materialNameImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedItem?.materialName?.materialNameImage.replace(/\\/g, "/")}` : null;
-        setMaterialData((prev) => ({
-          ...prev,
-          materialName: id,
+        imageUrl = selectedItem?.materialName?.materialNameImage
+          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedItem.materialName.materialNameImage.replace(/\\/g, "/")}`
+          : null;
+        setMaterialData({
+          materialName: id || "",
           size: selectedItem?.size?.materialSize || "",
           capacity: selectedItem?.capacity?.materialCapacity || "",
           price: selectedItem?.price || "",
           stockAvailable: selectedItem?.stockAvailable || "",
           minimumOrder: selectedItem?.minimumOrder || "",
           vendorSupplier: selectedItem?.vendorSupplier || "",
-          ecoFriendly: selectedItem?.ecoFriendly ? "Yes" : "No" || "",
-          deliveryEstimation: selectedItem?.deliveryEstimation || ""
-        }));
+          ecoFriendly: selectedItem?.ecoFriendly ? "Yes" : "No",
+          deliveryEstimation: selectedItem?.deliveryEstimation || "",
+        });
         setMaterialNameImage(imageUrl);
         break;
+
+      case "stamp":
+        selectedItem = selectedStamp.find((s) => s._id === id);
+        imageUrl = selectedItem?.materialStampImage
+          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedItem.materialStampImage.replace(/\\/g, "/")}`
+          : null;
+        setStampData({ stamp: id || "", price: selectedItem?.price || "" });
+        setMaterialStampImage(imageUrl);
+        break;
+
+      case "stickers":
+        selectedItem = selectedStickers.find((s) => s._id === id);
+        imageUrl = selectedItem?.materialStickersImage
+          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedItem.materialStickersImage.replace(/\\/g, "/")}`
+          : null;
+        setStickerData({ sticker: id || "", price: selectedItem?.price || "" });
+        setMaterialStickerImage(imageUrl);
+        break;
+
+      case "vouchers":
+        selectedItem = selectedVouchers.find((s) => s._id === id);
+        imageUrl = selectedItem?.materialVouchersImage
+          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedItem.materialVouchersImage.replace(/\\/g, "/")}`
+          : null;
+        setVoucherData({ voucher: id || "", price: selectedItem?.price || "" });
+        setMaterialVoucherImage(imageUrl);
+        break;
+
+      case "card":
+        selectedItem = selectedCard.find((s) => s._id === id);
+        imageUrl = selectedItem?.materialCardImage
+          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedItem.materialCardImage.replace(/\\/g, "/")}`
+          : null;
+        setCardData({ card: id || "", price: selectedItem?.price || "" });
+        setMaterialCardImage(imageUrl);
+        break;
+
       default:
         break;
     }
 
-    // Step 3: Extract price safely
-    const price = selectedItem ? selectedItem.price : 0;
+    const price = selectedItem?.price || 0;
 
-    // Step 4: Update price, type, and form data
     setPrices((prev) => ({
       ...prev,
       [type]: price,
@@ -346,14 +311,12 @@ const CreateOrder = () => {
 
     setFormData((prev) => ({
       ...prev,
-      [type]: id,
-      quantity: "",
+      [type]: id || undefined, // Always send string
     }));
   } catch (error) {
-    console.error("Error fetching or updating details:", error);
+    console.error("Error in handleDropdownChange:", error);
   }
 };
-
 
   const handleQuantityChange = (e) => {
     const qty = Number(e.target.value);
@@ -440,9 +403,9 @@ const CreateOrder = () => {
                       <option value="">-- Select Type --</option>
                       {
                         selectedMaterial.map((mat) => (
-                        <>
+                        
                         <option key={mat._id} value={mat._id}>{mat.materialName?.materialName}</option>
-                        </>
+                      
                         ))
                       }
                       </select>

@@ -248,8 +248,8 @@ const handleDeleteConfirmed = async (id) => {
         <ConfirmationDialog
           onClose={handleDeleteCancel}
           deleteType="policy"   // 👈 added
-          id={selectedPolicyToDelete._id}
-          onDeleted={() => handleDeleteConfirmed(selectedPolicyToDelete._id)}
+          id={selectedPolicyToDelete?._id}
+          onDeleted={handleDeleteConfirmed}
         />
       )}
     </>

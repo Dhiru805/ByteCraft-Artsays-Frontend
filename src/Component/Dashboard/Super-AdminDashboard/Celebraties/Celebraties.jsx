@@ -79,28 +79,31 @@ function Celebrities() {
         setIsDeleteDialogOpen(false);
         setSelectedCelebrityToDelete(null);
     };
-
-    // confirm delete (call API + update UI)
     const handleDeleteConfirmed = async (id) => {
-        try {
-            const response = await axios.delete(`/api/remove-celebrity/${id}`);
-            if(response?.hasError === false){
-                toast.success(response.message)
-                fetchCelebratiesData()
-            }
-            else {
-                console.log(response)
-            }
-            // setCelebratiesData((prev) => prev.filter((celebrity) => celebrity._id !== id));
-        } catch (error) {
-            if(error?.status == 404){
-                toast.error(error?.response?.data?.message)
-            }
-            console.error("Error deleting celebrity:", error);
-        }
-        setIsDeleteDialogOpen(false);
-        setSelectedCelebrityToDelete(null);
-    };
+  try {
+    const response = await axios.delete(`/api/remove-celebrity/${id}`);
+
+   
+    if (response?.data?.hasError === false) {
+      toast.success(response?.data?.message || "Celebrity deleted successfully");
+      fetchCelebratiesData(); 
+    } else {
+      toast.error(response?.data?.message || "Failed to delete");
+    }
+
+  } catch (error) {
+    if (error?.response?.status === 404) {
+      toast.error(error?.response?.data?.message);
+    } else {
+      toast.error("Something went wrong");
+    }
+
+    console.error("Error deleting celebrity:", error);
+  }
+
+  setIsDeleteDialogOpen(false);
+  setSelectedCelebrityToDelete(null);
+};
 
     return (
         <div className="container-fluid">

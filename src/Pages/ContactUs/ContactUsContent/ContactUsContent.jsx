@@ -184,14 +184,21 @@ const ContactUsContent = () => {
               <div className="py-2">
                 <label className="block font-semibold text-gray-800 mb-1">Contact Number</label>
                 <input
-                  type="tel"
-                  name="contactNumber"
-                  placeholder="Type your Contact Number"
-                  value={formData.contactNumber}
-                  onChange={handleChange}
-                  className="w-full border-b border-gray-300 focus:border-[#E56500] focus:outline-none py-2"
-                  required
-                />
+  type="text"
+  name="contactNumber"
+  placeholder="Type your Contact Number"
+  value={formData.contactNumber}
+  onChange={(e) => {
+    const value = e.target.value;
+    if (/^[0-9]*$/.test(value)) {
+      handleChange(e); 
+    }
+  }}
+  maxLength={10}   
+  className="w-full border-b border-gray-300 focus:border-[#E56500] focus:outline-none py-2"
+  required
+/>
+
               </div>
 
               <div className="py-2">
