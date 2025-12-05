@@ -194,7 +194,6 @@ const Uploadpost = () => {
 
     setImages(updatedImages);
   };
-
   // Handle description input change
   const handleDescriptionChange = async (e) => {
     const userId = localStorage.getItem("userId");
@@ -323,7 +322,7 @@ const Uploadpost = () => {
                 alt="Profile"
               />
               <p className="text-lg font-medium">{profile?.username}</p>
-              {profile.verified?.length > 0 && (
+              {profile?.verified?.length > 0 && (
                 <img
                   src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
                     profile.verified[profile.verified.length - 1]?.badgeImage
@@ -441,7 +440,7 @@ const Uploadpost = () => {
                       }}
                     >
                       <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`}
+                        src={user?.profilePhoto?`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`:`${DEFAULT_PROFILE_IMAGE}`}
                         alt={user?.username}
                         className="w-8 h-8 rounded-full mr-2"
                       />

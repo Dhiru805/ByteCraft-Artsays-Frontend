@@ -19,11 +19,12 @@ const Explorebar = () => {
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
   const [reportSuccess, setReportSuccess] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const menuRef = useRef(null);
   const Navigate = useNavigate();
 
   useEffect(() => {
+    setLoading(true);
     const fetchPosts = async () => {
       try {
         const res = await getAPI(
@@ -34,6 +35,8 @@ const Explorebar = () => {
         console.log("Fetched posts:", res.data.posts);
       } catch (err) {
         console.error("Error fetching posts:", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchPosts();
@@ -60,11 +63,7 @@ const Explorebar = () => {
 
       // update `isSaved` flag directly
       setPosts((prev) =>
-        prev.map((p) =>
-          p._id === postId
-            ? { ...p, isSaved: !p.isSaved } 
-            : p
-        )
+        prev.map((p) => (p._id === postId ? { ...p, isSaved: !p.isSaved } : p))
       );
     } catch (err) {
       console.error("Error saving/unsaving:", err);
@@ -133,7 +132,9 @@ const Explorebar = () => {
       console.error("Error blocking/unblocking user:", err);
     }
   };
-
+if(loading){
+  return ExploreSkeleton()
+}
   return (
     <div className="lg:w-[56%] w-full max-w-6xl mx-auto flex flex-col lg:mt-6 lg:px-4 pt-2">
       {/* Masonry Grid */}
@@ -143,7 +144,7 @@ const Explorebar = () => {
             key={art._id}
             className="relative break-inside-avoid rounded-xl overflow-hidden shadow"
           >
-            <Link to={`/social-media/single-post/${art._id}`} >
+            <Link to={`/social-media/single-post/${art._id}`}>
               {/* Post Image */}
               <img
                 src={
@@ -427,3 +428,26 @@ export default Explorebar;
 const Portal = ({ children }) => {
   return createPortal(children, document.body);
 };
+const ExploreSkeleton = () => {
+  return (
+    <div className="w-full min-h-screen p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-pulse">
+      {Array.from({ length: 12 }).map((_, i) => (
+        <div
+          key={i}
+          className="w-full h-44 bg-gray-300 rounded-xl relative overflow-hidden"
+        >
+          {/* Top left username bar */}
+          <div className="absolute top-2 left-2 h-4 w-24 bg-gray-400 rounded"></div>
+
+          {/* Three dots right side */}
+          <div className="absolute top-2 right-2 flex gap-1">
+            <div className="h-2 w-2 bg-gray-400 rounded-full"></div>
+            <div className="h-2 w-2 bg-gray-400 rounded-full"></div>
+            <div className="h-2 w-2 bg-gray-400 rounded-full"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+

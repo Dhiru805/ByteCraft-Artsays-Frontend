@@ -135,7 +135,7 @@ const Profile = ({ shareprofileid }) => {
   const [mainCategories, setMainCategories] = useState([]);
   const [profile, setProfile] = useState(null);
   const [isMyProfile, setIsMyProfile] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [commentSettings, setCommentSettings] = useState(null);
   const [mentionSuggestions, setMentionSuggestions] = useState([]);
   const [showMentions, setShowMentions] = useState(false);
@@ -155,6 +155,103 @@ const Profile = ({ shareprofileid }) => {
   const [tipPopupOpen, setTipPopupOpen] = useState(false);
   const [tipAmount, setTipAmount] = useState(40);
   const [tipSuccess, setTipSuccess] = useState(false);
+  const [activeSection, setActiveSection] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(null);
+  const productPosts =
+    profile?.posts?.filter(
+      (pro) => pro.forProduct && pro.forProduct?.status === "Approved"
+    ) || [];
+  const normalPosts = profile?.posts?.filter((pro) => !pro.forProduct) || [];
+
+  const reversedPosts =
+    [
+      ...(profile?.postProductsEnabled ? productPosts : []),
+      ...normalPosts,
+    ].reverse() || [];
+  const reversedSaved = profile?.saved?.slice().reverse() || [];
+  let activePost = null;
+  if (activeSection === "posts") {
+    activePost = activeIndex !== null ? reversedPosts[activeIndex] : null;
+  } else if (activeSection === "saved") {
+    activePost = activeIndex !== null ? reversedSaved[activeIndex] : null;
+  }
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [menuOpenId, setMenuOpenId] = useState(null);
+
+  const [like, setLike] = useState(false);
+  const [likesCount, setLikesCount] = useState(activePost?.likes?.length || 0);
+  const [commentPanel, setComentPanel] = useState(false);
+  const [touchStartX, setTouchStartX] = useState(0);
+  const [touchEndX, setTouchEndX] = useState(0);
+
+  const [onPosts, setOnPosts] = useState(true);
+  const [onSave, setOnSave] = useState(false);
+  const [onItem, setOnItem] = useState(false);
+  const [onTag, setOnTag] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [follow, setFollow] = useState(false);
+  const [suggestionOn, setSuggestionOn] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+
+  useEffect(() => {
+    if (location.state?.onItem === true) {
+      setOnItem(true);
+      setOnPosts(false);
+    }
+  }, [location.state]);
+
+  const handleMoreClick = (id) => setMenuOpenId(id);
+
+  useEffect(() => {
+    setActiveImageIndex(0);
+  }, [activeIndex]);
+
+  const popupref1 = useRef(null);
+  const popupref2 = useRef(null);
+  const menuRef = useRef(null);
+  const profilepopupref1 = useRef(null);
+  const profilepopupref2 = useRef(null);
+  const activePostRef = useRef(null);
+  const commentRef = useRef(null);
+  const shareRef = useRef(null);
+
+  const doComment = () => {
+    if (commentRef.current) {
+      commentRef.current.focus(); // 👈 puts the cursor inside the input
+      commentRef.current.click(); // optional
+    }
+  };
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (
+        (popupref1.current && !popupref1.current.contains(e.target)) ||
+        (popupref2.current && !popupref2.current.contains(e.target))
+      ) {
+        setMenuOpenId(null);
+      }
+      if (
+        (profilepopupref1.current &&
+          !profilepopupref1.current.contains(e.target)) ||
+        (profilepopupref2.current &&
+          !profilepopupref2.current.contains(e.target))
+      ) {
+        setShowMenu(false);
+      }
+      if (
+        !shareRef.current &&
+        activePostRef.current &&
+        !activePostRef.current.contains(e.target)
+      ) {
+        setMenuOpenId(null);
+        setActiveIndex(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [menuOpenId, showMenu, activeIndex]);
 
   // helper: normalize array -> [ids]
   const toIdArray = (arr) =>
@@ -290,6 +387,7 @@ const Profile = ({ shareprofileid }) => {
     document.addEventListener("mousedown", handleClickOutside);
 
     const fetchProfile = async () => {
+      setLoading(true);
       try {
         const res = await getAPI(
           `/api/social-media/profile/${viewedUserId}`,
@@ -346,7 +444,6 @@ const Profile = ({ shareprofileid }) => {
         const res = await getAPI(
           `/api/get-profileproduct?userId=${viewedUserId}`
         );
-
         const data = res?.data?.data || res?.data || [];
         setProducts(data);
       } catch (error) {
@@ -359,23 +456,6 @@ const Profile = ({ shareprofileid }) => {
       fetchProduct();
     }
   }, [viewedUserId, profile]);
-
-  const [openComment, setOpenComment] = useState(false);
-  const [onPosts, setOnPosts] = useState(true);
-  const [onSave, setOnSave] = useState(false);
-  const [onItem, setOnItem] = useState(false);
-  const [onTag, setOnTag] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
-  const [follow, setFollow] = useState(false);
-  const [suggestionOn, setSuggestionOn] = useState(false);
-  const [isCancelling, setIsCancelling] = useState(false);
-
-  useEffect(() => {
-    if (location.state?.onItem === true) {
-      setOnItem(true);
-      setOnPosts(false);
-    }
-  }, [location.state]);
 
   const handleFollowToggle = async (targetUserId, isFollowing) => {
     const userId = localStorage.getItem("userId");
@@ -401,28 +481,6 @@ const Profile = ({ shareprofileid }) => {
       console.error("Error following/unfollowing user:", error);
     }
   };
-
-  const [activeSection, setActiveSection] = useState(null);
-  const [activeIndex, setActiveIndex] = useState(null);
-  const reversedPosts = profile?.posts?.slice().reverse() || [];
-  const reversedSaved = profile?.saved?.slice().reverse() || [];
-  let activePost = null;
-  if (activeSection === "posts") {
-    activePost = activeIndex !== null ? reversedPosts[activeIndex] : null;
-  } else if (activeSection === "saved") {
-    activePost = activeIndex !== null ? reversedSaved[activeIndex] : null;
-  }
-  const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [menuOpenId, setMenuOpenId] = useState(null);
-
-  const handleMoreClick = (id) => setMenuOpenId(id);
-
-  useEffect(() => {
-    setActiveImageIndex(0);
-  }, [activeIndex]);
-
-  const [touchStartX, setTouchStartX] = useState(0);
-  const [touchEndX, setTouchEndX] = useState(0);
 
   // Handle swipe start
   const handleTouchStart = (e) => {
@@ -479,12 +537,6 @@ const Profile = ({ shareprofileid }) => {
       }
     }
   };
-
-  const menuRef = useRef(null);
-
-  const [like, setLike] = useState(false);
-  const [likesCount, setLikesCount] = useState(activePost?.likes?.length || 0);
-  const [commentPanel, setComentPanel] = useState(false);
 
   // Sync like state whenever post changes
   useEffect(() => {
@@ -773,12 +825,23 @@ const Profile = ({ shareprofileid }) => {
     }
   };
 
-  // change the url  with username
-  // useEffect(() => {
-  //   if (profile?.username) {
-  //     window.history.replaceState({}, "", `/social-media/${profile.username}`);
-  //   }
-  // }, [profile]);
+  // copy the profile link
+  function fallbackCopyText(text) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+  }
+
+  if (loading) {
+    return ProfileSkeleton();
+  }
+
   return (
     <div
       className={`${
@@ -796,7 +859,10 @@ const Profile = ({ shareprofileid }) => {
           <title>{profile.username}</title>
           <meta name="description" content={profile.bio} />
           {/* <meta name="keywords" content={}/> */}
-          <meta name="author" content={`${profile.firstName} ${profile.lastName}`} />
+          <meta
+            name="author"
+            content={`${profile.firstName} ${profile.lastName}`}
+          />
 
           <meta property="og:type" content="profile" />
           <meta property="og:title" content={profile.username} />
@@ -849,7 +915,10 @@ const Profile = ({ shareprofileid }) => {
           )}
 
           {/* Popup Layout */}
-          <div className="lg:bg-white w-[73%] lg:h-[72vh] h-[56vh] rounded-lg overflow-hidden flex relative flex lg:flex-row flex-col">
+          <div
+            ref={activePostRef}
+            className="lg:bg-white w-[73%] lg:h-[72vh] h-[56vh] rounded-lg overflow-hidden flex relative flex lg:flex-row flex-col"
+          >
             {/* Left Side (Image Viewer) */}
             <div className="lg:w-[60%] lg:h-full h-[80%] w-full bg-black flex items-center justify-center relative ">
               {activePost.images?.length > 0 ? (
@@ -934,6 +1003,11 @@ const Profile = ({ shareprofileid }) => {
                             }
                           />
                         )}
+                        {activePost.isPromoted && (
+                          <span className="text-[11px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">
+                            Sponsored
+                          </span>
+                        )}
                       </span>
                       <span className="text-xs text-gray-500">
                         {activePost.location}
@@ -946,7 +1020,10 @@ const Profile = ({ shareprofileid }) => {
                   {menuOpenId &&
                     (activePost.user._id === loggedInUserId ? (
                       <>
-                        <ul className="absolute flex flex-col rounded-xl items-center justify-between right-1 top-12 mt-2 w-40 bg-gray-200 border shadow-lg z-10">
+                        <ul
+                          ref={popupref1}
+                          className="absolute flex flex-col rounded-xl items-center justify-between right-1 top-12 mt-2 w-40 bg-gray-200 border shadow-lg z-10"
+                        >
                           <li
                             className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
                             onClick={() => handleSave(activePost?._id)}
@@ -968,7 +1045,10 @@ const Profile = ({ shareprofileid }) => {
                       </>
                     ) : (
                       <>
-                        <ul className="absolute flex flex-col rounded-xl items-center justify-between right-1 top-12 mt-2 w-40 bg-gray-200 border shadow-lg z-10">
+                        <ul
+                          ref={popupref2}
+                          className="absolute flex flex-col rounded-xl items-center justify-between right-1 top-12 mt-2 w-40 bg-gray-200 border shadow-lg z-10"
+                        >
                           {/* Pay Tip */}
                           <div className="w-full flex flex-col items-center justify-center">
                             <li
@@ -1026,46 +1106,6 @@ const Profile = ({ shareprofileid }) => {
                       </>
                     ))}
                 </div>
-
-                {/* Profile with Caption */}
-                <div className="flex flex-col hidden lg:flex">
-                  <div className="flex items-center gap-2">
-                    <img
-                      src={
-                        profile?.profilePhoto
-                          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
-                          : `${DEFAULT_PROFILE_IMAGE}`
-                      }
-                      alt="profile"
-                      className="w-11 h-11 rounded-full"
-                    />
-                    <span className="font-semibold text-[16px] text-[#000000]">
-                      {profile?.username}
-                      {profile.verified?.length > 0 && (
-                        <img
-                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                            profile.verified[profile.verified.length - 1]
-                              ?.badgeImage
-                          }`}
-                          className="inline-block ml-1 w-6 h-6 object-contain"
-                          alt={
-                            profile.verified[profile.verified.length - 1]
-                              ?.badgeName || "badge"
-                          }
-                          title={
-                            profile.verified[profile.verified.length - 1]
-                              ?.badgeName
-                          }
-                        />
-                      )}
-                    </span>
-                  </div>
-
-                  {/* Caption */}
-                  <p className="my-4 text-[14px] whitespace-pre-line break-all">
-                    {activePost.caption || "No caption"}
-                  </p>
-                </div>
               </div>
               {/* Comments */}
               <div className="lg:flex hidden flex flex-col gap-3 overflow-y-auto max-h-auto">
@@ -1121,7 +1161,7 @@ const Profile = ({ shareprofileid }) => {
 
                       <FaRegComment
                         className="text-xl text-[#000000] font-medium cursor-pointer"
-                        onClick={() => setOpenComment(true)}
+                        onClick={() => doComment()}
                       />
                       <IoPaperPlaneOutline
                         onClick={() => setSharePost(true)}
@@ -1180,9 +1220,7 @@ const Profile = ({ shareprofileid }) => {
 
                 {canComment ? (
                   <div
-                    className={`${
-                      openComment ? "flex" : "hidden lg:flex"
-                    } items-center gap-2 pt-2 relative`}
+                    className={` flex items-center justify-between gap-2 pt-2 relative`}
                   >
                     {/* Suggestions dropdown */}
                     {showMentions && mentionSuggestions.length > 0 && (
@@ -1219,6 +1257,7 @@ const Profile = ({ shareprofileid }) => {
                       type="text"
                       placeholder="Add a comment..."
                       value={comment}
+                      ref={commentRef}
                       onChange={handleProfileCommentChange} // 👈 use new handler
                       className="flex-grow outline-none text-sm placeholder:text-[14px] placeholder:text-[#696969]"
                     />
@@ -1394,7 +1433,10 @@ const Profile = ({ shareprofileid }) => {
             </p>
 
             {/* Report Form */}
-            <form onSubmit={handleSubmit} className="space-y-3">
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-3 max-h-[20vh] overflow-y-auto"
+            >
               <div className="space-y-2">
                 {[
                   "I just don't like it",
@@ -1539,20 +1581,28 @@ const Profile = ({ shareprofileid }) => {
             {/* Close */}
             <button
               className="absolute top-2 right-2 text-xl"
-              onClick={() => setSharePost(false)}
+              onClick={() => setShareProfile(false)}
             >
               <i className="ri-close-line"></i>
             </button>
 
-            <h3 className="text-lg font-semibold mb-3">Share Post</h3>
+            <h3 className="text-lg font-semibold mb-3">Share Profile</h3>
 
             {/* Copy Link */}
             <button
               className="w-full py-2 bg-gray-200 text-gray-800 rounded-lg mb-2"
               onClick={() => {
                 const link = `${window.location.origin}/social-media/profile/${viewedUserId}`;
-                navigator.clipboard.writeText(link);
-                setCopyMsg("Link copied!");
+
+                if (navigator.clipboard && window.isSecureContext) {
+                  navigator.clipboard
+                    .writeText(link)
+                    .then(() => setCopyMsg("Link copied!"))
+                    .catch(() => fallbackCopyText(link));
+                } else {
+                  fallbackCopyText(link);
+                }
+
                 setTimeout(() => setCopyMsg(""), 2000);
               }}
             >
@@ -1570,7 +1620,10 @@ const Profile = ({ shareprofileid }) => {
 
       {sharePost && (
         <div className="fixed inset-0 bg-[#000000]/40 flex justify-center items-center z-[9999]">
-          <div className="bg-white w-80 rounded-xl p-4 shadow-lg relative">
+          <div
+            ref={shareRef}
+            className="bg-white w-80 rounded-xl p-4 shadow-lg relative"
+          >
             {/* Close */}
             <button
               className="absolute top-2 right-2 text-xl"
@@ -1586,8 +1639,14 @@ const Profile = ({ shareprofileid }) => {
               className="w-full py-2 bg-gray-200 text-gray-800 rounded-lg mb-2"
               onClick={() => {
                 const link = `${window.location.origin}/social-media/single-post/${activePost._id}`;
-                navigator.clipboard.writeText(link);
-                setCopyMsg("Link copied!");
+                if (navigator.clipboard && window.isSecureContext) {
+                  navigator.clipboard
+                    .writeText(link)
+                    .then(() => setCopyMsg("Link copied!"))
+                    .catch(() => fallbackCopyText(link));
+                } else {
+                  fallbackCopyText(link);
+                }
                 setTimeout(() => setCopyMsg(""), 2000);
               }}
             >
@@ -1775,7 +1834,10 @@ const Profile = ({ shareprofileid }) => {
                       <i className="ri-more-fill"></i>
                     </button>
                     {showMenu && (
-                      <div className="absolute right-0 top-full flex flex-col items-center mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-md z-50">
+                      <div
+                        ref={profilepopupref1}
+                        className="absolute right-0 top-full flex flex-col items-center mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-md z-50"
+                      >
                         <Link to={"/social-media/setting"}>
                           <button className="bg-gray-100 font-medium w-full px-3 py-1.5 hover:bg-gray-200 rounded-t-lg">
                             Setting and privacy
@@ -1832,6 +1894,7 @@ const Profile = ({ shareprofileid }) => {
                     </button>
                     {showMenu && (
                       <div
+                        ref={profilepopupref2}
                         className="absolute right-0 top-full flex flex-col items-center mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-md z-50"
                         onClick={(e) => e.stopPropagation()} //  prevent closing when clicking inside
                       >
@@ -2248,7 +2311,7 @@ const Profile = ({ shareprofileid }) => {
               <FaRegBookmark className="text-2xl" />
             </button>
           )}
-          {userType !== "Buyer" && (
+          {userType !== "Buyer" && profile?.postProductsEnabled && (
             <button
               onClick={() => {
                 setOnPosts(false);
@@ -2308,11 +2371,11 @@ const Profile = ({ shareprofileid }) => {
                   </div>
                 )}
 
-                {/* {post.isMultiple && (
-                  <div className="absolute top-2 left-2 bg-black/60 p-1 rounded">
-                    <i className="ri-checkbox-multiple-blank-line text-white text-lg"></i>
-                  </div>
-                )} */}
+                {post.isPromoted && (
+                  <span className="absolute top-2 left-2 text-[11px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">
+                    Sponsored
+                  </span>
+                )}
               </div>
             ))}
           </div>
@@ -2457,6 +2520,52 @@ const Profile = ({ shareprofileid }) => {
           ) : (
             <div className="text-center text-gray-500">No tagged posts</div>
           ))}
+      </div>
+    </div>
+  );
+};
+const ProfileSkeleton = () => {
+  return (
+    <div className="w-full min-h-screen bg-white px-4 py-6">
+      {/* Top Section Skeleton */}
+      <div className="flex flex-col items-center">
+        {/* Profile Photo */}
+        <div className="w-24 h-24 rounded-full bg-gray-300 animate-pulse mb-4"></div>
+
+        {/* Username */}
+        <div className="h-4 w-32 bg-gray-300 animate-pulse rounded mb-2"></div>
+
+        {/* Name */}
+        <div className="h-4 w-20 bg-gray-300 animate-pulse rounded mb-1"></div>
+
+        {/* Bio */}
+        <div className="h-3 w-40 bg-gray-300 animate-pulse rounded mb-1"></div>
+        <div className="h-3 w-32 bg-gray-300 animate-pulse rounded mb-4"></div>
+      </div>
+
+      {/* Tabs Skeleton */}
+      <div className="flex justify-center gap-8 mt-4 mb-6">
+        <div className="w-10 h-10 bg-gray-300 animate-pulse rounded-full"></div>
+        <div className="w-10 h-10 bg-gray-300 animate-pulse rounded-full"></div>
+        <div className="w-10 h-10 bg-gray-300 animate-pulse rounded-full"></div>
+      </div>
+
+      {/* Images Grid Skeleton */}
+      <div
+        className="
+        grid 
+        grid-cols-1 
+        sm:grid-cols-2 
+        md:grid-cols-3 
+        gap-4"
+      >
+        {/* Create 8 placeholders for loading */}
+        {Array.from({ length: 8 }).map((_, idx) => (
+          <div
+            key={idx}
+            className="w-full aspect-square bg-gray-300 animate-pulse rounded-xl"
+          ></div>
+        ))}
       </div>
     </div>
   );
