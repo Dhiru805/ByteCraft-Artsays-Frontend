@@ -13,6 +13,20 @@ const CelebrityCard = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [celebritiesData, setCelebritiesData] = useState([])
 
+const [currentPage, setCurrentPage] = useState(1); 
+const itemsPerPage = 9; 
+const indexOfLastProduct = currentPage * itemsPerPage;
+const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
+const currentProducts = celebritiesData.slice(indexOfFirstProduct, indexOfLastProduct);
+
+const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
+
+
+  const goToNextPage = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
+  const goToPrevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
+  const goToPage = (page) => setCurrentPage(page);
+
+
   const fetchCelebritiesData = async () => {
     try {
 
@@ -475,12 +489,15 @@ const CelebrityCard = () => {
           )}
         </div>
 
-        {/* <!-- Product Grid --> */}
+        {/* <!-- Celebrity Card --> */}
         <main className="md:col-span-3">
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
 
-            {celebritiesData.length > 0 ? (
-              celebritiesData.map((celebrity, index) => (
+            {/* {celebritiesData.length > 0 ? (
+              celebritiesData.map((celebrity, index) => ( */}
+              {currentProducts.length > 0 ? (
+  currentProducts.map((celebrity, index) => (
+
                 <div key={celebrity._id}
                   className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
 
@@ -813,7 +830,7 @@ const CelebrityCard = () => {
           </div>
 
           {/* <!-- Pagination --> */}
-          <div className="flex justify-center mt-6">
+          {/* <div className="flex justify-center mt-6">
             <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
               <FiChevronLeft className="self-center flex-shrink-0" />
               <button className="px-1 sm:px-3 py-1">Previous</button>
@@ -827,8 +844,56 @@ const CelebrityCard = () => {
               <button className="px-1 sm:px-3 py-1">Next</button>
               <FiChevronRight className="self-center flex-shrink-0" />
             </nav>
-          </div>
-
+          </div> */}
+ {/* Pagination */}
+                  <div className="flex justify-center mt-6">
+                    <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
+                      {/* Previous */}
+                      <button
+                        onClick={goToPrevPage}
+                        disabled={currentPage === 1}
+                        className={`px-2 sm:px-3 py-1 flex items-center ${
+                          currentPage === 1
+                            ? "opacity-50 cursor-not-allowed"
+                            : "hover:text-red-500"
+                        }`}
+                      >
+                        <FiChevronLeft className="self-center flex-shrink-0" />
+                        <span className="ml-1">Previous</span>
+                      </button>
+    
+                      {/* Page numbers */}
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                        (page) => (
+                          <button
+                            key={page}
+                            onClick={() => goToPage(page)}
+                            className={`px-2 sm:px-3 py-1 rounded ${
+                              currentPage === page
+                                ? "border border-dark text-dark"
+                                : "hover:text-red-500"
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        )
+                      )}
+    
+                      {/* Next */}
+                      <button
+                        onClick={goToNextPage}
+                        disabled={currentPage === totalPages}
+                        className={`px-2 sm:px-3 py-1 flex items-center ${
+                          currentPage === totalPages
+                            ? "opacity-50 cursor-not-allowed"
+                            : "hover:text-red-500"
+                        }`}
+                      >
+                        <span className="mr-1">Next</span>
+                        <FiChevronRight className="self-center flex-shrink-0" />
+                      </button>
+                    </nav>
+                  </div>
         </main>
       </div>
 

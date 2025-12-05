@@ -937,13 +937,18 @@ import { MdVerified } from "react-icons/md";
 import { FiChevronRight, FiChevronLeft } from "react-icons/fi";
 import { Bell } from "lucide-react";
 import getAPI from "../../../api/getAPI";   
+import { useNavigate } from "react-router-dom";
 
 const BidProduct = () => {
   const [products, setProducts] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const userId = localStorage.getItem("userId");
+  const navigate = useNavigate();
+const [highestLiveBid, setHighestLiveBid] = useState({});
+
+
  const [currentPage, setCurrentPage] = useState(1);
-   const itemsPerPage = 9;
+   const itemsPerPage = 12;
    const indexOfLastProduct = currentPage * itemsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
   const currentProducts = products.slice(
@@ -963,6 +968,7 @@ const BidProduct = () => {
   const goToPage = (page) => {
     setCurrentPage(page);
   };
+
 
  const fetchProducts = async () => {
   try {
@@ -996,7 +1002,8 @@ const BidProduct = () => {
 
     setProducts(finalList.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-    ));
+    ))
+    await fetchLiveHighestBids(finalList);
   } catch (err) {
     console.error("Error fetching bidding products:", err);
   }
@@ -1045,6 +1052,40 @@ const getFinalStatus = (item) => {
     }, 60000);
     return () => clearInterval(interval);
   }, []);
+const fetchLiveHighestBids = async (productsList) => {
+  try {
+    const highestMap = {};
+
+    await Promise.all(
+      productsList.map(async (item) => {
+        const bidId = item._id;
+
+        const res = await getAPI(`/api/bidding/all/${bidId}`, {}, true, false)
+          .catch(() => null);
+
+        const allBids = res?.data?.bids || [];
+
+        const highestAmount =
+          allBids.length > 0
+            ? Math.max(...allBids.map((b) => b.amount))
+            : item.basePrice;
+
+        highestMap[bidId] = highestAmount;
+      })
+    );
+
+    setHighestLiveBid(highestMap);
+  } catch (err) {
+    console.log("Live bid fetch error:", err);
+  }
+};
+useEffect(() => {
+  const interval = setInterval(() => {
+    fetchLiveHighestBids(products);
+  }, 3000);
+
+  return () => clearInterval(interval);
+}, [products]);
 
   return (
     <div className="max-w-[1440px] mx-auto mb-4">
@@ -1451,7 +1492,14 @@ const getFinalStatus = (item) => {
               if (isEnded) buttonText = "Closed";
 
               return (
-                <div key={item._id} className="mx-auto product-card w-[300px]">
+                // <div key={item._id} className="mx-auto product-card w-[300px]">
+<div
+  key={item._id}
+ // onClick={() => navigate(`/bid-details/${item.product?._id || item.productId || item._id}`)}
+  onClick={() => navigate(`/bid-details/${item._id}`)}
+  className="mx-auto product-card w-[300px] cursor-pointer rounded-t-2xl overflow-hidden"
+>
+
 
 
                   {/* Status Badge */}
@@ -1471,7 +1519,7 @@ const getFinalStatus = (item) => {
                       alt={item.artworkName}
                       className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
                     /> */}
-<div className="w-68 h-40 sm:h-64 rounded-t-2xl bg-white flex items-center justify-center overflow-hidden">
+<div className="w-[300px] h-40 sm:h-64 rounded-t-2xl bg-grey flex items-center justify-center overflow-hidden">
   <img
     src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.product?.mainImage}`}
     alt={item.artworkName}
@@ -1481,7 +1529,12 @@ const getFinalStatus = (item) => {
 
 
                     {/* Bell Icon */}
-                    <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
+                    <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow"
+                       onClick={(e) => {
+                         e.stopPropagation();
+    
+                         }}
+                         >
                       <Bell className="w-5 h-5 text-white" />
                     </button>
                   </div>
@@ -1538,7 +1591,7 @@ const getFinalStatus = (item) => {
 
                       {status !== "Upcoming" && (
                         <span className="text-green-600 font-semibold text-md">
-                          Highest Bid: ₹{item.highestBid || item.basePrice}
+                          Highest Bid: ₹{highestLiveBid[item._id] || item.basePrice}
                         </span>
                       )}
                     </div>

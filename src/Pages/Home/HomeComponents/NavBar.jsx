@@ -508,7 +508,7 @@ fetchProfile()
                           >
                             <i className="fas fa-bell me-2" /> Notification
                           </Link>
-                          <Link to={"/my-account/wishlist/${userId}"}>
+                          <Link to={`/my-account/wishlist/${userId}`}>
                             <div
                               className="dropdown-item-h"
                               onClick={handleUserIconClick}

@@ -143,6 +143,18 @@ import WhyArtSays from "../Component/Dashboard/Super-AdminDashboard/WhyArtSays/w
 import CreateWhyArtSays from "../Component/Dashboard/Super-AdminDashboard/WhyArtSays/create";
 import UpdateWhyArtSays from "../Component/Dashboard/Super-AdminDashboard/WhyArtSays/edit";
 
+import CareerCMS from "../Component/Dashboard/Super-AdminDashboard/CarrerCMS/table";
+import CreateCareerCMS from "../Component/Dashboard/Super-AdminDashboard/CarrerCMS/create";
+import UpdateCareerCMS from "../Component/Dashboard/Super-AdminDashboard/CarrerCMS/edit";
+
+import BlogCMS from "../Component/Dashboard/Super-AdminDashboard/blogCMS/table";
+import CreateblogCMS from "../Component/Dashboard/Super-AdminDashboard/blogCMS/create";
+import UpdateblogCMS from "../Component/Dashboard/Super-AdminDashboard/blogCMS/edit";
+
+import ChallengeCMS from "../Component/Dashboard/Super-AdminDashboard/challengeCMS/table";
+import CreatechallengeCMS from "../Component/Dashboard/Super-AdminDashboard/challengeCMS/create";
+import UpdatechallengeCMS from "../Component/Dashboard/Super-AdminDashboard/challengeCMS/edit";
+
 import LicensingTable from "../Component/Dashboard/Super-AdminDashboard/Licensing/LicensingTable";
 import CreateLicensing from "../Component/Dashboard/Super-AdminDashboard/Licensing/create";
 import UpdateLicensing from "../Component/Dashboard/Super-AdminDashboard/Licensing/UpdateLicensing";
@@ -507,6 +519,7 @@ import JoinChallenges from "../Pages/Challenges/JoinChallenges/JoinChallenges";
 import ProductDetails from "../Pages/ProductDetails/ProductDetails";
 import ProductDetailsTemplate from "../Pages/ProductDetails/ProductDetails copy";
 import BidDetails from "../Pages/BidDetails/BidDetails";
+import BidDetailsTemplate from "../Pages/BidDetails/BidDetails copy";
 import Certification from "../Pages/Certification/Certification";
 import Insurance from "../Pages/Insurance/Insurance";
 import Partner from "../Pages/Partner/Partner";
@@ -1099,6 +1112,18 @@ const AppRoutes = () => {
         <Route path="why-artsays" element={<WhyArtSays />} />
         <Route path="why-artsays/create" element={<CreateWhyArtSays />} />
         <Route path="why-artsays/update" element={<UpdateWhyArtSays />} />
+        {/*CareerCMS */}
+        <Route path="career-CMS" element={<CareerCMS />} />
+        <Route path="career-CMS/create" element={<CreateCareerCMS />} />
+        <Route path="career-CMS/update" element={<UpdateCareerCMS />} />
+        {/*ChallengeCMS */}
+        <Route path="challenge-CMS" element={<ChallengeCMS />} />
+        <Route path="challenge-CMS/create" element={<CreatechallengeCMS />} />
+        <Route path="challenge-CMS/update" element={<UpdatechallengeCMS />} />
+        {/*BlogCMS */}
+        <Route path="CMS-Blog" element={<BlogCMS />} />
+        <Route path="CMS-Blog/create" element={<CreateblogCMS />} />
+        <Route path="CMS-Blog/update" element={<UpdateblogCMS />} />
         {/* Licensing Pages */}
         <Route path="licensing" element={<LicensingTable />} />
         <Route path="licensing/create" element={<CreateLicensing />} />
@@ -1575,7 +1600,8 @@ const AppRoutes = () => {
 
         <Route path="/product-details" element={<ProductDetailsTemplate />} />
         <Route path="/product-details/:productId" element={<ProductDetails />} />
-        <Route path="/bid-details" element={<BidDetails />} />
+        <Route path="/bid-details" element={<BidDetailsTemplate />} />
+         <Route path="/bid-details/:bidId" element={<BidDetails />} />
         <Route path="/certification" element={<Certification />} />
         <Route path="/insurance" element={<Insurance />} />
         <Route path="/partner" element={<Partner />} />

@@ -2019,9 +2019,10 @@ const Product = () => {
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   const userId = localStorage.getItem("userId");
+  const userType = localStorage.getItem("userType"); 
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 9;
+  const itemsPerPage = 12;
   const [likedProducts, setLikedProducts] = useState({});
   const navigate = useNavigate();
 
@@ -2052,11 +2053,21 @@ const Product = () => {
     }));
   };
 
+const ensureBuyer = () => {
+  if (userType !== "Buyer") {
+    toast.warn("Only buyers can use this feature, Register as a Buyer to continue.");
+    return false;
+  }
+  return true;
+};
+
+
   const handleWishlist = async (productId) => {
-    if (!userId) {
-      toast.warn("You must be logged in as a buyer to use wishlist");
-      return;
-    }
+    // if (!userId) {
+    //   toast.warn("You must be logged in as a buyer to use wishlist");
+    //   return;
+    // }
+if (!ensureBuyer()) return;
 
     const isLiked = likedProducts[productId];
 
@@ -2293,7 +2304,7 @@ const Product = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6">
         {/* Sidebar Filters (hidden on mobile, toggleable) */}
         <aside className="hidden md:block rounded-xl filter-sidebar">
-          {/* All your filter sections here (unchanged) */}
+         
           <h2 className="font-bold text-lg mb-3">Filter by</h2>
 
           <hr className="mb-3 border-dark" />
@@ -2754,24 +2765,37 @@ const Product = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
+                           if (!ensureBuyer()) return;
+
                           addToCart(product._id);
                         }}
-                        className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart hover:bg-dark hover:text-white transition"
+                        disabled={!product.quantity || product.quantity === 0}
+                        className={`flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart hover:bg-dark hover:text-white transition ${(!product.quantity || product.quantity === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
                         <FaShoppingCart /> Add to Cart
                       </button>
 
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(
-                            `/my-account/check-out/${userId}?productId=${product._id}`
-                          );
-                        }}
-                        className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now"
-                      >
-                        Buy Now
-                      </button>
+                      {(!product.quantity || product.quantity === 0) ? (
+                        <button
+                          disabled
+                          className="flex-1 bg-gray-500 text-white py-2 rounded-full font-semibold shadow buy-now cursor-not-allowed"
+                        >
+                          Sold Out
+                        </button>
+                      ) : (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                             if (!ensureBuyer()) return;
+                            navigate(
+                              `/my-account/check-out/${userId}?productId=${product._id}`
+                            );
+                          }}
+                          className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now"
+                        >
+                          Buy Now
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>

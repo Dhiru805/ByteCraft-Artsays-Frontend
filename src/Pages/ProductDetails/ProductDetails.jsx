@@ -1605,16 +1605,18 @@
 
 //  export default ProductDetails;
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { MdVerified } from "react-icons/md";
 import { Star } from "lucide-react";
-import { useParams } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { HiMiniPercentBadge } from "react-icons/hi2";
 import { Heart, MapPin, ArrowRight, ShoppingCart, Zap } from "lucide-react";
 import { BsTelegram } from "react-icons/bs";
 import { FaChevronCircleRight, FaChevronCircleLeft } from "react-icons/fa";
 import getAPI from "../../api/getAPI";
+import postAPI from "../../api/postAPI";
+import { toast } from "react-toastify";
 
 const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 
@@ -1644,15 +1646,46 @@ const offersData = [
 const ProductDetails = () => {
   const { productId } = useParams();
   const id = productId;
+  const userId = localStorage.getItem("userId");
+  const userType = localStorage.getItem("userType"); 
 
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 
+  const resolveMediaUrl = (path) => {
+    if (!path || typeof path !== "string") return "/images/placeholder.jpg";
+    if (/^https?:\/\//i.test(path) || path.startsWith("data:")) return path;
+    const normalized = path.replace(/\\/g, "/");
+    const leadingSlash = normalized.startsWith("/") ? normalized : `/${normalized}`;
+    if (imageBaseURL) {
+      const base = imageBaseURL.endsWith("/")
+        ? imageBaseURL.slice(0, -1)
+        : imageBaseURL;
+      return `${base}${leadingSlash}`;
+    }
+    return leadingSlash;
+  };
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState([]);
   const ratingValue = Number(product?.averageRating ?? 0);
   const reviewCount = Number(product?.reviewCount ?? 0);
+  const rawMonthlyPurchase =
+    product?.monthlyPurchaseCount ??
+    product?.monthlySales ??
+    product?.ordersCount ??
+    product?.orderCount ??
+    product?.salesCount ??
+    product?.totalOrders ??
+    0;
+  const normalizedMonthlyPurchase = Number(rawMonthlyPurchase) || 0;
+  const fallbackPurchaseCount = reviewCount > 0 ? reviewCount : 0;
+  const purchaseDisplayCount =
+    normalizedMonthlyPurchase > 0
+      ? normalizedMonthlyPurchase
+      : fallbackPurchaseCount;
+  const hasPurchaseData = purchaseDisplayCount > 0;
 
   const [quantity, setQuantity] = useState(1);
   const [protection, setProtection] = useState(true);
@@ -1663,6 +1696,8 @@ const ProductDetails = () => {
   const [mainCategoryName, setMainCategoryName] = useState("");
   const [categoryName, setCategoryName] = useState("");
   const [subCategoryName, setSubCategoryName] = useState("");
+
+const tabRef = React.useRef(null);
 
   const [categoryData, setCategoryData] = useState({
     mainCategories: [],
@@ -1677,13 +1712,46 @@ const ProductDetails = () => {
     560001: "MG Road, Bangalore, Karnataka",
   };
 
+const ensureBuyer = () => {
+  if (userType !== "Buyer") {
+    toast.warn("Only buyers can use this feature, Register as a Buyer to continue.");
+    return false;
+  }
+  return true;
+};
+
   const artworkSize = { width: 100, height: 70 };
   const roomBackgrounds = [
     "/artimages/viewintheroom.jpg",
     "/artimages/wall3.jpg",
     "/artimages/wall4.webp",
   ];
+const addToCart = async (productId, desiredQty = 1) => {
+    const userId = localStorage.getItem("userId");
 
+    if (!userId) {
+      toast.warn("You must be logged in to add items to cart");
+      return;
+    }
+
+    try {
+      await postAPI(`/api/cart/addcart/${productId}`, {}, true);
+
+      if (desiredQty > 1) {
+        await postAPI(
+          "/api/cart/update",
+          { userId, productId, quantity: desiredQty },
+          true,
+          false
+        );
+      }
+
+      toast.success("Added to Cart!");
+    } catch (err) {
+      console.error("Add to cart error:", err);
+      toast.error("Failed to add to cart");
+    }
+  };
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -1695,7 +1763,14 @@ const ProductDetails = () => {
           getAPI("/api/reviews/all-reviews", {}, true, false),
         ]);
 
-        setReviews(reviewRes?.data?.data || []);
+        const reviewPayload =
+          reviewRes?.data?.data || reviewRes?.data?.reviews || [];
+        const sortedReviews = Array.isArray(reviewPayload)
+          ? [...reviewPayload].sort(
+              (a, b) => new Date(b?.createdAt || 0) - new Date(a?.createdAt || 0)
+            )
+          : [];
+        setReviews(sortedReviews);
 
         const products1 =
           res1?.data?.data?.filter((p) => p.status === "Approved") || [];
@@ -1794,6 +1869,19 @@ const ProductDetails = () => {
     setSubCategoryName(subCat?.subCategoryName || "N/A");
   }, [product, categoryData]);
 
+useEffect(() => {
+  const anchor = document.getElementById("tabs-start");
+  if (!anchor) return;
+
+  const yOffset = -120; 
+  const y = anchor.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+  setTimeout(() => {
+    window.scrollTo({ top: y, behavior: "smooth" });
+  }, 50);
+}, [activeTab]);
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (addresses[pinCode]) setAddress(addresses[pinCode]);
@@ -1808,6 +1896,60 @@ const ProductDetails = () => {
     if (sell >= market) return 0;
     return Math.round(((market - sell) / market) * 100);
   };
+
+  // const productReviews = reviews.filter(
+  //   (r) => String(r.productId?._id) === String(product?._id)
+  // );
+  // const productReviews = reviews.filter((review) => {
+  //   const buyerRequest = review.productId;
+  //   if (!buyerRequest) return false;
+
+  //   const reviewProductName = buyerRequest.ProductName?.trim()?.toLowerCase();
+  //   const currentProductName = product.productName?.trim()?.toLowerCase();
+
+  //   return reviewProductName === currentProductName;
+  // });
+
+  const productReviews = useMemo(() => {
+    if (!product || !reviews || reviews.length === 0) return [];
+
+    const currentProductIdStr = product._id?.toString() || product._id;
+    const currentProductName = (product.productName || "").trim().toLowerCase();
+
+    const filtered = reviews.filter((review) => {
+      const reviewProductId = review.productId;
+      if (!reviewProductId) return false;
+
+      const reviewProductIdStr =
+        typeof reviewProductId === "object"
+          ? reviewProductId._id?.toString() || reviewProductId.toString()
+          : reviewProductId.toString();
+
+      if (reviewProductIdStr === currentProductIdStr) {
+        return true;
+      }
+
+      const buyerRequest = typeof reviewProductId === "object" ? reviewProductId : null;
+      if (buyerRequest && buyerRequest.ProductName) {
+        const reviewProductName = buyerRequest.ProductName?.trim()?.toLowerCase();
+        if (reviewProductName && reviewProductName === currentProductName) {
+          return true;
+        }
+      }
+
+      if (review.productNameSnapshot) {
+        const snapshotName = review.productNameSnapshot.trim().toLowerCase();
+        if (snapshotName && snapshotName === currentProductName) {
+          return true;
+        }
+      }
+
+      return false;
+    });
+    return filtered.sort(
+      (a, b) => new Date(b?.createdAt || 0) - new Date(a?.createdAt || 0)
+    );
+  }, [product, reviews]);
 
   const nextSlide = () => {
     if (index < offersData.length - 3) setIndex(index + 1);
@@ -1966,7 +2108,7 @@ const ProductDetails = () => {
             subCategoryName,
             product.productName,
           ]
-            .filter((v) => v && v !== "N/A") // remove empty + N/A
+            .filter((v) => v && v !== "N/A") 
             .join(" / ")}
         </p>
 
@@ -2165,8 +2307,14 @@ const ProductDetails = () => {
                       </span>
 
                       <span className="text-dark text-sm ml-3">
-                        <strong>{Math.max(50, reviewCount * 10)}+</strong>{" "}
-                        bought this month
+                        {hasPurchaseData ? (
+                          <>
+                            <strong>{purchaseDisplayCount}</strong> bought this
+                            month
+                          </>
+                        ) : (
+                          <strong>Be the first to buy this month</strong>
+                        )}
                       </span>
                     </div>
                   </div>
@@ -2212,119 +2360,136 @@ const ProductDetails = () => {
                     </p>
                   </div>
 
-                {product.editionType?.toLowerCase().includes("limited") && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/limited edition.png"
-      alt="limited"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2">Limited Edition</p>
-  </div>
-)}
+                  {product.editionType?.toLowerCase().includes("limited") && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/limited edition.png"
+                        alt="limited"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2">
+                        Limited Edition
+                      </p>
+                    </div>
+                  )}
 
-{product.editionType?.toLowerCase().includes("original") && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/original.png"
-      alt="original"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2 rounded">Original</p>
-  </div>
-)}
+                  {product.editionType?.toLowerCase().includes("original") && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/original.png"
+                        alt="original"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2 rounded">
+                        Original
+                      </p>
+                    </div>
+                  )}
 
-{product.editionType?.toLowerCase().includes("premium") && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/premium.png"
-      alt="premium"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2 rounded">Premium</p>
-  </div>
-)}
+                  {product.editionType?.toLowerCase().includes("premium") && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/premium.png"
+                        alt="premium"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2 rounded">
+                        Premium
+                      </p>
+                    </div>
+                  )}
 
-{product.editionType?.toLowerCase().includes("open") && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/open edition.png"
-      alt="open edition"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2 rounded">Open Edition</p>
-  </div>
-)}
+                  {product.editionType?.toLowerCase().includes("open") && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/open edition.png"
+                        alt="open edition"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2 rounded">
+                        Open Edition
+                      </p>
+                    </div>
+                  )}
 
+                  {product.materials?.some(
+                    (mat) => mat.toLowerCase() === "glass"
+                  ) && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/glass material.png"
+                        alt="glass material"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2 rounded">
+                        Glass Material
+                      </p>
+                    </div>
+                  )}
 
-{product.materials?.some(mat => mat.toLowerCase() === "glass") && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/glass material.png"
-      alt="glass material"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2 rounded">
-      Glass Material
-    </p>
-  </div>
-)}
+                  {product.framing?.toLowerCase() === "framed" && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/framed.png"
+                        alt="framed"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2">
+                        Framed
+                      </p>
+                    </div>
+                  )}
 
+                  {product.framing?.toLowerCase() === "unframed" && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/framed.png"
+                        alt="unframed"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2">
+                        Unframed
+                      </p>
+                    </div>
+                  )}
 
+                  {product.handmade === "Yes" && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/handmade.png"
+                        alt="handmade"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2">
+                        Handmade
+                      </p>
+                    </div>
+                  )}
+                  {product.giftWrapping && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/gifting.png"
+                        alt="gifting options"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2 rounded">
+                        Gifting Options
+                      </p>
+                    </div>
+                  )}
 
-{product.framing?.toLowerCase() === "framed" && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/framed.png"
-      alt="framed"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2">Framed</p>
-  </div>
-)}
-
-{product.framing?.toLowerCase() === "unframed" && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/framed.png"
-      alt="unframed"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2">Unframed</p>
-  </div>
-)}
-
-{product.handmade === "Yes" && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/handmade.png"
-      alt="handmade"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2">Handmade</p>
-  </div>
-)}
-{product.giftWrapping  && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/gifting.png"
-      alt="gifting options"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2 rounded">Gifting Options</p>
-  </div>
-)}
-
-{product.artistSignature  && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/certified.png"
-      alt="certified"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2 rounded">Certified</p>
-  </div>
-)}
+                  {product.artistSignature && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/certified.png"
+                        alt="certified"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2 rounded">
+                        Certified
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Mobile / small screen stock info (template) */}
@@ -2432,12 +2597,14 @@ const ProductDetails = () => {
             </div>
 
             {/* Tabs (left column area) */}
-            <div className="mt-12 border-b">
-              <div className="flex gap-8 text-[#48372D] font-medium text-lg border-b border-gray-200 overflow-x-auto no-scrollbar">
+            {/* <div className="mt-12 border-b"> */}
+              {/* <div className="flex gap-8 text-[#48372D] font-medium text-lg border-b border-gray-200 overflow-x-auto no-scrollbar">
                 {["description", "details", "artist", "reviews"].map((tab) => (
                   <button
                     key={tab}
-                    onClick={() => setActiveTab(tab)}
+                    onClick={() => 
+                    setActiveTab(tab)
+                  }
                     className={`pb-2 flex-shrink-0 transition-all duration-200 whitespace-nowrap ${
                       activeTab === tab
                         ? "border-b-4 border-[#48372D] font-semibold text-[#48372D]"
@@ -2447,9 +2614,32 @@ const ProductDetails = () => {
                     {tab.charAt(0).toUpperCase() + tab.slice(1)}
                   </button>
                 ))}
-              </div>
+              </div> */}
+{/* Tabs (left column area) */}
+<div id="tabs-start" className="mt-12 border-b">
+  <div className="flex gap-8 text-[#48372D] font-medium text-lg border-b border-gray-200 overflow-x-auto no-scrollbar">
+    {["description", "details", "artist", "reviews"].map((tab) => (
+      <button
+        key={tab}
+        onClick={() => {
+          setActiveTab(tab);
+        }}
+        className={`pb-2 flex-shrink-0 transition-all duration-200 whitespace-nowrap ${
+          activeTab === tab
+            ? "border-b-4 border-[#48372D] font-semibold text-[#48372D]"
+            : "font-semibold text-[#48372D]"
+        }`}
+      >
+        {tab.charAt(0).toUpperCase() + tab.slice(1)}
+      </button>
+    
 
-              <div className="py-6 text-gray-700 leading-relaxed text-sm whitespace-pre-wrap break-words w-full">
+    ))}
+  </div>
+
+              <div 
+              ref={tabRef}
+              className="py-6 text-gray-700 leading-relaxed text-sm whitespace-pre-wrap break-words w-full">
                 {activeTab === "description" && (
                   <p>{product.description || "No description available."}</p>
                 )}
@@ -2685,9 +2875,11 @@ const ProductDetails = () => {
                         />
 
                         <Field label="COA Document" value={product.coaFile} />
-                       
-                        <Field label="Certificate Document" value={product.certificateFile} />
 
+                        <Field
+                          label="Certificate Document"
+                          value={product.certificateFile}
+                        />
                       </Grid>
                     </Section>
 
@@ -2719,7 +2911,8 @@ const ProductDetails = () => {
                       antiqueCondition: product.antiqueCondition,
                       conservationStatus: product.conservationStatus,
                       restorationHistory: product.restorationHistory,
-                      restorationDocumentation: product.restorationDocumentation,
+                      restorationDocumentation:
+                        product.restorationDocumentation,
                       provenanceHistory: product.provenanceHistory,
                       culturalSignificance: product.culturalSignificance,
                       appraisalDetails: product.appraisalDetails,
@@ -2729,7 +2922,8 @@ const ProductDetails = () => {
                       originalReproduction: product.originalReproduction,
                       museumExhibitionHistory: product.museumExhibitionHistory,
                       maintenanceRequired: product.maintenanceRequired,
-                      customEngravingAvailable: product.customEngravingAvailable,
+                      customEngravingAvailable:
+                        product.customEngravingAvailable,
                       certification: product.certification,
                     }) && (
                       <Section title="Antique & Vintage Details">
@@ -2892,13 +3086,17 @@ const ProductDetails = () => {
                         {/* Review Photos */}
                         {review.photos?.length > 0 && (
                           <div className="flex gap-3 mt-3">
-                            {review.photos.map((img, i) => (
-                              <img
-                                key={i}
-                                src={`${imageBaseURL}${img}`}
-                                className="w-20 h-20 rounded-lg object-cover border"
-                              />
-                            ))}
+                            {review.photos.map((img, i) => {
+                              const resolved = resolveMediaUrl(img);
+                              return (
+                                <img
+                                  key={i}
+                                  src={resolved}
+                                  className="w-20 h-20 rounded-lg object-cover border"
+                                  alt="review"
+                                />
+                              );
+                            })}
                           </div>
                         )}
                       </div>
@@ -3051,12 +3249,37 @@ const ProductDetails = () => {
                 )}
 
                 <div className="mt-3 flex flex-col gap-3">
-                  <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart">
+                  <button
+                   onClick={(e) => {
+                          e.stopPropagation();
+                           if (!ensureBuyer()) return;
+                          addToCart(product._id, quantity);
+                        }}
+                   disabled={!product.quantity || product.quantity === 0}
+                   className={`flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart ${(!product.quantity || product.quantity === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
                     <ShoppingCart size={18} /> Add to Cart
                   </button>
-                  <button className="flex items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-red-500 text-white py-2 font-semibold buy-now">
-                    <Zap size={18} /> Buy Now
-                  </button>
+                  {(!product.quantity || product.quantity === 0) ? (
+                    <button
+                      disabled
+                      className="flex items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-gray-500 text-white py-2 font-semibold buy-now cursor-not-allowed"
+                    >
+                      <Zap size={18} /> Sold Out
+                    </button>
+                  ) : (
+                    <button
+                      className="flex items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-red-500 text-white py-2 font-semibold buy-now"
+                      onClick={() => {
+                         if (!ensureBuyer()) return;
+                        navigate(
+                          `/my-account/check-out/${userId}?productId=${product._id}&quantity=${quantity}`
+                        );
+                      }}
+                    >
+                      <Zap size={18} /> Buy Now
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -3065,23 +3288,6 @@ const ProductDetails = () => {
       </div>
     );
   };
-
-  // const productReviews = reviews.filter(
-  //   (r) => String(r.productId?._id) === String(product?._id)
-  // );
-const productReviews = reviews.filter((review) => {
-  const buyerRequest = review.productId;
-  if (!buyerRequest) return false;
-
-  
-  const reviewProductName = buyerRequest.ProductName?.trim()?.toLowerCase();
-  const currentProductName = product.productName?.trim()?.toLowerCase();
-
-  return reviewProductName === currentProductName;
-});
-
-
-
 
   return <ProductImages imagesProp={images} initialImage={images[0]} />;
 };

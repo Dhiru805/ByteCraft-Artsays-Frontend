@@ -199,6 +199,27 @@ homepageSection: {
  idKey: "HomePageId",
 },
 
+careerCMS: {
+  getEndpoint: (id) => `/api/career-CMS/delete/${id}`,
+  successMessage: "Successfully deleted!",
+  errorMessage: "Failed to delete.",
+  idKey: "CareerCMSId",
+},
+
+challengeCMS: {
+  getEndpoint: (id) => `/api/challenge-CMS/delete/${id}`,
+  successMessage: "Successfully deleted!",
+  errorMessage: "Failed to delete.",
+  idKey: "ChallengeCMSId",
+},
+
+blogCMS: {
+  getEndpoint: (id) => `/api/blog-CMS/delete/${id}`,
+  successMessage: "Successfully deleted!",
+  errorMessage: "Failed to delete.",
+  idKey: "BlogCMSId",
+},
+
 affiliate: {
   getEndpoint: (id) => `/api/affiliate/delete/${id}`,
   successMessage: "Successfully deleted!",
