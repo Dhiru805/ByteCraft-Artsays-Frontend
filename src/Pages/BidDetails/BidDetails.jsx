@@ -914,7 +914,7 @@ const winner = useMemo(() => {
 
 const handleRemoveFromCart = async (productId) => {
   const userId = localStorage.getItem("userId");
-  
+
   let isBidWinnerItem = false;
   try {
     const cartRes = await getAPI(`/api/cart/${userId}`, {}, true, false);
@@ -960,12 +960,12 @@ const handleRemoveFromCart = async (productId) => {
   }
 
   try {
-    const res = await deleteAPI(`/api/cart/remove?userId=${userId}&productId=${productId}`, {
-      userId,
-      productId
-    });
+  const res = await deleteAPI(`/api/cart/remove?userId=${userId}&productId=${productId}`, {
+    userId,
+    productId
+  });
 
-    if (res.data.success) {
+  if (res.data.success) {
       if (isBidWinnerItem) {
         Swal.fire({
           title: "Removed",
@@ -975,9 +975,9 @@ const handleRemoveFromCart = async (productId) => {
           showConfirmButton: false,
         });
 
-        await postAPI("/api/bidding/carry-forward", {
-          bidId: finalData.bid.biddingId
-        });
+    await postAPI("/api/bidding/carry-forward", {
+      bidId: finalData.bid.biddingId
+    });
       } else {
         toast.success("Item removed from cart");
       }

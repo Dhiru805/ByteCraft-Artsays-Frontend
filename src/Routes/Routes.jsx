@@ -142,6 +142,18 @@ import WhyArtSays from "../Component/Dashboard/Super-AdminDashboard/WhyArtSays/w
 import CreateWhyArtSays from "../Component/Dashboard/Super-AdminDashboard/WhyArtSays/create";
 import UpdateWhyArtSays from "../Component/Dashboard/Super-AdminDashboard/WhyArtSays/edit";
 
+import CareerCMS from "../Component/Dashboard/Super-AdminDashboard/CarrerCMS/table";
+import CreateCareerCMS from "../Component/Dashboard/Super-AdminDashboard/CarrerCMS/create";
+import UpdateCareerCMS from "../Component/Dashboard/Super-AdminDashboard/CarrerCMS/edit";
+
+import BlogCMS from "../Component/Dashboard/Super-AdminDashboard/blogCMS/table";
+import CreateblogCMS from "../Component/Dashboard/Super-AdminDashboard/blogCMS/create";
+import UpdateblogCMS from "../Component/Dashboard/Super-AdminDashboard/blogCMS/edit";
+
+import ChallengeCMS from "../Component/Dashboard/Super-AdminDashboard/challengeCMS/table";
+import CreatechallengeCMS from "../Component/Dashboard/Super-AdminDashboard/challengeCMS/create";
+import UpdatechallengeCMS from "../Component/Dashboard/Super-AdminDashboard/challengeCMS/edit";
+
 import LicensingTable from "../Component/Dashboard/Super-AdminDashboard/Licensing/LicensingTable";
 import CreateLicensing from "../Component/Dashboard/Super-AdminDashboard/Licensing/create";
 import UpdateLicensing from "../Component/Dashboard/Super-AdminDashboard/Licensing/UpdateLicensing";
@@ -1078,6 +1090,18 @@ const AppRoutes = () => {
         <Route path="why-artsays" element={<WhyArtSays />} />
         <Route path="why-artsays/create" element={<CreateWhyArtSays />} />
         <Route path="why-artsays/update" element={<UpdateWhyArtSays />} />
+        {/*CareerCMS */}
+        <Route path="career-CMS" element={<CareerCMS />} />
+        <Route path="career-CMS/create" element={<CreateCareerCMS />} />
+        <Route path="career-CMS/update" element={<UpdateCareerCMS />} />
+        {/*ChallengeCMS */}
+        <Route path="challenge-CMS" element={<ChallengeCMS />} />
+        <Route path="challenge-CMS/create" element={<CreatechallengeCMS />} />
+        <Route path="challenge-CMS/update" element={<UpdatechallengeCMS />} />
+        {/*BlogCMS */}
+        <Route path="CMS-Blog" element={<BlogCMS />} />
+        <Route path="CMS-Blog/create" element={<CreateblogCMS />} />
+        <Route path="CMS-Blog/update" element={<UpdateblogCMS />} />
         {/* Licensing Pages */}
         <Route path="licensing" element={<LicensingTable />} />
         <Route path="licensing/create" element={<CreateLicensing />} />

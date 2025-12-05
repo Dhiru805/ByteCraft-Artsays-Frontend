@@ -1,0 +1,3 @@
+export const DEFAULT_PROFILE_IMAGE = "/assets/profileImage/user.png";
+
+
