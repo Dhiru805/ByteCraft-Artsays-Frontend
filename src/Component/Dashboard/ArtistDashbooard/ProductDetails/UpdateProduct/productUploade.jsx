@@ -67,7 +67,6 @@
       getSubCategoriesByCategory,
       profileData,
     } = useProductForm(product);
-
       const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [hasDefaultAddress, setHasDefaultAddress] = useState(false);
   const [isCheckingAddress, setIsCheckingAddress] = useState(false);
@@ -177,8 +176,8 @@
       // Images
       if (formData.iframeLink) fd.append("iframeLink", formData.iframeLink);
       images.forEach((img) => {
-        if (img.file) fd.append("images", img.file);
-        else if (img.isExisting) fd.append("existingImages", img.preview);
+        if (img.file) fd.append("images", img.file);  
+        else if (img.isExisting) fd.append("existingImages", img.preview); 
       });
 
 //       images.forEach((img) => {

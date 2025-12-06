@@ -42,33 +42,33 @@ const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isOnSocialMedia = location.pathname.startsWith("/social-media");
-const [profile,setProfile]=useState({})
+  const [profile, setProfile] = useState({});
   useEffect(() => {
     const fetchUserData = async () => {
-      try{
-      const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
-      setUser(result.data.user);
-      }catch(error){
-        console.error("Fetching user Error",error);
+      try {
+        const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
+        setUser(result.data.user);
+      } catch (error) {
+        console.error("Fetching user Error", error);
       }
     };
-  const fetchProfile = async () => {
+    const fetchProfile = async () => {
       try {
         const res = await getAPI(
           `/api/social-media/profile/${userId}`,
           {},
           false,
           true
-        )
-        setProfile(res.data.profile)
-      }catch(error){
-          console.error("Fetching profile error",error)
-        }
+        );
+        setProfile(res.data.profile);
+      } catch (error) {
+        console.error("Fetching profile error", error);
       }
-fetchProfile()
+    };
+    fetchProfile();
     fetchUserData();
   }, [userId]);
-  
+
   const handleDashboardClick = (Usertype) => {
     if (Usertype === "Artist") {
       navigate("/artist/dashboard");
@@ -137,14 +137,14 @@ fetchProfile()
     const handleClickOutside = (e) => {
       const isClickInsideSearch = e.target.closest(".search-box-h");
 
-    if (!isClickInsideSearch) {
-      collapseSearchBox();
-    }
+      if (!isClickInsideSearch) {
+        collapseSearchBox();
+      }
 
-    const isClickInsideDropdown = e.target.closest(".dropdown");
-    if (!isClickInsideDropdown) {
-      setShowDropdown(false);
-    }
+      const isClickInsideDropdown = e.target.closest(".dropdown");
+      if (!isClickInsideDropdown) {
+        setShowDropdown(false);
+      }
     };
 
     const handleEscape = (e) => {
@@ -411,10 +411,8 @@ fetchProfile()
                         {console.log("BASE_URL:", BASE_URL)}
                         <img
                           src={
-                            localStorage.getItem("profilePhoto")
-                              ? `${BASE_URL}${localStorage.getItem(
-                                  "profilePhoto"
-                                )}`
+                            user.profilePhoto
+                              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`
                               : DEFAULT_PROFILE_IMAGE
                           }
                           className="rounded-circle avatar"
@@ -712,7 +710,7 @@ fetchProfile()
             Usertype === "Super-Admin" ? (
               <div className="profile-content-h">
                 <div
-                  className="profile-item-h"
+                  className="profile-item-h pl-4"
                   onClick={() => {
                     handleDashboardClick(Usertype);
                   }}
@@ -720,10 +718,10 @@ fetchProfile()
                   <i class="bi bi-person-fill" />
                   <span>My Dashboard</span>
                 </div>
-                 {!isOnSocialMedia ? (
+                {!isOnSocialMedia ? (
                   <Link to="/social-media">
                     <div
-                      className="profile-item-h"
+                      className="profile-item-h pl-4"
                       onClick={() => setShowProfileMenu(!showProfileMenu)}
                     >
                       <img
@@ -741,7 +739,7 @@ fetchProfile()
                 ) : (
                   <Link to={"/"}>
                     <div
-                      className="profile-item-h"
+                      className="profile-item-h pl-4"
                       onClick={() => setShowProfileMenu(!showProfileMenu)}
                     >
                       <img
@@ -757,36 +755,25 @@ fetchProfile()
                     </div>
                   </Link>
                 )}
-                {/* <div className="profile-item-h">
-                    <a className="dropdown-item-h" onClick={() => navigate("/")}>
-                    <span style={{ display: "flex", alignItems: "center" }}>
-                      <img
-                        src={AIcon}
-                        className="icon-sidebar"
-                        alt="Artsays-Icon"
-                        style={{
-                          width: "16px",
-                          height: "16px",
-                          marginRight: "17px",
-                          marginLeft: "4px",
-                        }}
-                      />
-                      Switch to Artsays
-                    </span>
-                  </a> 
-                </div>  */}
-                <div className="profile-item-h">
-                  <i className="bi bi-patch-check-fill" />
-                  <span>Account Verification</span>
-                </div>
-                <div className="profile-item-h">
-                  <i className="bi bi-lock-fill" />
-                  <span>Security and Agreements</span>
-                </div>
-                <div className="profile-item-h">
-                  <i className="bi bi-question-circle" />
-                  <span>Help</span>
-                </div>
+
+                <Link>
+                  <div className="profile-item-h">
+                    <i className="bi bi-patch-check-fill" />
+                    <span>Account Verification</span>
+                  </div>
+                </Link>
+                <Link>
+                  <div className="profile-item-h">
+                    <i className="bi bi-lock-fill" />
+                    <span>Security and Agreements</span>
+                  </div>
+                </Link>
+                <Link>
+                  <div className="profile-item-h">
+                    <i className="bi bi-question-circle" />
+                    <span>Help</span>
+                  </div>
+                </Link>
                 <Link
                   to={"/privacy-policy"}
                   className="profile-item-h"
@@ -798,7 +785,6 @@ fetchProfile()
                   <span>Privacy Center</span>
                 </Link>
 
-               
                 <div className="profile-item-h" onClick={handleSignOut}>
                   <i className="bi bi-box-arrow-left" />
                   <span>Logout</span>

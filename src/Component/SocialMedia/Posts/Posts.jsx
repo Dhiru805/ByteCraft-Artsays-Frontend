@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "../Sidebar/Side-post-sugg.css";
 import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import putAPI from "../../../api/putAPI";
 import { timeAgo } from "./../../../utils/TimeAgo.js";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables.jsx";
-
 const Post = () => {
   const userId = localStorage.getItem("userId");
   const Navigate = useNavigate();
@@ -32,8 +31,21 @@ const Post = () => {
   const [sharePost, setSharePost] = useState(null);
   const [copyMsg, setCopyMsg] = useState("");
   const [loading, setLoading] = useState(false);
-  const activePost = activeIndex !== null ? posts[activeIndex] : null;
+  const [profile, setProfile] = useState({});
+  const [showCollaborators, setShowCollaborators] = useState(false);
+  const [allCollaboraters, setAllCollaboraters] = useState([]);
+  const navigate = useNavigate();
+  const popupRef = useRef();
+  const postRef = useRef();
+  const collabRef = useRef();
+  const commentRef = useRef();
+  const commentRefs = useRef({});
 
+  const productsPost = posts.filter((pro) => pro.forProduct);
+  const normalPost = posts.filter((pro) => !pro.forProduct);
+  const finalPost = [...productsPost, ...normalPost];
+
+  const activePost = activeIndex !== null ? finalPost[activeIndex] : null;
   useEffect(() => {
     const shouldLockScroll = activePost || reportPopupOpen || tipPopupOpen;
 
@@ -44,8 +56,25 @@ const Post = () => {
     };
   }, [activePost, reportPopupOpen, tipPopupOpen]);
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        setMenuOpenId(null); // CLOSE POPUP
+      }
+      if (postRef.current && !postRef.current.contains(event.target)) {
+        setActiveIndex(null);
+      }
+      if (collabRef.current && !collabRef.current.contains(event.current)) {
+        setShowCollaborators(false);
+        setAllCollaboraters([]);
+      }
+    }
 
-  const navigate = useNavigate(); 
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuOpenId, activeIndex, showCollaborators]);
 
   const goToProfile = (profileUserId) => {
     navigate("/social-media/profile", {
@@ -53,6 +82,35 @@ const Post = () => {
     });
   };
 
+  
+  // Fetch profile
+  useEffect(() => {
+    try {
+      const fetchProfile = async () => {
+        const res = await getAPI(
+          `/api/social-media/profile/${userId}`,
+          {},
+          false,
+          true
+        );
+        setProfile(res?.data?.profile);
+      };
+      if (userId) fetchProfile();
+    } catch (error) {
+      console.error("profile fetching error", error);
+    }
+  }, [userId]);
+
+  // find post's collaboration with userId
+  const isPostCollaborateWithUserId = (post) => {
+    return post?.collaborators?.some(
+      (user) => user._id === userId && post.user._id !== userId
+    );
+  };
+  const fetchAllCollaborators = (post) => {
+    const collaboraters = post.collaborators || [];
+    setAllCollaboraters(collaboraters);
+  };
   // 🔹 Fetch homepage posts
   useEffect(() => {
     const fetchPosts = async () => {
@@ -63,7 +121,7 @@ const Post = () => {
           true
         );
         setPosts(res?.data?.posts || []);
-       
+
         // console.log("Fetched posts:", res.data.posts);
       } catch (err) {
         console.error("Error fetching posts:", err);
@@ -73,7 +131,6 @@ const Post = () => {
     };
     fetchPosts();
   }, [userId]);
-
   const handleLike = async (postId) => {
     try {
       await postAPI(
@@ -99,7 +156,6 @@ const Post = () => {
     }
   };
 
-
   const handleSave = async (postId) => {
     try {
       await postAPI(
@@ -110,17 +166,12 @@ const Post = () => {
       );
 
       setPosts((prev) =>
-        prev.map((p) =>
-          p._id === postId
-            ? { ...p, isSaved: !p.isSaved } 
-            : p
-        )
+        prev.map((p) => (p._id === postId ? { ...p, isSaved: !p.isSaved } : p))
       );
     } catch (err) {
       console.error("Error saving/unsaving:", err);
     }
   };
-
 
   const handleComment = async (postId) => {
     if (!commentText.trim()) return;
@@ -146,7 +197,7 @@ const Post = () => {
 
   useEffect(() => {
     if (activePost) {
-      setActiveImageIndex(0); 
+      setActiveImageIndex(0);
     }
   }, [activePost]);
 
@@ -191,7 +242,6 @@ const Post = () => {
     setShowMentions(false);
   };
 
-
   const handleFollowToggle = async (targetUserId, isFollowing) => {
     const userId = localStorage.getItem("userId");
 
@@ -200,7 +250,7 @@ const Post = () => {
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
           post.user._id === targetUserId
-            ? { ...post, showFollowButton: isFollowing } 
+            ? { ...post, showFollowButton: isFollowing }
             : post
         )
       );
@@ -236,8 +286,8 @@ const Post = () => {
 
   const handleInputChange = (e) => {
     const value = e.target.value;
-    setTipAmount(value); 
-    setError(""); 
+    setTipAmount(value);
+    setError("");
   };
 
   const handleInputBlur = () => {
@@ -271,12 +321,12 @@ const Post = () => {
     }
 
     try {
-      const senderId = localStorage.getItem("userId"); 
+      const senderId = localStorage.getItem("userId");
 
       const res = await postAPI("/api/tips/create", {
         sender: senderId,
-        receiver: tipUser.receiverId, 
-        post: tipUser.id, 
+        receiver: tipUser.receiverId,
+        post: tipUser.id,
         amount: value,
       });
 
@@ -309,11 +359,11 @@ const Post = () => {
 
       const payload = {
         reporterId,
-        reportedUserId: reportedUser.id, 
-        postId: reportedUser.postId, 
+        reportedUserId: reportedUser.id,
+        postId: reportedUser.postId,
         reason: selectedReason,
         description,
-        reportType: "post", 
+        reportType: "post",
       };
 
       const res = await postAPI("/api/reports/create", payload, true, true);
@@ -361,27 +411,37 @@ const Post = () => {
   // const [reportPopupOpen, setReportPopupOpen] = useState(false);
   // const [reportSuccess, setReportSuccess] = useState(false);
 
+  // copy the profile link
+  function fallbackCopyText(text) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+  }
   if (loading) {
-    return <div>Posts are loading...</div>;
+    return (
+      <>
+        <LoadingSkeleton />
+      </>
+    );
   }
   return (
     <div className=" lg:w-[56%] w-full flex flex-col mx-auto">
       {/* Active Post Popup */}
       {activePost && (
         <div>
-
           {/* for big screen */}
           <div className="hidden lg:flex fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
-            <button
-              className="absolute lg:top-20 top-10 lg:right-40 right-10 text-4xl font-bold z-50"
-              onClick={() => setActiveIndex(null)}
-            >
-              <i className="ri-close-line text-black"></i>
-            </button>
-
             {/* Popup Layout */}
-            <div className="lg:bg-white w-[73%] lg:h-[72vh] h-[56vh] rounded-lg overflow-hidden flex relative lg:flex-row flex-col">
-             
+            <div
+              ref={postRef}
+              className="lg:bg-white w-[73%] lg:h-[72vh] h-[56vh] rounded-lg overflow-hidden flex relative lg:flex-row flex-col"
+            >
               {/* Left Side (Image Viewer) */}
               <div className="w-[60%] h-full  bg-black flex items-center justify-center relative">
                 {activePost.images?.length > 0 ? (
@@ -439,15 +499,15 @@ const Post = () => {
 
               {/* Right Side (Post Content) */}
               <div className="lg:w-[40%] w-full flex flex-col justify-between gap-6 p-4 bg-[#ffffff] overflow-y-auto">
-                
                 {/* User Info */}
                 <div className="flex flex-col gap-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <img
-                        src={activePost.user?.profilePhoto?
-                          `${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user?.profilePhoto}` :
-                          `${DEFAULT_PROFILE_IMAGE}`
+                        src={
+                          activePost.user?.profilePhoto
+                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user?.profilePhoto}`
+                            : `${DEFAULT_PROFILE_IMAGE}`
                         }
                         alt="profile"
                         className="w-10 h-10 rounded-full"
@@ -488,48 +548,6 @@ const Post = () => {
                       X
                     </button>
                   </div>
-
-                  {/* profile with caption */}
-                  <div className="flex flex-col gap-3">
-                    <div className="flex flex-row items-center gap-1">
-                      <img
-                        src={activePost?.user?.profilePhoto?
-                          `${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user?.profilePhoto}` :
-                          `${DEFAULT_PROFILE_IMAGE}`
-                        }
-                        alt="profile"
-                        className="w-10 h-10 rounded-full"
-                      />
-                      <span className="font-semibold text-sm">
-                        {activePost.user?.username}
-                        {activePost.user.verified?.length > 0 && (
-                          <img
-                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                              activePost.user.verified[
-                                activePost.user.verified.length - 1
-                              ]?.badgeImage
-                            }`}
-                            className="inline-block ml-1 w-5 h-5 object-contain"
-                            alt={
-                              activePost.user.verified[
-                                activePost.user.verified.length - 1
-                              ]?.badgeName || "badge"
-                            }
-                            title={
-                              activePost.user.verified[
-                                activePost.user.verified.length - 1
-                              ]?.badgeName
-                            }
-                          />
-                        )}
-                      </span>
-                    </div>
-
-                    {/* Caption */}
-                    <p className="text-sm">
-                      {activePost.caption || "No caption"}
-                    </p>
-                  </div>
                 </div>
 
                 {/* Comments */}
@@ -538,9 +556,10 @@ const Post = () => {
                     activePost.comments.map((comment, idx) => (
                       <div key={idx} className="flex items-start gap-2">
                         <img
-                          src={activePost.user?.profilePhoto?
-                            `${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}` :
-                            `${DEFAULT_PROFILE_IMAGE}`
+                          src={
+                            activePost.user?.profilePhoto
+                              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost?.user?.profilePhoto}`
+                              : `${DEFAULT_PROFILE_IMAGE}`
                           }
                           alt="profile"
                           className="w-8 h-8 rounded-full"
@@ -558,7 +577,6 @@ const Post = () => {
                   )}
                 </div>
                 <div className="flex flex-col gap-1.5">
-
                   {/* Actions */}
                   <div className="flex items-center justify-between ">
                     <div className="flex items-center gap-3">
@@ -571,8 +589,14 @@ const Post = () => {
                           } text-xl`}
                         ></i>
                       </button>
-                      <i className="ri-chat-3-line text-xl"></i>
-                      <i className="ri-send-plane-fill text-xl"></i>
+                      <i
+                        onClick={()=>{commentRef.current.focus()}}
+                        className="ri-chat-3-line text-xl"
+                      ></i>
+
+                      <button onClick={() => setSharePost(activePost)}>
+                        <i className="ri-send-plane-fill text-xl"></i>
+                      </button>
                     </div>
                     <div>
                       <button onClick={() => handleSave(activePost._id)}>
@@ -603,9 +627,10 @@ const Post = () => {
                             className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
                           >
                             <img
-                              src={activePost.user?.profilePhoto?
-                                `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}` :
-                                `${DEFAULT_PROFILE_IMAGE}`
+                              src={
+                                activePost.user?.profilePhoto
+                                  ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost?.user?.profilePhoto}`
+                                  : `${DEFAULT_PROFILE_IMAGE}`
                               }
                               alt={user.username}
                               className="w-8 h-8 rounded-full"
@@ -626,9 +651,10 @@ const Post = () => {
                     <div className="flex gap-2 relative">
                       <input
                         type="text"
+                        ref={commentRef}
                         placeholder="Add a comment..."
                         value={commentText}
-                        onChange={handleChange} 
+                        onChange={handleChange}
                         className="flex-grow outline-none text-sm"
                       />
                       <button
@@ -665,9 +691,10 @@ const Post = () => {
             <div className="flex-1 flex flex-col overflow-y-auto">
               <div className="flex gap-2 border-b p-3">
                 <img
-                  src={activePost.user?.profilePhoto?
-                    `${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user?.profilePhoto}` :
-                    `${DEFAULT_PROFILE_IMAGE}`
+                  src={
+                    activePost.user?.profilePhoto
+                      ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user?.profilePhoto}`
+                      : `${DEFAULT_PROFILE_IMAGE}`
                   }
                   alt="profile"
                   className="w-11 h-11 rounded-full"
@@ -712,8 +739,9 @@ const Post = () => {
                       <div key={idx} className="flex items-start gap-2">
                         <img
                           src={
-                            `${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}` ||
-                            `${DEFAULT_PROFILE_IMAGE}`
+                            comment?.user?.profilePhoto
+                              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`
+                              : `${DEFAULT_PROFILE_IMAGE}`
                           }
                           alt="profile"
                           className="w-8 h-8 rounded-full"
@@ -743,8 +771,9 @@ const Post = () => {
                   >
                     <img
                       src={
-                        `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}` ||
-                        `${DEFAULT_PROFILE_IMAGE}`
+                        user.profilePhoto
+                          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`
+                          : `${DEFAULT_PROFILE_IMAGE}`
                       }
                       alt={user.username}
                       className="w-8 h-8 rounded-full"
@@ -786,7 +815,6 @@ const Post = () => {
       {tipPopupOpen && (
         <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
           <div className="bg-white rounded-xl shadow-xl p-6 w-[400px]">
-           
             {/* Header */}
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold text-gray-800">Pay a Tip</h2>
@@ -797,7 +825,7 @@ const Post = () => {
                 ×
               </button>
             </div>
-           
+
             {/* Amount Input */}
             <div className="mb-4">
               <label className="font-medium text-sm text-gray-700">
@@ -871,12 +899,11 @@ const Post = () => {
           </div>
         </div>
       )}
-      
+
       {/* Report Modal */}
       {reportPopupOpen && (
         <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
           <div className="bg-white rounded-xl shadow-lg w-[400px] max-w-full p-5">
-           
             {/* Header */}
             <div className="flex justify-between items-center border-b pb-3 mb-4">
               <h2 className="text-lg font-semibold text-gray-800">
@@ -897,7 +924,7 @@ const Post = () => {
 
             {/* Report Form */}
             <form onSubmit={handleSubmit} className="space-y-3">
-              <div className="space-y-2">
+              <div className="space-y-2  max-h-[20vh] overflow-y-auto">
                 {[
                   "I just don't like it",
                   "Bullying or unwanted contact",
@@ -979,12 +1006,11 @@ const Post = () => {
           </div>
         </div>
       )}
-     
+
       {/* Success Popup */}
       {reportSuccess && reportedUser && (
         <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
           <div className="bg-white rounded-xl shadow-lg w-[380px] p-6 text-center">
-            
             {/* Success Icon */}
             <div className="flex justify-center mb-3">
               <svg
@@ -1038,7 +1064,6 @@ const Post = () => {
       {sharePost && (
         <div className="fixed inset-0 bg-[#000000]/40 flex justify-center items-center z-[9999]">
           <div className="bg-white w-80 rounded-xl p-4 shadow-lg relative">
-            
             {/* Close */}
             <button
               className="absolute top-2 right-2 text-xl"
@@ -1054,14 +1079,25 @@ const Post = () => {
               className="w-full py-2 bg-gray-200 text-gray-800 rounded-lg mb-2"
               onClick={() => {
                 const link = `${window.location.origin}/social-media/sharepost/${sharePost._id}`;
-                navigator.clipboard.writeText(link);
-                setCopyMsg("Link copied!");
+                // navigator.clipboard.writeText(link);
+                // setCopyMsg("Link copied!");
+                // setTimeout(() => setCopyMsg(""), 2000);
+
+                if (navigator.clipboard && window.isSecureContext) {
+                  navigator.clipboard
+                    .writeText(link)
+                    .then(() => setCopyMsg("Link copied!"))
+                    .catch(() => fallbackCopyText(link));
+                } else {
+                  fallbackCopyText(link);
+                }
+
                 setTimeout(() => setCopyMsg(""), 2000);
               }}
             >
               Copy Link
             </button>
-            
+
             {/* Success Message */}
             {copyMsg && (
               <p className="text-green-600 text-sm mt-1 text-center">
@@ -1071,17 +1107,18 @@ const Post = () => {
           </div>
         </div>
       )}
+
       <div className="w-full ">
-        {posts.map((post) => (
+        {finalPost?.map((post) => (
           <div key={post._id} className="w-full flex flex-col mb-4 relative">
-           
             {/* Post Header */}
             <div className="flex justify-between items-center">
               <div className="flex gap-2 p-2 items-center">
                 <img
                   src={
-                    `${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.user.profilePhoto}` ||
-                    `${DEFAULT_PROFILE_IMAGE}`
+                    post.user?.profilePhoto
+                      ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.user?.profilePhoto}`
+                      : `${DEFAULT_PROFILE_IMAGE}`
                   }
                   alt="profile"
                   className="h-11 w-11 rounded-full cursor-pointer"
@@ -1110,11 +1147,49 @@ const Post = () => {
                         }
                       />
                     )}
+                    <div className="flex items-center">
+                      {isPostCollaborateWithUserId(post) ? (
+                        <p className="font-extrabold cursor-pointer">
+                          , {profile?.username}
+                          {post.collaboraters?.length > 1 && (
+                            <>
+                              and &nbsp;
+                              <button
+                                onClick={() => {
+                                  setShowCollaborators(true);
+                                  fetchAllCollaborators(post);
+                                }}
+                                className="text-blue-600 font-medium hover:underline outline-none focus:outline-none active:outline-none"
+                              >
+                                ...others
+                              </button>
+                            </>
+                          )}
+                        </p>
+                      ) : (
+                        <>
+                          {post.collaborators?.length > 0 && (
+                            <p className="font-extrabold cursor-pointer">
+                              &nbsp; and &nbsp;
+                              <button
+                                onClick={() => {
+                                  setShowCollaborators(true);
+                                  fetchAllCollaborators(post);
+                                }}
+                                className="text-blue-600 font-medium hover:underline outline-none focus:outline-none active:outline-none"
+                              >
+                                ...others
+                              </button>
+                            </p>
+                          )}
+                        </>
+                      )}
+                    </div>
                   </div>
 
                   {/* Time + Sponsored */}
                   <div className="flex items-center gap-1 text-xs font-light text-gray-500">
-                    <p>• {timeAgo(post.createdAt)}</p>
+                    <p> {timeAgo(post.createdAt)}</p>
                     {post.isPromoted && (
                       <span className="text-[11px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">
                         Sponsored
@@ -1126,7 +1201,7 @@ const Post = () => {
 
               {/* CTA + Buttons */}
               <div className="flex items-center gap-3 mr-1">
-                {post.isPromoted && (
+                {/* {post.isPromoted && (
                   <>
                     {post.promotionDetails?.goal === "Visit your website" &&
                     post.user.website ? (
@@ -1145,7 +1220,7 @@ const Post = () => {
                       </button>
                     ) : null}
                   </>
-                )}
+                )} */}
                 {post.showFollowButton ? (
                   <button
                     onClick={() => handleFollowToggle(post.user._id, false)}
@@ -1156,10 +1231,11 @@ const Post = () => {
                 ) : (
                   ""
                 )}
-
-                <button className="buy-button">
-                  Buy <i className="cart-icon ri-shopping-cart-fill"></i>
-                </button>
+                {post.forProduct && (
+                  <button className="buy-button">
+                    Buy <i className="cart-icon ri-shopping-cart-fill"></i>
+                  </button>
+                )}
                 <button onClick={() => setMenuOpenId(post._id)}>
                   <i className="ri-more-fill text-lg"></i>
                 </button>
@@ -1168,8 +1244,10 @@ const Post = () => {
 
             {/* More Menu */}
             {menuOpenId === post._id && (
-              <ul className="absolute flex flex-col rounded-xl items-center justify-between right-1 top-12 mt-2 w-40 bg-gray-200 border shadow-lg z-10 ">
-               
+              <ul
+                ref={popupRef}
+                className="absolute flex flex-col rounded-xl items-center justify-between right-1 top-12 mt-2 w-40 bg-gray-200 border shadow-lg z-10 "
+              >
                 {/* Pay Tip */}
                 {post.user._id !== userId && (
                   <div className="w-full flex flex-col items-center justify-center">
@@ -1211,7 +1289,7 @@ const Post = () => {
                     <hr className="w-[75%] border-t border-gray-800" />
                   </div>
                 )}
-                
+
                 {/* Follow / Unfollow */}
                 {post.user._id !== userId && (
                   <div className="w-full flex flex-col items-center justify-center">
@@ -1341,6 +1419,32 @@ const Post = () => {
                       ))}
                     </div>
                   )}
+                  {/* Website Link Box */}
+                  {post.isPromoted && post.promotionDetails?.website && (
+                    <a
+                      href={post.promotionDetails.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="
+  absolute bottom-4 left-2 z-20
+  text-white text-[15px]
+  px-3 py-2
+  rounded-md
+  flex flex-col
+  shadow-lg
+  bg-[#48372D]/50
+  
+"
+                    >
+                      <span className="font-semibold leading-tight">
+                        Explore Our Website
+                      </span>
+
+                      <span className="text-[13px] break-all leading-tight">
+                        {post.promotionDetails.website}
+                      </span>
+                    </a>
+                  )}
                 </>
               )}
             </div>
@@ -1358,7 +1462,9 @@ const Post = () => {
                       } text-xl font-medium`}
                     ></i>
                   </button>
-                  <button>
+                  <button
+                    onClick={() => commentRefs.current[post._id]?.focus()}
+                  >
                     <i className="ri-chat-3-line text-xl font-medium"></i>
                   </button>
 
@@ -1410,7 +1516,7 @@ const Post = () => {
               {/* Comments */}
               <div
                 className="text-[13px] font-light cursor-pointer"
-                onClick={() => setActiveIndex(posts.indexOf(post))}
+                onClick={() => setActiveIndex(finalPost.indexOf(post))}
               >
                 View all {post.comments.length} comments
               </div>
@@ -1428,8 +1534,9 @@ const Post = () => {
                     >
                       <img
                         src={
-                          `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}` ||
-                          `${DEFAULT_PROFILE_IMAGE}`
+                          user.profilePhoto
+                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`
+                            : `${DEFAULT_PROFILE_IMAGE}`
                         }
                         alt={user.username}
                         className="w-8 h-8 rounded-full"
@@ -1465,6 +1572,7 @@ const Post = () => {
                     placeholder="Add a comment..."
                     value={commentText}
                     onChange={handleChange}
+                    ref={(el) => (commentRefs.current[post._id] = el)}
                     className="w-full rounded text-[13px] focus:outline-none focus:ring focus:border-blue-300"
                   />
                   <button
@@ -1485,8 +1593,83 @@ const Post = () => {
           </div>
         ))}
       </div>
+      {showCollaborators && allCollaboraters && (
+        <div className="fixed inset-0 flex items-center justify-center  bg-[#000000]/40 backdrop-blur-sm z-50">
+          <div
+            ref={collabRef}
+            className="relative bg-white rounded-xl shadow-xl p-5 w-80 animate-fadeIn"
+          >
+            {/* ❌ Close (cross) button */}
+            <button
+              onClick={() => setShowCollaborators(false)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
+            >
+              <i className="ri-close-line text-black"></i>{" "}
+            </button>
+
+            <h3 className="text-lg font-semibold mb-4 text-center">
+              Collaborators
+            </h3>
+
+            <ul className="space-y-2 max-h-48 overflow-y-auto">
+              {allCollaboraters?.length > 0 ? (
+                allCollaboraters.map((c) => {
+                  return (
+                    <li
+                      key={c._id}
+                      className="p-2 border rounded-md flex items-center space-x-6"
+                    >
+                      <img
+                        src={
+                          c?.profilePhoto
+                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${c.profilePhoto}`
+                            : DEFAULT_PROFILE_IMAGE
+                        }
+                        alt={c.username || "user"}
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+
+                      <span className=" text-lg font-bold ">{c.username}</span>
+                    </li>
+                  );
+                })
+              ) : (
+                <li className="text-gray-500 text-center py-3">
+                  No collaborators found
+                </li>
+              )}
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default Post;
+
+// loading skeleton
+const LoadingSkeleton = () => {
+  return (
+    <div className="animate-pulse p-4 rounded-xl shadow-sm border w-[90%] h-[90%]">
+      {/* Header */}
+      <div className="flex items-center space-x-3 mb-4">
+        <div className="w-10 h-10 rounded-full bg-gray-300"></div>
+        <div className="flex-1">
+          <div className="h-3 w-32 bg-gray-300 rounded"></div>
+          <div className="h-2 w-20 bg-gray-200 rounded mt-1"></div>
+        </div>
+      </div>
+
+      {/* Image / Content */}
+      <div className="w-full h-80 bg-gray-300 rounded-xl mb-4"></div>
+
+      {/* Footer */}
+      <div className="flex items-center space-x-4">
+        <div className="h-3 w-16 bg-gray-300 rounded"></div>
+        <div className="h-3 w-12 bg-gray-300 rounded"></div>
+        <div className="h-3 w-20 bg-gray-300 rounded"></div>
+      </div>
+    </div>
+  );
+};
