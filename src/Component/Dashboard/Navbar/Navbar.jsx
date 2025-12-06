@@ -30,7 +30,7 @@ const Navbar = () => {
           >
             <i className="fa fa-bars"></i>
           </button>
-          <a href="index.html" className="windhvi-text">
+          <a href="index.html" className="windhavi">
             Artsays
           </a>
         </div>
