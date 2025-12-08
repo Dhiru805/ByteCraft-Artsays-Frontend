@@ -551,6 +551,7 @@
 
 import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
+import ArtistGrid from "../../../Component/ArtistGrid/ArtistGrid";
 
 const DiscoverArtist = () => {
   const [data, setData] = useState(null);
@@ -621,6 +622,7 @@ const DiscoverArtist = () => {
           {data.description}
         </p>
       </div>
+      <ArtistGrid limit={8} />
     </div>
   );
 };

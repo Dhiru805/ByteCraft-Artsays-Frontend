@@ -483,6 +483,7 @@ import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
 import { MdVerified } from "react-icons/md";
 import { Bell } from "lucide-react";
+import BidGrid from "../../../Component/BidCard/BidCard";
 
 const BiddingArena = () => {
   const [data, setData] = useState(null);
@@ -537,8 +538,9 @@ const BiddingArena = () => {
           {data.description}
         </p>
       </div>
-
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 py-4">
+      <br />
+      <BidGrid />
+      {/* <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 py-4">
         {data.cards?.map((card, idx) => (
           <div key={idx} className="mx-auto product-card">
             
@@ -604,7 +606,7 @@ const BiddingArena = () => {
             </div>
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };

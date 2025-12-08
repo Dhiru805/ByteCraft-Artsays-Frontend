@@ -632,24 +632,7 @@
 // };
 // export default CommissionContent;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//OLD WORKING CODE 
+//OLD WORKING CODE
 
 // import { useState, useEffect, useRef } from "react";
 // import getAPI from "../../../api/getAPI";
@@ -748,7 +731,7 @@
 
 //   return (
 //     <div className="max-w-[1440px] mx-auto py-4 px-3">
-     
+
 //       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3">
 //         <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
 //           {data.heading}
@@ -950,7 +933,6 @@
 //     scrollRef.current.scrollLeft = scrollLeft - walk;
 //   };
 
- 
 // useEffect(() => {
 //   const fetchData = async () => {
 //     try {
@@ -1059,7 +1041,6 @@
 
 //   fetchWishlist();
 // }, []);
-
 
 //   if (loading) return <div>Loading...</div>;
 //   if (!data) return <div>No Browse Categories section available</div>;
@@ -1284,8 +1265,6 @@
 
 // export default BrowseCategories;
 
-
-
 import { useState, useEffect, useRef } from "react";
 import getAPI from "../../../api/getAPI";
 import { Heart } from "lucide-react";
@@ -1309,14 +1288,15 @@ const BrowseCategories = () => {
   const itemsPerPage = 8;
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   const userId = localStorage.getItem("userId");
-const userType = localStorage.getItem("userType"); 
+  const userType = localStorage.getItem("userType");
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
   const currentItems = filteredProducts.slice(indexOfFirst, indexOfLast);
 
-  const goNext = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
+  const goNext = () =>
+    currentPage < totalPages && setCurrentPage(currentPage + 1);
   const goPrev = () => currentPage > 1 && setCurrentPage(currentPage - 1);
   const goTo = (p) => setCurrentPage(p);
 
@@ -1430,7 +1410,9 @@ const userType = localStorage.getItem("userType");
         const catRes = await getAPI("/api/all");
         const allCats = catRes.data.data || [];
 
-        const usedIds = new Set(finalProducts.map((p) => p.category?.toString()));
+        const usedIds = new Set(
+          finalProducts.map((p) => p.category?.toString())
+        );
 
         const validCategories = allCats.filter((cat) =>
           usedIds.has(cat._id?.toString())
@@ -1458,13 +1440,15 @@ const userType = localStorage.getItem("userType");
     fetchData();
   }, []);
 
-const ensureBuyer = () => {
-  if (userType !== "Buyer") {
-    toast.warn("Only buyers can use this feature, Register as a Buyer to continue.");
-    return false;
-  }
-  return true;
-};
+  const ensureBuyer = () => {
+    if (userType !== "Buyer") {
+      toast.warn(
+        "Only buyers can use this feature, Register as a Buyer to continue."
+      );
+      return false;
+    }
+    return true;
+  };
 
   const handleWishlist = async (productId, e) => {
     e.stopPropagation();
@@ -1560,22 +1544,55 @@ const ensureBuyer = () => {
         onTouchMove={touchMove}
       >
         {categories.map((cat, index) => (
+          // <button
+          //   key={index}
+          //   onClick={() => {
+          //     setSelectedCategory(cat.categoryName);
+
+          //     const result = allProducts.filter(
+          //       (p) => p.category === cat._id
+          //     );
+
+          //     setFilteredProducts(result);
+          //     setCurrentPage(1);
+          //   }}
+          //   className="group relative flex items-center border-2 border-[#3b2b23] rounded-full h-14 px-6 text-[#3b2b23] text-lg font-semibold transition-all duration-500 ease-in-out whitespace-nowrap hover:pr-16"
+          // >
+          //   <span className="relative z-10">{cat.categoryName}</span>
+          //   <div className="absolute right-0 top-0 bottom-0 w-0 group-hover:w-14 bg-[#3b2b23] text-white text-3xl flex items-center justify-center rounded-full overflow-hidden transition-all duration-500 ease-in-out">
+          //     A
+          //   </div>
+          // </button>
           <button
             key={index}
             onClick={() => {
               setSelectedCategory(cat.categoryName);
-
-              const result = allProducts.filter(
-                (p) => p.category === cat._id
-              );
-
+              const result = allProducts.filter((p) => p.category === cat._id);
               setFilteredProducts(result);
               setCurrentPage(1);
             }}
-            className="group relative flex items-center border-2 border-[#3b2b23] rounded-full h-14 px-6 text-[#3b2b23] text-lg font-semibold transition-all duration-500 ease-in-out whitespace-nowrap hover:pr-16"
+            className={`
+    group relative flex items-center border-2 border-[#3b2b23]
+    rounded-full h-14 px-6 text-[#3b2b23] text-lg font-semibold
+    whitespace-nowrap transition-all duration-500 ease-in-out
+
+    ${
+      selectedCategory === cat.categoryName ? "pr-16" : "pr-6 group-hover:pr-16"
+    }
+  `}
           >
             <span className="relative z-10">{cat.categoryName}</span>
-            <div className="absolute right-0 top-0 bottom-0 w-0 group-hover:w-14 bg-[#3b2b23] text-white text-3xl flex items-center justify-center rounded-full overflow-hidden transition-all duration-500 ease-in-out">
+
+            <div
+              className={`
+      absolute top-0 bottom-0 right-0
+      bg-[#3b2b23] text-white text-3xl
+      rounded-full flex items-center justify-center overflow-hidden
+      transition-all duration-500 ease-in-out
+
+      ${selectedCategory === cat.categoryName ? "w-14" : "w-0 group-hover:w-14"}
+    `}
+            >
               A
             </div>
           </button>
@@ -1629,9 +1646,17 @@ const ensureBuyer = () => {
                   className="absolute bottom-3 right-3 p-2 rounded-full shadow bg-dark"
                 >
                   {likedProducts[product._id] ? (
-                    <Heart size={20} className="stroke-white" style={{ fill: "white" }} />
+                    <Heart
+                      size={20}
+                      className="stroke-white"
+                      style={{ fill: "white" }}
+                    />
                   ) : (
-                    <Heart size={20} className="stroke-white" style={{ fill: "transparent" }} />
+                    <Heart
+                      size={20}
+                      className="stroke-white"
+                      style={{ fill: "transparent" }}
+                    />
                   )}
                 </button>
               </div>
@@ -1667,7 +1692,9 @@ const ensureBuyer = () => {
                     <span className="text-sm font-bold text-orange-700">
                       {product.averageRating.toFixed(1)}
                     </span>
-                    <div className="flex">{renderStars(product.averageRating)}</div>
+                    <div className="flex">
+                      {renderStars(product.averageRating)}
+                    </div>
                     <span className="text-gray-500 text-sm">
                       ({product.reviewCount} Reviews)
                     </span>
