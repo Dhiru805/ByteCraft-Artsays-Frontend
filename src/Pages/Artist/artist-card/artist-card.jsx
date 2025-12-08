@@ -919,6 +919,7 @@ import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
 import { useNavigate } from "react-router-dom";
 import { DEFAULT_PROFILE_IMAGE } from "./constant";
+import { toast } from "react-toastify";
 
 const ArtistCard = () => {
   const [showFilters, setShowFilters] = useState(false);
@@ -942,113 +943,252 @@ const ArtistCard = () => {
           .map(String)
       : [];
 
-  useEffect(() => {
-    if (!userId) return; // wait until userId is available
-    let cancelled = false;
-    const loadData = async () => {
-      try {
-        const [artistsRes, categoriesRes, badgeRes, suggestedRes, myProfileRes] = await Promise.all([
-          getAPI("/artist/artists", {}, true, false),
-          getAPI("/api/main-category", true),
-          getAPI("/api/products/approved-with-badges", {}, true, false),
-          userId
-            ? getAPI(
-                `/api/social-media/suggested-users?userId=${userId}`,
-                { userId },
-                true,
-                true
-              ).catch(() => null)
-            : Promise.resolve(null),
-          userId
-            ? getAPI(`/api/social-media/profile/${userId}`, {}, true, true).catch(
-                () => null
-              )
-            : Promise.resolve(null),
-        ]);
+//   useEffect(() => {
+//     if (!userId) return; 
+// //  useEffect(() => {
+// //   if (!userId) {
+// //     loadPublicArtists();
+// //     return;
+// //   }
 
-        const artistList =
-          artistsRes?.data?.artists ||
-          artistsRes?.data?.data ||
-          artistsRes?.data ||
-          [];
-        const mainCategories = categoriesRes?.data?.data || [];
-        const badgeData = badgeRes?.data?.data || [];
+// //   loadPrivateArtists();
+// // }, [userId]);
 
-        const suggestedUsers = suggestedRes?.data?.suggestedUsers || [];
-        const suggestedFollowersMap = suggestedUsers.reduce((acc, u) => {
-          acc[String(u._id)] =
-            u?.profile?.followers || u?.followers || [];
-          return acc;
-        }, {});
 
-        const detailed = await Promise.all(
-          artistList.map(async (artist) => {
-            const aid = artist?._id || artist?.id || artist?.userId;
-            const [detailsRes, userRes, profileRes] = await Promise.all([
-              getAPI(`/auth/getartistdetails/${aid}`, {}, true, false).catch(
-                () => null
-              ),
-              getAPI(`/auth/userid/${aid}`, {}, true, false).catch(() => null),
-              getAPI(`/social-media/profile/${aid}`, {}, true, true).catch(
-                () => null
-              ),
-            ]);
+//     let cancelled = false;
+//     const loadData = async () => {
+//       try {
+//         const [artistsRes, categoriesRes, badgeRes, suggestedRes, myProfileRes] = await Promise.all([
+//           getAPI("/artist/artists", {}, true, false),
+//           getAPI("/api/main-category", true),
+//           getAPI("/api/products/approved-with-badges", {}, true, false),
+//           userId
+//             ? getAPI(
+//                 `/api/social-media/suggested-users?userId=${userId}`,
+//                 { userId },
+//                 true,
+//                 true
+//               ).catch(() => null)
+//             : Promise.resolve(null),
+//           userId
+//             ? getAPI(`/api/social-media/profile/${userId}`, {}, true, true).catch(
+//                 () => null
+//               )
+//             : Promise.resolve(null),
+//         ]);
 
-            const details = detailsRes?.data || {};
-            const user = userRes?.data?.user || artist || {};
-            const categoryId = Array.isArray(details?.artCategories)
-              ? details.artCategories[0]
-              : null;
-            const mainCategory =
-              mainCategories.find(
-                (c) => String(c._id) === String(categoryId || "")
-              ) || {};
-            const badgeEntry =
-              badgeData.find(
-                (b) =>
-                  String(b?.userId?._id || b?.userId) === String(aid || "")
-              ) || {};
+//         const artistList =
+//           artistsRes?.data?.artists ||
+//           artistsRes?.data?.data ||
+//           artistsRes?.data ||
+//           [];
+//         const mainCategories = categoriesRes?.data?.data || [];
+//         const badgeData = badgeRes?.data?.data || [];
 
-            const followersArr = normalizeIds(
-              profileRes?.data?.profile?.followers ||
-                suggestedFollowersMap[String(aid)] ||
-                user?.profile?.followers ||
-                user?.followers ||
-                []
-            );
-            const isFollowingArtist = followersArr.includes(String(userId || ""));
+//         const suggestedUsers = suggestedRes?.data?.suggestedUsers || [];
+//         const suggestedFollowersMap = suggestedUsers.reduce((acc, u) => {
+//           acc[String(u._id)] =
+//             u?.profile?.followers || u?.followers || [];
+//           return acc;
+//         }, {});
 
-            return {
-              id: aid,
-              profilePhoto: user?.profilePhoto,
-              username: user?.username || "",
-              name: user?.name || user?.firstName || "",
-              lastName: user?.lastName || "",
-              badges: badgeEntry?.badges || user?.badges || [],
-              mainCategoryName: mainCategory?.mainCategoryName || "Unknown",
-              followers: followersArr,
-              isFollowing: isFollowingArtist,
-            };
-          })
+//         const detailed = await Promise.all(
+//           artistList.map(async (artist) => {
+//             const aid = artist?._id || artist?.id || artist?.userId;
+//             const [detailsRes, userRes, profileRes] = await Promise.all([
+//               getAPI(`/auth/getartistdetails/${aid}`, {}, true, false).catch(
+//                 () => null
+//               ),
+//               getAPI(`/auth/userid/${aid}`, {}, true, false).catch(() => null),
+//               getAPI(`/social-media/profile/${aid}`, {}, true, true).catch(
+//                 () => null
+//               ),
+//             ]);
+
+//             const details = detailsRes?.data || {};
+//             const user = userRes?.data?.user || artist || {};
+//             const categoryId = Array.isArray(details?.artCategories)
+//               ? details.artCategories[0]
+//               : null;
+//             const mainCategory =
+//               mainCategories.find(
+//                 (c) => String(c._id) === String(categoryId || "")
+//               ) || {};
+//             const badgeEntry =
+//               badgeData.find(
+//                 (b) =>
+//                   String(b?.userId?._id || b?.userId) === String(aid || "")
+//               ) || {};
+
+//             const followersArr = normalizeIds(
+//               profileRes?.data?.profile?.followers ||
+//                 suggestedFollowersMap[String(aid)] ||
+//                 user?.profile?.followers ||
+//                 user?.followers ||
+//                 []
+//             );
+//             const isFollowingArtist = followersArr.includes(String(userId || ""));
+
+//             return {
+//               id: aid,
+//               profilePhoto: user?.profilePhoto,
+//               username: user?.username || "",
+//               name: user?.name || user?.firstName || "",
+//               lastName: user?.lastName || "",
+//               badges: badgeEntry?.badges || user?.badges || [],
+//               mainCategoryName: mainCategory?.mainCategoryName || "Unknown",
+//               followers: followersArr,
+//               isFollowing: isFollowingArtist,
+//             };
+//           })
+//         );
+
+//         if (!cancelled) {
+//           setArtists(detailed.filter((a) => a.id));
+//           const myFollowingIds = normalizeIds(
+//             myProfileRes?.data?.profile?.following || []
+//           );
+//           setMyFollowing(myFollowingIds);
+//         }
+//       } catch (err) {
+//         console.error("Error loading artists", err);
+//       }
+//     };
+
+//     loadData();
+//     return () => {
+//       cancelled = true;
+//     };
+//   }, [userId]);
+useEffect(() => {
+  let cancelled = false;
+
+  const loadData = async () => {
+    if (!userId) {
+      await loadPublicArtists();
+      return;
+    }
+
+    try {
+      const [
+        artistsRes, categoriesRes, badgeRes, suggestedRes, myProfileRes
+      ] = await Promise.all([
+        getAPI("/artist/artists", {}, true, false),
+        getAPI("/api/main-category", true),
+        getAPI("/api/products/approved-with-badges", {}, true, false),
+
+        getAPI(`/api/social-media/suggested-users?userId=${userId}`,
+          { userId }, true, true
+        ).catch(() => null),
+
+        getAPI(`/api/social-media/profile/${userId}`, {}, true, true)
+          .catch(() => null),
+      ]);
+
+      const artistList =
+        artistsRes?.data?.artists ||
+        artistsRes?.data?.data ||
+        artistsRes?.data ||
+        [];
+
+      const mainCategories = categoriesRes?.data?.data || [];
+      const badgeData = badgeRes?.data?.data || [];
+
+      const detailed = await Promise.all(
+        artistList.map(async (artist) => {
+          const aid = artist?._id || artist?.id || artist?.userId;
+
+          const [detailsRes, userRes, profileRes] = await Promise.all([
+            getAPI(`/auth/getartistdetails/${aid}`, {}, true, false).catch(() => null),
+            getAPI(`/auth/userid/${aid}`, {}, true, false).catch(() => null),
+            getAPI(`/social-media/profile/${aid}`, {}, true, true).catch(() => null),
+          ]);
+
+          const details = detailsRes?.data || {};
+          const user = userRes?.data?.user || artist || {};
+
+          const categoryId = Array.isArray(details?.artCategories)
+            ? details.artCategories[0]
+            : null;
+
+          const mainCategory = mainCategories.find(
+            (c) => String(c._id) === String(categoryId)
+          );
+
+          const badgeEntry = badgeData.find(
+            (b) =>
+              String(b?.userId?._id || b?.userId) === String(aid)
+          );
+
+          const followersArr = normalizeIds(
+            profileRes?.data?.profile?.followers || []
+          );
+
+          const isFollowingArtist = followersArr.includes(String(userId));
+
+          return {
+            id: aid,
+            profilePhoto: user?.profilePhoto,
+            username: user?.username || "",
+            name: user?.name || user?.firstName || "",
+            lastName: user?.lastName || "",
+            badges: badgeEntry?.badges || [],
+            mainCategoryName: mainCategory?.mainCategoryName || "Unknown",
+            followers: followersArr,
+            isFollowing: isFollowingArtist,
+          };
+        })
+      );
+
+      if (!cancelled) {
+        setArtists(detailed.filter((a) => a.id));
+
+        const myFollowingIds = normalizeIds(
+          myProfileRes?.data?.profile?.following || []
         );
 
-        if (!cancelled) {
-          setArtists(detailed.filter((a) => a.id));
-          const myFollowingIds = normalizeIds(
-            myProfileRes?.data?.profile?.following || []
-          );
-          setMyFollowing(myFollowingIds);
-        }
-      } catch (err) {
-        console.error("Error loading artists", err);
+        setMyFollowing(myFollowingIds);
       }
-    };
+    } catch (err) {
+      console.error("Error loading artists", err);
+    }
+  };
 
-    loadData();
-    return () => {
-      cancelled = true;
-    };
-  }, [userId]);
+  loadData();
+
+  return () => {
+    cancelled = true;
+  };
+}, [userId]);
+
+const loadPublicArtists = async () => {
+  try {
+    const artistsRes = await getAPI("/artist/artists", {}, false, false);
+
+    const artistList =
+      artistsRes?.data?.artists ||
+      artistsRes?.data?.data ||
+      artistsRes?.data ||
+      [];
+
+    setArtists(
+      artistList.map(a => ({
+        id: a._id,
+        profilePhoto: a.profilePhoto,
+        username: a.username,
+        name: a.name,
+        lastName: a.lastName,
+        badges: a.badges || [],
+        mainCategoryName: "Artist",
+        followers: [],
+        isFollowing: false,
+      }))
+    );
+
+  } catch (err) {
+    console.error("Public artist load failed:", err);
+  }
+};
 
   const paginatedArtists = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
@@ -1467,10 +1607,18 @@ const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {paginatedArtists.map((artist) => {
               const normalizedFollowers = normalizeIds(artist.followers);
+              // const isFollowing =
+              //   artist.isFollowing ||
+              //   normalizedFollowers.includes(String(userId || "")) ||
+              //   myFollowing.includes(String(artist.id));
               const isFollowing =
-                artist.isFollowing ||
-                normalizedFollowers.includes(String(userId || "")) ||
-                myFollowing.includes(String(artist.id));
+  userId &&
+  (
+    artist.isFollowing ||
+    normalizedFollowers.includes(String(userId)) ||
+    myFollowing.includes(String(artist.id))
+  );
+
               return (
                 <div
                   key={artist.id}
@@ -1524,14 +1672,35 @@ const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
                       <div className="w-1/5 flex flex-col justify-between items-end place-items-center hidden md:block">
                         <div>
-                          <button
+                        {/*  <button
                             className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded-full font-medium text-xs"
                             onClick={() =>
                               handleFollowToggle(artist.id, isFollowing)
                             }
                           >
                             {isFollowing ? "Unfollow" : "Follow"}
-                          </button>
+                          </button>*/}
+                          <button
+  //disabled={!userId}
+  // className={`bg-orange-500 ${
+  //   !userId ? "opacity-50 cursor-not-allowed" : "hover:bg-orange-600"
+  // } text-white px-3 py-1 rounded-full font-medium text-xs`}
+  className={`bg-orange-500 text-white px-3 py-1 rounded-full font-medium text-xs
+    ${!userId ? "opacity-60" : "hover:bg-orange-600"}
+  `}
+  // onClick={() => userId && handleFollowToggle(artist.id, isFollowing)}
+  onClick={() => {
+  if (!userId) {
+    toast.error("Please login to follow artist");   
+    return;
+  }
+  handleFollowToggle(artist.id, isFollowing);
+}}
+
+>
+  {isFollowing ? "Unfollow" : "Follow"}
+</button>
+
                         </div>
                         <div className="mt-2">
                           <button
