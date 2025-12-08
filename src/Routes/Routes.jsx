@@ -194,6 +194,8 @@ import EditInsurance from "../Component/Dashboard/Super-AdminDashboard/Insurance
 import EnquiryTable from "../Component/Dashboard/Super-AdminDashboard/Enquiry/table";
 import ViewEnquiry from "../Component/Dashboard/Super-AdminDashboard/Enquiry/view";
 
+import SMSSettingSignup from "../Component/Dashboard/Super-AdminDashboard/SMSSettings/SmsSettingsSignup"
+
 //----------------------------------------Homepage Super-Admin Dashboard-----------------------------------------------------------
 import Homepage from "../Component/Dashboard/Super-AdminDashboard/Homepage/table";
 import CreateHomepage from "../Component/Dashboard/Super-AdminDashboard/Homepage/create";
@@ -1192,6 +1194,12 @@ const AppRoutes = () => {
           path="/super-admin/homepage/hero/create"
           element={<CreateHero />}
         />
+   {/* SMS Setting */}
+ <Route
+          path="/super-admin/sms-settings/signup-sms"
+          element={<SMSSettingSignup />}
+        />
+      
         {/* Browse Categories */}
         <Route
           path="/super-admin/homepage/browse-categories/create"

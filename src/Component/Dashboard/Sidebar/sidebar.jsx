@@ -345,6 +345,18 @@ const Sidebar = () => {
           { label: "Keyword Targeting", path: `/super-admin/settings/keyword-targeting` },
         ],
       },
+       {
+        label: "SMS Settings",
+        tabId: "sms1",
+        label: "SMS Settings",
+        icon: "fa fa-cog",
+        path: `#sms-settings`,
+        basePath: "/super-admin/sms-settings",
+        subTabs: [
+          { label: "Signup-sms", subtabId: "sms11", path: `/super-admin/sms-settings/signup-sms` },
+
+        ],
+      },
       // ----------------------------------------------Community CMS-----------------------------------------------------//
       {
         label: "Community CMS",

@@ -25,29 +25,32 @@ const Register = () => {
   const [otp, setOtp] = useState('');
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [showOTPField, setShowOTPField] = useState(false);
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-  const { id, value } = e.target;
-  let updatedValue = value;
-  
-  if (id === 'firstName' || id === 'lastName') {
-    updatedValue = value.charAt(0).toUpperCase() + value.slice(1).trim();
-  }
-   if (id === 'emailOrPhone' || id === 'password') {
-    updatedValue = value.trim();
-  }
+    const { id, value } = e.target;
+    let updatedValue = value;
 
-  setFormData({
-    ...formData,
-    [id]: updatedValue,
-  });
+    if (id === 'firstName' || id === 'lastName') {
+      updatedValue = value.charAt(0).toUpperCase() + value.slice(1).trim();
+    }
+    if (id === 'emailOrPhone' || id === 'password') {
+      updatedValue = value.trim();
+    }
 
-  if (id === 'emailOrPhone' && isEmailVerified) {
-    setIsEmailVerified(false);
-    setShowOTPField(false);
-  }
-};
+    setFormData({
+      ...formData,
+      [id]: updatedValue,
+    });
+
+    if (id === 'emailOrPhone') {
+      if (isEmailVerified) setIsEmailVerified(false);
+      if (isPhoneVerified) setIsPhoneVerified(false);
+      setShowOTPField(false);
+    }
+
+  };
 
   const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -62,18 +65,31 @@ const Register = () => {
   const normalizePhone = (phone) => {
     return `+91${phone.replace(/^\+91/, '')}`;
   };
-
   const handleSendOTP = async () => {
-    if (!isValidEmail(formData.emailOrPhone)) {
-      toast.error("Please enter a valid email address");
+    const input = formData.emailOrPhone.trim();
+    const isEmail = isValidEmail(input);
+    const isPhone = isValidPhone(input);
+
+    if (!isEmail && !isPhone) {
+      toast.error("Please enter a valid email or phone number");
       return;
     }
 
     try {
       setLoadingOTP(true);
-      await postAPI('/auth/send-otp', { email: formData.emailOrPhone });
+
+      const payload = isEmail
+        ? { email: input }
+        : { phone: normalizePhone(input) };
+
+      await postAPI('/auth/send-otp', payload);
+
       setShowOTPField(true);
-      toast.success("OTP sent to your email");
+      toast.success(`OTP sent to your ${isEmail ? 'email' : 'phone'}!`);
+
+
+      setIsEmailVerified(false);
+      setIsPhoneVerified(false);
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to send OTP');
     } finally {
@@ -82,21 +98,37 @@ const Register = () => {
   };
 
   const handleVerifyOTP = async () => {
+    if (otp.length !== 6) {
+      toast.error("Enter a valid 6-digit OTP");
+      return;
+    }
+
+    const input = formData.emailOrPhone.trim();
+    const isEmail = isValidEmail(input);
+    const isPhone = isValidPhone(input);
+
     try {
       setLoadingOTP(true);
-      const response = await postAPI('/auth/verify-otp', { 
-        email: formData.emailOrPhone, 
-        otp 
-      });
-      
+
+      const payload = isEmail
+        ? { email: input, otp }
+        : { phone: normalizePhone(input), otp };
+
+      const response = await postAPI('/auth/verify-otp', payload);
+
       if (response.data.success) {
-        setIsEmailVerified(true);
+        if (isEmail) {
+          setIsEmailVerified(true);
+          toast.success("Email verified successfully!");
+        } else {
+          setIsPhoneVerified(true);
+          toast.success("Phone verified successfully!");
+        }
         setShowOTPField(false);
         setOtp('');
-        toast.success("Email verified successfully");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Invalid OTP');
+      toast.error(error.response?.data?.message || 'Invalid or expired OTP');
     } finally {
       setLoadingOTP(false);
     }
@@ -124,8 +156,8 @@ const Register = () => {
       return;
     }
 
-    if (isEmail && !isEmailVerified) {
-      toast.error("Please verify your email before signing up");
+    if ((isEmail && !isEmailVerified) || (isPhone && !isPhoneVerified)) {
+      toast.error("Please verify your email or phone with OTP first");
       setLoadingSubmit(false);
       return;
     }
@@ -231,7 +263,7 @@ const Register = () => {
                     required
                     value={formData.firstName}
                     onChange={handleChange}
-                    style={{ height: '48px', border: "1px solid #6b4f36", fontSize: "16px", color: "black"}}
+                    style={{ height: '48px', border: "1px solid #6b4f36", fontSize: "16px", color: "black" }}
                   />
                 </div>
               </div>
@@ -261,15 +293,9 @@ const Register = () => {
             </div>
 
             <div className="mb-3 position-relative">
-              <label htmlFor="emailOrPhone" className="form-label position-absolute text-dark px-2" style={{
-                top: '-12px',
-                left: '15px',
-                fontStyle: 'italic',
-                fontSize: '1rem',
-                zIndex: '1',
-                background: "white",
-              }}>
-                Email/Phone
+              <label htmlFor="emailOrPhone" className="form-label position-absolute text-dark px-2"
+                style={{ top: '-12px', left: '15px', fontStyle: 'italic', fontSize: '1rem', zIndex: '1', background: "white" }}>
+                Email or Phone
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -279,107 +305,102 @@ const Register = () => {
                   required
                   value={formData.emailOrPhone}
                   onChange={handleChange}
+                  placeholder="example@gmail.com or +919876543210"
                   style={{
                     height: '48px',
                     border: "1px solid #6b4f36",
                     fontSize: "16px",
                     color: "black",
-                    paddingRight: isValidEmail(formData.emailOrPhone) ? '50px' : '10px'
+                    paddingRight: '130px'
                   }}
-                  disabled={isEmailVerified}
+                  disabled={isEmailVerified || isPhoneVerified}
                 />
-                {isValidEmail(formData.emailOrPhone) && (
-                  isEmailVerified ? (
-                    <span
-                      style={{
-                        position: 'absolute',
-                        right: '10px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        color: '#28a745',
-                        fontSize: '18px'
-                      }}
-                    >
-                      <FaCheck />
-                    </span>
-                  ) : (
-                    <button
-                      type="button"
-                      style={{
-                        position: 'absolute',
-                        right: '10px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        border: "none",
-                        background: "#6b4f36",
-                        color: "white",
-                        padding: '8px 12px',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        fontSize: '14px'
-                      }}
-                      onClick={handleSendOTP}
-                      disabled={loadingOTP}
-                    >
-                      {loadingOTP ? 'Sending...' : 'Send OTP'}
-                    </button>
-                  )
-                )}
-              </div>
-            </div>
 
-            {showOTPField && !isEmailVerified && isValidEmail(formData.emailOrPhone) && (
-              <div className="mb-3 position-relative">
-                <label htmlFor="otp" className="form-label position-absolute text-dark px-2" style={{
-                  top: '-12px',
-                  left: '15px',
-                  fontStyle: 'italic',
-                  fontSize: '1rem',
-                  zIndex: '1',
-                  background: "white",
-                }}>
-                  Enter OTP
-                </label>
-                <div style={{ position: 'relative' }}>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="otp"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    placeholder="Enter 6-digit OTP"
-                    maxLength={6}
-                    style={{
-                      height: '48px',
-                      border: "1px solid #6b4f36",
-                      fontSize: "16px",
-                      color: "black",
-                      paddingRight: '80px'
-                    }}
-                  />
+                { }
+                {!isEmailVerified && !isPhoneVerified && (isValidEmail(formData.emailOrPhone) || isValidPhone(formData.emailOrPhone)) && (
                   <button
                     type="button"
+                    onClick={handleSendOTP}
+                    disabled={loadingOTP}
                     style={{
                       position: 'absolute',
                       right: '10px',
                       top: '50%',
                       transform: 'translateY(-50%)',
-                      border: "none",
-                      background: "#6b4f36",
-                      color: "white",
-                      padding: '8px 12px',
+                      background: '#6b4f36',
+                      color: 'white',
+                      border: 'none',
+                      padding: '8px 15px',
                       borderRadius: '4px',
-                      cursor: 'pointer',
                       fontSize: '14px'
                     }}
+                  >
+                    {loadingOTP ? 'Sending...' : 'Send OTP'}
+                  </button>
+                )}
+
+                { }
+                {(isEmailVerified || isPhoneVerified) && (
+                  <div style={{
+                    position: 'absolute',
+                    right: '15px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: '#28a745',
+                    fontSize: '22px'
+                  }}>
+                    <FaCheck />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            { }
+            {showOTPField && (
+              <div className="mb-3 position-relative">
+                <label className="form-label position-absolute text-dark px-2"
+                  style={{ top: '-12px', left: '15px', fontStyle: 'italic', fontSize: '1rem', zIndex: '1', background: "white" }}>
+                  Enter OTP
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type="text"
+                    className="form-control text-center"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    placeholder="000000"
+                    maxLength={6}
+                    style={{
+                      height: '48px',
+                      border: "1px solid #6b4f36",
+                      fontSize: "20px",
+                      letterSpacing: '10px'
+                    }}
+                  />
+                  <button
+                    type="button"
                     onClick={handleVerifyOTP}
                     disabled={loadingOTP || otp.length !== 6}
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: '#6b4f36',
+                      color: 'white',
+                      border: 'none',
+                      padding: '8px 16px',
+                      borderRadius: '4px',
+                      fontSize: '14px'
+                    }}
                   >
                     {loadingOTP ? 'Verifying...' : 'Verify'}
                   </button>
                 </div>
               </div>
             )}
+
+
 
             <div className="row mb-3">
               <div className="col-md-6 mb-3 mb-md-0">
@@ -502,10 +523,10 @@ const Register = () => {
                   }}
                 />
                 <label className="form-check-label text-dark fst-italic" htmlFor="acceptTerms" style={{ fontSize: '1rem', fontStyle: 'italic' }}>
-                  I accept&nbsp;      
+                  I accept&nbsp;
                   <a href="/terms-services" target="_blank" rel="noopener noreferrer" style={{ color: '#6b4f36', textDecoration: 'underline' }}>
                     Terms & Conditions
-                  </a> 
+                  </a>
                   <span style={{ color: 'red' }}> *</span>
                 </label>
               </div>
@@ -520,9 +541,16 @@ const Register = () => {
                 height: '48px',
                 transition: 'all 0.3s ease',
                 fontStyle: 'italic',
-                opacity: isValidEmail(formData.emailOrPhone) && !isEmailVerified ? 0.6 : 1
+                opacity:
+                  (isValidEmail(formData.emailOrPhone) && !isEmailVerified) ||
+                    (isValidPhone(formData.emailOrPhone) && !isPhoneVerified)
+                    ? 0.6 : 1
               }}
-              disabled={loadingSubmit || (isValidEmail(formData.emailOrPhone) && !isEmailVerified)}
+              disabled={
+                loadingSubmit ||
+                (isValidEmail(formData.emailOrPhone) && !isEmailVerified) ||
+                (isValidPhone(formData.emailOrPhone) && !isPhoneVerified)
+              }
             >
               {loadingSubmit ? 'Creating account...' : 'Sign up'}
             </button>
@@ -549,7 +577,7 @@ const Register = () => {
               color: '#6b4f36',
               backgroundColor: 'white'
             }}
-            >
+          >
             Register to Become an Artist or Seller
           </Link>
         </div>
