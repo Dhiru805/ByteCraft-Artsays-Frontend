@@ -469,247 +469,269 @@
 //     );
 // };
 
-// export default SoldProduct;
-import React, { useState, useEffect } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom'; 
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import Preferences from './../Pereferences/Pereferences';
-import Billings from './../Billings/Billings';
-import Products from './../Products/Product';
-import Transaction from './../Transaction/Transaction';
-import SoldProduct  from './../SoldProduct/SoldProduct'
-import Packagingmaterial from './../PackagingMaterial/ProductPurchasedSeller'
-import getAPI from '../../../../../../api/getAPI';
-import { Link } from 'react-router-dom';
-import Settings from './../UserProfile/BasicInformation';
-import useUserType from '../../../../urlconfig'
+//  export default SoldProduct;
 
-const UserProfileForm = () => {
-  const userType = useUserType();
-  // const { userId } = useParams();
-  const location = useLocation();
-    const { seller } = location.state || {};
 
-  const navigate = useNavigate(); 
-  const [imageFile, setImageFile] = useState(null);
-  const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
-  const [profileData, setProfileData] = useState({
-    name: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    userType: '',
-    address: {
-      line1: '',
-      line2: '',
-      city: '',
-      state: '',
-      country: '',
-      pincode: ''
-    },
-    gender: '',
-    birthdate: '',
-    website: ''
+import React, { useState, useEffect } from "react";
+import getAPI from "../../../../../../api/getAPI";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import useUserType from "../../../../urlconfig";
+
+const SoldProduct = () => {
+
+    const { sellerId } = useParams();
+    const location = useLocation();
+    const userId = sellerId || location.state?.seller?._id || location.state?.userId;
+
+    const [products, setProducts] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [productsPerPage, setProductsPerPage] = useState(10);
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const navigate = useNavigate();
+    const userType = useUserType();
+
+    useEffect(() => {
+        if (!userId) return;
+
+        const fetchProducts = async () => {
+            try {
+                const result = await getAPI(`/api/orders/seller/${userId}`, {}, true, false);
+                console.log("SELLER ORDERS RAW:", result?.data);
+
+                // if (!result?.data?.data || !Array.isArray(result.data.data)) {
+                //     setProducts([]);
+                //     return;
+                // }
+
+                // const formatted = result.data.data.flatMap(order =>
+                //     order.items
+                //         .filter(item => item.productId) 
+                //         .map(item => {
+                //             const product = item.productId;
+
+                //             return {
+                //                 orderId: order.orderId,
+                //                 sellerName:
+                //                     `${order.Seller?.id?.name || ""} ${order.Seller?.id?.lastName || ""}`.trim(),
+
+                //                 productId: product._id,
+                //                 productName: product.productName,
+                //                 mainImage: product.mainImage,
+
+                //                 productPrice: product.sellingPrice ?? product.finalPrice ?? 0,
+                //                 totalQuantity: item.quantity,
+
+                //                 createdAt: order.createdAt
+                //             };
+                //         })
+                // );
+
+                // setProducts(formatted);
+if (result?.data?.data && Array.isArray(result.data.data)) {
+
+  const formatted = result.data.data.flatMap(order => {
+
+    // const sellerName =
+    //   order.Seller?.name ||
+    //   `${order.Seller?.id?.name || ""} ${order.Seller?.id?.lastName || ""}`.trim();
+
+
+    return order.items
+      .filter(item => item.productId)
+      .map(item => {
+        const product = item.productId;
+        
+const sellerName =
+    `${product.userId?.name || ""} ${product.userId?.lastName || ""}`.trim();
+
+        return {
+          orderId: order.orderId,
+
+          sellerName: sellerName,
+
+          productId: product._id,
+          productName: product.productName,
+          mainImage: product.mainImage,
+
+          productPrice: product.sellingPrice ?? product.finalPrice ?? 0,
+          totalQuantity: item.quantity,
+          createdAt: order.createdAt
+        };
+      });
   });
 
-    const userId = seller?._id;
+  setProducts(formatted);
+}
 
+            } catch (err) {
+                console.error("Error fetching Seller sold products:", err);
+                setProducts([]);
+            }
+        };
 
-  const fetchProfile = async () => {
-    try {
-      const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
-      if (result.data.user) {
-        const userData = result.data.user;
-        const formattedBirthdate = userData.birthdate ? new Date(userData.birthdate).toISOString().split('T')[0] : '';
-        const parsedAddress = userData.address ? (typeof userData.address === 'string' ? JSON.parse(userData.address) : userData.address) : {};
+        fetchProducts();
+    }, [userId]);
 
-        setProfileData({
-          ...userData,
-          birthdate: formattedBirthdate,
-          address: parsedAddress,
-        });
+    const filteredProducts = products.filter(p =>
+        p.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.sellerName?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
-const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-        const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : 'DashboardAssets/assets/images/user.png';
-        setPreviewImage(profilePhotoUrl);
-      }
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-      toast.error("Error fetching profile data");
-    }
-  };
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+    const displayedProducts = filteredProducts.slice(
+        (currentPage - 1) * productsPerPage,
+        currentPage * productsPerPage
+    );
 
-  useEffect(() => {
-    if (userId) {
-      fetchProfile();
-    }
-  }, [userId]);
-
-  const [activeTab, setActiveTab] = useState('Settings');
-
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const tabFromUrl = queryParams.get('tab');
-    if (tabFromUrl) {
-      setActiveTab(tabFromUrl);
-    }
-  }, [location]);
-
-  const handleTabClick = (tabName) => {
-    setActiveTab(tabName);
-    navigate({
-      pathname: location.pathname,
-      search: `?tab=${tabName}`,
-    });
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProfileData((prevState) => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
-
-  const handleAddressChange = (e) => {
-    const { name, value } = e.target;
-    const [, subKey] = name.split('.');
-
-    setProfileData((prevState) => ({
-      ...prevState,
-      address: {
-        ...prevState.address,
-        [subKey]: value
-      }
-    }));
-  };
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-      setImageFile(file);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const formData = new FormData();
-      formData.append('name', profileData.name);
-      formData.append('lastName', profileData.lastName);
-      formData.append('address', JSON.stringify(profileData.address));
-      formData.append('gender', profileData.gender);
-      formData.append('birthdate', profileData.birthdate);
-      formData.append('website', profileData.website);
-
-      if (imageFile) {
-        formData.append('profilePhoto', imageFile);
-      }
-
-      const response = await fetch(`/auth/users/${userId}`, {
-        method: 'PUT',
-        body: formData,
-      });
-
-      if (response.ok) {
-        toast.success('Profile updated successfully!');
-      } else {
-        const errorText = await response.text();
-        toast.error(`Failed to update profile: ${response.status} ${errorText}`);
-      }
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      toast.error('Error updating profile. Please try again.');
-    }
-  };
-
-  const tabs = [
-    { name: 'Settings', component: Settings },
-    { name: 'Products', component: Products },
-    { name: 'Transaction', component: Transaction },
-    { name: 'Sold Products', component: SoldProduct },
-    { name: 'Packaging Material', component: Packagingmaterial },
-    { name: 'Billings', component: Billings },
-    { name: 'Preferences', component: Preferences },
-
-  ];
-
-  return (
-    <div className="container-fluid">
-      <div className="block-header">
-        <div className="row">
-          <div className="col-lg-6 col-md-6 col-sm-12">
-            <h2>Seller Profile View</h2>
-            <ul className="breadcrumb">
-              <li className="breadcrumb-item">
-<span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
-    <i className="fa fa-dashboard"></i>
-</span>
-              </li>
-              <li className="breadcrumb-item">
-                <span
-                  onClick={() => navigate('/super-admin/artist/management')}
-                  style={{ cursor: 'pointer' }}
-                >
-                  ArtistManageTable
-                </span>
-              </li>
-              <li className="breadcrumb-item">Seller Profile View</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div className="row clearfix">
-        <div className="col-lg-12">
-          <div className="card">
-            <div className="body">
-              <ul className="nav nav-tabs">
-                {tabs.map((tab) => (
-                  <li className="nav-item" key={tab.name}>
-                    <a
-                      className={`nav-link ${activeTab === tab.name ? 'active' : ''}`}
-                      onClick={() => handleTabClick(tab.name)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {tab.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+    return (
+        <div className="container-fluid">
+            <div className="block-header">
+                <h2>Seller Sold Products</h2>
             </div>
 
-            <div className="tab-content">
-              {tabs.map((tab) => (
-                <div
-                  key={tab.name}
-                  className={`tab-pane ${activeTab === tab.name ? 'active' : ''}`}
-                  id={tab.name}
-                >
-                  <tab.component
-                    userId={userId}
-                    profileData={profileData}
-                    previewImage={previewImage}
-                    handleImageUpload={handleImageUpload}
-                    handleChange={handleChange}
-                    handleAddressChange={handleAddressChange}
-                    handleSubmit={handleSubmit}
-                  />
+            <div className="card">
+                <div className="header d-flex justify-content-between align-items-center">
+
+                    {/* ITEMS PER PAGE */}
+                    <div className="d-flex align-items-center">
+                        <label className="mr-2">Show</label>
+                        <select
+                            className="form-control form-control-sm"
+                            value={productsPerPage}
+                            onChange={e => {
+                                setProductsPerPage(Number(e.target.value));
+                                setCurrentPage(1);
+                            }}
+                        >
+                            {[10, 25, 50, 100].map(num => (
+                                <option key={num} value={num}>{num}</option>
+                            ))}
+                        </select>
+                        <label className="ml-2">entries</label>
+                    </div>
+
+                    {/* SEARCH */}
+                    <div className="input-group" style={{ maxWidth: "200px" }}>
+                        <input
+                            type="text"
+                            className="form-control form-control-sm"
+                            placeholder="Search..."
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                        />
+                        <i className="fa fa-search"
+                            style={{
+                                position: "absolute",
+                                right: "10px",
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                pointerEvents: "none"
+                            }}
+                        ></i>
+                    </div>
                 </div>
-              ))}
+
+                {/* TABLE */}
+                <div className="body">
+                    <div className="table-responsive">
+                        <table className="table table-hover">
+                            <thead className="thead-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Seller Name</th>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {displayedProducts.map((p, index) => (
+                                    <tr key={p.productId}>
+                                        <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
+
+                                        <td>{p.sellerName}</td>
+
+                                        <td>
+                                            <div style={{ display: "flex", alignItems: "center" }}>
+                                                <img
+                                                    src={`${BASE_URL}${p.mainImage}`}
+                                                    className="rounded-circle avatar"
+                                                    alt={p.productName}
+                                                    style={{
+                                                        width: "30px",
+                                                        height: "30px",
+                                                        objectFit: "cover",
+                                                        marginRight: "10px"
+                                                    }}
+                                                />
+                                                {p.productName}
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            {new Intl.NumberFormat("en-IN", {
+                                                style: "currency",
+                                                currency: "INR"
+                                            }).format(p.productPrice)}
+                                        </td>
+
+                                        <td>{p.totalQuantity}</td>
+
+                                        <td>
+                                            {new Date(p.createdAt).toLocaleDateString("en-IN", {
+                                                year: "numeric",
+                                                month: "long",
+                                                day: "numeric"
+                                            })}
+                                        </td>
+
+                                        <td>
+                                            <button
+                                                className="btn btn-sm btn-outline-info"
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/super-admin/seller/soldproducts/view/${p.productId}`,
+                                                        { state: { userId } }
+                                                    )
+                                                }
+                                            >
+                                                <i className="fa fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* PAGINATION */}
+                    <div className="pagination d-flex justify-content-between mt-4">
+                        <span>
+                            Showing {(currentPage - 1) * productsPerPage + 1} to{" "}
+                            {Math.min(currentPage * productsPerPage, filteredProducts.length)} of{" "}
+                            {filteredProducts.length} entries
+                        </span>
+
+                        <ul className="pagination">
+                            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                                <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
+                            </li>
+
+                            <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                                <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
-export default UserProfileForm;
+export default SoldProduct;
