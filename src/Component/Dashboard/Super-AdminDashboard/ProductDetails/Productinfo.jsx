@@ -200,7 +200,7 @@ function AllProduct() {
 
                                             {activeTab === "artist" && (
                                                 <div className="tab-pane active">
-                                                    <p><strong>Name:</strong> <span style={{ marginLeft: "10px" }}>{product.userId.name} {product.userId.lastName}</span></p>
+                                                    {/* <p><strong>Name:</strong> <span style={{ marginLeft: "10px" }}>{product.userId.name} {product.userId.lastName}</span></p>
                                                     <p><strong>Email:</strong> <span style={{ marginLeft: "10px" }}>{product.userId.email}</span></p>
                                                     <p><strong>Website:</strong>
                                                         <a
@@ -211,7 +211,33 @@ function AllProduct() {
                                                         >
                                                             {product.userId.website}
                                                         </a>
-                                                    </p>
+                                                    </p> */}
+                                                    <p>
+  <strong>Name:</strong>
+  <span style={{ marginLeft: "10px" }}>
+    {product.userId?.name || "Unknown"} {product.userId?.lastName || ""}
+  </span>
+</p>
+
+<p>
+  <strong>Email:</strong>
+  <span style={{ marginLeft: "10px" }}>
+    {product.userId?.email || "N/A"}
+  </span>
+</p>
+
+<p>
+  <strong>Website:</strong>
+  <a
+    href={product.userId?.website || "#"}
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{ marginLeft: "10px", textDecoration: "none", color: "blue" }}
+  >
+    {product.userId?.website || "N/A"}
+  </a>
+</p>
+
                                                 </div>
                                             )}
                                         </div>

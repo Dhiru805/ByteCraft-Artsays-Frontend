@@ -335,6 +335,8 @@ import ArtistTransaction from "../Component/Dashboard/Super-AdminDashboard/Artis
 import ArtistPackagingMaterial from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/PackagingMaterial/ProductPurchasedArtist";
 import ArtistProductsDetails from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Product/ArtistProductDetails";
 import ArtistProductBidding from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Product/BiddingPass";
+import ArtistPDet from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/UserProfile/Products/ArtistProductDetails";
+//import ArtistSoldProduct from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/UserProfile/SoldProduct/SoldProductDetails";
 
 import BuyerManagement from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/BuyerManageTable";
 import BuyerProductPurchase from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductPurchased/ProductPurchased";
@@ -374,6 +376,7 @@ import ViewCustomRequestsuperadmin from "../Component/Dashboard/Super-AdminDashb
 //-----------------------------Bidding--------------------------//
 import AllBiddingProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/AllProduct/BiddingProduct";
 import BiddedProduct from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddedproduct/Biddedproduct";
+import BiddedProductView from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddedproduct/ProductRequestView";
 import BiddedProductTransaction from "../Component/Dashboard/Super-AdminDashboard/Bidding/Transaction/BiddedproductTransaction";
 import BiddingTable from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddingpass/BiddingTable";
 import BiddingTablePass from "../Component/Dashboard/Super-AdminDashboard/Bidding/Biddingpass/Biddingpass";
@@ -705,7 +708,7 @@ const AppRoutes = () => {
         <Route path="blog/view-blog" element={<SuperAdminViewBlog />} />
         <Route path="blog/update-blog" element={<SuperAdminUpdateBlog />} />
         <Route
-          path="product/product-info"
+          path="product/product-info/:productId"
           element={<SuperAdminProductInfo />}
         />
         {/* Admin Management */}
@@ -756,7 +759,7 @@ const AppRoutes = () => {
           element={<ArtistSoldProductTable />}
         />
         <Route
-          path="artist/soldproducts/view"
+          path="artist/soldproducts/view/:productId"
           element={<ArtistSoldProductView />}
         />
         <Route
@@ -768,7 +771,7 @@ const AppRoutes = () => {
           element={<ArtistPackagingMaterial />}
         />
         <Route
-          path="artist/management/productrequest/:userId"
+          path="artist/management/productrequest/:productId"
           element={<ArtistProductRequestView />}
         />
         <Route
@@ -778,6 +781,11 @@ const AppRoutes = () => {
         <Route
           path="artist/management/artisteditreuqest/"
           element={<ProductEditRequest />}
+
+        />
+         <Route
+          path="artist/allartistproduct/artist-prod-details/:userId/:productId"
+          element={<ArtistPDet />}
         />
         <Route
           path="artist/allartistproduct/productdetails/:userId"
@@ -848,11 +856,12 @@ const AppRoutes = () => {
           element={<ViewCustomRequestsuperadmin />}
         />
         <Route path="purchasetable" element={<PurchaseTable />} />
-        <Route path="purchasetable/view" element={<PurchaseTableView />} />
+        <Route path="purchasetable/view/:productId" element={<PurchaseTableView />} />
         <Route path="product-upload" element={<ProductUploads />} />
         {/* Bidding Management */}
         <Route path="bidding/allproduct" element={<AllBiddingProduct />} />
         <Route path="bidding/bidded-product" element={<BiddedProduct />} />
+        <Route path="bidding/bidded-product-view/:productId" element={<BiddedProductView />} />
         <Route
           path="bidding/transaction"
           element={<BiddedProductTransaction />}

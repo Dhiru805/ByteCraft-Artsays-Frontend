@@ -11,19 +11,37 @@ const AllBiddingProduct = () => {
     const [productsPerPage, setProductsPerPage] = useState(10);
 const navigate = useNavigate();
 
-    const fetchProducts = async () => {
-        try {
-            const result = await getAPI("/api/getallbid", {}, true, false);
-            if (result && result.data && Array.isArray(result.data.bids)) {
-                setProducts(result.data.bids);
-            } else {
-                console.error("Invalid API response", result.data);
-                setProducts([]);
-            }
-        } catch (error) {
-            console.error("Error fetching bids:", error);
+    // const fetchProducts = async () => {
+    //     try {
+    //         const result = await getAPI("/api/getallbid", {}, true, false);
+    //         if (result && result.data && Array.isArray(result.data.bids)) {
+    //             setProducts(result.data.bids);
+    //         } else {
+    //             console.error("Invalid API response", result.data);
+    //             setProducts([]);
+    //         }
+    //     } catch (error) {
+    //         console.error("Error fetching bids:", error);
+    //     }
+    // };
+const fetchProducts = async () => {
+    try {
+        const result = await getAPI("/api/bidding/all", {}, true, false);
+        console.log("Bidding Data:", result);
+
+        const bids = result?.data?.data;
+
+        if (Array.isArray(bids)) {
+            setProducts(bids);
+        } else {
+            console.error("Invalid bidding response:", result.data);
+            setProducts([]);
         }
-    };
+    } catch (error) {
+        console.error("Error fetching bids:", error);
+        setProducts([]);
+    }
+};
 
     useEffect(() => {
         fetchProducts();
@@ -34,10 +52,19 @@ const navigate = useNavigate();
         return () => clearInterval(interval);
     }, []);
 
-    const filteredProducts = products.filter(product =>
-        product.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.userId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
+    // const filteredProducts = products.filter(product =>
+    //     product.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //     product.userId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
+    // );
+const filteredProducts = products.filter(p => {
+    const s = searchTerm.toLowerCase();
+
+    return (
+        p.artworkName?.toLowerCase().includes(s) ||
+        p.product?.productName?.toLowerCase().includes(s) ||
+        p.user?.name?.toLowerCase().includes(s)
     );
+});
 
     const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
@@ -58,10 +85,15 @@ const navigate = useNavigate();
         setCurrentPage(1);
     };
 
+    // const paginatedProducts = filteredProducts.slice(
+    //     (currentPage - 1) * productsPerPage,
+    //     currentPage * productsPerPage
+    // );
     const paginatedProducts = filteredProducts.slice(
-        (currentPage - 1) * productsPerPage,
-        currentPage * productsPerPage
-    );
+    (currentPage - 1) * productsPerPage,
+    currentPage * productsPerPage
+);
+
     return (
         <div className="container-fluid">
             <div className="block-header">
@@ -128,18 +160,18 @@ const navigate = useNavigate();
                             <div className="table-responsive">
                                 <table className="table table-hover text-nowrap">
                                     <thead className="thead-dark">
+                                        
                                         <tr>
                                             <th>#</th>
                                             <th>Product Name</th>
                                             <th>Starting Bid</th>
-                                            <th>Current Bid</th>
-                                            <th>Bidded</th>
+                                            <th>Reserve Bid</th>
                                             <th>Date</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    {/* <tbody>
                                         {paginatedProducts.length === 0 ? (
                                             <tr>
                                                 <td colSpan="6" className="text-center">
@@ -209,7 +241,75 @@ const navigate = useNavigate();
                                                 </tr>
                                             ))
                                         )}
-                                    </tbody>
+                                    </tbody> */}
+                                    <tbody>
+{paginatedProducts.length === 0 ? (
+    
+    <tr>
+        <td colSpan="8" className="text-center">No data available</td>
+    </tr>
+) : (
+    paginatedProducts.map((item, index) => {
+        const p = item.product;
+
+
+
+        return (
+            
+            <tr key={item.bidId}>
+
+                <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
+
+                <td>
+                    <img
+                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${p?.mainImage}`}
+                        className="rounded-circle avatar"
+                        style={{
+                            width: "30px",
+                            height: "30px",
+                            marginRight: "10px",
+                            objectFit: "cover",
+                        }}
+                    />
+                    {p?.productName || "Unnamed Product"}
+                </td>
+
+                <td>
+                    ₹{new Intl.NumberFormat("en-IN").format(item.basePrice)}
+                </td>
+
+                <td>
+                    ₹{new Intl.NumberFormat("en-IN").format(item.reservePrice)}
+                </td>
+
+                <td>{new Date(item.bidStart).toLocaleDateString("en-IN")}</td>
+
+             <td>
+  {item.status === "Expired" ? (
+    <span className="badge badge-danger">Expired</span>
+  ) : (
+    <span className="badge badge-success">
+      Live – {item.timeRemaining}
+    </span>
+  )}
+</td>
+
+                {/* Action */}
+                <td>
+                    <button
+                        className="btn btn-sm btn-outline-info"
+                        // onClick={() => navigate(`/Dashboard/biddedproduct/productdetails/${p?.id}`)}
+                        onClick={() => navigate(`/super-admin/bidding/bidded-product-view/${p?.id}`)}
+                    >
+                        <i className="fa fa-eye"></i>
+                    </button>
+                </td>
+            </tr>
+        );
+    })
+)}
+</tbody>
+
                                 </table>
                             </div>
 

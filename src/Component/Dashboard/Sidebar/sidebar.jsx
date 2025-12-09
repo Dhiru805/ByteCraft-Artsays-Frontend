@@ -113,8 +113,8 @@ const Sidebar = () => {
             subTabs: [
               { label: "Management", subtabId: "byr11", path: `/super-admin/buyer/management` },
               { label: "Product Purchased", subtabId: "byr12", path: `/super-admin/buyer/productpurchased` },
-              { label: "Resell Product Request", subtabId: "byr13", path: `/super-admin/buyer/resellproduct` },
-              { label: "Sold Product", subtabId: "byr14", path: `/super-admin/buyer/soldproduct` }
+              // { label: "Resell Product Request", subtabId: "byr13", path: `/super-admin/buyer/resellproduct` },
+              // { label: "Sold Product", subtabId: "byr14", path: `/super-admin/buyer/soldproduct` }
               // icon: "fa-handshake",
               // path: `#Buyer-management`,
               // subTabs: [

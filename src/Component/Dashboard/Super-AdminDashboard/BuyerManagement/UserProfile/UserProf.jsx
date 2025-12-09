@@ -237,8 +237,8 @@ const UserProfileForm = () => {
     { name: 'Custom Request', component: Customrequest },
     { name: 'Transaction', component: Transaction },
     { name: 'Packaging Material', component: Packagingmaterial },
-    { name: 'Resell Product', component: RsellProduct },
-    { name: 'Sold Product', component: SodlProduct },
+    // { name: 'Resell Product', component: RsellProduct },
+    // { name: 'Sold Product', component: SodlProduct },
     { name: 'Billings', component: Billings },
     { name: 'Preferences', component: Preferences },
   ];
