@@ -461,7 +461,7 @@ const Register = () => {
                     }}
                   >
                     Enter OTP
-                  </label>
+                  </button>
                   <div style={{ position: "relative" }}>
                     <input
                       type="text"

@@ -11,15 +11,15 @@ const CelebrityCard = () => {
 
   const [showFilters, setShowFilters] = useState(false);
   const [celebritiesData, setCelebritiesData] = useState([]);
-const [loading,setLoading]=useState(true);
+  const [loading, setLoading] = useState(true);
 
-const [currentPage, setCurrentPage] = useState(1); 
-const itemsPerPage = 9; 
-const indexOfLastProduct = currentPage * itemsPerPage;
-const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
-const currentProducts = celebritiesData.slice(indexOfFirstProduct, indexOfLastProduct);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
+  const indexOfLastProduct = currentPage * itemsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
+  const currentProducts = celebritiesData.slice(indexOfFirstProduct, indexOfLastProduct);
 
-const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
+  const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
 
 
   const goToNextPage = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
@@ -39,7 +39,7 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
     } catch (error) {
       console.log(error);
     }
-    finally{
+    finally {
       setLoading(false);
     }
   };
@@ -492,37 +492,37 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
 
             {/* {celebritiesData.length > 0 ? (
               celebritiesData.map((celebrity, index) => ( */}
-              {currentProducts.length > 0 ? (
-  currentProducts.map((celebrity, index) => (
+            {currentProducts.length > 0 ? (
+              currentProducts.map((celebrity, index) => (
 
                 <div key={celebrity._id}
                   className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
 
-                    <div className="relative hidden md:block">
-                      <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                        <button
-                          onClick={() =>
-                            navigate(
-                              `/celebrity/${slugify(celebrity.artistName)}`,
-                              { state: { celebrity } }
-                            )
-                          }
-                          className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
-                        >
-                          View Collection
-                          <span className="text-white text-lg">
-                            <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
-                          </span>
-                        </button>
-                      </div>
+                  <div className="relative hidden md:block">
+                    <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
+                      <button
+                        onClick={() =>
+                          navigate(
+                            `/celebrity/${slugify(celebrity.artistName)}`,
+                            { state: { celebrity } }
+                          )
+                        }
+                        className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
+                      >
+                        View Collection
+                        <span className="text-white text-lg">
+                          <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
+                        </span>
+                      </button>
                     </div>
                   </div>
-                ))
-              ) : (
-                <div>No celebrities data</div>
-              )}
+                </div>
+              ))
+            ) : (
+              <div>No celebrities data</div>
+            )}
 
-              {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
@@ -558,7 +558,7 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
               </div>
             </div> */}
 
-              {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
@@ -594,7 +594,7 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
               </div>
             </div> */}
 
-              {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
@@ -630,7 +630,7 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
               </div>
             </div> */}
 
-              {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
@@ -666,7 +666,7 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
               </div>
             </div> */}
 
-              {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
@@ -702,7 +702,7 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
               </div>
             </div> */}
 
-              {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
@@ -738,7 +738,7 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
               </div>
             </div> */}
 
-              {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
@@ -774,7 +774,7 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
               </div>
             </div> */}
 
-              {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
@@ -809,78 +809,57 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
                 </div>
               </div>
             </div> */}
-            </div>
-
           </div>
 
-          {/* <!-- Pagination --> */}
-          {/* <div className="flex justify-center mt-6">
-            <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
-              <FiChevronLeft className="self-center flex-shrink-0" />
-              <button className="px-1 sm:px-3 py-1">Previous</button>
-              <button className="px-3 sm:px-3 py-1 rounded border border-dark text-dark">
-                1
+      {/* </div> */}
+      <div className="flex justify-center mt-6">
+        <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
+          {/* Previous */}
+          <button
+            onClick={goToPrevPage}
+            disabled={currentPage === 1}
+            className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === 1
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:text-red-500"
+              }`}
+          >
+            <FiChevronLeft className="self-center flex-shrink-0" />
+            <span className="ml-1">Previous</span>
+          </button>
+
+          {/* Page numbers */}
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+            (page) => (
+              <button
+                key={page}
+                onClick={() => goToPage(page)}
+                className={`px-2 sm:px-3 py-1 rounded ${currentPage === page
+                    ? "border border-dark text-dark"
+                    : "hover:text-red-500"
+                  }`}
+              >
+                {page}
               </button>
-              <button className="px-1 sm:px-3 py-1">2</button>
-              <button className="px-1 sm:px-3 py-1">3</button>
-              <button className="px-1 sm:px-3 py-1">. . .</button>
-              <button className="px-1 sm:px-3 py-1">10</button>
-              <button className="px-1 sm:px-3 py-1">Next</button>
-              <FiChevronRight className="self-center flex-shrink-0" />
-            </nav>
-          </div> */}
- {/* Pagination */}
-                  <div className="flex justify-center mt-6">
-                    <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
-                      {/* Previous */}
-                      <button
-                        onClick={goToPrevPage}
-                        disabled={currentPage === 1}
-                        className={`px-2 sm:px-3 py-1 flex items-center ${
-                          currentPage === 1
-                            ? "opacity-50 cursor-not-allowed"
-                            : "hover:text-red-500"
-                        }`}
-                      >
-                        <FiChevronLeft className="self-center flex-shrink-0" />
-                        <span className="ml-1">Previous</span>
-                      </button>
-    
-                      {/* Page numbers */}
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                        (page) => (
-                          <button
-                            key={page}
-                            onClick={() => goToPage(page)}
-                            className={`px-2 sm:px-3 py-1 rounded ${
-                              currentPage === page
-                                ? "border border-dark text-dark"
-                                : "hover:text-red-500"
-                            }`}
-                          >
-                            {page}
-                          </button>
-                        )
-                      )}
-    
-                      {/* Next */}
-                      <button
-                        onClick={goToNextPage}
-                        disabled={currentPage === totalPages}
-                        className={`px-2 sm:px-3 py-1 flex items-center ${
-                          currentPage === totalPages
-                            ? "opacity-50 cursor-not-allowed"
-                            : "hover:text-red-500"
-                        }`}
-                      >
-                        <span className="mr-1">Next</span>
-                        <FiChevronRight className="self-center flex-shrink-0" />
-                      </button>
-                    </nav>
-                  </div>
-        </main>
+            )
+          )}
+
+          {/* Next */}
+          <button
+            onClick={goToNextPage}
+            disabled={currentPage === totalPages}
+            className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === totalPages
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:text-red-500"
+              }`}
+          >
+            <span className="mr-1">Next</span>
+            <FiChevronRight className="self-center flex-shrink-0" />
+          </button>
+        </nav>
       </div>
-    </div>
+    </main>
+      </div >
+    </div >
   );
 };
 export default CelebrityCard;
