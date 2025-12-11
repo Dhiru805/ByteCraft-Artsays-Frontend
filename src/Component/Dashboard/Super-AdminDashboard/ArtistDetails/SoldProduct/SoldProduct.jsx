@@ -18,27 +18,62 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
     const navigate = useNavigate();
     const userType = useUserType();
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const result = await getAPI("/api/totalpurchaseproduct", {}, true, false);
-                console.log("Full API Response:", result);
+    // useEffect(() => {
+    //     const fetchProducts = async () => {
+    //         try {
+    //             const result = await getAPI("/api/totalpurchaseproduct", {}, true, false);
+    //             console.log("Full API Response:", result);
 
-                if (result && result.data && Array.isArray(result.data)) {
-                    setProducts(result.data); // Set only the array
-                } else {
-                    console.error("API response does not contain an array:", result.data);
-                    setProducts([]);
-                }
-            } catch (error) {
-                console.error("Error fetching products:", error);
+    //             if (result && result.data && Array.isArray(result.data)) {
+    //                 setProducts(result.data); // Set only the array
+    //             } else {
+    //                 console.error("API response does not contain an array:", result.data);
+    //                 setProducts([]);
+    //             }
+    //         } catch (error) {
+    //             console.error("Error fetching products:", error);
+    //             setProducts([]);
+    //         }
+    //     };
+
+    //     fetchProducts();
+    // }, []);
+
+useEffect(() => {
+    const fetchProducts = async () => {
+        try {
+            const result = await getAPI("/api/orders/artist", {}, true, false);
+            console.log("Artist Orders Response:", result);
+
+            if (result?.data?.data && Array.isArray(result.data.data)) {
+                
+                const formatted = result.data.data.flatMap(order => {
+                    return order.items
+                        .filter(item => item.productId) 
+                        .map(item => ({
+                            orderId: order.orderId,
+                            productId: item.productId._id,
+                            productName: item.productId.productName,
+                            mainImage: item.productId.mainImage,
+                            productPrice: item.productId.sellingPrice,
+                            artistName: order.Artist.id.name + " " + (order.Artist.id.lastName || ''),
+                            totalQuantity: item.quantity
+                        }));
+                });
+
+                setProducts(formatted);
+            } else {
+                console.error("Invalid Artist Orders Format:", result.data);
                 setProducts([]);
             }
-        };
+        } catch (error) {
+            console.error("Error fetching artist sold products:", error);
+            setProducts([]);
+        }
+    };
 
-        fetchProducts();
-    }, []);
-
+    fetchProducts();
+}, []);
 
 
     const totalPages = Math.ceil(products.length / productsPerPage);
@@ -177,7 +212,7 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
                                                 <td>{product.productPrice}</td> 
                                                 <td>{product.totalQuantity}</td> 
                                                 <td>
-                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/${userType}/Dashboard/artistsoldproduct/soldproductdetails/${product.productId}`)}>
+                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/super-admin/product-fetch-view/${product.productId}`)}>
                                                         <i className="fa fa-eye"></i>
                                                     </button>
                                                 </td>

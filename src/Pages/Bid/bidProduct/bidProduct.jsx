@@ -928,15 +928,12 @@
 // };
 // export default BidProduct;
 
-
-
-
 import "../../store/products/product.css";
 import React, { useState, useEffect } from "react";
 import { MdVerified } from "react-icons/md";
 import { FiChevronRight, FiChevronLeft } from "react-icons/fi";
 import { Bell } from "lucide-react";
-import getAPI from "../../../api/getAPI";   
+import getAPI from "../../../api/getAPI";
 import { useNavigate } from "react-router-dom";
 
 const BidProduct = () => {
@@ -944,18 +941,17 @@ const BidProduct = () => {
   const [showFilters, setShowFilters] = useState(false);
   const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
-const [highestLiveBid, setHighestLiveBid] = useState({});
+  const [highestLiveBid, setHighestLiveBid] = useState({});
 
-
- const [currentPage, setCurrentPage] = useState(1);
-   const itemsPerPage = 12;
-   const indexOfLastProduct = currentPage * itemsPerPage;
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
+  const indexOfLastProduct = currentPage * itemsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
   const currentProducts = products.slice(
     indexOfFirstProduct,
     indexOfLastProduct
   );
-   const totalPages = Math.ceil(products.length / itemsPerPage);
+  const totalPages = Math.ceil(products.length / itemsPerPage);
 
   const goToNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -969,67 +965,72 @@ const [highestLiveBid, setHighestLiveBid] = useState({});
     setCurrentPage(page);
   };
 
+  const fetchProducts = async () => {
+    try {
+      const [bidRes, badgeRes] = await Promise.all([
+        //getAPI(`/api/bidding/products/user/${userId}`, {}, true, false),
+        getAPI(`/api/bidding/products/all`, {}, true, false),
 
- const fetchProducts = async () => {
-  try {
-    const [bidRes, badgeRes] = await Promise.all([
-      //getAPI(`/api/bidding/products/user/${userId}`, {}, true, false),
-      getAPI(`/api/bidding/products/all`, {}, true, false),
+        getAPI(`/api/products/approved-with-badges`, {}, true, false),
+      ]);
 
-      getAPI(`/api/products/approved-with-badges`, {}, true, false),
-    ]);
+      const list = Array.isArray(bidRes?.data) ? bidRes.data : [];
 
+      const badgeData = badgeRes?.data?.data || [];
 
-    const list = Array.isArray(bidRes?.data) ? bidRes.data : [];
+      const finalList = list.map((item) => {
+        const p = item.product;
+        const realProductId = p._id || p.productId || p.product || null;
 
-    const badgeData = badgeRes?.data?.data || [];
+        const match = badgeData.find((b) => b._id === realProductId);
 
-    const finalList = list.map((item) => {
-      const p = item.product;
-      const realProductId = p._id || p.productId || p.product || null;
+        return {
+          ...item,
+          product: {
+            ...p,
+            seller: match?.seller || null,
+            badges: match?.badges || [],
+          },
+        };
+      });
 
-      const match = badgeData.find((b) => b._id === realProductId);
-
-      return {
-        ...item,
-        product: {
-          ...p,
-          seller: match?.seller || null,
-          badges: match?.badges || [],
-        },
-      };
-    });
-
-    setProducts(finalList.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-    ))
-    await fetchLiveHighestBids(finalList);
-  } catch (err) {
-    console.error("Error fetching bidding products:", err);
-  }
-};
-
+      setProducts(
+        finalList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      );
+      await fetchLiveHighestBids(finalList);
+    } catch (err) {
+      console.error("Error fetching bidding products:", err);
+    }
+  };
 
   useEffect(() => {
     fetchProducts();
   }, []);
-const getFinalStatus = (item) => {
-  const backend = item.bidProdStatus || "Upcoming";
 
-  const now = Date.now();
-  const start = new Date(item.bidStart).getTime();
-  const end = new Date(item.bidEnd).getTime();
+  const slugify = (text = "") =>
+    text
+      ?.toString()
+      ?.toLowerCase()
+      ?.replace(/[^a-z0-9]+/g, "-")
+      ?.replace(/(^-|-$)+/g, "") || "artwork";
 
-  if (now >= end) return "Ended";
+  const getFinalStatus = (item) => {
+    const backend = item.bidProdStatus || "Upcoming";
 
-  if (now < start) return "Upcoming";
+    const now = Date.now();
+    const start = new Date(item.bidStart).getTime();
+    const end = new Date(item.bidEnd).getTime();
 
-  const minutesLeft = (end - now) / 1000 / 60;
+    if (now >= end) return "Ended";
 
-  if (minutesLeft <= 1440) return "Ending Soon";
+    if (now < start) return "Upcoming";
 
-  return "Hot Deal";
-};
+    const minutesLeft = (end - now) / 1000 / 60;
+
+    if (minutesLeft <= 1440) return "Ending Soon";
+
+    return "Hot Deal";
+  };
 
   const getTimeRemaining = (end) => {
     const now = new Date().getTime();
@@ -1052,40 +1053,44 @@ const getFinalStatus = (item) => {
     }, 60000);
     return () => clearInterval(interval);
   }, []);
-const fetchLiveHighestBids = async (productsList) => {
-  try {
-    const highestMap = {};
+  const fetchLiveHighestBids = async (productsList) => {
+    try {
+      const highestMap = {};
 
-    await Promise.all(
-      productsList.map(async (item) => {
-        const bidId = item._id;
+      await Promise.all(
+        productsList.map(async (item) => {
+          const bidId = item._id;
 
-        const res = await getAPI(`/api/bidding/all/${bidId}`, {}, true, false)
-          .catch(() => null);
+          const res = await getAPI(
+            `/api/bidding/all/${bidId}`,
+            {},
+            true,
+            false
+          ).catch(() => null);
 
-        const allBids = res?.data?.bids || [];
+          const allBids = res?.data?.bids || [];
 
-        const highestAmount =
-          allBids.length > 0
-            ? Math.max(...allBids.map((b) => b.amount))
-            : item.basePrice;
+          const highestAmount =
+            allBids.length > 0
+              ? Math.max(...allBids.map((b) => b.amount))
+              : item.basePrice;
 
-        highestMap[bidId] = highestAmount;
-      })
-    );
+          highestMap[bidId] = highestAmount;
+        })
+      );
 
-    setHighestLiveBid(highestMap);
-  } catch (err) {
-    console.log("Live bid fetch error:", err);
-  }
-};
-useEffect(() => {
-  const interval = setInterval(() => {
-    fetchLiveHighestBids(products);
-  }, 3000);
+      setHighestLiveBid(highestMap);
+    } catch (err) {
+      console.log("Live bid fetch error:", err);
+    }
+  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchLiveHighestBids(products);
+    }, 3000);
 
-  return () => clearInterval(interval);
-}, [products]);
+    return () => clearInterval(interval);
+  }, [products]);
 
   return (
     <div className="max-w-[1440px] mx-auto mb-4">
@@ -1135,10 +1140,9 @@ useEffect(() => {
       </div>
 
       {/* Main Layout */}
-      
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6">
 
-              {/* Sidebar Filters (hidden on mobile, toggleable) */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6">
+        {/* Sidebar Filters (hidden on mobile, toggleable) */}
         <aside className="hidden md:block rounded-xl filter-sidebar">
           {/* All your filter sections here (unchanged) */}
           <h2 className="font-bold text-lg mb-3">Filter by</h2>
@@ -1478,9 +1482,7 @@ useEffect(() => {
         {/* MAIN PRODUCT GRID */}
         <main className="md:col-span-3">
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-
             {currentProducts.map((item) => {
-
               //const status = item.bidProdStatus;
               const status = getFinalStatus(item);
 
@@ -1493,23 +1495,32 @@ useEffect(() => {
 
               return (
                 // <div key={item._id} className="mx-auto product-card w-[300px]">
-<div
-  key={item._id}
- // onClick={() => navigate(`/bid-details/${item.product?._id || item.productId || item._id}`)}
-  onClick={() => navigate(`/bid-details/${item._id}`)}
-  className="mx-auto product-card w-[300px] cursor-pointer rounded-t-2xl overflow-hidden"
->
+                <div
+                  key={item._id}
+                  // onClick={() => navigate(`/bid-details/${item.product?._id || item.productId || item._id}`)}
+                  onClick={() => {
+                    const name =
+                      item?.artworkName ||
+                      item?.product?.productName ||
+                      item?.product?.title ||
+                      "artwork";
 
+                    const slug = slugify(name);
 
-
+                    navigate(`/bid-details/${slug}/${item._id}`);
+                  }}
+                  className="mx-auto product-card w-[300px] cursor-pointer rounded-t-2xl overflow-hidden"
+                >
                   {/* Status Badge */}
                   <div className="relative p-img">
-                    <span className={`absolute top-3 left-3 text-white text-sm font-semibold px-2 py-0.5 rounded-full shadow 
+                    <span
+                      className={`absolute top-3 left-3 text-white text-sm font-semibold px-2 py-0.5 rounded-full shadow 
                       ${status === "Upcoming" ? "bg-red-500" : ""}
                       ${status === "Hot Deal" ? "bg-dark" : ""}
                       ${status === "Ending Soon" ? "bg-dark" : ""}
                       ${status === "Ended" ? "bg-gray-500" : ""}
-                    `}>
+                    `}
+                    >
                       {status}
                     </span>
 
@@ -1519,22 +1530,21 @@ useEffect(() => {
                       alt={item.artworkName}
                       className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
                     /> */}
-<div className="w-[300px] h-40 sm:h-64 rounded-t-2xl bg-grey flex items-center justify-center overflow-hidden">
-  <img
-    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.product?.mainImage}`}
-    alt={item.artworkName}
-    className="h-full object-contain"
-  />
-</div>
-
+                    <div className="w-[300px] h-40 sm:h-64 rounded-t-2xl bg-grey flex items-center justify-center overflow-hidden">
+                      <img
+                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.product?.mainImage}`}
+                        alt={item.artworkName}
+                        className="h-full object-contain"
+                      />
+                    </div>
 
                     {/* Bell Icon */}
-                    <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow"
-                       onClick={(e) => {
-                         e.stopPropagation();
-    
-                         }}
-                         >
+                    <button
+                      className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    >
                       <Bell className="w-5 h-5 text-white" />
                     </button>
                   </div>
@@ -1542,14 +1552,16 @@ useEffect(() => {
                   {/* CARD BODY */}
                   <div className="p-3 product-info">
                     {status === "Upcoming" && (
-                      <p className="text-gray-500 text-xs sm:text-sm">•Upcoming Auction</p>
+                      <p className="text-gray-500 text-xs sm:text-sm">
+                        •Upcoming Auction
+                      </p>
                     )}
 
                     <h2 className="text-base sm:text-lg text-dark font-semibold mt-1">
                       {item.artworkName}
                     </h2>
 
-                   {/* <div className="flex items-center gap-1 mt-1">
+                    {/* <div className="flex items-center gap-1 mt-1">
   <p className="text-gray-700 text-xs sm:text-sm font-medium flex items-center gap-1">
     {item?.product?.userId?.name || "Unknown"}{" "}
     {item?.product?.userId?.lastName || ""}
@@ -1567,21 +1579,21 @@ useEffect(() => {
   ))}
 </div> */}
 
-<div className="flex items-center gap-1 mt-1">
-  <p className="text-gray-700 text-xs sm:text-sm font-medium flex items-center">
-    {item?.product?.seller?.name || "Unknown"}{" "}
-    {item?.product?.seller?.lastName || ""}
-  </p>
+                    <div className="flex items-center gap-1 mt-1">
+                      <p className="text-gray-700 text-xs sm:text-sm font-medium flex items-center">
+                        {item?.product?.seller?.name || "Unknown"}{" "}
+                        {item?.product?.seller?.lastName || ""}
+                      </p>
 
-  {item?.product?.badges?.map((img, index) => (
-    <img
-      key={index}
-      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${img}`}
-      className="w-5 h-5 rounded-full"
-      alt="badge"
-    />
-  ))}
-</div>
+                      {item?.product?.badges?.map((img, index) => (
+                        <img
+                          key={index}
+                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${img}`}
+                          className="w-5 h-5 rounded-full"
+                          alt="badge"
+                        />
+                      ))}
+                    </div>
 
                     {/* PRICE + Highest Bid */}
                     <div className="grid items-center gap-1 mt-1">
@@ -1591,7 +1603,8 @@ useEffect(() => {
 
                       {status !== "Upcoming" && (
                         <span className="text-green-600 font-semibold text-md">
-                          Highest Bid: ₹{highestLiveBid[item._id] || item.basePrice}
+                          Highest Bid: ₹
+                          {highestLiveBid[item._id] || item.basePrice}
                         </span>
                       )}
                     </div>
@@ -1609,68 +1622,70 @@ useEffect(() => {
                       <button
                         disabled={isEnded}
                         className={`flex-1 py-2 rounded-full font-semibold shadow text-black 
-                          ${isEnded ? "flex-1 bg-gray-500 text-white py-2 rounded-full font-semibold shadow buy-now" : "flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now"}
+                          ${
+                            isEnded
+                              ? "flex-1 bg-gray-500 text-white py-2 rounded-full font-semibold shadow buy-now"
+                              : "flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now"
+                          }
                         `}
                       >
                         {buttonText}
                       </button>
                     </div>
                   </div>
-
                 </div>
               );
             })}
-
           </div>
-           {/* Pagination */}
-                     <div className="flex justify-center mt-6">
-                       <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
-                         {/* Previous */}
-                         <button
-                           onClick={goToPrevPage}
-                           disabled={currentPage === 1}
-                           className={`px-2 sm:px-3 py-1 flex items-center ${
-                             currentPage === 1
-                               ? "opacity-50 cursor-not-allowed"
-                               : "hover:text-red-500"
-                           }`}
-                         >
-                           <FiChevronLeft className="self-center flex-shrink-0" />
-                           <span className="ml-1">Previous</span>
-                         </button>
-           
-                         {/* Page numbers */}
-                         {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                           (page) => (
-                             <button
-                               key={page}
-                               onClick={() => goToPage(page)}
-                               className={`px-2 sm:px-3 py-1 rounded ${
-                                 currentPage === page
-                                   ? "border border-dark text-dark"
-                                   : "hover:text-red-500"
-                               }`}
-                             >
-                               {page}
-                             </button>
-                           )
-                         )}
-           
-                         {/* Next */}
-                         <button
-                           onClick={goToNextPage}
-                           disabled={currentPage === totalPages}
-                           className={`px-2 sm:px-3 py-1 flex items-center ${
-                             currentPage === totalPages
-                               ? "opacity-50 cursor-not-allowed"
-                               : "hover:text-red-500"
-                           }`}
-                         >
-                           <span className="mr-1">Next</span>
-                           <FiChevronRight className="self-center flex-shrink-0" />
-                         </button>
-                       </nav>
-                     </div>
+          {/* Pagination */}
+          <div className="flex justify-center mt-6">
+            <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
+              {/* Previous */}
+              <button
+                onClick={goToPrevPage}
+                disabled={currentPage === 1}
+                className={`px-2 sm:px-3 py-1 flex items-center ${
+                  currentPage === 1
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:text-red-500"
+                }`}
+              >
+                <FiChevronLeft className="self-center flex-shrink-0" />
+                <span className="ml-1">Previous</span>
+              </button>
+
+              {/* Page numbers */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (page) => (
+                  <button
+                    key={page}
+                    onClick={() => goToPage(page)}
+                    className={`px-2 sm:px-3 py-1 rounded ${
+                      currentPage === page
+                        ? "border border-dark text-dark"
+                        : "hover:text-red-500"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                )
+              )}
+
+              {/* Next */}
+              <button
+                onClick={goToNextPage}
+                disabled={currentPage === totalPages}
+                className={`px-2 sm:px-3 py-1 flex items-center ${
+                  currentPage === totalPages
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:text-red-500"
+                }`}
+              >
+                <span className="mr-1">Next</span>
+                <FiChevronRight className="self-center flex-shrink-0" />
+              </button>
+            </nav>
+          </div>
         </main>
       </div>
     </div>

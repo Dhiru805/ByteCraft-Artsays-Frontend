@@ -1,0 +1,21 @@
+.artist-card {
+    background-color: #48372D;
+    border: 10px solid #48372D;
+}
+.artist-button {
+    background-color: #48372D;
+    border-radius: 0px;
+}
+.artist-img {
+    border-bottom: 0px;
+    background-color: #ffffff;
+    border-radius: 30px 30px 0px 0px;
+}
+.a-product-img {
+    background-color: #EBEBEB;
+    border-bottom: 2px solid #48372D;
+}
+.product-cat {
+    border-bottom: 2px solid #48372D;
+    border-radius: 0px 0px 30px 30px;
+}

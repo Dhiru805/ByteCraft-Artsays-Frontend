@@ -6,33 +6,85 @@ import { useNavigate } from 'react-router-dom';
 const BiddedProduct = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(5);
+    //const [productsPerPage, setproductsPerPage] = useState(5);
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
-    
-    
+    const [successfulBids, setSuccessfulBids] = useState([]);
+
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const result = await getAPI("/api/getbiddedproduct", {}, true, false);
-                if (result && result.data && Array.isArray(result.data.biddedProducts)) {
-                    setProducts(result.data.biddedProducts);
-                } else {
-                    console.error("API response does not contain an array:", result.data);
-                    setProducts([]);
-                }
+    // useEffect(() => {
+    //     const fetchProducts = async () => {
+    //         try {
+    //             const result = await getAPI("/api/getbiddedproduct", {}, true, false);
+    //             if (result && result.data && Array.isArray(result.data.biddedProducts)) {
+    //                 setProducts(result.data.biddedProducts);
+    //             } else {
+    //                 console.error("API response does not contain an array:", result.data);
+    //                 setProducts([]);
+    //             }
 
-            } catch (error) {
-                console.error("Error fetching products:", error);
+    //         } catch (error) {
+    //             console.error("Error fetching products:", error);
+    //             setProducts([]);
+    //         }
+    //     };
+
+    //     fetchProducts();
+    // }, []);
+
+    const fetchProducts = async () => {
+        try {
+            const result = await getAPI(
+                "/api/bidding/successful", 
+                {},
+                true,
+                false
+            );
+
+            console.log("Successfully Completed Bids:", result);
+
+            const completed = result?.data?.data;
+
+            if (Array.isArray(completed)) {
+                setProducts(completed);
+            } else {
+                console.error("Invalid successful bidding response:", result.data);
                 setProducts([]);
             }
-        };
 
-        fetchProducts();
-    }, []);
+        } catch (error) {
+            console.error("Error fetching successful bidded products:", error);
+            setProducts([]);
+        }
+    };
+const fetchSuccessfulBids = async () => {
+  try {
+    const result = await getAPI("/api/bidding/successful", {}, true, false);
+    
+    const completed = result?.data?.data || [];
+    setSuccessfulBids(completed);
+
+  } catch (error) {
+    console.error("Error fetching successful bids:", error);
+  }
+};
+// useEffect(() => {
+//     fetchProducts();
+// }, []);
+
+useEffect(() => {
+  const load = async () => {
+    await fetchProducts();        
+    await fetchSuccessfulBids();  
+  };
+
+  load();
+
+  const interval = setInterval(load, 5000);
+  return () => clearInterval(interval);
+}, []);
 
     const handlePrevious = () => {
         if (currentPage > 1) {
@@ -51,23 +103,47 @@ const BiddedProduct = () => {
         setCurrentPage(1);
     };
 
- const filteredProducts = products.filter(product =>
-        product?.buyer?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product?.buyer?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+//  const filteredProducts = products.filter(product =>
+//         product?.buyer?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//         product?.buyer?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
+//     );
+// const filteredProducts = products.filter((product) => {
+//     const search = searchTerm.toLowerCase();
 
-    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+//     return (
+//         product.artworkName?.toLowerCase().includes(search) ||
+//         product.product?.productName?.toLowerCase().includes(search) ||
+//         product.user?.name?.toLowerCase().includes(search)
+//     );
+// });
+const filteredProducts = products.filter((product) => {
+  const s = searchTerm.toLowerCase();
+
+  return (
+    product.product?.productName?.toLowerCase().includes(s) ||
+    product.highestBidder?.name?.toLowerCase().includes(s) ||
+    product.seller?.name?.toLowerCase().includes(s)
+  );
+});
+
+    // const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
     // const displayedProducts = filteredProducts.slice(
     //     (currentPage - 1) * productsPerPage,
     //     currentPage * productsPerPage
     // );
 
-    const paginatedProducts = filteredProducts.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
+    // const paginatedProducts = filteredProducts.slice(
+    //     (currentPage - 1) * productsPerPage,
+    //     currentPage * productsPerPage
+    // );
 
+const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * productsPerPage,
+    currentPage * productsPerPage
+);
 
 
     return (
@@ -122,14 +198,18 @@ const BiddedProduct = () => {
                                     <thead className="thead-dark">
                                         <tr>
                                             <th>#</th>
-                                            <th>Buyer Name</th>
+                                            <th>Winner</th>
                                             <th>Product Name</th>
                                             <th>Bidded Price</th>
+                                            <th>Highest Bid</th>
+
+
                                             <th>Date</th>
+                                            <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    {/* <tbody>
                                         {paginatedProducts.length === 0 ? (
                                             <tr>
                                                 <td colSpan="6" className="text-center">
@@ -142,7 +222,7 @@ const BiddedProduct = () => {
                                                 const buyer = product.buyer;
                                                 return (
                                                     <tr key={product._id}>
-                                                        <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                                                        <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
                                                         <td>{buyer.name} {buyer.lastName}</td>
                                                         <td>
                                                             {productData ? (
@@ -186,7 +266,212 @@ const BiddedProduct = () => {
                                                 );
                                             })
                                         )}
-                                    </tbody>
+                                    </tbody> */}
+                                    {/* <tbody>
+  {paginatedProducts.length === 0 ? (
+    <tr>
+      <td colSpan="6" className="text-center">No data available</td>
+    </tr>
+  ) : (
+    paginatedProducts.map((item, index) => {
+      const productData = item.product;
+      const creator = item.user;
+
+      return (
+        <tr key={item.bidId}>
+          <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
+
+        
+          <td>{creator?.name || "Unknown User"}</td>
+
+          <td>
+            {productData ? (
+              <>
+                <img
+                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${productData.mainImage}`}
+                  className="rounded-circle avatar"
+                  alt=""
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    objectFit: "cover",
+                    marginRight: "10px",
+                  }}
+                />
+                {productData.productName}
+              </>
+            ) : "No Product"}
+          </td>
+
+          <td>
+            ₹{new Intl.NumberFormat('en-IN').format(item.basePrice || item.reservePrice)}
+          </td>
+
+          <td>{new Date(item.bidStart).toLocaleDateString("en-IN")}</td>
+          <td>
+  {item.status === "Expired" ? (
+    <span className="badge badge-danger">Expired</span>
+  ) : (
+    <span className="badge badge-success">
+      Bidded
+    </span>
+  )}
+</td>
+
+
+          <td>
+            <button
+              className="btn btn-sm btn-outline-info"
+              onClick={() => navigate(`/Dashboard/biddedproduct/productdetails/${productData?._id}`)}
+            >
+              <i className="fa fa-eye"></i>
+            </button>
+          </td>
+        </tr>
+      );
+    })
+  )}
+</tbody> */}
+{/* <tbody>
+  {paginatedProducts.length === 0 ? (
+    <tr>
+      <td colSpan="7" className="text-center">No data available</td>
+    </tr>
+  ) : (
+    paginatedProducts.map((item, index) => {
+      const seller = item.seller;
+      const productData = item.product;
+const winnerInfo = successfulBids.find(
+  (s) => s.bidId === item.bidId
+);
+
+      return (
+        <tr key={item.bidId}>
+          <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
+
+          <td>
+            {item.highestBidder?.name || "No Bids"}
+          </td>
+
+          <td>
+            {productData ? (
+              <>
+                <img
+                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${productData.mainImage}`}
+                  className="rounded-circle avatar"
+                  alt=""
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    objectFit: "cover",
+                    marginRight: "10px",
+                  }}
+                />
+                {productData.productName}
+              </>
+            ) : (
+              "No Product"
+            )}
+          </td>
+
+      
+          {/* <td>
+            ₹{new Intl.NumberFormat("en-IN").format(item.highestBid || 0)}
+          </td> */}
+
+{/*       
+          <td>{new Date(item.bidEnd).toLocaleDateString("en-IN")}</td>
+
+        
+          <td>
+            <span className="badge badge-primary">
+              Completed
+            </span>
+          </td> */}
+
+          {/*
+          <td>
+            <button
+              className="btn btn-sm btn-outline-info"
+              onClick={() =>
+                navigate(`/Dashboard/biddedproduct/productdetails/${productData?.id}`)
+              }
+            >
+              <i className="fa fa-eye"></i>
+            </button>
+          </td>
+        </tr>
+      );
+    })
+  )}
+</tbody> */}
+<tbody>
+  {paginatedProducts.length === 0 ? (
+    <tr>
+      <td colSpan="10" className="text-center">No data available</td>
+    </tr>
+  ) : (
+    paginatedProducts.map((item, index) => {
+      const p = item.product;
+
+      const winnerRecord = successfulBids.find(s => s.bidId === item.bidId);
+      const winner = winnerRecord?.assignedWinners?.[0];
+   
+
+      return (
+        <tr key={item.bidId}>
+          
+          <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
+
+          {/* Winner Name */}
+          <td>{winner?.name || "No Winner"}</td>
+
+          {/* Product Name */}
+          <td>
+            <img
+              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${p?.mainImage}`}
+              className="rounded-circle avatar"
+              alt=""
+              style={{
+                width: "30px",
+                height: "30px",
+                marginRight: "10px",
+                objectFit: "cover"
+              }}
+            />
+            {p?.productName}
+          </td>
+
+       
+          <td>₹{item.basePrice.toLocaleString("en-IN")}</td>
+
+          <td>
+            ₹{item.highestBid?.toLocaleString("en-IN") || "—"}
+          </td>
+
+          <td>{new Date(item.bidEnd).toLocaleDateString("en-IN")}</td>
+
+          <td>
+            <span className="badge badge-primary">Bidded</span>
+          </td>
+
+          <td>
+            <button
+              className="btn btn-sm btn-outline-info"
+              onClick={() =>
+                navigate(`/super-admin/product-fetch-view/${p?.id}`)
+              }
+            >
+              <i className="fa fa-eye"></i>
+            </button>
+          </td>
+        </tr>
+      );
+    })
+  )}
+</tbody>
+
+
                                 </table>
                             </div>
                             <div className="pagination d-flex justify-content-between mt-4">

@@ -1,5 +1,3 @@
-
-
 // import React, { useState, useEffect } from 'react';
 // import getAPI from '../../../../../api/getAPI';
 // import { useNavigate } from 'react-router-dom';
@@ -41,19 +39,8 @@
 //     }, []);
 
 //     const filteredProducts = products.filter((product) => {
-//         const buyer = product?.buyerName || "";
-//         const productName = product?.productName || "";
-//         const price = String(product?.productPrice || "");
-
-//         const search = searchTerm.toLowerCase().trim();
-
-//         return (
-//             buyer.toLowerCase().includes(search) ||
-//             productName.toLowerCase().includes(search) ||
-//             price.includes(search)
-//         );
+//         return product.buyerName.toLowerCase().includes(searchTerm.toLowerCase().trim());
 //     });
-
 
 //     const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 //     const displayedProducts = filteredProducts.slice(
@@ -78,8 +65,8 @@
 //     };
 
 //     const handleImageClick = (product) => {
-//         const images = [product.product];
-//         setCurrentImages(images);
+//     const images = [product.product];        
+//     setCurrentImages(images);
 //         setCurrentImageIndex(0);
 //         setShowPopup(true);
 //     };
@@ -173,22 +160,21 @@
 //                                         {displayedProducts.map((product, index) => (
 //                                             <tr key={product.productId}>
 //                                                 <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
-//                                                 <td>{product?.buyerName ?? "N/A"}</td>
-
+//                                                 <td>{product.buyerName}</td>
 //                                                 <td>
-//                                                     <img
-//                                                         src={product.product}
-//                                                         className="rounded-circle avatar"
-//                                                         alt=""
-//                                                         onClick={() => handleImageClick(product)}
-//                                                         style={{
-//                                                             width: '30px',
-//                                                             height: '30px',
-//                                                             objectFit: 'cover',
-//                                                             marginRight: '10px',
-//                                                             cursor: 'pointer'
-//                                                         }}
-//                                                     /> {product.productName}
+//                                                         <img
+//                                                             src={product.product}
+//                                                             className="rounded-circle avatar"
+//                                                             alt=""
+//                                                             onClick={() => handleImageClick(product)}
+//                                                             style={{
+//                                                                 width: '30px',
+//                                                                 height: '30px',
+//                                                                 objectFit: 'cover',
+//                                                                 marginRight: '10px',
+//                                                                 cursor: 'pointer'
+//                                                             }}
+//                                                         /> {product.productName}
 //                                                 </td>
 //                                                 <td>{product.productPrice}</td>
 //                                                 <td>{product.totalQuantity}</td>
@@ -288,8 +274,6 @@
 // };
 
 // export default SoldProduct;
-
-
 import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
@@ -332,17 +316,8 @@ const SoldProduct = () => {
 
     // SAFE SEARCH FILTER — prevents null crash
     const filteredProducts = products.filter((product) => {
-        const buyer = product?.buyerName?.toLowerCase() || "";
-        const productName = product?.productName?.toLowerCase() || "";
-        const price = String(product?.productPrice || "");
-
-        const search = searchTerm.toLowerCase().trim();
-
-        return (
-            buyer.includes(search) ||
-            productName.includes(search) ||
-            price.includes(search)
-        );
+        const name = product?.buyerName || "";
+        return name.toLowerCase().includes(searchTerm.toLowerCase().trim());
     });
 
     const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
@@ -365,7 +340,8 @@ const SoldProduct = () => {
     };
 
     const handleImageClick = (product) => {
-        const images = [product.product];
+        const imageSrc = product?.product?.startsWith('http') ? product.product : `${BASE_URL}${product.product || ''}`;
+        const images = [imageSrc];
         setCurrentImages(images);
         setCurrentImageIndex(0);
         setShowPopup(true);
@@ -386,7 +362,7 @@ const SoldProduct = () => {
             <div className="block-header">
                 <div className="row">
                     <div className="col-lg-6 col-md-6 col-sm-12">
-                        <h2>Buyer Sold Product</h2>
+                        <h2>Buyer Ordered Product</h2>
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
                                 <span
@@ -396,7 +372,7 @@ const SoldProduct = () => {
                                     <i className="fa fa-dashboard"></i>
                                 </span>
                             </li>
-                            <li className="breadcrumb-item">Buyer Sold Product</li>
+                            <li className="breadcrumb-item">Buyer Ordered Product</li>
                         </ul>
                     </div>
                 </div>
@@ -453,7 +429,7 @@ const SoldProduct = () => {
                                             <th>Buyer Name</th>
                                             <th>Product Name</th>
                                             <th>Product Price</th>
-                                            <th>Sold Product Quantity</th>
+                                            <th>Ordered Product Quantity</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -462,7 +438,32 @@ const SoldProduct = () => {
                                         {displayedProducts.map((product, index) => (
                                             <tr key={product.productId}>
                                                 <td>
-                                                    {(currentPage - 1) * productsPerPage + index + 1}
+                                                    {/* <img
+                                                            src={product.product?.startsWith('http') ? product.product : `${BASE_URL}${product.product || ''}`}
+                                                            className="rounded-circle avatar"
+                                                            alt=""
+                                                            onClick={() => handleImageClick(product)}
+                                                            style={{
+                                                                width: '30px',
+                                                                height: '30px',
+                                                                objectFit: 'cover',
+                                                                marginRight: '10px',
+                                                                cursor: 'pointer'
+                                                            }}
+                                                        /> {product.productName} */}
+                                                    <img
+                                                        src={`${BASE_URL}${product.mainImage}`}
+                                                        className="rounded-circle avatar"
+                                                        alt=""
+                                                        style={{
+                                                            width: '30px',
+                                                            height: '30px',
+                                                            objectFit: 'cover',
+                                                            marginRight: '10px'
+                                                        }}
+                                                    />
+                                                    {product.productName}
+
                                                 </td>
 
                                                 {/* SAFE DISPLAY */}

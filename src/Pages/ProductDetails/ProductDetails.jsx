@@ -1617,6 +1617,7 @@ import { FaChevronCircleRight, FaChevronCircleLeft } from "react-icons/fa";
 import getAPI from "../../api/getAPI";
 import postAPI from "../../api/postAPI";
 import { toast } from "react-toastify";
+import { Helmet } from "react-helmet";
 
 const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 
@@ -1644,7 +1645,8 @@ const offersData = [
 ];
 
 const ProductDetails = () => {
-  const { productId } = useParams();
+ // const { productId } = useParams();
+ const { productSlug, productId } = useParams();
   const id = productId;
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType"); 
@@ -1984,6 +1986,11 @@ useEffect(() => {
         Product not found.
       </div>
     );
+
+    const seoTitle = `${product.productName} | Artsays`;
+const seoDesc = product.description?.slice(0, 150) || "Buy exclusive artwork from verified artists.";
+const seoImg = `${imageBaseURL}${product.mainImage}`;
+const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName}, artwork`;
 
   const discountPercent = calculateDiscount(
     product.sellingPrice,
@@ -3289,7 +3296,49 @@ useEffect(() => {
     );
   };
 
-  return <ProductImages imagesProp={images} initialImage={images[0]} />;
+  //return <ProductImages imagesProp={images} initialImage={images[0]} />;
+  return (
+  <>
+    <Helmet>
+      <title>{product.productName} | Artsays</title>
+
+      <meta name="title" content={product.productName} />
+      <meta name="description" content={product.description?.slice(0, 150)} />
+      <meta
+        name="keywords"
+        content={`${product.productName}, ${mainCategoryName}, ${categoryName}, artwork`}
+      />
+
+      {/* Open Graph */}
+      <meta property="og:type" content="product" />
+      <meta property="og:title" content={product.productName} />
+      <meta
+        property="og:description"
+        content={product.description?.slice(0, 150)}
+      />
+      <meta
+        property="og:image"
+        content={`${imageBaseURL}${product.mainImage}`}
+      />
+      <meta property="og:url" content={window.location.href} />
+
+      {/* Twitter */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={product.productName} />
+      <meta
+        name="twitter:description"
+        content={product.description?.slice(0, 150)}
+      />
+      <meta
+        name="twitter:image"
+        content={`${imageBaseURL}${product.mainImage}`}
+      />
+    </Helmet>
+
+    <ProductImages imagesProp={images} initialImage={images[0]} />
+  </>
+);
+
 };
 
 export default ProductDetails;

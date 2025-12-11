@@ -203,7 +203,7 @@ const ProductRequest = () => {
                                                 <td>{new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
                                                
                                                 <td>
-                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/super-admin/sellerproduct/${product._id}`)}>
+                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/super-admin/product-fetch-view/${product._id}`)}>
                                                         <i className="fa fa-eye"></i>
                                                     </button>
 

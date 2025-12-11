@@ -593,7 +593,7 @@ const ApprovedProduct = () => {
                                                 <td>
                                                     <button
                                                         className="btn btn-sm btn-outline-info mr-2"
-                                                        onClick={() => navigate(`/artist/product/view-product`, {
+                                                        onClick={() => navigate(`/artist/product-fetch-view-artist/${product._id}`, {
                                                             state: { productData: product }
                                                         })}
                                                     >

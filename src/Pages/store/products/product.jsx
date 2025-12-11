@@ -2061,6 +2061,11 @@ const ensureBuyer = () => {
   return true;
 };
 
+const slugify = (text) =>
+  text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
 
   const handleWishlist = async (productId) => {
     // if (!userId) {
@@ -2644,7 +2649,9 @@ if(loading)return <div><ProductsSkeliton /></div>;
               return (
                 <div
                   key={product._id}
-                  onClick={() => navigate(`/product-details/${product._id}`)}
+                  //onClick={() => navigate(`/product-details/${product._id}`)}
+                  onClick={() => { const slug = slugify(product.productName); navigate(`/product-details/${slug}/${product._id}`);}}
+
                   className="rounded-2xl shadow-md overflow-hidden flex flex-col justify-between product-card transition-transform duration-300 hover:-translate-y-1 m-3"
                 >
                   {/* Image */}
