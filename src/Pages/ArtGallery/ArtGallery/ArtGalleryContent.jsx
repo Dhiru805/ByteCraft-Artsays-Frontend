@@ -1121,6 +1121,8 @@ import deleteAPI from "../../../api/deleteAPI";
 import { toast } from "react-toastify";
 import { FiChevronRight } from "react-icons/fi";
 import { FiChevronLeft } from "react-icons/fi";
+import ArtGalleryContentSkeleton from "../../../Component/Skeleton/Home/Account/ArtGalleryContentSkeleton";
+
 const ArtGalleryContent = () => {
   const [page, setPage] = useState(null);
   const [products, setProducts] = useState([]);
@@ -1381,7 +1383,7 @@ const ArtGalleryContent = () => {
 
     fetchGalleryData();
   }, []);
-
+if(loading)return <div><ArtGalleryContentSkeleton /></div>
   return (
     <div className="max-w-[1440px] mx-auto mb-4">
       {/* Breadcrumb */}

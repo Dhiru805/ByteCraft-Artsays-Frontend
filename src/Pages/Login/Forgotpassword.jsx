@@ -17,7 +17,6 @@ const ForgotPassword = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
-
   const handleSendOtp = async (e) => {
     e.preventDefault();
     setLoading(true);

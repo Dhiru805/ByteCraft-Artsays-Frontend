@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import putAPI from '../../../../../../../api/putAPI';
 import getAPI from '../../../../../../../api/getAPI';
 import { DEFAULT_PROFILE_IMAGE } from './constant';
-
+import PersonalInformationSkeleton from '../../../../../../../Component/Skeleton/Home/Account/PersonalInformationSkeleton';
 export const AccountForm = () => {
   const fileInputRef = useRef(null);
 
@@ -324,7 +324,9 @@ export const AccountForm = () => {
       setLoading(false);
     }
   };
-  
+  if(loading && !profileData){
+    return <PersonalInformationSkeleton />;
+  }
   return (
     <form className="w-full max-w-[1100px] mx-auto px-4 mr-0 sm:px-6 lg:px-0 space-y-6" onSubmit={handleSubmit}>
       <h3 className="text-xl font-semibold">Personal Information</h3>

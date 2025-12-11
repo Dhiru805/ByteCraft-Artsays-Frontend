@@ -190,7 +190,7 @@
 import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
 import { LiaCoinsSolid } from "react-icons/lia";
-
+import WhyFromSkeleton from "../../../Component/Skeleton/WhyFromSkeleton";
 const WhyFromArtsays = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -220,7 +220,7 @@ const WhyFromArtsays = () => {
     fetchData();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div><WhyFromSkeleton/></div>;
   if (!data) return <div>No 'Why Buy from Artsays' section available</div>;
 
   return (

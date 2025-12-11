@@ -2,7 +2,7 @@
 import "../../store/products/product.css";
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../../../api/axiosConfig";
-
+import CommissionContentSkeliton from "../../../Component/Skeleton/Home/Account/CommissionContentSkeliton";
 const CommissionContent = () => {
   const [pageData, setPageData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -26,7 +26,7 @@ const CommissionContent = () => {
     fetchPublishedPage();
   }, []);
 
-  if (loading) return <p className="text-center py-6">Loading...</p>;
+  if (loading) return <CommissionContentSkeliton />;
   if (!pageData) return <p className="text-center py-6">No content found</p>;
 
   const filteredArticles = pageData.articles.filter((article) =>

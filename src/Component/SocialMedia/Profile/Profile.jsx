@@ -168,12 +168,17 @@ const Profile = ({ shareprofileid }) => {
       ...(profile?.postProductsEnabled ? productPosts : []),
       ...normalPosts,
     ].reverse() || [];
+
   const reversedSaved = profile?.saved?.slice().reverse() || [];
+  const reversedCollaborated = collaboratedPosts?.reverse() || [];
   let activePost = null;
   if (activeSection === "posts") {
     activePost = activeIndex !== null ? reversedPosts[activeIndex] : null;
   } else if (activeSection === "saved") {
     activePost = activeIndex !== null ? reversedSaved[activeIndex] : null;
+  } else if (activeSection === "Tags") {
+    activePost =
+      activeIndex !== null ? reversedCollaborated[activeIndex] : null;
   }
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [menuOpenId, setMenuOpenId] = useState(null);
@@ -192,6 +197,8 @@ const Profile = ({ shareprofileid }) => {
   const [follow, setFollow] = useState(false);
   const [suggestionOn, setSuggestionOn] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
+
+  const isMobile = window.innerWidth < 1024; // Tailwind lg breakpoint
 
   useEffect(() => {
     if (location.state?.onItem === true) {
@@ -215,35 +222,32 @@ const Profile = ({ shareprofileid }) => {
   const commentRef = useRef(null);
   const shareRef = useRef(null);
 
-  const doComment = () => {
-    if (commentRef.current) {
-      commentRef.current.focus(); // 👈 puts the cursor inside the input
-      commentRef.current.click(); // optional
-    }
-  };
   useEffect(() => {
     const handleOutsideClick = (e) => {
-      if (
-        (popupref1.current && !popupref1.current.contains(e.target)) ||
-        (popupref2.current && !popupref2.current.contains(e.target))
-      ) {
-        setMenuOpenId(null);
-      }
-      if (
-        (profilepopupref1.current &&
-          !profilepopupref1.current.contains(e.target)) ||
-        (profilepopupref2.current &&
-          !profilepopupref2.current.contains(e.target))
-      ) {
-        setShowMenu(false);
-      }
-      if (
-        !shareRef.current &&
-        activePostRef.current &&
-        !activePostRef.current.contains(e.target)
-      ) {
-        setMenuOpenId(null);
-        setActiveIndex(null);
+      if (!isMobile) {
+        if (
+          (popupref1.current && !popupref1.current.contains(e.target)) ||
+          (popupref2.current && !popupref2.current.contains(e.target))
+        ) {
+          setMenuOpenId(null);
+        }
+        if (
+          (profilepopupref1.current &&
+            !profilepopupref1.current.contains(e.target)) ||
+          (profilepopupref2.current &&
+            !profilepopupref2.current.contains(e.target))
+        ) {
+          setShowMenu(false);
+        }
+
+        if (
+          !shareRef.current &&
+          activePostRef.current &&
+          !activePostRef.current.contains(e.target)
+        ) {
+          setMenuOpenId(null);
+          setActiveIndex(null);
+        }
       }
     };
 
@@ -336,7 +340,7 @@ const Profile = ({ shareprofileid }) => {
         const res = await getAPI(
           `/api/social-media/posts/collaboratedPost?userId=${viewedUserId}`
         );
-        setCollaboratedPosts(res.data);
+        setCollaboratedPosts(res.data.data);
 
         console.log("response of fetch collaborated post", res);
       } catch (error) {
@@ -917,7 +921,7 @@ const Profile = ({ shareprofileid }) => {
           {/* Popup Layout */}
           <div
             ref={activePostRef}
-            className="lg:bg-white w-[73%] lg:h-[72vh] h-[56vh] rounded-lg overflow-hidden flex relative flex lg:flex-row flex-col"
+            className="lg:bg-white w-[73%] lg:h-[72vh] h-[56vh] rounded-lg lg:overflow-hidden overflow-visible flex relative flex lg:flex-row flex-col"
           >
             {/* Left Side (Image Viewer) */}
             <div className="lg:w-[60%] lg:h-full h-[80%] w-full bg-black flex items-center justify-center relative ">
@@ -1158,10 +1162,13 @@ const Profile = ({ shareprofileid }) => {
                           onClick={() => handleLike(activePost._id)}
                         />
                       )}
-
                       <FaRegComment
                         className="text-xl text-[#000000] font-medium cursor-pointer"
-                        onClick={() => doComment()}
+                        onClick={() => {
+                          if (commentRef.current) {
+                            commentRef.current.focus();
+                          }
+                        }}
                       />
                       <IoPaperPlaneOutline
                         onClick={() => setSharePost(true)}
@@ -1178,9 +1185,11 @@ const Profile = ({ shareprofileid }) => {
                             postImage: activePost.images[0],
                           }}
                         >
-                          <button className="px-2 py-0.5 bg-[#48372D] text-white text-base rounded-lg">
-                            Promote post
-                          </button>
+                          {activeSection === "posts" && (
+                            <button className="px-2 py-0.5 bg-[#48372D] text-white text-base rounded-lg">
+                              Promote post
+                            </button>
+                          )}
                         </Link>
                       )}
                       {activePost.isPromoted && (
@@ -1435,9 +1444,9 @@ const Profile = ({ shareprofileid }) => {
             {/* Report Form */}
             <form
               onSubmit={handleSubmit}
-              className="space-y-3 max-h-[20vh] overflow-y-auto"
+              className="space-y-3"
             >
-              <div className="space-y-2">
+              <div className="space-y-2  max-h-[20vh] overflow-y-auto">
                 {[
                   "I just don't like it",
                   "Bullying or unwanted contact",
@@ -2500,10 +2509,14 @@ const Profile = ({ shareprofileid }) => {
         {onTag &&
           (collaboratedPosts?.length !== 0 ? (
             <div className="grid grid-cols-3 sm:gap-4 gap-1 w-full">
-              {collaboratedPosts.map((post) => (
+              {collaboratedPosts.map((post, index) => (
                 <div key={post._id} className="relative cursor-pointer">
                   {post.images?.length > 0 && (
                     <img
+                      onClick={() => {
+                        setActiveIndex(index);
+                        setActiveSection("Tags");
+                      }}
                       src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
                       alt={`post-${post._id}`}
                       className="sm:h-[240px] sm:w-full h-[120px] rounded-md"

@@ -3,15 +3,15 @@ import { FiChevronRight } from "react-icons/fi";
 import { FiChevronLeft } from "react-icons/fi";
 import { ImArrowUpRight2 } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
-
+import CelebrityCardskeliton from "../../../Component/Skeleton/products/CelebrityCardskeliton";
 import getAPI from "../../../api/getAPI";
 
 const CelebrityCard = () => {
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [showFilters, setShowFilters] = useState(false);
-  const [celebritiesData, setCelebritiesData] = useState([])
+  const [celebritiesData, setCelebritiesData] = useState([]);
+const [loading,setLoading]=useState(true);
 
 const [currentPage, setCurrentPage] = useState(1); 
 const itemsPerPage = 9; 
@@ -29,47 +29,44 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
 
   const fetchCelebritiesData = async () => {
     try {
-
-      const response = await getAPI("/api/celebrities")
+      const response = await getAPI("/api/celebrities");
       if (response?.hasError === false) {
-        setCelebritiesData(response?.data?.data)
-        fetchartistsData()
+        setCelebritiesData(response?.data?.data);
+        fetchartistsData();
+      } else {
+        console.log(response);
       }
-      else {
-        console.log(response)
-      }
+    } catch (error) {
+      console.log(error);
     }
-    catch (error) {
-      console.log(error)
+    finally{
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCelebritiesData()
+    fetchCelebritiesData();
   }, []);
 
   const slugify = (text) => {
     return text
       .toLowerCase()
       .trim()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '')
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
   };
 
   const fetchartistsData = async () => {
     try {
-      const response = await getAPI("/artist/artists")
-      console.log(response)
-    }
-    catch (error) {
-      console.log(error)
+      const response = await getAPI("/artist/artists");
+      console.log(response);
+    } catch (error) {
+      console.log(error);
     }
   };
 
-
   return (
     <div className="max-w-[1440px] mx-auto mb-4">
-
       {/* Top Section: Breadcrumb + Search */}
       <div className="w-full bg-white py-3 px-3 sm:px-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -501,45 +498,31 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
                 <div key={celebrity._id}
                   className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
 
-                  <div className="px-2 py-4 text-center">
-                    <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
-                      {celebrity?.artistName || ""}
-                    </h2>
-                    <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
-
-                    </p>
-                  </div>
-
-                  <div>
-                    <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
-                      <img
-                        src="/herosectionimg/1.jpg"
-                        alt={celebrity?.artistName || ""}
-                        className="w-full h-40 sm:h-64 object-contain"
-                      />
+                    <div className="relative hidden md:block">
+                      <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
+                        <button
+                          onClick={() =>
+                            navigate(
+                              `/celebrity/${slugify(celebrity.artistName)}`,
+                              { state: { celebrity } }
+                            )
+                          }
+                          className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
+                        >
+                          View Collection
+                          <span className="text-white text-lg">
+                            <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
+                          </span>
+                        </button>
+                      </div>
                     </div>
                   </div>
+                ))
+              ) : (
+                <div>No celebrities data</div>
+              )}
 
-                  <div className="relative hidden md:block">
-                    <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                      <button
-                        onClick={() => navigate(`/celebrity/${slugify(celebrity.artistName)}`, { state: { celebrity } })}
-                        className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
-                      >
-                        View Collection
-                        <span className="text-white text-lg">
-                          <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div>No celebrities data</div>
-            )}
-
-            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+              {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
@@ -575,7 +558,7 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
               </div>
             </div> */}
 
-            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+              {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
@@ -611,7 +594,7 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
               </div>
             </div> */}
 
-            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+              {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
@@ -647,7 +630,7 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
               </div>
             </div> */}
 
-            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+              {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
@@ -683,7 +666,7 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
               </div>
             </div> */}
 
-            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+              {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
@@ -719,7 +702,7 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
               </div>
             </div> */}
 
-            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+              {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
@@ -755,7 +738,7 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
               </div>
             </div> */}
 
-            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+              {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
@@ -791,7 +774,7 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
               </div>
             </div> */}
 
-            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+              {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
               <div className="px-2 py-4 text-center">
                 <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
                   Rohan Malhotra
@@ -826,6 +809,7 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
                 </div>
               </div>
             </div> */}
+            </div>
 
           </div>
 
@@ -896,7 +880,6 @@ const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
                   </div>
         </main>
       </div>
-
     </div>
   );
 };

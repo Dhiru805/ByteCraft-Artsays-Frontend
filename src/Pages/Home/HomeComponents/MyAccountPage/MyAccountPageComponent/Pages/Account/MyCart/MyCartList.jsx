@@ -475,6 +475,7 @@ import postAPI from "../../../../../../../../api/postAPI";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 
+import MyCartListSkeleton from "../../../../../../../../Component/Skeleton/Home/Account/MyCartListSkeleton.jsx";
 const MyCartList = () => {
   const { userId } = useParams();
 const navigate = useNavigate();
@@ -700,7 +701,7 @@ const fetchCart = async () => {
   };
 
   if (loading)
-    return <div className="p-6 text-center text-lg">Loading cart...</div>;
+    return <div className="p-6 text-center text-lg"><MyCartListSkeleton /></div>;
 
   if (error)
     return (

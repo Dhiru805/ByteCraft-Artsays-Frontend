@@ -181,7 +181,7 @@ const LicensingPartnerContent = () => {
     fetchPublishedPage();
   }, []);
 
-  if (loading) return <p className="text-center py-6">Loading...</p>;
+  if (loading) return <p className="text-center py-6">{ArticleSkeleton()}</p>;
   if (!pageData) return <p className="text-center py-6">No content found</p>;
 
   const filteredArticles = pageData.articles.filter((article) =>
@@ -285,3 +285,34 @@ const LicensingPartnerContent = () => {
   );
 };
 export default LicensingPartnerContent;
+
+const ArticleSkeleton = () => {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 my-3 items-center animate-pulse">
+
+      {/* Image Skeleton */}
+      <aside className="rounded-xl w-full h-40 md:h-48 bg-gray-300"></aside>
+
+      {/* Content Skeleton */}
+      <main className="md:col-span-3 flex flex-col justify-center">
+        {/* Heading */}
+        <div className="w-40 md:w-64 h-5 bg-gray-300 rounded"></div>
+
+        {/* Divider */}
+        <div className="w-full h-[1px] bg-gray-300 my-4"></div>
+
+        {/* Paragraph lines */}
+        <div className="space-y-2">
+          <div className="w-full h-4 bg-gray-300 rounded"></div>
+          <div className="w-5/6 h-4 bg-gray-300 rounded"></div>
+          <div className="w-4/6 h-4 bg-gray-300 rounded"></div>
+        </div>
+
+        {/* Button */}
+        <div className="w-32 h-8 bg-gray-300 rounded-full mt-4"></div>
+      </main>
+
+    </div>
+  );
+};
+

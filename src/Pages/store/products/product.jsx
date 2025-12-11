@@ -2012,12 +2012,12 @@ import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
 import deleteAPI from "../../../api/deleteAPI";
 import { toast } from "react-toastify";
-
+import ProductsSkeliton from "../../../Component/Skeleton/products/ProductsSkeliton";
 const Product = () => {
   const [products, setProducts] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-
+  const [loading, setLoading] = useState(false);
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType"); 
 
@@ -2159,6 +2159,7 @@ if (!ensureBuyer()) return;
 
   useEffect(() => {
     const fetchAllProducts = async () => {
+      setLoading(true);
       try {
         const [res1, res2, ratingRes, badgeRes] = await Promise.all([
           getAPI("/api/getstatusapprovedproduct", {}, true, false),
@@ -2211,6 +2212,8 @@ if (!ensureBuyer()) return;
       } catch (error) {
         console.error("Error fetching products or badges:", error);
         setProducts([]);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -2254,7 +2257,7 @@ if (!ensureBuyer()) return;
       />
     ));
   };
-
+if(loading)return <div><ProductsSkeliton /></div>;
   return (
     <div className="max-w-[1440px] mx-auto mb-4">
       {/* --- Search and Breadcrumb --- */}

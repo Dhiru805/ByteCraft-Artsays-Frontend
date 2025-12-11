@@ -1,20 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import '../Login/LoginStyles.css';
-import { FaEye, FaEyeSlash, FaCheck } from 'react-icons/fa';
-import postAPI from '../../api/postAPI';
-
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "../Login/LoginStyles.css";
+import { FaEye, FaEyeSlash, FaCheck } from "react-icons/fa";
+import postAPI from "../../api/postAPI";
+import { FcGoogle } from "react-icons/fc";
+import { useGoogleLogin } from "@react-oauth/google";
+import putAPI from "../../api/putAPI";
 const Register = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    emailOrPhone: '',
-    password: '',
-    confirmPassword: '',
-    userType: 'Buyer',
-    role: 'buyer'
+    firstName: "",
+    lastName: "",
+    emailOrPhone: "",
+    password: "",
+    confirmPassword: "",
+    userType: "Buyer",
+    role: "buyer",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -22,7 +24,7 @@ const Register = () => {
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [loadingOTP, setLoadingOTP] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState("");
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [showOTPField, setShowOTPField] = useState(false);
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
@@ -32,10 +34,10 @@ const Register = () => {
     const { id, value } = e.target;
     let updatedValue = value;
 
-    if (id === 'firstName' || id === 'lastName') {
+    if (id === "firstName" || id === "lastName") {
       updatedValue = value.charAt(0).toUpperCase() + value.slice(1).trim();
     }
-    if (id === 'emailOrPhone' || id === 'password') {
+    if (id === "emailOrPhone" || id === "password") {
       updatedValue = value.trim();
     }
 
@@ -63,7 +65,7 @@ const Register = () => {
   };
 
   const normalizePhone = (phone) => {
-    return `+91${phone.replace(/^\+91/, '')}`;
+    return `+91${phone.replace(/^\+91/, "")}`;
   };
   const handleSendOTP = async () => {
     const input = formData.emailOrPhone.trim();
@@ -91,7 +93,7 @@ const Register = () => {
       setIsEmailVerified(false);
       setIsPhoneVerified(false);
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to send OTP');
+      toast.error(error.response?.data?.message || "Failed to send OTP");
     } finally {
       setLoadingOTP(false);
     }
@@ -138,10 +140,18 @@ const Register = () => {
     e.preventDefault();
     setLoadingSubmit(true);
 
-    const requiredFields = ['firstName', 'lastName', 'emailOrPhone', 'password', 'confirmPassword'];
+    const requiredFields = [
+      "firstName",
+      "lastName",
+      "emailOrPhone",
+      "password",
+      "confirmPassword",
+    ];
     for (const field of requiredFields) {
       if (!formData[field]) {
-        toast.error(`Please fill in ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+        toast.error(
+          `Please fill in ${field.replace(/([A-Z])/g, " $1").toLowerCase()}`
+        );
         setLoadingSubmit(false);
         return;
       }
@@ -151,7 +161,9 @@ const Register = () => {
     const isPhone = isValidPhone(formData.emailOrPhone);
 
     if (!isEmail && !isPhone) {
-      toast.error("Please enter a valid email or phone number (10 digits with optional +91)");
+      toast.error(
+        "Please enter a valid email or phone number (10 digits with optional +91)"
+      );
       setLoadingSubmit(false);
       return;
     }
@@ -183,47 +195,81 @@ const Register = () => {
         password: formData.password,
         confirmPassword: formData.confirmPassword,
         userType: formData.userType,
-        role: formData.role
+        role: formData.role,
       };
       delete payload.emailOrPhone;
 
-      const response = await postAPI('/auth/createuser', payload);
+      const response = await postAPI("/auth/createuser", payload);
 
       toast.success(response.data.message);
       setTimeout(() => {
-        navigate('/login');
+        navigate("/login");
       }, 1000);
     } catch (error) {
-      console.error('Registration error:', error);
-      toast.error(error.response?.data?.message || 'Something went wrong. Please try again.');
+      console.error("Registration error:", error);
+      toast.error(
+        error.response?.data?.message ||
+        "Something went wrong. Please try again."
+      );
     } finally {
       setLoadingSubmit(false);
     }
   };
+
+  const signUpWithGoogle = useGoogleLogin({
+    flow: "auth-code",
+    onSuccess: async (codeResponse) => {
+      console.log("Google signup response", codeResponse);
+
+      try {
+        const { code } = codeResponse;
+        const res = await postAPI(
+          "/auth/googlesignup",
+          {
+            code,
+          },
+          true
+        );
+        console.log("Google signup API response", res);
+        toast.success("Google Signup successfull");
+      } catch (error) {
+        console.error("Google Signup Failed", error);
+        toast.error(error?.response?.data?.message || "Google Signup Failed");
+      }
+    },
+    onError: () => toast.error("Google Signup Failed"),
+  });
+
+
   return (
     <>
       <ToastContainer />
       <div className="container-fluid p-0 min-vh-100 d-flex flex-column flex-lg-row">
         <div className="col-12 col-lg-6 d-none d-lg-flex flex-column justify-content-center align-items-center p-4 p-md-5 text-white right-panel-register">
-          <h2 className="fw-bold mb-3 mb-md-4 fs-2 fs-md-1">Already Sign up?</h2>
-          <p className="mb-3 mb-md-4 text-center"
+          <h2 className="fw-bold mb-3 mb-md-4 fs-2 fs-md-1">
+            Already Sign up?
+          </h2>
+          <p
+            className="mb-3 mb-md-4 text-center"
             style={{
-              fontSize: '20px',
-              fontWeight: 'normal',
-              lineHeight: '1.4',
+              fontSize: "20px",
+              fontWeight: "normal",
+              lineHeight: "1.4",
             }}
           >
-            Let's get you all set up so you can <br className="d-none d-md-block" />start creating your first onboarding experience.
+            Let's get you all set up so you can{" "}
+            <br className="d-none d-md-block" />
+            start creating your first onboarding experience.
           </p>
           <Link
             to="/login"
             className="btn btn-outline-light py-2 mt-2 mt-md-3 signup-btn"
             style={{
-              width: '25%',
-              fontSize: '20px',
-              fontStyle: 'italic',
-              border: '2px solid',
-              transition: 'all 0.3s ease',
+              width: "25%",
+              fontSize: "20px",
+              fontStyle: "italic",
+              border: "2px solid",
+              transition: "all 0.3s ease",
             }}
           >
             Sign In
@@ -231,29 +277,38 @@ const Register = () => {
         </div>
 
         <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5">
-          <h2 className="fw-bold mb-4 mb-md-3 text-dark fs-3 fs-md-1 text-center">Sign up for an Account</h2>
-          <p className="mb-3 mb-md-4 text-dark text-center"
+          <h2 className="fw-bold mb-4 mb-md-3 text-dark fs-3 fs-md-1 text-center">
+            Sign up for an Account
+          </h2>
+          <p
+            className="mb-3 mb-md-4 text-dark text-center"
             style={{
-              fontSize: '20px',
-              fontWeight: 'normal',
-              lineHeight: '1.4',
+              fontSize: "20px",
+              fontWeight: "normal",
+              lineHeight: "1.4",
             }}
           >
-            Let's get you all set up so you can <br className="d-none d-md-block" />start creating your first onboarding experience.
+            Let's get you all set up so you can{" "}
+            <br className="d-none d-md-block" />
+            start creating your first onboarding experience.
           </p>
 
           <form onSubmit={handleSubmit} className="w-100">
             <div className="row mb-3">
               <div className="col-md-6 mb-3 mb-md-0">
                 <div className="position-relative">
-                  <label htmlFor="firstName" className="form-label position-absolute text-dark px-2" style={{
-                    top: '-12px',
-                    left: '15px',
-                    fontStyle: 'italic',
-                    fontSize: '1rem',
-                    zIndex: '1',
-                    background: "white",
-                  }}>
+                  <label
+                    htmlFor="firstName"
+                    className="form-label position-absolute text-dark px-2"
+                    style={{
+                      top: "-12px",
+                      left: "15px",
+                      fontStyle: "italic",
+                      fontSize: "1rem",
+                      zIndex: "1",
+                      background: "white",
+                    }}
+                  >
                     First Name
                   </label>
                   <input
@@ -269,14 +324,18 @@ const Register = () => {
               </div>
               <div className="col-md-6">
                 <div className="position-relative">
-                  <label htmlFor="lastName" className="form-label position-absolute text-dark px-2" style={{
-                    top: '-12px',
-                    left: '15px',
-                    fontStyle: 'italic',
-                    fontSize: '1rem',
-                    zIndex: '1',
-                    background: "white",
-                  }}>
+                  <label
+                    htmlFor="lastName"
+                    className="form-label position-absolute text-dark px-2"
+                    style={{
+                      top: "-12px",
+                      left: "15px",
+                      fontStyle: "italic",
+                      fontSize: "1rem",
+                      zIndex: "1",
+                      background: "white",
+                    }}
+                  >
                     Last Name
                   </label>
                   <input
@@ -286,7 +345,12 @@ const Register = () => {
                     required
                     value={formData.lastName}
                     onChange={handleChange}
-                    style={{ height: '48px', border: "1px solid #6b4f36", fontSize: "16px", color: "black" }}
+                    style={{
+                      height: "48px",
+                      border: "1px solid #6b4f36",
+                      fontSize: "16px",
+                      color: "black",
+                    }}
                   />
                 </div>
               </div>
@@ -297,7 +361,7 @@ const Register = () => {
                 style={{ top: '-12px', left: '15px', fontStyle: 'italic', fontSize: '1rem', zIndex: '1', background: "white" }}>
                 Email or Phone
               </label>
-              <div style={{ position: 'relative' }}>
+              <div style={{ position: "relative" }}>
                 <input
                   type="text"
                   className="form-control"
@@ -307,11 +371,13 @@ const Register = () => {
                   onChange={handleChange}
                   placeholder="example@gmail.com or +919876543210"
                   style={{
-                    height: '48px',
+                    height: "48px",
                     border: "1px solid #6b4f36",
                     fontSize: "16px",
                     color: "black",
-                    paddingRight: '130px'
+                    paddingRight: isValidEmail(formData.emailOrPhone)
+                      ? "50px"
+                      : "10px",
                   }}
                   disabled={isEmailVerified || isPhoneVerified}
                 />
@@ -394,28 +460,68 @@ const Register = () => {
                       fontSize: '14px'
                     }}
                   >
-                    {loadingOTP ? 'Verifying...' : 'Verify'}
-                  </button>
+                    Enter OTP
+                  </label>
+                  <div style={{ position: "relative" }}>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="otp"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value)}
+                      placeholder="Enter 6-digit OTP"
+                      maxLength={6}
+                      style={{
+                        height: "48px",
+                        border: "1px solid #6b4f36",
+                        fontSize: "16px",
+                        color: "black",
+                        paddingRight: "80px",
+                      }}
+                    />
+                    <button
+                      type="button"
+                      style={{
+                        position: "absolute",
+                        right: "10px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        border: "none",
+                        background: "#6b4f36",
+                        color: "white",
+                        padding: "8px 12px",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        fontSize: "14px",
+                      }}
+                      onClick={handleVerifyOTP}
+                      disabled={loadingOTP || otp.length !== 6}
+                    >
+                      {loadingOTP ? "Verifying..." : "Verify"}
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
 
-
-
             <div className="row mb-3">
               <div className="col-md-6 mb-3 mb-md-0">
                 <div className="position-relative">
-                  <label htmlFor="password" className="form-label position-absolute text-dark px-2" style={{
-                    top: '-12px',
-                    left: '15px',
-                    fontStyle: 'italic',
-                    fontSize: '1rem',
-                    zIndex: '1',
-                    background: "white",
-                  }}>
+                  <label
+                    htmlFor="password"
+                    className="form-label position-absolute text-dark px-2"
+                    style={{
+                      top: "-12px",
+                      left: "15px",
+                      fontStyle: "italic",
+                      fontSize: "1rem",
+                      zIndex: "1",
+                      background: "white",
+                    }}
+                  >
                     Password
                   </label>
-                  <div style={{ position: 'relative' }}>
+                  <div style={{ position: "relative" }}>
                     <input
                       type={showPassword ? "text" : "password"}
                       className="form-control"
@@ -424,28 +530,30 @@ const Register = () => {
                       value={formData.password}
                       onChange={handleChange}
                       style={{
-                        height: '48px',
+                        height: "48px",
                         border: "1px solid #6b4f36",
                         fontSize: "16px",
                         color: "black",
-                        paddingRight: '40px'
+                        paddingRight: "40px",
                       }}
                     />
                     <button
                       type="button"
                       style={{
-                        position: 'absolute',
-                        right: '10px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
+                        position: "absolute",
+                        right: "10px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
                         border: "none",
                         background: "transparent",
                         outline: "none",
-                        cursor: 'pointer',
-                        color: '#6b4f36'
+                        cursor: "pointer",
+                        color: "#6b4f36",
                       }}
                       onClick={() => setShowPassword(!showPassword)}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
                     >
                       {showPassword ? <FaEyeSlash /> : <FaEye />}
                     </button>
@@ -454,17 +562,21 @@ const Register = () => {
               </div>
               <div className="col-md-6">
                 <div className="position-relative">
-                  <label htmlFor="confirmPassword" className="form-label position-absolute text-dark px-2" style={{
-                    top: '-12px',
-                    left: '15px',
-                    fontStyle: 'italic',
-                    fontSize: '1rem',
-                    zIndex: '1',
-                    background: "white",
-                  }}>
+                  <label
+                    htmlFor="confirmPassword"
+                    className="form-label position-absolute text-dark px-2"
+                    style={{
+                      top: "-12px",
+                      left: "15px",
+                      fontStyle: "italic",
+                      fontSize: "1rem",
+                      zIndex: "1",
+                      background: "white",
+                    }}
+                  >
                     Confirm Password
                   </label>
-                  <div style={{ position: 'relative' }}>
+                  <div style={{ position: "relative" }}>
                     <input
                       type={showConfirmPassword ? "text" : "password"}
                       className="form-control"
@@ -473,28 +585,32 @@ const Register = () => {
                       value={formData.confirmPassword}
                       onChange={handleChange}
                       style={{
-                        height: '48px',
+                        height: "48px",
                         border: "1px solid #6b4f36",
                         fontSize: "16px",
                         color: "black",
-                        paddingRight: '40px'
+                        paddingRight: "40px",
                       }}
                     />
                     <button
                       type="button"
                       style={{
-                        position: 'absolute',
-                        right: '10px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
+                        position: "absolute",
+                        right: "10px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
                         border: "none",
                         background: "transparent",
                         outline: "none",
-                        cursor: 'pointer',
-                        color: '#6b4f36'
+                        cursor: "pointer",
+                        color: "#6b4f36",
                       }}
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      aria-label={
+                        showConfirmPassword ? "Hide password" : "Show password"
+                      }
                     >
                       {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                     </button>
@@ -513,13 +629,13 @@ const Register = () => {
                   required
                   onChange={(e) => setAcceptTerms(e.target.checked)}
                   style={{
-                    width: '16px',
-                    height: '16px',
-                    border: '2px solid #6b4f36',
-                    borderRadius: '25%',
-                    appearance: 'none',
-                    cursor: 'pointer',
-                    backgroundColor: acceptTerms ? '#6b4f36' : 'transparent'
+                    width: "16px",
+                    height: "16px",
+                    border: "2px solid #6b4f36",
+                    borderRadius: "25%",
+                    appearance: "none",
+                    cursor: "pointer",
+                    backgroundColor: acceptTerms ? "#6b4f36" : "transparent",
                   }}
                 />
                 <label className="form-check-label text-dark fst-italic" htmlFor="acceptTerms" style={{ fontSize: '1rem', fontStyle: 'italic' }}>
@@ -552,14 +668,33 @@ const Register = () => {
                 (isValidPhone(formData.emailOrPhone) && !isPhoneVerified)
               }
             >
-              {loadingSubmit ? 'Creating account...' : 'Sign up'}
+              {loadingSubmit ? "Creating account..." : "Sign up"}
+            </button>
+            <button
+              className="btn w-100 text-white fst-italic mb-3 mb-md-0 register-btn"
+              style={{
+                backgroundColor: "#6b4f36",
+                fontSize: "1.1rem",
+                height: "48px",
+                transition: "all 0.3s ease",
+                fontStyle: "italic",
+                marginTop: "10px",
+              }}
+              onClick={() => signUpWithGoogle()}
+            >
+              <FcGoogle size={22} />
+              &nbsp; Continue with Google
             </button>
           </form>
 
+
+
           <div className="d-flex justify-content-center align-items-center my-3 w-100">
-            <span className="text-dark" style={{
-              fontSize: '1.0rem',
-            }}
+            <span
+              className="text-dark"
+              style={{
+                fontSize: "1.0rem",
+              }}
             >
               OR
             </span>
@@ -569,13 +704,13 @@ const Register = () => {
             type="button"
             className="btn w-100 d-flex align-items-center justify-content-center artist-seller-register-btn"
             style={{
-              border: '1px solid #6b4f36',
-              fontSize: '1.1rem',
-              height: '48px',
-              transition: 'all 0.3s ease',
-              fontStyle: 'italic',
-              color: '#6b4f36',
-              backgroundColor: 'white'
+              border: "1px solid #6b4f36",
+              fontSize: "1.1rem",
+              height: "48px",
+              transition: "all 0.3s ease",
+              fontStyle: "italic",
+              color: "#6b4f36",
+              backgroundColor: "white",
             }}
           >
             Register to Become an Artist or Seller
@@ -585,18 +720,18 @@ const Register = () => {
           <div className="mobile-signup-section text-center">
             <h3 className="mb-4 fs-4">Already Signed up?</h3>
             <p className="mb-4 fs-5">
-              Let's get you all set up so you can <br /> start creating your first
-              onboarding experience.
+              Let's get you all set up so you can <br /> start creating your
+              first onboarding experience.
             </p>
             <Link
               to="/login"
               className="btn btn-outline-light py-2 mt-2 mt-md-3 signup-btn"
               style={{
-                width: '25%',
-                fontSize: '20px',
-                fontStyle: 'italic',
-                border: '2px solid',
-                transition: 'all 0.3s ease',
+                width: "25%",
+                fontSize: "20px",
+                fontStyle: "italic",
+                border: "2px solid",
+                transition: "all 0.3s ease",
               }}
             >
               Sign In

@@ -1294,6 +1294,7 @@ import { useNavigate } from "react-router-dom";
 import postAPI from "../../../api/postAPI";
 import deleteAPI from "../../../api/deleteAPI";
 import { toast } from "react-toastify";
+import BrowserCategorySkeleton from "../../../Component/Skeleton/BrowserCategorySkeleton";
 
 const BrowseCategories = () => {
   const [data, setData] = useState(null);
@@ -1519,7 +1520,8 @@ const ensureBuyer = () => {
     fetchWishlist();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  // if (loading) return <div>Loading...</div>;
+  if (loading) return <div><BrowserCategorySkeleton/></div>;
   if (!data) return <div>No Browse Categories section available</div>;
 
   return (

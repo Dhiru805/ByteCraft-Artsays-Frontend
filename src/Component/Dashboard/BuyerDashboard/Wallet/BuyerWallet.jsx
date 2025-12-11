@@ -292,7 +292,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-
+import BuyerWalletSkeleton from "../../../Skeleton/wallet/BuyerWalletSkeleton";
 const BuyerWallet = () => {
   const [wallet, setWallet] = useState(null);
   const [transactions, setTransactions] = useState([]);
@@ -458,7 +458,7 @@ const BuyerWallet = () => {
     if (page > totalPages) setPage(totalPages);
   }, [transactions.length, pageSize, totalPages]);
 
-  if (!wallet) return <div>Loading...</div>;
+  if (!wallet) return <div><BuyerWalletSkeleton/></div>;
 
   return (
     <div className="container-fluid">
