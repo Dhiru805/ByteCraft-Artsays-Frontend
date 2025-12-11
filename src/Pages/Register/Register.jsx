@@ -8,6 +8,8 @@ import postAPI from "../../api/postAPI";
 import { FcGoogle } from "react-icons/fc";
 import { useGoogleLogin } from "@react-oauth/google";
 import putAPI from "../../api/putAPI";
+import { FaGoogle } from "react-icons/fa";
+
 const Register = () => {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -276,10 +278,14 @@ const Register = () => {
           </Link>
         </div>
 
-        <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5">
-          <h2 className="fw-bold mb-4 mb-md-3 text-dark fs-3 fs-md-1 text-center">
+        <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5" style={{ backgroundColor: "white" }}>
+          <Link to="/" className="text-decoration-none">
+            <h1 className="windhavi">Artsays</h1>
+          </Link>
+
+          <h4 className="fw-bold mb-4 mb-md-3 text-dark fs-3 fs-md-1 text-center">
             Sign up for an Account
-          </h2>
+          </h4>
           <p
             className="mb-3 mb-md-4 text-dark text-center"
             style={{
@@ -682,7 +688,7 @@ const Register = () => {
               }}
               onClick={() => signUpWithGoogle()}
             >
-              <FcGoogle size={22} />
+              <FaGoogle size={22} />
               &nbsp; Continue with Google
             </button>
           </form>

@@ -434,7 +434,7 @@ const ArtIcon = () => {
           {data.description}
         </p>
 
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-6">
           {celebrities.length > 0 ? (
             celebrities.map((celebrity) => (
               <div

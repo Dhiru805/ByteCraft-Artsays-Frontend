@@ -6653,8 +6653,9 @@ a.close.disabled {
     width: 100vw;
     height: 100vh;
     background: rgba(255, 255, 255, 0.15) !important;
-  backdrop-filter: blur(2px) !important;           
+  backdrop-filter: blur(2px) !important;          
   -webkit-backdrop-filter: blur(2px) !important;
+    
 }
 
 .modal-backdrop.fade {

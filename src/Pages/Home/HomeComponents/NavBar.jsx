@@ -205,7 +205,7 @@ const NavBar = () => {
                 </a>
                 <a
                   className="nav-link-h icon-link-h d-none d-md-inline-block me-3"
-                  href="/"
+                  href="/art-gallery"
                 >
                   <i className="fas fa-store" />
                 </a>

@@ -294,7 +294,7 @@ import UpdateChallengeApplication from "../Component/Dashboard/Super-AdminDashbo
 // import ViewChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/challengeview";
 // import ChallengesEntries from '../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/challengesEntries';
 import GSTSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/GST/GST';
-import InsuranceSetting  from '../Component/Dashboard/Super-AdminDashboard/Settings/Insurance/InsuranceSetting'
+import InsuranceSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/Insurance/InsuranceSetting'
 
 //------------------------------PackagingMaterial--------------------------------//
 import Material from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/Material";
@@ -704,7 +704,7 @@ const AppRoutes = () => {
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-services" element={<TermsofServices />} />
 
-       
+
       </Route>
 
       {/*-------------------------------------------Super Admin Routes--------------------------------------------- */}
@@ -791,7 +791,7 @@ const AppRoutes = () => {
           path="artist/management/productrequest/:productId"
           element={<ArtistProductRequestView />}
         />
-        
+
         <Route
           path="artist/management/artisteditreuqest/update-blog"
           element={<EditBlogRequest />}
@@ -801,12 +801,12 @@ const AppRoutes = () => {
           element={<ProductEditRequest />}
 
         />
-         <Route
+        <Route
           path="artist/allartistproduct/artist-prod-details/:userId/:productId"
           element={<ArtistPDet />}
         />
-        
-        
+
+
         <Route
           path="artist/allartistproduct/productdetails/:userId"
           element={<ArtistProductsDetails />}
@@ -852,11 +852,11 @@ const AppRoutes = () => {
           path="seller/productrequest"
           element={<SellerProductRequest />}
         />
-        <Route path="/super-admin/sellerproduct-request/:productId" element={<ProductRequestView />} />
-        <Route 
-    path="/super-admin/sellerproduct/:productId" 
-    element={<SellerProductDetails />} 
-/>
+        {/* <Route path="/super-admin/sellerproduct-request/:productId" element={<ProductRequestView />} /> */}
+        <Route
+          path="/super-admin/sellerproduct/:productId"
+          element={<SellerProductDetails />}
+        />
         <Route path="seller/soldproduct" element={<SellerSoldProducts />} />
         <Route path="seller/transaction" element={<SellerTransaction />} />
         <Route path="seller/packagingmaterial" element={<SellerPackaging />} />
@@ -880,7 +880,7 @@ const AppRoutes = () => {
           path="customordertable/view-request"
           element={<ViewCustomRequestsuperadmin />}
         />
-         <Route
+        <Route
           path="product-fetch-view/:productId"
           element={<ProductFetchView />}
         />
@@ -1021,8 +1021,8 @@ const AppRoutes = () => {
         <Route path="settings/create-user-role" element={<CreateRole />} />
         <Route path="product-settings/token-standard" element={<TokenStandards />} />
         <Route path="product-settings/period-era" element={<PeriodEras />} />
-        <Route path="settings/gst" element={<GSTSetting  />} />
-         <Route path="settings/insurance" element={<InsuranceSetting  />} />
+        <Route path="settings/gst" element={<GSTSetting />} />
+        <Route path="settings/insurance" element={<InsuranceSetting />} />
         {/* Advertise Routes */}
         <Route path="advertise" element={<SuperAdminArtistAdvertise />} />
         <Route path="advertise/sponser" element={<SuperAdminArtistSponsor />} />
@@ -1035,7 +1035,7 @@ const AppRoutes = () => {
         {/* FAQ Routes */}
         <Route path="faq" element={<FAQ />} />
         {/* Arti CMS */}
-       <Route path="artCMS" element={<ArtiCMS />} />
+        <Route path="artCMS" element={<ArtiCMS />} />
         {/* Career */}
         <Route path="career" element={<Carrer />} />
         <Route path="career/creer-job-post" element={<CreateCarrer />} />
@@ -1211,12 +1211,12 @@ const AppRoutes = () => {
           path="/super-admin/homepage/hero/create"
           element={<CreateHero />}
         />
-   {/* SMS Setting */}
- <Route
+        {/* SMS Setting */}
+        <Route
           path="/super-admin/sms-settings/signup-sms"
           element={<SMSSettingSignup />}
         />
-      
+
         {/* Browse Categories */}
         <Route
           path="/super-admin/homepage/browse-categories/create"
@@ -1336,7 +1336,7 @@ const AppRoutes = () => {
         <Route path="product" element={<AllProduct />} />
         <Route path="product/bidding-pass" element={<ArtistBiddingPass />} />
         <Route path="product/product-upload" element={<ProductUploade />} />
-        <Route path="product/update-product" element={<UpdateProductArtist/>} />
+        <Route path="product/update-product" element={<UpdateProductArtist />} />
         <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
         <Route path="custom-order" element={<CustomOrder />} />
         <Route path="product/view-product" element={<ProductView />} />
@@ -1417,7 +1417,7 @@ const AppRoutes = () => {
         {/* Wallet */}
         <Route path="wallet" element={<ArtistSellerWallet />} />
 
-        
+
       </Route>
 
       {/* --------------------------------------------Buyer Routes---------------------------------------------------- */}
@@ -1456,8 +1456,8 @@ const AppRoutes = () => {
           element={<SellerBiddingPass />}
         />
         <Route path="product/product-upload" element={<SellerProductUpload />} />
-        <Route path="product/update-product" element={<UpdateProductSeller/>} />
-        <Route path="product/view-product" element={<ProductViewSeller/>} />
+        <Route path="product/update-product" element={<UpdateProductSeller />} />
+        <Route path="product/view-product" element={<ProductViewSeller />} />
         <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
         <Route path="SellerProductUpload" element={<SellerProductUpload />} />
         <Route path="purchased-product" element={<SellerPurchasedProducts />} />
@@ -1630,7 +1630,7 @@ const AppRoutes = () => {
         <Route path="/product-details" element={<ProductDetailsTemplate />} />
         <Route path="product-details/:productSlug/:productId" element={<ProductDetails />} />
         <Route path="/bid-details" element={<BidDetailsTemplate />} />
-         <Route path="/bid-details/:bidSlug/:bidId" element={<BidDetails />} />
+        <Route path="/bid-details/:bidSlug/:bidId" element={<BidDetails />} />
         <Route path="/certification" element={<Certification />} />
         <Route path="/insurance" element={<Insurance />} />
         <Route path="/partner" element={<Partner />} />
@@ -1650,7 +1650,7 @@ const AppRoutes = () => {
         <Route path="/social-media/create-post" element={<CreatePost />} />
         <Route path="/social-media/upload-post" element={<UploadPost />} />
         <Route path="/social-media/profile/:shareProfileId?" element={<SocialProfile />} />
-          {/* this router for woner profile,share profile,and uselocation.state profile */}
+        {/* this router for woner profile,share profile,and uselocation.state profile */}
         <Route
           path="/social-media/profile/product-view"
           element={<ProductViewing />}
@@ -1672,8 +1672,8 @@ const AppRoutes = () => {
         <Route path="/social-media/live/:streamKey" element={<Live />} />
         <Route path="/social-media/test" element={<Test />} />
         <Route path="/social-media/setting" element={<Settings />} />
-        <Route path="/social-media/saved" element={<Saved/>} />
-        <Route path="/social-media/logout" element={<ProfileLogout/>}/>
+        <Route path="/social-media/saved" element={<Saved />} />
+        <Route path="/social-media/logout" element={<ProfileLogout />} />
 
         <Route path="/invoice" element={<EdprowiseInvoice />} />
         <Route path="/invoice1" element={<Invoice />} />

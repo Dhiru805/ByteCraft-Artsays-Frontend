@@ -43,27 +43,27 @@ const Register = () => {
   // };
 
   const handleChange = (e) => {
-  const { id, value } = e.target;
-  let updatedValue = value;
-  
-  if (id === 'firstName' || id === 'lastName') {
-    updatedValue = value.charAt(0).toUpperCase() + value.slice(1).trim();
-  }
- if (id === 'emailOrPhone' || id === 'password') {
-    updatedValue = value.trim();
-  }
+    const { id, value } = e.target;
+    let updatedValue = value;
 
-  setFormData({
-    ...formData,
-    [id]: updatedValue,
-  });
+    if (id === 'firstName' || id === 'lastName') {
+      updatedValue = value.charAt(0).toUpperCase() + value.slice(1).trim();
+    }
+    if (id === 'emailOrPhone' || id === 'password') {
+      updatedValue = value.trim();
+    }
 
- if (id === 'emailOrPhone') {
-  if (isEmailVerified) setIsEmailVerified(false);
-  if (isPhoneVerified) setIsPhoneVerified(false);
-  setShowOTPField(false);
-}
-};
+    setFormData({
+      ...formData,
+      [id]: updatedValue,
+    });
+
+    if (id === 'emailOrPhone') {
+      if (isEmailVerified) setIsEmailVerified(false);
+      if (isPhoneVerified) setIsPhoneVerified(false);
+      setShowOTPField(false);
+    }
+  };
 
   const handleToggle = () => {
     const newIsBusiness = !isBusiness;
@@ -91,39 +91,39 @@ const Register = () => {
     return `+91${phone.replace(/^\+91/, '')}`;
   };
 
-const handleSendOTP = async () => {
-  const input = formData.emailOrPhone.trim();
-  const isEmail = isValidEmail(input);
-  const isPhone = isValidPhone(input);
+  const handleSendOTP = async () => {
+    const input = formData.emailOrPhone.trim();
+    const isEmail = isValidEmail(input);
+    const isPhone = isValidPhone(input);
 
-  if (!isEmail && !isPhone) {
-    toast.error("Please enter a valid email or phone number");
-    return;
-  }
+    if (!isEmail && !isPhone) {
+      toast.error("Please enter a valid email or phone number");
+      return;
+    }
 
-  try {
-    setLoadingOTP(true);
+    try {
+      setLoadingOTP(true);
 
-    const payload = isEmail 
-      ? { email: input }
-      : { phone: normalizePhone(input) };
+      const payload = isEmail
+        ? { email: input }
+        : { phone: normalizePhone(input) };
 
-    await postAPI('/auth/send-otp', payload);
+      await postAPI('/auth/send-otp', payload);
 
-    setShowOTPField(true);
-    toast.success(`OTP sent to your ${isEmail ? 'email' : 'phone'}!`);
-    
-    // Reset verification if user switches between email/phone
-    setIsEmailVerified(false);
-    setIsPhoneVerified(false);
-  } catch (error) {
-    toast.error(error.response?.data?.message || 'Failed to send OTP');
-  } finally {
-    setLoadingOTP(false);
-  }
-};
+      setShowOTPField(true);
+      toast.success(`OTP sent to your ${isEmail ? 'email' : 'phone'}!`);
 
- const handleVerifyOTP = async () => {
+      // Reset verification if user switches between email/phone
+      setIsEmailVerified(false);
+      setIsPhoneVerified(false);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to send OTP');
+    } finally {
+      setLoadingOTP(false);
+    }
+  };
+
+  const handleVerifyOTP = async () => {
     if (otp.length !== 6) {
       toast.error("Enter a valid 6-digit OTP");
       return;
@@ -182,11 +182,11 @@ const handleSendOTP = async () => {
       return;
     }
 
-      if ((isEmail && !isEmailVerified) || (isPhone && !isPhoneVerified)) {
-         toast.error("Please verify your email or phone with OTP first");
-         setLoadingSubmit(false);
-         return;
-       }
+    if ((isEmail && !isEmailVerified) || (isPhone && !isPhoneVerified)) {
+      toast.error("Please verify your email or phone with OTP first");
+      setLoadingSubmit(false);
+      return;
+    }
 
     if (formData.userType === 'Artist' && !formData.artistName) {
       toast.error("Artist name is required");
@@ -274,8 +274,12 @@ const handleSendOTP = async () => {
           </Link>
         </div>
 
-        <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5">
-          <h2 className="fw-bold mb-4 mb-md-3 text-dark fs-3 fs-md-1 text-center">Sign up for an Account</h2>
+        <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5" style={{ backgroundColor: "white" }}>
+          <Link to="/" className="text-decoration-none">
+            <h1 className="windhavi">Artsays</h1>
+          </Link>
+
+          <h4 className="fw-bold mb-4 mb-md-3 text-dark fs-3 fs-md-1 text-center">Sign up for an Account</h4>
           <p className="mb-3 mb-md-4 text-dark text-center"
             style={{
               fontSize: '20px',
@@ -336,114 +340,114 @@ const handleSendOTP = async () => {
               </div>
             </div>
 
-          
-                      <div className="mb-3 position-relative">
-                        <label htmlFor="emailOrPhone" className="form-label position-absolute text-dark px-2"
-                          style={{ top: '-12px', left: '15px', fontStyle: 'italic', fontSize: '1rem', zIndex: '1', background: "white" }}>
-                          Email or Phone
-                        </label>
-                        <div style={{ position: 'relative' }}>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="emailOrPhone"
-                            required
-                            value={formData.emailOrPhone}
-                            onChange={handleChange}
-                            placeholder="example@gmail.com or +919876543210"
-                            style={{
-                              height: '48px',
-                              border: "1px solid #6b4f36",
-                              fontSize: "16px",
-                              color: "black",
-                              paddingRight: '130px'
-                            }}
-                            disabled={isEmailVerified || isPhoneVerified}
-                          />
-          
-                          { }
-                          {!isEmailVerified && !isPhoneVerified && (isValidEmail(formData.emailOrPhone) || isValidPhone(formData.emailOrPhone)) && (
-                            <button
-                              type="button"
-                              onClick={handleSendOTP}
-                              disabled={loadingOTP}
-                              style={{
-                                position: 'absolute',
-                                right: '10px',
-                                top: '50%',
-                                transform: 'translateY(-50%)',
-                                background: '#6b4f36',
-                                color: 'white',
-                                border: 'none',
-                                padding: '8px 15px',
-                                borderRadius: '4px',
-                                fontSize: '14px'
-                              }}
-                            >
-                              {loadingOTP ? 'Sending...' : 'Send OTP'}
-                            </button>
-                          )}
-          
-                          { }
-                          {(isEmailVerified || isPhoneVerified) && (
-                            <div style={{
-                              position: 'absolute',
-                              right: '15px',
-                              top: '50%',
-                              transform: 'translateY(-50%)',
-                              color: '#28a745',
-                              fontSize: '22px'
-                            }}>
-                              <FaCheck />
-                            </div>
-                          )}
-                        </div>
-                      </div>
-          
-                      { }
-                      {showOTPField && (
-                        <div className="mb-3 position-relative">
-                          <label className="form-label position-absolute text-dark px-2"
-                            style={{ top: '-12px', left: '15px', fontStyle: 'italic', fontSize: '1rem', zIndex: '1', background: "white" }}>
-                            Enter OTP
-                          </label>
-                          <div style={{ position: 'relative' }}>
-                            <input
-                              type="text"
-                              className="form-control text-center"
-                              value={otp}
-                              onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                              placeholder="000000"
-                              maxLength={6}
-                              style={{
-                                height: '48px',
-                                border: "1px solid #6b4f36",
-                                fontSize: "20px",
-                                letterSpacing: '10px'
-                              }}
-                            />
-                            <button
-                              type="button"
-                              onClick={handleVerifyOTP}
-                              disabled={loadingOTP || otp.length !== 6}
-                              style={{
-                                position: 'absolute',
-                                right: '10px',
-                                top: '50%',
-                                transform: 'translateY(-50%)',
-                                background: '#6b4f36',
-                                color: 'white',
-                                border: 'none',
-                                padding: '8px 16px',
-                                borderRadius: '4px',
-                                fontSize: '14px'
-                              }}
-                            >
-                              {loadingOTP ? 'Verifying...' : 'Verify'}
-                            </button>
-                          </div>
-                        </div>
-                      )}
+
+            <div className="mb-3 position-relative">
+              <label htmlFor="emailOrPhone" className="form-label position-absolute text-dark px-2"
+                style={{ top: '-12px', left: '15px', fontStyle: 'italic', fontSize: '1rem', zIndex: '1', background: "white" }}>
+                Email or Phone
+              </label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="emailOrPhone"
+                  required
+                  value={formData.emailOrPhone}
+                  onChange={handleChange}
+                  placeholder="example@gmail.com or +919876543210"
+                  style={{
+                    height: '48px',
+                    border: "1px solid #6b4f36",
+                    fontSize: "16px",
+                    color: "black",
+                    paddingRight: '130px'
+                  }}
+                  disabled={isEmailVerified || isPhoneVerified}
+                />
+
+                { }
+                {!isEmailVerified && !isPhoneVerified && (isValidEmail(formData.emailOrPhone) || isValidPhone(formData.emailOrPhone)) && (
+                  <button
+                    type="button"
+                    onClick={handleSendOTP}
+                    disabled={loadingOTP}
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: '#6b4f36',
+                      color: 'white',
+                      border: 'none',
+                      padding: '8px 15px',
+                      borderRadius: '4px',
+                      fontSize: '14px'
+                    }}
+                  >
+                    {loadingOTP ? 'Sending...' : 'Send OTP'}
+                  </button>
+                )}
+
+                { }
+                {(isEmailVerified || isPhoneVerified) && (
+                  <div style={{
+                    position: 'absolute',
+                    right: '15px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: '#28a745',
+                    fontSize: '22px'
+                  }}>
+                    <FaCheck />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            { }
+            {showOTPField && (
+              <div className="mb-3 position-relative">
+                <label className="form-label position-absolute text-dark px-2"
+                  style={{ top: '-12px', left: '15px', fontStyle: 'italic', fontSize: '1rem', zIndex: '1', background: "white" }}>
+                  Enter OTP
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type="text"
+                    className="form-control text-center"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    placeholder="000000"
+                    maxLength={6}
+                    style={{
+                      height: '48px',
+                      border: "1px solid #6b4f36",
+                      fontSize: "20px",
+                      letterSpacing: '10px'
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleVerifyOTP}
+                    disabled={loadingOTP || otp.length !== 6}
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: '#6b4f36',
+                      color: 'white',
+                      border: 'none',
+                      padding: '8px 16px',
+                      borderRadius: '4px',
+                      fontSize: '14px'
+                    }}
+                  >
+                    {loadingOTP ? 'Verifying...' : 'Verify'}
+                  </button>
+                </div>
+              </div>
+            )}
             <div className="mb-3">
               <div
                 className="d-flex align-items-center position-relative"
@@ -451,7 +455,7 @@ const handleSendOTP = async () => {
                   width: '200px',
                   height: '40px',
                   borderRadius: '20px',
-                  backgroundColor: '#f0e6db',
+                  // backgroundColor: '#f0e6db',
                   border: '1px solid #6b4f36',
                   cursor: 'pointer',
                 }}
@@ -481,10 +485,10 @@ const handleSendOTP = async () => {
                     fontSize: '0.9rem',
                   }}
                 >
-                  <span style={{ color: !isBusiness ? 'white' : '#6b4f36', fontWeight: !isBusiness ? 'bold' : 'normal' }}>
+                  <span style={{ color: !isBusiness ? 'white' : '#6b4f36', fontWeight: !isBusiness ? 'bold' : 'bold' }}>
                     Artist
                   </span>
-                  <span style={{ color: isBusiness ? 'white' : '#6b4f36', fontWeight: isBusiness ? 'bold' : 'normal' }}>
+                  <span style={{ color: isBusiness ? 'white' : '#6b4f36', fontWeight: isBusiness ? 'bold' : 'bold' }}>
                     Seller
                   </span>
                 </div>
@@ -668,16 +672,16 @@ const handleSendOTP = async () => {
                   }}
                 />
                 <label className="form-check-label text-dark fst-italic" htmlFor="acceptTerms" style={{ fontSize: '1rem', fontStyle: 'italic' }}>
-                  I accept&nbsp;      
+                  I accept&nbsp;
                   <a href="/terms-services" target="_blank" rel="noopener noreferrer" style={{ color: '#6b4f36', textDecoration: 'underline' }}>
                     Terms & Conditions
-                  </a> 
+                  </a>
                   <span style={{ color: 'red' }}> *</span>
                 </label>
               </div>
             </div>
 
-           
+
             <button
               type="submit"
               className="btn w-100 text-white fst-italic mb-3 mb-md-0 register-btn"
@@ -701,6 +705,33 @@ const handleSendOTP = async () => {
               {loadingSubmit ? 'Creating account...' : 'Sign up'}
             </button>
           </form>
+
+          <div className="d-flex justify-content-center align-items-center my-3 w-100">
+            <span
+              className="text-dark"
+              style={{
+                fontSize: "1.0rem",
+              }}
+            >
+              OR
+            </span>
+          </div>
+          <Link
+            to="/register"
+            type="button"
+            className="btn w-100 d-flex align-items-center justify-content-center artist-seller-register-btn"
+            style={{
+              border: "1px solid #6b4f36",
+              fontSize: "1.1rem",
+              height: "48px",
+              transition: "all 0.3s ease",
+              fontStyle: "italic",
+              color: "#6b4f36",
+              backgroundColor: "white",
+            }}
+          >
+            Register to Become an Buyer / Collector
+          </Link>
         </div>
         <div className="d-block d-md-none">
           <div className="mobile-signup-section text-center">

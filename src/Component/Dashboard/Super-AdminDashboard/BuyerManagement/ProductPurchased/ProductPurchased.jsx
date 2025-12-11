@@ -369,58 +369,58 @@ const SoldProduct = () => {
 
     //     fetchProducts();
     // }, []);
-useEffect(() => {
-    const fetchProducts = async () => {
-        try {
-            const result = await getAPI("/api/orders/buyer", {}, true, false);
-            console.log("Buyer Orders Response:", result);
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const result = await getAPI("/api/orders/buyer", {}, true, false);
+                console.log("Buyer Orders Response:", result);
 
-            if (result?.data?.data && Array.isArray(result.data.data)) {
-                
-                // const formatted = result.data.data.flatMap(order => {
-                //     return order.items
-                //         .filter(item => item.productId) 
-                //         .map(item => ({
-                //             orderId: order.orderId,
-                //             productId: item.productId._id,
-                //             productName: item.productId.productName,
-                //             mainImage: item.productId.mainImage,
-                //             productPrice: item.productId.sellingPrice,
-                //             artistName: order.Artist.id.name + " " + (order.Artist.id.lastName || ''),
-                //             totalQuantity: item.quantity
-                //         }));
-                // });
-const formatted = result.data.data.flatMap(order => {
-    return order.items
-        .filter(item => item.productId)
-        .map(item => ({
-            orderId: order.orderId,
-            productId: item.productId._id,
+                if (result?.data?.data && Array.isArray(result.data.data)) {
 
-            productName: item.productId.productName,
-            mainImage: item.productId.mainImage,
-            productPrice: item.productId.sellingPrice,
+                    // const formatted = result.data.data.flatMap(order => {
+                    //     return order.items
+                    //         .filter(item => item.productId) 
+                    //         .map(item => ({
+                    //             orderId: order.orderId,
+                    //             productId: item.productId._id,
+                    //             productName: item.productId.productName,
+                    //             mainImage: item.productId.mainImage,
+                    //             productPrice: item.productId.sellingPrice,
+                    //             artistName: order.Artist.id.name + " " + (order.Artist.id.lastName || ''),
+                    //             totalQuantity: item.quantity
+                    //         }));
+                    // });
+                    const formatted = result.data.data.flatMap(order => {
+                        return order.items
+                            .filter(item => item.productId)
+                            .map(item => ({
+                                orderId: order.orderId,
+                                productId: item.productId._id,
 
-            buyerName: order.Buyer.id.name + " " + (order.Buyer.id.lastName || ""),
-            artistName: order.Artist.id.name + " " + (order.Artist.id.lastName || ""),
+                                productName: item.productId.productName,
+                                mainImage: item.productId.mainImage,
+                                productPrice: item.productId.sellingPrice,
 
-            totalQuantity: item.quantity
-        }));
-});
+                                buyerName: order.Buyer.id.name + " " + (order.Buyer.id.lastName || ""),
+                                artistName: order.Artist.id.name + " " + (order.Artist.id.lastName || ""),
 
-                setProducts(formatted);
-            } else {
-                console.error("Invalid Buyer Orders Format:", result.data);
+                                totalQuantity: item.quantity
+                            }));
+                    });
+
+                    setProducts(formatted);
+                } else {
+                    console.error("Invalid Buyer Orders Format:", result.data);
+                    setProducts([]);
+                }
+            } catch (error) {
+                console.error("Error fetching buyer sold products:", error);
                 setProducts([]);
             }
-        } catch (error) {
-            console.error("Error fetching buyer sold products:", error);
-            setProducts([]);
-        }
-    };
+        };
 
-    fetchProducts();
-}, []);
+        fetchProducts();
+    }, []);
     const filteredProducts = products.filter((product) => {
         const name = product?.buyerName || "";
         return name.toLowerCase().includes(searchTerm.toLowerCase().trim());
@@ -435,24 +435,23 @@ const formatted = result.data.data.flatMap(order => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
         }
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        setProducts([]);
-      }
     };
 
-    fetchProducts();
-  }, []);
+    const handleNext = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
 
-  // Helper: Get product data safely
-  const getProductData = (product) => {
-    return product.product || product.resellProduct || product.customProduct || {};
-  };
+    const handleProductsPerPageChange = (event) => {
+        setProductsPerPage(Number(event.target.value));
+        setCurrentPage(1);
+    };
 
     const handleImageClick = (product) => {
-    const imageSrc = product?.product?.startsWith('http') ? product.product : `${BASE_URL}${product.product || ''}`;
-    const images = [imageSrc];
-    setCurrentImages(images);
+        const imageSrc = product?.product?.startsWith('http') ? product.product : `${BASE_URL}${product.product || ''}`;
+        const images = [imageSrc];
+        setCurrentImages(images);
         setCurrentImageIndex(0);
         setShowPopup(true);
     };
@@ -462,11 +461,9 @@ const formatted = result.data.data.flatMap(order => {
         setCurrentImageIndex((prevIndex) => Math.max(prevIndex - 1, 0));
     };
 
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-  const displayedProducts = filteredProducts.slice(
-    (currentPage - 1) * productsPerPage,
-    currentPage * productsPerPage
-  );
+    const goToNextImage = () => {
+        setCurrentImageIndex((prevIndex) => Math.min(prevIndex + 1, currentImages.length - 1));
+    };
 
 
     return (
@@ -550,7 +547,7 @@ const formatted = result.data.data.flatMap(order => {
                                                 <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
                                                 <td>{product.buyerName}</td>
                                                 <td>
-                                                        {/* <img
+                                                    {/* <img
                                                             src={product.product?.startsWith('http') ? product.product : `${BASE_URL}${product.product || ''}`}
                                                             className="rounded-circle avatar"
                                                             alt=""
@@ -563,18 +560,18 @@ const formatted = result.data.data.flatMap(order => {
                                                                 cursor: 'pointer'
                                                             }}
                                                         /> {product.productName} */}
-                                                        <img
-    src={`${BASE_URL}${product.mainImage}`}
-    className="rounded-circle avatar"
-    alt=""
-    style={{
-        width: '30px',
-        height: '30px',
-        objectFit: 'cover',
-        marginRight: '10px'
-    }}
-/>
-{product.productName}
+                                                    <img
+                                                        src={`${BASE_URL}${product.mainImage}`}
+                                                        className="rounded-circle avatar"
+                                                        alt=""
+                                                        style={{
+                                                            width: '30px',
+                                                            height: '30px',
+                                                            objectFit: 'cover',
+                                                            marginRight: '10px'
+                                                        }}
+                                                    />
+                                                    {product.productName}
 
                                                 </td>
                                                 <td>{product.productPrice}</td>
@@ -594,14 +591,32 @@ const formatted = result.data.data.flatMap(order => {
                                     Showing {filteredProducts.length === 0 ? 0 : (currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
                                 </span>
 
-  const goToPreviousImage = () => setCurrentImageIndex((prev) => Math.max(prev - 1, 0));
-  const goToNextImage = () => setCurrentImageIndex((prev) => Math.min(prev + 1, currentImages.length - 1));
+                                <ul className="pagination d-flex justify-content-end w-100">
+                                    <li
+                                        className={`paginate_button page-item ${currentPage === 1 ? 'disabled' : ''}`}
+                                        onClick={handlePrevious}
+                                    >
+                                        <button className="page-link">Previous</button>
+                                    </li>
 
-  return (
-    <div className="container-fluid">
-      <div className="block-header">
-        <h2>Buyer Product Purchased</h2>
-      </div>
+                                    {Array.from({ length: totalPages }, (_, index) => index + 1)
+                                        .filter((pageNumber) => pageNumber === currentPage)
+                                        .map((pageNumber, index, array) => {
+                                            const prevPage = array[index - 1];
+                                            if (prevPage && pageNumber - prevPage > 1) {
+                                                return (
+                                                    <React.Fragment key={`ellipsis-${pageNumber}`}>
+                                                        <li className="page-item disabled"><span className="page-link">...</span></li>
+                                                        <li
+                                                            key={pageNumber}
+                                                            className={`paginate_button page-item ${currentPage === pageNumber ? 'active' : ''}`}
+                                                            onClick={() => setCurrentPage(pageNumber)}
+                                                        >
+                                                            <button className="page-link">{pageNumber}</button>
+                                                        </li>
+                                                    </React.Fragment>
+                                                );
+                                            }
 
                                             return (
                                                 <li
@@ -651,109 +666,9 @@ const formatted = result.data.data.flatMap(order => {
                     </div>
                 </div>
             )}
-        
+
         </div>
-
-        <div className="body">
-          <div className="table-responsive">
-            <table className="table table-hover">
-              <thead className="thead-dark">
-                <tr>
-                  <th>#</th>
-                  <th>Buyer Name</th>
-                  <th>Product Name</th>
-                  <th>Quantity</th>
-                  <th>Total Price</th>
-                  <th>Payment Method</th>
-                  <th>Date</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {displayedProducts.length === 0 ? (
-                  <tr>
-                    <td colSpan="8" className="text-center py-4">
-                      {products.length === 0 ? 'No purchase records found' : 'No results match your search'}
-                    </td>
-                  </tr>
-                ) : (
-                  displayedProducts.map((product, index) => {
-                    const productData = getProductData(product);
-                    const buyerData = getBuyerData(product);
-
-                    return (
-                      <tr key={product._id || index}>
-                        <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
-                        <td>{`${buyerData.name || buyerData.firstName || ''} ${buyerData.lastName || buyerData.last_name || ''}`}</td>
-                        <td>{productData.productName || productData.ProductName || productData.name || 'N/A'}</td>
-                        <td>{product.quantity}</td>
-                        <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.finalPrice || product.totalPrice)}</td>
-                        <td>
-                          <span className={`badge badge-${product.paymentMethod === 'UPI' ? 'info' : product.paymentMethod === 'Credit Card' ? 'success' : product.paymentMethod === 'Cash on Delivery' ? 'warning' : 'secondary'}`}>
-                            {product.paymentMethod}
-                          </span>
-                        </td>
-                        <td>{product.purchaseDate ? new Date(product.purchaseDate).toLocaleDateString('en-IN') : 'N/A'}</td>
-                        <td>
-                          <button
-                            className="btn btn-sm btn-outline-info"
-                            onClick={() => navigate(`/${userType}/Dashboard/buyerproductpurchased/productpurchaseddetails/${product._id}`)}
-                            title="View Details"
-                          >
-                            <i className="fa fa-eye"></i>
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="d-flex justify-content-between align-items-center mt-3">
-            <span className="text-muted">
-              Showing {filteredProducts.length > 0 ? (currentPage - 1) * productsPerPage + 1 : 0} to{' '}
-              {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
-            </span>
-            <div>
-              <button className="btn btn-sm btn-outline-secondary mr-2" onClick={handlePrevious} disabled={currentPage === 1}>
-                <i className="fa fa-chevron-left mr-1"></i> Previous
-              </button>
-              <span className="mx-2 text-muted">Page {currentPage} of {totalPages || 1}</span>
-              <button className="btn btn-sm btn-outline-secondary" onClick={handleNext} disabled={currentPage === totalPages || totalPages === 0}>
-                Next <i className="fa fa-chevron-right ml-1"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {showPopup && currentImages.length > 0 && (
-        <div
-          onClick={() => setShowPopup(false)}
-          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999 }}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh', width: '600px', height: '700px', backgroundColor: '#1a1a1a', borderRadius: '12px', display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden', boxShadow: '0 10px 40px rgba(0,0,0,0.5)' }}
-          >
-            <button onClick={() => setShowPopup(false)} style={{ position: 'absolute', top: '15px', right: '15px', fontSize: '24px', color: '#fff', background: 'rgba(0,0,0,0.6)', border: 'none', cursor: 'pointer', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 3 }}>&times;</button>
-
-            <button onClick={goToPreviousImage} disabled={currentImageIndex === 0} style={{ position: 'absolute', left: '15px', top: '50%', transform: 'translateY(-50%)', fontSize: '30px', color: currentImageIndex === 0 ? '#555' : '#fff', background: 'rgba(0,0,0,0.6)', border: 'none', cursor: currentImageIndex === 0 ? 'not-allowed' : 'pointer', width: '50px', height: '50px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>&#10094;</button>
-
-            <img src={`${BASE_URL}${currentImages[currentImageIndex]}`} alt={`Product ${currentImageIndex + 1}`} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '20px' }} />
-
-            <button onClick={goToNextImage} disabled={currentImageIndex === currentImages.length - 1} style={{ position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)', fontSize: '30px', color: currentImageIndex === currentImages.length - 1 ? '#555' : '#fff', background: 'rgba(0,0,0,0.6)', border: 'none', cursor: currentImageIndex === currentImages.length - 1 ? 'not-allowed' : 'pointer', width: '50px', height: '50px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>&#10095;</button>
-
-            <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', color: 'white', background: 'rgba(0,0,0,0.7)', padding: '8px 20px', borderRadius: '25px', fontSize: '14px', fontWeight: '500' }}>
-              {currentImageIndex + 1} / {currentImages.length}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+    );
 };
 
 export default SoldProduct;

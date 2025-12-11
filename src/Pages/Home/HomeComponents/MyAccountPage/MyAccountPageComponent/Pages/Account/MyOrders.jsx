@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaChevronDown, FaEye } from 'react-icons/fa';
 import getAPI from '../../../../../../../api/getAPI';
+import putAPI from '../../../../../../../api/putAPI';
 import { DEFAULT_PROFILE_IMAGE } from './constant';
 import MyOrderView from './MyOrderView';
 import { useNavigate } from 'react-router-dom';

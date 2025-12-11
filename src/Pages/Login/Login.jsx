@@ -288,6 +288,8 @@ import VerificationPopup from "./VerificationPopup";
 // import { GoogleLogin } from "@react-oauth/google";
 import { FcGoogle } from "react-icons/fc";
 import { useGoogleLogin } from "@react-oauth/google";
+import { FaGoogle } from "react-icons/fa";
+
 const Login = () => {
   const [input, setInput] = useState("");
   const [password, setPassword] = useState("");
@@ -299,7 +301,7 @@ const Login = () => {
   const [googlePassword, setGooglePassword] = useState("");
   const navigate = useNavigate();
   const { login, userType, status: userStatus } = useAuth();
-  
+
   const normalizeUserType = (userType) => {
     const userTypeMap = {
       "super-admin": "Super-Admin",
@@ -516,10 +518,14 @@ const Login = () => {
       <ToastContainer />
       <VerificationPopup show={showPopup} onHide={() => setShowPopup(false)} />
       <div className="container-fluid p-0 min-vh-100 d-flex flex-column flex-lg-row">
-        <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5">
-          <h2 className="fw-bold mb-3 mb-md-4 text-dark fs-2 fs-md-1">
+        <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5" style={{ backgroundColor: "white" }}>
+          <Link to="/" className="text-decoration-none">
+            <h1 className="windhavi">Artsays</h1>
+          </Link>
+
+          <h4 className="fw-bold mb-3 mb-md-4 text-dark fs-2 fs-md-1">
             Login to your Account
-          </h2>
+          </h4>
           <p
             className="mb-3 mb-md-4 text-dark text-center"
             style={{
@@ -678,8 +684,8 @@ const Login = () => {
               }}
               onClick={() => loginWithGoogle()}
             >
-              <FcGoogle size={22} />
-              &nbsp; Continue with Google
+              <FaGoogle size={22} />
+              &nbsp; Login with Google
             </button>
           </form>
 
