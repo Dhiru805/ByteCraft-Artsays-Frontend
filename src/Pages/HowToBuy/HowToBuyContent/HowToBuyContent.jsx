@@ -78,11 +78,6 @@
 // };
 // export default CommissionContent;
 
-
-
-
-
-
 import "../../store/products/product.css";
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../../../api/axiosConfig";
@@ -108,7 +103,7 @@ const HowToBuyContent = () => {
     fetchPublishedPage();
   }, []);
 
-  if (loading) return <p className="text-center py-6">Loading...</p>;
+  if (loading) return <p className="text-center py-6">{HowToBuySkeleton()}</p>;
   if (!pageData) return <p className="text-center py-6">No content found</p>;
 
   return (
@@ -116,11 +111,17 @@ const HowToBuyContent = () => {
       <div className="w-full py-3 px-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-            <a href="#" className="hover:text-red-500">Home</a>
+            <a href="#" className="hover:text-red-500">
+              Home
+            </a>
             <span>/</span>
-            <a href="#" className="hover:text-red-500">Store</a>
+            <a href="#" className="hover:text-red-500">
+              Store
+            </a>
             <span>/</span>
-            <a href="#" className="hover:text-red-500">Paintings</a>
+            <a href="#" className="hover:text-red-500">
+              Paintings
+            </a>
             <span>/</span>
             <span className="font-medium text-gray-900">How To Buy</span>
           </nav>
@@ -175,3 +176,40 @@ const HowToBuyContent = () => {
 };
 
 export default HowToBuyContent;
+
+const HowToBuySkeleton = () => {
+  return (
+    <>
+      {/* ARTICLE SKELETON LOADER */}
+      <div className="grid grid-cols-1 gap-6 px-3 sm:px-6 my-3 animate-pulse">
+        {[...Array(4)].map((_, i) => (
+          <div
+            key={i}
+            className="grid grid-cols-1 md:grid-cols-4 gap-6 my-3 items-center"
+          >
+            {/* Image Skeleton */}
+            <aside className="md:col-span-1 flex justify-center">
+              <div className="w-full h-[200px] md:h-[300px] bg-gray-300 rounded-lg"></div>
+            </aside>
+
+            {/* Text Skeleton */}
+            <main className="md:col-span-3 flex flex-col justify-center">
+              {/* Heading */}
+              <div className="h-5 w-1/2 bg-gray-300 rounded"></div>
+
+              <hr className="my-3 border-gray-400" />
+
+              {/* Content Lines */}
+              <div className="space-y-2">
+                <div className="h-3 bg-gray-300 w-full rounded"></div>
+                <div className="h-3 bg-gray-300 w-5/6 rounded"></div>
+                <div className="h-3 bg-gray-300 w-4/6 rounded"></div>
+                <div className="h-3 bg-gray-300 w-2/3 rounded"></div>
+              </div>
+            </main>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+};

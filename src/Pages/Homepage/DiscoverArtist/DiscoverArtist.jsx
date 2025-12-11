@@ -551,7 +551,7 @@
 
 import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
-
+import DiscoverArtistSkeleton from "../../../Component/Skeleton/DiscoverArtistSkeleton";
 const DiscoverArtist = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -580,7 +580,7 @@ const DiscoverArtist = () => {
     fetchData();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div><DiscoverArtistSkeleton/></div>;
   if (!data) return <div>No Discover Artist section available</div>;
 
   return (

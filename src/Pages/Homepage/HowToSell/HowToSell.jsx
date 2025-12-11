@@ -209,7 +209,7 @@
 
 import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
-
+import HowToSellSkeleton from "../../../Component/Skeleton/HowToSellSkeleton";
 const HowToSell = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -238,7 +238,7 @@ const HowToSell = () => {
     fetchData();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div><HowToSellSkeleton/></div>;
   if (!data) return <div>How To Sell section not available</div>;
 
   return (

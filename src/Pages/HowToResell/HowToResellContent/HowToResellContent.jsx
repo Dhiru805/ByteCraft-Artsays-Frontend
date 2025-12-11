@@ -23,7 +23,7 @@ const HowToResellContent = () => {
     fetchPublishedPage();
   }, []);
 
-  if (loading) return <p className="text-center py-6">Loading...</p>;
+  if (loading) return <p className="text-center py-6">{HowToResellcontentSkeleton()}</p>;
   if (!pageData) return <p className="text-center py-6">No content found</p>;
 
   return (
@@ -31,9 +31,13 @@ const HowToResellContent = () => {
       <div className="w-full py-3 px-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-            <a href="#" className="hover:text-red-500">Home</a>
+            <a href="#" className="hover:text-red-500">
+              Home
+            </a>
             <span>/</span>
-            <a href="#" className="hover:text-red-500">Sell</a>
+            <a href="#" className="hover:text-red-500">
+              Sell
+            </a>
             <span>/</span>
             <span className="font-medium text-gray-900">How To Resell</span>
           </nav>
@@ -88,3 +92,65 @@ const HowToResellContent = () => {
 };
 
 export default HowToResellContent;
+
+const HowToResellcontentSkeleton = () => {
+  return (
+    <>
+      {/* SKELETON START */}
+      <div className="animate-pulse">
+        {/* Heading + Button Row */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3 px-3">
+          {/* Heading skeleton */}
+          <div className="md:col-span-3">
+            <div className="h-8 md:h-12 bg-gray-300 rounded w-3/4"></div>
+          </div>
+
+          {/* Desktop Button skeleton */}
+          <div className="hidden md:flex justify-end">
+            <div className="h-10 w-36 bg-gray-300 rounded-full"></div>
+          </div>
+        </div>
+
+        <hr className="my-3 border-gray-300" />
+
+        {/* Description skeleton */}
+        <div className="px-3 mt-3 space-y-2">
+          <div className="h-4 bg-gray-300 rounded w-full"></div>
+          <div className="h-4 bg-gray-300 rounded w-4/5"></div>
+        </div>
+
+        {/* Articles skeleton */}
+        <div className="grid grid-cols-1 gap-6 px-3 sm:px-6 my-3">
+          {[...Array(4)].map((_, index) => (
+            <div
+              key={index}
+              className="grid grid-cols-1 md:grid-cols-4 gap-6 my-3 items-center"
+            >
+              {/* Image skeleton */}
+              <aside className="md:col-span-1 flex justify-center">
+                <div className="w-full h-[180px] md:h-[240px] bg-gray-300 rounded-xl"></div>
+              </aside>
+
+              {/* Content skeleton */}
+              <main className="md:col-span-3">
+                {/* Article heading */}
+                <div className="h-5 bg-gray-300 rounded w-1/2"></div>
+
+                <hr className="my-3 border-gray-300" />
+
+                {/* Paragraph lines */}
+                <div className="space-y-2">
+                  <div className="h-3 bg-gray-300 rounded w-full"></div>
+                  <div className="h-3 bg-gray-300 rounded w-5/6"></div>
+                  <div className="h-3 bg-gray-300 rounded w-4/6"></div>
+                  <div className="h-3 bg-gray-300 rounded w-3/4"></div>
+                </div>
+              </main>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* SKELETON END */}
+    </>
+  );
+};

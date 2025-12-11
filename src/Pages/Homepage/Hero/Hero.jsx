@@ -83,7 +83,7 @@
 //                   {text}
 //                 </span>
 //                 <span
-//                   className="inline-block w-[3px] h-[1em] bg-gradient-to-r from-[#48372D] to-[#FF725E] 
+//                   className="inline-block w-[3px] h-[1em] bg-gradient-to-r from-[#48372D] to-[#FF725E]
 //                      align-bottom animate-blink ml-1"
 //                 ></span>
 //               </h2>
@@ -279,26 +279,10 @@
 // };
 // export default Hero;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import getAPI from "../../../api/getAPI";
-
+import HeroSectionSkeleton from "../../../Component/Skeleton/HeroSectionSkeleton";
 const Hero = () => {
   const [heroData, setHeroData] = useState(null);
   const [tags, setTags] = useState([]);
@@ -312,18 +296,23 @@ const Hero = () => {
 
   useEffect(() => {
     const fetchHero = async () => {
+
       try {
         const pageRes = await getAPI("/api/homepage/published");
         const homepage = pageRes.data.data;
         if (!homepage?._id) throw new Error("No published homepage found");
 
-        const heroRes = await getAPI(`/api/homepage-sections/hero/${homepage._id}`);
+        const heroRes = await getAPI(
+          `/api/homepage-sections/hero/${homepage._id}`
+        );
         if (!heroRes.data.success || !heroRes.data.data)
           throw new Error("Hero section not found");
 
         setHeroData(heroRes.data.data);
 
-        const tagsRes = await getAPI(`/api/homepage-sections/hero-browse-categories/getTags/${homepage._id}`);
+        const tagsRes = await getAPI(
+          `/api/homepage-sections/hero-browse-categories/getTags/${homepage._id}`
+        );
         if (tagsRes.data.success) setTags(tagsRes.data.data);
       } catch (err) {
         console.error(err);
@@ -339,7 +328,9 @@ const Hero = () => {
     const titles = heroData.recurrentTitles;
     const currentTitleObj = titles[wordIndex] || {};
     if (!currentTitleObj.title) return;
-    const delay = currentTitleObj.duration ? currentTitleObj.duration * 1000 : 1200;
+    const delay = currentTitleObj.duration
+      ? currentTitleObj.duration * 1000
+      : 1200;
 
     let timeout;
     if (typing) {
@@ -372,9 +363,17 @@ const Hero = () => {
   }, [wordIndex, heroData]);
 
   if (loading)
-    return <div className="h-[600px] flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="h-[600px] flex items-center justify-center">
+        <HeroSectionSkeleton/>
+      </div>
+    );
   if (!heroData)
-    return <div className="h-[600px] flex items-center justify-center">No Hero section available</div>;
+    return (
+      <div className="h-[600px] flex items-center justify-center">
+        No Hero section available
+      </div>
+    );
 
   const titles = heroData.recurrentTitles || [];
   const currentTitleObj = titles[wordIndex] || {};
@@ -383,7 +382,10 @@ const Hero = () => {
     // <div className="relative bg-[#F8F8F8] overflow-hidden">
     <div
       className="relative overflow-hidden bg-cover "
-      style={{ backgroundImage: "url('/herosectionimg/hero-bg.jpg')", backgroundPosition: "center top -130px" }}
+      style={{
+        backgroundImage: "url('/herosectionimg/hero-bg.jpg')",
+        backgroundPosition: "center top -130px",
+      }}
     >
       <div className="relative max-w-[1440px] mx-auto py-3 z-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-3 sm:px-6 my-3">
@@ -426,23 +428,31 @@ const Hero = () => {
                           alt="Art"
                           className="rounded-md shadow"
                         />
-                        <span className="mt-2 font-medium text-gray-700">Modern Art</span>
+                        <span className="mt-2 font-medium text-gray-700">
+                          Modern Art
+                        </span>
                       </div>
                     ))}
                   </div>
                   <ul className="flex flex-wrap gap-3 mb-4">
-                    {["Graphic Design", "Illustrations", "Glass Artwork"].map((tag, i) => (
-                      <li
-                        key={i}
-                        className="flex items-center px-3 py-1 bg-gray-100 rounded-full text-sm font-medium text-gray-700"
-                      >
-                        {tag}
-                        <span className="ml-2 cursor-pointer text-gray-500 hover:text-red-500">×</span>
-                      </li>
-                    ))}
+                    {["Graphic Design", "Illustrations", "Glass Artwork"].map(
+                      (tag, i) => (
+                        <li
+                          key={i}
+                          className="flex items-center px-3 py-1 bg-gray-100 rounded-full text-sm font-medium text-gray-700"
+                        >
+                          {tag}
+                          <span className="ml-2 cursor-pointer text-gray-500 hover:text-red-500">
+                            ×
+                          </span>
+                        </li>
+                      )
+                    )}
                   </ul>
                   <div className="border-t pt-3">
-                    <div className="font-bold flex items-center text-gray-800 mb-2">TREND NOW</div>
+                    <div className="font-bold flex items-center text-gray-800 mb-2">
+                      TREND NOW
+                    </div>
                     <div className="flex flex-wrap gap-4 text-sm text-[#f04a2f] font-medium">
                       <a href="#">Fine Art Ceramics</a>
                       <a href="#">Sculpture</a>
@@ -462,7 +472,8 @@ const Hero = () => {
               {heroData.buttons?.map((btn, i) => (
                 <button
                   key={i}
-                  className={`py-2 md:!py-3 px-4 md:!px-8 rounded-full font-bold transition-all duration-300 ${i % 2 === 0
+                  className={`py-2 md:!py-3 px-4 md:!px-8 rounded-full font-bold transition-all duration-300 ${
+                    i % 2 === 0
                       ? "bg-red-500 text-white py-2 md:!py-3 px-4 md:!px-8 rounded-full font-bold shadow buy-now"
                       : "items-center justify-center border border-dark rounded-full text-dark py-2 md:!py-3 px-4 md:!px-8 font-bold add-cart"
                     // <button className="bg-red-500 text-white py-2 md:!py-3 px-4 md:!px-8 rounded-full font-bold shadow buy-now">
@@ -471,7 +482,7 @@ const Hero = () => {
                     // <button className="items-center justify-center border border-dark rounded-full text-dark py-2 md:!py-3 px-4 md:!px-8 font-bold add-cart">
                     // Get Started Now
                     // </button>
-                    }`}
+                  }`}
                   onClick={() => (window.location.href = btn.link)}
                 >
                   {btn.name}
@@ -509,11 +520,11 @@ const Hero = () => {
                   className="w-6 h-6 object-contain"
                 />
               </div>
-              <span className="text-lg font-medium text-gray-800">{tag.title}</span>
+              <span className="text-lg font-medium text-gray-800">
+                {tag.title}
+              </span>
             </div>
           ))}
-
-
         </div>
       </div>
     </div>

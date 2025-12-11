@@ -34,6 +34,8 @@ const Post = () => {
   const [profile, setProfile] = useState({});
   const [showCollaborators, setShowCollaborators] = useState(false);
   const [allCollaboraters, setAllCollaboraters] = useState([]);
+  const isMobile = window.innerWidth < 1024; // Tailwind lg breakpoint
+
   const navigate = useNavigate();
   const popupRef = useRef();
   const postRef = useRef();
@@ -58,12 +60,18 @@ const Post = () => {
 
   useEffect(() => {
     function handleClickOutside(event) {
+      // --- CLOSE MENU POPUP ---
       if (popupRef.current && !popupRef.current.contains(event.target)) {
         setMenuOpenId(null); // CLOSE POPUP
       }
-      if (postRef.current && !postRef.current.contains(event.target)) {
-        setActiveIndex(null);
+
+      // --- DESKTOP POST POPUP ---
+      if (!isMobile) {
+        if (postRef.current && !postRef.current.contains(event.target)) {
+          setActiveIndex(null);
+        }
       }
+      
       if (collabRef.current && !collabRef.current.contains(event.current)) {
         setShowCollaborators(false);
         setAllCollaboraters([]);
@@ -82,7 +90,6 @@ const Post = () => {
     });
   };
 
-  
   // Fetch profile
   useEffect(() => {
     try {
@@ -590,7 +597,9 @@ const Post = () => {
                         ></i>
                       </button>
                       <i
-                        onClick={()=>{commentRef.current.focus()}}
+                        onClick={() => {
+                          commentRef.current.focus();
+                        }}
                         className="ri-chat-3-line text-xl"
                       ></i>
 
@@ -675,7 +684,9 @@ const Post = () => {
           </div>
 
           {/* for small screen */}
-          <div className="fixed inset-0 z-[9999] w-full h-full flex flex-col bg-[#ffffff] lg:hidden">
+          <div
+            className="fixed inset-0 z-[9999] w-full h-full flex flex-col bg-[#ffffff] lg:hidden"
+          >
             {/* back button with title */}
             <div className="w-full flex items-center justify-between p-3 border-b">
               <i

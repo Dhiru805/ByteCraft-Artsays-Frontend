@@ -259,7 +259,7 @@ const AffiliateContent = () => {
     fetchPublishedPage();
   }, []);
 
-  if (loading) return <p className="text-center py-6">Loading...</p>;
+  if (loading) return <p className="text-center py-6">{PageSkeleton()}</p>;
   if (!pageData) return <p className="text-center py-6">No content found</p>;
 
   const filteredArticles = pageData.articles?.filter((a) =>
@@ -374,3 +374,87 @@ const AffiliateContent = () => {
 };
 
 export default AffiliateContent;
+
+const PageSkeleton = () => {
+  return (
+    <div className="animate-pulse">
+
+      {/* Page Heading */}
+      <div className="px-3">
+        <div className="w-48 md:w-80 h-7 md:h-10 bg-gray-300 rounded"></div>
+        <div className="w-full h-[1px] bg-gray-300 my-3"></div>
+      </div>
+
+      {/* Page Description */}
+      <div className="px-3">
+        <div className="w-full h-4 bg-gray-300 rounded mt-3"></div>
+        <div className="w-5/6 h-4 bg-gray-300 rounded mt-2"></div>
+      </div>
+
+      {/* ARTICLE LIST */}
+      <div className="grid grid-cols-1 gap-6 px-3 sm:px-6 mt-6">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6 mt-3 items-center"
+          >
+            {/* Image Skeleton */}
+            <aside className="rounded-xl w-full h-40 md:h-56 bg-gray-300"></aside>
+
+            {/* Article Text Skeleton */}
+            <main className="md:col-span-3 flex flex-col justify-center">
+
+              {/* Heading */}
+              <div className="w-40 md:w-56 h-5 bg-gray-300 rounded"></div>
+
+              {/* Divider */}
+              <div className="w-full h-[1px] bg-gray-300 my-3"></div>
+
+              {/* Content Lines */}
+              <div className="space-y-2">
+                <div className="w-full h-4 bg-gray-300 rounded"></div>
+                <div className="w-5/6 h-4 bg-gray-300 rounded"></div>
+                <div className="w-4/6 h-4 bg-gray-300 rounded"></div>
+              </div>
+            </main>
+
+          </div>
+        ))}
+      </div>
+
+      {/* CARDS SECTION */}
+      <div className="my-10 px-3 sm:px-6">
+
+        {/* Cards Heading */}
+        <div className="mx-auto text-center">
+          <div className="w-48 md:w-80 h-7 bg-gray-300 rounded mx-auto"></div>
+          <div className="w-full h-[1px] bg-gray-300 my-3"></div>
+        </div>
+
+        {/* Cards Description */}
+        <div className="mx-auto text-center">
+          <div className="w-4/6 h-4 bg-gray-300 rounded mx-auto"></div>
+          <div className="w-3/6 h-4 bg-gray-300 rounded mt-2 mx-auto"></div>
+        </div>
+
+        {/* Cards Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="mx-auto border rounded-2xl shadow-2xl bg-gray-200"
+            >
+              {/* Card Image Skeleton */}
+              <div className="w-full h-28 sm:h-44 bg-gray-300 rounded-t-2xl"></div>
+
+              {/* Card Title Skeleton */}
+              <div className="h-5 bg-gray-300 rounded mx-auto mt-3 mb-4 w-24"></div>
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </div>
+  );
+};
+

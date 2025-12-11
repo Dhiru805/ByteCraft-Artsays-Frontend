@@ -953,6 +953,7 @@
 
 
 import React, { useEffect, useState } from "react";
+import ArtGalleryContentSkeleton from "../../../Component/Skeleton/Home/Account/ArtGalleryContentSkeleton";
 
 const ArtGalleryContent = () => {
   const [page, setPage] = useState(null);
@@ -1047,7 +1048,7 @@ const ArtGalleryContent = () => {
 
     fetchGalleryData();
   }, []);
-
+if(loading)return <div><ArtGalleryContentSkeleton /></div>
   return (
     <div className="max-w-[1440px] mx-auto mb-4">
     

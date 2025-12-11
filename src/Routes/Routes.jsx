@@ -1540,7 +1540,6 @@ const AppRoutes = () => {
         <Route path="/partner" element={<Partner />} />
 
         {/* ----------------------------------------------------social media Route ----------------------------------------------- */}
-
         <Route path="/social-media" element={<Homee />} />
         <Route path="/social-media/sharepost/:postId" element={<SharePost />} />
         {/* <Route path="/social-media/share-profile/:viewedUserId" element={<ShareProfile />} /> */}
@@ -1555,7 +1554,7 @@ const AppRoutes = () => {
         <Route path="/social-media/create-post" element={<CreatePost />} />
         <Route path="/social-media/upload-post" element={<UploadPost />} />
         <Route path="/social-media/profile/:shareProfileId?" element={<SocialProfile />} />
-{/* this router for woner profile,share profile,and uselocation.state profile */}
+          {/* this router for woner profile,share profile,and uselocation.state profile */}
         <Route
           path="/social-media/profile/product-view"
           element={<ProductViewing />}

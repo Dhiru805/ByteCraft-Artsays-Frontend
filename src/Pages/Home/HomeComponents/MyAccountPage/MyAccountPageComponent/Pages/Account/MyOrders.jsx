@@ -4,7 +4,7 @@ import getAPI from '../../../../../../../api/getAPI';
 import { DEFAULT_PROFILE_IMAGE } from './constant';
 import MyOrderView from './MyOrderView';
 import { useNavigate } from 'react-router-dom';
-
+import { MyOrderSkeleton } from '../../../../../../../Component/Skeleton/Home/Account/MyOrderSkeleton';
 const MyOrders = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,6 +59,7 @@ const MyOrders = () => {
     fetchApprovedProducts();
   }, []);
 
+if(loading)return <div><MyOrderSkeleton/></div>
   return (
     <>
       <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 lg:px-0 space-y-6">

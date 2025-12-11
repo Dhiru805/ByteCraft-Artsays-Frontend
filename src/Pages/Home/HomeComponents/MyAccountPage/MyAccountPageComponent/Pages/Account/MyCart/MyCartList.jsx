@@ -472,7 +472,7 @@ import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../../../../../api/getAPI";
 import deleteAPI from "../../../../../../../../api/deleteAPI";
 import postAPI from "../../../../../../../../api/postAPI";
-
+import MyCartListSkeleton from "../../../../../../../../Component/Skeleton/Home/Account/MyCartListSkeleton.jsx";
 const MyCartList = () => {
   const { userId } = useParams();
 const navigate = useNavigate();
@@ -547,7 +547,7 @@ const navigate = useNavigate();
   };
 
   if (loading)
-    return <div className="p-6 text-center text-lg">Loading cart...</div>;
+    return <div className="p-6 text-center text-lg"><MyCartListSkeleton /></div>;
 
   if (error)
     return (

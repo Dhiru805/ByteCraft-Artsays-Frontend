@@ -483,7 +483,7 @@ import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
 import { MdVerified } from "react-icons/md";
 import { Bell } from "lucide-react";
-
+import BiddingArenaSkeleton from "../../../Component/Skeleton/BiddingArenaSkeleton";
 const BiddingArena = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -511,7 +511,7 @@ const BiddingArena = () => {
     fetchData();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div><BiddingArenaSkeleton/></div>;
   if (!data) return <div>No Bidding Arena section available</div>;
 
   return (

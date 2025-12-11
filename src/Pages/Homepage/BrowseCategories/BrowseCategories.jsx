@@ -653,6 +653,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import getAPI from "../../../api/getAPI";
+import BrowserCategorySkeleton from "../../../Component/Skeleton/BrowserCategorySkeleton";
 
 const BrowseCategories = () => {
   const [data, setData] = useState(null);
@@ -720,7 +721,7 @@ const BrowseCategories = () => {
     fetchData();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div><BrowserCategorySkeleton/></div>;
   if (!data) return <div>No Browse Categories section available</div>;
 
   return (

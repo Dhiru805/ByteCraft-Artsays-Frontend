@@ -79,7 +79,7 @@ const ContactUsContent = () => {
   };
 
   if (!pageData) {
-    return <p className="text-center my-10">Loading Contact Us...</p>;
+    return <p className="text-center my-10">{ContactPageSkeleton()}</p>;
   }
 
   return (
@@ -240,3 +240,119 @@ const ContactUsContent = () => {
   );
 };
 export default ContactUsContent;
+
+const ContactPageSkeleton = () => {
+  return (
+    <div className="max-w-[1440px] mx-auto my-5 px-3 animate-pulse">
+
+      {/* PAGE HEADING */}
+      <div className="mx-auto text-center mt-2">
+        <div className="h-7 md:h-10 w-60 md:w-96 bg-gray-300 rounded mx-auto"></div>
+        <div className="w-full h-[1px] bg-gray-300 my-3"></div>
+      </div>
+
+      {/* PAGE DESCRIPTION */}
+      <div className="text-center">
+        <div className="h-4 bg-gray-300 rounded w-5/6 mx-auto"></div>
+        <div className="h-4 bg-gray-300 rounded w-4/6 mx-auto mt-2"></div>
+      </div>
+
+      {/* CARDS SECTION */}
+      <div className="my-5 grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-3">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="w-full border rounded-2xl shadow-2xl p-3 text-center bg-gray-100"
+          >
+            <div className="h-6 bg-gray-300 w-32 mx-auto rounded mb-3"></div>
+            <div className="h-4 bg-gray-300 w-full rounded mb-2"></div>
+            <div className="h-4 bg-gray-300 w-5/6 mx-auto rounded mb-2"></div>
+            <div className="h-4 bg-gray-300 w-4/6 mx-auto rounded"></div>
+          </div>
+        ))}
+      </div>
+
+      {/* MAIN GRID LEFT + RIGHT */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-5">
+
+        {/* LEFT SECTION */}
+        <div className="flex flex-col items-center space-y-6">
+
+          {/* ICON + TEXT BLOCK */}
+          <div className="grid grid-cols-4 gap-6 w-full mt-3">
+            {/* Icon Circle */}
+            <div className="max-w-[100px] text-7xl rounded-full bg-gray-300 p-3 justify-self-center"></div>
+
+            {/* Text Right */}
+            <div className="col-span-3">
+              <div className="h-6 bg-gray-300 w-44 rounded"></div>
+              <div className="w-full h-[1px] bg-gray-300 my-2"></div>
+
+              <div className="space-y-2">
+                <div className="h-4 bg-gray-300 w-full rounded"></div>
+                <div className="h-4 bg-gray-300 w-5/6 rounded"></div>
+                <div className="h-4 bg-gray-300 w-4/6 rounded"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* IMAGE SKELETON */}
+          <div className="w-full h-56 bg-gray-300 rounded-xl"></div>
+        </div>
+
+        {/* RIGHT --- CONTACT FORM */}
+        <main className="content-center">
+          <div className="border rounded-lg p-4 shadow bg-gray-100">
+
+            {/* Form Heading */}
+            <div className="text-center">
+              <div className="h-6 bg-gray-300 w-40 md:w-64 mx-auto rounded"></div>
+              <div className="w-full h-[1px] bg-gray-300 my-3"></div>
+            </div>
+
+            <div className="space-y-6">
+
+              {/* Name */}
+              <div>
+                <div className="h-4 w-20 bg-gray-300 rounded mb-2"></div>
+                <div className="w-full h-8 bg-gray-300 rounded"></div>
+              </div>
+
+              {/* Email */}
+              <div>
+                <div className="h-4 w-20 bg-gray-300 rounded mb-2"></div>
+                <div className="w-full h-8 bg-gray-300 rounded"></div>
+              </div>
+
+              {/* Contact */}
+              <div>
+                <div className="h-4 w-32 bg-gray-300 rounded mb-2"></div>
+                <div className="w-full h-8 bg-gray-300 rounded"></div>
+              </div>
+
+              {/* Category */}
+              <div>
+                <div className="h-4 w-24 bg-gray-300 rounded mb-2"></div>
+                <div className="w-full h-8 bg-gray-300 rounded"></div>
+              </div>
+
+              {/* Message */}
+              <div>
+                <div className="h-4 w-24 bg-gray-300 rounded mb-2"></div>
+                <div className="w-full h-20 bg-gray-300 rounded"></div>
+              </div>
+
+              {/* Submit Button */}
+              <div className="text-center py-3">
+                <div className="h-9 w-32 mx-auto bg-gray-300 rounded-full"></div>
+              </div>
+
+            </div>
+          </div>
+        </main>
+
+      </div>
+    </div>
+  );
+};
+

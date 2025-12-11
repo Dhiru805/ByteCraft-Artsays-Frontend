@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import { io } from "socket.io-client";
 import { useParams } from "react-router-dom";
 import Hls from "hls.js";
-
+import OthersLiveSkeleton from "../../Skeleton/Live/OthersLIveSkeleton";
 const user = {
   following:1234,
 }
@@ -67,7 +67,6 @@ const OthersLive = () => {
   const [hasFallbackAttempted, setHasFallbackAttempted] = useState(false);
   const [recoveryDisabled, setRecoveryDisabled] = useState(false);
   const { streamKey } = useParams();
-
     // WebRTC Configuration - STUN-only for localhost testing
     const rtcConfig = {
   iceServers: [
@@ -1884,6 +1883,7 @@ const handleSend = () => {
   });
   setInputText("");
 };
+  if (loading) return <div><OthersLiveSkeleton/></div>;
 
   return (
     <div className="lg:w-[78%] w-full lg:mx-auto mx-0 flex flex-col lg:flex-row px-1 ">

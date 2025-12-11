@@ -39,15 +39,20 @@ const SharePost = () => {
   const { postId } = useParams();
   const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
+  const isMobile = window.innerWidth < 1024; // Tailwind lg breakpoint
 
   const postRef = useRef();
   const collabRef = useRef();
-
+  const commentRef = useRef();
+  const activePostRef = useRef();
   useEffect(() => {
     function handleClickOutside(event) {
-      if (postRef.current && !postRef.current.contains(event.target)) {
-        setActiveIndex(null);
+      if (!isMobile) {
+        if (postRef.current && !postRef.current.contains(event.target)) {
+          setActiveIndex(null);
+        }
       }
+
       if (collabRef.current && !collabRef.current.contains(event.current)) {
         setShowCollaborators(false);
         setAllCollaboraters([]);
@@ -568,7 +573,11 @@ const SharePost = () => {
                                   className="flex items-start gap-2"
                                 >
                                   <img
-                                    src={comment?.user?.profilePhoto?`${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`:`${DEFAULT_PROFILE_IMAGE}`}
+                                    src={
+                                      comment?.user?.profilePhoto
+                                        ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`
+                                        : `${DEFAULT_PROFILE_IMAGE}`
+                                    }
                                     alt="profile"
                                     className="w-8 h-8 rounded-full"
                                   />
@@ -601,8 +610,14 @@ const SharePost = () => {
                                     } text-xl`}
                                   ></i>
                                 </button>
-                                <i className="ri-chat-3-line text-xl"></i>
-                                <i className="ri-send-plane-fill text-xl"></i>
+                                <i
+                                  onClick={() => {
+                                    activePostRef.current &&
+                                      activePostRef.current.focus();
+                                  }}
+                                  className="ri-chat-3-line text-xl"
+                                ></i>
+                                {/* <i className="ri-send-plane-fill text-xl"></i> */}
                               </div>
                               <div>
                                 <button
@@ -636,7 +651,11 @@ const SharePost = () => {
                                       className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
                                     >
                                       <img
-                                        src={user?.profilePhoto?`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`:`${DEFAULT_PROFILE_IMAGE}`}
+                                        src={
+                                          user?.profilePhoto
+                                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`
+                                            : `${DEFAULT_PROFILE_IMAGE}`
+                                        }
                                         alt={user.username}
                                         className="w-8 h-8 rounded-full"
                                       />
@@ -655,6 +674,7 @@ const SharePost = () => {
                               <div className="flex gap-2 relative">
                                 <input
                                   type="text"
+                                  ref={activePostRef}
                                   placeholder="Add a comment..."
                                   value={commentText}
                                   onChange={handleChange} // 👈 replace with custom handler
@@ -798,7 +818,11 @@ const SharePost = () => {
                                   className="flex items-start gap-2"
                                 >
                                   <img
-                                    src={comment?.user?.profilePhoto?`${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`:`${DEFAULT_PROFILE_IMAGE}`}
+                                    src={
+                                      comment?.user?.profilePhoto
+                                        ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`
+                                        : `${DEFAULT_PROFILE_IMAGE}`
+                                    }
                                     alt="profile"
                                     className="w-8 h-8 rounded-full"
                                   />
@@ -833,7 +857,11 @@ const SharePost = () => {
                                 className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
                               >
                                 <img
-                                  src={user?.profilePhoto?`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`:`${DEFAULT_PROFILE_IMAGE}`}
+                                  src={
+                                    user?.profilePhoto
+                                      ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`
+                                      : `${DEFAULT_PROFILE_IMAGE}`
+                                  }
                                   alt={user.username}
                                   className="w-8 h-8 rounded-full"
                                 />
@@ -990,10 +1018,7 @@ const SharePost = () => {
                       </p>
 
                       {/* Report Form */}
-                      <form
-                        onSubmit={handleSubmit}
-                        className="space-y-3  "
-                      >
+                      <form onSubmit={handleSubmit} className="space-y-3  ">
                         <div className="space-y-2 max-h-[20vh] overflow-y-auto ">
                           {[
                             "I just don't like it",
@@ -1535,7 +1560,14 @@ const SharePost = () => {
                             ></i>
                           </button>
                           <button>
-                            <i className="ri-chat-3-line text-xl font-medium"></i>
+                            <i
+                              onClick={() => {
+                                if (commentRef.current) {
+                                  commentRef.current.focus();
+                                }
+                              }}
+                              className="ri-chat-3-line text-xl font-medium"
+                            ></i>
                           </button>
 
                           <button onClick={() => setSharePost(sharePostData)}>
@@ -1610,7 +1642,11 @@ const SharePost = () => {
                               className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
                             >
                               <img
-                                src={user?.profilePhoto?`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`:`${DEFAULT_PROFILE_IMAGE}`}
+                                src={
+                                  user?.profilePhoto
+                                    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`
+                                    : `${DEFAULT_PROFILE_IMAGE}`
+                                }
                                 alt={user.username}
                                 className="w-8 h-8 rounded-full"
                               />
@@ -1649,6 +1685,7 @@ const SharePost = () => {
                             type="text"
                             placeholder="Add a comment..."
                             value={commentText}
+                            ref={commentRef}
                             onChange={handleChange}
                             className="w-full rounded text-[13px] focus:outline-none focus:ring focus:border-blue-300"
                           />

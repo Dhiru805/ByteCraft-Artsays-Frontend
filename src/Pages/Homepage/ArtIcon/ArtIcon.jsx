@@ -360,7 +360,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ImArrowUpRight2 } from "react-icons/im";
 import getAPI from "../../../api/getAPI";
-
+import ArtlconSkeleton from "../../../Component/Skeleton/ArtIconSkeleton";
 const ArtIcon = () => {
   const [data, setData] = useState(null);
   const [celebrities, setCelebrities] = useState([]);
@@ -406,7 +406,7 @@ const ArtIcon = () => {
       .replace(/^-+|-+$/g, "");
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div><ArtlconSkeleton /></div>;
   if (!data) return <div>No Art Icon section available</div>;
 
   return (

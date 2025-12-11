@@ -110,7 +110,7 @@
 
 import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
-
+import WhyArtsaysDiffSkeleton from "../../../Component/Skeleton/WhyArtsaysDiffSkeleton";
 const WhyArtsaysDifferent = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -138,7 +138,7 @@ const WhyArtsaysDifferent = () => {
     fetchData();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div><WhyArtsaysDiffSkeleton/></div>;
   if (!data) return <div>No "Why Artsays Is Different" section available</div>;
 
   return (
