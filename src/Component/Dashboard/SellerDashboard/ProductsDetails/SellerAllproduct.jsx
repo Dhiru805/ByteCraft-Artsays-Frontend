@@ -209,7 +209,7 @@ const ApprovedProduct = () => {
                                                 <td>
                                                     <button
                                                         className="btn btn-sm btn-outline-info mr-2"
-                                                        onClick={() => navigate(`/seller/product/view-product`, {
+                                                        onClick={() => navigate(`/seller/product-fetch-view-seller/${product._id}`, {
                                                             state: { productData: product }
                                                         })}
                                                     >

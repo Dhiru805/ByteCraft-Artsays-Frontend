@@ -39,36 +39,92 @@ const ProductRequest = () => {
         }
     }, []);
 
-    useEffect(() => {
-        if (!userId) return;
-        const fetchProducts = async () => {
-            try {
-                const result = await getAPI(`/api/getartistsoldproductbyid/${encodeURIComponent(userId)}`, {}, true, false);
-                console.log("Full API Response:", result);
-                console.log("Data Type:", typeof result.data);
+    // useEffect(() => {
+    //     if (!userId) return;
+    //     const fetchProducts = async () => {
+    //         try {
+    //             const result = await getAPI(`/api/getartistsoldproductbyid/${encodeURIComponent(userId)}`, {}, true, false);
+    //             console.log("Full API Response:", result);
+    //             console.log("Data Type:", typeof result.data);
 
-                if (result && result.data && Array.isArray(result.data)) {
-                    setProducts(result.data); // MODIFIED
-                } else {
-                    console.error("API response does not contain a valid array:", result.data);
-                    setProducts([]); // MODIFIED
-                }
-            } catch (error) {
-                console.error("Error fetching products:", error);
+    //             if (result && result.data && Array.isArray(result.data)) {
+    //                 setProducts(result.data); // MODIFIED
+    //             } else {
+    //                 console.error("API response does not contain a valid array:", result.data);
+    //                 setProducts([]); // MODIFIED
+    //             }
+    //         } catch (error) {
+    //             console.error("Error fetching products:", error);
+    //             setProducts([]);
+    //         }
+    //     };
+
+    //     fetchProducts();
+    // }, [userId]);
+// useEffect(() => {
+//     const fetchProducts = async () => {
+//         try {
+//             const result = await getAPI(`/api/artist-purchases/${userId}`);
+
+
+// console.log("API DATA RECEIVED:", result.data.data);
+
+//             if (result?.data?.success) {
+//                 setProducts(result.data.data);
+//             } else {
+//                 setProducts([]);
+//             }
+//         } catch (error) {
+//             console.error("Error fetching artist purchased products:", error);
+//             setProducts([]);
+//         }
+//     };
+
+//     fetchProducts();
+// }, []);
+
+useEffect(() => {
+    if (!userId) return;
+
+    const fetchProducts = async () => {
+        try {
+            const result = await getAPI(
+                `/api/artist-purchases/${userId}`,
+                {},
+                true,
+                false
+            );
+
+            console.log("🔥 Purchased Artist Products Response:", result);
+
+            if (result?.data?.data && Array.isArray(result.data.data)) {
+                setProducts(result.data.data);
+            } else {
                 setProducts([]);
             }
-        };
 
-        fetchProducts();
-    }, [userId]);
+        } catch (error) {
+            console.error("❌ Error fetching purchased products:", error);
+            setProducts([]);
+        }
+    };
+
+    fetchProducts();
+}, [userId]);
 
 
-    const filteredProducts = products.filter(product =>
-        product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.artistName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.userId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // const filteredProducts = products.filter(product =>
+    //     product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //     product.artistName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //     product.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //     product.userId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
+    // );
+    const filteredProducts = products.filter(item =>
+    item.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.artistName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.buyerName?.toLowerCase().includes(searchTerm.toLowerCase())
+);
+
 
     const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
@@ -181,7 +237,7 @@ const ProductRequest = () => {
                                     <thead className="thead-dark">
                                         <tr>
                                             <th>#</th>
-                                            <th>Name</th>
+                                            {/* <th>Name</th> */}
                                             <th>Product Name</th>
                                             <th>Product Price</th>
                                             <th>Product Quantity</th>
@@ -190,13 +246,13 @@ const ProductRequest = () => {
                                             <th>Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    {/* <tbody>
                                         {displayedProducts.map((product, index) => {
                                             const productData = product.product || product.resellProduct;
                                             return (
                                                 <tr key={product._id}>
                                                     <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
-                                                    {/* changed for name as mentioned in the data */}
+                                                 
                                                     <td>{product.artistName || 'N/A'}</td>
 
                                                     <td>
@@ -216,18 +272,7 @@ const ProductRequest = () => {
                                                                     }}
                                                                 />{product.productName}
 
-                                                                {/* <img
-                                                                    src={product.product ? `${BASE_URL}${product.product}` : 'default-image-url.jpg'}
-                                                                    className="rounded-circle avatar"
-                                                                    alt=""
-                                                                    style={{
-                                                                        width: '30px',
-                                                                        height: '30px',
-                                                                        objectFit: 'cover',
-                                                                        marginRight: '10px'
-                                                                    }}
-                                                                />
-                                                                {product.productName || 'N/A'} */}
+                                                               
                                                             </>
                                                         ) : (
                                                             "No Product Data"
@@ -255,7 +300,48 @@ const ProductRequest = () => {
                                                 </tr>
                                             );
                                         })}
-                                    </tbody>
+                                    </tbody> */}
+                              <tbody>
+    {displayedProducts.map((item, index) => (
+        <tr key={index}>
+            <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
+
+            {/* <td>{item.artistName || "N/A"}</td> */}
+
+            <td>
+                <img
+                    src={`${BASE_URL}${item.productImage}`}
+                    alt=""
+                    style={{
+                        width: "30px",
+                        height: "30px",
+                        objectFit: "cover",
+                        borderRadius: "50%",
+                        marginRight: "10px"
+                    }}
+                />
+                {item.productName}
+            </td>
+
+            <td>
+                {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" })
+                    .format(item.subtotal)
+                    .replace(/\.00$/, "")}
+            </td>
+
+            <td>{item.quantityPurchased}</td>
+            <td>{item.paymentMethod}</td>
+            <td>{new Date(item.purchaseDate).toLocaleDateString("en-IN")}</td>
+            <td>
+                <button className="btn btn-sm btn-outline-info"
+                    onClick={() => navigate(`/artist/product-fetch-view-artist/${item.productId}`)}>
+                    <i className="fa fa-eye"></i>
+                </button>
+            </td>
+        </tr>
+    ))}
+</tbody>
+
                                 </table>
                             </div>
                             <div className="pagination d-flex justify-content-between mt-4">

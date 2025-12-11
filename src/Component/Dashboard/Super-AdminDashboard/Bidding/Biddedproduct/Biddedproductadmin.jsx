@@ -459,7 +459,7 @@ const winnerInfo = successfulBids.find(
             <button
               className="btn btn-sm btn-outline-info"
               onClick={() =>
-                navigate(`/super-admin/bidding/bidded-product-view/${p?.id}`)
+                navigate(`/super-admin/product-fetch-view/${p?.id}`)
               }
             >
               <i className="fa fa-eye"></i>

@@ -577,7 +577,7 @@ const formatted = result.data.data.flatMap(order => {
                                                 <td>{product.productPrice}</td>
                                                 <td>{product.totalQuantity}</td>
                                                 <td>
-                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/${userType}/Dashboard/buyersoldproduct/soldproductdetails/${product.productId}`)}>
+                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/super-admin/product-fetch-view/${product.productId}`)}>
                                                         <i className="fa fa-eye"></i>
                                                     </button>
                                                 </td>

@@ -428,7 +428,7 @@ const BuyerSoldProduct = ({ userId }) => {
                                                 className="btn btn-sm btn-outline-info"
                                                 onClick={() =>
                                                     navigate(
-                                                        `/super-admin/buyer/soldproducts/view/${p.productId}`,
+                                                        `/super-admin/product-fetch-view/${p.productId}`,
                                                         { state: { userId } }
                                                     )
                                                 }

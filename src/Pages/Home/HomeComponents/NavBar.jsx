@@ -348,7 +348,7 @@ const NavBar = () => {
                     <i className="fas fa-shopping-cart" />
                   </a>
                 ) : Usertype === "Artist" || Usertype === "Super-Admin" ? (
-                  <a className="nav-link-h me-3" href="/blog">
+                  <a className="nav-link-h me-3" href="/blogs">
                     BLOG
                   </a>
                 ) : !isLoggedIn ? (

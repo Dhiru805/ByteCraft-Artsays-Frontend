@@ -600,7 +600,7 @@ useEffect(() => {
         className="btn btn-sm btn-outline-info mr-2"
         onClick={() => {
             console.log("NAVIGATING WITH ID:", product._id);
-            navigate(`/super-admin/product/product-info/${product._id}`);
+            navigate(`/super-admin/product-fetch-view/${product._id}`);
         }}
     >
         <i className="fa fa-eye"></i>

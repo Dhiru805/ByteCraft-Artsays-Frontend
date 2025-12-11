@@ -299,7 +299,7 @@ const filteredProducts = products.filter(p => {
                     <button
                         className="btn btn-sm btn-outline-info"
                         // onClick={() => navigate(`/Dashboard/biddedproduct/productdetails/${p?.id}`)}
-                        onClick={() => navigate(`/super-admin/bidding/bidded-product-view/${p?.id}`)}
+                        onClick={() => navigate(`/super-admin/product-fetch-view/${p?.id}`)}
                     >
                         <i className="fa fa-eye"></i>
                     </button>

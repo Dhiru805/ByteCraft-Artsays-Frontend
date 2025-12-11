@@ -7,12 +7,23 @@ import { Outlet } from 'react-router-dom';
 import ScrollToTop from "../ScrollToTop/ScrollToTop";
 
 const Dashboard = () => {
- useEffect(() => {
-    if (!sessionStorage.getItem("reloaded")) {
-      sessionStorage.setItem("reloaded", "true");
-      window.location.reload();
-    }
-  }, []);
+//  useEffect(() => {
+//     if (!sessionStorage.getItem("reloaded")) {
+//       sessionStorage.setItem("reloaded", "true");
+//       window.location.reload();
+//     }
+//   }, []);
+useEffect(() => {
+  const path = window.location.pathname;
+  const shouldReload =
+    path === "/artist" ||
+    path === "/artist/dashboard";
+
+  if (shouldReload && !sessionStorage.getItem("artist_page_reloaded")) {
+    sessionStorage.setItem("artist_page_reloaded", "true");
+    window.location.reload();
+  }
+}, []);
 
   return (
     <div id="wrapper">

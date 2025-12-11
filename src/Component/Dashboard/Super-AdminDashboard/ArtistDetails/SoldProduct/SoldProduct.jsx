@@ -212,7 +212,7 @@ useEffect(() => {
                                                 <td>{product.productPrice}</td> 
                                                 <td>{product.totalQuantity}</td> 
                                                 <td>
-                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/super-admin/artist/soldproducts/view/${product.productId}`)}>
+                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/super-admin/product-fetch-view/${product.productId}`)}>
                                                         <i className="fa fa-eye"></i>
                                                     </button>
                                                 </td>

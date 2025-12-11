@@ -754,6 +754,8 @@ import { Star, MapPin, ArrowRight, Heart, Zap, ShoppingCart } from "lucide-react
 import { HiMiniPercentBadge } from "react-icons/hi2";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import { Helmet } from "react-helmet";
+
 const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 
 const resolveMediaUrl = (path) => {
@@ -769,7 +771,8 @@ const resolveMediaUrl = (path) => {
 };
 
 const BidDetails = () => {
-  const { bidId } = useParams();
+  //const { bidId } = useParams();
+const { bidSlug, bidId } = useParams();
 
   const [bidData, setBidData] = useState(null);
   const [productData, setProductData] = useState(null);
@@ -1396,12 +1399,21 @@ const handleBidSubmit = async (amount) => {
   if (loading) return <p className="text-center py-10 text-xl font-semibold">Loading...</p>;
   if (!finalData) return <p className="text-center py-10 text-xl text-red-500">Product not found.</p>;
 
+  const seoTitle = `${finalData?.bid?.artworkName} | Live Art Auction`;
+const seoDesc = finalData?.description
+  ? finalData.description.substring(0, 150)
+  : `Bid on ${finalData?.bid?.artworkName}. Starting at ₹${finalData?.bid?.basePrice}.`;
+
+const seoImg = selectedImage || images[0] || "/default-auction.jpg";
+const seoUrl = window.location.href;
+
   const Section = ({ title, children }) => (
     <div className="mb-8">
       <h2 className="text-xl font-semibold mb-3">{title}</h2>
       {children}
     </div>
   );
+
 
   const Grid = ({ children }) => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-10">{children}</div>
@@ -1551,6 +1563,54 @@ const hasAnyValue = (obj) => {
 
   return (
     <div className="max-w-[1440px] mx-auto font-[Poppins] bg-white text-[#111] p-6">
+     <Helmet>
+  <title>{seoTitle}</title>
+
+  <meta name="description" content={seoDesc} />
+  <meta name="keywords" content={`${finalData?.bid?.artworkName}, art auction, bidding, ${artist?.name}`} />
+
+  {/* Canonical */}
+  <link rel="canonical" href={seoUrl} />
+
+  {/* Open Graph */}
+  <meta property="og:title" content={seoTitle} />
+  <meta property="og:description" content={seoDesc} />
+  <meta property="og:image" content={seoImg} />
+  <meta property="og:url" content={seoUrl} />
+  <meta property="og:type" content="product" />
+
+  {/* Twitter */}
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={seoTitle} />
+  <meta name="twitter:description" content={seoDesc} />
+  <meta name="twitter:image" content={seoImg} />
+
+  {/* JSON-LD Auction Schema */}
+  <script type="application/ld+json">
+    {JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Auction",
+      "name": finalData?.bid?.artworkName,
+      "image": seoImg,
+      "description": seoDesc,
+      "url": seoUrl,
+      "startDate": finalData?.bid?.bidStart,
+      "endDate": finalData?.bid?.bidEnd,
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "INR",
+        "price": currentHighest,
+        "availability": isBidEnded ? "https://schema.org/Discontinued" : "https://schema.org/InStock"
+      },
+      "seller": {
+        "@type": "Person",
+        "name": artist?.name || artist?.username
+      }
+    })}
+  </script>
+</Helmet>
+
+
       {/* BREADCRUMB */}
       <p className="text-sm text-gray-500">
         {finalData ? `${mainCategoryName !== "N/A" ? mainCategoryName : finalData.mainCategory} / ${categoryName !== "N/A" ? categoryName : finalData.category} / ${subCategoryName !== "N/A" ? subCategoryName : finalData.subCategory}` : ""}

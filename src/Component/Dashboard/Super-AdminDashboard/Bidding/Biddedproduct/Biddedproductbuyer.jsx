@@ -141,7 +141,7 @@ const BiddedProduct = () => {
                                                     <td>
                                                         {productData && (
                                                             <button className="btn btn-sm btn-outline-info mr-2"
-                                                                onClick={() => navigate(`/${userType}/Dashboard/biddedproduct/productdetails/${productData._id}`)}>
+                                                                onClick={() => navigate(`/super-admin/product-fetch-view/${productData._id}`)}>
                                                                 <i className="fa fa-eye"></i>
                                                             </button>
                                                         )}

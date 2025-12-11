@@ -287,7 +287,7 @@ useEffect(() => {
         <button
             className="btn btn-sm btn-outline-info"
            // onClick={() => navigate(`/${userType}/Dashboard/productpurchased/productview/${product.orderId}`)}
-            onClick={() => navigate(`/super-admin/purchasetable/view/${product.productId}`)}
+            onClick={() => navigate(`/super-admin/product-fetch-view/${product.productId}`)}
         >
             <i className="fa fa-eye"></i>
         </button>

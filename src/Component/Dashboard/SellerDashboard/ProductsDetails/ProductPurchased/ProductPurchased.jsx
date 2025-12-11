@@ -38,29 +38,59 @@ const ProductRequest = () => {
         }
     }, []);
 
-    useEffect(() => {
-        if (!userId) return;
-        const fetchProducts = async () => {
-            try {
-                const result = await getAPI(`/api/getsoldproductbyid/${encodeURIComponent(userId)}`, {}, true, false);
-                console.log("Full API Response:", result);
-                console.log("Data Type:", typeof result.data);
+    // useEffect(() => {
+    //     if (!userId) return;
+    //     const fetchProducts = async () => {
+    //         try {
+    //             const result = await getAPI(`/api/getsoldproductbyid/${encodeURIComponent(userId)}`, {}, true, false);
+    //             console.log("Full API Response:", result);
+    //             console.log("Data Type:", typeof result.data);
 
-                if (result && result.data && Array.isArray(result.data)) {
-                    setProducts(result.data); // MODIFIED
-                } else {
-                    console.error("API response does not contain a valid array:", result.data);
-                    setProducts([]); // MODIFIED
-                }
-            } catch (error) {
-                console.error("Error fetching products:", error);
+    //             if (result && result.data && Array.isArray(result.data)) {
+    //                 setProducts(result.data); // MODIFIED
+    //             } else {
+    //                 console.error("API response does not contain a valid array:", result.data);
+    //                 setProducts([]); // MODIFIED
+    //             }
+    //         } catch (error) {
+    //             console.error("Error fetching products:", error);
+    //             setProducts([]);
+    //         }
+    //     };
+
+    //     fetchProducts();
+    // }, [userId]);
+
+useEffect(() => {
+    if (!userId) return;
+
+    const fetchPurchasedProducts = async () => {
+        try {
+            console.log("Fetching seller purchased products for:", userId);
+
+            const res = await getAPI(
+                `/api/seller-purchased-products/${encodeURIComponent(userId)}`,
+                {},
+                true,
+                false
+            );
+
+            console.log("Seller Purchased Products Response:", res);
+
+            if (res?.data?.data && Array.isArray(res.data.data)) {
+                setProducts(res.data.data);
+            } else {
+                console.error(" Invalid API response format:", res);
                 setProducts([]);
             }
-        };
+        } catch (error) {
+            console.error(" Error fetching seller purchased products:", error);
+            setProducts([]);
+        }
+    };
 
-        fetchProducts();
-    }, [userId]);
-
+    fetchPurchasedProducts();
+}, [userId]);
 
     const totalPages = Math.ceil(products.length / productsPerPage);
 
@@ -158,13 +188,13 @@ const ProductRequest = () => {
                                             <th>Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    {/* <tbody>
                                         {displayedProducts.map((product, index) => {
                                             const productData = product.product || product.resellProduct;
                                             return (
                                                 <tr key={product._id}>
                                                     <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
-                                                    {/* changed for name as mentioned in the data */}
+                                                    
                                                     <td>{product.artistName || 'N/A'}</td>
 
                                                     <td>
@@ -209,7 +239,61 @@ const ProductRequest = () => {
                                                 </tr>
                                             );
                                         })}
-                                    </tbody>
+                                    </tbody> */}
+                                    <tbody>
+    {displayedProducts.map((item, index) => (
+        <tr key={index}>
+            <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
+
+            {/* Buyer Name */}
+            <td>{item.buyerName || "Unknown"}</td>
+
+            {/* Product Name & Image */}
+            <td>
+                <img
+                    src={item.productImage ? `${BASE_URL}${item.productImage}` : "/default.png"}
+                    className="rounded-circle avatar"
+                    alt=""
+                    style={{
+                        width: "30px",
+                        height: "30px",
+                        objectFit: "cover",
+                        marginRight: "10px"
+                    }}
+                />
+                {item.productName}
+            </td>
+
+            {/* Product Price */}
+            <td>
+                {new Intl.NumberFormat("en-IN", {
+                    style: "currency",
+                    currency: "INR"
+                }).format(item.subtotal).replace(/\.00$/, "")}
+            </td>
+
+            {/* Quantity */}
+            <td>{item.quantityPurchased}</td>
+
+            {/* Payment Method */}
+            <td>{item.paymentMethod}</td>
+
+            {/* Purchase Date */}
+            <td>{new Date(item.purchaseDate).toLocaleDateString()}</td>
+
+            {/* View Button */}
+            <td>
+                <button
+                    className="btn btn-sm btn-outline-info"
+                    onClick={() => navigate(`/seller/product-fetch-view-seller/${item.productId}`)}
+                >
+                    <i className="fa fa-eye"></i>
+                </button>
+            </td>
+        </tr>
+    ))}
+</tbody>
+
                                 </table>
                             </div>
                             <div className="pagination d-flex justify-content-between mt-4">
