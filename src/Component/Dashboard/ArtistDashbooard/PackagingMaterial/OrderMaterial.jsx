@@ -11,8 +11,7 @@ const OrderMaterial = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedOrderToDelete, setSelectedOrderToDelete] =
-    useState(null);
+  const [selectedOrderToDelete, setSelectedOrderToDelete] = useState(null);
 
   const handleProductsPerPageChange = (event) => {
     setProductsPerPage(Number(event.target.value));
@@ -105,9 +104,7 @@ const OrderMaterial = () => {
                     <i className="fa fa-dashboard"></i>
                   </span>
                 </li>
-                <li className="breadcrumb-item">
-                  Packaging Material Order
-                </li>
+                <li className="breadcrumb-item">Packaging Material Order</li>
               </ul>
             </div>
 
@@ -116,9 +113,7 @@ const OrderMaterial = () => {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={() =>
-                    navigate(`/artist/packaging-material/create`)
-                  }
+                  onClick={() => navigate(`/artist/packaging-material/create`)}
                 >
                   <i className="fa fa-plus"></i> Create Order
                 </button>
@@ -172,7 +167,6 @@ const OrderMaterial = () => {
                         <th>Actions</th>
                       </tr>
                     </thead>
-
                     <tbody>
                       {paginatedItems.length === 0 ? (
                         <tr>
@@ -184,17 +178,17 @@ const OrderMaterial = () => {
                         paginatedItems.map((mat, index) => {
                           const productImage =
                             mat.material?.materialName?.materialNameImage ||
-                            mat.stamp?.image ||
-                            mat.stickers?.image ||
-                            mat.vouchers?.image ||
-                            mat.card?.image;
+                            mat.stamp?.materialStampImage ||
+                            mat.stickers?.materialStickersImage ||
+                            mat.vouchers?.materialVouchersImage ||
+                            mat.card?.materialCardImage;
 
                           const productName =
                             mat.material?.materialName?.materialName ||
-                            mat.stamp?.name ||
-                            mat.stickers?.name ||
-                            mat.vouchers?.name ||
-                            mat.card?.name;
+                            mat.stamp?.materialStamp ||
+                            mat.stickers?.materialStickers ||
+                            mat.vouchers?.materialVouchers ||
+                            mat.card?.materialCard;
 
                           return (
                             <tr key={mat._id}>
@@ -204,11 +198,10 @@ const OrderMaterial = () => {
                                 <img
                                   src={
                                     productImage
-                                      ? `${process.env
-                                          .REACT_APP_API_URL_FOR_IMAGE}/${productImage.replace(
-                                          /\\/g,
-                                          "/"
-                                        )}`
+                                      ? `${
+                                          process.env
+                                            .REACT_APP_API_URL_FOR_IMAGE
+                                        }/${productImage.replace(/\\/g, "/")}`
                                       : "/placeholder.jpg"
                                   }
                                   className="rounded-circle"
@@ -283,42 +276,35 @@ const OrderMaterial = () => {
                         currentPage === 1 ? "disabled" : ""
                       }`}
                     >
-                      <button
-                        className="page-link"
-                        onClick={handlePrevious}
-                      >
+                      <button className="page-link" onClick={handlePrevious}>
                         Previous
                       </button>
                     </li>
 
-                    {Array.from(
-                      { length: totalPages },
-                      (_, i) => i + 1
-                    ).map((page) => (
-                      <li
-                        key={page}
-                        className={`page-item ${
-                          currentPage === page ? "active" : ""
-                        }`}
-                      >
-                        <button
-                          className="page-link"
-                          onClick={() => setCurrentPage(page)}
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                      (page) => (
+                        <li
+                          key={page}
+                          className={`page-item ${
+                            currentPage === page ? "active" : ""
+                          }`}
                         >
-                          {page}
-                        </button>
-                      </li>
-                    ))}
+                          <button
+                            className="page-link"
+                            onClick={() => setCurrentPage(page)}
+                          >
+                            {page}
+                          </button>
+                        </li>
+                      )
+                    )}
 
                     <li
                       className={`page-item ${
                         currentPage === totalPages ? "disabled" : ""
                       }`}
                     >
-                      <button
-                        className="page-link"
-                        onClick={handleNext}
-                      >
+                      <button className="page-link" onClick={handleNext}>
                         Next
                       </button>
                     </li>

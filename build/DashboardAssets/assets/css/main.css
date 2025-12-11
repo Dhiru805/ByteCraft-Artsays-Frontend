@@ -3644,7 +3644,7 @@ html.fullscreen-bg #wrapper {
   position: relative;
   padding: 13px 20px;
   outline-width: 0;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .sidebar-nav .metismenu a:hover,
@@ -3696,7 +3696,12 @@ html.fullscreen-bg #wrapper {
 .sidebar-nav .metismenu .has-arrow::after {
   color: var(--text-muted);
 }
-
+.sidebar-nav .metismenu > li > a {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    white-space: nowrap !important;
+}
 ul.choose-skin {
   display: flex;
   justify-content: start;
