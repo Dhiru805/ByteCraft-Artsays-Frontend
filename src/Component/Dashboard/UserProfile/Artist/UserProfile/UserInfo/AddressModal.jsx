@@ -386,10 +386,24 @@ const AddressModal = ({ isOpen, onClose,userId,fetchProfile}) => {
                   readOnly
                   style={{ marginRight: '10px' }}
                 />
-                <span style={{ flex: 1 }}>
-                  {address.addressLine1}, {address.city}, {address.state},{' '}
-                  {address.country}, {address.pincode}
-                </span>
+                <div style={{ flex: 1 }}>
+                  <div>
+                    {address.addressLine1}, {address.city}, {address.state},{' '}
+                    {address.country}, {address.pincode}
+                  </div>
+                  {address.warehouseId && (
+                    <div className="mt-1">
+                      <small className="text-muted">
+                        Warehouse ID: {address.warehouseId}
+                        {address.warehouseRegistered && (
+                          <span className="text-success ml-2">
+                            (Registered)
+                          </span>
+                        )}
+                      </small>
+                    </div>
+                  )}
+                </div>
 
                 {defaultAddressId !== address._id && (
                   <div>
