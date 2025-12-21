@@ -229,8 +229,7 @@ const NavBar = () => {
                   <a className="logo-h" href="/">
                     <img src="/assets/home/logo.svg" alt="" />
                   </a>
-                  <div className="mega-menu">
-                    {/* Top Header Bar */}
+                  {/* <div className="mega-menu">
                     <div className="header-wrapper-m">
                       <div className="corner left-corner" />
                       <div className="scroll-container">
@@ -252,9 +251,7 @@ const NavBar = () => {
                       </div>
                       <div className="corner right-corner" />
                     </div>
-                    {/* Main Content */}
                     <div className="container-custom-m">
-                      {/* Sidebar */}
                       <div className="sidebar-wrapper-m">
                         <div className="sidebar-m">
                           <button className="sidebar-btn-m active">
@@ -274,7 +271,6 @@ const NavBar = () => {
                           </button>
                         </div>
                       </div>
-                      {/* Table Section */}
                       <div className="table-section">
                         <div className="table-wrapper table-responsive">
                           <table className="mb-0">
@@ -316,7 +312,6 @@ const NavBar = () => {
                           </a>
                         </div>
                       </div>
-                      {/* Featured Artwork Card */}
                       <div className="art-card position-relative overflow-hidden rounded-4 align-content-center">
                         <img
                           src={artwork}
@@ -357,7 +352,7 @@ const NavBar = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             )}

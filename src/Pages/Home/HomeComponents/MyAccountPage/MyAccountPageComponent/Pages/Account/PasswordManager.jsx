@@ -64,10 +64,10 @@ const PasswordManager = () => {
   };
 
   return (
-  <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 lg:px-0 space-y-6">
+  <div className="w-full space-y-6">
     <h2 className="text-2xl text-gray-900 font-semibold">Password Manager</h2>
 
-    <form className="space-y-8" onSubmit={handleSubmit}>
+    <form className="space-y-4" onSubmit={handleSubmit}>
       {/* Current password */}
       <div>
         <label className="block mb-2 font-medium">

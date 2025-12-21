@@ -122,7 +122,7 @@ const BankPaymentDetails = () => {
   };
 
   return (
-    <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 lg:px-0 space-y-6">
+    <div className="w-full space-y-6">
       <h2 className="text-2xl text-gray-950 font-semibold">
         Bank/Payment Details (For Payments & Withdrawals)
       </h2>

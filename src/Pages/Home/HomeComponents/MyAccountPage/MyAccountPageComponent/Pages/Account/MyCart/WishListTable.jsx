@@ -417,7 +417,7 @@ const addAllToCart = async () => {
 
 
   return (
-    <div className="max-w-[1464px] w-full px-4 sm:px-6 lg:px-12 pt-10 text-lg overflow-hidden">
+    <div className="w-full">
       <div className="w-full overflow-x-auto">
         <table className="w-full min-w-[700px] border-collapse">
           <thead>

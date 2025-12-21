@@ -47,7 +47,7 @@ const isOrderCompleted = pathname.startsWith('/my-account/order-completed');
   return (
     <>
       {/* Top Section */}
-      <div className="h-[300px] w-full px-4 sm:px-12 md:px-20 lg:px-[5rem] bg-[#E8E8E8] flex items-center justify-center">
+      <div className="h-full w-full p-4 md:p-12 bg-[#E8E8E8] flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-4xl font-bold text-zinc-900">{heading}</h2>
           <p className="text-sm text-gray-500 mt-4">
@@ -60,16 +60,16 @@ const isOrderCompleted = pathname.startsWith('/my-account/order-completed');
 
       {/* Main Layout */}
       {!(isTrackOrder || isWishlist || isOrderCompleted || isMyCart || isCheckOut) ? (
-        <div className="w-full max-w-[1464px] mx-auto px-4 sm:px-8 md:px-12 lg:px-[116px] py-10 flex flex-col lg:flex-row gap-6 md:gap-8 lg:gap-[40px] bg-white overflow-x-hidden overflow-y-hidden">
-            <div className="hidden lg:block w-full lg:w-[300px]">
+        <div className="w-full max-w-[1440px] mx-auto gap-6 bg-white grid grid-cols-8 py-4 px-3 md:px-0">
+            <div className="hidden lg:block w-full col-span-2">
             <AccountSidebar />
           </div>
-          <div className="w-full">
+          <div className="w-full col-span-8 md:col-span-6">
             <Outlet />
           </div>
         </div>
       ) : (
-        <div className="w-full max-w-[1464px] mx-auto px-4 sm:px-8 md:px-12 lg:px-[116px] py-10 bg-white overflow-x-hidden">
+        <div className="w-full max-w-[1440px] mx-auto gap-6 bg-white py-4 px-3 md:px-0">
           <Outlet />
         </div>
       )}

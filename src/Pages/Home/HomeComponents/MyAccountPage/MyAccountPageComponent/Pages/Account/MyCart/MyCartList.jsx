@@ -332,7 +332,7 @@
 //     }
 //   };
 
-  
+
 //   if (loading)
 //     return <div className="p-6 text-center text-lg">Loading cart...</div>;
 
@@ -478,7 +478,7 @@ import { toast } from "react-toastify";
 import MyCartListSkeleton from "../../../../../../../../Component/Skeleton/Home/Account/MyCartListSkeleton.jsx";
 const MyCartList = () => {
   const { userId } = useParams();
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -495,23 +495,23 @@ const navigate = useNavigate();
   //     setLoading(false);
   //   }
   // };
-const fetchCart = async () => {
-  try {
-    const res = await getAPI(`/api/cart/${userId}`);
-    console.log("CART RESPONSE >>>", res.data);
+  const fetchCart = async () => {
+    try {
+      const res = await getAPI(`/api/cart/${userId}`);
+      console.log("CART RESPONSE >>>", res.data);
 
-    const safeItems = (res.data.items || []).filter(
-      (i) => i && i.product !== null
-    );
+      const safeItems = (res.data.items || []).filter(
+        (i) => i && i.product !== null
+      );
 
-    setCart(safeItems);
-  } catch (err) {
-    console.log("Cart load error:", err);
-    setError(true);
-  } finally {
-    setLoading(false);
-  }
-};
+      setCart(safeItems);
+    } catch (err) {
+      console.log("Cart load error:", err);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchCart();
@@ -572,7 +572,7 @@ const fetchCart = async () => {
       });
 
       setCart((prev) => prev.filter((i) => i.product._id !== productId));
-      
+
       if (isBidWinnerItem) {
         Swal.fire({
           title: "Removed",
@@ -597,10 +597,10 @@ const fetchCart = async () => {
       if (qty < 1) return;
 
       await postAPI(
-  "/api/cart/update",
-  { userId, productId, quantity: qty },
-  false 
-);
+        "/api/cart/update",
+        { userId, productId, quantity: qty },
+        false
+      );
 
 
       setCart((prev) =>
@@ -634,7 +634,7 @@ const fetchCart = async () => {
 
     if (hasBidWinnerItems) {
       const bidWinnerCount = cart.filter((item) => item.isBidWinnerItem === true).length;
-      
+
       const result = await Swal.fire({
         title: "Clear Cart?",
         html: `
@@ -678,7 +678,7 @@ const fetchCart = async () => {
       }
 
       setCart([]);
-      
+
       if (hasBidWinnerItems) {
         Swal.fire({
           title: "Cart Cleared",
@@ -712,19 +712,19 @@ const fetchCart = async () => {
 
   if (cart.length === 0)
     return <div className="p-6 text-center text-lg">Your Cart is Empty.</div>;
-const grouped = cart.map(item => ({
-  name: item.product.productName,
-  qty: item.quantity,
-  price: item.product.sellingPrice,
-  subtotal: item.quantity * item.product.sellingPrice
-}));
+  const grouped = cart.map(item => ({
+    name: item.product.productName,
+    qty: item.quantity,
+    price: item.product.sellingPrice,
+    subtotal: item.quantity * item.product.sellingPrice
+  }));
 
   return (
-    <div className="max-w-[1464px] px-4 sm:px-6 lg:px-12 pt-10 text-lg">
-      <div className="flex flex-col lg:flex-row gap-8">
+    <div className="">
+      <div className="grid md:grid-cols-7 lg:flex-row gap-6">
 
         {/* CART TABLE */}
-        <div className="flex-1 overflow-x-auto">
+        <div className="md:col-span-5">
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-yellow-200 text-left">
@@ -762,8 +762,7 @@ const grouped = cart.map(item => ({
                       <p>{item.product.productName}</p>
                       <p className="text-xs text-gray-500">
                         {item.product.userId?.username ||
-                          `${item.product.userId?.name || ""} ${
-                            item.product.userId?.lastName || ""
+                          `${item.product.userId?.name || ""} ${item.product.userId?.lastName || ""
                           }`}
                       </p>
                     </div>
@@ -809,69 +808,42 @@ const grouped = cart.map(item => ({
         </div>
 
         {/* SUMMARY */}
-        {/* <div className="w-full lg:w-[350px] border rounded-3xl p-4 text-lg h-fit text-gray-700">
+        <div className="w-full border rounded-3xl p-3 text-lg text-gray-700 md:col-span-2">
           <h2 className="text-xl font-semibold">Order Summary</h2>
           <hr className="my-2" />
 
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span>Items</span>
-              <span>{cart.length}</span>
-            </div>
-
-            <div className="flex justify-between font-medium">
-              <span>Total</span>
-              <span>
-                ₹
-                {cart.reduce(
-                  (acc, item) =>
-                    acc + item.product.sellingPrice * item.quantity,
-                  0
-                )}
-              </span>
-            </div>
-
-            <button className="w-full mt-4 bg-[#5C4033] hover:bg-[#4b3327] text-white py-2 rounded-full text-sm">
-              Proceed to Payment
-            </button>
+          {/* ITEM LIST WITH DUPLICATE COUNTS */}
+          <div className="space-y-2 mb-4">
+            {grouped.map((g, index) => (
+              <div key={index} className="flex justify-between text-sm">
+                <span>{g.name} × {g.qty}</span>
+                <span>₹{g.subtotal}</span>
+              </div>
+            ))}
           </div>
-        </div> */}
-<div className="w-full lg:w-[350px] border rounded-3xl p-4 text-lg h-fit text-gray-700">
-  <h2 className="text-xl font-semibold">Order Summary</h2>
-  <hr className="my-2" />
 
-  {/* ITEM LIST WITH DUPLICATE COUNTS */}
-  <div className="space-y-2 mb-4">
-    {grouped.map((g, index) => (
-      <div key={index} className="flex justify-between text-sm">
-        <span>{g.name} × {g.qty}</span>
-        <span>₹{g.subtotal}</span>
-      </div>
-    ))}
-  </div>
+          <hr className="my-2" />
 
-  <hr className="my-2" />
+          {/* TOTAL ITEMS */}
+          <div className="flex justify-between text-base text-gray-900">
+            <span>Total Items</span>
+            <span>{grouped.reduce((acc, g) => acc + g.qty, 0)}</span>
+          </div>
 
-  {/* TOTAL ITEMS */}
-  <div className="flex justify-between text-base text-gray-900">
-    <span>Total Items</span>
-    <span>{grouped.reduce((acc, g) => acc + g.qty, 0)}</span>
-  </div>
+          {/* TOTAL PRICE */}
+          <div className="flex justify-between font-medium text-base mt-2 text-gray-900">
+            <span>Total Price</span>
+            <span>
+              ₹{grouped.reduce((acc, g) => acc + g.subtotal, 0)}
+            </span>
+          </div>
 
-  {/* TOTAL PRICE */}
-  <div className="flex justify-between font-medium text-base mt-2 text-gray-900">
-    <span>Total Price</span>
-    <span>
-      ₹{grouped.reduce((acc, g) => acc + g.subtotal, 0)}
-    </span>
-  </div>
-
-  <button 
-  onClick={() => navigate(`/my-account/check-out/${userId}`)}
-  className="w-full mt-4 bg-[#5C4033] hover:bg-[#4b3327] text-white py-2 rounded-full text-sm">
-    Proceed to Checkout
-  </button>
-</div>
+          <button
+            onClick={() => navigate(`/my-account/check-out/${userId}`)}
+            className="w-full mt-4 bg-[#5C4033] hover:bg-[#4b3327] text-white py-2 rounded-full text-sm">
+            Proceed to Checkout
+          </button>
+        </div>
 
       </div>
 

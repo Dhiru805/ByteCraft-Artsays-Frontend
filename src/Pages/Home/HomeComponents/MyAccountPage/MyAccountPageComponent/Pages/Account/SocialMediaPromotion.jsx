@@ -91,7 +91,7 @@ const SocialMediaPromotion = () => {
   };
 
   return (
-  <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 lg:px-0 space-y-10">
+  <div className="w-full space-y-6">
     <h2 className="text-2xl text-gray-950 font-semibold">Social Media Promotion</h2>
 
     <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>

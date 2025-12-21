@@ -152,10 +152,10 @@ const AccountVerification = () => {
   };
 
   return (
-  <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 lg:px-0 space-y-6">
+  <div className="w-full">
     <h2 className="text-2xl text-gray-950 pb-4 font-semibold">Account Verification</h2>
 
-    <form className="space-y-8 text-sm font-semibold" onSubmit={handleSubmit}>
+    <form className="text-sm font-semibold" onSubmit={handleSubmit}>
       {/* ID Type */}
       <div>
         <label className="block mb-2 font-medium">

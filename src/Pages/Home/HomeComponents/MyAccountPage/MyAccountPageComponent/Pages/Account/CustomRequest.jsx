@@ -688,7 +688,7 @@ const AddCustomRequestForm = () => {
   };
 
   return (
-    <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 lg:px-0">
+    <div className="w-full">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <h2 className="text-2xl text-gray-950 font-semibold">
           Custom Requests

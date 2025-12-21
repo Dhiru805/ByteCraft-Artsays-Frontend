@@ -211,7 +211,7 @@ const ManageAddress = () => {
   };
 
   return (
-    <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 lg:px-0 space-y-6">
+    <div className="w-full space-y-6">
       <h2 className="text-xl text-gray-950 font-semibold">Manage Address</h2>
 
       {isFetching && <div className="text-gray-600 py-4">Loading addresses...</div>}
@@ -226,12 +226,12 @@ const ManageAddress = () => {
 
       {!isFetching && addresses.length > 0 && (
         <div
-          className={`border-[0.6px] border-[#6F3E2D] p-4 my-4 space-y-4 ${addresses.length > 2 ? 'rounded-[60px]' : 'rounded-full'
+          className={`border-[0.6px] border-[#6F3E2D] p-4 my-4 ${addresses.length > 2 ? 'rounded-[60px]' : 'rounded-2xl'
             }`}
         >
           {addresses.map((addr, index) => (
             <div key={index}>
-              <div className="px-4 py-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                   <p className="font-semibold text-lg text-gray-900">
                     {addr.city}, {addr.state}, {addr.country}
@@ -280,7 +280,7 @@ const ManageAddress = () => {
               )}
 
               {addresses.length > 1 && index < addresses.length - 1 && (
-                <hr className="border-t border-gray-300 m-4" />
+                <hr className="border-t border-gray-300 my-2" />
               )}
             </div>
           ))}
