@@ -7,6 +7,7 @@ import ConfirmationDialog from '../../../ConfirmationDialog';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
 import { DEFAULT_PROFILE_IMAGE } from "../../../../../Constants/ConstantsVariables";
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 
 const ProductRequest = () => {
@@ -21,7 +22,7 @@ const ProductRequest = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [selectedProductToDelete, setSelectedProductToDelete] = useState(null);
-    
+    const[loading,setLoading]=useState(false);
 
 
     const confirm = useConfirm();
@@ -31,6 +32,7 @@ const ProductRequest = () => {
 
     useEffect(() => {
         const fetchProducts = async () => {
+            setLoading(true)
             try {
                 const result = await getAPI("/api/getsellerproduct", {}, true, false);
                 console.log("Full API Response:", result);
@@ -45,6 +47,8 @@ const ProductRequest = () => {
             } catch (error) {
                 console.error("Error fetching products:", error);
                 setProducts([]);
+            }finally{
+                setLoading(false);
             }
         };
 
@@ -145,7 +149,7 @@ const ProductRequest = () => {
 
 
 
-
+if(loading)return <ProductRequestSkeleton/>
     return (
         <div className="container-fluid">
             <div className="block-header">

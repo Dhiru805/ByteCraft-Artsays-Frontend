@@ -171,7 +171,7 @@ const SuccessPartner = () => {
         }
     }, [current, slides.length]);
 
-    if (loading) return <div className="text-center py-4">Loading...</div>;
+    if (loading) return <div className="text-center py-4"><SuccessPartnerSkaliton/></div>;
     if (error) return <div className="text-center py-4 text-red-500">Error: {error}</div>;
     if (!data) return <div className="text-center py-4">No data available</div>;
 
@@ -247,3 +247,34 @@ const SuccessPartner = () => {
 };
 
 export default SuccessPartner;
+
+const SuccessPartnerSkaliton=()=>{
+    return(<><div className="max-w-[1440px] mx-auto py-4 animate-pulse">
+  {/* Title skeleton */}
+  <div className="h-6 md:h-10 w-40 md:w-72 bg-gray-300 rounded mx-3"></div>
+
+  <hr className="my-3 border-dark" />
+
+  {/* Description skeleton */}
+  <div className="mt-3 h-4 md:h-6 w-2/3 bg-gray-300 rounded mx-3"></div>
+
+  {/* Slider skeleton */}
+  <div className="relative w-full overflow-hidden mt-4">
+    <div className="flex gap-6 px-3 sm:px-6 my-3 overflow-x-scroll scroll-smooth scrollbar-hide select-none">
+
+      {/* Repeat for 4–6 skeleton items */}
+      {[...Array(6)].map((_, index) => (
+        <div
+          key={index}
+          className="flex-shrink-0 w-[85vw] sm:w-[45vw] md:w-[220px] border border-gray-300 rounded-2xl p-3 bg-white"
+        >
+          {/* Image skeleton */}
+          <div className="w-full h-[190px] bg-gray-300 rounded-xl"></div>
+        </div>
+      ))}
+
+    </div>
+  </div>
+</div>
+</>)
+}

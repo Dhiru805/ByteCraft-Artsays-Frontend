@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import ConfirmationDialog from '../../../ConfirmationDialog';
-
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton"
 
 function ViewDetails() {
   const location = useLocation();
@@ -13,9 +13,10 @@ function ViewDetails() {
   const [selectedBlogToDelete, setSelectedBlogToDelete] = useState(null);
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   const navigate = useNavigate();
-
+const[loading,setLoading]=useState(false);
 
   const fetchBlog = async () => {
+    setLoading(true)
     try {
       const result = await getAPI(`/Blog-Post/getblogbyid/${blog._id}`, {}, true, false);
       if (result.data) {
@@ -23,6 +24,8 @@ function ViewDetails() {
       }
     } catch (error) {
       console.error("Error fetching blog:", error);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -48,7 +51,7 @@ function ViewDetails() {
     setSelectedBlogToDelete(blog);
     setIsDeleteDialogOpen(true);
   };
-
+if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">
@@ -146,3 +149,4 @@ function ViewDetails() {
 }
 
 export default ViewDetails;
+

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../../api/getAPI";
 import ConfirmationDialog from "../../../ConfirmationDialog";
-
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 function BlogList() {
   const [blogs, setBlogs] = useState([]);
@@ -13,7 +13,7 @@ function BlogList() {
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const navigate = useNavigate();
   const userId = localStorage.getItem('userId');
-
+const [loading,setLoading]=useState(true)
   const [searchTerm, setSearchTerm] = useState('');
   const [productsPerPage, setProductsPerPage] = useState(10);
 
@@ -26,6 +26,8 @@ function BlogList() {
       }
     } catch (error) {
       console.error("Error fetching blogs:", error);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -77,7 +79,7 @@ function BlogList() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentBlogs = filteredBlogs.slice(startIndex, startIndex + itemsPerPage)
 
-  
+  if(loading)return  <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

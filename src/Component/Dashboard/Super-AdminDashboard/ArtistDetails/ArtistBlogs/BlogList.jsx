@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../../api/getAPI";
 import useUserType from "../../../urlconfig";
 import ConfirmationDialog from "../../../ConfirmationDialog";
-
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const BlogList = () => {
   const [blogs, setBlogs] = useState([]);
@@ -14,7 +14,7 @@ const BlogList = () => {
   const userType = useUserType();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedBlogToDelete, setSelectedBlogToDelete] = useState(null);
-
+const [loading,setLoading]=useState(true)
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -26,6 +26,8 @@ const BlogList = () => {
         }
       } catch (error) {
         console.error("Error fetching blogs:", error);
+      }finally{
+        setLoading(false)
       }
     };
     fetchBlog();
@@ -59,7 +61,7 @@ const BlogList = () => {
     setIsDeleteDialogOpen(true);
   };
 
-
+if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

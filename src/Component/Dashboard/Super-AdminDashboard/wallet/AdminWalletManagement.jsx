@@ -1251,6 +1251,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import BuyerWalletSkeleton from "../../../Skeleton/wallet/BuyerWalletSkeleton";
 
 const AdminWalletManagement = () => {
   const [wallets, setWallets] = useState([]);
@@ -1269,7 +1270,7 @@ const AdminWalletManagement = () => {
   const [pageSize, setPageSize] = useState(10);
   const [selectedUserForDestination, setSelectedUserForDestination] = useState("");
   const [userDestinationData, setUserDestinationData] = useState(null);
-
+const[loading,setLoading]=useState(true)
 
   const API_URL = process.env.REACT_APP_API_URL;
 
@@ -1279,6 +1280,8 @@ const AdminWalletManagement = () => {
       setWallets(res.data || []);
     } catch (err) {
       console.error(err);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -1394,6 +1397,7 @@ const AdminWalletManagement = () => {
   const totalWalletPages = Math.ceil(wallets.length / pageSize);
   const displayedWallets = wallets.slice((walletPage - 1) * pageSize, walletPage * pageSize);
 
+  if(loading)return <BuyerWalletSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header mb-4">

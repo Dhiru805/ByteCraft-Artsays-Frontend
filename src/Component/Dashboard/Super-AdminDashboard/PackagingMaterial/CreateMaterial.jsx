@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import postAPI from "../../../../api/postAPI";
 import getAPI from "../../../../api/getAPI";
+import { toast } from "react-toastify";
 
 const CreateMaterial = () => {
   const navigate = useNavigate();
@@ -17,94 +18,108 @@ const CreateMaterial = () => {
     vendorSupplier: "",
     ecoFriendly: "Yes",
     status: "Active",
-    deliveryEstimation: ""
+    deliveryEstimation: "",
   });
   const [materialNameImage, setMaterialNameImage] = useState(null);
-  const [materialNameImagePreview, setMaterialNameImagePreview] = useState(null);
+  const [materialNameImagePreview, setMaterialNameImagePreview] =
+    useState(null);
   const [error, setError] = useState(null);
   const [materialNames, setMaterialNames] = useState([]);
   const [materialSizes, setMaterialSizes] = useState([]);
   const [materialCapacitys, setMaterialCapacitys] = useState([]);
 
   useEffect(() => {
-      const fetchMaterialNames = async () => {
-        try {
-          const userId = localStorage.getItem("userId");
-          if(!userId) return;
+    const fetchMaterialNames = async () => {
+      try {
+        const userId = localStorage.getItem("userId");
+        if (!userId) return;
 
-          const res = await getAPI(`/api/packaging-material-setting/material-name/${userId}`);
-          console.log(res);
-          setMaterialNames(res.materialName || res.data?.materialName || []);
-        } catch(err){
-          console.error("Failed to fetch materialNames", err);
-        }
-      };
-      fetchMaterialNames();
+        const res = await getAPI(
+          `/api/packaging-material-setting/material-name/${userId}`
+        );
+        console.log(res);
+        setMaterialNames(res.materialName || res.data?.materialName || []);
+      } catch (err) {
+        console.error("Failed to fetch materialNames", err);
+      }
+    };
+    fetchMaterialNames();
   }, []);
 
   useEffect(() => {
     const fetchMaterialSizes = async () => {
-        try {
-          const userId = localStorage.getItem("userId");
-          if(!userId) return;
+      try {
+        const userId = localStorage.getItem("userId");
+        if (!userId) return;
 
-          const res = await getAPI(`/api/packaging-material-setting/material-size/${userId}`);
-          console.log(res);
-          setMaterialSizes(res.materialSize || res.data?.materialSize || []);
-        } catch(err){
-          console.error("Failed to fetch materialSizes", err);
-        }
-      };
-      fetchMaterialSizes();
+        const res = await getAPI(
+          `/api/packaging-material-setting/material-size/${userId}`
+        );
+        console.log(res);
+        setMaterialSizes(res.materialSize || res.data?.materialSize || []);
+      } catch (err) {
+        console.error("Failed to fetch materialSizes", err);
+      }
+    };
+    fetchMaterialSizes();
   }, []);
 
   useEffect(() => {
     const fetchMaterialCapacitys = async () => {
-        try {
-          const userId = localStorage.getItem("userId");
-          if(!userId) return;
+      try {
+        const userId = localStorage.getItem("userId");
+        if (!userId) return;
 
-          const res = await getAPI(`/api/packaging-material-setting/material-capacity/${userId}`);
-          console.log(res);
-          setMaterialCapacitys(res.materialCapacity || res.data?.materialCapacity || []);
-        } catch(err){
-          console.error("Failed to fetch materialCapacitys", err);
-        }
-      };
-      fetchMaterialCapacitys();
+        const res = await getAPI(
+          `/api/packaging-material-setting/material-capacity/${userId}`
+        );
+        console.log(res);
+        setMaterialCapacitys(
+          res.materialCapacity || res.data?.materialCapacity || []
+        );
+      } catch (err) {
+        console.error("Failed to fetch materialCapacitys", err);
+      }
+    };
+    fetchMaterialCapacitys();
   }, []);
 
   const fetchMaterialNameImage = async (userId, materialName) => {
     try {
-        const res = await getAPI(`/api/packaging-material-setting/material-name/${userId}/${materialName}`);
-        console.log("API Response:", res);
+      const res = await getAPI(
+        `/api/packaging-material-setting/material-name/${userId}/${materialName}`
+      );
+      console.log("API Response:", res);
 
-        const imagePath = res?.materialNameImage || res?.data?.materialNameImage;
-        if (!imagePath) return null;
+      const imagePath = res?.materialNameImage || res?.data?.materialNameImage;
+      if (!imagePath) return null;
 
-        // Convert Windows backslashes to forward slashes
-        return `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${imagePath.replace(/\\/g, "/")}`;
+      // Convert Windows backslashes to forward slashes
+      return `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${imagePath.replace(
+        /\\/g,
+        "/"
+      )}`;
     } catch (err) {
-        console.error("Failed to fetch image:", err);
-        return null;
+      console.error("Failed to fetch image:", err);
+      return null;
     }
-    };
+  };
 
   // Handle text input changes
   const handleInputChange = async (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    if(name === "materialName" && value) {
-        try {
-            const userId = localStorage.getItem("userId");
-            const imageUrl = await fetchMaterialNameImage(userId, value);
-            setMaterialNameImagePreview(imageUrl);
-            if(imageUrl) setMaterialNameImage(null);
-        } catch(err) {
-            console.error("Failed to fetch material name Image:", err);
-            setMaterialNameImagePreview(null);
-        }
+    if (name === "materialName" && value) {
+      try {
+        const userId = localStorage.getItem("userId");
+        const imageUrl = await fetchMaterialNameImage(userId, value);
+        setMaterialNameImagePreview(imageUrl);
+        if (imageUrl) setMaterialNameImage(null);
+      } catch (err) {
+        console.error("Failed to fetch material name Image:", err);
+        setMaterialNameImagePreview(null);
+      }
     }
   };
 
@@ -124,13 +139,16 @@ const CreateMaterial = () => {
     setLoading(true);
     setError(null);
 
-     const userId = localStorage.getItem("userId");
-        if (!userId) {
-            setError("User not logged in.");
-            setLoading(false);
-            return;
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      setError("User not logged in.");
+      setLoading(false);
+      return;
     }
-
+    if (!materialNameImage) {
+      toast.error("Please upload Material Image");
+      return;
+    }
     console.log("UserId in handlesubmit", userId);
 
     // Create FormData object for multipart/form-data
@@ -151,14 +169,20 @@ const CreateMaterial = () => {
     }
     try {
       // Send POST request to backend
-      const response = await postAPI("/api/package-material/material/create", data);
+      const response = await postAPI(
+        "/api/package-material/material/create",
+        data
+      );
 
       // Handle success
       console.log("In handleSubmit", response);
       navigate("/super-admin/packaging-material/material"); // Redirect to material list
     } catch (err) {
       // Handle error
-      console.error("Error in postAPI:", err.response?.data || err.message || err);
+      console.error(
+        "Error in postAPI:",
+        err.response?.data || err.message || err
+      );
       setError(err.response?.data?.message || "Failed to create material.");
     } finally {
       setLoading(false);
@@ -212,10 +236,11 @@ const CreateMaterial = () => {
                     required
                   >
                     <option value="">-- Select MaterialName --</option>
-                    {
-                      materialNames.map((mat) => (
-                        <option key={mat._id} value={mat.materialName}>{mat.materialName}</option>
-                      ))}
+                    {materialNames.map((mat) => (
+                      <option key={mat._id} value={mat.materialName}>
+                        {mat.materialName}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="form-group mt-3">
@@ -248,10 +273,11 @@ const CreateMaterial = () => {
                     required
                   >
                     <option value="">-- Select MaterialSize --</option>
-                    {
-                      materialSizes.map((mat) => (
-                        <option key={mat._id} value={mat.materialSize}>{mat.materialSize}</option>
-                      ))}
+                    {materialSizes.map((mat) => (
+                      <option key={mat._id} value={mat.materialSize}>
+                        {mat.materialSize}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="form-group">
@@ -265,10 +291,11 @@ const CreateMaterial = () => {
                     required
                   >
                     <option value="">-- Select MaterialCapacity --</option>
-                    {
-                      materialCapacitys.map((mat) => (
-                        <option key={mat._id} value={mat.materialCapacity}>{mat.materialCapacity}</option>
-                      ))}
+                    {materialCapacitys.map((mat) => (
+                      <option key={mat._id} value={mat.materialCapacity}>
+                        {mat.materialCapacity}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="form-group">
@@ -317,15 +344,24 @@ const CreateMaterial = () => {
                 </div>
                 <div className="form-group">
                   <label>Eco-friendly</label>
-                  <select className="form-control form-control-sm" name="ecoFriendly" value={formData.ecoFriendly}
-                    onChange={handleInputChange}>
+                  <select
+                    className="form-control form-control-sm"
+                    name="ecoFriendly"
+                    value={formData.ecoFriendly}
+                    onChange={handleInputChange}
+                  >
                     <option value="Yes">Yes</option>
                     <option value="No">No</option>
                   </select>
                 </div>
                 <div className="form-group">
                   <label>Status</label>
-                  <select className="form-control form-control-sm" name="status" value={formData.status} onChange={handleInputChange}>
+                  <select
+                    className="form-control form-control-sm"
+                    name="status"
+                    value={formData.status}
+                    onChange={handleInputChange}
+                  >
                     <option value="Active">Active</option>
                     <option value="Inactive">Inactive</option>
                   </select>

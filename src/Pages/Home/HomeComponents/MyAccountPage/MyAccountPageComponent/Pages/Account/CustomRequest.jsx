@@ -14,7 +14,7 @@ import getAPI from "../../../../../../../api/getAPI";
 import putAPI from "../../../../../../../api/putAPI";
 import NegotiateModal from "./NegotiateModal";
 import ViewBuyerRequest from "./ViewRequest";
-import { DEFAULT_PROFILE_IMAGE } from './constant';
+import { DEFAULT_PROFILE_IMAGE } from "./constant";
 import CreatableSelect from "react-select/creatable";
 
 const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
@@ -81,7 +81,7 @@ const AddCustomRequestForm = () => {
 
   const fetchAddresses = async () => {
     if (!userId) {
-      setFetchError('User not logged in. Please log in to view addresses.');
+      setFetchError("User not logged in. Please log in to view addresses.");
       setIsFetching(false);
       return;
     }
@@ -92,7 +92,10 @@ const AddCustomRequestForm = () => {
       const response = await getAPI(`/auth/userid/${userId}`);
       console.log("Fetched user data:", response.data.user);
 
-      if (response.data?.user?.address && Array.isArray(response.data.user.address)) {
+      if (
+        response.data?.user?.address &&
+        Array.isArray(response.data.user.address)
+      ) {
         setAddresses(response.data.user.address);
         setSelectedAddressId(response.data.user.selectedAddress || null);
       } else {
@@ -100,9 +103,9 @@ const AddCustomRequestForm = () => {
         setSelectedAddressId(null);
       }
     } catch (error) {
-      setFetchError('Failed to load addresses. Please try again later.');
-      toast.error('Failed to load addresses');
-      console.error('Error fetching addresses:', error);
+      setFetchError("Failed to load addresses. Please try again later.");
+      // toast.error('Failed to load addresses');
+      console.error("Error fetching addresses:", error);
     } finally {
       setIsFetching(false);
     }
@@ -114,7 +117,7 @@ const AddCustomRequestForm = () => {
       setRequests(response.data.buyerRequests || []);
     } catch (error) {
       console.error("Error fetching requests:", error);
-      toast.error("Failed to fetch requests");
+      // toast.error("Failed to fetch requests");
     }
   };
 
@@ -125,7 +128,7 @@ const AddCustomRequestForm = () => {
         setArtists(response.data);
       } catch (error) {
         console.error("Error fetching artists:", error);
-        toast.error("Failed to fetch Artists");
+        // toast.error("Failed to fetch Artists");
       }
     };
 
@@ -198,23 +201,31 @@ const AddCustomRequestForm = () => {
       let artistId = "";
       if (existingData.Artist?.id) {
         artistId = existingData.Artist.id._id || "";
-        artistName = `${existingData.Artist.id.name || ""} ${existingData.Artist.id.lastName || ""}`.trim();
+        artistName = `${existingData.Artist.id.name || ""} ${
+          existingData.Artist.id.lastName || ""
+        }`.trim();
       } else if (existingData.Artist) {
         artistId = existingData.Artist._id || "";
-        artistName = `${existingData.Artist.name || ""} ${existingData.Artist.lastName || ""}`.trim();
+        artistName = `${existingData.Artist.name || ""} ${
+          existingData.Artist.lastName || ""
+        }`.trim();
       }
       setArtistId(artistId);
       setSelectedArtistName(artistName);
 
-      if (existingData.BuyerSelectedAddress && Object.keys(existingData.BuyerSelectedAddress).length > 0) {
-        const matchingAddress = addresses.find(addr =>
-          addr.line1 === existingData.BuyerSelectedAddress.line1 &&
-          addr.line2 === existingData.BuyerSelectedAddress.line2 &&
-          addr.landmark === existingData.BuyerSelectedAddress.landmark &&
-          addr.city === existingData.BuyerSelectedAddress.city &&
-          addr.state === existingData.BuyerSelectedAddress.state &&
-          addr.country === existingData.BuyerSelectedAddress.country &&
-          addr.pincode === existingData.BuyerSelectedAddress.pincode
+      if (
+        existingData.BuyerSelectedAddress &&
+        Object.keys(existingData.BuyerSelectedAddress).length > 0
+      ) {
+        const matchingAddress = addresses.find(
+          (addr) =>
+            addr.line1 === existingData.BuyerSelectedAddress.line1 &&
+            addr.line2 === existingData.BuyerSelectedAddress.line2 &&
+            addr.landmark === existingData.BuyerSelectedAddress.landmark &&
+            addr.city === existingData.BuyerSelectedAddress.city &&
+            addr.state === existingData.BuyerSelectedAddress.state &&
+            addr.country === existingData.BuyerSelectedAddress.country &&
+            addr.pincode === existingData.BuyerSelectedAddress.pincode
         );
         setSelectedAddressId(matchingAddress?._id || null);
       } else {
@@ -249,41 +260,66 @@ const AddCustomRequestForm = () => {
         let categoryList = [];
 
         for (const mainCat of mainCategories) {
-          const categoryResponse = await getAPI(`/api/category/${mainCat._id}`, {}, true);
-          if (!categoryResponse.hasError && Array.isArray(categoryResponse.data?.data)) {
+          const categoryResponse = await getAPI(
+            `/api/category/${mainCat._id}`,
+            {},
+            true
+          );
+          if (
+            !categoryResponse.hasError &&
+            Array.isArray(categoryResponse.data?.data)
+          ) {
+           
+          
             for (const cat of categoryResponse.data.data) {
+              const categoryId = cat._id || cat.id;
+
               categoryList.push({
-                value: cat.id,
+                value: categoryId,
                 label: cat.categoryName,
                 mainCategoryId: mainCat._id,
-                type: 'category',
+                type: "category",
               });
 
-              const subCategoryResponse = await getAPI(`/api/sub-category/${cat.id}`, {}, true);
-              if (!subCategoryResponse.hasError && Array.isArray(subCategoryResponse.data?.data)) {
-                const subCategories = subCategoryResponse.data.data.map((subCat) => ({
-                  value: subCat.id,
-                  label: `${subCat.subCategoryName}`,
-                  mainCategoryId: mainCat._id,
-                  parentCategoryId: cat.id,
-                  type: 'sub-category',
-                }));
-                categoryList.push(...subCategories);
+              try {
+                const subCategoryResponse = await getAPI(
+                  `/api/sub-category/${categoryId}`,
+                  {},
+                  true
+                );
+
+                if (
+                  !subCategoryResponse.hasError &&
+                  Array.isArray(subCategoryResponse.data?.data)
+                ) {
+                  const subCategories = subCategoryResponse.data.data.map(
+                    (subCat) => ({
+                      value: subCat._id || subCat.id,
+                      label: subCat.subCategoryName,
+                      mainCategoryId: mainCat._id,
+                      parentCategoryId: categoryId,
+                      type: "sub-category",
+                    })
+                  );
+
+                  categoryList.push(...subCategories);
+                }
+              } catch (err) {
+                // Expected case: no sub-categories
+                console.warn(`No sub-categories for category ${categoryId}`);
               }
             }
           }
         }
-
         setAllCategories(categoryList);
       } else {
         toast.error("Failed to load main categories.");
       }
     } catch (err) {
       console.error("Error fetching all categories:", err);
-      toast.error("Something went wrong while fetching categories.");
+      // toast.error("Something went wrong while fetching categories.");
     }
   };
-
   const handleArtTypeChange = (selectedOption) => {
     const value = selectedOption?.label || "";
     setFormData((prev) => ({
@@ -349,12 +385,15 @@ const AddCustomRequestForm = () => {
     }
 
     if (!formData.paymentTerm) {
-      alert("Please select a payment term.");
+      toast.error("Please select a payment term.");
       return;
     }
 
-    if (formData.paymentTerm === "Installment" && !formData.installmentDuration) {
-      alert("Please select an installment duration.");
+    if (
+      formData.paymentTerm === "Installment" &&
+      !formData.installmentDuration
+    ) {
+      toast.error("Please select an installment duration.");
       return;
     }
     if (!selectedAddressId) {
@@ -413,15 +452,38 @@ const AddCustomRequestForm = () => {
 
     // Append the selected address to the form payload
     if (selectedAddressId) {
-      const selectedAddress = addresses.find(addr => addr._id === selectedAddressId);
+      const selectedAddress = addresses.find(
+        (addr) => addr._id === selectedAddressId
+      );
       if (selectedAddress) {
-        formPayload.append("BuyerSelectedAddress[line1]", selectedAddress.line1 || "");
-        formPayload.append("BuyerSelectedAddress[line2]", selectedAddress.line2 || "");
-        formPayload.append("BuyerSelectedAddress[landmark]", selectedAddress.landmark || "");
-        formPayload.append("BuyerSelectedAddress[city]", selectedAddress.city || "");
-        formPayload.append("BuyerSelectedAddress[state]", selectedAddress.state || "");
-        formPayload.append("BuyerSelectedAddress[country]", selectedAddress.country || "");
-        formPayload.append("BuyerSelectedAddress[pincode]", selectedAddress.pincode || "");
+        formPayload.append(
+          "BuyerSelectedAddress[line1]",
+          selectedAddress.line1 || ""
+        );
+        formPayload.append(
+          "BuyerSelectedAddress[line2]",
+          selectedAddress.line2 || ""
+        );
+        formPayload.append(
+          "BuyerSelectedAddress[landmark]",
+          selectedAddress.landmark || ""
+        );
+        formPayload.append(
+          "BuyerSelectedAddress[city]",
+          selectedAddress.city || ""
+        );
+        formPayload.append(
+          "BuyerSelectedAddress[state]",
+          selectedAddress.state || ""
+        );
+        formPayload.append(
+          "BuyerSelectedAddress[country]",
+          selectedAddress.country || ""
+        );
+        formPayload.append(
+          "BuyerSelectedAddress[pincode]",
+          selectedAddress.pincode || ""
+        );
       } else {
         toast.error("Selected address not found.");
         setIsSubmitting(false);
@@ -432,9 +494,13 @@ const AddCustomRequestForm = () => {
     try {
       let response;
       if (editingId) {
-        response = await putAPI(`/api/update-buyer-request/${editingId}`, formPayload, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        response = await putAPI(
+          `/api/update-buyer-request/${editingId}`,
+          formPayload,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
       } else {
         response = await postAPI(
           "/api/buyer-request",
@@ -526,11 +592,15 @@ const AddCustomRequestForm = () => {
         toast.success(`Buyer request ${status.toLowerCase()} successfully`);
         if (showRejectModal) setShowRejectModal(false);
       } else {
-        toast.error(response?.message || `Failed to update buyer request status`);
+        toast.error(
+          response?.message || `Failed to update buyer request status`
+        );
       }
     } catch (error) {
       console.error("Error updating buyer request status:", error);
-      toast.error(error.response?.data?.message || "Error updating buyer request status");
+      toast.error(
+        error.response?.data?.message || "Error updating buyer request status"
+      );
     } finally {
       setLoading(false);
       await fetchRequests();
@@ -594,10 +664,16 @@ const AddCustomRequestForm = () => {
   };
 
   const getLatestNegotiatedBudget = (req) => {
-    const buyerBudgets = Array.isArray(req.BuyerNegotiatedBudgets) ? req.BuyerNegotiatedBudgets : [];
-    const artistBudgets = Array.isArray(req.ArtistNegotiatedBudgets) ? req.ArtistNegotiatedBudgets : [];
+    const buyerBudgets = Array.isArray(req.BuyerNegotiatedBudgets)
+      ? req.BuyerNegotiatedBudgets
+      : [];
+    const artistBudgets = Array.isArray(req.ArtistNegotiatedBudgets)
+      ? req.ArtistNegotiatedBudgets
+      : [];
     const allBudgets = [...buyerBudgets, ...artistBudgets];
-    return allBudgets.length > 0 ? `₹${allBudgets[allBudgets.length - 1]}` : "—";
+    return allBudgets.length > 0
+      ? `₹${allBudgets[allBudgets.length - 1]}`
+      : "—";
   };
 
   const filteredRequests = requests.filter((req) =>
@@ -614,7 +690,9 @@ const AddCustomRequestForm = () => {
   return (
     <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 lg:px-0">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h2 className="text-2xl text-gray-950 font-semibold">Custom Requests</h2>
+        <h2 className="text-2xl text-gray-950 font-semibold">
+          Custom Requests
+        </h2>
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto">
           <div className="relative w-full sm:w-[200px]">
             <input
@@ -631,7 +709,8 @@ const AddCustomRequestForm = () => {
               setShowForm(true);
               setShowViewModal(false);
               setViewRequest(null);
-            }} className="bg-[#6F4D34] text-white text-[15px] font-semibold px-4 py-2 rounded-xl flex items-center justify-center"
+            }}
+            className="bg-[#6F4D34] text-white text-[15px] font-semibold px-4 py-2 rounded-xl flex items-center justify-center"
           >
             <FaPlus className="mr-2" /> Add Request
           </button>
@@ -645,10 +724,16 @@ const AddCustomRequestForm = () => {
                 <th className="px-4 py-7 whitespace-nowrap">#</th>
                 <th className="px-4 py-2 whitespace-nowrap">Product Name</th>
                 <th className="px-4 py-2 whitespace-nowrap">Artist Name</th>
-                <th className="px-4 py-2 whitespace-nowrap">Artist Negotiated Budget</th>
+                <th className="px-4 py-2 whitespace-nowrap">
+                  Artist Negotiated Budget
+                </th>
                 <th className="px-4 py-2 whitespace-nowrap">Request Date</th>
-                <th className="px-4 py-2 whitespace-nowrap">Artist Request Status</th>
-                <th className="px-4 py-2 whitespace-nowrap">Buyer Request Status</th>
+                <th className="px-4 py-2 whitespace-nowrap">
+                  Artist Request Status
+                </th>
+                <th className="px-4 py-2 whitespace-nowrap">
+                  Buyer Request Status
+                </th>
                 <th className="px-4 py-2 whitespace-nowrap">Action</th>
               </tr>
             </thead>
@@ -679,32 +764,39 @@ const AddCustomRequestForm = () => {
                       {req.ProductName || "—"}
                     </td>
                     <td className="px-4 py-2">
-                      {req.Artist?.id?.name || ""} {req.Artist?.id?.lastName || ""}
+                      {req.Artist?.id?.name || ""}{" "}
+                      {req.Artist?.id?.lastName || ""}
                     </td>
-                    <td className="px-4 py-2">{getLatestNegotiatedBudget(req)}</td>
                     <td className="px-4 py-2">
-                      {req?.createdAt ? new Date(req.createdAt).toLocaleDateString() : "—"}
+                      {getLatestNegotiatedBudget(req)}
+                    </td>
+                    <td className="px-4 py-2">
+                      {req?.createdAt
+                        ? new Date(req.createdAt).toLocaleDateString()
+                        : "—"}
                     </td>
                     <td className="px-4 py-2">
                       <button
-                        className={`px-3 py-1 rounded-lg border text-sm ${req.RequestStatus === "Approved"
-                          ? "text-green-500 border-green-500 bg-white"
-                          : req.RequestStatus === "Pending"
+                        className={`px-3 py-1 rounded-lg border text-sm ${
+                          req.RequestStatus === "Approved"
+                            ? "text-green-500 border-green-500 bg-white"
+                            : req.RequestStatus === "Pending"
                             ? "text-yellow-500 border-yellow-500 bg-white"
                             : "text-red-500 border-red-500 bg-white"
-                          }`}
+                        }`}
                       >
                         {req.RequestStatus || "Pending"}
                       </button>
                     </td>
                     <td className="px-4 py-2">
                       <button
-                        className={`px-3 py-1 rounded-lg border text-sm ${req.BuyerStatus === "Approved"
-                          ? "text-green-500 border-green-500 bg-white"
-                          : req.BuyerStatus === "Pending"
+                        className={`px-3 py-1 rounded-lg border text-sm ${
+                          req.BuyerStatus === "Approved"
+                            ? "text-green-500 border-green-500 bg-white"
+                            : req.BuyerStatus === "Pending"
                             ? "text-yellow-500 border-yellow-500 bg-white"
                             : "text-red-500 border-red-500 bg-white"
-                          }`}
+                        }`}
                       >
                         {req.BuyerStatus || "Pending"}
                       </button>
@@ -715,43 +807,43 @@ const AddCustomRequestForm = () => {
                         className="cursor-pointer text-2xl text-cyan-600 border border-cyan-400 p-1 rounded-lg"
                         title="View"
                       />
-                      {(
-                        (req.BuyerNegotiatedBudgets.length === 0 && req.ArtistNegotiatedBudgets.length < 2 && req.RequestStatus === "Pending") &&
-                        <GoPencil
-                          onClick={() => handleEditRequest(req._id)}
-                          className="cursor-pointer text-2xl text-sky-600 border border-sky-400 p-1 rounded-lg"
-                          title="Edit"
-                        />)}
-                      {(
-                        (
-                          (req.BuyerNegotiatedBudgets.length === 0 && req.ArtistNegotiatedBudgets.length === 1) ||
-                          (req.BuyerNegotiatedBudgets.length === 1 && req.ArtistNegotiatedBudgets.length === 2) ||
-                          (req.BuyerNegotiatedBudgets.length === 2 && req.ArtistNegotiatedBudgets.length === 3)
-                        ) &&
-                        (req.RequestStatus === "Pending")
-                      ) && (
-                          loading ? (
-                            <div className="w-6 h-6 flex items-center justify-center border border-green-400 rounded-lg">
-                              <FaSpinner
-                                className="animate-spin text-2xl text-green-600 p-1 rounded-lg"
-                                title="Loading..."
-                              />
-                            </div>
-                          ) : (
-                            <FaCheck
-                              onClick={() => handleStatusUpdate("Approved", "", req._id)}
-                              className="cursor-pointer text-2xl text-green-600 border border-green-400 p-1 rounded-lg"
-                              title="Accept"
-                            />
-                          )
+                      {req.BuyerNegotiatedBudgets.length === 0 &&
+                        req.ArtistNegotiatedBudgets.length < 2 &&
+                        req.RequestStatus === "Pending" && (
+                          <GoPencil
+                            onClick={() => handleEditRequest(req._id)}
+                            className="cursor-pointer text-2xl text-sky-600 border border-sky-400 p-1 rounded-lg"
+                            title="Edit"
+                          />
                         )}
-                      {(
-                        (
-                          (req.BuyerNegotiatedBudgets.length === 0 && req.ArtistNegotiatedBudgets.length === 1) ||
-                          (req.BuyerNegotiatedBudgets.length === 1 && req.ArtistNegotiatedBudgets.length === 2)
-                        ) &&
-                        (req.RequestStatus === "Pending")
-                      ) && (
+                      {((req.BuyerNegotiatedBudgets.length === 0 &&
+                        req.ArtistNegotiatedBudgets.length === 1) ||
+                        (req.BuyerNegotiatedBudgets.length === 1 &&
+                          req.ArtistNegotiatedBudgets.length === 2) ||
+                        (req.BuyerNegotiatedBudgets.length === 2 &&
+                          req.ArtistNegotiatedBudgets.length === 3)) &&
+                        req.RequestStatus === "Pending" &&
+                        (loading ? (
+                          <div className="w-6 h-6 flex items-center justify-center border border-green-400 rounded-lg">
+                            <FaSpinner
+                              className="animate-spin text-2xl text-green-600 p-1 rounded-lg"
+                              title="Loading..."
+                            />
+                          </div>
+                        ) : (
+                          <FaCheck
+                            onClick={() =>
+                              handleStatusUpdate("Approved", "", req._id)
+                            }
+                            className="cursor-pointer text-2xl text-green-600 border border-green-400 p-1 rounded-lg"
+                            title="Accept"
+                          />
+                        ))}
+                      {((req.BuyerNegotiatedBudgets.length === 0 &&
+                        req.ArtistNegotiatedBudgets.length === 1) ||
+                        (req.BuyerNegotiatedBudgets.length === 1 &&
+                          req.ArtistNegotiatedBudgets.length === 2)) &&
+                        req.RequestStatus === "Pending" && (
                           <LuHandshake
                             onClick={() => {
                               setSelectedRequest(req);
@@ -761,33 +853,30 @@ const AddCustomRequestForm = () => {
                             title="Negotiate"
                           />
                         )}
-                      {(
-                        (req.RequestStatus === "Approved")
-                      ) && (
-                          <FaRupeeSign
-                            className="cursor-pointer text-2xl text-blue-500 p-1 border rounded-lg"
-                            title="Payment"
-                          />
-                        )}
-                      {(
-                        req.BuyerNegotiatedBudgets.length === 2 && req.ArtistNegotiatedBudgets.length === 3 &&
-                        req.RequestStatus !== "Approved" && req.RequestStatus !== "Rejected"
-                      ) && (
-                          loading ? (
-                            <div className="w-8 h-8 flex items-center justify-center border border-green-400 rounded-lg">
-                              <FaSpinner
-                                className="animate-spin text-2xl text-red-600 p-1 rounded-lg"
-                                title="Loading..."
-                              />
-                            </div>
-                          ) : (
-                            <RiProhibited2Line
-                              onClick={() => setShowRejectModal(true)}
-                              className="cursor-pointer text-2xl text-red-600 border border-red-400 p-1 rounded-lg"
-                              title="Reject"
+                      {req.RequestStatus === "Approved" && (
+                        <FaRupeeSign
+                          className="cursor-pointer text-2xl text-blue-500 p-1 border rounded-lg"
+                          title="Payment"
+                        />
+                      )}
+                      {req.BuyerNegotiatedBudgets.length === 2 &&
+                        req.ArtistNegotiatedBudgets.length === 3 &&
+                        req.RequestStatus !== "Approved" &&
+                        req.RequestStatus !== "Rejected" &&
+                        (loading ? (
+                          <div className="w-8 h-8 flex items-center justify-center border border-green-400 rounded-lg">
+                            <FaSpinner
+                              className="animate-spin text-2xl text-red-600 p-1 rounded-lg"
+                              title="Loading..."
                             />
-                          )
-                        )}
+                          </div>
+                        ) : (
+                          <RiProhibited2Line
+                            onClick={() => setShowRejectModal(true)}
+                            className="cursor-pointer text-2xl text-red-600 border border-red-400 p-1 rounded-lg"
+                            title="Reject"
+                          />
+                        ))}
                       {showRejectModal && (
                         <div
                           className="modal fade show"
@@ -826,7 +915,10 @@ const AddCustomRequestForm = () => {
                                   maxHeight: "60vh",
                                 }}
                               >
-                                <label htmlFor="rejectComment" className="form-label">
+                                <label
+                                  htmlFor="rejectComment"
+                                  className="form-label"
+                                >
                                   Rejection Comment
                                 </label>
                                 <textarea
@@ -835,7 +927,9 @@ const AddCustomRequestForm = () => {
                                   name="rejectComment"
                                   rows="4"
                                   value={rejectComment}
-                                  onChange={(e) => setRejectComment(e.target.value)}
+                                  onChange={(e) =>
+                                    setRejectComment(e.target.value)
+                                  }
                                   disabled={loading}
                                 />
                               </div>
@@ -853,10 +947,16 @@ const AddCustomRequestForm = () => {
                                   className="btn btn-danger"
                                   onClick={() => {
                                     if (!rejectComment.trim()) {
-                                      toast.error("Please enter a rejection comment before saving.");
+                                      toast.error(
+                                        "Please enter a rejection comment before saving."
+                                      );
                                       return;
                                     }
-                                    handleStatusUpdate("Rejected", rejectComment, req._id);
+                                    handleStatusUpdate(
+                                      "Rejected",
+                                      rejectComment,
+                                      req._id
+                                    );
                                   }}
                                   disabled={loading}
                                 >
@@ -872,7 +972,10 @@ const AddCustomRequestForm = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="10" className="px-4 py-4 text-center text-gray-500">
+                  <td
+                    colSpan="10"
+                    className="px-4 py-4 text-center text-gray-500"
+                  >
                     No requests found.
                   </td>
                 </tr>
@@ -888,7 +991,9 @@ const AddCustomRequestForm = () => {
               {editingId ? "Edit Custom Request" : "Add Custom Request"}
             </h3>
             <div>
-              <label className="block font-medium mb-1">Product Name <span className="text-red-500">*</span></label>
+              <label className="block font-medium mb-1">
+                Product Name <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 name="productName"
@@ -900,7 +1005,9 @@ const AddCustomRequestForm = () => {
               />
             </div>
             <div>
-              <label className="block font-medium mb-1">Select Artist <span className="text-red-500">*</span></label>
+              <label className="block font-medium mb-1">
+                Select Artist <span className="text-red-500">*</span>
+              </label>
               <select
                 id="artistSelect"
                 name="artist"
@@ -908,17 +1015,23 @@ const AddCustomRequestForm = () => {
                 onChange={(e) => {
                   const selectedId = e.target.value;
                   setArtistId(selectedId);
-                  const selectedArtist = artists.find((a) => a._id === selectedId);
+                  const selectedArtist = artists.find(
+                    (a) => a._id === selectedId
+                  );
                   setSelectedArtistName(
                     selectedArtist
-                      ? `${selectedArtist.name} ${selectedArtist.lastName || ""}`.trim()
+                      ? `${selectedArtist.name} ${
+                          selectedArtist.lastName || ""
+                        }`.trim()
                       : ""
                   );
                 }}
                 className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
                 required
               >
-                <option value="">Select an artist <span className="text-red-500">*</span></option>
+                <option value="">
+                  Select an artist <span className="text-red-500">*</span>
+                </option>
                 {artists.map((artist) => (
                   <option key={artist._id} value={artist._id}>
                     {artist.name} {artist.lastName}
@@ -940,7 +1053,9 @@ const AddCustomRequestForm = () => {
                 }}
                 value={
                   allCategories.find((cat) => cat.label === formData.artType) ||
-                  (formData.artType ? { label: formData.artType, value: formData.artType } : null)
+                  (formData.artType
+                    ? { label: formData.artType, value: formData.artType }
+                    : null)
                 }
                 isClearable
                 isSearchable
@@ -963,7 +1078,9 @@ const AddCustomRequestForm = () => {
                 }}
                 value={
                   sizeOptions.find((opt) => opt.label === formData.size) ||
-                  (formData.size ? { label: formData.size, value: formData.size } : null)
+                  (formData.size
+                    ? { label: formData.size, value: formData.size }
+                    : null)
                 }
                 isClearable
                 isSearchable
@@ -973,7 +1090,9 @@ const AddCustomRequestForm = () => {
               />
             </div>
             <div>
-              <label className="block font-medium mb-1">Select Delivery Address <span className="text-red-500">*</span></label>
+              <label className="block font-medium mb-1">
+                Select Delivery Address <span className="text-red-500">*</span>
+              </label>
               {isFetching ? (
                 <p>Loading addresses...</p>
               ) : fetchError ? (
@@ -992,17 +1111,25 @@ const AddCustomRequestForm = () => {
                         required
                       />
                       <label>
-                        {address.line1}, {address.line2 ? `${address.line2}, ` : ''}{address.landmark ? `${address.landmark}, ` : ''}{address.city}, {address.state}, {address.country}, {address.pincode}
+                        {address.line1},{" "}
+                        {address.line2 ? `${address.line2}, ` : ""}
+                        {address.landmark ? `${address.landmark}, ` : ""}
+                        {address.city}, {address.state}, {address.country},{" "}
+                        {address.pincode}
                       </label>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p>No addresses found. Please add an address in your profile.</p>
+                <p>
+                  No addresses found. Please add an address in your profile.
+                </p>
               )}
             </div>
             <div>
-              <label className="block font-medium mb-1">Color Preferences </label>
+              <label className="block font-medium mb-1">
+                Color Preferences{" "}
+              </label>
               <div className="flex w-full items-center border-2 border-gray-300 rounded-xl px-2">
                 <input
                   type="text"
@@ -1048,7 +1175,9 @@ const AddCustomRequestForm = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block font-medium mb-1">Minimum Budget ($) <span className="text-red-500">*</span></label>
+                <label className="block font-medium mb-1">
+                  Minimum Budget ($) <span className="text-red-500">*</span>
+                </label>
                 <input
                   type="number"
                   name="minBudget"
@@ -1058,7 +1187,9 @@ const AddCustomRequestForm = () => {
                 />
               </div>
               <div>
-                <label className="block font-medium mb-1">Maximum Budget ($) <span className="text-red-500">*</span></label>
+                <label className="block font-medium mb-1">
+                  Maximum Budget ($) <span className="text-red-500">*</span>
+                </label>
                 <input
                   type="number"
                   name="maxBudget"
@@ -1069,8 +1200,16 @@ const AddCustomRequestForm = () => {
               </div>
             </div>
             <div className="flex flex-col md:flex-row gap-4">
-              <div className={formData.paymentTerm === "Installment" ? "md:w-1/2 w-full" : "w-full"}>
-                <label className="block font-medium mb-1">Payment Term <span className="text-red-500">*</span></label>
+              <div
+                className={
+                  formData.paymentTerm === "Installment"
+                    ? "md:w-1/2 w-full"
+                    : "w-full"
+                }
+              >
+                <label className="block font-medium mb-1">
+                  Payment Term <span className="text-red-500">*</span>
+                </label>
                 <select
                   id="paymentTerm"
                   name="paymentTerm"
@@ -1089,7 +1228,9 @@ const AddCustomRequestForm = () => {
               {/* Show only when Installment is selected */}
               {formData.paymentTerm === "Installment" && (
                 <div className="md:w-1/2 w-full">
-                  <label className="block font-medium mb-1">Installment Duration <span className="text-red-500">*</span></label>
+                  <label className="block font-medium mb-1">
+                    Installment Duration <span className="text-red-500">*</span>
+                  </label>
                   <select
                     id="installmentDuration"
                     name="installmentDuration"
@@ -1105,8 +1246,11 @@ const AddCustomRequestForm = () => {
                   </select>
                 </div>
               )}
-            </div>            <div>
-              <label className="block font-medium mb-1">Expected Deadline (days) <span className="text-red-500">*</span></label>
+            </div>{" "}
+            <div>
+              <label className="block font-medium mb-1">
+                Expected Deadline (days) <span className="text-red-500">*</span>
+              </label>
               <input
                 type="number"
                 name="expectedDeadline"
@@ -1117,13 +1261,18 @@ const AddCustomRequestForm = () => {
               />
             </div>
             <div>
-              <label className="block font-medium mb-1">Reference Image <span className="text-red-500">*</span></label>
+              <label className="block font-medium mb-1">
+                Reference Image <span className="text-red-500">*</span>
+              </label>
               <input
                 type="file"
                 name="buyerImage"
                 accept="image/*,application/pdf"
                 onChange={(e) => {
-                  const file = e.target.files && e.target.files.length > 0 ? e.target.files[0] : null;
+                  const file =
+                    e.target.files && e.target.files.length > 0
+                      ? e.target.files[0]
+                      : null;
                   if (!file) return;
                   handleChange(e);
                   const fileType = file.type;
@@ -1184,7 +1333,9 @@ const AddCustomRequestForm = () => {
               )}
             </div>
             <div>
-              <label className="block font-medium mb-1">Additional Comments</label>
+              <label className="block font-medium mb-1">
+                Additional Comments
+              </label>
               <textarea
                 name="comments"
                 value={formData.comments}
@@ -1194,7 +1345,9 @@ const AddCustomRequestForm = () => {
               ></textarea>
             </div>
             <div className="form-group mt-3">
-              <label htmlFor="description">Detailed Description <span className="text-red-500">*</span></label>
+              <label htmlFor="description">
+                Detailed Description <span className="text-red-500">*</span>
+              </label>
               <ReactQuill
                 id="description"
                 value={formData.description}
@@ -1248,54 +1401,51 @@ const AddCustomRequestForm = () => {
           onSubmit={handleNegotiationSubmit}
         />
       )}
-      {
-        showPopup && (
+      {showPopup && (
+        <div
+          onClick={() => setShowPopup(false)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.65)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
           <div
-            onClick={() => setShowPopup(false)}
+            onClick={(e) => e.stopPropagation()}
             style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.65)',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              zIndex: 1000,
+              position: "relative",
+              width: "500px",
+              height: "600px",
+              backgroundColor: "#111",
+              borderRadius: "12px",
+              boxShadow: "0 0 20px rgba(255, 255, 255, 0.2)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              overflow: "hidden",
             }}
           >
-            <div
-              onClick={(e) => e.stopPropagation()}
+            {/* Image */}
+            <img
+              src={currentImages[currentImageIndex]}
+              alt="Popup"
               style={{
-                position: 'relative',
-                width: '500px',
-                height: '600px',
-                backgroundColor: '#111',
-                borderRadius: '12px',
-                boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                overflow: 'hidden',
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                borderRadius: "12px",
               }}
-            >
-              {/* Image */}
-              <img
-                src={currentImages[currentImageIndex]}
-                alt="Popup"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  borderRadius: '12px',
-                }}
-              />
-            </div>
+            />
           </div>
-        )
-      }
-
+        </div>
+      )}
     </div>
   );
 };

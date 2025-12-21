@@ -3,6 +3,7 @@ import FAQTable from "./FAQTable";
 import AddFAQ from "./CreateFAQ";
 import getAPI from "../../../../api/getAPI";
 import { useNavigate } from 'react-router-dom';
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 
 const FAQSetting = () => {
   const [faqs, setFAQs] = useState([]);
@@ -10,7 +11,7 @@ const FAQSetting = () => {
   const navigate = useNavigate();
   const [subFAQs, setSubFAQs] = useState([]);
   const [selectedSubFAQ, setSelectedSubFAQ] = useState(null);
-
+const[loading,setLoading]=useState(true);
   const fetchSubFAQData = async () => {
     try {
       const response = await getAPI(`/api/get-FAQ`, {}, true);
@@ -21,6 +22,8 @@ const FAQSetting = () => {
       }
     } catch (err) {
       console.error("Error fetching FAQ List:", err);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -28,6 +31,7 @@ const FAQSetting = () => {
     fetchSubFAQData();
   }, []);
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

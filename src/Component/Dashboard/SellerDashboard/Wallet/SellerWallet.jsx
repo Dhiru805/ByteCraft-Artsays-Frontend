@@ -655,7 +655,7 @@ const SellerWallet = () => {
     fetchTransactions();
   }, [userId]);
 
-  if (!wallet) return <div>Loading...</div>;
+  if (!wallet) return <div>{WalletSkeleton()}</div>;
 
   return (
     <div className="container-fluid">
@@ -947,5 +947,157 @@ const SellerWallet = () => {
 
 export default SellerWallet;
 
+ function WalletSkeleton() {
+  return (
+    <div className="container-fluid animate-pulse">
+
+      {/* Header */}
+      <div className="block-header mb-4">
+        <div className="h-8 w-48 bg-gray-300 rounded"></div>
+      </div>
+
+      {/* Balance Cards */}
+      <div className="row clearfix row-deck mb-4">
+        {Array(4)
+          .fill()
+          .map((_, idx) => (
+            <div
+              key={idx}
+              className="col-lg-3 col-md-6 col-sm-6 mb-3"
+            >
+              <div className="card p-4 rounded-lg shadow-sm">
+                <div className="flex items-center gap-4">
+                  {/* Icon */}
+                  <div className="h-10 w-10 bg-gray-200 rounded-full"></div>
+
+                  <div className="flex flex-col gap-2">
+                    <div className="h-4 w-28 bg-gray-200 rounded"></div>
+                    <div className="h-6 w-20 bg-gray-300 rounded"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+      </div>
+
+      {/* Add Money & Withdraw */}
+      <div className="row clearfix mb-4">
+
+        {/* Add Money */}
+        <div className="col-lg-6 col-md-12 mb-4">
+          <div className="card p-4 shadow-sm rounded-lg">
+            <div className="h-6 w-40 bg-gray-300 rounded mb-4"></div>
+
+            <div className="space-y-4">
+
+              <div>
+                <div className="h-4 w-24 bg-gray-200 rounded mb-2"></div>
+                <div className="h-10 w-full bg-gray-300 rounded"></div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="h-10 w-32 bg-gray-300 rounded"></div>
+                <div className="h-10 w-40 bg-gray-300 rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Withdrawal */}
+        <div className="col-lg-6 col-md-12 mb-4">
+          <div className="card p-4 shadow-sm rounded-lg">
+            <div className="h-6 w-48 bg-gray-300 rounded mb-4"></div>
+
+            {/* Amount Field */}
+            <div className="mb-4">
+              <div className="h-4 w-24 bg-gray-200 mb-2 rounded"></div>
+              <div className="h-10 w-full bg-gray-300 rounded"></div>
+            </div>
+
+            {/* Withdrawal Method */}
+            <div className="mb-4">
+              <div className="h-4 w-32 bg-gray-200 mb-2 rounded"></div>
+              <div className="h-10 w-full bg-gray-300 rounded"></div>
+            </div>
+
+            {/* Conditional fields skeleton (5 rows) */}
+            <div className="space-y-4">
+              {Array(5)
+                .fill()
+                .map((_, i) => (
+                  <div key={i}>
+                    <div className="h-4 w-40 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-10 w-full bg-gray-300 rounded"></div>
+                  </div>
+                ))}
+            </div>
+
+            <div className="h-10 w-full bg-gray-400 rounded mt-6"></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Transactions */}
+      <div className="row clearfix">
+        <div className="col-sm-12">
+          <div className="card p-4 shadow-sm rounded-lg">
+
+            {/* Header */}
+            <div className="flex justify-between items-center mb-4">
+              <div className="h-6 w-40 bg-gray-300 rounded"></div>
+
+              <div className="flex items-center gap-2">
+                <div className="h-4 w-10 bg-gray-200 rounded"></div>
+                <div className="h-10 w-20 bg-gray-300 rounded"></div>
+                <div className="h-4 w-10 bg-gray-200 rounded"></div>
+              </div>
+            </div>
+
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="table w-full">
+                <thead>
+                  <tr>
+                    {["#", "Type", "Amount", "Purpose", "Status", "Date"].map(
+                      (item, i) => (
+                        <th key={i}>
+                          <div className="h-4 w-16 bg-gray-200 rounded"></div>
+                        </th>
+                      )
+                    )}
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {Array(5)
+                    .fill()
+                    .map((_, i) => (
+                      <tr key={i} className="border-b">
+                        {Array(6)
+                          .fill()
+                          .map((_, c) => (
+                            <td key={c} className="py-3">
+                              <div className="h-4 w-20 bg-gray-300 rounded"></div>
+                            </td>
+                          ))}
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination */}
+            <div className="flex justify-end items-center mt-4 gap-2">
+              <div className="h-8 w-8 bg-gray-300 rounded"></div>
+              <div className="h-8 w-24 bg-gray-300 rounded"></div>
+              <div className="h-8 w-8 bg-gray-300 rounded"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 

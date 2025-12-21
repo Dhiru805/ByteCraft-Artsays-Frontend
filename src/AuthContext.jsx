@@ -1,41 +1,54 @@
 // src/AuthContext.js
-import { createContext, useContext, useState, useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode';
-import { toast } from 'react-toastify';
+import { createContext, useContext, useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
+import { toast } from "react-toastify";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [userType, setUserType] = useState(() => localStorage.getItem('userType') || null);
-  const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem('token'));
-  const [status, setStatus] = useState(() => localStorage.getItem('status') || null);
+  const [userType, setUserType] = useState(
+    () => localStorage.getItem("userType") || null
+  );
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    () => !!localStorage.getItem("token")
+  );
+  const [status, setStatus] = useState(
+    () => localStorage.getItem("status") || null
+  );
 
-  const login = (token, type, userStatus) => {
-    localStorage.setItem('token', token);
-    localStorage.setItem('userType', type);
-    localStorage.setItem('status', userStatus);
+  const login = (token, type, userStatus,username,firstName,lastName) => {
+    localStorage.setItem("token", token);
+    localStorage.setItem("userType", type);
+    localStorage.setItem("status", userStatus);
+    localStorage.setItem("username", username);
+    localStorage.setItem("firstName",firstName);
+    localStorage.setItem("lastName",lastName);
+
     setIsAuthenticated(true);
     setUserType(type);
     setStatus(userStatus);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userType');
-    localStorage.removeItem('email');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('rememberMe');
-    localStorage.removeItem('rememberedEmailOrPhone');
-    localStorage.removeItem('rememberedPassword');
-    localStorage.removeItem('status');
+    localStorage.removeItem("token");
+    localStorage.removeItem("userType");
+    localStorage.removeItem("email");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("rememberMe");
+    localStorage.removeItem("rememberedEmailOrPhone");
+    localStorage.removeItem("rememberedPassword");
+    localStorage.removeItem("status");
+    localStorage.removeItem("username");
+    localStorage.removeItem("firstName");
+    localStorage.removeItem("lastName")
     setIsAuthenticated(false);
     setUserType(null);
     setStatus(null);
-    toast.info('Session expired after 48 hours. Please log in again.');
+    toast.info("Session expired after 48 hours. Please log in again.");
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       try {
         const decoded = jwtDecode(token);
@@ -53,14 +66,16 @@ export const AuthProvider = ({ children }) => {
 
         return () => clearTimeout(timer);
       } catch (error) {
-        console.error('Error decoding token:', error);
+        console.error("Error decoding token:", error);
         logout();
       }
     }
   }, [isAuthenticated]);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userType, status, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, userType, status, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

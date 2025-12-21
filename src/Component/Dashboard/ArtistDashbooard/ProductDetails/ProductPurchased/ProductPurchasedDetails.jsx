@@ -10,6 +10,7 @@ function AllProduct() {
     const [selectedImages, setSelectedImages] = useState({});
     const [expanded, setExpanded] = useState({});
     const [activeTab, setActiveTab] = useState("description");
+    const [loading,setLoading]=useState(true);
     const userType = useUserType();
   const navigate = useNavigate();
 
@@ -42,6 +43,8 @@ function AllProduct() {
             } catch (error) {
                 console.error("Error fetching product:", error);
                 setProducts([]);
+            }finally{
+                setLoading(false);
             }
         };
         fetchProduct();
@@ -64,7 +67,7 @@ function AllProduct() {
     const handleTabChange = (tab) => {
         setActiveTab(tab);
     };
-
+if(loading)return <ProductPurchasedSkeleton/>
     return (
         <>
             <div className="block-header">
@@ -257,3 +260,104 @@ function AllProduct() {
 }
 
 export default AllProduct;
+
+function ProductPurchasedSkeleton() {
+    return (
+        <div className="animate-pulse">
+
+            {/* Header Skeleton */}
+            <div className="block-header mb-6">
+                <div className="row">
+
+                    <div className="col-lg-6 col-md-6 col-sm-12">
+                        <div className="h-7 w-48 bg-gray-300 rounded mb-4"></div>
+
+                        {/* Breadcrumb */}
+                        <ul className="flex items-center gap-3">
+                            <li className="h-4 w-6 bg-gray-200 rounded"></li>
+                            <li className="h-4 w-24 bg-gray-200 rounded"></li>
+                            <li className="h-4 w-32 bg-gray-200 rounded"></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            {/* Product Card Skeleton */}
+            <div className="card mb-6">
+                <div className="body p-4">
+
+                    <div className="row">
+
+                        {/* LEFT: Image Preview */}
+                        <div className="preview col-lg-4 col-md-12 mb-4">
+
+                            {/* Main Image */}
+                            <div className="w-[350px] h-[350px] bg-gray-300 rounded-lg mb-4"></div>
+
+                            {/* Thumbnails */}
+                            <div className="flex flex-wrap gap-3">
+                                {Array(5).fill().map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className="w-[55px] h-[55px] bg-gray-300 rounded"
+                                    ></div>
+                                ))}
+                            </div>
+
+                        </div>
+
+                        {/* RIGHT: Product Details */}
+                        <div className="details col-lg-8 col-md-12">
+
+                            {/* Product Title */}
+                            <div className="h-6 w-64 bg-gray-300 rounded"></div>
+                            <hr className="my-4" />
+
+                            {/* Price */}
+                            <div className="h-5 w-40 bg-gray-200 rounded mb-3"></div>
+
+                            {/* Category */}
+                            <div className="h-5 w-48 bg-gray-200 rounded"></div>
+                            <hr className="my-4" />
+
+                        </div>
+
+                    </div>
+
+                    {/* Tabs */}
+                    <div className="row mt-6">
+                        <div className="col-12">
+
+                            {/* Tab Buttons */}
+                            <div className="flex gap-4 border-b pb-2">
+
+                                <div className="h-8 w-40 bg-gray-200 rounded"></div>
+                                <div className="h-8 w-32 bg-gray-200 rounded"></div>
+
+                            </div>
+
+                            {/* Tab Content */}
+                            <div className="mt-4">
+
+                                {/* Description Content */}
+                                <div className="space-y-3">
+                                    <div className="h-4 w-full bg-gray-200 rounded"></div>
+                                    <div className="h-4 w-11/12 bg-gray-200 rounded"></div>
+                                    <div className="h-4 w-4/5 bg-gray-200 rounded"></div>
+                                </div>
+
+                                {/* Read More */}
+                                <div className="h-4 w-24 bg-gray-200 rounded mt-3"></div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    );
+}

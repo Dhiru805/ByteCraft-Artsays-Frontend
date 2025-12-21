@@ -4,6 +4,7 @@ import getAPI from "../../../../api/getAPI";
 import deleteAPI from "../../../../api/deleteAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
 import { toast } from "react-toastify";
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 
 function Curations() {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ function Curations() {
  const [deleteType, setDeleteType] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedCurationToDelete, setSelectedCurationToDelete] = useState(null);
+const[loading,setLoading]=useState(true);
 
   const fetchCurationsData = async () => {
     try {
@@ -26,6 +28,8 @@ function Curations() {
       }
     } catch (error) {
       console.log(error);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -87,6 +91,7 @@ function Curations() {
     setSelectedCurationToDelete(null);
   };
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
      

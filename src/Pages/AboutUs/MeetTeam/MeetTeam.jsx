@@ -99,7 +99,7 @@ const MeetTeam = () => {
     fetchMeetTeam();
   }, []);
 
-  if (loading) return <p className="text-center py-6">Loading...</p>;
+  if (loading) return <p className="text-center py-6">{TeamMembersSkeleton()}</p>;
   if (!data) return <p className="text-center py-6">Meet Team section not available</p>;
 
   return (
@@ -151,3 +151,42 @@ const MeetTeam = () => {
 };
 
 export default MeetTeam;
+
+
+const TeamMembersSkeleton = () => {
+  return (
+    <div className="max-w-[1440px] mx-auto py-3 my-5 animate-pulse">
+      {/* Heading */}
+      <div>
+        <div className="h-8 w-56 bg-gray-300 rounded mx-auto"></div>
+        <div className="h-1 w-40 bg-gray-300 mx-auto my-4"></div>
+        <div className="h-4 w-72 bg-gray-300 rounded mx-auto mt-4"></div>
+        <div className="h-4 w-64 bg-gray-300 rounded mx-auto mt-2"></div>
+      </div>
+
+      {/* Skeleton Cards */}
+      <section className="py-16 text-center">
+        <div className="flex flex-wrap justify-center gap-16 max-w-6xl mx-auto">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="flex flex-col items-center">
+              {/* Circle Image */}
+              <div className="w-64 h-64 rounded-full border-8 border-gray-300 overflow-hidden">
+                <div className="w-full h-full bg-gray-300"></div>
+              </div>
+
+              {/* Name */}
+              <div className="mt-6 h-6 w-40 bg-gray-300 rounded"></div>
+
+              {/* Role */}
+              <div className="mt-3 h-5 w-28 bg-gray-300 rounded"></div>
+
+              {/* Description */}
+              <div className="mt-2 h-4 w-48 bg-gray-300 rounded"></div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+};
+

@@ -6,6 +6,7 @@ import postAPI from '../../../../api/postAPI';
 import ConfirmationDialog from '../../ConfirmationDialog';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 
 const Career = () => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const Career = () => {
   const [careersPerPage, setCareersPerPage] = useState(10);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedCareerToDelete, setSelectedCareerToDelete] = useState(null);
-
+const[loading,setLoading]=useState(true);
   const fetchCareers = async () => {
     try {
       const response = await getAPI("/api/get-career");
@@ -25,6 +26,8 @@ const Career = () => {
     } catch (error) {
       console.error("Error fetching careers:", error);
       setCareers([]);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -114,6 +117,7 @@ const handleStatusUpdate = async () => {
   }
 };
 
+if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

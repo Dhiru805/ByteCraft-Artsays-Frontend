@@ -50,7 +50,7 @@ export const AccountPage = () => {
 
       {/* Main Layout */}
       {!(isTrackOrder || isWishlist || isOrderCompleted || isMyCart || isCheckOut) ? (
-        <div className="w-full max-w-[1464px] mx-auto px-4 sm:px-8 md:px-12 lg:px-[116px] py-10 flex flex-col lg:flex-row gap-6 md:gap-8 lg:gap-[40px] bg-white overflow-x-hidden">
+        <div className="w-full max-w-[1464px] mx-auto px-4 sm:px-8 md:px-12 lg:px-[116px] py-10 flex flex-col lg:flex-row gap-6 md:gap-8 lg:gap-[40px] bg-white overflow-x-hidden overflow-y-hidden">
             <div className="hidden lg:block w-full lg:w-[300px]">
             <AccountSidebar />
           </div>

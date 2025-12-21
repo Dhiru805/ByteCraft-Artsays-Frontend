@@ -4,7 +4,7 @@ import getAPI from '../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../urlconfig';
 import ConfirmationDialog from '../../ConfirmationDialog';
-
+import ProductRequestSkeleton from '../../../Skeleton/artist/ProductRequestSkeleton';
 const ApprovedProduct = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -16,7 +16,7 @@ const ApprovedProduct = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [selectedProductToDelete, setSelectedProductToDelete] = useState(null);
-
+const[loading,setLoading]=useState(true);
 
     const navigate = useNavigate();
     const userType = useUserType();
@@ -38,6 +38,8 @@ const ApprovedProduct = () => {
             } catch (error) {
                 console.error("Error fetching products:", error);
                 setProducts([]);
+            }finally{
+                setLoading(false)
             }
         };
 
@@ -105,6 +107,7 @@ const ApprovedProduct = () => {
         setIsDeleteDialogOpen(true);
     };
 
+    if(loading) return <ProductRequestSkeleton/>
     return (
         <>
             <div className="row clearfix">

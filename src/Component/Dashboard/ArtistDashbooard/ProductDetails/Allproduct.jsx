@@ -389,7 +389,7 @@ import useUserType from '../../urlconfig';
 import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
 import ConfirmationDialog from '../../ConfirmationDialog';
 import ShippingAddressModal from './ShippingAddressModal';
-
+import ProductRequestSkeleton from '../../../Skeleton/artist/ProductRequestSkeleton';
 
 const ApprovedProduct = () => {
     const [products, setProducts] = useState([]);
@@ -407,7 +407,7 @@ const ApprovedProduct = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [currentImages, setCurrentImages] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
+const[loading,setLoading]=useState(true)
     useEffect(() => {
         const fetchProducts = async () => {
             const userId = localStorage.getItem('userId');
@@ -425,6 +425,8 @@ const ApprovedProduct = () => {
             } catch (error) {
                 console.error("Error fetching products:", error);
                 setProducts([]);
+            }finally{
+                setLoading(false)
             }
         };
 
@@ -498,7 +500,7 @@ const ApprovedProduct = () => {
         setSelectedProductId(productId);
         setIsShippingModalOpen(true);
     };
-
+if(loading)return <ProductRequestSkeleton/>
     return (
         <>
             <div className="row clearfix">

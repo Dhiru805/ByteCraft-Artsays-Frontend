@@ -90,6 +90,8 @@ const CreateSellerModal = ({ onClose, fetchSellers }) => {
           </div>
           <div className="modal-body">
             <form onSubmit={handleSubmit}>
+              <div style={{ maxHeight: "30vh", overflowY: "auto" }}>
+
               <div className="form-group">
                 <label>First Name</label>
                 <input type="text" className="form-control" name="firstName" value={formData.firstName} onChange={handleChange} required />
@@ -149,6 +151,7 @@ const CreateSellerModal = ({ onClose, fetchSellers }) => {
                     </span>
                   </div>
                 </div>
+              </div>
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={onClose}>

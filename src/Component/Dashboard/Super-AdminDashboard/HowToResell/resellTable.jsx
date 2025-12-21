@@ -256,6 +256,7 @@ import { toast } from "react-toastify";
 import getAPI from "../../../../api/getAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
 import axiosInstance from "../../../../api/axiosConfig";
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 
 const HowToResellTable = () => {
   const navigate = useNavigate();
@@ -267,7 +268,7 @@ const HowToResellTable = () => {
   const [deleteType, setDeleteType] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedPageToDelete, setSelectedPageToDelete] = useState(null);
-
+const[loading,setLoading]=useState(true)
   const [isSEOModalOpen, setIsSEOModalOpen] = useState(false);
   const [seoData, setSeoData] = useState({
     metaTitle: "",
@@ -287,6 +288,8 @@ const HowToResellTable = () => {
       console.error("Error fetching How To Resell pages:", error);
       toast.error(error.response?.data?.message || "Failed to fetch pages");
       setPages([]);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -411,7 +414,7 @@ const HowToResellTable = () => {
     setPagesPerPage(Number(e.target.value));
     setCurrentPage(1);
   };
-
+if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

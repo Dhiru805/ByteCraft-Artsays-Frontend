@@ -40,15 +40,6 @@
 //   );
 // }
 
-
-
-
-
-
-
-
-
-
 import React, { useState, useEffect } from "react";
 import TestimonialCard from "./TestimonialCard";
 import getAPI from "../../../api/getAPI";
@@ -63,13 +54,15 @@ const Testimonials = () => {
         const pageRes = await getAPI("/api/about-us/published");
         const aboutUsPage = pageRes.data.data;
 
-        if (!aboutUsPage?._id) throw new Error("No published About Us page found");
+        if (!aboutUsPage?._id)
+          throw new Error("No published About Us page found");
 
         const sectionRes = await getAPI(
           `/api/about-us-sections/testimonials/${aboutUsPage._id}`
         );
 
-        if (!sectionRes.data.success) throw new Error("Testimonials section not found");
+        if (!sectionRes.data.success)
+          throw new Error("Testimonials section not found");
 
         setData(sectionRes.data.data);
       } catch (err) {
@@ -82,13 +75,13 @@ const Testimonials = () => {
     fetchTestimonials();
   }, []);
 
-  if (loading) return <p className="text-center py-6">Loading...</p>;
-  if (!data) return <p className="text-center py-6">Testimonials not available</p>;
+  if (loading) return <TestimonialsSkeleton />;
+  if (!data)
+    return <p className="text-center py-6">Testimonials not available</p>;
 
   return (
     <section className="py-16 bg-[#F8F8F8]">
       <div className="max-w-[1440px] mx-auto py-3 my-5 px-6 text-center">
-       
         <h2 className="text-3xl md:text-4xl font-bold text-[#2E2B26] mb-4">
           {data.mainHeading || "Testimonials"}
         </h2>
@@ -96,14 +89,13 @@ const Testimonials = () => {
           {data.mainDescription || "Hear what people are saying about us."}
         </p>
 
-        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {data.testimonials?.map((t, i) => (
             <TestimonialCard
               key={i}
               text={t.description}
               name={t.name}
-              bg="bg-white" 
+              bg="bg-white"
             />
           ))}
         </div>
@@ -113,3 +105,39 @@ const Testimonials = () => {
 };
 
 export default Testimonials;
+
+const TestimonialsSkeleton = () => {
+  return (
+    <>
+      {/* TESTIMONIALS SKELETON */}
+      <section className="py-16 bg-[#F8F8F8] animate-pulse">
+        <div className="max-w-[1440px] mx-auto py-3 my-5 px-6 text-center">
+          {/* Heading Skeleton */}
+          <div className="h-8 w-56 bg-gray-300 rounded mx-auto mb-4"></div>
+
+          {/* Description Skeleton */}
+          <div className="h-4 w-3/4 bg-gray-300 rounded mx-auto mb-2"></div>
+          <div className="h-4 w-1/2 bg-gray-300 rounded mx-auto mb-12"></div>
+
+          {/* Testimonial Cards Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[1, 2, 3].map((_, i) => (
+              <div key={i} className="bg-white p-6 rounded-lg shadow-md">
+                {/* Quote Icon Placeholder */}
+                <div className="h-10 w-10 bg-gray-300 rounded-full mx-auto mb-4"></div>
+
+                {/* Text Placeholder */}
+                <div className="h-4 w-full bg-gray-300 rounded mb-2"></div>
+                <div className="h-4 w-5/6 bg-gray-300 rounded mb-2"></div>
+                <div className="h-4 w-4/6 bg-gray-300 rounded mb-4"></div>
+
+                {/* Name Placeholder */}
+                <div className="h-5 w-32 bg-gray-300 rounded mx-auto"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  );
+};

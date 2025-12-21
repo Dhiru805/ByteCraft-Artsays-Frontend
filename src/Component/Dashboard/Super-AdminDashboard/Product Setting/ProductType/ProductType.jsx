@@ -3,25 +3,28 @@ import getAPI from "../../../../../api/getAPI";
 import ProductTypeTable from "./ProductTypeTable";
 import CreateProductTypeModal from "./CreateProductType";
 import { useNavigate } from 'react-router-dom';
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const ProductType = () => {
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
     const [productTypes, setProductTypes] = useState([]);
-    
+    const[loading,setLoading]=useState(true)
     const fetchProductTypes = async () => {
         try {
             const response = await getAPI("/api/getproducttype");
             setProductTypes(response.data);
         } catch (error) {
             console.error("Error fetching product types:", error);
+        }finally{
+            setLoading(false)
         }
     };
     
     useEffect(() => {
         fetchProductTypes();
     }, []);
-
+if(loading)return <ProductRequestSkeleton/>
     return (
         <div className="container-fluid">
             <div className="block-header">

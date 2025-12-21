@@ -73,7 +73,7 @@ const MissionVision = () => {
     fetchMissionVision();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div><AlternatingCardsSkeleton /></div>;
   if (!data) return <div>Mission & Vision section not available</div>;
 
   return (
@@ -124,3 +124,53 @@ const MissionVision = () => {
 };
 
 export default MissionVision;
+
+
+// AlternatingCardsSkeleton.jsx
+ function AlternatingCardsSkeleton() {
+  return (
+    <div className="bg-[#F8F8F8] py-5">
+      <div className="max-w-[1440px] mx-auto space-y-10 animate-pulse">
+
+        {[1, 2, 3, 4].map((i) => {
+          const isImageLeft = i % 2 === 0;
+
+          return (
+            <div
+              key={i}
+              className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center"
+            >
+              {/* Left Image (when index is even) */}
+              {isImageLeft && (
+                <div className="flex justify-center items-center">
+                  <div className="w-full h-[250px] md:h-[320px] bg-gray-300 rounded-xl"></div>
+                </div>
+              )}
+
+              {/* Card Content Skeleton */}
+              <div className="mx-5 bg-white p-6 border rounded-2xl shadow flex flex-col justify-center">
+                <div className="flex items-center justify-center pb-3 space-x-3">
+                  <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
+                  <div className="h-6 w-40 bg-gray-300 rounded"></div>
+                </div>
+
+                <div className="space-y-2 mt-2 px-4">
+                  <div className="h-4 w-full bg-gray-300 rounded"></div>
+                  <div className="h-4 w-5/6 bg-gray-300 rounded"></div>
+                  <div className="h-4 w-4/6 bg-gray-300 rounded"></div>
+                </div>
+              </div>
+
+              {/* Right Image (when index is odd) */}
+              {!isImageLeft && (
+                <div className="flex justify-center items-center">
+                  <div className="w-full h-[250px] md:h-[320px] bg-gray-300 rounded-xl"></div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

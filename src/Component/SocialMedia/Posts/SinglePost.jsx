@@ -35,7 +35,8 @@ const SharePost = () => {
   const [showCollaborators, setShowCollaborators] = useState(false);
   const [allCollaboraters, setAllCollaboraters] = useState([]);
   const [profile, setProfile] = useState({});
-
+const[loading,setLoading]=useState(true);
+  // 
   const { postId } = useParams();
   const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
@@ -78,11 +79,12 @@ const SharePost = () => {
       } catch (error) {
         console.error("Error fetching share post data:", error);
         toast.error(error.response.data.message || "Error fetching post data");
+      }finally{
+        setLoading(false)
       }
     };
     fetchSinglePostData();
   }, [postId]);
-
   const handleLike = async (postId) => {
     try {
       await postAPI(
@@ -222,9 +224,13 @@ const SharePost = () => {
   }, [userId]);
   //  Navigate to profile
   const goToProfile = (profileUserId) => {
-    navigate("/social-media/profile", {
-      state: { userId: profileUserId },
-    });
+    navigate(
+      `/artsays-community/profile/${
+        sharePostData?.user?.username
+          ? `${sharePostData?.user?.username}`
+          : `${sharePostData?.user?.name}_${sharePostData?.user?.lastName}_${profileUserId}`
+      }`,{state:{userId:profileUserId}}
+    );
   };
 
   const handleInputChange = (e) => {
@@ -355,7 +361,7 @@ const SharePost = () => {
 
         // ✅ Redirect user if blocked
         if (res.data.isBlocked) {
-          navigate("/social-media/");
+          navigate("/artsays-community/");
         }
       }
     } catch (err) {
@@ -386,6 +392,7 @@ const SharePost = () => {
     document.execCommand("copy");
     document.body.removeChild(textarea);
   }
+  if(loading)return <LoadingSkeleton/>
   return (
     <>
       {sharePostData && (
@@ -1055,7 +1062,7 @@ const SharePost = () => {
 
                         {/* Description */}
                         {selectedReason && (
-                          <div className="mt-3">
+                          <div className="mt-1">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                               {selectedReason === "Other"
                                 ? "Describe the issue (required)"
@@ -1081,7 +1088,7 @@ const SharePost = () => {
                         )}
 
                         {/* Actions */}
-                        <div className="flex justify-end gap-3 mt-4">
+                        <div className="flex justify-end gap-3 mt-1">
                           <button
                             type="button"
                             onClick={() => setReportPopupOpen(false)}
@@ -1180,7 +1187,7 @@ const SharePost = () => {
                       <button
                         className="w-full py-2 bg-gray-200 text-gray-800 rounded-lg mb-2"
                         onClick={() => {
-                          const link = `${window.location.origin}/social-media/sharepost/${sharePost._id}`;
+                          const link = `${window.location.origin}/artsays-community/sharepost/${sharePost._id}`;
                           // navigator.clipboard.writeText(link);
                           // setCopyMsg("Link copied!");
                           // setTimeout(() => setCopyMsg(""), 2000);
@@ -1439,9 +1446,13 @@ const SharePost = () => {
                         <li
                           className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
                           onClick={() =>
-                            navigate("/social-media/profile", {
-                              state: { userId: sharePostData.user._id },
-                            })
+                            navigate(
+                              `/artsays-community/profile/${
+                                sharePostData?.user?.username
+                                  ? `${sharePostData?.user?.username}`
+                                  : `${sharePostData?.user?.name}_${sharePostData?.user?.lastName}_${sharePostData?.user?._id}`
+                              }`,{state:{userId:sharePostData?.user?._id}}
+                            )
                           }
                         >
                           About This Account
@@ -1718,3 +1729,30 @@ const SharePost = () => {
   );
 };
 export default SharePost;
+
+
+// loading skeleton
+const LoadingSkeleton = () => {
+  return (
+    <div className="animate-pulse p-4 rounded-xl shadow-sm border w-[90%] h-[90%]">
+      {/* Header */}
+      <div className="flex items-center space-x-3 mb-4">
+        <div className="w-10 h-10 rounded-full bg-gray-300"></div>
+        <div className="flex-1">
+          <div className="h-3 w-32 bg-gray-300 rounded"></div>
+          <div className="h-2 w-20 bg-gray-200 rounded mt-1"></div>
+        </div>
+      </div>
+
+      {/* Image / Content */}
+      <div className="w-full h-80 bg-gray-300 rounded-xl mb-4"></div>
+
+      {/* Footer */}
+      <div className="flex items-center space-x-4">
+        <div className="h-3 w-16 bg-gray-300 rounded"></div>
+        <div className="h-3 w-12 bg-gray-300 rounded"></div>
+        <div className="h-3 w-20 bg-gray-300 rounded"></div>
+      </div>
+    </div>
+  );
+};

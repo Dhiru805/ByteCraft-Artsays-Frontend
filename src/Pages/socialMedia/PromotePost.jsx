@@ -15,7 +15,9 @@ const PromotePost = () => {
   const postId = location.state?.postId;
   const postImage = location.state?.postImage;
   const userId = localStorage.getItem("userId");
-
+  const username = localStorage.getItem("username");
+  const firstName = localStorage.getItem("firstName");
+  const lastName = localStorage.getItem("lastName");
   const [budget, setBudget] = useState(346);
   const [days, setDays] = useState(3);
   const [categories, setCategories] = useState([]);
@@ -43,9 +45,17 @@ const PromotePost = () => {
     fetchMainCategories();
   }, []);
 
+  const hasValidUsername =
+    typeof username === "string" &&
+    username.trim() !== "" &&
+    username !== "undefined" &&
+    username !== "null";
+
   // 💰 Budget and reach calculations
   const totalBudget = budget * days;
-  const estimatedReach = `${Math.floor(budget * 10 * days)}-${Math.floor(budget * 20 * days)}`;
+  const estimatedReach = `${Math.floor(budget * 10 * days)}-${Math.floor(
+    budget * 20 * days
+  )}`;
   const gst = +(totalBudget * 0.18).toFixed(2);
   const Total = +(totalBudget + gst).toFixed(2);
 
@@ -84,7 +94,14 @@ const PromotePost = () => {
       );
       if (res?.data?.success) {
         toast.success("Post promoted successfully!");
-        navigate("/social-media/profile");
+        navigate(
+          `/artsays-community/profile/${
+            hasValidUsername
+              ? `${username}`
+              : `${firstName}_${lastName}_${userId}`
+          }`,
+          { state: { userId: userId } }
+        );
       } else {
         toast.error(res?.data?.message || "Failed to promote post.");
       }
@@ -102,9 +119,8 @@ const PromotePost = () => {
         {/* Header */}
         <header className="flex flex-col w-full">
           <div className="flex items-center gap-2 mb-2">
-            <Link to={"/social-media/profile"}>
-              <RiArrowLeftLine className="text-xl" />
-            </Link>
+            
+            <RiArrowLeftLine className="text-xl" onClick={()=>navigate(-1)}/>
             <h2 className="text-xl font-bold">Promote Post</h2>
           </div>
         </header>
@@ -287,20 +303,20 @@ const PromotePost = () => {
             {/* Duration */}
             <div className="flex flex-col">
               <p className="font-semibold text-lg mb-1">Duration</p>
-             
-                <div>
-                  <p className="text-sm text-[#000000] mb-1">
-                    Number of days: {days} days
-                  </p>
-                  <input
-                    type="range"
-                    min="1"
-                    max="30"
-                    value={days}
-                    onChange={(e) => setDays(Number(e.target.value))}
-                    className="w-full accent-red-500"
-                  />
-                </div>
+
+              <div>
+                <p className="text-sm text-[#000000] mb-1">
+                  Number of days: {days} days
+                </p>
+                <input
+                  type="range"
+                  min="1"
+                  max="30"
+                  value={days}
+                  onChange={(e) => setDays(Number(e.target.value))}
+                  className="w-full accent-red-500"
+                />
+              </div>
             </div>
 
             {/* Boost Post Button */}
@@ -348,7 +364,7 @@ const PromotePost = () => {
 
             <div className="rounded p-4 text-sm space-y-1 flex flex-col">
               <h3 className="font-semibold text-lg mb-2">Payment summary</h3>
-              
+
               <div className="flex flex-row justify-between align-center">
                 <p className="text-sm text-[#000000]"> Budget</p>
                 <p className="text-sm text-[#000000]">₹{totalBudget}</p>
@@ -359,11 +375,9 @@ const PromotePost = () => {
               </div>
               <div className="flex flex-row justify-between align-center">
                 <p className="text-sm text-[#000000] font-semibold">
-                  Total  amount
+                  Total amount
                 </p>
-                <p className="text-sm text-[#000000] font-semibold">
-                  ₹{Total}
-                </p>
+                <p className="text-sm text-[#000000] font-semibold">₹{Total}</p>
               </div>
             </div>
           </div>

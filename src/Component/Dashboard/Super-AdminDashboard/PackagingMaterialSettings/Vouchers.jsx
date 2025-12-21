@@ -3,7 +3,8 @@ import postAPI from "../../../../api/postAPI";
 import getAPI from "../../../../api/getAPI";
 import putAPI from "../../../../api/putAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
-
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
+import { toast } from "react-toastify";
 const Vouchers = () => {
   const [showPopUp, setShowPopUp] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -22,7 +23,7 @@ const Vouchers = () => {
   const [perPage, setPerPage] = useState(10);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedMaterialToDelete, setSelectedMaterialToDelete] = useState(null);
-
+const[pageloading,setPageloading]=useState(false);
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setMaterialVouchersImage(file);
@@ -53,6 +54,7 @@ const Vouchers = () => {
   };
 
   const fetchMaterials = async () => {
+    setPageloading(true)
     try {
       const userId = localStorage.getItem("userId");
       const res = await getAPI(`/api/packaging-material-setting/material-vouchers/${userId}`);
@@ -65,6 +67,8 @@ const Vouchers = () => {
       }
     } catch(error) {
       console.error("Error fetching materials:", error);
+    }finally{
+      setPageloading(false)
     }
   }
 
@@ -119,7 +123,10 @@ const Vouchers = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+ if (!materialVouchersImage) {
+      toast.error("Upload Vouchers Image");
+      return;
+    }
     try {
       const formData = new FormData();
       formData.append("userId", localStorage.getItem("userId"));
@@ -162,6 +169,7 @@ const Vouchers = () => {
     }
   };
 
+  if(pageloading)return <ProductRequestSkeleton/>
   return (
     <>
     <div className="container-fluid">

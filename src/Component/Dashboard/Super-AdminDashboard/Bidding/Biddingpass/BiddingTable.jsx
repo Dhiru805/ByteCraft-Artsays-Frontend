@@ -5,6 +5,7 @@ import postAPI from "../../../../../api/postAPI";
 import putAPI from "../../../../../api/putAPI";
 import deleteAPI from "../../../../../api/deleteAPI";
 import { toast } from "react-toastify";
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const BiddingTable = () => {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ const BiddingTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-
+const[loading,setLoading]=useState(false);
   const [formData, setFormData] = useState({
     name: "",
     validityPeriod: "",
@@ -31,12 +32,15 @@ const BiddingTable = () => {
   });
 
   const fetchPassTypes = async () => {
+    setLoading(true)
     try {
       const res = await getAPI("/api/bidding/passes", {}, true);
       const list = Array.isArray(res?.data?.data) ? res.data.data : [];
       setPasses(list);
     } catch (e) {
       setPasses([]);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -152,6 +156,7 @@ const BiddingTable = () => {
       toast.error("Failed to delete");
     }
   };
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

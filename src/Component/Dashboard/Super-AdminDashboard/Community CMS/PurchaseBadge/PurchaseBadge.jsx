@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../../api/getAPI";
 import { toast } from "react-toastify";
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const PurchaseBadge = () => {
   const [users, setUsers] = useState([]);
@@ -29,9 +30,7 @@ const PurchaseBadge = () => {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center vh-100">
-        <h5>Loading badge users...</h5>
-      </div>
+     <><ProductRequestSkeleton/></>
     );
   }
 

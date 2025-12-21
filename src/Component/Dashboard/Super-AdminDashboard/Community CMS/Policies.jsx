@@ -4,13 +4,14 @@ import getAPI from "../../../../api/getAPI";
 import deleteAPI from "../../../../api/deleteAPI";
 import { toast } from "react-toastify";
 import ConfirmationDialog from "../../ConfirmationDialog";
+import ProductRequestSkeleton from "../../../../Component/Skeleton/artist/ProductRequestSkeleton";
 
 function Policies() {
   const [policies, setPolicies] = useState([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedPolicyToDelete, setSelectedPolicyToDelete] = useState(null);
   const navigate = useNavigate();
-
+const[loading,setLoading]=useState(true)
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -41,6 +42,8 @@ function Policies() {
     } catch (error) {
       console.error("Error fetching policies:", error);
       toast.error("Failed to load policies");
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -73,6 +76,7 @@ const handleDeleteConfirmed = async (id) => {
     setIsDeleteDialogOpen(true);
   };
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <>
       <div className="container-fluid">

@@ -3,11 +3,13 @@ import getAPI from "../../../../../api/getAPI";
 import ProductCouponCodeTable from "./ProductCouponCodeTable";
 import CreateProductCouponCodeModal from "./CreateProductCouponCode";
 import { useNavigate } from 'react-router-dom';
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const ProductCouponCode = () => {
     const [productCouponCodes, setProductCouponCodes] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
+const[loading,setLoading]=useState(true);
 
     const fetchProductCouponCodes = async () => {
         try {
@@ -15,6 +17,9 @@ const ProductCouponCode = () => {
             setProductCouponCodes(response.data);
         } catch (error) {
             console.error("Error fetching product coupon codes:", error);
+        }finally{
+           setLoading(false)
+
         }
     };
     
@@ -22,6 +27,7 @@ const ProductCouponCode = () => {
         fetchProductCouponCodes();
     }, []);
 
+    if(loading) return <ProductRequestSkeleton/>
     return (
         <div className="container-fluid">
             <div className="block-header">

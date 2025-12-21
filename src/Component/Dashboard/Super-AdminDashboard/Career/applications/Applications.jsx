@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 import getAPI from "../../../../../api/getAPI";
 
@@ -11,7 +12,7 @@ function Applications() {
     const [searchTerm, setSearchTerm] = useState("")
     const [applications, setApplications] = useState([])
     const [currentPage, setCurrentPage] = useState(1)
-
+const[loading,setLoading]=useState(true)
     const handleApplicationsPerPage = (e) => {
         setApplicationsPerPage(Number(e.target.value))
     }
@@ -30,6 +31,8 @@ function Applications() {
         }
         catch (error) {
             console.log("Error fetch careers application: ", error)
+        }finally{
+            setLoading(false)
         }
     }
 
@@ -65,7 +68,7 @@ function Applications() {
         }
     }
 
-
+if(loading)return <ProductRequestSkeleton/>
     return (
         <div className="container-fluid">
 

@@ -3,18 +3,20 @@ import getAPI from "../../../../../api/getAPI";
 import ProductMaterialTable from "./ProductMaterialTable";
 import CreateProductMaterialModal from "./CreateProductMaterial";
 import { useNavigate } from 'react-router-dom';
-
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 const ProductMaterial = () => {
     const [productMaterials, setProductMaterials] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
-
+const[loading,setLoading]=useState(true);
     const fetchProductMaterials = async () => {
         try {
             const response = await getAPI("/api/getproductmaterials");
             setProductMaterials(response.data);
         } catch (error) {
             console.error("Error fetching product materials:", error);
+        }finally{
+            setLoading(false)
         }
     };
     
@@ -22,6 +24,7 @@ const ProductMaterial = () => {
         fetchProductMaterials();
     }, []);
 
+    if(loading)return <ProductRequestSkeleton/>
     return (
         <div className="container-fluid">
             <div className="block-header">

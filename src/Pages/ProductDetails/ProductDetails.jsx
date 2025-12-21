@@ -1833,7 +1833,7 @@ const ProductDetails = () => {
   if (loading)
     return (
       <div className="max-w-[1440px] mx-auto p-10 text-center text-xl font-semibold">
-        Loading product…
+        <ProductDetailsSkeleton />
       </div>
     );
   if (!product)
@@ -2212,119 +2212,136 @@ const ProductDetails = () => {
                     </p>
                   </div>
 
-                {product.editionType?.toLowerCase().includes("limited") && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/limited edition.png"
-      alt="limited"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2">Limited Edition</p>
-  </div>
-)}
+                  {product.editionType?.toLowerCase().includes("limited") && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/limited edition.png"
+                        alt="limited"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2">
+                        Limited Edition
+                      </p>
+                    </div>
+                  )}
 
-{product.editionType?.toLowerCase().includes("original") && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/original.png"
-      alt="original"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2 rounded">Original</p>
-  </div>
-)}
+                  {product.editionType?.toLowerCase().includes("original") && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/original.png"
+                        alt="original"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2 rounded">
+                        Original
+                      </p>
+                    </div>
+                  )}
 
-{product.editionType?.toLowerCase().includes("premium") && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/premium.png"
-      alt="premium"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2 rounded">Premium</p>
-  </div>
-)}
+                  {product.editionType?.toLowerCase().includes("premium") && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/premium.png"
+                        alt="premium"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2 rounded">
+                        Premium
+                      </p>
+                    </div>
+                  )}
 
-{product.editionType?.toLowerCase().includes("open") && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/open edition.png"
-      alt="open edition"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2 rounded">Open Edition</p>
-  </div>
-)}
+                  {product.editionType?.toLowerCase().includes("open") && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/open edition.png"
+                        alt="open edition"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2 rounded">
+                        Open Edition
+                      </p>
+                    </div>
+                  )}
 
+                  {product.materials?.some(
+                    (mat) => mat.toLowerCase() === "glass"
+                  ) && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/glass material.png"
+                        alt="glass material"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2 rounded">
+                        Glass Material
+                      </p>
+                    </div>
+                  )}
 
-{product.materials?.some(mat => mat.toLowerCase() === "glass") && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/glass material.png"
-      alt="glass material"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2 rounded">
-      Glass Material
-    </p>
-  </div>
-)}
+                  {product.framing?.toLowerCase() === "framed" && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/framed.png"
+                        alt="framed"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2">
+                        Framed
+                      </p>
+                    </div>
+                  )}
 
+                  {product.framing?.toLowerCase() === "unframed" && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/framed.png"
+                        alt="unframed"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2">
+                        Unframed
+                      </p>
+                    </div>
+                  )}
 
+                  {product.handmade === "Yes" && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/handmade.png"
+                        alt="handmade"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2">
+                        Handmade
+                      </p>
+                    </div>
+                  )}
+                  {product.giftWrapping && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/gifting.png"
+                        alt="gifting options"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2 rounded">
+                        Gifting Options
+                      </p>
+                    </div>
+                  )}
 
-{product.framing?.toLowerCase() === "framed" && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/framed.png"
-      alt="framed"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2">Framed</p>
-  </div>
-)}
-
-{product.framing?.toLowerCase() === "unframed" && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/framed.png"
-      alt="unframed"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2">Unframed</p>
-  </div>
-)}
-
-{product.handmade === "Yes" && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/handmade.png"
-      alt="handmade"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2">Handmade</p>
-  </div>
-)}
-{product.giftWrapping  && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/gifting.png"
-      alt="gifting options"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2 rounded">Gifting Options</p>
-  </div>
-)}
-
-{product.artistSignature  && (
-  <div className="p-2">
-    <img
-      src="/herosectionimg/certified.png"
-      alt="certified"
-      className="w-full h-10 object-contain"
-    />
-    <p className="text-dark text-center text-xs mt-2 rounded">Certified</p>
-  </div>
-)}
+                  {product.artistSignature && (
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/certified.png"
+                        alt="certified"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2 rounded">
+                        Certified
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Mobile / small screen stock info (template) */}
@@ -2685,9 +2702,11 @@ const ProductDetails = () => {
                         />
 
                         <Field label="COA Document" value={product.coaFile} />
-                       
-                        <Field label="Certificate Document" value={product.certificateFile} />
 
+                        <Field
+                          label="Certificate Document"
+                          value={product.certificateFile}
+                        />
                       </Grid>
                     </Section>
 
@@ -2719,7 +2738,8 @@ const ProductDetails = () => {
                       antiqueCondition: product.antiqueCondition,
                       conservationStatus: product.conservationStatus,
                       restorationHistory: product.restorationHistory,
-                      restorationDocumentation: product.restorationDocumentation,
+                      restorationDocumentation:
+                        product.restorationDocumentation,
                       provenanceHistory: product.provenanceHistory,
                       culturalSignificance: product.culturalSignificance,
                       appraisalDetails: product.appraisalDetails,
@@ -2729,7 +2749,8 @@ const ProductDetails = () => {
                       originalReproduction: product.originalReproduction,
                       museumExhibitionHistory: product.museumExhibitionHistory,
                       maintenanceRequired: product.maintenanceRequired,
-                      customEngravingAvailable: product.customEngravingAvailable,
+                      customEngravingAvailable:
+                        product.customEngravingAvailable,
                       certification: product.certification,
                     }) && (
                       <Section title="Antique & Vintage Details">
@@ -3069,21 +3090,54 @@ const ProductDetails = () => {
   // const productReviews = reviews.filter(
   //   (r) => String(r.productId?._id) === String(product?._id)
   // );
-const productReviews = reviews.filter((review) => {
-  const buyerRequest = review.productId;
-  if (!buyerRequest) return false;
+  const productReviews = reviews.filter((review) => {
+    const buyerRequest = review.productId;
+    if (!buyerRequest) return false;
 
-  
-  const reviewProductName = buyerRequest.ProductName?.trim()?.toLowerCase();
-  const currentProductName = product.productName?.trim()?.toLowerCase();
+    const reviewProductName = buyerRequest.ProductName?.trim()?.toLowerCase();
+    const currentProductName = product.productName?.trim()?.toLowerCase();
 
-  return reviewProductName === currentProductName;
-});
-
-
-
+    return reviewProductName === currentProductName;
+  });
 
   return <ProductImages imagesProp={images} initialImage={images[0]} />;
 };
 
 export default ProductDetails;
+
+const ProductDetailsSkeleton = () => {
+  return (
+    <div className="max-w-[1440px] mx-auto p-6 animate-pulse">
+      {/* Breadcrumb */}
+      <div className="h-4 w-1/3 bg-gray-200 rounded mb-4"></div>
+
+      <div className="grid grid-cols-1 md:grid-cols-10 gap-6">
+        {/* Left: Image */}
+        <div className="col-span-5">
+          <div className="h-[550px] bg-gray-200 rounded-xl"></div>
+          <div className="flex gap-3 mt-3">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="w-24 h-24 bg-gray-200 rounded-lg"></div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right: Product Info */}
+        <div className="col-span-5 space-y-4">
+          <div className="h-8 w-3/4 bg-gray-200 rounded"></div>
+          <div className="h-4 w-1/2 bg-gray-200 rounded"></div>
+
+          <div className="h-10 w-1/3 bg-gray-200 rounded"></div>
+
+          <div className="flex gap-3">
+            <div className="h-6 w-16 bg-gray-200 rounded"></div>
+            <div className="h-6 w-16 bg-gray-200 rounded"></div>
+          </div>
+
+          <div className="h-12 w-full bg-gray-200 rounded"></div>
+          <div className="h-12 w-full bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    </div>
+  );
+};

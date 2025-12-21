@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
-
+import ProductRequestSkeleton from '../../../../Skeleton/artist/ProductRequestSkeleton';
 
 const BiddedProduct = () => {
     const [products, setProducts] = useState([]);
@@ -9,7 +9,7 @@ const BiddedProduct = () => {
     const [itemsPerPage, setItemsPerPage] = useState(5);
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
-    
+    const[loading,setLoading]=useState(true)
     
 
     const navigate = useNavigate();
@@ -28,6 +28,8 @@ const BiddedProduct = () => {
             } catch (error) {
                 console.error("Error fetching products:", error);
                 setProducts([]);
+            }finally{
+                setLoading(false)
             }
         };
 
@@ -69,7 +71,7 @@ const BiddedProduct = () => {
     );
 
 
-
+if(loading)return<ProductRequestSkeleton/>
     return (
         <>
             <div className="row clearfix">

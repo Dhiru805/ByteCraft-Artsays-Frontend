@@ -49,7 +49,7 @@ const PromoteProfile = () => {
         {/* Header */}
         <header className="flex flex-col w-full ">
           <div className="flex items-center gap-2 mb-2">
-            <Link to={"/social-media/profile"}>
+            <Link to={"/artsays-community/profile"}>
               <RiArrowLeftLine className="text-xl" />
             </Link>
             <h2 className="text-xl font-bold">Boost Profile</h2>

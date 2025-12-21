@@ -3,17 +3,19 @@ import CategoryTable from "./Categotytable";
 import CreateCategoryModal from "./Createcategory";
 import getAPI from "../../../../../api/getAPI";
 import { useNavigate } from 'react-router-dom';
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 
 const Category = () => {
   const [categories] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
-
+const[loading,setLoading]=useState(false);
 
   const [subCategories, setSubCategories] = useState([]);
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
   const fetchSubCategoryData = async () => {
+    setLoading(true)
     try {
       const response = await getAPI(`/api/sub-category`, {}, true);
       if (
@@ -28,6 +30,8 @@ const Category = () => {
       }
     } catch (err) {
       console.error("Error fetching Sub category List:", err);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -35,6 +39,7 @@ const Category = () => {
     fetchSubCategoryData();
   }, []);
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

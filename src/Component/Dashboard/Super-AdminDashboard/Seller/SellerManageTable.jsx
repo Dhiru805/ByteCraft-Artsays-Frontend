@@ -6,6 +6,7 @@ import CreateSellerModal from "./Createmodal";
 import useUserType from '../../urlconfig';
 import getAPI from "../../../../api/getAPI";
 import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 
 function SellerManageTable() {
   const [sellers, setSellers] = useState([]);
@@ -20,12 +21,13 @@ function SellerManageTable() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage, setProductsPerPage] = useState(10);
-
+const[loading,setLoading]=useState(false);
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   const navigate = useNavigate();
 
   const fetchSellers = async () => {
+    setLoading(true)
     try {
       const response = await getAPI("/api/get-Allsellers");
       const sellersData = response.data;
@@ -45,6 +47,8 @@ function SellerManageTable() {
       setSellers(parsedSellers);
     } catch (error) {
       console.error("Error fetching sellers:", error);
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -103,7 +107,7 @@ function SellerManageTable() {
     setCurrentPage(1);
   };
 
-
+if(loading)return <ProductRequestSkeleton/>
   return (
     <>
       <div className="container-fluid">

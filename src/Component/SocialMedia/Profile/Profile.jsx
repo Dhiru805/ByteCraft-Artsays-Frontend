@@ -168,7 +168,6 @@ const Profile = ({ shareprofileid }) => {
       ...(profile?.postProductsEnabled ? productPosts : []),
       ...normalPosts,
     ].reverse() || [];
-
   const reversedSaved = profile?.saved?.slice().reverse() || [];
   const reversedCollaborated = collaboratedPosts?.reverse() || [];
   let activePost = null;
@@ -188,7 +187,6 @@ const Profile = ({ shareprofileid }) => {
   const [commentPanel, setComentPanel] = useState(false);
   const [touchStartX, setTouchStartX] = useState(0);
   const [touchEndX, setTouchEndX] = useState(0);
-
   const [onPosts, setOnPosts] = useState(true);
   const [onSave, setOnSave] = useState(false);
   const [onItem, setOnItem] = useState(false);
@@ -197,9 +195,9 @@ const Profile = ({ shareprofileid }) => {
   const [follow, setFollow] = useState(false);
   const [suggestionOn, setSuggestionOn] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
-
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [showFollowing, setShowFollowing] = useState(false);
   const isMobile = window.innerWidth < 1024; // Tailwind lg breakpoint
-
   useEffect(() => {
     if (location.state?.onItem === true) {
       setOnItem(true);
@@ -218,10 +216,7 @@ const Profile = ({ shareprofileid }) => {
   const menuRef = useRef(null);
   const profilepopupref1 = useRef(null);
   const profilepopupref2 = useRef(null);
-  const activePostRef = useRef(null);
   const commentRef = useRef(null);
-  const shareRef = useRef(null);
-
   useEffect(() => {
     const handleOutsideClick = (e) => {
       if (!isMobile) {
@@ -239,15 +234,6 @@ const Profile = ({ shareprofileid }) => {
         ) {
           setShowMenu(false);
         }
-
-        if (
-          !shareRef.current &&
-          activePostRef.current &&
-          !activePostRef.current.contains(e.target)
-        ) {
-          setMenuOpenId(null);
-          setActiveIndex(null);
-        }
       }
     };
 
@@ -256,6 +242,16 @@ const Profile = ({ shareprofileid }) => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [menuOpenId, showMenu, activeIndex]);
+
+  useEffect(() => {
+    const shouldLockScroll = activePost || reportPopupOpen || tipPopupOpen;
+
+    document.body.style.overflow = shouldLockScroll ? "hidden" : "auto";
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [activePost, reportPopupOpen, tipPopupOpen]);
 
   // helper: normalize array -> [ids]
   const toIdArray = (arr) =>
@@ -271,9 +267,10 @@ const Profile = ({ shareprofileid }) => {
     return sa === sb;
   };
 
+  const stateUserId = location?.state?.userId;
+
   //  Take userId from state if available,or shared url otherwise fallback to localStorage
-  const viewedUserId =
-    location.state?.userId || shareprofileid || loggedInUserId;
+  const viewedUserId = shareprofileid || stateUserId || loggedInUserId;
 
   useEffect(() => {
     if (!viewedUserId || !userType) return;
@@ -613,6 +610,7 @@ const Profile = ({ shareprofileid }) => {
 
   const handleBlockUser = async () => {
     const loggedInUserId = localStorage.getItem("userId");
+
     if (!loggedInUserId || !viewedUserId) return;
 
     try {
@@ -627,7 +625,7 @@ const Profile = ({ shareprofileid }) => {
         console.log(res.data.message);
 
         if (res.data.isBlocked) {
-          Navigate("/social-media/");
+          Navigate("/artsays-community/");
         }
       }
     } catch (err) {
@@ -638,7 +636,6 @@ const Profile = ({ shareprofileid }) => {
   // Detect "@" and fetch mention suggestions
   const handleProfileCommentChange = async (e) => {
     e.preventDefault();
-
     const value = e.target.value;
     setComment(value);
 
@@ -760,6 +757,9 @@ const Profile = ({ shareprofileid }) => {
     localStorage.removeItem("email");
     localStorage.removeItem("userId");
     localStorage.removeItem("profilePhoto");
+    localStorage.removeItem("username");
+    localStorage.removeItem("firstName");
+    localStorage.removeItem("lastName");
     window.dispatchEvent(new Event("profilePhotoUpdated"));
     window.location.href = "/";
   };
@@ -842,6 +842,16 @@ const Profile = ({ shareprofileid }) => {
     document.body.removeChild(textarea);
   }
 
+const navigateToProfile=(profile)=>{
+ Navigate(
+      `/artsays-community/profile/${
+        profile?.username
+          ? `${profile?.username}`
+          : `${profile?.name}_${profile?.lastName}_${profile._id}`
+      }`,{state:{userId:profile?._id}}
+    );
+}
+
   if (loading) {
     return ProfileSkeleton();
   }
@@ -896,7 +906,13 @@ const Profile = ({ shareprofileid }) => {
 
       {/* Active Post Popup for all screen size*/}
       {activePost && (
-        <div className=" absolute inset-0 z-[9999] bg-[#000000] w-full bg-opacity-40 flex  justify-center items-center w-full">
+        <div
+          className=" fixed  inset-0 z-[9999] bg-[#000000] w-full bg-opacity-40 flex  justify-center items-center w-full"
+          onClick={() => {
+            setActiveIndex(null);
+            setMenuOpenId(null);
+          }}
+        >
           {/* Close Button */}
           <button
             className="absolute lg:top-5 top-5 lg:right-15 right-5 text-4xl font-bold z-50 mt-3 lg:mr-12"
@@ -905,14 +921,17 @@ const Profile = ({ shareprofileid }) => {
               setMenuOpenId(null);
             }}
           >
-            <i className="ri-close-line text-[#000000]"></i>
+            <i className="ri-close-line text-[#fcfcfc]"></i>
           </button>
 
           {/* Left Arrow (previous post) */}
           {activeIndex > 0 && (
             <button
               className="absolute bg-gray-600 lg:p-2 p-1 w-10 h-10 lg:w-12 lg:h-12  rounded-full lg:left-10 left-6 -translate-x-1/3 top-1/2 transform -translate-y-1/2 text-gray-100 lg:text-4xl text-xl z-50"
-              onClick={() => setActiveIndex((prev) => prev - 1)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveIndex((prev) => prev - 1);
+              }}
             >
               <i className="ri-arrow-left-wide-fill "></i>
             </button>
@@ -920,7 +939,7 @@ const Profile = ({ shareprofileid }) => {
 
           {/* Popup Layout */}
           <div
-            ref={activePostRef}
+            onClick={(e) => e.stopPropagation()}
             className="lg:bg-white w-[73%] lg:h-[72vh] h-[56vh] rounded-lg lg:overflow-hidden overflow-visible flex relative flex lg:flex-row flex-col"
           >
             {/* Left Side (Image Viewer) */}
@@ -1179,7 +1198,7 @@ const Profile = ({ shareprofileid }) => {
                     <div className="flex items-center gap-3">
                       {isMyProfile && activePost.isPromoted === false && (
                         <Link
-                          to={"/social-media/profile/promote-post"}
+                          to={"/artsays-community/profile/promote-post"}
                           state={{
                             postId: activePost._id,
                             postImage: activePost.images[0],
@@ -1290,7 +1309,10 @@ const Profile = ({ shareprofileid }) => {
           {activeIndex < reversedPosts.length - 1 && (
             <button
               className="absolute bg-gray-600 lg:p-2 p-1 w-10 h-10 lg:w-12 lg:h-12  rounded-full lg:right-10 right-3   top-1/2 transform -translate-y-1/2 text-gray-100 lg:text-4xl  text-xl z-50"
-              onClick={() => setActiveIndex((prev) => prev + 1)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveIndex((prev) => prev + 1);
+              }}
             >
               <i className="ri-arrow-right-wide-fill "></i>
             </button>
@@ -1442,10 +1464,7 @@ const Profile = ({ shareprofileid }) => {
             </p>
 
             {/* Report Form */}
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-3"
-            >
+            <form onSubmit={handleSubmit} className="space-y-3">
               <div className="space-y-2  max-h-[20vh] overflow-y-auto">
                 {[
                   "I just don't like it",
@@ -1601,7 +1620,13 @@ const Profile = ({ shareprofileid }) => {
             <button
               className="w-full py-2 bg-gray-200 text-gray-800 rounded-lg mb-2"
               onClick={() => {
-                const link = `${window.location.origin}/social-media/profile/${viewedUserId}`;
+                const link = `${
+                  window.location.origin
+                }/artsays-community/profile/${
+                  profile?.username
+                    ? `${profile?.username}_${viewedUserId}`
+                    : `${profile?.firstName}_${profile?.lastName}_${viewedUserId}`
+                }`;
 
                 if (navigator.clipboard && window.isSecureContext) {
                   navigator.clipboard
@@ -1629,10 +1654,7 @@ const Profile = ({ shareprofileid }) => {
 
       {sharePost && (
         <div className="fixed inset-0 bg-[#000000]/40 flex justify-center items-center z-[9999]">
-          <div
-            ref={shareRef}
-            className="bg-white w-80 rounded-xl p-4 shadow-lg relative"
-          >
+          <div className="bg-white w-80 rounded-xl p-4 shadow-lg relative">
             {/* Close */}
             <button
               className="absolute top-2 right-2 text-xl"
@@ -1647,7 +1669,7 @@ const Profile = ({ shareprofileid }) => {
             <button
               className="w-full py-2 bg-gray-200 text-gray-800 rounded-lg mb-2"
               onClick={() => {
-                const link = `${window.location.origin}/social-media/single-post/${activePost._id}`;
+                const link = `${window.location.origin}/artsays-community/single-post/${activePost._id}`;
                 if (navigator.clipboard && window.isSecureContext) {
                   navigator.clipboard
                     .writeText(link)
@@ -1831,7 +1853,7 @@ const Profile = ({ shareprofileid }) => {
                     className="flex gap-2 items-center relative"
                     ref={menuRef}
                   >
-                    <Link to={"/social-media/setting/"}>
+                    <Link to={"/artsays-community/setting/"}>
                       <button className="hidden sm:flex px-2.5 py-1 bg-[#6F4D34] text-white rounded-md text-base">
                         Edit Profile
                       </button>
@@ -1847,7 +1869,7 @@ const Profile = ({ shareprofileid }) => {
                         ref={profilepopupref1}
                         className="absolute right-0 top-full flex flex-col items-center mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-md z-50"
                       >
-                        <Link to={"/social-media/setting"}>
+                        <Link to={"/artsays-community/setting"}>
                           <button className="bg-gray-100 font-medium w-full px-3 py-1.5 hover:bg-gray-200 rounded-t-lg">
                             Setting and privacy
                           </button>
@@ -1958,13 +1980,19 @@ const Profile = ({ shareprofileid }) => {
                   </span>{" "}
                   Posts
                 </p>
-                <p className="text-[#6E4E37] font-medium">
+                <p
+                  className="text-[#6E4E37] font-medium"
+                  onClick={() => setShowFollowers(true)}
+                >
                   <span className="font-bold text-[#48372D]">
                     {profile.followersCount}
                   </span>{" "}
                   Followers
                 </p>
-                <p className="text-[#6E4E37] font-medium">
+                <p
+                  className="text-[#6E4E37] font-medium"
+                  onClick={() => setShowFollowing(true)}
+                >
                   <span className="font-bold text-[#48372D]">
                     {profile.followingCount}
                   </span>{" "}
@@ -1980,27 +2008,32 @@ const Profile = ({ shareprofileid }) => {
                 <p className="text-[#6E4E37] font-2xl">{profile.role}</p>
                 <p className="text-[#000000] font-medium">{profile.bio}</p>
                 <div className="flex items-center gap-2 text-[#3d2b1f]">
-                  <i className="ri-link-m text-[#000000] font-medium"></i>
                   {profile.website && (
-                    <a
-                      href={
-                        profile.website?.startsWith("http")
-                          ? profile.website
-                          : `https://${profile.website}`
-                      }
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline text-[#000000] font-medium"
-                    >
-                      {profile.website}
-                    </a>
+                    <>
+                      <i className="ri-link-m text-[#000000] font-medium"></i>
+
+                      <a
+                        href={
+                          profile.website?.startsWith("http")
+                            ? profile.website
+                            : `https://${profile.website}`
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline text-[#000000] font-medium"
+                      >
+                        {profile.website}
+                      </a>
+                    </>
                   )}
                 </div>
               </div>
             </div>
           </div>
         ) : (
-          <p>profile loading</p>
+          <p className="flex items-center justify-center min-h-screen text-2xl md:text-3xl font-semibold text-gray-500 text-center">
+            No Profile available
+          </p>
         )}
 
         {/* profile header for smaall screen */}
@@ -2067,16 +2100,16 @@ const Profile = ({ shareprofileid }) => {
                   <div className="absolute right-0 top-full flex flex-col items-center mt-2 w-40 bg-gray-200 rounded-md z-50">
                     {isMyProfile ? (
                       <>
-                        <Link to={"/social-media/setting"}>
+                        <Link to={"/artsays-community/setting"}>
                           <button className="bg-gray-100 font-medium w-full px-1 py-1 hover:bg-gray-200 rounded-t-lg">
                             Setting and privacy
                           </button>
                         </Link>
 
-                        <hr className="w-[80%] border-t border-gray-800" />
+                        {/* <hr className="w-[80%] border-t border-gray-800" />
                         <button className="bg-gray-100 w-full font-medium px-1 py-1 hover:bg-gray-200">
                           Login activity
-                        </button>
+                        </button> */}
                         <hr className="w-[80%] border-t border-gray-800" />
                         <button
                           onClick={handleSignOut}
@@ -2195,16 +2228,16 @@ const Profile = ({ shareprofileid }) => {
 
         {isMyProfile ? (
           <div className="sm:hidden flex justify-between items-center ">
-            <Link to={"/social-media/setting/"}>
+            <Link to={"/artsays-community/setting/"}>
               <button className="px-8 py-2 bg-[#6F4D34] text-white rounded-md text-lg">
                 Edit Profile
               </button>
             </Link>
-            <Link to={"/social-media/profile/promote-profile"}>
+            {/* <Link to={`/artsays-community/profile/${profile?.userName? `${profile?.userName}`:`${profile?.firstName}_${profile?.lastName}_${viewedUserId}`}`,{state:{userId:viewedUserId}}}>
               <button className="px-8 py-2 bg-[#6F4D34] text-white rounded-md text-lg">
                 Boost Profile
               </button>
-            </Link>
+            </Link> */}
           </div>
         ) : (
           <div className="sm:hidden flex gap-6 justify-between items-center ">
@@ -2242,7 +2275,7 @@ const Profile = ({ shareprofileid }) => {
               <button
                 className="text-[18px] text-[#000000] cursor-pointer"
                 onClick={() =>
-                  Navigate("/social-media/profile/suggestion", {
+                  Navigate("/artsays-community/profile/suggestion", {
                     state: { users, viewedUserId },
                   })
                 }
@@ -2533,6 +2566,112 @@ const Profile = ({ shareprofileid }) => {
           ) : (
             <div className="text-center text-gray-500">No tagged posts</div>
           ))}
+
+        {/* all followers */}
+        {showFollowers && profile?.followers.length > 0 && (
+          <div
+            className="fixed inset-0 flex items-center justify-center  bg-[#000000]/40 backdrop-blur-sm z-50"
+            onClick={() => setShowFollowers(false)}
+          >
+            <div
+              onClick={(e)=>e.stopPropagation()}
+              className="relative bg-white rounded-xl shadow-xl p-5 w-80 animate-fadeIn"
+            >
+              {/* ❌ Close (cross) button */}
+              <button
+                onClick={() => setShowFollowers(false)}
+                className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
+              >
+                <i className="ri-close-line text-black"></i>{" "}
+              </button>
+
+              <h3 className="text-lg font-semibold mb-4 text-center" >
+                All Followers
+              </h3>
+
+              <ul className="space-y-2 max-h-48 overflow-y-auto">
+                {profile?.followers.map((c) => {
+                  return (
+                    <li
+                      key={c._id}
+                      className="p-2 border rounded-md flex items-center space-x-6"
+                      onClick={()=>{navigateToProfile(c);setShowFollowers(false);}}
+                    >
+                      <img
+                        src={
+                          c?.profilePhoto
+                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${c.profilePhoto}`
+                            : DEFAULT_PROFILE_IMAGE
+                        }
+                        alt={c.username || "user"}
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+
+                      <span className=" text-lg font-bold ">
+                        {c.username
+                          ? `${c.username}`
+                          : `${c.name}_${c.lastName}`}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {/* all following */}
+        {showFollowing && profile?.following.length > 0 && (
+          <div
+            className="fixed inset-0 flex items-center justify-center  bg-[#000000]/40 backdrop-blur-sm z-50"
+            onClick={() => setShowFollowing(false)}
+          >
+            <div
+              onClick={(e)=>e.stopPropagation()}
+              className="relative bg-white rounded-xl shadow-xl p-5 w-80 animate-fadeIn"
+            >
+              {/* ❌ Close (cross) button */}
+              <button
+                onClick={() => setShowFollowing(false)}
+                className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
+              >
+                <i className="ri-close-line text-black"></i>{" "}
+              </button>
+
+              <h3 className="text-lg font-semibold mb-4 text-center" >
+                All Followings
+              </h3>
+
+              <ul className="space-y-2 max-h-48 overflow-y-auto">
+                {profile?.following.map((c) => {
+                  return (
+                    <li
+                      key={c._id}
+                      className="p-2 border rounded-md flex items-center space-x-6"
+                      onClick={()=>{navigateToProfile(c);setShowFollowers(false);}}
+                    >
+                      <img
+                        src={
+                          c?.profilePhoto
+                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${c.profilePhoto}`
+                            : DEFAULT_PROFILE_IMAGE
+                        }
+                        alt={c.username || "user"}
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+
+                      <span className=" text-lg font-bold ">
+                        {c.username
+                          ? `${c.username}`
+                          : `${c.name}_${c.lastName}`}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -751,6 +751,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../../api/axiosConfig";
 import ConfirmationDialog from "../../ConfirmationDialog";
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 
 const PolicyTable = () => {
   const navigate = useNavigate();
@@ -762,7 +763,7 @@ const PolicyTable = () => {
   const [policiesPerPage, setPoliciesPerPage] = useState(10);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedPolicyToDelete, setSelectedPolicyToDelete] = useState(null);
-
+const[loading,setLoading]=useState(true)
   const [isSEOModalOpen, setIsSEOModalOpen] = useState(false);
   const [seoData, setSeoData] = useState({
     metaTitle: "",
@@ -784,6 +785,8 @@ const PolicyTable = () => {
     } catch (error) {
       console.error("Error fetching policies:", error);
       toast.error(error.response?.data?.message || "Failed to fetch policies");
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -921,6 +924,7 @@ const PolicyTable = () => {
     setCurrentPage(1);
   };
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
 

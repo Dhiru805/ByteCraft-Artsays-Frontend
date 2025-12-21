@@ -3,13 +3,14 @@ import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
 import { jwtDecode } from 'jwt-decode';
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const ProductRequest = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
-
+const[loading,setLoading]=useState(false);
 
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
@@ -39,6 +40,7 @@ const ProductRequest = () => {
     useEffect(() => {
         if (!userId) return;
         const fetchProducts = async () => {
+            setLoading(true)
             try {
                 const result = await getAPI(`/api/getallpurchasedproduct/${encodeURIComponent(userId)}`, {}, true, false);
                 console.log("Full API Response:", result);
@@ -54,6 +56,8 @@ const ProductRequest = () => {
             } catch (error) {
                 console.error("Error fetching products:", error);
                 setProducts([]);
+            }finally{
+                setLoading(false)
             }
         };
 
@@ -97,7 +101,7 @@ const ProductRequest = () => {
     };
 
 
-
+if(loading)return <ProductRequestSkeleton/>
     return (
         <div className="container-fluid">
             <div className="block-header">

@@ -3,6 +3,7 @@ import getAPI from "../../../../../api/getAPI";
 import { useNavigate } from "react-router-dom";
 import putAPI from "../../../../../api/putAPI";
 import { toast } from "react-toastify";
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const Order = () => {
   const [orders, setOrders] = useState([]);
@@ -12,6 +13,7 @@ const Order = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [refreshData, setRefreshData] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const handleProductsPerPageChange = (event) => {
     setProductsPerPage(Number(event.target.value));
@@ -30,43 +32,53 @@ const Order = () => {
     }
   };
 
- const fetchOrders = async () => {
-  try {
-    const [resUser, resSeller] = await Promise.all([
-      getAPI(`/api/package-material/`),
-      getAPI(`/api/package-material/seller/order/`)
-    ]);
+  const fetchOrders = async () => {
+    try {
+      const [resUser, resSeller] = await Promise.all([
+        getAPI(`/api/package-material/`),
+        getAPI(`/api/package-material/seller/order/`),
+      ]);
 
-    if (resUser.hasError || resSeller.hasError) {
-      console.error("Error fetching orders:", resUser.message || resSeller.message);
-      setOrders([]);
-      return;
-    }
-
-    const userData = (Array.isArray(resUser.data.data) ? resUser.data.data : [resUser.data.data])
-      .map(order => ({ ...order, source: "Artist" }));
-
-    const sellerData = (Array.isArray(resSeller.data.data) ? resSeller.data.data : [resSeller.data.data])
-      .map(order => ({ ...order, source: "Seller" }));
-
-    // Deduplicate by _id
-    const allOrders = [...userData, ...sellerData];
-    const uniqueOrders = [];
-    const seen = new Set();
-
-    for (const order of allOrders) {
-      if (!seen.has(order._id)) {
-        uniqueOrders.push(order);
-        seen.add(order._id);
+      if (resUser.hasError || resSeller.hasError) {
+        console.error(
+          "Error fetching orders:",
+          resUser.message || resSeller.message
+        );
+        setOrders([]);
+        return;
       }
-    }
-    setOrders(uniqueOrders);
 
-  } catch (error) {
-    console.error("Failed to fetch orders:", error);
-    setOrders([]);
-  }
-};
+      const userData = (
+        Array.isArray(resUser.data.data)
+          ? resUser.data.data
+          : [resUser.data.data]
+      ).map((order) => ({ ...order, source: "Artist" }));
+
+      const sellerData = (
+        Array.isArray(resSeller.data.data)
+          ? resSeller.data.data
+          : [resSeller.data.data]
+      ).map((order) => ({ ...order, source: "Seller" }));
+
+      // Deduplicate by _id
+      const allOrders = [...userData, ...sellerData];
+      const uniqueOrders = [];
+      const seen = new Set();
+
+      for (const order of allOrders) {
+        if (!seen.has(order._id)) {
+          uniqueOrders.push(order);
+          seen.add(order._id);
+        }
+      }
+      setOrders(uniqueOrders);
+    } catch (error) {
+      console.error("Failed to fetch orders:", error);
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchOrders();
@@ -80,56 +92,62 @@ const Order = () => {
   const totalPages = Math.ceil(filteredItems.length / productsPerPage);
 
   const handleStatusChange = async (e, id) => {
- const newStatus = e.target.value;
-  const originalStatus = orders.find((order) => order._id === id)?.status;
-  const selectElement = e.target; 
+    const newStatus = e.target.value;
+    const originalStatus = orders.find((order) => order._id === id)?.status;
+    const selectElement = e.target;
 
-  try {
-    const res = await putAPI(`/api/package-material/order/status/${id}`, { status: newStatus });
-    console.log("Artist data", res); 
+    try {
+      const res = await putAPI(`/api/package-material/order/status/${id}`, {
+        status: newStatus,
+      });
+      console.log("Artist data", res);
 
-    if (res.data.success || res.data.data.success) { 
-      toast.success("Status updated successfully!");
-      setOrders((prevOrders) =>
-        prevOrders.map((order) =>
-          order._id === id ? { ...order, status: newStatus } : order
-        )
-      );
-    } else {
-      toast.error(`Failed to update: ${res.message || 'Unknown error'}`);
-      selectElement.value = originalStatus; 
+      if (res.data.success || res.data.data.success) {
+        toast.success("Status updated successfully!");
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order._id === id ? { ...order, status: newStatus } : order
+          )
+        );
+      } else {
+        toast.error(`Failed to update: ${res.message || "Unknown error"}`);
+        selectElement.value = originalStatus;
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      selectElement.value = originalStatus;
     }
-  } catch (error) {
-    console.error("Error updating status:", error);
-    selectElement.value = originalStatus; 
-  }
-};
+  };
 
-const handleChange = async (e, id) => {
-  const newStatus = e.target.value;
-  const originalStatus = orders.find((order) => order._id === id)?.status;
-  const selectElement = e.target; 
-  try {
-    const res = await putAPI(`/api/package-material/seller/order/status/${id}`, { status: newStatus });
-    console.log("Seller data", res); 
-
-    if (res.data.success || res.data.data.success) { 
-      toast.success("Status updated successfully!");
-      setOrders((prevOrders) =>
-        prevOrders.map((order) =>
-          order._id === id ? { ...order, status: newStatus } : order
-        )
+  const handleChange = async (e, id) => {
+    const newStatus = e.target.value;
+    const originalStatus = orders.find((order) => order._id === id)?.status;
+    const selectElement = e.target;
+    try {
+      const res = await putAPI(
+        `/api/package-material/seller/order/status/${id}`,
+        { status: newStatus }
       );
-    } else {
-      toast.error(`Failed to update: ${res.message || 'Unknown error'}`);
-      selectElement.value = originalStatus; 
-    }
-  } catch (error) {
-    console.error("Error updating status:", error);
-    selectElement.value = originalStatus;
-  }
-}
+      console.log("Seller data", res);
 
+      if (res.data.success || res.data.data.success) {
+        toast.success("Status updated successfully!");
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order._id === id ? { ...order, status: newStatus } : order
+          )
+        );
+      } else {
+        toast.error(`Failed to update: ${res.message || "Unknown error"}`);
+        selectElement.value = originalStatus;
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      selectElement.value = originalStatus;
+    }
+  };
+
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <>
       <div className="container-fluid">
@@ -146,7 +164,14 @@ const handleChange = async (e, id) => {
                     <i className="fa fa-dashboard"></i>
                   </span>
                 </li>
-                <li className="breadcrumb-item" onClick={() => navigate("/super-admin/packaging-material/order")}>Packaging Material Order</li>
+                <li
+                  className="breadcrumb-item"
+                  onClick={() =>
+                    navigate("/super-admin/packaging-material/order")
+                  }
+                >
+                  Packaging Material Order
+                </li>
               </ul>
             </div>
           </div>
@@ -211,7 +236,7 @@ const handleChange = async (e, id) => {
                       </tr>
                     </thead>
                     <tbody>
-                      {orders.filter((mat) =>
+                      {orders?.filter((mat) =>
                         mat.material?.materialName?.materialName
                           .toLowerCase()
                           .includes(searchTerm.toLowerCase())
@@ -308,20 +333,25 @@ const handleChange = async (e, id) => {
                                   }}
                                   value={mat.status}
                                   onChange={(e) => {
-                                    handleStatusChange(e, mat._id)
-                                    handleChange(e, mat._id)
+                                    handleStatusChange(e, mat._id);
+                                    handleChange(e, mat._id);
                                   }}
                                 >
                                   <option value="">Select Status</option>
-                                  <option value="Work in Progress"> Work in Progress</option>
-                                  <option value="Ready for Transit">Ready for Transit </option>
+                                  <option value="Work in Progress">
+                                    {" "}
+                                    Work in Progress
+                                  </option>
+                                  <option value="Ready for Transit">
+                                    Ready for Transit{" "}
+                                  </option>
                                   <option value="In-Transit">In-Transit</option>
                                   <option value="Delivered">Delivered</option>
                                 </select>
                               </td>
                             </tr>
                           ))
-                      )} 
+                      )}
                     </tbody>
                   </table>
                 </div>

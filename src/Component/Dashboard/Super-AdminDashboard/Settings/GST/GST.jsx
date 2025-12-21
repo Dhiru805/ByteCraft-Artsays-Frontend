@@ -3,12 +3,13 @@ import GSTTable from "./GSTTable";
 import AddGST from "./CreateGST";
 import getAPI from "../../../../../api/getAPI";
 import { useNavigate } from 'react-router-dom';
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const GSTSetting = () => {
   const [gstSettings, setGSTSettings] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
-
+const[loading,setLoading]=useState(true)
   const [subGSTSettings, setSubGSTSettings] = useState([]);
   const [selectedSubGST, setSelectedSubGST] = useState(null);
 
@@ -26,6 +27,9 @@ const GSTSetting = () => {
       }
     } catch (err) {
       console.error("Error fetching GST List:", err);
+    }finally{
+          setLoading(false)
+
     }
   };
 
@@ -33,6 +37,7 @@ const GSTSetting = () => {
     fetchSubGSTData();
   }, []);
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

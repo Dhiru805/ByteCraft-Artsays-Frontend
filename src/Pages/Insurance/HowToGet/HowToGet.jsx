@@ -89,7 +89,7 @@ const HowToGet = () => {
     fetchData();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>{HowToGetSkaliton()}</div>;
 
   return (
     <div className="max-w-[1440px] mx-auto py-4">
@@ -136,3 +136,44 @@ const HowToGet = () => {
 };
 
 export default HowToGet;
+
+
+const HowToGetSkaliton=()=>{
+  return(
+    <><div className="max-w-[1440px] mx-auto py-4 animate-pulse px-3">
+
+  {/* Title Skeleton */}
+  <div className="h-7 md:h-10 w-72 bg-gray-300 rounded mb-3"></div>
+
+  <hr className="my-3 border-dark" />
+
+  {/* Subtitle Skeleton */}
+  <div className="h-4 w-full bg-gray-300 rounded mb-2"></div>
+  <div className="h-4 w-[90%] bg-gray-300 rounded mb-4"></div>
+
+  {/* Cards Grid Skeleton */}
+  <div className="grid grid-cols-1 md:grid-cols-4 mt-3 gap-2 md:gap-3 px-2 md:px-0 py-2">
+
+    {[1, 2, 3, 4].map((i) => (
+      <div
+        key={i}
+        className="col-span-1 border border-gray-300 rounded-tr-[100px] rounded-bl-[100px] p-5 py-24 text-center flex flex-col justify-center"
+      >
+        {/* Title line */}
+        <div className="h-5 w-32 bg-gray-300 rounded mx-auto mb-4"></div>
+
+        {/* Description lines */}
+        <div className="space-y-2 mt-3">
+          <div className="h-4 w-full bg-gray-300 rounded"></div>
+          <div className="h-4 w-[90%] bg-gray-300 rounded mx-auto"></div>
+          <div className="h-4 w-[80%] bg-gray-300 rounded mx-auto"></div>
+        </div>
+      </div>
+    ))}
+
+  </div>
+
+</div>
+</>
+  )
+}

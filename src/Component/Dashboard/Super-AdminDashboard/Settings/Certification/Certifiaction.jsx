@@ -3,16 +3,18 @@ import CertificationTable  from "./CertificationTable";
 import AddCertification from "./CreateCertifiaction";
 import getAPI from "../../../../../api/getAPI";
 import { useNavigate } from 'react-router-dom';
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const CertificationSetting = () => {
   const [certifications, setCertifications] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
-
+const[loading,setLoading]=useState(false);
   const [subCertifications, setSubCertifications] = useState([]);
   const [selectedSubCertification, setSelectedSubCertification] = useState(null);
 
   const fetchSubCertificationData = async () => {
+    setLoading(true)
     try {
       const response = await getAPI(`/api/get-certification-setting`, {}, true);
       if (
@@ -26,6 +28,8 @@ const CertificationSetting = () => {
       }
     } catch (err) {
       console.error("Error fetching certification List:", err);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -33,6 +37,7 @@ const CertificationSetting = () => {
     fetchSubCertificationData();
   }, []);
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

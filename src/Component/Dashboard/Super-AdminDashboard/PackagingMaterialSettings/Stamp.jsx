@@ -3,7 +3,8 @@ import postAPI from "../../../../api/postAPI";
 import getAPI from "../../../../api/getAPI";
 import putAPI from "../../../../api/putAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
-
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
+import { toast } from "react-toastify";
 const Stamp = () => {
   const [showPopUp, setShowPopUp] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -22,7 +23,7 @@ const Stamp = () => {
   const [perPage, setPerPage] = useState(10);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedMaterialToDelete, setSelectedMaterialToDelete] = useState(null);
-
+const[pageloading,setPageloading]=useState(false);
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setMaterialStampImage(file);
@@ -59,6 +60,7 @@ const Stamp = () => {
   const totalPages = Math.ceil(filteredItems.length / productsPerPage);
 
   const fetchMaterials = async () => {
+    setPageloading(true)
     try {
       const userId = localStorage.getItem("userId");
       const res = await getAPI(`/api/packaging-material-setting/material-stamp/${userId}`);
@@ -71,6 +73,8 @@ const Stamp = () => {
       }
     } catch (error) {
       console.error("Error fetching materials:", error);
+    }finally{
+      setPageloading(false)
     }
   }
 
@@ -122,7 +126,10 @@ const Stamp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+if (!materialStampImage) {
+      toast.error("Upload Material stamp Image");
+      return;
+    }
     try {
       const formData = new FormData();
       formData.append("userId", localStorage.getItem("userId"));
@@ -165,6 +172,7 @@ const Stamp = () => {
     }
   };
 
+  if(pageloading)return <ProductRequestSkeleton/>
   return (
     <>
     <div className="container-fluid">

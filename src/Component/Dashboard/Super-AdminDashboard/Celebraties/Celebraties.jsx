@@ -5,6 +5,7 @@ import ConfirmationDialog from "../../ConfirmationDialog";
 import deleteAPI from "../../../../api/deleteAPI";
 import { toast } from "react-toastify";
 import axios from "axios";
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 
 function Celebrities() {
 
@@ -17,6 +18,7 @@ function Celebrities() {
 
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
     const [selectedCelebrityToDelete, setSelectedCelebrityToDelete] = useState(null)
+const[loading,setLoading]=useState(true);
 
     const handleCelebratiesPerPage = (e) => {
         setCelebratiesPerPage(Number(e.target.value))
@@ -38,6 +40,8 @@ function Celebrities() {
         }
         catch (error) {
             console.log(error)
+        }finally{
+            setLoading(false)
         }
     };
 
@@ -102,6 +106,7 @@ function Celebrities() {
         setSelectedCelebrityToDelete(null);
     };
 
+    if(loading)return <ProductRequestSkeleton/>
     return (
         <div className="container-fluid">
 

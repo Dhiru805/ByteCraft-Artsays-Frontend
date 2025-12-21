@@ -29,6 +29,8 @@ import getAPI from "../../../api/getAPI";
 import { FaUser, FaChevronLeft, FaTools } from "react-icons/fa";
 import { MdOutlineSecurity, MdVerified, MdLibraryAdd } from "react-icons/md";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
+import HeaderSkeleton from "../../../Component/Skeleton/Home/HeaderSkeleton";
+
 const NavBar = () => {
   const [showMegamenu, setShowMegamenu] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -41,15 +43,19 @@ const NavBar = () => {
   const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
   const location = useLocation();
-  const isOnSocialMedia = location.pathname.startsWith("/social-media");
+  const isOnSocialMedia = location.pathname.startsWith("/artsays-community");
   const [profile, setProfile] = useState({});
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchUserData = async () => {
+      setLoading(true);
       try {
         const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
         setUser(result.data.user);
       } catch (error) {
         console.error("Fetching user Error", error);
+      } finally {
+        setLoading(false);
       }
     };
     const fetchProfile = async () => {
@@ -90,12 +96,15 @@ const NavBar = () => {
     localStorage.removeItem("email");
     localStorage.removeItem("userId");
     localStorage.removeItem("profilePhoto");
+    localStorage.removeItem("username");
+    localStorage.removeItem("firstName");
+    localStorage.removeItem("lastName");
     window.dispatchEvent(new Event("profilePhotoUpdated"));
     window.location.href = "/";
   };
 
   useEffect(() => {
-    if (location.pathname.startsWith("/social-media")) {
+    if (location.pathname.startsWith("/artsays-community")) {
       setIsToggled(true);
     } else {
       setIsToggled(false);
@@ -106,7 +115,7 @@ const NavBar = () => {
     if (isToggled) {
       navigate("/");
     } else {
-      navigate("/social-media");
+      navigate("/artsays-community");
     }
   };
 
@@ -186,6 +195,8 @@ const NavBar = () => {
       // overlay?.removeEventListener("click", closeSidebar);
     };
   }, [isToggled]);
+
+  if (loading) return <HeaderSkeleton />;
   return (
     <div className="w-full">
       <header className="header-h">
@@ -407,6 +418,7 @@ const NavBar = () => {
                           token: localStorage.getItem("token"),
                           usertype: localStorage.getItem("usertype"),
                           profilePhoto: localStorage.getItem("profilePhoto"),
+                          username: localStorage.getItem("username"),
                         })}
                         {console.log("BASE_URL:", BASE_URL)}
                         <img
@@ -447,7 +459,7 @@ const NavBar = () => {
                             </div>
                           </Link>
                           {!isOnSocialMedia ? (
-                            <Link to="/social-media">
+                            <Link to="/artsays-community">
                               <div
                                 className="dropdown-item-h"
                                 onClick={handleUserIconClick}
@@ -548,7 +560,7 @@ const NavBar = () => {
                             {!isOnSocialMedia ? (
                               <Link
                                 className="dropdown-item-h"
-                                to={"/social-media"}
+                                to={"/artsays-community"}
                                 onClick={handleUserIconClick}
                               >
                                 <img
@@ -641,7 +653,7 @@ const NavBar = () => {
                 {/* {
                 showProfileMenu && (
                   <>
-                    <a className="dropdown-item-h" onClick={() => navigate("/social-media")}>
+                    <a className="dropdown-item-h" onClick={() => navigate("/artsays-community")}>
                       <img 
                         alt="community-logo" 
                         src={artLogo} 
@@ -719,7 +731,7 @@ const NavBar = () => {
                   <span>My Dashboard</span>
                 </div>
                 {!isOnSocialMedia ? (
-                  <Link to="/social-media">
+                  <Link to="/artsays-community">
                     <div
                       className="profile-item-h pl-4"
                       onClick={() => setShowProfileMenu(!showProfileMenu)}
@@ -916,7 +928,7 @@ const NavBar = () => {
                 </Link>
 
                 <Link
-                  to={"my-account/social-media-promotion"}
+                  to={"my-account/artsays-community-promotion"}
                   onClick={() => setShowProfileMenu(!showProfileMenu)}
                 >
                   <div className="profile-item-h flex">
@@ -952,7 +964,7 @@ const NavBar = () => {
                 </Link>
 
                 {!isOnSocialMedia ? (
-                  <Link to="/social-media">
+                  <Link to="/artsays-community">
                     <div
                       className="profile-item-h"
                       onClick={() => setShowProfileMenu(!showProfileMenu)}
