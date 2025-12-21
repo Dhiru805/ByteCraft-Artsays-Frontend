@@ -13,12 +13,23 @@ const stickersArray = ["🔥", "😂", "❤️", "👍", "🎉", "😍", "😭",
 const Uploadpost = () => {
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
+  const username = localStorage.getItem("username");
+  const firstName = localStorage.getItem("firstName");
+  const lastName = localStorage.getItem("lastName");
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showStickers, setShowStickers] = useState(false);
   const [stickerPos, setStickerPos] = useState({ top: 0, left: 0 });
   const emojiBtnRef = useRef(null);
   const stickerRef = useRef(null);
+
+
+  
+const hasValidUsername =
+  typeof username === "string" &&
+  username.trim() !== "" &&
+  username !== "undefined" &&
+  username !== "null";
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -76,10 +87,10 @@ const Uploadpost = () => {
         true, // private (requires token)
         { "Content-Type": "multipart/form-data" } // headers override
       );
-
+ 
       if (res && !res.hasError) {
         toast.success("Post uploaded successfully!");
-        navigate("/social-media/profile");
+        navigate(`/artsays-community/profile/${hasValidUsername? `${username}`:`${firstName}_${lastName}_${userId}`}`,{state:{userId:userId}});
       } else {
         toast.error(res?.message || "Failed to upload post");
       }
@@ -268,7 +279,7 @@ const Uploadpost = () => {
       <div className="w-[78%] mx-auto flex flex-col ab  lg:mt-8">
         {/* Header */}
         <div className="w-full bg-[#000000] flex items-center justify-between rounded-t-xl header">
-          <Link to="/social-media/create-post">
+          <Link to="/artsays-community/create-post">
             <i className="text-[30px] ri-arrow-left-s-line text-white ml-2"></i>
           </Link>
           <p className="text-lg text-white font-medium">Create new post</p>
@@ -338,7 +349,6 @@ const Uploadpost = () => {
                 />
               )}{" "}
             </div>
-
             {/* Post Description */}
             <div className="w-full bg-[#F0EDEB] h-40 flex flex-col items-center justify-between rounded-lg py-2 px-2 relative">
               <textarea
@@ -383,7 +393,6 @@ const Uploadpost = () => {
                 </p>
               </div>
             </div>
-
             {/* Location */}
             <div className="w-full bg-[#F0EDEB] flex flex-col px-2 rounded-lg relative">
               <input
@@ -413,7 +422,6 @@ const Uploadpost = () => {
                 </div>
               )}
             </div>
-
             {/* Collaborators */}
             <div className="w-full bg-[#F0EDEB] flex flex-col px-2 rounded-lg relative">
               <input
@@ -440,7 +448,11 @@ const Uploadpost = () => {
                       }}
                     >
                       <img
-                        src={user?.profilePhoto?`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`:`${DEFAULT_PROFILE_IMAGE}`}
+                        src={
+                          user?.profilePhoto
+                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`
+                            : `${DEFAULT_PROFILE_IMAGE}`
+                        }
                         alt={user?.username}
                         className="w-8 h-8 rounded-full mr-2"
                       />
@@ -477,7 +489,6 @@ const Uploadpost = () => {
                 ))}
               </div>
             </div>
-            
             {/* Share To */} {/* Post Button */}
             <div className="w-full flex items-center justify-end">
               <input

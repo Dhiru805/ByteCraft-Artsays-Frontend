@@ -54,7 +54,6 @@ const items = [
   { key: "comments", label: "Comments", icon: <FaRegComment /> },
   { key: "blocked", label: "Blocked", icon: <RiProhibitedLine /> },
   { key: "verified", label: "Verified", icon: <RiVerifiedBadgeLine /> },
-  // { key: "help", label: "Help", icon: <RiQuestionLine /> },
   {
     key: "privacy-center",
     label: "Privacy Center",
@@ -72,7 +71,9 @@ const Setting = () => {
   const [loading, setLoading] = useState(true);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const navigate = useNavigate();
-
+  const userName = localStorage.getItem("username");
+  const firstName = localStorage.getItem("firstName");
+  const lastName = localStorage.getItem("lastName");
   const [name, setName] = useState(profile?.firstName || "");
   const [username, setUsername] = useState(profile?.username || "");
   const [website, setWebsite] = useState(profile?.website || "");
@@ -92,6 +93,14 @@ const Setting = () => {
       setProfilePhoto(profile.profilePhoto || "");
     }
   }, [profile]);
+
+
+const hasValidUsername =
+  typeof userName === "string" &&
+  userName.trim() !== "" &&
+  userName !== "undefined" &&
+  userName !== "null";
+
 
   const bioMax = 150;
   const remaining = bioMax - bio.length;
@@ -1819,82 +1828,6 @@ const Setting = () => {
           </div>
         )}
 
-        {/* help panel */}
-        {/* {active === "help" && (
-          <div className="w-full lg:p-6 lg:mt-6 h-full">
-            <div className="lg:border lg:border-gray-300 rounded-xl bg-white p-6">
-              <div className="flex items-center gap-1 mb-4">
-                {lgActive && (
-                  <button
-                    className="text-[24px] font-bold text-[#000000]"
-                    onClick={() => setLgActive(false)}
-                  >
-                    <i class="ri-arrow-left-s-line"></i>
-                  </button>
-                )}
-                <h1 className="text-[24px] text-[#000000] font-bold ">Help</h1>
-              </div>
-
-              <div className="relative mb-6 ">
-                <i className="ri-search-line absolute top-1/2 left-3 transform -translate-y-1/2 text-[#000000] text-[18px]"></i>
-                <input
-                  type="text"
-                  placeholder="Type your question...."
-                  className="w-full bg-[#f6f7f9] text-[14px] text-[#000000] pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none placeholder:text-[16px] placeholder:text-[#48372D]"
-                />
-              </div>
-
-              <div className="mb-6">
-                <h2 className="text-[20px] font-semibold mb-3">
-                  Support requests
-                </h2>
-                <ul className="space-y-1">
-                  {["Reports", "Safety Notices", "Violations"].map(
-                    (item, i) => (
-                      <li
-                        key={i}
-                        className="flex items-center justify-between cursor-pointer hover:underline  text-[#000000] text-[14px]"
-                      >
-                        <span>{item}</span>
-                        <span className="">
-                          <i className="ri-arrow-right-s-line text-xl font-bold"></i>
-                        </span>
-                      </li>
-                    )
-                  )}
-                </ul>
-              </div>
-
-              <div className="mb-6">
-                <h2 className="text-[20px] font-semibold mb-3">FAQs</h2>
-                <ul className="space-y-2 text-[16px] text-[#000000]">
-                  <li className="cursor-pointer hover:underline">
-                    How do I turn on memberships?
-                  </li>
-                  <li className="cursor-pointer hover:underline">
-                    How do I set my artwork price?
-                  </li>
-                  <li className="cursor-pointer hover:underline">
-                    How do I set my artwork price?
-                  </li>
-                  <li className="cursor-pointer hover:underline">
-                    How can I message buyers?
-                  </li>
-                </ul>
-              </div>
-
-              <div className="flex rounded-l-xl items-center border border-gray-300 rounded-md overflow-hidden mt-4">
-                <div className="flex-1 px-4 py-2 font-semibold text-[20px] text-[#000000]">
-                  Still need help?
-                </div>
-                <button className="bg-[#4B2B1C] text-white px-5 py-2 text-[20px] rounded-r-xl font-semibold">
-                  Contact Us
-                </button>
-              </div>
-            </div>
-          </div>
-        )} */}
-
         {/* verification panel */}
         {active === "verified" && (
           <div className="w-full lg:p-6 lg:mt-6">
@@ -2213,7 +2146,13 @@ const Setting = () => {
 
                   <button
                     onClick={() => {
-                      const link = `${window.location.origin}/social-media/profile/${userId}`;
+                      const link = `${
+                        window.location.origin
+                      }/artsays-community/profile/${
+                        hasValidUsername
+                          ? `${userName}_${userId}`
+                          : `${firstName}_${lastName}_${userId}`
+                      }`;
                       if (navigator.clipboard && window.isSecureContext) {
                         navigator.clipboard
                           .writeText(link)

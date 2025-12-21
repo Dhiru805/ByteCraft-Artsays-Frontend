@@ -109,6 +109,10 @@ export const NavGuestState = () => {
     localStorage.removeItem('email');
     localStorage.removeItem('userId');
     localStorage.removeItem('profilePhoto'); // Clear profile photo
+    localStorage.removeItem("username");
+    localStorage.removeItem("firstName");
+    localStorage.removeItem("lastName");
+    
     setProfileImage(DEFAULT_PROFILE_IMAGE);
     window.dispatchEvent(new Event('profilePhotoUpdated')); // Notify other components
     window.location.href = '/';

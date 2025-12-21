@@ -252,6 +252,7 @@ import { toast } from "react-toastify";
 import getAPI from "../../../../api/getAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
 import axiosInstance from "../../../../api/axiosConfig";
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 
 const HowToBuyTable = () => {
   const navigate = useNavigate();
@@ -263,7 +264,7 @@ const HowToBuyTable = () => {
   const [deleteType, setDeleteType] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedPageToDelete, setSelectedPageToDelete] = useState(null);
-
+const[loading,setLoading]=useState(true)
   const [isSEOModalOpen, setIsSEOModalOpen] = useState(false);
   const [seoData, setSeoData] = useState({
     metaTitle: "",
@@ -283,6 +284,8 @@ const HowToBuyTable = () => {
       console.error("Error fetching How To Buy pages:", error);
       toast.error(error.response?.data?.message || "Failed to fetch pages");
       setPages([]);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -408,6 +411,7 @@ const HowToBuyTable = () => {
     setCurrentPage(1);
   };
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

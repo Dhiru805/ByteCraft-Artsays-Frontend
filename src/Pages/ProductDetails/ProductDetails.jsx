@@ -1645,11 +1645,11 @@ const offersData = [
 ];
 
 const ProductDetails = () => {
- // const { productId } = useParams();
- const { productSlug, productId } = useParams();
+  // const { productId } = useParams();
+  const { productSlug, productId } = useParams();
   const id = productId;
   const userId = localStorage.getItem("userId");
-  const userType = localStorage.getItem("userType"); 
+  const userType = localStorage.getItem("userType");
 
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 
@@ -1699,7 +1699,7 @@ const ProductDetails = () => {
   const [categoryName, setCategoryName] = useState("");
   const [subCategoryName, setSubCategoryName] = useState("");
 
-const tabRef = React.useRef(null);
+  const tabRef = React.useRef(null);
 
   const [categoryData, setCategoryData] = useState({
     mainCategories: [],
@@ -1714,13 +1714,13 @@ const tabRef = React.useRef(null);
     560001: "MG Road, Bangalore, Karnataka",
   };
 
-const ensureBuyer = () => {
-  if (userType !== "Buyer") {
-    toast.warn("Only buyers can use this feature, Register as a Buyer to continue.");
-    return false;
-  }
-  return true;
-};
+  const ensureBuyer = () => {
+    if (userType !== "Buyer") {
+      toast.warn("Only buyers can use this feature, Register as a Buyer to continue.");
+      return false;
+    }
+    return true;
+  };
 
   const artworkSize = { width: 100, height: 70 };
   const roomBackgrounds = [
@@ -1728,7 +1728,7 @@ const ensureBuyer = () => {
     "/artimages/wall3.jpg",
     "/artimages/wall4.webp",
   ];
-const addToCart = async (productId, desiredQty = 1) => {
+  const addToCart = async (productId, desiredQty = 1) => {
     const userId = localStorage.getItem("userId");
 
     if (!userId) {
@@ -1769,8 +1769,8 @@ const addToCart = async (productId, desiredQty = 1) => {
           reviewRes?.data?.data || reviewRes?.data?.reviews || [];
         const sortedReviews = Array.isArray(reviewPayload)
           ? [...reviewPayload].sort(
-              (a, b) => new Date(b?.createdAt || 0) - new Date(a?.createdAt || 0)
-            )
+            (a, b) => new Date(b?.createdAt || 0) - new Date(a?.createdAt || 0)
+          )
           : [];
         setReviews(sortedReviews);
 
@@ -1871,17 +1871,17 @@ const addToCart = async (productId, desiredQty = 1) => {
     setSubCategoryName(subCat?.subCategoryName || "N/A");
   }, [product, categoryData]);
 
-useEffect(() => {
-  const anchor = document.getElementById("tabs-start");
-  if (!anchor) return;
+  useEffect(() => {
+    const anchor = document.getElementById("tabs-start");
+    if (!anchor) return;
 
-  const yOffset = -120; 
-  const y = anchor.getBoundingClientRect().top + window.pageYOffset + yOffset;
+    const yOffset = -120;
+    const y = anchor.getBoundingClientRect().top + window.pageYOffset + yOffset;
 
-  setTimeout(() => {
-    window.scrollTo({ top: y, behavior: "smooth" });
-  }, 50);
-}, [activeTab]);
+    setTimeout(() => {
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }, 50);
+  }, [activeTab]);
 
 
   const handleSubmit = (e) => {
@@ -1968,7 +1968,7 @@ useEffect(() => {
           text: "I found this amazing art on Artsays!",
           url: window.location.href,
         })
-        .catch(() => {});
+        .catch(() => { });
     } else {
       alert("Share not supported in this browser");
     }
@@ -1977,7 +1977,7 @@ useEffect(() => {
   if (loading)
     return (
       <div className="max-w-[1440px] mx-auto p-10 text-center text-xl font-semibold">
-        Loading product…
+        <ProductDetailsSkeleton />
       </div>
     );
   if (!product)
@@ -1987,22 +1987,20 @@ useEffect(() => {
       </div>
     );
 
-    const seoTitle = `${product.productName} | Artsays`;
-const seoDesc = product.description?.slice(0, 150) || "Buy exclusive artwork from verified artists.";
-const seoImg = `${imageBaseURL}${product.mainImage}`;
-const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName}, artwork`;
+  const seoTitle = `${product.productName} | Artsays`;
+  const seoDesc = product.description?.slice(0, 150) || "Buy exclusive artwork from verified artists.";
+  const seoImg = `${imageBaseURL}${product.mainImage}`;
+  const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName}, artwork`;
 
   const discountPercent = calculateDiscount(
     product.sellingPrice,
     product.marketPrice
   );
-  const username = `${
-    product?.userId?.username ||
+  const username = `${product?.userId?.username ||
     `${product?.userId?.name || ""} ${product?.userId?.lastName || ""}`
-  }`.trim();
-  const artistName = `${product?.userId?.name || ""} ${
-    product?.userId?.lastName || ""
-  }`.trim();
+    }`.trim();
+  const artistName = `${product?.userId?.name || ""} ${product?.userId?.lastName || ""
+    }`.trim();
 
   const ProductImages = ({ imagesProp, initialImage }) => {
     const [selectedImage, setSelectedImage] = useState(
@@ -2115,7 +2113,7 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
             subCategoryName,
             product.productName,
           ]
-            .filter((v) => v && v !== "N/A") 
+            .filter((v) => v && v !== "N/A")
             .join(" / ")}
         </p>
 
@@ -2169,11 +2167,10 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
                       src={img}
                       alt={`thumb-${i}`}
                       onClick={() => setSelectedImage(img)}
-                      className={`w-24 h-24 object-contain rounded-lg product-img product-card cursor-pointer border-2 transition-all duration-200 ${
-                        selectedImage === img
+                      className={`w-24 h-24 object-contain rounded-lg product-img product-card cursor-pointer border-2 transition-all duration-200 ${selectedImage === img
                           ? "border-[#48372D]"
                           : "border-transparent"
-                      }`}
+                        }`}
                     />
                   ))}
                 </div>
@@ -2223,11 +2220,10 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
                           src={room}
                           alt={`room-${i}`}
                           onClick={() => setSelectedRoom(room)}
-                          className={`w-24 h-20 object-cover rounded-lg cursor-pointer border-2 ${
-                            selectedRoom === room
+                          className={`w-24 h-20 object-cover rounded-lg cursor-pointer border-2 ${selectedRoom === room
                               ? "border-[#48372D]"
                               : "border-transparent"
-                          }`}
+                            }`}
                         />
                       ))}
                     </div>
@@ -2422,17 +2418,17 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
                   {product.materials?.some(
                     (mat) => mat.toLowerCase() === "glass"
                   ) && (
-                    <div className="p-2">
-                      <img
-                        src="/herosectionimg/glass material.png"
-                        alt="glass material"
-                        className="w-full h-10 object-contain"
-                      />
-                      <p className="text-dark text-center text-xs mt-2 rounded">
-                        Glass Material
-                      </p>
-                    </div>
-                  )}
+                      <div className="p-2">
+                        <img
+                          src="/herosectionimg/glass material.png"
+                          alt="glass material"
+                          className="w-full h-10 object-contain"
+                        />
+                        <p className="text-dark text-center text-xs mt-2 rounded">
+                          Glass Material
+                        </p>
+                      </div>
+                    )}
 
                   {product.framing?.toLowerCase() === "framed" && (
                     <div className="p-2">
@@ -2558,19 +2554,17 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
                     <div className="flex gap-2">
                       <button
                         onClick={prevSlide}
-                        className={`p-2 rounded-full focus:bg-none ${
-                          index === 0 ? "opacity-40 cursor-not-allowed" : ""
-                        }`}
+                        className={`p-2 rounded-full focus:bg-none ${index === 0 ? "opacity-40 cursor-not-allowed" : ""
+                          }`}
                       >
                         <ChevronLeft />
                       </button>
                       <button
                         onClick={nextSlide}
-                        className={`p-2 rounded-full focus:bg-none ${
-                          index >= offersData.length - 3
+                        className={`p-2 rounded-full focus:bg-none ${index >= offersData.length - 3
                             ? "opacity-40 cursor-not-allowed"
                             : ""
-                        }`}
+                          }`}
                       >
                         <ChevronRight />
                       </button>
@@ -2605,7 +2599,7 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
 
             {/* Tabs (left column area) */}
             {/* <div className="mt-12 border-b"> */}
-              {/* <div className="flex gap-8 text-[#48372D] font-medium text-lg border-b border-gray-200 overflow-x-auto no-scrollbar">
+            {/* <div className="flex gap-8 text-[#48372D] font-medium text-lg border-b border-gray-200 overflow-x-auto no-scrollbar">
                 {["description", "details", "artist", "reviews"].map((tab) => (
                   <button
                     key={tab}
@@ -2622,31 +2616,30 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
                   </button>
                 ))}
               </div> */}
-{/* Tabs (left column area) */}
-<div id="tabs-start" className="mt-12 border-b">
-  <div className="flex gap-8 text-[#48372D] font-medium text-lg border-b border-gray-200 overflow-x-auto no-scrollbar">
-    {["description", "details", "artist", "reviews"].map((tab) => (
-      <button
-        key={tab}
-        onClick={() => {
-          setActiveTab(tab);
-        }}
-        className={`pb-2 flex-shrink-0 transition-all duration-200 whitespace-nowrap ${
-          activeTab === tab
-            ? "border-b-4 border-[#48372D] font-semibold text-[#48372D]"
-            : "font-semibold text-[#48372D]"
-        }`}
-      >
-        {tab.charAt(0).toUpperCase() + tab.slice(1)}
-      </button>
-    
+            {/* Tabs (left column area) */}
+            <div id="tabs-start" className="mt-12 border-b">
+              <div className="flex gap-8 text-[#48372D] font-medium text-lg border-b border-gray-200 overflow-x-auto no-scrollbar">
+                {["description", "details", "artist", "reviews"].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => {
+                      setActiveTab(tab);
+                    }}
+                    className={`pb-2 flex-shrink-0 transition-all duration-200 whitespace-nowrap ${activeTab === tab
+                        ? "border-b-4 border-[#48372D] font-semibold text-[#48372D]"
+                        : "font-semibold text-[#48372D]"
+                      }`}
+                  >
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  </button>
 
-    ))}
-  </div>
 
-              <div 
-              ref={tabRef}
-              className="py-6 text-gray-700 leading-relaxed text-sm whitespace-pre-wrap break-words w-full">
+                ))}
+              </div>
+
+              <div
+                ref={tabRef}
+                className="py-6 text-gray-700 leading-relaxed text-sm whitespace-pre-wrap break-words w-full">
                 {activeTab === "description" && (
                   <p>{product.description || "No description available."}</p>
                 )}
@@ -2933,88 +2926,88 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
                         product.customEngravingAvailable,
                       certification: product.certification,
                     }) && (
-                      <Section title="Antique & Vintage Details">
-                        <Grid>
-                          <Field
-                            label="Origin Region"
-                            value={product.originRegion}
-                          />
-                          <Field
-                            label="Period / Era"
-                            value={product.periodEra}
-                          />
-                          <Field
-                            label="Antique Condition"
-                            value={product.antiqueCondition}
-                          />
-                          <Field
-                            label="Conservation Status"
-                            value={product.conservationStatus}
-                          />
+                        <Section title="Antique & Vintage Details">
+                          <Grid>
+                            <Field
+                              label="Origin Region"
+                              value={product.originRegion}
+                            />
+                            <Field
+                              label="Period / Era"
+                              value={product.periodEra}
+                            />
+                            <Field
+                              label="Antique Condition"
+                              value={product.antiqueCondition}
+                            />
+                            <Field
+                              label="Conservation Status"
+                              value={product.conservationStatus}
+                            />
 
-                          <Field
-                            label="Provenance History"
-                            value={product.provenanceHistory}
-                          />
-                          <Field
-                            label="Cultural Significance"
-                            value={product.culturalSignificance}
-                          />
+                            <Field
+                              label="Provenance History"
+                              value={product.provenanceHistory}
+                            />
+                            <Field
+                              label="Cultural Significance"
+                              value={product.culturalSignificance}
+                            />
 
-                          <Field
-                            label="Appraisal Details"
-                            value={product.appraisalDetails}
-                          />
-                          <Field
-                            label="Engravings / Markings"
-                            value={product.engravingMarkings}
-                          />
+                            <Field
+                              label="Appraisal Details"
+                              value={product.appraisalDetails}
+                            />
+                            <Field
+                              label="Engravings / Markings"
+                              value={product.engravingMarkings}
+                            />
 
-                          <Field
-                            label="Patina / Wear"
-                            value={product.patinaWear}
-                          />
-                          <Field
-                            label="Handmade (Antique Context)"
-                            value={product.isHandmade ? "Yes" : "No"}
-                          />
+                            <Field
+                              label="Patina / Wear"
+                              value={product.patinaWear}
+                            />
+                            <Field
+                              label="Handmade (Antique Context)"
+                              value={product.isHandmade ? "Yes" : "No"}
+                            />
 
-                          <Field
-                            label="Original / Reproduction"
-                            value={product.originalReproduction}
-                          />
+                            <Field
+                              label="Original / Reproduction"
+                              value={product.originalReproduction}
+                            />
 
-                          <Field
-                            label="Museum Exhibition History"
-                            value={product.museumExhibitionHistory}
-                          />
+                            <Field
+                              label="Museum Exhibition History"
+                              value={product.museumExhibitionHistory}
+                            />
 
-                          <Field
-                            label="Maintenance Required"
-                            value={product.maintenanceRequired}
-                          />
-                          <Field
-                            label="Custom Engraving Available"
-                            value={
-                              product.customEngravingAvailable ? "Yes" : "No"
-                            }
-                          />
+                            <Field
+                              label="Maintenance Required"
+                              value={product.maintenanceRequired}
+                            />
+                            <Field
+                              label="Custom Engraving Available"
+                              value={
+                                product.customEngravingAvailable ? "Yes" : "No"
+                              }
+                            />
 
-                          <Field
-                            label="Restoration Documentation"
-                            value={product.restorationDocumentation}
-                          />
-                          <Field
-                            label="Certification"
-                            value={product.certification}
-                          />
-                          <Field
-                            label="Restoration History"
-                            value={product.restorationHistory}
-                          />
-                        </Grid>
-                      </Section>
-                    )}
+                            <Field
+                              label="Restoration Documentation"
+                              value={product.restorationDocumentation}
+                            />
+                            <Field
+                              label="Certification"
+                              value={product.certification}
+                            />
+                            <Field
+                              label="Restoration History"
+                              value={product.restorationHistory}
+                            />
+                          </Grid>
+                        </Section>
+                      )}
                   </div>
                 )}
 
@@ -3257,13 +3250,13 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
 
                 <div className="mt-3 flex flex-col gap-3">
                   <button
-                   onClick={(e) => {
-                          e.stopPropagation();
-                           if (!ensureBuyer()) return;
-                          addToCart(product._id, quantity);
-                        }}
-                   disabled={!product.quantity || product.quantity === 0}
-                   className={`flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart ${(!product.quantity || product.quantity === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (!ensureBuyer()) return;
+                      addToCart(product._id, quantity);
+                    }}
+                    disabled={!product.quantity || product.quantity === 0}
+                    className={`flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart ${(!product.quantity || product.quantity === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <ShoppingCart size={18} /> Add to Cart
                   </button>
@@ -3278,7 +3271,7 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
                     <button
                       className="flex items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-red-500 text-white py-2 font-semibold buy-now"
                       onClick={() => {
-                         if (!ensureBuyer()) return;
+                        if (!ensureBuyer()) return;
                         navigate(
                           `/my-account/check-out/${userId}?productId=${product._id}&quantity=${quantity}`
                         );
@@ -3298,47 +3291,98 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
 
   //return <ProductImages imagesProp={images} initialImage={images[0]} />;
   return (
-  <>
-    <Helmet>
-      <title>{product.productName} | Artsays</title>
+    <>
+      <Helmet>
+        <title>{product.productName} | Artsays</title>
 
-      <meta name="title" content={product.productName} />
-      <meta name="description" content={product.description?.slice(0, 150)} />
-      <meta
-        name="keywords"
-        content={`${product.productName}, ${mainCategoryName}, ${categoryName}, artwork`}
-      />
+        <meta name="title" content={product.productName} />
+        <meta name="description" content={product.description?.slice(0, 150)} />
+        <meta
+          name="keywords"
+          content={`${product.productName}, ${mainCategoryName}, ${categoryName}, artwork`}
+        />
 
-      {/* Open Graph */}
-      <meta property="og:type" content="product" />
-      <meta property="og:title" content={product.productName} />
-      <meta
-        property="og:description"
-        content={product.description?.slice(0, 150)}
-      />
-      <meta
-        property="og:image"
-        content={`${imageBaseURL}${product.mainImage}`}
-      />
-      <meta property="og:url" content={window.location.href} />
+        {/* Open Graph */}
+        <meta property="og:type" content="product" />
+        <meta property="og:title" content={product.productName} />
+        <meta
+          property="og:description"
+          content={product.description?.slice(0, 150)}
+        />
+        <meta
+          property="og:image"
+          content={`${imageBaseURL}${product.mainImage}`}
+        />
+        <meta property="og:url" content={window.location.href} />
 
-      {/* Twitter */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={product.productName} />
-      <meta
-        name="twitter:description"
-        content={product.description?.slice(0, 150)}
-      />
-      <meta
-        name="twitter:image"
-        content={`${imageBaseURL}${product.mainImage}`}
-      />
-    </Helmet>
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={product.productName} />
+        <meta
+          name="twitter:description"
+          content={product.description?.slice(0, 150)}
+        />
+        <meta
+          name="twitter:image"
+          content={`${imageBaseURL}${product.mainImage}`}
+        />
+      </Helmet>
 
-    <ProductImages imagesProp={images} initialImage={images[0]} />
-  </>
-);
+      <ProductImages imagesProp={images} initialImage={images[0]} />
+    </>
+  );
 
+  // const productReviews = reviews.filter(
+  //   (r) => String(r.productId?._id) === String(product?._id)
+  // );
+  // const productReviews = reviews.filter((review) => {
+  //   const buyerRequest = review.productId;
+  //   if (!buyerRequest) return false;
+
+  //   const reviewProductName = buyerRequest.ProductName?.trim()?.toLowerCase();
+  //   const currentProductName = product.productName?.trim()?.toLowerCase();
+
+  //   return reviewProductName === currentProductName;
+  // });
+
+  return <ProductImages imagesProp={images} initialImage={images[0]} />;
 };
 
 export default ProductDetails;
+
+const ProductDetailsSkeleton = () => {
+  return (
+    <div className="max-w-[1440px] mx-auto p-6 animate-pulse">
+      {/* Breadcrumb */}
+      <div className="h-4 w-1/3 bg-gray-200 rounded mb-4"></div>
+
+      <div className="grid grid-cols-1 md:grid-cols-10 gap-6">
+        {/* Left: Image */}
+        <div className="col-span-5">
+          <div className="h-[550px] bg-gray-200 rounded-xl"></div>
+          <div className="flex gap-3 mt-3">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="w-24 h-24 bg-gray-200 rounded-lg"></div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right: Product Info */}
+        <div className="col-span-5 space-y-4">
+          <div className="h-8 w-3/4 bg-gray-200 rounded"></div>
+          <div className="h-4 w-1/2 bg-gray-200 rounded"></div>
+
+          <div className="h-10 w-1/3 bg-gray-200 rounded"></div>
+
+          <div className="flex gap-3">
+            <div className="h-6 w-16 bg-gray-200 rounded"></div>
+            <div className="h-6 w-16 bg-gray-200 rounded"></div>
+          </div>
+
+          <div className="h-12 w-full bg-gray-200 rounded"></div>
+          <div className="h-12 w-full bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    </div>
+  );
+};

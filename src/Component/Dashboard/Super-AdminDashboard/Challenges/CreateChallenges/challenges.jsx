@@ -2,23 +2,26 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../../api/getAPI";
 import { toast } from "react-toastify";
-import ConfirmationDialog from '../../../ConfirmationDialog';
+import ConfirmationDialog from "../../../ConfirmationDialog";
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const ChallengesTable = () => {
   const navigate = useNavigate();
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteType, setDeleteType] = useState("");
   const [productsPerPage, setProductsPerPage] = useState(10);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedChallengeToDelete, setSelectedChallengeToDelete] = useState(null);
+  const [selectedChallengeToDelete, setSelectedChallengeToDelete] =
+    useState(null);
 
-  const filteredChallenges = challenges.filter(challenge =>
-    challenge.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    challenge.type.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredChallenges = challenges.filter(
+    (challenge) =>
+      challenge.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      challenge.type.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredChallenges.length / productsPerPage);
@@ -36,7 +39,7 @@ const ChallengesTable = () => {
     try {
       setLoading(true);
       const data = await getAPI("/api/getchallengedata");
-      console.log(data)
+      console.log(data);
       if (!data.hasError) {
         setChallenges(data.data?.challenges || []);
       } else {
@@ -53,16 +56,18 @@ const ChallengesTable = () => {
 
   const handleDeleteConfirmed = async (id) => {
     try {
-      const response = await getAPI(`/api/deleteChallenge/${id}`, { method: 'DELETE' });
+      const response = await getAPI(`/api/deleteChallenge/${id}`, {
+        method: "DELETE",
+      });
 
       if (!response.hasError) {
         fetchChallenges();
-        toast.success('Challenge deleted successfully!');
+        toast.success("Challenge deleted successfully!");
       } else {
-        toast.error(response.message || 'Failed to delete challenge.');
+        toast.error(response.message || "Failed to delete challenge.");
       }
     } catch (error) {
-      toast.error('An error occurred while deleting the challenge.');
+      toast.error("An error occurred while deleting the challenge.");
     } finally {
       setIsDeleteDialogOpen(false);
       setSelectedChallengeToDelete(null);
@@ -116,7 +121,9 @@ const ChallengesTable = () => {
                 <button
                   type="button"
                   className="btn btn-secondary mr-2"
-                  onClick={() => navigate("/super-admin/challenges/create-Challenge")}
+                  onClick={() =>
+                    navigate("/super-admin/challenges/create-Challenge")
+                  }
                 >
                   <i className="fa fa-plus"></i>
                 </button>
@@ -129,7 +136,6 @@ const ChallengesTable = () => {
       <div className="row clearfix">
         <div className="col-lg-12">
           <div className="card">
-            
             <div className="header d-flex justify-content-between align-items-center">
               <div className="d-none d-md-flex align-items-center mb-2 mb-md-0">
                 <label className="mb-0 mr-2">Show</label>
@@ -137,7 +143,7 @@ const ChallengesTable = () => {
                   className="form-control form-control-sm"
                   value={productsPerPage}
                   onChange={handleProductsPerPageChange}
-                  style={{ minWidth: '70px' }}
+                  style={{ minWidth: "70px" }}
                 >
                   <option value="10">10</option>
                   <option value="25">25</option>
@@ -147,7 +153,7 @@ const ChallengesTable = () => {
                 <label className="mb-0 ml-2">entries</label>
               </div>
               <div className="w-100 w-md-auto d-flex justify-content-end">
-                <div className="input-group" style={{ maxWidth: '150px' }}>
+                <div className="input-group" style={{ maxWidth: "150px" }}>
                   <input
                     type="text"
                     className="form-control form-control-sm"
@@ -158,11 +164,11 @@ const ChallengesTable = () => {
                   <i
                     className="fa fa-search"
                     style={{
-                      position: 'absolute',
-                      right: '10px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      pointerEvents: 'none',
+                      position: "absolute",
+                      right: "10px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      pointerEvents: "none",
                     }}
                   ></i>
                 </div>
@@ -187,11 +193,7 @@ const ChallengesTable = () => {
                   </thead>
                   <tbody>
                     {loading ? (
-                      <tr>
-                        <td colSpan="9" className="text-center">
-                          Loading...
-                        </td>
-                      </tr>
+                      <ProductRequestSkeleton />
                     ) : error ? (
                       <tr>
                         <td colSpan="9" className="text-center text-danger">
@@ -213,7 +215,9 @@ const ChallengesTable = () => {
                           <td>{challenge.entryFee || "-"}</td>
                           <td>
                             {challenge.startDate
-                              ? new Date(challenge.startDate).toLocaleDateString()
+                              ? new Date(
+                                  challenge.startDate
+                                ).toLocaleDateString()
                               : "-"}
                           </td>
                           <td>
@@ -223,7 +227,9 @@ const ChallengesTable = () => {
                           </td>
                           <td>
                             {challenge.submissionDeadline
-                              ? new Date(challenge.submissionDeadline).toLocaleDateString()
+                              ? new Date(
+                                  challenge.submissionDeadline
+                                ).toLocaleDateString()
                               : "-"}
                           </td>
                           <td>{challenge.status || "-"}</td>
@@ -233,11 +239,13 @@ const ChallengesTable = () => {
                               className="btn btn-outline-primary btn-sm mr-1"
                               title="View"
                               onClick={() => {
-                                navigate("/super-admin/challenges/view-challenge", {
-                                  state: { id: challenge._id },
-                                });
+                                navigate(
+                                  "/super-admin/challenges/view-challenge",
+                                  {
+                                    state: { id: challenge._id },
+                                  }
+                                );
                               }}
-
                             >
                               <i className="fa fa-eye"></i>
                             </button>
@@ -246,9 +254,12 @@ const ChallengesTable = () => {
                               className="btn btn-outline-info btn-sm mr-2"
                               title="Edit"
                               onClick={() => {
-                                navigate("/super-admin/challenges/update-challenge", {
-                                  state: { id: challenge._id },
-                                });
+                                navigate(
+                                  "/super-admin/challenges/update-challenge",
+                                  {
+                                    state: { id: challenge._id },
+                                  }
+                                );
                               }}
                             >
                               <i className="fa fa-pencil"></i>
@@ -271,28 +282,43 @@ const ChallengesTable = () => {
               <div className="pagination d-flex justify-content-between mt-4">
                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
                   Showing{" "}
-                  {(filteredChallenges.length === 0 ? 0 : (currentPage - 1) * productsPerPage + 1)} to{" "}
-                  {Math.min(currentPage * productsPerPage, filteredChallenges.length)} of{" "}
-                  {filteredChallenges.length} entries
+                  {filteredChallenges.length === 0
+                    ? 0
+                    : (currentPage - 1) * productsPerPage + 1}{" "}
+                  to{" "}
+                  {Math.min(
+                    currentPage * productsPerPage,
+                    filteredChallenges.length
+                  )}{" "}
+                  of {filteredChallenges.length} entries
                 </span>
                 <ul className="pagination d-flex justify-content-end w-100">
                   <li
-                    className={`paginate_button page-item ${currentPage === 1 ? "disabled" : ""}`}
+                    className={`paginate_button page-item ${
+                      currentPage === 1 ? "disabled" : ""
+                    }`}
                     onClick={handlePrevious}
                   >
                     <button className="page-link">Previous</button>
                   </li>
-                  {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+                  {Array.from(
+                    { length: totalPages },
+                    (_, index) => index + 1
+                  ).map((pageNumber) => (
                     <li
                       key={pageNumber}
-                      className={`paginate_button page-item ${currentPage === pageNumber ? "active" : ""}`}
+                      className={`paginate_button page-item ${
+                        currentPage === pageNumber ? "active" : ""
+                      }`}
                       onClick={() => setCurrentPage(pageNumber)}
                     >
                       <button className="page-link">{pageNumber}</button>
                     </li>
                   ))}
                   <li
-                    className={`paginate_button page-item ${currentPage === totalPages ? "disabled" : ""}`}
+                    className={`paginate_button page-item ${
+                      currentPage === totalPages ? "disabled" : ""
+                    }`}
                     onClick={handleNext}
                   >
                     <button className="page-link">Next</button>

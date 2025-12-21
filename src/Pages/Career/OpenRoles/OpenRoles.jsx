@@ -177,10 +177,11 @@ function OpenRoles() {
   const [careersPage, setCareersPage] = useState(null);
 
   const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(true);
   const fetchOpenJobs = async () => {
     try {
       const response = await getAPI("/api/get-career");
+
       if (response?.data) {
         setJobs(response.data.data);
       }
@@ -197,9 +198,10 @@ function OpenRoles() {
       }
     } catch (error) {
       console.log("Failed to load careers page", error);
+    } finally {
+      setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchOpenJobs();
     fetchCareersCMS();
@@ -215,6 +217,7 @@ function OpenRoles() {
 
   const section2 = careersPage?.section2;
 
+  if (loading) return <Openroleskeleton />;
   return (
     <div className="max-w-[1440px] mx-auto mb-4 px-3">
       {/* Title Row */}
@@ -281,3 +284,36 @@ function OpenRoles() {
 }
 
 export default OpenRoles;
+
+const Openroleskeleton = () => {
+  return (
+    <>
+      {/* JOBS SKELETON */}
+      <div className="w-full space-y-6 animate-pulse">
+        {[1, 2, 3].map((_, index) => (
+          <div
+            key={index}
+            className="w-full border !border-[#FB5934] !border-t-[20px] rounded-2xl shadow-xl p-2 md:p-4"
+          >
+            {/* Category */}
+            <div className="h-4 w-24 bg-gray-300 rounded mb-3"></div>
+
+            {/* Job Title */}
+            <div className="h-6 w-3/4 bg-gray-300 rounded mb-3"></div>
+
+            {/* Read Description */}
+            <div className="h-4 w-40 bg-gray-300 rounded mb-3"></div>
+
+            {/* Summary (3 lines) */}
+            <div className="h-3 w-full bg-gray-300 rounded mb-2"></div>
+            <div className="h-3 w-[90%] bg-gray-300 rounded mb-2"></div>
+            <div className="h-3 w-[70%] bg-gray-300 rounded mb-4"></div>
+
+            {/* Button */}
+            <div className="h-10 w-32 bg-gray-300 rounded-full mx-auto"></div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+};

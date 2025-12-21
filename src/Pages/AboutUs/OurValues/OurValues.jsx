@@ -131,7 +131,7 @@ const OurValues = () => {
     fetchOurValues();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div><ValuesSkeleton /></div>;
   if (!data) return <div>Our Values section not available</div>;
 
   return (
@@ -179,3 +179,49 @@ const OurValues = () => {
 };
 
 export default OurValues;
+
+
+// ValuesSkeleton.jsx
+ function ValuesSkeleton() {
+  return (
+    <div className="max-w-[1440px] mx-auto py-3 animate-pulse">
+      
+      {/* Heading */}
+      <div className="px-3">
+        <div className="h-8 w-1/3 bg-gray-300 rounded"></div>
+
+        <hr className="my-3 border-dark opacity-30" />
+
+        <div className="space-y-2 mt-3">
+          <div className="h-4 w-full bg-gray-300 rounded"></div>
+          <div className="h-4 w-5/6 bg-gray-300 rounded"></div>
+        </div>
+      </div>
+
+      {/* Cards Section */}
+      <div className="my-5 px-3">
+        <main className="md:col-span-3">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:!gap-6">
+
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="w-full mx-auto border rounded-2xl shadow-2xl p-3"
+              >
+                {/* Image block */}
+                <div className="w-full h-28 sm:h-44 bg-gray-300 rounded-t-2xl"></div>
+
+                {/* Title */}
+                <div className="mt-3 flex justify-center">
+                  <div className="h-5 w-24 bg-gray-300 rounded"></div>
+                </div>
+              </div>
+            ))}
+
+          </div>
+        </main>
+      </div>
+
+    </div>
+  );
+}

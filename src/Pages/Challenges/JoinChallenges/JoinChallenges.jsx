@@ -8,8 +8,7 @@ import "./JoinChallenges.css";
 import getAPI from "../../../api/getAPI";
 
 const JoinChallenges = () => {
-
-  const location = useLocation()
+  const location = useLocation();
   const challengeDetails = location?.state;
 
   const [applicationData, setApplicationData] = useState({
@@ -20,68 +19,73 @@ const JoinChallenges = () => {
     category: "",
     challengeName: challengeDetails?.title || "",
     description: "",
-    guidelines: false
-  })
-  const [works, setWorks] = useState(null)
-  const [categories, setCategories] = useState()
+    guidelines: false,
+  });
+  const [works, setWorks] = useState(null);
+  const [categories, setCategories] = useState();
 
   const handleApplicationData = (e) => {
     const { value, name, type, checked } = e.target;
     setApplicationData({
       ...applicationData,
-      [name]: type === "checkbox" ? checked : value
-    })
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
   const handleWorkFile = (e) => {
-    e.preventDefault()
-    setWorks(e.target.files[0])
+    e.preventDefault();
+    setWorks(e.target.files[0]);
   };
 
   const fetchCategories = async () => {
     try {
-      const response = await getAPI("/api/main-category")
+      const response = await getAPI("/api/main-category");
 
       if (response?.hasError === false) {
-        setCategories(response.data.data)
+        setCategories(response.data.data);
+      } else {
+        console.log(response);
       }
-      else {
-        console.log(response)
-      }
+    } catch (error) {
+      console.log("Error while fetching categories", error);
     }
-    catch (error) {
-      console.log("Error while fetching categories", error)
-    }
-  }
+  };
 
   useEffect(() => {
-    fetchCategories()
+    fetchCategories();
   }, []);
 
   const handleSubmitApplication = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!works) {
-      toast.warning("Please upload your work")
+      toast.warning("Please upload your work");
       return;
     }
-
-    const formData = new FormData()
-    formData.append("fullName", applicationData.fullName)
-    formData.append("email", applicationData.email)
-    formData.append("contactNumber", applicationData.contactNumber)
-    formData.append("userName", applicationData.userName)
-    formData.append("category", applicationData.category)
-    formData.append("challengeName", applicationData.challengeName)
-    formData.append("description", applicationData.description)
-    formData.append("guidelines", applicationData.guidelines)
-    formData.append("works", works)
+    if (!/^[6-9]\d{9}$/.test(applicationData.contactNumber)) {
+      toast.error("enter valid mobile number");
+    }
+    const formData = new FormData();
+    formData.append("fullName", applicationData.fullName);
+    formData.append("email", applicationData.email);
+    formData.append("contactNumber", applicationData.contactNumber);
+    formData.append("userName", applicationData.userName);
+    formData.append("category", applicationData.category);
+    formData.append("challengeName", applicationData.challengeName);
+    formData.append("description", applicationData.description);
+    formData.append("guidelines", applicationData.guidelines);
+    formData.append("works", works);
 
     try {
-      const response = await postAPI("/api/join-challenge", formData, {}, false)
+      const response = await postAPI(
+        "/api/join-challenge",
+        formData,
+        {},
+        false
+      );
 
       if (response?.hasError === false) {
-        toast.success(response?.message)
+        toast.success(response?.message);
         setApplicationData({
           fullName: "",
           email: "",
@@ -90,22 +94,19 @@ const JoinChallenges = () => {
           category: "",
           challengeName: challengeDetails?.title || "",
           description: "",
-          guidelines: false
-        })
-        setWorks(null)
+          guidelines: false,
+        });
+        setWorks(null);
+      } else {
+        console.log(response);
       }
-      else {
-        console.log(response)
-      }
+    } catch (error) {
+      console.error("Error submiting application: ", error);
     }
-    catch (error) {
-      console.error("Error submiting application: ", error)
-    }
-  }
+  };
 
   return (
     <div className="mb-4">
-
       <div>
         {/* Top Section: Breadcrumb + Search */}
         <div className="w-full py-3 px-3">
@@ -148,13 +149,14 @@ const JoinChallenges = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2">
-
         {/* Challenge details */}
         <div className="md:p-4 content-center">
           <div className="max-w-3xl text-[#48372D] space-y-6">
             <div>
               <h2 className="text-2xl font-bold">Theme</h2>
-              <p className="mt-1">{challengeDetails?.title || "Challenge Title"}</p>
+              <p className="mt-1">
+                {challengeDetails?.title || "Challenge Title"}
+              </p>
             </div>
 
             <div>
@@ -167,13 +169,20 @@ const JoinChallenges = () => {
             <div>
               <h2 className="text-2xl font-bold">Submission Deadline</h2>
               <p className="mt-1">
-                {challengeDetails?.submissionDeadline ? format(new Date(challengeDetails.submissionDeadline), "do MMMM, yyyy") : "N/A"}
+                {challengeDetails?.submissionDeadline
+                  ? format(
+                      new Date(challengeDetails.submissionDeadline),
+                      "do MMMM, yyyy"
+                    )
+                  : "N/A"}
               </p>
             </div>
 
             <div>
               <h2 className="text-2xl font-bold">Entry Charges</h2>
-              <p className="mt-1">{challengeDetails?.entryFee || "Entry fees"}</p>
+              <p className="mt-1">
+                {challengeDetails?.entryFee || "Entry fees"}
+              </p>
             </div>
 
             <div>
@@ -198,7 +207,6 @@ const JoinChallenges = () => {
                   className="rules-text"
                 />
               )}
-
             </div>
           </div>
         </div>
@@ -213,7 +221,6 @@ const JoinChallenges = () => {
           </p>
           <br />
           <form class="space-y-6" onSubmit={handleSubmitApplication}>
-
             {/* <!-- Name --> */}
             <div className="py-2">
               <label class="block font-semibold text-gray-800 mb-1">Name</label>
@@ -281,12 +288,21 @@ const JoinChallenges = () => {
               <label class="block font-semibold text-gray-800 mb-1">
                 Category
               </label>
-              <select className="w-full border-b border-gray-300 focus:border-[#E56500] focus:outline-none py-2 bg-transparent"
-                onChange={handleApplicationData} value={applicationData.category} name="category">
-                <option value="" disabled>Choose your Category</option>
-                {categories && categories.map((category, index)=> (
-                  <option key={index} value={category.mainCategoryName}>{category.mainCategoryName}</option>
-                ))}
+              <select
+                className="w-full border-b border-gray-300 focus:border-[#E56500] focus:outline-none py-2 bg-transparent"
+                onChange={handleApplicationData}
+                value={applicationData.category}
+                name="category"
+              >
+                <option value="" disabled>
+                  Choose your Category
+                </option>
+                {categories &&
+                  categories.map((category, index) => (
+                    <option key={index} value={category.mainCategoryName}>
+                      {category.mainCategoryName}
+                    </option>
+                  ))}
               </select>
             </div>
 
@@ -335,8 +351,11 @@ const JoinChallenges = () => {
                 </span>
               </label> */}
 
-              <input type="file" accept=".pdf,.doc,.docx" onChange={handleWorkFile} />
-
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx"
+                onChange={handleWorkFile}
+              />
             </div>
 
             {/* Checkbox */}
@@ -368,6 +387,3 @@ const JoinChallenges = () => {
   );
 };
 export default JoinChallenges;
-
-
-

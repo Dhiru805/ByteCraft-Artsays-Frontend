@@ -198,7 +198,6 @@ const ManageAddress = () => {
       const responsePut = await putAPI(`/auth/users/${userId}`, updatedUser, {
         'Content-Type': 'application/json',
       });
-
       if (responsePut.hasError) {
         toast.error(responsePut.message || 'Failed to set default address');
       } else {

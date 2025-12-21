@@ -3,14 +3,16 @@ import KeywordTargetingTable from "./KeywordTargetingTable";
 import AddKeywordTargeting from "./AddKeywordTargeting";
 import getAPI from "../../../../../api/getAPI";
 import { useNavigate } from 'react-router-dom';
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const KeywordTargetingSetting = () => {
   const [keywordTargetings, setKeywordTargetings] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedKeywordTargeting, setSelectedKeywordTargeting] = useState(null);
   const navigate = useNavigate();
-
+const[loading,setLoading]=useState(false)
   const fetchKeywordTargetingData = async () => {
+    setLoading(true)
     try {
       const response = await getAPI(`/api/get-keyword-targetings`, {}, true);
       if (
@@ -24,6 +26,8 @@ const KeywordTargetingSetting = () => {
       }
     } catch (err) {
       console.error("Error fetching keyword targeting list:", err);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -31,6 +35,7 @@ const KeywordTargetingSetting = () => {
     fetchKeywordTargetingData();
   }, []);
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

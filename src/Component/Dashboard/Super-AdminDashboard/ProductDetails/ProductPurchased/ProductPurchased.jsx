@@ -3,13 +3,14 @@ import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
 import { jwtDecode } from 'jwt-decode';
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const ProductRequest = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
-
+    const [loading, setLoading] = useState(false);
 
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
@@ -36,62 +37,64 @@ const ProductRequest = () => {
         }
     }, []);
 
-//     useEffect(() => {
-//         if (!userId) return;
-//         const fetchProducts = async () => {
-//             try {
-//                 const result = await getAPI(`/api/getallpurchasedproduct/${encodeURIComponent(userId)}`, {}, true, false);
-//                 console.log("Full API Response:", result);
-//                 console.log("Data Type:", typeof result.data);
+    //     useEffect(() => {
+    //         if (!userId) return;
+    //         const fetchProducts = async () => {
+    //             try {
+    //                 const result = await getAPI(`/api/getallpurchasedproduct/${encodeURIComponent(userId)}`, {}, true, false);
+    //                 console.log("Full API Response:", result);
+    //                 console.log("Data Type:", typeof result.data);
 
-//                 // if (result && result.data && Array.isArray(result.data.purchases)) {
-//                 //     setProducts(result.data.purchases);
-//                 // } else {
-//                 //     console.error("API response does not contain an array:", result.data);
-//                 //     setProducts([]);
-//                 // }
-// const purchasedArray = result?.data?.data;
+    //                 // if (result && result.data && Array.isArray(result.data.purchases)) {
+    //                 //     setProducts(result.data.purchases);
+    //                 // } else {
+    //                 //     console.error("API response does not contain an array:", result.data);
+    //                 //     setProducts([]);
+    //                 // }
+    // const purchasedArray = result?.data?.data;
 
-// if (Array.isArray(purchasedArray)) {
-//     setProducts(purchasedArray);
-// } else {
-//     console.error("API response does not contain a valid array:", result.data);
-//     setProducts([]);
-// }
+    // if (Array.isArray(purchasedArray)) {
+    //     setProducts(purchasedArray);
+    // } else {
+    //     console.error("API response does not contain a valid array:", result.data);
+    //     setProducts([]);
+    // }
 
-//             } catch (error) {
-//                 console.error("Error fetching products:", error);
-//                 setProducts([]);
-//             }
-//         };
+    //             } catch (error) {
+    //                 console.error("Error fetching products:", error);
+    //                 setProducts([]);
+    //             }
+    //         };
 
-//         fetchProducts();
-//     }, [userId]);
+    //         fetchProducts();
+    //     }, [userId]);
 
-useEffect(() => {
-    const fetchProducts = async () => {
-        try {
-            const result = await getAPI(`/api/purchased-products`, {}, true, false);
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const result = await getAPI(`/api/purchased-products`, {}, true, false);
 
-            console.log("Purchased Products Response:", result);
+                console.log("Purchased Products Response:", result);
 
-            const purchasedArray = result?.data?.data; // <-- your controller returns data: purchasedProducts
+                const purchasedArray = result?.data?.data; // <-- your controller returns data: purchasedProducts
 
-            if (Array.isArray(purchasedArray)) {
-                setProducts(purchasedArray);
-            } else {
-                console.error("Invalid purchased product response:", result.data);
+                if (Array.isArray(purchasedArray)) {
+                    setProducts(purchasedArray);
+                } else {
+                    console.error("Invalid purchased product response:", result.data);
+                    setProducts([]);
+                }
+
+            } catch (error) {
+                console.error("Error fetching purchased products:", error);
                 setProducts([]);
+            } finally {
+                setLoading(false);
             }
+        };
 
-        } catch (error) {
-            console.error("Error fetching purchased products:", error);
-            setProducts([]);
-        }
-    };
-
-    fetchProducts();
-}, []);
+        fetchProducts();
+    }, []);
 
 
 
@@ -129,7 +132,7 @@ useEffect(() => {
     };
 
 
-
+    if (loading) return <ProductRequestSkeleton />
     return (
         <div className="container-fluid">
             <div className="block-header">
@@ -257,42 +260,42 @@ useEffect(() => {
                                                 //     </td>
                                                 // </tr>
                                                 <tr key={index}>
-    <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
+                                                    <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
 
-    <td>{product.buyerName}</td>
+                                                    <td>{product.buyerName}</td>
 
-    <td>
-        <img
-            src={`${BASE_URL}${product.productImage}`}
-            className="rounded-circle avatar"
-            style={{ width: "30px", height: "30px", marginRight: "10px", objectFit: "cover" }}
-        />
-        {product.productName}
-    </td>
+                                                    <td>
+                                                        <img
+                                                            src={`${BASE_URL}${product.productImage}`}
+                                                            className="rounded-circle avatar"
+                                                            style={{ width: "30px", height: "30px", marginRight: "10px", objectFit: "cover" }}
+                                                        />
+                                                        {product.productName}
+                                                    </td>
 
-    <td>
-        {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" })
-            .format(product.sellingPrice)
-            .replace(/\.00$/, "")}
-    </td>
+                                                    <td>
+                                                        {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" })
+                                                            .format(product.sellingPrice)
+                                                            .replace(/\.00$/, "")}
+                                                    </td>
 
-    <td>{product.quantityPurchased}</td>
+                                                    <td>{product.quantityPurchased}</td>
 
-    <td>{product.paymentMethod || "N/A"}</td>
+                                                    <td>{product.paymentMethod || "N/A"}</td>
 
 
-    <td>{new Date(product.purchaseDate).toLocaleDateString("en-IN")}</td>
+                                                    <td>{new Date(product.purchaseDate).toLocaleDateString("en-IN")}</td>
 
-    <td>
-        <button
-            className="btn btn-sm btn-outline-info"
-           // onClick={() => navigate(`/${userType}/Dashboard/productpurchased/productview/${product.orderId}`)}
-            onClick={() => navigate(`/super-admin/product-fetch-view/${product.productId}`)}
-        >
-            <i className="fa fa-eye"></i>
-        </button>
-    </td>
-</tr>
+                                                    <td>
+                                                        <button
+                                                            className="btn btn-sm btn-outline-info"
+                                                            // onClick={() => navigate(`/${userType}/Dashboard/productpurchased/productview/${product.orderId}`)}
+                                                            onClick={() => navigate(`/super-admin/product-fetch-view/${product.productId}`)}
+                                                        >
+                                                            <i className="fa fa-eye"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
 
                                             );
                                         })}

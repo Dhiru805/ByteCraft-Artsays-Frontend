@@ -7,6 +7,9 @@ import { useNavigate } from "react-router-dom";
 import putAPI from "../../../api/putAPI";
 import { timeAgo } from "./../../../utils/TimeAgo.js";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables.jsx";
+import { Zap } from "lucide-react";
+import { toast } from "react-toastify";
+import { useAuth } from "../../../AuthContext.jsx";
 const Post = () => {
   const userId = localStorage.getItem("userId");
   const Navigate = useNavigate();
@@ -36,6 +39,10 @@ const Post = () => {
   const [allCollaboraters, setAllCollaboraters] = useState([]);
   const isMobile = window.innerWidth < 1024; // Tailwind lg breakpoint
 
+  const userName = localStorage.getItem("username");
+  const firstName = localStorage.getItem("firstName");
+  const lastName = localStorage.getItem("lastName");
+
   const navigate = useNavigate();
   const popupRef = useRef();
   const postRef = useRef();
@@ -43,10 +50,10 @@ const Post = () => {
   const commentRef = useRef();
   const commentRefs = useRef({});
 
+  const { userType } = useAuth();
   const productsPost = posts.filter((pro) => pro.forProduct);
   const normalPost = posts.filter((pro) => !pro.forProduct);
   const finalPost = [...productsPost, ...normalPost];
-
   const activePost = activeIndex !== null ? finalPost[activeIndex] : null;
   useEffect(() => {
     const shouldLockScroll = activePost || reportPopupOpen || tipPopupOpen;
@@ -71,7 +78,7 @@ const Post = () => {
           setActiveIndex(null);
         }
       }
-      
+
       if (collabRef.current && !collabRef.current.contains(event.current)) {
         setShowCollaborators(false);
         setAllCollaboraters([]);
@@ -84,10 +91,14 @@ const Post = () => {
     };
   }, [menuOpenId, activeIndex, showCollaborators]);
 
-  const goToProfile = (profileUserId) => {
-    navigate("/social-media/profile", {
-      state: { userId: profileUserId },
-    });
+  const goToProfile = (post) => {
+    navigate(
+      `/artsays-community/profile/${
+        post?.user?.username
+          ? `${post?.user?.username}`
+          : `${post?.user?.name}_${post?.user?.lastName}_${post?.user?._id}`
+      }`,{state:{userId:post?.user?._id}}
+    );
   };
 
   // Fetch profile
@@ -319,7 +330,6 @@ const Post = () => {
     setTipAmount(Number(e.target.value));
     setError("");
   };
-
   const handleConfirm = async () => {
     const value = Number(tipAmount);
     if (value < 40 || value > 1440) {
@@ -407,7 +417,7 @@ const Post = () => {
         setReportSuccess(false);
 
         if (res.data.isBlocked) {
-          Navigate("/social-media/");
+          Navigate("/artsays-community/");
         }
       }
     } catch (err) {
@@ -430,6 +440,17 @@ const Post = () => {
     document.execCommand("copy");
     document.body.removeChild(textarea);
   }
+
+  const ensureBuyer = () => {
+    if (userType !== "Buyer") {
+      toast.warn(
+        "Only buyers can use this feature, Register as a Buyer to continue."
+      );
+      return false;
+    }
+    return true;
+  };
+
   if (loading) {
     return (
       <>
@@ -684,9 +705,7 @@ const Post = () => {
           </div>
 
           {/* for small screen */}
-          <div
-            className="fixed inset-0 z-[9999] w-full h-full flex flex-col bg-[#ffffff] lg:hidden"
-          >
+          <div className="fixed inset-0 z-[9999] w-full h-full flex flex-col bg-[#ffffff] lg:hidden">
             {/* back button with title */}
             <div className="w-full flex items-center justify-between p-3 border-b">
               <i
@@ -1089,7 +1108,7 @@ const Post = () => {
             <button
               className="w-full py-2 bg-gray-200 text-gray-800 rounded-lg mb-2"
               onClick={() => {
-                const link = `${window.location.origin}/social-media/sharepost/${sharePost._id}`;
+                const link = `${window.location.origin}/artsays-community/sharepost/${sharePost._id}`;
                 // navigator.clipboard.writeText(link);
                 // setCopyMsg("Link copied!");
                 // setTimeout(() => setCopyMsg(""), 2000);
@@ -1133,14 +1152,14 @@ const Post = () => {
                   }
                   alt="profile"
                   className="h-11 w-11 rounded-full cursor-pointer"
-                  onClick={() => goToProfile(post.user._id)}
+                  onClick={() => goToProfile(post)}
                 />
 
                 <div>
                   <div className="flex items-center">
                     <h3
                       className="font-extrabold cursor-pointer"
-                      onClick={() => goToProfile(post.user._id)}
+                      onClick={() => goToProfile(post)}
                     >
                       {post.user.username}
                     </h3>
@@ -1224,7 +1243,7 @@ const Post = () => {
                       </button>
                     ) : post.promotionDetails?.goal === "Visit your profile" ? (
                       <button
-                        onClick={() => goToProfile(post.user._id)}
+                        onClick={() => goToProfile(post)}
                         className="buy-button"
                       >
                         Visit Profile
@@ -1242,11 +1261,28 @@ const Post = () => {
                 ) : (
                   ""
                 )}
-                {post.forProduct && (
-                  <button className="buy-button">
+                {/* {post.forProduct && (
+                   <Link to={`/product-details/${post?.forProduct}`}>
+                  <button className="buy-button" >
                     Buy <i className="cart-icon ri-shopping-cart-fill"></i>
                   </button>
-                )}
+                   </Link>
+                )} */}
+                 {post.forProduct && (
+                <button
+                  className="flex px-2 items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-red-500 text-white py-2 font-semibold buy-now"
+                  onClick={() => {
+                    if (!ensureBuyer()) return;
+                    navigate(
+                      `/my-account/check-out/${userId}?productId=${
+                        post?.forProduct
+                      }&quantity=${1}`
+                    );
+                  }}
+                >
+                  <Zap size={18} /> Buy Now
+                </button>
+                 )}
                 <button onClick={() => setMenuOpenId(post._id)}>
                   <i className="ri-more-fill text-lg"></i>
                 </button>
@@ -1338,9 +1374,13 @@ const Post = () => {
                 <li
                   className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
                   onClick={() =>
-                    navigate("/social-media/profile", {
-                      state: { userId: post.user._id },
-                    })
+                    navigate(
+                      `/artsays-community/profile/${
+                        post?.user?.username
+                          ? `${post?.user?.username}`
+                          : `${post?.user?.name}_${post?.user?.lastName}_${post?.user?._id}`
+                      }`,{state:{userId:post?.user?._id}}
+                    )
                   }
                 >
                   About This Account

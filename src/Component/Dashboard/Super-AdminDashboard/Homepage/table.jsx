@@ -160,6 +160,7 @@ import "react-toastify/dist/ReactToastify.css";
 import getAPI from "../../../../api/getAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
 import axiosInstance from "../../../../api/axiosConfig";
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 
 const HomepageSectionsTable = () => {
   const navigate = useNavigate();
@@ -169,7 +170,7 @@ const HomepageSectionsTable = () => {
   const [deleteType, setDeleteType] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedSectionToDelete, setSelectedSectionToDelete] = useState(null);
-
+const[loading,setLoading]=useState(true)
   const [isSEOModalOpen, setIsSEOModalOpen] = useState(false);
   const [seoData, setSeoData] = useState({
     metaTitle: "",
@@ -189,6 +190,8 @@ const HomepageSectionsTable = () => {
       console.error("Error fetching homepages:", error);
       toast.error(error.response?.data?.message || "Failed to fetch homepages");
       setPages([]);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -298,6 +301,7 @@ const HomepageSectionsTable = () => {
     }
   };
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header d-flex justify-content-between align-items-center">
@@ -381,6 +385,7 @@ const HomepageSectionsTable = () => {
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content p-3">
               <h5>Homepage SEO Metadata</h5>
+              <div style={{ maxHeight: "30vh", overflowY: "auto" }}>
               <div className="form-group">
                 <label>Meta Title</label>
                 <input
@@ -451,6 +456,7 @@ const HomepageSectionsTable = () => {
                     />
                   </div>
                 )}
+              </div>
               </div>
               <div className="d-flex justify-content-end mt-3">
                 <button className="btn btn-secondary mr-2" onClick={handleSEOModalClose}>

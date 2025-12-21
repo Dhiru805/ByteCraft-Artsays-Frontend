@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import getAPI from '../../../../api/getAPI';
 import ConfirmationDialog from '../../ConfirmationDialog';
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 
 const Certification = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const Certification = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedCertToDelete, setSelectedCertToDelete] = useState(null);
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+const[loading,setLoading]=useState(true);
 
   const fetchCertifications = async () => {
     try {
@@ -22,6 +24,8 @@ const Certification = () => {
     } catch (error) {
       console.error("Error fetching certifications:", error);
       setCertifications([]);
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -81,6 +85,7 @@ const Certification = () => {
     setCurrentPage(1);
   };
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

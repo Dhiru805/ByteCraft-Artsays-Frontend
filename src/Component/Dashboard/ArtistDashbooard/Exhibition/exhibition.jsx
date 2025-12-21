@@ -11,8 +11,9 @@ const ExhibitionTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [exhibitionsPerPage, setExhibitionsPerPage] = useState(10);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedExhibitionToDelete, setSelectedExhibitionToDelete] = useState(null);
-
+  const [selectedExhibitionToDelete, setSelectedExhibitionToDelete] =
+    useState(null);
+  const [loading, setLoading] = useState(true);
   const fetchExhibitions = async () => {
     try {
       const userId = localStorage.getItem("userId");
@@ -26,8 +27,10 @@ const ExhibitionTable = () => {
       setExhibitions(data);
     } catch (error) {
       console.error("Error fetching exhibitions:", error);
-      toast.error(error.response?.data?.message || "Failed to fetch exhibitions");
+      // toast.error(error.response?.data?.message || "Failed to fetch exhibitions");
       setExhibitions([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,7 +44,9 @@ const ExhibitionTable = () => {
   };
 
   const handleDeleteConfirmed = (id) => {
-    setExhibitions((prevExhibitions) => prevExhibitions.filter((exhibition) => exhibition._id !== id));
+    setExhibitions((prevExhibitions) =>
+      prevExhibitions.filter((exhibition) => exhibition._id !== id)
+    );
     setIsDeleteDialogOpen(false);
   };
 
@@ -80,6 +85,7 @@ const ExhibitionTable = () => {
     setCurrentPage(1);
   };
 
+  if (loading) return <ExhibitionsSkeleton />;
   return (
     <div className="container-fluid">
       <div className="block-header">
@@ -88,7 +94,10 @@ const ExhibitionTable = () => {
             <h2>Exhibitions</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <span onClick={() => navigate("/artist/dashboard")} style={{ cursor: "pointer" }}>
+                <span
+                  onClick={() => navigate("/artist/dashboard")}
+                  style={{ cursor: "pointer" }}
+                >
                   <i className="fa fa-dashboard"></i>
                 </span>
               </li>
@@ -101,7 +110,9 @@ const ExhibitionTable = () => {
                 <button
                   type="button"
                   className="btn btn-secondary mr-2"
-                  onClick={() => navigate("/artist/exhibition/create-exhibition")}
+                  onClick={() =>
+                    navigate("/artist/exhibition/create-exhibition")
+                  }
                 >
                   <i className="fa fa-plus"></i>
                 </button>
@@ -145,7 +156,7 @@ const ExhibitionTable = () => {
                       right: "10px",
                       top: "50%",
                       transform: "translateY(-50%)",
-                      pointerEvents: 'none',
+                      pointerEvents: "none",
                     }}
                   ></i>
                 </div>
@@ -166,56 +177,79 @@ const ExhibitionTable = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {displayedExhibitions.map((exhibition, index) => (
-                      <tr key={exhibition._id}>
-                        <td>{(currentPage - 1) * exhibitionsPerPage + index + 1}</td>
-                        <td>{exhibition.title || "-"}</td>
-                        <td>{exhibition.type || "-"}</td>
-                        <td>{exhibition.hostedBy || "-"}</td>
-                        <td>{new Date(exhibition.startDate).toLocaleDateString() || "-"}</td>
-                        <td>
-                          <button className={`btn btn-sm  ${exhibition.status === 'Pending' ? 'btn-outline-warning' : exhibition.status === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
-                            {exhibition.status}
-                          </button>
-                        </td>
+                    {displayedExhibitions.length > 0 ? (
+                      displayedExhibitions.map((exhibition, index) => (
+                        <tr key={exhibition._id}>
+                          <td>
+                            {(currentPage - 1) * exhibitionsPerPage + index + 1}
+                          </td>
+                          <td>{exhibition.title || "-"}</td>
+                          <td>{exhibition.type || "-"}</td>
+                          <td>{exhibition.hostedBy || "-"}</td>
+                          <td>
+                            {new Date(
+                              exhibition.startDate
+                            ).toLocaleDateString() || "-"}
+                          </td>
+                          <td>
+                            <button
+                              className={`btn btn-sm  ${
+                                exhibition.status === "Pending"
+                                  ? "btn-outline-warning"
+                                  : exhibition.status === "Approved"
+                                  ? "btn-outline-success"
+                                  : "btn-outline-danger"
+                              }`}
+                            >
+                              {exhibition.status}
+                            </button>
+                          </td>
 
-                        <td>
-                          <button
-                            type="button"
-                            className="btn btn-outline-primary btn-sm mr-1"
-                            title="View"
-                            onClick={() =>
-                              navigate(`/artist/exhibition/view-exhibition`, { state: { exhibition } })
-                            }
-                          >
-                            <i className="fa fa-eye"></i>
-                          </button>
-                          {exhibition.status !== "Approved" && exhibition.status !== "Rejected" && (
-
-                            <>
-                              <button
-                                type="button"
-                                className="btn btn-outline-info btn-sm mr-2"
-                                title="Edit"
-                                onClick={() =>
-                                  navigate(`/artist/exhibition/update-exhibition`, { state: { exhibition } })
-                                }
-                              >
-                                <i className="fa fa-pencil"></i>
-                              </button>
-                              <button
-                                type="button"
-                                className="btn btn-outline-danger btn-sm"
-                                title="Delete"
-                                onClick={() => openDeleteDialog(exhibition)}
-                              >
-                                <i className="fa fa-trash-o"></i>
-                              </button>
-                            </>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
+                          <td>
+                            <button
+                              type="button"
+                              className="btn btn-outline-primary btn-sm mr-1"
+                              title="View"
+                              onClick={() =>
+                                navigate(`/artist/exhibition/view-exhibition`, {
+                                  state: { exhibition },
+                                })
+                              }
+                            >
+                              <i className="fa fa-eye"></i>
+                            </button>
+                            {exhibition.status !== "Approved" &&
+                              exhibition.status !== "Rejected" && (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline-info btn-sm mr-2"
+                                    title="Edit"
+                                    onClick={() =>
+                                      navigate(
+                                        `/artist/exhibition/update-exhibition`,
+                                        { state: { exhibition } }
+                                      )
+                                    }
+                                  >
+                                    <i className="fa fa-pencil"></i>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline-danger btn-sm"
+                                    title="Delete"
+                                    onClick={() => openDeleteDialog(exhibition)}
+                                  >
+                                    <i className="fa fa-trash-o"></i>
+                                  </button>
+                                </>
+                              )}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>No Data Available</tr>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -225,27 +259,40 @@ const ExhibitionTable = () => {
                   {filteredExhibitions.length === 0
                     ? 0
                     : (currentPage - 1) * exhibitionsPerPage + 1}{" "}
-                  to {Math.min(currentPage * exhibitionsPerPage, filteredExhibitions.length)} of{" "}
-                  {filteredExhibitions.length} entries
+                  to{" "}
+                  {Math.min(
+                    currentPage * exhibitionsPerPage,
+                    filteredExhibitions.length
+                  )}{" "}
+                  of {filteredExhibitions.length} entries
                 </span>
                 <ul className="pagination d-flex justify-content-end w-100">
                   <li
-                    className={`paginate_button page-item ${currentPage === 1 ? "disabled" : ""}`}
+                    className={`paginate_button page-item ${
+                      currentPage === 1 ? "disabled" : ""
+                    }`}
                     onClick={handlePrevious}
                   >
                     <button className="page-link">Previous</button>
                   </li>
-                  {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+                  {Array.from(
+                    { length: totalPages },
+                    (_, index) => index + 1
+                  ).map((pageNumber) => (
                     <li
                       key={pageNumber}
-                      className={`paginate_button page-item ${currentPage === pageNumber ? "active" : ""}`}
+                      className={`paginate_button page-item ${
+                        currentPage === pageNumber ? "active" : ""
+                      }`}
                       onClick={() => setCurrentPage(pageNumber)}
                     >
                       <button className="page-link">{pageNumber}</button>
                     </li>
                   ))}
                   <li
-                    className={`paginate_button page-item ${currentPage === totalPages ? "disabled" : ""}`}
+                    className={`paginate_button page-item ${
+                      currentPage === totalPages ? "disabled" : ""
+                    }`}
                     onClick={handleNext}
                   >
                     <button className="page-link">Next</button>
@@ -269,3 +316,108 @@ const ExhibitionTable = () => {
 };
 
 export default ExhibitionTable;
+
+const ExhibitionsSkeleton = () => {
+  return (
+    <div className="p-4 animate-pulse">
+      {/* Header */}
+      <div className="mb-6">
+        <div className="h-7 w-48 bg-gray-300 rounded mb-3"></div>
+
+        <div className="flex gap-2">
+          <div className="h-4 w-5 bg-gray-300 rounded"></div>
+          <div className="h-4 w-24 bg-gray-300 rounded"></div>
+        </div>
+      </div>
+
+      {/* Action Button */}
+      <div className="flex justify-end mb-4">
+        <div className="h-10 w-10 bg-gray-300 rounded"></div>
+      </div>
+
+      {/* Filter Bar */}
+      <div className="bg-white shadow rounded p-4 mb-4 flex flex-col md:flex-row justify-between gap-4">
+        {/* Show Entries */}
+        <div className="flex items-center gap-3">
+          <div className="h-5 w-10 bg-gray-200 rounded"></div>
+          <div className="h-8 w-20 bg-gray-300 rounded"></div>
+          <div className="h-5 w-16 bg-gray-200 rounded"></div>
+        </div>
+
+        {/* Search */}
+        <div className="flex justify-end">
+          <div className="h-8 w-40 bg-gray-300 rounded"></div>
+        </div>
+      </div>
+
+      {/* Table Skeleton */}
+      <div className="bg-white shadow rounded p-4">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b">
+                {[
+                  "#",
+                  "Title",
+                  "Type",
+                  "Hosted By",
+                  "Start Date",
+                  "Status",
+                  "Action",
+                ].map((header, i) => (
+                  <th key={i} className="py-3">
+                    <div className="h-4 w-20 bg-gray-300 rounded mx-auto"></div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+
+            <tbody>
+              {Array.from({ length: 8 }).map((_, i) => (
+                <tr key={i} className="border-b">
+                  <td className="py-4">
+                    <div className="h-4 w-6 bg-gray-200 rounded mx-auto"></div>
+                  </td>
+                  <td className="py-4">
+                    <div className="h-4 w-28 bg-gray-200 rounded mx-auto"></div>
+                  </td>
+                  <td className="py-4">
+                    <div className="h-4 w-20 bg-gray-200 rounded mx-auto"></div>
+                  </td>
+                  <td className="py-4">
+                    <div className="h-4 w-24 bg-gray-200 rounded mx-auto"></div>
+                  </td>
+                  <td className="py-4">
+                    <div className="h-4 w-24 bg-gray-200 rounded mx-auto"></div>
+                  </td>
+                  <td className="py-4">
+                    <div className="h-6 w-20 bg-gray-300 rounded mx-auto"></div>
+                  </td>
+                  <td className="py-4">
+                    <div className="flex justify-center gap-2">
+                      <div className="h-8 w-8 bg-gray-300 rounded"></div>
+                      <div className="h-8 w-8 bg-gray-300 rounded"></div>
+                      <div className="h-8 w-8 bg-gray-300 rounded"></div>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        <div className="flex flex-col md:flex-row justify-between items-center mt-6 gap-4">
+          <div className="h-4 w-64 bg-gray-300 rounded"></div>
+
+          <div className="flex gap-2">
+            <div className="h-8 w-20 bg-gray-300 rounded"></div>
+            <div className="h-8 w-8 bg-gray-300 rounded"></div>
+            <div className="h-8 w-8 bg-gray-300 rounded"></div>
+            <div className="h-8 w-20 bg-gray-300 rounded"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

@@ -93,12 +93,15 @@ import { useNavigate } from "react-router-dom";
 import CategoryTable from "./Categotytable";
 import CreateCategoryModal from "./Createcategory";
 import getAPI from "../../../../../api/getAPI";
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
+
 
 const Category = () => {
   const navigate = useNavigate();
 
   // State for categories (used in create/edit modal if needed)
   const [categories, setCategories] = useState([]);
+const[loading,setLoading]=useState(false);
 
   // State for sub-categories (used in table)
   const [subCategories, setSubCategories] = useState([]);
@@ -108,6 +111,7 @@ const Category = () => {
 
   // Fetch all product categories (for dropdowns or reference)
   const fetchCategoryData = async () => {
+    setLoading(true)
     try {
       const response = await getAPI(`/api/product-category`, {}, true);
       if (!response.hasError && response.data && Array.isArray(response.data.data)) {
@@ -115,6 +119,8 @@ const Category = () => {
       }
     } catch (err) {
       console.error("Error fetching Product Categories:", err);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -137,6 +143,7 @@ const Category = () => {
     fetchSubCategoryData();
   }, []);
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

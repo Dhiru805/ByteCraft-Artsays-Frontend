@@ -118,7 +118,7 @@ const WhyArtSaysContent = () => {
     fetchPublishedPage();
   }, []);
 
-  if (loading) return <p className="text-center py-6">Loading...</p>;
+  if (loading) return <p className="text-center py-6">{ArticleSkeleton()}</p>;
   if (!pageData) return <p className="text-center py-6">No content found</p>;
 
   return (
@@ -191,3 +191,37 @@ const WhyArtSaysContent = () => {
 };
 
 export default WhyArtSaysContent;
+
+// ArticleSkeleton.jsx
+ function ArticleSkeleton() {
+  return (
+    <div className="grid grid-cols-1 gap-6 px-3 sm:px-6 my-3 animate-pulse">
+      {[1, 2, 3].map((item) => (
+        <div
+          key={item}
+          className="grid grid-cols-1 md:grid-cols-4 gap-6 my-3 items-center"
+        >
+          {/* Image Skeleton */}
+          <aside className="md:col-span-1 flex justify-center">
+            <div className="w-full h-[200px] md:h-[300px] bg-gray-300 rounded-lg"></div>
+          </aside>
+
+          {/* Content Skeleton */}
+          <main className="md:col-span-3 flex flex-col justify-center">
+            <div className="h-5 w-1/3 bg-gray-300 rounded"></div>
+
+            <hr className="my-3 border-dark opacity-30" />
+
+            <div className="space-y-2">
+              <div className="h-4 w-full bg-gray-300 rounded"></div>
+              <div className="h-4 w-5/6 bg-gray-300 rounded"></div>
+              <div className="h-4 w-4/6 bg-gray-300 rounded"></div>
+            </div>
+
+            <div className="h-10 w-32 bg-gray-300 rounded-full mt-4"></div>
+          </main>
+        </div>
+      ))}
+    </div>
+  );
+}

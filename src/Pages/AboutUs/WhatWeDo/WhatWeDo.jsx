@@ -133,7 +133,7 @@ const WhatWeDo = () => {
     fetchWhatWeDo();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>{WhatWeDoSkeleton() }</div>;
   if (!data) return <div>What We Do section not available</div>;
 
   return (
@@ -197,3 +197,52 @@ const WhatWeDo = () => {
 
 export default WhatWeDo;
 
+// WhatWeDoSkeleton.jsx
+ function WhatWeDoSkeleton() {
+  return (
+    <div className="max-w-[1440px] mx-auto py-3 my-5 animate-pulse">
+      
+      {/* Heading + Description */}
+      <div>
+        <div className="h-8 w-1/3 bg-gray-300 rounded mx-3"></div>
+
+        <hr className="my-3 border-dark opacity-30" />
+
+        <div className="px-3 space-y-2 mt-3">
+          <div className="h-4 w-full bg-gray-300 rounded"></div>
+          <div className="h-4 w-5/6 bg-gray-300 rounded"></div>
+          <div className="h-4 w-4/6 bg-gray-300 rounded"></div>
+        </div>
+      </div>
+
+      {/* Cards + Image Layout */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-3 sm:px-6 my-5">
+        
+        {/* Left: Accordion Skeletons */}
+        <div className="order-2 md:!order-1 flex flex-col items-center space-y-3 w-full">
+
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="border rounded-lg shadow w-full max-w-[1000px] p-4">
+              <div className="flex justify-between items-center">
+                <div className="h-6 w-2/3 bg-gray-300 rounded"></div>
+                <div className="h-6 w-6 bg-gray-300 rounded-full"></div>
+              </div>
+
+              <div className="mt-3 space-y-2">
+                <div className="h-4 w-full bg-gray-300 rounded"></div>
+                <div className="h-4 w-5/6 bg-gray-300 rounded"></div>
+              </div>
+            </div>
+          ))}
+
+        </div>
+
+        {/* Right: Image Skeleton */}
+        <div className="order-1 md:!order-2 content-center justify-items-center">
+          <div className="w-full h-[250px] md:h-[350px] bg-gray-300 rounded-lg"></div>
+        </div>
+
+      </div>
+    </div>
+  );
+}

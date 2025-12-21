@@ -1,4 +1,3 @@
-
 // import React, { useEffect, useState } from "react";
 // import { useNavigate, useLocation } from "react-router-dom";
 // import { toast } from "react-toastify";
@@ -249,14 +248,13 @@
 
 // export default ContactUsTable;
 
-
-
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import getAPI from "../../../../api/getAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
 import axiosInstance from "../../../../api/axiosConfig";
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 
 const ContactUsTable = () => {
   const navigate = useNavigate();
@@ -268,7 +266,7 @@ const ContactUsTable = () => {
   const [deleteType, setDeleteType] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedPageToDelete, setSelectedPageToDelete] = useState(null);
-
+  const [loading, setLoading] = useState(true);
   const [isSEOModalOpen, setIsSEOModalOpen] = useState(false);
   const [seoData, setSeoData] = useState({
     metaTitle: "",
@@ -288,6 +286,8 @@ const ContactUsTable = () => {
       console.error("Error fetching Contact Us pages:", error);
       toast.error(error.response?.data?.message || "Failed to fetch pages");
       setPages([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -377,9 +377,13 @@ const ContactUsTable = () => {
       if (seoData.metaImage) formData.append("metaImage", seoData.metaImage);
 
       if (seoData._id) {
-        await axiosInstance.put(`/api/contactus/updateSEO/${seoData._id}`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        await axiosInstance.put(
+          `/api/contactus/updateSEO/${seoData._id}`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
         toast.success("SEO metadata updated successfully.");
       } else {
         await axiosInstance.post("/api/contactus/createSEO", formData, {
@@ -406,13 +410,16 @@ const ContactUsTable = () => {
     currentPage * pagesPerPage
   );
 
-  const handlePrevious = () => currentPage > 1 && setCurrentPage(currentPage - 1);
-  const handleNext = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
+  const handlePrevious = () =>
+    currentPage > 1 && setCurrentPage(currentPage - 1);
+  const handleNext = () =>
+    currentPage < totalPages && setCurrentPage(currentPage + 1);
   const handlePagesPerPageChange = (e) => {
     setPagesPerPage(Number(e.target.value));
     setCurrentPage(1);
   };
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">
@@ -490,7 +497,9 @@ const ContactUsTable = () => {
                         <td>{page.cards?.length || 0}</td>
                         <td>
                           {page.status === "published" ? (
-                            <span className="badge badge-success">Published</span>
+                            <span className="badge badge-success">
+                              Published
+                            </span>
                           ) : (
                             <span className="badge badge-secondary">Draft</span>
                           )}
@@ -500,7 +509,9 @@ const ContactUsTable = () => {
                             className="btn btn-outline-info btn-sm mr-1"
                             title="Edit"
                             onClick={() =>
-                              navigate("/super-admin/contactus/update", { state: { page } })
+                              navigate("/super-admin/contactus/update", {
+                                state: { page },
+                              })
                             }
                           >
                             <i className="fa fa-pencil"></i>
@@ -525,27 +536,36 @@ const ContactUsTable = () => {
                   {filteredPages.length === 0
                     ? 0
                     : (currentPage - 1) * pagesPerPage + 1}{" "}
-                  to {Math.min(currentPage * pagesPerPage, filteredPages.length)} of{" "}
-                  {filteredPages.length} entries
+                  to{" "}
+                  {Math.min(currentPage * pagesPerPage, filteredPages.length)}{" "}
+                  of {filteredPages.length} entries
                 </span>
                 <ul className="pagination d-flex justify-content-end w-100">
                   <li
-                    className={`paginate_button page-item ${currentPage === 1 ? "disabled" : ""}`}
+                    className={`paginate_button page-item ${
+                      currentPage === 1 ? "disabled" : ""
+                    }`}
                     onClick={handlePrevious}
                   >
                     <button className="page-link">Previous</button>
                   </li>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
-                    <li
-                      key={pageNumber}
-                      className={`paginate_button page-item ${currentPage === pageNumber ? "active" : ""}`}
-                      onClick={() => setCurrentPage(pageNumber)}
-                    >
-                      <button className="page-link">{pageNumber}</button>
-                    </li>
-                  ))}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (pageNumber) => (
+                      <li
+                        key={pageNumber}
+                        className={`paginate_button page-item ${
+                          currentPage === pageNumber ? "active" : ""
+                        }`}
+                        onClick={() => setCurrentPage(pageNumber)}
+                      >
+                        <button className="page-link">{pageNumber}</button>
+                      </li>
+                    )
+                  )}
                   <li
-                    className={`paginate_button page-item ${currentPage === totalPages ? "disabled" : ""}`}
+                    className={`paginate_button page-item ${
+                      currentPage === totalPages ? "disabled" : ""
+                    }`}
                     onClick={handleNext}
                   >
                     <button className="page-link">Next</button>
@@ -636,12 +656,16 @@ const ContactUsTable = () => {
                     <img
                       src={
                         typeof seoData.metaImage === "string"
-                         // ? seoData.metaImage
-                         ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${seoData.metaImage}`
+                          ? // ? seoData.metaImage
+                            `${process.env.REACT_APP_API_URL_FOR_IMAGE}${seoData.metaImage}`
                           : URL.createObjectURL(seoData.metaImage)
                       }
                       alt="SEO Preview"
-                      style={{ maxWidth: "200px", maxHeight: "150px", objectFit: "cover" }}
+                      style={{
+                        maxWidth: "200px",
+                        maxHeight: "150px",
+                        objectFit: "cover",
+                      }}
                     />
                   </div>
                 )}

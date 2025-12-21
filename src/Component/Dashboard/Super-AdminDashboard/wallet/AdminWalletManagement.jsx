@@ -916,6 +916,7 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { enUS } from "date-fns/locale";
 
+import BuyerWalletSkeleton from "../../../Skeleton/wallet/BuyerWalletSkeleton";
 
 const AdminWalletManagement = () => {
   const [wallets, setWallets] = useState([]);
@@ -958,6 +959,7 @@ const AdminWalletManagement = () => {
 
 
 
+const[loading,setLoading]=useState(true)
 
   const API_URL = process.env.REACT_APP_API_URL;
 
@@ -967,6 +969,8 @@ const AdminWalletManagement = () => {
       setWallets(res.data || []);
     } catch (err) {
       console.error(err);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -1352,6 +1356,7 @@ const AdminWalletManagement = () => {
 
 
 
+  if(loading)return <BuyerWalletSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header mb-4">

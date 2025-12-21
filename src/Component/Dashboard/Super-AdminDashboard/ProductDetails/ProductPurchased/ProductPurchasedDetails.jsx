@@ -268,6 +268,7 @@ import { useParams } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import useUserType from '../../../urlconfig';
 import { Link } from "react-router-dom";
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 function AllProduct() {
     const { productId } = useParams();
@@ -275,6 +276,7 @@ function AllProduct() {
     const [selectedImages, setSelectedImages] = useState({});
     const [expanded, setExpanded] = useState({});
     const [activeTab, setActiveTab] = useState("description");
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const userType = useUserType();
 
@@ -298,6 +300,8 @@ function AllProduct() {
             } catch (error) {
                 console.error("Error fetching product:", error);
                 setProducts([]);
+            } finally {
+                setLoading(false);
             }
         };
         fetchProduct();
@@ -321,6 +325,7 @@ function AllProduct() {
         setActiveTab(tab);
     };
 
+    if (loading) return <ProductRequestSkeleton />
     return (
         <>
             <div className="block-header">

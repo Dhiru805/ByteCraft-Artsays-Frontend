@@ -328,7 +328,7 @@ const Customization = () => {
     if (response.data?.success) {
       toast.success(formData._id ? "Live updated successfully!" : "Live created successfully!");
       setThumbnailPreview(null);
-      navigate(`/social-media/${response.data.streamKey}/${username}`);
+      navigate(`/artsays-community/${response.data.streamKey}/${username}`);
     } else {
       toast.error(response.data?.message || "Something went wrong");
     }

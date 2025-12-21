@@ -413,6 +413,7 @@ import React, { useState, useEffect } from "react";
 import getAPI from "../../../../../api/getAPI";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import useUserType from "../../../urlconfig";
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const SoldProduct = () => {
 
@@ -425,6 +426,10 @@ const SoldProduct = () => {
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState("");
 
+    const [showPopup, setShowPopup] = useState(false);
+    const [currentImages, setCurrentImages] = useState([]);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+const[loading,setLoading]=useState(false);
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
     const navigate = useNavigate();
     const userType = useUserType();
@@ -433,6 +438,7 @@ const SoldProduct = () => {
         if (!userId) return;
 
         const fetchProducts = async () => {
+            setLoading(true)
             try {
                 const result = await getAPI(`/api/orders/seller/${userId}`, {}, true, false);
                 console.log("SELLER ORDERS RAW:", result?.data);
@@ -505,6 +511,8 @@ const sellerName =
             } catch (err) {
                 console.error("Error fetching Seller sold products:", err);
                 setProducts([]);
+            }finally{
+                setLoading(false)
             }
         };
 
@@ -522,6 +530,39 @@ const sellerName =
         currentPage * productsPerPage
     );
 
+    const handlePrevious = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const handleNext = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handleProductsPerPageChange = (event) => {
+        setProductsPerPage(Number(event.target.value));
+        setCurrentPage(1);
+    };
+        const handleImageClick = (product) => {
+        const images = [product.mainImage, ...(product.otherImages || [])];
+        setCurrentImages(images);
+        setCurrentImageIndex(0);
+        setShowPopup(true);
+    };
+
+
+    const goToPreviousImage = () => {
+        setCurrentImageIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+    };
+
+    const goToNextImage = () => {
+        setCurrentImageIndex((prevIndex) => Math.min(prevIndex + 1, currentImages.length - 1));
+    };
+
+    if(loading)return <ProductRequestSkeleton/>
     return (
         <div className="container-fluid">
             <div className="block-header">

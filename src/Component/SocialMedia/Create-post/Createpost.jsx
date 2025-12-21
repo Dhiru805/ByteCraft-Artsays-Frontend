@@ -12,7 +12,7 @@ const Createpost = () => {
     preview: URL.createObjectURL(file), // for showing in carousel
   }));
      if (fileData.length > 0) {
-       navigate("/social-media/upload-post", { state: { images: fileData } });
+       navigate("/artsays-community/upload-post", { state: { images: fileData } });
      }
   };
 
