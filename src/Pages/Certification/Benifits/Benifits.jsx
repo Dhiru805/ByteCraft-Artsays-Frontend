@@ -62,19 +62,19 @@
 //                 </div>
 //             </div>
 //             <div className="flex mt-0 md:!mt-3 justify-evenly gap-2 md:gap-3 px-2 md:px-0">
-//                 <div className="border !border-[#FB5934] !rounded-br-[100px] !rounded-bl-[100px] !rounded-sm p-2 md:!p-12 text-center">
-//                     <p className="text-xs md:text-lg font-medium text-black leading-relaxed mt-3 md:mt-0">
-//                         Certified pieces attract higher prices.
-//                     </p>
-//                     <h1 className="text-sm md:text-xl font-bold text-dark">
-//                         Boosts Artwork Value
-//                     </h1>
-//                     <img
-//                         src='./herosectionimg/boost.svg'
-//                         alt="boost"
-//                         className="w-full h-[50px] md:h-[150px] object-contain product-img transition-all duration-300"
-//                     />
-//                 </div>
+                // <div className="border !border-[#FB5934] !rounded-br-[100px] !rounded-bl-[100px] !rounded-sm p-2 md:!p-12 text-center">
+                //     <p className="text-xs md:text-lg font-medium text-black leading-relaxed mt-3 md:mt-0">
+                //         Certified pieces attract higher prices.
+                //     </p>
+                //     <h1 className="text-sm md:text-xl font-bold text-dark">
+                //         Boosts Artwork Value
+                //     </h1>
+                //     <img
+                //         src='./herosectionimg/boost.svg'
+                //         alt="boost"
+                //         className="w-full h-[50px] md:h-[150px] object-contain product-img transition-all duration-300"
+                //     />
+                // </div>
 //                 <div className="border !border-[#FB5934] !rounded-br-[100px] !rounded-bl-[100px] !rounded-sm p-2 md:!p-12 text-center">
 //                     <p className="text-xs md:text-lg font-medium text-black leading-relaxed mt-3 md:mt-0">
 //                         Certified pieces attract higher prices.
@@ -136,18 +136,18 @@ const Benifits = () => {
   const renderCard = (card, index) => (
     <div
       key={index}
-      className={`border !border-[#FB5934] bg-white text-center shadow-sm
-                  p-4 md:p-8 w-[320px] h-[300px] md:w-[360px] md:h-[320px]
-                  flex flex-col justify-between items-center
+      className={`border !border-[#FB5934] text-center shadow-sm
+                  p-2 md:!p-12
+                  // flex flex-col justify-between items-center
                   ${
                     index < 3
-                      ? "!rounded-tr-[100px] !rounded-tl-[100px]"
-                      : "!rounded-br-[100px] !rounded-bl-[100px]"
+                      ? "!rounded-tr-3xl md:!rounded-tr-[100px] !rounded-tl-3xl md:!rounded-tl-[100px]"
+                      : "!rounded-br-3xl md:!rounded-br-[100px] !rounded-bl-3xl md:!rounded-bl-[100px]"
                   }
                   !rounded-sm`}
     >
       <div className="flex-1 flex flex-col justify-center">
-        <p className="text-xs md:text-lg font-medium text-black leading-relaxed mb-2">
+        <p className="text-xs md:text-lg font-medium text-black leading-relaxed mt-3 md:mt-0">
           {card.description || "Certified pieces attract higher prices."}
         </p>
         <h1 className="text-sm md:text-xl font-bold text-dark">
@@ -156,7 +156,6 @@ const Benifits = () => {
       </div>
 
       {card.image && (
-        <div className="h-[100px] md:h-[130px] w-full flex items-center justify-center mt-3">
           <img
             src={
               card.image.startsWith("http")
@@ -164,9 +163,8 @@ const Benifits = () => {
                 : `${process.env.REACT_APP_API_URL}/${card.image}`
             }
             alt={card.title}
-            className="h-full w-auto max-w-[90%] object-contain transition-all duration-300"
+            className="w-full h-[50px] md:h-[150px] object-contain product-img transition-all duration-300"
           />
-        </div>
       )}
     </div>
   );
@@ -197,8 +195,7 @@ const Benifits = () => {
       </p>
 
       {/* Cards Grid */}
-      {/* <div className="flex flex-wrap justify-center gap-4 md:gap-6 px-2 md:px-0 py-6"> */}
-      <div className="flex flex-wrap justify-center gap-10 md:gap-16 px-2 md:px-0 py-10">
+      <div className="mt-3 justify-evenly grid grid-cols-3 gap-2 md:gap-3 px-2 md:px-0 py-2">
 
 
         {cardsToRender.map((card, index) => renderCard(card, index))}

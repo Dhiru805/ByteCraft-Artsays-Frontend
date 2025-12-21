@@ -20,6 +20,7 @@ import WhyArtsaysContent from "./WhyArtsaysContent/WhyArtsaysContent";
 import { Helmet } from "react-helmet";
 import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
+import Testimonials from "../AboutUs/Testimonials/Testimonials";
 
 const WhyArtsays = () => {
   const [seoData, setSeoData] = useState({
@@ -80,6 +81,7 @@ const WhyArtsays = () => {
 
       <HeroImgWhyArtsays />
       <WhyArtsaysContent />
+      <Testimonials />
     </div>
   );
 };

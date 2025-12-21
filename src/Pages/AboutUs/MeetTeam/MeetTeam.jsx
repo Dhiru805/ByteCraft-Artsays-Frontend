@@ -110,13 +110,13 @@ const MeetTeam = () => {
           {data.mainHeading}
         </h1>
         <hr className="my-3 border-dark" />
-        <p className="mt-3 text-xs md:text-base text-center font-medium text-black leading-relaxed px-3">
+        <p className="mt-3 text-xs md:text-lg md:text-dark text-center font-medium text-black leading-relaxed px-3">
           {data.mainDescription}
         </p>
       </div>
 
       <section className="py-16 bg-white text-center">
-        <div className="flex flex-wrap justify-center gap-16 max-w-6xl mx-auto">
+        <div className="flex flex-wrap justify-center gap-16 max-w-full mx-auto">
           {data.teamMembers.map((member, index) => (
             <div key={member._id} className="flex flex-col items-center">
               <div className="w-64 h-64 rounded-full border-8 border-[#6F4D34] overflow-hidden">

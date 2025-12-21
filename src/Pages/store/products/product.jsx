@@ -2019,7 +2019,7 @@ const Product = () => {
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   const [loading, setLoading] = useState(false);
   const userId = localStorage.getItem("userId");
-  const userType = localStorage.getItem("userType"); 
+  const userType = localStorage.getItem("userType");
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
@@ -2053,26 +2053,26 @@ const Product = () => {
     }));
   };
 
-const ensureBuyer = () => {
-  if (userType !== "Buyer") {
-    toast.warn("Only buyers can use this feature, Register as a Buyer to continue.");
-    return false;
-  }
-  return true;
-};
+  const ensureBuyer = () => {
+    if (userType !== "Buyer") {
+      toast.warn("Only buyers can use this feature, Register as a Buyer to continue.");
+      return false;
+    }
+    return true;
+  };
 
-const slugify = (text) =>
-  text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)+/g, "");
+  const slugify = (text) =>
+    text
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)+/g, "");
 
   const handleWishlist = async (productId) => {
     // if (!userId) {
     //   toast.warn("You must be logged in as a buyer to use wishlist");
     //   return;
     // }
-if (!ensureBuyer()) return;
+    if (!ensureBuyer()) return;
 
     const isLiked = likedProducts[productId];
 
@@ -2262,7 +2262,7 @@ if (!ensureBuyer()) return;
       />
     ));
   };
-if(loading)return <div><ProductsSkeliton /></div>;
+  if (loading) return <div><ProductsSkeliton /></div>;
   return (
     <div className="max-w-[1440px] mx-auto mb-4">
       {/* --- Search and Breadcrumb --- */}
@@ -2312,7 +2312,7 @@ if(loading)return <div><ProductsSkeliton /></div>;
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6">
         {/* Sidebar Filters (hidden on mobile, toggleable) */}
         <aside className="hidden md:block rounded-xl filter-sidebar">
-         
+
           <h2 className="font-bold text-lg mb-3">Filter by</h2>
 
           <hr className="mb-3 border-dark" />
@@ -2637,10 +2637,10 @@ if(loading)return <div><ProductsSkeliton /></div>;
               const hasDiscount = product.sellingPrice < product.marketPrice;
               const discountPercent = hasDiscount
                 ? Math.round(
-                    ((product.marketPrice - product.sellingPrice) /
-                      product.marketPrice) *
-                      100
-                  )
+                  ((product.marketPrice - product.sellingPrice) /
+                    product.marketPrice) *
+                  100
+                )
                 : 0;
 
               const average = product.averageRating;
@@ -2650,46 +2650,48 @@ if(loading)return <div><ProductsSkeliton /></div>;
                 <div
                   key={product._id}
                   //onClick={() => navigate(`/product-details/${product._id}`)}
-                  onClick={() => { const slug = slugify(product.productName); navigate(`/product-details/${slug}/${product._id}`);}}
+                  onClick={() => { const slug = slugify(product.productName); navigate(`/product-details/${slug}/${product._id}`); }}
 
-                  className="rounded-2xl shadow-md overflow-hidden flex flex-col justify-between product-card transition-transform duration-300 hover:-translate-y-1 m-3"
+                  className="w-full mx-auto product-card"
                 >
                   {/* Image */}
-                  <div className="relative p-img">
-                    {product.editionType && (
-                      <span className="absolute top-3 left-3 text-white bg-dark text-sm font-semibold px-2 py-0.5 rounded-full shadow">
-                        {product.editionType}
-                      </span>
-                    )}
-                    <img
-                      src={`${imageBaseURL}${product.mainImage}`}
-                      alt={product.productName}
-                      className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
-                    />
-                    <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
-                      {/* <Heart className="w-5 h-5 text-white" /> */}
-                      <div
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleWishlist(product._id);
-                        }}
-                        className="cursor-pointer"
-                      >
-                        {likedProducts[product._id] ? (
-                          <Heart
-                            size={20}
-                            className="stroke-white"
-                            style={{ fill: "white" }}
-                          />
-                        ) : (
-                          <Heart
-                            size={20}
-                            className="stroke-white"
-                            style={{ fill: "transparent" }}
-                          />
-                        )}
-                      </div>
-                    </button>
+                  <div className="bg-[#ffffff]">
+                    <div className="relative p-img">
+                      {product.editionType && (
+                        <span className="absolute top-3 left-3 text-white bg-dark text-sm font-semibold px-2 py-0.5 rounded-full shadow">
+                          {product.editionType}
+                        </span>
+                      )}
+                      <img
+                        src={`${imageBaseURL}${product.mainImage}`}
+                        alt={product.productName}
+                        className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
+                      />
+                      <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
+                        {/* <Heart className="w-5 h-5 text-white" /> */}
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleWishlist(product._id);
+                          }}
+                          className="cursor-pointer"
+                        >
+                          {likedProducts[product._id] ? (
+                            <Heart
+                              size={20}
+                              className="stroke-white"
+                              style={{ fill: "white" }}
+                            />
+                          ) : (
+                            <Heart
+                              size={20}
+                              className="stroke-white"
+                              style={{ fill: "transparent", color: "white" }}
+                            />
+                          )}
+                        </div>
+                      </button>
+                    </div>
                   </div>
 
                   {/* Product Info */}
@@ -2704,9 +2706,8 @@ if(loading)return <div><ProductsSkeliton /></div>;
                       {/* Artist name from populated userId */}
                       <p
                         className="text-gray-700 text-xs sm:text-sm font-medium flex items-center"
-                        title={`${product.userId?.name ?? ""} ${
-                          product.userId?.lastName ?? ""
-                        }`}
+                        title={`${product.userId?.name ?? ""} ${product.userId?.lastName ?? ""
+                          }`}
                       >
                         {product.userId?.name ||
                           product.userId?.firstName ||
@@ -2775,12 +2776,12 @@ if(loading)return <div><ProductsSkeliton /></div>;
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                           if (!ensureBuyer()) return;
+                          if (!ensureBuyer()) return;
 
                           addToCart(product._id);
                         }}
                         disabled={!product.quantity || product.quantity === 0}
-                        className={`flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart hover:bg-dark hover:text-white transition ${(!product.quantity || product.quantity === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className={`flex items-center justify-center gap-2 flex-1 bg-[#ffffff] border border-dark rounded-full text-dark py-2 font-semibold add-cart transition ${(!product.quantity || product.quantity === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
                         <FaShoppingCart /> Add to Cart
                       </button>
@@ -2796,7 +2797,7 @@ if(loading)return <div><ProductsSkeliton /></div>;
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                             if (!ensureBuyer()) return;
+                            if (!ensureBuyer()) return;
                             navigate(
                               `/my-account/check-out/${userId}?productId=${product._id}`
                             );
@@ -2819,11 +2820,10 @@ if(loading)return <div><ProductsSkeliton /></div>;
               <button
                 onClick={goToPrevPage}
                 disabled={currentPage === 1}
-                className={`px-2 sm:px-3 py-1 flex items-center ${
-                  currentPage === 1
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:text-red-500"
-                }`}
+                className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === 1
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:text-red-500"
+                  }`}
               >
                 <FiChevronLeft className="self-center flex-shrink-0" />
                 <span className="ml-1">Previous</span>
@@ -2835,11 +2835,10 @@ if(loading)return <div><ProductsSkeliton /></div>;
                   <button
                     key={page}
                     onClick={() => goToPage(page)}
-                    className={`px-2 sm:px-3 py-1 rounded ${
-                      currentPage === page
-                        ? "border border-dark text-dark"
-                        : "hover:text-red-500"
-                    }`}
+                    className={`px-2 sm:px-3 py-1 rounded ${currentPage === page
+                      ? "border border-dark text-dark"
+                      : "hover:text-red-500"
+                      }`}
                   >
                     {page}
                   </button>
@@ -2850,11 +2849,10 @@ if(loading)return <div><ProductsSkeliton /></div>;
               <button
                 onClick={goToNextPage}
                 disabled={currentPage === totalPages}
-                className={`px-2 sm:px-3 py-1 flex items-center ${
-                  currentPage === totalPages
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:text-red-500"
-                }`}
+                className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === totalPages
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:text-red-500"
+                  }`}
               >
                 <span className="mr-1">Next</span>
                 <FiChevronRight className="self-center flex-shrink-0" />

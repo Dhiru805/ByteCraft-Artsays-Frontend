@@ -165,7 +165,7 @@ const LifeAtArtsays = () => {
       <hr className="my-3 border-dark" />
 
       {/* Dynamic Section 3 Description */}
-      <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+      <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
         {section3?.description ||
           "At Artsays, we’re more than just a team — we’re a creative family."}
       </p>
@@ -177,39 +177,23 @@ const LifeAtArtsays = () => {
             <div className="order-2 sm:order-1 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {section3?.cards?.length > 0 ? (
                 section3.cards.map((card, idx) => (
-                  // <div
-                  //   key={idx}
-                  //   className="w-full mx-auto border rounded-2xl shadow-xl hover:!shadow-2xl"
-                  // >
-                  //   <div className="relative">
-                  //     <img
-                  //       src={card.image ? `${base}/${card.image}` : "/placeholder.png"}
-                  //       alt={card.text}
-                  //       className="w-full h-32 sm:h-48 object-contain rounded-t-2xl p-3"
-                  //     />
-                  //   </div>
-
-                  //   <h2 className="text-base sm:text-lg text-dark font-semibold mt-1 p-3 text-center">
-                  //     {card.text || "Untitled"}
-                  //   </h2>
-                  // </div>
                   <div
-  key={idx}
-  className="w-full mx-auto border rounded-2xl shadow-xl hover:shadow-2xl
-             flex flex-col items-center justify-start p-4 h-[260px] sm:h-[220px]"
->
-  {/* Image */}
-  <img
-    src={card.image ? `${base}/${card.image}` : "/placeholder.png"}
-    alt=""
-    className="w-full h-24 sm:h-32 object-contain"
-  />
+                    key={idx}
+                    className="w-full mx-auto border rounded-2xl shadow-xl hover:shadow-2xl
+                              flex flex-col items-center justify-content-center p-4"
+                  >
+                    {/* Image */}
+                    <img
+                      src={card.image ? `${base}/${card.image}` : "/placeholder.png"}
+                      alt=""
+                      className="w-full h-24 md:h-32 object-contain"
+                    />
 
-  {/* Text */}
-  <h2 className="text-base sm:text-lg text-dark font-semibold mt-3 text-center">
-    {card.text}
-  </h2>
-</div>
+                    {/* Text */}
+                    <h2 className="text-base sm:text-lg text-dark font-semibold mt-3 text-center">
+                      {card.text}
+                    </h2>
+                  </div>
 
                 ))
               ) : (

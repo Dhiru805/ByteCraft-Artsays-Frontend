@@ -19,7 +19,6 @@ import ForgotPassword from "../Pages/Login/Forgotpassword";
 //-----public routes-----//
 import PrivacyPolicy from "../Pages/PrivacyPolicy/PrivacyPolicy";
 import TermsofServices from "../Pages/Terms&Condition/TermsofServices";
-import BiddingPass from "../Pages/Art-Biding/BidingPage";
 // import Challenge from "../Pages/Challenges/Challenge";
 
 //----------------------------------------My Account-----------------------------------------//
@@ -521,7 +520,7 @@ import CelebrityContent from "../Pages/Celebrity/celebrityContent/celebrityConte
 import JobRoles from "../Pages/Career/JobRoles";
 import Blogs from "../Pages/blogs/Blogs";
 import BlogCardDetails from "../Pages/blogDetails/BlogCardDetails";
-import ChallengesContent from "../Pages/Challenges/ChallengesContent/ChallengesContent";
+// import ChallengesContent from "../Pages/Challenges/ChallengesContent/ChallengesContent";
 import JoinChallenges from "../Pages/Challenges/JoinChallenges/JoinChallenges";
 import ProductDetails from "../Pages/ProductDetails/ProductDetails";
 import ProductDetailsTemplate from "../Pages/ProductDetails/ProductDetails copy";
@@ -695,7 +694,6 @@ const AppRoutes = () => {
       <Route element={<PublicRoute />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/bidding" element={<BiddingPass />} />
         <Route
           path="/artist-seller-register"
           element={<ArtistSellerRegister />}
@@ -1624,7 +1622,7 @@ const AppRoutes = () => {
         <Route path="/blogs" element={<Blogs />} />
         <Route path="/blog/:blogId" element={<BlogCardDetails />} />
 
-        <Route path="/challenge" element={<ChallengesContent />} />
+        <Route path="/challenge" element={<Challenge />} />
         <Route path="/challenge/:theme" element={<JoinChallenges />} />
 
         <Route path="/product-details" element={<ProductDetailsTemplate />} />

@@ -113,11 +113,11 @@ const WhoWeAre = () => {
             )}
           </div>
           <div className="col-span-2 content-center">
-            <h1 className="text-lg md:text-4xl font-bold text-orange-500 px-3">
+            <h1 className="text-lg md:text-5xl font-bold text-orange-500 px-3">
               {data.heading}
             </h1>
             <hr className="my-3 border-dark" />
-            <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+            <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
               {data.description}
             </p>
           </div>

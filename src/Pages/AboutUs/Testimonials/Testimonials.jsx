@@ -88,22 +88,23 @@ const Testimonials = () => {
   return (
     <section className="py-16 bg-[#F8F8F8]">
       <div className="max-w-[1440px] mx-auto py-3 my-5 px-6 text-center">
-       
+
         <h2 className="text-3xl md:text-4xl font-bold text-[#2E2B26] mb-4">
           {data.mainHeading || "Testimonials"}
         </h2>
+        <hr className="my-3 border-dark" />
         <p className="text-[#2E2B26] max-w-3xl mx-auto mb-12">
           {data.mainDescription || "Hear what people are saying about us."}
         </p>
 
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {data.testimonials?.map((t, i) => (
             <TestimonialCard
               key={i}
               text={t.description}
               name={t.name}
-              bg="bg-white" 
+              bg="bg-white"
             />
           ))}
         </div>

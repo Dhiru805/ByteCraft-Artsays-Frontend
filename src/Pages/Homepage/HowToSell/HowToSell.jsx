@@ -238,14 +238,14 @@ const HowToSell = () => {
     fetchData();
   }, []);
 
-  if (loading) return <div><HowToSellSkeleton/></div>;
+  if (loading) return <div><HowToSellSkeleton /></div>;
   if (!data) return <div>How To Sell section not available</div>;
 
   return (
     <div className="max-w-[1440px] mx-auto py-4 px-3">
       <div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3">
-      
+
           <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
             {data.heading}
           </h1>
@@ -253,9 +253,9 @@ const HowToSell = () => {
           {data.buttonName && (
             <a
               href={data.buttonLink || "#"}
-             // className="hidden md:inline-flex items-center justify-center bg-red-500 text-white font-semibold rounded-full shadow px-5 py-2 min-w-[120px]"
-            className="hidden md:inline-flex items-center justify-center bg-red-500 text-white font-semibold rounded-full shadow px-6 py-2 min-w-[0] text-center"
-  style={{ minWidth: 'auto' }}
+              // className="hidden md:inline-flex items-center justify-center bg-red-500 text-white font-semibold rounded-full shadow px-5 py-2 min-w-[120px]"
+              className="hidden md:inline-flex items-center justify-center bg-red-500 text-white font-semibold rounded-full shadow px-6 py-2 min-w-[0] text-center"
+              style={{ minWidth: 'auto' }}
             >
               {data.buttonName}
             </a>
@@ -264,7 +264,7 @@ const HowToSell = () => {
 
         <hr className="my-3 border-dark" />
 
-        <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+        <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
           {data.description}
         </p>
       </div>
@@ -274,14 +274,13 @@ const HowToSell = () => {
           {data.cards?.map((card, idx) => (
             <div
               key={idx}
-              className="bg-white rounded-2xl shadow-md p-6 text-center"
+              className="flex-1 bg-[#F8F8F8] rounded-2xl shadow-md p-6 text-center relative z-10"
             >
               {card.image && (
                 <img
                   src={`${imageBaseURL}/${card.image}`}
                   alt={card.title}
-                  //className="mx-auto mb-4 w-48 h-48 object-contain"
-                  className="mx-auto mb-4 w-full max-w-[200px] h-auto object-contain"
+                  className="mx-auto mb-4 w-full h-40 object-contain"
                 />
               )}
               <h3 className="text-lg font-semibold">{card.title}</h3>

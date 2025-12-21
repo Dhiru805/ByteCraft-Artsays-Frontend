@@ -178,7 +178,7 @@ const JoinArtsays = () => {
         {s1.buttonName && (
           <a
             href={s1.buttonLink || "#"}
-            className="hidden md:block w-[200px] place-self-end flex-1 bg-red-500 text-white py-2 px-6 rounded-full font-semibold shadow buy-now "
+            className="hidden md:block w-[200px] place-self-end flex-1 bg-red-500 text-white text-center py-2 px-6 rounded-full font-semibold shadow buy-now "
           >
             {s1.buttonName}
           </a>
@@ -188,7 +188,7 @@ const JoinArtsays = () => {
       <hr className="my-3 border-dark" />
 
       {/* Subtitle / Description */}
-      <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+      <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
         {s1.description}
       </p>
 
@@ -200,13 +200,13 @@ const JoinArtsays = () => {
             {s1.cards.map((card, i) => (
               <div
                 key={i}
-                className="w-full mx-auto border rounded-2xl shadow-xl hover:!shadow-2xl"
+                className="w-full mx-auto border shadow-xl hover:!shadow-2xl"
               >
                 <div className="relative">
                   <img
                     src={`${base}/${card.image}`}
                     alt={card.text}
-                    className="w-full h-36 sm:h-56 lg:h-64 object-contain rounded-t-2xl p-3 product-img"
+                    className="w-full h-36 object-contain p-3 product-img"
                   />
                 </div>
 

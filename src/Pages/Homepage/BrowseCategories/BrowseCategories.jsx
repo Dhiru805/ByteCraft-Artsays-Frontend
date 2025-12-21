@@ -75,6 +75,7 @@
 //           talented artists and bring your creative vision to life.
 //         </p>
 //       </div>
+//       {/* catergory scroll */}
 //       <div>
 //         <div
 //         ref={scrollRef}
@@ -632,7 +633,7 @@
 // };
 // export default CommissionContent;
 
-//OLD WORKING CODE
+// OLD WORKING CODE
 
 // import { useState, useEffect, useRef } from "react";
 // import getAPI from "../../../api/getAPI";
@@ -838,7 +839,7 @@
 
 // export default BrowseCategories;
 
-//======================================================================================================================
+// ======================================================================================================================
 
 // import { useState, useEffect, useRef } from "react";
 // import getAPI from "../../../api/getAPI";
@@ -1451,6 +1452,12 @@ const BrowseCategories = () => {
     return true;
   };
 
+  const slugify = (text) =>
+  text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
+
   const handleWishlist = async (productId, e) => {
     e.stopPropagation();
 
@@ -1505,7 +1512,7 @@ const BrowseCategories = () => {
   }, []);
 
   // if (loading) return <div>Loading...</div>;
-  if (loading) return <div><BrowserCategorySkeleton/></div>;
+  if (loading) return <div><BrowserCategorySkeleton /></div>;
   if (!data) return <div>No Browse Categories section available</div>;
 
   return (
@@ -1533,7 +1540,7 @@ const BrowseCategories = () => {
       </p>
 
       {/* CATEGORY BUTTONS */}
-      <div
+      {/* <div
         ref={scrollRef}
         className="flex gap-3 overflow-x-auto p-6 cursor-grab !scrollbar-hide"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
@@ -1599,14 +1606,78 @@ const BrowseCategories = () => {
             </div>
           </button>
         ))}
+      </div> */}
+
+      {/* CATEGORY BUTTONS */}
+      <div>
+        <div
+          ref={scrollRef}
+          className="flex gap-2 overflow-x-auto !scrollbar-hide p-6 cursor-grab"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          onMouseDown={mouseDown}
+          onMouseLeave={mouseLeave}
+          onMouseUp={mouseUp}
+          onMouseMove={mouseMove}
+          onTouchStart={touchStart}
+          onTouchEnd={touchEnd}
+          onTouchMove={touchMove}
+        >
+          {categories.map((cat, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                setSelectedCategory(cat.categoryName);
+                const result = allProducts.filter(
+                  (p) => p.category === cat._id
+                );
+                setFilteredProducts(result);
+                setCurrentPage(1);
+              }}
+              className={`
+          group relative flex items-center
+          border-2 border-[#3b2b23]
+          rounded-full h-14 px-6
+          text-[#3b2b23] text-lg font-semibold
+          transition-all duration-500 ease-in-out
+          whitespace-nowrap
+          ${selectedCategory === cat.categoryName
+                  ? "pr-16"
+                  : "hover:pr-16"
+                }
+        `}
+            >
+              {/* TEXT */}
+              <span className="relative z-10">
+                {cat.categoryName}
+              </span>
+
+              {/* EXPANDING CIRCLE */}
+              <div
+                className={`
+            absolute right-0 top-0 bottom-0
+            bg-[#3b2b23] text-white text-3xl
+            flex items-center justify-center
+            rounded-full overflow-hidden
+            transition-all duration-500 ease-in-out
+            ${selectedCategory === cat.categoryName
+                    ? "w-14"
+                    : "w-0 group-hover:w-14"
+                  }
+          `}
+              >
+                A
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* SELECTED CATEGORY */}
-      {selectedCategory && (
+      {/* {selectedCategory && (
         <h2 className="text-2xl font-bold text-[#3b2b23] px-3 mt-6">
           Showing results for: {selectedCategory}
         </h2>
-      )}
+      )} */}
 
       {/* PRODUCT CARDS */}
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 px-3 mt-6">
@@ -1616,17 +1687,17 @@ const BrowseCategories = () => {
 
           const discountPercent = hasDiscount
             ? Math.round(
-                ((product.marketPrice - product.sellingPrice) /
-                  product.marketPrice) *
-                  100
-              )
+              ((product.marketPrice - product.sellingPrice) /
+                product.marketPrice) *
+              100
+            )
             : 0;
 
           return (
             <div
               key={product._id}
-              onClick={() => navigate(`/product-details/${product._id}`)}
-              className="rounded-2xl shadow-md overflow-hidden flex flex-col justify-between cursor-pointer bg-white hover:-translate-y-1 transition-transform duration-300"
+              onClick={() => { const slug = slugify(product.productName); navigate(`/product-details/${slug}/${product._id}`);}}
+              className="rounded-3xl shadow-md overflow-hidden flex flex-col justify-between cursor-pointer bg-[#ffffff] hover:-translate-y-1 transition-transform duration-300"
             >
               {/* Image */}
               <div className="relative p-img">
@@ -1639,7 +1710,7 @@ const BrowseCategories = () => {
                 <img
                   src={`${imageBaseURL}${product.mainImage}`}
                   alt={product.productName}
-                  className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
+                  className="w-full h-40 sm:h-64 object-contain rounded-t-3xl"
                 />
 
                 {/* Wishlist */}
@@ -1657,7 +1728,7 @@ const BrowseCategories = () => {
                     <Heart
                       size={20}
                       className="stroke-white"
-                      style={{ fill: "transparent" }}
+                      style={{ fill: "transparent", color: "white" }}
                     />
                   )}
                 </button>
@@ -1673,8 +1744,7 @@ const BrowseCategories = () => {
                 <div className="flex items-center gap-2 mt-1">
                   <p className="text-gray-700 text-xs sm:text-sm font-medium">
                     {product.userId?.username ||
-                      `${product.userId?.name || ""} ${
-                        product.userId?.lastName || ""
+                      `${product.userId?.name || ""} ${product.userId?.lastName || ""
                       }` ||
                       "Unknown"}
                   </p>
@@ -1737,17 +1807,16 @@ const BrowseCategories = () => {
       </div>
 
       {/* PAGINATION */}
-      {totalPages > 1 && (
+      {/* {totalPages > 1 && (
         <div className="flex justify-center mt-6">
           <nav className="flex items-center space-x-2 rounded border border-dark px-3 py-2 text-sm font-semibold">
             <button
               onClick={goPrev}
               disabled={currentPage === 1}
-              className={`px-3 py-1 ${
-                currentPage === 1
+              className={`px-3 py-1 ${currentPage === 1
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:text-red-500"
-              }`}
+                }`}
             >
               Prev
             </button>
@@ -1756,11 +1825,10 @@ const BrowseCategories = () => {
               <button
                 key={p}
                 onClick={() => goTo(p)}
-                className={`px-3 py-1 rounded ${
-                  currentPage === p
+                className={`px-3 py-1 rounded ${currentPage === p
                     ? "border border-dark"
                     : "hover:text-red-500"
-                }`}
+                  }`}
               >
                 {p}
               </button>
@@ -1769,17 +1837,16 @@ const BrowseCategories = () => {
             <button
               onClick={goNext}
               disabled={currentPage === totalPages}
-              className={`px-3 py-1 ${
-                currentPage === totalPages
+              className={`px-3 py-1 ${currentPage === totalPages
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:text-red-500"
-              }`}
+                }`}
             >
               Next
             </button>
           </nav>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

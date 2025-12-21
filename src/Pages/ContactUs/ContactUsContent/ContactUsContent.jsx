@@ -100,9 +100,9 @@ const ContactUsContent = () => {
           {pageData.cards.map((card, index) => (
             <div
               key={index}
-              className="w-full mx-auto border rounded-2xl shadow-2xl p-3 text-center"
+              className="w-full mx-auto border rounded-2xl shadow-2xl p-3 !py-6 text-center"
             >
-              <p className="text-xl font-semibold text-dark mb-2">{card.cardHeading}</p>
+              <p className="text-2xl font-semibold text-dark mb-2">{card.cardHeading}</p>
               {card.cardDescription && (
                 <p
                   className="text-lg text-dark"

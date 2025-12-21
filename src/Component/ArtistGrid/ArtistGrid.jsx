@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { DEFAULT_PROFILE_IMAGE } from "../ArtistGrid/constant";
 import { toast } from "react-toastify";
 
-const ArtistCard = () => {
+const ArtistCard = ({ limit = 8, searchQuery = "" }) => {
   const [showFilters, setShowFilters] = useState(false);
   const [artists, setArtists] = useState([]);
   const [myFollowing, setMyFollowing] = useState([]);
@@ -23,229 +23,240 @@ const ArtistCard = () => {
   const normalizeIds = (arr) =>
     Array.isArray(arr)
       ? arr
-          .map((f) =>
-            typeof f === "object" ? f?._id || f?.id || f?.user || f : f
-          )
-          .filter(Boolean)
-          .map(String)
+        .map((f) =>
+          typeof f === "object" ? f?._id || f?.id || f?.user || f : f
+        )
+        .filter(Boolean)
+        .map(String)
       : [];
 
-// useEffect(() => {
-//   let cancelled = false;
+  // useEffect(() => {
+  //   let cancelled = false;
 
-//   const loadData = async () => {
-//     if (!userId) {
-//       await loadPublicArtists();
-//       return;
-//     }
+  //   const loadData = async () => {
+  //     if (!userId) {
+  //       await loadPublicArtists();
+  //       return;
+  //     }
 
-//     try {
-//       const [
-//         artistsRes, categoriesRes, badgeRes, suggestedRes, myProfileRes
-//       ] = await Promise.all([
-//         getAPI("/artist/artists", {}, true, false),
-//         getAPI("/api/main-category", true),
-//         getAPI("/api/products/approved-with-badges", {}, true, false),
+  //     try {
+  //       const [
+  //         artistsRes, categoriesRes, badgeRes, suggestedRes, myProfileRes
+  //       ] = await Promise.all([
+  //         getAPI("/artist/artists", {}, true, false),
+  //         getAPI("/api/main-category", true),
+  //         getAPI("/api/products/approved-with-badges", {}, true, false),
 
-//         getAPI(`/api/social-media/suggested-users?userId=${userId}`,
-//           { userId }, true, true
-//         ).catch(() => null),
+  //         getAPI(`/api/social-media/suggested-users?userId=${userId}`,
+  //           { userId }, true, true
+  //         ).catch(() => null),
 
-//         getAPI(`/api/social-media/profile/${userId}`, {}, true, true)
-//           .catch(() => null),
-//       ]);
+  //         getAPI(`/api/social-media/profile/${userId}`, {}, true, true)
+  //           .catch(() => null),
+  //       ]);
 
-//       const artistList =
-//         artistsRes?.data?.artists ||
-//         artistsRes?.data?.data ||
-//         artistsRes?.data ||
-//         [];
+  //       const artistList =
+  //         artistsRes?.data?.artists ||
+  //         artistsRes?.data?.data ||
+  //         artistsRes?.data ||
+  //         [];
 
-//       const mainCategories = categoriesRes?.data?.data || [];
-//       const badgeData = badgeRes?.data?.data || [];
+  //       const mainCategories = categoriesRes?.data?.data || [];
+  //       const badgeData = badgeRes?.data?.data || [];
 
-//       const detailed = await Promise.all(
-//         artistList.map(async (artist) => {
-//           const aid = artist?._id || artist?.id || artist?.userId;
+  //       const detailed = await Promise.all(
+  //         artistList.map(async (artist) => {
+  //           const aid = artist?._id || artist?.id || artist?.userId;
 
-//           const [detailsRes, userRes, profileRes] = await Promise.all([
-//             getAPI(`/auth/getartistdetails/${aid}`, {}, true, false).catch(() => null),
-//             getAPI(`/auth/userid/${aid}`, {}, true, false).catch(() => null),
-//             getAPI(`/social-media/profile/${aid}`, {}, true, true).catch(() => null),
-//           ]);
+  //           const [detailsRes, userRes, profileRes] = await Promise.all([
+  //             getAPI(`/auth/getartistdetails/${aid}`, {}, true, false).catch(() => null),
+  //             getAPI(`/auth/userid/${aid}`, {}, true, false).catch(() => null),
+  //             getAPI(`/social-media/profile/${aid}`, {}, true, true).catch(() => null),
+  //           ]);
 
-//           const details = detailsRes?.data || {};
-//           const user = userRes?.data?.user || artist || {};
+  //           const details = detailsRes?.data || {};
+  //           const user = userRes?.data?.user || artist || {};
 
-//           const categoryId = Array.isArray(details?.artCategories)
-//             ? details.artCategories[0]
-//             : null;
+  //           const categoryId = Array.isArray(details?.artCategories)
+  //             ? details.artCategories[0]
+  //             : null;
 
-//           const mainCategory = mainCategories.find(
-//             (c) => String(c._id) === String(categoryId)
-//           );
+  //           const mainCategory = mainCategories.find(
+  //             (c) => String(c._id) === String(categoryId)
+  //           );
 
-//           const badgeEntry = badgeData.find(
-//             (b) =>
-//               String(b?.userId?._id || b?.userId) === String(aid)
-//           );
+  //           const badgeEntry = badgeData.find(
+  //             (b) =>
+  //               String(b?.userId?._id || b?.userId) === String(aid)
+  //           );
 
-//           const followersArr = normalizeIds(
-//             profileRes?.data?.profile?.followers || []
-//           );
+  //           const followersArr = normalizeIds(
+  //             profileRes?.data?.profile?.followers || []
+  //           );
 
-//           const isFollowingArtist = followersArr.includes(String(userId));
+  //           const isFollowingArtist = followersArr.includes(String(userId));
 
-//           return {
-//             id: aid,
-//             profilePhoto: user?.profilePhoto,
-//             username: user?.username || "",
-//             name: user?.name || user?.firstName || "",
-//             lastName: user?.lastName || "",
-//             badges: badgeEntry?.badges || [],
-//             mainCategoryName: mainCategory?.mainCategoryName || "Unknown",
-//             followers: followersArr,
-//             isFollowing: isFollowingArtist,
-//           };
-//         })
-//       );
+  //           return {
+  //             id: aid,
+  //             profilePhoto: user?.profilePhoto,
+  //             username: user?.username || "",
+  //             name: user?.name || user?.firstName || "",
+  //             lastName: user?.lastName || "",
+  //             badges: badgeEntry?.badges || [],
+  //             mainCategoryName: mainCategory?.mainCategoryName || "Unknown",
+  //             followers: followersArr,
+  //             isFollowing: isFollowingArtist,
+  //           };
+  //         })
+  //       );
 
-//       if (!cancelled) {
-//         setArtists(detailed.filter((a) => a.id));
+  //       if (!cancelled) {
+  //         setArtists(detailed.filter((a) => a.id));
 
-//         const myFollowingIds = normalizeIds(
-//           myProfileRes?.data?.profile?.following || []
-//         );
+  //         const myFollowingIds = normalizeIds(
+  //           myProfileRes?.data?.profile?.following || []
+  //         );
 
-//         setMyFollowing(myFollowingIds);
-//       }
-//     } catch (err) {
-//       console.error("Error loading artists", err);
-//     }
-//   };
+  //         setMyFollowing(myFollowingIds);
+  //       }
+  //     } catch (err) {
+  //       console.error("Error loading artists", err);
+  //     }
+  //   };
 
-//   loadData();
+  //   loadData();
 
-//   return () => {
-//     cancelled = true;
-//   };
-// }, [userId]);
-useEffect(() => {
-  let cancelled = false;
+  //   return () => {
+  //     cancelled = true;
+  //   };
+  // }, [userId]);
+  useEffect(() => {
+    let cancelled = false;
 
-  const loadTopArtists = async () => {
-    try {
-      const topRes = await getAPI("/api/social-media/top-followed", {}, false, false);
-      const topProfiles = topRes?.data?.data || [];
+    const loadTopArtists = async () => {
+      try {
+        const topRes = await getAPI("/api/social-media/top-followed", {}, false, false);
+        const topProfiles = topRes?.data?.data || [];
 
-      let mainCategories = [];
-      let badgeData = [];
+        let mainCategories = [];
+        let badgeData = [];
 
-      if (userId) {
-        const [categoriesRes, badgeRes] = await Promise.all([
-          getAPI("/api/main-category", true).catch(() => ({ data: { data: [] }})),
-          getAPI("/api/products/approved-with-badges", {}, true, false).catch(() => ({ data: { data: [] }})),
-        ]);
+        if (userId) {
+          const [categoriesRes, badgeRes] = await Promise.all([
+            getAPI("/api/main-category", true).catch(() => ({ data: { data: [] } })),
+            getAPI("/api/products/approved-with-badges", {}, true, false).catch(() => ({ data: { data: [] } })),
+          ]);
 
-        mainCategories = categoriesRes?.data?.data || [];
-        badgeData = badgeRes?.data?.data || [];
+          mainCategories = categoriesRes?.data?.data || [];
+          badgeData = badgeRes?.data?.data || [];
+        }
+
+        const formatted = await Promise.all(
+          topProfiles.map(async (entry) => {
+            const uid = entry.user;
+
+            const userRes = await getAPI(`/auth/userid/${uid}`, {}, false, false);
+            const user = userRes?.data?.user;
+
+            let categoryName = "Artist";
+            let badges = [];
+            let isFollowing = false;
+
+            if (userId) {
+              const detailsRes = await getAPI(`/auth/getartistdetails/${uid}`, {}, true, false).catch(() => null);
+              const details = detailsRes?.data || {};
+
+              const categoryId = Array.isArray(details?.artCategories)
+                ? details.artCategories[0]
+                : null;
+
+              const category = mainCategories.find((c) => String(c._id) === String(categoryId));
+              categoryName = category?.mainCategoryName || "Unknown";
+
+              const profileRes = await getAPI(`/social-media/profile/${uid}`, {}, true, true).catch(() => null);
+              const followersArr = normalizeIds(profileRes?.data?.profile?.followers || []);
+              isFollowing = followersArr.includes(String(userId));
+
+              const badgeEntry = badgeData.find(
+                (b) => String(b?.userId?._id || b?.userId) === String(uid)
+              );
+              badges = badgeEntry?.badges || [];
+            }
+
+            return {
+              id: uid,
+              profilePhoto: user?.profilePhoto,
+              username: user?.username || "",
+              name: user?.name || "",
+              lastName: user?.lastName || "",
+              badges,
+              mainCategoryName: categoryName,
+              followers: entry.followers || [],
+              isFollowing,
+            };
+          })
+        );
+
+        if (!cancelled) {
+          setArtists(formatted);
+        }
+      } catch (err) {
+        console.error("Error loading top artists:", err);
       }
+    };
 
-      const formatted = await Promise.all(
-        topProfiles.map(async (entry) => {
-          const uid = entry.user;
+    loadTopArtists();
 
-          const userRes = await getAPI(`/auth/userid/${uid}`, {}, false, false);
-          const user = userRes?.data?.user;
+    return () => (cancelled = true);
+  }, [userId]);
 
-          let categoryName = "Artist";
-          let badges = [];
-          let isFollowing = false;
+  const loadPublicArtists = async () => {
+    try {
+      const artistsRes = await getAPI("/artist/artists", {}, false, false);
 
-          if (userId) {
-            const detailsRes = await getAPI(`/auth/getartistdetails/${uid}`, {}, true, false).catch(() => null);
-            const details = detailsRes?.data || {};
+      const artistList =
+        artistsRes?.data?.artists ||
+        artistsRes?.data?.data ||
+        artistsRes?.data ||
+        [];
 
-            const categoryId = Array.isArray(details?.artCategories)
-              ? details.artCategories[0]
-              : null;
-
-            const category = mainCategories.find((c) => String(c._id) === String(categoryId));
-            categoryName = category?.mainCategoryName || "Unknown";
-
-            const profileRes = await getAPI(`/social-media/profile/${uid}`, {}, true, true).catch(() => null);
-            const followersArr = normalizeIds(profileRes?.data?.profile?.followers || []);
-            isFollowing = followersArr.includes(String(userId));
-
-            const badgeEntry = badgeData.find(
-              (b) => String(b?.userId?._id || b?.userId) === String(uid)
-            );
-            badges = badgeEntry?.badges || [];
-          }
-
-          return {
-            id: uid,
-            profilePhoto: user?.profilePhoto,
-            username: user?.username || "",
-            name: user?.name || "",
-            lastName: user?.lastName || "",
-            badges,
-            mainCategoryName: categoryName,
-            followers: entry.followers || [],
-            isFollowing,
-          };
-        })
+      setArtists(
+        artistList.map(a => ({
+          id: a._id,
+          profilePhoto: a.profilePhoto,
+          username: a.username,
+          name: a.name,
+          lastName: a.lastName,
+          badges: a.badges || [],
+          mainCategoryName: "Artist",
+          followers: [],
+          isFollowing: false,
+        }))
       );
 
-      if (!cancelled) {
-        setArtists(formatted); 
-      }
     } catch (err) {
-      console.error("Error loading top artists:", err);
+      console.error("Public artist load failed:", err);
     }
   };
 
-  loadTopArtists();
-
-  return () => (cancelled = true);
-}, [userId]);
-
-const loadPublicArtists = async () => {
-  try {
-    const artistsRes = await getAPI("/artist/artists", {}, false, false);
-
-    const artistList =
-      artistsRes?.data?.artists ||
-      artistsRes?.data?.data ||
-      artistsRes?.data ||
-      [];
-
-    setArtists(
-      artistList.map(a => ({
-        id: a._id,
-        profilePhoto: a.profilePhoto,
-        username: a.username,
-        name: a.name,
-        lastName: a.lastName,
-        badges: a.badges || [],
-        mainCategoryName: "Artist",
-        followers: [],
-        isFollowing: false,
-      }))
+  const filteredArtists = useMemo(() => {
+    if (!searchQuery) return artists;
+    const query = searchQuery.toLowerCase();
+    return artists.filter(artist =>
+      artist.name?.toLowerCase().includes(query) ||
+      artist.lastName?.toLowerCase().includes(query) ||
+      artist.username?.toLowerCase().includes(query) ||
+      artist.mainCategoryName?.toLowerCase().includes(query)
     );
-
-  } catch (err) {
-    console.error("Public artist load failed:", err);
-  }
-};
+  }, [artists, searchQuery]);
 
   const paginatedArtists = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
-    return artists.slice(start, start + pageSize);
-  }, [artists, currentPage]);
+    return filteredArtists.slice(start, start + pageSize);
+  }, [filteredArtists, currentPage]);
 
-  const totalPages = Math.max(1, Math.ceil(artists.length / pageSize));
-const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+  const totalPages = Math.max(1, Math.ceil(filteredArtists.length / pageSize));
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
   const handleFollowToggle = async (targetUserId, isFollowing) => {
     try {
       if (isFollowing) {
@@ -302,18 +313,18 @@ const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
     <div className="max-w-[1440px] mx-auto mb-4">
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6">
-     <main className="md:col-span-4 w-full">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 py-4">
+        <main className="md:col-span-4 w-full">
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-3 ">
             {paginatedArtists.map((artist) => {
               const normalizedFollowers = normalizeIds(artist.followers);
               const isFollowing =
-  userId &&
-  (
-    artist.isFollowing ||
-    normalizedFollowers.includes(String(userId)) ||
-    myFollowing.includes(String(artist.id))
-  );
+                userId &&
+                (
+                  artist.isFollowing ||
+                  normalizedFollowers.includes(String(userId)) ||
+                  myFollowing.includes(String(artist.id))
+                );
 
               return (
                 <div
@@ -341,9 +352,9 @@ const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
                     </p>
                   </div>
 
-                  <div className="py-4 px-2">
+                  <div className="py-3 px-2">
                     <div className="flex items-stretch justify-between">
-                      <div className="w-full md:w-4/5 flex flex-col justify-between">
+                      <div className="w-full md:w-3.5/5 flex flex-col justify-between">
                         <div>
                           <h2 className="text-white text-sm md:text-lg font-bold flex items-center">
                             {`${artist.name} ${artist.lastName}`.trim() || "Unknown"}
@@ -366,36 +377,23 @@ const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
                       <div className="w-px bg-gray-600 mx-3 hidden md:block"></div>
 
-                      <div className="w-1/5 flex flex-col justify-between items-end place-items-center hidden md:block">
+                      <div className="w-1.5/5 flex flex-col justify-between items-end place-items-center hidden md:block">
                         <div>
-                        {/*  <button
-                            className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded-full font-medium text-xs"
-                            onClick={() =>
-                              handleFollowToggle(artist.id, isFollowing)
-                            }
+                          <button
+                            className={`bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded-full font-medium text-xs
+                            ${!userId ? "opacity-60" : "hover:bg-orange-600"}
+                  `}
+                            onClick={() => {
+                              if (!userId) {
+                                toast.error("Please Login to follow artist");
+                                return;
+                              }
+                              handleFollowToggle(artist.id, isFollowing);
+                            }}
+
                           >
                             {isFollowing ? "Unfollow" : "Follow"}
-                          </button>*/}
-                          <button
-  //disabled={!userId}
-  // className={`bg-orange-500 ${
-  //   !userId ? "opacity-50 cursor-not-allowed" : "hover:bg-orange-600"
-  // } text-white px-3 py-1 rounded-full font-medium text-xs`}
-  className={`bg-orange-500 text-white px-3 py-1 rounded-full font-medium text-xs
-    ${!userId ? "opacity-60" : "hover:bg-orange-600"}
-  `}
-  // onClick={() => userId && handleFollowToggle(artist.id, isFollowing)}
-  onClick={() => {
-  if (!userId) {
-    toast.error("Please login to follow artist");   
-    return;
-  }
-  handleFollowToggle(artist.id, isFollowing);
-}}
-
->
-  {isFollowing ? "Unfollow" : "Follow"}
-</button>
+                          </button>
 
                         </div>
                         <div className="mt-2">
@@ -413,11 +411,11 @@ const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
               );
             })}
           </div>
-{/* <div className="flex justify-center mt-6">
+          {/* <div className="flex justify-center mt-6">
   <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar"> */}
 
-    {/* Previous */}
-    {/* <button
+          {/* Previous */}
+          {/* <button
       className={`px-2 sm:px-3 py-1 flex items-center ${
                   currentPage === 1
                     ? "opacity-50 cursor-not-allowed"
@@ -430,8 +428,8 @@ const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
                       <span className="ml-1">Previous</span>
     </button> */}
 
-    {/* Page Numbers */}
-    {/* {pages.map((page) => (
+          {/* Page Numbers */}
+          {/* {pages.map((page) => (
       <button
         key={page}
         className={`px-3 py-1  ${
@@ -445,8 +443,8 @@ const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
       </button>
     ))} */}
 
-    {/* Next */}
-    {/* <button
+          {/* Next */}
+          {/* <button
       className={`px-2 sm:px-3 py-1 flex items-center ${
                   currentPage === totalPages
                     ? "opacity-50 cursor-not-allowed"

@@ -14,7 +14,7 @@ const CelebrityCard = () => {
   const [loading, setLoading] = useState(true);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
+  const itemsPerPage = 9;
   const indexOfLastProduct = currentPage * itemsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
   const currentProducts = celebritiesData.slice(indexOfFirstProduct, indexOfLastProduct);
@@ -27,31 +27,22 @@ const CelebrityCard = () => {
   const goToPage = (page) => setCurrentPage(page);
 
 
-  const fetchartistsData = async () => {
-    try {
-      const response = await getAPI("/artist/artists");
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const fetchCelebritiesData = async () => {
     try {
       const response = await getAPI("/api/celebrities");
       if (response?.hasError === false) {
         setCelebritiesData(response?.data?.data);
-        fetchartistsData(); // ✅ now safe
+        fetchartistsData();
       } else {
         console.log(response);
       }
     } catch (error) {
       console.log(error);
-    } finally {
+    }
+    finally {
       setLoading(false);
     }
   };
-
 
   useEffect(() => {
     fetchCelebritiesData();
@@ -63,6 +54,15 @@ const CelebrityCard = () => {
       .trim()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
+  };
+
+  const fetchartistsData = async () => {
+    try {
+      const response = await getAPI("/artist/artists");
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -484,29 +484,14 @@ const CelebrityCard = () => {
         <main className="md:col-span-3">
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
 
+            {/* {celebritiesData.length > 0 ? (
+              celebritiesData.map((celebrity, index) => ( */}
             {currentProducts.length > 0 ? (
-              currentProducts.map((celebrity) => (
-                <div
-                  key={celebrity._id}
-                  className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]"
-                >
-                  {/* Artist Name */}
-                  <div className="px-2 py-4 text-center">
-                    <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
-                      {celebrity.artistName || ""}
-                    </h2>
-                  </div>
+              currentProducts.map((celebrity, index) => (
 
-                  {/* Image */}
-                  <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
-                    <img
-                      src={celebrity.image || "/herosectionimg/1.jpg"}
-                      alt={celebrity.artistName || ""}
-                      className="w-full h-40 sm:h-64 object-contain"
-                    />
-                  </div>
+                <div key={celebrity._id}
+                  className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
 
-                  {/* Desktop CTA */}
                   <div className="relative hidden md:block">
                     <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
                       <button
@@ -516,10 +501,10 @@ const CelebrityCard = () => {
                             { state: { celebrity } }
                           )
                         }
-                        className="flex items-center gap-2 bg-white/70 bg-dark text-white font-medium px-3 py-2 rounded-full shadow-md transition"
+                        className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
                       >
                         View Collection
-                        <span className="text-dark text-lg bg-[#ffffff] rounded-full">
+                        <span className="text-white text-lg">
                           <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
                         </span>
                       </button>
@@ -531,56 +516,342 @@ const CelebrityCard = () => {
               <div>No celebrities data</div>
             )}
 
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+              <div className="px-2 py-4 text-center">
+                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
+                  Rohan Malhotra
+                </h2>
+                <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
+                  Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
+                  Energy Of His Music.
+                </p>
+              </div>
+
+              <div>
+                <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
+                  <img
+                    src="/herosectionimg/1.jpg"
+                    alt="Collection Artwork"
+                    className="w-full h-40 sm:h-64 object-contain"
+                  />
+                </div>
+              </div>
+
+              <div className="relative hidden md:block">
+                <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
+                  <button
+                    href="#"
+                    className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
+                  >
+                    View Collection
+                    <span className="text-white text-lg">
+                      <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div> */}
+
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+              <div className="px-2 py-4 text-center">
+                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
+                  Rohan Malhotra
+                </h2>
+                <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
+                  Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
+                  Energy Of His Music.
+                </p>
+              </div>
+
+              <div>
+                <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
+                  <img
+                    src="/herosectionimg/1.jpg"
+                    alt="Collection Artwork"
+                    className="w-full h-40 sm:h-64 object-contain"
+                  />
+                </div>
+              </div>
+
+              <div className="relative hidden md:block">
+                <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
+                  <button
+                    href="#"
+                    className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
+                  >
+                    View Collection
+                    <span className="text-white text-lg">
+                      <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div> */}
+
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+              <div className="px-2 py-4 text-center">
+                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
+                  Rohan Malhotra
+                </h2>
+                <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
+                  Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
+                  Energy Of His Music.
+                </p>
+              </div>
+
+              <div>
+                <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
+                  <img
+                    src="/herosectionimg/1.jpg"
+                    alt="Collection Artwork"
+                    className="w-full h-40 sm:h-64 object-contain"
+                  />
+                </div>
+              </div>
+
+              <div className="relative hidden md:block">
+                <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
+                  <button
+                    href="#"
+                    className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
+                  >
+                    View Collection
+                    <span className="text-white text-lg">
+                      <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div> */}
+
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+              <div className="px-2 py-4 text-center">
+                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
+                  Rohan Malhotra
+                </h2>
+                <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
+                  Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
+                  Energy Of His Music.
+                </p>
+              </div>
+
+              <div>
+                <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
+                  <img
+                    src="/herosectionimg/1.jpg"
+                    alt="Collection Artwork"
+                    className="w-full h-40 sm:h-64 object-contain"
+                  />
+                </div>
+              </div>
+
+              <div className="relative hidden md:block">
+                <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
+                  <button
+                    href="#"
+                    className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
+                  >
+                    View Collection
+                    <span className="text-white text-lg">
+                      <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div> */}
+
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+              <div className="px-2 py-4 text-center">
+                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
+                  Rohan Malhotra
+                </h2>
+                <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
+                  Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
+                  Energy Of His Music.
+                </p>
+              </div>
+
+              <div>
+                <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
+                  <img
+                    src="/herosectionimg/1.jpg"
+                    alt="Collection Artwork"
+                    className="w-full h-40 sm:h-64 object-contain"
+                  />
+                </div>
+              </div>
+
+              <div className="relative hidden md:block">
+                <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
+                  <button
+                    href="#"
+                    className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
+                  >
+                    View Collection
+                    <span className="text-white text-lg">
+                      <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div> */}
+
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+              <div className="px-2 py-4 text-center">
+                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
+                  Rohan Malhotra
+                </h2>
+                <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
+                  Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
+                  Energy Of His Music.
+                </p>
+              </div>
+
+              <div>
+                <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
+                  <img
+                    src="/herosectionimg/1.jpg"
+                    alt="Collection Artwork"
+                    className="w-full h-40 sm:h-64 object-contain"
+                  />
+                </div>
+              </div>
+
+              <div className="relative hidden md:block">
+                <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
+                  <button
+                    href="#"
+                    className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
+                  >
+                    View Collection
+                    <span className="text-white text-lg">
+                      <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div> */}
+
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+              <div className="px-2 py-4 text-center">
+                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
+                  Rohan Malhotra
+                </h2>
+                <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
+                  Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
+                  Energy Of His Music.
+                </p>
+              </div>
+
+              <div>
+                <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
+                  <img
+                    src="/herosectionimg/1.jpg"
+                    alt="Collection Artwork"
+                    className="w-full h-40 sm:h-64 object-contain"
+                  />
+                </div>
+              </div>
+
+              <div className="relative hidden md:block">
+                <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
+                  <button
+                    href="#"
+                    className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
+                  >
+                    View Collection
+                    <span className="text-white text-lg">
+                      <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div> */}
+
+            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+              <div className="px-2 py-4 text-center">
+                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
+                  Rohan Malhotra
+                </h2>
+                <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
+                  Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
+                  Energy Of His Music.
+                </p>
+              </div>
+
+              <div>
+                <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
+                  <img
+                    src="/herosectionimg/1.jpg"
+                    alt="Collection Artwork"
+                    className="w-full h-40 sm:h-64 object-contain"
+                  />
+                </div>
+              </div>
+
+              <div className="relative hidden md:block">
+                <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
+                  <button
+                    href="#"
+                    className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
+                  >
+                    View Collection
+                    <span className="text-white text-lg">
+                      <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div> */}
           </div>
 
-          {/* </div> */}
-          <div className="flex justify-center mt-6">
-            <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
+      {/* </div> */}
+      <div className="flex justify-center mt-6">
+        <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
+          {/* Previous */}
+          <button
+            onClick={goToPrevPage}
+            disabled={currentPage === 1}
+            className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === 1
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:text-red-500"
+              }`}
+          >
+            <FiChevronLeft className="self-center flex-shrink-0" />
+            <span className="ml-1">Previous</span>
+          </button>
 
-              {/* Previous */}
+          {/* Page numbers */}
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+            (page) => (
               <button
-                className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === 1
-                    ? "opacity-50 cursor-not-allowed"
+                key={page}
+                onClick={() => goToPage(page)}
+                className={`px-2 sm:px-3 py-1 rounded ${currentPage === page
+                    ? "border border-dark text-dark"
                     : "hover:text-red-500"
                   }`}
-                onClick={goToPrevPage}
-                disabled={currentPage === 1}
               >
-                <FiChevronLeft className="self-center flex-shrink-0" />
-                <span className="ml-1">Previous</span>
+                {page}
               </button>
+            )
+          )}
 
-              {/* Page Numbers */}
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => goToPage(page)}
-                  className={`px-3 py-1 rounded ${currentPage === page
-                      ? "border border-dark text-dark"
-                      : "hover:text-red-500"
-                    }`}
-                >
-                  {page}
-                </button>
-              ))}
-
-              {/* Next */}
-              <button
-                className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === totalPages
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:text-red-500"
-                  }`}
-                onClick={goToNextPage}
-                disabled={currentPage === totalPages}
-              >
-                <span className="mr-1">Next</span>
-                <FiChevronRight className="self-center flex-shrink-0" />
-              </button>
-
-            </nav>
-          </div>
-
-        </main>
+          {/* Next */}
+          <button
+            onClick={goToNextPage}
+            disabled={currentPage === totalPages}
+            className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === totalPages
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:text-red-500"
+              }`}
+          >
+            <span className="mr-1">Next</span>
+            <FiChevronRight className="self-center flex-shrink-0" />
+          </button>
+        </nav>
+      </div>
+    </main>
       </div >
     </div >
   );

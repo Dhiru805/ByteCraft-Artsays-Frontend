@@ -1,11 +1,10 @@
-body {
+/* body {
   margin: 0;
   font-family: Arial, sans-serif;
   background-color: #f5f5f5;
   padding-bottom: 0;
-  /* Space for bottom nav */
   transition: filter 0.3s ease;
-}
+} */
 
 /* Desktop Sidebar Styles */
 .sidebar-container-s {

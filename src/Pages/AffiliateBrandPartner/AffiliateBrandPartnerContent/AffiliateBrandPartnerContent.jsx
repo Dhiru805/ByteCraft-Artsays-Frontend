@@ -37,11 +37,9 @@ const AffiliateBPContent = () => {
             <div className="w-full py-3 px-3">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-                        <a href="#" className="hover:text-red-500">Home</a>
+                        <a href="/" className="hover:text-red-500">Home</a>
                         <span>/</span>
-                        <a href="#" className="hover:text-red-500">Store</a>
-                        <span>/</span>
-                        <span className="font-medium text-gray-900">Affiliate BP</span>
+                        <span className="font-medium text-gray-900">Affiliate Brand Partner</span>
                     </nav>
 
                     <div className="relative w-full sm:w-64">
@@ -72,7 +70,7 @@ const AffiliateBPContent = () => {
             <hr className="my-3 border-dark" />
 
        
-            <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+            <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
                 {pageData.webpageDescription}
             </p>
 
@@ -89,7 +87,7 @@ const AffiliateBPContent = () => {
                         <main className={`md:col-span-3 flex flex-col justify-center ${index % 2 === 1 ? "md:text-right md:order-1" : "md:text-left md:order-2"}`}>
                             <h2 className="text-sm md:text-xl font-bold text-orange-500">{article.articleHeading}</h2>
                             <hr className="my-3 border-dark" />
-                            <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">{article.articleContent}</p>
+                            <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed">{article.articleContent}</p>
 
 
                             {/* {article.buttonName && article.buttonPath && (
@@ -129,7 +127,7 @@ const AffiliateBPContent = () => {
 
 
                     {pageData.cardsDescription && (
-                        <p className="mt-2 text-sm md:text-base font-medium text-black text-center mb-5">
+                        <p className="mt-2 text-sm md:text-lg md:text-dark font-medium text-black text-center mb-5">
                             {pageData.cardsDescription}
                         </p>
                     )}

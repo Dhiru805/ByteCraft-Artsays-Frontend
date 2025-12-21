@@ -31,12 +31,8 @@ const HowToResellContent = () => {
       <div className="w-full py-3 px-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-            <a href="#" className="hover:text-red-500">
+            <a href="/" className="hover:text-red-500">
               Home
-            </a>
-            <span>/</span>
-            <a href="#" className="hover:text-red-500">
-              Sell
             </a>
             <span>/</span>
             <span className="font-medium text-gray-900">How To Resell</span>
@@ -55,7 +51,7 @@ const HowToResellContent = () => {
 
       <hr className="my-3 border-dark" />
 
-      <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+      <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
         {pageData.webpageDescription}
       </p>
 
@@ -80,7 +76,7 @@ const HowToResellContent = () => {
                 {article.articleHeading}
               </h2>
               <hr className="my-3 border-dark" />
-              <p className="text-xs md:text-base font-medium text-black leading-relaxed">
+              <p className="text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed whitespace-pre-wrap">
                 {article.articleContent}
               </p>
             </main>

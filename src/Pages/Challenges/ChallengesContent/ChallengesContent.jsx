@@ -243,15 +243,19 @@ const ChallengesContent = () => {
   const navigate = useNavigate();
 
   const fetchChallenges = async () => {
-    try {
-      const response = await getAPI("/api/getchallengedata");
-      if (response?.hasError === false) {
-        setChallengesData(response?.data.challenges);
-      }
-    } catch (error) {
-      console.log(error);
+  try {
+    const response = await getAPI("/api/getchallengedata");
+    if (response?.hasError === false) {
+      const liveChallenges = response?.data?.challenges?.filter(
+        (challenge) => challenge?.status === "live"
+      );
+      setChallengesData(liveChallenges);
     }
-  };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 
   const fetchChallengeCMS = async () => {
     try {
@@ -294,13 +298,9 @@ const ChallengesContent = () => {
         <div className="w-full py-3 px-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-              <a href="#" className="hover:text-red-500">Home</a>
+              <a href="/" className="hover:text-red-500">Home</a>
               <span>/</span>
-              <a href="#" className="hover:text-red-500">Store</a>
-              <span>/</span>
-              <a href="#" className="hover:text-red-500">Paintings</a>
-              <span>/</span>
-              <span className="font-medium text-gray-900">Abstract</span>
+              <a href="#" className="hover:text-red-500">Challenges</a>
             </nav>
           </div>
         </div>
@@ -315,7 +315,7 @@ const ChallengesContent = () => {
         <hr className="my-3 border-dark" />
 
         {/* Subtitle */}
-        <p className="mt-3 text-xs md:text-base font-medium text-dark leading-relaxed px-3">
+        <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-dark leading-relaxed px-3">
           {cmsData?.description ||
             "At ArtSays, we make it simple for you to collaborate directly with talented artists..."}
         </p>
@@ -345,7 +345,7 @@ const ChallengesContent = () => {
 
                   <hr className="my-3 border-dark" />
 
-                  <p className="text-xs md:text-base font-medium text-black leading-relaxed line-clamp-2">
+                  <p className="text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed line-clamp-2">
                     {challenge?.description}
                   </p>
 
@@ -398,7 +398,7 @@ const ChallengesContent = () => {
                     {challenge?.title}
                   </h2>
 
-                  <p className="text-sm md:text-base text-dark mb-4 leading-relaxed line-clamp-2">
+                  <p className="text-sm md:text-dark text-dark mb-4 leading-relaxed line-clamp-2">
                     {challenge?.description}
                   </p>
 

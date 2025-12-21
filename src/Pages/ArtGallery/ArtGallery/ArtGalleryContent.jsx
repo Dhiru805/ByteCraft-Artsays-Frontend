@@ -1347,8 +1347,8 @@ const ArtGalleryContent = () => {
           return allowedUserIds.has(String(productUserId));
         });
         collectedProducts = collectedProducts.sort(
-  (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-);
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
 
         const ratings = ratingRes?.data?.data || [];
 
@@ -1383,7 +1383,7 @@ const ArtGalleryContent = () => {
 
     fetchGalleryData();
   }, []);
-if(loading)return <div><ArtGalleryContentSkeleton /></div>
+  if (loading) return <div><ArtGalleryContentSkeleton /></div>
   return (
     <div className="max-w-[1440px] mx-auto mb-4">
       {/* Breadcrumb */}
@@ -1417,10 +1417,10 @@ if(loading)return <div><ArtGalleryContentSkeleton /></div>
             Loading description...
           </p>
         ) : error ? (
-          <p className="mt-3 text-xs md:text-base text-red-600">{error}</p>
+          <p className="mt-3 text-xs md:text-lg md:text-dark text-red-600">{error}</p>
         ) : (
           <>
-            <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
+            <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed">
               {page?.description}
             </p>
             <br />
@@ -1434,10 +1434,10 @@ if(loading)return <div><ArtGalleryContentSkeleton /></div>
                     product.sellingPrice < product.marketPrice;
                   const discountPercent = hasDiscount
                     ? Math.round(
-                        ((product.marketPrice - product.sellingPrice) /
-                          product.marketPrice) *
-                          100
-                      )
+                      ((product.marketPrice - product.sellingPrice) /
+                        product.marketPrice) *
+                      100
+                    )
                     : 0;
 
                   const average = product.averageRating;
@@ -1502,9 +1502,8 @@ if(loading)return <div><ArtGalleryContentSkeleton /></div>
                           {/* Artist name from populated userId */}
                           <p
                             className="text-gray-700 text-xs sm:text-sm font-medium flex items-center"
-                            title={`${product.userId?.name ?? ""} ${
-                              product.userId?.lastName ?? ""
-                            }`}
+                            title={`${product.userId?.name ?? ""} ${product.userId?.lastName ?? ""
+                              }`}
                           >
                             {product.userId?.name ||
                               product.userId?.firstName ||
@@ -1617,11 +1616,10 @@ if(loading)return <div><ArtGalleryContentSkeleton /></div>
                   <button
                     onClick={goToPrevPage}
                     disabled={currentPage === 1}
-                    className={`px-2 sm:px-3 py-1 flex items-center ${
-                      currentPage === 1
+                    className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === 1
                         ? "opacity-50 cursor-not-allowed"
                         : "hover:text-red-500"
-                    }`}
+                      }`}
                   >
                     <FiChevronLeft className="self-center flex-shrink-0" />
                     <span className="ml-1">Previous</span>
@@ -1633,11 +1631,10 @@ if(loading)return <div><ArtGalleryContentSkeleton /></div>
                       <button
                         key={page}
                         onClick={() => goToPage(page)}
-                        className={`px-2 sm:px-3 py-1 rounded ${
-                          currentPage === page
+                        className={`px-2 sm:px-3 py-1 rounded ${currentPage === page
                             ? "border border-dark text-dark"
                             : "hover:text-red-500"
-                        }`}
+                          }`}
                       >
                         {page}
                       </button>
@@ -1648,11 +1645,10 @@ if(loading)return <div><ArtGalleryContentSkeleton /></div>
                   <button
                     onClick={goToNextPage}
                     disabled={currentPage === totalPages}
-                    className={`px-2 sm:px-3 py-1 flex items-center ${
-                      currentPage === totalPages
+                    className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === totalPages
                         ? "opacity-50 cursor-not-allowed"
                         : "hover:text-red-500"
-                    }`}
+                      }`}
                   >
                     <span className="mr-1">Next</span>
                     <FiChevronRight className="self-center flex-shrink-0" />
@@ -1672,7 +1668,7 @@ if(loading)return <div><ArtGalleryContentSkeleton /></div>
               </h1>
             )}
             <hr className="my-3 border-dark" />
-            <p className="text-sm md:text-base text-gray-700 leading-relaxed">
+            <p className="text-sm md:text-lg md:text-dark text-gray-700 leading-relaxed">
               {page.sectionDescription}
             </p>
           </>

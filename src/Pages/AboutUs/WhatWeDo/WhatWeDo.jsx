@@ -144,49 +144,23 @@ const WhatWeDo = () => {
           {data.heading || "What We Do"}
         </h1>
         <hr className="my-3 border-dark" />
-        <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+        <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
           {data.description || "Description not available for this section."}
         </p>
       </div>
 
     
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-3 sm:px-6 my-5">
-    
-        {/* <div className="order-2 md:!order-1 content-center justify-items-center">
+        <div className="order-2 md:!order-1 content-center justify-items-center">
           <div className="space-y-3">
-            {data.cards?.map((card, index) => (
-              <div key={index} className="border rounded-lg shadow">
-                <button
-                  onClick={() => toggle(index)}
-                  className="w-full flex justify-between items-center p-4 text-lg font-bold text-left"
-                >
-                  {card.cardHeading}
-                  <span>
-                    {openIndex === index ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                  </span>
-                </button>*/}
-
-        
-        {/*<div
-                  className={`transition-all duration-500 ease-in-out overflow-hidden ${
-                    openIndex === index ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                  }`}
-                >
-                  <div className="px-4 pb-4 text-gray-600">{card.cardDescription}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div> */}
-        <div className="order-2 md:!order-1 flex flex-col items-center space-y-3 w-full">
           {data.cards?.map((card, index) => (
             <div
               key={index}
-              className="border rounded-lg shadow w-full max-w-[1000px]" 
+              className="border rounded-lg shadow" 
             >
               <button
                 onClick={() => toggle(index)}
-                className="w-full flex justify-between items-center p-4 text-lg font-bold text-left"
+                className="w-full flex justify-between items-center p-4 text-lg font-bold text-left focus:outline-none"
               >
                 {card.cardHeading}
                 <span>
@@ -202,6 +176,7 @@ const WhatWeDo = () => {
               </div>
             </div>
           ))}
+          </div>
         </div>
 
 

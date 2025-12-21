@@ -557,6 +557,7 @@ import ArtistGrid from "../../../Component/ArtistGrid/ArtistGrid";
 const DiscoverArtist = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -598,6 +599,8 @@ const DiscoverArtist = () => {
             <input
               type="text"
               placeholder="Search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400"
             />
             <svg
@@ -619,11 +622,11 @@ const DiscoverArtist = () => {
 
         <hr className="my-3 border-dark" />
 
-        <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+        <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
           {data.description}
         </p>
       </div>
-      <ArtistGrid limit={8} />
+      <ArtistGrid limit={8} searchQuery={searchQuery} />
     </div>
   );
 };

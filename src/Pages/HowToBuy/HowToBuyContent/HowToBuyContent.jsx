@@ -111,16 +111,8 @@ const HowToBuyContent = () => {
       <div className="w-full py-3 px-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-            <a href="#" className="hover:text-red-500">
+            <a href="/" className="hover:text-red-500">
               Home
-            </a>
-            <span>/</span>
-            <a href="#" className="hover:text-red-500">
-              Store
-            </a>
-            <span>/</span>
-            <a href="#" className="hover:text-red-500">
-              Paintings
             </a>
             <span>/</span>
             <span className="font-medium text-gray-900">How To Buy</span>
@@ -132,14 +124,14 @@ const HowToBuyContent = () => {
         <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
           {pageData.webpageHeading}
         </h1>
-        <button className="hidden md:block flex-1 bg-red-500 text-white py-2 px-6 rounded-full font-semibold shadow buy-now">
+        <button className="hidden md:block flex-1 bg-red-500 text-white py-2 px-6 rounded-full font-semibold shadow buy-now" onClick={() => window.location.href = '/store'}>
           Discover New Arrivals
         </button>
       </div>
 
       <hr className="my-3 border-dark" />
 
-      <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+      <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
         {pageData.webpageDescription}
       </p>
 
@@ -154,7 +146,7 @@ const HowToBuyContent = () => {
                 <img
                   src={`${imageBaseURL}/${article.bannerImage}`}
                   alt={article.articleHeading}
-                  className="w-full h-full object-cover rounded-lg max-h-[300px]"
+                  className="w-full h-25 md:h-full object-cover rounded-lg filter drop-shadow-[0_10px_15px_rgba(0,0,0,0.35)]"
                 />
               </aside>
             )}
@@ -164,7 +156,7 @@ const HowToBuyContent = () => {
                 {article.articleHeading}
               </h2>
               <hr className="my-3 border-dark" />
-              <p className="text-xs md:text-base font-medium text-black leading-relaxed">
+              <p className="text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed whitespace-pre-wrap">
                 {article.articleContent}
               </p>
             </main>

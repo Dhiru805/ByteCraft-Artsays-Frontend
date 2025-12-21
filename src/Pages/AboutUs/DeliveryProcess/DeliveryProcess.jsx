@@ -250,7 +250,7 @@ const DeliveryProcess = () => {
           {data.heading}
         </h1>
         <hr className="my-3 border-dark" />
-        <p className="mt-3 text-xs md:text-base font-medium text-center text-black leading-relaxed px-3">
+        <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-center text-black leading-relaxed px-3">
           {data.description}
         </p>
 
