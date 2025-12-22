@@ -313,9 +313,9 @@ const ArtistCard = ({ limit = 8, searchQuery = "" }) => {
 
   return (
     <div className="max-w-[1440px] mx-auto mb-4">
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 py-4">
-        <main className="md:col-span-4 w-full">
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-3 ">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 py-4">
+        <main className="col-span-4 w-full">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 ">
             {paginatedArtists.map((artist) => {
               const normalizedFollowers = normalizeIds(artist.followers);
               const isFollowing =
@@ -411,81 +411,6 @@ const ArtistCard = ({ limit = 8, searchQuery = "" }) => {
               );
             })}
           </div>
-          {/* <div className="flex justify-center mt-6">
-  <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar"> */}
-
-          {/* Previous */}
-          {/* <button
-      className={`px-2 sm:px-3 py-1 flex items-center ${
-                  currentPage === 1
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:text-red-500"
-                }`}
-      disabled={currentPage === 1}
-      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-    >
-       <FiChevronLeft className="self-center flex-shrink-0" />
-                      <span className="ml-1">Previous</span>
-    </button> */}
-
-          {/* Page Numbers */}
-          {/* {pages.map((page) => (
-      <button
-        key={page}
-        className={`px-3 py-1  ${
-          page === currentPage
-            ? "border border-dark text-dark"
-            : "hover:text-red-500"
-        }`}
-        onClick={() => setCurrentPage(page)}
-      >
-        {page}
-      </button>
-    ))} */}
-
-          {/* Next */}
-          {/* <button
-      className={`px-2 sm:px-3 py-1 flex items-center ${
-                  currentPage === totalPages
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:text-red-500"
-                }`}
-      disabled={currentPage >= totalPages}
-      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-    >
-       <span className="mr-1">Next</span>
-                      <FiChevronRight className="self-center flex-shrink-0" />
-    </button>
-  </nav>
-</div> */}
-
-          {/* <div className="flex justify-center mt-6">
-            <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
-              <FiChevronLeft className="self-center flex-shrink-0" />
-              <button
-                className="px-1 sm:px-3 py-1"
-                disabled={currentPage === 1}
-                onClick={() =>
-                  setCurrentPage((p) => Math.max(1, p - 1))
-                }
-              >
-                Previous
-              </button>
-              <button className="px-3 sm:px-3 py-1 rounded border border-dark text-dark">
-                {currentPage}
-              </button>
-              <button
-                className="px-1 sm:px-3 py-1"
-                disabled={currentPage >= totalPages}
-                onClick={() =>
-                  setCurrentPage((p) => Math.min(totalPages, p + 1))
-                }
-              >
-                Next
-              </button>
-              <FiChevronRight className="self-center flex-shrink-0" />
-            </nav>
-          </div> */}
         </main>
       </div>
     </div>

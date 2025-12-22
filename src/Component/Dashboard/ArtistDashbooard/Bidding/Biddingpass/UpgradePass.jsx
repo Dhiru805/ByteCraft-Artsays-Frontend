@@ -450,7 +450,7 @@ const UpgradePass = () => {
         </div>
       </div>
 
-      <div className="row clearfix">
+      <div className="row clearfix" style={{ gap: '16px' }}>
         {visiblePasses.length === 0 ? (
           <div className="col-12">
             <div className="alert alert-info" role="alert">
@@ -463,10 +463,10 @@ const UpgradePass = () => {
             return (
               <div
                 key={pass._id || index}
-                className="col-lg-4 col-md-6 col-12 mb-4 overflow-hidden"
+                className="col-lg-4 col-md-6 col-12 mb-4 overflow-hidden pr-0 pl-0"
               >
                 <div
-                  className={`card shadow-sm w-100 ${
+                  className={`card shadow-sm w-100 h-100 ${
                     isActive ? "border-primary" : ""
                   }`}
                   style={{
@@ -501,7 +501,7 @@ const UpgradePass = () => {
                     <div style={{ width: "20px" }}></div>
                   </div> */}
                   <div
-                    className="d-flex justify-content-center align-items-center px-4 pt-4 pb-2"
+                    className="d-flex justify-content-center align-items-center py-2 px-3"
                     style={{ gap: "10px" }}
                   >
                     <label
@@ -630,14 +630,14 @@ const UpgradePass = () => {
                       </tbody>
                     </table> */}
 
-                  <div className="card-body pt-2 pb-3 overflow-x-auto">
-                    <table  className="table table-borderless mb-0  table-fixed break-words ">
+                  <div className="card-body py-2 px-3 overflow-x-auto">
+                    <table  className="table table-borderless mb-0 table-fixed break-words">
                       <tbody>
                         <tr>
-                          <td className="w-[35%] font-bold align-top">
+                          <td className="px-1 py-2 font-bold align-top">
                             Validity:
                           </td>
-                          <td className="break-all whitespace-normal max-w-0">
+                          <td className="px-1 py-2">
                             {pass.validityPeriod
                               ? `${pass.validityPeriod} days`
                               : "-"}
@@ -645,19 +645,19 @@ const UpgradePass = () => {
                         </tr>
 
                         <tr>
-                          <td className="font-bold align-top">
+                          <td className="px-1 py-2 font-bold align-top">
                             Product Upload Limit:
                           </td>
-                          <td className="break-words whitespace-normal">
+                          <td className="px-1 py-2">
                             {pass.productUploadLimit || "-"}
                           </td>
                         </tr>
 
                         <tr>
-                          <td className="font-bold align-top">
+                          <td className="px-1 py-2 font-bold align-top">
                             Base Price Range:
                           </td>
-                          <td className="break-words whitespace-normal">
+                          <td className="px-1 py-2">
                             {pass.basePriceRange
                               ? (() => {
                                   const parts = String(
@@ -672,28 +672,28 @@ const UpgradePass = () => {
                         </tr>
 
                         <tr>
-                          <td className="font-bold align-top">
+                          <td className="px-1 py-2 font-bold align-top">
                             Bid Visibility:
                           </td>
-                          <td className="break-words whitespace-normal">
+                          <td className="px-1 py-2">
                             {pass.bidVisibility || "-"}
                           </td>
                         </tr>
 
                         <tr>
-                          <td className="font-bold align-top">
+                          <td className="px-1 py-2 font-bold align-top">
                             Bidding Analytics:
                           </td>
-                          <td className="break-words whitespace-normal">
+                          <td className="px-1 py-2">
                             {pass.biddingAnalytics || "-"}
                           </td>
                         </tr>
 
                         <tr>
-                          <td className="font-bold align-top">
+                          <td className="px-1 py-2 font-bold align-top">
                             Add-on Access:
                           </td>
-                          <td className="break-words whitespace-normal">
+                          <td className="px-1 py-2">
                             {pass.addonAccess?.length
                               ? pass.addonAccess.join(", ")
                               : "-"}
@@ -701,66 +701,66 @@ const UpgradePass = () => {
                         </tr>
 
                         <tr>
-                          <td className="font-bold align-top">
+                          <td className="px-1 py-2 font-bold align-top">
                             Support Priority:
                           </td>
-                          <td className="break-words whitespace-normal">
+                          <td className="px-1 py-2">
                             {pass.supportPriority || "-"}
                           </td>
                         </tr>
 
                         <tr>
-                          <td className="font-bold align-top">
+                          <td className="px-1 py-2 font-bold align-top">
                             Refund / Cancellation:
                           </td>
-                          <td className="break-words whitespace-normal">
+                          <td className="px-1 py-2">
                             {pass.refundPolicy || "-"}
                           </td>
                         </tr>
 
                         <tr>
-                          <td className="font-bold align-top">
+                          <td className="px-1 py-2 font-bold align-top">
                             Early Renewal Bonus:
                           </td>
-                          <td className="break-words whitespace-normal">
+                          <td className="px-1 py-2">
                             {pass.earlyRenewalBonus || "-"}
                           </td>
                         </tr>
 
                         <tr>
-                          <td className="font-bold align-top">
+                          <td className="px-1 py-2 font-bold align-top">
                             Custom Bid Time:
                           </td>
-                          <td className="break-words whitespace-normal">
+                          <td className="px-1 py-2">
                             {pass.customBidTimeControl || "-"}
                           </td>
                         </tr>
 
                         <tr>
-                          <td className="font-bold align-top">
+                          <td className="px-1 py-2 font-bold align-top">
                             Exclusive Auctions:
                           </td>
-                          <td className="break-words whitespace-normal">
+                          <td className="px-1 py-2">
                             {pass.exclusiveAuctionsAccess ? "Yes" : "No"}
                           </td>
                         </tr>
 
                         <tr>
-                          <td className="font-bold align-top">
+                          <td className="px-1 py-2 font-bold align-top">
                             Dashboard Features:
                           </td>
-                          <td className="break-words whitespace-normal">
+                          <td className="px-1 py-2">
                             {pass.dashboardFeatures || "-"}
                           </td>
                         </tr>
                       </tbody>
                     </table>
 
-                    <div className="text-center mt-3">
-                      <div className="font-bold text-blue-600 text-[1.8rem]">
-                        ₹{pass.pricing || "-"}
+                    <div className="text-center mt-3 border-top pt-3">
+                      <div className="font-bold text-blue-600 text-[2rem] font-weight-bold">
+                        ₹{pass.pricing || "-"} <small className="text-gray-500">Price</small>
                       </div>
-                      <small className="text-gray-500">Price</small>
+                      
                     </div>
                   </div>
 
