@@ -1,1610 +1,3 @@
-//  import { MdVerified } from "react-icons/md";
-//  import { Star, Truck, Gift, Banknote, CreditCard } from "lucide-react";
-//  import React, { useState } from "react";
-//  import { ChevronLeft, ChevronRight } from "lucide-react";
-//  import { HiMiniPercentBadge } from "react-icons/hi2";
-//  import { Heart, MapPin, ArrowRight, ShoppingCart, Zap } from "lucide-react";
-//  import { BsTelegram } from "react-icons/bs";
-//  import { FaChevronCircleRight } from "react-icons/fa";
-//  import { FaChevronCircleLeft } from "react-icons/fa";
-
-//  const offersData = [
-//      {
-//          title: "Cashback",
-//          description: "Upto ₹50.00 cashback as Google Pay Balance when...",
-//          offers: "3 offers",
-//      },
-//      {
-//          title: "Bank Offer",
-//          description: "Upto ₹1,000.00 discount on SBI Credit Cards",
-//          offers: "8 offers",
-//      },
-//      {
-//          title: "EMI Offers",
-//          description: "Get GST invoice and save up to 28% on business purchases",
-//          offers: "1 offer",
-//      },
-//      {
-//          title: "Festival Offer",
-//          description: "Flat ₹500 off on selected paintings during the festival sale",
-//          offers: "2 offers",
-//      },
-//  ];
-
-//  const ProductDetails = () => {
-//      const [quantity, setQuantity] = useState(1);
-//      const [protection, setProtection] = useState(true);
-//      const [giftOption, setGiftOption] = useState(true);
-//      const [index, setIndex] = useState(0);
-//      const [activeTab, setActiveTab] = useState("description");
-
-//      const images = [
-//          "/herosectionimg/12.jpg",
-//          "/herosectionimg/13.jpg",
-//          "/herosectionimg/14.jpg",
-//          "/herosectionimg/11.jpg",
-//          "/herosectionimg/1.jpg",
-//          "/herosectionimg/2.png",
-//          "/herosectionimg/shraddha.jpg",
-//      ];
-
-//      const [selectedImage, setSelectedImage] = useState(images[0]);
-
-//      const nextSlide = () => {
-//          if (index < offersData.length - 3) setIndex(index + 1);
-//      };
-
-//      const ProductImages = () => {
-//          const roomBackgrounds = [
-//              "/artimages/viewintheroom.jpg",
-//              "/artimages/wall3.jpg",
-//              "/artimages/wall4.webp",
-//          ];
-
-//          const [selectedImage, setSelectedImage] = useState(images[0]);
-//          const [selectedRoom, setSelectedRoom] = useState(roomBackgrounds[0]);
-//          const [showPopup, setShowPopup] = useState(false);
-
-//          // Example artwork size (in inches or cm)
-//          const artworkSize = { width: 100, height: 70 };
-
-//          const changeImage = (direction) => {
-//              const currentIndex = images.indexOf(selectedImage);
-//              if (direction === 'next') {
-//                  setSelectedImage(images[(currentIndex + 1) % images.length]);
-//              } else {
-//                  setSelectedImage(images[(currentIndex - 1 + images.length) % images.length]);
-//              }
-//          };
-
-//          const handleShare = () => {
-//              if (navigator.share) {
-//                  navigator
-//                      .share({
-//                          title: 'Check out this artwork!',
-//                          text: 'I found this amazing art on Artsays!',
-//                          url: window.location.href,
-//                      })
-//                      .then(() => console.log('Shared successfully'))
-//                      .catch((err) => console.log('Error sharing', err));
-//              } else {
-//                  alert('Share not supported in this browser');
-//              }
-//          };
-
-//          const [pinCode, setPinCode] = useState("");
-//          const [address, setAddress] = useState("");
-
-//          const addresses = {
-//              "110017": "23 Aurum Lane, Sector 17, Vasant Vibe, New Delhi",
-//              "560001": "MG Road, Bangalore, Karnataka",
-//          };
-
-//          const handleSubmit = (e) => {
-//              e.preventDefault();
-
-//              if (addresses[pinCode]) {
-//                  setAddress(addresses[pinCode]);
-//              } else {
-//                  alert("Invalid PIN code");
-//                  setAddress("");
-//              }
-//          };
-
-//          const prevSlide = () => {
-//              if (index > 0) setIndex(index - 1);
-//          };
-//          return (
-//              <div className="max-w-[1440px] mx-auto font-[Poppins] bg-[#ffffff] text-[#111] p-6">
-//                  {/* ====== Top Section ====== */}
-//                  <p className="text-sm text-gray-500">Art / Painting / Abstract</p>
-//                  <div className="grid grid-cols-1 md:grid-cols-10 gap-6 mt-3">
-//                      <div className="col-span-8">
-//                          <div className="grid grid-cols-1 md:grid-cols-10 gap-6 mt-3">
-//                              {/* ===== Left: Image Gallery ===== */}
-
-//                              <div className="flex flex-col lg:flex-row-reverse col-span-5 gap-3 relative">
-//                                  {/* ===== Main Image ===== */}
-//                                  <div className="relative w-full h-auto align-content-center product-card">
-//                                      <img
-//                                          src={selectedImage}
-//                                          alt="Main"
-//                                          className="w-full h-[550px] object-contain product-img transition-all duration-300"
-//                                      />
-
-//                                      {/* ===== View in Room Button ===== */}
-//                                      <button
-//                                          onClick={() => setShowPopup(true)}
-//                                          className="absolute bottom-5 bg-dark text-[#ffffff] text-sm px-3 py-1 rounded-2xl shadow flex justify-self-center gap-1"
-//                                      >
-//                                          👁️ View in Room
-//                                      </button>
-
-//                                      {/* ===== Share Button ===== */}
-//                                      <button
-//                                          onClick={handleShare}
-//                                          className="absolute top-3 right-3 text-[#48372D] text-4xl py-1"
-//                                      >
-//                                          <BsTelegram />
-//                                      </button>
-
-//                                      <button
-//                                          onClick={handleShare}
-//                                          className="absolute top-3 left-3 bg-[#48372D] text-white text-md px-2 rounded-full"
-//                                      >
-//                                          .Sponsored
-//                                      </button>
-
-//                                      {/* ===== Right Side Vertical Arrow Buttons ===== */}
-//                                      <div className="absolute top-1/2 right-3 transform -translate-y-1/2 flex flex-col gap-2">
-//                                          <button
-//                                              onClick={() => changeImage('prev')}
-//                                              className="text-[#48372D] text-4xl"
-//                                          >
-//                                              <FaChevronCircleLeft />
-//                                          </button>
-//                                          <button
-//                                              onClick={() => changeImage('next')}
-//                                              className="text-[#48372D] text-4xl"
-//                                          >
-//                                              <FaChevronCircleRight />
-//                                          </button>
-//                                      </div>
-//                                  </div>
-
-//                                  {/* ===== Thumbnails ===== */}
-//                                  <div className="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-y-auto lg:overflow-x-hidden lg:max-h-[550px] scrollbar-hide">
-//                                      {images.map((img, index) => (
-//                                          <img
-//                                              key={index}
-//                                              src={img}
-//                                              alt={`thumb-${index}`}
-//                                              onClick={() => setSelectedImage(img)}
-//                                              className={`w-24 h-24 object-contain rounded-lg product-img product-card cursor-pointer border-2 transition-all duration-200 ${selectedImage === img ? "border-dark" : "border-transparent"
-//                                                  }`}
-//                                          />
-//                                      ))}
-//                                  </div>
-//                              </div>
-
-//                              {/* ======= POPUP MODAL ======= */}
-//                              {showPopup && (
-//                                  <div className="fixed inset-0 bg-opacity-60 backdrop-blur-md flex items-center justify-center z-[999]" style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}>
-//                                      <div className="relative bg-white rounded-xl shadow-lg max-w-5xl w-full p-4">
-//                                          {/* Close Button */}
-//                                          <button
-//                                              onClick={() => setShowPopup(false)}
-//                                              className="absolute top-3 right-3 text-gray-700 text-xl font-bold"
-//                                          >
-//                                              ✕
-//                                          </button>
-
-//                                          {/* Room Background + Artwork */}
-//                                          <div className="relative w-full h-[550px] overflow-hidden rounded-lg">
-//                                              <img
-//                                                  src={selectedRoom}
-//                                                  alt="room"
-//                                                  className="w-full h-full object-contain"
-//                                              />
-
-//                                              {/* Overlayed Artwork */}
-//                                              <div className="absolute bottom-[200px] inset-0 flex justify-center items-center">
-//                                                  <div className="relative">
-//                                                      <img
-//                                                          src={selectedImage}
-//                                                          alt="art"
-//                                                          className="object-contain rounded-lg mb-3"
-//                                                          style={{
-//                                                              width: `${artworkSize.width * 3}px`, // scale for visibility
-//                                                              height: `${artworkSize.height * 3}px`,
-//                                                          }}
-//                                                      />
-//                                                      {/* Dimensions Label */}
-//                                                      <div className="absolute -bottom-6 w-full text-center text-sm font-medium bg-[#ffffff] py-1 rounded-md">
-//                                                          {artworkSize.width} × {artworkSize.height} cm
-//                                                      </div>
-//                                                  </div>
-//                                              </div>
-//                                          </div>
-
-//                                          {/* Room Selector */}
-//                                          <div className="flex justify-center gap-3 mt-4">
-//                                              {roomBackgrounds.map((room, i) => (
-//                                                  <img
-//                                                      key={i}
-//                                                      src={room}
-//                                                      alt={`room-${i}`}
-//                                                      onClick={() => setSelectedRoom(room)}
-//                                                      className={`w-24 h-20 object-cover rounded-lg cursor-pointer border-2 ${selectedRoom === room ? "border-dark" : "border-transparent"
-//                                                          }`}
-//                                                  />
-//                                              ))}
-//                                          </div>
-//                                      </div>
-//                                  </div>
-//                              )}
-
-//                              {/* ===== Right: Product Info ===== */}
-//                              <div className="col-span-5">
-//                                  <h1 className="text-lg md:text-3xl font-semibold leading-snug">
-//                                      Dreamcatcher – Lotus with moon Stained glass and glass leaves
-//                                  </h1>
-//                                  <div className="flex flex-wrap gap-2 text-xs mt-2">
-//                                      <span className="bg-gray-200 px-2 py-1 rounded-md">#Abstract</span>
-//                                      <span className="bg-gray-200 px-2 py-1 rounded-md">#Contemporary</span>
-//                                      <span className="bg-gray-200 px-2 py-1 rounded-md">#Oil Painting</span>
-//                                      <span className="bg-gray-200 px-2 py-1 rounded-md">#Modern Art</span>
-//                                  </div>
-//                                  <div className="flex flex-wrap gap-2 text-xs mt-2">
-//                                      <span className="bg-gray-200 px-2 py-1 rounded-md">Original Artwork</span>
-//                                  </div>
-
-//                                  <div className="flex items-center justify-between">
-//                                      <div>
-//                                          <p className="text-dark font-bold text-lg flex mr-3 mt-2 items-center">MystiqSoul <MdVerified className="ml-1 text-blue-600 w-4 h-4" /></p>
-//                                          <div className="flex items-center text-yellow-500 mt-2">
-//                                              {[...Array(5)].map((_, i) => (
-//                                                  <Star key={i} size={16} fill="#facc15" stroke="#facc15" />
-//                                              ))}
-//                                              <span className="text-dark ml-1 text-sm">(2,592)</span>
-//                                              <span className="text-dark text-sm ml-2"><strong>600+</strong> bought this month</span>
-//                                          </div>
-//                                      </div>
-
-//                                  </div>
-
-//                                  {/* Price Section */}
-//                                  <div className="flex items-center gap-3 mt-2">
-//                                      <span className="bg-[#DC3545] px-2 py-1 rounded-md text-white font-bold text-md">-67%</span>
-//                                      <p className="text-3xl font-bold">₹8,035</p>
-//                                      <p className="text-dark line-through text-lg">₹19,820</p>
-//                                  </div>
-//                                  <div className="flex items-center gap-3 mt-2">
-//                                      <div className="text-gray-500 text-xs">M.R.P.:<span className="line-through"> ₹12,299</span></div>
-//                                      <div className="text-gray-500 text-xs"> Inclusive of all taxes</div>
-//                                  </div>
-//                                  <div className="flex gap-2 pt-2 justify-between">
-//                                      <div className="p-2">
-//                                          <img
-//                                              src="/herosectionimg/limited edition.png"
-//                                              alt="limited edition"
-//                                              className="w-full h-10 object-contain" />
-//                                          <p className="text-dark text-center text-xs mt-2 rounded">
-//                                              Limited Edition
-//                                          </p>
-//                                      </div>
-//                                      {/* <div className="p-2">
-//                              <img
-//                                  src="/herosectionimg/original.png"
-//                                  alt="original"
-//                                  className="w-full h-10 object-contain" />
-//                              <p className="text-dark text-center text-xs mt-2 rounded">
-//                                  Original
-//                              </p>
-//                          </div>
-//                          <div className="p-2">
-//                              <img
-//                                  src="/herosectionimg/premium.png"
-//                                  alt="premium"
-//                                  className="w-full h-10 object-contain" />
-//                              <p className="text-dark text-center text-xs mt-2 rounded">
-//                                  Premium
-//                              </p>
-//                          </div>
-//                          <div className="p-2">
-//                              <img
-//                                  src="/herosectionimg/open edition.png"
-//                                  alt="open edition"
-//                                  className="w-full h-10 object-contain" />
-//                              <p className="text-dark text-center text-xs mt-2 rounded">
-//                                  Open Edition
-//                              </p>
-//                          </div> */}
-//                                      <div className="p-2">
-//                                          <img
-//                                              src="/herosectionimg/free delivery.png"
-//                                              alt="free delivery"
-//                                              className="w-full h-10 object-contain" />
-//                                          <p className="text-dark text-center text-xs mt-2 rounded">
-//                                              Free Delivery
-//                                          </p>
-//                                      </div>
-//                                      <div className="p-2">
-//                                          <img
-//                                              src="/herosectionimg/framed.png"
-//                                              alt="framed"
-//                                              className="w-full h-10 object-contain" />
-//                                          <p className="text-dark text-center text-xs mt-2 rounded">
-//                                              Framed
-//                                          </p>
-//                                      </div>
-//                                      <div className="p-2">
-//                                          <img
-//                                              src="/herosectionimg/handmade.png"
-//                                              alt="handemade"
-//                                              className="w-full h-10 object-contain" />
-//                                          <p className="text-dark text-center text-xs mt-2 rounded">
-//                                              Handmade
-//                                          </p>
-//                                      </div>
-//                                      {/* <div className="p-2">
-//                              <img
-//                                  src="/herosectionimg/glass material.png"
-//                                  alt="glass material"
-//                                  className="w-full h-10 object-contain" />
-//                              <p className="text-dark text-center text-xs mt-2 rounded">
-//                                  Glass Material
-//                              </p>
-//                          </div>
-//                          <div className="p-2">
-//                              <img
-//                                  src="/herosectionimg/gifting.png"
-//                                  alt="gifting options"
-//                                  className="w-full h-10 object-contain" />
-//                              <p className="text-dark text-center text-xs mt-2 rounded">
-//                                  Gifting Options
-//                              </p>
-//                          </div>
-//                          <div className="p-2">
-//                              <img
-//                                  src="/herosectionimg/certified.png"
-//                                  alt="certified"
-//                                  className="w-full h-10 object-contain" />
-//                              <p className="text-dark text-center text-xs mt-2 rounded">
-//                                  Certified
-//                              </p>
-//                          </div> */}
-//                                  </div>
-
-//                                  {/* In Stocks / Details */}
-//                                  <div className="w-full max-w-sm d-block d-md-none">
-//                                      {/* Address */}
-//                                      <div className="flex items-start gap-2 mt-2 text-sm text-dark">
-//                                          <MapPin size={18} className="text-dark mt-1" />
-//                                          <p>23 Aurum Lane, Sector 17, Vasant Vibe, New Delhi</p>
-//                                      </div>
-
-//                                      {/* Stock and Seller Info */}
-//                                      <div className="mt-3">
-//                                          <p className="text-green-600 font-semibold">In Stock</p>
-//                                          <table className="mt-2 w-full text-sm">
-//                                              <tbody>
-//                                                  <tr className="border-b border-gray-100">
-//                                                      <td className="text-xs font-semibold py-1">Delivered by</td>
-//                                                      <td className="text-left text-xs py-1">Artsays</td>
-//                                                  </tr>
-
-//                                                  <tr className="border-b border-gray-100">
-//                                                      <td className="text-xs font-semibold py-1">Sold by</td>
-//                                                      <td className="text-left text-xs text-orange-600 font-medium py-1 flex items-center gap-1">
-//                                                          MystiqSoul <MdVerified className="text-blue-600 w-4 h-4" />
-//                                                      </td>
-//                                                  </tr>
-
-//                                                  <tr className="border-b border-gray-100">
-//                                                      <td className="text-xs font-semibold py-1">Artist</td>
-//                                                      <td className="text-left text-xs text-orange-600 font-medium py-1">Neha Joshi</td>
-//                                                  </tr>
-
-//                                                  <tr>
-//                                                      <td className="text-xs font-semibold py-1">Payment</td>
-//                                                      <td className="text-left text-xs py-1">Secure Transaction</td>
-//                                                  </tr>
-//                                              </tbody>
-//                                          </table>
-
-//                                      </div>
-
-//                                  </div>
-
-//                                  {/* Offers Section */}
-//                                  <div className="w-full mx-auto">
-//                                      {/* Header */}
-//                                      <div className="flex items-center justify-between">
-//                                          <div className="flex items-center gap-2">
-//                                              <HiMiniPercentBadge className="text-red-500 text-xl" />
-//                                              <h2 className="text-lg font-semibold">Offers</h2>
-//                                          </div>
-//                                          <div className="flex gap-2">
-//                                              <button
-//                                                  onClick={prevSlide}
-//                                                  className={`p-2 rounded-full focus:bg-none transition ${index === 0 ? "opacity-40 cursor-not-allowed" : ""
-//                                                      }`}
-//                                              >
-//                                                  <ChevronLeft />
-//                                              </button>
-//                                              <button
-//                                                  onClick={nextSlide}
-//                                                  className={`p-2 rounded-full focus:bg-none transition ${index >= offersData.length - 3 ? "opacity-40 cursor-not-allowed" : ""
-//                                                      }`}
-//                                              >
-//                                                  <ChevronRight />
-//                                              </button>
-//                                          </div>
-//                                      </div>
-
-//                                      {/* Slider Container */}
-//                                      <div className="overflow-hidden">
-//                                          <div
-//                                              className="flex transition-transform duration-500 ease-out"
-//                                              style={{ transform: `translateX(-${index * 33.3333}%)` }}
-//                                          >
-//                                              {offersData.map((offer, i) => (
-//                                                  <div
-//                                                      key={i}
-//                                                      className="min-w-[33.3333%] p-1"
-//                                                  >
-//                                                      <div className="border rounded-xl px-1 md:!px-3 py-2 h-full shadow-sm hover:shadow-md transition">
-//                                                          <h3 className="font-bold text-md md:text-lg mb-2">{offer.title}</h3>
-//                                                          <p className="text-xs text-gray-600 mb-2">{offer.description}</p>
-//                                                          <p className="text-sm font-medium text-gray-800">{offer.offers}</p>
-//                                                      </div>
-//                                                  </div>
-//                                              ))}
-//                                          </div>
-//                                      </div>
-//                                  </div>
-
-//                                  {/* Protection/ Buttons */}
-//                                  <div className="w-full max-w-sm d-block d-md-none">
-//                                      {/* Protection Plans */}
-//                                      <div className="mt-3">
-//                                          <p className="font-semibold text-lg">Add a protection plan</p>
-
-//                                          <div className="mt-2 space-y-2">
-//                                              <div className="flex items-start gap-2 text-sm cursor-pointer">
-//                                                  <input
-//                                                      type="checkbox"
-//                                                      checked={protection}
-//                                                      onChange={() => setProtection(!protection)}
-//                                                      className="mt-1 accent-black"
-//                                                  />
-//                                                  <span>
-//                                                      Screen Damage Protection while delivery for{" "}
-//                                                      <span className="font-semibol">₹2,749.00</span>
-//                                                  </span>
-//                                              </div>
-
-//                                              <div className="flex items-start gap-2 text-sm cursor-pointer">
-//                                                  <input
-//                                                      type="checkbox"
-//                                                      checked={giftOption}
-//                                                      onChange={() => setGiftOption(!giftOption)}
-//                                                      className="mt-1 accent-black"
-//                                                  />
-//                                                  <span>
-//                                                      Gift options for <span className="font-semibold">₹2,749.00</span>
-//                                                  </span>
-//                                              </div>
-//                                          </div>
-//                                      </div>
-
-//                                      {/* Quantity */}
-//                                      <div className="mt-3 flex items-center justify-around">
-//                                          <span className="font-semibold text-sm">Quantity :</span>
-//                                          <select
-//                                              value={quantity}
-//                                              onChange={(e) => setQuantity(e.target.value)}
-//                                              className="border border-dark rounded-md px-3 py-1 text-sm focus:outline-none"
-//                                          >
-//                                              {[...Array(10)].map((_, i) => (
-//                                                  <option key={i + 1} value={i + 1}>
-//                                                      {i + 1}
-//                                                  </option>
-//                                              ))}
-//                                          </select>
-//                                      </div>
-
-//                                      {/* Buttons */}
-//                                      <div className="mt-3 flex flex-col gap-3">
-//                                          <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart">
-//                                              <ShoppingCart size={18} /> Add to Cart
-//                                          </button>
-//                                          <button className="flex items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-red-500 text-white py-2 font-semibold buy-now">
-//                                              <Zap size={18} /> Buy Now
-//                                          </button>
-//                                      </div>
-//                                  </div>
-
-//                              </div>
-
-//                          </div>
-
-//                          <div className="mt-12 border-b">
-//                              {/* ===== Tabs ===== */}
-//                              <div
-//                                  className="flex gap-8 text-[#48372D] font-medium text-lg border-b border-gray-200
-//                                              overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing scroll-smooth select-none"
-//                                  onMouseDown={(e) => {
-//                                      const el = e.currentTarget;
-//                                      el.isDown = true;
-//                                      el.startX = e.pageX - el.offsetLeft;
-//                                      el.scrollLeftStart = el.scrollLeft;
-//                                  }}
-//                                  onMouseLeave={(e) => {
-//                                      e.currentTarget.isDown = false;
-//                                  }}
-//                                  onMouseUp={(e) => {
-//                                      e.currentTarget.isDown = false;
-//                                  }}
-//                                  onMouseMove={(e) => {
-//                                      const el = e.currentTarget;
-//                                      if (!el.isDown) return;
-//                                      e.preventDefault();
-//                                      const x = e.pageX - el.offsetLeft;
-//                                      const walk = (x - el.startX) * 1.5; // scroll speed
-//                                      el.scrollLeft = el.scrollLeftStart - walk;
-//                                  }}
-//                              >
-//                                  {["description", "details", "artist", "reviews"].map((tab) => (
-//                                      <button
-//                                          key={tab}
-//                                          onClick={() => setActiveTab(tab)}
-//                                          className={`pb-2 flex-shrink-0 transition-all duration-200 whitespace-nowrap ${activeTab === tab
-//                                              ? "border-b-4 border-[#48372D] font-semibold text-[#48372D] focus:outline-none"
-//                                              : "font-semibold text-[#48372D] focus:outline-none"
-//                                              }`}
-//                                      >
-//                                          {tab.charAt(0).toUpperCase() + tab.slice(1)}
-//                                      </button>
-//                                  ))}
-//                              </div>
-
-//                              {/* ===== Tab Content ===== */}
-//                              <div className="py-6 text-gray-700 leading-relaxed text-sm">
-//                                  {activeTab === "description" && (
-//                                      <p>
-//                                          Inspired by the harmony of dreams and divine awakening, Dreamcatcher
-//                                          Lotus blends the protective symbolism of a dreamcatcher with the
-//                                          spiritual purity of the lotus flower. Handmade with intricate care, this
-//                                          piece channels positive energy, making it a beautiful and meaningful
-//                                          addition to any space. Ideal for gifting or personal zen corners.
-//                                      </p>
-//                                  )}
-
-//                                  {activeTab === "details" && (
-//                                      <div className="space-y-2">
-//                                          <h2 className="text-xl font-semibold">Artwork Specifications</h2>
-//                                          <p><span className="font-semibold">Material:</span> Cotton Thread & Beads</p>
-//                                          <p><span className="font-semibold">Dimensions:</span> 40 x 20 cm</p>
-//                                          <p><span className="font-semibold">Weight:</span> 350g</p>
-//                                          <p><span className="font-semibold">Care:</span> Wipe gently with a soft dry cloth</p>
-//                                      </div>
-//                                  )}
-
-//                                  {activeTab === "artist" && (
-//                                      <div>
-//                                          <p className="font-semibold text-lg">Artist: Neha Joshi</p>
-//                                          <p className="mt-2">
-//                                              Neha Joshi is a contemporary Indian artist specializing in spiritual
-//                                              and symbolic artworks. Her creations explore the connection between
-//                                              mindfulness and modern living, using handcrafted natural materials.
-//                                          </p>
-//                                      </div>
-//                                  )}
-
-//                                  {activeTab === "reviews" && (
-//                                      <div className="space-y-4">
-//                                          <div className="border p-3 rounded-lg shadow-sm">
-//                                              <p className="font-semibold">Aarav Patel ⭐⭐⭐⭐⭐</p>
-//                                              <p className="text-sm mt-1">
-//                                                  Beautifully crafted! The attention to detail is stunning and it
-//                                                  brings a calming energy to my home.
-//                                              </p>
-//                                          </div>
-//                                          <div className="border p-3 rounded-lg shadow-sm">
-//                                              <p className="font-semibold">Priya Mehta ⭐⭐⭐⭐☆</p>
-//                                              <p className="text-sm mt-1">
-//                                                  Loved it! Just wished it came in a slightly bigger size.
-//                                              </p>
-//                                          </div>
-//                                      </div>
-//                                  )}
-//                              </div>
-//                          </div>
-
-//                      </div>
-//                      {/* ===== Right: Product Price ===== */}
-//                      <div className="col-span-2 d-none d-md-block">
-//                          <div className="sticky top-10">
-//                              <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg border border-dark px-3 py-3">
-//                                  {/* Price and Wishlist */}
-//                                  <div className="flex justify-between items-center">
-//                                      <div>
-//                                          <p className="text-3xl font-bold">₹ 8,035</p>
-//                                      </div>
-//                                      <button>
-//                                          <Heart className="text-dark text-lg" />
-//                                      </button>
-//                                  </div>
-//                                  <p className="text-sm mt-1">
-//                                      FREE delivery <span className="font-semibold">Sunday, 10 August</span>.{" "}
-//                                      <span className="text-orange-600 cursor-pointer">Details</span>
-//                                  </p>
-
-//                                  {/* Address */}
-//                                  <div className="max-w-md">
-//                                      {!address && (
-//                                          <form onSubmit={handleSubmit} className="relative w-full">
-//                                              {/* Left icon */}
-//                                              <MapPin className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
-
-//                                              {/* Input field */}
-//                                              <input
-//                                                  type="text"
-//                                                  placeholder="Enter Pin Code"
-//                                                  value={pinCode}
-//                                                  onChange={(e) => setPinCode(e.target.value)}
-//                                                  className="w-full !border-b-2 py-2 pl-4 pr-10 text-gray-400 placeholder-dark-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
-//                                              />
-
-//                                              {/* Submit arrow button (inside input) */}
-//                                              <button
-//                                                  type="submit"
-//                                                  className="absolute right-1 top-1/2 -translate-y-1/2 text-gray-400"
-//                                              >
-//                                                  <ArrowRight size={20} />
-//                                              </button>
-//                                          </form>
-//                                      )}
-
-//                                      {/* Address display */}
-//                                      {address && (
-//                                          <div className="flex items-start gap-2 mt-2 text-sm text-dark">
-//                                              <MapPin className="text-dark text-xl" />
-//                                              <p>{address}</p>
-//                                          </div>
-//                                      )}
-//                                  </div>
-
-//                                  {/* Stock and Seller Info */}
-//                                  <div className="mt-2">
-//                                      <p className="text-green-600 font-semibold">In Stock</p>
-//                                      <table className="mt-2 w-full text-sm">
-//                                          <tbody>
-//                                              <tr className="border-b border-gray-100">
-//                                                  <td className="text-xs font-semibold py-1">Delivered by</td>
-//                                                  <td className="text-left text-xs py-1">Artsays</td>
-//                                              </tr>
-
-//                                              <tr className="border-b border-gray-100">
-//                                                  <td className="text-xs font-semibold py-1">Sold by</td>
-//                                                  <td className="text-left text-xs text-orange-600 font-medium py-1 flex items-center gap-1">
-//                                                      MystiqSoul <MdVerified className="text-blue-600 w-4 h-4" />
-//                                                  </td>
-//                                              </tr>
-
-//                                              <tr className="border-b border-gray-100">
-//                                                  <td className="text-xs font-semibold py-1">Artist</td>
-//                                                  <td className="text-left text-xs text-orange-600 font-medium py-1">Neha Joshi</td>
-//                                              </tr>
-
-//                                              <tr>
-//                                                  <td className="text-xs font-semibold py-1">Payment</td>
-//                                                  <td className="text-left text-xs py-1">Secure Transaction</td>
-//                                              </tr>
-//                                          </tbody>
-//                                      </table>
-
-//                                  </div>
-
-//                                  {/* Protection Plans */}
-//                                  <div className="mt-3">
-//                                      <p className="font-semibold text-lg">Add a protection plan</p>
-
-//                                      <div className="mt-2 space-y-2">
-//                                          <div className="flex items-start gap-2 text-sm cursor-pointer">
-//                                              <input
-//                                                  type="checkbox"
-//                                                  checked={protection}
-//                                                  onChange={() => setProtection(!protection)}
-//                                                  className="mt-1 accent-black"
-//                                              />
-//                                              <span>
-//                                                  Screen Damage Protection while delivery for{" "}
-//                                                  <span className="font-semibol">₹2,749.00</span>
-//                                              </span>
-//                                          </div>
-
-//                                          <div className="flex items-start gap-2 text-sm cursor-pointer">
-//                                              <input
-//                                                  type="checkbox"
-//                                                  checked={giftOption}
-//                                                  onChange={() => setGiftOption(!giftOption)}
-//                                                  className="mt-1 accent-black"
-//                                              />
-//                                              <span>
-//                                                  Gift options for <span className="font-semibold">₹2,749.00</span>
-//                                              </span>
-//                                          </div>
-//                                      </div>
-//                                  </div>
-
-//                                  {/* Quantity */}
-//                                  <div className="mt-3 flex items-center justify-around">
-//                                      <span className="font-semibold text-sm">Quantity :</span>
-//                                      <select
-//                                          value={quantity}
-//                                          onChange={(e) => setQuantity(e.target.value)}
-//                                          className="border border-dark rounded-md px-3 py-1 text-sm focus:outline-none"
-//                                      >
-//                                          {[...Array(10)].map((_, i) => (
-//                                              <option key={i + 1} value={i + 1}>
-//                                                  {i + 1}
-//                                              </option>
-//                                          ))}
-//                                      </select>
-//                                  </div>
-
-//                                  {/* Buttons */}
-//                                  <div className="mt-3 flex flex-col gap-3">
-//                                      <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart">
-//                                          <ShoppingCart size={18} /> Add to Cart
-//                                      </button>
-//                                      <button className="flex items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-red-500 text-white py-2 font-semibold buy-now">
-//                                          <Zap size={18} /> Buy Now
-//                                      </button>
-//                                  </div>
-//                              </div>
-//                          </div>
-//                      </div>
-//                  </div>
-
-//              </div>
-//          );
-//      };
-
-//      return <ProductImages />;
-//  };
-
-//  export default ProductDetails;
-
-//  import React, { useState, useEffect } from "react";
-//  import { MdVerified } from "react-icons/md";
-//  import { Star, Truck, Gift, Banknote, CreditCard } from "lucide-react";
-//  import { useParams } from "react-router-dom";
-//  import { ChevronLeft, ChevronRight } from "lucide-react";
-//  import { HiMiniPercentBadge } from "react-icons/hi2";
-//  import { Heart, MapPin, ArrowRight, ShoppingCart, Zap } from "lucide-react";
-//  import { BsTelegram } from "react-icons/bs";
-//  import { FaChevronCircleRight, FaChevronCircleLeft } from "react-icons/fa";
-//  import getAPI from "../../api/getAPI";
-
-//  const offersData = [
-//    {
-//      title: "Cashback",
-//      description: "Upto ₹50.00 cashback as Google Pay Balance when...",
-//      offers: "3 offers",
-//    },
-//    {
-//      title: "Bank Offer",
-//      description: "Upto ₹1,000.00 discount on SBI Credit Cards",
-//      offers: "8 offers",
-//    },
-//    {
-//      title: "EMI Offers",
-//      description: "Get GST invoice and save up to 28% on business purchases",
-//      offers: "1 offer",
-//    },
-//    {
-//      title: "Festival Offer",
-//      description: "Flat ₹500 off on selected paintings during the festival sale",
-//      offers: "2 offers",
-//    },
-//  ];
-
-//  const ProductDetails = () => {
-//    const { productId } = useParams();
-//    const id = productId;
-
-//    const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-//    console.log("useParams() output:", useParams());
-
-//    // -------------------- ALL HOOKS MUST BE AT TOP ---------------------
-//    const [product, setProduct] = useState(null);
-//    const [images, setImages] = useState([]);
-//    const [loading, setLoading] = useState(true);
-
-//    const [quantity, setQuantity] = useState(1);
-//    const [protection, setProtection] = useState(true);
-//    const [giftOption, setGiftOption] = useState(true);
-//    const [index, setIndex] = useState(0);
-//    const [activeTab, setActiveTab] = useState("description");
-
-//    const [selectedImage, setSelectedImage] = useState(null);
-
-//    const roomBackgrounds = [
-//      "/artimages/viewintheroom.jpg",
-//      "/artimages/wall3.jpg",
-//      "/artimages/wall4.webp",
-//    ];
-
-//    const [selectedRoom, setSelectedRoom] = useState(roomBackgrounds[0]);
-//    const [showPopup, setShowPopup] = useState(false);
-
-//    const artworkSize = { width: 100, height: 70 };
-//    const handleShare = () => {
-//      if (navigator.share) {
-//        navigator
-//          .share({
-//            title: "Check out this artwork!",
-//            text: "I found this amazing art on Artsays!",
-//            url: window.location.href,
-//          })
-//          .then(() => console.log("Shared successfully"))
-//          .catch((err) => console.log("Error sharing", err));
-//      } else {
-//        alert("Share not supported in this browser");
-//      }
-//    };
-//   const [pinCode, setPinCode] = useState("");
-//          const [address, setAddress] = useState("");
-
-//          const addresses = {
-//              "110017": "23 Aurum Lane, Sector 17, Vasant Vibe, New Delhi",
-//              "560001": "MG Road, Bangalore, Karnataka",
-//          };
-
-//          const handleSubmit = (e) => {
-//              e.preventDefault();
-
-//              if (addresses[pinCode]) {
-//                  setAddress(addresses[pinCode]);
-//              } else {
-//                  alert("Invalid PIN code");
-//                  setAddress("");
-//              }
-//          };
-
-//    useEffect(() => {
-//      const fetchProduct = async () => {
-//        try {
-//          const [res1, res2, ratingRes, badgeRes] = await Promise.all([
-//            getAPI("/api/getstatusapprovedproduct", {}, true, false),
-//            getAPI("/api/getstatusapprovedproductforSELLER", {}, true, false),
-//            getAPI("/api/reviews/aggregated", {}, true, false),
-//            getAPI("/api/products/approved-with-badges", {}, true, false),
-//          ]);
-
-//          const products1 =
-//            res1?.data?.data?.filter((p) => p.status === "Approved") || [];
-
-//          const products2 =
-//            res2?.data?.data?.filter((p) => p.status === "Approved") || [];
-
-//          let allProducts = [...products1, ...products2];
-
-//          const ratings = ratingRes?.data?.data || [];
-
-//          allProducts = allProducts.map((product) => {
-//            const matchedRating = ratings.find(
-//              (r) => String(r.productId) === String(product._id)
-//            );
-
-//            return {
-//              ...product,
-//              averageRating: matchedRating?.averageRating
-//                ? Number(matchedRating.averageRating)
-//                : null,
-//              reviewCount: matchedRating?.reviewCount ?? 0,
-//            };
-//          });
-
-//          const badgeData = badgeRes?.data?.data || [];
-
-//          allProducts = allProducts.map((p) => {
-//            const match = badgeData.find((b) => String(b._id) === String(p._id));
-//            return {
-//              ...p,
-//              seller: match?.seller || p.seller,
-//              badges: match?.badges || [],
-//            };
-//          });
-
-//          console.log("URL Param:", id);
-//          console.log(
-//            "All Products:",
-//            allProducts.map((p) => p._id)
-//          );
-
-//          const found = allProducts.find((p) => String(p._id) === String(id));
-
-//          if (!found) {
-//            console.log("❌ Product not found for given ID");
-//            setLoading(false);
-//            return;
-//          }
-
-//          const gallery = [
-//            `${imageBaseURL}${found.mainImage}`,
-//            ...(found.otherImages || []).map((img) => `${imageBaseURL}${img}`),
-//          ];
-
-//          setProduct(found);
-//          setImages(gallery);
-//          setSelectedImage(gallery[0]);
-//          setLoading(false);
-//        } catch (error) {
-//          console.error("Error loading product:", error);
-//          setLoading(false);
-//        }
-//      };
-
-//      fetchProduct();
-//    }, [id]);
-
-//    const calculateDiscount = (sell, market) => {
-//      if (sell == null || market == null) return 0;
-//      if (sell >= market) return 0;
-//      return Math.round(((market - sell) / market) * 100);
-//    };
-
-//    if (loading) {
-//      return (
-//        <div className="max-w-[1440px] mx-auto p-10 text-center text-xl font-semibold">
-//          Loading product…
-//        </div>
-//      );
-//    }
-
-//    if (!product) {
-//      return (
-//        <div className="max-w-[1440px] mx-auto p-10 text-center text-xl font-semibold">
-//          Product not found.
-//        </div>
-//      );
-//    }
-
-//    const discountPercent = calculateDiscount(
-//      product.sellingPrice,
-//      product.marketPrice
-//    );
-
-//    const nextSlide = () => {
-//      if (index < images.length - 1) setIndex(index + 1);
-//    };
-
-//    const prevSlide = () => {
-//      if (index > 0) setIndex(index - 1);
-//    };
-
-//    const changeImage = (direction) => {
-//      const currentIndex = images.indexOf(selectedImage);
-//      if (direction === "next") {
-//        setSelectedImage(images[(currentIndex + 1) % images.length]);
-//      } else {
-//        setSelectedImage(
-//          images[(currentIndex - 1 + images.length) % images.length]
-//        );
-//      }
-//    };
-
-//    const username = `${product?.userId?.username || ""}`.trim();
-//    const artistName = `${product?.userId?.name || ""} ${
-//      product?.userId?.lastName || ""
-//    }`.trim();
-
-//    return (
-//      <div className="max-w-[1440px] mx-auto font-[Poppins] bg-[#ffffff] text-[#111] p-6">
-//        <p className="text-sm text-gray-500">
-//          Art / {product.mainCategory || "Painting"} / {product.category || ""}
-//        </p>
-
-//        <div className="grid grid-cols-1 md:grid-cols-10 gap-6 mt-3">
-//          <div className="col-span-8">
-//            <div className="grid grid-cols-1 md:grid-cols-10 gap-6 mt-3">
-//              {/* ---------------------- Image Section ------------------------ */}
-//              <div className="flex flex-col lg:flex-row-reverse col-span-5 gap-3 relative">
-//                <div className="relative w-full h-auto align-content-center product-card">
-//                  <img
-//                    src={selectedImage}
-//                    alt={product.productName || "Product Image"}
-//                    className="w-full h-[550px] object-contain product-img transition-all duration-300"
-//                  />
-
-//                  {/* View in Room */}
-//                  <button
-//                    onClick={() => setShowPopup(true)}
-//                    className="absolute bottom-5 bg-dark text-white text-sm px-3 py-1 rounded-2xl shadow flex justify-self-center gap-1"
-//                  >
-//                    👁️ View in Room
-//                  </button>
-
-//                  {/* Share */}
-//                  <button
-//                    onClick={handleShare}
-//                    className="absolute top-3 right-3 text-[#48372D] text-4xl py-1"
-//                  >
-//                    <BsTelegram />
-//                  </button>
-
-//                  {/* Arrows */}
-//                  <div className="absolute top-1/2 right-3 -translate-y-1/2 flex flex-col gap-2">
-//                    <button
-//                      onClick={() => changeImage("prev")}
-//                      className="text-[#48372D] text-4xl"
-//                    >
-//                      <FaChevronCircleLeft />
-//                    </button>
-//                    <button
-//                      onClick={() => changeImage("next")}
-//                      className="text-[#48372D] text-4xl"
-//                    >
-//                      <FaChevronCircleRight />
-//                    </button>
-//                  </div>
-//                </div>
-
-//                {/* Thumbnails */}
-//                <div className="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-y-auto lg:overflow-x-hidden lg:max-h-[550px] scrollbar-hide">
-//                  {images.map((img, i) => (
-//                    <img
-//                      key={i}
-//                      src={img}
-//                      alt={`thumb-${i}`}
-//                      onClick={() => setSelectedImage(img)}
-//                      className={`w-24 h-24 object-contain rounded-lg product-img product-card cursor-pointer border-2 transition-all duration-200 ${
-//                        selectedImage === img
-//                          ? "border-dark"
-//                          : "border-transparent"
-//                      }`}
-//                    />
-//                  ))}
-//                </div>
-//              </div>
-
-//              {/* ---------------------- Product Info Section ------------------------ */}
-//              <div className="col-span-5">
-//                <h1 className="text-lg md:text-3xl font-semibold leading-snug">
-//                  {product.productName}
-//                </h1>
-
-//                <div className="flex flex-wrap gap-2 text-xs mt-2">
-//                  {product.tags?.length ? (
-//                    product.tags.map((tag, i) => (
-//                      <span
-//                        key={i}
-//                        className="bg-gray-200 px-2 py-1 rounded-md text-xs"
-//                      >
-//                        #{tag}
-//                      </span>
-//                    ))
-//                  ) : (
-//                    <span className="bg-gray-200 px-2 py-1 rounded-md text-xs">
-//                      #Art
-//                    </span>
-//                  )}
-//                </div>
-
-//                {product.editionType && (
-//                  <div className="flex gap-2 mt-2 text-xs">
-//                    <span className="bg-gray-200 px-2 py-1 rounded-md">
-//                      {product.editionType}
-//                    </span>
-//                  </div>
-//                )}
-
-//                {/* Artist Name */}
-//                <p className="text-dark font-bold text-lg flex mt-2 items-center gap-1">
-//                  {username || "Unknown"}
-
-//                  {/* Dynamic badges */}
-//                  {product.badges?.map((img, index) => (
-//                    <img
-//                      key={index}
-//                      src={`${imageBaseURL}${img}`}
-//                      className="w-5 h-5 rounded-full object-contain"
-//                    />
-//                  ))}
-//                </p>
-
-//                {/* Rating Placeholder */}
-//                <div className="flex items-center text-yellow-500 mt-1">
-//                  {[...Array(5)].map((_, i) => (
-//                    <Star key={i} size={16} fill="#facc15" stroke="#facc15" />
-//                  ))}
-//                  <span className="text-dark ml-1 text-sm">(2,592)</span>
-//                  <span className="text-dark text-sm ml-2">
-//                    <strong>600+</strong> bought this month
-//                  </span>
-//                </div>
-
-//                {/* PRICE */}
-//                <div className="flex items-center gap-3 mt-3">
-//                  {discountPercent > 0 && (
-//                    <span className="bg-[#DC3545] px-2 py-1 rounded-md text-white font-bold">
-//                      -{discountPercent}%
-//                    </span>
-//                  )}
-
-//                  <p className="text-3xl font-bold">
-//                    ₹{product.sellingPrice?.toLocaleString()}
-//                  </p>
-
-//                </div>
-
-//                {/* Delivery Info */}
-//                <div className="flex items-center mt-2 text-xs text-gray-500">
-//                  {discountPercent > 0 && (
-//                    <p className="text-dark text-lg text-xs">
-//                      M.R.P.:{" "}
-//                      <span className="line-through">
-//                        ₹{product.marketPrice?.toLocaleString()}
-//                      </span>
-//                    </p>
-//                  )}
-//                  <span className="ml-2">Inclusive of all taxes</span>
-//                </div>
-//              </div>
-//            </div>
-//            <div className="flex gap-2 pt-2 justify-between">
-//              <div className="p-2">
-//                <img
-//                  src="/herosectionimg/limited edition.png"
-//                  alt="limited edition"
-//                  className="w-full h-10 object-contain"
-//                />
-//                <p className="text-dark text-center text-xs mt-2 rounded">
-//                  Limited Edition
-//                </p>
-//              </div>
-//              {/* <div className="p-2">
-//                              <img
-//                                  src="/herosectionimg/original.png"
-//                                  alt="original"
-//                                  className="w-full h-10 object-contain" />
-//                              <p className="text-dark text-center text-xs mt-2 rounded">
-//                                  Original
-//                              </p>
-//                          </div>
-//                          <div className="p-2">
-//                              <img
-//                                  src="/herosectionimg/premium.png"
-//                                  alt="premium"
-//                                  className="w-full h-10 object-contain" />
-//                              <p className="text-dark text-center text-xs mt-2 rounded">
-//                                  Premium
-//                              </p>
-//                          </div>
-//                          <div className="p-2">
-//                              <img
-//                                  src="/herosectionimg/open edition.png"
-//                                  alt="open edition"
-//                                  className="w-full h-10 object-contain" />
-//                              <p className="text-dark text-center text-xs mt-2 rounded">
-//                                  Open Edition
-//                              </p>
-//                          </div> */}
-//              <div className="p-2">
-//                <img
-//                  src="/herosectionimg/free delivery.png"
-//                  alt="free delivery"
-//                  className="w-full h-10 object-contain"
-//                />
-//                <p className="text-dark text-center text-xs mt-2 rounded">
-//                  Free Delivery
-//                </p>
-//              </div>
-//              <div className="p-2">
-//                <img
-//                  src="/herosectionimg/framed.png"
-//                  alt="framed"
-//                  className="w-full h-10 object-contain"
-//                />
-//                <p className="text-dark text-center text-xs mt-2 rounded">
-//                  Framed
-//                </p>
-//              </div>
-//              <div className="p-2">
-//                <img
-//                  src="/herosectionimg/handmade.png"
-//                  alt="handemade"
-//                  className="w-full h-10 object-contain"
-//                />
-//                <p className="text-dark text-center text-xs mt-2 rounded">
-//                  Handmade
-//                </p>
-//              </div>
-//              {/* <div className="p-2">
-//                              <img
-//                                  src="/herosectionimg/glass material.png"
-//                                  alt="glass material"
-//                                  className="w-full h-10 object-contain" />
-//                              <p className="text-dark text-center text-xs mt-2 rounded">
-//                                  Glass Material
-//                              </p>
-//                          </div>
-//                          <div className="p-2">
-//                              <img
-//                                  src="/herosectionimg/gifting.png"
-//                                  alt="gifting options"
-//                                  className="w-full h-10 object-contain" />
-//                              <p className="text-dark text-center text-xs mt-2 rounded">
-//                                  Gifting Options
-//                              </p>
-//                          </div>
-//                          <div className="p-2">
-//                              <img
-//                                  src="/herosectionimg/certified.png"
-//                                  alt="certified"
-//                                  className="w-full h-10 object-contain" />
-//                              <p className="text-dark text-center text-xs mt-2 rounded">
-//                                  Certified
-//                              </p>
-//                          </div> */}
-//                          {/* Offers Section */}
-//            <div className="w-full mx-auto">
-//              {/* Header */}
-//                                      <div className="flex items-center justify-between">
-//                                          <div className="flex items-center gap-2">
-//                                              <HiMiniPercentBadge className="text-red-500 text-xl" />
-//                                              <h2 className="text-lg font-semibold">Offers</h2>
-//                                          </div>
-//                                          <div className="flex gap-2">
-//                                              <button
-//                                                  onClick={prevSlide}
-//                                                  className={`p-2 rounded-full focus:bg-none transition ${index === 0 ? "opacity-40 cursor-not-allowed" : ""
-//                                                      }`}
-//                                              >
-//                                                  <ChevronLeft />
-//                                              </button>
-//                                              <button
-//                                                  onClick={nextSlide}
-//                                                  className={`p-2 rounded-full focus:bg-none transition ${index >= offersData.length - 3 ? "opacity-40 cursor-not-allowed" : ""
-//                                                      }`}
-//                                              >
-//                                                  <ChevronRight />
-//                                              </button>
-//                                          </div>
-//                                      </div>
-
-//                                      {/* Slider Container */}
-//                                      <div className="overflow-hidden">
-//                                          <div
-//                                              className="flex transition-transform duration-500 ease-out"
-//                                              style={{ transform: `translateX(-${index * 33.3333}%)` }}
-//                                          >
-//                                              {offersData.map((offer, i) => (
-//                                                  <div
-//                                                      key={i}
-//                                                      className="min-w-[33.3333%] p-1"
-//                                                  >
-//                                                      <div className="border rounded-xl px-1 md:!px-3 py-2 h-full shadow-sm hover:shadow-md transition">
-//                                                          <h3 className="font-bold text-md md:text-lg mb-2">{offer.title}</h3>
-//                                                          <p className="text-xs text-gray-600 mb-2">{offer.description}</p>
-//                                                          <p className="text-sm font-medium text-gray-800">{offer.offers}</p>
-//                                                      </div>
-//                                                  </div>
-//                                              ))}
-//                                          </div>
-//                                      </div>
-//                                  </div>
-
-//                                    {/* Protection/ Buttons */}
-//                                  <div className="w-full max-w-sm d-block d-md-none">
-//                                      {/* Protection Plans */}
-//                                      <div className="mt-3">
-//                                          <p className="font-semibold text-lg">Add a protection plan</p>
-
-//                                          <div className="mt-2 space-y-2">
-//                                              <div className="flex items-start gap-2 text-sm cursor-pointer">
-//                                                  <input
-//                                                      type="checkbox"
-//                                                      checked={protection}
-//                                                      onChange={() => setProtection(!protection)}
-//                                                      className="mt-1 accent-black"
-//                                                  />
-//                                                  <span>
-//                                                      Screen Damage Protection while delivery for{" "}
-//                                                      <span className="font-semibol">₹2,749.00</span>
-//                                                  </span>
-//                                              </div>
-
-//                                              <div className="flex items-start gap-2 text-sm cursor-pointer">
-//                                                  <input
-//                                                      type="checkbox"
-//                                                      checked={giftOption}
-//                                                      onChange={() => setGiftOption(!giftOption)}
-//                                                      className="mt-1 accent-black"
-//                                                  />
-//                                                  <span>
-//                                                      Gift options for <span className="font-semibold">₹2,749.00</span>
-//                                                  </span>
-//                                              </div>
-//                                          </div>
-//                                      </div>
-//            </div>
-
-//            {/* ---------------- POPUP: VIEW IN ROOM ---------------- */}
-//            {showPopup && (
-//              <div
-//                className="fixed inset-0 bg-opacity-60 backdrop-blur-md flex items-center justify-center z-[999]"
-//                style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
-//              >
-//                <div className="relative bg-white rounded-xl shadow-lg max-w-5xl w-full p-4">
-//                  {/* Close BTN */}
-//                  <button
-//                    onClick={() => setShowPopup(false)}
-//                    className="absolute top-3 right-3 text-gray-700 text-xl font-bold"
-//                  >
-//                    ✕
-//                  </button>
-
-//                  {/* Room Background */}
-//                  <div className="relative w-full h-[550px] overflow-hidden rounded-lg">
-//                    <img
-//                      src={selectedRoom}
-//                      alt="room"
-//                      className="w-full h-full object-contain"
-//                    />
-
-//                    {/* Artwork Over Room */}
-//                    <div className="absolute bottom-[200px] inset-0 flex justify-center items-center">
-//                      <div className="relative">
-//                        <img
-//                          src={selectedImage}
-//                          alt="art"
-//                          className="object-contain rounded-lg mb-3"
-//                          style={{
-//                            width: `${artworkSize.width * 3}px`,
-//                            height: `${artworkSize.height * 3}px`,
-//                          }}
-//                        />
-
-//                        <div className="absolute -bottom-6 w-full text-center text-sm font-medium bg-white py-1 rounded-md">
-//                          {artworkSize.width} × {artworkSize.height} cm
-//                        </div>
-//                      </div>
-//                    </div>
-//                  </div>
-
-//                  {/* Room Selector */}
-//                  <div className="flex justify-center gap-3 mt-4">
-//                    {roomBackgrounds.map((room, i) => (
-//                      <img
-//                        key={i}
-//                        src={room}
-//                        alt={`room-${i}`}
-//                        onClick={() => setSelectedRoom(room)}
-//                        className={`w-24 h-20 object-cover rounded-lg cursor-pointer border-2 ${
-//                          selectedRoom === room
-//                            ? "border-dark"
-//                            : "border-transparent"
-//                        }`}
-//                      />
-//                    ))}
-//                  </div>
-//                </div>
-//              </div>
-//            )}
-//            <div className="col-span-2 d-none d-md-block">
-//            <div className="sticky top-10">
-//              <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg border border-dark px-3 py-3">
-//                {/* Price + Wishlist */}
-//                <div className="flex justify-between items-center">
-//                  <p className="text-3xl font-bold">
-//                    ₹{product.sellingPrice?.toLocaleString()}
-//                  </p>
-//                  <Heart className="text-dark text-lg" />
-//                </div>
-
-//                <p className="text-sm mt-1">
-//                  FREE delivery{" "}
-//                  <span className="font-semibold">
-//                    {product.estimatedDelivery || "2–5 days"}
-//                  </span>
-//                </p>
-
-//                {/* ADDRESS + PIN CHECK */}
-//                <div className="max-w-md mt-4">
-//                  <MapPin className="text-gray-400 mb-1" />
-
-//                  <input
-//                    type="text"
-//                    placeholder="Enter Pin Code"
-//                    className="w-full border-b-2 py-2 text-gray-600 placeholder-dark-400 focus:outline-none"
-//                  />
-//                </div>
-
-//                {/* STOCK + SELLER DETAILS */}
-//                <div className="mt-3">
-//                  <p className="text-green-600 font-semibold">In Stock</p>
-
-//                  <table className="mt-2 w-full text-sm">
-//                    <tbody>
-//                      <tr className="border-b border-gray-100">
-//                        <td className="text-xs font-semibold py-1">
-//                          Delivered by
-//                        </td>
-//                        <td className="text-left text-xs py-1">Artsays</td>
-//                      </tr>
-
-//                      <tr className="border-b border-gray-100">
-//                        <td className="text-xs font-semibold py-1">Sold by</td>
-//                        <td className="text-left text-xs text-orange-600 font-medium py-1 flex items-center gap-1">
-//                          {username || "Unknown"}
-
-//  {product.badges?.map((img, index) => (
-//    <img
-//      key={index}
-//      src={`${imageBaseURL}${img}`}
-//      className="w-4 h-4 rounded-full object-contain"
-//    />
-//  ))}
-//                        </td>
-//                      </tr>
-
-//                      <tr className="border-b border-gray-100">
-//                        <td className="text-xs font-semibold py-1">Artist</td>
-//                        <td className="text-left text-xs text-orange-600 font-medium py-1">
-//                          {artistName || "N/A"}
-//                        </td>
-//                      </tr>
-
-//                      <tr>
-//                        <td className="text-xs font-semibold py-1">Payment</td>
-//                        <td className="text-left text-xs py-1">
-//                          Secure Transaction
-//                        </td>
-//                      </tr>
-//                    </tbody>
-//                  </table>
-//                </div>
-
-//                {/* QUANTITY */}
-//                <div className="mt-3 flex items-center justify-between">
-//                  <span className="font-semibold text-sm">Quantity:</span>
-//                  <select
-//                    value={quantity}
-//                    onChange={(e) => setQuantity(e.target.value)}
-//                    className="border border-dark rounded-md px-3 py-1 text-sm"
-//                  >
-//                    {[...Array(10)].map((_, i) => (
-//                      <option key={i + 1} value={i + 1}>
-//                        {i + 1}
-//                      </option>
-//                    ))}
-//                  </select>
-//                </div>
-
-//                {/* BUTTONS */}
-//                <div className="mt-3 flex flex-col gap-3">
-//                  <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart">
-//                    <ShoppingCart size={18} /> Add to Cart
-//                  </button>
-
-//                  <button className="flex items-center justify-center gap-2 flex-1 bg-red-500 text-white rounded-full py-2 font-semibold buy-now">
-//                    <Zap size={18} /> Buy Now
-//                  </button>
-//                </div>
-//              </div>
-//            </div>
-//          </div>
-//          </div>
-
-//          <div className="mt-12 border-b">
-//                                      {/* ===== Tabs ===== */}
-//                                      <div
-//                                          className="flex gap-8 text-[#48372D] font-medium text-lg border-b border-gray-200
-//                                                      overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing scroll-smooth select-none"
-//                                          onMouseDown={(e) => {
-//                                              const el = e.currentTarget;
-//                                              el.isDown = true;
-//                                              el.startX = e.pageX - el.offsetLeft;
-//                                              el.scrollLeftStart = el.scrollLeft;
-//                                          }}
-//                                          onMouseLeave={(e) => {
-//                                              e.currentTarget.isDown = false;
-//                                          }}
-//                                          onMouseUp={(e) => {
-//                                              e.currentTarget.isDown = false;
-//                                          }}
-//                                          onMouseMove={(e) => {
-//                                              const el = e.currentTarget;
-//                                              if (!el.isDown) return;
-//                                              e.preventDefault();
-//                                              const x = e.pageX - el.offsetLeft;
-//                                              const walk = (x - el.startX) * 1.5; // scroll speed
-//                                              el.scrollLeft = el.scrollLeftStart - walk;
-//                                          }}
-//                                      >
-//                                          {["description", "details", "artist", "reviews"].map((tab) => (
-//                                              <button
-//                                                  key={tab}
-//                                                  onClick={() => setActiveTab(tab)}
-//                                                  className={`pb-2 flex-shrink-0 transition-all duration-200 whitespace-nowrap ${activeTab === tab
-//                                                      ? "border-b-4 border-[#48372D] font-semibold text-[#48372D] focus:outline-none"
-//                                                      : "font-semibold text-[#48372D] focus:outline-none"
-//                                                      }`}
-//                                              >
-//                                                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
-//                                              </button>
-//                                          ))}
-//                                      </div>
-
-//                                      {/* ===== Tab Content ===== */}
-//                                      <div className="py-6 text-gray-700 leading-relaxed text-sm">
-//                                          {activeTab === "description" && (
-//                                              <p>
-//                                                  Inspired by the harmony of dreams and divine awakening, Dreamcatcher
-//                                                  Lotus blends the protective symbolism of a dreamcatcher with the
-//                                                  spiritual purity of the lotus flower. Handmade with intricate care, this
-//                                                  piece channels positive energy, making it a beautiful and meaningful
-//                                                  addition to any space. Ideal for gifting or personal zen corners.
-//                                              </p>
-//                                          )}
-
-//                                          {activeTab === "details" && (
-//                                              <div className="space-y-2">
-//                                                  <h2 className="text-xl font-semibold">Artwork Specifications</h2>
-//                                                  <p><span className="font-semibold">Material:</span> Cotton Thread & Beads</p>
-//                                                  <p><span className="font-semibold">Dimensions:</span> 40 x 20 cm</p>
-//                                                  <p><span className="font-semibold">Weight:</span> 350g</p>
-//                                                  <p><span className="font-semibold">Care:</span> Wipe gently with a soft dry cloth</p>
-//                                              </div>
-//                                          )}
-
-//                                          {activeTab === "artist" && (
-//                                              <div>
-//                                                  <p className="font-semibold text-lg">Artist: Neha Joshi</p>
-//                                                  <p className="mt-2">
-//                                                      Neha Joshi is a contemporary Indian artist specializing in spiritual
-//                                                      and symbolic artworks. Her creations explore the connection between
-//                                                      mindfulness and modern living, using handcrafted natural materials.
-//                                                  </p>
-//                                              </div>
-//                                          )}
-
-//                                          {activeTab === "reviews" && (
-//                                              <div className="space-y-4">
-//                                                  <div className="border p-3 rounded-lg shadow-sm">
-//                                                      <p className="font-semibold">Aarav Patel ⭐⭐⭐⭐⭐</p>
-//                                                      <p className="text-sm mt-1">
-//                                                          Beautifully crafted! The attention to detail is stunning and it
-//                                                          brings a calming energy to my home.
-//                                                      </p>
-//                                                  </div>
-//                                                  <div className="border p-3 rounded-lg shadow-sm">
-//                                                      <p className="font-semibold">Priya Mehta ⭐⭐⭐⭐☆</p>
-//                                                      <p className="text-sm mt-1">
-//                                                          Loved it! Just wished it came in a slightly bigger size.
-//                                                      </p>
-//                                                  </div>
-//                                              </div>
-//                                          )}
-//                                      </div>
-//                                  </div>
-
-//                              </div>
-
-//              </div>
-
-//      </div>
-//    );
-//  };
-
-//  export default ProductDetails;
-
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { MdVerified } from "react-icons/md";
@@ -1645,11 +38,12 @@ const offersData = [
 ];
 
 const ProductDetails = () => {
- // const { productId } = useParams();
- const { productSlug, productId } = useParams();
+  // const { productId } = useParams();
+  const { productSlug, productId } = useParams();
   const id = productId;
   const userId = localStorage.getItem("userId");
-  const userType = localStorage.getItem("userType"); 
+  const userType = localStorage.getItem("userType");
+const [notServiceable, setNotServiceable] = useState(null);
 
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 
@@ -1657,7 +51,9 @@ const ProductDetails = () => {
     if (!path || typeof path !== "string") return "/images/placeholder.jpg";
     if (/^https?:\/\//i.test(path) || path.startsWith("data:")) return path;
     const normalized = path.replace(/\\/g, "/");
-    const leadingSlash = normalized.startsWith("/") ? normalized : `/${normalized}`;
+    const leadingSlash = normalized.startsWith("/")
+      ? normalized
+      : `/${normalized}`;
     if (imageBaseURL) {
       const base = imageBaseURL.endsWith("/")
         ? imageBaseURL.slice(0, -1)
@@ -1699,7 +95,7 @@ const ProductDetails = () => {
   const [categoryName, setCategoryName] = useState("");
   const [subCategoryName, setSubCategoryName] = useState("");
 
-const tabRef = React.useRef(null);
+  const tabRef = React.useRef(null);
 
   const [categoryData, setCategoryData] = useState({
     mainCategories: [],
@@ -1714,13 +110,15 @@ const tabRef = React.useRef(null);
     560001: "MG Road, Bangalore, Karnataka",
   };
 
-const ensureBuyer = () => {
-  if (userType !== "Buyer") {
-    toast.warn("Only buyers can use this feature, Register as a Buyer to continue.");
-    return false;
-  }
-  return true;
-};
+  const ensureBuyer = () => {
+    if (userType !== "Buyer") {
+      toast.warn(
+        "Only buyers can use this feature, Register as a Buyer to continue."
+      );
+      return false;
+    }
+    return true;
+  };
 
   const artworkSize = { width: 100, height: 70 };
   const roomBackgrounds = [
@@ -1728,7 +126,7 @@ const ensureBuyer = () => {
     "/artimages/wall3.jpg",
     "/artimages/wall4.webp",
   ];
-const addToCart = async (productId, desiredQty = 1) => {
+  const addToCart = async (productId, desiredQty = 1) => {
     const userId = localStorage.getItem("userId");
 
     if (!userId) {
@@ -1769,7 +167,8 @@ const addToCart = async (productId, desiredQty = 1) => {
           reviewRes?.data?.data || reviewRes?.data?.reviews || [];
         const sortedReviews = Array.isArray(reviewPayload)
           ? [...reviewPayload].sort(
-              (a, b) => new Date(b?.createdAt || 0) - new Date(a?.createdAt || 0)
+              (a, b) =>
+                new Date(b?.createdAt || 0) - new Date(a?.createdAt || 0)
             )
           : [];
         setReviews(sortedReviews);
@@ -1871,27 +270,195 @@ const addToCart = async (productId, desiredQty = 1) => {
     setSubCategoryName(subCat?.subCategoryName || "N/A");
   }, [product, categoryData]);
 
-useEffect(() => {
-  const anchor = document.getElementById("tabs-start");
-  if (!anchor) return;
+  useEffect(() => {
+    const anchor = document.getElementById("tabs-start");
+    if (!anchor) return;
 
-  const yOffset = -120; 
-  const y = anchor.getBoundingClientRect().top + window.pageYOffset + yOffset;
+    const yOffset = -120;
+    const y = anchor.getBoundingClientRect().top + window.pageYOffset + yOffset;
 
-  setTimeout(() => {
-    window.scrollTo({ top: y, behavior: "smooth" });
-  }, 50);
-}, [activeTab]);
+    setTimeout(() => {
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }, 50);
+  }, [activeTab]);
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (addresses[pinCode]) setAddress(addresses[pinCode]);
+  //   else {
+  //     alert("Invalid PIN code");
+  //     setAddress("");
+  //   }
+  // };
+  //======================================================================================================
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (addresses[pinCode]) setAddress(addresses[pinCode]);
-    else {
-      alert("Invalid PIN code");
-      setAddress("");
-    }
+    await checkPincodeServiceability();
   };
+  
+
+const checkPincodeServiceability = async (pin) => {
+  if (!pin || pin.length !== 6) {
+    toast.warning("Enter a valid 6-digit pincode");
+    return;
+  }
+
+  try {
+    const res = await getAPI(`/api/delhivery/check-pincode/${pin}`);
+    const list = res?.data?.data?.data;
+
+    if (!Array.isArray(list) || list.length === 0) {
+      setNotServiceable(true);
+      setAddress(""); 
+      toast.error("Delivery NOT available");
+      return;
+    }
+
+    const info = list[0];
+
+    const formatted = [info.locality, info.city, info.state, info.pincode]
+      .filter(Boolean)
+      .join(", ");
+
+    setAddress(formatted);
+    setNotServiceable(!info.fm_serviceable);
+
+    if (info.fm_serviceable) {
+      toast.success("Delivery available!");
+    } else {
+      toast.error("Delivery NOT available");
+    }
+
+  } catch (err) {
+    setNotServiceable(true);
+    setAddress("");
+    toast.error("Could not check serviceability");
+  }
+};
+
+
+//   const [pin, setPin] = useState("");
+
+//   return (
+//     <div className="mt-3 w-full">
+
+//       {/* ROW: PINCODE INPUT */}
+//       <div className="flex items-center border-b-2 py-2 w-full">
+//         <MapPin className="text-gray-400 mr-2" />
+
+//         <input
+//           type="text"
+//           maxLength={6}
+//           placeholder="Enter 6-digit Pincode"
+//           value={pin}
+//           onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
+//           onKeyDown={(e) => {
+//             if (e.key === "Enter") {
+//               e.preventDefault();
+//               checkPincode(pin);
+//             }
+//           }}
+//           className="flex-1 bg-transparent outline-none text-gray-700"
+//         />
+
+//         <button
+//           type="button"
+//           onClick={() => checkPincode(pin)}
+//           disabled={pin.length !== 6}
+//           className={`ml-2 px-3 py-1 rounded-md text-sm font-medium ${
+//             pin.length === 6
+//               ? "bg-[#48372D] text-white"
+//               : "bg-gray-300 text-gray-600 cursor-not-allowed"
+//           }`}
+//         >
+//           Check
+//         </button>
+//       </div>
+
+//       {/* MESSAGE */}
+//       {address && (
+//         <p className="text-green-600 text-xs mt-2">
+//             Delivery available to this location
+//         </p>
+//       )}
+
+//       {/* ADDRESS EDITOR */}
+//       {address !== "" && (
+//         <textarea
+//           placeholder="Enter your full address"
+//           value={address}
+//           onChange={(e) => setAddress(e.target.value)}
+//           className="w-full mt-2 border rounded-md p-2 text-sm text-gray-700"
+//           rows={2}
+//         />
+//       )}
+//     </div>
+//   );
+// };
+const PincodeChecker = ({ address, setAddress, checkPincode, notServiceable }) => {
+  const [pin, setPin] = useState("");
+
+  return (
+    <div className="mt-3 w-full">
+
+<div className="relative w-full border-b-2 py-2">
+  <MapPin className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400" />
+
+  <input
+    type="text"
+    maxLength={6}
+    placeholder="Enter 6-digit Pincode"
+    value={pin}
+    onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
+    onKeyDown={(e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        checkPincode(pin);
+      }
+    }}
+    className="w-full pl-6 pr-16 bg-transparent outline-none text-gray-700"
+  />
+
+  <button
+    type="button"
+    onClick={() => checkPincode(pin)}
+    disabled={pin.length !== 6}
+    className={`absolute right-0 top-1/2 -translate-y-1/2 px-3 py-1 text-sm rounded-md font-medium ${
+      pin.length === 6
+        ? "bg-[#48372D] text-white"
+        : "bg-gray-300 text-gray-600 cursor-not-allowed"
+    }`}
+  >
+    Check
+  </button>
+</div>
+
+      {notServiceable === true && (
+        <p className="text-red-600 text-xs mt-2">
+          ✗ Delivery not available to this pincode.
+        </p>
+      )}
+
+      {notServiceable === false && address && (
+        <p className="text-green-600 text-xs mt-2">
+            Delivery available to this location
+        </p>
+      )}
+
+      {(notServiceable !== null) && (
+        <textarea
+          placeholder="Enter your full address"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          className="w-full mt-2 border rounded-md p-2 text-sm text-gray-700"
+          rows={2}
+        />
+      )}
+    </div>
+  );
+};
 
   const calculateDiscount = (sell, market) => {
     if (sell == null || market == null) return 0;
@@ -1899,18 +466,6 @@ useEffect(() => {
     return Math.round(((market - sell) / market) * 100);
   };
 
-  // const productReviews = reviews.filter(
-  //   (r) => String(r.productId?._id) === String(product?._id)
-  // );
-  // const productReviews = reviews.filter((review) => {
-  //   const buyerRequest = review.productId;
-  //   if (!buyerRequest) return false;
-
-  //   const reviewProductName = buyerRequest.ProductName?.trim()?.toLowerCase();
-  //   const currentProductName = product.productName?.trim()?.toLowerCase();
-
-  //   return reviewProductName === currentProductName;
-  // });
 
   const productReviews = useMemo(() => {
     if (!product || !reviews || reviews.length === 0) return [];
@@ -1931,9 +486,11 @@ useEffect(() => {
         return true;
       }
 
-      const buyerRequest = typeof reviewProductId === "object" ? reviewProductId : null;
+      const buyerRequest =
+        typeof reviewProductId === "object" ? reviewProductId : null;
       if (buyerRequest && buyerRequest.ProductName) {
-        const reviewProductName = buyerRequest.ProductName?.trim()?.toLowerCase();
+        const reviewProductName =
+          buyerRequest.ProductName?.trim()?.toLowerCase();
         if (reviewProductName && reviewProductName === currentProductName) {
           return true;
         }
@@ -1987,10 +544,12 @@ useEffect(() => {
       </div>
     );
 
-    const seoTitle = `${product.productName} | Artsays`;
-const seoDesc = product.description?.slice(0, 150) || "Buy exclusive artwork from verified artists.";
-const seoImg = `${imageBaseURL}${product.mainImage}`;
-const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName}, artwork`;
+  const seoTitle = `${product.productName} | Artsays`;
+  const seoDesc =
+    product.description?.slice(0, 150) ||
+    "Buy exclusive artwork from verified artists.";
+  const seoImg = `${imageBaseURL}${product.mainImage}`;
+  const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName}, artwork`;
 
   const discountPercent = calculateDiscount(
     product.sellingPrice,
@@ -2115,7 +674,7 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
             subCategoryName,
             product.productName,
           ]
-            .filter((v) => v && v !== "N/A") 
+            .filter((v) => v && v !== "N/A")
             .join(" / ")}
         </p>
 
@@ -2356,7 +915,7 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
                 </div>
 
                 <div className="flex flex-wrap gap-4 pt-4 justify-between">
-                  <div className="p-2">
+                  {/* <div className="p-2">
                     <img
                       src="/herosectionimg/free delivery.png"
                       alt="free"
@@ -2365,7 +924,36 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
                     <p className="text-dark text-center text-xs mt-2">
                       Free Delivery
                     </p>
-                  </div>
+                  </div> */}
+                  <div className="p-2">
+    {product.shippingCharges > 0 ? (
+      <>
+        <div className="flex flex-col items-center">
+          <span className="text-xl font-bold">₹{product.shippingCharges}</span>
+          <span className="text-dark text-center text-xs">Shipping</span>
+          {product.estimatedDelivery && (
+            <span className="text-xs text-gray-500 mt-1">
+              {product.estimatedDelivery} days
+            </span>
+          )}
+        </div>
+      </>
+    ) : (
+      <>
+        <img
+          src="/herosectionimg/free delivery.png"
+          alt="free delivery"
+          className="w-full h-10 object-contain"
+        />
+        <p className="text-dark text-center text-xs mt-2">Free Delivery</p>
+        {product.estimatedDelivery && (
+          <span className="block text-xs text-gray-500">
+            {product.estimatedDelivery} days
+          </span>
+        )}
+      </>
+    )}
+  </div>
 
                   {product.editionType?.toLowerCase().includes("limited") && (
                     <div className="p-2">
@@ -2605,7 +1193,7 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
 
             {/* Tabs (left column area) */}
             {/* <div className="mt-12 border-b"> */}
-              {/* <div className="flex gap-8 text-[#48372D] font-medium text-lg border-b border-gray-200 overflow-x-auto no-scrollbar">
+            {/* <div className="flex gap-8 text-[#48372D] font-medium text-lg border-b border-gray-200 overflow-x-auto no-scrollbar">
                 {["description", "details", "artist", "reviews"].map((tab) => (
                   <button
                     key={tab}
@@ -2622,31 +1210,30 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
                   </button>
                 ))}
               </div> */}
-{/* Tabs (left column area) */}
-<div id="tabs-start" className="mt-12 border-b">
-  <div className="flex gap-8 text-[#48372D] font-medium text-lg border-b border-gray-200 overflow-x-auto no-scrollbar">
-    {["description", "details", "artist", "reviews"].map((tab) => (
-      <button
-        key={tab}
-        onClick={() => {
-          setActiveTab(tab);
-        }}
-        className={`pb-2 flex-shrink-0 transition-all duration-200 whitespace-nowrap ${
-          activeTab === tab
-            ? "border-b-4 border-[#48372D] font-semibold text-[#48372D]"
-            : "font-semibold text-[#48372D]"
-        }`}
-      >
-        {tab.charAt(0).toUpperCase() + tab.slice(1)}
-      </button>
-    
+            {/* Tabs (left column area) */}
+            <div id="tabs-start" className="mt-12 border-b">
+              <div className="flex gap-8 text-[#48372D] font-medium text-lg border-b border-gray-200 overflow-x-auto no-scrollbar">
+                {["description", "details", "artist", "reviews"].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => {
+                      setActiveTab(tab);
+                    }}
+                    className={`pb-2 flex-shrink-0 transition-all duration-200 whitespace-nowrap ${
+                      activeTab === tab
+                        ? "border-b-4 border-[#48372D] font-semibold text-[#48372D]"
+                        : "font-semibold text-[#48372D]"
+                    }`}
+                  >
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  </button>
+                ))}
+              </div>
 
-    ))}
-  </div>
-
-              <div 
-              ref={tabRef}
-              className="py-6 text-gray-700 leading-relaxed text-sm whitespace-pre-wrap break-words w-full">
+              <div
+                ref={tabRef}
+                className="py-6 text-gray-700 leading-relaxed text-sm whitespace-pre-wrap break-words w-full"
+              >
                 {activeTab === "description" && (
                   <p>{product.description || "No description available."}</p>
                 )}
@@ -3114,7 +1701,6 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
             </div>
           </div>
 
-          {/* RIGHT: Product Price Card (2 cols) */}
           <div className="col-span-2 d-none d-md-block">
             <div className="sticky top-10">
               <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg border border-dark px-3 py-3">
@@ -3140,7 +1726,7 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
                   </span>
                 </p>
 
-                <div className="max-w-md mt-3">
+                {/* <div className="max-w-md mt-3">
                   {!address ? (
                     <form onSubmit={handleSubmit} className="relative w-full">
                       <MapPin className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
@@ -3164,7 +1750,108 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
                       <p>{address}</p>
                     </div>
                   )}
-                </div>
+                </div> */}
+
+                {/* <div className="max-w-md mt-3">
+                  {!address ? (
+                    <>
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          handleSubmit(e);
+                        }}
+                        className="relative w-full"
+                        autoComplete="off"
+                      >
+                        <MapPin className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
+
+                        <input
+                          type="text"
+                          placeholder="Enter Pin Code"
+                          value={pinCode}
+                          onChange={(e) => setPinCode(e.target.value)}
+                          className="w-full !border-b-2 py-2 pl-6 pr-10 text-gray-400 placeholder-dark-400 focus:outline-none"
+                        />
+
+                        <button
+                          type="submit"
+                          className="absolute right-1 top-1/2 -translate-y-1/2 text-gray-400"
+                        >
+                          <ArrowRight size={20} />
+                        </button>
+                      </form>
+
+                      {address && (
+                        <p className="text-green-600 text-xs mt-2">
+                            Delivery available to {address}
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <div className="flex items-start gap-2 mt-2 text-sm text-dark">
+                      <MapPin className="text-dark text-xl" />
+                      <p>{address}</p>
+                    </div>
+                  )}
+                </div> */}
+{/* <div className="max-w-md mt-3">
+
+  <div className="relative w-full flex items-center gap-2">
+
+    <MapPin className="text-gray-400 text-lg" />
+
+    <input
+      type="text"
+      maxLength={6}
+      placeholder="Enter 6-digit Pincode"
+      value={pinCode}
+      onChange={(e) => {
+        const onlyNums = e.target.value.replace(/\D/g, ""); 
+        setPinCode(onlyNums);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          checkPincodeServiceability();
+        }
+      }}
+      className="flex-1 border-b-2 py-2 text-gray-700 focus:outline-none"
+    />
+
+    <button
+      type="button"
+      onClick={checkPincodeServiceability}
+      disabled={pinCode.length !== 6}
+      className={`px-3 py-1 rounded-md text-sm font-medium ${
+        pinCode.length === 6 
+          ? "bg-[#48372D] text-white" 
+          : "bg-gray-300 text-gray-600 cursor-not-allowed"
+      }`}
+    >
+      Check
+    </button>
+  </div>
+
+  {address && (
+    <p className="text-green-600 text-xs mt-2">
+        Delivery available to {address}
+    </p>
+  )}
+
+  {address === "" && pinCode.length === 6 && (
+    <p className="text-red-600 text-xs mt-2">
+      ✗ Not serviceable to this pincode
+    </p>
+  )}
+
+</div> */}
+<PincodeChecker 
+  address={address}
+  setAddress={setAddress}
+  checkPincode={checkPincodeServiceability}
+  notServiceable={notServiceable}
+/>
+
 
                 <div className="mt-2">
                   <p className="text-green-600 font-semibold">In Stock</p>
@@ -3257,17 +1944,21 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
 
                 <div className="mt-3 flex flex-col gap-3">
                   <button
-                   onClick={(e) => {
-                          e.stopPropagation();
-                           if (!ensureBuyer()) return;
-                          addToCart(product._id, quantity);
-                        }}
-                   disabled={!product.quantity || product.quantity === 0}
-                   className={`flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart ${(!product.quantity || product.quantity === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (!ensureBuyer()) return;
+                      addToCart(product._id, quantity);
+                    }}
+                    disabled={!product.quantity || product.quantity === 0}
+                    className={`flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart ${
+                      !product.quantity || product.quantity === 0
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }`}
                   >
                     <ShoppingCart size={18} /> Add to Cart
                   </button>
-                  {(!product.quantity || product.quantity === 0) ? (
+                  {!product.quantity || product.quantity === 0 ? (
                     <button
                       disabled
                       className="flex items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-gray-500 text-white py-2 font-semibold buy-now cursor-not-allowed"
@@ -3278,7 +1969,7 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
                     <button
                       className="flex items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-red-500 text-white py-2 font-semibold buy-now"
                       onClick={() => {
-                         if (!ensureBuyer()) return;
+                        if (!ensureBuyer()) return;
                         navigate(
                           `/my-account/check-out/${userId}?productId=${product._id}&quantity=${quantity}`
                         );
@@ -3298,47 +1989,46 @@ const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName
 
   //return <ProductImages imagesProp={images} initialImage={images[0]} />;
   return (
-  <>
-    <Helmet>
-      <title>{product.productName} | Artsays</title>
+    <>
+      <Helmet>
+        <title>{product.productName} | Artsays</title>
 
-      <meta name="title" content={product.productName} />
-      <meta name="description" content={product.description?.slice(0, 150)} />
-      <meta
-        name="keywords"
-        content={`${product.productName}, ${mainCategoryName}, ${categoryName}, artwork`}
-      />
+        <meta name="title" content={product.productName} />
+        <meta name="description" content={product.description?.slice(0, 150)} />
+        <meta
+          name="keywords"
+          content={`${product.productName}, ${mainCategoryName}, ${categoryName}, artwork`}
+        />
 
-      {/* Open Graph */}
-      <meta property="og:type" content="product" />
-      <meta property="og:title" content={product.productName} />
-      <meta
-        property="og:description"
-        content={product.description?.slice(0, 150)}
-      />
-      <meta
-        property="og:image"
-        content={`${imageBaseURL}${product.mainImage}`}
-      />
-      <meta property="og:url" content={window.location.href} />
+        {/* Open Graph */}
+        <meta property="og:type" content="product" />
+        <meta property="og:title" content={product.productName} />
+        <meta
+          property="og:description"
+          content={product.description?.slice(0, 150)}
+        />
+        <meta
+          property="og:image"
+          content={`${imageBaseURL}${product.mainImage}`}
+        />
+        <meta property="og:url" content={window.location.href} />
 
-      {/* Twitter */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={product.productName} />
-      <meta
-        name="twitter:description"
-        content={product.description?.slice(0, 150)}
-      />
-      <meta
-        name="twitter:image"
-        content={`${imageBaseURL}${product.mainImage}`}
-      />
-    </Helmet>
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={product.productName} />
+        <meta
+          name="twitter:description"
+          content={product.description?.slice(0, 150)}
+        />
+        <meta
+          name="twitter:image"
+          content={`${imageBaseURL}${product.mainImage}`}
+        />
+      </Helmet>
 
-    <ProductImages imagesProp={images} initialImage={images[0]} />
-  </>
-);
-
+      <ProductImages imagesProp={images} initialImage={images[0]} />
+    </>
+  );
 };
 
 export default ProductDetails;
