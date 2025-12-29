@@ -3,6 +3,7 @@ import "./Side-post-sugg.css";
 import { Link, useLocation } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
+import MediaSideBarSkele from "../../Skeleton/Home/Account/MediaSideBarSkele";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -13,6 +14,17 @@ const Sidebar = () => {
   const [user, setUser] = useState({});
   const createRef = useRef(null);
   const userId = localStorage.getItem("userId");
+  const username = localStorage.getItem("username");
+  const firstName = localStorage.getItem("firstName");
+  const lastName = localStorage.getItem("lastName");
+  const [loading, setLoading] = useState(true);
+
+const hasValidUsername =
+  typeof username === "string" &&
+  username.trim() !== "" &&
+  username !== "undefined" &&
+  username !== "null";
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -28,60 +40,60 @@ const Sidebar = () => {
   }, []);
 
   const items = [
-    { key: "home", icon: "house-fill", label: "Home", link: "/social-media/" },
+    { key: "home", icon: "house-fill", label: "Home", link: "/artsays-community/" },
     {
       key: "search",
       icon: "search",
       label: "Search",
-      link: "/social-media/search",
+      link: "/artsays-community/search",
     },
     {
       key: "explore",
       icon: "compass",
       label: "Explore",
-      link: "/social-media/explore",
+      link: "/artsays-community/explore",
     },
     {
       key: "notification",
       icon: "bell",
       label: "Notification",
-      link: "/social-media/notification",
+      link: "/artsays-community/notification",
     },
     {
       key: "create",
       icon: "plus-square",
       label: "Create",
-      link: "/social-media/create-post",
+      link: "/artsays-community/create-post",
     },
     {
       key: "live",
       icon: "broadcast-pin",
       label: "Live",
-      link: "/social-media/create-live",
+      link: "/artsays-community/create-live",
     },
     {
       key: "profile",
       icon: "person",
       label: "Profile",
-      link: "/social-media/profile",
+      link: `/artsays-community/profile/${hasValidUsername? `${username}`:`${firstName}_${lastName}_${userId}`}`,
     },
     {
       key: "saved",
       icon: "bookmark",
       label: "Saved",
-      link: "/social-media/saved",
+      link: "/artsays-community/saved",
     },
     {
       key: "settings",
       icon: "gear",
       label: "Settings",
-      link: "/social-media/setting",
+      link: "/artsays-community/setting",
     },
     {
       key: "logout",
       icon: "box-arrow-left",
       label: "Logout",
-      link: "/social-media/logout",
+      link: "/artsays-community/logout",
     },
   ];
 
@@ -102,6 +114,7 @@ const Sidebar = () => {
     fetchUserData();
   }, [userId]);
 
+  if(loading)return <MediaSideBarSkele/>
   return (
     <>
       {/* Sidebar */}
@@ -172,7 +185,7 @@ const Sidebar = () => {
             </div>
             {showCreate && (
               <div className="create-options-s flex" ref={createRef}>
-                <Link to="/social-media/create-post">
+                <Link to="/artsays-community/create-post">
                   <div
                     className="create-option-s"
                     onClick={() => console.log("Post")}
@@ -181,7 +194,7 @@ const Sidebar = () => {
                     <span>Post</span>
                   </div>
                 </Link>
-                <Link to="/social-media/create-live">
+                <Link to="/artsays-community/create-live">
                   <div
                     className="create-option-s"
                     onClick={() => console.log("Live")}

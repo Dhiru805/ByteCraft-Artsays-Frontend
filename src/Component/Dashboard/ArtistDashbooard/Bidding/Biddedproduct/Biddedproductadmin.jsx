@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode";
 
 
 const BiddedProduct = () => {
@@ -13,6 +14,20 @@ const BiddedProduct = () => {
     
 
     const navigate = useNavigate();
+const [artistId, setArtistId] = useState(null);
+
+useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+        try {
+            const decoded = jwtDecode(token);
+            setArtistId(decoded.userId);
+        } catch (e) {
+            console.error("Token decode failed:", e);
+        }
+    }
+}, []);
 
     // useEffect(() => {
     //     const fetchProducts = async () => {
@@ -33,6 +48,64 @@ const BiddedProduct = () => {
 
     //     fetchProducts();
     // }, []);
+// useEffect(() => {
+//     if (!artistId) return;
+
+//     const fetchData = async () => {
+//         try {
+//             const result = await getAPI(
+//                 `/api/artist-bidded-products/${artistId}`,
+//                 {},
+//                 true,
+//                 false
+//             );
+
+//             console.log("Artist Bidded Products:", result.data);
+
+//             if (result?.data?.data && Array.isArray(result.data.data)) {
+//                 setProducts(result.data.data);
+//             } else {
+//                 console.error("Invalid format:", result);
+//                 setProducts([]);
+//             }
+//         } catch (error) {
+//             console.error("Error fetching artist bidded products:", error);
+//             setProducts([]);
+//         }
+//     };
+
+//     fetchData();
+// }, [artistId]);
+useEffect(() => {
+  const fetchBiddedProducts = async () => {
+    try {
+      console.log("🔥 Fetching artist bidded products with ID:", artistId);
+
+      const response = await getAPI(
+        `/api/artist-bidded-products/${artistId}`,
+        {},
+        true,
+        false
+      );
+
+      console.log("🔥 API FULL RESPONSE:", response);
+
+      if (response?.data?.data && Array.isArray(response.data.data)) {
+        console.log("🔥 Setting products:", response.data.data);
+        setProducts(response.data.data);
+      } else {
+        console.log("❌ API returned unexpected format:", response);
+        setProducts([]);
+      }
+    } catch (error) {
+      console.log("❌ Fetch Error:", error);
+      setProducts([]);
+    }
+  };
+
+  if (artistId) fetchBiddedProducts();
+}, [artistId]);
+
 
     const handlePrevious = () => {
         if (currentPage > 1) {
@@ -51,10 +124,17 @@ const BiddedProduct = () => {
         setCurrentPage(1);
     };
 
- const filteredProducts = products.filter(product =>
-        product?.buyer?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product?.buyer?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+//  const filteredProducts = products.filter(product =>
+//         product?.buyer?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//         product?.buyer?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
+//     );
+
+const filteredProducts = products.filter(item =>
+  item.product?.productName
+    ?.toLowerCase()
+    .includes(searchTerm.toLowerCase())
+);
+
 
     const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
@@ -129,7 +209,7 @@ const BiddedProduct = () => {
                                             <th>Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    {/* <tbody>
                                         {paginatedProducts.length === 0 ? (
                                             <tr>
                                                 <td colSpan="6" className="text-center">
@@ -186,7 +266,62 @@ const BiddedProduct = () => {
                                                 );
                                             })
                                         )}
-                                    </tbody>
+                                    </tbody> */}
+
+                                    <tbody>
+  {paginatedProducts.length === 0 ? (
+    <tr>
+      <td colSpan="6" className="text-center">No data available</td>
+    </tr>
+  ) : (
+    paginatedProducts.map((item, index) => {
+      const product = item.product;
+
+      return (
+        <tr key={item.bidId}>
+          <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+
+          <td>{item.assignedWinners?.[0]?.name || "No Buyer Yet"}</td>
+
+          <td>
+            <img
+              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${product.mainImage}`}
+              className="rounded-circle avatar"
+              alt=""
+              style={{
+                width: "30px",
+                height: "30px",
+                objectFit: "cover",
+                marginRight: "10px",
+              }}
+            />
+            {product.productName}
+          </td>
+
+          <td>
+            {item.assignedWinners?.length
+              ? item.assignedWinners[0].amount
+              : "No Bids"}
+          </td>
+
+          <td>{new Date(item.createdAt).toLocaleDateString()}</td>
+
+          <td>
+            <button
+              className="btn btn-sm btn-outline-info mr-2"
+              onClick={() =>
+                navigate(`/artist/product-fetch-view-artist/${product.id}`)
+              }
+            >
+              <i className="fa fa-eye"></i>
+            </button>
+          </td>
+        </tr>
+      );
+    })
+  )}
+</tbody>
+
                                 </table>
                             </div>
                             <div className="pagination d-flex justify-content-between mt-4">

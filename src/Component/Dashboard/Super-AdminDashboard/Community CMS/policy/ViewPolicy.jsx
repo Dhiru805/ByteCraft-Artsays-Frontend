@@ -57,7 +57,7 @@ const ViewPolicy = () => {
           </div>
 
           <div>
-            <h6 className="text-muted">Created At</h6>
+            <h6 className="text-muted">Created At</h6> 
             <p className="mb-0">
               {new Date(policy.createdAt).toLocaleString()}
             </p>

@@ -347,7 +347,7 @@ const NotificationAndPreferences = () => {
   };
 
   return (
-    <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 text-gray-800 text-[16px] space-y-6">
+    <div className="w-full space-y-6">
       <h2 className="text-2xl font-semibold text-gray-950">Notification and Preferences</h2>
 
       {/* Search Category */}

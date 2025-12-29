@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const Transaction = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
-
+const[loading,setLoading]=useState(false);
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -17,6 +18,7 @@ const Transaction = () => {
 
     useEffect(() => {
         const fetchProducts = async () => {
+            setLoading(true)
             try {
                 const result = await getAPI("/api/gettransactionseller", {}, true, false);
                 console.log("Full API Response:", result);
@@ -32,6 +34,8 @@ const Transaction = () => {
             } catch (error) {
                 console.error("Error fetching products:", error);
                 setProducts([]);
+            }finally{
+                setLoading(false)
             }
         };
 
@@ -62,7 +66,7 @@ const Transaction = () => {
         setCurrentPage(1);
     };
 
-
+if(loading) return <ProductRequestSkeleton/> 
     return (
         <div className="container-fluid">
             <div className="block-header">

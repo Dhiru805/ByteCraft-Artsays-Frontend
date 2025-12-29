@@ -19,11 +19,12 @@ const Explorebar = () => {
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
   const [reportSuccess, setReportSuccess] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const menuRef = useRef(null);
   const Navigate = useNavigate();
 
   useEffect(() => {
+    setLoading(true);
     const fetchPosts = async () => {
       try {
         const res = await getAPI(
@@ -34,6 +35,8 @@ const Explorebar = () => {
         console.log("Fetched posts:", res.data.posts);
       } catch (err) {
         console.error("Error fetching posts:", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchPosts();
@@ -60,11 +63,7 @@ const Explorebar = () => {
 
       // update `isSaved` flag directly
       setPosts((prev) =>
-        prev.map((p) =>
-          p._id === postId
-            ? { ...p, isSaved: !p.isSaved } 
-            : p
-        )
+        prev.map((p) => (p._id === postId ? { ...p, isSaved: !p.isSaved } : p))
       );
     } catch (err) {
       console.error("Error saving/unsaving:", err);
@@ -126,7 +125,7 @@ const Explorebar = () => {
 
         // ✅ Redirect user if blocked
         if (res.data.isBlocked) {
-          Navigate("/social-media/");
+          Navigate("/artsays-community/");
         }
       }
     } catch (err) {
@@ -134,6 +133,21 @@ const Explorebar = () => {
     }
   };
 
+   function fallbackCopyText(text) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+  }
+
+if(loading){
+  return ExploreSkeleton()
+}
   return (
     <div className="lg:w-[56%] w-full max-w-6xl mx-auto flex flex-col lg:mt-6 lg:px-4 pt-2">
       {/* Masonry Grid */}
@@ -143,7 +157,7 @@ const Explorebar = () => {
             key={art._id}
             className="relative break-inside-avoid rounded-xl overflow-hidden shadow"
           >
-            <Link to={`/social-media/single-post/${art._id}`} >
+            <Link to={`/artsays-community/single-post/${art._id}`}>
               {/* Post Image */}
               <img
                 src={
@@ -243,9 +257,16 @@ const Explorebar = () => {
             <button
               className="w-full py-2 bg-gray-200 text-gray-800 rounded-lg mb-2"
               onClick={() => {
-                const link = `${window.location.origin}/social-media/sharepost/${sharePost}`;
-                navigator.clipboard.writeText(link);
-                setCopyMsg("Link copied!");
+                const link = `${window.location.origin}/artsays-community/sharepost/${sharePost}`;
+                if (navigator.clipboard && window.isSecureContext) {
+                  navigator.clipboard
+                    .writeText(link)
+                    .then(() => setCopyMsg("Link copied!"))
+                    .catch(() => fallbackCopyText(link));
+                } else {
+                  fallbackCopyText(link);
+                }
+
                 setTimeout(() => setCopyMsg(""), 2000);
               }}
             >
@@ -262,9 +283,9 @@ const Explorebar = () => {
       )}
       {reportPopupOpen && (
         <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
-          <div className="bg-white rounded-xl shadow-lg w-[400px] max-w-full p-5">
+          <div className="bg-white rounded-xl shadow-lg w-[400px] max-w-full p-4">
             {/* Header */}
-            <div className="flex justify-between items-center border-b pb-3 mb-4">
+            <div className="flex justify-between items-center border-b pb-3 mb-2">
               <h2 className="text-lg font-semibold text-gray-800">
                 Report @{reportedUser?.username}
               </h2>
@@ -277,13 +298,13 @@ const Explorebar = () => {
             </div>
 
             {/* Subtitle */}
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-600 mb-2">
               Why are you reporting this post?
             </p>
 
             {/* Report Form */}
-            <form onSubmit={handleSubmit} className="space-y-3">
-              <div className="space-y-2">
+            <form onSubmit={handleSubmit} className="space-y-1">
+              <div className="space-y-1">
                 {[
                   "I just don't like it",
                   "Bullying or unwanted contact",
@@ -317,7 +338,7 @@ const Explorebar = () => {
 
               {/* Description */}
               {selectedReason && (
-                <div className="mt-3">
+                <div className="mt-1" style={{ maxHeight: "10vh", overflowY: "auto" }} >
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     {selectedReason === "Other"
                       ? "Describe the issue (required)"
@@ -328,7 +349,7 @@ const Explorebar = () => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Add more details..."
-                    className={`w-full p-2 border rounded-lg focus:ring-2 focus:outline-none text-sm ${
+                    className={`w-full  border h-7 rounded-lg focus:ring-2 focus:outline-none text-sm ${
                       error
                         ? "border-red-500 focus:ring-red-500"
                         : "border-gray-300 focus:ring-red-500"
@@ -341,7 +362,7 @@ const Explorebar = () => {
               )}
 
               {/* Actions */}
-              <div className="flex justify-end gap-3 mt-4">
+              <div className="flex justify-end gap-3 ">
                 <button
                   type="button"
                   onClick={() => setReportPopupOpen(false)}
@@ -427,3 +448,26 @@ export default Explorebar;
 const Portal = ({ children }) => {
   return createPortal(children, document.body);
 };
+const ExploreSkeleton = () => {
+  return (
+    <div className="w-full min-h-screen p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-pulse">
+      {Array.from({ length: 12 }).map((_, i) => (
+        <div
+          key={i}
+          className="w-full h-44 bg-gray-300 rounded-xl relative overflow-hidden"
+        >
+          {/* Top left username bar */}
+          <div className="absolute top-2 left-2 h-4 w-24 bg-gray-400 rounded"></div>
+
+          {/* Three dots right side */}
+          <div className="absolute top-2 right-2 flex gap-1">
+            <div className="h-2 w-2 bg-gray-400 rounded-full"></div>
+            <div className="h-2 w-2 bg-gray-400 rounded-full"></div>
+            <div className="h-2 w-2 bg-gray-400 rounded-full"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+

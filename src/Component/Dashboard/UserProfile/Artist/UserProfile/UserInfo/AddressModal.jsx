@@ -185,7 +185,7 @@ const AddressModal = ({ isOpen, onClose,userId,fetchProfile}) => {
         { addressId, isDefault: true, userId },
         true,
         false
-      );
+      )
       if (!response.hasError) {
         await fetchDefaultAddress();
         await fetchProfile();
@@ -202,6 +202,7 @@ const AddressModal = ({ isOpen, onClose,userId,fetchProfile}) => {
       }
     } catch (err) {
       setError('Failed to set default address.');
+
     } finally {
       setLoading(false);
     }

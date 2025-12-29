@@ -80,7 +80,7 @@ const AccountSecurityAgreements = () => {
   };
 
   return (
-  <form onSubmit={handleSubmit} className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 space-y-6 text-gray-800">
+  <form onSubmit={handleSubmit} className="w-full">
     <h2 className="text-2xl font-semibold text-gray-950">Account Security and Agreements</h2>
 
     <ul className="space-y-4 text-[16px] font-medium">

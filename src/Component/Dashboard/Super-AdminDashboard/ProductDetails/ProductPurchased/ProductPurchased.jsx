@@ -3,13 +3,14 @@ import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
 import { jwtDecode } from 'jwt-decode';
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const ProductRequest = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
-
+    const [loading, setLoading] = useState(false);
 
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
@@ -36,30 +37,64 @@ const ProductRequest = () => {
         }
     }, []);
 
+    //     useEffect(() => {
+    //         if (!userId) return;
+    //         const fetchProducts = async () => {
+    //             try {
+    //                 const result = await getAPI(`/api/getallpurchasedproduct/${encodeURIComponent(userId)}`, {}, true, false);
+    //                 console.log("Full API Response:", result);
+    //                 console.log("Data Type:", typeof result.data);
+
+    //                 // if (result && result.data && Array.isArray(result.data.purchases)) {
+    //                 //     setProducts(result.data.purchases);
+    //                 // } else {
+    //                 //     console.error("API response does not contain an array:", result.data);
+    //                 //     setProducts([]);
+    //                 // }
+    // const purchasedArray = result?.data?.data;
+
+    // if (Array.isArray(purchasedArray)) {
+    //     setProducts(purchasedArray);
+    // } else {
+    //     console.error("API response does not contain a valid array:", result.data);
+    //     setProducts([]);
+    // }
+
+    //             } catch (error) {
+    //                 console.error("Error fetching products:", error);
+    //                 setProducts([]);
+    //             }
+    //         };
+
+    //         fetchProducts();
+    //     }, [userId]);
+
     useEffect(() => {
-        if (!userId) return;
         const fetchProducts = async () => {
             try {
-                const result = await getAPI(`/api/getallpurchasedproduct/${encodeURIComponent(userId)}`, {}, true, false);
-                console.log("Full API Response:", result);
-                console.log("Data Type:", typeof result.data);
+                const result = await getAPI(`/api/purchased-products`, {}, true, false);
 
-                if (result && result.data && Array.isArray(result.data.purchases)) {
-                    setProducts(result.data.purchases);
+                console.log("Purchased Products Response:", result);
+
+                const purchasedArray = result?.data?.data; // <-- your controller returns data: purchasedProducts
+
+                if (Array.isArray(purchasedArray)) {
+                    setProducts(purchasedArray);
                 } else {
-                    console.error("API response does not contain an array:", result.data);
+                    console.error("Invalid purchased product response:", result.data);
                     setProducts([]);
                 }
 
             } catch (error) {
-                console.error("Error fetching products:", error);
+                console.error("Error fetching purchased products:", error);
                 setProducts([]);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchProducts();
-    }, [userId]);
-
+    }, []);
 
 
 
@@ -97,7 +132,7 @@ const ProductRequest = () => {
     };
 
 
-
+    if (loading) return <ProductRequestSkeleton />
     return (
         <div className="container-fluid">
             <div className="block-header">
@@ -176,52 +211,92 @@ const ProductRequest = () => {
                                     </thead>
                                     <tbody>
                                         {displayedProducts.map((product, index) => {
-                                            const productData = product.product || product.resellProduct;
+                                            console.log("PURCHASE ENTRY:", product);
+                                            const productData = product?.product || product?.resellProduct || {};
+
                                             return (
-                                                <tr key={product._id}>
+                                                // <tr key={product._id}>
+                                                //     <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
+                                                //     <td>{product.buyer.name} {product.buyer.lastName}</td>
+                                                //     <td>
+                                                //         {productData ? (
+                                                //             <>
+                                                //                 <img
+                                                //                     src={productData.mainImage || 'default-image-url.jpg'}
+                                                //                     className="rounded-circle avatar"
+                                                //                     alt=""
+                                                //                     style={{
+                                                //                         width: '30px',
+                                                //                         height: '30px',
+                                                //                         objectFit: 'cover',
+                                                //                         marginRight: '10px'
+                                                //                     }}
+                                                //                 />
+                                                //                 {productData.productName}
+                                                //             </>
+                                                //         ) : (
+                                                //             "No Product Data"
+                                                //         )}
+                                                //     </td>
+                                                //     <td>
+                                                //         {productData
+                                                //             ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' })
+                                                //                 .format(productData.price)
+                                                //                 .replace(/\.00$/, '')
+                                                //             : 'N/A'}
+                                                //     </td>
+                                                //     <td>{product.quantity}</td>
+                                                //     <td>{product.paymentMethod}</td>
+                                                //     <td>
+                                                //         {new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                                //     </td>
+                                                //     <td>
+                                                //         {productData && (
+                                                //             <button className="btn btn-sm btn-outline-info mr-2"
+                                                //                 onClick={() => navigate(`/${userType}/Dashboard/productpurchased/productview/${product._id}`)}>
+                                                //                 <i className="fa fa-eye"></i>
+                                                //             </button>
+                                                //         )}
+                                                //     </td>
+                                                // </tr>
+                                                <tr key={index}>
                                                     <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
-                                                    <td>{product.buyer.name} {product.buyer.lastName}</td>
+
+                                                    <td>{product.buyerName}</td>
+
                                                     <td>
-                                                        {productData ? (
-                                                            <>
-                                                                <img
-                                                                    src={productData.mainImage || 'default-image-url.jpg'}
-                                                                    className="rounded-circle avatar"
-                                                                    alt=""
-                                                                    style={{
-                                                                        width: '30px',
-                                                                        height: '30px',
-                                                                        objectFit: 'cover',
-                                                                        marginRight: '10px'
-                                                                    }}
-                                                                />
-                                                                {productData.productName}
-                                                            </>
-                                                        ) : (
-                                                            "No Product Data"
-                                                        )}
+                                                        <img
+                                                            src={`${BASE_URL}${product.productImage}`}
+                                                            className="rounded-circle avatar"
+                                                            style={{ width: "30px", height: "30px", marginRight: "10px", objectFit: "cover" }}
+                                                        />
+                                                        {product.productName}
                                                     </td>
+
                                                     <td>
-                                                        {productData
-                                                            ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' })
-                                                                .format(productData.price)
-                                                                .replace(/\.00$/, '')
-                                                            : 'N/A'}
+                                                        {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" })
+                                                            .format(product.sellingPrice)
+                                                            .replace(/\.00$/, "")}
                                                     </td>
-                                                    <td>{product.quantity}</td>
-                                                    <td>{product.paymentMethod}</td>
+
+                                                    <td>{product.quantityPurchased}</td>
+
+                                                    <td>{product.paymentMethod || "N/A"}</td>
+
+
+                                                    <td>{new Date(product.purchaseDate).toLocaleDateString("en-IN")}</td>
+
                                                     <td>
-                                                        {new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
-                                                    </td>
-                                                    <td>
-                                                        {productData && (
-                                                            <button className="btn btn-sm btn-outline-info mr-2"
-                                                                onClick={() => navigate(`/${userType}/Dashboard/productpurchased/productview/${product._id}`)}>
-                                                                <i className="fa fa-eye"></i>
-                                                            </button>
-                                                        )}
+                                                        <button
+                                                            className="btn btn-sm btn-outline-info"
+                                                            // onClick={() => navigate(`/${userType}/Dashboard/productpurchased/productview/${product.orderId}`)}
+                                                            onClick={() => navigate(`/super-admin/product-fetch-view/${product.productId}`)}
+                                                        >
+                                                            <i className="fa fa-eye"></i>
+                                                        </button>
                                                     </td>
                                                 </tr>
+
                                             );
                                         })}
                                     </tbody>

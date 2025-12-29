@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import getAPI from "../../../api/getAPI";
 import { timeAgo } from "../../../utils/TimeAgo";
 import postAPI from "../../../api/postAPI";
@@ -32,10 +32,40 @@ const SharePost = () => {
   const [description, setDescription] = useState("");
   const [reportSuccess, setReportSuccess] = useState(false);
   const [copyMsg, setCopyMsg] = useState("");
-
+  const [showCollaborators, setShowCollaborators] = useState(false);
+  const [allCollaboraters, setAllCollaboraters] = useState([]);
+  const [profile, setProfile] = useState({});
+const[loading,setLoading]=useState(true);
+  // 
   const { postId } = useParams();
   const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
+  const isMobile = window.innerWidth < 1024; // Tailwind lg breakpoint
+
+  const postRef = useRef();
+  const collabRef = useRef();
+  const commentRef = useRef();
+  const activePostRef = useRef();
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (!isMobile) {
+        if (postRef.current && !postRef.current.contains(event.target)) {
+          setActiveIndex(null);
+        }
+      }
+
+      if (collabRef.current && !collabRef.current.contains(event.current)) {
+        setShowCollaborators(false);
+        setAllCollaboraters([]);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [activeIndex, showCollaborators]);
+
   useEffect(() => {
     const fetchSinglePostData = async () => {
       try {
@@ -49,11 +79,12 @@ const SharePost = () => {
       } catch (error) {
         console.error("Error fetching share post data:", error);
         toast.error(error.response.data.message || "Error fetching post data");
+      }finally{
+        setLoading(false)
       }
     };
     fetchSinglePostData();
   }, [postId]);
-
   const handleLike = async (postId) => {
     try {
       await postAPI(
@@ -174,11 +205,32 @@ const SharePost = () => {
     }
   };
 
+  // Fetch profile
+  useEffect(() => {
+    try {
+      const fetchProfile = async () => {
+        const res = await getAPI(
+          `/api/social-media/profile/${userId}`,
+          {},
+          false,
+          true
+        );
+        setProfile(res?.data?.profile);
+      };
+      if (userId) fetchProfile();
+    } catch (error) {
+      console.error("profile fetching error", error);
+    }
+  }, [userId]);
   //  Navigate to profile
   const goToProfile = (profileUserId) => {
-    navigate("/social-media/profile", {
-      state: { userId: profileUserId },
-    });
+    navigate(
+      `/artsays-community/profile/${
+        sharePostData?.user?.username
+          ? `${sharePostData?.user?.username}`
+          : `${sharePostData?.user?.name}_${sharePostData?.user?.lastName}_${profileUserId}`
+      }`,{state:{userId:profileUserId}}
+    );
   };
 
   const handleInputChange = (e) => {
@@ -309,13 +361,38 @@ const SharePost = () => {
 
         // ✅ Redirect user if blocked
         if (res.data.isBlocked) {
-          navigate("/social-media/");
+          navigate("/artsays-community/");
         }
       }
     } catch (err) {
       console.error("Error blocking/unblocking user:", err);
     }
   };
+
+  //  find post's collaboration with userId
+  const isPostCollaborateWithUserId = (post) => {
+    return post?.collaborators?.some(
+      (user) => user._id === userId && post.user._id !== userId
+    );
+  };
+  const fetchAllCollaborators = (post) => {
+    const collaboraters = post.collaborators || [];
+    setAllCollaboraters(collaboraters);
+  };
+
+  // copy the profile link
+  function fallbackCopyText(text) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+  }
+  if(loading)return <LoadingSkeleton/>
   return (
     <>
       {sharePostData && (
@@ -373,16 +450,11 @@ const SharePost = () => {
                   <div>
                     {/* for big screen */}
                     <div className="hidden lg:flex fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
-                      {/* Close Button */}
-                      <button
-                        className="absolute lg:top-20 top-10 lg:right-40 right-10 text-4xl font-bold z-50"
-                        onClick={() => setActiveIndex(false)}
-                      >
-                        <i className="ri-close-line text-black"></i>
-                      </button>
-
                       {/* Popup Layout */}
-                      <div className="lg:bg-white w-[73%] lg:h-[72vh] h-[56vh] rounded-lg overflow-hidden flex relative lg:flex-row flex-col">
+                      <div
+                        ref={postRef}
+                        className="lg:bg-white w-[73%] lg:h-[72vh] h-[56vh] rounded-lg overflow-hidden flex relative lg:flex-row flex-col"
+                      >
                         {/* Left Side (Image Viewer) */}
                         <div className="w-[60%] h-full  bg-black flex items-center justify-center relative">
                           {sharePostData.images?.length > 0 ? (
@@ -446,7 +518,11 @@ const SharePost = () => {
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
                                 <img
-                                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.user?.profilePhoto}`}
+                                  src={
+                                    sharePostData.user?.profilePhoto
+                                      ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.user?.profilePhoto}`
+                                      : `${DEFAULT_PROFILE_IMAGE}`
+                                  }
                                   alt="profile"
                                   className="w-10 h-10 rounded-full"
                                 />
@@ -493,45 +569,6 @@ const SharePost = () => {
                                 X
                               </button>
                             </div>
-                            {/* profile with caption */}
-                            <div className="flex flex-col gap-3">
-                              <div className="flex flex-row items-center gap-1">
-                                <img
-                                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.user?.profilePhoto}`}
-                                  alt="profile"
-                                  className="w-10 h-10 rounded-full"
-                                />
-                                <span className="font-semibold text-sm">
-                                  {sharePostData.user?.username}
-                                  {sharePostData.user.verified?.length > 0 && (
-                                    <img
-                                      src={`${
-                                        process.env.REACT_APP_API_URL_FOR_IMAGE
-                                      }${
-                                        sharePostData.user.verified[
-                                          sharePostData.user.verified.length - 1
-                                        ]?.badgeImage
-                                      }`}
-                                      className="inline-block ml-1 w-5 h-5 object-contain"
-                                      alt={
-                                        sharePostData.user.verified[
-                                          sharePostData.user.verified.length - 1
-                                        ]?.badgeName || "badge"
-                                      }
-                                      title={
-                                        sharePostData.user.verified[
-                                          sharePostData.user.verified.length - 1
-                                        ]?.badgeName
-                                      }
-                                    />
-                                  )}
-                                </span>
-                              </div>
-                              {/* Caption */}
-                              <p className="text-sm">
-                                {sharePostData.caption || "No caption"}
-                              </p>
-                            </div>
                           </div>
 
                           {/* Comments */}
@@ -543,7 +580,11 @@ const SharePost = () => {
                                   className="flex items-start gap-2"
                                 >
                                   <img
-                                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`}
+                                    src={
+                                      comment?.user?.profilePhoto
+                                        ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`
+                                        : `${DEFAULT_PROFILE_IMAGE}`
+                                    }
                                     alt="profile"
                                     className="w-8 h-8 rounded-full"
                                   />
@@ -576,8 +617,14 @@ const SharePost = () => {
                                     } text-xl`}
                                   ></i>
                                 </button>
-                                <i className="ri-chat-3-line text-xl"></i>
-                                <i className="ri-send-plane-fill text-xl"></i>
+                                <i
+                                  onClick={() => {
+                                    activePostRef.current &&
+                                      activePostRef.current.focus();
+                                  }}
+                                  className="ri-chat-3-line text-xl"
+                                ></i>
+                                {/* <i className="ri-send-plane-fill text-xl"></i> */}
                               </div>
                               <div>
                                 <button
@@ -611,7 +658,11 @@ const SharePost = () => {
                                       className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
                                     >
                                       <img
-                                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`}
+                                        src={
+                                          user?.profilePhoto
+                                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`
+                                            : `${DEFAULT_PROFILE_IMAGE}`
+                                        }
                                         alt={user.username}
                                         className="w-8 h-8 rounded-full"
                                       />
@@ -630,6 +681,7 @@ const SharePost = () => {
                               <div className="flex gap-2 relative">
                                 <input
                                   type="text"
+                                  ref={activePostRef}
                                   placeholder="Add a comment..."
                                   value={commentText}
                                   onChange={handleChange} // 👈 replace with custom handler
@@ -651,6 +703,57 @@ const SharePost = () => {
                             )}
                           </div>
                         </div>
+                        {showCollaborators && allCollaboraters && (
+                          <div className="fixed inset-0 flex items-center justify-center  bg-[#000000]/40 backdrop-blur-sm z-50">
+                            <div
+                              ref={collabRef}
+                              className="relative bg-white rounded-xl shadow-xl p-5 w-80 animate-fadeIn"
+                            >
+                              {/* ❌ Close (cross) button */}
+                              <button
+                                onClick={() => setShowCollaborators(false)}
+                                className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
+                              >
+                                <i className="ri-close-line text-black"></i>{" "}
+                              </button>
+
+                              <h3 className="text-lg font-semibold mb-4 text-center">
+                                Collaborators
+                              </h3>
+
+                              <ul className="space-y-2 max-h-48 overflow-y-auto">
+                                {allCollaboraters?.length > 0 ? (
+                                  allCollaboraters.map((c) => {
+                                    return (
+                                      <li
+                                        key={c._id}
+                                        className="p-2 border rounded-md flex items-center space-x-6"
+                                      >
+                                        <img
+                                          src={
+                                            c?.profilePhoto
+                                              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${c.profilePhoto}`
+                                              : DEFAULT_PROFILE_IMAGE
+                                          }
+                                          alt={c.username || "user"}
+                                          className="w-10 h-10 rounded-full object-cover"
+                                        />
+
+                                        <span className=" text-lg font-bold ">
+                                          {c.username}
+                                        </span>
+                                      </li>
+                                    );
+                                  })
+                                ) : (
+                                  <li className="text-gray-500 text-center py-3">
+                                    No collaborators found
+                                  </li>
+                                )}
+                              </ul>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                     {/* for small screen */}
@@ -670,7 +773,11 @@ const SharePost = () => {
                       <div className="flex-1 flex flex-col overflow-y-auto">
                         <div className="flex gap-2 border-b p-3">
                           <img
-                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.user?.profilePhoto}`}
+                            src={
+                              sharePostData.user?.profilePhoto
+                                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.user?.profilePhoto}`
+                                : `${DEFAULT_PROFILE_IMAGE}`
+                            }
                             alt="profile"
                             className="w-11 h-11 rounded-full"
                           />
@@ -718,7 +825,11 @@ const SharePost = () => {
                                   className="flex items-start gap-2"
                                 >
                                   <img
-                                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`}
+                                    src={
+                                      comment?.user?.profilePhoto
+                                        ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`
+                                        : `${DEFAULT_PROFILE_IMAGE}`
+                                    }
                                     alt="profile"
                                     className="w-8 h-8 rounded-full"
                                   />
@@ -753,7 +864,11 @@ const SharePost = () => {
                                 className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
                               >
                                 <img
-                                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`}
+                                  src={
+                                    user?.profilePhoto
+                                      ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`
+                                      : `${DEFAULT_PROFILE_IMAGE}`
+                                  }
                                   alt={user.username}
                                   className="w-8 h-8 rounded-full"
                                 />
@@ -910,8 +1025,8 @@ const SharePost = () => {
                       </p>
 
                       {/* Report Form */}
-                      <form onSubmit={handleSubmit} className="space-y-3">
-                        <div className="space-y-2">
+                      <form onSubmit={handleSubmit} className="space-y-3  ">
+                        <div className="space-y-2 max-h-[20vh] overflow-y-auto ">
                           {[
                             "I just don't like it",
                             "Bullying or unwanted contact",
@@ -947,7 +1062,7 @@ const SharePost = () => {
 
                         {/* Description */}
                         {selectedReason && (
-                          <div className="mt-3">
+                          <div className="mt-1">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                               {selectedReason === "Other"
                                 ? "Describe the issue (required)"
@@ -973,7 +1088,7 @@ const SharePost = () => {
                         )}
 
                         {/* Actions */}
-                        <div className="flex justify-end gap-3 mt-4">
+                        <div className="flex justify-end gap-3 mt-1">
                           <button
                             type="button"
                             onClick={() => setReportPopupOpen(false)}
@@ -1072,9 +1187,20 @@ const SharePost = () => {
                       <button
                         className="w-full py-2 bg-gray-200 text-gray-800 rounded-lg mb-2"
                         onClick={() => {
-                          const link = `${window.location.origin}/social-media/sharepost/${sharePost._id}`;
-                          navigator.clipboard.writeText(link);
-                          setCopyMsg("Link copied!");
+                          const link = `${window.location.origin}/artsays-community/sharepost/${sharePost._id}`;
+                          // navigator.clipboard.writeText(link);
+                          // setCopyMsg("Link copied!");
+                          // setTimeout(() => setCopyMsg(""), 2000);
+
+                          if (navigator.clipboard && window.isSecureContext) {
+                            navigator.clipboard
+                              .writeText(link)
+                              .then(() => setCopyMsg("Link copied!"))
+                              .catch(() => fallbackCopyText(link));
+                          } else {
+                            fallbackCopyText(link);
+                          }
+
                           setTimeout(() => setCopyMsg(""), 2000);
                         }}
                       >
@@ -1095,7 +1221,11 @@ const SharePost = () => {
                     <div className="flex justify-between items-center">
                       <div className="flex gap-2 p-2 items-center">
                         <img
-                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.user.profilePhoto}`}
+                          src={
+                            sharePostData?.user?.profilePhoto
+                              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData?.user?.profilePhoto}`
+                              : `${DEFAULT_PROFILE_IMAGE}`
+                          }
                           alt="profile"
                           className="h-11 w-11 rounded-full cursor-pointer"
                           onClick={() => goToProfile(sharePostData.user._id)}
@@ -1129,11 +1259,49 @@ const SharePost = () => {
                                 }
                               />
                             )}
+                            <div className="flex items-center">
+                              {isPostCollaborateWithUserId(sharePostData) ? (
+                                <p className="font-extrabold cursor-pointer">
+                                  , {profile?.username}
+                                  {sharePostData.collaboraters?.length > 1 && (
+                                    <>
+                                      and &nbsp;
+                                      <button
+                                        onClick={() => {
+                                          setShowCollaborators(true);
+                                          fetchAllCollaborators(sharePostData);
+                                        }}
+                                        className="text-blue-600 font-medium hover:underline outline-none focus:outline-none active:outline-none"
+                                      >
+                                        ...others
+                                      </button>
+                                    </>
+                                  )}
+                                </p>
+                              ) : (
+                                <>
+                                  {sharePostData.collaborators?.length > 0 && (
+                                    <p className="font-extrabold cursor-pointer">
+                                      &nbsp; and &nbsp;
+                                      <button
+                                        onClick={() => {
+                                          setShowCollaborators(true);
+                                          fetchAllCollaborators(sharePostData);
+                                        }}
+                                        className="text-blue-600 font-medium hover:underline outline-none focus:outline-none active:outline-none"
+                                      >
+                                        ...others
+                                      </button>
+                                    </p>
+                                  )}
+                                </>
+                              )}
+                            </div>
                           </div>
 
                           {/* Time + Sponsored */}
                           <div className="flex items-center gap-1 text-xs font-light text-gray-500">
-                            <p>• {timeAgo(sharePostData.createdAt)}</p>
+                            <p> {timeAgo(sharePostData.createdAt)}</p>
                             {sharePostData.isPromoted && (
                               <span className="text-[11px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">
                                 Sponsored
@@ -1187,10 +1355,12 @@ const SharePost = () => {
                           ""
                         )}
 
-                        <button className="buy-button">
-                          Buy{" "}
-                          <i className="cart-icon ri-shopping-cart-fill"></i>
-                        </button>
+                        {sharePostData.forProduct && (
+                          <button className="buy-button">
+                            Buy{" "}
+                            <i className="cart-icon ri-shopping-cart-fill"></i>
+                          </button>
+                        )}
                         <button
                           onClick={() => setMenuOpenId(sharePostData._id)}
                         >
@@ -1276,9 +1446,13 @@ const SharePost = () => {
                         <li
                           className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
                           onClick={() =>
-                            navigate("/social-media/profile", {
-                              state: { userId: sharePostData.user._id },
-                            })
+                            navigate(
+                              `/artsays-community/profile/${
+                                sharePostData?.user?.username
+                                  ? `${sharePostData?.user?.username}`
+                                  : `${sharePostData?.user?.name}_${sharePostData?.user?.lastName}_${sharePostData?.user?._id}`
+                              }`,{state:{userId:sharePostData?.user?._id}}
+                            )
                           }
                         >
                           About This Account
@@ -1361,6 +1535,24 @@ const SharePost = () => {
                                 ))}
                               </div>
                             )}
+                            {/* Website Link Box */}
+                            {sharePostData.isPromoted &&
+                              sharePostData.promotionDetails?.website && (
+                                <a
+                                  href={sharePostData.promotionDetails.website}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="absolute bottom-4 left-2 z-20 text-white text-[15px] px-3 py-2 rounded-md flex flex-col shadow-lg bg-[#48372D]/50"
+                                >
+                                  <span className="font-semibold leading-tight">
+                                    Explore Our Website
+                                  </span>
+
+                                  <span className="text-[13px] break-all leading-tight">
+                                    {sharePostData.promotionDetails.website}
+                                  </span>
+                                </a>
+                              )}
                           </>
                         )}
                     </div>
@@ -1379,7 +1571,14 @@ const SharePost = () => {
                             ></i>
                           </button>
                           <button>
-                            <i className="ri-chat-3-line text-xl font-medium"></i>
+                            <i
+                              onClick={() => {
+                                if (commentRef.current) {
+                                  commentRef.current.focus();
+                                }
+                              }}
+                              className="ri-chat-3-line text-xl font-medium"
+                            ></i>
                           </button>
 
                           <button onClick={() => setSharePost(sharePostData)}>
@@ -1454,7 +1653,11 @@ const SharePost = () => {
                               className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
                             >
                               <img
-                                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`}
+                                src={
+                                  user?.profilePhoto
+                                    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`
+                                    : `${DEFAULT_PROFILE_IMAGE}`
+                                }
                                 alt={user.username}
                                 className="w-8 h-8 rounded-full"
                               />
@@ -1493,6 +1696,7 @@ const SharePost = () => {
                             type="text"
                             placeholder="Add a comment..."
                             value={commentText}
+                            ref={commentRef}
                             onChange={handleChange}
                             className="w-full rounded text-[13px] focus:outline-none focus:ring focus:border-blue-300"
                           />
@@ -1525,3 +1729,30 @@ const SharePost = () => {
   );
 };
 export default SharePost;
+
+
+// loading skeleton
+const LoadingSkeleton = () => {
+  return (
+    <div className="animate-pulse p-4 rounded-xl shadow-sm border w-[90%] h-[90%]">
+      {/* Header */}
+      <div className="flex items-center space-x-3 mb-4">
+        <div className="w-10 h-10 rounded-full bg-gray-300"></div>
+        <div className="flex-1">
+          <div className="h-3 w-32 bg-gray-300 rounded"></div>
+          <div className="h-2 w-20 bg-gray-200 rounded mt-1"></div>
+        </div>
+      </div>
+
+      {/* Image / Content */}
+      <div className="w-full h-80 bg-gray-300 rounded-xl mb-4"></div>
+
+      {/* Footer */}
+      <div className="flex items-center space-x-4">
+        <div className="h-3 w-16 bg-gray-300 rounded"></div>
+        <div className="h-3 w-12 bg-gray-300 rounded"></div>
+        <div className="h-3 w-20 bg-gray-300 rounded"></div>
+      </div>
+    </div>
+  );
+};

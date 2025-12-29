@@ -126,13 +126,13 @@ const UserProfileForm = () => {
 
   const tabs = [
     { name: 'Settings', component: Settings },
-    { name: 'Product Purcahsed', component: Productpurchased },
+    { name: 'Product Purchased', component: Productpurchased },
     { name: 'Custom Request', component: Customrequest },
     // { name: 'Products', component: Products },
     { name: 'Transaction', component: Transaction },
     { name: 'Packaging Material', component: Packagingmaterial },
-    { name: 'Resell Product', component: RsellProduct },
-    { name: 'Sold Product', component: SoldProduct },
+    // { name: 'Resell Product', component: RsellProduct },
+    // { name: 'Sold Product', component: SoldProduct },
     { name: 'Billings', component: Billings },
     { name: 'Preferences', component: Preferences },
 

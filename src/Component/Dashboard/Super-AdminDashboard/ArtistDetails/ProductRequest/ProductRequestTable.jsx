@@ -7,7 +7,7 @@ import ConfirmationDialog from '../../../ConfirmationDialog';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
 import { DEFAULT_PROFILE_IMAGE } from "../../../../../Constants/ConstantsVariables";
-
+import ProductRequestSkeleton from '../../../../Skeleton/artist/ProductRequestSkeleton';
 
 const ProductRequest = () => {
     const [products, setProducts] = useState([]);
@@ -20,7 +20,7 @@ const ProductRequest = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [selectedProductToDelete, setSelectedProductToDelete] = useState(null);
-
+const [loading,setLoading]=useState(false);
 
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
@@ -32,6 +32,7 @@ const ProductRequest = () => {
 
     useEffect(() => {
         const fetchProducts = async () => {
+            setLoading(true)
             try {
                 const result = await getAPI("/api/get-cropImage", {}, true, false);
                 console.log("Full API Response:", result);
@@ -46,6 +47,8 @@ const ProductRequest = () => {
             } catch (error) {
                 console.error("Error fetching products:", error);
                 setProducts([]);
+            }finally{
+                setLoading(false)
             }
         };
 
@@ -148,6 +151,7 @@ const ProductRequest = () => {
     };
 
 
+if(loading)return <ProductRequestSkeleton/>
 
 
     return (
@@ -273,7 +277,7 @@ const ProductRequest = () => {
                                                 <td>
                                                     <button
                                                         className="btn btn-sm btn-outline-info mr-2"
-                                                        onClick={() => navigate(`/super-admin/artist/management/productrequest/${product._id}`)}
+                                                        onClick={() => navigate(`/super-admin/product-fetch-view/${product._id}`)}
                                                     >
                                                         <i className="fa fa-eye"></i>
                                                     </button>

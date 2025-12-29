@@ -3,7 +3,7 @@ import postAPI from "../../../../api/postAPI";
 import getAPI from "../../../../api/getAPI";
 import putAPI from "../../../../api/putAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
-
+import { toast } from "react-toastify";
 const Card = () => {
   const [showPopUp, setShowPopUp] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -119,7 +119,10 @@ const Card = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+ if (!materialCardImage) {
+      toast.error("Upload Material Card Image");
+      return;
+    }
     try {
       const formData = new FormData();
       formData.append("userId", localStorage.getItem("userId"));

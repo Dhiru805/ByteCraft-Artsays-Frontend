@@ -210,7 +210,7 @@
 
 import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
-
+import HowToBuySkeleton from "../../../Component/Skeleton/HowToBuySkeleton";
 const HowToBuy = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -240,7 +240,7 @@ const HowToBuy = () => {
     fetchData();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div><HowToBuySkeleton/></div>;
   if (!data) return <div>How To Buy section not available</div>;
 
   return (
@@ -264,11 +264,11 @@ const HowToBuy = () => {
 
         <hr className="my-3 border-dark" />
 
-        <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+        <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
           {data.description}
         </p>
 
-        <section className="w-full py-16">
+        <section className="w-full mt-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             {data.cards?.map((card, idx) => (
               <div
@@ -282,7 +282,7 @@ const HowToBuy = () => {
                     className="mx-auto mb-4 w-full max-w-[200px] h-auto object-contain"
                   />
                 )}
-                <h3 className="text-lg font-semibold">{card.title}</h3>
+                <h3 className="text-lg font-bold">{card.title}</h3>
                 <p className="text-gray-600 mt-2 text-sm">{card.description}</p>
 
                 {card.icons?.length > 0 && (

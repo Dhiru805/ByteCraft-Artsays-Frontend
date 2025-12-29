@@ -139,7 +139,7 @@ const Path = () => {
         const fetchData = async () => {
             try {
                 const res = await getAPI("/api/certificate/published");
-                if (res.data && res.data.data) {
+                if (res?.data?.data) {
                     setData(res.data.data);
                 }
             } catch (err) {
@@ -149,116 +149,152 @@ const Path = () => {
         fetchData();
     }, []);
 
+    const cards = data?.section2?.cards || [];
+
     return (
         <div className="max-w-[1440px] mx-auto py-4">
-                {/* title */}
-              
-                <h1 className="text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
-                    {data?.section2Heading || "Your Path to Certification"}
-                </h1>
+            {/* Title */}
+            <h1 className="text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
+                {data?.section2Heading || "Your Path to Certification"}
+            </h1>
 
             <hr className="my-3 border-dark" />
 
             {/* Subtitle */}
-          
             <p className="mt-3 text-xs md:text-lg font-medium text-black leading-relaxed px-3">
-                {data?.section2Description || "Showcase authenticity and build trust with verified certifications."}
+                {data?.section2Description ||
+                    "Showcase authenticity and build trust with verified certifications."}
             </p>
 
             {/* Main Layout */}
-            {data?.section2?.cards && data.section2.cards.length > 0 ? (
-                data.section2.cards.map((card, index) => (
-                    <div key={index} className="md:flex justify-center gap-6 px-3 sm:px-6 my-3">
-                        {index % 2 === 0 ? (
-                            <>
-                                <div className="w-full md:w-4/6 border border-gray-700 rounded-2xl p-4 mb-6 md:mb-0">
-                                    <div className="grid grid-cols-1 md:grid-cols-4 h-full gap-6">
-                                        <main className="md:col-span-2 content-end">
-                                            <div>
-                                                <h1 className="text-sm md:text-xl font-bold text-orange-500">
-                                                    {card.title}
-                                                </h1>
-                                                <hr className="my-3 border-dark" />
-                                                <p className="mt-3 text-xs md:text-lg font-medium text-black leading-relaxed">
-                                                    {card.description}
-                                                </p>
-                                            </div>
-                                        </main>
+            {cards.length > 0 &&
+                (() => {
+                    const rows = [];
 
-                                        <aside className="md:col-span-2 rounded-xl filter-sidebar flex justify-center items-center bg-transparent">
-                                            {card.image && <img src={`${process.env.REACT_APP_API_URL}/${card.image}`} alt={card.title} />}
-                                        </aside>
-                                    </div>
-                                </div>
+                    for (let i = 0; i < cards.length; i += 2) {
+                        const card = cards[i];
+                        const nextCard = cards[i + 1];
 
-                                {data.section2.cards[index + 1] && (
-                                    <div className="w-full md:w-2/6 border border-gray-700 rounded-2xl p-4 mb-6 md:mb-0">
-                                        <aside className="rounded-xl flex justify-center items-center bg-transparent mb-3">
-                                            {data.section2.cards[index + 1].image && <img src={`${process.env.REACT_APP_API_URL}/${data.section2.cards[index + 1].image}`} alt={data.section2.cards[index + 1].title} />}
-                                        </aside>
-                                        <main className="content-end">
-                                            <div>
-                                                <h1 className="text-sm md:text-xl font-bold text-orange-500">
-                                                    {data.section2.cards[index + 1].title}
-                                                </h1>
-                                                <hr className="my-3 border-dark" />
-                                                <p className="mt-3 text-xs md:text-lg font-medium text-black leading-relaxed">
-                                                    {data.section2.cards[index + 1].description}
-                                                </p>
+                        rows.push(
+                            <div
+                                key={i}
+                                className="md:flex justify-center gap-6 px-3 sm:px-6 my-3"
+                            >
+                                {i % 4 === 0 ? (
+                                    <>
+                                        {/* BIG LEFT */}
+                                        <div className="w-full md:w-4/6 border border-gray-700 rounded-2xl p-4 mb-6 md:mb-0">
+                                            <div className="grid grid-cols-1 md:grid-cols-4 h-full gap-6">
+                                                <main className="md:col-span-2 content-end">
+                                                    <div>
+                                                        <h1 className="text-sm md:text-xl font-bold text-orange-500">
+                                                            {card.title}
+                                                        </h1>
+                                                        <hr className="my-3 border-dark" />
+                                                        <p className="mt-3 text-xs md:text-lg font-medium text-black leading-relaxed">
+                                                            {card.description}
+                                                        </p>
+                                                    </div>
+                                                </main>
+
+                                                <aside className="md:col-span-2 rounded-xl filter-sidebar flex justify-center items-center bg-transparent">
+                                                    {card.image && (
+                                                        <img
+                                                            src={`${process.env.REACT_APP_API_URL}/${card.image}`}
+                                                            alt={card.title} className="h-full md:h-[300px]"
+                                                        />
+                                                    )}
+                                                </aside>
                                             </div>
-                                        </main>
-                                    </div>
-                                )}
-                            </>
-                        ) : (
-                            <>
-                                <div className="w-full md:w-2/6 border border-gray-700 rounded-2xl p-4 mb-6 md:mb-0">
-                                    <aside className="rounded-xl flex justify-center items-center bg-transparent mb-3">
-                                        {card.image && <img src={`${process.env.REACT_APP_API_URL}/${card.image}`} alt={card.title} />}
-                                    </aside>
-                                    <main className="content-end">
-                                        <div>
-                                            <h1 className="text-sm md:text-xl font-bold text-orange-500">
-                                                {card.title}
-                                            </h1>
-                                            <hr className="my-3 border-dark" />
-                                            <p className="mt-3 text-xs md:text-lg font-medium text-black leading-relaxed">
-                                                {card.description}
-                                            </p>
                                         </div>
-                                    </main>
-                                </div>
-                                {data.section2.cards[index + 1] && (
-                                    <div className="w-full md:w-4/6 border border-gray-700 rounded-2xl p-4 mb-6 md:mb-0">
-                                        <div className="grid grid-cols-1 md:grid-cols-4 h-full gap-6">
-                                            <main className="md:col-span-2 content-end">
+
+                                        {/* SMALL RIGHT */}
+                                        {nextCard && (
+                                            <div className="w-full md:w-2/6 border border-gray-700 rounded-2xl p-4 mb-6 md:mb-0">
+                                                <aside className="rounded-xl flex justify-center items-center bg-transparent mb-3">
+                                                    {nextCard.image && (
+                                                        <img
+                                                            src={`${process.env.REACT_APP_API_URL}/${nextCard.image}`}
+                                                            alt={nextCard.title} className="h-full md:h-[200px]"
+                                                        />
+                                                    )}
+                                                </aside>
+                                                <main className="content-end">
+                                                    <div>
+                                                        <h1 className="text-sm md:text-xl font-bold text-orange-500">
+                                                            {nextCard.title}
+                                                        </h1>
+                                                        <hr className="my-3 border-dark" />
+                                                        <p className="mt-3 text-xs md:text-lg font-medium text-black leading-relaxed">
+                                                            {nextCard.description}
+                                                        </p>
+                                                    </div>
+                                                </main>
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        {/* SMALL LEFT */}
+                                        <div className="w-full md:w-2/6 border border-gray-700 rounded-2xl p-4 mb-6 md:mb-0">
+                                            <aside className="rounded-xl flex justify-center items-center bg-transparent mb-3">
+                                                {card.image && (
+                                                    <img
+                                                        src={`${process.env.REACT_APP_API_URL}/${card.image}`}
+                                                        alt={card.title} className="h-full md:h-[200px]"
+                                                    />
+                                                )}
+                                            </aside>
+                                            <main className="content-end">
                                                 <div>
                                                     <h1 className="text-sm md:text-xl font-bold text-orange-500">
-                                                        {data.section2.cards[index + 1].title}
+                                                        {card.title}
                                                     </h1>
                                                     <hr className="my-3 border-dark" />
                                                     <p className="mt-3 text-xs md:text-lg font-medium text-black leading-relaxed">
-                                                        {data.section2.cards[index + 1].description}
+                                                        {card.description}
                                                     </p>
                                                 </div>
                                             </main>
-
-                                            <aside className="md:col-span-2 rounded-xl filter-sidebar flex justify-center items-center bg-transparent">
-                                                {data.section2.cards[index + 1].image && <img src={`${process.env.REACT_APP_API_URL}/${data.section2.cards[index + 1].image}`} alt={data.section2.cards[index + 1].title} />}
-                                            </aside>
                                         </div>
-                                    </div>
-                                )}
-                            </>
-                        )}
-                    </div>
-                ))
-            ) : (
-                <>
-                </>
-            )}
 
+                                        {/* BIG RIGHT */}
+                                        {nextCard && (
+                                            <div className="w-full md:w-4/6 border border-gray-700 rounded-2xl p-4 mb-6 md:mb-0">
+                                                <div className="grid grid-cols-1 md:grid-cols-4 h-full gap-6">
+                                                    <main className="md:col-span-2 content-end">
+                                                        <div>
+                                                            <h1 className="text-sm md:text-xl font-bold text-orange-500">
+                                                                {nextCard.title}
+                                                            </h1>
+                                                            <hr className="my-3 border-dark" />
+                                                            <p className="mt-3 text-xs md:text-lg font-medium text-black leading-relaxed">
+                                                                {nextCard.description}
+                                                            </p>
+                                                        </div>
+                                                    </main>
+
+                                                    <aside className="md:col-span-2 rounded-xl filter-sidebar flex justify-center items-center bg-transparent">
+                                                        {nextCard.image && (
+                                                            <img
+                                                                src={`${process.env.REACT_APP_API_URL}/${nextCard.image}`}
+                                                                alt={nextCard.title} className="h-full md:h-[300px]"
+                                                            />
+                                                        )}
+                                                    </aside>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+                        );
+                    }
+
+                    return rows;
+                })()}
         </div>
     );
 };
+
 export default Path;

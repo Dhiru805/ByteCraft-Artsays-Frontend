@@ -154,7 +154,7 @@ const ProductRequest = ({ userId }) => {
                                                 <td>
                                                     <button
                                                         className="btn btn-sm btn-outline-info mr-2"
-                                                        onClick={() => navigate(`/${userType}/Dashboard/artistmanagetable/artistprofileview/${userId}/artistproductdetails/${product._id}`, { state: { userId } })}
+                                                        onClick={() => navigate(`/super-admin/product-fetch-view/${product._id}`, { state: { userId } })}
                                                     >
                                                         <i className="fa fa-eye"></i>
                                                     </button>

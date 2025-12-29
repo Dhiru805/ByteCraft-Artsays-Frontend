@@ -21,7 +21,7 @@ const MyAccountSidebar = () => {
   const currentPath = location.pathname;
 
   return (
-    <div className="bg-white h-[920px] w-[350px] flex flex-col space-y-[20px]">
+    <div className="bg-white w-full flex flex-col space-y-5">
       {links.map(({ name, path }) => {
         const fullPath = `/my-account/${path}`;
         const isPersonalInfo =
@@ -34,7 +34,7 @@ const MyAccountSidebar = () => {
           <NavLink
             key={path}
             to={fullPath}
-            className={`block w-[340px] h-[60px] text-[18px] font-semibold text-left py-[15px] px-[20px] border-[0.6px] rounded-[14px] transition ${
+            className={`block w-full text-lg font-semibold text-left py-[15px] px-[20px] border-[0.6px] rounded-2xl transition ${
               isActive
                 ? 'bg-[#6F4D34] text-white'
                 : 'bg-white text-[#7B7B7B]'

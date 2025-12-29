@@ -7,6 +7,7 @@ const ViewOrder = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({});
   const [address, setAddress] = useState("");
+const [loading,setLoading]=useState(false);
 
   useEffect(() => {
     const getUser = async () => {
@@ -49,6 +50,7 @@ const ViewOrder = () => {
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
+      setLoading(true)
       try {
         const userId = localStorage.getItem("userId");
         const res = await getAPI(`/api/package-material/order/${userId}/${id}`);
@@ -101,11 +103,14 @@ const ViewOrder = () => {
       } catch (err) {
         console.error("Error fetching order details:", err);
       }
+      finally{
+        setLoading(false)
+      }
     };
 
     if (id) fetchOrderDetails();
   }, [id, formData.deliveryAddress]);
-
+if(loading)return <ViewOrderSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">
@@ -472,3 +477,68 @@ const ViewOrder = () => {
 };
 
 export default ViewOrder;
+
+const ViewOrderSkeleton=()=>{
+  return(<><div className="animate-pulse p-4 md:p-6">
+
+  {/* Header */}
+  <div className="mb-6">
+    <div className="h-6 w-40 bg-gray-300 rounded"></div>
+
+    <div className="flex space-x-2 mt-4">
+      <div className="h-4 w-6 bg-gray-300 rounded"></div>
+      <div className="h-4 w-24 bg-gray-300 rounded"></div>
+      <div className="h-4 w-20 bg-gray-300 rounded"></div>
+    </div>
+  </div>
+
+  {/* Card */}
+  <div className="bg-white shadow rounded-xl p-6">
+
+    {/* Sections Skeleton */}
+    {Array.from({ length: 5 }).map((_, sectionIndex) => (
+      <div key={sectionIndex} className="mb-8">
+
+        {/* Label */}
+        <div className="h-5 w-32 bg-gray-300 rounded mb-3"></div>
+
+        {/* Select Skeleton */}
+        <div className="h-10 w-full bg-gray-200 rounded mb-4"></div>
+
+        {/* Image */}
+        <div className="h-5 w-28 bg-gray-300 rounded mb-2"></div>
+        <div className="h-40 w-full bg-gray-200 rounded mb-4"></div>
+
+        {/* 3 Small Inputs */}
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="mb-4">
+            <div className="h-4 w-24 bg-gray-300 rounded mb-2"></div>
+            <div className="h-10 bg-gray-200 rounded w-full"></div>
+          </div>
+        ))}
+
+      </div>
+    ))}
+
+    {/* Quantity */}
+    <div className="mb-4">
+      <div className="h-4 w-32 bg-gray-300 rounded mb-2"></div>
+      <div className="h-10 bg-gray-200 rounded"></div>
+    </div>
+
+    {/* Delivery Address */}
+    <div className="mb-4">
+      <div className="h-4 w-40 bg-gray-300 rounded mb-2"></div>
+      <div className="h-10 bg-gray-200 rounded"></div>
+    </div>
+
+    {/* Total Price */}
+    <div className="mb-4">
+      <div className="h-4 w-32 bg-gray-300 rounded mb-2"></div>
+      <div className="h-10 bg-gray-200 rounded"></div>
+    </div>
+
+  </div>
+</div>
+</>)
+}

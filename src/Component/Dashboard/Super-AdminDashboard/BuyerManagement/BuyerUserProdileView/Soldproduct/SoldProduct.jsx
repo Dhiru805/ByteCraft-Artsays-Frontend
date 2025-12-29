@@ -12,26 +12,62 @@ const SoldProduct = ({ userId }) => {
     const navigate = useNavigate();
     const userType = useUserType();
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const result = await getAPI(`/api/buyersoldproductbyid/${userId}`, {}, true, false);
-                console.log("Full API Response:", result);
+    // useEffect(() => {
+    //     const fetchProducts = async () => {
+    //         try {
+    //             const result = await getAPI(`/api/buyersoldproductbyid/${userId}`, {}, true, false);
+    //             console.log("Full API Response:", result);
 
-                if (result && result.data && Array.isArray(result.data)) {
-                    setProducts(result.data); // Set only the array
-                } else {
-                    console.error("API response does not contain an array:", result.data);
-                    setProducts([]);
-                }
-            } catch (error) {
-                console.error("Error fetching products:", error);
+    //             if (result && result.data && Array.isArray(result.data)) {
+    //                 setProducts(result.data); // Set only the array
+    //             } else {
+    //                 console.error("API response does not contain an array:", result.data);
+    //                 setProducts([]);
+    //             }
+    //         } catch (error) {
+    //             console.error("Error fetching products:", error);
+    //             setProducts([]);
+    //         }
+    //     };
+
+    //     fetchProducts();
+    // }, []);
+useEffect(() => {
+    const fetchProducts = async () => {
+        try {
+            const result = await getAPI("/api/orders/buyer", {}, true, false);
+            console.log("Buyer Orders Response:", result);
+
+            if (result?.data?.data && Array.isArray(result.data.data)) {
+
+                const formatted = result.data.data.flatMap(order => {
+                    return order.items
+                        .filter(item => item.productId)
+                        .map(item => ({
+                            orderId: order.orderId,
+                            productId: item.productId._id,
+                            productName: item.productId.productName,
+                            productImage: item.productId.mainImage,
+                            productPrice: item.productId.sellingPrice,
+                            buyerName: order.Buyer.id.name + " " + (order.Buyer.id.lastName || ''),
+                            totalQuantity: item.quantity
+                        }));
+                });
+
+                setProducts(formatted);
+            } else {
+                console.error("Invalid Buyer Orders Format:", result.data);
                 setProducts([]);
             }
-        };
 
-        fetchProducts();
-    }, []);
+        } catch (error) {
+            console.error("Error fetching buyer sold products:", error);
+            setProducts([]);
+        }
+    };
+
+    fetchProducts();
+}, []);
 
     const filteredProducts = products.filter(product =>
         product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||

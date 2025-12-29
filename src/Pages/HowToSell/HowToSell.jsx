@@ -19,6 +19,7 @@ import HeroImgHowToSell from "./hero-img/hero-img";
 import HowToSellContent from "./HowToSellContent/HowToSellContent";
 import { Helmet } from "react-helmet";
 import axiosInstance from "../../api/axiosConfig";
+import Testimonials from "../AboutUs/Testimonials/Testimonials";
 
 const HowToSell = () => {
   const [seoData, setSeoData] = useState({
@@ -86,6 +87,7 @@ const HowToSell = () => {
       <div className="max-w-[1440px] mx-auto font-[poppins]">
         <HeroImgHowToSell />
         <HowToSellContent />
+        <Testimonials />
       </div>
     </>
   );

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
 import ConfirmationDialog from '../../../ConfirmationDialog';
 import { LuGavel } from "react-icons/lu";
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const ProductRequest = () => {
     const [products, setProducts] = useState([]);
@@ -17,13 +18,14 @@ const ProductRequest = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [selectedProductToDelete, setSelectedProductToDelete] = useState(null);
-
+const[loading,setLoading]=useState(false);
 
     const navigate = useNavigate();
     const userType = useUserType();
 
     useEffect(() => {
         const fetchProducts = async () => {
+            setLoading(true);
             try {
                 const result = await getAPI("/api/getsellerproduct", {}, true, false);
                 console.log("Full API Response:", result);
@@ -38,6 +40,8 @@ const ProductRequest = () => {
             } catch (error) {
                 console.error("Error fetching products:", error);
                 setProducts([]);
+            }finally{
+                setLoading(false)
             }
         };
 
@@ -102,6 +106,7 @@ const ProductRequest = () => {
         setIsDeleteDialogOpen(true);
     };
 
+    if(loading)return <ProductRequestSkeleton/>
     return (
         <div className="container-fluid">
             <div className="block-header">
@@ -201,13 +206,9 @@ const ProductRequest = () => {
                                                     />{product.productName}</td>
                                                 <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.sellingPrice).replace(/\.00$/, '')}</td>
                                                 <td>{new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
-                                                {/* <td>
-                                                    <button className={`btn btn-sm ${product.status === 'Pending' ? 'btn-outline-warning' : product.status === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
-                                                        {product.status}
-                                                    </button>
-                                                </td> */}
+                                               
                                                 <td>
-                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/super-admin/sellerproductview/${product._id}`)}>
+                                                    <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/super-admin/product-fetch-view/${product._id}`)}>
                                                         <i className="fa fa-eye"></i>
                                                     </button>
 

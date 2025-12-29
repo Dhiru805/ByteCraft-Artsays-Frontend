@@ -13,20 +13,21 @@ const PromotePost = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const postId = location.state?.postId;
-  const postImage = location.state?.postImage[0];
+  const postImage = location.state?.postImage;
   const userId = localStorage.getItem("userId");
-
+  const username = localStorage.getItem("username");
+  const firstName = localStorage.getItem("firstName");
+  const lastName = localStorage.getItem("lastName");
   const [budget, setBudget] = useState(346);
   const [days, setDays] = useState(3);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [goal, setGoal] = useState("Visit your profile");
   const [loading, setLoading] = useState(false);
-
+  const [website, setWebsite] = useState("");
+  const [error, setError] = useState("");
   const [showRequirements, setShowRequirements] = useState(false);
   const [requirementToggle, setRequirementToggle] = useState(false);
-  const [durationToggle, setDurationToggle] = useState(false);
-
   // 🧭 Fetch all main categories
   useEffect(() => {
     const fetchMainCategories = async () => {
@@ -44,43 +45,73 @@ const PromotePost = () => {
     fetchMainCategories();
   }, []);
 
+  const hasValidUsername =
+    typeof username === "string" &&
+    username.trim() !== "" &&
+    username !== "undefined" &&
+    username !== "null";
+
   // 💰 Budget and reach calculations
   const totalBudget = budget * days;
-  const estimatedReach = `${1800 + days * 100}-${4800 + days * 150}`;
-  const gst = (budget * 0.18).toFixed(2);
-  const dailyTotal = (budget + parseFloat(gst)).toFixed(2);
+  const estimatedReach = `${Math.floor(budget * 10 * days)}-${Math.floor(
+    budget * 20 * days
+  )}`;
+  const gst = +(totalBudget * 0.18).toFixed(2);
+  const Total = +(totalBudget + gst).toFixed(2);
 
-// 🚀 Promote Post Function
-const handleBoostPost = async () => {
-  if (!postId) return toast.error("Missing post ID. Please try again.");
-  if (!days || !budget) return toast.error("Please select budget and duration.");
+  // 🚀 Promote Post Function
+  const handleBoostPost = async () => {
+    if (!postId) return toast.error("Missing post ID. Please try again.");
+    if (!days || !budget)
+      return toast.error("Please select budget and duration.");
 
-  const payload = {
-    postId,
-    category: selectedCategory || null, 
-    goal,
-    dailyBudget: budget,
-    durationDays: days,
-    userId,
-  };
-
-  try {
-    setLoading(true);
-    const res = await postAPI("/api/social-media/posts/promote", payload, true, true);
-    if (res?.data?.success) {
-      toast.success("Post promoted successfully!");
-      navigate("/social-media/profile");
-    } else {
-      toast.error(res?.data?.message || "Failed to promote post.");
+    if (website) {
+      const urlPattern =
+        /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/;
+      if (!urlPattern.test(website)) {
+        setError("Enter a valid website URL");
+        return;
+      }
     }
-  } catch (error) {
-    toast.error("Error promoting post. Please try again.");
-    console.error("PromotePost Error:", error);
-  } finally {
-    setLoading(false);
-  }
-};
 
+    const payload = {
+      postId,
+      category: selectedCategory || null,
+      goal,
+      website,
+      dailyBudget: budget,
+      durationDays: days,
+      userId,
+    };
+
+    try {
+      setLoading(true);
+      const res = await postAPI(
+        "/api/social-media/posts/promote",
+        payload,
+        true,
+        true
+      );
+      if (res?.data?.success) {
+        toast.success("Post promoted successfully!");
+        navigate(
+          `/artsays-community/profile/${
+            hasValidUsername
+              ? `${username}`
+              : `${firstName}_${lastName}_${userId}`
+          }`,
+          { state: { userId: userId } }
+        );
+      } else {
+        toast.error(res?.data?.message || "Failed to promote post.");
+      }
+    } catch (error) {
+      toast.error("Error promoting post. Please try again.");
+      console.error("PromotePost Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="w-full min-h-screen bg-white">
@@ -88,9 +119,8 @@ const handleBoostPost = async () => {
         {/* Header */}
         <header className="flex flex-col w-full">
           <div className="flex items-center gap-2 mb-2">
-            <Link to={"/social-media/profile"}>
-              <RiArrowLeftLine className="text-xl" />
-            </Link>
+            
+            <RiArrowLeftLine className="text-xl" onClick={()=>navigate(-1)}/>
             <h2 className="text-xl font-bold">Promote Post</h2>
           </div>
         </header>
@@ -152,6 +182,27 @@ const handleBoostPost = async () => {
               </label>
             </div>
 
+            {goal === "Visit your website" && (
+              <div className="mt-3">
+                <label className="block font-medium text-sm mb-1">
+                  Enter your website
+                </label>
+
+                <input
+                  type="text"
+                  value={website}
+                  onChange={(e) => {
+                    setWebsite(e.target.value);
+                  }}
+                  placeholder="https://yourwebsite.com"
+                  className="w-full border p-2 rounded-md outline-none focus:ring-2 focus:ring-blue-500"
+                />
+
+                {/* Error Message */}
+                {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
+              </div>
+            )}
+
             {/* Special Requirements */}
             <div>
               <div
@@ -182,9 +233,7 @@ const handleBoostPost = async () => {
                       type="checkbox"
                       className="sr-only peer"
                       checked={requirementToggle}
-                      onChange={() =>
-                        setRequirementToggle(!requirementToggle)
-                      }
+                      onChange={() => setRequirementToggle(!requirementToggle)}
                     />
                     <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-[#000000]"></div>
                     <div className="absolute left-1 top-1 bg-gray-100 w-4 h-4 rounded-full transition peer-checked:translate-x-5"></div>
@@ -219,9 +268,7 @@ const handleBoostPost = async () => {
 
             {/* Budget */}
             <div className="flex flex-col gap-2">
-              <h3 className="font-semibold text-lg">
-                What’s your ad budget?
-              </h3>
+              <h3 className="font-semibold text-lg">What’s your ad budget?</h3>
               <div className="p-4 rounded-sm bg-[#F4F6F8] flex justify-between items-center w-full">
                 <div>
                   <p className="text-lg font-semibold">
@@ -256,41 +303,20 @@ const handleBoostPost = async () => {
             {/* Duration */}
             <div className="flex flex-col">
               <p className="font-semibold text-lg mb-1">Duration</p>
-              <label className="flex items-center justify-between flex-row-reverse gap-2">
-                <input
-                  type="radio"
-                  name="duration"
-                  onClick={() => setDurationToggle(false)}
-                />
-                <p className="text-sm text-[#000000] font-medium">
-                  Run this ad until I pause it
+
+              <div>
+                <p className="text-sm text-[#000000] mb-1">
+                  Number of days: {days} days
                 </p>
-              </label>
-              <label className="flex items-center justify-between flex-row-reverse">
                 <input
-                  type="radio"
-                  name="duration"
-                  onClick={() => setDurationToggle(!durationToggle)}
+                  type="range"
+                  min="1"
+                  max="30"
+                  value={days}
+                  onChange={(e) => setDays(Number(e.target.value))}
+                  className="w-full accent-red-500"
                 />
-                <p className="text-sm text-[#000000] font-medium">
-                  Set duration
-                </p>
-              </label>
-              {durationToggle && (
-                <div>
-                  <p className="text-sm text-[#000000] mb-1">
-                    Number of days: {days} days
-                  </p>
-                  <input
-                    type="range"
-                    min="1"
-                    max="30"
-                    value={days}
-                    onChange={(e) => setDays(Number(e.target.value))}
-                    className="w-full accent-red-500"
-                  />
-                </div>
-              )}
+              </div>
             </div>
 
             {/* Boost Post Button */}
@@ -315,7 +341,7 @@ const handleBoostPost = async () => {
           <div className="hidden lg:block w-[1px] bg-gray-800 "></div>
 
           {/* Right Section */}
-          <div className="hidden lg:flex flex-col w-[40%]">
+          <div className="flex  flex-col w-full lg:w-[40%]">
             <div className="rounded p-4">
               <h3 className="font-semibold text-lg mb-4">Preview ad</h3>
               <img
@@ -338,24 +364,20 @@ const handleBoostPost = async () => {
 
             <div className="rounded p-4 text-sm space-y-1 flex flex-col">
               <h3 className="font-semibold text-lg mb-2">Payment summary</h3>
-              <p className="text-sm text-[#000000]">
-                Your ad will run until you pause it.
-              </p>
+
               <div className="flex flex-row justify-between align-center">
-                <p className="text-sm text-[#000000]">Daily budget</p>
-                <p className="text-sm text-[#000000]">₹{budget}</p>
+                <p className="text-sm text-[#000000]"> Budget</p>
+                <p className="text-sm text-[#000000]">₹{totalBudget}</p>
               </div>
               <div className="flex flex-row justify-between align-center">
-                <p className="text-sm text-[#000000]">Estimated GST</p>
+                <p className="text-sm text-[#000000]">GST</p>
                 <p className="text-sm text-[#000000]">₹{gst}</p>
               </div>
               <div className="flex flex-row justify-between align-center">
                 <p className="text-sm text-[#000000] font-semibold">
-                  Estimated daily amount
+                  Total amount
                 </p>
-                <p className="text-sm text-[#000000] font-semibold">
-                  ₹{dailyTotal}
-                </p>
+                <p className="text-sm text-[#000000] font-semibold">₹{Total}</p>
               </div>
             </div>
           </div>

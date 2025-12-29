@@ -270,7 +270,7 @@ import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../../api/getAPI";
 import postAPI from "../../../../../api/postAPI";
 import { toast } from "react-toastify";
-
+import BiddingPassSkeleton from "../../../../Skeleton/biddingpass/BiddingPassSkeleton";
 const BiddingPass = () => {
   const navigate = useNavigate();
   const [passes, setPasses] = useState([]);
@@ -280,7 +280,7 @@ const BiddingPass = () => {
   const [currentPassId, setCurrentPassId] = useState(null);
   const [currentPassPrice, setCurrentPassPrice] = useState(null);
   const userId = localStorage.getItem("userId");
-
+  const [loading, setLoading] = useState(true);
   const parsePrice = (value) => {
     if (value == null) return null;
     if (typeof value === "number") return value;
@@ -322,6 +322,8 @@ const BiddingPass = () => {
         setHasActive(!!activeOrder);
       } catch {
         setPasses([]);
+      } finally {
+        setLoading(false);
       }
     };
     load();
@@ -366,6 +368,7 @@ const BiddingPass = () => {
         })
       : passes;
 
+  if (loading) return <BiddingPassSkeleton />;
   return (
     <div className="container-fluid mt-3">
       <div className="block-header mb-4">

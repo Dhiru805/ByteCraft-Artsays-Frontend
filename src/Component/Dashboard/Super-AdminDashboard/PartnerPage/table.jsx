@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import getAPI from "../../../../api/getAPI";
 import axiosInstance from "../../../../api/axiosConfig";
 import ConfirmationDialog from "../../ConfirmationDialog";
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 
 const PartnerTable = () => {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ const PartnerTable = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedPageToDelete, setSelectedPageToDelete] = useState(null);
   const [deleteType, setDeleteType] = useState("");
-
+const[loading,setLoading]=useState(true)
   const fetchPages = async () => {
     try {
       const res = await getAPI("/api/partner");
@@ -26,6 +27,8 @@ const PartnerTable = () => {
       console.error("Error fetching partner pages:", err);
       toast.error(err.response?.data?.message || "Failed to fetch partner pages");
       setPages([]);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -79,6 +82,7 @@ const PartnerTable = () => {
     }
   };
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

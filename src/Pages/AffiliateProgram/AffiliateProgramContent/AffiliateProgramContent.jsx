@@ -259,7 +259,7 @@ const AffiliateContent = () => {
     fetchPublishedPage();
   }, []);
 
-  if (loading) return <p className="text-center py-6">Loading...</p>;
+  if (loading) return <p className="text-center py-6">{PageSkeleton()}</p>;
   if (!pageData) return <p className="text-center py-6">No content found</p>;
 
   const filteredArticles = pageData.articles?.filter((a) =>
@@ -271,11 +271,9 @@ const AffiliateContent = () => {
       <div className="w-full py-3 px-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-            <a href="#" className="hover:text-red-500">Home</a>
+            <a href="/" className="text-gray-900 hover:text-red-500">Home</a>
             <span>/</span>
-            <a href="#" className="hover:text-red-500">Store</a>
-            <span>/</span>
-            <span className="font-medium text-gray-900">Affiliate</span>
+            <span className="font-medium text-gray-900">Affiliate Program</span>
           </nav>
 
           <div className="relative w-full sm:w-64">
@@ -304,23 +302,23 @@ const AffiliateContent = () => {
       </h1>
       <hr className="my-3 border-dark" />
 
-      <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+      <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
         {pageData.webpageDescription}
       </p>
 
-      <div className="grid grid-cols-1 gap-6 px-3 sm:px-6 mt-6">
+      <div className="grid grid-cols-1 gap-6 px-3 sm:px-6">
         {filteredArticles.map((article, index) => (
-          <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6 mt-3">
+          <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {article.bannerImage && (
-              <aside className={`rounded-xl filter-sidebar content-center ${index % 2 === 1 ? "md:order-2" : "md:order-1"}`}>
+              <aside className={`rounded-xl filter-sidebar content-center ${index % 2 === 1 ? "md:order-1" : "md:order-2"}`}>
                 <img src={`${imageBaseURL}/${article.bannerImage}`} alt={article.articleHeading} className="w-full h-full object-cover rounded-lg" />
               </aside>
             )}
 
-            <main className={`md:col-span-3 flex flex-col justify-center ${index % 2 === 1 ? "md:text-right md:order-1" : "md:text-left md:order-2"}`}>
+            <main className={`md:col-span-3 flex flex-col justify-center ${index % 2 === 1 ? "md:text-right md:order-2" : "md:text-left md:order-1"}`}>
               <h2 className="text-sm md:text-xl font-bold text-orange-500">{article.articleHeading}</h2>
               <hr className="my-3 border-dark" />
-              <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">{article.articleContent}</p>
+              <p className="text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed">{article.articleContent}</p>
             </main>
           </div>
         ))}
@@ -328,17 +326,15 @@ const AffiliateContent = () => {
 
       {pageData.cards?.length > 0 && (
         <div className="my-10 px-3 sm:px-6">
-        
+
           {pageData.cardsHeading && (
-            <h2 className="text-lg md:text-4xl font-bold text-orange-500 text-center mb-5">
+            <h2 className="text-lg md:text-4xl font-bold text-orange-500 text-center">
               {pageData.cardsHeading}
-              <hr className="my-3 border-dark" />
             </h2>
-            
           )}
-         
+          <hr className="my-3 border-dark" />
           {pageData.cardsDescription && (
-            <p className="mt-2 text-sm md:text-base font-medium text-black text-center mb-5">
+            <p className="text-sm md:text-lg md:text-dark font-medium text-black leading-relaxed px-3 text-center mb-5">
               {pageData.cardsDescription}
             </p>
           )}
@@ -346,19 +342,19 @@ const AffiliateContent = () => {
             {pageData.cards.map((card, idx) => (
               <div
                 key={idx}
-                className="mx-auto border rounded-2xl shadow-2xl bg-white hover:scale-105 transition-transform duration-300 ease-in-out"
+                className="w-full mx-auto border rounded-2xl shadow-lg hover:shadow-2xl"
               >
-              
-                <div className="relative flex items-center justify-center">
+
+                <div className="relative">
                   <img
                     src={`${imageBaseURL}/${card.cardImage}`}
                     alt={card.cardTitle}
-                    className="w-full h-28 sm:h-44 object-contain rounded-t-2xl p-5 pb-0 product-img"
+                    className="w-full h-28 sm:h-44 object-contain rounded-t-2xl p-3 md:p-5 pb-0 product-img"
                   />
                 </div>
 
-              
-                <h2 className="text-base sm:text-lg text-dark font-semibold mt-1 p-3 text-center">
+
+                <h2 className="sm:text-lg text-dark font-semibold p-3 text-center">
                   {card.cardTitle}
                 </h2>
               </div>
@@ -374,3 +370,87 @@ const AffiliateContent = () => {
 };
 
 export default AffiliateContent;
+
+const PageSkeleton = () => {
+  return (
+    <div className="animate-pulse">
+
+      {/* Page Heading */}
+      <div className="px-3">
+        <div className="w-48 md:w-80 h-7 md:h-10 bg-gray-300 rounded"></div>
+        <div className="w-full h-[1px] bg-gray-300 my-3"></div>
+      </div>
+
+      {/* Page Description */}
+      <div className="px-3">
+        <div className="w-full h-4 bg-gray-300 rounded mt-3"></div>
+        <div className="w-5/6 h-4 bg-gray-300 rounded mt-2"></div>
+      </div>
+
+      {/* ARTICLE LIST */}
+      <div className="grid grid-cols-1 gap-6 px-3 sm:px-6 mt-6">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6 mt-3 items-center"
+          >
+            {/* Image Skeleton */}
+            <aside className="rounded-xl w-full h-40 md:h-56 bg-gray-300"></aside>
+
+            {/* Article Text Skeleton */}
+            <main className="md:col-span-3 flex flex-col justify-center">
+
+              {/* Heading */}
+              <div className="w-40 md:w-56 h-5 bg-gray-300 rounded"></div>
+
+              {/* Divider */}
+              <div className="w-full h-[1px] bg-gray-300 my-3"></div>
+
+              {/* Content Lines */}
+              <div className="space-y-2">
+                <div className="w-full h-4 bg-gray-300 rounded"></div>
+                <div className="w-5/6 h-4 bg-gray-300 rounded"></div>
+                <div className="w-4/6 h-4 bg-gray-300 rounded"></div>
+              </div>
+            </main>
+
+          </div>
+        ))}
+      </div>
+
+      {/* CARDS SECTION */}
+      <div className="my-10 px-3 sm:px-6">
+
+        {/* Cards Heading */}
+        <div className="mx-auto text-center">
+          <div className="w-48 md:w-80 h-7 bg-gray-300 rounded mx-auto"></div>
+          <div className="w-full h-[1px] bg-gray-300 my-3"></div>
+        </div>
+
+        {/* Cards Description */}
+        <div className="mx-auto text-center">
+          <div className="w-4/6 h-4 bg-gray-300 rounded mx-auto"></div>
+          <div className="w-3/6 h-4 bg-gray-300 rounded mt-2 mx-auto"></div>
+        </div>
+
+        {/* Cards Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="mx-auto border rounded-2xl shadow-2xl bg-gray-200"
+            >
+              {/* Card Image Skeleton */}
+              <div className="w-full h-28 sm:h-44 bg-gray-300 rounded-t-2xl"></div>
+
+              {/* Card Title Skeleton */}
+              <div className="h-5 bg-gray-300 rounded mx-auto mt-3 mb-4 w-24"></div>
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </div>
+  );
+};
+

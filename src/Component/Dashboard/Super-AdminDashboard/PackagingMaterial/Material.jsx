@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import getAPI from "../../../../api/getAPI";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../../ConfirmationDialog";
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 
 const Material = () => {
 
@@ -15,7 +16,7 @@ const Material = () => {
     const [perPage, setPerPage] = useState(10);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [selectedMaterialToDelete, setSelectedMaterialToDelete] = useState(null);
-
+const[loading,setLoading]=useState(true)
     const handleImageChange = (e) => {
     const file = e.target.files[0];
     setMaterialNameImage(file);
@@ -61,6 +62,7 @@ const Material = () => {
     };
 
     const fetchMaterials = async () => {
+      
       try {
         const userId = localStorage.getItem("userId");
         const res = await getAPI(`/api/package-material/material/${userId}`);
@@ -77,6 +79,8 @@ const Material = () => {
       } catch (error) {
         console.error("Failed to fetch materials:", error);
         setMaterials([]);
+      }finally{
+        setLoading(false)
       }
     };
 
@@ -87,6 +91,7 @@ const Material = () => {
   const filteredItems = materials.filter(mat => mat.materialName?.materialName.toLowerCase().includes(searchTerm.toLowerCase()));
   const totalPages = Math.ceil(filteredItems.length / productsPerPage);
 
+  if(loading)return <ProductRequestSkeleton/>
     return (
       <>
         <div className="container-fluid">

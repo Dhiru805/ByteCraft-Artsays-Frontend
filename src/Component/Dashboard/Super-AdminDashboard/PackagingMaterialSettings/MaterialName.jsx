@@ -3,6 +3,7 @@ import postAPI from "../../../../api/postAPI";
 import getAPI from "../../../../api/getAPI";
 import putAPI from "../../../../api/putAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
+import { toast } from "react-toastify";
 
 const MaterialName = () => {
   const [showPopUp, setShowPopUp] = useState(false);
@@ -16,11 +17,12 @@ const MaterialName = () => {
   const [viewMode, setViewMode] = useState(false);
   const [viewData, setViewData] = useState(null);
   const [productsPerPage, setProductsPerPage] = useState(10);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedMaterialToDelete, setSelectedMaterialToDelete] = useState(null);
+  const [selectedMaterialToDelete, setSelectedMaterialToDelete] =
+    useState(null);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -51,20 +53,28 @@ const MaterialName = () => {
     setCurrentPage(1);
   };
 
-  const filteredItems = materials.filter(mat => mat.materialName?.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredItems = materials.filter((mat) =>
+    mat.materialName?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   const totalPages = Math.ceil(filteredItems.length / productsPerPage);
 
   const fetchMaterials = async () => {
     try {
       const userId = localStorage.getItem("userId");
-      const res = await getAPI(`/api/packaging-material-setting/material-name/${userId}`);
+      const res = await getAPI(
+        `/api/packaging-material-setting/material-name/${userId}`
+      );
       if (res.data.success) {
-        setMaterials(Array.isArray(res.data.materialName) ? res.data.materialName : [res.data.materialName]);
+        setMaterials(
+          Array.isArray(res.data.materialName)
+            ? res.data.materialName
+            : [res.data.materialName]
+        );
       }
     } catch (error) {
       console.error("Error fetching materials:", error);
     }
-  }
+  };
 
   useEffect(() => {
     fetchMaterials();
@@ -74,7 +84,7 @@ const MaterialName = () => {
     setViewMode(true);
     setViewData(mat);
     setShowPopUp(true);
-  }
+  };
 
   const openCreateModal = () => {
     setEditMode(false);
@@ -83,16 +93,22 @@ const MaterialName = () => {
     setImagePreview(null);
     setEditId(null);
     setShowPopUp(true);
-  }
+  };
 
   const openEditModal = (mat) => {
     setEditMode(true);
     setMaterialName(mat.materialName);
     setMaterialNameImage(null);
-    setImagePreview(mat.materialNameImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${mat.materialNameImage.replace(/\\/g, "/")}` : "/placeholder.jpg");
+    setImagePreview(
+      mat.materialNameImage
+        ? `${
+            process.env.REACT_APP_API_URL_FOR_IMAGE
+          }/${mat.materialNameImage.replace(/\\/g, "/")}`
+        : "/placeholder.jpg"
+    );
     setEditId(mat._id);
     setShowPopUp(true);
-  }
+  };
 
   const handleDeleteCancel = () => {
     setIsDeleteDialogOpen(false);
@@ -112,14 +128,20 @@ const MaterialName = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+    if (!materialNameImage) {
+      toast.error("Upload Material Image");
+      return;
+    }
     try {
       const formData = new FormData();
       formData.append("userId", localStorage.getItem("userId"));
       formData.append("materialName", materialName);
       formData.append("materialNameImage", materialNameImage);
 
-      const res = await postAPI("/api/packaging-material-setting/material-name/create", formData);
+      const res = await postAPI(
+        "/api/packaging-material-setting/material-name/create",
+        formData
+      );
       console.log("Material Name Created:", res.data);
       fetchMaterials();
       setShowPopUp(false);
@@ -144,7 +166,10 @@ const MaterialName = () => {
         formData.append("materialNameImage", materialNameImage);
       }
 
-      const res = await putAPI(`/api/packaging-material-setting/material-name/update/${editId}`, formData);
+      const res = await putAPI(
+        `/api/packaging-material-setting/material-name/update/${editId}`,
+        formData
+      );
       console.log("Updated:", res);
       fetchMaterials();
       setShowPopUp(false);
@@ -153,7 +178,7 @@ const MaterialName = () => {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <>
@@ -184,13 +209,21 @@ const MaterialName = () => {
                   {showPopUp && (
                     <div
                       className="modal show d-block"
-                      style={{ backgroundColor: "rgba(0, 0, 0, 0.7)", color: "black" }}
+                      style={{
+                        backgroundColor: "rgba(0, 0, 0, 0.7)",
+                        color: "black",
+                      }}
                     >
                       <div className="modal-dialog">
                         <div className="modal-content">
                           <div className="modal-header">
-                            <h5 className="modal-title">{viewMode ? "View Material Name" :
-                              editMode ? "Update Material Name" : "Create Material Name"}</h5>
+                            <h5 className="modal-title">
+                              {viewMode
+                                ? "View Material Name"
+                                : editMode
+                                ? "Update Material Name"
+                                : "Create Material Name"}
+                            </h5>
                             <button
                               type="button"
                               className="close"
@@ -220,7 +253,13 @@ const MaterialName = () => {
                                   {viewData?.materialNameImage && (
                                     <div className="mt-2">
                                       <img
-                                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${viewData.materialNameImage.replace(/\\/g, "/")}`}
+                                        src={`${
+                                          process.env
+                                            .REACT_APP_API_URL_FOR_IMAGE
+                                        }/${viewData.materialNameImage.replace(
+                                          /\\/g,
+                                          "/"
+                                        )}`}
                                         alt={viewData.materialName}
                                         className="img-thumbnail"
                                         style={{ maxHeight: "200px" }}
@@ -230,7 +269,11 @@ const MaterialName = () => {
                                 </div>
                               </div>
                             ) : (
-                              <form onSubmit={editMode ? handleUpdate : handleSubmit}>
+                              <form
+                                onSubmit={
+                                  editMode ? handleUpdate : handleSubmit
+                                }
+                              >
                                 <div className="form-group">
                                   <label>Material Name</label>
                                   <input
@@ -238,12 +281,16 @@ const MaterialName = () => {
                                     className="form-control"
                                     name="materialName"
                                     value={materialName}
-                                    onChange={(e) => setMaterialName(e.target.value)}
+                                    onChange={(e) =>
+                                      setMaterialName(e.target.value)
+                                    }
                                     required
                                   />
                                 </div>
                                 <div className="form-group mt-3">
-                                  <label htmlFor="materialImage">Material Image</label>
+                                  <label htmlFor="materialImage">
+                                    Material Image
+                                  </label>
                                   <input
                                     type="file"
                                     id="materialImage"
@@ -277,8 +324,12 @@ const MaterialName = () => {
                                     disabled={loading}
                                   >
                                     {loading
-                                      ? editMode ? "Updating...." : "Creating....." :
-                                      editMode ? "Update Material Name" : "Create Material Name"}
+                                      ? editMode
+                                        ? "Updating...."
+                                        : "Creating....."
+                                      : editMode
+                                      ? "Update Material Name"
+                                      : "Create Material Name"}
                                   </button>
                                 </div>
                               </form>
@@ -349,14 +400,23 @@ const MaterialName = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {materials.filter((mat) => mat.materialName.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 ? (
+                      {materials.filter((mat) =>
+                        mat.materialName
+                          .toLowerCase()
+                          .includes(searchTerm.toLowerCase())
+                      ).length === 0 ? (
                         <tr>
                           <td colSpan="4" className="text-center">
                             No data available
                           </td>
                         </tr>
                       ) : (
-                        materials.filter((mat) => mat.materialName.toLowerCase().includes(searchTerm.toLowerCase()))
+                        materials
+                          .filter((mat) =>
+                            mat.materialName
+                              .toLowerCase()
+                              .includes(searchTerm.toLowerCase())
+                          )
                           .map((mat, index) => (
                             <tr key={mat._id}>
                               <td>{(currentPage - 1) * perPage + index + 1}</td>
@@ -364,16 +424,22 @@ const MaterialName = () => {
                                 <img
                                   src={
                                     mat.materialNameImage
-                                      ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${mat.materialNameImage.replace(/\\/g, "/")}`
+                                      ? `${
+                                          process.env
+                                            .REACT_APP_API_URL_FOR_IMAGE
+                                        }/${mat.materialNameImage.replace(
+                                          /\\/g,
+                                          "/"
+                                        )}`
                                       : "/placeholder.jpg"
                                   }
                                   className="rounded-circle"
                                   alt={mat.materialName}
                                   style={{
-                                    width: '30px',
-                                    height: '30px',
-                                    objectFit: 'cover',
-                                    marginRight: '10px'
+                                    width: "30px",
+                                    height: "30px",
+                                    objectFit: "cover",
+                                    marginRight: "10px",
                                   }}
                                 />
                               </td>
@@ -413,12 +479,19 @@ const MaterialName = () => {
 
                 <div className="pagination d-flex justify-content-between mt-4">
                   <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, filteredItems.length)} of {filteredItems.length} entries
+                    Showing {(currentPage - 1) * productsPerPage + 1} to{" "}
+                    {Math.min(
+                      currentPage * productsPerPage,
+                      filteredItems.length
+                    )}{" "}
+                    of {filteredItems.length} entries
                   </span>
 
                   <ul className="pagination d-flex justify-content-end w-100">
                     <li
-                      className={`paginate_button page-item ${currentPage === 1 ? 'disabled' : ''}`}
+                      className={`paginate_button page-item ${
+                        currentPage === 1 ? "disabled" : ""
+                      }`}
                       onClick={handlePrevious}
                     >
                       <button className="page-link">Previous</button>
@@ -431,13 +504,19 @@ const MaterialName = () => {
                         if (prevPage && pageNumber - prevPage > 1) {
                           return (
                             <React.Fragment key={`ellipsis-${pageNumber}`}>
-                              <li className="page-item disabled"><span className="page-link">...</span></li>
+                              <li className="page-item disabled">
+                                <span className="page-link">...</span>
+                              </li>
                               <li
                                 key={pageNumber}
-                                className={`paginate_button page-item ${currentPage === pageNumber ? 'active' : ''}`}
+                                className={`paginate_button page-item ${
+                                  currentPage === pageNumber ? "active" : ""
+                                }`}
                                 onClick={() => setCurrentPage(pageNumber)}
                               >
-                                <button className="page-link">{pageNumber}</button>
+                                <button className="page-link">
+                                  {pageNumber}
+                                </button>
                               </li>
                             </React.Fragment>
                           );
@@ -446,7 +525,9 @@ const MaterialName = () => {
                         return (
                           <li
                             key={pageNumber}
-                            className={`paginate_button page-item ${currentPage === pageNumber ? 'active' : ''}`}
+                            className={`paginate_button page-item ${
+                              currentPage === pageNumber ? "active" : ""
+                            }`}
                             onClick={() => setCurrentPage(pageNumber)}
                           >
                             <button className="page-link">{pageNumber}</button>
@@ -455,7 +536,9 @@ const MaterialName = () => {
                       })}
 
                     <li
-                      className={`paginate_button page-item ${currentPage === totalPages ? 'disabled' : ''}`}
+                      className={`paginate_button page-item ${
+                        currentPage === totalPages ? "disabled" : ""
+                      }`}
                       onClick={handleNext}
                     >
                       <button className="page-link">Next</button>
@@ -467,15 +550,14 @@ const MaterialName = () => {
           </div>
         </div>
       </div>
-      {
-        isDeleteDialogOpen && (
-          <ConfirmationDialog
-            onClose={handleDeleteCancel}
-            deleteType="materialName"
-            id={selectedMaterialToDelete._id}
-            onDeleted={handleDeleteConfirmed}
-          />
-        )}
+      {isDeleteDialogOpen && (
+        <ConfirmationDialog
+          onClose={handleDeleteCancel}
+          deleteType="materialName"
+          id={selectedMaterialToDelete._id}
+          onDeleted={handleDeleteConfirmed}
+        />
+      )}
     </>
   );
 };

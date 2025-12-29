@@ -4,7 +4,7 @@ import { BsFillCreditCard2FrontFill } from 'react-icons/bs';
 
 const PaymentMethod = () => {
   return (
-  <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 lg:px-0 space-y-6">
+  <div className="w-full space-y-6">
     <h2 className="text-xl font-semibold text-gray-900">Payment Method</h2>
 
     {/* Linked / Linkable Accounts */}

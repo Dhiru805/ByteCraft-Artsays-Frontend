@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import putAPI from '../../../../../../../api/putAPI';
 import getAPI from '../../../../../../../api/getAPI';
 import { DEFAULT_PROFILE_IMAGE } from './constant';
-
+import PersonalInformationSkeleton from '../../../../../../../Component/Skeleton/Home/Account/PersonalInformationSkeleton';
 export const AccountForm = () => {
   const fileInputRef = useRef(null);
 
@@ -324,87 +324,92 @@ export const AccountForm = () => {
       setLoading(false);
     }
   };
-  
+  if (loading && !profileData) {
+    return <PersonalInformationSkeleton />;
+  }
   return (
-    <form className="w-full max-w-[1100px] mx-auto px-4 mr-0 sm:px-6 lg:px-0 space-y-6" onSubmit={handleSubmit}>
+    <form className="w-full space-y-6" onSubmit={handleSubmit}>
       <h3 className="text-xl font-semibold">Personal Information</h3>
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        <div className="relative w-24 h-24">
-          <div className="w-24 h-24 bg-gray-300 rounded-full overflow-hidden">
-            <img
-              src={profileImage || DEFAULT_PROFILE_IMAGE}
-              alt="Profile Preview"
-              className="w-full h-full object-cover"
+      <div className='grid md:grid-cols-3'>
+        <div className="flex flex-col md:col-span-1 items-center gap-4">
+          <div className="relative">
+            <div className="w-[10rem] h-[10rem] bg-gray-300 rounded-full overflow-hidden">
+              <img
+                src={profileImage || DEFAULT_PROFILE_IMAGE}
+                alt="Profile Preview"
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            {profileImage && profileImage !== DEFAULT_PROFILE_IMAGE && (
+              <button
+                type="button"
+                onClick={handleDeleteImage}
+                className="absolute bottom-0 right-0 w-8 h-8 bg-[#6F3E2D] rounded-full flex items-center justify-center border border-white cursor-pointer"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-4 h-4 text-white hover:text-red-500 transition-colors duration-200"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 18M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2m4 0H5m1 0v12a2 2 0 002 2h8a2 2 0 002-2V6"
+                  />
+                </svg>
+
+              </button>
+            )}
+
+          </div>
+          <div>
+            <input
+              id="profileUpload"
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              className="hidden"
+              onChange={handleImageUpload}
+            />
+            <label
+              htmlFor="profileUpload"
+              className="bg-[#6F4D34] text-white text-sm font-semibold py-2 px-4 rounded-3xl cursor-pointer"
+            >
+              Upload Profile Image
+            </label>
+          </div>
+        </div>
+        <div className='md:col-span-2 space-y-6 content-center'>
+          <div>
+            <label className="block text-sm">First Name *</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Nelson"
+              className="w-full border-2 px-3 py-2 rounded-xl"
             />
           </div>
-
-          {profileImage && profileImage !== DEFAULT_PROFILE_IMAGE && (
-            <button
-              type="button"
-              onClick={handleDeleteImage}
-              className="absolute bottom-0 right-0 w-8 h-8 bg-[#6F3E2D] rounded-full flex items-center justify-center border border-white cursor-pointer"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-4 h-4 text-white hover:text-red-500 transition-colors duration-200"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 18M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2m4 0H5m1 0v12a2 2 0 002 2h8a2 2 0 002-2V6"
-                />
-              </svg>
-
-            </button>
-          )}
-
-        </div>
-        <div>
-          <input
-            id="profileUpload"
-            type="file"
-            accept="image/*"
-            ref={fileInputRef}
-            className="hidden"
-            onChange={handleImageUpload}
-          />
-          <label
-            htmlFor="profileUpload"
-            className="bg-[#6F4D34] text-white text-sm font-semibold py-2 px-4 rounded-3xl cursor-pointer"
-          >
-            Upload Profile Image
-          </label>
+          <div>
+            <label className="block text-sm">Last Name *</label>
+            <input
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="D."
+              className="w-full border-2 px-3 py-2 rounded-xl"
+            />
+          </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm">First Name *</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Nelson"
-            className="w-full border-2 px-3 py-2 rounded-xl"
-          />
-        </div>
-        <div>
-          <label className="block text-sm">Last Name *</label>
-          <input
-            type="text"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            placeholder="D."
-            className="w-full border-2 px-3 py-2 rounded-xl"
-          />
-        </div>
-
-        <div className="md:col-span-2">
+        <div className="md:col-span-1">
           <label className="block text-sm">Username *</label>
           <input
             type="text"
@@ -415,7 +420,7 @@ export const AccountForm = () => {
           />
         </div>
 
-        <div className="md:col-span-2">
+        <div className="md:col-span-1">
           <label className="block text-sm">Email *</label>
           <input
             type="email"
@@ -425,7 +430,10 @@ export const AccountForm = () => {
             className="w-full border-2 px-3 py-2 rounded-xl"
           />
         </div>
-        <div className="md:col-span-2">
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="md:col-span-1">
           <label className="block text-sm">Phone *</label>
           <input
             type="tel"
@@ -435,9 +443,17 @@ export const AccountForm = () => {
             className="w-full border-2 px-3 py-2 rounded-xl"
           />
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="md:col-span-1">
+          <label className="block text-sm mb-2">Date of Birth</label>
+          <input
+            type="date"
+            value={birthdate}
+            onChange={(e) => setBirthdate(e.target.value)}
+            className="w-full border-2 px-3 py-2 rounded-xl"
+          />
+        </div>
+
         <div>
           <label className="block text-sm mb-2">Gender</label>
           <div className="flex gap-4 text-lg text-gray-500 font-normal">
@@ -458,15 +474,6 @@ export const AccountForm = () => {
               Female
             </button>
           </div>
-        </div>
-        <div>
-          <label className="block text-sm mb-2">Date of Birth</label>
-          <input
-            type="date"
-            value={birthdate}
-            onChange={(e) => setBirthdate(e.target.value)}
-            className="w-full border-2 px-3 py-2 rounded-xl"
-          />
         </div>
       </div>
 

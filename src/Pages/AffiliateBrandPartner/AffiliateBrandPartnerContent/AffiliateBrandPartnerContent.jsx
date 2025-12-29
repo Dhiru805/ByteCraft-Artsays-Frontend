@@ -24,7 +24,7 @@ const AffiliateBPContent = () => {
         fetchPublishedPage();
     }, []);
 
-    if (loading) return <p className="text-center py-6">Loading...</p>;
+    if (loading) return <p className="text-center py-6">{PageSkeleton()}</p>;
     if (!pageData) return <p className="text-center py-6">No content found</p>;
 
     const filteredArticles = pageData.articles?.filter((a) =>
@@ -37,11 +37,9 @@ const AffiliateBPContent = () => {
             <div className="w-full py-3 px-3">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-                        <a href="#" className="hover:text-red-500">Home</a>
+                        <a href="/" className="hover:text-red-500">Home</a>
                         <span>/</span>
-                        <a href="#" className="hover:text-red-500">Store</a>
-                        <span>/</span>
-                        <span className="font-medium text-gray-900">Affiliate BP</span>
+                        <span className="font-medium text-gray-900">Affiliate Brand Partner</span>
                     </nav>
 
                     <div className="relative w-full sm:w-64">
@@ -72,7 +70,7 @@ const AffiliateBPContent = () => {
             <hr className="my-3 border-dark" />
 
        
-            <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+            <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
                 {pageData.webpageDescription}
             </p>
 
@@ -89,7 +87,7 @@ const AffiliateBPContent = () => {
                         <main className={`md:col-span-3 flex flex-col justify-center ${index % 2 === 1 ? "md:text-right md:order-1" : "md:text-left md:order-2"}`}>
                             <h2 className="text-sm md:text-xl font-bold text-orange-500">{article.articleHeading}</h2>
                             <hr className="my-3 border-dark" />
-                            <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">{article.articleContent}</p>
+                            <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed">{article.articleContent}</p>
 
 
                             {/* {article.buttonName && article.buttonPath && (
@@ -129,7 +127,7 @@ const AffiliateBPContent = () => {
 
 
                     {pageData.cardsDescription && (
-                        <p className="mt-2 text-sm md:text-base font-medium text-black text-center mb-5">
+                        <p className="mt-2 text-sm md:text-lg md:text-dark font-medium text-black text-center mb-5">
                             {pageData.cardsDescription}
                         </p>
                     )}
@@ -163,3 +161,88 @@ const AffiliateBPContent = () => {
 };
 
 export default AffiliateBPContent;
+
+
+const PageSkeleton = () => {
+  return (
+    <div className="animate-pulse px-3 sm:px-6">
+
+      {/* PAGE HEADING */}
+      <div className="mt-3">
+        <div className="h-7 md:h-10 w-48 md:w-80 bg-gray-300 rounded"></div>
+        <div className="w-full h-[1px] bg-gray-300 my-3"></div>
+      </div>
+
+      {/* PAGE DESCRIPTION */}
+      <div>
+        <div className="h-4 bg-gray-300 rounded w-full"></div>
+        <div className="h-4 bg-gray-300 rounded w-5/6 mt-2"></div>
+      </div>
+
+      {/* ARTICLE LIST */}
+      <div className="grid grid-cols-1 gap-6 mt-6">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
+
+            {/* Image Skeleton */}
+            <aside className="w-full h-40 md:h-56 bg-gray-300 rounded-xl"></aside>
+
+            {/* Article Text */}
+            <main className="md:col-span-3 flex flex-col justify-center">
+
+              {/* Heading Line */}
+              <div className="h-5 bg-gray-300 rounded w-40 md:w-56"></div>
+
+              <div className="w-full h-[1px] bg-gray-300 my-3"></div>
+
+              {/* Paragraph Lines */}
+              <div className="space-y-2">
+                <div className="h-4 bg-gray-300 rounded w-full"></div>
+                <div className="h-4 bg-gray-300 rounded w-5/6"></div>
+                <div className="h-4 bg-gray-300 rounded w-4/6"></div>
+              </div>
+
+              {/* Button Skeleton */}
+              <div className="h-8 w-28 bg-gray-300 rounded-xl mt-4"></div>
+
+            </main>
+          </div>
+        ))}
+      </div>
+
+      {/* CARDS SECTION */}
+      <div className="my-5">
+
+        {/* Cards Heading */}
+        <div className="text-center mt-8">
+          <div className="h-7 md:h-10 w-48 md:w-80 bg-gray-300 rounded mx-auto"></div>
+          <div className="w-full h-[1px] bg-gray-300 my-3 mx-auto"></div>
+        </div>
+
+        {/* Cards Description */}
+        <div className="text-center">
+          <div className="h-4 bg-gray-300 rounded w-5/6 mx-auto"></div>
+          <div className="h-4 bg-gray-300 rounded w-4/6 mx-auto mt-2"></div>
+        </div>
+
+        {/* Cards Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="mx-auto border rounded-2xl shadow-2xl bg-gray-200"
+            >
+              {/* Card Image */}
+              <div className="h-28 sm:h-44 w-full bg-gray-300 rounded-t-2xl"></div>
+
+              {/* Card Title */}
+              <div className="h-5 bg-gray-300 rounded w-24 mx-auto my-4"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+    </div>
+  );
+};
+

@@ -78,11 +78,6 @@
 // };
 // export default CommissionContent;
 
-
-
-
-
-
 import "../../store/products/product.css";
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../../../api/axiosConfig";
@@ -108,18 +103,17 @@ const HowToSellContent = () => {
     fetchPublishedPage();
   }, []);
 
-  if (loading) return <p className="text-center py-6">Loading...</p>;
+  if (loading) return <p className="text-center py-6">{HowToSellcontentSkeleton()}</p>;
   if (!pageData) return <p className="text-center py-6">No content found</p>;
 
   return (
     <div className="max-w-[1440px] mx-auto mb-4">
-  
       <div className="w-full py-3 px-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-            <a href="#" className="hover:text-red-500">Home</a>
-            <span>/</span>
-            <a href="#" className="hover:text-red-500">Sell</a>
+            <a href="/" className="hover:text-red-500">
+              Home
+            </a>
             <span>/</span>
             <span className="font-medium text-gray-900">How To Sell</span>
           </nav>
@@ -130,14 +124,14 @@ const HowToSellContent = () => {
         <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
           {pageData.webpageHeading}
         </h1>
-        <button className="hidden md:block flex-1 bg-red-500 text-white py-2 px-6 rounded-full font-semibold shadow buy-now">
+        <button className="hidden md:block flex-1 bg-red-500 text-white py-2 px-6 rounded-full font-semibold shadow buy-now" onClick={() => window.location.href = '/login'}>
           Start Selling
         </button>
       </div>
 
       <hr className="my-3 border-dark" />
 
-      <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+      <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
         {pageData.webpageDescription}
       </p>
 
@@ -152,7 +146,7 @@ const HowToSellContent = () => {
                 <img
                   src={`${imageBaseURL}/${article.bannerImage}`}
                   alt={article.articleHeading}
-                  className="w-full h-full object-cover rounded-lg max-h-[300px]"
+                  className="w-full object-cover rounded-lg filter drop-shadow-[0_10px_15px_rgba(0,0,0,0.35)]"
                 />
               </aside>
             )}
@@ -162,7 +156,7 @@ const HowToSellContent = () => {
                 {article.articleHeading}
               </h2>
               <hr className="my-3 border-dark" />
-              <p className="text-xs md:text-base font-medium text-black leading-relaxed">
+              <p className="text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed">
                 {article.articleContent}
               </p>
             </main>
@@ -174,3 +168,60 @@ const HowToSellContent = () => {
 };
 
 export default HowToSellContent;
+
+const HowToSellcontentSkeleton = () => {
+  return (
+    <>
+      {/* SKELETON WRAPPER */}
+      <div className="animate-pulse">
+        {/* Heading + Button Row */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3 px-3">
+          <div className="md:col-span-3">
+            <div className="h-8 md:h-12 bg-gray-300 rounded w-3/4"></div>
+          </div>
+
+          <div className="hidden md:flex justify-end">
+            <div className="h-10 w-32 bg-gray-300 rounded-full"></div>
+          </div>
+        </div>
+
+        <hr className="my-3 border-gray-400" />
+
+        {/* Description */}
+        <p className="px-3">
+          <div className="h-4 bg-gray-300 rounded w-full mb-2"></div>
+          <div className="h-4 bg-gray-300 rounded w-5/6"></div>
+        </p>
+
+        {/* Articles Skeleton */}
+        <div className="grid grid-cols-1 gap-6 px-3 sm:px-6 my-3">
+          {[...Array(4)].map((_, index) => (
+            <div
+              key={index}
+              className="grid grid-cols-1 md:grid-cols-4 gap-6 my-3 items-center"
+            >
+              {/* Image */}
+              <aside className="md:col-span-1 flex justify-center">
+                <div className="w-full h-[200px] md:h-[300px] bg-gray-300 rounded-lg"></div>
+              </aside>
+
+              {/* Content */}
+              <main className="md:col-span-3">
+                <div className="h-5 bg-gray-300 rounded w-1/2"></div>
+
+                <hr className="my-3 border-gray-400" />
+
+                <div className="space-y-2">
+                  <div className="h-3 bg-gray-300 w-full rounded"></div>
+                  <div className="h-3 bg-gray-300 w-5/6 rounded"></div>
+                  <div className="h-3 bg-gray-300 w-4/6 rounded"></div>
+                  <div className="h-3 bg-gray-300 w-3/4 rounded"></div>
+                </div>
+              </main>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+};

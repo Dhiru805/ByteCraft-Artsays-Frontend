@@ -25,7 +25,7 @@ const HowToBidContent = () => {
     fetchPublishedPage();
   }, []);
 
-  if (loading) return <p className="text-center py-6">Loading...</p>;
+  if (loading) return <p className="text-center py-6">{ArticleListSkeleton()}</p>;
   if (!pageData) return <p className="text-center py-6">No content found</p>;
 
   const filteredArticles = pageData.articles.filter((article) =>
@@ -37,9 +37,7 @@ const HowToBidContent = () => {
       <div className="w-full py-3 px-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-            <a href="#" className="hover:text-red-500">Home</a>
-            <span>/</span>
-            <a href="#" className="hover:text-red-500">Dashboard</a>
+            <a href="/" className="hover:text-red-500">Home</a>
             <span>/</span>
             <span className="font-medium text-gray-900">How to Bid</span>
           </nav>
@@ -75,7 +73,7 @@ const HowToBidContent = () => {
       </h1>
       <hr className="my-3 border-dark" />
 
-      <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+      <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
         {pageData.webpageDescription}
       </p>
 
@@ -108,7 +106,7 @@ const HowToBidContent = () => {
                 {article.articleHeading}
               </h2>
               <hr className="my-3 border-dark" />
-              <p className="text-xs md:text-base font-medium text-black leading-relaxed">
+              <p className="text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed">
                 {article.articleContent}
               </p>
 
@@ -128,3 +126,56 @@ const HowToBidContent = () => {
 };
 
 export default HowToBidContent;
+
+
+const ArticleListSkeleton = () => {
+  return (
+    <div className="grid grid-cols-1 gap-6 px-3 sm:px-6 my-3 animate-pulse">
+
+      {[1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className="grid grid-cols-1 md:grid-cols-4 gap-6 my-3 items-center"
+        >
+          {/* Image Skeleton */}
+          <aside
+            className={`rounded-xl w-full h-40 md:h-52 bg-gray-300 ${
+              i % 2 === 1 ? "md:order-2" : "md:order-1"
+            }`}
+          />
+
+          {/* Text Content Skeleton */}
+          <main
+            className={`md:col-span-3 flex flex-col justify-center ${
+              i % 2 === 1 ? "md:text-right md:order-1" : "md:text-left md:order-2"
+            }`}
+          >
+            {/* Heading */}
+            <div className="h-5 md:h-7 w-40 bg-gray-300 rounded"></div>
+
+            <hr className="my-3 border-dark" />
+
+            {/* Paragraph */}
+            <div className="space-y-2">
+              <div className="h-4 w-full bg-gray-200 rounded"></div>
+              <div className="h-4 w-5/6 bg-gray-200 rounded"></div>
+              <div className="h-4 w-3/4 bg-gray-200 rounded"></div>
+            </div>
+
+            {/* Button Skeleton */}
+            <div
+              className={`mt-2 ${
+                i % 2 === 1 ? "md:self-end" : "md:self-start"
+              }`}
+            >
+              <div className="h-10 w-32 bg-gray-300 rounded-full"></div>
+            </div>
+          </main>
+        </div>
+      ))}
+
+    </div>
+  );
+};
+
+// export default ArticleListSkeleton;

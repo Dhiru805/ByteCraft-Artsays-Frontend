@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import getAPI from "../../../../../api/getAPI";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const Sponsors = () => {
   const [sponsors, setSponsors] = useState([]);
@@ -29,9 +30,7 @@ const Sponsors = () => {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center vh-100">
-        <h5>Loading sponsored posts...</h5>
-      </div>
+      <ProductRequestSkeleton/>
     );
   }
 

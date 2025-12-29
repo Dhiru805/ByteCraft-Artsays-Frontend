@@ -400,59 +400,59 @@
 //           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
 //             {/* <!-- Product Card --> */}
 
-//             <div className="mx-auto product-card">
-//               {/* Premium Label */}
-//               <div className="relative p-img">
-//                 <span className="absolute top-3 bg-red-500 left-3 text-white text-sm font-semibold px-2 py-0.5 rounded-full shadow">
-//                   Upcoming
-//                 </span>
+// <div className="mx-auto product-card">
+//   {/* Premium Label */}
+//   <div className="relative p-img">
+//     <span className="absolute top-3 bg-red-500 left-3 text-white text-sm font-semibold px-2 py-0.5 rounded-full shadow">
+//       Upcoming
+//     </span>
 
-//                 {/* Product Image */}
-//                 <img
-//                   src="/herosectionimg/1.jpg"
-//                   alt="Beauty of Joseon Mandala Art"
-//                   className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
-//                 />
+//     {/* Product Image */}
+//     <img
+//       src="/herosectionimg/1.jpg"
+//       alt="Beauty of Joseon Mandala Art"
+//       className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
+//     />
 
-//                 {/* Bell Icon */}
-//                 <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
-//                   <Bell className="w-5 h-5 text-white" />
-//                 </button>
-//               </div>
-//               {/* Product Info */}
-//               <div className="p-3 product-info">
-//                 <p className="text-gray-500 text-xs sm:text-sm">•Sponsored</p>
-//                 <h2 className="text-base sm:text-lg text-dark font-semibold mt-1">
-//                   Beauty of Joseon Mandala Art By SL
-//                 </h2>
-//                 <p className="text-gray-700 text-xs sm:text-sm font-medium flex items-center">
-//                   Dhiraj Designs
-//                   <span className="ml-1 text-blue-600">
-//                     <MdVerified className="ml-1 text-blue-600 w-4 h-4" />
-//                   </span>
-//                 </p>
+//     {/* Bell Icon */}
+//     <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
+//       <Bell className="w-5 h-5 text-white" />
+//     </button>
+//   </div>
+//   {/* Product Info */}
+//   <div className="p-3 product-info">
+//     <p className="text-gray-500 text-xs sm:text-sm">•Sponsored</p>
+//     <h2 className="text-base sm:text-lg text-dark font-semibold mt-1">
+//       Beauty of Joseon Mandala Art By SL
+//     </h2>
+//     <p className="text-gray-700 text-xs sm:text-sm font-medium flex items-center">
+//       Dhiraj Designs
+//       <span className="ml-1 text-blue-600">
+//         <MdVerified className="ml-1 text-blue-600 w-4 h-4" />
+//       </span>
+//     </p>
 
-//                 {/* Rating */}
-//                 <div className="grid items-center gap-1 mt-2">
-//                   <br />
-//                   <span className="text-red-500 font-semibold text-md sm:text-lg">
-//                     Starting Price: ₹5,000
-//                   </span>
-//                 </div>
-//               </div>
+//     {/* Rating */}
+//     <div className="grid items-center gap-1 mt-2">
+//       <br />
+//       <span className="text-red-500 font-semibold text-md sm:text-lg">
+//         Starting Price: ₹5,000
+//       </span>
+//     </div>
+//   </div>
 
-//               <div className="p-3 product-button d-none d-md-block">
-//                 {/* Buttons */}
-//                 <div className="flex justify-between gap-3">
-//                   <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-xs text-dark py-2 font-semibold add-cart">
-//                     2 Day Left
-//                   </button>
-//                   <button className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now">
-//                     Remind Me
-//                   </button>
-//                 </div>
-//               </div>
-//             </div>
+//   <div className="p-3 product-button d-none d-md-block">
+//     {/* Buttons */}
+//     <div className="flex justify-between gap-3">
+//       <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-xs text-dark py-2 font-semibold add-cart">
+//         2 Day Left
+//       </button>
+//       <button className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now">
+//         Remind Me
+//       </button>
+//     </div>
+//   </div>
+// </div>
 //             <div className="mx-auto product-card">
 //               {/* Premium Label */}
 //               <div className="relative p-img">
@@ -928,29 +928,30 @@
 // };
 // export default BidProduct;
 
-
-
-
 import "../../store/products/product.css";
 import React, { useState, useEffect } from "react";
 import { MdVerified } from "react-icons/md";
 import { FiChevronRight, FiChevronLeft } from "react-icons/fi";
 import { Bell } from "lucide-react";
-import getAPI from "../../../api/getAPI";   
+import getAPI from "../../../api/getAPI";
+import { useNavigate } from "react-router-dom";
 
 const BidProduct = () => {
   const [products, setProducts] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const userId = localStorage.getItem("userId");
- const [currentPage, setCurrentPage] = useState(1);
-   const itemsPerPage = 9;
-   const indexOfLastProduct = currentPage * itemsPerPage;
+  const navigate = useNavigate();
+  const [highestLiveBid, setHighestLiveBid] = useState({});
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
+  const indexOfLastProduct = currentPage * itemsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
   const currentProducts = products.slice(
     indexOfFirstProduct,
     indexOfLastProduct
   );
-   const totalPages = Math.ceil(products.length / itemsPerPage);
+  const totalPages = Math.ceil(products.length / itemsPerPage);
 
   const goToNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -964,65 +965,72 @@ const BidProduct = () => {
     setCurrentPage(page);
   };
 
- const fetchProducts = async () => {
-  try {
-    const [bidRes, badgeRes] = await Promise.all([
-      //getAPI(`/api/bidding/products/user/${userId}`, {}, true, false),
-      getAPI(`/api/bidding/products/all`, {}, true, false),
+  const fetchProducts = async () => {
+    try {
+      const [bidRes, badgeRes] = await Promise.all([
+        //getAPI(`/api/bidding/products/user/${userId}`, {}, true, false),
+        getAPI(`/api/bidding/products/all`, {}, true, false),
 
-      getAPI(`/api/products/approved-with-badges`, {}, true, false),
-    ]);
+        getAPI(`/api/products/approved-with-badges`, {}, true, false),
+      ]);
 
+      const list = Array.isArray(bidRes?.data) ? bidRes.data : [];
 
-    const list = Array.isArray(bidRes?.data) ? bidRes.data : [];
+      const badgeData = badgeRes?.data?.data || [];
 
-    const badgeData = badgeRes?.data?.data || [];
+      const finalList = list.map((item) => {
+        const p = item.product;
+        const realProductId = p._id || p.productId || p.product || null;
 
-    const finalList = list.map((item) => {
-      const p = item.product;
-      const realProductId = p._id || p.productId || p.product || null;
+        const match = badgeData.find((b) => b._id === realProductId);
 
-      const match = badgeData.find((b) => b._id === realProductId);
+        return {
+          ...item,
+          product: {
+            ...p,
+            seller: match?.seller || null,
+            badges: match?.badges || [],
+          },
+        };
+      });
 
-      return {
-        ...item,
-        product: {
-          ...p,
-          seller: match?.seller || null,
-          badges: match?.badges || [],
-        },
-      };
-    });
-
-    setProducts(finalList.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-    ));
-  } catch (err) {
-    console.error("Error fetching bidding products:", err);
-  }
-};
-
+      setProducts(
+        finalList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      );
+      await fetchLiveHighestBids(finalList);
+    } catch (err) {
+      console.error("Error fetching bidding products:", err);
+    }
+  };
 
   useEffect(() => {
     fetchProducts();
   }, []);
-const getFinalStatus = (item) => {
-  const backend = item.bidProdStatus || "Upcoming";
 
-  const now = Date.now();
-  const start = new Date(item.bidStart).getTime();
-  const end = new Date(item.bidEnd).getTime();
+  const slugify = (text = "") =>
+    text
+      ?.toString()
+      ?.toLowerCase()
+      ?.replace(/[^a-z0-9]+/g, "-")
+      ?.replace(/(^-|-$)+/g, "") || "artwork";
 
-  if (now >= end) return "Ended";
+  const getFinalStatus = (item) => {
+    const backend = item.bidProdStatus || "Upcoming";
 
-  if (now < start) return "Upcoming";
+    const now = Date.now();
+    const start = new Date(item.bidStart).getTime();
+    const end = new Date(item.bidEnd).getTime();
 
-  const minutesLeft = (end - now) / 1000 / 60;
+    if (now >= end) return "Ended";
 
-  if (minutesLeft <= 1440) return "Ending Soon";
+    if (now < start) return "Upcoming";
 
-  return "Hot Deal";
-};
+    const minutesLeft = (end - now) / 1000 / 60;
+
+    if (minutesLeft <= 1440) return "Ending Soon";
+
+    return "Hot Deal";
+  };
 
   const getTimeRemaining = (end) => {
     const now = new Date().getTime();
@@ -1045,11 +1053,49 @@ const getFinalStatus = (item) => {
     }, 60000);
     return () => clearInterval(interval);
   }, []);
+  const fetchLiveHighestBids = async (productsList) => {
+    try {
+      const highestMap = {};
+
+      await Promise.all(
+        productsList.map(async (item) => {
+          const bidId = item._id;
+
+          const res = await getAPI(
+            `/api/bidding/all/${bidId}`,
+            {},
+            true,
+            false
+          ).catch(() => null);
+
+          const allBids = res?.data?.bids || [];
+
+          const highestAmount =
+            allBids.length > 0
+              ? Math.max(...allBids.map((b) => b.amount))
+              : item.basePrice;
+
+          highestMap[bidId] = highestAmount;
+        })
+      );
+
+      setHighestLiveBid(highestMap);
+    } catch (err) {
+      console.log("Live bid fetch error:", err);
+    }
+  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchLiveHighestBids(products);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [products]);
 
   return (
     <div className="max-w-[1440px] mx-auto mb-4">
       {/* Top Section: Breadcrumb + Search */}
-      <div className="w-full bg-white py-3 px-3 sm:px-6">
+      <div className="w-full py-3 px-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           {/* Breadcrumb */}
           <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
@@ -1094,10 +1140,9 @@ const getFinalStatus = (item) => {
       </div>
 
       {/* Main Layout */}
-      
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6">
 
-              {/* Sidebar Filters (hidden on mobile, toggleable) */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6">
+        {/* Sidebar Filters (hidden on mobile, toggleable) */}
         <aside className="hidden md:block rounded-xl filter-sidebar">
           {/* All your filter sections here (unchanged) */}
           <h2 className="font-bold text-lg mb-3">Filter by</h2>
@@ -1437,12 +1482,8 @@ const getFinalStatus = (item) => {
         {/* MAIN PRODUCT GRID */}
         <main className="md:col-span-3">
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-
             {currentProducts.map((item) => {
-
-              //const status = item.bidProdStatus;
               const status = getFinalStatus(item);
-
               const timeRemaining = getTimeRemaining(item.bidEnd);
               const isEnded = timeRemaining === "Ended";
 
@@ -1451,173 +1492,141 @@ const getFinalStatus = (item) => {
               if (isEnded) buttonText = "Closed";
 
               return (
-                <div key={item._id} className="mx-auto product-card w-[300px]">
-
-
-                  {/* Status Badge */}
-                  <div className="relative p-img">
-                    <span className={`absolute top-3 left-3 text-white text-sm font-semibold px-2 py-0.5 rounded-full shadow 
+                <div
+                  key={item._id}
+                  onClick={() => {
+                    const slug = slugify(item.artworkName || "artwork");
+                    navigate(`/bid-details/${slug}/${item._id}`);
+                  }}
+                  className="w-full mx-auto product-card transition-all duration-300 hover:-translate-y-1"
+                >
+                  {/* Image */}
+                  <div className="bg-[#ffffff]">
+                    <div className="relative p-img">
+                      {/* <div className="bg-[#ffffff]"> */}
+                      <span
+                        className={`absolute top-3 left-3 text-white text-xs font-semibold px-2 py-1 rounded-full shadow
                       ${status === "Upcoming" ? "bg-red-500" : ""}
-                      ${status === "Hot Deal" ? "bg-dark" : ""}
-                      ${status === "Ending Soon" ? "bg-dark" : ""}
+                      ${status === "Hot Deal" || status === "Ending Soon" ? "bg-dark" : ""}
                       ${status === "Ended" ? "bg-gray-500" : ""}
-                    `}>
-                      {status}
-                    </span>
+                    `}
+                      >
+                        {status}
+                      </span>
 
-                    {/* Product Image */}
-                    {/* <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.product?.mainImage}`}
-                      alt={item.artworkName}
-                      className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
-                    /> */}
-<div className="w-68 h-40 sm:h-64 rounded-t-2xl bg-white flex items-center justify-center overflow-hidden">
-  <img
-    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.product?.mainImage}`}
-    alt={item.artworkName}
-    className="h-full object-contain"
-  />
-</div>
+                      <img
+                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.product?.mainImage}`}
+                        alt={item.artworkName}
+                        className="w-full h-40 sm:h-64 object-contain rounded-[30px] product-img"
+                      />
 
-
-                    {/* Bell Icon */}
-                    <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
-                      <Bell className="w-5 h-5 text-white" />
-                    </button>
+                      <button
+                        className="absolute bottom-3 right-3 bg-dark p-2 rounded-full shadow"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Bell className="w-5 h-5 text-white" />
+                      </button>
+                    </div>
                   </div>
 
-                  {/* CARD BODY */}
-                  <div className="p-3 product-info">
+                  {/* Info */}
+                  <div className="p-3 product-info space-y-1">
                     {status === "Upcoming" && (
-                      <p className="text-gray-500 text-xs sm:text-sm">•Upcoming Auction</p>
+                      <p className="text-gray-500 text-xs">• Upcoming Auction</p>
                     )}
 
-                    <h2 className="text-base sm:text-lg text-dark font-semibold mt-1">
+                    <h2 className="text-base sm:text-lg text-dark font-semibold">
                       {item.artworkName}
                     </h2>
 
-                   {/* <div className="flex items-center gap-1 mt-1">
-  <p className="text-gray-700 text-xs sm:text-sm font-medium flex items-center gap-1">
-    {item?.product?.userId?.name || "Unknown"}{" "}
-    {item?.product?.userId?.lastName || ""}
-
-    <MdVerified className="text-blue-600 w-4 h-4" />
-  </p>
-
-  {item?.product?.userId?.badges?.map((img, index) => (
-    <img
-      key={index}
-      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${img}`}
-      className="w-5 h-5 rounded-full"
-      alt="badge"
-    />
-  ))}
-</div> */}
-
-<div className="flex items-center gap-1 mt-1">
-  <p className="text-gray-700 text-xs sm:text-sm font-medium flex items-center">
-    {item?.product?.seller?.name || "Unknown"}{" "}
-    {item?.product?.seller?.lastName || ""}
-  </p>
-
-  {item?.product?.badges?.map((img, index) => (
-    <img
-      key={index}
-      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${img}`}
-      className="w-5 h-5 rounded-full"
-      alt="badge"
-    />
-  ))}
-</div>
-
-                    {/* PRICE + Highest Bid */}
-                    <div className="grid items-center gap-1 mt-1">
-                      <span className="text-red-500 font-semibold text-md sm:text-lg">
+                    <div className="flex items-center gap-1 flex-wrap">
+                      <p className="text-gray-700 text-xs sm:text-sm font-medium">
+                        {item?.product?.seller?.name || "Unknown"}
+                      </p>
+                      {item?.product?.badges?.map((img, i) => (
+                        <img key={i} src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${img}`} className="w-5 h-5 rounded-full" />
+                      ))}
+                    </div>
+                    <div className="grid items-center gap-1">
+                      <span className="text-red-500 font-semibold">
                         Starting Price: ₹{item.basePrice}
                       </span>
 
                       {status !== "Upcoming" && (
-                        <span className="text-green-600 font-semibold text-md">
-                          Highest Bid: ₹{item.highestBid || item.basePrice}
+                        <span className="text-green-600 font-semibold">
+                          Highest Bid: ₹{highestLiveBid[item._id] || item.basePrice}
                         </span>
                       )}
                     </div>
                   </div>
 
-                  {/* BUTTONS */}
-                  <div className="p-3 product-button d-none d-md-block">
-                    <div className="flex justify-between gap-3">
-                      {/* LEFT: Time remaining */}
-                      <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-xs text-dark py-2 font-semibold add-cart">
+                  {/* Buttons */}
+                  <div className="p-3 border-t border-gray-200 d-none d-md-block">
+                    <div className="flex gap-3">
+                      <button className="flex-1 bg-[#ffffff] border border-dark rounded-full text-xs py-2 font-semibold hover:bg-dark hover:text-white transition">
                         {timeRemaining}
                       </button>
-
-                      {/* RIGHT: Action Button */}
                       <button
                         disabled={isEnded}
-                        className={`flex-1 py-2 rounded-full font-semibold shadow text-black 
-                          ${isEnded ? "flex-1 bg-gray-500 text-white py-2 rounded-full font-semibold shadow buy-now" : "flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now"}
-                        `}
+                        className={`flex-1 py-2 rounded-full font-semibold shadow transition
+                        ${isEnded ? "bg-gray-500 text-white" : "bg-red-500 text-white"}
+                      `}
                       >
                         {buttonText}
                       </button>
                     </div>
                   </div>
-
                 </div>
               );
             })}
-
           </div>
-           {/* Pagination */}
-                     <div className="flex justify-center mt-6">
-                       <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
-                         {/* Previous */}
-                         <button
-                           onClick={goToPrevPage}
-                           disabled={currentPage === 1}
-                           className={`px-2 sm:px-3 py-1 flex items-center ${
-                             currentPage === 1
-                               ? "opacity-50 cursor-not-allowed"
-                               : "hover:text-red-500"
-                           }`}
-                         >
-                           <FiChevronLeft className="self-center flex-shrink-0" />
-                           <span className="ml-1">Previous</span>
-                         </button>
-           
-                         {/* Page numbers */}
-                         {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                           (page) => (
-                             <button
-                               key={page}
-                               onClick={() => goToPage(page)}
-                               className={`px-2 sm:px-3 py-1 rounded ${
-                                 currentPage === page
-                                   ? "border border-dark text-dark"
-                                   : "hover:text-red-500"
-                               }`}
-                             >
-                               {page}
-                             </button>
-                           )
-                         )}
-           
-                         {/* Next */}
-                         <button
-                           onClick={goToNextPage}
-                           disabled={currentPage === totalPages}
-                           className={`px-2 sm:px-3 py-1 flex items-center ${
-                             currentPage === totalPages
-                               ? "opacity-50 cursor-not-allowed"
-                               : "hover:text-red-500"
-                           }`}
-                         >
-                           <span className="mr-1">Next</span>
-                           <FiChevronRight className="self-center flex-shrink-0" />
-                         </button>
-                       </nav>
-                     </div>
+
+          {/* Pagination */}
+          <div className="flex justify-center mt-6">
+            <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
+
+              {/* Previous */}
+              <button
+                className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === 1
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:text-red-500"
+                  }`}
+                disabled={currentPage === 1}
+                onClick={goToPrevPage}
+              >
+                <FiChevronLeft className="self-center flex-shrink-0" />
+                <span className="ml-1">Previous</span>
+              </button>
+
+              {/* Page Numbers */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => goToPage(p)}
+                  className={`px-3 py-1 rounded ${currentPage === p
+                      ? "border border-dark text-dark"
+                      : "hover:text-red-500"
+                    }`}
+                >
+                  {p}
+                </button>
+              ))}
+
+              {/* Next */}
+              <button
+                className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === totalPages
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:text-red-500"
+                  }`}
+                disabled={currentPage === totalPages}
+                onClick={goToNextPage}
+              >
+                <span className="mr-1">Next</span>
+                <FiChevronRight className="self-center flex-shrink-0" />
+              </button>
+
+            </nav>
+          </div>
         </main>
       </div>
     </div>

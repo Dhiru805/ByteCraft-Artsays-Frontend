@@ -2,7 +2,7 @@
 import "../../store/products/product.css";
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../../../api/axiosConfig";
-
+import CommissionContentSkeliton from "../../../Component/Skeleton/Home/Account/CommissionContentSkeliton";
 const CommissionContent = () => {
   const [pageData, setPageData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -26,7 +26,7 @@ const CommissionContent = () => {
     fetchPublishedPage();
   }, []);
 
-  if (loading) return <p className="text-center py-6">Loading...</p>;
+  if (loading) return <CommissionContentSkeliton />;
   if (!pageData) return <p className="text-center py-6">No content found</p>;
 
   const filteredArticles = pageData.articles.filter((article) =>
@@ -40,11 +40,9 @@ const CommissionContent = () => {
         <div className="flex flex-wrap items-center justify-between gap-3">
       
           <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-            <a href="#" className="hover:text-red-500">Home</a>
+            <a href="/" className="hover:text-red-500">Home</a>
             <span>/</span>
-            <a href="#" className="hover:text-red-500">Dashboard</a>
-            <span>/</span>
-            <span className="font-medium text-gray-900">Commission</span>
+            <a href="#" className="hover:text-red-500">Commission Info</a>
           </nav>
 
           <div className="relative w-full sm:w-64">
@@ -78,7 +76,7 @@ const CommissionContent = () => {
       </h1>
       <hr className="my-3 border-dark" />
 
-      <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+      <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
         {pageData.webpageDescription}
       </p>
 
@@ -111,12 +109,12 @@ const CommissionContent = () => {
                 {article.articleHeading}
               </h2>
               <hr className="my-3 border-dark" />
-              <p className="text-xs md:text-base font-medium text-black leading-relaxed">
+              <p className="text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed">
                 {article.articleContent}
               </p>
 
               {article.buttonName && article.buttonPath && (
-                <a href={article.buttonPath}>
+                <a href={article.buttonPath} target="_blank">
                   <button className="flex-1 bg-red-500 text-white py-2 px-3 mt-3 rounded-full font-semibold shadow buy-now">
                     {article.buttonName}
                   </button>

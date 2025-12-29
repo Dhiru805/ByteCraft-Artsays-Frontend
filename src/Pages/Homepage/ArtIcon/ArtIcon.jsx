@@ -50,19 +50,19 @@
 //             </div>
 
 //             {/* Button */}
-//             <div className="relative hidden md:block">
-//               <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-//                 <button
-//                   href="#"
-//                   className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium font-semibold  px-3 py-2 rounded-full shadow-md transition"
-//                 >
-//                   View Collection
-//                   <span className="text-white text-lg">
-//                     <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
-//                   </span>
-//                 </button>
-//               </div>
-//             </div>
+            // <div className="relative hidden md:block">
+            //   <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
+            //     <button
+            //       href="#"
+            //       className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium font-semibold  px-3 py-2 rounded-full shadow-md transition"
+            //     >
+            //       View Collection
+            //       <span className="text-white text-lg">
+            //         <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
+            //       </span>
+            //     </button>
+            //   </div>
+            // </div>
 //           </div>
 //           <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
 //             {/* Top Section: Text */}
@@ -360,7 +360,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ImArrowUpRight2 } from "react-icons/im";
 import getAPI from "../../../api/getAPI";
-
+import ArtlconSkeleton from "../../../Component/Skeleton/ArtIconSkeleton";
 const ArtIcon = () => {
   const [data, setData] = useState(null);
   const [celebrities, setCelebrities] = useState([]);
@@ -406,7 +406,7 @@ const ArtIcon = () => {
       .replace(/^-+|-+$/g, "");
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div><ArtlconSkeleton /></div>;
   if (!data) return <div>No Art Icon section available</div>;
 
   return (
@@ -434,7 +434,7 @@ const ArtIcon = () => {
           {data.description}
         </p>
 
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-6">
           {celebrities.length > 0 ? (
             celebrities.map((celebrity) => (
               <div
@@ -456,17 +456,17 @@ const ArtIcon = () => {
                 </div>
 
                 <div className="relative hidden md:block">
-                  <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
+                  <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
                     <button
                       onClick={() =>
                         navigate(`/celebrity/${slugify(celebrity.artistName)}`, {
                           state: { celebrity },
                         })
                       }
-                      className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
+                      className="flex items-center gap-2 bg-white/70 bg-dark text-white font-medium font-semibold  px-3 py-2 rounded-full shadow-md transition"
                     >
                       View Collection
-                      <span className="text-white text-lg">
+                      <span className="text-dark text-lg bg-[#ffffff] rounded-full">
                         <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
                       </span>
                     </button>

@@ -2,9 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import postAPI from "../../../../api/postAPI";
 import getAPI from "../../../../api/getAPI";
-
+import { toast } from "react-toastify";
 const CreateOrder = () => {
-  
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -22,18 +21,18 @@ const CreateOrder = () => {
     stamp: "",
     price: "",
   });
-   const [stickerData, setStickerData] = useState({
+  const [stickerData, setStickerData] = useState({
     sticker: "",
-    price: ""
-  })
+    price: "",
+  });
   const [voucherData, setVoucherData] = useState({
     voucher: "",
-    price: ""
-  })
+    price: "",
+  });
   const [cardData, setCardData] = useState({
     card: "",
-    price: ""
-  })
+    price: "",
+  });
   const [materialData, setMaterialData] = useState({
     materialName: "",
     size: "",
@@ -43,8 +42,8 @@ const CreateOrder = () => {
     minimumOrder: "",
     vendorSupplier: "",
     ecoFriendly: "",
-    deliveryEstimation: ""
-  })
+    deliveryEstimation: "",
+  });
   const [materialNameImage, setMaterialNameImage] = useState(null);
   const [materialStampImage, setMaterialStampImage] = useState(null);
   const [materialStickerImage, setMaterialStickerImage] = useState(null);
@@ -61,140 +60,188 @@ const CreateOrder = () => {
   const [quantities, setQuantities] = useState({});
   const [prices, setPrices] = useState({});
   const [currentType, setCurrentType] = useState("");
+  const [allAddress, setAllAddress] = useState([]);
+  //   useEffect(() => {
+  //     const getUser = async () => {
+  //       try {
+  //         const userId = localStorage.getItem("userId");
+  //         const res = await getAPI(`/auth/user/${userId}`);
+  //         console.log("User profile dataaaaaaaaaaaaaaaaa", res);
+
+  //         let address = res.data.address;
+
+  //         // Step 1: Parse the address if it's a string
+  //         let parsedAddress = address;
+  //         if (typeof address === "string") {
+  //           try {
+  //             parsedAddress = JSON.parse(address);
+  //           } catch (err) {
+  //             console.error("Error parsing address:", err);
+  //             parsedAddress = {};
+  //           }
+  //         }
+
+  //         // Step 2: Extract the relevant fields safely
+  //         const deliveryAddress = `${parsedAddress.line1 || ""}, ${
+  //           parsedAddress.line2 || ""
+  //         }, ${parsedAddress.city || ""}, ${parsedAddress.state || ""}, ${
+  //           parsedAddress.country || ""
+  //         }, ${parsedAddress.pincode || ""}`;
+  // console.log("delivery addresssssssssss",deliveryAddress)
+  //         // Step 3: Set to state
+  //         setFormData((prev) => ({
+  //           ...prev,
+  //           deliveryAddress: deliveryAddress,
+  //         }));
+  //         setAddress(deliveryAddress);
+  //       } catch (err) {
+  //         console.error("Error fetching user:", err);
+  //       }
+  //     };
+
+  //     getUser();
+  //   }, []);
 
   useEffect(() => {
-  const getUser = async () => {
-    try {
-      const userId = localStorage.getItem("userId");
-      const res = await getAPI(`/auth/user/${userId}`);
-      console.log("User profile data", res);
-
-      let address = res.data.address;
-
-      // Step 1: Parse the address if it's a string
-      let parsedAddress = address;
-      if (typeof address === "string") {
-        try {
-          parsedAddress = JSON.parse(address);
-        } catch (err) {
-          console.error("Error parsing address:", err);
-          parsedAddress = {};
+    const userId = localStorage.getItem("userId");
+    const fetchAddresses = async () => {
+      if (!userId) return;
+      try {
+        const response = await getAPI(
+          `/api/get-address/${userId}`,
+          {},
+          true,
+          false
+        );
+        if (!response.hasError) {
+          const addressData = response.data.data || response.data;
+          setAllAddress(
+            Array.isArray(addressData) ? addressData : [addressData]
+          );
         }
+      } catch (err) {
+        console.error("Failed to fetch addresses.");
       }
+    };
 
-      // Step 2: Extract the relevant fields safely
-      const deliveryAddress = `${parsedAddress.line1 || ""}, ${parsedAddress.line2 || ""}, ${parsedAddress.city || ""}, ${parsedAddress.state || ""}, ${parsedAddress.country || ""}, ${parsedAddress.pincode || ""}`;
-
-      // Step 3: Set to state
-      setFormData((prev) => ({
-        ...prev,
-        deliveryAddress: deliveryAddress
-      }));
-      setAddress(deliveryAddress);
-
-    } catch (err) {
-      console.error("Error fetching user:", err);
-    }
-  };
-
-  getUser();
-}, []);
-
-
+    fetchAddresses();
+  }, []);
   useEffect(() => {
     const fetchMaterialNames = async () => {
-        try {
-            const res = await getAPI(`/api/package-material/material`);
-            console.log("material names", res);
-            if(res.data && Array.isArray(res.data)) {
-                setSelectedMaterial(res.data);
-            } else if(res.data && res.data.data) {
-                setSelectedMaterial(res.data.data);
-            } else {
-                setSelectedMaterial([]);
-            }
-        } catch(error) {
-            console.error("Error fetching materials", error.message);
+      try {
+        const res = await getAPI(`/api/package-material/material`);
+        console.log("material names", res);
+        if (res.data && Array.isArray(res.data)) {
+          setSelectedMaterial(res.data);
+        } else if (res.data && res.data.data) {
+          setSelectedMaterial(res.data.data);
+        } else {
+          setSelectedMaterial([]);
         }
-    }
+      } catch (error) {
+        console.error("Error fetching materials", error.message);
+      }
+    };
     fetchMaterialNames();
-  }, [])
+  }, []);
 
   useEffect(() => {
     const fetchMaterialStamp = async () => {
-        try {
-            const res = await getAPI(`/api/packaging-material-setting/material-stamp/`);
-            console.log("material stamp", res);
-            if(res.data && Array.isArray(res.data)) {
-                setSelectedStamp(res.data);
-            } else if(res.data && res.data.data) {
-                setSelectedStamp(res.data.data);
-            } else {
-                setSelectedStamp([]);
-            }
-        } catch(error) {
-            console.error("Error fetching stamp", error.message);
+      try {
+        const res = await getAPI(
+          `/api/packaging-material-setting/material-stamp/`
+        );
+        console.log("material stamp", res);
+        if (res.data && Array.isArray(res.data)) {
+          setSelectedStamp(res.data);
+        } else if (res.data && res.data.data) {
+          setSelectedStamp(res.data.data);
+        } else {
+          setSelectedStamp([]);
         }
-    }
+      } catch (error) {
+        console.error("Error fetching stamp", error.message);
+      }
+    };
     fetchMaterialStamp();
-  }, [])
+  }, []);
 
   useEffect(() => {
     const fetchMaterialStickers = async () => {
-        try {
-            const res = await getAPI(`/api/packaging-material-setting/material-stickers/`);
-            console.log("material stickers", res);
-            if(res.data && Array.isArray(res.data)) {
-                setSelectedStickers(res.data);
-            } else if(res.data && res.data.data) {
-                setSelectedStickers(res.data.data);
-            } else {
-                setSelectedStickers([]);
-            }
-        } catch(error) {
-            console.error("Error fetching stickers", error.message);
+      try {
+        const res = await getAPI(
+          `/api/packaging-material-setting/material-stickers/`
+        );
+        console.log("material stickers", res);
+        if (res.data && Array.isArray(res.data)) {
+          setSelectedStickers(res.data);
+        } else if (res.data && res.data.data) {
+          setSelectedStickers(res.data.data);
+        } else {
+          setSelectedStickers([]);
         }
-    }
+      } catch (error) {
+        console.error("Error fetching stickers", error.message);
+      }
+    };
     fetchMaterialStickers();
-  }, [])
+  }, []);
 
   useEffect(() => {
     const fetchMaterialVouchers = async () => {
-        try {
-            const res = await getAPI(`/api/packaging-material-setting/material-vouchers/`);
-            console.log("material vouchers", res);
-            if(res.data && Array.isArray(res.data)) {
-                setSelectedVouchers(res.data);
-            } else if(res.data && res.data.data) {
-                setSelectedVouchers(res.data.data);
-            } else {
-                setSelectedVouchers([]);
-            }
-        } catch(error) {
-            console.error("Error fetching vouchers", error.message);
+      try {
+        const res = await getAPI(
+          `/api/packaging-material-setting/material-vouchers/`
+        );
+        console.log("material vouchers", res);
+        if (res.data && Array.isArray(res.data)) {
+          setSelectedVouchers(res.data);
+        } else if (res.data && res.data.data) {
+          setSelectedVouchers(res.data.data);
+        } else {
+          setSelectedVouchers([]);
         }
-    }
+      } catch (error) {
+        console.error("Error fetching vouchers", error.message);
+      }
+    };
     fetchMaterialVouchers();
-  }, [])
+  }, []);
 
   useEffect(() => {
     const fetchMaterialCard = async () => {
-        try {
-            const res = await getAPI(`/api/packaging-material-setting/material-card/`);
-            console.log("material card", res);
-            if(res.data && Array.isArray(res.data)) {
-                setSelectedCard(res.data);
-            } else if(res.data && res.data.data) {
-                setSelectedCard(res.data.data);
-            } else {
-                setSelectedCard([]);
-            }
-        } catch(error) {
-            console.error("Error fetching card", error.message);
+      try {
+        const res = await getAPI(
+          `/api/packaging-material-setting/material-card/`
+        );
+        console.log("material card", res);
+        if (res.data && Array.isArray(res.data)) {
+          setSelectedCard(res.data);
+        } else if (res.data && res.data.data) {
+          setSelectedCard(res.data.data);
+        } else {
+          setSelectedCard([]);
         }
-    }
+      } catch (error) {
+        console.error("Error fetching card", error.message);
+      }
+    };
     fetchMaterialCard();
-  }, [])
+  }, []);
+
+const formatAddressLabel = (addr) => {
+  return [
+    addr.addressLine1,
+    addr.addressLine2,
+    addr.landmark,
+    addr.city,
+    addr.state,
+    addr.pincode,
+    addr.country,
+  ]
+    .filter(Boolean)
+    .join(", ");
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -208,29 +255,36 @@ const CreateOrder = () => {
       return;
     }
 
-    console.log("UserId in handlesubmit", userId);
-
     // Create FormData object for multipart/form-data
     const data = new FormData();
     data.append("userId", userId);
-    data.append("material", formData.material);
-    data.append("stamp", formData.stamp);
-    data.append("stickers", formData.stickers);
-    data.append("vouchers", formData.vouchers);
-    data.append("card", formData.card);
     data.append("quantity", formData.quantity);
     data.append("deliveryAddress", formData.deliveryAddress);
     data.append("totalPrice", formData.totalPrice);
 
+    if (formData.material) {
+      data.append("material", formData.material);
+    }
+    if (formData.stamp) {
+      data.append("stamp", formData.stamp);
+    }
+    if (formData.stickers) {
+      data.append("stickers", formData.stickers);
+    }
+    if (formData.vouchers) {
+      data.append("vouchers", formData.vouchers);
+    }
+    if (formData.card) {
+      data.append("card", formData.card);
+    }
     try {
       // Send POST request to backend
       const response = await postAPI(
         "/api/package-material/order/create",
         data
       );
-
+      toast.success(response.message);
       // Handle success
-      console.log("In handleSubmit", response);
       navigate("/artist/packaging-material"); // Redirect to material list
     } catch (err) {
       // Handle error
@@ -245,115 +299,137 @@ const CreateOrder = () => {
   };
 
   const handleDropdownChange = async (type, id) => {
-  try {
-    const userId = localStorage.getItem("userId");
+    try {
+      const userId = localStorage.getItem("userId");
 
-    if (type === "material") {
-      setMaterialData(selectedMaterial);
+      if (type === "material") {
+        setMaterialData(selectedMaterial);
+      }
+
+      if (type === "stamp") {
+        setStampData(selectedStamp);
+      }
+
+      if (type === "sticker") {
+        setStickerData(selectedStickers);
+      }
+
+      if (type === "vouchers") {
+        setVoucherData(selectedVouchers);
+      }
+
+      if (type === "card") {
+        setCardData(selectedCard);
+      }
+
+      // Step 2: Find the selected item from respective array
+      let selectedItem = null;
+
+      switch (type) {
+        case "stamp":
+          selectedItem = selectedStamp.find((s) => s._id === id);
+          const stampUrl = selectedItem?.materialStampImage
+            ? `${
+                process.env.REACT_APP_API_URL_FOR_IMAGE
+              }/${selectedItem?.materialStampImage.replace(/\\/g, "/")}`
+            : null;
+          setStampData((prev) => ({
+            ...prev,
+            stamp: id,
+            price: selectedItem?.price || "",
+          }));
+          setMaterialStampImage(stampUrl);
+          break;
+        case "stickers":
+          selectedItem = selectedStickers.find((s) => s._id === id);
+          const stickerUrl = selectedItem?.materialStickersImage
+            ? `${
+                process.env.REACT_APP_API_URL_FOR_IMAGE
+              }/${selectedItem?.materialStickersImage.replace(/\\/g, "/")}`
+            : null;
+          setStickerData((prev) => ({
+            ...prev,
+            sticker: id,
+            price: selectedItem?.price || "",
+          }));
+          setMaterialStickerImage(stickerUrl);
+          break;
+        case "vouchers":
+          selectedItem = selectedVouchers.find((s) => s._id === id);
+          const VoucherUrl = selectedItem?.materialVouchersImage
+            ? `${
+                process.env.REACT_APP_API_URL_FOR_IMAGE
+              }/${selectedItem?.materialVouchersImage.replace(/\\/g, "/")}`
+            : null;
+          setVoucherData((prev) => ({
+            ...prev,
+            voucher: id,
+            price: selectedItem?.price || "",
+          }));
+          setMaterialVoucherImage(VoucherUrl);
+          break;
+        case "card":
+          selectedItem = selectedCard.find((s) => s._id === id);
+          const cardUrl = selectedItem?.materialCardImage
+            ? `${
+                process.env.REACT_APP_API_URL_FOR_IMAGE
+              }/${selectedItem?.materialCardImage.replace(/\\/g, "/")}`
+            : null;
+          setCardData((prev) => ({
+            ...prev,
+            card: id,
+            price: selectedItem?.price || "",
+          }));
+          setMaterialCardImage(cardUrl);
+          break;
+        case "material":
+          selectedItem = selectedMaterial.find((s) => s._id === id);
+          const imageUrl = selectedItem?.materialName?.materialNameImage
+            ? `${
+                process.env.REACT_APP_API_URL_FOR_IMAGE
+              }/${selectedItem?.materialName?.materialNameImage.replace(
+                /\\/g,
+                "/"
+              )}`
+            : null;
+          setMaterialData((prev) => ({
+            ...prev,
+            materialName: id,
+            size: selectedItem?.size?.materialSize || "",
+            capacity: selectedItem?.capacity?.materialCapacity || "",
+            price: selectedItem?.price || "",
+            stockAvailable: selectedItem?.stockAvailable || "",
+            minimumOrder: selectedItem?.minimumOrder || "",
+            vendorSupplier: selectedItem?.vendorSupplier || "",
+            ecoFriendly: selectedItem?.ecoFriendly ? "Yes" : "No" || "",
+            deliveryEstimation: selectedItem?.deliveryEstimation || "",
+          }));
+          setMaterialNameImage(imageUrl);
+          break;
+        default:
+          break;
+      }
+
+      // Step 3: Extract price safely
+      const price = selectedItem ? selectedItem.price : 0;
+
+      // Step 4: Update price, type, and form data
+      setPrices((prev) => ({
+        ...prev,
+        [type]: price,
+      }));
+
+      setCurrentType(type);
+
+      setFormData((prev) => ({
+        ...prev,
+        [type]: id,
+        quantity: "",
+      }));
+    } catch (error) {
+      console.error("Error fetching or updating details:", error);
     }
-    
-    if (type === "stamp") {
-      setStampData(selectedStamp);
-    }
-
-    if (type === "sticker") {
-      setStickerData(selectedStickers);
-    }
-
-    if (type === "vouchers") {
-      setVoucherData(selectedVouchers);
-    }
-
-    if (type === "card") {
-      setCardData(selectedCard);
-    }
-
-    // Step 2: Find the selected item from respective array
-    let selectedItem = null;
-
-    switch (type) {
-      case "stamp":
-        selectedItem = selectedStamp.find((s) => s._id === id);
-        const stampUrl = selectedItem?.materialStampImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedItem?.materialStampImage.replace(/\\/g, "/")}` : null;
-        setStampData((prev) => ({
-          ...prev,
-          stamp: id,
-          price: selectedItem?.price || ""
-        }));
-        setMaterialStampImage(stampUrl);
-        break;
-      case "stickers":
-        selectedItem = selectedStickers.find((s) => s._id === id);
-        const stickerUrl = selectedItem?.materialStickersImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedItem?.materialStickersImage.replace(/\\/g, "/")}` : null;
-        setStickerData((prev) => ({
-          ...prev,
-          sticker: id,
-          price: selectedItem?.price || ""
-        }));
-        setMaterialStickerImage(stickerUrl);
-        break;
-      case "vouchers":
-        selectedItem = selectedVouchers.find((s) => s._id === id);
-        const VoucherUrl = selectedItem?.materialVouchersImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedItem?.materialVouchersImage.replace(/\\/g, "/")}` : null;
-        setVoucherData((prev) => ({
-          ...prev,
-          voucher: id,
-          price: selectedItem?.price || ""
-        }));
-        setMaterialVoucherImage(VoucherUrl);
-        break;
-      case "card":
-        selectedItem = selectedCard.find((s) => s._id === id);
-        const cardUrl = selectedItem?.materialCardImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedItem?.materialCardImage.replace(/\\/g, "/")}` : null;
-        setCardData((prev) => ({
-          ...prev,
-          card: id,
-          price: selectedItem?.price || ""
-        }));
-        setMaterialCardImage(cardUrl);
-        break;
-      case "material":
-        selectedItem = selectedMaterial.find((s) => s._id === id);
-        const imageUrl = selectedItem?.materialName?.materialNameImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedItem?.materialName?.materialNameImage.replace(/\\/g, "/")}` : null;
-        setMaterialData((prev) => ({
-          ...prev,
-          materialName: id,
-          size: selectedItem?.size?.materialSize || "",
-          capacity: selectedItem?.capacity?.materialCapacity || "",
-          price: selectedItem?.price || "",
-          stockAvailable: selectedItem?.stockAvailable || "",
-          minimumOrder: selectedItem?.minimumOrder || "",
-          vendorSupplier: selectedItem?.vendorSupplier || "",
-          ecoFriendly: selectedItem?.ecoFriendly ? "Yes" : "No" || "",
-          deliveryEstimation: selectedItem?.deliveryEstimation || ""
-        }));
-        setMaterialNameImage(imageUrl);
-        break;
-      default:
-        break;
-    }
-
-    // Step 3: Extract price safely
-    const price = selectedItem ? selectedItem.price : 0;
-
-    // Step 4: Update price, type, and form data
-    setPrices((prev) => ({
-      ...prev,
-      [type]: price,
-    }));
-
-    setCurrentType(type);
-
-    setFormData((prev) => ({
-      ...prev,
-      [type]: id,
-      quantity: "",
-    }));
-  } catch (error) {
-    console.error("Error fetching or updating details:", error);
-  }
-};
-
+  };
 
   const handleQuantityChange = (e) => {
     const qty = Number(e.target.value);
@@ -421,49 +497,51 @@ const CreateOrder = () => {
                     required
                   >
                     <option value="">-- Select Material --</option>
-                      <option value="material">Material</option>
-                      <option value="stamp">Stamp</option>
-                      <option value="stickers">Stickers</option>
-                      <option value="vouchers">Vouchers</option>
-                      <option value="card">Card</option>
+                    <option value="material">Material</option>
+                    <option value="stamp">Stamp</option>
+                    <option value="stickers">Stickers</option>
+                    <option value="vouchers">Vouchers</option>
+                    <option value="card">Card</option>
                   </select>
                   {selectedProduct === "material" && (
                     <>
-                    <label className="mt-2 mb-0">Material Type</label>
-                    <select
-                      className="form-control mt-2"
-                      name="material"
-                      value={formData.material}
-                      onChange={(e) => handleDropdownChange("material", e.target.value)}
-                      required
-                    >
-                      <option value="">-- Select Type --</option>
-                      {
-                        selectedMaterial.map((mat) => (
-                        <>
-                        <option key={mat._id} value={mat._id}>{mat.materialName?.materialName}</option>
-                        </>
-                        ))
-                      }
+                      <label className="mt-2 mb-0">Material Type</label>
+                      <select
+                        className="form-control mt-2"
+                        name="material"
+                        value={formData.material}
+                        onChange={(e) =>
+                          handleDropdownChange("material", e.target.value)
+                        }
+                        required
+                      >
+                        <option value="">-- Select Type --</option>
+                        {selectedMaterial.map((mat) => (
+                          <>
+                            <option key={mat._id} value={mat._id}>
+                              {mat.materialName?.materialName}
+                            </option>
+                          </>
+                        ))}
                       </select>
                       {formData.material && (
-                          <div className="mt-3">
-                            {materialNameImage && (
-                              <div className="form-group mt-3">
-                                <label>Material Image</label>
-                                {materialNameImage && (
-                                  <div className="mt-2">
-                                    <img
-                                      src={materialNameImage}
-                                      alt="Material Name Preview"
-                                      className="img-thumbnail"
-                                      style={{ maxHeight: "200px" }}
-                                    />
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                            <div className="form-group">
+                        <div className="mt-3">
+                          {materialNameImage && (
+                            <div className="form-group mt-3">
+                              <label>Material Image</label>
+                              {materialNameImage && (
+                                <div className="mt-2">
+                                  <img
+                                    src={materialNameImage}
+                                    alt="Material Name Preview"
+                                    className="img-thumbnail"
+                                    style={{ maxHeight: "200px" }}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          <div className="form-group">
                             <label>Size</label>
                             <input
                               type="text"
@@ -535,44 +613,46 @@ const CreateOrder = () => {
                               disabled
                             />
                           </div>
-                          </div>
-                        )}
+                        </div>
+                      )}
                     </>
                   )}
                   {selectedProduct === "stamp" && (
-                      <>
-                        <label className="mt-2 mb-0">Select Stamp</label>
-                        <select
-                          className="form-control mt-2"
-                          name="stamp"
-                          value={formData.stamp}
-                          onChange={(e) => handleDropdownChange("stamp", e.target.value)}
-                          required
-                        >
-                          <option value="">-- Select Type --</option>
-                          {selectedStamp.map((mat) => (
-                            <option key={mat._id} value={mat._id}>
-                              {mat?.materialStamp}
-                            </option>
-                          ))}
-                        </select>
-                        {formData.stamp && (
-                          <div className="mt-3">
-                            {materialStampImage && (
-                              <div className="form-group mt-3">
-                                <label>Stamp Image</label>
-                                {materialStampImage && (
-                                  <div className="mt-2">
-                                    <img
-                                      src={materialStampImage}
-                                      alt="Material Name Preview"
-                                      className="img-thumbnail"
-                                      style={{ maxHeight: "200px" }}
-                                    />
-                                  </div>
-                                )}
-                              </div>
-                            )}
+                    <>
+                      <label className="mt-2 mb-0">Select Stamp</label>
+                      <select
+                        className="form-control mt-2"
+                        name="stamp"
+                        value={formData.stamp}
+                        onChange={(e) =>
+                          handleDropdownChange("stamp", e.target.value)
+                        }
+                        required
+                      >
+                        <option value="">-- Select Type --</option>
+                        {selectedStamp.map((mat) => (
+                          <option key={mat._id} value={mat._id}>
+                            {mat?.materialStamp}
+                          </option>
+                        ))}
+                      </select>
+                      {formData.stamp && (
+                        <div className="mt-3">
+                          {materialStampImage && (
+                            <div className="form-group mt-3">
+                              <label>Stamp Image</label>
+                              {materialStampImage && (
+                                <div className="mt-2">
+                                  <img
+                                    src={materialStampImage}
+                                    alt="Material Name Preview"
+                                    className="img-thumbnail"
+                                    style={{ maxHeight: "200px" }}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          )}
                           <div className="form-group">
                             <label>Price / Unit</label>
                             <input
@@ -582,48 +662,50 @@ const CreateOrder = () => {
                               disabled
                             />
                           </div>
-                          </div>
-                        )}
-                      </>
-                    )}
+                        </div>
+                      )}
+                    </>
+                  )}
 
                   {selectedProduct === "stickers" && (
                     <>
-                    <label className="mt-2 mb-0">Select Sticker</label>
-                    <select
-                      className="form-control mt-2"
-                      name="stickers"
-                      value={formData.stickers}
-                      onChange={(e) => handleDropdownChange("stickers", e.target.value)}
-                      required
-                    >
-                      <option value="">-- Select Type --</option>
-                      {
-                        selectedStickers.map((mat) => (
-                        <>
-                        <option key={mat._id} value={mat._id}>{mat?.materialStickers}</option>
-                        </>
-                        ))
-                      }
+                      <label className="mt-2 mb-0">Select Sticker</label>
+                      <select
+                        className="form-control mt-2"
+                        name="stickers"
+                        value={formData.stickers}
+                        onChange={(e) =>
+                          handleDropdownChange("stickers", e.target.value)
+                        }
+                        required
+                      >
+                        <option value="">-- Select Type --</option>
+                        {selectedStickers.map((mat) => (
+                          <>
+                            <option key={mat._id} value={mat._id}>
+                              {mat?.materialStickers}
+                            </option>
+                          </>
+                        ))}
                       </select>
                       {/* Show these details only when a stamp is chosen */}
-                        {formData.stickers && (
-                          <div className="mt-3">
-                            {materialStickerImage && (
-                              <div className="form-group mt-3">
-                                <label>Sticker Image</label>
-                                {materialStickerImage && (
-                                  <div className="mt-2">
-                                    <img
-                                      src={materialStickerImage}
-                                      alt="Material Name Preview"
-                                      className="img-thumbnail"
-                                      style={{ maxHeight: "200px" }}
-                                    />
-                                  </div>
-                                )}
-                              </div>
-                            )}
+                      {formData.stickers && (
+                        <div className="mt-3">
+                          {materialStickerImage && (
+                            <div className="form-group mt-3">
+                              <label>Sticker Image</label>
+                              {materialStickerImage && (
+                                <div className="mt-2">
+                                  <img
+                                    src={materialStickerImage}
+                                    alt="Material Name Preview"
+                                    className="img-thumbnail"
+                                    style={{ maxHeight: "200px" }}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          )}
                           <div className="form-group">
                             <label>Price / Unit</label>
                             <input
@@ -633,47 +715,49 @@ const CreateOrder = () => {
                               disabled
                             />
                           </div>
-                          </div>
-                        )}
+                        </div>
+                      )}
                     </>
                   )}
                   {selectedProduct === "vouchers" && (
                     <>
-                    <label className="mt-2 mb-0">Select Voucher</label>
-                    <select
-                      className="form-control mt-2"
-                      name="vouchers"
-                      value={formData.vouchers}
-                      onChange={(e) => handleDropdownChange("vouchers", e.target.value)}
-                      required
-                    >
-                      <option value="">-- Select Type --</option>
-                      {
-                        selectedVouchers.map((mat) => (
-                        <>
-                        <option key={mat._id} value={mat._id}>{mat?.materialVouchers}</option>
-                        </>
-                        ))
-                      }
-                    </select>
-                    {/* Show these details only when a stamp is chosen */}
-                        {formData.vouchers && (
-                          <div className="mt-3">
-                            {materialVoucherImage && (
-                              <div className="form-group mt-3">
-                                <label>Voucher Image</label>
-                                {materialVoucherImage && (
-                                  <div className="mt-2">
-                                    <img
-                                      src={materialVoucherImage}
-                                      alt="Material Name Preview"
-                                      className="img-thumbnail"
-                                      style={{ maxHeight: "200px" }}
-                                    />
-                                  </div>
-                                )}
-                              </div>
-                            )}
+                      <label className="mt-2 mb-0">Select Voucher</label>
+                      <select
+                        className="form-control mt-2"
+                        name="vouchers"
+                        value={formData.vouchers}
+                        onChange={(e) =>
+                          handleDropdownChange("vouchers", e.target.value)
+                        }
+                        required
+                      >
+                        <option value="">-- Select Type --</option>
+                        {selectedVouchers.map((mat) => (
+                          <>
+                            <option key={mat._id} value={mat._id}>
+                              {mat?.materialVouchers}
+                            </option>
+                          </>
+                        ))}
+                      </select>
+                      {/* Show these details only when a stamp is chosen */}
+                      {formData.vouchers && (
+                        <div className="mt-3">
+                          {materialVoucherImage && (
+                            <div className="form-group mt-3">
+                              <label>Voucher Image</label>
+                              {materialVoucherImage && (
+                                <div className="mt-2">
+                                  <img
+                                    src={materialVoucherImage}
+                                    alt="Material Name Preview"
+                                    className="img-thumbnail"
+                                    style={{ maxHeight: "200px" }}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          )}
                           <div className="form-group">
                             <label>Price / Unit</label>
                             <input
@@ -683,47 +767,49 @@ const CreateOrder = () => {
                               disabled
                             />
                           </div>
-                          </div>
-                        )}
+                        </div>
+                      )}
                     </>
                   )}
                   {selectedProduct === "card" && (
                     <>
-                    <label className="mt-2 mb-0">Select Card</label>
-                    <select
-                      className="form-control mt-2"
-                      name="card"
-                      value={formData.card}
-                      onChange={(e) => handleDropdownChange("card", e.target.value)}
-                      required
-                    >
-                      <option value="">-- Select Type --</option>
-                      {
-                        selectedCard.map((mat) => (
-                        <>
-                        <option key={mat._id} value={mat._id}>{mat?.materialCard}</option>
-                        </>
-                        ))
-                      }
-                    </select>
-                    {/* Show these details only when a stamp is chosen */}
-                        {formData.card && (
-                          <div className="mt-3">
-                            {materialCardImage && (
-                              <div className="form-group mt-3">
-                                <label>Card Image</label>
-                                {materialCardImage && (
-                                  <div className="mt-2">
-                                    <img
-                                      src={materialCardImage}
-                                      alt="Material Name Preview"
-                                      className="img-thumbnail"
-                                      style={{ maxHeight: "200px" }}
-                                    />
-                                  </div>
-                                )}
-                              </div>
-                            )}
+                      <label className="mt-2 mb-0">Select Card</label>
+                      <select
+                        className="form-control mt-2"
+                        name="card"
+                        value={formData.card}
+                        onChange={(e) =>
+                          handleDropdownChange("card", e.target.value)
+                        }
+                        required
+                      >
+                        <option value="">-- Select Type --</option>
+                        {selectedCard.map((mat) => (
+                          <>
+                            <option key={mat._id} value={mat._id}>
+                              {mat?.materialCard}
+                            </option>
+                          </>
+                        ))}
+                      </select>
+                      {/* Show these details only when a stamp is chosen */}
+                      {formData.card && (
+                        <div className="mt-3">
+                          {materialCardImage && (
+                            <div className="form-group mt-3">
+                              <label>Card Image</label>
+                              {materialCardImage && (
+                                <div className="mt-2">
+                                  <img
+                                    src={materialCardImage}
+                                    alt="Material Name Preview"
+                                    className="img-thumbnail"
+                                    style={{ maxHeight: "200px" }}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          )}
                           <div className="form-group">
                             <label>Price / Unit</label>
                             <input
@@ -733,8 +819,8 @@ const CreateOrder = () => {
                               disabled
                             />
                           </div>
-                          </div>
-                        )}
+                        </div>
+                      )}
                     </>
                   )}
                 </div>
@@ -751,13 +837,22 @@ const CreateOrder = () => {
                 </div>
                 <div className="form-group">
                   <label>Delivery Address</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="deliveryAddress"
+                  
+                  <select
+                    className="form-control mt-2"
                     value={formData.deliveryAddress}
+                    name="deliveryAddress"
                     required
-                  />
+                    onChange={(e)=>setFormData((pre)=>({...pre, [e.target.name]: e.target.value}))}
+                  >
+                    <option value="">Select delivery address</option>
+
+                    {allAddress.map((addr) => (
+                      <option key={addr._id} value={addr._id}>
+                        {formatAddressLabel(addr)}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="form-group">
                   <label>Total Price</label>
@@ -766,7 +861,9 @@ const CreateOrder = () => {
                     className="form-control"
                     name="totalPrice"
                     value={formData.totalPrice}
-                    onChange={(e) => setFormData({ ...formData, totalPrice: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, totalPrice: e.target.value })
+                    }
                     required
                   />
                 </div>

@@ -3,25 +3,28 @@ import getAPI from "../../../../../api/getAPI";
 import BlockchainNetworkTable from "./BlockchainNetworkTable";
 import CreateBlockchainNetworkModal from "./CreateBlockchainNetwork";
 import { useNavigate } from 'react-router-dom';
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const BlockchainNetwork = () => {
     const [blockchainNetworks, setBlockchainNetworks] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
-
+const[loading,setLoading]=useState(true);
     const fetchBlockchainNetworks = async () => {
         try {
             const response = await getAPI("/api/getblockchainnetworks");
             setBlockchainNetworks(response.data);
         } catch (error) {
             console.error("Error fetching blockchain networks:", error);
+        }finally{
+            setLoading(false)
         }
     };
     
     useEffect(() => {
         fetchBlockchainNetworks();
     }, []);
-
+if(loading)return <ProductRequestSkeleton/>
     return (
         <div className="container-fluid">
             <div className="block-header">

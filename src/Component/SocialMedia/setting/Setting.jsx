@@ -26,7 +26,7 @@ import {
   RiShieldUserLine,
 } from "react-icons/ri";
 import { FiEdit, FiChevronDown } from "react-icons/fi";
-import {  FaCheck } from 'react-icons/fa';
+import { FaCheck } from "react-icons/fa";
 import { FaTimes } from "react-icons/fa";
 import { MdVerified } from "react-icons/md";
 import { FaRegClock } from "react-icons/fa";
@@ -54,7 +54,6 @@ const items = [
   { key: "comments", label: "Comments", icon: <FaRegComment /> },
   { key: "blocked", label: "Blocked", icon: <RiProhibitedLine /> },
   { key: "verified", label: "Verified", icon: <RiVerifiedBadgeLine /> },
-  { key: "help", label: "Help", icon: <RiQuestionLine /> },
   {
     key: "privacy-center",
     label: "Privacy Center",
@@ -72,7 +71,9 @@ const Setting = () => {
   const [loading, setLoading] = useState(true);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const navigate = useNavigate();
-
+  const userName = localStorage.getItem("username");
+  const firstName = localStorage.getItem("firstName");
+  const lastName = localStorage.getItem("lastName");
   const [name, setName] = useState(profile?.firstName || "");
   const [username, setUsername] = useState(profile?.username || "");
   const [website, setWebsite] = useState(profile?.website || "");
@@ -81,6 +82,7 @@ const Setting = () => {
   const [showSuggestion, setShowSuggestion] = useState();
   const [toggleEnable, setToggleEnable] = useState(false);
   const [deleteAccount, setDeleteAccount] = useState(false);
+  const [copyMsg, setCopyMsg] = useState("");
 
   useEffect(() => {
     if (profile) {
@@ -92,6 +94,14 @@ const Setting = () => {
     }
   }, [profile]);
 
+
+const hasValidUsername =
+  typeof userName === "string" &&
+  userName.trim() !== "" &&
+  userName !== "undefined" &&
+  userName !== "null";
+
+
   const bioMax = 150;
   const remaining = bioMax - bio.length;
 
@@ -100,8 +110,8 @@ const Setting = () => {
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setProfilePhotoFile(file); 
-      setProfilePhoto(URL.createObjectURL(file)); 
+      setProfilePhotoFile(file);
+      setProfilePhoto(URL.createObjectURL(file));
     }
   };
 
@@ -462,7 +472,7 @@ const Setting = () => {
   const fetchPerks = async () => {
     try {
       const res = await getAPI("/api/perks");
-      setPerks(res.data.data || []); 
+      setPerks(res.data.data || []);
     } catch (err) {
       console.error("Error fetching perks:", err);
     }
@@ -577,7 +587,7 @@ const Setting = () => {
       const userId = localStorage.getItem("userId");
 
       const res = await deleteAPI(`/api/membership/${id}`, {
-        params: { userId }, 
+        params: { userId },
       });
 
       if (res.data.success) {
@@ -636,16 +646,28 @@ const Setting = () => {
       const userId = localStorage.getItem("userId");
       const newValue = !toggleEnable;
 
-      setToggleEnable(newValue); // ✅ update UI instantly (optimistic)
-
       await postAPI("/api/profile/post-products/toggle", {
         userId,
         enabled: newValue,
       });
+      setToggleEnable(newValue); // ✅ update UI instantly (optimistic)
     } catch (err) {
       console.error("Error updating toggle:", err);
     }
   };
+
+  // copy the profile link
+  function fallbackCopyText(text) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+  }
 
   return (
     <div className="lg:w-[78%] w-full lg:mx-auto mx-0 flex flex-row lg:px-1">
@@ -665,7 +687,7 @@ const Setting = () => {
                 <div
                   className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md
       h-[30vh] flex flex-col justify-between items-center gap-4"
-                  onClick={(e) => e.stopPropagation()} 
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <div className="flex flex-col items-center justify-between gap-4">
                     <h1 className="text-[24px] font-bold text-[#000000]">
@@ -1149,7 +1171,6 @@ const Setting = () => {
             </div>
 
             <div className="sm:px-10 space-y-6">
-
               {/* Active Memberships toggle */}
               <div className="flex justify-between items-center">
                 <div className="text-[20px] text-[#000000] font-semibold">
@@ -1227,7 +1248,7 @@ const Setting = () => {
                                     setNewSelectedPerks((prev) => [
                                       ...prev,
                                       perk._id,
-                                    ]); 
+                                    ]);
                                   } else {
                                     setNewSelectedPerks((prev) =>
                                       prev.filter((id) => id !== perk._id)
@@ -1807,87 +1828,6 @@ const Setting = () => {
           </div>
         )}
 
-        {/* help panel */}
-        {active === "help" && (
-          <div className="w-full lg:p-6 lg:mt-6 h-full">
-            <div className="lg:border lg:border-gray-300 rounded-xl bg-white p-6">
-              {/* Heading */}
-              <div className="flex items-center gap-1 mb-4">
-                {lgActive && (
-                  <button
-                    className="text-[24px] font-bold text-[#000000]"
-                    onClick={() => setLgActive(false)}
-                  >
-                    <i class="ri-arrow-left-s-line"></i>
-                  </button>
-                )}
-                <h1 className="text-[24px] text-[#000000] font-bold ">Help</h1>
-              </div>
-
-              {/* Search Box */}
-              <div className="relative mb-6 ">
-                <i className="ri-search-line absolute top-1/2 left-3 transform -translate-y-1/2 text-[#000000] text-[18px]"></i>
-                <input
-                  type="text"
-                  placeholder="Type your question...."
-                  className="w-full bg-[#f6f7f9] text-[14px] text-[#000000] pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none placeholder:text-[16px] placeholder:text-[#48372D]"
-                />
-              </div>
-
-              {/* Support Requests */}
-              <div className="mb-6">
-                <h2 className="text-[20px] font-semibold mb-3">
-                  Support requests
-                </h2>
-                <ul className="space-y-1">
-                  {["Reports", "Safety Notices", "Violations"].map(
-                    (item, i) => (
-                      <li
-                        key={i}
-                        className="flex items-center justify-between cursor-pointer hover:underline  text-[#000000] text-[14px]"
-                      >
-                        <span>{item}</span>
-                        <span className="">
-                          <i className="ri-arrow-right-s-line text-xl font-bold"></i>
-                        </span>
-                      </li>
-                    )
-                  )}
-                </ul>
-              </div>
-
-              {/* FAQs */}
-              <div className="mb-6">
-                <h2 className="text-[20px] font-semibold mb-3">FAQs</h2>
-                <ul className="space-y-2 text-[16px] text-[#000000]">
-                  <li className="cursor-pointer hover:underline">
-                    How do I turn on memberships?
-                  </li>
-                  <li className="cursor-pointer hover:underline">
-                    How do I set my artwork price?
-                  </li>
-                  <li className="cursor-pointer hover:underline">
-                    How do I set my artwork price?
-                  </li>
-                  <li className="cursor-pointer hover:underline">
-                    How can I message buyers?
-                  </li>
-                </ul>
-              </div>
-
-              {/* Contact Us Box */}
-              <div className="flex rounded-l-xl items-center border border-gray-300 rounded-md overflow-hidden mt-4">
-                <div className="flex-1 px-4 py-2 font-semibold text-[20px] text-[#000000]">
-                  Still need help?
-                </div>
-                <button className="bg-[#4B2B1C] text-white px-5 py-2 text-[20px] rounded-r-xl font-semibold">
-                  Contact Us
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* verification panel */}
         {active === "verified" && (
           <div className="w-full lg:p-6 lg:mt-6">
@@ -1922,9 +1862,8 @@ const Setting = () => {
                   {/* <FaCircleCheck className=" text-lg " /> */}
                   {isEmailVerified ? (
                     <span
-                    className=" text-lg "
+                      className=" text-lg "
                       style={{
-                        
                         color: "#28a745",
                         fontSize: "18px",
                       }}
@@ -1933,14 +1872,13 @@ const Setting = () => {
                     </span>
                   ) : (
                     <span
-                       className=" text-lg "
+                      className=" text-lg "
                       style={{
-                      
                         color: "rgb(253, 29, 5)",
                         fontSize: "18px",
                       }}
                     >
-                  <FaTimes/>
+                      <FaTimes />
                     </span>
                   )}
                 </div>
@@ -2206,7 +2144,28 @@ const Setting = () => {
                     visible on your profile and artworks.
                   </p>
 
-                  <button className="mt-4 bg-[#4B2B1C] w-full flex text-lg justify-center p-3 items-center gap-2 text-white font-semibold rounded-xl">
+                  <button
+                    onClick={() => {
+                      const link = `${
+                        window.location.origin
+                      }/artsays-community/profile/${
+                        hasValidUsername
+                          ? `${userName}_${userId}`
+                          : `${firstName}_${lastName}_${userId}`
+                      }`;
+                      if (navigator.clipboard && window.isSecureContext) {
+                        navigator.clipboard
+                          .writeText(link)
+                          .then(() => setCopyMsg("Link copied!"))
+                          .catch(() => fallbackCopyText(link));
+                      } else {
+                        fallbackCopyText(link);
+                      }
+
+                      setTimeout(() => setCopyMsg(""), 2000);
+                    }}
+                    className="mt-4 bg-[#4B2B1C] w-full flex text-lg justify-center p-3 items-center gap-2 text-white font-semibold rounded-xl"
+                  >
                     Share your moment on socials <IoPaperPlaneOutline />
                   </button>
                 </div>

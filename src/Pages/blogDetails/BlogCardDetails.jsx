@@ -189,6 +189,149 @@ function BlogCardDetails() {
         }
     }, [artistId]);
 
+    /* -------------------- STATE -------------------- */
+    const [activeHeading, setActiveHeading] = useState(null);
+
+    /* -------------------- HELPERS -------------------- */
+
+    // Inject IDs into headings
+    const addIdsToHeadings = (html) => {
+        if (!html) return "";
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+
+        const headings = doc.querySelectorAll("h1, h2");
+
+        headings.forEach((heading, index) => {
+            const id = heading.innerText
+                .toLowerCase()
+                .replace(/\s+/g, "-")
+                .replace(/[^\w-]/g, "");
+
+            heading.id = `${id}-${index}`;
+        });
+
+        return doc.body.innerHTML;
+    };
+
+    // Build TOC list
+    const getTocItems = (html) => {
+        if (!html) return [];
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+
+        return Array.from(doc.querySelectorAll("h1, h2")).map(
+            (heading, index) => {
+                const id = heading.innerText
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")
+                    .replace(/[^\w-]/g, "");
+
+                return {
+                    id: `${id}-${index}`,
+                    text: heading.innerText,
+                };
+            }
+        );
+    };
+
+    // Scroll with offset (for fixed headers)
+    const scrollToHeading = (id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        const offset = -80;
+        const y =
+            el.getBoundingClientRect().top + window.pageYOffset + offset;
+
+        window.scrollTo({ top: y, behavior: "smooth" });
+    };
+
+    // Observe headings to set active state
+    useEffect(() => {
+        if (!blogDetails?.blogDescription) return;
+
+        const headings = document.querySelectorAll("h1, h2");
+        if (!headings.length) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        setActiveHeading(entry.target.id);
+                    }
+                });
+            },
+            {
+                rootMargin: "-120px 0px -60% 0px",
+                threshold: 0.1,
+            }
+        );
+
+        headings.forEach((heading) => observer.observe(heading));
+
+        return () => observer.disconnect();
+    }, [blogDetails]);
+
+    const shareUrl = window.location.href;
+const shareTitle = blogDetails?.title || "Check out this blog on ArtSays";
+const shareText = blogDetails?.shortDescription || "Interesting read from ArtSays";
+
+const openShareWindow = (url) => {
+  window.open(url, "_blank", "noopener,noreferrer,width=600,height=500");
+};
+
+const handleFacebookShare = () => {
+  openShareWindow(
+    `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+      shareUrl
+    )}`
+  );
+};
+
+const handleLinkedInShare = () => {
+  openShareWindow(
+    `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+      shareUrl
+    )}`
+  );
+};
+
+const handleTwitterShare = () => {
+  openShareWindow(
+    `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+      shareUrl
+    )}&text=${encodeURIComponent(shareTitle)}`
+  );
+};
+
+const handleWhatsappShare = () => {
+  openShareWindow(
+    `https://wa.me/?text=${encodeURIComponent(
+      `${shareTitle} - ${shareUrl}`
+    )}`
+  );
+};
+
+const handleNativeShare = async () => {
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: shareTitle,
+        text: shareText,
+        url: shareUrl,
+      });
+    } catch (error) {
+      console.log("Share cancelled");
+    }
+  } else {
+    alert("Sharing not supported on this browser");
+  }
+};
+
+
 
     return (
         <div className="w-full">
@@ -227,13 +370,13 @@ function BlogCardDetails() {
             )}
 
             <div className="w-full bg-[#48372D]">
-                <div className="w-full max-w-[1440px] mx-auto p-4 lg:p-6">
+                <div className="w-full max-w-[1440px] mx-auto p-3 md:!p-6">
                     <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-6 items-center">
                         <div className="text-white flex flex-col justify-center">
                             <h2 className="text-[25px] lg:text-[34px] font-bold mb-3">
                                 {blogDetails ? blogDetails.blogName : 'Blog Title'}
                             </h2>
-                            <div className="text-base overflow-hidden text-break">{blogDetails ? blogDetails.summary : 'Blog summary'}</div>
+                            <div className="text-white overflow-hidden text-break">{blogDetails ? blogDetails.summary : 'Blog summary'}</div>
                             <div className="flex gap-2 my-2">
                                 <span>{blogDetails ? blogDetails.blogAuthor : 'Author Name'}</span>
                                 <span>|</span>
@@ -246,19 +389,23 @@ function BlogCardDetails() {
                             </div>
                         </div>
                         <div className="w-full">
-                            <div className="aspect-[16/9] w-full lg:w-full">
-                                <img src={blogDetails ? `${process.env.REACT_APP_API_URL}/${blogDetails.blogImage}` : blog1}
-                                    alt="Blog" className="w-full h-full object-cover rounded"
-                                    onError={(e) => e.currentTarget.src = blog1} />
+                            <div className="bg-[#EBEBEB] rounded-2xl">
+                                <div className="relative h-full md:h-[400px] content-center">
+                                    <div className="w-full h-48 md:h-80 overflow-hidden">
+                                        <img src={blogDetails ? `${process.env.REACT_APP_API_URL}/${blogDetails.blogImage}` : blog1}
+                                            alt="Blog" className="w-full h-full object-cover"
+                                            onError={(e) => e.currentTarget.src = blog1} />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="w-full max-w-[1440px] mx-auto p-4 lg:px-6">
+            {/* <div className="w-full max-w-[1440px] mx-auto p-3 lg:px-6">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-2 lg:gap-1">
-                    <div className="col-span-12 md:col-span-9 lg:col-span-9 xl:col-span-10 space-y-6 order-2 md:!order-1">
+                    <div className="col-span-12 md:col-span-9 space-y-6 order-2 md:!order-1">
                         {blogDetails &&
                             <div dangerouslySetInnerHTML={{ __html: blogDetails.blogDescription }}
                                 className="rich-text break-all overflow-hidden">
@@ -276,25 +423,24 @@ function BlogCardDetails() {
                         </div>
                     </div>
 
-                    <div className="col-span-12 md:col-span-3 lg:col-span-3 xl:col-span-2 space-y-4 order-1 md:!order-2">
-
+                    <div className="hidden md:block col-span-12 md:col-span-3 space-y-4 order-1 md:order-2 md:sticky md:top-6 self-start overflow-visible">
                         <div className="w-full bg-[#48372D] rounded-lg p-3 text-white flex flex-col justify-center items-center text-center">
                             <img src={userDetails ? `${process.env.REACT_APP_API_URL}/${userDetails.profilePhoto}` : artist}
-                                alt="Artist image" id="artist-image"
+                                alt="Artist image" id="artist-image" className="m-3"
                                 onError={(e) => e.currentTarget.src = artist} />
                             <div>
                                 <div className="flex items-center gap-2">
-                                    <h5 className="text-[16px] lg:text-lg font-semibold line-clamp-1">
+                                    <h5 className="text-[16px] lg:text-lg font-semibold line-clamp-1 py-1 md:py-2">
                                         {blogDetails ? blogDetails.blogAuthor : 'Author Name'}
                                     </h5>
                                     <BiSolidEdit className="cursor-pointer text-[16px] lg:text-lg" />
                                 </div>
-                                <div className="text-[14px] lg:text-[16px] my-1">
+                                <div className="text-[14px] lg:text-[16px] py-1 md:py-2">
                                     {userDetails?.role
                                         ? userDetails.role.charAt(0).toUpperCase() + userDetails.role.slice(1) : 'Role'}
                                 </div>
-                                <div className="text-[14px] lg:text-[16px]">{blogDetails ? blogDetails.category : 'Category'}</div>
-                                <div className="flex items-center justify-center gap-4 mt-2">
+                                <div className="text-[14px] lg:text-[16px] py-1 md:py-2">{blogDetails ? blogDetails.category : 'Category'}</div>
+                                <div className="flex items-center justify-center gap-4 py-1 md:py-2">
                                     <div className="flex items-center gap-1">
                                         <button className="focus:outline-0" onClick={handleBlogLikes}><ThumbsUp size={20} /></button>
                                         <span className="font-semibold">{blogDetails ? blogDetails.likes : 0}</span>
@@ -309,14 +455,14 @@ function BlogCardDetails() {
                             </div>
                         </div>
 
-                        <div className="bg-[#48372D] rounded-lg text-white px-2 py-3 lg:px-5 lg:py-4" id="blog_tocSticky">
-                            <h5 className="text-[16px] lg:text-lg font-semibold flex justify-between items-center cursor-pointer"
+                        <div className="bg-[#48372D] rounded-lg text-white p-3 md:!p-4">
+                            <h5 className="text-lg md:text-lg font-semibold flex justify-between items-center cursor-pointer"
                                 onClick={() => setOpen(!open)}>
-                                Table of Contents {open ? <IoIosArrowUp className="text-[12px] lg:text-16px]" /> : <IoIosArrowDown className="text-[12px] lg:text-16px]" />}
+                                Table of Contents {open ? <IoIosArrowUp className="text-lg md:text-2xl" /> : <IoIosArrowDown className="text-[12px] lg:text-16px]" />}
                             </h5>
                             {
                                 open && (
-                                    <div className="mt-4 text-sm space-y-2">
+                                    <div className="mt-3 md:mt-4 text-sm space-y-2 text-gray-300">
                                         {blogDetails && (
                                             renderHeadingElements(blogDetails.blogDescription).map((content, index) => (
                                                 <p>{content.innerText}</p>
@@ -327,7 +473,7 @@ function BlogCardDetails() {
                             }
                         </div>
 
-                        <div className="hidden md:block bg-[#48372D] rounded-lg text-white px-2 py-3 lg:px-5 lg:py-4">
+                        <div className="bg-[#48372D] rounded-lg text-white px-2 py-3 lg:px-5 lg:py-4">
                             <h5 className="text-[14px] lg:text-lg font-semibold">Share:</h5>
                             <div className="flex gap-2 mt-2">
                                 <FaFacebookSquare className="text-[17px] lg:text-xl" />
@@ -338,8 +484,213 @@ function BlogCardDetails() {
                             </div>
                         </div>
                     </div>
+                    <div className="block md:hidden col-span-12 bg-[#48372D] rounded-lg text-white p-3 md:!p-4" id="blog_tocSticky">
+                        <h5 className="text-lg md:text-lg font-semibold flex justify-between items-center cursor-pointer"
+                            onClick={() => setOpen(!open)}>
+                            Table of Contents {open ? <IoIosArrowUp className="text-lg md:text-2xl" /> : <IoIosArrowDown className="text-[12px] lg:text-16px]" />}
+                        </h5>
+                        {
+                            open && (
+                                <div className="mt-3 md:mt-4 text-sm space-y-2 text-gray-300">
+                                    {blogDetails && (
+                                        renderHeadingElements(blogDetails.blogDescription).map((content, index) => (
+                                            <p>{content.innerText}</p>
+                                        ))
+                                    )}
+                                </div>
+                            )
+                        }
+                    </div>
+                </div>
+            </div> */}
+
+            <div className="w-full max-w-[1440px] mx-auto p-3 lg:px-6">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-2 lg:gap-1">
+
+                    {/* ================= BLOG CONTENT ================= */}
+                    <div className="col-span-12 md:col-span-9 space-y-6 order-2 md:order-1">
+
+                        {blogDetails && (
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html: addIdsToHeadings(blogDetails.blogDescription),
+                                }}
+                                className="rich-text break-words"
+                            />
+                        )}
+
+                        <div>
+                            <h4 className="font-semibold text-lg">Keywords:</h4>
+                            <div className="flex gap-3 mt-2 flex-wrap">
+                                {blogDetails?.tags?.map((tag, index) => (
+                                    <span
+                                        key={index}
+                                        className="bg-[#EBEBEB] border border-blue-200 px-3 py-1 rounded-full font-medium"
+                                    >
+                                        #{tag}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* ================= DESKTOP SIDEBAR ================= */}
+                    <div className="hidden md:block col-span-12 md:col-span-3 space-y-4 order-1 md:order-2 md:sticky md:top-6 self-start">
+
+                        {/* AUTHOR CARD */}
+                        <div className="w-full bg-[#48372D] rounded-lg p-3 text-white flex flex-col justify-center items-center text-center">
+                            <img src={userDetails ? `${process.env.REACT_APP_API_URL}/${userDetails.profilePhoto}` : artist}
+                                alt="Artist image" id="artist-image" className="m-3"
+                                onError={(e) => e.currentTarget.src = artist} />
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <h5 className="text-[16px] lg:text-lg font-semibold line-clamp-1 py-1 md:py-2">
+                                        {blogDetails ? blogDetails.blogAuthor : 'Author Name'}
+                                    </h5>
+                                    <BiSolidEdit className="cursor-pointer text-[16px] lg:text-lg" />
+                                </div>
+                                <div className="text-[14px] lg:text-[16px] py-1 md:py-2">
+                                    {userDetails?.role
+                                        ? userDetails.role.charAt(0).toUpperCase() + userDetails.role.slice(1) : 'Role'}
+                                </div>
+                                <div className="text-[14px] lg:text-[16px] py-1 md:py-2">{blogDetails ? blogDetails.category : 'Category'}</div>
+                                <div className="flex items-center justify-center gap-4 py-1 md:py-2">
+                                    <div className="flex items-center gap-1">
+                                        <button className="focus:outline-0" onClick={handleBlogLikes}><ThumbsUp size={20} /></button>
+                                        <span className="font-semibold">{blogDetails ? blogDetails.likes : 0}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                        <button className="focus:outline-0">
+                                            <MessageCircle size={20} />
+                                        </button>
+                                        <span className="font-semibold">{blogDetails ? blogDetails.comments.length : 0}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        {/* DESKTOP TOC */}
+                        <div className="bg-[#48372D] rounded-lg text-white p-4">
+                            <h5
+                                className="text-lg font-semibold flex justify-between items-center cursor-pointer"
+                                onClick={() => setOpen(!open)}
+                            >
+                                Table of Contents
+                                {open ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                            </h5>
+
+                            {open && (
+                                <div className="mt-3 text-sm space-y-1">
+                                    {blogDetails &&
+                                        getTocItems(blogDetails.blogDescription).map((item, index) => {
+                                            const isActive = activeHeading === item.id;
+                                            return (
+                                                <button
+                                                    key={index}
+                                                    onClick={() => scrollToHeading(item.id)}
+                                                    className={`block w-full text-left py-1 rounded transition
+                      ${isActive
+                                                            ? "bg-white text-[#48372D] px-2 font-semibold"
+                                                            : "text-gray-300 hover:text-white"
+                                                        }`}
+                                                >
+                                                    • {item.text}
+                                                </button>
+                                            );
+                                        })}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* SHARE */}
+                        <div className="bg-[#48372D] rounded-lg text-white p-4">
+  <h5 className="text-[14px] lg:text-lg font-semibold">Share:</h5>
+
+  <div className="flex gap-3 mt-3 items-center">
+    <button
+      onClick={handleFacebookShare}
+      className="hover:scale-110 transition"
+      aria-label="Share on Facebook"
+    >
+      <FaFacebookSquare className="text-[17px] lg:text-xl" />
+    </button>
+
+    <button
+      onClick={handleLinkedInShare}
+      className="hover:scale-110 transition"
+      aria-label="Share on LinkedIn"
+    >
+      <FaLinkedin className="text-[17px] lg:text-xl" />
+    </button>
+
+    <button
+      onClick={handleTwitterShare}
+      className="hover:scale-110 transition"
+      aria-label="Share on Twitter"
+    >
+      <FaSquareXTwitter className="text-[17px] lg:text-xl" />
+    </button>
+
+    <button
+      onClick={handleWhatsappShare}
+      className="hover:scale-110 transition"
+      aria-label="Share on WhatsApp"
+    >
+      <IoLogoWhatsapp className="text-[17px] lg:text-xl" />
+    </button>
+
+    <button
+      onClick={handleNativeShare}
+      className="hover:scale-110 transition"
+      aria-label="More share options"
+    >
+      <FaShareAlt className="text-[17px] lg:text-xl" />
+    </button>
+  </div>
+</div>
+
+                    </div>
+
+                    {/* ================= MOBILE TOC ================= */}
+                    <div className="block md:hidden col-span-12 bg-[#48372D] rounded-lg text-white p-3 md:!p-4" id="blog_tocSticky">
+                        <h5
+                            className="text-lg font-semibold flex justify-between items-center cursor-pointer"
+                            onClick={() => setOpen(!open)}
+                        >
+                            Table of Contents
+                            {open ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                        </h5>
+
+                        {open && (
+                            <div className="mt-3 text-sm space-y-1">
+                                {blogDetails &&
+                                    getTocItems(blogDetails.blogDescription).map((item, index) => {
+                                        const isActive = activeHeading === item.id;
+                                        return (
+                                            <button
+                                                key={index}
+                                                onClick={() => {
+                                                    scrollToHeading(item.id);
+                                                    setOpen(false);
+                                                }}
+                                                className={`block w-full text-left py-1 rounded transition
+                    ${isActive
+                                                        ? "bg-[#ffffff] text-[#48372D] px-2 font-semibold"
+                                                        : "text-gray-300 hover:text-white"
+                                                    }`}
+                                            >
+                                                • {item.text}
+                                            </button>
+                                        );
+                                    })}
+                            </div>
+                        )}
+                    </div>
+
                 </div>
             </div>
+
         </div>
     );
 }

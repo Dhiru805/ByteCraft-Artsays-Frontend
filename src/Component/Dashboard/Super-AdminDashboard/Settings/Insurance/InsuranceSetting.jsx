@@ -3,13 +3,14 @@ import InsuranceTable from "./InsuranceTable";
 import AddInsuranceSetting from "./AddInsurance";
 import getAPI from "../../../../../api/getAPI";
 import { useNavigate } from 'react-router-dom';
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const InsuranceSetting = () => {
   const [insuranceSettings, setInsuranceSettings] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedInsuranceSetting, setSelectedInsuranceSetting] = useState(null);
   const navigate = useNavigate();
-
+const[loading,setLoading]=useState(true);
   const fetchInsuranceSettingData = async () => {
     try {
       const response = await getAPI(`/api/get-insurance-settings`, {}, true);
@@ -24,6 +25,8 @@ const InsuranceSetting = () => {
       }
     } catch (err) {
       console.error("Error fetching insurance setting list:", err);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -31,6 +34,7 @@ const InsuranceSetting = () => {
     fetchInsuranceSettingData();
   }, []);
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

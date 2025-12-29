@@ -133,7 +133,7 @@ const WhatWeDo = () => {
     fetchWhatWeDo();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>{WhatWeDoSkeleton() }</div>;
   if (!data) return <div>What We Do section not available</div>;
 
   return (
@@ -144,49 +144,23 @@ const WhatWeDo = () => {
           {data.heading || "What We Do"}
         </h1>
         <hr className="my-3 border-dark" />
-        <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+        <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
           {data.description || "Description not available for this section."}
         </p>
       </div>
 
     
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-3 sm:px-6 my-5">
-    
-        {/* <div className="order-2 md:!order-1 content-center justify-items-center">
+        <div className="order-2 md:!order-1 content-center justify-items-center">
           <div className="space-y-3">
-            {data.cards?.map((card, index) => (
-              <div key={index} className="border rounded-lg shadow">
-                <button
-                  onClick={() => toggle(index)}
-                  className="w-full flex justify-between items-center p-4 text-lg font-bold text-left"
-                >
-                  {card.cardHeading}
-                  <span>
-                    {openIndex === index ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                  </span>
-                </button>*/}
-
-        
-        {/*<div
-                  className={`transition-all duration-500 ease-in-out overflow-hidden ${
-                    openIndex === index ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                  }`}
-                >
-                  <div className="px-4 pb-4 text-gray-600">{card.cardDescription}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div> */}
-        <div className="order-2 md:!order-1 flex flex-col items-center space-y-3 w-full">
           {data.cards?.map((card, index) => (
             <div
               key={index}
-              className="border rounded-lg shadow w-full max-w-[1000px]" 
+              className="border rounded-lg shadow" 
             >
               <button
                 onClick={() => toggle(index)}
-                className="w-full flex justify-between items-center p-4 text-lg font-bold text-left"
+                className="w-full flex justify-between items-center p-4 text-lg font-bold text-left focus:outline-none"
               >
                 {card.cardHeading}
                 <span>
@@ -202,6 +176,7 @@ const WhatWeDo = () => {
               </div>
             </div>
           ))}
+          </div>
         </div>
 
 
@@ -222,3 +197,52 @@ const WhatWeDo = () => {
 
 export default WhatWeDo;
 
+// WhatWeDoSkeleton.jsx
+ function WhatWeDoSkeleton() {
+  return (
+    <div className="max-w-[1440px] mx-auto py-3 my-5 animate-pulse">
+      
+      {/* Heading + Description */}
+      <div>
+        <div className="h-8 w-1/3 bg-gray-300 rounded mx-3"></div>
+
+        <hr className="my-3 border-dark opacity-30" />
+
+        <div className="px-3 space-y-2 mt-3">
+          <div className="h-4 w-full bg-gray-300 rounded"></div>
+          <div className="h-4 w-5/6 bg-gray-300 rounded"></div>
+          <div className="h-4 w-4/6 bg-gray-300 rounded"></div>
+        </div>
+      </div>
+
+      {/* Cards + Image Layout */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-3 sm:px-6 my-5">
+        
+        {/* Left: Accordion Skeletons */}
+        <div className="order-2 md:!order-1 flex flex-col items-center space-y-3 w-full">
+
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="border rounded-lg shadow w-full max-w-[1000px] p-4">
+              <div className="flex justify-between items-center">
+                <div className="h-6 w-2/3 bg-gray-300 rounded"></div>
+                <div className="h-6 w-6 bg-gray-300 rounded-full"></div>
+              </div>
+
+              <div className="mt-3 space-y-2">
+                <div className="h-4 w-full bg-gray-300 rounded"></div>
+                <div className="h-4 w-5/6 bg-gray-300 rounded"></div>
+              </div>
+            </div>
+          ))}
+
+        </div>
+
+        {/* Right: Image Skeleton */}
+        <div className="order-1 md:!order-2 content-center justify-items-center">
+          <div className="w-full h-[250px] md:h-[350px] bg-gray-300 rounded-lg"></div>
+        </div>
+
+      </div>
+    </div>
+  );
+}

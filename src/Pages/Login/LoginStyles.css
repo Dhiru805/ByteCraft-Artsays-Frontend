@@ -70,7 +70,7 @@
       font-size: 1.1rem !important;
     }
     
-    .right-panel, .bg-white {
+    .right-panel{
       padding: 2rem 1.5rem !important;
     }
     .signup-btn:hover {
@@ -122,7 +122,7 @@
 }
 
 @media (max-width: 768px) {
-    .right-panel-register, .bg-white {
+    .right-panel-register {
         padding: 2rem 1.5rem !important;
     }
 }

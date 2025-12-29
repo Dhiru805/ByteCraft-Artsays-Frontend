@@ -18,10 +18,11 @@ const Product = () => {
   const [currentImages, setCurrentImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE
-
+const [loading,setLoading]=useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       const userId = localStorage.getItem('userId');
       try {
         const result = await getAPI(`/api/campaigns/${userId}`, {}, true, false);
@@ -29,6 +30,9 @@ const Product = () => {
         console.log(result.data.data);
       } catch (error) {
         console.error("Error fetching products:", error);
+      }
+      finally {
+        setLoading(false);
       }
     };
     fetchProducts();
@@ -105,6 +109,8 @@ const Product = () => {
       toast.error("Failed to close the campaign");
     }
   };
+
+  if(loading)return <AdvertiseSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">
@@ -462,3 +468,127 @@ const Product = () => {
 };
 
 export default Product;
+
+
+ function AdvertiseSkeleton() {
+  return (
+    <div className="p-4 animate-pulse">
+
+      {/* Header Section */}
+      <div className="mb-6">
+        <div className="h-7 w-40 bg-gray-300 rounded mb-3"></div>
+
+        <div className="flex items-center gap-2">
+          <div className="h-4 w-6 bg-gray-300 rounded"></div>
+          <div className="h-4 w-20 bg-gray-300 rounded"></div>
+        </div>
+      </div>
+
+      {/* Action Button Row */}
+      <div className="flex justify-end mb-4">
+        <div className="h-9 w-9 bg-gray-300 rounded"></div>
+      </div>
+
+      {/* Filters (Show entries + Search) */}
+      <div className="bg-white p-4 shadow rounded mb-4 flex flex-col md:flex-row justify-between gap-4">
+
+        {/* Show entries */}
+        <div className="hidden md:flex items-center gap-2">
+          <div className="h-4 w-12 bg-gray-300 rounded"></div>
+          <div className="h-8 w-16 bg-gray-200 rounded"></div>
+          <div className="h-4 w-12 bg-gray-300 rounded"></div>
+        </div>
+
+        {/* Search */}
+        <div className="flex justify-end items-center">
+          <div className="relative w-40">
+            <div className="h-8 w-full bg-gray-200 rounded"></div>
+            <div className="h-4 w-4 bg-gray-300 absolute right-2 top-2 rounded"></div>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Table Section */}
+      <div className="bg-white p-4 shadow rounded">
+        <div className="overflow-x-auto">
+
+          {/* Table Header */}
+          <table className="table-auto w-full text-left">
+            <thead>
+              <tr>
+                {[
+                  "#",
+                  "Name",
+                  "Product Name",
+                  "Market Price",
+                  "Selling Price",
+                  "Date",
+                  "Status",
+                  "Action",
+                ].map((col, idx) => (
+                  <th key={idx} className="py-3">
+                    <div className="h-4 w-24 bg-gray-300 rounded"></div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+
+            {/* Table Body Skeleton (8 rows) */}
+            <tbody>
+              {Array.from({ length: 8 }).map((_, rowIdx) => (
+                <tr key={rowIdx} className="border-t">
+                  {Array.from({ length: 8 }).map((_, colIdx) => (
+                    <td key={colIdx} className="py-4">
+                      <div
+                        className={`${
+                          colIdx === 2
+                            ? "flex items-center gap-3"
+                            : ""
+                        }`}
+                      >
+                        {/* Circle image for Product column */}
+                        {colIdx === 2 && (
+                          <div className="h-8 w-8 bg-gray-300 rounded-full"></div>
+                        )}
+
+                        <div className="h-4 w-20 bg-gray-200 rounded"></div>
+                      </div>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+
+          </table>
+        </div>
+
+        {/* Pagination skeleton */}
+        <div className="flex justify-between items-center mt-6">
+
+          {/* Showing entries text */}
+          <div className="hidden sm:block h-4 w-64 bg-gray-300 rounded"></div>
+
+          {/* Pagination buttons */}
+          <div className="flex gap-2">
+            <div className="h-8 w-20 bg-gray-300 rounded"></div>
+            <div className="h-8 w-8 bg-gray-300 rounded"></div>
+            <div className="h-8 w-8 bg-gray-300 rounded"></div>
+            <div className="h-8 w-20 bg-gray-300 rounded"></div>
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* Optional Popup Skeleton */}
+      {/* Uncomment if needed */}
+      {/* 
+      <div className="fixed inset-0 bg-black/60 flex justify-center items-center">
+        <div className="w-80 h-80 bg-gray-800 rounded-lg"></div>
+      </div>
+      */}
+
+    </div>
+  );
+}

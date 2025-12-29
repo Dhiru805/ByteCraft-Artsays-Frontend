@@ -294,7 +294,7 @@ import { useLocation, useParams } from "react-router-dom";
 import getAPI from "../../../../../../../../api/getAPI";
 
 const OrderCompleted = () => {
-  const { userId } = useParams();  
+  const { userId } = useParams();
   const { state } = useLocation();
 
   const order = state?.order;
@@ -303,7 +303,7 @@ const OrderCompleted = () => {
 
   const [fullProducts, setFullProducts] = useState([]);
 
-  const BASE = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 
   const calculateDeliveryDate = (range) => {
     if (!range) return "N/A";
@@ -331,10 +331,12 @@ const OrderCompleted = () => {
       ];
 
       const merged = purchasedItems.map((cartItem, i) => {
-        const real = approved.find((p) => p._id === productIds[i]);
+        const pid = productIds[i];
+        const real =
+          approved.find((p) => String(p._id) === String(pid)) || null;
         return {
           ...cartItem,
-          full: real || null,
+          full: real,
         };
       });
 
@@ -353,14 +355,14 @@ const OrderCompleted = () => {
   const estimatedDelivery = calculateDeliveryDate(
     fullProducts[0]?.full?.estimatedDelivery
   );
-const totalShipping = fullProducts.reduce(
-  (acc, item) => acc + Number(item.full?.shippingCharges || 0),
-  0
-);
+  const totalShipping = fullProducts.reduce(
+    (acc, item) => acc + Number(item.full?.shippingCharges || 0),
+    0
+  );
 
   return (
-    <div className="max-w-[1464px] px-4 sm:px-6 lg:px-12 pt-10 space-y-8 text-[15px] text-lg">
-      
+    <div className="w-full space-y-6 pt-10">
+
       {/* Header */}
       <div className="text-center space-y-4">
         <div className="w-12 h-12 mx-auto rounded-full bg-[#5C4033] flex items-center justify-center">
@@ -371,9 +373,9 @@ const totalShipping = fullProducts.reduce(
       </div>
 
       {/* Order Info */}
-      <div className="bg-yellow-200 p-12 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="bg-yellow-200 p-8 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-6 text-lg">
         <div className="grid grid-cols-2 md:grid-cols-4 w-full text-center divide-x divide-gray-300">
-          
+
           <div className="px-4 space-y-5">
             <p className="text-gray-500">Order ID</p>
             <p className="text-black font-semibold">#{order.orderId}</p>
@@ -395,7 +397,7 @@ const totalShipping = fullProducts.reduce(
           </div>
 
         </div>
-{/* 
+        {/* 
         <div className="lg:pr-[55px]">
           <button className="bg-[#5C4033] hover:bg-[#4b3327] text-white text-sm px-6 py-2 rounded-full">
             Download Invoice
@@ -405,8 +407,8 @@ const totalShipping = fullProducts.reduce(
 
       {/* Order Details */}
       <div className="border border-gray-200 rounded-2xl p-6 bg-white">
-        <h3 className="text-xl font-semibold mb-4">Order Details</h3>
-        <hr className="py-3" />
+        <h3 className="text-xl font-semibold">Order Details</h3>
+        <hr className="my-3" />
 
         {/* Products */}
         <div className="border-b pb-4 mb-4">
@@ -439,38 +441,38 @@ const totalShipping = fullProducts.reduce(
             ))}
           </div> */}
           <div className="space-y-4">
-  {fullProducts.map((item, i) => (
-    <div key={i} className="flex justify-between items-center border-b pb-3">
+            {fullProducts.map((item, i) => (
+              <div key={i} className="flex justify-between items-center border-b pb-3">
 
-      <div className="flex gap-3 py-3 items-center">
-        <img
-          src={`${BASE}${item.full?.mainImage}`}
-          className="w-16 h-16 rounded-xl object-cover border"
-          alt=""
-        />
+                <div className="flex gap-3 py-3 items-center">
+                  <img
+                    src={`${BASE}${item.full?.mainImage}`}
+                    className="w-16 h-16 rounded-xl object-cover border"
+                    alt=""
+                  />
 
-        <div>
-          <p className="font-medium text-gray-800">
-            {item.full?.productName} × {item.qty}
-          </p>
+                  <div>
+                    <p className="font-medium text-gray-800">
+                      {item.full?.productName} × {item.qty}
+                    </p>
 
-          <p className="text-xs text-gray-500">
-            MRP: ₹{item.price} per unit
-          </p>
+                    <p className="text-xs text-gray-500">
+                      MRP: ₹{item.price} per unit
+                    </p>
 
-          <p className="text-xs text-gray-500">
-            Owned by {item.full?.userId?.name || "Seller"}
-          </p>
-        </div>
-      </div>
+                    <p className="text-xs text-gray-500">
+                      Owned by {item.full?.userId?.name || "Seller"}
+                    </p>
+                  </div>
+                </div>
 
-      <div className="text-right">
-        <p className="font-semibold text-gray-900">₹{item.subtotal}</p>
-      </div>
+                <div className="text-right">
+                  <p className="font-semibold text-gray-900">₹{item.subtotal}</p>
+                </div>
 
-    </div>
-  ))}
-</div>
+              </div>
+            ))}
+          </div>
 
         </div>
 

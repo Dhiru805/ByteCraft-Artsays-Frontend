@@ -285,6 +285,10 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from "../../AuthContext";
 import postAPI from "../../api/postAPI";
 import VerificationPopup from "./VerificationPopup";
+// import { GoogleLogin } from "@react-oauth/google";
+import { FcGoogle } from "react-icons/fc";
+import { useGoogleLogin } from "@react-oauth/google";
+import { FaGoogle } from "react-icons/fa";
 
 const Login = () => {
   const [input, setInput] = useState("");
@@ -293,6 +297,8 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [showPasswordPopup, setShowPasswordPopup] = useState(false);
+  const [googlePassword, setGooglePassword] = useState("");
   const navigate = useNavigate();
   const { login, userType, status: userStatus } = useAuth();
 
@@ -320,6 +326,7 @@ const Login = () => {
         token: localStorage.getItem("token"),
         userType: localStorage.getItem("userType"),
         status: localStorage.getItem("status"),
+        username: localStorage.getItem("username"),
       },
     });
 
@@ -367,6 +374,82 @@ const Login = () => {
     }
   }, [userType, userStatus]);
 
+  const loginWithGoogle = useGoogleLogin({
+    flow: "auth-code",
+    onSuccess: async (codeResponse) => {
+      console.log("Google login response", codeResponse);
+
+      try {
+        const { code } = codeResponse;
+        const res = await postAPI("/auth/googlelogin", { code }, true);
+        console.log("google login api response", res);
+
+        const {
+          token,
+          userType,
+          email,
+          userId,
+          status,
+          userrole,
+          username,
+          firstName,
+          lastName,
+        } = res.data;
+        if (!token || !userType) {
+          throw new Error("Invalid response from server");
+        }
+
+        const normalizedUserType = normalizeUserType(userType);
+        const normalizedStatus = status
+          ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
+          : null;
+
+        login(
+          token,
+          normalizedUserType,
+          normalizedStatus,
+          username,
+          firstName,
+          lastName
+        );
+
+        localStorage.setItem("token", token);
+        localStorage.setItem("userType", normalizedUserType);
+        localStorage.setItem("email", email);
+        localStorage.setItem("userId", userId);
+        localStorage.setItem("status", normalizedStatus);
+        localStorage.setItem("userrole", userrole);
+        localStorage.setItem("username", username);
+        localStorage.setItem("firstName", firstName);
+        localStorage.setItem("lastName", lastName);
+
+        console.log("localStorage after login:", {
+          token: localStorage.getItem("token"),
+          userType: localStorage.getItem("userType"),
+          status: localStorage.getItem("status"),
+        });
+
+        if (rememberMe) {
+          localStorage.setItem("rememberedEmailOrPhone", input);
+          localStorage.setItem("rememberedPassword", password);
+          localStorage.setItem("rememberMe", "true");
+        } else {
+          localStorage.removeItem("rememberedEmailOrPhone");
+          localStorage.removeItem("rememberedPassword");
+          localStorage.setItem("rememberMe", "false");
+        }
+
+        toast.success("Login Successful!");
+        navigate("/");
+        window.location.reload();
+      } catch (error) {
+        console.error("Google Login Failed", error);
+        toast.error(error?.response?.data?.message || "Google Login Failed");
+      }
+    },
+    onError: () => toast.error("Google Login Failed"),
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -380,14 +463,24 @@ const Login = () => {
         },
         true
       );
-
-      const { token, userType, email, userId, status, userrole } = res.data;
+      const {
+        token,
+        userType,
+        email,
+        userId,
+        status,
+        userrole,
+        username,
+        firstName,
+        lastName,
+      } = res.data;
       console.log("Login API response:", {
         token,
         userType,
         email,
         userId,
         status,
+        username,
       });
 
       if (!token || !userType) {
@@ -399,7 +492,7 @@ const Login = () => {
         ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
         : null;
 
-      login(token, normalizedUserType, normalizedStatus);
+      login(token, normalizedUserType, normalizedStatus, username);
 
       localStorage.setItem("token", token);
       localStorage.setItem("userType", normalizedUserType);
@@ -407,7 +500,10 @@ const Login = () => {
       localStorage.setItem("userId", userId);
       localStorage.setItem("status", normalizedStatus);
       localStorage.setItem("userrole", userrole);
-
+      localStorage.setItem("username", username);
+      localStorage.setItem("firstName", firstName);
+      localStorage.setItem("lastName", lastName);
+      
       console.log("localStorage after login:", {
         token: localStorage.getItem("token"),
         userType: localStorage.getItem("userType"),
@@ -455,10 +551,14 @@ const Login = () => {
       <ToastContainer />
       <VerificationPopup show={showPopup} onHide={() => setShowPopup(false)} />
       <div className="container-fluid p-0 min-vh-100 d-flex flex-column flex-lg-row">
-        <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5">
-          <h2 className="fw-bold mb-3 mb-md-4 text-dark fs-2 fs-md-1">
+        <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5" style={{ backgroundColor: "white" }}>
+          <Link to="/" className="text-decoration-none">
+            <h1 className="windhavi">Artsays</h1>
+          </Link>
+
+          <h4 className="fw-bold mb-3 mb-md-4 text-dark fs-2 fs-md-1">
             Login to your Account
-          </h2>
+          </h4>
           <p
             className="mb-3 mb-md-4 text-dark text-center"
             style={{
@@ -605,7 +705,82 @@ const Login = () => {
             >
               {loading ? "Logging in..." : "Login"}
             </button>
+            <button
+              className="btn w-100 text-white fst-italic mb-3 mb-md-0 login-btn"
+              style={{
+                backgroundColor: "#6b4f36",
+                fontSize: "1.1rem",
+                height: "48px",
+                transition: "all 0.3s ease",
+                fontStyle: "italic",
+                marginTop: "10px",
+              }}
+              onClick={() => loginWithGoogle()}
+            >
+              <FaGoogle size={22} />
+              &nbsp; Login with Google
+            </button>
           </form>
+
+          {/* Password Popup Modal */}
+          {showPasswordPopup && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+              {/* Modal Container */}
+              <div className="bg-white p-6 rounded-lg shadow-2xl w-full max-w-sm mx-4 transition-all duration-300 transform scale-100 opacity-100">
+                <h3 className="text-2xl font-semibold mb-6 text-gray-800">
+                  Set Your Password
+                </h3>
+
+                {/* Password Input Field */}
+                <div className="mb-6 relative">
+                  <label
+                    htmlFor="google-password-input"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    New Password
+                  </label>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="google-password-input"
+                    placeholder="Enter password"
+                    value={googlePassword}
+                    onChange={(e) => setGooglePassword(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-800 focus:border-amber-800 transition duration-150 text-gray-900"
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/4 text-gray-500 hover:text-gray-700"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
+
+                {/* Action Buttons */}
+                <button
+                  onClick={() => {
+                    setShowPasswordPopup(false);
+                    toast.success("Password saved!");
+                  }}
+                  className="w-full px-4 py-2 mb-3 bg-amber-800 text-white font-semibold rounded-md hover:bg-amber-900 transition duration-200 focus:outline-none focus:ring-2 focus:ring-amber-800 focus:ring-offset-2"
+                >
+                  Save Password
+                </button>
+                <button
+                  onClick={() => {
+                    setShowPasswordPopup(false);
+                    setGooglePassword("");
+                  }}
+                  className="w-full px-4 py-2 text-amber-800 bg-gray-100 border border-gray-300 font-semibold rounded-md hover:bg-gray-200 transition duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
+                >
+                  Skip for now
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5 text-white right-panel">

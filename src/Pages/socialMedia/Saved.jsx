@@ -14,7 +14,7 @@ const Saved = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        setLoading(true)
+        setLoading(true);
         const res = await getAPI(
           `/api/social-media/profile/${userId}`,
           {},
@@ -38,31 +38,38 @@ const Saved = () => {
     <div className="flex flex-col">
       <main className="flex l flex-row lg:gap-4 lg:w-[96%] mx-auto">
         <Sidebar />
-        {loading && <p>...loading</p>}
-        
-        <div className="grid grid-cols-3 gap-1 sm:gap-4 w-full relative">
-          {saved
-            ?.slice()
-            .reverse()
-            .map((post, index) => (
-              <div key={post._id} className="relative">
-                <Link to={`/social-media/single-post/${post._id}`}>
-                  <img
-                    
-                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
-                    alt={`post-${index}`}
-                    className="h-[120px] sm:h-[240px] sm:w-full object-cover rounded-md cursor-pointer"
-                  />
-                </Link>
-                {/* Multi-image icon */}
-                {post.images.length > 1 && (
-                  <div className="absolute top-2 right-2 bg-black/60 p-1 rounded">
-                    <i className="ri-checkbox-multiple-blank-line text-gray-100 text-lg"></i>
+        {loading ? (
+          ProfileGridLoading()
+        ) : (
+          <div className="grid grid-cols-3 gap-1 sm:gap-4 w-full relative">
+            {saved.length > 0 ? (
+              saved
+                ?.slice()
+                .reverse()
+                .map((post, index) => (
+                  <div key={post._id} className="relative">
+                    <Link to={`/artsays-community/single-post/${post._id}`}>
+                      <img
+                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
+                        alt={`post-${index}`}
+                        className="h-[120px] sm:h-[240px] sm:w-full object-cover rounded-md cursor-pointer"
+                      />
+                    </Link>
+                    {/* Multi-image icon */}
+                    {post.images.length > 1 && (
+                      <div className="absolute top-2 right-2 bg-black/60 p-1 rounded">
+                        <i className="ri-checkbox-multiple-blank-line text-gray-100 text-lg"></i>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ))}
-        </div>
+                ))
+            ) : (
+              <p className="flex items-center justify-center min-h-screen text-3xl md:text-4xl font-bold text-gray-400 tracking-wide">
+                No saved data found
+              </p>
+            )}
+          </div>
+        )}
         <Suggestion />
       </main>
     </div>
@@ -70,3 +77,17 @@ const Saved = () => {
 };
 
 export default Saved;
+const ProfileGridLoading = () => {
+  return (
+    <div className="w-full">
+      <div className="grid grid-cols-3 gap-3 p-3">
+        {Array.from({ length: 9 }).map((_, i) => (
+          <div
+            key={i}
+            className="animate-pulse bg-gray-300 rounded-lg border w-full aspect-square"
+          ></div>
+        ))}
+      </div>
+    </div>
+  );
+};

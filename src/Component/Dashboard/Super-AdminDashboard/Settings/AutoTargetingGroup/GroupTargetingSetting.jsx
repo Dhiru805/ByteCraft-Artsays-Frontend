@@ -3,14 +3,16 @@ import GroupTargetingTable from "./GroupTargetingTable";
 import AddGroupTargeting from "./AddGroupTargeting";
 import getAPI from "../../../../../api/getAPI";
 import { useNavigate } from 'react-router-dom';
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const GroupTargetingSetting = () => {
   const [groupTargetings, setGroupTargetings] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedGroupTargeting, setSelectedGroupTargeting] = useState(null);
   const navigate = useNavigate();
-
+const[loading,setLoading]=useState(false);
   const fetchGroupTargetingData = async () => {
+    setLoading(true)
     try {
       const response = await getAPI(`/api/get-group-targetings`, {}, true);
       if (
@@ -24,6 +26,8 @@ const GroupTargetingSetting = () => {
       }
     } catch (err) {
       console.error("Error fetching group targeting list:", err);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -31,6 +35,7 @@ const GroupTargetingSetting = () => {
     fetchGroupTargetingData();
   }, []);
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

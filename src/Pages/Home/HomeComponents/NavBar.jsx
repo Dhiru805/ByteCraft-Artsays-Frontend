@@ -29,6 +29,8 @@ import getAPI from "../../../api/getAPI";
 import { FaUser, FaChevronLeft, FaTools } from "react-icons/fa";
 import { MdOutlineSecurity, MdVerified, MdLibraryAdd } from "react-icons/md";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
+import HeaderSkeleton from "../../../Component/Skeleton/Home/HeaderSkeleton";
+
 const NavBar = () => {
   const [showMegamenu, setShowMegamenu] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -41,8 +43,9 @@ const NavBar = () => {
   const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
   const location = useLocation();
-  const isOnSocialMedia = location.pathname.startsWith("/social-media");
-const [profile,setProfile]=useState({})
+  const isOnSocialMedia = location.pathname.startsWith("/artsays-community");
+  const [profile, setProfile] = useState({});
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (!userId) {
       setUser({});
@@ -51,30 +54,33 @@ const [profile,setProfile]=useState({})
     }
 
     const fetchUserData = async () => {
-      try{
-      const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
-      setUser(result.data.user);
-      }catch(error){
-        console.error("Fetching user Error",error);
+      setLoading(true);
+      try {
+        const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
+        setUser(result.data.user);
+      } catch (error) {
+        console.error("Fetching user Error", error);
+      } finally {
+        setLoading(false);
       }
     };
-  const fetchProfile = async () => {
+    const fetchProfile = async () => {
       try {
         const res = await getAPI(
           `/api/social-media/profile/${userId}`,
           {},
           false,
           true
-        )
-        setProfile(res.data.profile)
-      }catch(error){
-          console.error("Fetching profile error",error)
-        }
+        );
+        setProfile(res.data.profile);
+      } catch (error) {
+        console.error("Fetching profile error", error);
       }
-fetchProfile()
+    };
+    fetchProfile();
     fetchUserData();
   }, [userId]);
-  
+
   const handleDashboardClick = (Usertype) => {
     if (Usertype === "Artist") {
       navigate("/artist/dashboard");
@@ -96,12 +102,15 @@ fetchProfile()
     localStorage.removeItem("email");
     localStorage.removeItem("userId");
     localStorage.removeItem("profilePhoto");
+    localStorage.removeItem("username");
+    localStorage.removeItem("firstName");
+    localStorage.removeItem("lastName");
     window.dispatchEvent(new Event("profilePhotoUpdated"));
     window.location.href = "/";
   };
 
   useEffect(() => {
-    if (location.pathname.startsWith("/social-media")) {
+    if (location.pathname.startsWith("/artsays-community")) {
       setIsToggled(true);
     } else {
       setIsToggled(false);
@@ -112,7 +121,7 @@ fetchProfile()
     if (isToggled) {
       navigate("/");
     } else {
-      navigate("/social-media");
+      navigate("/artsays-community");
     }
   };
 
@@ -143,14 +152,14 @@ fetchProfile()
     const handleClickOutside = (e) => {
       const isClickInsideSearch = e.target.closest(".search-box-h");
 
-    if (!isClickInsideSearch) {
-      collapseSearchBox();
-    }
+      if (!isClickInsideSearch) {
+        collapseSearchBox();
+      }
 
-    const isClickInsideDropdown = e.target.closest(".dropdown");
-    if (!isClickInsideDropdown) {
-      setShowDropdown(false);
-    }
+      const isClickInsideDropdown = e.target.closest(".dropdown");
+      if (!isClickInsideDropdown) {
+        setShowDropdown(false);
+      }
     };
 
     const handleEscape = (e) => {
@@ -192,6 +201,8 @@ fetchProfile()
       // overlay?.removeEventListener("click", closeSidebar);
     };
   }, [isToggled]);
+
+  if (loading) return <HeaderSkeleton />;
   return (
     <div className="w-full">
       <header className="header-h">
@@ -211,7 +222,7 @@ fetchProfile()
                 </a>
                 <a
                   className="nav-link-h icon-link-h d-none d-md-inline-block me-3"
-                  href="/"
+                  href="/art-gallery"
                 >
                   <i className="fas fa-store" />
                 </a>
@@ -224,8 +235,7 @@ fetchProfile()
                   <a className="logo-h" href="/">
                     <img src="/assets/home/logo.svg" alt="" />
                   </a>
-                  <div className="mega-menu">
-                    {/* Top Header Bar */}
+                  {/* <div className="mega-menu">
                     <div className="header-wrapper-m">
                       <div className="corner left-corner" />
                       <div className="scroll-container">
@@ -247,9 +257,7 @@ fetchProfile()
                       </div>
                       <div className="corner right-corner" />
                     </div>
-                    {/* Main Content */}
                     <div className="container-custom-m">
-                      {/* Sidebar */}
                       <div className="sidebar-wrapper-m">
                         <div className="sidebar-m">
                           <button className="sidebar-btn-m active">
@@ -269,7 +277,6 @@ fetchProfile()
                           </button>
                         </div>
                       </div>
-                      {/* Table Section */}
                       <div className="table-section">
                         <div className="table-wrapper table-responsive">
                           <table className="mb-0">
@@ -311,7 +318,6 @@ fetchProfile()
                           </a>
                         </div>
                       </div>
-                      {/* Featured Artwork Card */}
                       <div className="art-card position-relative overflow-hidden rounded-4 align-content-center">
                         <img
                           src={artwork}
@@ -352,7 +358,7 @@ fetchProfile()
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             )}
@@ -384,7 +390,7 @@ fetchProfile()
                     <i className="fas fa-shopping-cart" />
                   </a>
                 ) : Usertype === "Artist" || Usertype === "Super-Admin" ? (
-                  <a className="nav-link-h me-3" href="/blog">
+                  <a className="nav-link-h me-3" href="/blogs">
                     BLOG
                   </a>
                 ) : !isLoggedIn ? (
@@ -413,14 +419,13 @@ fetchProfile()
                           token: localStorage.getItem("token"),
                           usertype: localStorage.getItem("usertype"),
                           profilePhoto: localStorage.getItem("profilePhoto"),
+                          username: localStorage.getItem("username"),
                         })}
                         {console.log("BASE_URL:", BASE_URL)}
                         <img
                           src={
-                            localStorage.getItem("profilePhoto")
-                              ? `${BASE_URL}${localStorage.getItem(
-                                  "profilePhoto"
-                                )}`
+                            user.profilePhoto
+                              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`
                               : DEFAULT_PROFILE_IMAGE
                           }
                           className="rounded-circle avatar"
@@ -455,7 +460,7 @@ fetchProfile()
                             </div>
                           </Link>
                           {!isOnSocialMedia ? (
-                            <Link to="/social-media">
+                            <Link to="/artsays-community">
                               <div
                                 className="dropdown-item-h"
                                 onClick={handleUserIconClick}
@@ -514,7 +519,7 @@ fetchProfile()
                           >
                             <i className="fas fa-bell me-2" /> Notification
                           </Link>
-                          <Link to={"/my-account/wishlist/${userId}"}>
+                          <Link to={`/my-account/wishlist/${userId}`}>
                             <div
                               className="dropdown-item-h"
                               onClick={handleUserIconClick}
@@ -556,7 +561,7 @@ fetchProfile()
                             {!isOnSocialMedia ? (
                               <Link
                                 className="dropdown-item-h"
-                                to={"/social-media"}
+                                to={"/artsays-community"}
                                 onClick={handleUserIconClick}
                               >
                                 <img
@@ -649,7 +654,7 @@ fetchProfile()
                 {/* {
                 showProfileMenu && (
                   <>
-                    <a className="dropdown-item-h" onClick={() => navigate("/social-media")}>
+                    <a className="dropdown-item-h" onClick={() => navigate("/artsays-community")}>
                       <img 
                         alt="community-logo" 
                         src={artLogo} 
@@ -718,7 +723,7 @@ fetchProfile()
             Usertype === "Super-Admin" ? (
               <div className="profile-content-h">
                 <div
-                  className="profile-item-h"
+                  className="profile-item-h pl-4"
                   onClick={() => {
                     handleDashboardClick(Usertype);
                   }}
@@ -726,10 +731,10 @@ fetchProfile()
                   <i class="bi bi-person-fill" />
                   <span>My Dashboard</span>
                 </div>
-                 {!isOnSocialMedia ? (
-                  <Link to="/social-media">
+                {!isOnSocialMedia ? (
+                  <Link to="/artsays-community">
                     <div
-                      className="profile-item-h"
+                      className="profile-item-h pl-4"
                       onClick={() => setShowProfileMenu(!showProfileMenu)}
                     >
                       <img
@@ -747,7 +752,7 @@ fetchProfile()
                 ) : (
                   <Link to={"/"}>
                     <div
-                      className="profile-item-h"
+                      className="profile-item-h pl-4"
                       onClick={() => setShowProfileMenu(!showProfileMenu)}
                     >
                       <img
@@ -763,36 +768,25 @@ fetchProfile()
                     </div>
                   </Link>
                 )}
-                {/* <div className="profile-item-h">
-                    <a className="dropdown-item-h" onClick={() => navigate("/")}>
-                    <span style={{ display: "flex", alignItems: "center" }}>
-                      <img
-                        src={AIcon}
-                        className="icon-sidebar"
-                        alt="Artsays-Icon"
-                        style={{
-                          width: "16px",
-                          height: "16px",
-                          marginRight: "17px",
-                          marginLeft: "4px",
-                        }}
-                      />
-                      Switch to Artsays
-                    </span>
-                  </a> 
-                </div>  */}
-                <div className="profile-item-h">
-                  <i className="bi bi-patch-check-fill" />
-                  <span>Account Verification</span>
-                </div>
-                <div className="profile-item-h">
-                  <i className="bi bi-lock-fill" />
-                  <span>Security and Agreements</span>
-                </div>
-                <div className="profile-item-h">
-                  <i className="bi bi-question-circle" />
-                  <span>Help</span>
-                </div>
+
+                <Link>
+                  <div className="profile-item-h">
+                    <i className="bi bi-patch-check-fill" />
+                    <span>Account Verification</span>
+                  </div>
+                </Link>
+                <Link>
+                  <div className="profile-item-h">
+                    <i className="bi bi-lock-fill" />
+                    <span>Security and Agreements</span>
+                  </div>
+                </Link>
+                <Link>
+                  <div className="profile-item-h">
+                    <i className="bi bi-question-circle" />
+                    <span>Help</span>
+                  </div>
+                </Link>
                 <Link
                   to={"/privacy-policy"}
                   className="profile-item-h"
@@ -804,7 +798,6 @@ fetchProfile()
                   <span>Privacy Center</span>
                 </Link>
 
-               
                 <div className="profile-item-h" onClick={handleSignOut}>
                   <i className="bi bi-box-arrow-left" />
                   <span>Logout</span>
@@ -936,7 +929,7 @@ fetchProfile()
                 </Link>
 
                 <Link
-                  to={"my-account/social-media-promotion"}
+                  to={"my-account/artsays-community-promotion"}
                   onClick={() => setShowProfileMenu(!showProfileMenu)}
                 >
                   <div className="profile-item-h flex">
@@ -972,7 +965,7 @@ fetchProfile()
                 </Link>
 
                 {!isOnSocialMedia ? (
-                  <Link to="/social-media">
+                  <Link to="/artsays-community">
                     <div
                       className="profile-item-h"
                       onClick={() => setShowProfileMenu(!showProfileMenu)}

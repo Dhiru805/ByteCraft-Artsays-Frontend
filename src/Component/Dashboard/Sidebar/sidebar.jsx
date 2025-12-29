@@ -86,7 +86,6 @@ const Sidebar = () => {
         path: "/super-admin/blog",
         subTabs: []
       },
-
       {
         label: "Artist",
         tabId: "att1",
@@ -230,6 +229,13 @@ const Sidebar = () => {
         subTabs: []
       },
       {
+        label: "Arty CMS",
+        icon: "fa fa-cog",
+        path: `/super-admin/artCMS`,
+        basePath: "/super-admin/artCMS",
+        subTabs: []
+      },
+      {
         label: "Career",
         icon: "fa fa-briefcase",
         path: '#Career',
@@ -292,30 +298,25 @@ const Sidebar = () => {
         subTabs: [
           { label: "Homepage", subtabId: "wcms11", path: `/super-admin/homepage` },
           { label: "About Us", subtabId: "wcms12", path: `/super-admin/about-us` },
-          { label: "Affiliate", subtabId: "wcms19", path: `/super-admin/affiliate` },
-          { label: "Affiliate-Brand Partner", subtabId: "wcms19", path: `/super-admin/affiliate-bp` },
-          { label: "Store", subtabId: "wcms13", path: `` },
-          { label: "Bid", subtabId: "wcms14", path: `` },
+          { label: "Affiliate Program", subtabId: "wcms19", path: `/super-admin/affiliate` },
+          { label: "Affiliate Brand Partner", subtabId: "wcms19", path: `/super-admin/affiliate-bp` },
           { label: "How to Bid", subtabId: "wcms15", path: `/super-admin/how-to-bid` },
           { label: "How to Buy", subtabId: "wcms15", path: `/super-admin/how-to-buy` },
           { label: "How to Sell", subtabId: "wcms16", path: `/super-admin/how-to-sell` },
           { label: "How to Re-Sell", subtabId: "wcms16", path: `/super-admin/how-to-resell` },
           { label: "Why-ArtSays", subtabId: "wcms16", path: `/super-admin/why-artsays` },
-          { label: "Discover Artists", subtabId: "wcms17", path: `` },
-          { label: "Celebrity Collections", subtabId: "wcms18", path: `` },
-          { label: "Challenges", subtabId: "wcms19", path: `` },
-          { label: "Blogs", subtabId: "wcms19", path: `` },
+          { label: "Challenges", subtabId: "wcms19", path: `/super-admin/challenge-CMS` },
+          { label: "Blogs", subtabId: "wcms19", path: `/super-admin/CMS-Blog` },
           //{ label: "Policys", subtabId: "wcms19", path: `/super-admin/policy` },
           { label: "Policies", subtabId: "wcms21", path: `/super-admin/policy` },
           { label: "Commissions", subtabId: "wcms19", path: `/super-admin/commission` },
           { label: "Certificate", subtabId: "wcms19", path: `/super-admin/certificate` },
           { label: "Partner", subtabId: "wcms19", path: `/super-admin/partner` },
           { label: "Insurance", subtabId: "wcms19", path: `/super-admin/insurance` },
-          { label: "Licensing", subtabId: "wcms19", path: `/super-admin/licensing` },
-          { label: "Social Media", subtabId: "wcms19", path: `` },
+          { label: "Licensing Partner", subtabId: "wcms19", path: `/super-admin/licensing` },
           { label: "Art Gallery", subtabId: "wcms19", path: `/super-admin/CMS-art-gallery` },
           { label: "Contact Us", subtabId: "wcms19", path: `/super-admin/contactus` },
-          { label: "Career", subtabId: "wcms19", path: `` },
+          { label: "Career", subtabId: "wcms19", path: `/super-admin/career-CMS` },
         ],
       },
       {
@@ -337,6 +338,18 @@ const Sidebar = () => {
           { label: "Default Auto Targeting", path: `/super-admin/settings/auto-targeting` },
           { label: "Auto Targeting Group", path: `/super-admin/settings/group-targeting` },
           { label: "Keyword Targeting", path: `/super-admin/settings/keyword-targeting` },
+        ],
+      },
+       {
+        label: "SMS Settings",
+        tabId: "sms1",
+        label: "SMS Settings",
+        icon: "fa fa-cog",
+        path: `#sms-settings`,
+        basePath: "/super-admin/sms-settings",
+        subTabs: [
+          { label: "Signup-sms", subtabId: "sms11", path: `/super-admin/sms-settings/signup-sms` },
+
         ],
       },
       // ----------------------------------------------Community CMS-----------------------------------------------------//

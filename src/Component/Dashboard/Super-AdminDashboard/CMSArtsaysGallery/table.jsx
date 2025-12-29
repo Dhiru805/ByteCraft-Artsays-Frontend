@@ -458,6 +458,7 @@ import getAPI from "../../../../api/getAPI";
 import deleteAPI from "../../../../api/deleteAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
 import { toast } from "react-toastify";
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 
 function ArtGalleryCMS() {
   const navigate = useNavigate();
@@ -469,7 +470,7 @@ function ArtGalleryCMS() {
   const [deleteType, setDeleteType] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedGalleryToDelete, setSelectedGalleryToDelete] = useState(null);
-
+const[loading,setLoading]=useState(true)
   const fetchGalleryData = async () => {
     try {
       const response = await getAPI("/api/CMS-artsays-gallery");
@@ -480,6 +481,8 @@ function ArtGalleryCMS() {
       }
     } catch (error) {
       console.log(error);
+    }finally{
+        setLoading(false)
     }
   };
 
@@ -538,6 +541,7 @@ function ArtGalleryCMS() {
     setSelectedGalleryToDelete(null);
   };
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

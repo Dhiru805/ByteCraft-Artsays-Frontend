@@ -306,7 +306,7 @@ const UpgradePass = () => {
   const [currentPassPrice, setCurrentPassPrice] = useState(null);
   const [activeOrderId, setActiveOrderId] = useState(null);
   const userId = localStorage.getItem("userId");
-
+  const [loading, setLoading] = useState(true);
   const parsePrice = (value) => {
     if (value == null) return null;
     if (typeof value === "number") return value;
@@ -384,6 +384,8 @@ const UpgradePass = () => {
         );
       } catch {
         setPasses([]);
+      } finally {
+        setLoading(false);
       }
     };
     load();
@@ -437,6 +439,7 @@ const UpgradePass = () => {
     });
   })();
 
+  if (loading) return <BiddingPassSkeleton />;
   return (
     <div className="container-fluid mt-3">
       <div className="block-header mb-4">
@@ -447,7 +450,7 @@ const UpgradePass = () => {
         </div>
       </div>
 
-      <div className="row clearfix">
+      <div className="row clearfix" style={{ gap: '16px' }}>
         {visiblePasses.length === 0 ? (
           <div className="col-12">
             <div className="alert alert-info" role="alert">
@@ -460,10 +463,10 @@ const UpgradePass = () => {
             return (
               <div
                 key={pass._id || index}
-                className="col-lg-4 col-md-6 col-sm-12 mb-4"
+                className="col-lg-4 col-md-6 col-12 mb-4 overflow-hidden pr-0 pl-0"
               >
                 <div
-                  className={`card shadow-sm ${
+                  className={`card shadow-sm w-100 h-100 ${
                     isActive ? "border-primary" : ""
                   }`}
                   style={{
@@ -498,7 +501,7 @@ const UpgradePass = () => {
                     <div style={{ width: "20px" }}></div>
                   </div> */}
                   <div
-                    className="d-flex justify-content-center align-items-center px-4 pt-4 pb-2"
+                    className="d-flex justify-content-center align-items-center py-2 px-3"
                     style={{ gap: "10px" }}
                   >
                     <label
@@ -626,7 +629,142 @@ const UpgradePass = () => {
                         </tr>
                       </tbody>
                     </table> */}
-                  <div className="card-body pt-2 pb-3">
+
+                  <div className="card-body py-2 px-3 overflow-x-auto">
+                    <table  className="table table-borderless mb-0 table-fixed break-words">
+                      <tbody>
+                        <tr>
+                          <td className="px-1 py-2 font-bold align-top">
+                            Validity:
+                          </td>
+                          <td className="px-1 py-2">
+                            {pass.validityPeriod
+                              ? `${pass.validityPeriod} days`
+                              : "-"}
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td className="px-1 py-2 font-bold align-top">
+                            Product Upload Limit:
+                          </td>
+                          <td className="px-1 py-2">
+                            {pass.productUploadLimit || "-"}
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td className="px-1 py-2 font-bold align-top">
+                            Base Price Range:
+                          </td>
+                          <td className="px-1 py-2">
+                            {pass.basePriceRange
+                              ? (() => {
+                                  const parts = String(
+                                    pass.basePriceRange
+                                  ).split("-");
+                                  if (parts.length === 2)
+                                    return `₹${parts[0].trim()} - ₹${parts[1].trim()}`;
+                                  return pass.basePriceRange;
+                                })()
+                              : "-"}
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td className="px-1 py-2 font-bold align-top">
+                            Bid Visibility:
+                          </td>
+                          <td className="px-1 py-2">
+                            {pass.bidVisibility || "-"}
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td className="px-1 py-2 font-bold align-top">
+                            Bidding Analytics:
+                          </td>
+                          <td className="px-1 py-2">
+                            {pass.biddingAnalytics || "-"}
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td className="px-1 py-2 font-bold align-top">
+                            Add-on Access:
+                          </td>
+                          <td className="px-1 py-2">
+                            {pass.addonAccess?.length
+                              ? pass.addonAccess.join(", ")
+                              : "-"}
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td className="px-1 py-2 font-bold align-top">
+                            Support Priority:
+                          </td>
+                          <td className="px-1 py-2">
+                            {pass.supportPriority || "-"}
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td className="px-1 py-2 font-bold align-top">
+                            Refund / Cancellation:
+                          </td>
+                          <td className="px-1 py-2">
+                            {pass.refundPolicy || "-"}
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td className="px-1 py-2 font-bold align-top">
+                            Early Renewal Bonus:
+                          </td>
+                          <td className="px-1 py-2">
+                            {pass.earlyRenewalBonus || "-"}
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td className="px-1 py-2 font-bold align-top">
+                            Custom Bid Time:
+                          </td>
+                          <td className="px-1 py-2">
+                            {pass.customBidTimeControl || "-"}
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td className="px-1 py-2 font-bold align-top">
+                            Exclusive Auctions:
+                          </td>
+                          <td className="px-1 py-2">
+                            {pass.exclusiveAuctionsAccess ? "Yes" : "No"}
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td className="px-1 py-2 font-bold align-top">
+                            Dashboard Features:
+                          </td>
+                          <td className="px-1 py-2">
+                            {pass.dashboardFeatures || "-"}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <div className="text-center mt-3 border-top pt-3">
+                      <div className="font-bold text-blue-600 text-[2rem] font-weight-bold">
+                        ₹{pass.pricing || "-"} <small className="text-gray-500">Price</small>
+                      </div>
+                      
+                    </div>
+                  </div>
+
+                  {/* <div className="card-body pt-2 pb-3">
                     <table
                       className="table table-borderless mb-0"
                       style={{
@@ -856,7 +994,7 @@ const UpgradePass = () => {
                       </div>
                       <small className="text-muted">Price</small>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             );
@@ -879,3 +1017,62 @@ const UpgradePass = () => {
 };
 
 export default UpgradePass;
+
+function BiddingPassSkeleton() {
+  return (
+    <div className="container-fluid mt-3 animate-pulse">
+      {/* Header */}
+      <div className="block-header mb-4">
+        <div className="h-8 w-48 bg-gray-300 rounded"></div>
+
+        <div className="flex items-center space-x-2 mt-2">
+          <div className="h-4 w-6 bg-gray-200 rounded"></div>
+          <div className="h-4 w-24 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+
+      {/* Cards Section */}
+      <div className="row clearfix">
+        {Array(3)
+          .fill()
+          .map((_, idx) => (
+            <div key={idx} className="col-lg-4 col-md-6 col-sm-12 mb-4">
+              <div className="card shadow-sm rounded-lg p-4">
+                {/* Title + Radio */}
+                <div className="flex justify-center items-center gap-4 mb-4">
+                  <div className="h-7 w-28 bg-gray-300 rounded"></div>
+                  <div className="h-6 w-6 bg-gray-300 rounded-full"></div>
+                </div>
+
+                {/* Table Rows */}
+                <div className="space-y-3">
+                  {Array(12)
+                    .fill()
+                    .map((_, row) => (
+                      <div
+                        key={row}
+                        className="flex justify-between items-start"
+                      >
+                        <div className="h-4 w-32 bg-gray-200 rounded"></div>
+                        <div className="h-4 w-24 bg-gray-300 rounded"></div>
+                      </div>
+                    ))}
+                </div>
+
+                {/* Price */}
+                <div className="text-center mt-6">
+                  <div className="h-8 w-24 bg-gray-300 rounded mx-auto"></div>
+                  <div className="h-3 w-12 bg-gray-200 rounded mx-auto mt-2"></div>
+                </div>
+              </div>
+            </div>
+          ))}
+      </div>
+
+      {/* Bottom Button */}
+      <div className="pt-2 pb-4 text-center">
+        <div className="h-10 w-48 bg-gray-300 rounded mx-auto"></div>
+      </div>
+    </div>
+  );
+}

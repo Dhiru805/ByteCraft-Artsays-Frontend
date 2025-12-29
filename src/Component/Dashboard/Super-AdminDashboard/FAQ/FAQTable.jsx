@@ -27,7 +27,8 @@ const FAQTable = ({
 
   const filteredSubFAQs = sortedSubFAQs.filter((faq) =>
     (faq.faqType || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-    faq.question.toLowerCase().includes(searchTerm.toLowerCase())
+    faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    faq.keywords?.join(", ").toLowerCase().includes(searchTerm.toLowerCase()) // search keywords
   );
 
   const totalPages = Math.ceil(filteredSubFAQs.length / itemsPerPage);
@@ -227,7 +228,6 @@ const FAQTable = ({
               </div>
             </div>
 
-            {/* TABLE */}
             <div className="body">
               <div className="table-responsive">
                 <table className="table table-hover text-nowrap js-basic-example dataTable table-custom m-b-0 c_list">
@@ -237,13 +237,14 @@ const FAQTable = ({
                       <th>FAQ Type</th>
                       <th>Question</th>
                       <th>Answer</th>
+                      <th>Keywords</th> {/* ⭐ Added column */}
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {displayedSubFAQs.length === 0 ? (
                       <tr>
-                        <td colSpan="5" className="text-center">
+                        <td colSpan="6" className="text-center">
                           No FAQs available
                         </td>
                       </tr>
@@ -256,6 +257,7 @@ const FAQTable = ({
                           <td>{faq.faqType}</td>
                           <td>{faq.question}</td>
                           <td>{faq.answer}</td>
+                          <td>{faq.keywords?.join(", ")}</td> {/* ⭐ Display keywords */}
                           <td>
                             <button
                               type="button"
@@ -281,7 +283,6 @@ const FAQTable = ({
                 </table>
               </div>
 
-              {/* PAGINATION */}
               <div className="pagination d-flex justify-content-between mt-4">
                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
                   Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
@@ -296,12 +297,40 @@ const FAQTable = ({
                   >
                     <button className="page-link">Previous</button>
                   </li>
+                  {Array.from({ length: totalPages }, (_, index) => index + 1)
+                    .filter((pageNumber) => pageNumber === currentPage)
+                    .map((pageNumber, index, array) => {
+                      const prevPage = array[index - 1];
+                      if (prevPage && pageNumber - prevPage > 1) {
+                        return (
+                          <React.Fragment key={`ellipsis-${pageNumber}`}>
+                            <li className="page-item disabled"><span className="page-link">...</span></li>
+                            <li
+                              key={pageNumber} 
+                              className={`paginate_button page-item ${currentPage === pageNumber ? 'active' : ''}`}
+                              onClick={() => setCurrentPage(pageNumber)}
+                            >
+                              <button className="page-link">{pageNumber}</button>
+                            </li>
+                          </React.Fragment>
+                        );
+                      }
+                      return (
+                        <li
+                          key={pageNumber}
+                          className={`paginate_button page-item ${currentPage === pageNumber ? 'active' : ''}`}
+                          onClick={() => setCurrentPage(pageNumber)}
+                        >
+                          <button className="page-link">{pageNumber}</button>
+                        </li>
+                      );
+                    })}
                   <li
                     className={`paginate_button page-item ${currentPage === totalPages ? "disabled" : ""
                       }`}
                     onClick={handleNext}
                   >
-                    <button className="page-link">Next</button>
+                    <button className="page-link">Next</button> 
                   </li>
                 </ul>
               </div>

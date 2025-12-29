@@ -19,6 +19,7 @@ import HeroImgHowToBuy from "./hero-img/hero-img";
 import HowToBuyContent from "./HowToBuyContent/HowToBuyContent";
 import { Helmet } from "react-helmet";
 import axiosInstance from "../../api/axiosConfig";
+import Testimonials from "../AboutUs/Testimonials/Testimonials";
 
 const HowToBuy = () => {
   const [seoData, setSeoData] = useState({
@@ -86,6 +87,7 @@ const HowToBuy = () => {
 
       <HeroImgHowToBuy />
       <HowToBuyContent />
+      <Testimonials />
     </div>
   );
 };

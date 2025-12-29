@@ -1,16 +1,51 @@
-
-import { Outlet } from 'react-router-dom';
-import { useEffect } from 'react';
-import NavBar from '../Pages/Home/HomeComponents/NavBar';
-import Footer from '../Pages/Home/HomeComponents/Footer';
-
-
+import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import NavBar from "../Pages/Home/HomeComponents/NavBar";
+import Footer from "../Pages/Home/HomeComponents/Footer";
+import { useState } from "react";
+import HeroSectionSkeleton from "../Component/Skeleton/HeroSectionSkeleton";
+import BrowserCategorySkeleton from "../Component/Skeleton/BrowserCategorySkeleton";
+import WhyFromSkeleton from "../Component/Skeleton/WhyFromSkeleton";
+import BiddingArenaSkeleton from "../Component/Skeleton/BiddingArenaSkeleton";
+import HowToBuySkeleton from "../Component/Skeleton/HowToBuySkeleton";
+import DiscoverArtistSkeleton from "../Component/Skeleton/DiscoverArtistSkeleton";
+import WhyArtsaysDiffSkeleton from "../Component/Skeleton/WhyArtsaysDiffSkeleton";
+import HomeChallengesSkeleton from "../Component/Skeleton/HomeChallengesSkeleton";
+import ArtlconSkeleton from "../Component/Skeleton/ArtIconSkeleton";
+import HowToSellSkeleton from "../Component/Skeleton/HowToSellSkeleton";
+import HeaderSkeleton from "../Component/Skeleton/Home/HeaderSkeleton";
 const WebsiteLayout = () => {
-    useEffect(() => {
-    import('../index.css');
-  }, [])
+  const [cssReady, setCssReady] = useState(false);
+  useEffect(() => {
+    let mounted = true;
+    import("../index.css").then(() => {
+      if (mounted) setCssReady(true);
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  if (!cssReady) {
+    return (
+      <div>
+        <HeaderSkeleton />
+        <HeroSectionSkeleton />
+        <BrowserCategorySkeleton />
+        <WhyFromSkeleton />
+        <BiddingArenaSkeleton />
+        <HowToBuySkeleton />
+        <DiscoverArtistSkeleton />
+        <WhyArtsaysDiffSkeleton />
+        <HomeChallengesSkeleton />
+        <ArtlconSkeleton />
+        <HowToSellSkeleton />
+      </div>
+    );
+  }
   return (
-    <div >
+    <div>
       <NavBar />
       <Outlet />
       <Footer />

@@ -133,7 +133,7 @@ function LifeAtArtsays() {
       <hr className="my-3 border-dark" />
 
       {/* Subtitle */}
-      <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+      <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
         At Artsays, we’re more than just a team — we’re a creative family. Every
         day, we celebrate imagination, innovation, and inclusivity. Whether
         you’re coding a new feature, designing a fresh interface, or

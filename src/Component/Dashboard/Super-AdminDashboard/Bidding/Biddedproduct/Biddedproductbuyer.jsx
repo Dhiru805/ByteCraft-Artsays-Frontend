@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
-import useUserType from '../../urlconfig';
+import useUserType from '../../../urlconfig';
 import { jwtDecode } from 'jwt-decode';
+
 
 const BiddedProduct = () => {
     const [products, setProducts] = useState([]);
@@ -140,7 +141,7 @@ const BiddedProduct = () => {
                                                     <td>
                                                         {productData && (
                                                             <button className="btn btn-sm btn-outline-info mr-2"
-                                                                onClick={() => navigate(`/${userType}/Dashboard/biddedproduct/productdetails/${productData._id}`)}>
+                                                                onClick={() => navigate(`/super-admin/product-fetch-view/${productData._id}`)}>
                                                                 <i className="fa fa-eye"></i>
                                                             </button>
                                                         )}

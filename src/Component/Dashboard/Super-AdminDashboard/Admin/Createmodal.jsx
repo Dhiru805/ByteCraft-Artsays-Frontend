@@ -11,15 +11,13 @@ const CreateAdminModal = ({ onClose, fetchAdmins }) => {
     password: "",
     confirmPassword: "",
     userType: "Super-Admin",
-    role: "super-admin", 
+    role: "super-admin",
     userrole: "",
-
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [roleOptions, setRoleOptions] = useState([]);
-
 
   useEffect(() => {
     const fetchRoles = async () => {
@@ -46,7 +44,7 @@ const CreateAdminModal = ({ onClose, fetchAdmins }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
     for (const key in formData) {
       if (!formData[key]) {
         toast.error("Please fill in all fields");
@@ -68,14 +66,19 @@ const CreateAdminModal = ({ onClose, fetchAdmins }) => {
       onClose();
     } catch (error) {
       console.error("Error response:", error);
-      toast.error(error.response?.data?.message || "An unexpected error occurred");
+      toast.error(
+        error.response?.data?.message || "An unexpected error occurred"
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
   return (
-    <div className="modal show d-block" style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}>
+    <div
+      className="modal show d-block"
+      style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}
+    >
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
@@ -86,80 +89,123 @@ const CreateAdminModal = ({ onClose, fetchAdmins }) => {
           </div>
           <div className="modal-body">
             <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>First Name</label>
-                <input type="text" className="form-control" name="firstName" value={formData.firstName} onChange={handleChange} required />
-              </div>
-              <div className="form-group">
-                <label>Last Name</label>
-                <input type="text" className="form-control" name="lastName" value={formData.lastName} onChange={handleChange} required />
-              </div>
-              <div className="form-group">
-                <label>Email</label>
-                <input type="email" className="form-control" name="email" value={formData.email} onChange={handleChange} required />
-              </div>
-              <div className="form-group position-relative">
-                <label>Password</label>
-                <div className="input-group">
+              <div style={{ maxHeight: "30vh", overflowY: "auto" }}>
+                <div className="form-group">
+                  <label>First Name</label>
                   <input
-                    type={showPassword ? "text" : "password"}
+                    type="text"
                     className="form-control"
-                    name="password"
-                    value={formData.password}
+                    name="firstName"
+                    value={formData.firstName}
                     onChange={handleChange}
                     required
                   />
-                  <div className="input-group-append">
-                    <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
-                      <i className={`fa ${showPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
-                    </span>
-                  </div>
                 </div>
-              </div>
-              <div className="form-group position-relative">
-                <label>Confirm Password</label>
-                <div className="input-group">
+                <div className="form-group">
+                  <label>Last Name</label>
                   <input
-                    type={showConfirmPassword ? "text" : "password"}
+                    type="text"
                     className="form-control"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
+                    name="lastName"
+                    value={formData.lastName}
                     onChange={handleChange}
                     required
                   />
-                  <div className="input-group-append">
-                    <span className="input-group-text" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                      <i className={`fa ${showConfirmPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
-                    </span>
+                </div>
+                <div className="form-group">
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="form-group position-relative">
+                  <label>Password</label>
+                  <div className="input-group">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      className="form-control"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                    />
+                    <div className="input-group-append">
+                      <span
+                        className="input-group-text"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        <i
+                          className={`fa ${
+                            showPassword ? "fa-eye-slash" : "fa-eye"
+                          }`}
+                        ></i>
+                      </span>
+                    </div>
                   </div>
                 </div>
+                <div className="form-group position-relative">
+                  <label>Confirm Password</label>
+                  <div className="input-group">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      className="form-control"
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      required
+                    />
+                    <div className="input-group-append">
+                      <span
+                        className="input-group-text"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                      >
+                        <i
+                          className={`fa ${
+                            showConfirmPassword ? "fa-eye-slash" : "fa-eye"
+                          }`}
+                        ></i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>User Role</label>
+                  <select
+                    className="form-control"
+                    name="userrole"
+                    value={formData.userrole}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Select Role</option>
+                    {roleOptions.map((role) => (
+                      <option key={role._id} value={role.role}>
+                        {role.role}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-              <div className="form-group">
-                <label>User Role</label>
-                <select
-                  className="form-control"
-                  name="userrole"
-                  value={formData.userrole}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Select Role</option>
-                  {roleOptions.map((role) => (
-                    <option key={role._id} value={role.role}>
-                      {role.role}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={onClose}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={onClose}
+                >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   className="btn btn-primary"
-                  disabled={loading}>
+                  disabled={loading}
+                >
                   {loading ? "Creating....." : "Create Admin"}
                 </button>
               </div>

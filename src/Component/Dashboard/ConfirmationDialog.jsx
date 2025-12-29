@@ -12,11 +12,18 @@ const DELETE_CONFIG = {
   },
     // ... other configs ...
   policy: {
-    getEndpoint: (id) => `/api/social-policies/${id}`, // 👈 correct API route
+    getEndpoint: (id) => `/api/social-policies/${id}`, // 👈 correct one
     successMessage: "Policy successfully deleted!",
     errorMessage: "Failed to delete Policy.",
     idKey: "PolicyId",
   },
+  celebrity: {
+  getEndpoint: (id) => `/api/remove-celebrity/${id}`,
+  successMessage: "Celebrity deleted successfully!",
+  errorMessage: "Failed to delete celebrity.",
+  idKey: "_id",
+},
+
   
   blog: {
     getEndpoint: (id) => `/Blog-Post/${id}`,
@@ -105,13 +112,21 @@ certificateCMS: {
   errorMessage: "Failed to delete FAQ.",
   idKey: "FAQId",
 },
-
-policy : {
-  getEndpoint: (id) => `/api/deletePolicy/${id}`,
-  successMessage: "Policy successfully deleted!",
-  errorMessage: "Failed to delete Policy.",
-  idKey: "PolicyId",
+company: {
+  getEndpoint: (id) => `/api/company-info/delete/${id}`,
+  successMessage: "Company info successfully deleted!",
+  errorMessage: "Failed to delete company.",
+  idKey: "_id",
 },
+
+
+// policy : {
+//   getEndpoint: (id) => `/api/deletePolicy/${id}`,
+//   successMessage: "Policy successfully deleted!",
+//   errorMessage: "Failed to delete your Policy.",
+//   idKey: "PolicyId",
+// },
+
 
 howtobuy : {
   getEndpoint: (id) => `/api/howtobuy/delete/${id}`,
@@ -182,6 +197,27 @@ homepageSection: {
   successMessage: "Successfully deleted!",
   errorMessage: "Failed to delete.",
  idKey: "HomePageId",
+},
+
+careerCMS: {
+  getEndpoint: (id) => `/api/career-CMS/delete/${id}`,
+  successMessage: "Successfully deleted!",
+  errorMessage: "Failed to delete.",
+  idKey: "CareerCMSId",
+},
+
+challengeCMS: {
+  getEndpoint: (id) => `/api/challenge-CMS/delete/${id}`,
+  successMessage: "Successfully deleted!",
+  errorMessage: "Failed to delete.",
+  idKey: "ChallengeCMSId",
+},
+
+blogCMS: {
+  getEndpoint: (id) => `/api/blog-CMS/delete/${id}`,
+  successMessage: "Successfully deleted!",
+  errorMessage: "Failed to delete.",
+  idKey: "BlogCMSId",
 },
 
 affiliate: {
@@ -453,6 +489,8 @@ address:{
 function ConfirmationDialog({ onClose, deleteType, id, onDeleted }) {
   const handleDelete = async () => {
     const config = DELETE_CONFIG[deleteType];
+      console.log("Deleting policy ID:", id);
+console.log("DELETE URL:", config.getEndpoint(id));
 
     if (!config) {
       console.error("Invalid delete type.");

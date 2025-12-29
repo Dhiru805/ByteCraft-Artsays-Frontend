@@ -168,7 +168,7 @@ import { FaCrown } from "react-icons/fa";
 import getAPI from "../../../api/getAPI";
 import { differenceInDays, format } from "date-fns";
 import { useNavigate } from "react-router-dom";
-
+import HomeChallengesSkeleton from "../../../Component/Skeleton/HomeChallengesSkeleton";
 const HomeChallenges = () => {
   const [homepageChallenges, setHomepageChallenges] = useState(null);
   const [detailedChallenges, setDetailedChallenges] = useState([]);
@@ -273,7 +273,7 @@ const HomeChallenges = () => {
       .replace(/^-+|-+$/g, "");
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div><HomeChallengesSkeleton/></div>;
 
   return (
     <div className="max-w-[1440px] mx-auto py-4 px-3">
@@ -288,7 +288,7 @@ const HomeChallenges = () => {
 
           <hr className="my-3 border-dark" />
 
-          <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+          <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
             {homepageChallenges.description}
           </p>
         </div>

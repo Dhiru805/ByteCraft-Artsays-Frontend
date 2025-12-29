@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 function Reports() {
   const [reports, setReports] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [suspensionDays, setSuspensionDays] = useState({});
   const [confirmModal, setConfirmModal] = useState({
     show: false,
@@ -17,6 +17,7 @@ function Reports() {
   const navigate = useNavigate();
 
   const fetchReports = async () => {
+    setLoading(true)
     try {
       const response = await getAPI("/api/admin/reports", {}, true);
       if (response.data?.success) {
@@ -151,9 +152,7 @@ function Reports() {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center vh-100">
-        <h5>Loading reports...</h5>
-      </div>
+        <Reportskeleton/>
     );
   }
 
@@ -280,3 +279,54 @@ function Reports() {
 }
 
 export default Reports;
+
+
+const Reportskeleton=()=>{
+  return(
+    <>
+  <div className="animate-pulse">
+    {/* Header Skeleton */}
+    <div className="h-7 w-56 bg-gray-300 rounded mb-4"></div>
+
+    {/* Card */}
+    <div className="bg-white shadow-sm rounded-lg p-4">
+      {/* Table Header Skeleton */}
+      <div className="grid grid-cols-4 gap-4 bg-gray-200 p-3 rounded mb-3">
+        <div className="h-4 bg-gray-300 rounded"></div>
+        <div className="h-4 bg-gray-300 rounded"></div>
+        <div className="h-4 bg-gray-300 rounded"></div>
+        <div className="h-4 bg-gray-300 rounded"></div>
+      </div>
+
+      {/* Table Rows Skeleton */}
+      {Array.from({ length: 5 }).map((_, i) => (
+        <div
+          key={i}
+          className="grid grid-cols-4 gap-4 items-center border-b py-3"
+        >
+          {/* # */}
+          <div className="h-4 w-6 bg-gray-300 rounded"></div>
+
+          {/* User */}
+          <div>
+            <div className="h-4 w-32 bg-gray-300 rounded mb-2"></div>
+            <div className="h-3 w-20 bg-gray-200 rounded"></div>
+          </div>
+
+          {/* Report Count */}
+          <div className="h-4 w-10 bg-gray-300 rounded"></div>
+
+          {/* Actions */}
+          <div className="flex gap-2">
+            <div className="h-8 w-20 bg-gray-300 rounded"></div>
+            <div className="h-8 w-28 bg-gray-300 rounded"></div>
+            <div className="h-8 w-10 bg-gray-300 rounded"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+</>
+  )
+}
