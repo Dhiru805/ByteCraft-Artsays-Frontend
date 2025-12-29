@@ -86,9 +86,18 @@ const Sidebar = () => {
   ];
 
   useEffect(() => {
+    if (!userId) {
+      setUser({});
+      return;
+    }
+
     const fetchUserData = async () => {
-      const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
-      setUser(result.data.user);
+      try {
+        const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
+        setUser(result.data.user);
+      } catch (error) {
+        console.error("Failed to load sidebar user", error);
+      }
     };
     fetchUserData();
   }, [userId]);

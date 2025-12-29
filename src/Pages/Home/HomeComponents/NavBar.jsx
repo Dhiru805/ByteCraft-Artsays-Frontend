@@ -44,6 +44,12 @@ const NavBar = () => {
   const isOnSocialMedia = location.pathname.startsWith("/social-media");
 const [profile,setProfile]=useState({})
   useEffect(() => {
+    if (!userId) {
+      setUser({});
+      setProfile({});
+      return;
+    }
+
     const fetchUserData = async () => {
       try{
       const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
