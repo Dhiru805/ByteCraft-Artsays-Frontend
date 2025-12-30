@@ -12,7 +12,7 @@ const Explorebar = () => {
   const [posts, setPosts] = useState([]);
   const [sharePost, setSharePost] = useState(null);
   const [copyMsg, setCopyMsg] = useState("");
-  const [menuPos, setMenuPos] = useState({ x: 0, y: 0 });
+  // const [menuPos, setMenuPos] = useState({ x: 0, y: 0 });
   const [reportedUser, setReportedUser] = useState(null);
   const [reportPopupOpen, setReportPopupOpen] = useState(false);
   const [selectedReason, setSelectedReason] = useState("");
@@ -133,7 +133,7 @@ const Explorebar = () => {
     }
   };
 
-   function fallbackCopyText(text) {
+  function fallbackCopyText(text) {
     const textarea = document.createElement("textarea");
     textarea.value = text;
     textarea.style.position = "fixed";
@@ -145,13 +145,13 @@ const Explorebar = () => {
     document.body.removeChild(textarea);
   }
 
-if(loading){
-  return ExploreSkeleton()
-}
+  if (loading) {
+    return ExploreSkeleton()
+  }
   return (
-    <div className="lg:w-[56%] w-full max-w-6xl mx-auto flex flex-col lg:mt-6 lg:px-4 pt-2">
+    <div className="col-span-12 lg:col-span-6 w-full max-w-6xl my-4 mx-auto flex flex-col">
       {/* Masonry Grid */}
-      <div className="columns-2 sm:columns-3 gap-2 sm:gap-4 space-y-2 sm:space-y-4">
+      <div className="columns-2 sm:columns-3 gap-2 space-y-2">
         {posts.map((art) => (
           <div
             key={art._id}
@@ -170,73 +170,62 @@ if(loading){
               />
             </Link>
             {/* Overlay Header */}
-            <div className="absolute top-0 left-0 w-full bg-[#000000BF] bg-opacity-50 text-white flex justify-between items-center px-2 py-2.5 text-xs">
-              <span className="font-medium sm:text-lg text-[15px]">
+            <div className="absolute top-0 left-0 w-full bg-[#000000BF] bg-opacity-50 text-white flex justify-between items-center px-2 py-2 text-xs">
+              <span className="font-medium sm:text-md text-sm">
                 {art.user.username}
               </span>
-              <div className="flex gap-2 items-center text-lg">
+              <div className="flex relative gap-2 items-center text-lg">
                 {/* <i className="ri-shopping-cart-2-fill text-[#FB5934]"></i> */}
                 <i
                   className="ri-more-fill cursor-pointer"
                   onClick={(e) => {
-                    const rect = e.target.getBoundingClientRect();
-                    setMenuPos({ x: rect.left, y: rect.bottom });
                     setActiveMenuId((prev) =>
                       prev === art._id ? null : art._id
                     );
                   }}
                 ></i>
+
+                {/* Dropdown Menu */}
+                {activeMenuId === art._id && (
+                  <div
+                    ref={menuRef}
+                    className="absolute right-0 top-full flex flex-col items-center bg-white text-[#000000] text-xs rounded-xl shadow-lg w-32 z-99">
+                    <button
+                      disabled={userId === art.user?._id}
+                      onClick={() => {
+                        setReportedUser({
+                          id: art.user._id,
+                          postId: art._id,
+                          username: art.user.username,
+                        });
+                        setReportPopupOpen(true);
+                        setActiveMenuId(null);
+                      }}
+                      className="w-full px-4 py-2 hover:bg-gray-200 rounded-t-lg font-semibold"
+                    >
+                      Report
+                    </button>
+                    <hr className="w-[80%] border-t border-gray-400" />
+                    <button
+                      className="w-full px-4 py-2 hover:bg-gray-200 font-semibold"
+                      onClick={() => handleSave(art._id)}
+                    >
+                      <span>{art.isSaved ? "Unsave" : "Save"}</span>
+                    </button>
+                    <hr className="w-[80%] border-t border-gray-400" />
+                    <button
+                      className="w-full px-4 py-2 hover:bg-gray-200 rounded-b-lg font-semibold"
+                      onClick={() => setSharePost(art._id)}
+                    >
+                      Share
+                    </button>
+                  </div>
+                )}
+
               </div>
             </div>
 
-            {/* Dropdown Menu */}
-            {activeMenuId === art._id && (
-              <Portal>
-                <div
-                  ref={menuRef}
-                  style={{
-                    transform: `translate(${menuPos.x}px, ${menuPos.y}px)`,
-                  }}
-                  // className="absolute top-2 right-1 flex flex-col items-center z-10 lg:bg-white bg-gray-100 text-black text-sm rounded-xl shadow-lg w-32"
-                  className="fixed top-0 left-0 flex flex-col items-center 
-      bg-white text-black text-sm rounded-xl shadow-lg w-32 z-[99999]"
-                >
-                  <button
-                    disabled={userId === art.user?._id}
-                    onClick={() => {
-                      setReportedUser({
-                        id: art.user._id,
-                        postId: art._id,
-                        username: art.user.username,
-                      });
-                      setReportPopupOpen(true);
-                      setActiveMenuId(null);
-                    }}
-                    className="bg-gray-100 w-full px-4 py-2 hover:bg-gray-400 rounded-t-lg"
-                  >
-                    Report
-                  </button>
-                  <hr className="w-full border-t border-gray-800" />
-                  <button
-                    className="bg-gray-100 w-full px-4 py-2 hover:bg-gray-400"
-                    onClick={() => handleSave(art._id)}
-                  >
-                    <span>{art.isSaved ? "Unsave" : "Save"}</span>
-                  </button>
-                  <hr className="w-full border-t border-gray-800" />
-                  {/* <button className="bg-gray-100 w-full px-4 py-2 hover:bg-gray-400">
-                    Go to post
-                  </button>
-                  <hr className="w-full border-t border-gray-800" /> */}
-                  <button
-                    className="bg-gray-100 w-full px-4 py-2 hover:bg-gray-400 rounded-b-lg"
-                    onClick={() => setSharePost(art._id)}
-                  >
-                    Share
-                  </button>
-                </div>
-              </Portal>
-            )}
+
           </div>
         ))}
       </div>
@@ -349,11 +338,10 @@ if(loading){
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Add more details..."
-                    className={`w-full  border h-7 rounded-lg focus:ring-2 focus:outline-none text-sm ${
-                      error
-                        ? "border-red-500 focus:ring-red-500"
-                        : "border-gray-300 focus:ring-red-500"
-                    }`}
+                    className={`w-full  border h-7 rounded-lg focus:ring-2 focus:outline-none text-sm ${error
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-red-500"
+                      }`}
                   />
                   {error && (
                     <p className="text-xs text-red-500 mt-1">{error}</p>
@@ -373,11 +361,10 @@ if(loading){
                 <button
                   type="submit"
                   disabled={!selectedReason}
-                  className={`px-4 py-2 rounded-lg text-white font-medium ${
-                    selectedReason
-                      ? "bg-red-500 hover:bg-red-600"
-                      : "bg-gray-400 cursor-not-allowed"
-                  }`}
+                  className={`px-4 py-2 rounded-lg text-white font-medium ${selectedReason
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-gray-400 cursor-not-allowed"
+                    }`}
                 >
                   Submit
                 </button>
@@ -450,11 +437,11 @@ const Portal = ({ children }) => {
 };
 const ExploreSkeleton = () => {
   return (
-    <div className="w-full min-h-screen p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-pulse">
+    <div className="w-full col-span-12 lg:col-span-6 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 animate-pulse">
       {Array.from({ length: 12 }).map((_, i) => (
         <div
           key={i}
-          className="w-full h-44 bg-gray-300 rounded-xl relative overflow-hidden"
+          className="w-full bg-gray-300 rounded-xl relative overflow-hidden"
         >
           {/* Top left username bar */}
           <div className="absolute top-2 left-2 h-4 w-24 bg-gray-400 rounded"></div>

@@ -8,7 +8,7 @@ const CreatePost = () => {
     <div className=" flex flex-col">
     
       {/* Main layout: Sidebar | Post | Suggestion */}
-      <main className='flex flex-row lg:gap-4 lg:w-[96%] w-full mx-auto'>
+      <main className='grid grid-cols-12 gap-2 p-2'>
         <Sidebar />
         <Createpost/>
         <Suggestion />

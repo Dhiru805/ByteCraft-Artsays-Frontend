@@ -97,7 +97,7 @@ const AddCustomRequestForm = () => {
         Array.isArray(response.data.user.address)
       ) {
         setAddresses(response.data.user.address);
-        setSelectedAddressId(response.data.user.selectedAddress || null);
+        // setSelectedAddressId(response.data.user.selectedAddress || null);
       } else {
         setAddresses([]);
         setSelectedAddressId(null);
@@ -164,6 +164,7 @@ const AddCustomRequestForm = () => {
     setSelectedAddressId(addressId);
   };
 
+
   const handleDescriptionChange = (value) => {
     setFormData({ ...formData, description: value });
   };
@@ -201,14 +202,12 @@ const AddCustomRequestForm = () => {
       let artistId = "";
       if (existingData.Artist?.id) {
         artistId = existingData.Artist.id._id || "";
-        artistName = `${existingData.Artist.id.name || ""} ${
-          existingData.Artist.id.lastName || ""
-        }`.trim();
+        artistName = `${existingData.Artist.id.name || ""} ${existingData.Artist.id.lastName || ""
+          }`.trim();
       } else if (existingData.Artist) {
         artistId = existingData.Artist._id || "";
-        artistName = `${existingData.Artist.name || ""} ${
-          existingData.Artist.lastName || ""
-        }`.trim();
+        artistName = `${existingData.Artist.name || ""} ${existingData.Artist.lastName || ""
+          }`.trim();
       }
       setArtistId(artistId);
       setSelectedArtistName(artistName);
@@ -269,8 +268,8 @@ const AddCustomRequestForm = () => {
             !categoryResponse.hasError &&
             Array.isArray(categoryResponse.data?.data)
           ) {
-           
-          
+
+
             for (const cat of categoryResponse.data.data) {
               const categoryId = cat._id || cat.id;
 
@@ -396,20 +395,16 @@ const AddCustomRequestForm = () => {
       toast.error("Please select an installment duration.");
       return;
     }
-    if (!selectedAddressId) {
+    if (selectedAddressId === null) {
       toast.error("Please select a delivery address");
       return;
     }
 
+
+
     if (!plainTextDescription) {
       toast.error("Description is required");
       setDescriptionError(true);
-      return;
-    }
-
-    if (!selectedAddressId) {
-      toast.error("Please select a delivery address.");
-      setIsSubmitting(false);
       return;
     }
 
@@ -453,8 +448,9 @@ const AddCustomRequestForm = () => {
     // Append the selected address to the form payload
     if (selectedAddressId) {
       const selectedAddress = addresses.find(
-        (addr) => addr._id === selectedAddressId
-      );
+  (addr) => String(addr._id) === String(selectedAddressId)
+);
+
       if (selectedAddress) {
         formPayload.append(
           "BuyerSelectedAddress[line1]",
@@ -777,26 +773,24 @@ const AddCustomRequestForm = () => {
                     </td>
                     <td className="px-4 py-2">
                       <button
-                        className={`px-3 py-1 rounded-lg border text-sm ${
-                          req.RequestStatus === "Approved"
-                            ? "text-green-500 border-green-500 bg-white"
-                            : req.RequestStatus === "Pending"
+                        className={`px-3 py-1 rounded-lg border text-sm ${req.RequestStatus === "Approved"
+                          ? "text-green-500 border-green-500 bg-white"
+                          : req.RequestStatus === "Pending"
                             ? "text-yellow-500 border-yellow-500 bg-white"
                             : "text-red-500 border-red-500 bg-white"
-                        }`}
+                          }`}
                       >
                         {req.RequestStatus || "Pending"}
                       </button>
                     </td>
                     <td className="px-4 py-2">
                       <button
-                        className={`px-3 py-1 rounded-lg border text-sm ${
-                          req.BuyerStatus === "Approved"
-                            ? "text-green-500 border-green-500 bg-white"
-                            : req.BuyerStatus === "Pending"
+                        className={`px-3 py-1 rounded-lg border text-sm ${req.BuyerStatus === "Approved"
+                          ? "text-green-500 border-green-500 bg-white"
+                          : req.BuyerStatus === "Pending"
                             ? "text-yellow-500 border-yellow-500 bg-white"
                             : "text-red-500 border-red-500 bg-white"
-                        }`}
+                          }`}
                       >
                         {req.BuyerStatus || "Pending"}
                       </button>
@@ -1020,8 +1014,7 @@ const AddCustomRequestForm = () => {
                   );
                   setSelectedArtistName(
                     selectedArtist
-                      ? `${selectedArtist.name} ${
-                          selectedArtist.lastName || ""
+                      ? `${selectedArtist.name} ${selectedArtist.lastName || ""
                         }`.trim()
                       : ""
                   );
@@ -1105,10 +1098,9 @@ const AddCustomRequestForm = () => {
                         type="radio"
                         name="selectedAddress"
                         value={address._id}
-                        checked={selectedAddressId === address._id}
+                        checked={String(selectedAddressId) === String(address._id)}
                         onChange={() => handleAddressChange(address._id)}
                         className="mr-2"
-                        required
                       />
                       <label>
                         {address.line1},{" "}

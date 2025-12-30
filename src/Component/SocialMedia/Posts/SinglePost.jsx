@@ -35,7 +35,7 @@ const SharePost = () => {
   const [showCollaborators, setShowCollaborators] = useState(false);
   const [allCollaboraters, setAllCollaboraters] = useState([]);
   const [profile, setProfile] = useState({});
-const[loading,setLoading]=useState(true);
+  const [loading, setLoading] = useState(true);
   // 
   const { postId } = useParams();
   const userId = localStorage.getItem("userId");
@@ -79,7 +79,7 @@ const[loading,setLoading]=useState(true);
       } catch (error) {
         console.error("Error fetching share post data:", error);
         toast.error(error.response.data.message || "Error fetching post data");
-      }finally{
+      } finally {
         setLoading(false)
       }
     };
@@ -225,11 +225,10 @@ const[loading,setLoading]=useState(true);
   //  Navigate to profile
   const goToProfile = (profileUserId) => {
     navigate(
-      `/artsays-community/profile/${
-        sharePostData?.user?.username
-          ? `${sharePostData?.user?.username}`
-          : `${sharePostData?.user?.name}_${sharePostData?.user?.lastName}_${profileUserId}`
-      }`,{state:{userId:profileUserId}}
+      `/artsays-community/profile/${sharePostData?.user?.username
+        ? `${sharePostData?.user?.username}`
+        : `${sharePostData?.user?.name}_${sharePostData?.user?.lastName}_${profileUserId}`
+      }`, { state: { userId: profileUserId } }
     );
   };
 
@@ -392,7 +391,7 @@ const[loading,setLoading]=useState(true);
     document.execCommand("copy");
     document.body.removeChild(textarea);
   }
-  if(loading)return <LoadingSkeleton/>
+  if (loading) return <LoadingSkeleton />
   return (
     <>
       {sharePostData && (
@@ -441,10 +440,10 @@ const[loading,setLoading]=useState(true);
 
       {sharePostData && (
         <>
-          <div className=" flex flex-col">
-            <main className="flex l flex-row lg:gap-4 lg:w-[96%] mx-auto">
-              <Sidebar />
-              <div className=" lg:w-[56%] w-full flex flex-col mx-auto">
+          <div className="flex flex-col">
+            <main className="gap-2 grid grid-cols-12 mx-auto">
+              <Sidebar className="col-span-3" />
+              <div className="col-span-12 lg:col-span-6 w-full flex flex-col mx-auto">
                 {/* Active Post Popup */}
                 {activeIndex && (
                   <div>
@@ -480,26 +479,25 @@ const[loading,setLoading]=useState(true);
                                   )}
                                   {activeImageIndex <
                                     sharePostData.images.length - 1 && (
-                                    <button
-                                      className="absolute right-3 top-1/2 -translate-y-1/2 bg-gray-100/70 p-2 rounded-full"
-                                      onClick={() =>
-                                        setActiveImageIndex((prev) => prev + 1)
-                                      }
-                                    >
-                                      <i className="ri-arrow-right-s-line text-xl"></i>
-                                    </button>
-                                  )}
+                                      <button
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 bg-gray-100/70 p-2 rounded-full"
+                                        onClick={() =>
+                                          setActiveImageIndex((prev) => prev + 1)
+                                        }
+                                      >
+                                        <i className="ri-arrow-right-s-line text-xl"></i>
+                                      </button>
+                                    )}
 
                                   {/* Image Dots */}
                                   <div className="absolute bottom-3 flex gap-2 justify-center w-full">
                                     {sharePostData.images.map((_, idx) => (
                                       <div
                                         key={idx}
-                                        className={`w-2 h-2 rounded-full ${
-                                          idx === activeImageIndex
+                                        className={`w-2 h-2 rounded-full ${idx === activeImageIndex
                                             ? "bg-gray-100"
                                             : "bg-gray-500"
-                                        }`}
+                                          }`}
                                       ></div>
                                     ))}
                                   </div>
@@ -531,31 +529,29 @@ const[loading,setLoading]=useState(true);
                                     {sharePostData.user?.username}
                                     {sharePostData.user.verified?.length >
                                       0 && (
-                                      <img
-                                        src={`${
-                                          process.env
-                                            .REACT_APP_API_URL_FOR_IMAGE
-                                        }${
-                                          sharePostData.user.verified[
-                                            sharePostData.user.verified.length -
+                                        <img
+                                          src={`${process.env
+                                              .REACT_APP_API_URL_FOR_IMAGE
+                                            }${sharePostData.user.verified[
+                                              sharePostData.user.verified.length -
                                               1
-                                          ]?.badgeImage
-                                        }`}
-                                        className="inline-block ml-1 w-5 h-5 object-contain"
-                                        alt={
-                                          sharePostData.user.verified[
-                                            sharePostData.user.verified.length -
+                                            ]?.badgeImage
+                                            }`}
+                                          className="inline-block ml-1 w-5 h-5 object-contain"
+                                          alt={
+                                            sharePostData.user.verified[
+                                              sharePostData.user.verified.length -
                                               1
-                                          ]?.badgeName || "badge"
-                                        }
-                                        title={
-                                          sharePostData.user.verified[
-                                            sharePostData.user.verified.length -
+                                            ]?.badgeName || "badge"
+                                          }
+                                          title={
+                                            sharePostData.user.verified[
+                                              sharePostData.user.verified.length -
                                               1
-                                          ]?.badgeName
-                                        }
-                                      />
-                                    )}
+                                            ]?.badgeName
+                                          }
+                                        />
+                                      )}
                                   </span>
                                   <span className="text-xs text-gray-500">
                                     {sharePostData.location || ""}
@@ -610,11 +606,10 @@ const[loading,setLoading]=useState(true);
                                   onClick={() => handleLike(sharePostData._id)}
                                 >
                                   <i
-                                    className={`${
-                                      sharePostData.likes.includes(userId)
+                                    className={`${sharePostData.likes.includes(userId)
                                         ? "ri-heart-fill text-red-500"
                                         : "ri-heart-line"
-                                    } text-xl`}
+                                      } text-xl`}
                                   ></i>
                                 </button>
                                 <i
@@ -631,11 +626,10 @@ const[loading,setLoading]=useState(true);
                                   onClick={() => handleSave(sharePostData._id)}
                                 >
                                   <i
-                                    className={`${
-                                      sharePostData.isSaved
+                                    className={`${sharePostData.isSaved
                                         ? "ri-bookmark-fill"
                                         : "ri-bookmark-line"
-                                    } text-xl`}
+                                      } text-xl`}
                                   ></i>
                                 </button>
                               </div>
@@ -786,13 +780,11 @@ const[loading,setLoading]=useState(true);
                               {sharePostData.user?.username}
                               {sharePostData.user.verified?.length > 0 && (
                                 <img
-                                  src={`${
-                                    process.env.REACT_APP_API_URL_FOR_IMAGE
-                                  }${
-                                    sharePostData.user.verified[
+                                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE
+                                    }${sharePostData.user.verified[
                                       sharePostData.user.verified.length - 1
                                     ]?.badgeImage
-                                  }`}
+                                    }`}
                                   className="inline-block ml-1 w-6 h-6 object-contain"
                                   alt={
                                     sharePostData.user.verified[
@@ -935,9 +927,8 @@ const[loading,setLoading]=useState(true);
                           value={tipAmount}
                           onChange={handleInputChange}
                           onBlur={handleInputBlur}
-                          className={`w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none ${
-                            error ? "border-red-500" : "border-gray-300"
-                          }`}
+                          className={`w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none ${error ? "border-red-500" : "border-gray-300"
+                            }`}
                         />
                         <p className="text-xs text-gray-500 mt-1">
                           Min ₹40 • Max ₹1,440
@@ -1073,11 +1064,10 @@ const[loading,setLoading]=useState(true);
                               value={description}
                               onChange={(e) => setDescription(e.target.value)}
                               placeholder="Add more details..."
-                              className={`w-full p-2 border rounded-lg focus:ring-2 focus:outline-none text-sm ${
-                                error
+                              className={`w-full p-2 border rounded-lg focus:ring-2 focus:outline-none text-sm ${error
                                   ? "border-red-500 focus:ring-red-500"
                                   : "border-gray-300 focus:ring-red-500"
-                              }`}
+                                }`}
                             />
                             {error && (
                               <p className="text-xs text-red-500 mt-1">
@@ -1099,11 +1089,10 @@ const[loading,setLoading]=useState(true);
                           <button
                             type="submit"
                             disabled={!selectedReason}
-                            className={`px-4 py-2 rounded-lg text-white font-medium ${
-                              selectedReason
+                            className={`px-4 py-2 rounded-lg text-white font-medium ${selectedReason
                                 ? "bg-red-500 hover:bg-red-600"
                                 : "bg-gray-400 cursor-not-allowed"
-                            }`}
+                              }`}
                           >
                             Submit
                           </button>
@@ -1215,11 +1204,11 @@ const[loading,setLoading]=useState(true);
                     </div>
                   </div>
                 )}
-                <div className="w-full ">
-                  <div className="w-full flex flex-col mb-4 relative">
+                <div className="w-full my-4">
+                  <div className="w-full flex flex-col p-2 rounded-xl shadow-sm border relative">
                     {/* Post Header */}
                     <div className="flex justify-between items-center">
-                      <div className="flex gap-2 p-2 items-center">
+                      <div className="flex gap-2 items-center">
                         <img
                           src={
                             sharePostData?.user?.profilePhoto
@@ -1234,7 +1223,7 @@ const[loading,setLoading]=useState(true);
                         <div>
                           <div className="flex items-center">
                             <h3
-                              className="font-extrabold cursor-pointer"
+                              className="font-extrabold text-[#000000] cursor-pointer"
                               onClick={() =>
                                 goToProfile(sharePostData.user._id)
                               }
@@ -1244,13 +1233,11 @@ const[loading,setLoading]=useState(true);
 
                             {sharePostData.user.verified?.length > 0 && (
                               <img
-                                src={`${
-                                  process.env.REACT_APP_API_URL_FOR_IMAGE
-                                }${
-                                  sharePostData.user.verified[
+                                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE
+                                  }${sharePostData.user.verified[
                                     sharePostData.user.verified.length - 1
                                   ]?.badgeImage
-                                }`}
+                                  }`}
                                 className="inline-block ml-1 w-5 h-5 object-contain"
                                 alt={
                                   sharePostData.user.verified[
@@ -1300,10 +1287,10 @@ const[loading,setLoading]=useState(true);
                           </div>
 
                           {/* Time + Sponsored */}
-                          <div className="flex items-center gap-1 text-xs font-light text-gray-500">
+                          <div className="flex items-center gap-1 mt-1 text-xs text-gray-500">
                             <p> {timeAgo(sharePostData.createdAt)}</p>
                             {sharePostData.isPromoted && (
-                              <span className="text-[11px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">
+                              <span className="font-semibold text-black">
                                 Sponsored
                               </span>
                             )}
@@ -1312,12 +1299,12 @@ const[loading,setLoading]=useState(true);
                       </div>
 
                       {/* CTA + Buttons */}
-                      <div className="flex items-center gap-3 mr-1">
+                      <div className="flex items-center gap-2">
                         {sharePostData.isPromoted && (
                           <>
                             {sharePostData.promotionDetails?.goal ===
                               "Visit your website" &&
-                            sharePostData.user.website ? (
+                              sharePostData.user.website ? (
                               <button
                                 onClick={() =>
                                   window.open(
@@ -1371,12 +1358,12 @@ const[loading,setLoading]=useState(true);
 
                     {/* More Menu */}
                     {menuOpenId && (
-                      <ul className="absolute flex flex-col rounded-xl items-center justify-between right-1 top-12 mt-2 w-40 bg-gray-200 border shadow-lg z-10 ">
+                      <ul className="absolute bg-white flex flex-col text-xs rounded-xl items-center justify-between right-1 top-12 w-40 border shadow-md z-10">
                         {/* Pay Tip */}
                         {sharePostData.user._id !== userId && (
-                          <div className="w-full flex flex-col items-center justify-center">
+                          <div className="w-full flex flex-col items-center justify-center rounded-t-xl">
                             <li
-                              className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400 rounded-t-xl"
+                              className="w-full px-3 py-2 font-semibold text-[#000000] flex items-center justify-center cursor-pointer hover:bg-gray-400 rounded-t-xl"
                               onClick={() => {
                                 setTipUser({
                                   id: sharePostData._id,
@@ -1396,7 +1383,7 @@ const[loading,setLoading]=useState(true);
                         {sharePostData.user._id !== userId && (
                           <div className="w-full flex flex-col items-center justify-center">
                             <li
-                              className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
+                              className="w-full px-3 py-2 font-semibold text-[#000000] flex items-center justify-center cursor-pointer hover:bg-gray-200"
                               onClick={() => {
                                 setReportedUser({
                                   id: sharePostData.user._id,
@@ -1417,7 +1404,7 @@ const[loading,setLoading]=useState(true);
                         {sharePostData.user._id !== userId && (
                           <div className="w-full flex flex-col items-center justify-center">
                             <li
-                              className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
+                              className="w-full px-3 py-2 font-semibold text-[#000000] flex items-center justify-center cursor-pointer hover:bg-gray-200"
                               // pass !post.showFollowButton so the function will set showFollowButton to the new value
                               onClick={() =>
                                 handleFollowToggle(
@@ -1436,7 +1423,7 @@ const[loading,setLoading]=useState(true);
 
                         {/* Save / Unsave */}
                         <li
-                          className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
+                          className="w-full px-3 py-2 font-semibold text-[#000000] flex items-center justify-center cursor-pointer rounded-t-xl hover:bg-gray-200"
                           onClick={() => handleSave(sharePostData?._id)}
                         >
                           {sharePostData.isSaved ? "Unsave" : "Save"}
@@ -1444,14 +1431,13 @@ const[loading,setLoading]=useState(true);
                         <hr className="w-[75%] border-t border-gray-800" />
 
                         <li
-                          className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
+                          className="w-full px-3 py-2 font-semibold text-[#000000] flex items-center justify-center cursor-pointer hover:bg-gray-200"
                           onClick={() =>
                             navigate(
-                              `/artsays-community/profile/${
-                                sharePostData?.user?.username
-                                  ? `${sharePostData?.user?.username}`
-                                  : `${sharePostData?.user?.name}_${sharePostData?.user?.lastName}_${sharePostData?.user?._id}`
-                              }`,{state:{userId:sharePostData?.user?._id}}
+                              `/artsays-community/profile/${sharePostData?.user?.username
+                                ? `${sharePostData?.user?.username}`
+                                : `${sharePostData?.user?.name}_${sharePostData?.user?.lastName}_${sharePostData?.user?._id}`
+                              }`, { state: { userId: sharePostData?.user?._id } }
                             )
                           }
                         >
@@ -1461,7 +1447,7 @@ const[loading,setLoading]=useState(true);
 
                         {/* Cancel */}
                         <li
-                          className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400 text-red-500 rounded-b-xl"
+                          className="w-full px-3 py-2 font-semibold text-[#000000] flex items-center justify-center cursor-pointer hover:bg-red-200 text-red-600 rounded-b-xl"
                           onClick={() => setMenuOpenId(null)}
                         >
                           Cancel
@@ -1470,18 +1456,17 @@ const[loading,setLoading]=useState(true);
                     )}
 
                     {/* Post Image Carousel */}
-                    <div className="mx-1 relative">
+                    <div className="py-2 relative">
                       {sharePostData.images &&
                         sharePostData.images.length > 0 && (
                           <>
                             <img
-                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                                sharePostData.images[
-                                  sharePostData.activeImageIndex || 0
+                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.images[
+                                sharePostData.activeImageIndex || 0
                                 ]
-                              }`}
+                                }`}
                               alt="Post content"
-                              className="w-full lg:h-[600px] sm:h-[480px] h-[300px] rounded-lg "
+                              className="w-full h-full rounded-lg"
                             />
 
                             {/* Left Arrow (only if not on first image) */}
@@ -1504,7 +1489,7 @@ const[loading,setLoading]=useState(true);
                             {/* Right Arrow (only if not on last image) */}
                             {sharePostData.images.length > 1 &&
                               (sharePostData.activeImageIndex || 0) <
-                                sharePostData.images.length - 1 && (
+                              sharePostData.images.length - 1 && (
                                 <button
                                   onClick={() =>
                                     setSharePostData((prev) => ({
@@ -1521,16 +1506,15 @@ const[loading,setLoading]=useState(true);
 
                             {/* Dots */}
                             {sharePostData.images.length > 1 && (
-                              <div className="absolute bottom-2 w-full flex justify-center gap-1">
+                              <div className="absolute bottom-6 w-full flex justify-center gap-1 z-10">
                                 {sharePostData.images.map((_, idx) => (
                                   <span
                                     key={idx}
-                                    className={`h-2 w-2 rounded-full ${
-                                      (sharePostData.activeImageIndex || 0) ===
-                                      idx
+                                    className={`h-2 w-2 rounded-full ${(sharePostData.activeImageIndex || 0) ===
+                                        idx
                                         ? "bg-gray-100"
                                         : "bg-gray-400"
-                                    }`}
+                                      }`}
                                   ></span>
                                 ))}
                               </div>
@@ -1542,7 +1526,7 @@ const[loading,setLoading]=useState(true);
                                   href={sharePostData.promotionDetails.website}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="absolute bottom-4 left-2 z-20 text-white text-[15px] px-3 py-2 rounded-md flex flex-col shadow-lg bg-[#48372D]/50"
+                                  className="absolute bottom-4 w-[80%] text-white text-md px-3 py-2 justify-self-center rounded-md flex flex-col shadow-lg bg-[#48372D]/70 hover:bg-[#48372D]"
                                 >
                                   <span className="font-semibold leading-tight">
                                     Explore Our Website
@@ -1561,16 +1545,15 @@ const[loading,setLoading]=useState(true);
                     <div className="flex flex-col gap-1.5 mx-1">
                       <div className="flex flex-row items-center justify-between">
                         <div className="flex flex-row gap-4">
-                          <button onClick={() => handleLike(sharePostData._id)}>
+                          <button onClick={() => handleLike(sharePostData._id)} className="focus:outline-none">
                             <i
-                              className={`${
-                                sharePostData.likes.includes(userId)
+                              className={`${sharePostData.likes.includes(userId)
                                   ? "ri-heart-fill text-red-500"
                                   : "ri-heart-line"
-                              } text-xl font-medium`}
+                                } text-xl font-medium`}
                             ></i>
                           </button>
-                          <button>
+                          <button className="focus:outline-none">
                             <i
                               onClick={() => {
                                 if (commentRef.current) {
@@ -1581,20 +1564,19 @@ const[loading,setLoading]=useState(true);
                             ></i>
                           </button>
 
-                          <button onClick={() => setSharePost(sharePostData)}>
+                          <button onClick={() => setSharePost(sharePostData)} className="focus:outline-none">
                             <i className="ri-send-plane-fill text-xl font-medium"></i>
                           </button>
                         </div>
                         <div className="flex items-center">
                           <button
-                            onClick={() => handleSave(sharePostData?._id)}
+                            onClick={() => handleSave(sharePostData?._id)} className="focus:outline-none"
                           >
                             <i
-                              className={`${
-                                sharePostData?.isSaved
+                              className={`${sharePostData?.isSaved
                                   ? "ri-bookmark-fill"
                                   : "ri-bookmark-line"
-                              } text-xl font-medium`}
+                                } text-xl font-medium`}
                             ></i>
                           </button>
                         </div>
@@ -1607,15 +1589,14 @@ const[loading,setLoading]=useState(true);
 
                       {/* Description */}
                       <div>
-                        <p className="text-[12px] mt-0.5 font-semibold break-all whitespace-normal w-full">
+                        <p className="text-sm mt-1 text-[#000000] font-semibold break-all whitespace-normal w-full">
                           {sharePostData.user.username}{" "}
                           {sharePostData.user.verified?.length > 0 && (
                             <img
-                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                                sharePostData.user.verified[
+                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.user.verified[
                                   sharePostData.user.verified.length - 1
                                 ]?.badgeImage
-                              }`}
+                                }`}
                               className="inline-block ml-1 w-5 h-5 object-contain"
                               alt={
                                 sharePostData.user.verified[
@@ -1635,10 +1616,10 @@ const[loading,setLoading]=useState(true);
 
                       {/* Comments */}
                       <div
-                        className="text-[13px] font-light cursor-pointer"
+                        className="text-xs text-[#000000] font-light cursor-pointer"
                         onClick={() => setActiveIndex(true)}
                       >
-                        View all {sharePostData.comments.length} comments
+                        View all {sharePostData.comments.length} Comments
                       </div>
 
                       {/* Add Comment */}
@@ -1665,12 +1646,10 @@ const[loading,setLoading]=useState(true);
                                 {user.username}
                                 {user.verified?.length > 0 && (
                                   <img
-                                    src={`${
-                                      process.env.REACT_APP_API_URL_FOR_IMAGE
-                                    }${
-                                      user.verified[user.verified.length - 1]
+                                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE
+                                      }${user.verified[user.verified.length - 1]
                                         ?.badgeImage
-                                    }`}
+                                      }`}
                                     className="inline-block ml-1 w-6 h-6 object-contain"
                                     alt={
                                       user.verified[user.verified.length - 1]
@@ -1698,7 +1677,7 @@ const[loading,setLoading]=useState(true);
                             value={commentText}
                             ref={commentRef}
                             onChange={handleChange}
-                            className="w-full rounded text-[13px] focus:outline-none focus:ring focus:border-blue-300"
+                            className="w-full rounded text-sm focus:outline-none"
                           />
                           <button
                             onClick={() =>
@@ -1715,12 +1694,10 @@ const[loading,setLoading]=useState(true);
                         </p>
                       )}
                     </div>
-
-                    <hr className="h-0.5 bg-gray-300 border-none mt-2" />
                   </div>
                 </div>
               </div>
-              <Suggestion />
+              <Suggestion className="col-span-3" />
             </main>
           </div>
         </>
@@ -1734,24 +1711,73 @@ export default SharePost;
 // loading skeleton
 const LoadingSkeleton = () => {
   return (
-    <div className="animate-pulse p-4 rounded-xl shadow-sm border w-[90%] h-[90%]">
-      {/* Header */}
-      <div className="flex items-center space-x-3 mb-4">
-        <div className="w-10 h-10 rounded-full bg-gray-300"></div>
-        <div className="flex-1">
-          <div className="h-3 w-32 bg-gray-300 rounded"></div>
-          <div className="h-2 w-20 bg-gray-200 rounded mt-1"></div>
+    <div className="grid grid-cols-12 gap-2 px-2">
+      <div className="col-span-3 w-full hidden lg:flex mx-auto animate-pulse rounded-xl my-4 shadow-sm border">
+        {/* Icon column */}
+        <div className="flex flex-col items-center gap-4 p-3">
+          {[...Array(9)].map((_, i) => (
+            <div
+              key={i}
+              className="w-10 h-10 rounded-lg bg-gray-300"
+            />
+          ))}
+        </div>
+
+        {/* Expanded labels */}
+        <div className="flex flex-col items-center gap-4 py-3 pr-3">
+          {[...Array(9)].map((_, i) => (
+            <div
+              key={i}
+              className="w-36 h-10 rounded-lg bg-gray-300"
+            />
+          ))}
         </div>
       </div>
+      <div className="animate-pulse w-full p-4 rounded-xl shadow-sm border justify-self-center my-4 col-span-12 lg:col-span-6">
+        {/* Header */}
+        <div className="flex items-center space-x-3 mb-4">
+          <div className="w-10 h-10 rounded-full bg-gray-300"></div>
+          <div className="flex-1">
+            <div className="h-3 w-32 bg-gray-300 rounded"></div>
+            <div className="h-2 w-20 bg-gray-200 rounded mt-1"></div>
+          </div>
+        </div>
 
-      {/* Image / Content */}
-      <div className="w-full h-80 bg-gray-300 rounded-xl mb-4"></div>
+        {/* Image / Content */}
+        <div className="w-full h-80 bg-gray-300 rounded-xl mb-4"></div>
 
-      {/* Footer */}
-      <div className="flex items-center space-x-4">
-        <div className="h-3 w-16 bg-gray-300 rounded"></div>
-        <div className="h-3 w-12 bg-gray-300 rounded"></div>
-        <div className="h-3 w-20 bg-gray-300 rounded"></div>
+        {/* Footer */}
+        <div className="flex items-center space-x-4">
+          <div className="h-3 w-16 bg-gray-300 rounded"></div>
+          <div className="h-3 w-12 bg-gray-300 rounded"></div>
+          <div className="h-3 w-20 bg-gray-300 rounded"></div>
+        </div>
+      </div>
+      <div className="sticky top-0 overflow-y-auto lg:h-full hidden lg:block col-span-3 my-4 animate-pulse">
+        {/* Title */}
+        <div className="h-5 w-40 bg-gray-300 rounded mb-4 ml-1" />
+
+        {/* Suggested Users */}
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="flex justify-between items-center mb-3 gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 bg-gray-300 rounded-full" />
+              <div className="space-y-1">
+                <div className="h-3 w-24 bg-gray-300 rounded" />
+                <div className="h-2 w-16 bg-gray-300 rounded" />
+              </div>
+            </div>
+            <div className="h-7 w-16 bg-gray-300 rounded-lg" />
+          </div>
+        ))}
+
+        <div className="h-px bg-gray-300 my-3" />
+
+        {/* Ad Section */}
+        <div className="space-y-3">
+          <div className="h-40 w-full bg-gray-300 rounded-xl" />
+          <div className="h-10 w-full bg-gray-300 rounded-xl" />
+        </div>
       </div>
     </div>
   );

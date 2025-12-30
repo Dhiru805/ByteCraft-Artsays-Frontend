@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
 import deleteAPI from "../../../api/deleteAPI";
-import "./searchb.css";
-import { IoMic } from "react-icons/io5";
 import { MdVerified } from "react-icons/md";
 import { Link } from "react-router-dom";
 // import { BsBroadcast } from "react-icons/bs";
@@ -179,8 +177,8 @@ const SearchBar = () => {
 
       setShowDropdown(
         result.users?.length > 0 ||
-          result.tags?.length > 0 ||
-          result.posts?.length > 0
+        result.tags?.length > 0 ||
+        result.posts?.length > 0
       );
     } catch (err) {
       console.error("Search error:", err);
@@ -247,11 +245,10 @@ const SearchBar = () => {
     addRecentSearch(user.username, user._id, "user");
     setShowDropdown(false);
     navigate(
-      `/artsays-community/profile/${
-        user?.username
-          ? `${user?.username}`
-          : `${user?.name}_${user?.lastName}_${user?._id}`
-      }`,{state:{userId:user?._id}}
+      `/artsays-community/profile/${user?.username
+        ? `${user?.username}`
+        : `${user?.name}_${user?.lastName}_${user?._id}`
+      }`, { state: { userId: user?._id } }
     );
   };
 
@@ -277,18 +274,18 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="lg:w-[56%] w-full max-w-6xl mx-auto flex flex-col gap-3 sm:mt-6 mt-3 sm:px-4 px-2">
+    <div className="col-span-12 lg:col-span-6 w-full mx-auto flex flex-col gap-3 sm:mt-6 mt-3 sm:px-4 px-2">
       {/* Search Bar */}
       <div className="relative w-full">
-        <div className="bg-[#FDE8D3] px-4 py-2 rounded-xl flex items-center justify-between">
-          <div className="flex items-center w-full gap-3">
+        <div className="bg-[#FDE8D3] px-2.5 py-1 rounded-xl flex items-center justify-between">
+          <div className="flex items-center w-full gap-2">
             <i className="ri-search-line text-xl font-bold text-[#000000]"></i>
             <input
               type="text"
               value={query}
               onChange={handleSearch}
               placeholder="Search or type #tag"
-              className="bg-transparent ml-2 w-full text-gray-900 outline-none font-medium text-base"
+              className="bg-transparent w-full text-gray-900 outline-none font-medium text-base"
             />
           </div>
           {/* <div className="flex items-center gap-3 text-xl text-[#6E4E37]">
@@ -299,7 +296,7 @@ const SearchBar = () => {
         {/* Dropdown */}
         {showDropdown &&
           (suggestedUsers.length > 0 || suggestedTags.length > 0) && (
-            <div className="absolute inset-0 top-full left-0 w-full h-[calc(100vh-70px)] bg-white z-[9999] overflow-y-auto p-3">
+            <div className="absolute inset-0 top-full left-0 w-full h-[calc(100vh-70px)] bg-white z-[9999] overflow-y-auto py-2">
               {/* Tags */}
               {suggestedTags.length > 0 && (
                 <div className="flex flex-col gap-2 mb-3">
@@ -308,7 +305,7 @@ const SearchBar = () => {
                     <div
                       key={index}
                       onClick={() => handleHashtagClick(tag)}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#F5F5F5] cursor-pointer hover:bg-[#EDEDED]"
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer hover:bg-[#EBEBEB]"
                     >
                       <span className="text-blue-500 font-bold">#{tag}</span>
                     </div>
@@ -353,34 +350,31 @@ const SearchBar = () => {
       <div>
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-medium text-[#000000]">
-            Recent searches
+            Recent Searches
           </h3>
           <button
-            className="text-lg font-medium text-[#6F4D34]"
+            className="text-xs font-medium text-[#6F4D34]"
             onClick={clearAllRecent}
           >
             Clear all
           </button>
         </div>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex gap-2 overflow-x-auto whitespace-nowrap" style={{ scrollbarWidth: "none" }}>
           {recentSearches.map((item) => (
             <div
               key={item._id}
-              className="txt bg-[#ECE6E6] px-3 py-2 rounded-xl font-medium text-sm text-[#000000] flex items-center gap-2"
+              className="bg-[#ECE6E6] px-2 py-1 rounded-md font-medium text-sm text-[#000000] flex items-center gap-2 min-w-max"
             >
               <span
-                className="cursor-pointer"
+                className="cursor-pointer whitespace-nowrap"
                 onClick={() => {
                   if (item.type === "user") {
-                    // navigate("/artsays-community/profile", {
-                    //   state: { userId: item.refId },
-                    // });
                     navigate(
-                      `/artsays-community/profile/${
-                        item.username
-                          ? `${item.username}`
-                          : `${item.name}_${item.lastName}_${item._id}`
-                      }`,{state:{userId:item._id}}
+                      `/artsays-community/profile/${item.username
+                        ? item.username
+                        : `${item.name}_${item.lastName}_${item._id}`
+                      }`,
+                      { state: { userId: item._id } }
                     );
                   } else if (item.type === "hashtag") {
                     handleHashtagClick(item.tag);
@@ -389,15 +383,17 @@ const SearchBar = () => {
               >
                 {item.label}
               </span>
+
               <button
                 className="text-[#000000] text-xs hover:text-red-500"
                 onClick={() => removeRecentSearch(item._id)}
               >
-                X
+                ✕
               </button>
             </div>
           ))}
         </div>
+
       </div>
 
       {/* Full-page Post Grid */}
@@ -425,14 +421,14 @@ const SearchBar = () => {
         {suggestionForUser.map((user) => (
           <div
             key={user._id}
-            className="sgu flex justify-between items-center bg-[#FEE2CC] rounded-xl p-2"
+            className="border-l-[14px] border-[#E56500] flex justify-between items-center bg-[#FEE2CC] rounded-xl p-2"
           >
             <div className="flex items-center gap-3 w-full">
               <img
                 src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`}
                 alt={user?.username}
                 onClick={() => handleUserClick(user)}
-                className="w-14 h-14 lg:w-16 lg:h-16 rounded-full border object-cover cursor-pointer"
+                className="w-14 h-14 rounded-full border object-cover cursor-pointer"
               />
               <div className="flex flex-col">
                 <span
@@ -449,11 +445,10 @@ const SearchBar = () => {
               {/* Follow/Unfollow Toggle */}
               <button
                 onClick={() => handleFollowToggle(user._id, user.isFollowing)}
-                className={`${
-                  user.isFollowing
-                    ? "bg-gray-300 text-[#48372D]"
-                    : "bg-[#48372D] text-[#FEE2CC]"
-                } sm:text-[17px] text-[16px] rounded-lg px-3 py-1 font-bold`}
+                className={`${user.isFollowing
+                  ? "bg-gray-300 text-[#48372D]"
+                  : "bg-[#48372D] text-[#FEE2CC]"
+                  } sm:text-md text-sm rounded-lg px-2 py-1 font-bold`}
               >
                 {user.isFollowing ? "Unfollow" : "Follow"}
               </button>
@@ -470,7 +465,7 @@ const SearchBar = () => {
                     setSuggestionForUser(res.data.suggestedUsers || []);
                   })
                 }
-                className="text-[#000000] sm:px-3 sm:py-1 rounded-lg text-2xl font-semibold"
+                className="text-[#000000] sm:px-3 sm:py-1 rounded-lg text-lg font-semibold"
               >
                 <i className="ri-close-line"></i>
               </button>

@@ -11,7 +11,7 @@ const Homee = () => {
      </header>
 
       {/* Main layout: Sidebar | Post | Suggestion */}
-      <main className='flex l flex-row lg:gap-4 lg:w-[96%] mx-auto'>
+      <main className='grid grid-cols-12 gap-2 p-2'>
         <Sidebar />
         <Post />
         <Suggestion />

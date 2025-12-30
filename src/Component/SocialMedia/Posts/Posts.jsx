@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import putAPI from "../../../api/putAPI";
 import { timeAgo } from "./../../../utils/TimeAgo.js";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables.jsx";
-import { Zap } from "lucide-react";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../AuthContext.jsx";
 const Post = () => {
@@ -93,11 +92,10 @@ const Post = () => {
 
   const goToProfile = (post) => {
     navigate(
-      `/artsays-community/profile/${
-        post?.user?.username
-          ? `${post?.user?.username}`
-          : `${post?.user?.name}_${post?.user?.lastName}_${post?.user?._id}`
-      }`,{state:{userId:post?.user?._id}}
+      `/artsays-community/profile/${post?.user?.username
+        ? `${post?.user?.username}`
+        : `${post?.user?.name}_${post?.user?.lastName}_${post?.user?._id}`
+      }`, { state: { userId: post?.user?._id } }
     );
   };
 
@@ -161,11 +159,11 @@ const Post = () => {
         prev.map((p) =>
           p._id === postId
             ? {
-                ...p,
-                likes: p.likes.includes(userId)
-                  ? p.likes.filter((id) => id !== userId)
-                  : [...p.likes, userId],
-              }
+              ...p,
+              likes: p.likes.includes(userId)
+                ? p.likes.filter((id) => id !== userId)
+                : [...p.likes, userId],
+            }
             : p
         )
       );
@@ -353,7 +351,7 @@ const Post = () => {
 
         setTipAmount(40);
 
-        setTimeout(() => setTipSuccess(false), 2500);
+        setTimeout(() => setTipSuccess(false), 25000);
       } else {
         setError(res.data.message || "Failed to send tip");
       }
@@ -441,6 +439,14 @@ const Post = () => {
     document.body.removeChild(textarea);
   }
 
+  const getExternalUrl = (url) => {
+  if (!url) return "#";
+  return url.startsWith("http://") || url.startsWith("https://")
+    ? url
+    : `https://${url}`;
+};
+
+
   const ensureBuyer = () => {
     if (userType !== "Buyer") {
       toast.warn(
@@ -459,7 +465,7 @@ const Post = () => {
     );
   }
   return (
-    <div className=" lg:w-[56%] w-full flex flex-col mx-auto">
+    <div className="col-span-12 lg:col-span-6 w-full my-4 flex flex-col mx-auto">
       {/* Active Post Popup */}
       {activePost && (
         <div>
@@ -509,11 +515,10 @@ const Post = () => {
                           {activePost.images.map((_, idx) => (
                             <div
                               key={idx}
-                              className={`w-2 h-2 rounded-full ${
-                                idx === activeImageIndex
-                                  ? "bg-gray-100"
-                                  : "bg-gray-500"
-                              }`}
+                              className={`w-2 h-2 rounded-full ${idx === activeImageIndex
+                                ? "bg-gray-100"
+                                : "bg-gray-500"
+                                }`}
                             ></div>
                           ))}
                         </div>
@@ -545,11 +550,10 @@ const Post = () => {
                           {activePost.user?.username}
                           {activePost.user.verified?.length > 0 && (
                             <img
-                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                                activePost.user.verified[
-                                  activePost.user.verified.length - 1
-                                ]?.badgeImage
-                              }`}
+                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user.verified[
+                                activePost.user.verified.length - 1
+                              ]?.badgeImage
+                                }`}
                               className="inline-block ml-1 w-5 h-5 object-contain"
                               alt={
                                 activePost.user.verified[
@@ -610,11 +614,10 @@ const Post = () => {
                     <div className="flex items-center gap-3">
                       <button onClick={() => handleLike(activePost._id)}>
                         <i
-                          className={`${
-                            activePost.likes.includes(userId)
-                              ? "ri-heart-fill text-red-500"
-                              : "ri-heart-line"
-                          } text-xl`}
+                          className={`${activePost.likes.includes(userId)
+                            ? "ri-heart-fill text-red-500"
+                            : "ri-heart-line"
+                            } text-xl`}
                         ></i>
                       </button>
                       <i
@@ -631,11 +634,10 @@ const Post = () => {
                     <div>
                       <button onClick={() => handleSave(activePost._id)}>
                         <i
-                          className={`${
-                            activePost.isSaved
-                              ? "ri-bookmark-fill"
-                              : "ri-bookmark-line"
-                          } text-xl`}
+                          className={`${activePost.isSaved
+                            ? "ri-bookmark-fill"
+                            : "ri-bookmark-line"
+                            } text-xl`}
                         ></i>
                       </button>
                     </div>
@@ -734,11 +736,10 @@ const Post = () => {
                     {activePost.user?.username}
                     {activePost.user.verified?.length > 0 && (
                       <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                          activePost.user.verified[
-                            activePost.user.verified.length - 1
-                          ]?.badgeImage
-                        }`}
+                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user.verified[
+                          activePost.user.verified.length - 1
+                        ]?.badgeImage
+                          }`}
                         className="inline-block ml-1 w-6 h-6 object-contain"
                         alt={
                           activePost.user.verified[
@@ -842,6 +843,7 @@ const Post = () => {
           </div>
         </div>
       )}
+
       {tipPopupOpen && (
         <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
           <div className="bg-white rounded-xl shadow-xl p-6 w-[400px]">
@@ -868,9 +870,8 @@ const Post = () => {
                 value={tipAmount}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
-                className={`w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none ${
-                  error ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none ${error ? "border-red-500" : "border-gray-300"
+                  }`}
               />
               <p className="text-xs text-gray-500 mt-1">Min ₹40 • Max ₹1,440</p>
               {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
@@ -910,6 +911,7 @@ const Post = () => {
           </div>
         </div>
       )}
+
       {tipSuccess && (
         <div className="fixed inset-0 z-[10000] bg-[#000000]/40 flex justify-center items-center">
           <div className="bg-white p-6 rounded-xl shadow-xl text-center w-[300px] animate-bounceIn">
@@ -918,7 +920,7 @@ const Post = () => {
               Tip Sent Successfully!
             </h3>
             <p className="text-gray-600 mt-1">
-              You tipped <span className="font-bold">₹{tipAmount}</span>
+              You Tipped <span className="font-bold">₹{tipAmount}</span>
             </p>
             <button
               onClick={() => setTipSuccess(false)}
@@ -932,10 +934,10 @@ const Post = () => {
 
       {/* Report Modal */}
       {reportPopupOpen && (
-        <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
-          <div className="bg-white rounded-xl shadow-lg w-[400px] max-w-full p-5">
+        <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center overflow-auto">
+          <div className="bg-white rounded-xl shadow-lg p-3">
             {/* Header */}
-            <div className="flex justify-between items-center border-b pb-3 mb-4">
+            <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-800">
                 Report @{reportedUser?.username}
               </h2>
@@ -946,15 +948,15 @@ const Post = () => {
                 ×
               </button>
             </div>
-
+            <hr className="my-2 border-dark" />
             {/* Subtitle */}
             <p className="text-sm text-gray-600 mb-4">
               Why are you reporting this post?
             </p>
 
             {/* Report Form */}
-            <form onSubmit={handleSubmit} className="space-y-3">
-              <div className="space-y-2  max-h-[20vh] overflow-y-auto">
+            <form onSubmit={handleSubmit} className="space-y-2">
+              <div className="space-y-2">
                 {[
                   "I just don't like it",
                   "Bullying or unwanted contact",
@@ -999,11 +1001,10 @@ const Post = () => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Add more details..."
-                    className={`w-full p-2 border rounded-lg focus:ring-2 focus:outline-none text-sm ${
-                      error
-                        ? "border-red-500 focus:ring-red-500"
-                        : "border-gray-300 focus:ring-red-500"
-                    }`}
+                    className={`w-full p-2 border rounded-lg focus:ring-2 focus:outline-none text-sm ${error
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-red-500"
+                      }`}
                   />
                   {error && (
                     <p className="text-xs text-red-500 mt-1">{error}</p>
@@ -1012,7 +1013,7 @@ const Post = () => {
               )}
 
               {/* Actions */}
-              <div className="flex justify-end gap-3 mt-4">
+              <div className="flex justify-end gap-3 mt-2">
                 <button
                   type="button"
                   onClick={() => setReportPopupOpen(false)}
@@ -1023,11 +1024,10 @@ const Post = () => {
                 <button
                   type="submit"
                   disabled={!selectedReason}
-                  className={`px-4 py-2 rounded-lg text-white font-medium ${
-                    selectedReason
-                      ? "bg-red-500 hover:bg-red-600"
-                      : "bg-gray-400 cursor-not-allowed"
-                  }`}
+                  className={`px-4 py-2 rounded-lg text-white font-medium ${selectedReason
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-gray-400 cursor-not-allowed"
+                    }`}
                 >
                   Submit
                 </button>
@@ -1066,31 +1066,32 @@ const Post = () => {
             <p className="text-gray-600 text-sm mt-1">
               We’ve received your report about @{reportedUser.username}.
             </p>
-
+            <hr className="my-2 border-dark" />
             {/* Block Option */}
-            <div className="mt-4 border-t pt-4">
+            <div className="">
               <p className="text-sm text-gray-700 mb-2">
                 Do you also want to block{" "}
                 <span className="font-semibold">@{reportedUser.username}</span>?
               </p>
               <div className="flex justify-center gap-3">
                 <button
-                  onClick={handleBlockUser} // ✅ hook your block API
-                  className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
-                >
-                  Block
-                </button>
-                <button
                   onClick={() => setReportSuccess(false)}
                   className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100"
                 >
                   Close
+                </button>
+                <button
+                  onClick={handleBlockUser} // ✅ hook your block API
+                  className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
+                >
+                  Block
                 </button>
               </div>
             </div>
           </div>
         </div>
       )}
+
       {sharePost && (
         <div className="fixed inset-0 bg-[#000000]/40 flex justify-center items-center z-[9999]">
           <div className="bg-white w-80 rounded-xl p-4 shadow-lg relative">
@@ -1109,10 +1110,6 @@ const Post = () => {
               className="w-full py-2 bg-gray-200 text-gray-800 rounded-lg mb-2"
               onClick={() => {
                 const link = `${window.location.origin}/artsays-community/sharepost/${sharePost._id}`;
-                // navigator.clipboard.writeText(link);
-                // setCopyMsg("Link copied!");
-                // setTimeout(() => setCopyMsg(""), 2000);
-
                 if (navigator.clipboard && window.isSecureContext) {
                   navigator.clipboard
                     .writeText(link)
@@ -1138,12 +1135,12 @@ const Post = () => {
         </div>
       )}
 
-      <div className="w-full ">
+      <div className="w-full space-y-2">
         {finalPost?.map((post) => (
-          <div key={post._id} className="w-full flex flex-col mb-4 relative">
+          <div key={post._id} className="w-full flex flex-col p-2 relative rounded-xl shadow-sm border">
             {/* Post Header */}
             <div className="flex justify-between items-center">
-              <div className="flex gap-2 p-2 items-center">
+              <div className="flex gap-2 items-center">
                 <img
                   src={
                     post.user?.profilePhoto
@@ -1158,7 +1155,7 @@ const Post = () => {
                 <div>
                   <div className="flex items-center">
                     <h3
-                      className="font-extrabold cursor-pointer"
+                      className="font-extrabold text-[#000000] cursor-pointer"
                       onClick={() => goToProfile(post)}
                     >
                       {post.user.username}
@@ -1166,10 +1163,9 @@ const Post = () => {
 
                     {post.user.verified?.length > 0 && (
                       <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                          post.user.verified[post.user.verified.length - 1]
-                            ?.badgeImage
-                        }`}
+                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.user.verified[post.user.verified.length - 1]
+                          ?.badgeImage
+                          }`}
                         className="inline-block ml-1 w-5 h-5 object-contain"
                         alt={
                           post.user.verified[post.user.verified.length - 1]
@@ -1177,7 +1173,7 @@ const Post = () => {
                         }
                       />
                     )}
-                    <div className="flex items-center">
+                    <div className="flex items-center text-[#000000]">
                       {isPostCollaborateWithUserId(post) ? (
                         <p className="font-extrabold cursor-pointer">
                           , {profile?.username}
@@ -1218,39 +1214,30 @@ const Post = () => {
                   </div>
 
                   {/* Time + Sponsored */}
-                  <div className="flex items-center gap-1 text-xs font-light text-gray-500">
-                    <p> {timeAgo(post.createdAt)}</p>
+                  <div className="flex items-center gap-1 mt-1 text-xs text-gray-500">
                     {post.isPromoted && (
-                      <span className="text-[11px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">
+                      <span className="font-semibold text-black">
                         Sponsored
                       </span>
                     )}
+
+                    {post.location && !post.isPromoted && (
+                      <>
+                        {post.isPromoted && <span>·</span>}
+                        <span>{post.location}</span>
+                      </>
+                    )}
+
+                    {(post.isPromoted || post.location) && <span>·</span>}
+
+                    <span>{timeAgo(post.createdAt)}</span>
                   </div>
+
                 </div>
               </div>
 
               {/* CTA + Buttons */}
-              <div className="flex items-center gap-3 mr-1">
-                {/* {post.isPromoted && (
-                  <>
-                    {post.promotionDetails?.goal === "Visit your website" &&
-                    post.user.website ? (
-                      <button
-                        onClick={() => window.open(post.user.website, "_blank")}
-                        className="buy-button"
-                      >
-                        Visit Website
-                      </button>
-                    ) : post.promotionDetails?.goal === "Visit your profile" ? (
-                      <button
-                        onClick={() => goToProfile(post)}
-                        className="buy-button"
-                      >
-                        Visit Profile
-                      </button>
-                    ) : null}
-                  </>
-                )} */}
+              <div className="flex items-center gap-2">
                 {post.showFollowButton ? (
                   <button
                     onClick={() => handleFollowToggle(post.user._id, false)}
@@ -1261,29 +1248,21 @@ const Post = () => {
                 ) : (
                   ""
                 )}
-                {/* {post.forProduct && (
-                   <Link to={`/product-details/${post?.forProduct}`}>
-                  <button className="buy-button" >
-                    Buy <i className="cart-icon ri-shopping-cart-fill"></i>
+                {post.forProduct && (
+                  <button
+                    className="buy-button"
+                    onClick={() => {
+                      if (!ensureBuyer()) return;
+                      navigate(
+                        `/my-account/check-out/${userId}?productId=${post?.forProduct
+                        }&quantity=${1}`
+                      );
+                    }}
+                  >
+                    Buy Now
                   </button>
-                   </Link>
-                )} */}
-                 {post.forProduct && (
-                <button
-                  className="flex px-2 items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-red-500 text-white py-2 font-semibold buy-now"
-                  onClick={() => {
-                    if (!ensureBuyer()) return;
-                    navigate(
-                      `/my-account/check-out/${userId}?productId=${
-                        post?.forProduct
-                      }&quantity=${1}`
-                    );
-                  }}
-                >
-                  <Zap size={18} /> Buy Now
-                </button>
-                 )}
-                <button onClick={() => setMenuOpenId(post._id)}>
+                )}
+                <button onClick={() => setMenuOpenId(post._id)} className="focus:outline-none">
                   <i className="ri-more-fill text-lg"></i>
                 </button>
               </div>
@@ -1293,13 +1272,13 @@ const Post = () => {
             {menuOpenId === post._id && (
               <ul
                 ref={popupRef}
-                className="absolute flex flex-col rounded-xl items-center justify-between right-1 top-12 mt-2 w-40 bg-gray-200 border shadow-lg z-10 "
+                className="absolute bg-white flex flex-col text-xs rounded-xl items-center justify-between right-1 top-12 w-40 border shadow-md z-10 "
               >
                 {/* Pay Tip */}
                 {post.user._id !== userId && (
                   <div className="w-full flex flex-col items-center justify-center">
                     <li
-                      className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400 rounded-t-xl"
+                      className="w-full px-3 py-2 flex items-center font-semibold justify-center cursor-pointer hover:bg-gray-200 rounded-t-xl"
                       onClick={() => {
                         setTipUser({
                           id: post._id,
@@ -1311,15 +1290,16 @@ const Post = () => {
                     >
                       Pay Tip
                     </li>
-                    <hr className="w-[75%] border-t border-gray-800" />
                   </div>
                 )}
+
+                <hr className="w-[80%] border-t border-gray-400" />
 
                 {/* Report */}
                 {post.user._id !== userId && (
                   <div className="w-full flex flex-col items-center justify-center">
                     <li
-                      className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
+                      className="w-full px-3 py-2 flex font-semibold items-center justify-center cursor-pointer hover:bg-gray-200"
                       onClick={() => {
                         setReportedUser({
                           id: post.user._id,
@@ -1332,16 +1312,16 @@ const Post = () => {
                     >
                       Report
                     </li>
-
-                    <hr className="w-[75%] border-t border-gray-800" />
                   </div>
                 )}
+
+                <hr className="w-[80%] border-t border-gray-400" />
 
                 {/* Follow / Unfollow */}
                 {post.user._id !== userId && (
                   <div className="w-full flex flex-col items-center justify-center">
                     <li
-                      className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
+                      className="w-full px-3 py-2 flex font-semibold items-center justify-center cursor-pointer hover:bg-gray-200"
                       onClick={() =>
                         handleFollowToggle(
                           post.user._id,
@@ -1349,47 +1329,43 @@ const Post = () => {
                         )
                       }
                     >
-                      {post.showFollowButton ? "follow" : "unfollow"}
+                      {post.showFollowButton ? "Follow" : "Unfollow"}
                     </li>
-                    <hr className="w-[75%] border-t border-gray-800" />
                   </div>
                 )}
 
+                <hr className="w-[80%] border-t border-gray-400" />
+
                 {/* Save / Unsave */}
                 <li
-                  className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
+                  className="w-full px-3 py-2 flex font-semibold items-center justify-center cursor-pointer hover:bg-gray-200"
                   onClick={() => handleSave(post?._id)}
                 >
                   {post.isSaved ? "Unsave" : "Save"}
                 </li>
-                <hr className="w-[75%] border-t border-gray-800" />
 
-                {/* Copy Link */}
-                {/* <li className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400">
-                  Copy Link
-                </li>
-                <hr className="w-[75%] border-t border-gray-800" /> */}
+                <hr className="w-[80%] border-t border-gray-400" />
 
                 {/* About This Account */}
                 <li
-                  className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
+                  className="w-full px-3 py-2 flex font-semibold items-center justify-center cursor-pointer hover:bg-gray-200"
                   onClick={() =>
                     navigate(
-                      `/artsays-community/profile/${
-                        post?.user?.username
-                          ? `${post?.user?.username}`
-                          : `${post?.user?.name}_${post?.user?.lastName}_${post?.user?._id}`
-                      }`,{state:{userId:post?.user?._id}}
+                      `/artsays-community/profile/${post?.user?.username
+                        ? `${post?.user?.username}`
+                        : `${post?.user?.name}_${post?.user?.lastName}_${post?.user?._id}`
+                      }`, { state: { userId: post?.user?._id } }
                     )
                   }
                 >
                   About This Account
                 </li>
-                <hr className="w-[75%] border-t border-gray-800" />
+
+                <hr className="w-[80%] border-t border-gray-400" />
 
                 {/* Cancel */}
                 <li
-                  className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400 text-red-500 rounded-b-xl"
+                  className="w-full px-3 py-2 flex font-semibold items-center justify-center cursor-pointer hover:bg-red-200 text-red-500 rounded-b-xl"
                   onClick={() => setMenuOpenId(null)}
                 >
                   Cancel
@@ -1398,15 +1374,14 @@ const Post = () => {
             )}
 
             {/* Post Image Carousel */}
-            <div className="mx-1 relative">
+            <div className="py-2 relative">
               {post.images && post.images.length > 0 && (
                 <>
                   <img
-                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                      post.images[post.activeImageIndex || 0]
-                    }`}
+                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[post.activeImageIndex || 0]
+                      }`}
                     alt="Post content"
-                    className="w-full lg:h-[600px] sm:h-[480px] h-[300px] rounded-lg "
+                    className="w-full h-full rounded-lg "
                   />
 
                   {/* Left Arrow (only if not on first image) */}
@@ -1418,17 +1393,17 @@ const Post = () => {
                             prev.map((p) =>
                               p._id === post._id
                                 ? {
-                                    ...p,
-                                    activeImageIndex:
-                                      (p.activeImageIndex || 0) - 1,
-                                  }
+                                  ...p,
+                                  activeImageIndex:
+                                    (p.activeImageIndex || 0) - 1,
+                                }
                                 : p
                             )
                           )
                         }
-                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-40 text-white rounded-full p-2"
+                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-40 text-white rounded-full p-2 focus:outline-none"
                       >
-                        <i className="ri-arrow-left-s-line text-xl"></i>
+                        <i className="ri-arrow-left-s-line text-xl bg-gray-600 rounded-full"></i>
                       </button>
                     )}
 
@@ -1441,31 +1416,30 @@ const Post = () => {
                             prev.map((p) =>
                               p._id === post._id
                                 ? {
-                                    ...p,
-                                    activeImageIndex:
-                                      (p.activeImageIndex || 0) + 1,
-                                  }
+                                  ...p,
+                                  activeImageIndex:
+                                    (p.activeImageIndex || 0) + 1,
+                                }
                                 : p
                             )
                           )
                         }
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-40 text-white rounded-full p-2"
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-40 text-white rounded-full p-2 focus:outline-none"
                       >
-                        <i className="ri-arrow-right-s-line text-xl"></i>
+                        <i className="ri-arrow-right-s-line text-xl bg-gray-600 rounded-full"></i>
                       </button>
                     )}
 
                   {/* Dots */}
                   {post.images.length > 1 && (
-                    <div className="absolute bottom-2 w-full flex justify-center gap-1">
+                    <div className="absolute bottom-6 w-full flex justify-center gap-1 z-10">
                       {post.images.map((_, idx) => (
                         <span
                           key={idx}
-                          className={`h-2 w-2 rounded-full ${
-                            (post.activeImageIndex || 0) === idx
-                              ? "bg-gray-100"
-                              : "bg-gray-400"
-                          }`}
+                          className={`h-2 w-2 rounded-full ${(post.activeImageIndex || 0) === idx
+                            ? "bg-white"
+                            : "bg-[#000000]"
+                            }`}
                         ></span>
                       ))}
                     </div>
@@ -1473,25 +1447,16 @@ const Post = () => {
                   {/* Website Link Box */}
                   {post.isPromoted && post.promotionDetails?.website && (
                     <a
-                      href={post.promotionDetails.website}
+                      href={getExternalUrl(post.promotionDetails.website)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="
-  absolute bottom-4 left-2 z-20
-  text-white text-[15px]
-  px-3 py-2
-  rounded-md
-  flex flex-col
-  shadow-lg
-  bg-[#48372D]/50
-  
-"
+                      className="absolute bottom-4 w-[80%] text-white text-md px-3 py-2 justify-self-center mt-2 rounded-md flex flex-col shadow-lg bg-[#48372D]/70 hover:bg-[#48372D]"
                     >
                       <span className="font-semibold leading-tight">
                         Explore Our Website
                       </span>
 
-                      <span className="text-[13px] break-all leading-tight">
+                      <span className="break-all leading-tight">
                         {post.promotionDetails.website}
                       </span>
                     </a>
@@ -1501,54 +1466,51 @@ const Post = () => {
             </div>
 
             {/* Post Actions */}
-            <div className="flex flex-col gap-1.5 mx-1">
+            <div className="flex flex-col gap-1 mx-1">
               <div className="flex flex-row items-center justify-between">
                 <div className="flex flex-row gap-4">
-                  <button onClick={() => handleLike(post._id)}>
+                  <button onClick={() => handleLike(post._id)} className="focus:outline-none text-[#000000]">
                     <i
-                      className={`${
-                        post.likes.includes(userId)
-                          ? "ri-heart-fill text-red-500"
-                          : "ri-heart-line"
-                      } text-xl font-medium`}
+                      className={`${post.likes.includes(userId)
+                        ? "ri-heart-fill text-red-500"
+                        : "ri-heart-line"
+                        } text-xl font-medium`}
                     ></i>
                   </button>
                   <button
-                    onClick={() => commentRefs.current[post._id]?.focus()}
+                    onClick={() => commentRefs.current[post._id]?.focus()} className="focus:outline-none text-[#000000]"
                   >
                     <i className="ri-chat-3-line text-xl font-medium"></i>
                   </button>
 
-                  <button onClick={() => setSharePost(post)}>
+                  <button onClick={() => setSharePost(post)} className="focus:outline-none text-[#000000]">
                     <i className="ri-send-plane-fill text-xl font-medium"></i>
                   </button>
                 </div>
                 <div className="flex items-center">
-                  <button onClick={() => handleSave(post?._id)}>
+                  <button onClick={() => handleSave(post?._id)} className="focus:outline-none text-[#000000]">
                     <i
-                      className={`${
-                        post?.isSaved ? "ri-bookmark-fill" : "ri-bookmark-line"
-                      } text-xl font-medium`}
+                      className={`${post?.isSaved ? "ri-bookmark-fill" : "ri-bookmark-line"
+                        } text-xl font-medium`}
                     ></i>
                   </button>
                 </div>
               </div>
 
               {/* Likes */}
-              <div className="text-[13px] font-bold">
+              <div className="text-sm text-[#000000] font-bold">
                 {post.likes.length} likes
               </div>
 
               {/* Description */}
               <div>
-                <p className="text-[12px] mt-0.5 font-semibold break-all whitespace-normal w-full">
+                <p className="text-sm mt-1 text-[#000000] font-semibold break-all whitespace-normal w-full">
                   {post.user.username}{" "}
                   {post.user.verified?.length > 0 && (
                     <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                        post.user.verified[post.user.verified.length - 1]
-                          ?.badgeImage
-                      }`}
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.user.verified[post.user.verified.length - 1]
+                        ?.badgeImage
+                        }`}
                       className="inline-block ml-1 w-5 h-5 object-contain"
                       alt={
                         post.user.verified[post.user.verified.length - 1]
@@ -1560,13 +1522,13 @@ const Post = () => {
                       }
                     />
                   )}{" "}
-                  . {post.caption}
+                  {post.caption}
                 </p>
               </div>
 
               {/* Comments */}
               <div
-                className="text-[13px] font-light cursor-pointer"
+                className="text-xs text-[#000000] font-light cursor-pointer"
                 onClick={() => setActiveIndex(finalPost.indexOf(post))}
               >
                 View all {post.comments.length} comments
@@ -1596,10 +1558,9 @@ const Post = () => {
                         {user.username}
                         {user.verified?.length > 0 && (
                           <img
-                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                              user.verified[user.verified.length - 1]
-                                ?.badgeImage
-                            }`}
+                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.verified[user.verified.length - 1]
+                              ?.badgeImage
+                              }`}
                             className="inline-block ml-1 w-6 h-6 object-contain"
                             alt={
                               user.verified[user.verified.length - 1]
@@ -1624,7 +1585,7 @@ const Post = () => {
                     value={commentText}
                     onChange={handleChange}
                     ref={(el) => (commentRefs.current[post._id] = el)}
-                    className="w-full rounded text-[13px] focus:outline-none focus:ring focus:border-blue-300"
+                    className="w-full text-sm focus:outline-none text-[#000000]"
                   />
                   <button
                     onClick={() => handleComment(post._id, commentText)}
@@ -1639,23 +1600,22 @@ const Post = () => {
                 </p>
               )}
             </div>
-
-            <hr className="h-0.5 bg-gray-300 border-none mt-2" />
           </div>
         ))}
       </div>
+      
       {showCollaborators && allCollaboraters && (
         <div className="fixed inset-0 flex items-center justify-center  bg-[#000000]/40 backdrop-blur-sm z-50">
           <div
             ref={collabRef}
-            className="relative bg-white rounded-xl shadow-xl p-5 w-80 animate-fadeIn"
+            className="relative bg-white rounded-xl shadow-xl p-3 w-80 animate-fadeIn"
           >
             {/* ❌ Close (cross) button */}
             <button
               onClick={() => setShowCollaborators(false)}
-              className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
+              className="absolute top-3 right-3 text-gray-500 hover:text-[#000000] text-xl"
             >
-              <i className="ri-close-line text-black"></i>{" "}
+              <i className="ri-close-line text-[#000000]"></i>{" "}
             </button>
 
             <h3 className="text-lg font-semibold mb-4 text-center">
@@ -1702,7 +1662,7 @@ export default Post;
 // loading skeleton
 const LoadingSkeleton = () => {
   return (
-    <div className="animate-pulse p-4 rounded-xl shadow-sm border w-[90%] h-[90%]">
+    <div className="animate-pulse rounded-xl shadow-sm border my-4 col-span-12 lg:col-span-6 p-2">
       {/* Header */}
       <div className="flex items-center space-x-3 mb-4">
         <div className="w-10 h-10 rounded-full bg-gray-300"></div>

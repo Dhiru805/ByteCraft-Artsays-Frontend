@@ -11,7 +11,7 @@ import {
   FaHeart,
 } from "react-icons/fa6";
 import { BsGrid3X3 } from "react-icons/bs";
-import { IoPaperPlaneOutline } from "react-icons/io5";
+import { IoPaperPlane } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { BiUserPlus } from "react-icons/bi";
 import getAPI from "../../../../src/api/getAPI";
@@ -21,6 +21,7 @@ import { toast } from "react-toastify";
 import { FaCheckCircle } from "react-icons/fa";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 import { Helmet } from "react-helmet";
+
 
 const user = {
   live: false,
@@ -129,6 +130,7 @@ photographed by #siddharth
 const Profile = ({ shareprofileid }) => {
   const location = useLocation();
   const Navigate = useNavigate();
+  const navigate = useNavigate();
   const loggedInUserId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
   const [users, setUsers] = useState([]);
@@ -162,6 +164,17 @@ const Profile = ({ shareprofileid }) => {
       (pro) => pro.forProduct && pro.forProduct?.status === "Approved"
     ) || [];
   const normalPosts = profile?.posts?.filter((pro) => !pro.forProduct) || [];
+
+  const scrollRef = useRef(null);
+
+  const scrollLeft = () => {
+    scrollRef.current.scrollBy({ left: -300, behavior: "smooth" });
+  };
+
+  const scrollRight = () => {
+    scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
+  };
+
 
   const reversedPosts =
     [
@@ -377,7 +390,7 @@ const Profile = ({ shareprofileid }) => {
     return false;
   };
 
-  const postProduct = () => {};
+  const postProduct = () => { };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -695,13 +708,13 @@ const Profile = ({ shareprofileid }) => {
           const updatedPosts = prev.posts.map((p) =>
             p._id === postId
               ? {
-                  ...p,
-                  isPromoted: false,
-                  promotionDetails: {
-                    ...p.promotionDetails,
-                    status: "completed",
-                  },
-                }
+                ...p,
+                isPromoted: false,
+                promotionDetails: {
+                  ...p.promotionDetails,
+                  status: "completed",
+                },
+              }
               : p
           );
           return { ...prev, posts: updatedPosts };
@@ -842,15 +855,22 @@ const Profile = ({ shareprofileid }) => {
     document.body.removeChild(textarea);
   }
 
-const navigateToProfile=(profile)=>{
- Navigate(
-      `/artsays-community/profile/${
-        profile?.username
-          ? `${profile?.username}`
-          : `${profile?.name}_${profile?.lastName}_${profile._id}`
-      }`,{state:{userId:profile?._id}}
+  const getExternalUrl = (url) => {
+    if (!url) return "#";
+    return url.startsWith("http://") || url.startsWith("https://")
+      ? url
+      : `https://${url}`;
+  };
+
+
+  const navigateToProfile = (profile) => {
+    Navigate(
+      `/artsays-community/profile/${profile?.username
+        ? `${profile?.username}`
+        : `${profile?.name}_${profile?.lastName}_${profile._id}`
+      }`, { state: { userId: profile?._id } }
     );
-}
+  }
 
   if (loading) {
     return ProfileSkeleton();
@@ -858,9 +878,8 @@ const navigateToProfile=(profile)=>{
 
   return (
     <div
-      className={`${
-        activePost ? "w-[80%]" : ""
-      } lg:w-[56%] w-full lg:mt-8 mt-4`}
+      className={`my-4 ${activePost ? "w-full" : ""
+        } col-span-12 lg:col-span-6 w-full flex flex-col mx-auto`}
     >
       {profile && (
         <Helmet>
@@ -907,7 +926,7 @@ const navigateToProfile=(profile)=>{
       {/* Active Post Popup for all screen size*/}
       {activePost && (
         <div
-          className=" fixed  inset-0 z-[9999] bg-[#000000] w-full bg-opacity-40 flex  justify-center items-center w-full"
+          className=" fixed inset-0 z-[9999] bg-[#000000] w-full bg-opacity-40 flex justify-center items-center w-full"
           onClick={() => {
             setActiveIndex(null);
             setMenuOpenId(null);
@@ -915,223 +934,276 @@ const navigateToProfile=(profile)=>{
         >
           {/* Close Button */}
           <button
-            className="absolute lg:top-5 top-5 lg:right-15 right-5 text-4xl font-bold z-50 mt-3 lg:mr-12"
+            className="absolute top-5 right-5 text-4xl font-bold z-50 focus:outline-none"
             onClick={() => {
               setActiveIndex(null);
               setMenuOpenId(null);
             }}
           >
-            <i className="ri-close-line text-[#fcfcfc]"></i>
+            <i className="ri-close-line text-[#fcfcfc] bg-[#000000] p-1 rounded-full"></i>
           </button>
 
           {/* Left Arrow (previous post) */}
           {activeIndex > 0 && (
             <button
-              className="absolute bg-gray-600 lg:p-2 p-1 w-10 h-10 lg:w-12 lg:h-12  rounded-full lg:left-10 left-6 -translate-x-1/3 top-1/2 transform -translate-y-1/2 text-gray-100 lg:text-4xl text-xl z-50"
+              className="absolute w-10 h-10 lg:left-10 left-6 -translate-x-1/3 top-1/2 transform -translate-y-1/2 text-gray-100 lg:text-4xl text-xl z-50 focus:outline-none"
               onClick={(e) => {
                 e.stopPropagation();
                 setActiveIndex((prev) => prev - 1);
               }}
             >
-              <i className="ri-arrow-left-wide-fill "></i>
+              <i className="ri-arrow-left-wide-fill  bg-[#000000] p-1 rounded-full"></i>
             </button>
           )}
 
           {/* Popup Layout */}
           <div
             onClick={(e) => e.stopPropagation()}
-            className="lg:bg-white w-[73%] lg:h-[72vh] h-[56vh] rounded-lg lg:overflow-hidden overflow-visible flex relative flex lg:flex-row flex-col"
+            className="lg:bg-white w-[90%] lg:w-[75%] h-[90%] lg:h-[75%] rounded-lg lg:overflow-hidden overflow-visible flex relative flex lg:flex-row flex-col grid grid-cols-12"
           >
             {/* Left Side (Image Viewer) */}
-            <div className="lg:w-[60%] lg:h-full h-[80%] w-full bg-black flex items-center justify-center relative ">
-              {activePost.images?.length > 0 ? (
-                <>
-                  <img
-                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.images[activeImageIndex]}`}
-                    alt="post"
-                    className="h-full w-full "
-                  />
+            <div className="col-span-12 lg:col-span-8 lg:h-full w-full bg-[#EBEBEB] flex items-center justify-center relative ">
+              <div className="w-full h-[300px] lg:h-[550px] bg-[#EBEBEB] relative flex col-span-12 md:col-span-8 items-center justify-center border-r-[1.5px] rounded-b-md border-gray-200">
+                {activePost.images?.length > 0 ? (
+                  <>
+                    <img
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.images[activeImageIndex]}`}
+                      alt="post"
+                      className="h-full w-full object-contain"
+                    />
 
-                  {/* Image Navigation Arrows */}
-                  {activeImageIndex > 0 && (
-                    <button
-                      className="absolute sm:left-4 left-2 w-8 h-8 sm:h-11 sm:w-11 top-1/2 z-50 transform -translate-y-1/2 bg-gray-100 text-[#000000] opacity-80 p-1 rounded-full"
-                      onClick={() => setActiveImageIndex((prev) => prev - 1)}
-                    >
-                      <i className="ri-arrow-left-s-line lg:text-3xl sm:text-2xl  text-lg"></i>
-                    </button>
-                  )}
-                  {activeImageIndex < activePost.images.length - 1 && (
-                    <button
-                      className="absolute sm:right-4 right-2 w-8 h-8 sm:h-11 sm:w-11 top-1/2 transform -translate-y-1/2 z-50 bg-gray-100 text-[#000000] opacity-80 p-1 rounded-full"
-                      onClick={() => setActiveImageIndex((prev) => prev + 1)}
-                    >
-                      <i className="ri-arrow-right-s-line lg:text-3xl sm:text-2xl text-lg"></i>
-                    </button>
-                  )}
+                    {/* Image Navigation Arrows */}
+                    {activeImageIndex > 0 && (
+                      <button
+                        className="absolute sm:left-4 left-2 w-8 h-8 top-1/2 z-50 transform -translate-y-1/2 text-[#ffffff] opacity-80 p-1 rounded-full focus:outline-none"
+                        onClick={() => setActiveImageIndex((prev) => prev - 1)}
+                      >
+                        <i className="ri-arrow-left-s-line lg:text-3xl sm:text-2xl text-lg bg-[#000000] rounded-full"></i>
+                      </button>
+                    )}
+                    {activeImageIndex < activePost.images.length - 1 && (
+                      <button
+                        className="absolute sm:right-4 right-2 w-8 h-8 top-1/2 transform -translate-y-1/2 z-50 text-[#ffffff] opacity-80 p-1 rounded-full focus:outline-none"
+                        onClick={() => setActiveImageIndex((prev) => prev + 1)}
+                      >
+                        <i className="ri-arrow-right-s-line lg:text-3xl sm:text-2xl text-lg bg-[#000000] rounded-full"></i>
+                      </button>
+                    )}
 
-                  {/* Image Indicators (dots) */}
-                  {activePost.images.length > 1 && (
-                    <div className="absolute bottom-3 flex gap-2 justify-center w-full">
-                      {activePost.images.map((_, idx) => (
-                        <div
-                          key={idx}
-                          className={`w-2 h-2 rounded-full ${
-                            idx === activeImageIndex
-                              ? "bg-gray-100"
-                              : "bg-gray-500"
-                          }`}
-                        ></div>
-                      ))}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="text-gray-500">No image</div>
-              )}
+                    {/* Image Indicators (dots) */}
+                    {activePost.images.length > 1 && (
+                      <div className="absolute bottom-6 flex gap-2 justify-center w-full z-10">
+                        {activePost.images.map((_, idx) => (
+                          <div
+                            key={idx}
+                            className={`w-2 h-2 rounded-full ${idx === activeImageIndex
+                              ? "bg-white"
+                              : "bg-[#000000]"
+                              }`}
+                          ></div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* 🔥 WEBSITE LINK BOX (ADD HERE) */}
+                    {activePost.isPromoted &&
+                      activePost.promotionDetails?.website && (
+                        <a
+                          href={getExternalUrl(activePost.promotionDetails.website)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%] text-white text-sm px-3 py-2 rounded-md flex flex-col shadow-lg bg-[#48372D]/70 hover:bg-[#48372D]"
+                        >
+                          <span className="font-semibold leading-tight">
+                            Explore Our Website
+                          </span>
+                          <span className="break-all leading-tight">
+                            {activePost.promotionDetails.website}
+                          </span>
+                        </a>
+                      )}
+                  </>
+                ) : (
+                  <div className="text-gray-500">No Image</div>
+                )}
+              </div>
             </div>
 
             {/* Right Side (Post Content) */}
-            <div className="lg:w-[40%] w-full flex flex-col justify-between gap-6 py-2 px-3 bg-[#ffffff] overflow-y-scroll ">
+            <div className="col-span-12 lg:col-span-4 w-full flex flex-col justify-between gap-2 p-2 bg-[#ffffff] overflow-y-scroll" style={{ scrollbarWidth: "none" }}>
               {/* User Info */}
               <div className="flex flex-col gap-6 ">
-                <div className="flex items-center justify-between relative">
-                  <div className="flex items-center gap-2">
-                    <img
-                      src={
-                        profile?.profilePhoto
-                          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
-                          : `${DEFAULT_PROFILE_IMAGE}`
-                      }
-                      alt="profile"
-                      className="w-11 h-11 rounded-full"
-                    />
-                    <div className="flex flex-col">
-                      <span className="font-semibold text-[16px] text-[#000000]">
-                        {profile?.username}
-                        {profile.verified?.length > 0 && (
-                          <img
-                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                              profile.verified[profile.verified.length - 1]
-                                ?.badgeImage
-                            }`}
-                            className="inline-block ml-1 w-6 h-6 object-contain"
-                            alt={
-                              profile.verified[profile.verified.length - 1]
-                                ?.badgeName || "badge"
-                            }
-                            title={
-                              profile.verified[profile.verified.length - 1]
-                                ?.badgeName
-                            }
-                          />
-                        )}
+                <div className="relative">
+                  <div className="flex items-center justify-between relative">
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={
+                          profile?.profilePhoto
+                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                            : `${DEFAULT_PROFILE_IMAGE}`
+                        }
+                        alt="profile"
+                        className="w-8 h-8 rounded-full"
+                      />
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-sm text-[#000000]">
+                          {profile?.username}
+
+                          {profile.verified?.length > 0 && (
+                            <img
+                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]?.badgeImage
+                                }`}
+                              className="inline-block ml-1 w-5 h-5 object-contain"
+                              alt={
+                                profile.verified[profile.verified.length - 1]?.badgeName || "badge"
+                              }
+                              title={profile.verified[profile.verified.length - 1]?.badgeName}
+                            />
+                          )}
+                        </span>
                         {activePost.isPromoted && (
-                          <span className="text-[11px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">
+                          <span className="text-xs text-[#000000] font-semibold">
                             Sponsored
                           </span>
                         )}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {activePost.location}
-                      </span>
+                        {/* Show location ONLY if NOT sponsored */}
+                        {!activePost.isPromoted && activePost.location && (
+                          <span className="text-xs text-gray-500">
+                            {activePost.location}
+                          </span>
+                        )}
+                      </div>
+
+                    </div>
+                    <button onClick={() => handleMoreClick(activePost._id)} className="focus:outline-none">
+                      <i className="ri-more-fill font-semibold text-2xl text-[#000000]"></i>
+                    </button>
+                    {menuOpenId &&
+                      (activePost.user._id === loggedInUserId ? (
+                        <>
+                          <ul
+                            ref={popupref1}
+                            className="absolute flex flex-col rounded-xl items-center justify-between right-0 top-8 w-40 bg-white border shadow-lg z-10"
+                          >
+                            <li
+                              className="w-full px-3 py-2 flex items-center text-[#000000] justify-center font-semibold cursor-pointer hover:bg-gray-200"
+                              onClick={() => handleSave(activePost?._id)}
+                            >
+                              {activePost.isSaved ? "Unsave" : "Save"}
+                            </li>
+                            <hr className="w-[80%] border-t border-gray-800" />
+                            {/* Cancel */}
+                            <li
+                              className="w-full px-3 py-2 flex items-center justify-center font-semibold cursor-pointer hover:bg-red-200 text-red-500 rounded-b-xl"
+                              onClick={() => setMenuOpenId(null)}
+                            >
+                              Cancel
+                            </li>
+                          </ul>
+                        </>
+                      ) : (
+                        <>
+                          <ul
+                            ref={popupref2}
+                            className="absolute flex flex-col rounded-xl items-center justify-between right-0 top-8 w-40 bg-white border shadow-lg z-10"
+                          >
+                            {/* Pay Tip */}
+                            <div className="w-full flex flex-col items-center justify-center">
+                              <li
+                                className="w-full px-3 py-2 flex items-center justify-center cursor-pointer font-semibold hover:bg-gray-200 rounded-t-xl"
+                                onClick={() => {
+                                  setTipUser({
+                                    id: activePost._id,
+                                    receiverId: activePost.user._id,
+                                  });
+                                  setTipPopupOpen(true);
+                                  setMenuOpenId(null);
+                                }}
+                              >
+                                Pay Tip
+                              </li>
+                              <hr className="w-[75%] border-t border-gray-800" />
+                            </div>
+
+                            {/* Report */}
+                            <div className="w-full flex flex-col items-center justify-center">
+                              <li
+                                className="w-full px-3 py-2 flex items-center justify-center cursor-pointer font-semibold hover:bg-gray-200"
+                                onClick={() => {
+                                  setReportedUser({
+                                    id: activePost.user._id,
+                                    postId: activePost._id,
+                                    username: activePost.user.username,
+                                  });
+                                  setReportPopupOpen(true);
+                                  setMenuOpenId(null);
+                                }}
+                              >
+                                Report
+                              </li>
+
+                              <hr className="w-[75%] border-t border-gray-800" />
+                            </div>
+
+                            <li
+                              className="w-full px-3 py-2 flex items-center justify-center cursor-pointer font-semibold hover:bg-gray-200"
+                              onClick={() => handleSave(activePost?._id)}
+                            >
+                              {activePost.isSaved ? "Unsave" : "Save"}
+                            </li>
+                            <hr className="w-[75%] border-t border-gray-800" />
+
+                            {/* Cancel */}
+                            <li
+                              className="w-full px-3 py-2 flex items-center justify-center cursor-pointer font-semibold hover:bg-red-200 text-red-500 rounded-b-xl"
+                              onClick={() => setMenuOpenId(null)}
+                            >
+                              Cancel
+                            </li>
+                          </ul>
+                        </>
+                      ))}
+                  </div>
+                  <hr className="my-2 border-gray-200" />
+                  <div className="items-center">
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={
+                          profile?.profilePhoto
+                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                            : `${DEFAULT_PROFILE_IMAGE}`
+                        }
+                        alt="profile"
+                        className="w-8 h-8 rounded-full"
+                      />
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-sm text-[#000000]">
+                          {profile?.username}
+
+                          {profile.verified?.length > 0 && (
+                            <img
+                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]?.badgeImage
+                                }`}
+                              className="inline-block ml-1 w-5 h-5 object-contain"
+                              alt={
+                                profile.verified[profile.verified.length - 1]?.badgeName || "badge"
+                              }
+                              title={profile.verified[profile.verified.length - 1]?.badgeName}
+                            />
+                          )}
+                        </span>
+                        {activePost && (
+                          <p className="text-sm font-semibold text-black break-words whitespace-normal">
+                            {" "} {activePost.caption}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  <button onClick={() => handleMoreClick(activePost._id)}>
-                    <i className="ri-more-fill font-semibold text-2xl text-[#000000]"></i>
-                  </button>
-                  {menuOpenId &&
-                    (activePost.user._id === loggedInUserId ? (
-                      <>
-                        <ul
-                          ref={popupref1}
-                          className="absolute flex flex-col rounded-xl items-center justify-between right-1 top-12 mt-2 w-40 bg-gray-200 border shadow-lg z-10"
-                        >
-                          <li
-                            className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
-                            onClick={() => handleSave(activePost?._id)}
-                          >
-                            {activePost.isSaved ? "Unsave" : "Save"}
-                          </li>
-                          <hr className="w-[75%] border-t border-gray-800" />
-
-                          <hr className="w-[75%] border-t border-gray-800" />
-
-                          {/* Cancel */}
-                          <li
-                            className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400 text-red-500 rounded-b-xl"
-                            onClick={() => setMenuOpenId(null)}
-                          >
-                            Cancel
-                          </li>
-                        </ul>
-                      </>
-                    ) : (
-                      <>
-                        <ul
-                          ref={popupref2}
-                          className="absolute flex flex-col rounded-xl items-center justify-between right-1 top-12 mt-2 w-40 bg-gray-200 border shadow-lg z-10"
-                        >
-                          {/* Pay Tip */}
-                          <div className="w-full flex flex-col items-center justify-center">
-                            <li
-                              className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400 rounded-t-xl"
-                              onClick={() => {
-                                setTipUser({
-                                  id: activePost._id,
-                                  receiverId: activePost.user._id,
-                                });
-                                setTipPopupOpen(true);
-                                setMenuOpenId(null);
-                              }}
-                            >
-                              Pay Tip
-                            </li>
-                            <hr className="w-[75%] border-t border-gray-800" />
-                          </div>
-
-                          {/* Report */}
-                          <div className="w-full flex flex-col items-center justify-center">
-                            <li
-                              className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
-                              onClick={() => {
-                                setReportedUser({
-                                  id: activePost.user._id,
-                                  postId: activePost._id,
-                                  username: activePost.user.username,
-                                });
-                                setReportPopupOpen(true);
-                                setMenuOpenId(null);
-                              }}
-                            >
-                              Report
-                            </li>
-
-                            <hr className="w-[75%] border-t border-gray-800" />
-                          </div>
-
-                          <li
-                            className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
-                            onClick={() => handleSave(activePost?._id)}
-                          >
-                            {activePost.isSaved ? "Unsave" : "Save"}
-                          </li>
-                          <hr className="w-[75%] border-t border-gray-800" />
-
-                          {/* Cancel */}
-                          <li
-                            className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400 text-red-500 rounded-b-xl"
-                            onClick={() => setMenuOpenId(null)}
-                          >
-                            Cancel
-                          </li>
-                        </ul>
-                      </>
-                    ))}
                 </div>
               </div>
               {/* Comments */}
-              <div className="lg:flex hidden flex flex-col gap-3 overflow-y-auto max-h-auto">
+              <div className="flex flex-col gap-2 overflow-y-auto max-h-auto" style={{ scrollbarWidth: "none" }}>
                 {comments.length > 0 ? (
                   comments
                     .slice()
@@ -1149,13 +1221,26 @@ const navigateToProfile=(profile)=>{
                         />
                         <div>
                           <div className="flex items-center gap-1">
-                            <span className="text-sm font-semibold">
+                            <span className="font-semibold text-sm text-[#000000]">
                               {comment?.user?.username}
+
+                              {comment?.user?.verified?.length > 0 && (
+                                <img
+                                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]?.badgeImage
+                                    }`}
+                                  className="inline-block ml-1 w-5 h-5 object-contain"
+                                  alt={
+                                    comment.user.verified[comment.user.verified.length - 1]?.badgeName ||
+                                    "badge"
+                                  }
+                                  title={
+                                    comment.user.verified[comment.user.verified.length - 1]?.badgeName
+                                  }
+                                />
+                              )}
                             </span>
-                            {comment?.user?.verified && (
-                              <i className="ri-verified-badge-fill text-blue-500 text-xs"></i>
-                            )}
                           </div>
+
                           <p className="text-sm">{comment?.text}</p>
                         </div>
                       </div>
@@ -1165,9 +1250,9 @@ const navigateToProfile=(profile)=>{
                 )}
               </div>
               {/* action and comment */}
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1">
                 {/* Actions + Likes */}
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       {like ? (
@@ -1189,7 +1274,7 @@ const navigateToProfile=(profile)=>{
                           }
                         }}
                       />
-                      <IoPaperPlaneOutline
+                      <IoPaperPlane
                         onClick={() => setSharePost(true)}
                         className="text-xl text-[#000000] font-medium cursor-pointer"
                       />
@@ -1205,15 +1290,15 @@ const navigateToProfile=(profile)=>{
                           }}
                         >
                           {activeSection === "posts" && (
-                            <button className="px-2 py-0.5 bg-[#48372D] text-white text-base rounded-lg">
-                              Promote post
+                            <button className="px-2 py-0.5 bg-[#48372D] text-white text-sm rounded-lg">
+                              Promote
                             </button>
                           )}
                         </Link>
                       )}
                       {activePost.isPromoted && (
                         <button
-                          className="px-2 py-0.5 bg-[#48372D] text-white text-base rounded-lg"
+                          className="px-2 py-0.5 bg-[#48372D] text-white text-sm rounded-lg"
                           onClick={() => cancelPromotion(activePost._id)}
                           disabled={isCancelling}
                         >
@@ -1223,12 +1308,12 @@ const navigateToProfile=(profile)=>{
 
                       {activePost?.isSaved ? (
                         <FaBookmark
-                          className="text-[23px] text-[#000000] cursor-pointer"
+                          className="text-xl text-[#000000] cursor-pointer"
                           onClick={() => handleSave(activePost._id)}
                         />
                       ) : (
                         <FaRegBookmark
-                          className="text-[23px] text-[#000000] cursor-pointer"
+                          className="text-xl text-[#000000] cursor-pointer"
                           onClick={() => handleSave(activePost._id)}
                         />
                       )}
@@ -1248,7 +1333,7 @@ const navigateToProfile=(profile)=>{
 
                 {canComment ? (
                   <div
-                    className={` flex items-center justify-between gap-2 pt-2 relative`}
+                    className={` flex items-center justify-between gap-2 relative py-2`}
                   >
                     {/* Suggestions dropdown */}
                     {showMentions && mentionSuggestions.length > 0 && (
@@ -1287,7 +1372,7 @@ const navigateToProfile=(profile)=>{
                       value={comment}
                       ref={commentRef}
                       onChange={handleProfileCommentChange} // 👈 use new handler
-                      className="flex-grow outline-none text-sm placeholder:text-[14px] placeholder:text-[#696969]"
+                      className="flex-grow outline-none text-sm text-[#000000] placeholder:text-sm placeholder:text-[#696969]"
                     />
                     <button
                       className="text-[#6F4D34] font-semibold"
@@ -1308,13 +1393,13 @@ const navigateToProfile=(profile)=>{
           {/* Right Arrow (next post) */}
           {activeIndex < reversedPosts.length - 1 && (
             <button
-              className="absolute bg-gray-600 lg:p-2 p-1 w-10 h-10 lg:w-12 lg:h-12  rounded-full lg:right-10 right-3   top-1/2 transform -translate-y-1/2 text-gray-100 lg:text-4xl  text-xl z-50"
+              className="absolute w-10 h-10 lg:right-10 right-3 top-1/2 transform -translate-y-1/2 text-gray-100 lg:text-4xl text-xl z-50 focus:outline-none"
               onClick={(e) => {
                 e.stopPropagation();
                 setActiveIndex((prev) => prev + 1);
               }}
             >
-              <i className="ri-arrow-right-wide-fill "></i>
+              <i className="ri-arrow-right-wide-fill bg-[#000000] p-1 rounded-full"></i>
             </button>
           )}
         </div>
@@ -1443,10 +1528,10 @@ const navigateToProfile=(profile)=>{
 
       {/* Report Modal */}
       {reportPopupOpen && (
-        <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
-          <div className="bg-white rounded-xl shadow-lg w-[400px] max-w-full p-5">
+        <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center overflow-auto">
+          <div className="bg-white rounded-xl shadow-lg p-3">
             {/* Header */}
-            <div className="flex justify-between items-center border-b pb-3 mb-4">
+            <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-800">
                 Report @{reportedUser?.username}
               </h2>
@@ -1457,7 +1542,7 @@ const navigateToProfile=(profile)=>{
                 ×
               </button>
             </div>
-
+            <hr className="my-2 border-dark" />
             {/* Subtitle */}
             <p className="text-sm text-gray-600 mb-4">
               Why are you reporting this post?
@@ -1465,7 +1550,7 @@ const navigateToProfile=(profile)=>{
 
             {/* Report Form */}
             <form onSubmit={handleSubmit} className="space-y-3">
-              <div className="space-y-2  max-h-[20vh] overflow-y-auto">
+              <div className="space-y-2">
                 {[
                   "I just don't like it",
                   "Bullying or unwanted contact",
@@ -1510,11 +1595,10 @@ const navigateToProfile=(profile)=>{
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Add more details..."
-                    className={`w-full p-2 border rounded-lg focus:ring-2 focus:outline-none text-sm ${
-                      error
-                        ? "border-red-500 focus:ring-red-500"
-                        : "border-gray-300 focus:ring-red-500"
-                    }`}
+                    className={`w-full p-2 border rounded-lg focus:ring-2 focus:outline-none text-sm ${error
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-red-500"
+                      }`}
                   />
                   {error && (
                     <p className="text-xs text-red-500 mt-1">{error}</p>
@@ -1534,11 +1618,10 @@ const navigateToProfile=(profile)=>{
                 <button
                   type="submit"
                   disabled={!selectedReason}
-                  className={`px-4 py-2 rounded-lg text-white font-medium ${
-                    selectedReason
-                      ? "bg-red-500 hover:bg-red-600"
-                      : "bg-gray-400 cursor-not-allowed"
-                  }`}
+                  className={`px-4 py-2 rounded-lg text-white font-medium ${selectedReason
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-gray-400 cursor-not-allowed"
+                    }`}
                 >
                   Submit
                 </button>
@@ -1620,13 +1703,11 @@ const navigateToProfile=(profile)=>{
             <button
               className="w-full py-2 bg-gray-200 text-gray-800 rounded-lg mb-2"
               onClick={() => {
-                const link = `${
-                  window.location.origin
-                }/artsays-community/profile/${
-                  profile?.username
+                const link = `${window.location.origin
+                  }/artsays-community/profile/${profile?.username
                     ? `${profile?.username}_${viewedUserId}`
                     : `${profile?.firstName}_${profile?.lastName}_${viewedUserId}`
-                }`;
+                  }`;
 
                 if (navigator.clipboard && window.isSecureContext) {
                   navigator.clipboard
@@ -1721,9 +1802,8 @@ const navigateToProfile=(profile)=>{
                 value={tipAmount}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
-                className={`w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none ${
-                  error ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none ${error ? "border-red-500" : "border-gray-300"
+                  }`}
               />
               <p className="text-xs text-gray-500 mt-1">Min ₹40 • Max ₹1,440</p>
               {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
@@ -1786,14 +1866,13 @@ const navigateToProfile=(profile)=>{
       )}
 
       <div
-        className={` w-full text-[#2d1b0f] flex flex-col gap-8 ${
-          activePost ? "bg-black bg-opacity-50" : ""
-        }`}
+        className={` w-full flex flex-col gap-3 ${activePost ? "bg-black bg-opacity-50" : ""
+          }`}
       >
         {/* profile header for large screen*/}
         {profile ? (
-          <div className="hidden sm:flex items-start gap-6 lg:gap-6 w-full sm:mb-2">
-            <div className="relative w-20 h-20 sm:w-[186px] sm:h-[186px] shrink-0">
+          <div className="hidden sm:flex items-start gap-6 w-full">
+            <div className="relative w-[150px] h-[150px] shrink-0 align-self-center">
               {user.live ? (
                 <div className="p-[3px] sm:p-[6px] rounded-full bg-gradient-to-r from-[#6E300C] via-[#F1620E] to-[#6E300C] w-full h-full">
                   <div className="w-full h-full bg-white rounded-full overflow-hidden">
@@ -1824,17 +1903,16 @@ const navigateToProfile=(profile)=>{
               )}
             </div>
 
-            <div className="flex flex-col gap-2.5 w-full">
+            <div className="flex flex-col gap-2 w-full">
               <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-semibold text-[#000000]">
+                <h1 className="text-lg font-semibold text-[#000000]">
                   {profile.username}
                   {profile.verified?.length > 0 && (
                     <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                        profile.verified[profile.verified.length - 1]
-                          ?.badgeImage
-                      }`}
-                      className="inline-block ml-1 w-6 h-6 object-contain"
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]
+                        ?.badgeImage
+                        }`}
+                      className="inline-block ml-1 w-5 h-5 object-contain"
                       alt={
                         profile.verified[profile.verified.length - 1]
                           ?.badgeName || "badge"
@@ -1854,12 +1932,12 @@ const navigateToProfile=(profile)=>{
                     ref={menuRef}
                   >
                     <Link to={"/artsays-community/setting/"}>
-                      <button className="hidden sm:flex px-2.5 py-1 bg-[#6F4D34] text-white rounded-md text-base">
+                      <button className="hidden sm:flex px-2 py-1 bg-[#6F4D34] text-white font-semibold rounded-md text-sm">
                         Edit Profile
                       </button>
                     </Link>
                     <button
-                      className="text-xl"
+                      className="text-xl focus:outline-none"
                       onClick={() => setShowMenu((prev) => !prev)}
                     >
                       <i className="ri-more-fill"></i>
@@ -1867,17 +1945,17 @@ const navigateToProfile=(profile)=>{
                     {showMenu && (
                       <div
                         ref={profilepopupref1}
-                        className="absolute right-0 top-full flex flex-col items-center mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-md z-50"
+                        className="absolute right-0 top-full flex flex-col items-center w-48 bg-white border border-gray-200 rounded-md shadow-md z-50"
                       >
-                        <Link to={"/artsays-community/setting"}>
-                          <button className="bg-gray-100 font-medium w-full px-3 py-1.5 hover:bg-gray-200 rounded-t-lg">
-                            Setting and privacy
+                        <Link to={"/artsays-community/setting"} className="w-full">
+                          <button className="w-full font-medium px-3 py-1.5 rounded-t-md hover:bg-gray-200">
+                            Setting and Privacy
                           </button>
                         </Link>
                         <hr className="w-[80%] border-t border-gray-800" />
                         <button
                           onClick={handleSignOut}
-                          className="bg-gray-100 w-full font-medium px-3 py-1.5 rounded-b-lg hover:bg-gray-200"
+                          className="w-full font-medium px-3 py-1.5 hover:bg-gray-200"
                         >
                           Log Out
                         </button>
@@ -1885,7 +1963,7 @@ const navigateToProfile=(profile)=>{
 
                         <button
                           onClick={() => setShowMenu(!showMenu)}
-                          className="bg-gray-100 w-full font-medium px-3 py-1.5 rounded-b-lg hover:bg-gray-200"
+                          className="w-full font-medium px-3 py-1.5 rounded-b-md hover:bg-gray-200"
                         >
                           Cancel
                         </button>
@@ -1897,28 +1975,27 @@ const navigateToProfile=(profile)=>{
                   <div className="flex gap-2 items-center relative">
                     <button
                       onClick={() => handleFollowToggle(viewedUserId, follow)}
-                      className={`px-2 py-1 rounded-md text-[16px] font-bold ${
-                        follow
-                          ? "bg-white text-[#6F4D34] border-[1px] border-[#6F4D34]"
-                          : "bg-[#6F4D34] text-white"
-                      }`}
+                      className={`px-2 py-1 rounded-md text-sm font-semibold focus:outline-none ${follow
+                        ? "bg-white text-[#6F4D34] border-[1px] border-[#6F4D34]"
+                        : "bg-[#6F4D34] text-white"
+                        }`}
                     >
                       {follow ? "Unfollow" : "Follow"}
                     </button>
 
                     {follow && (
-                      <button className="flex items-center gap-1 px-2 py-1 bg-[#6F4D34] font-bold text-white rounded-md text-base">
-                        join
+                      <button className="flex items-center gap-1 px-2 py-1 bg-[#6F4D34] font-bold text-white rounded-md text-sm focus:outline-none">
+                        Join
                       </button>
                     )}
                     <button
-                      className="flex items-center gap-1 px-2 py-1 bg-[#6F4D34] font-bold text-white rounded-md text-base"
+                      className="flex items-center gap-1 px-2 py-1 bg-[#6F4D34] font-bold text-white rounded-md focus:outline-none"
                       onClick={() => setSuggestionOn((prev) => !prev)}
                     >
-                      <BiUserPlus className="text-xl" />
+                      <BiUserPlus className="text-[20px] " />
                     </button>
                     <button
-                      className="text-xl"
+                      className="text-xl focus:outline-none"
                       onClick={() => setShowMenu((prev) => !prev)}
                     >
                       <i className="ri-more-fill"></i>
@@ -1926,11 +2003,11 @@ const navigateToProfile=(profile)=>{
                     {showMenu && (
                       <div
                         ref={profilepopupref2}
-                        className="absolute right-0 top-full flex flex-col items-center mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-md z-50"
+                        className="absolute right-0 top-full flex flex-col items-center w-48 bg-white border border-gray-200 rounded-md shadow-md z-50"
                         onClick={(e) => e.stopPropagation()} //  prevent closing when clicking inside
                       >
                         <button
-                          className="bg-gray-100 font-medium w-full px-3 py-1.5 hover:bg-gray-200 rounded-t-lg"
+                          className="font-medium w-full px-3 py-1.5 hover:bg-gray-200 rounded-t-md"
                           onClick={() => {
                             console.log("clicked");
                             handleBlockUser();
@@ -1948,20 +2025,20 @@ const navigateToProfile=(profile)=>{
                             setReportPopupOpen(true);
                             setShowMenu((prev) => !prev);
                           }}
-                          className="bg-gray-100 w-full font-medium px-3 py-1.5 hover:bg-gray-200"
+                          className="w-full font-medium px-3 py-1.5 hover:bg-gray-200"
                         >
                           Report
                         </button>
                         <hr className="w-[80%] border-t border-gray-800" />
                         <button
                           onClick={() => setShareProfile(true)}
-                          className="bg-gray-100 w-full font-medium px-3 py-1.5 hover:bg-gray-200"
+                          className="w-full font-medium px-3 py-1.5 hover:bg-gray-200"
                         >
                           Share to
                         </button>
                         <hr className="w-[80%] border-t border-gray-800" />
                         <button
-                          className="bg-gray-100 w-full font-medium px-3 py-1.5 rounded-b-lg hover:bg-gray-200"
+                          className="w-full font-medium px-3 py-1.5 rounded-b-md hover:bg-gray-200"
                           onClick={() => setShowMenu(false)} //  close on cancel
                         >
                           Cancel
@@ -1974,26 +2051,26 @@ const navigateToProfile=(profile)=>{
 
               {/* Stats */}
               <div className="flex sm:gap-8 gap-6 text-base">
-                <p className="text-[#6E4E37] font-medium">
-                  <span className="font-bold text-[#48372D]">
+                <p className="text-gray-600 font-medium">
+                  <span className="font-bold text-lg text-[#000000]">
                     {profile.postCount}
                   </span>{" "}
                   Posts
                 </p>
                 <p
-                  className="text-[#6E4E37] font-medium"
+                  className="text-gray-600 cursor-pointer font-medium"
                   onClick={() => setShowFollowers(true)}
                 >
-                  <span className="font-bold text-[#48372D]">
+                  <span className="font-bold text-lg text-[#000000]">
                     {profile.followersCount}
                   </span>{" "}
                   Followers
                 </p>
                 <p
-                  className="text-[#6E4E37] font-medium"
+                  className="text-gray-600 cursor-pointer font-medium"
                   onClick={() => setShowFollowing(true)}
                 >
-                  <span className="font-bold text-[#48372D]">
+                  <span className="font-bold text-lg text-[#000000]">
                     {profile.followingCount}
                   </span>{" "}
                   Following
@@ -2002,12 +2079,12 @@ const navigateToProfile=(profile)=>{
 
               {/* Bio */}
               <div className="text-sm sm:mt-1.5 flex flex-col justify-between">
-                <h2 className="font-semibold text-lg text-[#000000]">
-                  {profile.firstName}
+                <h2 className="font-semibold text-sm text-[#000000]">
+                  {profile.firstName} {profile.lastName}
                 </h2>
-                <p className="text-[#6E4E37] font-2xl">{profile.role}</p>
-                <p className="text-[#000000] font-medium">{profile.bio}</p>
-                <div className="flex items-center gap-2 text-[#3d2b1f]">
+                <p className="text-[#6E4E37] text-sm capitalize">{profile.role}</p>
+                <p className="text-[#000000] text-sm">{profile.bio}</p>
+                <div className="flex items-center gap-1 text-sm text-[#3d2b1f]">
                   {profile.website && (
                     <>
                       <i className="ri-link-m text-[#000000] font-medium"></i>
@@ -2032,7 +2109,7 @@ const navigateToProfile=(profile)=>{
           </div>
         ) : (
           <p className="flex items-center justify-center min-h-screen text-2xl md:text-3xl font-semibold text-gray-500 text-center">
-            No Profile available
+            No Profile Available
           </p>
         )}
 
@@ -2049,8 +2126,8 @@ const navigateToProfile=(profile)=>{
                           ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
                           : `${DEFAULT_PROFILE_IMAGE}`
                       }
-                      className="w-full h-full rounded-full object-cover"
-                      alt="profile-pic"
+                      className="w-[75px] h-[75px] rounded-full object-cover"
+                      alt={profile.username}
                     />
                     <div className="absolute bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 text-white text-[10px] font-semibold bg-gradient-to-r from-[#F1620E] to-[#72320C] rounded-tl-[10px] rounded-tr-[10px]">
                       LIVE
@@ -2063,63 +2140,87 @@ const navigateToProfile=(profile)=>{
                         ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
                         : `${DEFAULT_PROFILE_IMAGE}`
                     }
-                    className="w-[90px] h-[90px] rounded-full object-cover"
+                    className="w-[75px] h-[75px] rounded-full object-cover"
                     alt={profile.username}
                   />
                 )}
 
-                <h1 className="text-3xl font-semibold text-[#000000]">
-                  {profile.username}
-                  {profile.verified?.length > 0 && (
-                    <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                        profile.verified[profile.verified.length - 1]
+                <div className="flex flex-col gap-2 w-full">
+                  <h1 className="text-lg font-semibold text-[#000000]">
+                    {profile.username}
+                    {profile.verified?.length > 0 && (
+                      <img
+                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]
                           ?.badgeImage
-                      }`}
-                      className="inline-block ml-1 w-6 h-6 object-contain"
-                      alt={
-                        profile.verified[profile.verified.length - 1]
-                          ?.badgeName || "badge"
-                      }
-                      title={
-                        profile.verified[profile.verified.length - 1]?.badgeName
-                      }
-                    />
-                  )}
-                </h1>
+                          }`}
+                        className="inline-block ml-1 w-4 h-4 object-contain"
+                        alt={
+                          profile.verified[profile.verified.length - 1]
+                            ?.badgeName || "badge"
+                        }
+                        title={
+                          profile.verified[profile.verified.length - 1]?.badgeName
+                        }
+                      />
+                    )}
+                  </h1>
+
+                  {/* Stats */}
+                  <div className="flex justify-between sm:gap-8 gap-6 text-base">
+                    <p className="flex flex-col text-center text-[#6E4E37] text-lg font-medium">
+                      <span className="font-bold text-[#48372D]">
+                        {profile.postCount}
+                      </span>{" "}
+                      Posts
+                    </p>
+                    <p className="flex flex-col text-center text-[#6E4E37] text-lg cursor-pointer font-medium" onClick={() => setShowFollowers(true)}>
+                      <span className="font-bold text-[#48372D]">
+                        {profile.followersCount}
+                      </span>{" "}
+                      Followers
+                    </p>
+                    <p className="flex flex-col text-center text-[#6E4E37] text-lg cursor-pointer font-medium" onClick={() => setShowFollowing(true)}>
+                      <span className="font-bold text-[#48372D]">
+                        {profile.followingCount}
+                      </span>{" "}
+                      Following
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="flex gap-2 items-center relative" ref={menuRef}>
+              <div className="flex gap-2 relative place-self-start" ref={menuRef}>
                 <button
-                  className="text-xl"
+                  className="text-xl focus:outline-none"
                   onClick={() => setShowMenu((prev) => !prev)}
                 >
                   <i className="ri-more-fill"></i>
                 </button>
 
                 {showMenu && (
-                  <div className="absolute right-0 top-full flex flex-col items-center mt-2 w-40 bg-gray-200 rounded-md z-50">
+                  <div className="absolute right-0 top-full flex flex-col items-center w-40 bg-white border border-gray-200 rounded-md z-50">
                     {isMyProfile ? (
                       <>
-                        <Link to={"/artsays-community/setting"}>
-                          <button className="bg-gray-100 font-medium w-full px-1 py-1 hover:bg-gray-200 rounded-t-lg">
-                            Setting and privacy
+                        <Link to={"/artsays-community/setting"} className="w-full">
+                          <button className="font-medium w-full px-1 py-1 hover:bg-gray-200 rounded-t-md">
+                            Setting and Privacy
                           </button>
                         </Link>
 
                         {/* <hr className="w-[80%] border-t border-gray-800" />
-                        <button className="bg-gray-100 w-full font-medium px-1 py-1 hover:bg-gray-200">
+                        <button className="w-full font-medium px-1 py-1 hover:bg-gray-200">
                           Login activity
                         </button> */}
                         <hr className="w-[80%] border-t border-gray-800" />
                         <button
                           onClick={handleSignOut}
-                          className="bg-gray-100 w-full font-medium px-1 py-1 rounded-b-lg hover:bg-gray-200"
+                          className="w-full font-medium px-1 py-1 hover:bg-gray-200"
                         >
                           Log Out
                         </button>
+                        <hr className="w-[80%] border-t border-gray-800" />
                         <button
                           onClick={() => setShowMenu(!showMenu)}
-                          className="bg-gray-100 w-full font-medium px-1 py-1 rounded-b-lg hover:bg-gray-200"
+                          className="w-full font-medium px-1 py-1 rounded-b-md hover:bg-gray-200"
                         >
                           Cancel
                         </button>
@@ -2127,12 +2228,10 @@ const navigateToProfile=(profile)=>{
                     ) : (
                       <>
                         <button
-                          className="bg-gray-100 w-full font-medium px-1 py-1 hover:bg-gray-200 rounded-t-lg"
+                          className="w-full font-medium px-1 py-1 hover:bg-gray-200 rounded-t-md"
                           onClick={() => {
                             console.log("clicked");
                             handleBlockUser();
-
-                            // ✅ close menu manually
                           }}
                         >
                           Block
@@ -2147,21 +2246,21 @@ const navigateToProfile=(profile)=>{
                             setReportPopupOpen(true);
                             setShowMenu((prev) => !prev);
                           }}
-                          className="bg-gray-100 w-full font-medium px-1 py-1 hover:bg-gray-200"
+                          className="w-full font-medium px-1 py-1 hover:bg-gray-200"
                         >
                           Report
                         </button>
                         <hr className="w-[80%] border-t border-gray-800" />
                         <button
                           onClick={() => setShareProfile(true)}
-                          className="bg-gray-100 w-full font-medium px-1 py-1 hover:bg-gray-200"
+                          className="w-full font-medium px-1 py-1 hover:bg-gray-200"
                         >
                           Share to
                         </button>
                         <hr className="w-[80%] border-t border-gray-800" />
                         <button
                           onClick={() => setShowMenu(false)}
-                          className="bg-gray-100 w-full font-medium px-1 py-1 rounded-b-lg hover:bg-gray-200"
+                          className="w-full font-medium px-1 py-1 rounded-b-md hover:bg-gray-200"
                         >
                           Cancel
                         </button>
@@ -2173,36 +2272,14 @@ const navigateToProfile=(profile)=>{
             </div>
 
             <div className="flex flex-col gap-2.5 w-full">
-              {/* Stats */}
-              <div className="flex justify-between sm:gap-8 gap-6 text-base">
-                <p className="text-[#6E4E37] text-lg font-medium">
-                  <span className="font-bold text-[#48372D]">
-                    {profile.postCount}
-                  </span>{" "}
-                  Posts
-                </p>
-                <p className="text-[#6E4E37] text-lg  font-medium">
-                  <span className="font-bold text-[#48372D]">
-                    {profile.followersCount}
-                  </span>{" "}
-                  Followers
-                </p>
-                <p className="text-[#6E4E37] text-lg font-medium">
-                  <span className="font-bold text-[#48372D]">
-                    {profile.followingCount}
-                  </span>{" "}
-                  Following
-                </p>
-              </div>
-
               {/* Bio */}
               <div className="text-sm sm:mt-1.5 flex flex-col justify-between">
                 <h2 className="font-semibold text-lg text-[#000000]">
-                  {profile.firstName}
+                  {profile.firstName} {profile.lastName}
                 </h2>
-                <p className="text-[#6E4E37]">{profile.role}</p>
-                <p className="text-[#000000] font-medium">{profile.bio}</p>
-                <div className="flex items-center gap-2 text-[#3d2b1f]">
+                <p className="text-md text-[#6E4E37] capitalize">{profile.role}</p>
+                <p className="text-md text-[#000000] font-medium">{profile.bio}</p>
+                <div className="flex items-center gap-1 text-[#3d2b1f]">
                   <i className="ri-link-m text-[#000000] font-medium"></i>
                   {profile.website && (
                     <a
@@ -2223,57 +2300,64 @@ const navigateToProfile=(profile)=>{
             </div>
           </div>
         ) : (
-          <p>profile loading</p>
+          <p>Profile Loading</p>
         )}
 
         {isMyProfile ? (
-          <div className="sm:hidden flex justify-between items-center ">
-            <Link to={"/artsays-community/setting/"}>
-              <button className="px-8 py-2 bg-[#6F4D34] text-white rounded-md text-lg">
-                Edit Profile
-              </button>
-            </Link>
-            {/* <Link to={`/artsays-community/profile/${profile?.userName? `${profile?.userName}`:`${profile?.firstName}_${profile?.lastName}_${viewedUserId}`}`,{state:{userId:viewedUserId}}}>
-              <button className="px-8 py-2 bg-[#6F4D34] text-white rounded-md text-lg">
-                Boost Profile
-              </button>
-            </Link> */}
+          <div className="sm:hidden flex grid grid-cols-12 gap-3 justify-between items-center ">
+            <button
+              onClick={() => navigate("/artsays-community/setting/")}
+              className="px-8 py-2 bg-[#6F4D34] text-white rounded-md text-md font-semibold col-span-5"
+            >
+              Edit Profile
+            </button>
+            <button className="px-8 py-2 bg-[#6F4D34] text-white rounded-md text-md font-semibold col-span-5" onClick={() => setShareProfile(true)}>
+              Share Profile
+            </button>
+            <button
+              className="flex items-center gap-2 px-2 py-2 bg-[#6F4D34] text-white justify-content-center rounded-md col-span-2"
+              onClick={() => setSuggestionOn((prev) => !prev)}
+            >
+              <BiUserPlus className="text-[21px]" />
+            </button>
           </div>
         ) : (
-          <div className="sm:hidden flex gap-6 justify-between items-center ">
+          <div className="sm:hidden flex grid grid-cols-12 gap-3 justify-between items-center ">
             <button
               onClick={() => handleFollowToggle(viewedUserId, follow)}
-              className={`flw-btn rounded-md text-[16px] font-bold transition ${
-                follow
-                  ? "bg-white text-[#6F4D34] border-[1px] border-[#6F4D34]"
-                  : "bg-[#6F4D34] text-white"
-              }`}
+              className={`col-span-5 rounded-md text-md font-semibold transition ${follow
+                ? "bg-white text-[#6F4D34] border-[1px] border-[#6F4D34]"
+                : "bg-[#6F4D34] text-white"
+                }`}
             >
               {follow ? "Unfollow" : "Follow"}
             </button>
 
             {follow && (
-              <button className=" bg-[#6F4D34] text-white px-4 py-2 font-bold rounded-md text-lg">
-                Join
+              // <button className=" bg-[#6F4D34] text-white col-span-5 px-4 py-2 font-semibold rounded-md text-md">
+              //   Join
+              // </button>
+              <button className="px-8 py-2 bg-[#6F4D34] col-span-5 text-white rounded-md text-md font-semibold" onClick={() => navigate("/my-account/custom-request")}>
+                Request Art
               </button>
             )}
             <button
-              className="flex items-center gap-2 px-2 py-2 bg-[#6F4D34] text-white rounded-md text-lg"
+              className="flex items-center gap-2 px-2 py-2 bg-[#6F4D34] text-white justify-content-center rounded-md col-span-2"
               onClick={() => setSuggestionOn((prev) => !prev)}
             >
-              <BiUserPlus className="text-2xl" />
+              <BiUserPlus className="text-[21px]" />
             </button>
           </div>
         )}
 
         {/* suggeted for you */}
         {suggestionOn && (
-          <div className="flex flex-col">
+          <div className="flex flex-col px-2">
             {/* Header */}
-            <div className="flex items-center justify-between px-2 mb-4">
-              <p className="text-[18px] text-[#000000] ">Suggested for you</p>
+            <div className="flex items-center justify-between pb-3">
+              <p className="text-md font-semibold text-[#000000]">Suggested For You</p>
               <button
-                className="text-[18px] text-[#000000] cursor-pointer"
+                className="text-md font-semibold text-[#000000] cursor-pointer"
                 onClick={() =>
                   Navigate("/artsays-community/profile/suggestion", {
                     state: { users, viewedUserId },
@@ -2285,46 +2369,85 @@ const navigateToProfile=(profile)=>{
             </div>
 
             {/* Scrollable Suggested Users */}
-            <div className="flex gap-4 overflow-x-auto px-2 sm:pb-2">
-              {users.map((user) => (
-                <div
-                  key={user.id}
-                  className="sm:min-w-[200px] sm:max-w-[200px] max-w-[100px] min-w-[100px] flex-shrink-0 flex flex-col  justify-between border rounded-sm p-3  relative"
-                >
-                  <button className="absolute sm:top-2 top-0 right-2 text-xl text-gray-400 hover:text-black">
-                    ×
-                  </button>
-                  <img
-                    src={
-                      `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}` ||
-                      "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"
-                    }
-                    alt={user.username}
-                    className="sm:w-20 sm:h-20 w-[55px] h-[55px] rounded-full object-cover mx-auto mb-2"
-                  />
-                  <p className="text-center font-semibold text-[12px] text-[#000000]">
-                    {user.username}
-                  </p>
-                  <p className="text-center text-[#777777] text-[10px]">
-                    {user.role}
-                  </p>
-                  <hr className="sm:mt-4 mt-2 mb-1" />
-                  <button
-                    className="block w-full sm:py-1 text-center text-[16px] font-bold text-[#48372D] "
-                    onClick={() =>
-                      handleFollowToggle(user._id, user.isFollowing)
-                    }
+            <div className="relative w-full">
+
+              {/* LEFT ARROW (Desktop only) */}
+              <button
+                onClick={scrollLeft}
+                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-20
+               text-white shadow-md rounded-full w-6 h-6 items-center justify-center
+               bg-[#000000] focus:outline-none "
+              >
+                <i className="ri-arrow-left-s-line text-2xl"></i>
+              </button>
+
+              {/* SCROLLABLE LIST */}
+              <div
+                ref={scrollRef}
+                className="flex gap-2 overflow-x-auto scrollbar-none" style={{ scrollbarWidth: "none" }}
+              >
+                {users.map((user) => (
+                  <div
+                    key={user.id}
+                    className="sm:min-w-[170px]
+                   min-w-[100px] max-w-[100px]
+                   flex-shrink-0 flex flex-col justify-between
+                   border rounded-md p-3 text-[#000000] relative break-words"
                   >
-                    {user.isFollowing ? "Unfollow" : "Follow"}
-                  </button>
-                </div>
-              ))}
+                    <button className="absolute top-0 right-2 text-xl text-[#000000]">
+                      ×
+                    </button>
+
+                    <img
+                      src={
+                        user?.profilePhoto
+                          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`
+                          : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+                      }
+                      alt={user.username}
+                      className="sm:w-20 sm:h-20 w-[55px] h-[55px]
+                     rounded-full object-cover mx-auto mb-2 bg-gray-200"
+                    />
+
+                    <p className="text-center font-semibold text-sm">
+                      {user.username}
+                    </p>
+
+                    <p className="text-center text-[#777777] text-xs">
+                      {user.role}
+                    </p>
+
+                    <hr className="sm:mt-4 mt-2 mb-1" />
+
+                    <button
+                      className="block w-full sm:py-1 text-center text-md
+                     font-semibold text-[#000000] hover:bg-gray-200 hover:rounded-md"
+                      onClick={() =>
+                        handleFollowToggle(user._id, user.isFollowing)
+                      }
+                    >
+                      {user.isFollowing ? "Unfollow" : "Follow"}
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* RIGHT ARROW (Desktop only) */}
+              <button
+                onClick={scrollRight}
+                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-20
+               text-white shadow-md rounded-full w-6 h-6 items-center justify-center
+               bg-[#000000] focus:outline-none "
+              >
+                <i className="ri-arrow-right-s-line text-2xl"></i>
+              </button>
             </div>
+
           </div>
         )}
 
         {/* Divider Tabs */}
-        <div className="flex justify-around items-center sm:mb-1 mx-1">
+        <div className="flex justify-around items-center">
           <button
             onClick={() => {
               setOnPosts(true);
@@ -2332,9 +2455,8 @@ const navigateToProfile=(profile)=>{
               setOnItem(false);
               setOnTag(false);
             }}
-            className={`${
-              onPosts ? "bg-[#48372D] text-white rounded-full py-1 px-5 " : ""
-            } p-3`}
+            className={`${onPosts ? "bg-[#48372D] text-white rounded-full py-1 px-5 " : ""
+              } p-3 focus:outline-none`}
           >
             <BsGrid3X3 className="text-2xl" />
           </button>
@@ -2346,9 +2468,8 @@ const navigateToProfile=(profile)=>{
                 setOnItem(false);
                 setOnTag(false);
               }}
-              className={`${
-                onSave ? "bg-[#48372D] text-white rounded-full  py-1 px-5" : ""
-              } p-3`}
+              className={`${onSave ? "bg-[#48372D] text-white rounded-full  py-1 px-5" : ""
+                } p-3 focus:outline-none`}
             >
               <FaRegBookmark className="text-2xl" />
             </button>
@@ -2361,9 +2482,8 @@ const navigateToProfile=(profile)=>{
                 setOnItem(true);
                 setOnTag(false);
               }}
-              className={`${
-                onItem ? "bg-[#48372D] text-white rounded-full  py-1 px-5" : ""
-              } p-3`}
+              className={`${onItem ? "bg-[#48372D] text-white rounded-full  py-1 px-5" : ""
+                } p-3 focus:outline-none`}
             >
               <LuArchive className="text-2xl" />
             </button>
@@ -2375,9 +2495,8 @@ const navigateToProfile=(profile)=>{
               setOnItem(false);
               setOnTag(true);
             }}
-            className={`${
-              onTag ? "bg-[#48372D] text-white rounded-full  py-1 px-5" : ""
-            } p-3`}
+            className={`${onTag ? "bg-[#48372D] text-white rounded-full  py-1 px-5" : ""
+              } p-3 focus:outline-none`}
           >
             <LuSquareUserRound className="text-2xl" />
           </button>
@@ -2385,7 +2504,7 @@ const navigateToProfile=(profile)=>{
 
         {/* post tabs */}
         {onPosts && (
-          <div className="grid grid-cols-3 sm:gap-4 gap-1 w-full">
+          <div className="grid grid-cols-3 gap-1 w-full">
             {reversedPosts.map((post, index) => (
               <div
                 key={post._id}
@@ -2393,13 +2512,13 @@ const navigateToProfile=(profile)=>{
                   setActiveIndex(index);
                   setActiveSection("posts");
                 }} // ✅ use index directly
-                className="relative cursor-pointer"
+                className="relative cursor-pointer bg-[#EBEBEB] rounded-md border border-gray-400"
               >
                 {post.images?.length > 0 ? (
                   <img
                     src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
                     alt={`post-${post._id}`}
-                    className="sm:h-[240px] sm:w-full h-[120px]  rounded-md"
+                    className="sm:h-[210px] w-full h-[120px] rounded-md"
                   />
                 ) : (
                   <div className="flex items-center justify-center text-[#000000] w-full h-[120px] sm:h-[240px] rounded-md">
@@ -2414,7 +2533,7 @@ const navigateToProfile=(profile)=>{
                 )}
 
                 {post.isPromoted && (
-                  <span className="absolute top-2 left-2 text-[11px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">
+                  <span className="absolute top-2 left-2 text-xs bg-[#000000] text-white px-2 py-0.5 rounded-md font-medium">
                     Sponsored
                   </span>
                 )}
@@ -2425,7 +2544,7 @@ const navigateToProfile=(profile)=>{
 
         {/* Saved */}
         {onSave && (
-          <div className="grid grid-cols-3 gap-1 sm:gap-4 w-full relative">
+          <div className="grid grid-cols-3 gap-1 w-full relative">
             {profile.saved
               ?.slice()
               .reverse()
@@ -2438,7 +2557,7 @@ const navigateToProfile=(profile)=>{
                     }}
                     src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
                     alt={`post-${index}`}
-                    className="h-[120px] sm:h-[240px] sm:w-full object-cover rounded-md cursor-pointer"
+                    className="h-[120px] sm:h-[210px] w-full object-cover rounded-md cursor-pointer"
                   />
 
                   {/* Multi-image icon */}
@@ -2451,39 +2570,40 @@ const navigateToProfile=(profile)=>{
               ))}
           </div>
         )}
+
         {/* Selling Items */}
         {userType !== "Buyer" && onItem && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-1 w-full">
             {products.length > 0 ? (
               products.map((item, index) => (
                 <div
                   key={index}
-                  className="bg-[#FEE2CC] rounded-lg overflow-hidden text-white flex flex-col shadow-lg"
+                  className="bg-[#48372D] rounded-lg border-[#48372D] border-2 overflow-hidden text-white flex flex-col shadow-md"
                 >
                   {/* Image Section */}
-                  <div className="h-[200px] bg-[#FEE2CC]">
+                  <div className="h-[200px] bg-[#EBEBEB] rounded-b-2xl">
                     <img
                       src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.mainImage}`}
                       alt={item.productName}
-                      className="h-full w-full object-contain"
+                      className="h-full w-full object-contain rounded-b-2xl"
                     />
                   </div>
 
                   {/* Content Section */}
-                  <div className="selling-div flex flex-col justify-between min-h-[140px] bg-[#48372D] p-4">
+                  <div className="flex flex-col justify-between bg-[#48372D] p-2">
                     <div className="flex flex-col justify-between">
                       <h3 className="font-semibold text-lg truncate">
                         {item.productName}
                       </h3>
-                      <p className="text-[10px] text-[#B7B7B7] mt-1 line-clamp-2">
+                      <p className="text-xs text-white mt-1 line-clamp-2">
                         {item.description}
                       </p>
                     </div>
 
-                    <hr className="mt-4 w-full text-[#A8A8A8]" />
+                    <hr className="w-full my-2 text-white" />
 
                     {/* ✅ Price Section with old crossed-out price */}
-                    <div className="flex justify-between items-center mt-2">
+                    <div className="flex justify-between items-center">
                       <div className="flex flex-col">
                         <div className="flex items-baseline gap-2">
                           <span className="text-base font-semibold text-white">
@@ -2491,7 +2611,7 @@ const navigateToProfile=(profile)=>{
                           </span>
                           {item.marketPrice && (
                             <span className="text-sm text-gray-300 line-through">
-                              ₹ {item.sellingPrice?.toLocaleString("en-IN")}
+                              ₹ {item.marketPrice?.toLocaleString("en-IN")}
                             </span>
                           )}
                         </div>
@@ -2505,7 +2625,7 @@ const navigateToProfile=(profile)=>{
 
                       <div className="flex items-center gap-2">
                         <Link to={`/product-details/${item._id}`}>
-                          <button className="text-sm bg-white text-[#6E4E37] px-3 py-[2px] rounded-md font-medium hover:bg-[#f8f8f8] transition">
+                          <button className="text-sm bg-white text-[#48372D] px-3 py-1 rounded-md font-semibold transition">
                             View
                           </button>
                         </Link>
@@ -2541,7 +2661,7 @@ const navigateToProfile=(profile)=>{
         {/* Tagged */}
         {onTag &&
           (collaboratedPosts?.length !== 0 ? (
-            <div className="grid grid-cols-3 sm:gap-4 gap-1 w-full">
+            <div className="grid grid-cols-3 gap-1 w-full">
               {collaboratedPosts.map((post, index) => (
                 <div key={post._id} className="relative cursor-pointer">
                   {post.images?.length > 0 && (
@@ -2552,7 +2672,7 @@ const navigateToProfile=(profile)=>{
                       }}
                       src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
                       alt={`post-${post._id}`}
-                      className="sm:h-[240px] sm:w-full h-[120px] rounded-md"
+                      className="sm:h-[210px] w-full h-[120px] rounded-md"
                     />
                   )}
                   {post.images?.length > 1 && (
@@ -2574,28 +2694,28 @@ const navigateToProfile=(profile)=>{
             onClick={() => setShowFollowers(false)}
           >
             <div
-              onClick={(e)=>e.stopPropagation()}
-              className="relative bg-white rounded-xl shadow-xl p-5 w-80 animate-fadeIn"
+              onClick={(e) => e.stopPropagation()}
+              className="relative bg-white rounded-xl shadow-xl p-3 w-90 animate-fadeIn"
             >
               {/* ❌ Close (cross) button */}
               <button
                 onClick={() => setShowFollowers(false)}
-                className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
+                className="absolute top-3 right-3 text-[#000000] text-xl"
               >
                 <i className="ri-close-line text-black"></i>{" "}
               </button>
 
-              <h3 className="text-lg font-semibold mb-4 text-center" >
+              <h3 className="text-lg font-semibold text-[#000000] mb-3 text-center" >
                 All Followers
               </h3>
-
-              <ul className="space-y-2 max-h-48 overflow-y-auto">
+              <hr className="w-full justify-self-center mb-3 border-t border-gray-800" />
+              <ul className="space-y-2 max-h-48 overflow-y-auto" style={{ scrollbarWidth: "none" }}>
                 {profile?.followers.map((c) => {
                   return (
                     <li
                       key={c._id}
                       className="p-2 border rounded-md flex items-center space-x-6"
-                      onClick={()=>{navigateToProfile(c);setShowFollowers(false);}}
+                      onClick={() => { navigateToProfile(c); setShowFollowers(false); }}
                     >
                       <img
                         src={
@@ -2627,28 +2747,28 @@ const navigateToProfile=(profile)=>{
             onClick={() => setShowFollowing(false)}
           >
             <div
-              onClick={(e)=>e.stopPropagation()}
-              className="relative bg-white rounded-xl shadow-xl p-5 w-80 animate-fadeIn"
+              onClick={(e) => e.stopPropagation()}
+              className="relative bg-white rounded-xl shadow-xl p-3 w-90 animate-fadeIn"
             >
               {/* ❌ Close (cross) button */}
               <button
                 onClick={() => setShowFollowing(false)}
-                className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
+                className="absolute top-3 right-3 text-[#000000] text-xl"
               >
                 <i className="ri-close-line text-black"></i>{" "}
               </button>
 
-              <h3 className="text-lg font-semibold mb-4 text-center" >
+              <h3 className="text-lg font-semibold mb-3 text-[#000000] text-center" >
                 All Followings
               </h3>
-
-              <ul className="space-y-2 max-h-48 overflow-y-auto">
+              <hr className="w-full justify-self-center mb-3 border-t border-gray-800" />
+              <ul className="space-y-2 max-h-48 overflow-y-auto" style={{ scrollbarWidth: "none" }}>
                 {profile?.following.map((c) => {
                   return (
                     <li
                       key={c._id}
                       className="p-2 border rounded-md flex items-center space-x-6"
-                      onClick={()=>{navigateToProfile(c);setShowFollowers(false);}}
+                      onClick={() => { navigateToProfile(c); setShowFollowers(false); }}
                     >
                       <img
                         src={
@@ -2678,7 +2798,7 @@ const navigateToProfile=(profile)=>{
 };
 const ProfileSkeleton = () => {
   return (
-    <div className="w-full min-h-screen bg-white px-4 py-6">
+    <div className="w-full min-h-screen col-span-12 lg:col-span-6 bg-white my-4">
       {/* Top Section Skeleton */}
       <div className="flex flex-col items-center">
         {/* Profile Photo */}
@@ -2692,11 +2812,12 @@ const ProfileSkeleton = () => {
 
         {/* Bio */}
         <div className="h-3 w-40 bg-gray-300 animate-pulse rounded mb-1"></div>
-        <div className="h-3 w-32 bg-gray-300 animate-pulse rounded mb-4"></div>
+        <div className="h-3 w-32 bg-gray-300 animate-pulse rounded"></div>
       </div>
 
       {/* Tabs Skeleton */}
-      <div className="flex justify-center gap-8 mt-4 mb-6">
+      <div className="flex justify-center gap-8 my-3">
+        <div className="w-10 h-10 bg-gray-300 animate-pulse rounded-full"></div>
         <div className="w-10 h-10 bg-gray-300 animate-pulse rounded-full"></div>
         <div className="w-10 h-10 bg-gray-300 animate-pulse rounded-full"></div>
         <div className="w-10 h-10 bg-gray-300 animate-pulse rounded-full"></div>
@@ -2705,11 +2826,8 @@ const ProfileSkeleton = () => {
       {/* Images Grid Skeleton */}
       <div
         className="
-        grid 
-        grid-cols-1 
-        sm:grid-cols-2 
-        md:grid-cols-3 
-        gap-4"
+        grid grid-cols-3 
+        gap-3"
       >
         {/* Create 8 placeholders for loading */}
         {Array.from({ length: 8 }).map((_, idx) => (

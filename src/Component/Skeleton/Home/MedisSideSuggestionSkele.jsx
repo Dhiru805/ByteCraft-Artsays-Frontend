@@ -1,6 +1,6 @@
 const MediaSideSuggestionSkele = () => {
   return (
-    <div className="sticky top-0 overflow-y-auto lg:h-[90vh] hidden lg:flex lg:flex-col lg:w-[22%] px-2 mt-4 animate-pulse">
+    <div className="sticky top-0 overflow-y-auto lg:h-full hidden lg:block col-span-3 px-2 py-2 my-4 animate-pulse">
       {/* Title */}
       <div className="h-5 w-40 bg-gray-300 rounded mb-4 ml-1" />
 
