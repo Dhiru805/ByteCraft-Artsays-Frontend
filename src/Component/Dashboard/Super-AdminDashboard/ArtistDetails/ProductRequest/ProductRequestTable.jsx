@@ -14,7 +14,8 @@ const ProductRequest = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
-    const [loadingIds, setLoadingIds] = useState([]);
+    const[aproveLoading,setAproveLoading]=useState([]);
+    const[rejectLoading,setRejectLoading]=useState([]);
     const [showPopup, setShowPopup] = useState(false);
     const [currentImages, setCurrentImages] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -75,7 +76,7 @@ const [loading,setLoading]=useState(false);
             if (status === 'Approved') {
                 toast.success('Product Request is Approved');
             } else if (status === 'Rejected') {
-                toast.error('Product Request is Rejected');
+                toast.success('Product Request is Rejected');
             }
         } catch (error) {
             console.error("Error updating product status:", error);
@@ -84,9 +85,9 @@ const [loading,setLoading]=useState(false);
 
     const handleReject = async (productId) => {
         confirm(async () => {
-            setLoadingIds(prev => [...prev, productId]);
+            setRejectLoading((pre)=>[...pre,productId])
             await updateProductStatus(productId, 'Rejected');
-            setLoadingIds(prev => prev.filter(id => id !== productId));
+            setRejectLoading((pre)=>pre.filter((id)=>id!==productId))
         }, "Are you sure you want to reject this product?");
     };
 
@@ -284,14 +285,14 @@ if(loading)return <ProductRequestSkeleton/>
                                                     <button
                                                         className="btn btn-sm btn-outline-success mr-2"
                                                         title="Approved"
-                                                        disabled={loadingIds.includes(product._id)}
+                                                        disabled={aproveLoading.includes(product._id) }
                                                         onClick={async () => {
-                                                            setLoadingIds(prev => [...prev, product._id]);
+                                                            setAproveLoading((pre)=>[...pre,product._id]);
                                                             await updateProductStatus(product._id, 'Approved');
-                                                            setLoadingIds(prev => prev.filter(id => id !== product._id));
+                                                            setAproveLoading((pre)=>pre.filter((id)=>id!==product._id));
                                                         }}
                                                     >
-                                                        {loadingIds.includes(product._id) ? (
+                                                        {aproveLoading.includes(product._id) ? (
                                                             <i className="fa fa-spinner fa-spin"></i>
                                                         ) : (
                                                             <i className="fa fa-check"></i>
@@ -302,10 +303,10 @@ if(loading)return <ProductRequestSkeleton/>
                                                     <button
                                                         className="btn btn-sm btn-outline-danger mr-2"
                                                         title="Declined"
-                                                        disabled={loadingIds.includes(product._id)}
+                                                        disabled={rejectLoading.includes(product._id)}
                                                         onClick={() => handleReject(product._id)}
                                                     >
-                                                        {loadingIds.includes(product._id) ? (
+                                                        { rejectLoading.includes(product._id)? (
                                                             <i className="fa fa-spinner fa-spin"></i>
                                                         ) : (
                                                             <i className="fa fa-ban"></i>

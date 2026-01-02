@@ -1646,7 +1646,7 @@ const offersData = [
 
 const ProductDetails = () => {
   // const { productId } = useParams();
-  const { productSlug, productId } = useParams();
+  const {  productId } = useParams();
   const id = productId;
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
@@ -1657,7 +1657,9 @@ const ProductDetails = () => {
     if (!path || typeof path !== "string") return "/images/placeholder.jpg";
     if (/^https?:\/\//i.test(path) || path.startsWith("data:")) return path;
     const normalized = path.replace(/\\/g, "/");
-    const leadingSlash = normalized.startsWith("/") ? normalized : `/${normalized}`;
+    const leadingSlash = normalized.startsWith("/")
+      ? normalized
+      : `/${normalized}`;
     if (imageBaseURL) {
       const base = imageBaseURL.endsWith("/")
         ? imageBaseURL.slice(0, -1)
@@ -1716,7 +1718,9 @@ const ProductDetails = () => {
 
   const ensureBuyer = () => {
     if (userType !== "Buyer") {
-      toast.warn("Only buyers can use this feature, Register as a Buyer to continue.");
+      toast.warn(
+        "Only buyers can use this feature, Register as a Buyer to continue."
+      );
       return false;
     }
     return true;
@@ -1769,8 +1773,9 @@ const ProductDetails = () => {
           reviewRes?.data?.data || reviewRes?.data?.reviews || [];
         const sortedReviews = Array.isArray(reviewPayload)
           ? [...reviewPayload].sort(
-            (a, b) => new Date(b?.createdAt || 0) - new Date(a?.createdAt || 0)
-          )
+              (a, b) =>
+                new Date(b?.createdAt || 0) - new Date(a?.createdAt || 0)
+            )
           : [];
         setReviews(sortedReviews);
 
@@ -1883,7 +1888,6 @@ const ProductDetails = () => {
     }, 50);
   }, [activeTab]);
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (addresses[pinCode]) setAddress(addresses[pinCode]);
@@ -1931,9 +1935,11 @@ const ProductDetails = () => {
         return true;
       }
 
-      const buyerRequest = typeof reviewProductId === "object" ? reviewProductId : null;
+      const buyerRequest =
+        typeof reviewProductId === "object" ? reviewProductId : null;
       if (buyerRequest && buyerRequest.ProductName) {
-        const reviewProductName = buyerRequest.ProductName?.trim()?.toLowerCase();
+        const reviewProductName =
+          buyerRequest.ProductName?.trim()?.toLowerCase();
         if (reviewProductName && reviewProductName === currentProductName) {
           return true;
         }
@@ -1968,7 +1974,7 @@ const ProductDetails = () => {
           text: "I found this amazing art on Artsays!",
           url: window.location.href,
         })
-        .catch(() => { });
+        .catch(() => {});
     } else {
       alert("Share not supported in this browser");
     }
@@ -1988,7 +1994,9 @@ const ProductDetails = () => {
     );
 
   const seoTitle = `${product.productName} | Artsays`;
-  const seoDesc = product.description?.slice(0, 150) || "Buy exclusive artwork from verified artists.";
+  const seoDesc =
+    product.description?.slice(0, 150) ||
+    "Buy exclusive artwork from verified artists.";
   const seoImg = `${imageBaseURL}${product.mainImage}`;
   const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName}, artwork`;
 
@@ -1996,11 +2004,13 @@ const ProductDetails = () => {
     product.sellingPrice,
     product.marketPrice
   );
-  const username = `${product?.userId?.username ||
+  const username = `${
+    product?.userId?.username ||
     `${product?.userId?.name || ""} ${product?.userId?.lastName || ""}`
-    }`.trim();
-  const artistName = `${product?.userId?.name || ""} ${product?.userId?.lastName || ""
-    }`.trim();
+  }`.trim();
+  const artistName = `${product?.userId?.name || ""} ${
+    product?.userId?.lastName || ""
+  }`.trim();
 
   const ProductImages = ({ imagesProp, initialImage }) => {
     const [selectedImage, setSelectedImage] = useState(
@@ -2167,10 +2177,11 @@ const ProductDetails = () => {
                       src={img}
                       alt={`thumb-${i}`}
                       onClick={() => setSelectedImage(img)}
-                      className={`w-24 h-24 object-contain rounded-lg product-img product-card cursor-pointer border-2 transition-all duration-200 ${selectedImage === img
+                      className={`w-24 h-24 object-contain rounded-lg product-img product-card cursor-pointer border-2 transition-all duration-200 ${
+                        selectedImage === img
                           ? "border-[#48372D]"
                           : "border-transparent"
-                        }`}
+                      }`}
                     />
                   ))}
                 </div>
@@ -2220,10 +2231,11 @@ const ProductDetails = () => {
                           src={room}
                           alt={`room-${i}`}
                           onClick={() => setSelectedRoom(room)}
-                          className={`w-24 h-20 object-cover rounded-lg cursor-pointer border-2 ${selectedRoom === room
+                          className={`w-24 h-20 object-cover rounded-lg cursor-pointer border-2 ${
+                            selectedRoom === room
                               ? "border-[#48372D]"
                               : "border-transparent"
-                            }`}
+                          }`}
                         />
                       ))}
                     </div>
@@ -2418,17 +2430,17 @@ const ProductDetails = () => {
                   {product.materials?.some(
                     (mat) => mat.toLowerCase() === "glass"
                   ) && (
-                      <div className="p-2">
-                        <img
-                          src="/herosectionimg/glass material.png"
-                          alt="glass material"
-                          className="w-full h-10 object-contain"
-                        />
-                        <p className="text-dark text-center text-xs mt-2 rounded">
-                          Glass Material
-                        </p>
-                      </div>
-                    )}
+                    <div className="p-2">
+                      <img
+                        src="/herosectionimg/glass material.png"
+                        alt="glass material"
+                        className="w-full h-10 object-contain"
+                      />
+                      <p className="text-dark text-center text-xs mt-2 rounded">
+                        Glass Material
+                      </p>
+                    </div>
+                  )}
 
                   {product.framing?.toLowerCase() === "framed" && (
                     <div className="p-2">
@@ -2554,17 +2566,19 @@ const ProductDetails = () => {
                     <div className="flex gap-2">
                       <button
                         onClick={prevSlide}
-                        className={`p-2 rounded-full focus:bg-none ${index === 0 ? "opacity-40 cursor-not-allowed" : ""
-                          }`}
+                        className={`p-2 rounded-full focus:bg-none ${
+                          index === 0 ? "opacity-40 cursor-not-allowed" : ""
+                        }`}
                       >
                         <ChevronLeft />
                       </button>
                       <button
                         onClick={nextSlide}
-                        className={`p-2 rounded-full focus:bg-none ${index >= offersData.length - 3
+                        className={`p-2 rounded-full focus:bg-none ${
+                          index >= offersData.length - 3
                             ? "opacity-40 cursor-not-allowed"
                             : ""
-                          }`}
+                        }`}
                       >
                         <ChevronRight />
                       </button>
@@ -2625,21 +2639,21 @@ const ProductDetails = () => {
                     onClick={() => {
                       setActiveTab(tab);
                     }}
-                    className={`pb-2 flex-shrink-0 transition-all duration-200 whitespace-nowrap ${activeTab === tab
+                    className={`pb-2 flex-shrink-0 transition-all duration-200 whitespace-nowrap ${
+                      activeTab === tab
                         ? "border-b-4 border-[#48372D] font-semibold text-[#48372D]"
                         : "font-semibold text-[#48372D]"
-                      }`}
+                    }`}
                   >
                     {tab.charAt(0).toUpperCase() + tab.slice(1)}
                   </button>
-
-
                 ))}
               </div>
 
               <div
                 ref={tabRef}
-                className="py-6 text-gray-700 leading-relaxed text-sm whitespace-pre-wrap break-words w-full">
+                className="py-6 text-gray-700 leading-relaxed text-sm whitespace-pre-wrap break-words w-full"
+              >
                 {activeTab === "description" && (
                   <p>{product.description || "No description available."}</p>
                 )}
@@ -2926,88 +2940,88 @@ const ProductDetails = () => {
                         product.customEngravingAvailable,
                       certification: product.certification,
                     }) && (
-                        <Section title="Antique & Vintage Details">
-                          <Grid>
-                            <Field
-                              label="Origin Region"
-                              value={product.originRegion}
-                            />
-                            <Field
-                              label="Period / Era"
-                              value={product.periodEra}
-                            />
-                            <Field
-                              label="Antique Condition"
-                              value={product.antiqueCondition}
-                            />
-                            <Field
-                              label="Conservation Status"
-                              value={product.conservationStatus}
-                            />
+                      <Section title="Antique & Vintage Details">
+                        <Grid>
+                          <Field
+                            label="Origin Region"
+                            value={product.originRegion}
+                          />
+                          <Field
+                            label="Period / Era"
+                            value={product.periodEra}
+                          />
+                          <Field
+                            label="Antique Condition"
+                            value={product.antiqueCondition}
+                          />
+                          <Field
+                            label="Conservation Status"
+                            value={product.conservationStatus}
+                          />
 
-                            <Field
-                              label="Provenance History"
-                              value={product.provenanceHistory}
-                            />
-                            <Field
-                              label="Cultural Significance"
-                              value={product.culturalSignificance}
-                            />
+                          <Field
+                            label="Provenance History"
+                            value={product.provenanceHistory}
+                          />
+                          <Field
+                            label="Cultural Significance"
+                            value={product.culturalSignificance}
+                          />
 
-                            <Field
-                              label="Appraisal Details"
-                              value={product.appraisalDetails}
-                            />
-                            <Field
-                              label="Engravings / Markings"
-                              value={product.engravingMarkings}
-                            />
+                          <Field
+                            label="Appraisal Details"
+                            value={product.appraisalDetails}
+                          />
+                          <Field
+                            label="Engravings / Markings"
+                            value={product.engravingMarkings}
+                          />
 
-                            <Field
-                              label="Patina / Wear"
-                              value={product.patinaWear}
-                            />
-                            <Field
-                              label="Handmade (Antique Context)"
-                              value={product.isHandmade ? "Yes" : "No"}
-                            />
+                          <Field
+                            label="Patina / Wear"
+                            value={product.patinaWear}
+                          />
+                          <Field
+                            label="Handmade (Antique Context)"
+                            value={product.isHandmade ? "Yes" : "No"}
+                          />
 
-                            <Field
-                              label="Original / Reproduction"
-                              value={product.originalReproduction}
-                            />
+                          <Field
+                            label="Original / Reproduction"
+                            value={product.originalReproduction}
+                          />
 
-                            <Field
-                              label="Museum Exhibition History"
-                              value={product.museumExhibitionHistory}
-                            />
+                          <Field
+                            label="Museum Exhibition History"
+                            value={product.museumExhibitionHistory}
+                          />
 
-                            <Field
-                              label="Maintenance Required"
-                              value={product.maintenanceRequired}
-                            />
-                            <Field
-                              label="Custom Engraving Available"
-                              value={
-                                product.customEngravingAvailable ? "Yes" : "No"
-                              }
-                            />
+                          <Field
+                            label="Maintenance Required"
+                            value={product.maintenanceRequired}
+                          />
+                          <Field
+                            label="Custom Engraving Available"
+                            value={
+                              product.customEngravingAvailable ? "Yes" : "No"
+                            }
+                          />
 
-                            <Field
-                              label="Restoration Documentation"
-                              value={product.restorationDocumentation}
-                            />
-                            <Field
-                              label="Certification"
-                              value={product.certification}
-                            />
-                            <Field
-                              label="Restoration History"
-                              value={product.restorationHistory}
-                            />
-                          </Grid>
-                        </Section>
-                      )}
+                          <Field
+                            label="Restoration Documentation"
+                            value={product.restorationDocumentation}
+                          />
+                          <Field
+                            label="Certification"
+                            value={product.certification}
+                          />
+                          <Field
+                            label="Restoration History"
+                            value={product.restorationHistory}
+                          />
+                        </Grid>
+                      </Section>
+                    )}
                   </div>
                 )}
 
@@ -3256,11 +3270,15 @@ const ProductDetails = () => {
                       addToCart(product._id, quantity);
                     }}
                     disabled={!product.quantity || product.quantity === 0}
-                    className={`flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart ${(!product.quantity || product.quantity === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart ${
+                      !product.quantity || product.quantity === 0
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }`}
                   >
                     <ShoppingCart size={18} /> Add to Cart
                   </button>
-                  {(!product.quantity || product.quantity === 0) ? (
+                  {!product.quantity || product.quantity === 0 ? (
                     <button
                       disabled
                       className="flex items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-gray-500 text-white py-2 font-semibold buy-now cursor-not-allowed"
@@ -3292,42 +3310,46 @@ const ProductDetails = () => {
   //return <ProductImages imagesProp={images} initialImage={images[0]} />;
   return (
     <>
-      <Helmet>
-        <title>{product.productName} | Artsays</title>
+      {product && (
+        <Helmet>
+          <title>{product.productName} | Artsays</title>
 
-        <meta name="title" content={product.productName} />
-        <meta name="description" content={product.description?.slice(0, 150)} />
-        <meta
-          name="keywords"
-          content={`${product.productName}, ${mainCategoryName}, ${categoryName}, artwork`}
-        />
+          <meta name="title" content={product.productName} />
+          <meta
+            name="description"
+            content={product.description?.slice(0, 150)}
+          />
+          <meta
+            name="keywords"
+            content={`${product.productName}, ${mainCategoryName}, ${categoryName}, artwork`}
+          />
 
-        {/* Open Graph */}
-        <meta property="og:type" content="product" />
-        <meta property="og:title" content={product.productName} />
-        <meta
-          property="og:description"
-          content={product.description?.slice(0, 150)}
-        />
-        <meta
-          property="og:image"
-          content={`${imageBaseURL}${product.mainImage}`}
-        />
-        <meta property="og:url" content={window.location.href} />
+          {/* Open Graph */}
+          <meta property="og:type" content="product" />
+          <meta property="og:title" content={product.productName} />
+          <meta
+            property="og:description"
+            content={product.description?.slice(0, 150)}
+          />
+          <meta
+            property="og:image"
+            content={`${imageBaseURL}${product.mainImage}`}
+          />
+          <meta property="og:url" content={window.location.href} />
 
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={product.productName} />
-        <meta
-          name="twitter:description"
-          content={product.description?.slice(0, 150)}
-        />
-        <meta
-          name="twitter:image"
-          content={`${imageBaseURL}${product.mainImage}`}
-        />
-      </Helmet>
-
+          {/* Twitter */}
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content={product.productName} />
+          <meta
+            name="twitter:description"
+            content={product.description?.slice(0, 150)}
+          />
+          <meta
+            name="twitter:image"
+            content={`${imageBaseURL}${product.mainImage}`}
+          />
+        </Helmet>
+      )}
       <ProductImages imagesProp={images} initialImage={images[0]} />
     </>
   );

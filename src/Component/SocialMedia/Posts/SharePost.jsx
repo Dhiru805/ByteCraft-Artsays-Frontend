@@ -5,12 +5,19 @@ import getAPI from "../../../api/getAPI";
 import { timeAgo } from "../../../utils/TimeAgo";
 import postAPI from "../../../api/postAPI";
 import { Helmet } from "react-helmet";
+import { toast } from "react-toastify";
+import { Zap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 const SharePost = () => {
   const [sharePostData, setSharePostData] = useState(null);
   const { postId } = useParams();
   const userId = localStorage.getItem("userId");
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
+  const navigate = useNavigate();
+  console.log("aaaaaaaaaaaaaaaaasharepostdata", sharePostData);
   useEffect(() => {
     const fetchSharePostData = async () => {
       try {
@@ -27,7 +34,6 @@ const SharePost = () => {
     };
     fetchSharePostData();
   }, [postId]);
-
   // 🔹 Like / Unlike
   const handleLike = async (postId) => {
     try {
@@ -47,6 +53,16 @@ const SharePost = () => {
       console.error("Error liking/unliking:", err);
     }
   };
+  const ensureBuyer = () => {
+    if (sharePostData.user.userType !== "Buyer") {
+      toast.warn(
+        "Only buyers can use this feature, Register as a Buyer to continue."
+      );
+      return false;
+    }
+    return true;
+  };
+  console.log("activeindexxxxxxxxxxxxxxxxxxxxx",activeImageIndex)
   return (
     <div className="max-w-[50%] mx-auto mt-6">
       {sharePostData && (
@@ -168,53 +184,63 @@ const SharePost = () => {
                   ) : null}
                 </>
               )}
-              {sharePostData.showFollowButton ? (
+              {/* {sharePostData?.showFollowButton ? (
                 <button
-                  // onClick={() => handleFollowToggle(sharePostData.user._id, false)}
+                  onClick={() => handleFollowToggle(sharePostData.user._id, false)}
                   className="buy-button"
                 >
                   Follow
                 </button>
               ) : (
                 ""
-              )}
+              )} */}
 
-              <button className="buy-button">
-                Buy <i className="cart-icon ri-shopping-cart-fill"></i>
-              </button>
-              {/* <button onClick={() => setMenuOpenId(post._id)}>
-                      <i className="ri-more-fill text-lg"></i>
-                    </button> */}
+              {sharePostData.forProduct && (
+                <button
+                  className="flex px-2 items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-red-500 text-white py-2 font-semibold buy-now"
+                  onClick={() => {
+                    if (!ensureBuyer()) return;
+                    navigate(
+                      `/my-account/check-out/${userId}?productId=${
+                        sharePostData?.forProduct
+                      }&quantity=${1}`
+                    );
+                  }}
+                >
+                  <Zap size={18} /> Buy Now
+                </button>
+              )}
             </div>
           </div>
           {/* Post Image Carousel */}
           <div className="mx-1 relative">
-            {sharePostData.images && sharePostData.images.length > 0 && (
+            {sharePostData?.images && sharePostData?.images?.length > 0 && (
               <>
                 <img
                   src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                    sharePostData.images[sharePostData.activeImageIndex || 0]
+                    sharePostData.images[activeImageIndex || 0]
                   }`}
                   alt="Post content"
                   className="w-full lg:h-[600px] sm:h-[480px] h-[300px] rounded-lg "
                 />
 
                 {/* Left Arrow (only if not on first image) */}
-                {sharePostData.images.length > 1 &&
-                  (sharePostData.activeImageIndex || 0) > 0 && (
+                {sharePostData?.images?.length > 1 &&
+                  (activeImageIndex ) > 0 && (
                     <button
-                      onClick={() =>
-                        setSharePostData((prev) =>
-                          prev.map((p) =>
-                            p._id === sharePostData._id
-                              ? {
-                                  ...p,
-                                  activeImageIndex:
-                                    (p.activeImageIndex || 0) - 1,
-                                }
-                              : p
-                          )
-                        )
+                      onClick={
+                        () => setActiveImageIndex(activeImageIndex  - 1)
+                        // setSharePostData((prev) =>
+                        //   prev.map((p) =>
+                        //     p._id === sharePostData?._id
+                        //       ? {
+                        //           ...p,
+                        //           activeImageIndex:
+                        //             (p.activeImageIndex || 0) - 1,
+                        //         }
+                        //       : p
+                        //   )
+                        // )
                       }
                       className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-40 text-white rounded-full p-2"
                     >
@@ -223,22 +249,24 @@ const SharePost = () => {
                   )}
 
                 {/* Right Arrow (only if not on last image) */}
-                {sharePostData.images.length > 1 &&
-                  (sharePostData.activeImageIndex || 0) <
-                    sharePostData.images.length - 1 && (
+                {sharePostData?.images?.length > 1 &&
+                  (activeImageIndex || 0) <
+                    sharePostData?.images.length - 1 && (
                     <button
-                      onClick={() =>
-                        setSharePostData((prev) =>
-                          prev.map((p) =>
-                            p._id === sharePostData._id
-                              ? {
-                                  ...p,
-                                  activeImageIndex:
-                                    (p.activeImageIndex || 0) + 1,
-                                }
-                              : p
-                          )
-                        )
+                      onClick={
+                        () => setActiveImageIndex(activeImageIndex + 1)
+
+                        // setSharePostData((prev) =>
+                        //   prev.images.map((p) =>
+                        //     p._id === sharePostData?._id
+                        //       ? {
+                        //           ...p,
+                        //           activeImageIndex:
+                        //             (p?.activeImageIndex || 0) + 1,
+                        //         }
+                        //       : p
+                        //   )
+                        // )
                       }
                       className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-40 text-white rounded-full p-2"
                     >
@@ -247,13 +275,13 @@ const SharePost = () => {
                   )}
 
                 {/* Dots */}
-                {sharePostData.images.length > 1 && (
+                {sharePostData?.images?.length > 1 && (
                   <div className="absolute bottom-2 w-full flex justify-center gap-1">
-                    {sharePostData.images.map((_, idx) => (
+                    {sharePostData?.images?.map((_, idx) => (
                       <span
                         key={idx}
                         className={`h-2 w-2 rounded-full ${
-                          (sharePostData.activeImageIndex || 0) === idx
+                          (activeImageIndex || 0) === idx
                             ? "bg-gray-100"
                             : "bg-gray-400"
                         }`}
@@ -282,7 +310,7 @@ const SharePost = () => {
 
             {/* Likes */}
             <div className="text-[13px] font-bold">
-              {sharePostData.likes.length} likes
+              {sharePostData?.likes.length} likes
             </div>
           </div>
         </div>

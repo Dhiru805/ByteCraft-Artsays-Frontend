@@ -942,7 +942,7 @@ function ProductUpload() {
     const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
     setCreatedProductId(null);
-    navigate(`/seller/product`);
+    navigate(`/seller/product-details`);
   };
 
   const handleSetShippingAddress = () => {
@@ -953,14 +953,14 @@ function ProductUpload() {
   const handleAddressModalClose = () => {
     setShowAddressModal(false);
     setCreatedProductId(null);
-    navigate(`/seller/product`);
+    navigate(`/seller/product-details`);
   };
 
   const handleAddressSaved = () => {
     setShowAddressModal(false);
     setCreatedProductId(null);
     toast.success("Shipping address set successfully! Your product is now eligible for approval.");
-    navigate(`/seller/product`);
+    navigate(`/seller/product-details`);
   };
 
   return (
@@ -989,7 +989,7 @@ function ProductUpload() {
       <div className="row clearfix">
         <div className="col-lg-12">
           <div className="card">
-            <form onSubmit={handleSubmit} className="bg-white p-4 rounded">
+            <div  className="bg-white p-4 rounded">
               {/* Tabs Navigation */}
               <ul className="nav nav-tabs mb-4">
                 <li className="nav-item">
@@ -1127,13 +1127,14 @@ function ProductUpload() {
                       type="submit"
                       className="btn btn-primary"
                       disabled={isSubmitting}
+                      onClick={handleSubmit}
                     >
                       {isSubmitting ? 'Creating...' : 'Create Product'}
                     </button>
                   )}
                 </div>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>

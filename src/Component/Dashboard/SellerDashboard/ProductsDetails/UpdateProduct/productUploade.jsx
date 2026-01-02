@@ -326,7 +326,7 @@
         const fd = prepareFormData("Drafted");
         await putAPI(`/api/update-products/${product._id}`, fd, {}, true);
         toast.success("Saved as draft");
-        navigate("/seller/product");
+        navigate("/seller/product-details");
       } catch (err) {
         toast.error(err.response?.data?.message || "Save failed");
       } finally {
@@ -371,7 +371,8 @@
         const fd = prepareFormData("Pending");
         await putAPI(`/api/update-products/${product._id}`, fd, {}, true);
         toast.success("Product updated!");
-        navigate("/seller/product");
+        navigate("/seller/product-details");
+        
       } catch (err) {
         toast.error(err.response?.data?.message || "Update failed");
       } finally {
@@ -892,7 +893,7 @@
         <div className="block-header">
           <div className="row">
             <div className="col-lg-6 col-md-6 col-sm-12">
-              <h2>Create Product</h2>
+              <h2>Update Product</h2>
               <ul className="breadcrumb">
                 <li className="breadcrumb-item">
                   <span onClick={() => navigate('/seller/dashboard')} style={{ cursor: 'pointer' }}>
@@ -913,7 +914,7 @@
         <div className="row clearfix">
           <div className="col-lg-12">
             <div className="card">
-              <form onSubmit={handleSubmit} className="bg-white p-4 rounded">
+              <div  className="bg-white p-4 rounded">
                 {/* Tabs Navigation */}
                 <ul className="nav nav-tabs mb-4">
                   <li className="nav-item">
@@ -1051,13 +1052,14 @@
                         type="submit"
                         className="btn btn-primary"
                         disabled={isSubmitting || isCheckingAddress}
+                        onClick={handleSubmit}
                       >
                         {isSubmitting ? 'Updateing...' : 'Update'}
                       </button>
                     )}
                   </div>
                   </div>
-              </form>
+              </div>
             </div>
           </div>
         </div>

@@ -23,13 +23,11 @@ const Uploadpost = () => {
   const emojiBtnRef = useRef(null);
   const stickerRef = useRef(null);
 
-
-  
-const hasValidUsername =
-  typeof username === "string" &&
-  username.trim() !== "" &&
-  username !== "undefined" &&
-  username !== "null";
+  const hasValidUsername =
+    typeof username === "string" &&
+    username.trim() !== "" &&
+    username !== "undefined" &&
+    username !== "null";
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -87,10 +85,17 @@ const hasValidUsername =
         true, // private (requires token)
         { "Content-Type": "multipart/form-data" } // headers override
       );
- 
+
       if (res && !res.hasError) {
         toast.success("Post uploaded successfully!");
-        navigate(`/artsays-community/profile/${hasValidUsername? `${username}`:`${firstName}_${lastName}_${userId}`}`,{state:{userId:userId}});
+        navigate(
+          `/artsays-community/profile/${
+            hasValidUsername
+              ? `${username}`
+              : `${firstName}_${lastName}_${userId}`
+          }`,
+          { state: { userId: userId } }
+        );
       } else {
         toast.error(res?.message || "Failed to upload post");
       }
@@ -115,7 +120,6 @@ const hasValidUsername =
   const [collaborators, setCollaborators] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
-
   useEffect(() => {
     const fetchSuggestions = async () => {
       if (searchQuery.trim().length < 2) {
@@ -130,6 +134,8 @@ const hasValidUsername =
           false,
           true
         );
+        console.log("descmentionsssssssssssss",res)
+
         if (res?.data?.collaborators) {
           setSuggestions(res.data.collaborators);
         }
@@ -223,6 +229,7 @@ const hasValidUsername =
           {},
           true
         );
+        console.log("mentionssssssssss",res)
         if (res?.data?.users) {
           setDescMentionSuggestions(res.data.users);
           setShowDescMentions(true);
@@ -374,7 +381,24 @@ const hasValidUsername =
                         className="w-8 h-8 rounded-full"
                       />
                       <span className="text-sm font-medium text-gray-800">
-                        {user.username}
+                        {user.username}{" "}
+                        {user?.verified?.length > 0 && (
+                          <img
+                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                              user.verified[user.verified.length - 1]
+                                ?.badgeImage
+                            }`}
+                            className="inline-block ml-1 w-6 h-6 object-contain"
+                            alt={
+                              user.verified[user.verified.length - 1]
+                                ?.badgeName || "badge"
+                            }
+                            title={
+                              user.verified[user.verified.length - 1]
+                                ?.badgeName
+                            }
+                          />
+                        )}{" "}
                       </span>
                       <span className="text-xs text-gray-500">{user.role}</span>
                     </div>
@@ -456,7 +480,26 @@ const hasValidUsername =
                         alt={user?.username}
                         className="w-8 h-8 rounded-full mr-2"
                       />
-                      <p className="text-sm">{user?.username}</p>
+                      <p className="text-sm">{user?.username} {user.verified?.length > 0 && (
+                            <img
+                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                                user.verified[
+                                  user.verified.length - 1
+                                ]?.badgeImage
+                              }`}
+                              className="inline-block ml-1 w-5 h-5 object-contain"
+                              alt={
+                                user.verified[
+                                  user.verified.length - 1
+                                ]?.badgeName || "badge"
+                              }
+                              title={
+                                user.verified[
+                                  user.verified.length - 1
+                                ]?.badgeName
+                              }
+                            />
+                          )}</p>
                     </div>
                   ))}
                 </div>

@@ -1635,7 +1635,7 @@ const AppRoutes = () => {
         <Route path="/challenge/:theme" element={<JoinChallenges />} />
 
         <Route path="/product-details" element={<ProductDetailsTemplate />} />
-        <Route path="product-details/:productSlug/:productId" element={<ProductDetails />} />
+        <Route path="/product-details/:productId" element={<ProductDetails />} />
         <Route path="/bid-details" element={<BidDetailsTemplate />} />
         <Route path="/bid-details/:bidSlug/:bidId" element={<BidDetails />} />
         <Route path="/certification" element={<Certification />} />

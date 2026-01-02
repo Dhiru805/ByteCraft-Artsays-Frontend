@@ -600,8 +600,8 @@ const ArtistBiddingProducts = () => {
 
   const handleDeleteConfirmed = async (id) => {
     try {
-      await axiosInstance.delete(`/api/bidding/products/delete/${id}`);
-      toast.success("Bidding product deleted!");
+      // await axiosInstance.delete(`/api/bidding/products/delete/${id}`);
+      // toast.success("Bidding product deleted!");
 
       setProducts((prev) => prev.filter((p) => p._id !== id));
     } catch (error) {

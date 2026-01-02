@@ -9,11 +9,12 @@ const BiddedProduct = () => {
   //const [productsPerPage, setproductsPerPage] = useState(5);
   const [productsPerPage, setProductsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
-  const [successfulBids, setSuccessfulBids] = useState([]);
+  // const [successfulBids, setSuccessfulBids] = useState([]);
   const [loading, setLoading] = useState(true)
 
   const navigate = useNavigate();
-
+console.log("productttttttttttttttttttttttttt",products)
+// console.log("successfulbiddddddddddddddddddddddddd",successfulBids)
   // useEffect(() => {
   //     const fetchProducts = async () => {
   //         try {
@@ -61,17 +62,17 @@ const BiddedProduct = () => {
     }
   };
 
-  const fetchSuccessfulBids = async () => {
-    try {
-      const result = await getAPI("/api/bidding/successful", {}, true, false);
+  // const fetchSuccessfulBids = async () => {
+  //   try {
+  //     const result = await getAPI("/api/bidding/successful", {}, true, false);
 
-      const completed = result?.data?.data || [];
-      setSuccessfulBids(completed);
+  //     const completed = result?.data?.data || [];
+  //     setSuccessfulBids(completed);
 
-    } catch (error) {
-      console.error("Error fetching successful bids:", error);
-    }
-  };
+  //   } catch (error) {
+  //     console.error("Error fetching successful bids:", error);
+  //   }
+  // };
   // useEffect(() => {
   //     fetchProducts();
   // }, []);
@@ -79,7 +80,7 @@ const BiddedProduct = () => {
   useEffect(() => {
     const load = async () => {
       await fetchProducts();
-      await fetchSuccessfulBids();
+      // await fetchSuccessfulBids();
     };
 
     load();
@@ -416,7 +417,7 @@ const winnerInfo = successfulBids.find(
                       paginatedProducts.map((item, index) => {
                         const p = item.product;
 
-                        const winnerRecord = successfulBids.find(s => s.bidId === item.bidId);
+                        const winnerRecord = products.find(s => s.bidId === item.bidId);
                         const winner = winnerRecord?.assignedWinners?.[0];
 
 

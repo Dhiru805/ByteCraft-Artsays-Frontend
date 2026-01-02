@@ -103,7 +103,6 @@ const SearchBar = () => {
           true,
           true
         );
-        console.log("unfollow success56325412", response);
       } else {
         const response = await postAPI(
           `/api/social-media/follow/${targetUserId}`,
@@ -111,7 +110,6 @@ const SearchBar = () => {
           true,
           true
         );
-        console.log("follow success56325412", response);
       }
 
       setSuggestionForUser((prevUsers) =>
@@ -144,7 +142,7 @@ const SearchBar = () => {
     };
     if (userId) fetchRecentAndSuggestions();
   }, [userId]);
-  console.log("kkkkkkkkkkkkkkkk", { recentSearches, suggestionForUser });
+
   //  Handle search input
   const handleSearch = async (e) => {
     const value = e.target.value;
@@ -251,7 +249,8 @@ const SearchBar = () => {
         user?.username
           ? `${user?.username}`
           : `${user?.name}_${user?.lastName}_${user?._id}`
-      }`,{state:{userId:user?._id}}
+      }`,
+      { state: { userId: user?._id } }
     );
   };
 
@@ -275,7 +274,6 @@ const SearchBar = () => {
       console.error("Hashtag posts fetch error:", err);
     }
   };
-
   return (
     <div className="lg:w-[56%] w-full max-w-6xl mx-auto flex flex-col gap-3 sm:mt-6 mt-3 sm:px-4 px-2">
       {/* Search Bar */}
@@ -333,8 +331,25 @@ const SearchBar = () => {
                       <div>
                         <p className="font-semibold text-black flex items-center gap-1">
                           {user?.username}
-                          {user.verified && (
-                            <MdVerified className="text-blue-500 text-lg" />
+                           {user.verified?.length > 0 && (
+                            <img
+                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                                user.verified[
+                                  user.verified.length - 1
+                                ]?.badgeImage
+                              }`}
+                              className="inline-block ml-1 w-5 h-5 object-contain"
+                              alt={
+                                user.verified[
+                                  user.verified.length - 1
+                                ]?.badgeName || "badge"
+                              }
+                              title={
+                                user.verified[
+                                  user.verified.length - 1
+                                ]?.badgeName
+                              }
+                            />
                           )}
                         </p>
                         <p className="text-sm text-gray-700">
@@ -380,7 +395,8 @@ const SearchBar = () => {
                         item.username
                           ? `${item.username}`
                           : `${item.name}_${item.lastName}_${item._id}`
-                      }`,{state:{userId:item._id}}
+                      }`,
+                      { state: { userId: item._id } }
                     );
                   } else if (item.type === "hashtag") {
                     handleHashtagClick(item.tag);
@@ -439,7 +455,20 @@ const SearchBar = () => {
                   className="lg:text-[20px] text-lg font-medium text-[#000000] cursor-pointer"
                   onClick={() => handleUserClick(user)}
                 >
-                  {user.username}
+                  {user?.username}
+                  {user.verified?.length > 0 && (
+                    <img
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                        user.verified[user.verified.length - 1]?.badgeImage
+                      }`}
+                      className="inline-block ml-1 w-5 h-5 object-contain"
+                      alt={
+                        user.verified[user.verified.length - 1]?.badgeName ||
+                        "badge"
+                      }
+                      title={user.verified[user.verified.length - 1]?.badgeName}
+                    />
+                  )}
                 </span>
                 <span className="text-sm text-gray-600">{user.role}</span>
               </div>

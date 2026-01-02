@@ -38,7 +38,6 @@ import postAPI from "../../../api/postAPI";
 import { useNavigate } from "react-router-dom";
 
 const userType = localStorage.getItem("userType");
-
 const items = [
   { key: "edit-profile", label: "Edit Profile", icon: <FaRegCircleUser /> },
   { key: "notifications", label: "Notifications", icon: <FiBell /> },
@@ -51,7 +50,11 @@ const items = [
     label: "Collaboration and Mentions",
     icon: <GoMention />,
   },
-  { key: "comments", label: "Comments", icon: <FaRegComment /> },
+
+  ...(userType !== "Buyer"
+    ? [{ key: "comments", label: "Comments", icon: <FaRegComment /> }]
+    : []),
+
   { key: "blocked", label: "Blocked", icon: <RiProhibitedLine /> },
   { key: "verified", label: "Verified", icon: <RiVerifiedBadgeLine /> },
   {
@@ -73,8 +76,9 @@ const Setting = () => {
   const navigate = useNavigate();
   const userName = localStorage.getItem("username");
   const firstName = localStorage.getItem("firstName");
-  const lastName = localStorage.getItem("lastName");
+  const lastname = localStorage.getItem("lastName");
   const [name, setName] = useState(profile?.firstName || "");
+  const [lastName, setLastName] = useState(profile?.lastName || "");
   const [username, setUsername] = useState(profile?.username || "");
   const [website, setWebsite] = useState(profile?.website || "");
   const [bio, setBio] = useState(profile?.bio || "");
@@ -87,6 +91,7 @@ const Setting = () => {
   useEffect(() => {
     if (profile) {
       setName(profile.firstName || "");
+      setLastName(profile.lastName || "");
       setUsername(profile.username || "");
       setWebsite(profile.website || "");
       setBio(profile.bio || "");
@@ -94,13 +99,11 @@ const Setting = () => {
     }
   }, [profile]);
 
-
-const hasValidUsername =
-  typeof userName === "string" &&
-  userName.trim() !== "" &&
-  userName !== "undefined" &&
-  userName !== "null";
-
+  const hasValidUsername =
+    typeof userName === "string" &&
+    userName.trim() !== "" &&
+    userName !== "undefined" &&
+    userName !== "null";
 
   const bioMax = 150;
   const remaining = bioMax - bio.length;
@@ -138,7 +141,9 @@ const hasValidUsername =
     const formData = new FormData();
     formData.append("userId", userId);
     formData.append("name", name);
+    formData.append("lastName", lastName);
     formData.append("username", username);
+    // formData.append("")
     formData.append("website", website);
     formData.append("bio", bio);
 
@@ -255,6 +260,7 @@ const hasValidUsername =
     allowCommentsFrom: "everyone",
     allowGifComments: true,
   });
+  
   const handleSettingsChange = async (field, value) => {
     const userId = localStorage.getItem("userId");
     try {
@@ -668,7 +674,19 @@ const hasValidUsername =
     document.execCommand("copy");
     document.body.removeChild(textarea);
   }
+  const badgesFunction = (badges = []) => {
+    if (userType === "Buyer") {
+      return badges.filter(
+        (badge) =>
+          !badge.badgeName.includes("Trusted Badge") &&
+          !badge.badgeName.includes("Master Badge")
+      );
+    }
+    return badges;
+  };
 
+  if (userType === "Buyer") {
+  }
   return (
     <div className="lg:w-[78%] w-full lg:mx-auto mx-0 flex flex-row lg:px-1">
       <div
@@ -754,8 +772,19 @@ const hasValidUsername =
                   Name
                 </label>
                 <input
-                  placeholder={name}
+                  value={name}
                   onChange={(e) => setName(e.target.value)}
+                  className="w-full bg-[#f1f4f8] rounded-md px-4 py-3 text-sm placeholder-[#000000] outline-none"
+                />
+              </div>
+              {/* Name */}
+              <div>
+                <label className="block text-[18px] font-semibold text-[#000000] mb-1">
+                  Last Name
+                </label>
+                <input
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
                   className="w-full bg-[#f1f4f8] rounded-md px-4 py-3 text-sm placeholder-[#000000] outline-none"
                 />
               </div>
@@ -1649,7 +1678,7 @@ const hasValidUsername =
         )}
 
         {/* comments panel */}
-        {active === "comments" && (
+        {active === "comments" && userType !== "Buyer" && (
           <div className="w-full lg:mt-4 ">
             <div className="w-full flex flex-col gap-5 rounded-xl lg:border-[1px] lg:border-[#48372D] h-[90vh] shadow-sm lg:py-4 px-1">
               {/* Header */}
@@ -1885,12 +1914,12 @@ const hasValidUsername =
               </div>
 
               {/* Verification Badges */}
-              <div>
+              {isEmailVerified&&(<div>
                 <h2 className="text-[24px] text-[#000000] font-bold mb-2">
                   Verification Badge
                 </h2>
 
-                {badges.map((badge) => {
+                {badgesFunction(badges)?.map((badge) => {
                   const alreadyHasBadge = profile?.verified?.some(
                     (b) => b._id.toString() === badge._id.toString()
                   );
@@ -1990,7 +2019,8 @@ const hasValidUsername =
                     </div>
                   );
                 })}
-              </div>
+              </div>)}
+              
             </div>
 
             {/* Purchase Popup + Success Popup remain same */}
@@ -2151,7 +2181,7 @@ const hasValidUsername =
                       }/artsays-community/profile/${
                         hasValidUsername
                           ? `${userName}_${userId}`
-                          : `${firstName}_${lastName}_${userId}`
+                          : `${firstName}_${lastname}_${userId}`
                       }`;
                       if (navigator.clipboard && window.isSecureContext) {
                         navigator.clipboard

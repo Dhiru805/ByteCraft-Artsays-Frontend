@@ -271,6 +271,7 @@ import getAPI from "../../../../../api/getAPI";
 import postAPI from "../../../../../api/postAPI";
 import { toast } from "react-toastify";
 import BiddingPassSkeleton from "../../../../Skeleton/biddingpass/BiddingPassSkeleton";
+
 const BiddingPass = () => {
   const navigate = useNavigate();
   const [passes, setPasses] = useState([]);
@@ -281,6 +282,7 @@ const BiddingPass = () => {
   const [currentPassPrice, setCurrentPassPrice] = useState(null);
   const userId = localStorage.getItem("userId");
   const [loading, setLoading] = useState(true);
+
   const parsePrice = (value) => {
     if (value == null) return null;
     if (typeof value === "number") return value;
@@ -350,9 +352,10 @@ const BiddingPass = () => {
         toast.success("Pass purchased successfully!");
         navigate("/artist/bidding-pass-table");
       } else {
-        toast.error(res?.message || "Failed to purchase pass");
+
+        toast.error(res?.data?.message || "Failed to purchase pass");
       }
-    } catch {
+    } catch(err) {
       toast.error("Something went wrong");
     }
   };

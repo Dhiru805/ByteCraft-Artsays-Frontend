@@ -133,7 +133,7 @@ const Explorebar = () => {
     }
   };
 
-   function fallbackCopyText(text) {
+  function fallbackCopyText(text) {
     const textarea = document.createElement("textarea");
     textarea.value = text;
     textarea.style.position = "fixed";
@@ -145,9 +145,10 @@ const Explorebar = () => {
     document.body.removeChild(textarea);
   }
 
-if(loading){
-  return ExploreSkeleton()
-}
+  console.log("postssssssssssssssssssss", posts);
+  if (loading) {
+    return ExploreSkeleton();
+  }
   return (
     <div className="lg:w-[56%] w-full max-w-6xl mx-auto flex flex-col lg:mt-6 lg:px-4 pt-2">
       {/* Masonry Grid */}
@@ -173,6 +174,22 @@ if(loading){
             <div className="absolute top-0 left-0 w-full bg-[#000000BF] bg-opacity-50 text-white flex justify-between items-center px-2 py-2.5 text-xs">
               <span className="font-medium sm:text-lg text-[15px]">
                 {art.user.username}
+                {art.user.verified?.length > 0 && (
+                  <img
+                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                      art.user.verified[art.user.verified.length - 1]
+                        ?.badgeImage
+                    }`}
+                    className="inline-block ml-1 w-5 h-5 object-contain"
+                    alt={
+                      art.user.verified[art.user.verified.length - 1]
+                        ?.badgeName || "badge"
+                    }
+                    title={
+                      art.user.verified[art.user.verified.length - 1]?.badgeName
+                    }
+                  />
+                )}
               </span>
               <div className="flex gap-2 items-center text-lg">
                 {/* <i className="ri-shopping-cart-2-fill text-[#FB5934]"></i> */}
@@ -287,7 +304,27 @@ if(loading){
             {/* Header */}
             <div className="flex justify-between items-center border-b pb-3 mb-2">
               <h2 className="text-lg font-semibold text-gray-800">
-                Report @{reportedUser?.username}
+                Report @{reportedUser?.username}{" "}
+                {reportedUser.verified?.length > 0 && (
+                  <img
+                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                      reportedUser.verified[
+                        reportedUser.verified.length - 1
+                      ]?.badgeImage
+                    }`}
+                    className="inline-block ml-1 w-5 h-5 object-contain"
+                    alt={
+                      reportedUser.verified[
+                        reportedUser.verified.length - 1
+                      ]?.badgeName || "badge"
+                    }
+                    title={
+                       reportedUser.verified[
+                        reportedUser.verified.length - 1
+                      ]?.badgeName
+                    }
+                  />
+                )}
               </h2>
               <button
                 onClick={() => setReportPopupOpen(false)}
@@ -338,7 +375,10 @@ if(loading){
 
               {/* Description */}
               {selectedReason && (
-                <div className="mt-1" style={{ maxHeight: "10vh", overflowY: "auto" }} >
+                <div
+                  className="mt-1"
+                  style={{ maxHeight: "10vh", overflowY: "auto" }}
+                >
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     {selectedReason === "Other"
                       ? "Describe the issue (required)"
@@ -470,4 +510,3 @@ const ExploreSkeleton = () => {
     </div>
   );
 };
-

@@ -46,15 +46,20 @@ const Post = () => {
   const navigate = useNavigate();
   const popupRef = useRef();
   const postRef = useRef();
-  const collabRef = useRef();
   const commentRef = useRef();
   const commentRefs = useRef({});
 
   const { userType } = useAuth();
-  const productsPost = posts.filter((pro) => pro.forProduct);
+  const productsPost = posts.filter(
+    (pro) => pro.forProduct && pro.profile.postProductsEnabled
+  );
+
   const normalPost = posts.filter((pro) => !pro.forProduct);
+
   const finalPost = [...productsPost, ...normalPost];
+
   const activePost = activeIndex !== null ? finalPost[activeIndex] : null;
+
   useEffect(() => {
     const shouldLockScroll = activePost || reportPopupOpen || tipPopupOpen;
 
@@ -76,12 +81,8 @@ const Post = () => {
       if (!isMobile) {
         if (postRef.current && !postRef.current.contains(event.target)) {
           setActiveIndex(null);
+          setShowMentions(false);
         }
-      }
-
-      if (collabRef.current && !collabRef.current.contains(event.current)) {
-        setShowCollaborators(false);
-        setAllCollaboraters([]);
       }
     }
 
@@ -97,10 +98,20 @@ const Post = () => {
         post?.user?.username
           ? `${post?.user?.username}`
           : `${post?.user?.name}_${post?.user?.lastName}_${post?.user?._id}`
-      }`,{state:{userId:post?.user?._id}}
+      }`,
+      { state: { userId: post?.user?._id } }
     );
   };
-
+const goProfile=(user)=>{
+   navigate(
+      `/artsays-community/profile/${
+        user?.username
+          ? `${user?.username}`
+          : `${user?.name}_${user?.lastName}_${user?._id}`
+      }`,
+      { state: { userId: user?._id } }
+    );
+}
   // Fetch profile
   useEffect(() => {
     try {
@@ -425,6 +436,17 @@ const Post = () => {
     }
   };
 
+  const navigateToProfile = (user) => {
+    navigate(
+      `/artsays-community/profile/${
+        user?.username
+          ? `${user?.username}`
+          : `${user?.name}_${user?.lastName}_${user?._id}`
+      }`,
+      { state: { userId: user?._id } }
+    );
+  };
+
   // const [reportPopupOpen, setReportPopupOpen] = useState(false);
   // const [reportSuccess, setReportSuccess] = useState(false);
 
@@ -530,7 +552,10 @@ const Post = () => {
                 {/* User Info */}
                 <div className="flex flex-col gap-6">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+                    <div
+                      className="flex items-center gap-2"
+                      onClick={() => navigateToProfile(activePost.user)}
+                    >
                       <img
                         src={
                           activePost.user?.profilePhoto
@@ -570,7 +595,10 @@ const Post = () => {
                       </div>
                     </div>
                     <button
-                      onClick={() => setActiveIndex(null)}
+                      onClick={() => {
+                        setActiveIndex(null);
+                        setShowMentions(false);
+                      }}
                       className="text-gray-600 hover:text-red-500 text-2xl font-bold"
                     >
                       X
@@ -593,8 +621,33 @@ const Post = () => {
                           className="w-8 h-8 rounded-full"
                         />
                         <div>
-                          <span className="text-sm font-semibold">
+                          <span
+                            className="text-sm font-semibold"
+                            onClick={() => navigateToProfile(comment.user)}
+                          >
                             {comment?.user?.username}
+                            {comment?.user?.verified?.length > 0 && (
+                              <img
+                                src={`${
+                                  process.env.REACT_APP_API_URL_FOR_IMAGE
+                                }${
+                                  comment?.user?.verified[
+                                    comment?.user?.verified.length - 1
+                                  ]?.badgeImage
+                                }`}
+                                className="inline-block ml-1 w-5 h-5 object-contain"
+                                alt={
+                                  comment?.user?.verified[
+                                    comment?.user?.verified.length - 1
+                                  ]?.badgeName || "badge"
+                                }
+                                title={
+                                  comment?.user?.verified[
+                                    comment?.user?.verified.length - 1
+                                  ]?.badgeName
+                                }
+                              />
+                            )}
                           </span>
                           <p className="text-xs">{comment?.text}</p>
                         </div>
@@ -666,7 +719,26 @@ const Post = () => {
                               className="w-8 h-8 rounded-full"
                             />
                             <span className="text-sm font-medium text-gray-800">
-                              {user.username}
+                              {user.username}{" "}
+                              {user.verified?.length > 0 && (
+                                <img
+                                  src={`${
+                                    process.env.REACT_APP_API_URL_FOR_IMAGE
+                                  }${
+                                    user.verified[user.verified.length - 1]
+                                      ?.badgeImage
+                                  }`}
+                                  className="inline-block ml-1 w-5 h-5 object-contain"
+                                  alt={
+                                    user.verified[user.verified.length - 1]
+                                      ?.badgeName || "badge"
+                                  }
+                                  title={
+                                    user.verified[user.verified.length - 1]
+                                      ?.badgeName
+                                  }
+                                />
+                              )}
                             </span>
                             <span className="text-xs text-gray-500">
                               {user.role}
@@ -710,7 +782,10 @@ const Post = () => {
             <div className="w-full flex items-center justify-between p-3 border-b">
               <i
                 className="ri-arrow-left-s-line text-2xl"
-                onClick={() => setActiveIndex(null)}
+                onClick={() => {
+                  setActiveIndex(null);
+                  setShowMentions(false);
+                }}
               ></i>
               <span className="font-semibold text-xl text-center">
                 Comments
@@ -719,7 +794,10 @@ const Post = () => {
 
             {/* caption with comments */}
             <div className="flex-1 flex flex-col overflow-y-auto">
-              <div className="flex gap-2 border-b p-3">
+              <div
+                className="flex gap-2 border-b p-3"
+                onClick={() => navigateToProfile(activePost.user)}
+              >
                 <img
                   src={
                     activePost.user?.profilePhoto
@@ -777,8 +855,35 @@ const Post = () => {
                           className="w-8 h-8 rounded-full"
                         />
                         <div>
-                          <span className="text-[15px] font-semibold block">
+                          <span
+                            className="text-[15px] font-semibold block"
+                            onClick={() => {
+                              navigateToProfile(comment?.user);
+                            }}
+                          >
                             {comment?.user?.username}
+                            {comment?.user?.verified?.length > 0 && (
+                              <img
+                                src={`${
+                                  process.env.REACT_APP_API_URL_FOR_IMAGE
+                                }${
+                                  comment?.user?.verified[
+                                    comment?.user?.verified.length - 1
+                                  ]?.badgeImage
+                                }`}
+                                className="inline-block ml-1 w-5 h-5 object-contain"
+                                alt={
+                                  comment?.user?.verified[
+                                    comment?.user?.verified.length - 1
+                                  ]?.badgeName || "badge"
+                                }
+                                title={
+                                  comment?.user?.verified[
+                                    comment?.user?.verified.length - 1
+                                  ]?.badgeName
+                                }
+                              />
+                            )}
                           </span>
                           <p className="text-xs break-words">{comment?.text}</p>
                         </div>
@@ -810,6 +915,22 @@ const Post = () => {
                     />
                     <span className="text-sm font-medium text-gray-800">
                       {user.username}
+                      {user?.verified?.length > 0 && (
+                        <img
+                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                            user?.verified[user?.verified.length - 1]
+                              ?.badgeImage
+                          }`}
+                          className="inline-block ml-1 w-5 h-5 object-contain"
+                          alt={
+                            user?.verified[user?.verified.length - 1]
+                              ?.badgeName || "badge"
+                          }
+                          title={
+                            user?.verified[user?.verified.length - 1]?.badgeName
+                          }
+                        />
+                      )}
                     </span>
                     <span className="text-xs text-gray-500">{user.role}</span>
                   </div>
@@ -938,6 +1059,23 @@ const Post = () => {
             <div className="flex justify-between items-center border-b pb-3 mb-4">
               <h2 className="text-lg font-semibold text-gray-800">
                 Report @{reportedUser?.username}
+                {reportedUser.verified?.length > 0 && (
+                  <img
+                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                      reportedUser.verified[reportedUser.verified.length - 1]
+                        ?.badgeImage
+                    }`}
+                    className="inline-block ml-1 w-5 h-5 object-contain"
+                    alt={
+                      reportedUser.verified[reportedUser.verified.length - 1]
+                        ?.badgeName || "badge"
+                    }
+                    title={
+                      reportedUser.verified[reportedUser.verified.length - 1]
+                        ?.badgeName
+                    }
+                  />
+                )}
               </h2>
               <button
                 onClick={() => setReportPopupOpen(false)}
@@ -1268,21 +1406,21 @@ const Post = () => {
                   </button>
                    </Link>
                 )} */}
-                 {post.forProduct && (
-                <button
-                  className="flex px-2 items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-red-500 text-white py-2 font-semibold buy-now"
-                  onClick={() => {
-                    if (!ensureBuyer()) return;
-                    navigate(
-                      `/my-account/check-out/${userId}?productId=${
-                        post?.forProduct
-                      }&quantity=${1}`
-                    );
-                  }}
-                >
-                  <Zap size={18} /> Buy Now
-                </button>
-                 )}
+                {post.forProduct && (
+                  <button
+                    className="flex px-2 items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-red-500 text-white py-2 font-semibold buy-now"
+                    onClick={() => {
+                      if (!ensureBuyer()) return;
+                      navigate(
+                        `/my-account/check-out/${userId}?productId=${
+                          post?.forProduct
+                        }&quantity=${1}`
+                      );
+                    }}
+                  >
+                    <Zap size={18} /> Buy Now
+                  </button>
+                )}
                 <button onClick={() => setMenuOpenId(post._id)}>
                   <i className="ri-more-fill text-lg"></i>
                 </button>
@@ -1325,6 +1463,7 @@ const Post = () => {
                           id: post.user._id,
                           postId: post._id,
                           username: post.user.username,
+                          verified: post.user.verified,
                         });
                         setReportPopupOpen(true);
                         setMenuOpenId(null);
@@ -1379,7 +1518,8 @@ const Post = () => {
                         post?.user?.username
                           ? `${post?.user?.username}`
                           : `${post?.user?.name}_${post?.user?.lastName}_${post?.user?._id}`
-                      }`,{state:{userId:post?.user?._id}}
+                      }`,
+                      { state: { userId: post?.user?._id } }
                     )
                   }
                 >
@@ -1541,7 +1681,10 @@ const Post = () => {
 
               {/* Description */}
               <div>
-                <p className="text-[12px] mt-0.5 font-semibold break-all whitespace-normal w-full">
+                <p
+                  className="text-[12px] mt-0.5 font-semibold break-all whitespace-normal w-full"
+                  onClick={() => navigateToProfile(post.user)}
+                >
                   {post.user.username}{" "}
                   {post.user.verified?.length > 0 && (
                     <img
@@ -1645,10 +1788,13 @@ const Post = () => {
         ))}
       </div>
       {showCollaborators && allCollaboraters && (
-        <div className="fixed inset-0 flex items-center justify-center  bg-[#000000]/40 backdrop-blur-sm z-50">
+        <div
+          className="fixed inset-0 flex items-center justify-center  bg-[#000000]/40 backdrop-blur-sm z-50"
+          onClick={() => setShowCollaborators(false)}
+        >
           <div
-            ref={collabRef}
             className="relative bg-white rounded-xl shadow-xl p-5 w-80 animate-fadeIn"
+            onClick={(e) =>e.stopPropagation() }
           >
             {/* ❌ Close (cross) button */}
             <button
@@ -1669,6 +1815,7 @@ const Post = () => {
                     <li
                       key={c._id}
                       className="p-2 border rounded-md flex items-center space-x-6"
+                      onClick={() => goProfile(c)}
                     >
                       <img
                         src={
@@ -1680,7 +1827,22 @@ const Post = () => {
                         className="w-10 h-10 rounded-full object-cover"
                       />
 
-                      <span className=" text-lg font-bold ">{c.username}</span>
+                      <span className=" text-lg font-bold ">
+                        {c.username}{" "}
+                        {c.verified?.length > 0 && (
+                          <img
+                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                              c.verified[c.verified.length - 1]?.badgeImage
+                            }`}
+                            className="inline-block ml-1 w-5 h-5 object-contain"
+                            alt={
+                              c.verified[c.verified.length - 1]?.badgeName ||
+                              "badge"
+                            }
+                            title={c.verified[c.verified.length - 1]?.badgeName}
+                          />
+                        )}
+                      </span>
                     </li>
                   );
                 })

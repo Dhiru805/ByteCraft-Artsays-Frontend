@@ -11,13 +11,13 @@ const Suggestion = () => {
   const [users, setUsers] = useState([]);
   const [activeAdIndex, setActiveAdIndex] = useState(0);
   // const [mainCategories, setMainCategories] = useState([]);
-const[loading,setLoading]=useState(true);
+  const [loading, setLoading] = useState(true);
   const [isNarrow, setIsNarrow] = useState(
     typeof window !== "undefined" ? window.innerWidth <= 1024 : false
   );
   useEffect(() => {
     const handleResize = () => setIsNarrow(window.innerWidth <= 1024);
-    window.addEventListener("resize", handleResize());
+    window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -28,7 +28,7 @@ const[loading,setLoading]=useState(true);
   ];
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
-const navigate=useNavigate();
+  const navigate = useNavigate();
   // helper: normalize array -> [ids]
   // const toIdArray = (arr) =>
   //   Array.isArray(arr)
@@ -106,8 +106,8 @@ const navigate=useNavigate();
         setUsers(res?.data?.suggestedUsers || []);
       } catch (error) {
         console.error("Error fetching suggested users:", error);
-      }finally{
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -118,100 +118,97 @@ const navigate=useNavigate();
       let response;
 
       if (isFollowing) {
-      response=  await postAPI(
+        response = await postAPI(
           `/api/social-media/unfollow/${targetUserId}`,
           { userId },
           true,
           true
         );
       } else {
-      response=  await postAPI(
+        response = await postAPI(
           `/api/social-media/follow/${targetUserId}`,
           { userId },
           true,
           true
         );
-
       }
       // ❗ Only update UI if backend confirmed success
-       if (response?.data?.status === 200 ) {
-      setUsers((prev) =>
-        prev.map((user) =>
-          user._id === targetUserId
-            ? {
-                ...user,
-                profile: {
-                  ...user.profile,
-                  followers: isFollowing
-                    ? user.profile.followers.filter((id) => id !== userId)
-                    : [...user.profile.followers, userId],
-                },
-              }
-            : user
-        )
-      );
-    } else {
-      console.warn("API did not respond with success, UI not updated.");
-    }
-
+      if (response?.data?.status === 200) {
+        setUsers((prev) =>
+          prev.map((user) =>
+            user._id === targetUserId
+              ? {
+                  ...user,
+                  profile: {
+                    ...user.profile,
+                    followers: isFollowing
+                      ? user.profile.followers.filter((id) => id !== userId)
+                      : [...user.profile.followers, userId],
+                  },
+                }
+              : user
+          )
+        );
+      } else {
+        console.warn("API did not respond with success, UI not updated.");
+      }
     } catch (error) {
       console.error("Error following/unfollowing user:", error);
     }
   };
 
-
-  const navigateToProfile=(user)=>{
-     navigate(
+  const navigateToProfile = (user) => {
+    navigate(
       `/artsays-community/profile/${
         user?.username
           ? `${user?.username}`
           : `${user?.name}_${user?.lastName}_${user?._id}`
-      }`,{state:{userId:user?._id}}
+      }`,
+      { state: { userId: user?._id } }
     );
-  }
-  if(loading)return <MediaSideSuggestionSkele/>
+  };
+  if (loading) return <MediaSideSuggestionSkele />;
   return (
     <div className="suggestion sticky top-0 overflow-y-auto lg:h-[90vh] hidden lg:flex lg:flex-col lg:w-[22%] px-2 mt-4">
       <h3 className="text-lg font-bold my-2 ml-1">Suggested for you</h3>
 
       {users.map((user, index) => {
         let isFollowing = Array.isArray(user?.profile?.followers)
-          ?  user.profile.followers.map(String).includes(String(userId))
+          ? user.profile.followers.map(String).includes(String(userId))
           : false;
 
         const displayUsername = isNarrow
-          ? (user?.username ? user.username.slice(0, 5) : "")
+          ? user?.username
+            ? user.username.slice(0, 5)
+            : ""
           : user?.username;
 
         return (
           <div
-            key={index} onClick={()=>navigateToProfile(user)}
+            key={index}
+            onClick={() => navigateToProfile(user)}
             className="suggested flex flex-col sm:flex-row p-1 items-start sm:items-center justify-between mb-2 gap-2 border-[#6E4E37]"
           >
             {/* Avatar + Name */}
             <div className="flex items-center gap-2">
               <img
-                src={user?.profilePhoto?
-                  `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}` : `${DEFAULT_PROFILE_IMAGE}`
+                src={
+                  user?.profilePhoto
+                    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`
+                    : `${DEFAULT_PROFILE_IMAGE}`
                 }
                 alt="avatar"
                 className="rounded-full w-9 h-9 object-cover"
               />
-              {/* <div className="flex flex-col">
-                <p className="text-sm font-semibold text-gray-800">
-                  {user.username}
+             
+              <div className="flex flex-col max-w-[80px] lg:max-w-fit">
+                <p className="text-sm font-semibold text-gray-800 truncate lg:truncate-none">
+                  {displayUsername?displayUsername?.length > 13
+                    ? displayUsername.slice(0, 13)
+                    : displayUsername:""}
                 </p>
                 <p className="text-[8px] text-gray-600">Suggested for you</p>
-              </div> */}
-              <div className="flex flex-col max-w-[80px] lg:max-w-fit">
-  <p className="text-sm font-semibold text-gray-800 truncate lg:truncate-none">
-    {displayUsername}
-  </p>
-  <p className="text-[8px] text-gray-600">
-    Suggested for you
-  </p>
-</div>
-
+              </div>
             </div>
 
             {/* Buttons */}
@@ -273,7 +270,7 @@ const navigate=useNavigate();
         <p className="w-full text-sm text-[#564138] p-1.5 rounded-xl border-2 border-[#4C3427] font-bold text-[#333]">
           The art drop you didn’t know you needed!!
         </p>
-{/* 
+        {/* 
         <button className="text-xs mt-2 sm:text-sm w-full font-semibold text-white bg-[#6F4D34] px-3 sm:px-4 py-2 rounded hover:bg-[#cc3e0e] transition">
           Explore Now
         </button> */}

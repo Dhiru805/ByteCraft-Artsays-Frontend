@@ -21,6 +21,8 @@ import { toast } from "react-toastify";
 import { FaCheckCircle } from "react-icons/fa";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 import { Helmet } from "react-helmet";
+import ConfirmationDialog from "../../Dashboard/ConfirmationDialog";
+import deleteAPI from "../../../api/deleteAPI";
 
 const user = {
   live: false,
@@ -157,17 +159,22 @@ const Profile = ({ shareprofileid }) => {
   const [tipSuccess, setTipSuccess] = useState(false);
   const [activeSection, setActiveSection] = useState(null);
   const [activeIndex, setActiveIndex] = useState(null);
+  const [reversedPosts, setReversedPosts] = useState([]);
   const productPosts =
     profile?.posts?.filter(
       (pro) => pro.forProduct && pro.forProduct?.status === "Approved"
     ) || [];
   const normalPosts = profile?.posts?.filter((pro) => !pro.forProduct) || [];
 
-  const reversedPosts =
-    [
-      ...(profile?.postProductsEnabled ? productPosts : []),
-      ...normalPosts,
-    ].reverse() || [];
+  useEffect(() => {
+    setReversedPosts(
+      [
+        ...(profile?.postProductsEnabled ? productPosts : []),
+        ...normalPosts,
+      ].reverse() || []
+    );
+  }, [profile]);
+  console.log("profileeeeeeeeeeeeeee", profile);
   const reversedSaved = profile?.saved?.slice().reverse() || [];
   const reversedCollaborated = collaboratedPosts?.reverse() || [];
   let activePost = null;
@@ -192,11 +199,14 @@ const Profile = ({ shareprofileid }) => {
   const [onItem, setOnItem] = useState(false);
   const [onTag, setOnTag] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [follow, setFollow] = useState(false);
+  const [follow, setFollow] = useState();
   const [suggestionOn, setSuggestionOn] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const [showFollowers, setShowFollowers] = useState(false);
   const [showFollowing, setShowFollowing] = useState(false);
+  const [selectedPostToDelete, setSelectedPostToDelete] = useState(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
   const isMobile = window.innerWidth < 1024; // Tailwind lg breakpoint
   useEffect(() => {
     if (location.state?.onItem === true) {
@@ -271,6 +281,7 @@ const Profile = ({ shareprofileid }) => {
 
   //  Take userId from state if available,or shared url otherwise fallback to localStorage
   const viewedUserId = shareprofileid || stateUserId || loggedInUserId;
+  const viewedUserType = profile?.userType;
 
   useEffect(() => {
     if (!viewedUserId || !userType) return;
@@ -396,6 +407,7 @@ const Profile = ({ shareprofileid }) => {
           false,
           true
         );
+
         if (res?.data?.profile) {
           setProfile(res.data.profile);
           setCommentSettings(
@@ -410,7 +422,7 @@ const Profile = ({ shareprofileid }) => {
           setCanComment(allowed);
           setFollow(
             res.data.profile.followers
-              .map((id) => id.toString())
+              .map((id) => id._id.toString())
               .includes(String(loggedInUserId))
           );
 
@@ -422,8 +434,6 @@ const Profile = ({ shareprofileid }) => {
           setIsMyProfile(String(loggedInUserId) === String(apiUserId));
 
           console.log(isMyProfile);
-
-          console.log(res.data.profile);
         }
       } catch (error) {
         console.error("Error fetching profile:", error);
@@ -468,6 +478,7 @@ const Profile = ({ shareprofileid }) => {
           true,
           true
         );
+        setFollow(false);
       } else {
         await postAPI(
           `/api/social-media/follow/${targetUserId}`,
@@ -475,9 +486,8 @@ const Profile = ({ shareprofileid }) => {
           true,
           true
         );
+        setFollow(true);
       }
-
-      setFollow(!follow);
     } catch (error) {
       console.error("Error following/unfollowing user:", error);
     }
@@ -495,7 +505,6 @@ const Profile = ({ shareprofileid }) => {
   };
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState(activePost?.comments || []);
-
   const handleAddComment = async (postId) => {
     if (!comment.trim()) return;
 
@@ -829,6 +838,31 @@ const Profile = ({ shareprofileid }) => {
     }
   };
 
+  const handleDeleteConfirmed = (post) => {
+    setActiveIndex(null);
+    setMenuOpenId(null);
+    setSelectedPostToDelete(post);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleteDialogOpen(false);
+    setSelectedPostToDelete(null);
+  };
+
+  const handlePostDelete = async (id) => {
+    try {
+      setReversedPosts((prev) => prev.filter((p) => p._id !== id));
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to delete bidding product."
+      );
+    } finally {
+      setIsDeleteDialogOpen(false);
+      setSelectedPostToDelete(null);
+    }
+  };
+
   // copy the profile link
   function fallbackCopyText(text) {
     const textarea = document.createElement("textarea");
@@ -842,15 +876,16 @@ const Profile = ({ shareprofileid }) => {
     document.body.removeChild(textarea);
   }
 
-const navigateToProfile=(profile)=>{
- Navigate(
+  const navigateToProfile = (profile) => {
+    Navigate(
       `/artsays-community/profile/${
         profile?.username
           ? `${profile?.username}`
           : `${profile?.name}_${profile?.lastName}_${profile._id}`
-      }`,{state:{userId:profile?._id}}
+      }`,
+      { state: { userId: profile?._id } }
     );
-}
+  };
 
   if (loading) {
     return ProfileSkeleton();
@@ -1054,7 +1089,14 @@ const navigateToProfile=(profile)=>{
                             {activePost.isSaved ? "Unsave" : "Save"}
                           </li>
                           <hr className="w-[75%] border-t border-gray-800" />
-
+                          <li
+                            className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
+                            onClick={() =>
+                              handleDeleteConfirmed(activePost?._id)
+                            }
+                          >
+                            Delete
+                          </li>
                           <hr className="w-[75%] border-t border-gray-800" />
 
                           {/* Cancel */}
@@ -1149,12 +1191,34 @@ const navigateToProfile=(profile)=>{
                         />
                         <div>
                           <div className="flex items-center gap-1">
-                            <span className="text-sm font-semibold">
+                            <span
+                              className="text-sm font-semibold"
+                              onClick={() => navigateToProfile(comment.user)}
+                            >
                               {comment?.user?.username}
+                              {comment.user.verified?.length > 0 && (
+                                <img
+                                  src={`${
+                                    process.env.REACT_APP_API_URL_FOR_IMAGE
+                                  }${
+                                    comment?.user?.verified[
+                                      comment?.user?.verified.length - 1
+                                    ]?.badgeImage
+                                  }`}
+                                  className="inline-block ml-1 w-5 h-5 object-contain"
+                                  alt={
+                                    comment?.user?.verified[
+                                      comment?.user?.verified.length - 1
+                                    ]?.badgeName || "badge"
+                                  }
+                                  title={
+                                    comment?.user?.verified[
+                                      comment?.user?.verified.length - 1
+                                    ]?.badgeName
+                                  }
+                                />
+                              )}
                             </span>
-                            {comment?.user?.verified && (
-                              <i className="ri-verified-badge-fill text-blue-500 text-xs"></i>
-                            )}
                           </div>
                           <p className="text-sm">{comment?.text}</p>
                         </div>
@@ -1272,6 +1336,25 @@ const navigateToProfile=(profile)=>{
                             />
                             <span className="text-sm font-medium text-gray-800">
                               {user.username}
+                              {user.verified?.length > 0 && (
+                                <img
+                                  src={`${
+                                    process.env.REACT_APP_API_URL_FOR_IMAGE
+                                  }${
+                                    user.verified[user.verified.length - 1]
+                                      ?.badgeImage
+                                  }`}
+                                  className="inline-block ml-1 w-5 h-5 object-contain"
+                                  alt={
+                                    user.verified[user.verified.length - 1]
+                                      ?.badgeName || "badge"
+                                  }
+                                  title={
+                                    user.verified[user.verified.length - 1]
+                                      ?.badgeName
+                                  }
+                                />
+                              )}
                             </span>
                             <span className="text-xs text-gray-500">
                               {user.role}
@@ -1330,7 +1413,6 @@ const navigateToProfile=(profile)=>{
               onClick={() => setComentPanel(false)}
             ></i>
             <span className="font-semibold text-xl text-center">Comments</span>
-            <div></div>
           </div>
 
           {/* caption with comments */}
@@ -1347,7 +1429,27 @@ const navigateToProfile=(profile)=>{
               />
               <div className="">
                 <span className="font-semibold text-[16px] block">
-                  {activePost.user?.username}
+                  {activePost.user?.username}{" "}
+                  {activePost.user.verified?.length > 0 && (
+                    <img
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                        activePost.user.verified[
+                          activePost.user.verified.length - 1
+                        ]?.badgeImage
+                      }`}
+                      className="inline-block ml-1 w-5 h-5 object-contain"
+                      alt={
+                        activePost.user.verified[
+                          activePost.user.verified.length - 1
+                        ]?.badgeName || "badge"
+                      }
+                      title={
+                        activePost.user.verified[
+                          activePost.user.verified.length - 1
+                        ]?.badgeName
+                      }
+                    />
+                  )}
                 </span>
                 <p className="whitespace-pre-wrap break-words break-all text-sm">
                   {activePost.caption}
@@ -1373,8 +1475,33 @@ const navigateToProfile=(profile)=>{
                         className="w-8 h-8 rounded-full"
                       />
                       <div>
-                        <span className="text-[15px] font-semibold block">
-                          {comment?.user?.username}
+                        <span
+                          className="text-[15px] font-semibold block"
+                          onClick={() => {
+                            navigateToProfile(comment?.user);
+                          }}
+                        >
+                          {comment?.user?.username}{" "}
+                          {comment?.user?.verified?.length > 0 && (
+                            <img
+                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                                comment?.user?.verified[
+                                  comment?.user?.verified.length - 1
+                                ]?.badgeImage
+                              }`}
+                              className="inline-block ml-1 w-5 h-5 object-contain"
+                              alt={
+                                comment?.user?.verified[
+                                  comment?.user?.verified.length - 1
+                                ]?.badgeName || "badge"
+                              }
+                              title={
+                                comment?.user?.verified[
+                                  comment?.user?.verified.length - 1
+                                ]?.badgeName
+                              }
+                            />
+                          )}
                         </span>
                         <p className="text-xs break-words">{comment?.text}</p>
                       </div>
@@ -1409,6 +1536,22 @@ const navigateToProfile=(profile)=>{
                       />
                       <span className="text-sm font-medium text-gray-800">
                         {user.username}
+                        {user.verified?.length > 0 && (
+                          <img
+                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                              user.verified[user.verified.length - 1]
+                                ?.badgeImage
+                            }`}
+                            className="inline-block ml-1 w-5 h-5 object-contain"
+                            alt={
+                              user.verified[user.verified.length - 1]
+                                ?.badgeName || "badge"
+                            }
+                            title={
+                              user.verified[user.verified.length - 1]?.badgeName
+                            }
+                          />
+                        )}
                       </span>
                       <span className="text-xs text-gray-500">{user.role}</span>
                     </div>
@@ -1449,6 +1592,23 @@ const navigateToProfile=(profile)=>{
             <div className="flex justify-between items-center border-b pb-3 mb-4">
               <h2 className="text-lg font-semibold text-gray-800">
                 Report @{reportedUser?.username}
+                {reportedUser.verified?.length > 0 && (
+                  <img
+                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                      reportedUser.verified[reportedUser.verified.length - 1]
+                        ?.badgeImage
+                    }`}
+                    className="inline-block ml-1 w-5 h-5 object-contain"
+                    alt={
+                      reportedUser.verified[reportedUser.verified.length - 1]
+                        ?.badgeName || "badge"
+                    }
+                    title={
+                      reportedUser.verified[reportedUser.verified.length - 1]
+                        ?.badgeName
+                    }
+                  />
+                )}
               </h2>
               <button
                 onClick={() => setReportPopupOpen(false)}
@@ -1575,14 +1735,52 @@ const navigateToProfile=(profile)=>{
               Thanks for letting us know
             </h3>
             <p className="text-gray-600 text-sm mt-1">
-              We’ve received your report about @{reportedUser.username}.
+              We’ve received your report about @{reportedUser.username}{" "}
+              {reportedUser.verified?.length > 0 && (
+                <img
+                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                    reportedUser.verified[reportedUser.verified.length - 1]
+                      ?.badgeImage
+                  }`}
+                  className="inline-block ml-1 w-5 h-5 object-contain"
+                  alt={
+                    reportedUser.verified[reportedUser.verified.length - 1]
+                      ?.badgeName || "badge"
+                  }
+                  title={
+                    reportedUser.verified[reportedUser.verified.length - 1]
+                      ?.badgeName
+                  }
+                />
+              )}
+              .
             </p>
 
             {/* Block Option */}
             <div className="mt-4 border-t pt-4">
               <p className="text-sm text-gray-700 mb-2">
                 Do you also want to block{" "}
-                <span className="font-semibold">@{reportedUser.username}</span>?
+                <span className="font-semibold">
+                  @{reportedUser.username}{" "}
+                  {reportedUser.verified?.length > 0 && (
+                    <img
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                        reportedUser.verified[reportedUser.verified.length - 1]
+                          ?.badgeImage
+                      }`}
+                      className="inline-block ml-1 w-5 h-5 object-contain"
+                      alt={
+                        reportedUser.verified[reportedUser.verified.length - 1]
+                          ?.badgeName || "badge"
+                      }
+                      title={
+                        reportedUser.verified[reportedUser.verified.length - 1]
+                          ?.badgeName
+                      }
+                    />
+                  )}
+                </span>
+                ?
               </p>
               <div className="flex justify-center gap-3">
                 <button
@@ -1981,19 +2179,19 @@ const navigateToProfile=(profile)=>{
                   Posts
                 </p>
                 <p
-                  className="text-[#6E4E37] font-medium"
+                  className="text-[#6E4E37] font-medium cursor-pointer"
                   onClick={() => setShowFollowers(true)}
                 >
-                  <span className="font-bold text-[#48372D]">
+                  <span className="font-bold text-[#48372D] ">
                     {profile.followersCount}
                   </span>{" "}
                   Followers
                 </p>
                 <p
-                  className="text-[#6E4E37] font-medium"
+                  className="text-[#6E4E37] font-medium cursor-pointer"
                   onClick={() => setShowFollowing(true)}
                 >
-                  <span className="font-bold text-[#48372D]">
+                  <span className="font-bold text-[#48372D] ">
                     {profile.followingCount}
                   </span>{" "}
                   Following
@@ -2325,7 +2523,7 @@ const navigateToProfile=(profile)=>{
 
         {/* Divider Tabs */}
         <div className="flex justify-around items-center sm:mb-1 mx-1">
-          <button
+          {viewedUserType !== "Buyer"&&<button
             onClick={() => {
               setOnPosts(true);
               setOnSave(false);
@@ -2337,7 +2535,7 @@ const navigateToProfile=(profile)=>{
             } p-3`}
           >
             <BsGrid3X3 className="text-2xl" />
-          </button>
+          </button>}
           {isMyProfile && (
             <button
               onClick={() => {
@@ -2353,7 +2551,7 @@ const navigateToProfile=(profile)=>{
               <FaRegBookmark className="text-2xl" />
             </button>
           )}
-          {userType !== "Buyer" && profile?.postProductsEnabled && (
+          {viewedUserType !== "Buyer" && profile?.postProductsEnabled && (
             <button
               onClick={() => {
                 setOnPosts(false);
@@ -2426,7 +2624,7 @@ const navigateToProfile=(profile)=>{
         {/* Saved */}
         {onSave && (
           <div className="grid grid-cols-3 gap-1 sm:gap-4 w-full relative">
-            {profile.saved
+            {profile?.saved
               ?.slice()
               .reverse()
               .map((post, index) => (
@@ -2436,13 +2634,13 @@ const navigateToProfile=(profile)=>{
                       setActiveIndex(index);
                       setActiveSection("saved");
                     }}
-                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
+                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post?.images[0]}`}
                     alt={`post-${index}`}
                     className="h-[120px] sm:h-[240px] sm:w-full object-cover rounded-md cursor-pointer"
                   />
 
                   {/* Multi-image icon */}
-                  {post.images.length > 1 && (
+                  {post?.images?.length > 1 && (
                     <div className="absolute top-2 right-2 bg-black/60 p-1 rounded">
                       <i className="ri-checkbox-multiple-blank-line text-gray-100 text-lg"></i>
                     </div>
@@ -2452,7 +2650,7 @@ const navigateToProfile=(profile)=>{
           </div>
         )}
         {/* Selling Items */}
-        {userType !== "Buyer" && onItem && (
+        {onItem && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
             {products.length > 0 ? (
               products.map((item, index) => (
@@ -2574,8 +2772,8 @@ const navigateToProfile=(profile)=>{
             onClick={() => setShowFollowers(false)}
           >
             <div
-              onClick={(e)=>e.stopPropagation()}
-              className="relative bg-white rounded-xl shadow-xl p-5 w-80 animate-fadeIn"
+              onClick={(e) => e.stopPropagation()}
+              className="relative bg-white rounded-xl shadow-xl p-5 w-[480px] animate-fadeIn"
             >
               {/* ❌ Close (cross) button */}
               <button
@@ -2585,7 +2783,7 @@ const navigateToProfile=(profile)=>{
                 <i className="ri-close-line text-black"></i>{" "}
               </button>
 
-              <h3 className="text-lg font-semibold mb-4 text-center" >
+              <h3 className="text-lg font-semibold mb-4 text-center">
                 All Followers
               </h3>
 
@@ -2594,8 +2792,11 @@ const navigateToProfile=(profile)=>{
                   return (
                     <li
                       key={c._id}
-                      className="p-2 border rounded-md flex items-center space-x-6"
-                      onClick={()=>{navigateToProfile(c);setShowFollowers(false);}}
+                      className="p-2 w-90 border rounded-md flex items-center space-x-6"
+                      onClick={() => {
+                        navigateToProfile(c);
+                        setShowFollowers(false);
+                      }}
                     >
                       <img
                         src={
@@ -2608,9 +2809,24 @@ const navigateToProfile=(profile)=>{
                       />
 
                       <span className=" text-lg font-bold ">
-                        {c.username
-                          ? `${c.username}`
-                          : `${c.name}_${c.lastName}`}
+                        {c?.username
+                          ? `${c?.username}`
+                          : `${c?.name}_${c?.lastName}`}{" "}
+                        {c?.verified?.length > 0 && (
+                          <img
+                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                              c?.verified[c?.verified.length - 1]?.badgeImage
+                            }`}
+                            className="inline-block ml-1 w-5 h-5 object-contain"
+                            alt={
+                              c?.verified[c?.verified.length - 1]?.badgeName ||
+                              "badge"
+                            }
+                            title={
+                              c?.verified[c?.verified.length - 1]?.badgeName
+                            }
+                          />
+                        )}
                       </span>
                     </li>
                   );
@@ -2627,8 +2843,8 @@ const navigateToProfile=(profile)=>{
             onClick={() => setShowFollowing(false)}
           >
             <div
-              onClick={(e)=>e.stopPropagation()}
-              className="relative bg-white rounded-xl shadow-xl p-5 w-80 animate-fadeIn"
+              onClick={(e) => e.stopPropagation()}
+              className="relative bg-white rounded-xl shadow-xl p-5 w-[480px] animate-fadeIn"
             >
               {/* ❌ Close (cross) button */}
               <button
@@ -2638,7 +2854,7 @@ const navigateToProfile=(profile)=>{
                 <i className="ri-close-line text-black"></i>{" "}
               </button>
 
-              <h3 className="text-lg font-semibold mb-4 text-center" >
+              <h3 className="text-lg font-semibold mb-4 text-center">
                 All Followings
               </h3>
 
@@ -2648,22 +2864,40 @@ const navigateToProfile=(profile)=>{
                     <li
                       key={c._id}
                       className="p-2 border rounded-md flex items-center space-x-6"
-                      onClick={()=>{navigateToProfile(c);setShowFollowers(false);}}
+                      onClick={() => {
+                        navigateToProfile(c);
+                        setShowFollowing(false);
+                      }}
                     >
                       <img
                         src={
                           c?.profilePhoto
-                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${c.profilePhoto}`
+                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${c?.profilePhoto}`
                             : DEFAULT_PROFILE_IMAGE
                         }
-                        alt={c.username || "user"}
+                        alt={c?.username || "user"}
                         className="w-10 h-10 rounded-full object-cover"
                       />
 
                       <span className=" text-lg font-bold ">
-                        {c.username
-                          ? `${c.username}`
-                          : `${c.name}_${c.lastName}`}
+                        {c?.username
+                          ? `${c?.username}`
+                          : `${c?.name}_${c?.lastName}`}{" "}
+                        {c?.verified?.length > 0 && (
+                          <img
+                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                              c?.verified[c?.verified.length - 1]?.badgeImage
+                            }`}
+                            className="inline-block ml-1 w-5 h-5 object-contain"
+                            alt={
+                              c?.verified[c?.verified.length - 1]?.badgeName ||
+                              "badge"
+                            }
+                            title={
+                              c?.verified[c?.verified.length - 1]?.badgeName
+                            }
+                          />
+                        )}
                       </span>
                     </li>
                   );
@@ -2673,6 +2907,14 @@ const navigateToProfile=(profile)=>{
           </div>
         )}
       </div>
+      {isDeleteDialogOpen && (
+        <ConfirmationDialog
+          onClose={handleDeleteCancel}
+          deleteType="deletePost"
+          id={selectedPostToDelete}
+          onDeleted={handlePostDelete}
+        />
+      )}
     </div>
   );
 };
