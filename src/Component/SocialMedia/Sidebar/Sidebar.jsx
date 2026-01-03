@@ -17,6 +17,7 @@ const Sidebar = () => {
   const username = localStorage.getItem("username");
   const firstName = localStorage.getItem("firstName");
   const lastName = localStorage.getItem("lastName");
+  const userType=localStorage.getItem("userType");
   const [loading, setLoading] = useState(true);
 
   const hasValidUsername =
@@ -59,12 +60,17 @@ const Sidebar = () => {
       label: "Notification",
       link: "/artsays-community/notification",
     },
-    {
-      key: "create",
-      icon: "plus-square",
-      label: "Create",
-      link: "/artsays-community/create-post",
-    },
+    
+  ...(userType !== "Buyer"
+    ? [
+        {
+          key: "create",
+          icon: "plus-square",
+          label: "Create",
+          link: "/artsays-community/create-post",
+        },
+      ]
+    : []),
     {
       key: "live",
       icon: "broadcast-pin",

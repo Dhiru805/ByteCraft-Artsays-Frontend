@@ -250,7 +250,7 @@ const ApprovedProduct = () => {
                                                         <i className="fa fa-eye"></i>
                                                     </button>
 
-                          <button
+                          {/* <button
                             className="btn btn-sm btn-outline-danger"
                             title="Bidding Pass"
                             onClick={() =>
@@ -258,7 +258,7 @@ const ApprovedProduct = () => {
                             }
                           >
                             <i className="fas fa-ticket-alt"></i>
-                          </button>
+                          </button> */}
                           <button
                             type="button"
                             className="btn btn-outline-danger btn-sm ml-2"

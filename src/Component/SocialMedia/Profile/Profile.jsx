@@ -20,6 +20,8 @@ import { toast } from "react-toastify";
 import { FaCheckCircle } from "react-icons/fa";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 import { Helmet } from "react-helmet";
+import ConfirmationDialog from "../../Dashboard/ConfirmationDialog";
+import deleteAPI from "../../../api/deleteAPI";
 
 
 const user = {
@@ -158,6 +160,7 @@ const Profile = ({ shareprofileid }) => {
   const [tipSuccess, setTipSuccess] = useState(false);
   const [activeSection, setActiveSection] = useState(null);
   const [activeIndex, setActiveIndex] = useState(null);
+  const [reversedPosts, setReversedPosts] = useState([]);
   const productPosts =
     profile?.posts?.filter(
       (pro) => pro.forProduct && pro.forProduct?.status === "Approved"
@@ -180,6 +183,15 @@ const Profile = ({ shareprofileid }) => {
       ...(profile?.postProductsEnabled ? productPosts : []),
       ...normalPosts,
     ].reverse() || [];
+  useEffect(() => {
+    setReversedPosts(
+      [
+        ...(profile?.postProductsEnabled ? productPosts : []),
+        ...normalPosts,
+      ].reverse() || []
+    );
+  }, [profile]);
+  console.log("profileeeeeeeeeeeeeee", profile);
   const reversedSaved = profile?.saved?.slice().reverse() || [];
   const reversedCollaborated = collaboratedPosts?.reverse() || [];
   let activePost = null;
@@ -204,11 +216,14 @@ const Profile = ({ shareprofileid }) => {
   const [onItem, setOnItem] = useState(false);
   const [onTag, setOnTag] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [follow, setFollow] = useState(false);
+  const [follow, setFollow] = useState();
   const [suggestionOn, setSuggestionOn] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const [showFollowers, setShowFollowers] = useState(false);
   const [showFollowing, setShowFollowing] = useState(false);
+  const [selectedPostToDelete, setSelectedPostToDelete] = useState(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
   const isMobile = window.innerWidth < 1024; // Tailwind lg breakpoint
   useEffect(() => {
     if (location.state?.onItem === true) {
@@ -283,6 +298,7 @@ const Profile = ({ shareprofileid }) => {
 
   //  Take userId from state if available,or shared url otherwise fallback to localStorage
   const viewedUserId = shareprofileid || stateUserId || loggedInUserId;
+  const viewedUserType = profile?.userType;
 
   useEffect(() => {
     if (!viewedUserId || !userType) return;
@@ -408,6 +424,7 @@ const Profile = ({ shareprofileid }) => {
           false,
           true
         );
+
         if (res?.data?.profile) {
           setProfile(res.data.profile);
           setCommentSettings(
@@ -422,7 +439,7 @@ const Profile = ({ shareprofileid }) => {
           setCanComment(allowed);
           setFollow(
             res.data.profile.followers
-              .map((id) => id.toString())
+              .map((id) => id._id.toString())
               .includes(String(loggedInUserId))
           );
 
@@ -434,8 +451,6 @@ const Profile = ({ shareprofileid }) => {
           setIsMyProfile(String(loggedInUserId) === String(apiUserId));
 
           console.log(isMyProfile);
-
-          console.log(res.data.profile);
         }
       } catch (error) {
         console.error("Error fetching profile:", error);
@@ -480,6 +495,7 @@ const Profile = ({ shareprofileid }) => {
           true,
           true
         );
+        setFollow(false);
       } else {
         await postAPI(
           `/api/social-media/follow/${targetUserId}`,
@@ -487,9 +503,8 @@ const Profile = ({ shareprofileid }) => {
           true,
           true
         );
+        setFollow(true);
       }
-
-      setFollow(!follow);
     } catch (error) {
       console.error("Error following/unfollowing user:", error);
     }
@@ -507,7 +522,6 @@ const Profile = ({ shareprofileid }) => {
   };
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState(activePost?.comments || []);
-
   const handleAddComment = async (postId) => {
     if (!comment.trim()) return;
 
@@ -838,6 +852,31 @@ const Profile = ({ shareprofileid }) => {
     } catch (err) {
       console.error("Error sending tip:", err);
       setError("Something went wrong. Try again.");
+    }
+  };
+
+  const handleDeleteConfirmed = (post) => {
+    setActiveIndex(null);
+    setMenuOpenId(null);
+    setSelectedPostToDelete(post);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleteDialogOpen(false);
+    setSelectedPostToDelete(null);
+  };
+
+  const handlePostDelete = async (id) => {
+    try {
+      setReversedPosts((prev) => prev.filter((p) => p._id !== id));
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to delete bidding product."
+      );
+    } finally {
+      setIsDeleteDialogOpen(false);
+      setSelectedPostToDelete(null);
     }
   };
 
@@ -1199,6 +1238,104 @@ const Profile = ({ shareprofileid }) => {
                       </div>
                     </div>
                   </div>
+                  <button onClick={() => handleMoreClick(activePost._id)}>
+                    <i className="ri-more-fill font-semibold text-2xl text-[#000000]"></i>
+                  </button>
+                  {menuOpenId &&
+                    (activePost.user._id === loggedInUserId ? (
+                      <>
+                        <ul
+                          ref={popupref1}
+                          className="absolute flex flex-col rounded-xl items-center justify-between right-1 top-12 mt-2 w-40 bg-gray-200 border shadow-lg z-10"
+                        >
+                          <li
+                            className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
+                            onClick={() => handleSave(activePost?._id)}
+                          >
+                            {activePost.isSaved ? "Unsave" : "Save"}
+                          </li>
+                          <hr className="w-[75%] border-t border-gray-800" />
+                          <li
+                            className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
+                            onClick={() =>
+                              handleDeleteConfirmed(activePost?._id)
+                            }
+                          >
+                            Delete
+                          </li>
+                          <hr className="w-[75%] border-t border-gray-800" />
+
+                          {/* Cancel */}
+                          <li
+                            className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400 text-red-500 rounded-b-xl"
+                            onClick={() => setMenuOpenId(null)}
+                          >
+                            Cancel
+                          </li>
+                        </ul>
+                      </>
+                    ) : (
+                      <>
+                        <ul
+                          ref={popupref2}
+                          className="absolute flex flex-col rounded-xl items-center justify-between right-1 top-12 mt-2 w-40 bg-gray-200 border shadow-lg z-10"
+                        >
+                          {/* Pay Tip */}
+                          <div className="w-full flex flex-col items-center justify-center">
+                            <li
+                              className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400 rounded-t-xl"
+                              onClick={() => {
+                                setTipUser({
+                                  id: activePost._id,
+                                  receiverId: activePost.user._id,
+                                });
+                                setTipPopupOpen(true);
+                                setMenuOpenId(null);
+                              }}
+                            >
+                              Pay Tip
+                            </li>
+                            <hr className="w-[75%] border-t border-gray-800" />
+                          </div>
+
+                          {/* Report */}
+                          <div className="w-full flex flex-col items-center justify-center">
+                            <li
+                              className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
+                              onClick={() => {
+                                setReportedUser({
+                                  id: activePost.user._id,
+                                  postId: activePost._id,
+                                  username: activePost.user.username,
+                                });
+                                setReportPopupOpen(true);
+                                setMenuOpenId(null);
+                              }}
+                            >
+                              Report
+                            </li>
+
+                            <hr className="w-[75%] border-t border-gray-800" />
+                          </div>
+
+                          <li
+                            className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400"
+                            onClick={() => handleSave(activePost?._id)}
+                          >
+                            {activePost.isSaved ? "Unsave" : "Save"}
+                          </li>
+                          <hr className="w-[75%] border-t border-gray-800" />
+
+                          {/* Cancel */}
+                          <li
+                            className="w-full px-3 py-2 flex items-center justify-center cursor-pointer hover:bg-gray-400 text-red-500 rounded-b-xl"
+                            onClick={() => setMenuOpenId(null)}
+                          >
+                            Cancel
+                          </li>
+                        </ul>
+                      </>
+                    ))}
                 </div>
               </div>
               {/* Comments */}
@@ -1220,20 +1357,30 @@ const Profile = ({ shareprofileid }) => {
                         />
                         <div>
                           <div className="flex items-center gap-1">
-                            <span className="font-semibold text-sm text-[#000000]">
+                            <span
+                              className="text-sm font-semibold"
+                              onClick={() => navigateToProfile(comment.user)}
+                            >
                               {comment?.user?.username}
-
-                              {comment?.user?.verified?.length > 0 && (
+                              {comment.user.verified?.length > 0 && (
                                 <img
-                                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]?.badgeImage
-                                    }`}
+                                  src={`${
+                                    process.env.REACT_APP_API_URL_FOR_IMAGE
+                                  }${
+                                    comment?.user?.verified[
+                                      comment?.user?.verified.length - 1
+                                    ]?.badgeImage
+                                  }`}
                                   className="inline-block ml-1 w-5 h-5 object-contain"
                                   alt={
-                                    comment.user.verified[comment.user.verified.length - 1]?.badgeName ||
-                                    "badge"
+                                    comment?.user?.verified[
+                                      comment?.user?.verified.length - 1
+                                    ]?.badgeName || "badge"
                                   }
                                   title={
-                                    comment.user.verified[comment.user.verified.length - 1]?.badgeName
+                                    comment?.user?.verified[
+                                      comment?.user?.verified.length - 1
+                                    ]?.badgeName
                                   }
                                 />
                               )}
@@ -1356,6 +1503,25 @@ const Profile = ({ shareprofileid }) => {
                             />
                             <span className="text-sm font-medium text-gray-800">
                               {user.username}
+                              {user.verified?.length > 0 && (
+                                <img
+                                  src={`${
+                                    process.env.REACT_APP_API_URL_FOR_IMAGE
+                                  }${
+                                    user.verified[user.verified.length - 1]
+                                      ?.badgeImage
+                                  }`}
+                                  className="inline-block ml-1 w-5 h-5 object-contain"
+                                  alt={
+                                    user.verified[user.verified.length - 1]
+                                      ?.badgeName || "badge"
+                                  }
+                                  title={
+                                    user.verified[user.verified.length - 1]
+                                      ?.badgeName
+                                  }
+                                />
+                              )}
                             </span>
                             <span className="text-xs text-gray-500">
                               {user.role}
@@ -1414,7 +1580,6 @@ const Profile = ({ shareprofileid }) => {
               onClick={() => setComentPanel(false)}
             ></i>
             <span className="font-semibold text-xl text-center">Comments</span>
-            <div></div>
           </div>
 
           {/* caption with comments */}
@@ -1431,7 +1596,27 @@ const Profile = ({ shareprofileid }) => {
               />
               <div className="">
                 <span className="font-semibold text-[16px] block">
-                  {activePost.user?.username}
+                  {activePost.user?.username}{" "}
+                  {activePost.user.verified?.length > 0 && (
+                    <img
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                        activePost.user.verified[
+                          activePost.user.verified.length - 1
+                        ]?.badgeImage
+                      }`}
+                      className="inline-block ml-1 w-5 h-5 object-contain"
+                      alt={
+                        activePost.user.verified[
+                          activePost.user.verified.length - 1
+                        ]?.badgeName || "badge"
+                      }
+                      title={
+                        activePost.user.verified[
+                          activePost.user.verified.length - 1
+                        ]?.badgeName
+                      }
+                    />
+                  )}
                 </span>
                 <p className="whitespace-pre-wrap break-words break-all text-sm">
                   {activePost.caption}
@@ -1457,8 +1642,33 @@ const Profile = ({ shareprofileid }) => {
                         className="w-8 h-8 rounded-full"
                       />
                       <div>
-                        <span className="text-[15px] font-semibold block">
-                          {comment?.user?.username}
+                        <span
+                          className="text-[15px] font-semibold block"
+                          onClick={() => {
+                            navigateToProfile(comment?.user);
+                          }}
+                        >
+                          {comment?.user?.username}{" "}
+                          {comment?.user?.verified?.length > 0 && (
+                            <img
+                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                                comment?.user?.verified[
+                                  comment?.user?.verified.length - 1
+                                ]?.badgeImage
+                              }`}
+                              className="inline-block ml-1 w-5 h-5 object-contain"
+                              alt={
+                                comment?.user?.verified[
+                                  comment?.user?.verified.length - 1
+                                ]?.badgeName || "badge"
+                              }
+                              title={
+                                comment?.user?.verified[
+                                  comment?.user?.verified.length - 1
+                                ]?.badgeName
+                              }
+                            />
+                          )}
                         </span>
                         <p className="text-xs break-words">{comment?.text}</p>
                       </div>
@@ -1493,6 +1703,22 @@ const Profile = ({ shareprofileid }) => {
                       />
                       <span className="text-sm font-medium text-gray-800">
                         {user.username}
+                        {user.verified?.length > 0 && (
+                          <img
+                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                              user.verified[user.verified.length - 1]
+                                ?.badgeImage
+                            }`}
+                            className="inline-block ml-1 w-5 h-5 object-contain"
+                            alt={
+                              user.verified[user.verified.length - 1]
+                                ?.badgeName || "badge"
+                            }
+                            title={
+                              user.verified[user.verified.length - 1]?.badgeName
+                            }
+                          />
+                        )}
                       </span>
                       <span className="text-xs text-gray-500">{user.role}</span>
                     </div>
@@ -1533,6 +1759,23 @@ const Profile = ({ shareprofileid }) => {
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-800">
                 Report @{reportedUser?.username}
+                {reportedUser.verified?.length > 0 && (
+                  <img
+                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                      reportedUser.verified[reportedUser.verified.length - 1]
+                        ?.badgeImage
+                    }`}
+                    className="inline-block ml-1 w-5 h-5 object-contain"
+                    alt={
+                      reportedUser.verified[reportedUser.verified.length - 1]
+                        ?.badgeName || "badge"
+                    }
+                    title={
+                      reportedUser.verified[reportedUser.verified.length - 1]
+                        ?.badgeName
+                    }
+                  />
+                )}
               </h2>
               <button
                 onClick={() => setReportPopupOpen(false)}
@@ -1657,14 +1900,52 @@ const Profile = ({ shareprofileid }) => {
               Thanks for letting us know
             </h3>
             <p className="text-gray-600 text-sm mt-1">
-              We’ve received your report about @{reportedUser.username}.
+              We’ve received your report about @{reportedUser.username}{" "}
+              {reportedUser.verified?.length > 0 && (
+                <img
+                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                    reportedUser.verified[reportedUser.verified.length - 1]
+                      ?.badgeImage
+                  }`}
+                  className="inline-block ml-1 w-5 h-5 object-contain"
+                  alt={
+                    reportedUser.verified[reportedUser.verified.length - 1]
+                      ?.badgeName || "badge"
+                  }
+                  title={
+                    reportedUser.verified[reportedUser.verified.length - 1]
+                      ?.badgeName
+                  }
+                />
+              )}
+              .
             </p>
 
             {/* Block Option */}
             <div className="mt-4 border-t pt-4">
               <p className="text-sm text-gray-700 mb-2">
                 Do you also want to block{" "}
-                <span className="font-semibold">@{reportedUser.username}</span>?
+                <span className="font-semibold">
+                  @{reportedUser.username}{" "}
+                  {reportedUser.verified?.length > 0 && (
+                    <img
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                        reportedUser.verified[reportedUser.verified.length - 1]
+                          ?.badgeImage
+                      }`}
+                      className="inline-block ml-1 w-5 h-5 object-contain"
+                      alt={
+                        reportedUser.verified[reportedUser.verified.length - 1]
+                          ?.badgeName || "badge"
+                      }
+                      title={
+                        reportedUser.verified[reportedUser.verified.length - 1]
+                          ?.badgeName
+                      }
+                    />
+                  )}
+                </span>
+                ?
               </p>
               <div className="flex justify-center gap-3">
                 <button
@@ -2446,8 +2727,8 @@ const Profile = ({ shareprofileid }) => {
         )}
 
         {/* Divider Tabs */}
-        <div className="flex justify-around items-center">
-          <button
+        <div className="flex justify-around items-center sm:mb-1 mx-1">
+          {viewedUserType !== "Buyer"&&<button
             onClick={() => {
               setOnPosts(true);
               setOnSave(false);
@@ -2458,7 +2739,7 @@ const Profile = ({ shareprofileid }) => {
               } p-3 focus:outline-none`}
           >
             <BsGrid3X3 className="text-2xl" />
-          </button>
+          </button>}
           {isMyProfile && (
             <button
               onClick={() => {
@@ -2473,7 +2754,7 @@ const Profile = ({ shareprofileid }) => {
               <FaRegBookmark className="text-2xl" />
             </button>
           )}
-          {userType !== "Buyer" && profile?.postProductsEnabled && (
+          {viewedUserType !== "Buyer" && profile?.postProductsEnabled && (
             <button
               onClick={() => {
                 setOnPosts(false);
@@ -2554,13 +2835,13 @@ const Profile = ({ shareprofileid }) => {
                       setActiveIndex(index);
                       setActiveSection("saved");
                     }}
-                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
+                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post?.images[0]}`}
                     alt={`post-${index}`}
                     className="h-[120px] sm:h-[210px] w-full object-cover rounded-md cursor-pointer"
                   />
 
                   {/* Multi-image icon */}
-                  {post.images.length > 1 && (
+                  {post?.images?.length > 1 && (
                     <div className="absolute top-2 right-2 bg-black/60 p-1 rounded">
                       <i className="ri-checkbox-multiple-blank-line text-gray-100 text-lg"></i>
                     </div>
@@ -2571,7 +2852,9 @@ const Profile = ({ shareprofileid }) => {
         )}
 
         {/* Selling Items */}
-        {userType !== "Buyer" && onItem && (
+        {/* {userType !== "Buyer" && onItem && (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-1 w-full"> */}
+        {onItem && (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-1 w-full">
             {products.length > 0 ? (
               products.map((item, index) => (
@@ -2727,9 +3010,24 @@ const Profile = ({ shareprofileid }) => {
                       />
 
                       <span className=" text-lg font-bold ">
-                        {c.username
-                          ? `${c.username}`
-                          : `${c.name}_${c.lastName}`}
+                        {c?.username
+                          ? `${c?.username}`
+                          : `${c?.name}_${c?.lastName}`}{" "}
+                        {c?.verified?.length > 0 && (
+                          <img
+                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                              c?.verified[c?.verified.length - 1]?.badgeImage
+                            }`}
+                            className="inline-block ml-1 w-5 h-5 object-contain"
+                            alt={
+                              c?.verified[c?.verified.length - 1]?.badgeName ||
+                              "badge"
+                            }
+                            title={
+                              c?.verified[c?.verified.length - 1]?.badgeName
+                            }
+                          />
+                        )}
                       </span>
                     </li>
                   );
@@ -2772,17 +3070,32 @@ const Profile = ({ shareprofileid }) => {
                       <img
                         src={
                           c?.profilePhoto
-                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${c.profilePhoto}`
+                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${c?.profilePhoto}`
                             : DEFAULT_PROFILE_IMAGE
                         }
-                        alt={c.username || "user"}
+                        alt={c?.username || "user"}
                         className="w-10 h-10 rounded-full object-cover"
                       />
 
                       <span className=" text-lg font-bold ">
-                        {c.username
-                          ? `${c.username}`
-                          : `${c.name}_${c.lastName}`}
+                        {c?.username
+                          ? `${c?.username}`
+                          : `${c?.name}_${c?.lastName}`}{" "}
+                        {c?.verified?.length > 0 && (
+                          <img
+                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                              c?.verified[c?.verified.length - 1]?.badgeImage
+                            }`}
+                            className="inline-block ml-1 w-5 h-5 object-contain"
+                            alt={
+                              c?.verified[c?.verified.length - 1]?.badgeName ||
+                              "badge"
+                            }
+                            title={
+                              c?.verified[c?.verified.length - 1]?.badgeName
+                            }
+                          />
+                        )}
                       </span>
                     </li>
                   );
@@ -2792,6 +3105,14 @@ const Profile = ({ shareprofileid }) => {
           </div>
         )}
       </div>
+      {isDeleteDialogOpen && (
+        <ConfirmationDialog
+          onClose={handleDeleteCancel}
+          deleteType="deletePost"
+          id={selectedPostToDelete}
+          onDeleted={handlePostDelete}
+        />
+      )}
     </div>
   );
 };

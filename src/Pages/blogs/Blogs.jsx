@@ -183,7 +183,6 @@ function Blogs() {
     const [cmsData, setCmsData] = useState(null);
 
     const ITEMS_PER_PAGE = 12;
-
     // ---------------- FETCH BLOGS ----------------
     const fetchBlogsData = async () => {
         try {
@@ -193,7 +192,7 @@ function Blogs() {
                 setTotalPages(Math.ceil(response.data.blogs.length / ITEMS_PER_PAGE));
             }
         } catch (error) {
-            console.log(error);
+            console.log("fetch blogs data err",error);
         }
     };
 

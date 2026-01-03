@@ -38,7 +38,6 @@ import postAPI from "../../../api/postAPI";
 import { useNavigate } from "react-router-dom";
 
 const userType = localStorage.getItem("userType");
-
 const items = [
   { key: "edit-profile", label: "Edit Profile", icon: <FaRegCircleUser /> },
   { key: "notifications", label: "Notifications", icon: <FiBell /> },
@@ -51,7 +50,11 @@ const items = [
     label: "Collaboration and Mentions",
     icon: <GoMention />,
   },
-  { key: "comments", label: "Comments", icon: <FaRegComment /> },
+
+  ...(userType !== "Buyer"
+    ? [{ key: "comments", label: "Comments", icon: <FaRegComment /> }]
+    : []),
+
   { key: "blocked", label: "Blocked", icon: <RiProhibitedLine /> },
   { key: "verified", label: "Verified", icon: <RiVerifiedBadgeLine /> },
   {
@@ -72,9 +75,9 @@ const Setting = () => {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const navigate = useNavigate();
   const userName = localStorage.getItem("username");
-  const firstNameLS = localStorage.getItem("firstName");
-  const lastNameLS = localStorage.getItem("lastName");
-  const [firstName, setFirstName] = useState(profile?.firstName || "");
+  const firstName = localStorage.getItem("firstName");
+  const lastname = localStorage.getItem("lastName");
+  const [name, setName] = useState(profile?.firstName || "");
   const [lastName, setLastName] = useState(profile?.lastName || "");
   const [username, setUsername] = useState(profile?.username || "");
   const [website, setWebsite] = useState(profile?.website || "");
@@ -87,7 +90,7 @@ const Setting = () => {
 
   useEffect(() => {
     if (profile) {
-      setFirstName(profile.firstName || "");
+      setName(profile.firstName || "");
       setLastName(profile.lastName || "");
       setUsername(profile.username || "");
       setWebsite(profile.website || "");
@@ -96,13 +99,11 @@ const Setting = () => {
     }
   }, [profile]);
 
-
   const hasValidUsername =
     typeof userName === "string" &&
     userName.trim() !== "" &&
     userName !== "undefined" &&
     userName !== "null";
-
 
   const bioMax = 150;
   const remaining = bioMax - bio.length;
@@ -140,9 +141,10 @@ const Setting = () => {
 
     const formData = new FormData();
     formData.append("userId", userId);
-    formData.append("firstName", firstName);
+    formData.append("name", name);
     formData.append("lastName", lastName);
     formData.append("username", username);
+    // formData.append("")
     formData.append("website", website);
     formData.append("bio", bio);
 
@@ -260,6 +262,7 @@ const Setting = () => {
     allowCommentsFrom: "everyone",
     allowGifComments: true,
   });
+  
   const handleSettingsChange = async (field, value) => {
     const userId = localStorage.getItem("userId");
     try {
@@ -673,7 +676,19 @@ const Setting = () => {
     document.execCommand("copy");
     document.body.removeChild(textarea);
   }
+  const badgesFunction = (badges = []) => {
+    if (userType === "Buyer") {
+      return badges.filter(
+        (badge) =>
+          !badge.badgeName.includes("Trusted Badge") &&
+          !badge.badgeName.includes("Master Badge")
+      );
+    }
+    return badges;
+  };
 
+  if (userType === "Buyer") {
+  }
   return (
     <div className="col-span-12 lg:col-span-9 grid grid-cols-9 gap-2">
       <div className="col-span-12 lg:col-span-6 w-full">
@@ -880,29 +895,71 @@ const Setting = () => {
                   </label>
                 </div>
 
-                {(userType === "Artist" || userType === "Seller") && (
-                  <div className="flex justify-between">
-                    <div className="text-md text-[#000000] font-semibold">
-                      Post your products on your profile
-                    </div>
-                    <label className="inline-flex items-center cursor-pointer">
-                      <div className="relative">
-                        <input
-                          type="checkbox"
-                          checked={toggleEnable}
-                          onChange={handleToggleChange}
-                          className="sr-only"
-                        />
-                        <div
-                          className={`w-10 h-5 rounded-full transition ${toggleEnable ? "bg-[#4f3823]" : "bg-gray-300"
-                            }`}
-                        ></div>
-                        <div
-                          className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-gray-100 shadow transform transition ${toggleEnable ? "translate-x-5" : "translate-x-0"
-                            }`}
-                        ></div>
-                      </div>
-                    </label>
+              {/* Name */}
+              <div>
+                <label className="block text-[18px] font-semibold text-[#000000] mb-1">
+                  Name
+                </label>
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full bg-[#f1f4f8] rounded-md px-4 py-3 text-sm placeholder-[#000000] outline-none"
+                />
+              </div>
+              {/* Name */}
+              <div>
+                <label className="block text-[18px] font-semibold text-[#000000] mb-1">
+                  Last Name
+                </label>
+                <input
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="w-full bg-[#f1f4f8] rounded-md px-4 py-3 text-sm placeholder-[#000000] outline-none"
+                />
+              </div>
+
+              {/* Username */}
+              <div>
+                <label className="block text-[18px] font-semibold text-[#000000] mb-1">
+                  User Name
+                </label>
+                <input
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full bg-[#f1f4f8] rounded-md px-4 py-3 text-sm placeholder-[#000000] outline-none"
+                />
+              </div>
+
+              {/* Website */}
+              <div>
+                <label className="block text-[18px] font-semibold text-[#000000] mb-1">
+                  Website
+                </label>
+                <input
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                  placeholder="https://example.com"
+                  className="w-full bg-[#f1f4f8] rounded-md px-4 py-3 text-sm placeholder-[#000000] outline-none"
+                />
+              </div>
+
+              {/* Bio */}
+              <div>
+                <label className="block text-[18px] font-semibold text-[#000000] mb-1">
+                  Bio
+                </label>
+                <div className="relative">
+                  <textarea
+                    value={bio}
+                    onChange={(e) => {
+                      if (e.target.value.length <= bioMax)
+                        setBio(e.target.value);
+                    }}
+                    placeholder="Write your bio"
+                    className="w-full bg-[#f1f4f8] rounded-md px-4 py-2 text-sm resize-none min-h-[65px] outline-none placeholder-[#000000]"
+                  />
+                  <div className="absolute bottom-2 right-3 text-xs text-gray-500">
+                    {remaining}/{bioMax}
                   </div>
                 )}
 
@@ -1468,10 +1525,12 @@ const Setting = () => {
             </div>
           )}
 
-          {/* collaboration and mention panel */}
-          {active === "collaboration-mentions" && (
-            <div className="w-full my-4 bg-white rounded-xl lg:border lg:border-gray-200 lg:shadow-sm lg:p-[1rem] space-y-3 h-fit">
-              <div className="flex items-center gap-2">
+        {/* comments panel */}
+        {active === "comments" && userType !== "Buyer" && (
+          <div className="w-full lg:mt-4 ">
+            <div className="w-full flex flex-col gap-5 rounded-xl lg:border-[1px] lg:border-[#48372D] h-[90vh] shadow-sm lg:py-4 px-1">
+              {/* Header */}
+              <div className="flex items-center gap-1 lg:px-5 px-2">
                 {lgActive && (
                     <button
                       className="text-2xl font-bold text-[#000000]"
@@ -1857,48 +1916,16 @@ const Setting = () => {
                   </h1>
                 </div>
 
-                {/* Email Verification */}
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <h1 className="text-md text-[#000000] font-semibold ">
-                      Request Verification
-                    </h1>
-                    <span className="text-md text-[#000000] font-semibold">
-                      {isEmailVerified ? "Verified" : "Unverified"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center bg-[#EBEBEB] px-3 py-2 rounded-md text-sm font-semibold">
-                    Email Verification
-                    {/* <FaCircleCheck className=" text-lg " /> */}
-                    {isEmailVerified ? (
-                      <span
-                        className=" text-lg "
-                        style={{
-                          color: "#28a745",
-                          fontSize: "18px",
-                        }}
-                      >
-                        <FaCheck />
-                      </span>
-                    ) : (
-                      <span
-                        className=" text-lg "
-                        style={{
-                          color: "rgb(253, 29, 5)",
-                          fontSize: "18px",
-                        }}
-                      >
-                        <FaTimes />
-                      </span>
-                    )}
-                  </div>
-                </div>
+              {/* Verification Badges */}
+              {isEmailVerified&&(<div>
+                <h2 className="text-[24px] text-[#000000] font-bold mb-2">
+                  Verification Badge
+                </h2>
 
-                {/* Verification Badges */}
-                <div className="space-y-3">
-                  <h2 className="text-lg text-[#000000] font-bold">
-                    Verification Badge
-                  </h2>
+                {badgesFunction(badges)?.map((badge) => {
+                  const alreadyHasBadge = profile?.verified?.some(
+                    (b) => b._id.toString() === badge._id.toString()
+                  );
 
                   {badges.map((badge) => {
                     const alreadyHasBadge = profile?.verified?.some(
@@ -2096,6 +2123,11 @@ const Setting = () => {
                         </ul>
                       </div>
                     </div>
+                  );
+                })}
+              </div>)}
+              
+            </div>
 
                     {/* Terms */}
                     <p className="text-sm text-gray-500 text-center">
@@ -2177,7 +2209,93 @@ const Setting = () => {
                     </button>
                   </div>
                 </div>
-              )}
+              </div>
+            )}
+
+            {/* Success Popup */}
+            {showSuccessPopup && activeBadge && (
+              <div className="mt-14 absolute inset-0 z-50 bg-[#000000] bg-opacity-50 flex justify-center items-center lg:p-0 p-4 py-6">
+                <div className="bg-white rounded-none lg:rounded-lg w-full lg:max-w-md overflow-y-auto relative lg:p-6 p-4">
+                  <button
+                    onClick={() => setShowSuccessPopup(false)}
+                    className="absolute top-3 right-4 text-2xl text-gray-600"
+                  >
+                    ×
+                  </button>
+
+                  <h2 className="text-xl font-bold text-center mb-4">
+                    Welcome to the Verified Club!
+                  </h2>
+
+                  <div className="flex justify-center mb-4">
+                    <img
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`}
+                      alt="Profile"
+                      className="w-24 h-24 rounded-full object-cover"
+                    />
+                  </div>
+
+                  <p className="text-center font-semibold mb-1 flex items-center justify-center gap-2">
+                    {profile?.username}{" "}
+                    <img
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activeBadge.badgeImage}`}
+                      alt="badge"
+                      className="w-6 h-6 object-cover rounded-full"
+                    />
+                  </p>
+                  <p className="text-center text-sm text-gray-700 mb-6">
+                    Your {activeBadge.badgeName} is now active and proudly
+                    visible on your profile and artworks.
+                  </p>
+
+                  <button
+                    onClick={() => {
+                      const link = `${
+                        window.location.origin
+                      }/artsays-community/profile/${
+                        hasValidUsername
+                          ? `${userName}_${userId}`
+                          : `${firstName}_${lastname}_${userId}`
+                      }`;
+                      if (navigator.clipboard && window.isSecureContext) {
+                        navigator.clipboard
+                          .writeText(link)
+                          .then(() => setCopyMsg("Link copied!"))
+                          .catch(() => fallbackCopyText(link));
+                      } else {
+                        fallbackCopyText(link);
+                      }
+
+                      setTimeout(() => setCopyMsg(""), 2000);
+                    }}
+                    className="mt-4 bg-[#4B2B1C] w-full flex text-lg justify-center p-3 items-center gap-2 text-white font-semibold rounded-xl"
+                  >
+                    Share your moment on socials <IoPaperPlaneOutline />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Privacy center panel */}
+        {active === "privacy-center" && (
+          <div className="w-full lg:mt-8 flex flex-col lg:border-[1px] lg:border-[#48372D] lg:px-1 lg:rounded-xl lg:py-3 lg:px-3">
+            <div className="flex flex-col gap-4 ">
+              <div className="flex items-center gap-1">
+                {lgActive && (
+                  <button
+                    className="text-[24px] font-bold text-[#000000]"
+                    onClick={() => setLgActive(false)}
+                  >
+                    <i className="ri-arrow-left-s-line"></i>
+                  </button>
+                )}
+                <div className="text-[24px] font-bold ">Privacy Center</div>
+              </div>
+              <div className="text-[20px] font-semibold mb-2">
+                Privacy Policy
+              </div>
             </div>
           )}
 
