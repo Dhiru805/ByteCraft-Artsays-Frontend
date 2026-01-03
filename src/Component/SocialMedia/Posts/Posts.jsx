@@ -3,6 +3,7 @@ import "../Sidebar/Side-post-sugg.css";
 import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
 import { FaCheckCircle } from "react-icons/fa";
+import { Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import putAPI from "../../../api/putAPI";
 import { timeAgo } from "./../../../utils/TimeAgo.js";
@@ -47,6 +48,7 @@ const Post = () => {
   const postRef = useRef();
   const commentRef = useRef();
   const commentRefs = useRef({});
+  const collabRef = useRef();
 
   const { userType } = useAuth();
   const productsPost = posts.filter(
@@ -1398,8 +1400,7 @@ const goProfile=(user)=>{
                   >
                     Buy Now
                   </button>
-                   </Link>
-                )} */}
+                )}
                 {post.forProduct && (
                   <button
                     className="flex px-2 items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-red-500 text-white py-2 font-semibold buy-now"
@@ -1770,9 +1771,8 @@ const goProfile=(user)=>{
         >
           <div
             ref={collabRef}
-            className="relative bg-white rounded-xl shadow-xl p-3 w-80 animate-fadeIn"
             className="relative bg-white rounded-xl shadow-xl p-5 w-80 animate-fadeIn"
-            onClick={(e) =>e.stopPropagation() }
+            onClick={(e) => e.stopPropagation()}
           >
             {/* ❌ Close (cross) button */}
             <button

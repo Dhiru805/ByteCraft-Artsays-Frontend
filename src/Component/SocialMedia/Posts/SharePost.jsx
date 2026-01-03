@@ -252,34 +252,11 @@ const SharePost = () => {
                   )}
 
                 {/* Right Arrow (only if not on last image) */}
-                // {sharePostData.images.length > 1 &&
-                //   (sharePostData.activeImageIndex || 0) <
-                //   sharePostData.images.length - 1 && (
-                //     <button
-                //       onClick={() =>
-                //         setSharePostData((prev) => ({
-                //           ...prev,
-                //           activeImageIndex: (prev.activeImageIndex || 0) + 1,
-                //         }))
                 {sharePostData?.images?.length > 1 &&
                   (activeImageIndex || 0) <
                     sharePostData?.images.length - 1 && (
                     <button
-                      onClick={
-                        () => setActiveImageIndex(activeImageIndex + 1)
-
-                        // setSharePostData((prev) =>
-                        //   prev.images.map((p) =>
-                        //     p._id === sharePostData?._id
-                        //       ? {
-                        //           ...p,
-                        //           activeImageIndex:
-                        //             (p?.activeImageIndex || 0) + 1,
-                        //         }
-                        //       : p
-                        //   )
-                        // )
-                      }
+                      onClick={() => setActiveImageIndex(activeImageIndex + 1)}
                       className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-40 text-white rounded-full p-2 focus:outline-none"
                     >
                       <i className="ri-arrow-right-s-line text-xl bg-gray-600 rounded-full"></i>

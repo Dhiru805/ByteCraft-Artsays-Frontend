@@ -178,11 +178,6 @@ const Profile = ({ shareprofileid }) => {
   };
 
 
-  const reversedPosts =
-    [
-      ...(profile?.postProductsEnabled ? productPosts : []),
-      ...normalPosts,
-    ].reverse() || [];
   useEffect(() => {
     setReversedPosts(
       [
@@ -3146,8 +3141,8 @@ const ProfileSkeleton = () => {
       {/* Images Grid Skeleton */}
       <div
         className="
-        grid grid-cols-3 
-        gap-3"
+        grid grid-cols-3
+        gap-3 h-full"
       >
         {/* Create 8 placeholders for loading */}
         {Array.from({ length: 8 }).map((_, idx) => (
