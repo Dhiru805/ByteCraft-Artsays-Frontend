@@ -647,19 +647,25 @@ const PublicRoute = ({ children }) => {
 };
 
 const WebsiteWrapper = () => {
-  const [showAnimation, setShowAnimation] = useState(true);
+  const [showAnimation, setShowAnimation] = useState(() => {
+    if (typeof window !== "undefined") {
+      return !localStorage.getItem("hasSeenPreloader");
+    }
+    return true;
+  });
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname === "/") {
+    if (location.pathname === "/" && showAnimation) {
       const timer = setTimeout(() => {
         setShowAnimation(false);
-      }, 6000); // Preloader duration (6 seconds)
+        localStorage.setItem("hasSeenPreloader", "true");
+      }, 9000); // Synchronized with PreloaderAnimation duration (~8.8s + buffer)
       return () => clearTimeout(timer);
     } else {
-      setShowAnimation(false); // Skip preloader for other routes
+      setShowAnimation(false); // Skip preloader for other routes or if already seen
     }
-  }, [location.pathname]);
+  }, [location.pathname, showAnimation]);
 
   return showAnimation && location.pathname === "/" ? (
     <PreloaderAnimation />
