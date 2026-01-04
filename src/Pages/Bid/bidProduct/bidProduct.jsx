@@ -978,21 +978,25 @@ const BidProduct = () => {
 
       const badgeData = badgeRes?.data?.data || [];
 
-      const finalList = list.map((item) => {
-        const p = item.product;
-        const realProductId = p._id || p.productId || p.product || null;
+      const finalList = list
+        .filter((item) => item?.product)
+        .map((item) => {
+          const p = item.product;
+          const realProductId = p?._id || p?.productId || p?.product || null;
 
-        const match = badgeData.find((b) => b._id === realProductId);
+          const match = realProductId
+            ? badgeData.find((b) => b && b._id === realProductId)
+            : null;
 
-        return {
-          ...item,
-          product: {
-            ...p,
-            seller: match?.seller || null,
-            badges: match?.badges || [],
-          },
-        };
-      });
+          return {
+            ...item,
+            product: {
+              ...p,
+              seller: match?.seller || p?.seller || null,
+              badges: match?.badges || p?.badges || [],
+            },
+          };
+        });
 
       setProducts(
         finalList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
