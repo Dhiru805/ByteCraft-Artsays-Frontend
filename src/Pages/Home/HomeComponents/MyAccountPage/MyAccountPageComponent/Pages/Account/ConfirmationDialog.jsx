@@ -70,12 +70,6 @@ const DELETE_CONFIG = {
     errorMessage: "Failed to delete address.",
     idKey: "AddressIndex",
   },
-  buyeraddress:{
-  getEndpoint:(id)=>`/api/delete-buyeraddres/${id}`,
-  successMessage:"Buyer address successfully delete!",
-  errorMessage:"Failed to delete address",
-  idKey:"addressId"
-}
 };
 
 function ConfirmationDialog({ onClose, deleteType, id, onDeleted }) {

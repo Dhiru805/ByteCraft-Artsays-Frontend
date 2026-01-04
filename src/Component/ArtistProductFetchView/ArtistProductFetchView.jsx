@@ -41,6 +41,7 @@ function ArtistProductFetchView() {
 
     //const { product, seller, buyers, mainCategoryDetails } = data;
 const { product, seller, buyers } = data;
+
     //const mainCategoryName = mainCategoryDetails?.mainCategoryName || product?.mainCategory || "N/A";
 const mainCategoryName = product?.mainCategory || "N/A";
 

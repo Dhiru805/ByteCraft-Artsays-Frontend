@@ -26,6 +26,7 @@ function BlogCardDetails() {
     const startTimeRef = useRef(null)
     const [artistId, setArtistId] = useState(null)
     const [userDetails, setUserDetails] = useState(null)
+
     // Function to fetch blog details
     const fetchBlogDetails = async () => {
 

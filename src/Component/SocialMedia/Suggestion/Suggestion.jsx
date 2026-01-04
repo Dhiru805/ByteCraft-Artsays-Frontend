@@ -17,7 +17,7 @@ const Suggestion = () => {
   );
   useEffect(() => {
     const handleResize = () => setIsNarrow(window.innerWidth <= 1024);
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize());
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -131,6 +131,7 @@ const Suggestion = () => {
           true,
           true
         );
+
       }
       // ❗ Only update UI if backend confirmed success
       if (response?.data?.status === 200) {
@@ -152,6 +153,7 @@ const Suggestion = () => {
       } else {
         console.warn("API did not respond with success, UI not updated.");
       }
+
     } catch (error) {
       console.error("Error following/unfollowing user:", error);
     }
@@ -177,9 +179,7 @@ const Suggestion = () => {
           : false;
 
         const displayUsername = isNarrow
-          ? user?.username
-            ? user.username.slice(0, 5)
-            : ""
+          ? (user?.username ? user.username.slice(0, 5) : "")
           : user?.username;
 
         return (
@@ -198,9 +198,7 @@ const Suggestion = () => {
               />
               <div className="flex flex-col max-w-[80px] lg:max-w-fit">
                 <p className="text-xs font-semibold text-gray-800 truncate lg:truncate-none">
-                  {displayUsername?displayUsername?.length > 13
-                    ? displayUsername.slice(0, 13)
-                    : displayUsername:""}
+                  {displayUsername}
                 </p>
                 <p className="text-[8px] text-gray-600">
                   Suggested for you

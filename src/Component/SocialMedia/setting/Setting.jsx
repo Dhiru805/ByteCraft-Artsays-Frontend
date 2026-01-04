@@ -2,25 +2,43 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import getAPI from "../../../../src/api/getAPI";
 import putAPI from "../../../../src/api/putAPI";
-import deleteAPI from "../../../api/deleteAPI";
-import postAPI from "../../../api/postAPI";
-import { useNavigate } from "react-router-dom";
+import AdPayments from "./Creator-Control/AdPayments";
+import BrandedContent from "./Creator-Control/BrandedContent";
+import PartnershipAds from "./Creator-Control/PartnershipAds";
+import Faq from "./Creator-Control/Faq";
+import WelcomeMessage from "./Creator-Control/WelcomeMessage";
+import MinimumAge from "./Creator-Control/MinimumAge";
+import MonetizationStatus from "./Creator-Control/MonetizationStatus";
+import ViewCounts from "./Creator-Control/ViewCounts";
+import AddProfessional from "./Creator-Control/AddProfessional";
+import AppointmentRequests from "./Creator-Control/AppointmentRequests";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { FiBell } from "react-icons/fi";
+import { LuArchive } from "react-icons/lu";
 import { FaUserGroup } from "react-icons/fa6";
 import { GoMention } from "react-icons/go";
 import { FaRegComment } from "react-icons/fa";
 import {
+  RiBarChartBoxLine,
   RiProhibitedLine,
   RiVerifiedBadgeLine,
+  RiQuestionLine,
   RiShieldUserLine,
 } from "react-icons/ri";
 import { FiEdit, FiChevronDown } from "react-icons/fi";
+import { FaCheck } from "react-icons/fa";
+import { FaTimes } from "react-icons/fa";
+import { MdVerified } from "react-icons/md";
+import { FaRegClock } from "react-icons/fa";
+import { RiShieldStarFill } from "react-icons/ri";
+import { FaCircleCheck } from "react-icons/fa6";
 import { IoPaperPlaneOutline } from "react-icons/io5";
+import deleteAPI from "../../../api/deleteAPI";
+import postAPI from "../../../api/postAPI";
+import { useNavigate } from "react-router-dom";
 
 const userType = localStorage.getItem("userType");
-const firstNameLS = localStorage.getItem("firstName");
-const lastNameLS = localStorage.getItem("lastName");
+
 const items = [
   { key: "edit-profile", label: "Edit Profile", icon: <FaRegCircleUser /> },
   { key: "notifications", label: "Notifications", icon: <FiBell /> },
@@ -33,11 +51,7 @@ const items = [
     label: "Collaboration and Mentions",
     icon: <GoMention />,
   },
-
-  ...(userType !== "Buyer"
-    ? [{ key: "comments", label: "Comments", icon: <FaRegComment /> }]
-    : []),
-
+  { key: "comments", label: "Comments", icon: <FaRegComment /> },
   { key: "blocked", label: "Blocked", icon: <RiProhibitedLine /> },
   { key: "verified", label: "Verified", icon: <RiVerifiedBadgeLine /> },
   {
@@ -58,9 +72,9 @@ const Setting = () => {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const navigate = useNavigate();
   const userName = localStorage.getItem("username");
-  const firstName = localStorage.getItem("firstName");
-  const lastname = localStorage.getItem("lastName");
-  const [name, setName] = useState(profile?.firstName || "");
+  const firstNameLS = localStorage.getItem("firstName");
+  const lastNameLS = localStorage.getItem("lastName");
+  const [firstName, setFirstName] = useState(profile?.firstName || "");
   const [lastName, setLastName] = useState(profile?.lastName || "");
   const [username, setUsername] = useState(profile?.username || "");
   const [website, setWebsite] = useState(profile?.website || "");
@@ -73,7 +87,7 @@ const Setting = () => {
 
   useEffect(() => {
     if (profile) {
-      setName(profile.firstName || "");
+      setFirstName(profile.firstName || "");
       setLastName(profile.lastName || "");
       setUsername(profile.username || "");
       setWebsite(profile.website || "");
@@ -82,11 +96,13 @@ const Setting = () => {
     }
   }, [profile]);
 
+
   const hasValidUsername =
     typeof userName === "string" &&
     userName.trim() !== "" &&
     userName !== "undefined" &&
     userName !== "null";
+
 
   const bioMax = 150;
   const remaining = bioMax - bio.length;
@@ -124,10 +140,9 @@ const Setting = () => {
 
     const formData = new FormData();
     formData.append("userId", userId);
-    formData.append("name", name);
+    formData.append("firstName", firstName);
     formData.append("lastName", lastName);
     formData.append("username", username);
-    // formData.append("")
     formData.append("website", website);
     formData.append("bio", bio);
 
@@ -245,7 +260,6 @@ const Setting = () => {
     allowCommentsFrom: "everyone",
     allowGifComments: true,
   });
-
   const handleSettingsChange = async (field, value) => {
     const userId = localStorage.getItem("userId");
     try {
@@ -659,19 +673,7 @@ const Setting = () => {
     document.execCommand("copy");
     document.body.removeChild(textarea);
   }
-  const badgesFunction = (badges = []) => {
-    if (userType === "Buyer") {
-      return badges.filter(
-        (badge) =>
-          !badge.badgeName.includes("Trusted Badge") &&
-          !badge.badgeName.includes("Master Badge")
-      );
-    }
-    return badges;
-  };
 
-  if (userType === "Buyer") {
-  }
   return (
     <div className="col-span-12 lg:col-span-9 grid grid-cols-9 gap-2">
       <div className="col-span-12 lg:col-span-6 w-full">
@@ -765,59 +767,61 @@ const Setting = () => {
                   </div>
                 </div>
 
-
-
-                {/* Name */}
-                <div>
-                  <label className="block text-[18px] font-semibold text-[#000000] mb-1">
-                    Name
-                  </label>
-                  <input
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-[#f1f4f8] rounded-md px-4 py-3 text-sm placeholder-[#000000] outline-none"
-                  />
-                </div>
-                {/* Name */}
-                <div>
-                  <label className="block text-[18px] font-semibold text-[#000000] mb-1">
-                    Last Name
-                  </label>
-                  <input
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    className="w-full bg-[#f1f4f8] rounded-md px-4 py-3 text-sm placeholder-[#000000] outline-none"
-                  />
+                <div className="grid grid-cols-2 gap-2">
+                  {/* First Name */}
+                  <div className="col-span-1">
+                    <label className="block text-md font-semibold text-[#000000] mb-1">
+                      First Name
+                    </label>
+                    <input
+                      value={firstName}
+                      placeholder={firstNameLS}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="w-full bg-[#EBEBEB] rounded-md px-3 py-2 font-semibold text-[#000000] text-sm placeholder-[#000000] placeholder:font-semibold outline-none"
+                    />
+                  </div>
+                  {/* Last Name */}
+                  <div className="col-span-1">
+                    <label className="block text-md font-semibold text-[#000000] mb-1">
+                      Last Name
+                    </label>
+                    <input
+                      value={lastName}
+                      placeholder={lastNameLS}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className="w-full bg-[#EBEBEB] rounded-md px-3 py-2 font-semibold text-[#000000] text-sm placeholder-[#000000] placeholder:font-semibold outline-none"
+                    />
+                  </div>
                 </div>
 
                 {/* Username */}
                 <div>
-                  <label className="block text-[18px] font-semibold text-[#000000] mb-1">
+                  <label className="block text-md font-semibold text-[#000000] mb-1">
                     User Name
                   </label>
                   <input
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full bg-[#f1f4f8] rounded-md px-4 py-3 text-sm placeholder-[#000000] outline-none"
+                    className="w-full bg-[#EBEBEB] rounded-md px-3 py-2 font-semibold text-[#000000] text-sm placeholder-[#000000] placeholder:font-semibold outline-none"
                   />
                 </div>
 
                 {/* Website */}
                 <div>
-                  <label className="block text-[18px] font-semibold text-[#000000] mb-1">
+                  <label className="block text-md font-semibold text-[#000000] mb-1">
                     Website
                   </label>
                   <input
                     value={website}
                     onChange={(e) => setWebsite(e.target.value)}
                     placeholder="https://example.com"
-                    className="w-full bg-[#f1f4f8] rounded-md px-4 py-3 text-sm placeholder-[#000000] outline-none"
+                    className="w-full bg-[#EBEBEB] rounded-md px-3 py-2 font-semibold text-[#000000] text-sm placeholder-[#000000] placeholder:font-semibold outline-none"
                   />
                 </div>
 
                 {/* Bio */}
                 <div>
-                  <label className="block text-[18px] font-semibold text-[#000000] mb-1">
+                  <label className="block text-md font-semibold text-[#000000] mb-1">
                     Bio
                   </label>
                   <div className="relative">
@@ -828,13 +832,79 @@ const Setting = () => {
                           setBio(e.target.value);
                       }}
                       placeholder="Write your bio"
-                      className="w-full bg-[#f1f4f8] rounded-md px-4 py-2 text-sm resize-none min-h-[65px] outline-none placeholder-[#000000]"
+                      className="w-full bg-[#EBEBEB] rounded-md px-3 py-2 font-semibold text-[#000000] text-sm resize-none outline-none placeholder:font-semibold placeholder-[#000000]"
                     />
-                    <div className="absolute bottom-2 right-3 text-xs text-gray-500">
+                    <div className="absolute bottom-2 right-2 text-xs text-gray-400 font-medium">
                       {remaining}/{bioMax}
                     </div>
                   </div>
                 </div>
+
+                {/* Contact */}
+                <div className="mb-4">
+                  <label className="block text-md font-semibold text-[#000000] mb-1">
+                    Contact
+                  </label>
+                  <div className="w-full bg-[#EBEBEB] rounded-md px-3 py-2 font-semibold text-[#000000] text-sm placeholder-[#000000] placeholder:font-semibold outline-none">
+                    {profile?.email}
+                  </div>
+                </div>
+
+                {/* Account suggestion toggle */}
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <div className="text-[16px] font-semibold text-[#000000]">
+                      Account suggestion
+                    </div>
+                    <div className="text-[14px] text-medium text-[#000000]">
+                      Show account suggestion on profile
+                    </div>
+                  </div>
+                  <label className="inline-flex items-center cursor-pointer">
+                    <div className="relative">
+                      <input
+                        type="checkbox"
+                        checked={showSuggestion}
+                        onChange={() => setShowSuggestion((s) => !s)}
+                        className="sr-only"
+                      />
+                      <div
+                        className={`w-10 h-5 rounded-full transition ${showSuggestion ? "bg-[#4f3823]" : "bg-gray-300"
+                          }`}
+                      ></div>
+                      <div
+                        className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-gray-100 shadow transform transition ${showSuggestion ? "translate-x-5" : "translate-x-0"
+                          }`}
+                      ></div>
+                    </div>
+                  </label>
+                </div>
+
+                {(userType === "Artist" || userType === "Seller") && (
+                  <div className="flex justify-between">
+                    <div className="text-md text-[#000000] font-semibold">
+                      Post your products on your profile
+                    </div>
+                    <label className="inline-flex items-center cursor-pointer">
+                      <div className="relative">
+                        <input
+                          type="checkbox"
+                          checked={toggleEnable}
+                          onChange={handleToggleChange}
+                          className="sr-only"
+                        />
+                        <div
+                          className={`w-10 h-5 rounded-full transition ${toggleEnable ? "bg-[#4f3823]" : "bg-gray-300"
+                            }`}
+                        ></div>
+                        <div
+                          className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-gray-100 shadow transform transition ${toggleEnable ? "translate-x-5" : "translate-x-0"
+                            }`}
+                        ></div>
+                      </div>
+                    </label>
+                  </div>
+                )}
 
                 {/* Save button */}
                 <button
@@ -1398,13 +1468,11 @@ const Setting = () => {
             </div>
           )}
 
-          {/* comments panel */}
-          {active === "comments" && userType !== "Buyer" && (
-            <div className="w-full lg:mt-4 ">
-              <div className="w-full flex flex-col gap-5 rounded-xl lg:border-[1px] lg:border-[#48372D] h-[90vh] shadow-sm lg:py-4 px-1">
-                {/* Header */}
-                <div className="flex items-center gap-1 lg:px-5 px-2">
-                  {lgActive && (
+          {/* collaboration and mention panel */}
+          {active === "collaboration-mentions" && (
+            <div className="w-full my-4 bg-white rounded-xl lg:border lg:border-gray-200 lg:shadow-sm lg:p-[1rem] space-y-3 h-fit">
+              <div className="flex items-center gap-2">
+                {lgActive && (
                     <button
                       className="text-2xl font-bold text-[#000000]"
                       onClick={() => setLgActive(false)}
@@ -1412,181 +1480,180 @@ const Setting = () => {
                       <i className="ri-arrow-left-s-line"></i>
                     </button>
                   )}
-                  <h1 className="text-2xl font-bold text-[#000000]">
-                    Collaboration and Mentions
-                  </h1>
-                </div>
+                <h1 className="text-2xl font-bold text-[#000000]">
+                  Collaboration and Mentions
+                </h1>
+              </div>
+              <div className="space-y-3">
+                {/* Who can Collaborate with you */}
                 <div className="space-y-3">
-                  {/* Who can Collaborate with you */}
-                  <div className="space-y-3">
-                    <div className="text-md font-semibold">
-                      Who can Collaborate with you
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      Choose who can Collaborate with you in their photos and
-                      videos. When people try to collaborate with you, they'll see
-                      if you don't allow collaboration from everyone.
-                    </div>
+                  <div className="text-md font-semibold">
+                    Who can Collaborate with you
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    Choose who can Collaborate with you in their photos and
+                    videos. When people try to collaborate with you, they'll see
+                    if you don't allow collaboration from everyone.
+                  </div>
 
-                    {/* Collaboration radio */}
-                    <div className="space-y-2">
-                      <div className="font-semibold text-[#000000]">Collaboration</div>
-                      <div className="flex flex-col gap-2">
-                        <label className="flex items-center gap-2 text-sm cursor-pointer">
-                          <input
-                            type="radio"
-                            name="collaboration"
-                            value="everyone"
-                            checked={collaborationSetting === "everyone"}
-                            onChange={() => {
-                              setCollaborationSetting("everyone");
-                              updateSettings({
-                                collaborationSettings: {
-                                  allowFrom: "everyone",
-                                  manualApprove,
-                                },
-                              });
-                            }}
-                          />
-                          <span>Allow collaboration from everyone</span>
-                        </label>
-                        <label className="flex items-center gap-2 text-sm cursor-pointer">
-                          <input
-                            type="radio"
-                            name="collaboration"
-                            value="following"
-                            checked={collaborationSetting === "following"}
-                            onChange={() => {
-                              setCollaborationSetting("following");
-                              updateSettings({
-                                collaborationSettings: {
-                                  allowFrom: "following",
-                                  manualApprove,
-                                },
-                              });
-                            }}
-                          />
-                          <span>Allow collaboration from people you follow</span>
-                        </label>
-                        <label className="flex items-center gap-2 text-sm cursor-pointer">
-                          <input
-                            type="radio"
-                            name="collaboration"
-                            value="none"
-                            checked={collaborationSetting === "none"}
-                            onChange={() => {
-                              setCollaborationSetting("none");
-                              updateSettings({
-                                collaborationSettings: {
-                                  allowFrom: "none",
-                                  manualApprove,
-                                },
-                              });
-                            }}
-                          />
-                          <span>Don't allow collaboration</span>
-                        </label>
-                      </div>
-                    </div>
-
-                    {/* Manually approve collaboration */}
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-semibold font-[#000000]">
-                          Manually Approve Collaboration
-                        </div>
-                      </div>
-                      <label className="inline-flex items-center cursor-pointer">
-                        <div className="relative">
-                          <input
-                            type="checkbox"
-                            checked={manualApprove}
-                            onChange={() => {
-                              setManualApprove(!manualApprove);
-                              updateSettings({
-                                collaborationSettings: {
-                                  allowFrom: collaborationSetting,
-                                  manualApprove: !manualApprove,
-                                },
-                              });
-                            }}
-                            className="sr-only"
-                          />
-                          <div
-                            className={`w-14 h-7 rounded-full transition ${manualApprove ? "bg-[#4f3823]" : "bg-gray-300"
-                              }`}
-                          ></div>
-                          <div
-                            className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-gray-100 shadow transform transition ${manualApprove ? "translate-x-7" : "translate-x-0"
-                              }`}
-                          ></div>
-                        </div>
+                  {/* Collaboration radio */}
+                  <div className="space-y-2">
+                    <div className="font-semibold text-[#000000]">Collaboration</div>
+                    <div className="flex flex-col gap-2">
+                      <label className="flex items-center gap-2 text-sm cursor-pointer">
+                        <input
+                          type="radio"
+                          name="collaboration"
+                          value="everyone"
+                          checked={collaborationSetting === "everyone"}
+                          onChange={() => {
+                            setCollaborationSetting("everyone");
+                            updateSettings({
+                              collaborationSettings: {
+                                allowFrom: "everyone",
+                                manualApprove,
+                              },
+                            });
+                          }}
+                        />
+                        <span>Allow collaboration from everyone</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-sm cursor-pointer">
+                        <input
+                          type="radio"
+                          name="collaboration"
+                          value="following"
+                          checked={collaborationSetting === "following"}
+                          onChange={() => {
+                            setCollaborationSetting("following");
+                            updateSettings({
+                              collaborationSettings: {
+                                allowFrom: "following",
+                                manualApprove,
+                              },
+                            });
+                          }}
+                        />
+                        <span>Allow collaboration from people you follow</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-sm cursor-pointer">
+                        <input
+                          type="radio"
+                          name="collaboration"
+                          value="none"
+                          checked={collaborationSetting === "none"}
+                          onChange={() => {
+                            setCollaborationSetting("none");
+                            updateSettings({
+                              collaborationSettings: {
+                                allowFrom: "none",
+                                manualApprove,
+                              },
+                            });
+                          }}
+                        />
+                        <span>Don't allow collaboration</span>
                       </label>
                     </div>
                   </div>
 
-                  {/* Who can @mention you */}
-                  <div className="space-y-2">
-                    <div className="text-md font-semibold font-[#000000]">
-                      Who Can @ Mention You
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      Choose who can @mention you to link your account in their
-                      stories, notes, comments, live videos, and captions. When
-                      people try to @mention you, they'll see if you don't allow
-                      @mentions.
-                    </div>
-
-                    {/* Mention radio */}
-                    <div className="space-y-2">
-                      <div className="font-semibold text-[#000000]">Mention</div>
-                      <div className="flex flex-col gap-2">
-                        <label className="flex items-center gap-2 text-sm cursor-pointer">
-                          <input
-                            type="radio"
-                            name="mention"
-                            value="everyone"
-                            checked={mentionSetting === "everyone"}
-                            onChange={() => {
-                              setMentionSetting("everyone");
-                              updateSettings({
-                                mentionSettings: { allowFrom: "everyone" },
-                              });
-                            }}
-                          />
-                          <span>Allow mention from everyone</span>
-                        </label>
-                        <label className="flex items-center gap-2 text-sm cursor-pointer">
-                          <input
-                            type="radio"
-                            name="mention"
-                            value="following"
-                            checked={mentionSetting === "following"}
-                            onChange={() => {
-                              setMentionSetting("following");
-                              updateSettings({
-                                mentionSettings: { allowFrom: "following" },
-                              });
-                            }}
-                          />
-                          <span>Allow mention from people you follow</span>
-                        </label>
-                        <label className="flex items-center gap-2 text-sm cursor-pointer">
-                          <input
-                            type="radio"
-                            name="mention"
-                            value="none"
-                            checked={mentionSetting === "none"}
-                            onChange={() => {
-                              setMentionSetting("none");
-                              updateSettings({
-                                mentionSettings: { allowFrom: "none" },
-                              });
-                            }}
-                          />
-                          <span>Don't allow mention</span>
-                        </label>
+                  {/* Manually approve collaboration */}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-semibold font-[#000000]">
+                        Manually Approve Collaboration
                       </div>
+                    </div>
+                    <label className="inline-flex items-center cursor-pointer">
+                      <div className="relative">
+                        <input
+                          type="checkbox"
+                          checked={manualApprove}
+                          onChange={() => {
+                            setManualApprove(!manualApprove);
+                            updateSettings({
+                              collaborationSettings: {
+                                allowFrom: collaborationSetting,
+                                manualApprove: !manualApprove,
+                              },
+                            });
+                          }}
+                          className="sr-only"
+                        />
+                        <div
+                          className={`w-14 h-7 rounded-full transition ${manualApprove ? "bg-[#4f3823]" : "bg-gray-300"
+                            }`}
+                        ></div>
+                        <div
+                          className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-gray-100 shadow transform transition ${manualApprove ? "translate-x-7" : "translate-x-0"
+                            }`}
+                        ></div>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Who can @mention you */}
+                <div className="space-y-2">
+                  <div className="text-md font-semibold font-[#000000]">
+                    Who Can @ Mention You
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    Choose who can @mention you to link your account in their
+                    stories, notes, comments, live videos, and captions. When
+                    people try to @mention you, they'll see if you don't allow
+                    @mentions.
+                  </div>
+
+                  {/* Mention radio */}
+                  <div className="space-y-2">
+                    <div className="font-semibold text-[#000000]">Mention</div>
+                    <div className="flex flex-col gap-2">
+                      <label className="flex items-center gap-2 text-sm cursor-pointer">
+                        <input
+                          type="radio"
+                          name="mention"
+                          value="everyone"
+                          checked={mentionSetting === "everyone"}
+                          onChange={() => {
+                            setMentionSetting("everyone");
+                            updateSettings({
+                              mentionSettings: { allowFrom: "everyone" },
+                            });
+                          }}
+                        />
+                        <span>Allow mention from everyone</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-sm cursor-pointer">
+                        <input
+                          type="radio"
+                          name="mention"
+                          value="following"
+                          checked={mentionSetting === "following"}
+                          onChange={() => {
+                            setMentionSetting("following");
+                            updateSettings({
+                              mentionSettings: { allowFrom: "following" },
+                            });
+                          }}
+                        />
+                        <span>Allow mention from people you follow</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-sm cursor-pointer">
+                        <input
+                          type="radio"
+                          name="mention"
+                          value="none"
+                          checked={mentionSetting === "none"}
+                          onChange={() => {
+                            setMentionSetting("none");
+                            updateSettings({
+                              mentionSettings: { allowFrom: "none" },
+                            });
+                          }}
+                        />
+                        <span>Don't allow mention</span>
+                      </label>
                     </div>
                   </div>
                 </div>
@@ -1790,13 +1857,50 @@ const Setting = () => {
                   </h1>
                 </div>
 
+                {/* Email Verification */}
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <h1 className="text-md text-[#000000] font-semibold ">
+                      Request Verification
+                    </h1>
+                    <span className="text-md text-[#000000] font-semibold">
+                      {isEmailVerified ? "Verified" : "Unverified"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center bg-[#EBEBEB] px-3 py-2 rounded-md text-sm font-semibold">
+                    Email Verification
+                    {/* <FaCircleCheck className=" text-lg " /> */}
+                    {isEmailVerified ? (
+                      <span
+                        className=" text-lg "
+                        style={{
+                          color: "#28a745",
+                          fontSize: "18px",
+                        }}
+                      >
+                        <FaCheck />
+                      </span>
+                    ) : (
+                      <span
+                        className=" text-lg "
+                        style={{
+                          color: "rgb(253, 29, 5)",
+                          fontSize: "18px",
+                        }}
+                      >
+                        <FaTimes />
+                      </span>
+                    )}
+                  </div>
+                </div>
+
                 {/* Verification Badges */}
-                {isEmailVerified && (<div>
-                  <h2 className="text-[24px] text-[#000000] font-bold mb-2">
+                <div className="space-y-3">
+                  <h2 className="text-lg text-[#000000] font-bold">
                     Verification Badge
                   </h2>
 
-                  {badgesFunction(badges)?.map((badge) => {
+                  {badges.map((badge) => {
                     const alreadyHasBadge = profile?.verified?.some(
                       (b) => b._id.toString() === badge._id.toString()
                     );
@@ -1895,186 +1999,185 @@ const Setting = () => {
                       </div>
                     );
                   })}
-                </div>)}
-
-                {/* Purchase Popup + Success Popup remain same */}
-                {/* Purchase Popup */}
-                {showPopup && activeBadge && (
-                  <div className="fixed inset-0 z-[9999] bg-[#000000] bg-opacity-50 overflow-hidden flex items-center justify-center p-2">
-                    <div className="bg-white rounded-xl p-[1rem] shadow-xl w-full max-w-md overflow-hidden relative animate-fadeIn space-y-3">
-                      {/* Close Button */}
-                      <button
-                        onClick={handleClosePopup}
-                        className="absolute top-3 right-3 text-2xl text-gray-500 hover:text-black transition"
-                      >
-                        ×
-                      </button>
-
-                      {/* Header */}
-                      <div className="text-center space-y-1">
-                        <h2 className="text-2xl font-bold text-gray-900">
-                          Account Verification
-                        </h2>
-                        <p className="text-sm text-gray-600">
-                          Get your{" "}
-                          <span className="font-semibold">
-                            {activeBadge.badgeName}
-                          </span>{" "}
-                          for just{" "}
-                          <span className="text-[#4B2B1C] font-bold">
-                            ₹{activeBadge.badgePrice}
-                          </span>
-                        </p>
-                      </div>
-
-                      {/* Profile Preview */}
-                      <div className="flex flex-col items-center space-y-1">
-                        <img
-                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`}
-                          alt="Profile"
-                          className="w-20 h-20 rounded-full object-cover border-4 border-[#f3f3f3] shadow-sm"
-                        />
-                        <p className="text-lg font-semibold text-[#000000]">
-                          {profile?.username}
-                        </p>
-                      </div>
-
-                      {/* Badge Info */}
-                      <div className="space-y-3">
-                        <div className="bg-gray-50 px-3 py-2 rounded-md border">
-                          <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-                            <img
-                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activeBadge.badgeImage}`}
-                              alt="badge"
-                              className="w-6 h-6 object-cover rounded-full"
-                            />
-                            {activeBadge.badgeName}
-                          </h3>
-                          <p className="text-sm text-[#000000]">
-                            {activeBadge.badgeDescription}
-                          </p>
-                        </div>
-
-                        {/* Criteria */}
-                        <div className="space-y-2">
-                          <h3 className="font-semibold text-[#000000]">
-                            Criteria
-                          </h3>
-                          <ul className="text-sm text-gray-700 space-y-2 pl-3 capitalize list-disc">
-                            {activeBadge.badgeName
-                              .toLowerCase()
-                              .includes("trusted") && (
-                                <>
-                                  <li>At least 5 original artworks uploaded</li>
-                                  <li>Active profile with bio and profile picture</li>
-                                  <li>1 month+ on the platform</li>
-                                  <li>Social link/portfolio linked & verified</li>
-                                </>
-                              )}
-                            {activeBadge.badgeName
-                              .toLowerCase()
-                              .includes("master") && (
-                                <>
-                                  <li>Have a Trusted Badge</li>
-                                  <li>At least 20 original artworks uploaded</li>
-                                  <li>Minimum ₹10,000 in sales on platform</li>
-                                  <li>
-                                    Verified portfolio and social media presence
-                                  </li>
-                                </>
-                              )}
-                            {activeBadge.badgeName
-                              .toLowerCase()
-                              .includes("artsays") && (
-                                <li>No criteria – available for everyone</li>
-                              )}
-                          </ul>
-                        </div>
-                      </div>
-
-                      {/* Terms */}
-                      <p className="text-sm text-gray-500 text-center">
-                        By tapping Confirm & Apply, you agree to our{" "}
-                        <span className="underline">Terms</span> and{" "}
-                        <span className="underline">Privacy Policy</span>.
-                      </p>
-
-                      {/* Action Button */}
-                      <div className="w-full">
-                        <button
-                          onClick={() => handleApplyForBadge(activeBadge._id)}
-                          className="w-full bg-[#4B2B1C] py-2 rounded-md text-white font-semibold shadow-md"
-                        >
-                          Confirm & Apply
-                        </button>
-                      </div>
-
-                    </div>
-                  </div>
-                )}
-
-                {/* Success Popup */}
-                {showSuccessPopup && activeBadge && (
-                  <div className="fixed inset-0 z-[9999] bg-[#000000] bg-opacity-50 flex justify-center items-center p-2">
-                    <div className="bg-white rounded-lg w-full lg:max-w-md overflow-y-auto relative p-3 space-y-3">
-                      <button
-                        onClick={() => setShowSuccessPopup(false)}
-                        className="absolute top-3 right-3 text-2xl text-gray-600"
-                      >
-                        ×
-                      </button>
-
-                      <h2 className="text-2xl font-bold text-center capitalize">
-                        Welcome to the Verified Club!
-                      </h2>
-
-                      <div className="flex justify-center">
-                        <img
-                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`}
-                          alt="Profile"
-                          className="w-24 h-24 rounded-full object-cover"
-                        />
-                      </div>
-
-                      <p className="text-center font-semibold flex items-center justify-center gap-2">
-                        {profile?.username}{" "}
-                        <img
-                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activeBadge.badgeImage}`}
-                          alt="badge"
-                          className="w-6 h-6 object-cover rounded-full"
-                        />
-                      </p>
-                      <p className="text-center text-sm text-[#000000] capitalize">
-                        Your {activeBadge.badgeName} is now active and proudly
-                        visible on your profile and artworks.
-                      </p>
-
-                      <button
-                        onClick={() => {
-                          const link = `${window.location.origin
-                            }/artsays-community/profile/${hasValidUsername
-                              ? `${userName}_${userId}`
-                              : `${firstNameLS}_${lastNameLS}_${userId}`
-                            }`;
-                          if (navigator.clipboard && window.isSecureContext) {
-                            navigator.clipboard
-                              .writeText(link)
-                              .then(() => setCopyMsg("Link copied!"))
-                              .catch(() => fallbackCopyText(link));
-                          } else {
-                            fallbackCopyText(link);
-                          }
-
-                          setTimeout(() => setCopyMsg(""), 2000);
-                        }}
-                        className="bg-[#4B2B1C] w-full flex justify-center py-2 items-center gap-2 text-white font-semibold rounded-lg capitalize"
-                      >
-                        Share your moment on socials <IoPaperPlaneOutline />
-                      </button>
-                    </div>
-                  </div>
-                )}
+                </div>
               </div>
+
+              {/* Purchase Popup + Success Popup remain same */}
+              {/* Purchase Popup */}
+              {showPopup && activeBadge && (
+                <div className="fixed inset-0 z-[9999] bg-[#000000] bg-opacity-50 overflow-hidden flex items-center justify-center p-2">
+                  <div className="bg-white rounded-xl p-[1rem] shadow-xl w-full max-w-md overflow-hidden relative animate-fadeIn space-y-3">
+                    {/* Close Button */}
+                    <button
+                      onClick={handleClosePopup}
+                      className="absolute top-3 right-3 text-2xl text-gray-500 hover:text-black transition"
+                    >
+                      ×
+                    </button>
+
+                    {/* Header */}
+                    <div className="text-center space-y-1">
+                      <h2 className="text-2xl font-bold text-gray-900">
+                        Account Verification
+                      </h2>
+                      <p className="text-sm text-gray-600">
+                        Get your{" "}
+                        <span className="font-semibold">
+                          {activeBadge.badgeName}
+                        </span>{" "}
+                        for just{" "}
+                        <span className="text-[#4B2B1C] font-bold">
+                          ₹{activeBadge.badgePrice}
+                        </span>
+                      </p>
+                    </div>
+
+                    {/* Profile Preview */}
+                    <div className="flex flex-col items-center space-y-1">
+                      <img
+                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`}
+                        alt="Profile"
+                        className="w-20 h-20 rounded-full object-cover border-4 border-[#f3f3f3] shadow-sm"
+                      />
+                      <p className="text-lg font-semibold text-[#000000]">
+                        {profile?.username}
+                      </p>
+                    </div>
+
+                    {/* Badge Info */}
+                    <div className="space-y-3">
+                      <div className="bg-gray-50 px-3 py-2 rounded-md border">
+                        <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                          <img
+                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activeBadge.badgeImage}`}
+                            alt="badge"
+                            className="w-6 h-6 object-cover rounded-full"
+                          />
+                          {activeBadge.badgeName}
+                        </h3>
+                        <p className="text-sm text-[#000000]">
+                          {activeBadge.badgeDescription}
+                        </p>
+                      </div>
+
+                      {/* Criteria */}
+                      <div className="space-y-2">
+                        <h3 className="font-semibold text-[#000000]">
+                          Criteria
+                        </h3>
+                        <ul className="text-sm text-gray-700 space-y-2 pl-3 capitalize list-disc">
+                          {activeBadge.badgeName
+                            .toLowerCase()
+                            .includes("trusted") && (
+                              <>
+                                <li>At least 5 original artworks uploaded</li>
+                                <li>Active profile with bio and profile picture</li>
+                                <li>1 month+ on the platform</li>
+                                <li>Social link/portfolio linked & verified</li>
+                              </>
+                            )}
+                          {activeBadge.badgeName
+                            .toLowerCase()
+                            .includes("master") && (
+                              <>
+                                <li>Have a Trusted Badge</li>
+                                <li>At least 20 original artworks uploaded</li>
+                                <li>Minimum ₹10,000 in sales on platform</li>
+                                <li>
+                                  Verified portfolio and social media presence
+                                </li>
+                              </>
+                            )}
+                          {activeBadge.badgeName
+                            .toLowerCase()
+                            .includes("artsays") && (
+                              <li>No criteria – available for everyone</li>
+                            )}
+                        </ul>
+                      </div>
+                    </div>
+
+                    {/* Terms */}
+                    <p className="text-sm text-gray-500 text-center">
+                      By tapping Confirm & Apply, you agree to our{" "}
+                      <span className="underline">Terms</span> and{" "}
+                      <span className="underline">Privacy Policy</span>.
+                    </p>
+
+                    {/* Action Button */}
+                    <div className="w-full">
+                      <button
+                        onClick={() => handleApplyForBadge(activeBadge._id)}
+                        className="w-full bg-[#4B2B1C] py-2 rounded-md text-white font-semibold shadow-md"
+                      >
+                        Confirm & Apply
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Success Popup */}
+              {showSuccessPopup && activeBadge && (
+                <div className="fixed inset-0 z-[9999] bg-[#000000] bg-opacity-50 flex justify-center items-center p-2">
+                  <div className="bg-white rounded-lg w-full lg:max-w-md overflow-y-auto relative p-3 space-y-3">
+                    <button
+                      onClick={() => setShowSuccessPopup(false)}
+                      className="absolute top-3 right-3 text-2xl text-gray-600"
+                    >
+                      ×
+                    </button>
+
+                    <h2 className="text-2xl font-bold text-center capitalize">
+                      Welcome to the Verified Club!
+                    </h2>
+
+                    <div className="flex justify-center">
+                      <img
+                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`}
+                        alt="Profile"
+                        className="w-24 h-24 rounded-full object-cover"
+                      />
+                    </div>
+
+                    <p className="text-center font-semibold flex items-center justify-center gap-2">
+                      {profile?.username}{" "}
+                      <img
+                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activeBadge.badgeImage}`}
+                        alt="badge"
+                        className="w-6 h-6 object-cover rounded-full"
+                      />
+                    </p>
+                    <p className="text-center text-sm text-[#000000] capitalize">
+                      Your {activeBadge.badgeName} is now active and proudly
+                      visible on your profile and artworks.
+                    </p>
+
+                    <button
+                      onClick={() => {
+                        const link = `${window.location.origin
+                          }/artsays-community/profile/${hasValidUsername
+                            ? `${userName}_${userId}`
+                            : `${firstNameLS}_${lastNameLS}_${userId}`
+                          }`;
+                        if (navigator.clipboard && window.isSecureContext) {
+                          navigator.clipboard
+                            .writeText(link)
+                            .then(() => setCopyMsg("Link copied!"))
+                            .catch(() => fallbackCopyText(link));
+                        } else {
+                          fallbackCopyText(link);
+                        }
+
+                        setTimeout(() => setCopyMsg(""), 2000);
+                      }}
+                      className="bg-[#4B2B1C] w-full flex justify-center py-2 items-center gap-2 text-white font-semibold rounded-lg capitalize"
+                    >
+                      Share your moment on socials <IoPaperPlaneOutline />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

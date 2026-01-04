@@ -1,47 +1,48 @@
-import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Preferences from "./Pereferences/Pereferences";
-import Billings from "./Billings/Billings";
-import getAPI from "../../../../api/getAPI";
-import putAPI from "../../../../api/putAPI";
-import Settings from "./UserProfile/BasicInformation";
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Preferences from './Pereferences/Pereferences';
+import Billings from './Billings/Billings';
+import getAPI from '../../../../api/getAPI';
+import putAPI from '../../../../api/putAPI';
+import Settings from './UserProfile/BasicInformation';
+
 
 const UserProfileForm = () => {
   const navigate = useNavigate();
   const [imageFile, setImageFile] = useState(null);
-  const [previewImage, setPreviewImage] = useState("");
+  const [previewImage, setPreviewImage] = useState('');
   const [passwordData, setPasswordData] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
   });
   const [profileData, setProfileData] = useState({
-    name: "",
-    lastName: "",
-    username: "",
-    email: "",
-    phone: "",
-    userType: "",
+    name: '',
+    lastName: '',
+    username: '', 
+    email: '',
+    phone: '',
+    userType: '',
     address: {
-      line1: "",
-      line2: "",
-      city: "",
-      state: "",
-      country: "",
-      pincode: "",
+      line1: '',
+      line2: '',
+      city: '',
+      state: '',
+      country: '',
+      pincode: ''
     },
-    gender: "",
-    birthdate: "",
-    website: "",
+    gender: '',
+    birthdate: '',
+    website: ''
   });
   const location = useLocation();
-  const userId = location.state?._id || localStorage.getItem("userId");
+  const userId = location.state?._id || localStorage.getItem('userId');
 
   useEffect(() => {
     if (location.state?._id) {
-      localStorage.setItem("userId", location.state._id);
+      localStorage.setItem('userId', location.state._id);
     }
   }, [location.state]);
 
@@ -50,14 +51,8 @@ const UserProfileForm = () => {
       const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
       if (result.data.user) {
         const userData = result.data.user;
-        const formattedBirthdate = userData.birthdate
-          ? new Date(userData.birthdate).toISOString().split("T")[0]
-          : "";
-        const parsedAddress = userData.address
-          ? typeof userData.address === "string"
-            ? JSON.parse(userData.address)
-            : userData.address
-          : {};
+        const formattedBirthdate = userData.birthdate ? new Date(userData.birthdate).toISOString().split('T')[0] : '';
+        const parsedAddress = userData.address ? (typeof userData.address === 'string' ? JSON.parse(userData.address) : userData.address) : {};
 
         setProfileData({
           ...userData,
@@ -66,9 +61,7 @@ const UserProfileForm = () => {
         });
 
         const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-        const profilePhotoUrl = result.data.user.profilePhoto
-          ? `${BASE_URL}${result.data.user.profilePhoto}`
-          : "DashboardAssets/assets/images/user.png";
+        const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : 'DashboardAssets/assets/images/user.png';
         setPreviewImage(profilePhotoUrl);
       }
     } catch (error) {
@@ -83,11 +76,11 @@ const UserProfileForm = () => {
     }
   }, [userId]);
 
-  const [activeTab, setActiveTab] = useState("Settings");
+  const [activeTab, setActiveTab] = useState('Settings');
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
-    const tabFromUrl = queryParams.get("tab");
+    const tabFromUrl = queryParams.get('tab');
     if (tabFromUrl) {
       setActiveTab(tabFromUrl);
     }
@@ -105,20 +98,20 @@ const UserProfileForm = () => {
     const { name, value } = e.target;
     setProfileData((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: value
     }));
   };
 
   const handleAddressChange = (e) => {
     const { name, value } = e.target;
-    const [, subKey] = name.split(".");
+    const [, subKey] = name.split('.');
 
     setProfileData((prevState) => ({
       ...prevState,
       address: {
         ...prevState.address,
-        [subKey]: value,
-      },
+        [subKey]: value
+      }
     }));
   };
 
@@ -136,9 +129,9 @@ const UserProfileForm = () => {
 
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
-    setPasswordData((prev) => ({
+    setPasswordData(prev => ({
       ...prev,
-      [name]: value,
+      [name]: value
     }));
   };
 
@@ -147,58 +140,54 @@ const UserProfileForm = () => {
 
     try {
       const formData = new FormData();
-      formData.append("name", profileData.name);
-      formData.append("lastName", profileData.lastName);
-      formData.append("address", JSON.stringify(profileData.address));
-      formData.append("gender", profileData.gender);
-      formData.append("birthdate", profileData.birthdate);
-      formData.append("bio", profileData.bio);
-      formData.append("username", profileData.username || "");
-      formData.append("email", profileData.email || "");
-      formData.append("phone", profileData.phone || "");
-      formData.append("emailVerified", profileData.emailVerified);
-      formData.append("numberVerified", profileData.numberVerified);
+      formData.append('name', profileData.name);
+      formData.append('lastName', profileData.lastName);
+      formData.append('address', JSON.stringify(profileData.address));
+      formData.append('gender', profileData.gender);
+      formData.append('birthdate', profileData.birthdate);
+      formData.append('bio', profileData.bio);
+      formData.append('username', profileData.username || '');
+      formData.append('email', profileData.email || '');
+      formData.append('phone', profileData.phone || '');
 
-      if (
-        passwordData.currentPassword ||
-        passwordData.newPassword ||
-        passwordData.confirmPassword
-      ) {
-        formData.append("currentPassword", passwordData.currentPassword);
-        formData.append("newPassword", passwordData.newPassword);
-        formData.append("confirmPassword", passwordData.confirmPassword);
+      if (passwordData.currentPassword || passwordData.newPassword || passwordData.confirmPassword) {
+        formData.append('currentPassword', passwordData.currentPassword);
+        formData.append('newPassword', passwordData.newPassword);
+        formData.append('confirmPassword', passwordData.confirmPassword);
       }
 
+
       if (imageFile) {
-        formData.append("profilePhoto", imageFile);
+        formData.append('profilePhoto', imageFile);
       }
 
       const response = await putAPI(`/auth/users/${userId}`, formData, {
-        "Content-Type": "multipart/form-data",
+        'Content-Type': 'multipart/form-data',
       });
 
-      toast.success(response.message || "Profile updated successfully!");
+      toast.success(response.message || 'Profile updated successfully!');
       if (response.ok) {
         setPasswordData({
-          currentPassword: "",
-          newPassword: "",
-          confirmPassword: "",
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
         });
+
       }
     } catch (error) {
-      console.error("Error updating profile:", error);
+      console.error('Error updating profile:', error);
       if (error.response?.data?.message) {
         toast.error(error.response.data.message);
       } else {
-        toast.error("Something went wrong. Please try again.");
+        toast.error('Something went wrong. Please try again.');
       }
     }
   };
 
   const tabs = [
-    { name: "Settings", component: Settings },
-    { name: "Billings", component: Billings },
-    { name: "Preferences", component: Preferences },
+    { name: 'Settings', component: Settings },
+    { name: 'Billings', component: Billings },
+    { name: 'Preferences', component: Preferences },
   ];
 
   return (
@@ -209,10 +198,7 @@ const UserProfileForm = () => {
             <h2>Profile</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <span
-                  onClick={() => navigate("/super-admin/dashboard")}
-                  style={{ cursor: "pointer" }}
-                >
+                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
                   <i className="fa fa-dashboard"></i>
                 </span>
               </li>
@@ -230,11 +216,9 @@ const UserProfileForm = () => {
                 {tabs.map((tab) => (
                   <li className="nav-item" key={tab.name}>
                     <a
-                      className={`nav-link ${
-                        activeTab === tab.name ? "active" : ""
-                      }`}
+                      className={`nav-link ${activeTab === tab.name ? 'active' : ''}`}
                       onClick={() => handleTabClick(tab.name)}
-                      style={{ cursor: "pointer" }}
+                      style={{ cursor: 'pointer' }}
                     >
                       {tab.name}
                     </a>
@@ -247,15 +231,12 @@ const UserProfileForm = () => {
               {tabs.map((tab) => (
                 <div
                   key={tab.name}
-                  className={`tab-pane ${
-                    activeTab === tab.name ? "active" : ""
-                  }`}
+                  className={`tab-pane ${activeTab === tab.name ? 'active' : ''}`}
                   id={tab.name}
                 >
                   <tab.component
                     userId={userId}
                     profileData={profileData}
-                    setProfileData={setProfileData}
                     previewImage={previewImage}
                     handleImageUpload={handleImageUpload}
                     handleChange={handleChange}
@@ -263,7 +244,7 @@ const UserProfileForm = () => {
                     handleSubmit={handleSubmit}
                     passwordData={passwordData}
                     handlePasswordChange={handlePasswordChange}
-                    fetchProfile={fetchProfile}
+                      fetchProfile={fetchProfile}
                   />
                 </div>
               ))}

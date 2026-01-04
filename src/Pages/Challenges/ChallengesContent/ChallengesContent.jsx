@@ -5,6 +5,7 @@
 // import { differenceInDays, format } from "date-fns";
 // import { useNavigate } from "react-router-dom";
 
+
 // const ChallengesContent = () => {
 
 //   const [showDetails, setShowDetails] = useState({});
@@ -148,7 +149,7 @@
 //                   {/* Buttons */}
 //                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 //                     <button
-//                       className="flex items-center bg-[#48372D] justify-center border !border-[#48372D] rounded-full text-white py-2
+//                       className="flex items-center bg-[#48372D] justify-center border !border-[#48372D] rounded-full text-white py-2 
 //                         font-semibold hover:bg-[#ffffff] hover:!text-[#48372D]"
 //                       onClick={() => navigate(`/challenge/${slugUrl(challenge?.title)}`, { state: challenge })}
 //                     >
@@ -156,7 +157,7 @@
 //                     </button>
 //                     <button
 //                       onClick={() => handleShowDetails(index)}
-//                       className="flex-1 border !border-[#48372D] py-2 px-6 rounded-full font-semibold text-[#48372D] transition-colors
+//                       className="flex-1 border !border-[#48372D] py-2 px-6 rounded-full font-semibold text-[#48372D] transition-colors 
 //                         duration-200 hover:bg-[#48372D] hover:!text-[#ffffff]"
 //                     >
 //                       Learn More
@@ -185,7 +186,7 @@
 //                   </ul>
 
 //                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4 py-4">
-//                     <button className="flex items-center bg-[#48372D] justify-center border !border-[#48372D] rounded-full text-white py-2
+//                     <button className="flex items-center bg-[#48372D] justify-center border !border-[#48372D] rounded-full text-white py-2 
 //                       font-semibold hover:bg-[#ffffff] hover:!text-[#48372D]"
 //                       onClick={() => navigate(`/challenge/${slugUrl(challenge?.title)}`, { state: challenge })}
 //                     >
@@ -225,6 +226,8 @@
 // };
 // export default ChallengesContent;
 
+
+
 import { useState, useEffect } from "react";
 import { GoDotFill } from "react-icons/go";
 import { FaCrown } from "react-icons/fa";
@@ -235,23 +238,24 @@ import { useNavigate } from "react-router-dom";
 const ChallengesContent = () => {
   const [showDetails, setShowDetails] = useState({});
   const [challengesData, setChallengesData] = useState([]);
-  const [cmsData, setCmsData] = useState(null);
-  const [disabledMap, setDisabledMap] = useState({});
+  const [cmsData, setCmsData] = useState(null); 
 
   const navigate = useNavigate();
+
   const fetchChallenges = async () => {
-    try {
-      const response = await getAPI("/api/getchallengedata");
-      if (response?.hasError === false) {
-        const liveChallenges = response?.data?.challenges?.filter(
-          (challenge) => challenge?.status === "live"
-        );
-        setChallengesData(liveChallenges);
-      }
-    } catch (error) {
-      console.log(error);
+  try {
+    const response = await getAPI("/api/getchallengedata");
+    if (response?.hasError === false) {
+      const liveChallenges = response?.data?.challenges?.filter(
+        (challenge) => challenge?.status === "live"
+      );
+      setChallengesData(liveChallenges);
     }
-  };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 
   const fetchChallengeCMS = async () => {
     try {
@@ -284,37 +288,8 @@ const ChallengesContent = () => {
   };
 
   const slugUrl = (theme) => {
-    return theme
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+    return theme.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   };
-
-  const checkMoreParticipants = async (challenge) => {
-    try {
-      const response = await getAPI(
-        `/api/getChallengApplicationsByChallengId/${challenge?._id}`
-      );
-      const isFull =
-        response?.data?.totalApplicants >= challenge?.maxParticipants;
-
-      setDisabledMap((prev) => ({
-        ...prev,
-        [challenge._id]: isFull,
-      }));
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    if (challengesData.length > 0) {
-      challengesData.forEach((challenge) => {
-        checkMoreParticipants(challenge);
-      });
-    }
-  }, [challengesData]);
 
   return (
     <div className="mb-4">
@@ -323,13 +298,9 @@ const ChallengesContent = () => {
         <div className="w-full py-3 px-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-              <a href="/" className="hover:text-red-500">
-                Home
-              </a>
+              <a href="/" className="hover:text-red-500">Home</a>
               <span>/</span>
-              <a href="#" className="hover:text-red-500">
-                Challenges
-              </a>
+              <a href="#" className="hover:text-red-500">Challenges</a>
             </nav>
           </div>
         </div>
@@ -357,11 +328,7 @@ const ChallengesContent = () => {
             className="grid grid-cols-1 md:grid-cols-2 gap-6 py-6 px-3 sm:px-6 my-3"
           >
             {/* LEFT SIDE */}
-            <div
-              className={`md:p-4 content-center order-2 ${
-                (index + 1) % 2 === 0 ? "md:!order-2" : "md:!order-1"
-              }`}
-            >
+            <div className={`md:p-4 content-center order-2 ${ (index + 1) % 2 === 0 ? "md:!order-2" : "md:!order-1" }`}>
               {!showDetails[index] ? (
                 <div>
                   {/* Timer Badge */}
@@ -385,10 +352,7 @@ const ChallengesContent = () => {
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2 pt-4">
                     {challenge?.tags.map((tag, index) => (
-                      <span
-                        key={index}
-                        className="bg-[#3a2a23] text-white px-4 py-1 rounded-full text-sm"
-                      >
+                      <span key={index} className="bg-[#3a2a23] text-white px-4 py-1 rounded-full text-sm">
                         {tag}
                       </span>
                     ))}
@@ -408,30 +372,12 @@ const ChallengesContent = () => {
                   </div>
 
                   {/* Buttons */}
-                  {disabledMap[challenge._id] && (
-                    <span className="mt-1 text-sm font-medium text-red-600">
-                      No more seats available
-                    </span>
-                  )}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
                     <button
-                      className={`flex items-center justify-center rounded-full py-2 font-semibold
-                                 border border-[#48372D] ${
-                                   daysLeft(challenge?.endDate) === "Expired" ||
-                                   disabledMap[challenge._id]
-                                     ? "bg-gray-400 text-white cursor-not-allowed"
-                                     : "bg-[#48372D] text-white hover:bg-white hover:text-[#48372D]"
-                                 }
-                                                        
-                                                                                   `}
+                      className="flex items-center bg-[#48372D] justify-center border !border-[#48372D] rounded-full text-white py-2 
+                      font-semibold hover:bg-[#ffffff] hover:!text-[#48372D]"
                       onClick={() =>
-                        navigate(`/challenge/${slugUrl(challenge?.title)}`, {
-                          state: challenge,
-                        })
-                      }
-                      disabled={
-                        daysLeft(challenge?.endDate) === "Expired" ||
-                        disabledMap[challenge._id]
+                        navigate(`/challenge/${slugUrl(challenge?.title)}`, { state: challenge })
                       }
                     >
                       Join The Challenge
@@ -463,40 +409,19 @@ const ChallengesContent = () => {
                     <li>
                       Submission Deadline:{" "}
                       {challenge?.submissionDeadline
-                        ? format(
-                            new Date(challenge.submissionDeadline),
-                            "dd MMMM, yyyy"
-                          )
+                        ? format(new Date(challenge.submissionDeadline), "dd MMMM, yyyy")
                         : "N/A"}
                     </li>
                   </ul>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4 py-4">
                     <button
+                      className="flex items-center bg-[#48372D] justify-center border !border-[#48372D] rounded-full text-white py-2 
+                      font-semibold hover:bg-[#ffffff] hover:!text-[#48372D]"
                       onClick={() =>
-                        navigate(`/challenge/${slugUrl(challenge?.title)}`, {
-                          state: challenge,
-                        })
+                        navigate(`/challenge/${slugUrl(challenge?.title)}`, { state: challenge })
                       }
-                      disabled={
-                        daysLeft(challenge?.endDate) === "Expired" ||
-                        disabledMap[challenge._id]
-                      }
-                      className={`flex items-center justify-center rounded-full py-2 font-semibold
-                                 border border-[#48372D] ${
-                                   daysLeft(challenge?.endDate) === "Expired" ||
-                                   disabledMap[challenge._id]
-                                     ? "bg-gray-400 text-white cursor-not-allowed"
-                                     : "bg-[#48372D] text-white hover:bg-white hover:text-[#48372D]"
-                                 }
-                                                        
-                                                                                   `}
                     >
-                      {disabledMap[challenge._id] && (
-                        <span className="mt-1 text-sm font-semibold text-red-600">
-                          No more seats available
-                        </span>
-                      )}
                       Join The Challenge
                     </button>
 
@@ -514,9 +439,7 @@ const ChallengesContent = () => {
 
             {/* RIGHT SIDE IMAGE */}
             <aside
-              className={`${
-                (index + 1) % 2 === 0 ? "md:!order-1" : "md:!order-2"
-              } order-1 rounded-2xl 
+              className={`${(index + 1) % 2 === 0 ? "md:!order-1" : "md:!order-2"} order-1 rounded-2xl 
                 content-center justify-items-center bg-[#EBEBEB]`}
             >
               <img

@@ -249,7 +249,6 @@ const BiddingTable = () => {
   const [passFilter, setPassFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const navigate = useNavigate();
-const[loading,setLoading]=useState(true);
 
   const fetchOrders = async () => {
     try {
@@ -262,14 +261,13 @@ const[loading,setLoading]=useState(true);
       setOrders(Array.isArray(res?.data?.data) ? res.data.data : []);
     } catch (e) {
       setOrders([]);
-    }finally{
-      setLoading(false)
     }
   };
 
   useEffect(() => {
     fetchOrders();
   }, []);
+
   const hasActive = orders.some((o) => o && o.active);
 
   const uniqueUsers = Array.from(
@@ -277,7 +275,7 @@ const[loading,setLoading]=useState(true);
       orders.map((o) => `${o.user?.name || ""} ${o.user?.lastName || ""}`)
     )
   ).filter((v) => v.trim() !== "");
-  
+
   const uniquePasses = Array.from(
     new Set(orders.map((o) => o.pass?.name || ""))
   ).filter((v) => v.trim() !== "");
@@ -314,7 +312,6 @@ const[loading,setLoading]=useState(true);
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
-  if(loading)return <BiddingSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">
@@ -540,65 +537,3 @@ const[loading,setLoading]=useState(true);
 };
 
 export default BiddingTable;
-
-const BiddingSkeleton=()=>{
-  return(
-    <>
-    <div className="w-full px-4 animate-pulse">
-  {/* HEADER */}
-  <div className="flex flex-wrap justify-between items-center mb-6">
-    <div>
-      <div className="h-6 w-48 bg-gray-300 rounded mb-2"></div>
-      <div className="h-4 w-32 bg-gray-200 rounded"></div>
-    </div>
-
-    <div className="h-9 w-32 bg-gray-300 rounded mt-3 md:mt-0"></div>
-  </div>
-
-  {/* FILTERS */}
-  <div className="flex flex-wrap justify-between items-center mb-4 gap-3">
-    <div className="h-8 w-48 bg-gray-200 rounded"></div>
-
-    <div className="flex gap-2">
-      <div className="h-8 w-36 bg-gray-200 rounded"></div>
-      <div className="h-8 w-28 bg-gray-200 rounded"></div>
-    </div>
-  </div>
-
-  {/* TABLE */}
-  <div className="border rounded-lg overflow-hidden">
-    {/* TABLE HEADER */}
-    <div className="grid grid-cols-6 gap-4 bg-gray-100 p-3">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="h-4 bg-gray-300 rounded"></div>
-      ))}
-    </div>
-
-    {/* TABLE ROWS */}
-    {Array.from({ length: 6 }).map((_, row) => (
-      <div
-        key={row}
-        className="grid grid-cols-6 gap-4 p-3 border-t"
-      >
-        {Array.from({ length: 6 }).map((_, col) => (
-          <div
-            key={col}
-            className="h-4 bg-gray-200 rounded"
-          ></div>
-        ))}
-      </div>
-    ))}
-  </div>
-
-  {/* PAGINATION */}
-  <div className="flex justify-between items-center mt-6">
-    <div className="h-4 w-48 bg-gray-200 rounded"></div>
-    <div className="flex gap-2">
-      <div className="h-8 w-24 bg-gray-300 rounded"></div>
-      <div className="h-8 w-24 bg-gray-300 rounded"></div>
-    </div>
-  </div>
-</div>
-</>
-  )
-}

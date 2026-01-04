@@ -368,6 +368,7 @@ function ProductUpload() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+
     if (!userId) {
       toast.error("User authentication required");
       setIsSubmitting(false);
@@ -995,7 +996,7 @@ function ProductUpload() {
       <div className="row clearfix">
         <div className="col-lg-12">
           <div className="card">
-            <div className="bg-white p-4 rounded">
+            <form onSubmit={handleSubmit} className="bg-white p-4 rounded">
               {/* Tabs Navigation */}
               <ul className="nav nav-tabs mb-4">
                 <li className="nav-item">
@@ -1133,14 +1134,13 @@ function ProductUpload() {
                       type="submit"
                       className="btn btn-primary"
                       disabled={isSubmitting}
-                      onClick={handleSubmit}
                     >
                       {isSubmitting ? 'Creating...' : 'Create Product'}
                     </button>
                   )}
                 </div>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>

@@ -6,7 +6,6 @@ import putAPI from "../../../../../api/putAPI";
 import deleteAPI from "../../../../../api/deleteAPI";
 import { toast } from "react-toastify";
 import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
-import ConfirmationDialog from "../../../ConfirmationDialog";
 
 const BiddingTable = () => {
   const navigate = useNavigate();
@@ -14,10 +13,7 @@ const BiddingTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [loading, setLoading] = useState(false);
-  const [selectedPassId, setSelectedPassId] = useState(null);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-
+const[loading,setLoading]=useState(false);
   const [formData, setFormData] = useState({
     name: "",
     validityPeriod: "",
@@ -36,15 +32,15 @@ const BiddingTable = () => {
   });
 
   const fetchPassTypes = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
       const res = await getAPI("/api/bidding/passes", {}, true);
       const list = Array.isArray(res?.data?.data) ? res.data.data : [];
       setPasses(list);
     } catch (e) {
       setPasses([]);
-    } finally {
-      setLoading(false);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -147,40 +143,20 @@ const BiddingTable = () => {
     }
   };
 
-  // const deletePass = async (passId) => {
-  //   try {
-  //     const res = await deleteAPI(`/api/bidding/passes/${passId}`, {}, true);
-  //     if (!res?.hasError) {
-  //       toast.success("Pass deleted");
-  //       fetchPassTypes();
-  //     } else {
-  //       toast.error(res?.message || "Failed to delete");
-  //     }
-  //   } catch (e) {
-  //     toast.error("Failed to delete");
-  //   }
-  // };
-
-  const handleDeleteCancel = () => {
-    setIsDeleteDialogOpen(false);
-    setSelectedPassId(null);
-  };
-
   const deletePass = async (passId) => {
-    setSelectedPassId(passId);
-    setIsDeleteDialogOpen(true);
+    try {
+      const res = await deleteAPI(`/api/bidding/passes/${passId}`, {}, true);
+      if (!res?.hasError) {
+        toast.success("Pass deleted");
+        fetchPassTypes();
+      } else {
+        toast.error(res?.message || "Failed to delete");
+      }
+    } catch (e) {
+      toast.error("Failed to delete");
+    }
   };
-
-  
-  const handleDeleteConfirmed = (id) => {
-    setPasses((passes) =>
-      passes.filter((pass) => pass._id !== id)
-    );
-    setIsDeleteDialogOpen(false);
-  };
-
-
-  if (loading) return <ProductRequestSkeleton />;
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">
@@ -372,14 +348,6 @@ const BiddingTable = () => {
           </div>
         </div>
       </div>
-      {isDeleteDialogOpen && (
-        <ConfirmationDialog
-          onClose={handleDeleteCancel}
-          deleteType="pass"
-          id={selectedPassId}
-          onDeleted={handleDeleteConfirmed}
-        />
-      )}
     </div>
   );
 };

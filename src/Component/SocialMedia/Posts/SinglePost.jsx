@@ -11,8 +11,6 @@ import { useNavigate } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { Helmet } from "react-helmet";
-import { Zap } from "lucide-react";
-
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 const SharePost = () => {
   const [sharePostData, setSharePostData] = useState(null);
@@ -38,13 +36,14 @@ const SharePost = () => {
   const [allCollaboraters, setAllCollaboraters] = useState([]);
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(true);
-  //
+  // 
   const { postId } = useParams();
   const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
   const isMobile = window.innerWidth < 1024; // Tailwind lg breakpoint
 
   const postRef = useRef();
+  const collabRef = useRef();
   const commentRef = useRef();
   const activePostRef = useRef();
   useEffect(() => {
@@ -53,6 +52,11 @@ const SharePost = () => {
         if (postRef.current && !postRef.current.contains(event.target)) {
           setActiveIndex(null);
         }
+      }
+
+      if (collabRef.current && !collabRef.current.contains(event.current)) {
+        setShowCollaborators(false);
+        setAllCollaboraters([]);
       }
     }
 
@@ -99,33 +103,30 @@ const SharePost = () => {
       console.error("Error liking/unliking:", err);
     }
   };
+
   const handleFollowToggle = async (targetUserId, isFollowing) => {
     const userId = localStorage.getItem("userId");
 
     try {
       if (isFollowing) {
-        const res = await postAPI(
+        await postAPI(
           `/api/social-media/unfollow/${targetUserId}`,
           { userId },
           true,
           true
         );
-        setSharePostData((prev) => ({
-          ...prev,
-          showFollowButton: !prev.showFollowButton,
-        }));
       } else {
-        const res = await postAPI(
+        await postAPI(
           `/api/social-media/follow/${targetUserId}`,
           { userId },
           true,
           true
         );
-        setSharePostData((prev) => ({
-          ...prev,
-          showFollowButton: !prev.showFollowButton,
-        }));
       }
+      setSharePostData((prev) => ({
+        ...prev,
+        showFollowButton: !isFollowing,
+      }));
     } catch (error) {
       console.error("Error following/unfollowing user:", error);
 
@@ -224,24 +225,13 @@ const SharePost = () => {
   //  Navigate to profile
   const goToProfile = (profileUserId) => {
     navigate(
-      `/artsays-community/profile/${
-        sharePostData?.user?.username
-          ? `${sharePostData?.user?.username}`
-          : `${sharePostData?.user?.name}_${sharePostData?.user?.lastName}_${profileUserId}`
-      }`,
-      { state: { userId: profileUserId } }
+      `/artsays-community/profile/${sharePostData?.user?.username
+        ? `${sharePostData?.user?.username}`
+        : `${sharePostData?.user?.name}_${sharePostData?.user?.lastName}_${profileUserId}`
+      }`, { state: { userId: profileUserId } }
     );
   };
-  const goProfile = (user) => {
-    navigate(
-      `/artsays-community/profile/${
-        user?.username
-          ? `${user?.username}`
-          : `${user?.name}_${user?.lastName}_${user?._id}`
-      }`,
-      { state: { userId: user?._id } }
-    );
-  };
+
   const handleInputChange = (e) => {
     const value = e.target.value;
     setTipAmount(value);
@@ -388,6 +378,7 @@ const SharePost = () => {
     const collaboraters = post.collaborators || [];
     setAllCollaboraters(collaboraters);
   };
+
   // copy the profile link
   function fallbackCopyText(text) {
     const textarea = document.createElement("textarea");
@@ -400,18 +391,7 @@ const SharePost = () => {
     document.execCommand("copy");
     document.body.removeChild(textarea);
   }
-
- const ensureBuyer = () => {
-    if (sharePostData?.user?.userType !== "Buyer") {
-      toast.warn(
-        "Only buyers can use this feature, Register as a Buyer to continue."
-      );
-      return false;
-    }
-    return true;
-  };
-
-  if (loading) return <LoadingSkeleton />;
+  if (loading) return <LoadingSkeleton />
   return (
     <>
       {sharePostData && (
@@ -534,12 +514,7 @@ const SharePost = () => {
                           {/* User Info */}
                           <div className="flex flex-col gap-6">
                             <div className="flex items-center justify-between">
-                              <div
-                                className="flex items-center gap-2"
-                                onClick={() =>
-                                  goToProfile(sharePostData.user._id)
-                                }
-                              >
+                              <div className="flex items-center gap-2">
                                 <img
                                   src={
                                     sharePostData.user?.profilePhoto
@@ -610,34 +585,8 @@ const SharePost = () => {
                                     className="w-8 h-8 rounded-full"
                                   />
                                   <div>
-                                    <span
-                                      className="text-sm font-semibold"
-                                      onClick={() => goProfile(comment?.user)}
-                                    >
+                                    <span className="text-sm font-semibold">
                                       {comment?.user?.username}
-                                      {comment?.user.verified?.length > 0 && (
-                                        <img
-                                          src={`${
-                                            process.env
-                                              .REACT_APP_API_URL_FOR_IMAGE
-                                          }${
-                                            comment?.user.verified[
-                                              comment?.user.verified.length - 1
-                                            ]?.badgeImage
-                                          }`}
-                                          className="inline-block ml-1 w-6 h-6 object-contain"
-                                          alt={
-                                            comment?.user.verified[
-                                              comment?.user.verified.length - 1
-                                            ]?.badgeName || "badge"
-                                          }
-                                          title={
-                                            comment?.user.verified[
-                                              comment?.user.verified.length - 1
-                                            ]?.badgeName
-                                          }
-                                        />
-                                      )}
                                     </span>
                                     <p className="text-xs">{comment?.text}</p>
                                   </div>
@@ -712,30 +661,7 @@ const SharePost = () => {
                                         className="w-8 h-8 rounded-full"
                                       />
                                       <span className="text-sm font-medium text-gray-800">
-                                        {user?.username}
-                                        {user?.verified?.length > 0 && (
-                                          <img
-                                            src={`${
-                                              process.env
-                                                .REACT_APP_API_URL_FOR_IMAGE
-                                            }${
-                                              user.verified[
-                                                user.verified.length - 1
-                                              ]?.badgeImage
-                                            }`}
-                                            className="inline-block ml-1 w-6 h-6 object-contain"
-                                            alt={
-                                              user.verified[
-                                                user.verified.length - 1
-                                              ]?.badgeName || "badge"
-                                            }
-                                            title={
-                                              user.verified[
-                                                user.verified.length - 1
-                                              ]?.badgeName
-                                            }
-                                          />
-                                        )}
+                                        {user.username}
                                       </span>
                                       <span className="text-xs text-gray-500">
                                         {user.role}
@@ -771,6 +697,57 @@ const SharePost = () => {
                             )}
                           </div>
                         </div>
+                        {showCollaborators && allCollaboraters && (
+                          <div className="fixed inset-0 flex items-center justify-center  bg-[#000000]/40 backdrop-blur-sm z-50">
+                            <div
+                              ref={collabRef}
+                              className="relative bg-white rounded-xl shadow-xl p-5 w-80 animate-fadeIn"
+                            >
+                              {/* ❌ Close (cross) button */}
+                              <button
+                                onClick={() => setShowCollaborators(false)}
+                                className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
+                              >
+                                <i className="ri-close-line text-black"></i>{" "}
+                              </button>
+
+                              <h3 className="text-lg font-semibold mb-4 text-center">
+                                Collaborators
+                              </h3>
+
+                              <ul className="space-y-2 max-h-48 overflow-y-auto">
+                                {allCollaboraters?.length > 0 ? (
+                                  allCollaboraters.map((c) => {
+                                    return (
+                                      <li
+                                        key={c._id}
+                                        className="p-2 border rounded-md flex items-center space-x-6"
+                                      >
+                                        <img
+                                          src={
+                                            c?.profilePhoto
+                                              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${c.profilePhoto}`
+                                              : DEFAULT_PROFILE_IMAGE
+                                          }
+                                          alt={c.username || "user"}
+                                          className="w-10 h-10 rounded-full object-cover"
+                                        />
+
+                                        <span className=" text-lg font-bold ">
+                                          {c.username}
+                                        </span>
+                                      </li>
+                                    );
+                                  })
+                                ) : (
+                                  <li className="text-gray-500 text-center py-3">
+                                    No collaborators found
+                                  </li>
+                                )}
+                              </ul>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                     {/* for small screen */}
@@ -799,12 +776,7 @@ const SharePost = () => {
                             className="w-11 h-11 rounded-full"
                           />
                           <div className="">
-                            <span
-                              className="font-semibold text-[16px] block"
-                              onClick={() =>
-                                goToProfile(sharePostData.user._id)
-                              }
-                            >
+                            <span className="font-semibold text-[16px] block">
                               {sharePostData.user?.username}
                               {sharePostData.user.verified?.length > 0 && (
                                 <img
@@ -854,34 +826,8 @@ const SharePost = () => {
                                     className="w-8 h-8 rounded-full"
                                   />
                                   <div>
-                                    <span
-                                      className="text-[15px] font-semibold block"
-                                      onClick={() => goProfile(comment.user)}
-                                    >
+                                    <span className="text-[15px] font-semibold block">
                                       {comment?.user?.username}
-                                      {comment?.user?.verified?.length > 0 && (
-                                        <img
-                                          src={`${
-                                            process.env
-                                              .REACT_APP_API_URL_FOR_IMAGE
-                                          }${
-                                            comment?.user?.verified[
-                                              comment?.user?.verified.length - 1
-                                            ]?.badgeImage
-                                          }`}
-                                          className="inline-block ml-1 w-5 h-5 object-contain"
-                                          alt={
-                                            comment?.user?.verified[
-                                              comment?.user?.verified.length - 1
-                                            ]?.badgeName || "badge"
-                                          }
-                                          title={
-                                            comment?.user?.verified[
-                                              comment?.user?.verified.length - 1
-                                            ]?.badgeName
-                                          }
-                                        />
-                                      )}
                                     </span>
                                     <p className="text-xs break-words">
                                       {comment?.text}
@@ -920,25 +866,6 @@ const SharePost = () => {
                                 />
                                 <span className="text-sm font-medium text-gray-800">
                                   {user.username}
-                                  {user.verified?.length > 0 && (
-                                    <img
-                                      src={`${
-                                        process.env.REACT_APP_API_URL_FOR_IMAGE
-                                      }${
-                                        user.verified[user.verified.length - 1]
-                                          ?.badgeImage
-                                      }`}
-                                      className="inline-block ml-1 w-5 h-5 object-contain"
-                                      alt={
-                                        user.verified[user.verified.length - 1]
-                                          ?.badgeName || "badge"
-                                      }
-                                      title={
-                                        user.verified[user.verified.length - 1]
-                                          ?.badgeName
-                                      }
-                                    />
-                                  )}
                                 </span>
                                 <span className="text-xs text-gray-500">
                                   {user.role}
@@ -1074,26 +1001,6 @@ const SharePost = () => {
                       <div className="flex justify-between items-center border-b pb-3 mb-4">
                         <h2 className="text-lg font-semibold text-gray-800">
                           Report @{reportedUser?.username}
-                          {reportedUser?.verified?.length > 0 && (
-                            <img
-                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                                reportedUser?.verified[
-                                  reportedUser?.verified.length - 1
-                                ]?.badgeImage
-                              }`}
-                              className="inline-block ml-1 w-5 h-5 object-contain"
-                              alt={
-                                reportedUser?.verified[
-                                  reportedUser?.verified.length - 1
-                                ]?.badgeName || "badge"
-                              }
-                              title={
-                                reportedUser?.verified[
-                                  reportedUser?.verified.length - 1
-                                ]?.badgeName
-                              }
-                            />
-                          )}
                         </h2>
                         <button
                           onClick={() => setReportPopupOpen(false)}
@@ -1230,29 +1137,7 @@ const SharePost = () => {
                         <p className="text-sm text-gray-700 mb-2">
                           Do you also want to block{" "}
                           <span className="font-semibold">
-                            @{reportedUser?.username}
-                            {reportedUser?.verified?.length > 0 && (
-                              <img
-                                src={`${
-                                  process.env.REACT_APP_API_URL_FOR_IMAGE
-                                }${
-                                  reportedUser?.verified[
-                                    reportedUser?.verified.length - 1
-                                  ]?.badgeImage
-                                }`}
-                                className="inline-block ml-1 w-5 h-5 object-contain"
-                                alt={
-                                  reportedUser?.verified[
-                                    reportedUser?.verified.length - 1
-                                  ]?.badgeName || "badge"
-                                }
-                                title={
-                                  reportedUser?.verified[
-                                    reportedUser?.verified.length - 1
-                                  ]?.badgeName
-                                }
-                              />
-                            )}
+                            @{reportedUser.username}
                           </span>
                           ?
                         </p>
@@ -1458,18 +1343,9 @@ const SharePost = () => {
                         )}
 
                         {sharePostData.forProduct && (
-                          <button
-                            className="flex px-2 items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-red-500 text-white py-2 font-semibold buy-now"
-                            onClick={() => {
-                              if (!ensureBuyer()) return;
-                              navigate(
-                                `/my-account/check-out/${userId}?productId=${
-                                  sharePostData?.forProduct
-                                }&quantity=${1}`
-                              );
-                            }}
-                          >
-                            <Zap size={18} /> Buy Now
+                          <button className="buy-button">
+                            Buy{" "}
+                            <i className="cart-icon ri-shopping-cart-fill"></i>
                           </button>
                         )}
                         <button
@@ -1821,81 +1697,7 @@ const SharePost = () => {
                   </div>
                 </div>
               </div>
-              {showCollaborators && allCollaboraters && (
-                <div
-                  onClick={() => setShowCollaborators(false)}
-                  className="fixed inset-0 flex items-center justify-center  bg-[#000000]/40 backdrop-blur-sm z-[10000]"
-                >
-                  <div
-                    className="relative bg-white rounded-xl shadow-xl p-5 w-80 animate-fadeIn"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {/* ❌ Close (cross) button */}
-                    <button
-                      onClick={() => setShowCollaborators(false)}
-                      className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
-                    >
-                      <i className="ri-close-line text-black"></i>{" "}
-                    </button>
-
-                    <h3 className="text-lg font-semibold mb-4 text-center">
-                      Collaborators
-                    </h3>
-
-                    <ul className="space-y-2 max-h-48 overflow-y-auto">
-                      {allCollaboraters?.length > 0 ? (
-                        allCollaboraters.map((c) => {
-                          return (
-                            <li
-                              key={c._id}
-                              className="p-2 border rounded-md flex items-center space-x-6"
-                              onClick={() => goProfile(c)}
-                            >
-                              <img
-                                src={
-                                  c?.profilePhoto
-                                    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${c.profilePhoto}`
-                                    : DEFAULT_PROFILE_IMAGE
-                                }
-                                alt={c.username || "user"}
-                                className="w-10 h-10 rounded-full object-cover"
-                              />
-
-                              <span className=" text-lg font-bold ">
-                                {c.username}
-                                {c.verified?.length > 0 && (
-                                  <img
-                                    src={`${
-                                      process.env.REACT_APP_API_URL_FOR_IMAGE
-                                    }${
-                                      c.verified[c.verified.length - 1]
-                                        ?.badgeImage
-                                    }`}
-                                    className="inline-block ml-1 w-5 h-5 object-contain"
-                                    alt={
-                                      c.verified[c.verified.length - 1]
-                                        ?.badgeName || "badge"
-                                    }
-                                    title={
-                                      c.verified[c.verified.length - 1]
-                                        ?.badgeName
-                                    }
-                                  />
-                                )}
-                              </span>
-                            </li>
-                          );
-                        })
-                      ) : (
-                        <li className="text-gray-500 text-center py-3">
-                          No collaborators found
-                        </li>
-                      )}
-                    </ul>
-                  </div>
-                </div>
-              )}
-              <Suggestion />
+              <Suggestion className="col-span-3" />
             </main>
           </div>
         </>
@@ -1904,6 +1706,7 @@ const SharePost = () => {
   );
 };
 export default SharePost;
+
 
 // loading skeleton
 const LoadingSkeleton = () => {

@@ -173,22 +173,6 @@ const Explorebar = () => {
             <div className="absolute top-0 left-0 w-full bg-[#000000BF] bg-opacity-50 text-white flex justify-between items-center px-2 py-2 text-xs">
               <span className="font-medium sm:text-md text-sm">
                 {art.user.username}
-                {art.user.verified?.length > 0 && (
-                  <img
-                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                      art.user.verified[art.user.verified.length - 1]
-                        ?.badgeImage
-                    }`}
-                    className="inline-block ml-1 w-5 h-5 object-contain"
-                    alt={
-                      art.user.verified[art.user.verified.length - 1]
-                        ?.badgeName || "badge"
-                    }
-                    title={
-                      art.user.verified[art.user.verified.length - 1]?.badgeName
-                    }
-                  />
-                )}
               </span>
               <div className="flex relative gap-2 items-center text-lg">
                 {/* <i className="ri-shopping-cart-2-fill text-[#FB5934]"></i> */}
@@ -292,27 +276,7 @@ const Explorebar = () => {
             {/* Header */}
             <div className="flex justify-between items-center border-b pb-3 mb-2">
               <h2 className="text-lg font-semibold text-gray-800">
-                Report @{reportedUser?.username}{" "}
-                {reportedUser.verified?.length > 0 && (
-                  <img
-                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                      reportedUser.verified[
-                        reportedUser.verified.length - 1
-                      ]?.badgeImage
-                    }`}
-                    className="inline-block ml-1 w-5 h-5 object-contain"
-                    alt={
-                      reportedUser.verified[
-                        reportedUser.verified.length - 1
-                      ]?.badgeName || "badge"
-                    }
-                    title={
-                       reportedUser.verified[
-                        reportedUser.verified.length - 1
-                      ]?.badgeName
-                    }
-                  />
-                )}
+                Report @{reportedUser?.username}
               </h2>
               <button
                 onClick={() => setReportPopupOpen(false)}
@@ -363,10 +327,7 @@ const Explorebar = () => {
 
               {/* Description */}
               {selectedReason && (
-                <div
-                  className="mt-1"
-                  style={{ maxHeight: "10vh", overflowY: "auto" }}
-                >
+                <div className="mt-1" style={{ maxHeight: "10vh", overflowY: "auto" }} >
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     {selectedReason === "Other"
                       ? "Describe the issue (required)"
@@ -496,3 +457,4 @@ const ExploreSkeleton = () => {
     </div>
   );
 };
+

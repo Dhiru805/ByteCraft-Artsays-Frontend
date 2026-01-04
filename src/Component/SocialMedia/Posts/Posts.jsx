@@ -3,7 +3,6 @@ import "../Sidebar/Side-post-sugg.css";
 import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
 import { FaCheckCircle } from "react-icons/fa";
-import { Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import putAPI from "../../../api/putAPI";
 import { timeAgo } from "./../../../utils/TimeAgo.js";
@@ -46,21 +45,15 @@ const Post = () => {
   const navigate = useNavigate();
   const popupRef = useRef();
   const postRef = useRef();
+  const collabRef = useRef();
   const commentRef = useRef();
   const commentRefs = useRef({});
-  const collabRef = useRef();
 
   const { userType } = useAuth();
-  const productsPost = posts.filter(
-    (pro) => pro.forProduct && pro.profile.postProductsEnabled
-  );
-
+  const productsPost = posts.filter((pro) => pro.forProduct);
   const normalPost = posts.filter((pro) => !pro.forProduct);
-
   const finalPost = [...productsPost, ...normalPost];
-
   const activePost = activeIndex !== null ? finalPost[activeIndex] : null;
-
   useEffect(() => {
     const shouldLockScroll = activePost || reportPopupOpen || tipPopupOpen;
 
@@ -82,8 +75,12 @@ const Post = () => {
       if (!isMobile) {
         if (postRef.current && !postRef.current.contains(event.target)) {
           setActiveIndex(null);
-          setShowMentions(false);
         }
+      }
+
+      if (collabRef.current && !collabRef.current.contains(event.current)) {
+        setShowCollaborators(false);
+        setAllCollaboraters([]);
       }
     }
 
@@ -101,16 +98,7 @@ const Post = () => {
       }`, { state: { userId: post?.user?._id } }
     );
   };
-const goProfile=(user)=>{
-   navigate(
-      `/artsays-community/profile/${
-        user?.username
-          ? `${user?.username}`
-          : `${user?.name}_${user?.lastName}_${user?._id}`
-      }`,
-      { state: { userId: user?._id } }
-    );
-}
+
   // Fetch profile
   useEffect(() => {
     try {
@@ -435,17 +423,6 @@ const goProfile=(user)=>{
     }
   };
 
-  const navigateToProfile = (user) => {
-    navigate(
-      `/artsays-community/profile/${
-        user?.username
-          ? `${user?.username}`
-          : `${user?.name}_${user?.lastName}_${user?._id}`
-      }`,
-      { state: { userId: user?._id } }
-    );
-  };
-
   // const [reportPopupOpen, setReportPopupOpen] = useState(false);
   // const [reportSuccess, setReportSuccess] = useState(false);
 
@@ -558,10 +535,7 @@ const goProfile=(user)=>{
                 {/* User Info */}
                 <div className="flex flex-col gap-6">
                   <div className="flex items-center justify-between">
-                    <div
-                      className="flex items-center gap-2"
-                      onClick={() => navigateToProfile(activePost.user)}
-                    >
+                    <div className="flex items-center gap-2">
                       <img
                         src={
                           activePost.user?.profilePhoto
@@ -600,10 +574,7 @@ const goProfile=(user)=>{
                       </div>
                     </div>
                     <button
-                      onClick={() => {
-                        setActiveIndex(null);
-                        setShowMentions(false);
-                      }}
+                      onClick={() => setActiveIndex(null)}
                       className="text-gray-600 hover:text-red-500 text-2xl font-bold"
                     >
                       X
@@ -626,33 +597,8 @@ const goProfile=(user)=>{
                           className="w-8 h-8 rounded-full"
                         />
                         <div>
-                          <span
-                            className="text-sm font-semibold"
-                            onClick={() => navigateToProfile(comment.user)}
-                          >
+                          <span className="text-sm font-semibold">
                             {comment?.user?.username}
-                            {comment?.user?.verified?.length > 0 && (
-                              <img
-                                src={`${
-                                  process.env.REACT_APP_API_URL_FOR_IMAGE
-                                }${
-                                  comment?.user?.verified[
-                                    comment?.user?.verified.length - 1
-                                  ]?.badgeImage
-                                }`}
-                                className="inline-block ml-1 w-5 h-5 object-contain"
-                                alt={
-                                  comment?.user?.verified[
-                                    comment?.user?.verified.length - 1
-                                  ]?.badgeName || "badge"
-                                }
-                                title={
-                                  comment?.user?.verified[
-                                    comment?.user?.verified.length - 1
-                                  ]?.badgeName
-                                }
-                              />
-                            )}
                           </span>
                           <p className="text-xs">{comment?.text}</p>
                         </div>
@@ -722,26 +668,7 @@ const goProfile=(user)=>{
                               className="w-8 h-8 rounded-full"
                             />
                             <span className="text-sm font-medium text-gray-800">
-                              {user.username}{" "}
-                              {user.verified?.length > 0 && (
-                                <img
-                                  src={`${
-                                    process.env.REACT_APP_API_URL_FOR_IMAGE
-                                  }${
-                                    user.verified[user.verified.length - 1]
-                                      ?.badgeImage
-                                  }`}
-                                  className="inline-block ml-1 w-5 h-5 object-contain"
-                                  alt={
-                                    user.verified[user.verified.length - 1]
-                                      ?.badgeName || "badge"
-                                  }
-                                  title={
-                                    user.verified[user.verified.length - 1]
-                                      ?.badgeName
-                                  }
-                                />
-                              )}
+                              {user.username}
                             </span>
                             <span className="text-xs text-gray-500">
                               {user.role}
@@ -785,10 +712,7 @@ const goProfile=(user)=>{
             <div className="w-full flex items-center justify-between p-3 border-b">
               <i
                 className="ri-arrow-left-s-line text-2xl"
-                onClick={() => {
-                  setActiveIndex(null);
-                  setShowMentions(false);
-                }}
+                onClick={() => setActiveIndex(null)}
               ></i>
               <span className="font-semibold text-xl text-center">
                 Comments
@@ -797,10 +721,7 @@ const goProfile=(user)=>{
 
             {/* caption with comments */}
             <div className="flex-1 flex flex-col overflow-y-auto">
-              <div
-                className="flex gap-2 border-b p-3"
-                onClick={() => navigateToProfile(activePost.user)}
-              >
+              <div className="flex gap-2 border-b p-3">
                 <img
                   src={
                     activePost.user?.profilePhoto
@@ -857,35 +778,8 @@ const goProfile=(user)=>{
                           className="w-8 h-8 rounded-full"
                         />
                         <div>
-                          <span
-                            className="text-[15px] font-semibold block"
-                            onClick={() => {
-                              navigateToProfile(comment?.user);
-                            }}
-                          >
+                          <span className="text-[15px] font-semibold block">
                             {comment?.user?.username}
-                            {comment?.user?.verified?.length > 0 && (
-                              <img
-                                src={`${
-                                  process.env.REACT_APP_API_URL_FOR_IMAGE
-                                }${
-                                  comment?.user?.verified[
-                                    comment?.user?.verified.length - 1
-                                  ]?.badgeImage
-                                }`}
-                                className="inline-block ml-1 w-5 h-5 object-contain"
-                                alt={
-                                  comment?.user?.verified[
-                                    comment?.user?.verified.length - 1
-                                  ]?.badgeName || "badge"
-                                }
-                                title={
-                                  comment?.user?.verified[
-                                    comment?.user?.verified.length - 1
-                                  ]?.badgeName
-                                }
-                              />
-                            )}
                           </span>
                           <p className="text-xs break-words">{comment?.text}</p>
                         </div>
@@ -917,22 +811,6 @@ const goProfile=(user)=>{
                     />
                     <span className="text-sm font-medium text-gray-800">
                       {user.username}
-                      {user?.verified?.length > 0 && (
-                        <img
-                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                            user?.verified[user?.verified.length - 1]
-                              ?.badgeImage
-                          }`}
-                          className="inline-block ml-1 w-5 h-5 object-contain"
-                          alt={
-                            user?.verified[user?.verified.length - 1]
-                              ?.badgeName || "badge"
-                          }
-                          title={
-                            user?.verified[user?.verified.length - 1]?.badgeName
-                          }
-                        />
-                      )}
                     </span>
                     <span className="text-xs text-gray-500">{user.role}</span>
                   </div>
@@ -1062,23 +940,6 @@ const goProfile=(user)=>{
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-800">
                 Report @{reportedUser?.username}
-                {reportedUser.verified?.length > 0 && (
-                  <img
-                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                      reportedUser.verified[reportedUser.verified.length - 1]
-                        ?.badgeImage
-                    }`}
-                    className="inline-block ml-1 w-5 h-5 object-contain"
-                    alt={
-                      reportedUser.verified[reportedUser.verified.length - 1]
-                        ?.badgeName || "badge"
-                    }
-                    title={
-                      reportedUser.verified[reportedUser.verified.length - 1]
-                        ?.badgeName
-                    }
-                  />
-                )}
               </h2>
               <button
                 onClick={() => setReportPopupOpen(false)}
@@ -1401,22 +1262,7 @@ const goProfile=(user)=>{
                     Buy Now
                   </button>
                 )}
-                {post.forProduct && (
-                  <button
-                    className="flex px-2 items-center justify-center gap-2 flex-1 hover:border-dark rounded-full bg-red-500 text-white py-2 font-semibold buy-now"
-                    onClick={() => {
-                      if (!ensureBuyer()) return;
-                      navigate(
-                        `/my-account/check-out/${userId}?productId=${
-                          post?.forProduct
-                        }&quantity=${1}`
-                      );
-                    }}
-                  >
-                    <Zap size={18} /> Buy Now
-                  </button>
-                )}
-                <button onClick={() => setMenuOpenId(post._id)}>
+                <button onClick={() => setMenuOpenId(post._id)} className="focus:outline-none">
                   <i className="ri-more-fill text-lg"></i>
                 </button>
               </div>
@@ -1459,7 +1305,6 @@ const goProfile=(user)=>{
                           id: post.user._id,
                           postId: post._id,
                           username: post.user.username,
-                          verified: post.user.verified,
                         });
                         setReportPopupOpen(true);
                         setMenuOpenId(null);
@@ -1506,12 +1351,10 @@ const goProfile=(user)=>{
                   className="w-full px-3 py-2 flex font-semibold items-center justify-center cursor-pointer hover:bg-gray-200"
                   onClick={() =>
                     navigate(
-                      `/artsays-community/profile/${
-                        post?.user?.username
-                          ? `${post?.user?.username}`
-                          : `${post?.user?.name}_${post?.user?.lastName}_${post?.user?._id}`
-                      }`,
-                      { state: { userId: post?.user?._id } }
+                      `/artsays-community/profile/${post?.user?.username
+                        ? `${post?.user?.username}`
+                        : `${post?.user?.name}_${post?.user?.lastName}_${post?.user?._id}`
+                      }`, { state: { userId: post?.user?._id } }
                     )
                   }
                 >
@@ -1661,10 +1504,7 @@ const goProfile=(user)=>{
 
               {/* Description */}
               <div>
-                <p
-                  className="text-[12px] mt-0.5 font-semibold break-all whitespace-normal w-full"
-                  onClick={() => navigateToProfile(post.user)}
-                >
+                <p className="text-sm mt-1 text-[#000000] font-semibold break-all whitespace-normal w-full">
                   {post.user.username}{" "}
                   {post.user.verified?.length > 0 && (
                     <img
@@ -1765,14 +1605,10 @@ const goProfile=(user)=>{
       </div>
       
       {showCollaborators && allCollaboraters && (
-        <div
-          className="fixed inset-0 flex items-center justify-center  bg-[#000000]/40 backdrop-blur-sm z-50"
-          onClick={() => setShowCollaborators(false)}
-        >
+        <div className="fixed inset-0 flex items-center justify-center  bg-[#000000]/40 backdrop-blur-sm z-50">
           <div
             ref={collabRef}
-            className="relative bg-white rounded-xl shadow-xl p-5 w-80 animate-fadeIn"
-            onClick={(e) => e.stopPropagation()}
+            className="relative bg-white rounded-xl shadow-xl p-3 w-80 animate-fadeIn"
           >
             {/* ❌ Close (cross) button */}
             <button
@@ -1793,7 +1629,6 @@ const goProfile=(user)=>{
                     <li
                       key={c._id}
                       className="p-2 border rounded-md flex items-center space-x-6"
-                      onClick={() => goProfile(c)}
                     >
                       <img
                         src={
@@ -1805,22 +1640,7 @@ const goProfile=(user)=>{
                         className="w-10 h-10 rounded-full object-cover"
                       />
 
-                      <span className=" text-lg font-bold ">
-                        {c.username}{" "}
-                        {c.verified?.length > 0 && (
-                          <img
-                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                              c.verified[c.verified.length - 1]?.badgeImage
-                            }`}
-                            className="inline-block ml-1 w-5 h-5 object-contain"
-                            alt={
-                              c.verified[c.verified.length - 1]?.badgeName ||
-                              "badge"
-                            }
-                            title={c.verified[c.verified.length - 1]?.badgeName}
-                          />
-                        )}
-                      </span>
+                      <span className=" text-lg font-bold ">{c.username}</span>
                     </li>
                   );
                 })

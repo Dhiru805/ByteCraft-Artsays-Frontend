@@ -97,11 +97,6 @@ const ChallengesTable = () => {
     fetchChallenges();
   }, []);
 
- if( loading ) {
-  return  <ProductRequestSkeleton />
- }
-                     
-                    
   return (
     <div className="container-fluid">
       <div className="block-header">
@@ -197,7 +192,9 @@ const ChallengesTable = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    { error ? (
+                    {loading ? (
+                      <ProductRequestSkeleton />
+                    ) : error ? (
                       <tr>
                         <td colSpan="9" className="text-center text-danger">
                           {error}

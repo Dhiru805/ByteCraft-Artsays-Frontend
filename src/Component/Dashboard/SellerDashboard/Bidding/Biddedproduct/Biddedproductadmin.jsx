@@ -71,7 +71,7 @@ const BiddedProduct = () => {
 
     fetchData();
   }, [sellerId]);
-  
+
   const handlePrevious = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
@@ -94,19 +94,10 @@ const BiddedProduct = () => {
 //       product?.buyer?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
 //       product?.buyer?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
 //   );
-
-
-// const filteredProducts = products.filter((item) => {
-//   const winner = item.assignedWinners?.[0];
-//   return winner?.name?.toLowerCase().includes(searchTerm.toLowerCase());
-// });
-
-
-const filteredProducts = products.filter(item =>
-  item.product?.productName
-    ?.toLowerCase()
-    .includes(searchTerm.toLowerCase())
-);
+const filteredProducts = products.filter((item) => {
+  const winner = item.assignedWinners?.[0];
+  return winner?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+});
 
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 

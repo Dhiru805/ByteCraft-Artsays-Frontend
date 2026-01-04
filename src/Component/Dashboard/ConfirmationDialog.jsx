@@ -481,23 +481,13 @@ address:{
   errorMessage: "Failed to delete  address.",
   idKey: "addressId",
 },
-pass:{
-  getEndpoint:(id)=>`/api/bidding/passes/${id}`,
-  successMessage:"pass deleted successfully",
-  errorMessage:"Failed to delete pass",
-  idKey:"pass"
-},
-deletePost:{
-  getEndpoint:(id)=>`/api/social-media/deletePost/${id}`,
-  successMessage:"post deleted successfully",
-  errorMessage:"Failed to deleted the post",
-  idKey:"Post"
-}
+
+
+
 };
 
 function ConfirmationDialog({ onClose, deleteType, id, onDeleted }) {
   const handleDelete = async () => {
-
     const config = DELETE_CONFIG[deleteType];
       console.log("Deleting policy ID:", id);
 console.log("DELETE URL:", config.getEndpoint(id));

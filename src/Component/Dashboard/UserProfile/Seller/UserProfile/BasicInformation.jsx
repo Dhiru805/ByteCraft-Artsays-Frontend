@@ -1,217 +1,41 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState,useEffect,useRef } from 'react';
 import BusinessProfile from "./BusinessProfile";
 import { FaPlus } from "react-icons/fa";
 import SocialMedia from "./SocialMediaPromotion";
-import BankDetails from "./BankandPaymentDetails";
-import ArtworkDetails from "./ArtworkSellingDetails";
-import Agreement from "./Agreements";
-import TaxCompliance from "./TaxLegalCompliance";
+import BankDetails from "./BankandPaymentDetails"
+import ArtworkDetails from "./ArtworkSellingDetails"
+import Agreement from "./Agreements"
+import TaxCompliance from "./TaxLegalCompliance"
 import putAPI from "../../../../../api/putAPI";
 import { toast } from "react-toastify";
 import { DEFAULT_PROFILE_IMAGE } from "../../../../../Constants/ConstantsVariables";
-import getAPI from "../../../../../api/getAPI";
-import AddressModal from "./AddressModal";
-import postAPI from "../../../../../api/postAPI";
-import { FaCheck } from "react-icons/fa";
+import getAPI from '../../../../../api/getAPI';
+import AddressModal from './AddressModal'
 
-const Settings = ({
-  userId,
-  profileData,
-  previewImage,
-  handleImageUpload,
-  handleChange,
-  handleAddressChange,
-  handleSubmit,
-  passwordData,
-  handlePasswordChange,
-  fetchProfile,
-  setProfileData
-}) => {
+
+const Settings = ({ userId, profileData, previewImage, handleImageUpload, handleChange, handleAddressChange, handleSubmit, passwordData, handlePasswordChange,fetchProfile }) => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
   const [localPreviewImage, setLocalPreviewImage] = useState(previewImage);
 
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef(null); 
 
   const [imageError, setImageError] = useState(false);
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false); 
   const [allUsernames, setAllUsernames] = useState([]);
-  const [originalUsername, setOriginalUsername] = useState("");
+  const [originalUsername, setOriginalUsername] = useState('');
   const [usernameCheckLoading, setUsernameCheckLoading] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState(null);
   const usernameCheckTimeout = useRef(null);
-  const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
-
-  const [loadingOTP, setLoadingOTP] = useState(false);
-  const [loadingPhoneOTP,setLoadingPhoneOTP]=useState(false);
-  const [loadingSubmit, setLoadingSubmit] = useState(false);
-  const [otp, setOtp] = useState("");
-  const [isEmailVerified, setIsEmailVerified] = useState(false)
-  const [isPhoneVerified, setIsPhoneVerified] = useState(false)
-  
-  const [showOTPField, setShowOTPField] = useState(false);
-    const [showPhoneOTPField, setShowPhoneOTPField] = useState(false);
-
-  
-    useEffect(() => {
-  if (profileData) {
-    setIsEmailVerified(profileData.emailVerified);
-    setIsPhoneVerified(profileData.numberVerified);
-  }
-}, [profileData]);
-
-  const actualImage =
-    !localPreviewImage || imageError
-      ? DEFAULT_PROFILE_IMAGE
-      : localPreviewImage;
-
-  const isValidEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const isValidPhone = (phone) => {
-    const phoneRegex = /^(\+91)?[0-9]{10}$/;
-    return phoneRegex.test(phone);
-  };
-
-  const normalizePhone = (phone) => {
-  if (!phone) return null;
-
-  // Convert to string and remove all non-digits
-  let digits = phone.toString().replace(/\D/g, "");
-
-  // Remove leading country code if present
-  if (digits.startsWith("91") && digits.length > 10) {
-    digits = digits.slice(2);
-  }
-
-  // Validate Indian mobile number length
-  if (digits.length !== 10) return null;
-
-  return `+91${digits}`;
-};
+   const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
 
 
-  const handleSendOTP = async () => {
-    const input = profileData.email.trim();
-    const isEmail = isValidEmail(input);
+const actualImage = !localPreviewImage || imageError ? DEFAULT_PROFILE_IMAGE : localPreviewImage;
 
-    if (!isEmail) {
-      toast.error("Please enter a valid email ");
-      return;
-    }
-
-    try {
-      setLoadingOTP(true);
-
-      
-      const payload = { email: input };
-
-       await postAPI("/auth/send-otp", payload);
-      setShowOTPField(true);
-      toast.success(`OTP sent to your email !`);
-
-      setIsEmailVerified(false);
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to send OTP");
-    } finally {
-      setLoadingOTP(false);
-    }
-  };
-   const handleSendOTPtoPhone = async () => {
-    const input = profileData.phone.trim();
-    const isPhone = isValidPhone(input);
-
-    if (!isPhone) {
-      toast.error("Please enter a valid  phone number");
-      return;
-    }
-
-    try {
-      setLoadingPhoneOTP(true);
-
-      
-      const payload = { phone: normalizePhone(input) };
-
-       await postAPI("/auth/send-otp", payload);
-      setShowPhoneOTPField(true);
-      toast.success(`OTP sent to your number !`);
-
-      setIsPhoneVerified(false);
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to send OTP");
-    } finally {
-      setLoadingPhoneOTP(false);
-    }
-  };
-
-  const handleVerifyOTP = async () => {
-    if (otp.length !== 6) {
-      toast.error("Enter a valid 6-digit OTP");
-      return;
-    }
-
-    const input = profileData?.email.trim();
-    const isEmail = isValidEmail(input);
-
-    try {
-      setLoadingOTP(true);
-
-     if(isEmail){
-      const payload = { email: input, otp };
-
-      const response = await postAPI("/auth/verify-otp", payload);
-
-      if (response.data.success) {
-          setIsEmailVerified(true);
-           setProfileData((prev)=>({...prev,emailVerified:true}))
-          toast.success("Email verified successfully!");
-       
-        setShowOTPField(false);
-        setOtp("");
-      }}
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Invalid or expired OTP");
-    } finally {
-      setLoadingOTP(false);
-    }
-  };
-   const handleVerifyPhoneOTP = async () => {
-    if (otp.length !== 6) {
-      toast.error("Enter a valid 6-digit OTP");
-      return;
-    }
-
-    const input = profileData?.phone.trim();
-    const isPhone = isValidPhone(input);
-    try {
-      setLoadingPhoneOTP(true);
-
-     if(isPhone){
-      const payload = { phone: normalizePhone(input), otp };
-
-      const response = await postAPI("/auth/verify-otp", payload);
-
-      if (response.data.success) {
-       setProfileData((pre)=>({...pre,numberVerified:true}))
-          setIsPhoneVerified(true);
-          toast.success("Phone verified successfully!");
-        }
-        setShowPhoneOTPField(false);
-        setOtp("");
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Invalid or expired OTP");
-    } finally {
-      setLoadingPhoneOTP(false);
-    }
-  };
-
-  useEffect(() => {
+ useEffect(() => {
     if (!previewImage) {
       setIsImageLoaded(true);
       return;
@@ -230,15 +54,16 @@ const Settings = ({
   }, [previewImage]);
 
   useEffect(() => {
-    setLocalPreviewImage(previewImage);
+    setLocalPreviewImage(previewImage); 
   }, [previewImage]);
 
-  const handleDeleteImage = async () => {
+
+const handleDeleteImage = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token');
 
       if (!token || !userId) {
-        toast.error("Please log in again.");
+        toast.error('Please log in again.');
         return;
       }
 
@@ -255,20 +80,15 @@ const Settings = ({
       );
 
       if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+        fileInputRef.current.value = '';
       }
 
-      setLocalPreviewImage(null);
+      setLocalPreviewImage(null); 
 
-      toast.success("Profile image deleted successfully!");
+      toast.success('Profile image deleted successfully!');
     } catch (error) {
-      console.error(
-        "Error deleting profile image:",
-        error.response?.data || error.message
-      );
-      toast.error(
-        error?.response?.data?.message || "Failed to delete profile image"
-      );
+      console.error('Error deleting profile image:', error.response?.data || error.message);
+      toast.error(error?.response?.data?.message || 'Failed to delete profile image');
     } finally {
       setLoading(false);
     }
@@ -281,37 +101,37 @@ const Settings = ({
   const validateRequired = () => {
     const missing = [];
     const requiredMap = {
-      "First Name": profileData.name,
-      "Last Name": profileData.lastName,
-      Birthdate: profileData.birthdate,
-      Gender: profileData.gender,
-      "Address Line 1": profileData.address?.line1,
-      "Address Line 2": profileData.address?.line2,
-      Pincode: profileData.address?.pincode,
-      City: profileData.address?.city,
-      "State/Province": profileData.address?.state,
-      Country: profileData.address?.country,
-      Username: profileData.username,
-      Email: profileData.email,
-      "Phone Number": profileData.phone,
-      Bio: profileData.bio,
+      'First Name'        : profileData.name,
+      'Last Name'         : profileData.lastName,
+      'Birthdate'         : profileData.birthdate,
+      'Gender'            : profileData.gender,
+      'Address Line 1'    : profileData.address?.line1,
+    'Address Line 2'    : profileData.address?.line2,
+    'Pincode'          : profileData.address?.pincode,
+      'City'              : profileData.address?.city,
+      'State/Province'    : profileData.address?.state,
+      'Country'           : profileData.address?.country,
+      'Username'          : profileData.username,
+      'Email'             : profileData.email,
+      'Phone Number'      : profileData.phone,
+      'Bio'               : profileData.bio,
     };
-
+  
     Object.entries(requiredMap).forEach(([label, value]) => {
-      if (!value || String(value).trim() === "") missing.push(label);
+      if (!value || String(value).trim() === '') missing.push(label);
     });
-
+  
     if (missing.length) {
-      toast.warn(`Please fill the required fields: ${missing.join(", ")}`);
+      toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
       return false;
     }
     return true;
   };
-
-  useEffect(() => {
+  
+    useEffect(() => {
     const fetchUsernames = async () => {
       try {
-        const res = await getAPI("/auth/all-usernames");
+        const res = await getAPI('/auth/all-usernames'); 
         setAllUsernames(res.data?.usernames || []);
         console.log("All usernames from backend:", res.data?.usernames || []);
       } catch (err) {
@@ -321,6 +141,7 @@ const Settings = ({
 
     fetchUsernames();
   }, []);
+
 
   const handleLiveUsernameCheck = (username) => {
     const typed = username.trim().toLowerCase();
@@ -337,9 +158,7 @@ const Settings = ({
 
     usernameCheckTimeout.current = setTimeout(() => {
       const isTaken = allUsernames
-        .filter(
-          (uname) => uname && uname.trim().toLowerCase() !== originalUsername
-        ) // ignore user's current username
+        .filter((uname) => uname && uname.trim().toLowerCase() !== originalUsername) // ignore user's current username
         .some((uname) => uname.trim().toLowerCase() === typed);
 
       setUsernameAvailable(!isTaken);
@@ -361,78 +180,59 @@ const Settings = ({
     <div className="body">
       <h5>Business Logo</h5>
       <div className="media">
-        <div
-          className="media-left m-r-15"
-          style={{
-            width: "140px",
-            height: "140px",
-            overflow: "hidden",
-            position: "relative",
-          }}
-        >
+        <div className="media-left m-r-15" style={{ width: '140px', height: '140px', overflow: 'hidden',position: 'relative' }}>
           {isImageLoaded && (
             <img
               src={actualImage}
               alt="User"
               className="user-photo media-object"
               style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                transition: "opacity 0.3s ease-in-out",
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                transition: 'opacity 0.3s ease-in-out'
               }}
             />
           )}
 
-          {isImageLoaded &&
-            actualImage !== DEFAULT_PROFILE_IMAGE &&
-            !imageError && (
-              <button
-                onClick={handleDeleteImage}
-                style={{
-                  position: "absolute",
-                  bottom: "3px",
-                  right: "3px",
-                  background: "red",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "50%",
-                  width: "24px",
-                  height: "24px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                  outline: "none",
-                  boxShadow: "none",
-                  transition: "transform 0.1s ease-in-out",
-                  zIndex: 2,
-                }}
-                onMouseDown={(e) =>
-                  (e.currentTarget.style.transform = "scale(0.9)")
-                }
-                onMouseUp={(e) =>
-                  (e.currentTarget.style.transform = "scale(1)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.transform = "scale(1)")
-                }
-                title="Delete photo"
-              >
-                <i className="fa fa-trash" />
-              </button>
-            )}
+        {isImageLoaded && actualImage !== DEFAULT_PROFILE_IMAGE && !imageError && (
+            <button
+              onClick={handleDeleteImage}
+              style={{
+                position: 'absolute',
+                bottom: '3px',
+                right: '3px',
+                background: 'red',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                width: '24px',
+                height: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                outline: 'none',
+                boxShadow: 'none',
+                transition: 'transform 0.1s ease-in-out',
+                zIndex: 2
+              }}
+              onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.9)'}
+              onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              title="Delete photo"
+            >
+              <i className="fa fa-trash" />
+            </button>
+          )}
         </div>
         <div className="media-body">
-          <p>
-            Upload your logo.
-            <br /> <em>Logo should be at least 140px x 140px</em>
-          </p>
+          <p>Upload your logo.<br /> <em>Logo should be at least 140px x 140px</em></p>
           <button
             type="button"
             className="btn btn-default"
             id="btn-upload-photo"
-            onClick={() => document.getElementById("filePhoto").click()}
+            onClick={() => document.getElementById('filePhoto').click()}
           >
             Upload Logo
           </button>
@@ -453,9 +253,7 @@ const Settings = ({
         <div className="row clearfix">
           <div className="col-lg-6 col-md-12">
             <div className="form-group">
-              <label htmlFor="firstName">
-                First Name <span style={{ color: "red" }}>*</span>
-              </label>
+              <label htmlFor="firstName">First Name <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -467,15 +265,13 @@ const Settings = ({
               />
             </div>
             <div className="form-group">
-              <label>
-                Gender <span style={{ color: "red" }}>*</span>
-              </label>
+              <label>Gender <span style={{ color: 'red' }}>*</span></label>
               <label className="fancy-radio mx-2">
                 <input
                   name="gender"
                   value="male"
                   type="radio"
-                  checked={profileData.gender === "male"}
+                  checked={profileData.gender === 'male'}
                   onChange={handleChange}
                 />
                 <span>
@@ -487,7 +283,7 @@ const Settings = ({
                   name="gender"
                   value="female"
                   type="radio"
-                  checked={profileData.gender === "female"}
+                  checked={profileData.gender === 'female'}
                   onChange={handleChange}
                 />
                 <span>
@@ -495,15 +291,11 @@ const Settings = ({
                 </span>
               </label>
             </div>
-            <div className="form-group">
-              <label htmlFor="birthdate">
-                Birthdate <span style={{ color: "red" }}>*</span>
-              </label>
+            <div className="form-group" >
+              <label htmlFor="birthdate">Birthdate <span style={{ color: 'red' }}>*</span></label>
               <div className="input-group">
                 <div className="input-group-prepend">
-                  <span className="input-group-text">
-                    <i className="fa fa-calendar"></i>
-                  </span>
+                  <span className="input-group-text"><i className="fa fa-calendar"></i></span>
                 </div>
                 <input
                   type="date"
@@ -517,9 +309,7 @@ const Settings = ({
               </div>
             </div>
             <div className="form-group">
-              <label htmlFor="addressLine2">
-                Address Line 2 <span style={{ color: "red" }}>*</span>
-              </label>
+              <label htmlFor="addressLine2">Address Line 2 <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -533,9 +323,7 @@ const Settings = ({
             </div>
 
             <div className="form-group">
-              <label htmlFor="city">
-                City <span style={{ color: "red" }}>*</span>
-              </label>
+              <label htmlFor="city">City <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -548,9 +336,7 @@ const Settings = ({
               />
             </div>
             <div className="form-group">
-              <label htmlFor="country">
-                Country <span style={{ color: "red" }}>*</span>
-              </label>
+              <label htmlFor="country">Country <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -566,9 +352,7 @@ const Settings = ({
 
           <div className="col-lg-6 col-md-12">
             <div className="form-group">
-              <label htmlFor="lastName">
-                Last Name <span style={{ color: "red" }}>*</span>
-              </label>
+              <label htmlFor="lastName">Last Name <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -580,20 +364,18 @@ const Settings = ({
               />
             </div>
 
-            <div className="form-group d-flex justify-content-end">
-              <button
-                type="button"
-                className="btn btn-outline-primary d-flex align-items-center"
-                onClick={openShippingModal}
-              >
-                <FaPlus className="mr-1" /> Set Address
-              </button>
-            </div>
+                 <div className="form-group d-flex justify-content-end">
+                          <button
+                            type="button"
+                            className="btn btn-outline-primary d-flex align-items-center"
+                            onClick={openShippingModal} 
+                          >
+                            <FaPlus className="mr-1" /> Set  Address
+                          </button>
+                        </div>
 
-            <div className="form-group">
-              <label htmlFor="addressLine1">
-                Address Line 1 <span style={{ color: "red" }}>*</span>
-              </label>
+            <div className="form-group" >
+              <label htmlFor="addressLine1">Address Line 1 <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -621,9 +403,7 @@ const Settings = ({
             </div>
 
             <div className="form-group">
-              <label htmlFor="state">
-                State/Province <span style={{ color: "red" }}>*</span>
-              </label>
+              <label htmlFor="state">State/Province <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -636,10 +416,9 @@ const Settings = ({
               />
             </div>
 
+
             <div className="form-group">
-              <label htmlFor="pincode">
-                Pincode <span style={{ color: "red" }}>*</span>
-              </label>
+              <label htmlFor="pincode">Pincode <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -656,9 +435,7 @@ const Settings = ({
         <div className="row clearfix">
           <div className="col-lg-6 col-md-12">
             <div className="form-group">
-              <label htmlFor="username">
-                Username <span style={{ color: "red" }}>*</span>
-              </label>
+              <label htmlFor="username">Username <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -669,9 +446,7 @@ const Settings = ({
                 value={profileData.username}
                 onChange={(e) => {
                   const lowercaseValue = e.target.value.toLowerCase();
-                  handleChange({
-                    target: { name: e.target.name, value: lowercaseValue },
-                  });
+                  handleChange({ target: { name: e.target.name, value: lowercaseValue } });
                   handleLiveUsernameCheck(lowercaseValue);
                 }}
               />
@@ -684,11 +459,10 @@ const Settings = ({
               {usernameAvailable === false && (
                 <small className="text-danger">Username is already taken</small>
               )}
+           
             </div>
             <div className="form-group">
-              <label htmlFor="email">
-                Email <span style={{ color: "red" }}>*</span>
-              </label>
+              <label htmlFor="email">Email <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="email"
                 className="form-control"
@@ -699,116 +473,17 @@ const Settings = ({
                 onChange={handleChange}
                 style={{
                   backgroundImage: 'url("data:image/png',
-                  backgroundRepeat: "no-repeat",
+                  backgroundRepeat: 'no-repeat',
                   backgroundSize: 20,
-                  backgroundPosition: "97% center",
-                  cursor: "auto",
-                  paddingRight: isValidEmail(profileData.email)
-                    ? "50px"
-                    : "10px",
+                  backgroundPosition: '97% center',
+                  cursor: 'auto',
                 }}
                 data-temp-mail-org={0}
                 fdprocessedid="yelneg"
-                disabled={isEmailVerified}
               />
-              {!isEmailVerified &&
-                isValidEmail(profileData.email) &&
-                !showOTPField && (
-                  <button
-                    type="button"
-                    onClick={handleSendOTP}
-                    disabled={loadingOTP}
-                    style={{
-                      position: "absolute",
-                      right: "25px",
-                      top: "52%",
-                      transform: "translateY(-44%)",
-                      background: "#6b4f36",
-                      color: "white",
-                      border: "none",
-                      padding: "6px 12px",
-                      borderRadius: "26px",
-                      fontSize: "12px",
-                    }}
-                  >
-                    {loadingOTP ? "Sending..." : "Send OTP"}
-                  </button>
-                )}
-
-              {}
-              {isEmailVerified && (
-                <div
-                  style={{
-                    position: "absolute",
-                    right: "26px",
-                    top: !showPhoneOTPField?"52%":"43%",
-                    transform: "translateY(-48%)",
-                    color: "#28a745",
-                    fontSize: "22px",
-                  }}
-                >
-                  <FaCheck />
-                </div>
-              )}
             </div>
-            {showOTPField && (
-              <div className="mb-3 position-relative">
-                <label
-                  className="form-label position-absolute text-dark px-2"
-                  style={{
-                    top: "-12px",
-                    left: "15px",
-                    fontStyle: "italic",
-                    fontSize: "0.8rem",
-                    zIndex: "1",
-                    background: "white",
-                  }}
-                >
-                  Enter OTP
-                </label>
-                <div style={{ position: "relative" }}>
-                  <input
-                    type="text"
-                    className="form-control text-center"
-                    value={otp}
-                    onChange={(e) =>
-                      setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
-                    }
-                    placeholder="000000"
-                    maxLength={6}
-                    // style={{
-                    //   height: '48px',
-                    //   border: "1px solid #6b4f36",
-                    //   fontSize: "20px",
-                    //   letterSpacing: '10px'
-                    // }}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleVerifyOTP}
-                    disabled={loadingOTP || otp.length !== 6}
-                    style={{
-                      position: "absolute",
-                      right: "10px",
-                      top: "52%",
-                      transform: "translateY(-44%)",
-                      background: "#6b4f36",
-                      color: "white",
-                      border: "none",
-                      padding: "6px 12px",
-                      borderRadius: "26px",
-                      fontSize: "12px",
-                    }}
-                  >
-                    Enter OTP
-                  </button>
-                </div>
-              </div>
-            )}
             <div className="form-group">
-              <label htmlFor="phone">
-                Phone Number <span style={{ color: "red" }}>*</span>
-              </label>
+              <label htmlFor="phone">Phone Number <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 className="form-control"
@@ -818,113 +493,9 @@ const Settings = ({
                 value={profileData.phone}
                 onChange={handleChange}
                 name="phone"
-                style={{
-                  //  height: "48px",
-                  //   border: "1px solid #6b4f36",
-                  //   fontSize: "16px",
-                  //   color: "black",
-                  paddingRight: isValidPhone(profileData.email)
-                    ? "50px"
-                    : "10px",
-                }}
-                // data-temp-mail-org={0}
-                // fdprocessedid="yelneg"
-                disabled={isPhoneVerified}
               />
-               {!isPhoneVerified &&
-                isValidPhone(profileData.phone) &&
-                !showPhoneOTPField && (
-                  <button
-                    type="button"
-                    onClick={handleSendOTPtoPhone}
-                    disabled={loadingPhoneOTP}
-                    style={{
-                      position: "absolute",
-                      right: "25px",
-                      top: "85%",
-                      transform: "translateY(-44%)",
-                      background: "#6b4f36",
-                      color: "white",
-                      border: "none",
-                      padding: "6px 12px",
-                      borderRadius: "26px",
-                      fontSize: "12px",
-                    }}
-                  >
-                    {loadingPhoneOTP ? "Sending..." : "Send OTP"}
-                  </button>
-                )}
-                 {isPhoneVerified && (
-                <div
-                  style={{
-                    position: "absolute",
-                    right: "26px",
-                    top: "85%",
-                    transform: "translateY(-48%)",
-                    color: "#28a745",
-                    fontSize: "22px",
-                  }}
-                >
-                  <FaCheck />
-                </div>
-              )}
             </div>
-             {showPhoneOTPField && (
-              <div className="mb-3 position-relative">
-                <label
-                  className="form-label position-absolute text-dark px-2"
-                   style={{
-                    top: "-12px",
-                    left: "15px",
-                    fontStyle: "italic",
-                    fontSize: "0.8rem",
-                    zIndex: "1",
-                    background: "white",
-                  }}
-                >
-                  Enter OTP
-                </label>
-                <div style={{ position: "relative" }}>
-                  <input
-                    type="text"
-                    className="form-control text-center"
-                    value={otp}
-                    onChange={(e) =>
-                      setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
-                    }
-                    placeholder="000000"
-                    maxLength={6}
-                    // style={{
-                    //   height: '48px',
-                    //   border: "1px solid #6b4f36",
-                    //   fontSize: "20px",
-                    //   letterSpacing: '10px'
-                    // }}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleVerifyPhoneOTP}
-                    disabled={loadingPhoneOTP || otp.length !== 6}
-                    style={{
-                      position: "absolute",
-                      right: "10px",
-                      top: "47%",
-                      transform: "translateY(-44%)",
-                      background: "#6b4f36",
-                      color: "white",
-                      border: "none",
-                      padding: "6px 12px",
-                      borderRadius: "26px",
-                      fontSize: "12px",
-                    }}
-                  >
-                    Enter OTP
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
-          
           <div className="col-lg-6 col-md-12">
             <div className="form-group">
               <label htmlFor="currentPassword">Current Password</label>
@@ -942,18 +513,9 @@ const Settings = ({
                   <button
                     className="btn btn-outline-secondary"
                     type="button"
-                    onClick={() =>
-                      togglePasswordVisibility(
-                        setShowCurrentPassword,
-                        showCurrentPassword
-                      )
-                    }
+                    onClick={() => togglePasswordVisibility(setShowCurrentPassword, showCurrentPassword)}
                   >
-                    <i
-                      className={`fa ${
-                        showCurrentPassword ? "fa-eye-slash" : "fa-eye"
-                      }`}
-                    ></i>
+                    <i className={`fa ${showCurrentPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
                   </button>
                 </div>
               </div>
@@ -974,18 +536,9 @@ const Settings = ({
                   <button
                     className="btn btn-outline-secondary"
                     type="button"
-                    onClick={() =>
-                      togglePasswordVisibility(
-                        setShowNewPassword,
-                        showNewPassword
-                      )
-                    }
+                    onClick={() => togglePasswordVisibility(setShowNewPassword, showNewPassword)}
                   >
-                    <i
-                      className={`fa ${
-                        showNewPassword ? "fa-eye-slash" : "fa-eye"
-                      }`}
-                    ></i>
+                    <i className={`fa ${showNewPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
                   </button>
                 </div>
               </div>
@@ -1006,18 +559,9 @@ const Settings = ({
                   <button
                     className="btn btn-outline-secondary"
                     type="button"
-                    onClick={() =>
-                      togglePasswordVisibility(
-                        setShowConfirmPassword,
-                        showConfirmPassword
-                      )
-                    }
+                    onClick={() => togglePasswordVisibility(setShowConfirmPassword, showConfirmPassword)}
                   >
-                    <i
-                      className={`fa ${
-                        showConfirmPassword ? "fa-eye-slash" : "fa-eye"
-                      }`}
-                    ></i>
+                    <i className={`fa ${showConfirmPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
                   </button>
                 </div>
               </div>
@@ -1025,9 +569,7 @@ const Settings = ({
           </div>
         </div>
         <div className="form-group">
-          <label htmlFor="bio">
-            Bio <span style={{ color: "red" }}>*</span>
-          </label>
+          <label htmlFor="bio">Bio <span style={{ color: 'red' }}>*</span></label>
           <textarea
             className="form-control"
             id="bio"
@@ -1038,8 +580,7 @@ const Settings = ({
             rows={3}
           />
         </div>
-        <button
-          type="button"
+        <button type="button"
           className="btn btn-primary mx-2"
           disabled={loading || usernameAvailable === false}
           onClick={async (e) => {
@@ -1047,41 +588,45 @@ const Settings = ({
 
             setLoading(true);
             try {
-              await handleSubmit(e);
-              window.location.reload();
+              await handleSubmit(e); 
+              window.location.reload(); 
             } catch (err) {
               console.error("Update failed:", err);
 
-              const backendMsg =
-                err?.response?.data?.message || "Failed to update profile";
+             
+              const backendMsg = err?.response?.data?.message || "Failed to update profile";
               toast.error(backendMsg);
             } finally {
               setLoading(false);
             }
           }}
-        >
-          {loading ? "Updating..." : "Update"}
-        </button>
+        >{loading ? "Updating..." : "Update"}</button>
       </div>
       <BusinessProfile userId={userId} />
 
       {/* < Verification userId={userId} /> */}
 
-      <TaxCompliance userId={userId} />
+        < TaxCompliance userId={userId} />
+  
 
-      <ArtworkDetails userId={userId} />
+      <ArtworkDetails
+        userId={userId} />
 
-      <BankDetails userId={userId} />
+      <BankDetails
+        userId={userId} />
 
-      <SocialMedia userId={userId} profileData={profileData} />
+      <SocialMedia
+        userId={userId}
+        profileData={profileData} />
 
-      <Agreement userId={userId} />
+      <Agreement
+        userId={userId} />
 
-      <AddressModal
+    <AddressModal
         isOpen={isShippingModalOpen}
         onClose={() => setIsShippingModalOpen(false)}
         userId={userId}
-        fetchProfile={fetchProfile}
+         fetchProfile={fetchProfile}
       />
     </div>
   );

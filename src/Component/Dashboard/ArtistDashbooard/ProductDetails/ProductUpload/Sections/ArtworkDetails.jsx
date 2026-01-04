@@ -388,7 +388,7 @@ const ArtworkDetails = ({
 
         {formData.condition?.value?.toLowerCase() === 'resale' && (
             <div className="form-group">
-                <label htmlFor="provenance">Provenance & History  <span style={{ color: 'red' }}>*</span></label>
+                <label htmlFor="provenance">Provenance & History</label>
                 <textarea
                     id="provenance"
                     name="provenance"

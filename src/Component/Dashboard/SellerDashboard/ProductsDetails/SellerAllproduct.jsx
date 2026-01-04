@@ -230,13 +230,13 @@ const ApprovedProduct = () => {
                                                     >
                                                         <i className="fa fa-map-marker"></i>
                                                     </button>
-                                                    {/* <button
+                                                    <button
                                                         className="btn btn-sm btn-outline-danger mr-2"
                                                         title="Bidding Pass"
                                                         onClick={() => navigate('/seller/product/bidding-pass')}
                                                     >
                                                         <i className="fas fa-ticket-alt"></i>
-                                                    </button> */}
+                                                    </button>
                                                     <button
                                                         type="button"
                                                         className="btn btn-outline-danger btn-sm"

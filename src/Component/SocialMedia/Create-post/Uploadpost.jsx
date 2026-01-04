@@ -23,6 +23,8 @@ const Uploadpost = () => {
   const emojiBtnRef = useRef(null);
   const stickerRef = useRef(null);
 
+
+
   const hasValidUsername =
     typeof username === "string" &&
     username.trim() !== "" &&
@@ -88,14 +90,7 @@ const Uploadpost = () => {
 
       if (res && !res.hasError) {
         toast.success("Post uploaded successfully!");
-        navigate(
-          `/artsays-community/profile/${
-            hasValidUsername
-              ? `${username}`
-              : `${firstName}_${lastName}_${userId}`
-          }`,
-          { state: { userId: userId } }
-        );
+        navigate(`/artsays-community/profile/${hasValidUsername ? `${username}` : `${firstName}_${lastName}_${userId}`}`, { state: { userId: userId } });
       } else {
         toast.error(res?.message || "Failed to upload post");
       }
@@ -120,6 +115,7 @@ const Uploadpost = () => {
   const [collaborators, setCollaborators] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
+
   useEffect(() => {
     const fetchSuggestions = async () => {
       if (searchQuery.trim().length < 2) {
@@ -134,8 +130,6 @@ const Uploadpost = () => {
           false,
           true
         );
-        console.log("descmentionsssssssssssss",res)
-
         if (res?.data?.collaborators) {
           setSuggestions(res.data.collaborators);
         }
@@ -229,7 +223,6 @@ const Uploadpost = () => {
           {},
           true
         );
-        console.log("mentionssssssssss",res)
         if (res?.data?.users) {
           setDescMentionSuggestions(res.data.users);
           setShowDescMentions(true);
@@ -380,24 +373,7 @@ const Uploadpost = () => {
                         className="w-8 h-8 rounded-full"
                       />
                       <span className="text-sm font-medium text-gray-800">
-                        {user.username}{" "}
-                        {user?.verified?.length > 0 && (
-                          <img
-                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                              user.verified[user.verified.length - 1]
-                                ?.badgeImage
-                            }`}
-                            className="inline-block ml-1 w-6 h-6 object-contain"
-                            alt={
-                              user.verified[user.verified.length - 1]
-                                ?.badgeName || "badge"
-                            }
-                            title={
-                              user.verified[user.verified.length - 1]
-                                ?.badgeName
-                            }
-                          />
-                        )}{" "}
+                        {user.username}
                       </span>
                       <span className="text-xs text-gray-500">{user.role}</span>
                     </div>
@@ -479,26 +455,7 @@ const Uploadpost = () => {
                         alt={user?.username}
                         className="w-8 h-8 rounded-full mr-2"
                       />
-                      <p className="text-sm">{user?.username} {user.verified?.length > 0 && (
-                            <img
-                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                                user.verified[
-                                  user.verified.length - 1
-                                ]?.badgeImage
-                              }`}
-                              className="inline-block ml-1 w-5 h-5 object-contain"
-                              alt={
-                                user.verified[
-                                  user.verified.length - 1
-                                ]?.badgeName || "badge"
-                              }
-                              title={
-                                user.verified[
-                                  user.verified.length - 1
-                                ]?.badgeName
-                              }
-                            />
-                          )}</p>
+                      <p className="text-sm">{user?.username}</p>
                     </div>
                   ))}
                 </div>

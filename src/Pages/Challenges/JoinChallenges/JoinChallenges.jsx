@@ -10,7 +10,7 @@ import getAPI from "../../../api/getAPI";
 const JoinChallenges = () => {
   const location = useLocation();
   const challengeDetails = location?.state;
-console.log("challengedetailssssssssssss",challengeDetails)
+
   const [applicationData, setApplicationData] = useState({
     fullName: "",
     email: "",
@@ -64,7 +64,6 @@ console.log("challengedetailssssssssssss",challengeDetails)
     }
     if (!/^[6-9]\d{9}$/.test(applicationData.contactNumber)) {
       toast.error("enter valid mobile number");
-      return;
     }
     const formData = new FormData();
     formData.append("fullName", applicationData.fullName);
@@ -76,7 +75,6 @@ console.log("challengedetailssssssssssss",challengeDetails)
     formData.append("description", applicationData.description);
     formData.append("guidelines", applicationData.guidelines);
     formData.append("works", works);
-    formData.append("challengId",challengeDetails._id);
 
     try {
       const response = await postAPI(
