@@ -2043,17 +2043,11 @@ const Product = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
-  const goToPage = (page) => {
-    setCurrentPage(page);
-  };
-  const toggleLike = (productId) => {
-    setLikedProducts((prev) => ({
-      ...prev,
-      [productId]: !prev[productId],
-    }));
-  };
+    const goToPage = (page) => {
+      setCurrentPage(page);
+    };
 
-  const ensureBuyer = () => {
+    const ensureBuyer = () => {
     if (userType !== "Buyer") {
       toast.warn("Only buyers can use this feature, Register as a Buyer to continue.");
       return false;
@@ -2245,7 +2239,7 @@ const Product = () => {
     };
 
     fetchWishlist();
-  }, []);
+  }, [userId]);
 
   const renderStars = (averageRating) => {
     if (averageRating == null) {

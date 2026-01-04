@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
 import { timeAgo } from "../../../utils/TimeAgo";
 import postAPI from "../../../api/postAPI";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 const SharePost = () => {
   const [sharePostData, setSharePostData] = useState(null);

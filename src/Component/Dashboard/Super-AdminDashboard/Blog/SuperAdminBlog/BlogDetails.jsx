@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import useUserType from '../../urlconfig';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 function ArtistBlogDetails() {
   const location = useLocation();

@@ -286,7 +286,7 @@ import { useAuth } from "../../AuthContext";
 import postAPI from "../../api/postAPI";
 import VerificationPopup from "./VerificationPopup";
 // import { GoogleLogin } from "@react-oauth/google";
-import { FcGoogle } from "react-icons/fc";
+// import { FcGoogle } from "react-icons/fc";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FaGoogle } from "react-icons/fa";
 

@@ -1617,41 +1617,38 @@ import { FaChevronCircleRight, FaChevronCircleLeft } from "react-icons/fa";
 import getAPI from "../../api/getAPI";
 import postAPI from "../../api/postAPI";
 import { toast } from "react-toastify";
-import { Helmet } from "react-helmet";
-
-const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
-
-const offersData = [
-  {
-    title: "Cashback",
-    description: "Upto ₹50.00 cashback as Google Pay Balance when...",
-    offers: "3 offers",
-  },
-  {
-    title: "Bank Offer",
-    description: "Upto ₹1,000.00 discount on SBI Credit Cards",
-    offers: "8 offers",
-  },
-  {
-    title: "EMI Offers",
-    description: "Get GST invoice and save up to 28% on business purchases",
-    offers: "1 offer",
-  },
-  {
-    title: "Festival Offer",
-    description: "Flat ₹500 off on selected paintings during the festival sale",
-    offers: "2 offers",
-  },
-];
+import { Helmet } from "react-helmet-async";
 
 const ProductDetails = () => {
-  // const { productId } = useParams();
-  const { productSlug, productId } = useParams();
+  const { productId } = useParams();
   const id = productId;
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
 
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
+  const imageBaseURL = useMemo(() => process.env.REACT_APP_API_URL_FOR_IMAGE || "", []);
+
+  const offersData = [
+    {
+      title: "Cashback",
+      description: "Upto ₹50.00 cashback as Google Pay Balance when...",
+      offers: "3 offers",
+    },
+    {
+      title: "Bank Offer",
+      description: "Upto ₹1,000.00 discount on SBI Credit Cards",
+      offers: "8 offers",
+    },
+    {
+      title: "EMI Offers",
+      description: "Get GST invoice and save up to 28% on business purchases",
+      offers: "1 offer",
+    },
+    {
+      title: "Festival Offer",
+      description: "Flat ₹500 off on selected paintings during the festival sale",
+      offers: "2 offers",
+    },
+  ];
 
   const resolveMediaUrl = (path) => {
     if (!path || typeof path !== "string") return "/images/placeholder.jpg";
@@ -1869,6 +1866,7 @@ const ProductDetails = () => {
     setMainCategoryName(mainCat?.mainCategoryName || "N/A");
     setCategoryName(cat?.categoryName || "N/A");
     setSubCategoryName(subCat?.subCategoryName || "N/A");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product, categoryData]);
 
   useEffect(() => {
@@ -1898,19 +1896,6 @@ const ProductDetails = () => {
     if (sell >= market) return 0;
     return Math.round(((market - sell) / market) * 100);
   };
-
-  // const productReviews = reviews.filter(
-  //   (r) => String(r.productId?._id) === String(product?._id)
-  // );
-  // const productReviews = reviews.filter((review) => {
-  //   const buyerRequest = review.productId;
-  //   if (!buyerRequest) return false;
-
-  //   const reviewProductName = buyerRequest.ProductName?.trim()?.toLowerCase();
-  //   const currentProductName = product.productName?.trim()?.toLowerCase();
-
-  //   return reviewProductName === currentProductName;
-  // });
 
   const productReviews = useMemo(() => {
     if (!product || !reviews || reviews.length === 0) return [];
@@ -1987,18 +1972,12 @@ const ProductDetails = () => {
       </div>
     );
 
-  const seoTitle = `${product.productName} | Artsays`;
-  const seoDesc = product.description?.slice(0, 150) || "Buy exclusive artwork from verified artists.";
-  const seoImg = `${imageBaseURL}${product.mainImage}`;
-  const seoKeywords = `${product.productName}, ${mainCategoryName}, ${categoryName}, artwork`;
-
   const discountPercent = calculateDiscount(
     product.sellingPrice,
     product.marketPrice
   );
   const username = `${product?.userId?.username ||
-    `${product?.userId?.name || ""} ${product?.userId?.lastName || ""}`
-    }`.trim();
+    `${product?.userId?.name || ""} ${product?.userId?.lastName || ""}`}`.trim();
   const artistName = `${product?.userId?.name || ""} ${product?.userId?.lastName || ""
     }`.trim();
 
@@ -2078,11 +2057,12 @@ const ProductDetails = () => {
                           document.getElementById(dialogId).close()
                         }
                       >
-                        <img
-                          src={fullURL}
-                          className="max-w-[90%] max-h-[90%] rounded-lg shadow-xl"
-                          onClick={(e) => e.stopPropagation()}
-                        />
+                      <img
+                            src={fullURL}
+                            alt="Full size preview"
+                            className="max-w-[90%] max-h-[90%] rounded-lg shadow-xl"
+                            onClick={(e) => e.stopPropagation()}
+                          />
                       </div>
                     </dialog>
                   </div>
@@ -2268,12 +2248,13 @@ const ProductDetails = () => {
                         <MdVerified className="ml-1 text-blue-600 w-4 h-4" />
                       )}{" "}
                       {product.badges?.map((img, index) => (
-                        <img
-                          key={index}
-                          src={`${imageBaseURL}${img}`}
-                          className="w-4 h-4 rounded-full object-contain"
-                        />
-                      ))}
+                          <img
+                            key={index}
+                            src={`${imageBaseURL}${img}`}
+                            alt="Badge"
+                            className="w-4 h-4 rounded-full object-contain"
+                          />
+                        ))}
                     </p>
                     {/* <div className="flex items-center text-yellow-500 mt-2">
                       {[...Array(5)].map((_, i) => (
@@ -2525,12 +2506,13 @@ const ProductDetails = () => {
                               <MdVerified className="text-blue-600 w-4 h-4" />
                             )}
                             {product.badges?.map((img, index) => (
-                              <img
-                                key={index}
-                                src={`${imageBaseURL}${img}`}
-                                className="w-4 h-4 rounded-full object-contain"
-                              />
-                            ))}
+                                <img
+                                  key={index}
+                                  src={`${imageBaseURL}${img}`}
+                                  alt="Badge"
+                                  className="w-4 h-4 rounded-full object-contain"
+                                />
+                              ))}
                           </td>
                         </tr>
                         <tr>
@@ -3177,12 +3159,13 @@ const ProductDetails = () => {
                             <MdVerified className="text-blue-600 w-4 h-4" />
                           )}
                           {product.badges?.map((img, index) => (
-                            <img
-                              key={index}
-                              src={`${imageBaseURL}${img}`}
-                              className="w-4 h-4 rounded-full object-contain"
-                            />
-                          ))}
+                              <img
+                                key={index}
+                                src={`${imageBaseURL}${img}`}
+                                alt="Badge"
+                                className="w-4 h-4 rounded-full object-contain"
+                              />
+                            ))}
                         </td>
                       </tr>
                       <tr className="border-b border-gray-100">
@@ -3328,24 +3311,9 @@ const ProductDetails = () => {
         />
       </Helmet>
 
-      <ProductImages imagesProp={images} initialImage={images[0]} />
-    </>
-  );
-
-  // const productReviews = reviews.filter(
-  //   (r) => String(r.productId?._id) === String(product?._id)
-  // );
-  // const productReviews = reviews.filter((review) => {
-  //   const buyerRequest = review.productId;
-  //   if (!buyerRequest) return false;
-
-  //   const reviewProductName = buyerRequest.ProductName?.trim()?.toLowerCase();
-  //   const currentProductName = product.productName?.trim()?.toLowerCase();
-
-  //   return reviewProductName === currentProductName;
-  // });
-
-  return <ProductImages imagesProp={images} initialImage={images[0]} />;
+        <ProductImages imagesProp={images} initialImage={images[0]} />
+      </>
+    );
 };
 
 export default ProductDetails;

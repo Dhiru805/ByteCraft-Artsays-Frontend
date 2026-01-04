@@ -1000,7 +1000,7 @@ const ArtistCard = () => {
   //                 () => null
   //               ),
   //               getAPI(`/auth/userid/${aid}`, {}, true, false).catch(() => null),
-  //               getAPI(`/social-media/profile/${aid}`, {}, true, true).catch(
+  //               getAPI(`/api/social-media/profile/${aid}`, {}, true, true).catch(
   //                 () => null
   //               ),
   //             ]);
@@ -1101,7 +1101,7 @@ const ArtistCard = () => {
             const [detailsRes, userRes, profileRes] = await Promise.all([
               getAPI(`/auth/getartistdetails/${aid}`, {}, true, false).catch(() => null),
               getAPI(`/auth/userid/${aid}`, {}, true, false).catch(() => null),
-              getAPI(`/social-media/profile/${aid}`, {}, true, true).catch(() => null),
+              getAPI(`/api/social-media/profile/${aid}`, {}, true, true).catch(() => null),
             ]);
 
             const details = detailsRes?.data || {};
@@ -1248,7 +1248,7 @@ const ArtistCard = () => {
   };
 
   const handleStoreVisit = (artistId) => {
-    navigate(`/social-media/profile/product-view?artistId=${artistId}`);
+    navigate(`/api/social-media/profile/product-view?artistId=${artistId}`);
   };
 
   return (

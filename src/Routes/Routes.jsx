@@ -111,12 +111,12 @@ import CreatePolicy from "../Component/Dashboard/Super-AdminDashboard/Policys/cr
 import UpdatePolicy from "../Component/Dashboard/Super-AdminDashboard/Policys/editPolicy";
 //import ViewPolicy from '../Component/Dashboard/Super-AdminDashboard/Policys/PolicyView';
 
-import How_To_Buy from "../Component/Dashboard/Super-AdminDashboard/HowToBuy/buyTable";
+import HowToBuyTable from "../Component/Dashboard/Super-AdminDashboard/HowToBuy/buyTable";
 import CreateHowToBuy from "../Component/Dashboard/Super-AdminDashboard/HowToBuy/create";
 import UpdateHowToBuy from "../Component/Dashboard/Super-AdminDashboard/HowToBuy/edit";
 //import ViewHowToBuy from "../Component/Dashboard/Super-AdminDashboard/HowToBuy/view";
 
-import How_To_Sell from "../Component/Dashboard/Super-AdminDashboard/HowToSell/sellTable";
+import HowToSellTable from "../Component/Dashboard/Super-AdminDashboard/HowToSell/sellTable";
 import CreateHowToSell from "../Component/Dashboard/Super-AdminDashboard/HowToSell/create";
 import UpdateHowToSell from "../Component/Dashboard/Super-AdminDashboard/HowToSell/edit";
 //import ViewHowToSell from "../Component/Dashboard/Super-AdminDashboard/HowToSell/view";
@@ -126,7 +126,7 @@ import CreateCelebrities from "../Component/Dashboard/Super-AdminDashboard/Celeb
 import ViewCelebrity from "../Component/Dashboard/Super-AdminDashboard/Celebraties/ViewCelebrity";
 import UpdateCelebrity from "../Component/Dashboard/Super-AdminDashboard/Celebraties/UpdateCelebrity";
 
-import How_To_Resell from "../Component/Dashboard/Super-AdminDashboard/HowToResell/resellTable";
+import HowToResellTable from "../Component/Dashboard/Super-AdminDashboard/HowToResell/resellTable";
 import CreateHowToResell from "../Component/Dashboard/Super-AdminDashboard/HowToResell/create";
 import UpdateHowToResell from "../Component/Dashboard/Super-AdminDashboard/HowToResell/edit";
 
@@ -444,7 +444,7 @@ import ArtistViewExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibi
 import ArtistSponser from "../Component/Dashboard/ArtistDashbooard/Advertise/Sponser";
 import ArtistProductCouponCodes from "../Component/Dashboard/ArtistDashbooard/ProductSetting/ProductCouponCode/ProductCouponCode";
 import UpdateProductArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/UpdateProduct/productUploade";
-import ProductViewArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/productUploade";
+// import ProductViewArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/productUploade";
 //-----------------------------Blogs--------------------------//
 import BlogList from "../Component/Dashboard/ArtistDashbooard/Blog/BlogList";
 import BlogPost from "../Component/Dashboard/ArtistDashbooard/Blog/BlogPost";
@@ -622,6 +622,12 @@ const PublicRoute = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const authPages = [
+      "/login",
+      "/register",
+      "/artist-seller-register",
+      "/forgotpassword",
+    ];
     if (isAuthenticated && authPages.includes(location.pathname)) {
       if (
         (userType === "Artist" || userType === "Seller") &&
@@ -636,13 +642,6 @@ const PublicRoute = ({ children }) => {
       return () => clearTimeout(timer);
     }
   }, [isAuthenticated, userType, userStatus, location.pathname, navigate]);
-
-  const authPages = [
-    "/login",
-    "/register",
-    "/artist-seller-register",
-    "/forgotpassword",
-  ];
 
   return children ? children : <Outlet />;
 };
@@ -1115,17 +1114,17 @@ const AppRoutes = () => {
         <Route path="policy/update-policy" element={<UpdatePolicy />} />
         {/* <Route path="policy/view-policy" element={<ViewPolicy />} /> */}
         {/*How_To_Buy*/}
-        <Route path="how-to-buy" element={<How_To_Buy />} />
-        <Route path="how-to-buy/create" element={<CreateHowToBuy />} />
-        <Route path="how-to-buy/update" element={<UpdateHowToBuy />} />
-        {/* <Route path="how-to-buy/view" element={<ViewHowToBuy />} />   */}
-        {/*How_To_Sell*/}
-        <Route path="how-to-sell" element={<How_To_Sell />} />
-        <Route path="how-to-sell/create" element={<CreateHowToSell />} />
-        <Route path="how-to-sell/update" element={<UpdateHowToSell />} />
-        {/* <Route path="how-to-sell/view" element={<ViewHowToSell />} />   */}
-        {/*How_To_Resell*/}
-        <Route path="how-to-resell" element={<How_To_Resell />} />
+          <Route path="how-to-buy" element={<HowToBuyTable />} />
+          <Route path="how-to-buy/create" element={<CreateHowToBuy />} />
+          <Route path="how-to-buy/update" element={<UpdateHowToBuy />} />
+          {/* <Route path="how-to-buy/view" element={<ViewHowToBuy />} />   */}
+          {/*How_To_Sell*/}
+          <Route path="how-to-sell" element={<HowToSellTable />} />
+          <Route path="how-to-sell/create" element={<CreateHowToSell />} />
+          <Route path="how-to-sell/update" element={<UpdateHowToSell />} />
+          {/* <Route path="how-to-sell/view" element={<ViewHowToSell />} />   */}
+          {/*How_To_Resell*/}
+          <Route path="how-to-resell" element={<HowToResellTable />} />
         <Route path="how-to-resell/create" element={<CreateHowToResell />} />
         <Route path="how-to-resell/update" element={<UpdateHowToResell />} />
         {/*WhyArtSays */}

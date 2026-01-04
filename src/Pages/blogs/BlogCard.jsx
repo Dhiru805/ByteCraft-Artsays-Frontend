@@ -16,7 +16,7 @@ function BlogCard({ blog }) {
             <div className="flex flex-col w-full border-2 border-[#6F4D34] bg-[#fff] rounded-[20px] lg:rounded-[25px] overflow-hidden">
                 <div className="w-full bg-[#6F4D34] relative z-10">
                     <div className="relative bg-[#EBEBEB] rounded-[25px]">
-                        <img src={blog ? `${process.env.REACT_APP_API_URL}/${blog.blogImage.replace(/\\/g, "/")}` : blog1} alt="Blog image" className="w-full h-40 sm:h-64 object-contain rounded-[25px]"
+                        <img src={blog ? `${process.env.REACT_APP_API_URL}/${blog.blogImage.replace(/\\/g, "/")}` : blog1} alt="Blog thumbnail" className="w-full h-40 sm:h-64 object-contain rounded-[25px]"
                             onError={(e) => e.currentTarget.src = blog1} />
                     </div>
                     <button className="absolute bottom-2 right-2 bg-[#fff] p-2 rounded-full focus:outline-0">

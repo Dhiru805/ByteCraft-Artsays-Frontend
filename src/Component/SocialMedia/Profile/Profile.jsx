@@ -19,7 +19,7 @@ import putAPI from "../../../../src/api/putAPI";
 import { toast } from "react-toastify";
 import { FaCheckCircle } from "react-icons/fa";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 
 const user = {

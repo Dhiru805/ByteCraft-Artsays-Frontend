@@ -472,8 +472,14 @@ const Sidebar = () => {
       },
       {
         label: "Packaging Material",
-        icon: "fa fa-archive",
+        icon: "fa-archive",
         path: "/artist/packaging-material",
+        subTabs: []
+      },
+      {
+        label: "Wallet",
+        icon: "fa-credit-card",
+        path: "/artist/wallet",
         subTabs: []
       },
     ],
@@ -539,6 +545,12 @@ const Sidebar = () => {
         label: "Packaging Material",
         icon: "fa fa-archive",
         path: "/seller/packaging-material",
+        subTabs: []
+      },
+      {
+        label: "Wallet",
+        icon: "fa-credit-card",
+        path: "/seller/wallet",
         subTabs: []
       },
       {

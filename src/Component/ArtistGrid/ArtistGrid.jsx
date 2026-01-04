@@ -173,7 +173,7 @@ const ArtistCard = ({ limit = 8, searchQuery = "" }) => {
               const category = mainCategories.find((c) => String(c._id) === String(categoryId));
               categoryName = category?.mainCategoryName || "Unknown";
 
-              const profileRes = await getAPI(`/social-media/profile/${uid}`, {}, true, true).catch(() => null);
+              const profileRes = await getAPI(`/api/social-media/profile/${uid}`, {}, true, true).catch(() => null);
               const followersArr = normalizeIds(profileRes?.data?.profile?.followers || []);
               isFollowing = followersArr.includes(String(userId));
 

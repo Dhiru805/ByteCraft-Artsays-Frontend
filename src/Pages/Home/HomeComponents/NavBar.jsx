@@ -400,23 +400,16 @@ const NavBar = () => {
                 {isLoggedIn && (
                   <div className="flex items-center">
                     <div className="dropdown position-relative">
-                      <div
-                        className="ms-4 user-icon"
-                        style={{
-                          borderRadius: "50%",
-                          cursor: "pointer",
-                          border: "2px solid #3e2e22",
-                        }}
-                        onClick={handleUserIconClick}
-                      >
-                        {console.log("user saved data", {
-                          token: localStorage.getItem("token"),
-                          usertype: localStorage.getItem("usertype"),
-                          profilePhoto: localStorage.getItem("profilePhoto"),
-                          username: localStorage.getItem("username"),
-                        })}
-                        {console.log("BASE_URL:", BASE_URL)}
-                        <img
+                        <div
+                          className="ms-4 user-icon"
+                          style={{
+                            borderRadius: "50%",
+                            cursor: "pointer",
+                            border: "2px solid #3e2e22",
+                          }}
+                          onClick={handleUserIconClick}
+                        >
+                          <img
                           src={
                             user.profilePhoto
                               ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`
@@ -722,7 +715,7 @@ const NavBar = () => {
                     handleDashboardClick(Usertype);
                   }}
                 >
-                  <i class="bi bi-person-fill" />
+                  <i className="bi bi-person-fill" />
                   <span>My Dashboard</span>
                 </div>
                 {!isOnSocialMedia ? (

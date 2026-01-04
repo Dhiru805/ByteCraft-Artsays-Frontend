@@ -107,9 +107,24 @@ const BuyerWallet = () => {
     }
   };
 
-  const [referralSettings, setReferralSettings] = useState(null);
+    const [referralSettings, setReferralSettings] = useState(null);
+    const [coinSetting, setCoinSetting] = useState({ 
+      coinValue: 0.10, 
+      currency: "INR",
+      transactionReward: 10,
+      referralReward: 100
+    });
 
-  const fetchReferralSettings = async () => {
+    const fetchCoinSetting = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/api/wallet/art-coins/value`);
+        setCoinSetting(res.data);
+      } catch (err) {
+        console.error("Error fetching coin setting:", err);
+      }
+    };
+
+    const fetchReferralSettings = async () => {
     if (!userId) return;
     try {
       const res = await axios.get(`${API_URL}/api/wallet/referral/settings/${userId}`);
@@ -300,21 +315,26 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
     }
   };
 
-  useEffect(() => {
-    if (!userId) return;
-    fetchWallet();
-    fetchTransactions();
-    fetchWithdrawals();
-    fetchLimits();
-    fetchReferralData();
-    fetchReferralSettings();
-  }, [userId]);
+    useEffect(() => {
+      if (!userId) return;
+      fetchWallet();
+      fetchTransactions();
+      fetchWithdrawals();
+      fetchLimits();
+      fetchReferralData();
+      fetchReferralSettings();
+      fetchCoinSetting();
+    }, [userId]);
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
   }, [transactions.length, pageSize, totalPages]);
 
     const showReferral = referralSettings?.isActive || userType === "Super-Admin";
+
+    if (!wallet) {
+      return <BuyerWalletSkeleton />;
+    }
 
     return (
 
@@ -340,11 +360,11 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
           <div className="card top_widget secondary-bg" style={{ backgroundColor: "#F36F21", color: "#ffffff" }}>
             <div className="body">
               <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-shopping-basket"></i></div>
-              <div className="content text-light">
-                <div className="text mb-2 text-uppercase">Art Coins</div>
-                <h4 className="number mb-0">{wallet.artCoins}</h4>
-                <small>Worth ₹{(wallet.artCoins * 0.10).toFixed(2)}</small>
-              </div>
+                <div className="content text-light">
+                  <div className="text mb-2 text-uppercase">Art Coins</div>
+                  <h4 className="number mb-0">{wallet.artCoins}</h4>
+                  <small>Worth {coinSetting.currency} {(wallet.artCoins * coinSetting.coinValue).toFixed(2)}</small>
+                </div>
             </div>
           </div>
         </div>
@@ -617,20 +637,20 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
             <div className="body">
               <div className="row">
                 <div className="col-md-4">
-                  <h5>How to Earn</h5>
-                  <ul>
-                    <li>10 coins per transaction</li>
-                    {showReferral && <li>100 coins on referral signup</li>}
-                    <li>Bonus coins on special offers</li>
-                  </ul>
-                </div>
-                <div className="col-md-4">
-                  <h5>How to Use</h5>
-                  <ul>
-                    <li>1 coin = ₹0.10 discount</li>
-                    <li>Max 20% discount per order</li>
-                    <li>Use during checkout</li>
-                  </ul>
+                    <h5>How to Earn</h5>
+                    <ul>
+                      <li>{coinSetting.transactionReward} coins per transaction</li>
+                      {showReferral && <li>{coinSetting.referralReward} coins on referral signup</li>}
+                      <li>Bonus coins on special offers</li>
+                    </ul>
+                  </div>
+                  <div className="col-md-4">
+                    <h5>How to Use</h5>
+                    <ul>
+                      <li>1 coin = {coinSetting.currency} {coinSetting.coinValue.toFixed(2)} discount</li>
+                      <li>Max 20% discount per order</li>
+                      <li>Use during checkout</li>
+                    </ul>
                 </div>
                 <div className="col-md-4">
                   <h5>Important Notes</h5>

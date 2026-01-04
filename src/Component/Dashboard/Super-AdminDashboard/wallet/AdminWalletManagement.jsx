@@ -46,11 +46,19 @@ const AdminWalletManagement = () => {
   const [sortOrder, setSortOrder] = useState("desc");
   const [isExporting, setIsExporting] = useState(false);
 
-  const [isGeneratingCodes, setIsGeneratingCodes] = useState(false);
-  const [referralSettings, setReferralSettings] = useState(null);
-  const [isSavingSettings, setIsSavingSettings] = useState(false);
+    const [isGeneratingCodes, setIsGeneratingCodes] = useState(false);
+    const [referralSettings, setReferralSettings] = useState(null);
+    const [isSavingSettings, setIsSavingSettings] = useState(false);
+      const [coinSetting, setCoinSetting] = useState({ 
+        coinValue: 0.10, 
+        currency: "INR",
+        transactionReward: 10,
+        referralReward: 100
+      });
+      const [isSavingCoinSetting, setIsSavingCoinSetting] = useState(false);
+  
+    const fetchData = async () => {
 
-  const fetchData = async () => {
     setLoading(true);
     try {
       const walletsRes = await axios.get(`/api/wallet/admin/all-wallets`);
@@ -61,6 +69,9 @@ const AdminWalletManagement = () => {
       
       const withdrawRes = await axios.get(`/api/wallet/withdrawals`);
       setWithdrawals(withdrawRes.data || []);
+
+      const coinRes = await axios.get(`/api/coin-settings`);
+      if (coinRes.data) setCoinSetting(coinRes.data);
     } catch (err) {
       console.error("Error fetching admin wallet data:", err?.response?.data || err?.message || err);
       toast.error(err?.response?.data?.message || "Failed to load dashboard data");
@@ -176,17 +187,31 @@ const AdminWalletManagement = () => {
     }
   };
 
-  const saveReferralSettings = async () => {
-    setIsSavingSettings(true);
-    try {
-      await axios.put('/api/wallet/admin/referral-settings', referralSettings);
-      toast.success("Referral settings saved successfully");
-    } catch (error) {
-      toast.error("Failed to save referral settings");
-    } finally {
-      setIsSavingSettings(false);
-    }
-  };
+    const saveReferralSettings = async () => {
+      setIsSavingSettings(true);
+      try {
+        await axios.put('/api/wallet/admin/referral-settings', referralSettings);
+        toast.success("Referral settings saved successfully");
+      } catch (error) {
+        toast.error("Failed to save referral settings");
+      } finally {
+        setIsSavingSettings(false);
+      }
+    };
+
+    const saveCoinSetting = async () => {
+      setIsSavingCoinSetting(true);
+      try {
+        await axios.put('/api/coin-settings', coinSetting);
+        toast.success("Coin settings saved successfully");
+        fetchData();
+      } catch (error) {
+        toast.error("Failed to save coin settings");
+      } finally {
+        setIsSavingCoinSetting(false);
+      }
+    };
+
 
   useEffect(() => {
     fetchReferralSettings();
@@ -341,14 +366,15 @@ const AdminWalletManagement = () => {
                       <span>Total Referrals Processed</span>
                       <strong>{wallets.reduce((sum, w) => sum + (w.referralCount || 0), 0)}</strong>
                     </li>
-                    <li className="list-group-item d-flex justify-content-between">
-                      <span>Art Coins Redeemed (Value)</span>
-                      <strong>₹{wallets.reduce((sum, w) => sum + (w.artCoinsRedeemed || 0) * 0.1, 0).toFixed(2)}</strong>
-                    </li>
-                    <li className="list-group-item d-flex justify-content-between">
+                      <li className="list-group-item d-flex justify-content-between">
+                        <span>Art Coins Redeemed (Value)</span>
+                        <strong>₹{wallets.reduce((sum, w) => sum + (w.artCoinsRedeemed || 0) * coinSetting.coinValue, 0).toFixed(2)}</strong>
+                      </li>
+
+                    {/*<li className="list-group-item d-flex justify-content-between">
                       <span>Verified KYC Users</span>
                       <strong>{wallets.filter(w => w.kycStatus === 'verified').length}</strong>
-                    </li>
+                    </li>*/}
                     <li className="list-group-item d-flex justify-content-between">
                       <span>Users with High Limits</span>
                       <strong>{wallets.filter(w => (w.dailyWithdrawalLimit || 50000) > 50000).length}</strong>
@@ -379,7 +405,7 @@ const AdminWalletManagement = () => {
                   <th>Role</th>
                   <th>Balance</th>
                   <th>Art Coins</th>
-                  <th>KYC Status</th>
+                  {/*<th>KYC Status</th>*/}
                   <th>Daily Limit</th>
                   <th>Last Active</th>
                   <th>Actions</th>
@@ -395,11 +421,11 @@ const AdminWalletManagement = () => {
                     <td><span className="badge badge-info">{w.role}</span></td>
                     <td>₹{w.balance.toLocaleString()}</td>
                     <td>{w.artCoins}</td>
-                    <td>
+                    {/*<td>
                       <span className={`badge ${w.kycStatus === 'verified' ? 'badge-success' : w.kycStatus === 'pending' ? 'badge-warning' : 'badge-danger'}`}>
                         {w.kycStatus || 'Not Started'}
                       </span>
-                    </td>
+                    </td>*/}
                     <td>₹{(w.dailyWithdrawalLimit || 50000).toLocaleString()} <button className="btn btn-xs btn-link p-0" onClick={() => {
                       const newLimit = prompt("Enter new daily limit:", w.dailyWithdrawalLimit || 50000);
                       if (newLimit) handleUpdateLimit(w.userId?._id || w.userId, 'dailyWithdrawalLimit', newLimit);
@@ -451,7 +477,7 @@ const AdminWalletManagement = () => {
                   <tr>
                     <th>User</th>
                     <th>Amount</th>
-                    <th>KYC</th>
+                    {/*<th>KYC</th>*/}
                     <th>Request Date</th>
                     <th>Status</th>
                     <th>Actions</th>
@@ -464,11 +490,11 @@ const AdminWalletManagement = () => {
                       <tr key={req._id}>
                         <td>{userWallet ? `${userWallet.name} ${userWallet.lastName}` : req.userId}</td>
                         <td>₹{req.amount.toLocaleString()}</td>
-                        <td>
+                        {/*<td>
                           <span className={`badge ${userWallet?.kycStatus === 'verified' ? 'badge-success' : 'badge-danger'}`}>
                             {userWallet?.kycStatus || 'Unknown'}
                           </span>
-                        </td>
+                        </td>*/}
                         <td>{new Date(req.createdAt).toLocaleString()}</td>
                         <td>
                           <span className={`badge ${req.status === 'pending' ? 'badge-warning' : req.status === 'approved' ? 'badge-info' : req.status === 'paid' ? 'badge-success' : 'badge-danger'}`}>
@@ -604,12 +630,94 @@ const AdminWalletManagement = () => {
             </div>
           )}
 
-          {activeTab === 'settings' && referralSettings && (
-            <div className="row clearfix">
-              <div className="col-lg-12">
-                <div className="card">
-                  <div className="header d-flex justify-content-between align-items-center">
-                    <h2>Referral Program Settings</h2>
+            {activeTab === 'settings' && referralSettings && (
+              <div className="row clearfix">
+                <div className="col-lg-12">
+                  <div className="card">
+                    <div className="header">
+                      <h2>Coin Value Settings</h2>
+                    </div>
+                    <div className="body">
+                      <div className="row">
+                        <div className="col-md-6">
+                            <div className="form-group">
+                              <label><strong>Art Coin Value (1 Coin = ₹)</strong></label>
+                              <input 
+                                type="number" 
+                                className="form-control" 
+                                value={coinSetting.coinValue} 
+                                onChange={e => setCoinSetting({ ...coinSetting, coinValue: Number(e.target.value) })} 
+                                step="0.01"
+                                min="0"
+                              />
+                                <small className="text-muted">Example: 0.10 means 10 coins = ₹1</small>
+                              </div>
+
+                            <div className="form-group">
+                              <label><strong>Coins Earned Per Transaction</strong></label>
+                              <input 
+                                type="number" 
+                                className="form-control" 
+                                value={coinSetting.transactionReward || 10} 
+                                onChange={e => setCoinSetting({ ...coinSetting, transactionReward: Number(e.target.value) })} 
+                                min="0"
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label><strong>Default Referral Coins Reward</strong></label>
+                              <input 
+                                type="number" 
+                                className="form-control" 
+                                value={coinSetting.referralReward || 100} 
+                                onChange={e => setCoinSetting({ ...coinSetting, referralReward: Number(e.target.value) })} 
+                                min="0"
+                              />
+                            </div>
+
+                            <div className="mt-4 p-3 bg-light border rounded">
+                              <h6><i className="fa fa-eye mr-2"></i>Value Preview (Real-time)</h6>
+                              <hr />
+                              <div className="d-flex justify-content-between mb-2">
+                                <span>1 Art Coin:</span>
+                                <strong className="text-success">{coinSetting.currency} {(1 * coinSetting.coinValue).toFixed(2)}</strong>
+                              </div>
+                              <div className="d-flex justify-content-between mb-2">
+                                <span>10 Art Coins:</span>
+                                <strong className="text-success">{coinSetting.currency} {(10 * coinSetting.coinValue).toFixed(2)}</strong>
+                              </div>
+                              <div className="d-flex justify-content-between mb-2">
+                                <span>100 Art Coins:</span>
+                                <strong className="text-success">{coinSetting.currency} {(100 * coinSetting.coinValue).toFixed(2)}</strong>
+                              </div>
+                              <div className="d-flex justify-content-between">
+                                <span>1,000 Art Coins:</span>
+                                <strong className="text-success">{coinSetting.currency} {(1000 * coinSetting.coinValue).toFixed(2)}</strong>
+                              </div>
+                            </div>
+                          </div>
+                        <div className="col-md-6">
+                          <div className="form-group">
+                            <label><strong>Currency Symbol</strong></label>
+                            <input 
+                              type="text" 
+                              className="form-control" 
+                              value={coinSetting.currency} 
+                              onChange={e => setCoinSetting({ ...coinSetting, currency: e.target.value })} 
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <button className="btn btn-warning" onClick={saveCoinSetting} disabled={isSavingCoinSetting}>
+                        {isSavingCoinSetting ? 'Saving...' : 'Save Coin Settings'}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="card mt-4">
+                    <div className="header d-flex justify-content-between align-items-center">
+                      <h2>Referral Program Settings</h2>
+
                     <div className="custom-control custom-switch">
                       <input
                         type="checkbox"

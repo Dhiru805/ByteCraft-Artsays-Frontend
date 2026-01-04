@@ -1292,15 +1292,16 @@ const BrowseCategories = () => {
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
 
+  // eslint-disable-next-line no-unused-vars
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
   const currentItems = filteredProducts.slice(indexOfFirst, indexOfLast);
 
-  const goNext = () =>
-    currentPage < totalPages && setCurrentPage(currentPage + 1);
-  const goPrev = () => currentPage > 1 && setCurrentPage(currentPage - 1);
-  const goTo = (p) => setCurrentPage(p);
+    // const goNext = () =>
+    //   currentPage < totalPages && setCurrentPage(currentPage + 1);
+    // const goPrev = () => currentPage > 1 && setCurrentPage(currentPage - 1);
+    // const goTo = (p) => setCurrentPage(p);
 
   const scrollRef = useRef(null);
   let isDown = false;
@@ -1509,9 +1510,8 @@ const BrowseCategories = () => {
     };
 
     fetchWishlist();
-  }, []);
+  }, [userId]);
 
-  // if (loading) return <div>Loading...</div>;
   if (loading) return <div><BrowserCategorySkeleton /></div>;
   if (!data) return <div>No Browse Categories section available</div>;
 
@@ -1753,6 +1753,7 @@ const BrowseCategories = () => {
                     <img
                       key={idx}
                       src={`${imageBaseURL}${img}`}
+                      alt="badge"
                       className="w-5 h-5 rounded-full"
                     />
                   ))}

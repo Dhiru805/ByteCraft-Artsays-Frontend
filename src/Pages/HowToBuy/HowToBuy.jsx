@@ -17,7 +17,7 @@
 import React, { useEffect, useState } from "react";
 import HeroImgHowToBuy from "./hero-img/hero-img";
 import HowToBuyContent from "./HowToBuyContent/HowToBuyContent";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import axiosInstance from "../../api/axiosConfig";
 import Testimonials from "../AboutUs/Testimonials/Testimonials";
 

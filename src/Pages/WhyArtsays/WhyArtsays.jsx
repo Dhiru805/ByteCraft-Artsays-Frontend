@@ -17,7 +17,7 @@
 import React, { useEffect, useState } from "react";
 import HeroImgWhyArtsays from "./hero-img/hero-img";
 import WhyArtsaysContent from "./WhyArtsaysContent/WhyArtsaysContent";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import Testimonials from "../AboutUs/Testimonials/Testimonials";

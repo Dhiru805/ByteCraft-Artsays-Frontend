@@ -754,7 +754,7 @@ import { Star, MapPin, ArrowRight, Heart, Zap, ShoppingCart } from "lucide-react
 import { HiMiniPercentBadge } from "react-icons/hi2";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 

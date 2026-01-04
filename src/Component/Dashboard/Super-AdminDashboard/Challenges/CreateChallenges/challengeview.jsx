@@ -2,7 +2,7 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import getAPI from "../../../../../api/getAPI";
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 function ViewChallenge() {
   const navigate = useNavigate();

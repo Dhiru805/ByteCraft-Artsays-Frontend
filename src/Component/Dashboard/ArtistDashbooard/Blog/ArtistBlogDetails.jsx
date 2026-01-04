@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import ProductRequestSkeleton from '../../../Skeleton/artist/ProductRequestSkeleton';
 
-import { Helmet } from 'react-helmet';
+import { Helmet } from "react-helmet-async";
 
 function ArtistBlogDetails() {
   const location = useLocation();

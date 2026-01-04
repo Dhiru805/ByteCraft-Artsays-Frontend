@@ -26,7 +26,7 @@
 
 
 import React, { useEffect, useState } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { toast } from "react-toastify";
 import axiosInstance from "../../api/axiosConfig";
 

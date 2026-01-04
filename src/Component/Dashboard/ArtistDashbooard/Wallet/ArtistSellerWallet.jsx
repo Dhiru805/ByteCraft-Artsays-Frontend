@@ -1,562 +1,75 @@
-// import React, { useEffect, useState } from "react";
-// import axios from "axios";
-// import { toast } from "react-toastify";
-
-// const ArtistSellerWallet = () => {
-//   const [wallet, setWallet] = useState(null);
-//   const [transactions, setTransactions] = useState([]);
-//   const [amount, setAmount] = useState("");
-//   const [withdrawAmount, setWithdrawAmount] = useState("");
-//   const [withdrawMethod, setWithdrawMethod] = useState("upi");
-//   const [withdrawDestination, setWithdrawDestination] = useState("");
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [page, setPage] = useState(1);
-//   const [pageSize, setPageSize] = useState(10);
-
-//   const totalPages = Math.ceil(transactions.length / pageSize);
-//   const displayedTransactions = transactions.slice((page - 1) * pageSize, page * pageSize);
-
-//   const API_URL = process.env.REACT_APP_API_URL;
-//   const RAZORPAY_KEY = process.env.REACT_APP_RAZORPAY_KEY;
-//   const userId = localStorage.getItem("userId");
-//   const userType = localStorage.getItem("userType");
-
-//   const fetchWallet = async () => {
-//     if (!userId) return;
-//     try {
-//       const res = await axios.get(`${API_URL}/api/wallet/${userId}`);
-//       setWallet(res.data);
-//     } catch (err) {
-//       if (err.response && err.response.status === 404) {
-//         const createRes = await axios.post(`${API_URL}/api/wallet/ensure/${userId}`);
-//         setWallet(createRes.data);
-//       } else console.error("Error fetching wallet:", err);
-//     }
-//   };
-
-//   const fetchTransactions = async () => {
-//     if (!userId) return;
-//     try {
-//       const res = await axios.get(`${API_URL}/api/wallet/transactions/${userId}`);
-//       setTransactions(res.data);
-//     } catch (err) {
-//       console.error("Error fetching transactions:", err);
-//     }
-//   };
-
-//   const loadRazorpayScript = () => new Promise((resolve) => {
-//     if (document.getElementById("razorpay-sdk")) return resolve(true);
-//     const script = document.createElement("script");
-//     script.id = "razorpay-sdk";
-//     script.src = "https://checkout.razorpay.com/v1/checkout.js";
-//     script.onload = () => resolve(true);
-//     script.onerror = () => resolve(false);
-//     document.body.appendChild(script);
-//   });
-
-//   const addMoneyDirect = async () => {
-//     if (!amount) return alert("Enter deposit amount");
-//     setIsLoading(true);
-//     try {
-//       const res = await axios.post(`${API_URL}/api/wallet/add-money/${userId}`, { amount: Number(amount) });
-//       setWallet(res.data.wallet);
-//       setTransactions([res.data.transaction, ...transactions]);
-//       setAmount("");
-//       toast.success("Wallet credited");
-//     } catch (err) {
-//       console.error("Error adding money:", err);
-//       toast.error("Failed to add money");
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-
-//   const addMoneyViaRazorpay = async () => {
-//     if (!amount) return alert("Enter deposit amount");
-
-//     if (!RAZORPAY_KEY) {
-//       toast.warning("Razorpay key not configured. Using test mode...");
-//       setTimeout(async () => {
-//         await fetchWallet();
-//         await fetchTransactions();
-//         toast.success("Test payment completed!");
-//       }, 1000);
-//       return;
-//     }
-
-//     const ok = await loadRazorpayScript();
-//     if (!ok) return toast.error("Failed to load payment SDK");
-//     try {
-//       const init = await axios.post(`${API_URL}/api/wallet/add-money-initiate/${userId}`, { amount: Number(amount) });
-//       const { id: orderId, amount: razorpayAmount, currency } = init.data;
-
-//       const options = {
-//         key: RAZORPAY_KEY,
-//         amount: razorpayAmount,
-//         currency: currency || "INR",
-//         name: "Artsays Wallet",
-//         description: "Add Money to Wallet",
-//         order_id: orderId,
-//         handler: async function (response) {
-//           toast.success("Payment successful! Updating wallet...");
-//           setTimeout(async () => {
-//             await fetchWallet();
-//             await fetchTransactions();
-//           }, 2000);
-//         },
-//         prefill: {
-//           name: "Artsays User",
-//           email: "user@artsays.com"
-//         },
-//         theme: { color: "#121212" },
-//         modal: {
-//           ondismiss: function () {
-//             toast.info("Payment cancelled");
-//           }
-//         }
-//       };
-
-//       const rz = new window.Razorpay(options);
-//       rz.on('payment.failed', function (response) {
-//         toast.error("Payment failed: " + response.error.description);
-//       });
-//       rz.open();
-//     } catch (err) {
-//       console.error("Error initiating payment:", err);
-//       toast.error("Failed to start payment: " + (err.response?.data?.error || err.message));
-//     }
-//   };
-
-//   const requestWithdrawal = async () => {
-//     if (!withdrawAmount) return alert("Enter amount to withdraw");
-//     if (!withdrawDestination) return alert("Enter withdrawal destination");
-//     if (Number(withdrawAmount) > wallet.balance) return alert("Insufficient balance");
-//     if (Number(withdrawAmount) < 100) return alert("Minimum withdrawal amount is ₹100");
-
-//     setIsLoading(true);
-//     try {
-//       const res = await axios.post(`${API_URL}/api/wallet/withdraw/${userId}`, {
-//         amount: Number(withdrawAmount),
-//         method: withdrawMethod,
-//         destination: withdrawDestination
-//       });
-//       setWallet(res.data.wallet);
-//       setTransactions([res.data.transaction, ...transactions]);
-//       setWithdrawAmount("");
-//       setWithdrawDestination("");
-//       toast.success("Withdrawal requested successfully! Admin will process it soon.");
-//     } catch (err) {
-//       console.error("Error requesting withdrawal:", err);
-//       toast.error("Failed to request withdrawal");
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     if (!userId) return;
-//     fetchWallet();
-//     fetchTransactions();
-//   }, [userId]);
-
-//   if (!wallet) return <div>Loading...</div>;
-
-//   return (
-//     <div className="container-fluid">
-//       <div className="block-header mb-4">
-//         <h2>My Wallet - {userType}</h2>
-//       </div>
-
-//       {/* Balance Cards */}
-//       <div className="row clearfix row-deck mb-4">
-//         <div className="col-lg-3 col-md-6 col-sm-6">
-//           <div className="card top_widget primary-bg">
-//             <div className="body">
-//               <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-rupee"></i></div>
-//               <div className="content text-light">
-//                 <div className="text mb-2 text-uppercase">Available Balance</div>
-//                 <h4 className="number mb-0">₹{wallet.balance}</h4>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         <div className="col-lg-3 col-md-6 col-sm-6">
-//           <div className="card top_widget secondary-bg">
-//             <div className="body">
-//               <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-hourglass-half"></i></div>
-//               <div className="content text-light">
-//                 <div className="text mb-2 text-uppercase">Pending Withdrawal</div>
-//                 <h4 className="number mb-0">₹{wallet.pendingWithdrawal}</h4>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         <div className="col-lg-3 col-md-6 col-sm-6">
-//           <div className="card top_widget bg-dark">
-//             <div className="body">
-//               <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-shopping-basket"></i></div>
-//               <div className="content text-light">
-//                 <div className="text mb-2 text-uppercase">Art Coins</div>
-//                 <h4 className="number mb-0">{wallet.artCoins}</h4>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         <div className="col-lg-3 col-md-6 col-sm-6">
-//           <div className="card top_widget bg-info">
-//             <div className="body">
-//               <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-chart-line"></i></div>
-//               <div className="content text-light">
-//                 <div className="text mb-2 text-uppercase">Total Earnings</div>
-//                 <h4 className="number mb-0">₹{wallet.totalCredited}</h4>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Add Money & Withdraw */}
-//       <div className="row clearfix mb-4">
-//         <div className="col-lg-6 col-md-12">
-//           <div className="card">
-//             <div className="header">
-//               <h2>Add Money to Wallet</h2>
-//             </div>
-//             <div className="body">
-//               <div className="form-group">
-//                 <label>Amount (₹)</label>
-//                 <input
-//                   type="number"
-//                   className="form-control"
-//                   placeholder="Enter amount"
-//                   value={amount}
-//                   onChange={e => setAmount(e.target.value)}
-//                   min="1"
-//                 />
-//               </div>
-//               <div className="d-flex gap-2">
-//                 <button
-//                   disabled={isLoading}
-//                   className="btn btn-primary"
-//                   onClick={addMoneyDirect}
-//                 >
-//                   Quick Add
-//                 </button>
-//                 <button
-//                   disabled={isLoading}
-//                   className="btn btn-success"
-//                   onClick={addMoneyViaRazorpay}
-//                 >
-//                   Pay via Razorpay
-//                 </button>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         <div className="col-lg-6 col-md-12">
-//           <div className="card">
-//             <div className="header">
-//               <h2>Request Withdrawal</h2>
-//             </div>
-//             <div className="body">
-//               <div className="form-group">
-//                 <label>Amount (₹)</label>
-//                 <input
-//                   type="number"
-//                   className="form-control"
-//                   placeholder="Enter amount"
-//                   value={withdrawAmount}
-//                   onChange={e => setWithdrawAmount(e.target.value)}
-//                   min="100"
-//                 />
-//               </div>
-//               <div className="form-group">
-//                 <label>Withdrawal Method</label>
-//                 <select
-//                   className="form-control"
-//                   value={withdrawMethod}
-//                   onChange={e => setWithdrawMethod(e.target.value)}
-//                 >
-//                   <option value="upi">UPI</option>
-//                   <option value="bank">Bank Transfer</option>
-//                   <option value="manual">Manual Transfer</option>
-//                 </select>
-//               </div>
-//               <div className="form-group">
-//                 <label>Destination</label>
-//                 <input
-//                   type="text"
-//                   className="form-control"
-//                   placeholder={withdrawMethod === 'upi' ? 'UPI ID' : 'Account Details'}
-//                   value={withdrawDestination}
-//                   onChange={e => setWithdrawDestination(e.target.value)}
-//                 />
-//               </div>
-//               <button
-//                 disabled={isLoading}
-//                 className="btn btn-warning btn-block"
-//                 onClick={requestWithdrawal}
-//               >
-//                 Request Withdrawal
-//               </button>
-//               <small className="text-muted">Minimum withdrawal: ₹100. Admin approval required.</small>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Earnings Info */}
-//       <div className="row clearfix mb-4">
-//         <div className="col-sm-12">
-//           <div className="card">
-//             <div className="header">
-//               <h2>Earnings Information</h2>
-//             </div>
-//             <div className="body">
-//               <div className="row">
-//                 <div className="col-md-4">
-//                   <h5>How You Earn</h5>
-//                   <ul>
-//                     <li>Artwork sales</li>
-//                     <li>Commission work</li>
-//                     <li>Bidding wins</li>
-//                     <li>Referral bonuses</li>
-//                   </ul>
-//                 </div>
-//                 <div className="col-md-4">
-//                   <h5>Withdrawal Process</h5>
-//                   <ul>
-//                     <li>Request withdrawal</li>
-//                     <li>Admin verification</li>
-//                     <li>Payment processing</li>
-//                     <li>Funds transferred</li>
-//                   </ul>
-//                 </div>
-//                 <div className="col-md-4">
-//                   <h5>Important Notes</h5>
-//                   <ul>
-//                     <li>Minimum withdrawal: ₹100</li>
-//                     <li>Processing time: 1-3 business days</li>
-//                     <li>Admin approval required</li>
-//                     <li>Keep withdrawal details updated</li>
-//                   </ul>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Recent Transactions */}
-//       {/* <div className="row clearfix">
-//         <div className="col-sm-12">
-//           <div className="card">
-//             <div className="header">
-//               <h2>Recent Transactions</h2>
-//             </div>
-//             <div className="body table-responsive">
-//               <table className="table table-hover mb-0">
-//                 <thead>
-//                   <tr>
-//                     <th>#</th>
-//                     <th>Type</th>
-//                     <th>Amount</th>
-//                     <th>Purpose</th>
-//                     <th>Status</th>
-//                     <th>Date</th>
-//                   </tr>
-//                 </thead>
-//                 <tbody>
-//                   {transactions.map((txn, idx) => (
-//                     <tr key={txn._id}>
-//                       <td>{idx + 1}</td>
-//                       <td>
-//                         <span className={`badge ${txn.type === 'credit' ? 'badge-success' : 'badge-danger'}`}>
-//                           {txn.type}
-//                         </span>
-//                       </td>
-//                       <td>₹{txn.amount}</td>
-//                       <td>{txn.purpose}</td>
-//                       <td>
-//                         <span className={`badge ${
-//                           txn.status === 'success' ? 'badge-success' : 
-//                           txn.status === 'pending' ? 'badge-warning' : 'badge-danger'
-//                         }`}>
-//                           {txn.status}
-//                         </span>
-//                       </td>
-//                       <td>{new Date(txn.createdAt).toLocaleString()}</td>
-//                     </tr>
-//                   ))}
-//                   {transactions.length === 0 && (
-//                     <tr>
-//                       <td colSpan="6" className="text-center">No transactions yet</td>
-//                     </tr>
-//                   )}
-//                 </tbody>
-//               </table>
-//             </div>
-//           </div>
-//         </div>
-//       </div> */}
-//       {/* Recent Transactions */}
-//       <div className="row clearfix">
-//         <div className="col-sm-12">
-//           <div className="card">
-//             <div className="header d-flex justify-content-between align-items-center">
-//               <h2>Recent Transactions</h2>
-//               <div>
-//                 Show
-//                 <select
-//                   className="form-control d-inline-block w-auto ml-2"
-//                   value={pageSize}
-//                   onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
-//                 >
-//                   {[5, 10, 15, 20, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
-//                 </select>
-//                 entries
-//               </div>
-//             </div>
-//             <div className="body table-responsive">
-//               <table className="table table-hover mb-0">
-//                 <thead>
-//                   <tr>
-//                     <th>#</th>
-//                     <th>Type</th>
-//                     <th>Amount</th>
-//                     <th>Purpose</th>
-//                     <th>Status</th>
-//                     <th>Date</th>
-//                   </tr>
-//                 </thead>
-//                 <tbody>
-//                   {displayedTransactions.map((txn, idx) => (
-//                     <tr key={txn._id}>
-//                       <td>{(page - 1) * pageSize + idx + 1}</td>
-//                       <td>
-//                         <span className={`badge ${txn.type === 'credit' ? 'badge-success' : 'badge-danger'}`}>
-//                           {txn.type}
-//                         </span>
-//                       </td>
-//                       <td>₹{txn.amount}</td>
-//                       <td>{txn.purpose}</td>
-//                       <td>
-//                         <span className={`badge ${txn.status === 'success' ? 'badge-success' :
-//                           txn.status === 'pending' ? 'badge-warning' : 'badge-danger'
-//                           }`}>
-//                           {txn.status}
-//                         </span>
-//                       </td>
-//                       <td>{new Date(txn.createdAt).toLocaleString()}</td>
-//                     </tr>
-//                   ))}
-//                   {displayedTransactions.length === 0 && (
-//                     <tr>
-//                       <td colSpan="6" className="text-center">No transactions yet</td>
-//                     </tr>
-//                   )}
-//                 </tbody>
-//               </table>
-//             </div>
-//             {/* Pagination Controls */}
-//             <div className="d-flex justify-content-center align-items-center mt-3 px-3 py-3">
-//               <ul className="pagination mb-0">
-//                 <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
-//                   <button className="page-link" onClick={() => setPage(prev => Math.max(prev - 1, 1))}>&laquo;</button>
-//                 </li>
-//                 {Array.from({ length: totalPages }, (_, i) => (
-//                   <li key={i} className={`page-item ${page === i + 1 ? 'active' : ''}`}>
-//                     <button className="page-link" onClick={() => setPage(i + 1)}>{i + 1}</button>
-//                   </li>
-//                 ))}
-//                 <li className={`page-item ${page === totalPages || totalPages === 0 ? 'disabled' : ''}`}>
-//                   <button className="page-link" onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}>&raquo;</button>
-//                 </li>
-//               </ul>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//     </div>
-//   );
-// };
-
-// export default ArtistSellerWallet;
-
-
-
-
-
-
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { API_URL } from "../../../../Constants/index";
 
-const ArtistSellerWallet = () => {
+export function ArtistSellerWallet() {
   const [wallet, setWallet] = useState(null);
   const [transactions, setTransactions] = useState([]);
+  const [withdrawals, setWithdrawals] = useState([]);
+  const [limits, setLimits] = useState(null);
   const [amount, setAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [withdrawMethod, setWithdrawMethod] = useState("upi");
   const [withdrawDestination, setWithdrawDestination] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("transactions");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [activeTab, setActiveTab] = useState("transactions");
-  const [withdrawals, setWithdrawals] = useState([]);
-  const [limits, setLimits] = useState(null);
   const [referralData, setReferralData] = useState(null);
   const [referralCodeInput, setReferralCodeInput] = useState("");
   const [isApplyingReferral, setIsApplyingReferral] = useState(false);
-  const [referralSettings, setReferralSettings] = useState(null);
+    const [referralSettings, setReferralSettings] = useState(null);
+    const [coinSetting, setCoinSetting] = useState({ 
+      coinValue: 0.10, 
+      currency: "INR",
+      transactionReward: 10,
+      referralReward: 100
+    });
 
-  const totalPages = Math.ceil(transactions.length / pageSize);
-  const displayedTransactions = transactions.slice((page - 1) * pageSize, page * pageSize);
+    const userId = localStorage.getItem("userId");
+    const userType = localStorage.getItem("userType");
 
-  const API_URL = process.env.REACT_APP_API_URL;
-  const RAZORPAY_KEY = process.env.REACT_APP_RAZORPAY_KEY;
-  const userId = localStorage.getItem("userId");
-  const userType = localStorage.getItem("userType");
+    const fetchCoinSetting = useCallback(async () => {
+      try {
+        const res = await axios.get(`${API_URL}/api/wallet/art-coins/value`);
+        setCoinSetting(res.data);
+      } catch (err) {
+        console.error("Error fetching coin setting:", err);
+      }
+    }, []);
 
-  const fetchWallet = async () => {
+    const fetchWallet = useCallback(async () => {
     if (!userId) return;
     try {
       const res = await axios.get(`${API_URL}/api/wallet/${userId}`);
       setWallet(res.data);
     } catch (err) {
-      if (err.response && err.response.status === 404) {
-        const createRes = await axios.post(`${API_URL}/api/wallet/ensure/${userId}`);
-        setWallet(createRes.data);
-      } else console.error("Error fetching wallet:", err);
+      toast.error("Failed to fetch wallet details");
     }
-  };
+  }, [userId]);
 
-  const fetchTransactions = async () => {
+  const fetchTransactions = useCallback(async () => {
     if (!userId) return;
     try {
       const res = await axios.get(`${API_URL}/api/wallet/transactions/${userId}`);
       setTransactions(res.data);
     } catch (err) {
-      console.error("Error fetching transactions:", err);
+      toast.error("Failed to fetch transactions");
     }
-  };
+  }, [userId]);
 
-  const fetchWithdrawals = async () => {
+  const fetchWithdrawals = useCallback(async () => {
     if (!userId) return;
     try {
       const res = await axios.get(`${API_URL}/api/wallet/withdrawals/user/${userId}`);
       setWithdrawals(res.data.withdrawals || []);
     } catch (err) {
-      console.error("Error fetching withdrawals:", err);
+      toast.error("Failed to fetch withdrawals");
     }
-  };
+  }, [userId]);
 
-  const fetchLimits = async () => {
+  const fetchLimits = useCallback(async () => {
     if (!userId) return;
     try {
       const res = await axios.get(`${API_URL}/api/wallet/limits/${userId}`);
@@ -564,9 +77,9 @@ const ArtistSellerWallet = () => {
     } catch (err) {
       console.error("Error fetching limits:", err);
     }
-  };
+  }, [userId]);
 
-  const fetchReferralData = async () => {
+  const fetchReferralData = useCallback(async () => {
     if (!userId) return;
     try {
       const res = await axios.get(`${API_URL}/api/wallet/referral/stats/${userId}`);
@@ -574,32 +87,22 @@ const ArtistSellerWallet = () => {
     } catch (err) {
       console.error("Error fetching referral data:", err);
     }
-  };
-
-
-
-  const loadRazorpayScript = () =>
-    new Promise((resolve) => {
-      if (document.getElementById("razorpay-sdk")) return resolve(true);
-      const script = document.createElement("script");
-      script.id = "razorpay-sdk";
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
+  }, [userId]);
 
   const addMoneyDirect = async () => {
-    if (!amount) return alert("Enter deposit amount");
+    if (!amount || amount <= 0) return toast.error("Please enter a valid amount");
     setIsLoading(true);
     try {
-      const res = await axios.post(`${API_URL}/api/wallet/add-money/${userId}`, { amount: Number(amount) });
-      setWallet(res.data.wallet);
-      setTransactions([res.data.transaction, ...transactions]);
+      await axios.post(`${API_URL}/api/wallet/add-money-direct`, {
+        userId,
+        amount: Number(amount),
+        purpose: "direct_deposit"
+      });
+      toast.success("Money added successfully!");
       setAmount("");
-      toast.success("Wallet credited");
+      fetchWallet();
+      fetchTransactions();
     } catch (err) {
-      console.error("Error adding money:", err);
       toast.error("Failed to add money");
     } finally {
       setIsLoading(false);
@@ -607,146 +110,108 @@ const ArtistSellerWallet = () => {
   };
 
   const addMoneyViaRazorpay = async () => {
-    if (!amount) return alert("Enter deposit amount");
-
-    if (!RAZORPAY_KEY) {
-      toast.warning("Razorpay key not configured. Using test mode...");
-      setTimeout(async () => {
-        await fetchWallet();
-        await fetchTransactions();
-        toast.success("Test payment completed!");
-      }, 1000);
-      return;
-    }
-
-    const ok = await loadRazorpayScript();
-    if (!ok) return toast.error("Failed to load payment SDK");
-
-    try {
-      const init = await axios.post(`${API_URL}/api/wallet/add-money-initiate/${userId}`, { amount: Number(amount) });
-      const { id: orderId, amount: razorpayAmount, currency } = init.data;
-
-      const options = {
-        key: RAZORPAY_KEY,
-        amount: razorpayAmount,
-        currency: currency || "INR",
-        name: "Artsays Wallet",
-        description: "Add Money to Wallet",
-        order_id: orderId,
-        handler: async function (response) {
-          toast.success("Payment successful! Updating wallet...");
-          setTimeout(async () => {
-            await fetchWallet();
-            await fetchTransactions();
-          }, 2000);
-        },
-        prefill: { name: "Artsays User", email: "user@artsays.com" },
-        theme: { color: "#121212" },
-        modal: { ondismiss: function () { toast.info("Payment cancelled"); } }
-      };
-
-      const rz = new window.Razorpay(options);
-      rz.on("payment.failed", function (response) {
-        toast.error("Payment failed: " + response.error.description);
-      });
-      rz.open();
-    } catch (err) {
-      console.error("Error initiating payment:", err);
-      toast.error("Failed to start payment: " + (err.response?.data?.error || err.message));
-    }
-  };
-
-  const requestWithdrawal = async () => {
-    if (!withdrawAmount) return alert("Enter amount to withdraw");
-
-    if (withdrawMethod === "upi" && !withdrawDestination.upi) return alert("Enter UPI ID");
-    if (withdrawMethod === "bank") {
-      const { name, accountNumber, ifsc, bankName, purpose } = withdrawDestination;
-      if (!name || !accountNumber || !ifsc || !bankName || !purpose) return alert("Fill all bank transfer details");
-    }
-
-    if (Number(withdrawAmount) > wallet.balance) return alert("Insufficient balance");
-    if (Number(withdrawAmount) < 100) return alert("Minimum withdrawal amount is ₹100");
-
+    if (!amount || amount <= 0) return toast.error("Please enter a valid amount");
     setIsLoading(true);
     try {
-      const res = await axios.post(`${API_URL}/api/wallet/withdraw/${userId}`, {
-        amount: Number(withdrawAmount),
-        method: withdrawMethod,
-        destination: withdrawMethod === "upi" ? withdrawDestination.upi : withdrawDestination
+      const orderRes = await axios.post(`${API_URL}/api/wallet/create-razorpay-order`, {
+        userId,
+        amount: Number(amount)
       });
-      setWallet(res.data.wallet);
-      setTransactions([res.data.transaction, ...transactions]);
-      setWithdrawAmount("");
-      setWithdrawDestination({});
-      fetchWithdrawals();
-      fetchLimits();
-      toast.success("Withdrawal requested successfully! Admin will process it soon.");
+
+      const options = {
+        key: process.env.REACT_APP_RAZORPAY_KEY_ID,
+        amount: orderRes.data.amount,
+        currency: orderRes.data.currency,
+        name: "Artsays Wallet",
+        description: "Add money to wallet",
+        order_id: orderRes.data.id,
+        handler: async function (response) {
+          try {
+            await axios.post(`${API_URL}/api/wallet/verify-razorpay-payment`, {
+              userId,
+              amount: Number(amount),
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
+            });
+            toast.success("Payment successful!");
+            setAmount("");
+            fetchWallet();
+            fetchTransactions();
+          } catch (err) {
+            toast.error("Payment verification failed");
+          }
+        },
+        prefill: {
+          name: localStorage.getItem("Artsays_name") || "",
+          email: localStorage.getItem("Artsays_email") || ""
+        },
+        theme: { color: "#4B2E05" }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (err) {
-      console.error("Error requesting withdrawal:", err);
-      toast.error(err.response?.data?.message || "Failed to request withdrawal");
+      toast.error("Failed to initiate payment");
     } finally {
       setIsLoading(false);
     }
   };
 
+  const requestWithdrawal = async () => {
+    if (!withdrawAmount || withdrawAmount < 100) return toast.error("Minimum withdrawal is ₹100");
+    if (withdrawAmount > wallet.balance) return toast.error("Insufficient balance");
+    if (!withdrawDestination.upi && (!withdrawDestination.accountNumber || !withdrawDestination.ifsc)) {
+      return toast.error("Please provide withdrawal destination details");
+    }
 
-
-  const downloadReceipt = async (txnId) => {
+    setIsLoading(true);
     try {
-      const res = await axios.get(`${API_URL}/api/wallet/transaction/receipt/${txnId}`);
-      const receipt = res.data;
-      
-      const receiptContent = `
-========================================
-           ARTSAYS RECEIPT
-========================================
-Receipt No: ${receipt.receiptNumber}
-Date: ${new Date(receipt.date).toLocaleString()}
+      await axios.post(`${API_URL}/api/wallet/withdraw`, {
+        userId,
+        amount: Number(withdrawAmount),
+        method: withdrawMethod,
+        destination: withdrawDestination
+      });
+      toast.success("Withdrawal request submitted!");
+      setWithdrawAmount("");
+      fetchWallet();
+      fetchWithdrawals();
+      fetchLimits();
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Failed to submit withdrawal request");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-Transaction Details:
---------------------
-Type: ${receipt.type.toUpperCase()}
-Amount: ₹${receipt.amount}
-Purpose: ${receipt.purpose}
-Status: ${receipt.status}
-
-User: ${receipt.user.name}
-Email: ${receipt.user.email}
-
-Balance After: ₹${receipt.balanceAfter}
-Art Coins: ${receipt.artCoinsEarned > 0 ? '+' : ''}${receipt.artCoinsEarned}
-
-Generated: ${new Date(receipt.generatedAt).toLocaleString()}
-========================================
-      `;
-      
-      const blob = new Blob([receiptContent], { type: 'text/plain' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `receipt_${receipt.receiptNumber}.txt`;
-      a.click();
-      window.URL.revokeObjectURL(url);
-      toast.success("Receipt downloaded");
+  const downloadReceipt = async (transactionId) => {
+    try {
+      const response = await axios.get(`${API_URL}/api/wallet/transaction/receipt/${transactionId}`, {
+        responseType: 'blob'
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `receipt-${transactionId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
     } catch (err) {
       toast.error("Failed to download receipt");
     }
   };
 
-  const exportTransactions = async (format = "csv") => {
+  const exportTransactions = async (format) => {
     try {
-      const res = await axios.get(`${API_URL}/api/wallet/transactions/export/${userId}?format=${format}`);
-      if (format === "csv") {
-        const blob = new Blob([res.data], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `transactions_${Date.now()}.csv`;
-        a.click();
-        window.URL.revokeObjectURL(url);
-      }
-      toast.success("Transactions exported");
+      const response = await axios.get(`${API_URL}/api/wallet/transactions/export/${userId}?format=${format}`, {
+        responseType: 'blob'
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `transactions-${userId}.${format}`);
+      document.body.appendChild(link);
+      link.click();
     } catch (err) {
       toast.error("Failed to export transactions");
     }
@@ -779,7 +244,7 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
     }
   };
 
-  const fetchReferralSettings = async () => {
+  const fetchReferralSettings = useCallback(async () => {
     if (!userId) return;
     try {
       const res = await axios.get(`${API_URL}/api/wallet/referral/settings/${userId}`);
@@ -787,27 +252,31 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
     } catch (err) {
       console.error("Error fetching referral settings:", err);
     }
-  };
-
-  useEffect(() => {
-    if (!userId) return;
-    fetchWallet();
-    fetchTransactions();
-    fetchWithdrawals();
-    fetchLimits();
-    fetchReferralData();
-    fetchReferralSettings();
   }, [userId]);
+
+    useEffect(() => {
+      if (!userId) return;
+      fetchWallet();
+      fetchTransactions();
+      fetchWithdrawals();
+      fetchLimits();
+      fetchReferralData();
+      fetchReferralSettings();
+      fetchCoinSetting();
+    }, [userId, fetchWallet, fetchTransactions, fetchWithdrawals, fetchLimits, fetchReferralData, fetchReferralSettings, fetchCoinSetting]);
 
   const showReferral = referralSettings?.isActive || userType === "Super-Admin";
 
-  if (!wallet) return <div>{WalletSkeleton()}</div>;
+    if (!wallet) return <WalletSkeleton />;
 
-  return (
-    <div className="container-fluid">
-      <div className="block-header mb-4">
-        <h2>My Wallet - {userType}</h2>
-      </div>
+    const displayedTransactions = transactions.slice((page - 1) * pageSize, page * pageSize);
+    const totalPages = Math.ceil(transactions.length / pageSize);
+
+    return (
+      <div className="container-fluid">
+        <div className="block-header mb-4">
+          <h2>My Wallet - {userType}</h2>
+        </div>
 
       <div className="row clearfix row-deck mb-4">
         <div className="col-lg-3 col-md-6 col-sm-6">
@@ -834,18 +303,18 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
           </div>
         </div>
 
-        <div className="col-lg-3 col-md-6 col-sm-6">
-          <div className="card top_widget bg-dark">
-            <div className="body">
-              <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-shopping-basket"></i></div>
-              <div className="content text-light">
-                <div className="text mb-2 text-uppercase">Art Coins</div>
-                <h4 className="number mb-0">{wallet.artCoins}</h4>
-                <small>Worth ₹{(wallet.artCoins * 0.10).toFixed(2)}</small>
+          <div className="col-lg-3 col-md-6 col-sm-6">
+            <div className="card top_widget bg-dark">
+              <div className="body">
+                <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-shopping-basket"></i></div>
+                <div className="content text-light">
+                  <div className="text mb-2 text-uppercase">Art Coins</div>
+                  <h4 className="number mb-0">{wallet.artCoins}</h4>
+                  <small>Worth {coinSetting.currency} {(wallet.artCoins * coinSetting.coinValue).toFixed(2)}</small>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
         <div className="col-lg-3 col-md-6 col-sm-6">
           <div className="card top_widget bg-info">
@@ -894,13 +363,13 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
                         </div>
                         <small className="text-muted">Remaining: ₹{limits.monthlyRemaining}</small>
                       </div>
+                      </div>
                     </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
       <div className="row clearfix mb-4">
         <div className="col-lg-6 col-md-12">
@@ -1010,34 +479,14 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
                       className="form-control"
                       placeholder="Enter IFSC code"
                       value={withdrawDestination.ifsc || ""}
-                      onChange={e => setWithdrawDestination({ ...withdrawDestination, ifsc: e.target.value })}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Bank Name & Branch</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Enter bank name & branch"
-                      value={withdrawDestination.bankName || ""}
-                      onChange={e => setWithdrawDestination({ ...withdrawDestination, bankName: e.target.value })}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Purpose of Transfer</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Enter purpose"
-                      value={withdrawDestination.purpose || ""}
-                      onChange={e => setWithdrawDestination({ ...withdrawDestination, purpose: e.target.value })}
+                      onChange={e => setWithdrawDestination({ ...withdrawDestination, ifsc: e.target.value.toUpperCase() })}
                     />
                   </div>
                 </>
               )}
 
               <button
-                className="btn btn-warning btn-block mt-3"
+                className="btn btn-primary btn-block mt-3"
                 onClick={requestWithdrawal}
                 disabled={isLoading}
               >
@@ -1163,16 +612,14 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
                         </li>
                         <li>
                           Your friend gets {referralSettings ? `${referralSettings.referredCoins} Art Coins ${referralSettings.referredCash > 0 ? `+ ₹${referralSettings.referredCash} cash` : ''}` : "50 Art Coins"} as a welcome bonus
-                          </li>
-                        </ul>
-                      </div>
-
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-            )}
+        )}
 
         <div className="row clearfix mb-4">
           <div className="col-sm-12">
@@ -1191,15 +638,15 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
                     <li>Referral bonuses</li>
                   </ul>
                 </div>
-                <div className="col-md-4">
-                  <h5>Art Coins Benefits</h5>
-                  <ul>
-                    <li>Earn 10 coins per transaction</li>
-                    <li>1 coin = ₹0.10 discount</li>
-                    <li>Max 20% discount per order</li>
-                    <li>Use during checkout</li>
-                  </ul>
-                </div>
+                  <div className="col-md-4">
+                    <h5>Art Coins Benefits</h5>
+                    <ul>
+                      <li>Earn {coinSetting.transactionReward} coins per transaction</li>
+                      <li>1 coin = {coinSetting.currency} {coinSetting.coinValue.toFixed(2)} discount</li>
+                      <li>Max 20% discount per order</li>
+                      <li>Use during checkout</li>
+                    </ul>
+                  </div>
                 <div className="col-md-4">
                   <h5>Important Notes</h5>
                   <ul>
@@ -1300,7 +747,7 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
                           </td>
                         </tr>
                       ))}
-                      {displayedTransactions.length === 0 && (
+                      {transactions.length === 0 && (
                         <tr>
                           <td colSpan="7" className="text-center">No transactions yet</td>
                         </tr>
@@ -1308,22 +755,24 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
                     </tbody>
                   </table>
                 </div>
-
-                <div className="d-flex justify-content-end align-items-center mt-3 px-3 py-3">
-                  <ul className="pagination mb-0">
-                    <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
-                      <button className="page-link" onClick={() => setPage(prev => Math.max(prev - 1, 1))}>&laquo;</button>
-                    </li>
-                    {Array.from({ length: totalPages }, (_, i) => (
-                      <li key={i} className={`page-item ${page === i + 1 ? 'active' : ''}`}>
-                        <button className="page-link" onClick={() => setPage(i + 1)}>{i + 1}</button>
+                {totalPages > 1 && (
+                  <div className="header d-flex justify-content-between align-items-center">
+                    <div>Showing {(page - 1) * pageSize + 1} to {Math.min(page * pageSize, transactions.length)} of {transactions.length} entries</div>
+                    <ul className="pagination mb-0">
+                      <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => setPage(page - 1)}>Previous</button>
                       </li>
-                    ))}
-                    <li className={`page-item ${page === totalPages ? 'disabled' : ''}`}>
-                      <button className="page-link" onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}>&raquo;</button>
-                    </li>
-                  </ul>
-                </div>
+                      {[...Array(totalPages)].map((_, i) => (
+                        <li key={i} className={`page-item ${page === i + 1 ? 'active' : ''}`}>
+                          <button className="page-link" onClick={() => setPage(i + 1)}>{i + 1}</button>
+                        </li>
+                      ))}
+                      <li className={`page-item ${page === totalPages ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => setPage(page + 1)}>Next</button>
+                      </li>
+                    </ul>
+                  </div>
+                )}
               </>
             )}
 
@@ -1335,10 +784,11 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
                       <th>#</th>
                       <th>Amount</th>
                       <th>Method</th>
+                      <th>Destination</th>
                       <th>Status</th>
-                      <th>Requested</th>
-                      <th>Processed</th>
-                      <th>Admin Note</th>
+                      <th>Requested At</th>
+                      <th>Processed At</th>
+                      <th>Note</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1346,7 +796,11 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
                       <tr key={w._id}>
                         <td>{idx + 1}</td>
                         <td>₹{w.amount}</td>
-                        <td>{w.method?.toUpperCase()}</td>
+                        <td className="text-uppercase">{w.method}</td>
+                        <td>
+                          {w.method === 'upi' ? w.destination.upi :
+                            `${w.destination.name} - ${w.destination.accountNumber}`}
+                        </td>
                         <td>
                           <span className={`badge badge-${
                             w.status === 'paid' ? 'success' :

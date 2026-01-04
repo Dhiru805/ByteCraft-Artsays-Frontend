@@ -7,7 +7,7 @@ import { FaSquareXTwitter } from "react-icons/fa6";
 import { IoLogoWhatsapp, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { ThumbsUp, MessageCircle } from "lucide-react";
 import { BiSolidEdit } from "react-icons/bi";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { intervalToDuration } from "date-fns";
 
 import blog1 from "../../assets/blog/blog-1.jpg";
@@ -34,7 +34,7 @@ function BlogCardDetails() {
             const { data } = await getAPI('/Blog-Post/statusapproved-blogs')
 
             if (data?.blogs) {
-                const matchedBlog = data.blogs.find((blog) => blog.slug == blogId)
+                const matchedBlog = data.blogs.find((blog) => blog.slug === blogId)
 
                 if (matchedBlog) {
                     fetchBlogViews(matchedBlog._id)
@@ -101,10 +101,11 @@ function BlogCardDetails() {
         return () => {
             saveReadingTime()
         };
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [blogId]);
 
     // Function to fetch heading elements
+    // eslint-disable-next-line no-unused-vars
     const renderHeadingElements = (description) => {
         if (!description) return null;
 
@@ -187,6 +188,7 @@ function BlogCardDetails() {
         if (artistId) {
             fetchUserDetails()
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [artistId]);
 
     /* -------------------- STATE -------------------- */
@@ -426,7 +428,7 @@ const handleNativeShare = async () => {
                     <div className="hidden md:block col-span-12 md:col-span-3 space-y-4 order-1 md:order-2 md:sticky md:top-6 self-start overflow-visible">
                         <div className="w-full bg-[#48372D] rounded-lg p-3 text-white flex flex-col justify-center items-center text-center">
                             <img src={userDetails ? `${process.env.REACT_APP_API_URL}/${userDetails.profilePhoto}` : artist}
-                                alt="Artist image" id="artist-image" className="m-3"
+                                alt="Artist" id="artist-image" className="m-3"
                                 onError={(e) => e.currentTarget.src = artist} />
                             <div>
                                 <div className="flex items-center gap-2">
@@ -540,7 +542,7 @@ const handleNativeShare = async () => {
                         {/* AUTHOR CARD */}
                         <div className="w-full bg-[#48372D] rounded-lg p-3 text-white flex flex-col justify-center items-center text-center">
                             <img src={userDetails ? `${process.env.REACT_APP_API_URL}/${userDetails.profilePhoto}` : artist}
-                                alt="Artist image" id="artist-image" className="m-3"
+                                alt="Artist" id="artist-image" className="m-3"
                                 onError={(e) => e.currentTarget.src = artist} />
                             <div>
                                 <div className="flex items-center gap-2">

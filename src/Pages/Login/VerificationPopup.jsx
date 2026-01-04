@@ -23,29 +23,28 @@ const VerificationPopup = ({ show, onHide }) => {
   }, [location.state]);
 
   useEffect(() => {
+    const fetchProfile = async () => {
+      setLoading(true);
+      try {
+        const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
+        if (result.data.user) {
+          const userData = result.data.user;
+          setProfileData({
+            ...userData,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        toast.error("Error fetching profile data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (userId) {
       fetchProfile();
     }
   }, [userId]);
-
-  const fetchProfile = async () => {
-    setLoading(true);
-    try {
-      const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
-      if (result.data.user) {
-        const userData = result.data.user;
-        setProfileData({
-          ...userData,
-        });
-
-      }
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-      toast.error('Error fetching profile data');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <Modal show={show} onHide={onHide} centered backdrop="static" keyboard={false}>
