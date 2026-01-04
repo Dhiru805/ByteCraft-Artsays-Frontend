@@ -20,74 +20,69 @@ export function ArtistSellerWallet() {
   const [referralCodeInput, setReferralCodeInput] = useState("");
   const [isApplyingReferral, setIsApplyingReferral] = useState(false);
     const [referralSettings, setReferralSettings] = useState(null);
-    const [coinSetting, setCoinSetting] = useState({ 
-      coinValue: 0.10, 
-      currency: "INR",
-      transactionReward: 10,
-      referralReward: 100
-    });
+    const [coinSetting, setCoinSetting] = useState({ coinValue: 0.10, currency: "INR", transactionReward: 10 });
 
     const userId = localStorage.getItem("userId");
     const userType = localStorage.getItem("userType");
 
+    const fetchWallet = useCallback(async () => {
+      if (!userId) return;
+      try {
+        const res = await axios.get(`${API_URL}/api/wallet/${userId}`);
+        setWallet(res.data);
+      } catch (err) {
+        toast.error("Failed to fetch wallet details");
+      }
+    }, [userId]);
+
+    const fetchTransactions = useCallback(async () => {
+      if (!userId) return;
+      try {
+        const res = await axios.get(`${API_URL}/api/wallet/transactions/${userId}`);
+        setTransactions(res.data);
+      } catch (err) {
+        toast.error("Failed to fetch transactions");
+      }
+    }, [userId]);
+
+    const fetchWithdrawals = useCallback(async () => {
+      if (!userId) return;
+      try {
+        const res = await axios.get(`${API_URL}/api/wallet/withdrawals/user/${userId}`);
+        setWithdrawals(res.data.withdrawals || []);
+      } catch (err) {
+        toast.error("Failed to fetch withdrawals");
+      }
+    }, [userId]);
+
+    const fetchLimits = useCallback(async () => {
+      if (!userId) return;
+      try {
+        const res = await axios.get(`${API_URL}/api/wallet/limits/${userId}`);
+        setLimits(res.data);
+      } catch (err) {
+        console.error("Error fetching limits:", err);
+      }
+    }, [userId]);
+
+    const fetchReferralData = useCallback(async () => {
+      if (!userId) return;
+      try {
+        const res = await axios.get(`${API_URL}/api/wallet/referral/stats/${userId}`);
+        setReferralData(res.data);
+      } catch (err) {
+        console.error("Error fetching referral data:", err);
+      }
+    }, [userId]);
+
     const fetchCoinSetting = useCallback(async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/wallet/art-coins/value`);
-        setCoinSetting(res.data);
+        const res = await axios.get(`${API_URL}/api/coin-settings`);
+        if (res.data) setCoinSetting(res.data);
       } catch (err) {
-        console.error("Error fetching coin setting:", err);
+        console.error("Error fetching coin settings:", err);
       }
     }, []);
-
-    const fetchWallet = useCallback(async () => {
-    if (!userId) return;
-    try {
-      const res = await axios.get(`${API_URL}/api/wallet/${userId}`);
-      setWallet(res.data);
-    } catch (err) {
-      toast.error("Failed to fetch wallet details");
-    }
-  }, [userId]);
-
-  const fetchTransactions = useCallback(async () => {
-    if (!userId) return;
-    try {
-      const res = await axios.get(`${API_URL}/api/wallet/transactions/${userId}`);
-      setTransactions(res.data);
-    } catch (err) {
-      toast.error("Failed to fetch transactions");
-    }
-  }, [userId]);
-
-  const fetchWithdrawals = useCallback(async () => {
-    if (!userId) return;
-    try {
-      const res = await axios.get(`${API_URL}/api/wallet/withdrawals/user/${userId}`);
-      setWithdrawals(res.data.withdrawals || []);
-    } catch (err) {
-      toast.error("Failed to fetch withdrawals");
-    }
-  }, [userId]);
-
-  const fetchLimits = useCallback(async () => {
-    if (!userId) return;
-    try {
-      const res = await axios.get(`${API_URL}/api/wallet/limits/${userId}`);
-      setLimits(res.data);
-    } catch (err) {
-      console.error("Error fetching limits:", err);
-    }
-  }, [userId]);
-
-  const fetchReferralData = useCallback(async () => {
-    if (!userId) return;
-    try {
-      const res = await axios.get(`${API_URL}/api/wallet/referral/stats/${userId}`);
-      setReferralData(res.data);
-    } catch (err) {
-      console.error("Error fetching referral data:", err);
-    }
-  }, [userId]);
 
   const addMoneyDirect = async () => {
     if (!amount || amount <= 0) return toast.error("Please enter a valid amount");
@@ -303,18 +298,18 @@ export function ArtistSellerWallet() {
           </div>
         </div>
 
-          <div className="col-lg-3 col-md-6 col-sm-6">
-            <div className="card top_widget bg-dark">
-              <div className="body">
-                <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-shopping-basket"></i></div>
+        <div className="col-lg-3 col-md-6 col-sm-6">
+          <div className="card top_widget bg-dark">
+            <div className="body">
+              <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-shopping-basket"></i></div>
                 <div className="content text-light">
                   <div className="text mb-2 text-uppercase">Art Coins</div>
                   <h4 className="number mb-0">{wallet.artCoins}</h4>
                   <small>Worth {coinSetting.currency} {(wallet.artCoins * coinSetting.coinValue).toFixed(2)}</small>
                 </div>
-              </div>
             </div>
           </div>
+        </div>
 
         <div className="col-lg-3 col-md-6 col-sm-6">
           <div className="card top_widget bg-info">
@@ -641,21 +636,30 @@ export function ArtistSellerWallet() {
                   <div className="col-md-4">
                     <h5>Art Coins Benefits</h5>
                     <ul>
-                      <li>Earn {coinSetting.transactionReward} coins per transaction</li>
+                      <li>Earn {coinSetting.transactionReward || 10} coins per transaction</li>
                       <li>1 coin = {coinSetting.currency} {coinSetting.coinValue.toFixed(2)} discount</li>
                       <li>Max 20% discount per order</li>
                       <li>Use during checkout</li>
                     </ul>
                   </div>
-                <div className="col-md-4">
-                  <h5>Important Notes</h5>
-                  <ul>
-                    <li>Minimum withdrawal: ₹100</li>
-                    <li>Daily limit: ₹50,000</li>
-                    <li>Monthly limit: ₹5,00,000</li>
-                    <li>KYC required for ₹1L+/month</li>
-                  </ul>
-                </div>
+                  <div className="col-md-4">
+                    <div className="p-3 bg-light border rounded">
+                      <h6><i className="fa fa-gift mr-2"></i>Benefit Preview</h6>
+                      <hr />
+                        <div className="d-flex justify-content-between mb-1 small">
+                          <span>Transaction Reward:</span>
+                          <strong className="text-primary">{coinSetting.transactionReward || 10} Coins</strong>
+                        </div>
+                        <div className="d-flex justify-content-between mb-1 small">
+                          <span>Referral Reward:</span>
+                          <strong className="text-primary">{referralSettings?.[`${userType.toLowerCase()}ReferrerCoinsReward`] || 0} Coins</strong>
+                        </div>
+                        <div className="d-flex justify-content-between mb-1 small">
+                          <span>Signup Bonus:</span>
+                          <strong className="text-primary">{coinSetting[`${userType.toLowerCase()}SignupBonus`] || 0} Coins</strong>
+                        </div>
+                    </div>
+                  </div>
               </div>
             </div>
           </div>

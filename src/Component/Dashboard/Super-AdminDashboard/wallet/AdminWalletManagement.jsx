@@ -49,13 +49,8 @@ const AdminWalletManagement = () => {
     const [isGeneratingCodes, setIsGeneratingCodes] = useState(false);
     const [referralSettings, setReferralSettings] = useState(null);
     const [isSavingSettings, setIsSavingSettings] = useState(false);
-      const [coinSetting, setCoinSetting] = useState({ 
-        coinValue: 0.10, 
-        currency: "INR",
-        transactionReward: 10,
-        referralReward: 100
-      });
-      const [isSavingCoinSetting, setIsSavingCoinSetting] = useState(false);
+    const [coinSetting, setCoinSetting] = useState({ coinValue: 0.10, currency: "INR" });
+    const [isSavingCoinSetting, setIsSavingCoinSetting] = useState(false);
   
     const fetchData = async () => {
 
@@ -371,10 +366,10 @@ const AdminWalletManagement = () => {
                         <strong>₹{wallets.reduce((sum, w) => sum + (w.artCoinsRedeemed || 0) * coinSetting.coinValue, 0).toFixed(2)}</strong>
                       </li>
 
-                    {/*<li className="list-group-item d-flex justify-content-between">
+                    <li className="list-group-item d-flex justify-content-between">
                       <span>Verified KYC Users</span>
                       <strong>{wallets.filter(w => w.kycStatus === 'verified').length}</strong>
-                    </li>*/}
+                    </li>
                     <li className="list-group-item d-flex justify-content-between">
                       <span>Users with High Limits</span>
                       <strong>{wallets.filter(w => (w.dailyWithdrawalLimit || 50000) > 50000).length}</strong>
@@ -405,7 +400,7 @@ const AdminWalletManagement = () => {
                   <th>Role</th>
                   <th>Balance</th>
                   <th>Art Coins</th>
-                  {/*<th>KYC Status</th>*/}
+                  <th>KYC Status</th>
                   <th>Daily Limit</th>
                   <th>Last Active</th>
                   <th>Actions</th>
@@ -421,11 +416,11 @@ const AdminWalletManagement = () => {
                     <td><span className="badge badge-info">{w.role}</span></td>
                     <td>₹{w.balance.toLocaleString()}</td>
                     <td>{w.artCoins}</td>
-                    {/*<td>
+                    <td>
                       <span className={`badge ${w.kycStatus === 'verified' ? 'badge-success' : w.kycStatus === 'pending' ? 'badge-warning' : 'badge-danger'}`}>
                         {w.kycStatus || 'Not Started'}
                       </span>
-                    </td>*/}
+                    </td>
                     <td>₹{(w.dailyWithdrawalLimit || 50000).toLocaleString()} <button className="btn btn-xs btn-link p-0" onClick={() => {
                       const newLimit = prompt("Enter new daily limit:", w.dailyWithdrawalLimit || 50000);
                       if (newLimit) handleUpdateLimit(w.userId?._id || w.userId, 'dailyWithdrawalLimit', newLimit);
@@ -477,7 +472,7 @@ const AdminWalletManagement = () => {
                   <tr>
                     <th>User</th>
                     <th>Amount</th>
-                    {/*<th>KYC</th>*/}
+                    <th>KYC</th>
                     <th>Request Date</th>
                     <th>Status</th>
                     <th>Actions</th>
@@ -490,11 +485,11 @@ const AdminWalletManagement = () => {
                       <tr key={req._id}>
                         <td>{userWallet ? `${userWallet.name} ${userWallet.lastName}` : req.userId}</td>
                         <td>₹{req.amount.toLocaleString()}</td>
-                        {/*<td>
+                        <td>
                           <span className={`badge ${userWallet?.kycStatus === 'verified' ? 'badge-success' : 'badge-danger'}`}>
                             {userWallet?.kycStatus || 'Unknown'}
                           </span>
-                        </td>*/}
+                        </td>
                         <td>{new Date(req.createdAt).toLocaleString()}</td>
                         <td>
                           <span className={`badge ${req.status === 'pending' ? 'badge-warning' : req.status === 'approved' ? 'badge-info' : req.status === 'paid' ? 'badge-success' : 'badge-danger'}`}>
@@ -637,9 +632,9 @@ const AdminWalletManagement = () => {
                     <div className="header">
                       <h2>Coin Value Settings</h2>
                     </div>
-                    <div className="body">
-                      <div className="row">
-                        <div className="col-md-6">
+                      <div className="body">
+                        <div className="row">
+                          <div className="col-md-4">
                             <div className="form-group">
                               <label><strong>Art Coin Value (1 Coin = ₹)</strong></label>
                               <input 
@@ -651,10 +646,11 @@ const AdminWalletManagement = () => {
                                 min="0"
                               />
                                 <small className="text-muted">Example: 0.10 means 10 coins = ₹1</small>
-                              </div>
-
+                            </div>
+                          </div>
+                          <div className="col-md-4">
                             <div className="form-group">
-                              <label><strong>Coins Earned Per Transaction</strong></label>
+                              <label><strong>Transaction Reward (Art Coins)</strong></label>
                               <input 
                                 type="number" 
                                 className="form-control" 
@@ -662,201 +658,297 @@ const AdminWalletManagement = () => {
                                 onChange={e => setCoinSetting({ ...coinSetting, transactionReward: Number(e.target.value) })} 
                                 min="0"
                               />
+                              <small className="text-muted">Coins awarded per transaction (Add Money, Buy, etc.)</small>
                             </div>
-
-                            <div className="form-group">
-                              <label><strong>Default Referral Coins Reward</strong></label>
-                              <input 
-                                type="number" 
-                                className="form-control" 
-                                value={coinSetting.referralReward || 100} 
-                                onChange={e => setCoinSetting({ ...coinSetting, referralReward: Number(e.target.value) })} 
-                                min="0"
-                              />
-                            </div>
-
-                            <div className="mt-4 p-3 bg-light border rounded">
-                              <h6><i className="fa fa-eye mr-2"></i>Value Preview (Real-time)</h6>
-                              <hr />
-                              <div className="d-flex justify-content-between mb-2">
-                                <span>1 Art Coin:</span>
-                                <strong className="text-success">{coinSetting.currency} {(1 * coinSetting.coinValue).toFixed(2)}</strong>
-                              </div>
-                              <div className="d-flex justify-content-between mb-2">
-                                <span>10 Art Coins:</span>
-                                <strong className="text-success">{coinSetting.currency} {(10 * coinSetting.coinValue).toFixed(2)}</strong>
-                              </div>
-                              <div className="d-flex justify-content-between mb-2">
-                                <span>100 Art Coins:</span>
-                                <strong className="text-success">{coinSetting.currency} {(100 * coinSetting.coinValue).toFixed(2)}</strong>
-                              </div>
-                              <div className="d-flex justify-content-between">
-                                <span>1,000 Art Coins:</span>
-                                <strong className="text-success">{coinSetting.currency} {(1000 * coinSetting.coinValue).toFixed(2)}</strong>
+                          </div>
+                            <div className="col-md-4">
+                              <div className="form-group">
+                                <label><strong>Currency Symbol</strong></label>
+                                <input 
+                                  type="text" 
+                                  className="form-control" 
+                                  value={coinSetting.currency} 
+                                  onChange={e => setCoinSetting({ ...coinSetting, currency: e.target.value })} 
+                                />
                               </div>
                             </div>
                           </div>
-                        <div className="col-md-6">
+
+                          <div className="row mt-3">
+                            <div className="col-md-4">
+                              <div className="form-group">
+                                <label><strong>Artist Signup Bonus</strong></label>
+                                <input 
+                                  type="number" 
+                                  className="form-control" 
+                                  value={coinSetting.artistSignupBonus || 0} 
+                                  onChange={e => setCoinSetting({ ...coinSetting, artistSignupBonus: Number(e.target.value) })} 
+                                  min="0"
+                                />
+                              </div>
+                            </div>
+                            <div className="col-md-4">
+                              <div className="form-group">
+                                <label><strong>Seller Signup Bonus</strong></label>
+                                <input 
+                                  type="number" 
+                                  className="form-control" 
+                                  value={coinSetting.sellerSignupBonus || 0} 
+                                  onChange={e => setCoinSetting({ ...coinSetting, sellerSignupBonus: Number(e.target.value) })} 
+                                  min="0"
+                                />
+                              </div>
+                            </div>
+                            <div className="col-md-4">
+                              <div className="form-group">
+                                <label><strong>Buyer Signup Bonus</strong></label>
+                                <input 
+                                  type="number" 
+                                  className="form-control" 
+                                  value={coinSetting.buyerSignupBonus || 0} 
+                                  onChange={e => setCoinSetting({ ...coinSetting, buyerSignupBonus: Number(e.target.value) })} 
+                                  min="0"
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="row mt-2">
+                          <div className="col-md-6">
+                            <div className="p-3 bg-light border rounded h-100">
+                                <h6><i className="fa fa-eye mr-2"></i>Value Preview (Real-time)</h6>
+                                <hr />
+                                <div className="d-flex justify-content-between mb-2">
+                                  <span>1 Art Coin:</span>
+                                  <strong className="text-success">{coinSetting.currency} {(1 * coinSetting.coinValue).toFixed(2)}</strong>
+                                </div>
+                                <div className="d-flex justify-content-between mb-2">
+                                  <span>10 Art Coins:</span>
+                                  <strong className="text-success">{coinSetting.currency} {(10 * coinSetting.coinValue).toFixed(2)}</strong>
+                                </div>
+                                <div className="d-flex justify-content-between mb-2">
+                                  <span>100 Art Coins:</span>
+                                  <strong className="text-success">{coinSetting.currency} {(100 * coinSetting.coinValue).toFixed(2)}</strong>
+                                </div>
+                                <div className="d-flex justify-content-between">
+                                  <span>1,000 Art Coins:</span>
+                                  <strong className="text-success">{coinSetting.currency} {(1000 * coinSetting.coinValue).toFixed(2)}</strong>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="col-md-6">
+                              <div className="p-3 bg-light border rounded h-100">
+                                <h6><i className="fa fa-gift mr-2"></i>Benefit Preview (Platform-wide)</h6>
+                                <hr />
+                                <div className="d-flex justify-content-between mb-2">
+                                  <span>Transaction Reward ({coinSetting.transactionReward || 10} coins):</span>
+                                  <strong className="text-primary">{coinSetting.currency} {((coinSetting.transactionReward || 10) * coinSetting.coinValue).toFixed(2)}</strong>
+                                </div>
+                                <div className="d-flex justify-content-between mb-2">
+                                  <span>Artist/Seller Referral ({referralSettings.artistReferrerCoinsReward || 0} coins):</span>
+                                  <strong className="text-primary">{coinSetting.currency} {((referralSettings.artistReferrerCoinsReward || 0) * coinSetting.coinValue).toFixed(2)}</strong>
+                                </div>
+                                  <div className="d-flex justify-content-between mb-2">
+                                    <span>Buyer Referral ({referralSettings.buyerReferrerCoinsReward || 0} coins):</span>
+                                    <strong className="text-primary">{coinSetting.currency} {((referralSettings.buyerReferrerCoinsReward || 0) * coinSetting.coinValue).toFixed(2)}</strong>
+                                  </div>
+                                  <div className="d-flex justify-content-between mb-2">
+                                    <span>Artist Signup Bonus ({coinSetting.artistSignupBonus || 0} coins):</span>
+                                    <strong className="text-primary">{coinSetting.currency} {((coinSetting.artistSignupBonus || 0) * coinSetting.coinValue).toFixed(2)}</strong>
+                                  </div>
+                                  <div className="d-flex justify-content-between mb-2">
+                                    <span>Seller Signup Bonus ({coinSetting.sellerSignupBonus || 0} coins):</span>
+                                    <strong className="text-primary">{coinSetting.currency} {((coinSetting.sellerSignupBonus || 0) * coinSetting.coinValue).toFixed(2)}</strong>
+                                  </div>
+                                  <div className="d-flex justify-content-between mb-2">
+                                    <span>Buyer Signup Bonus ({coinSetting.buyerSignupBonus || 0} coins):</span>
+                                    <strong className="text-primary">{coinSetting.currency} {((coinSetting.buyerSignupBonus || 0) * coinSetting.coinValue).toFixed(2)}</strong>
+                                  </div>
+                                  <div className="mt-3 text-muted small border-top pt-2">
+                                  <i className="fa fa-info-circle mr-1"></i> These rewards are automatically shown to Artists, Sellers, and Buyers in their respective dashboards.
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="mt-3">
+                            <button className="btn btn-warning" onClick={saveCoinSetting} disabled={isSavingCoinSetting}>
+                              {isSavingCoinSetting ? 'Saving...' : 'Save Coin Settings'}
+                            </button>
+                          </div>
+                      </div>
+                    </div>
+
+                    <div className="card mt-4">
+                      <div className="header d-flex justify-content-between align-items-center">
+                        <h2>Referral Program Settings</h2>
+
+                      <div className="custom-control custom-switch">
+                        <input
+                          type="checkbox"
+                          className="custom-control-input"
+                          id="referralActiveSwitch"
+                          checked={referralSettings.isActive}
+                          onChange={e => setReferralSettings({ ...referralSettings, isActive: e.target.checked })}
+                        />
+                        <label className="custom-control-label" htmlFor="referralActiveSwitch">
+                          Program Status: <strong>{referralSettings.isActive ? 'Active' : 'Disabled'}</strong>
+                        </label>
+                      </div>
+                    </div>
+                    <div className="body">
+                      <div className="row mb-4">
+                        <div className="col-md-4">
                           <div className="form-group">
-                            <label><strong>Currency Symbol</strong></label>
-                            <input 
-                              type="text" 
-                              className="form-control" 
-                              value={coinSetting.currency} 
-                              onChange={e => setCoinSetting({ ...coinSetting, currency: e.target.value })} 
-                            />
+                            <label><strong>Min Purchase for Reward (₹)</strong></label>
+                            <input type="number" className="form-control" value={referralSettings.minPurchaseForReward || 0} onChange={e => setReferralSettings({ ...referralSettings, minPurchaseForReward: Number(e.target.value) })} min="0" />
+                          </div>
+                        </div>
+                        <div className="col-md-4">
+                          <div className="form-group">
+                            <label><strong>Max Referrals Per User</strong></label>
+                            <input type="number" className="form-control" value={referralSettings.maxReferralsPerUser || 0} onChange={e => setReferralSettings({ ...referralSettings, maxReferralsPerUser: Number(e.target.value) })} min="0" />
                           </div>
                         </div>
                       </div>
-                      <button className="btn btn-warning" onClick={saveCoinSetting} disabled={isSavingCoinSetting}>
-                        {isSavingCoinSetting ? 'Saving...' : 'Save Coin Settings'}
-                      </button>
-                    </div>
-                  </div>
 
-                  <div className="card mt-4">
-                    <div className="header d-flex justify-content-between align-items-center">
-                      <h2>Referral Program Settings</h2>
+                        <div className="row">
+                          {/* Artist & Seller Settings */}
+                          <div className="col-md-6">
+                            <div className="card border shadow-none bg-light">
+                              <div className="header"><h6>Artist & Seller Referral Rewards</h6></div>
+                              <div className="body p-3">
+                                <div className="form-group">
+                                  <label>Referrer Cash (₹)</label>
+                                  <input 
+                                    type="number" 
+                                    className="form-control" 
+                                    value={referralSettings.artistReferrerCashReward || 0} 
+                                    onChange={e => {
+                                      const val = Number(e.target.value);
+                                      setReferralSettings({ 
+                                        ...referralSettings, 
+                                        artistReferrerCashReward: val,
+                                        sellerReferrerCashReward: val 
+                                      });
+                                    }} 
+                                  />
+                                </div>
+                                <div className="form-group">
+                                  <label>Referrer Art Coins</label>
+                                  <div className="input-group">
+                                    <input 
+                                      type="number" 
+                                      className="form-control" 
+                                      value={referralSettings.artistReferrerCoinsReward || 0} 
+                                      onChange={e => {
+                                        const val = Number(e.target.value);
+                                        setReferralSettings({ 
+                                          ...referralSettings, 
+                                          artistReferrerCoinsReward: val,
+                                          sellerReferrerCoinsReward: val 
+                                        });
+                                      }} 
+                                    />
+                                    <div className="input-group-append">
+                                      <span className="input-group-text bg-white text-muted">
+                                        ≈ {coinSetting.currency} {( (referralSettings.artistReferrerCoinsReward || 0) * coinSetting.coinValue).toFixed(2)}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="form-group">
+                                  <label>Referred Cash (₹)</label>
+                                  <input 
+                                    type="number" 
+                                    className="form-control" 
+                                    value={referralSettings.artistReferredCashReward || 0} 
+                                    onChange={e => {
+                                      const val = Number(e.target.value);
+                                      setReferralSettings({ 
+                                        ...referralSettings, 
+                                        artistReferredCashReward: val,
+                                        sellerReferredCashReward: val 
+                                      });
+                                    }} 
+                                  />
+                                </div>
+                                <div className="form-group">
+                                  <label>Referred Art Coins</label>
+                                  <div className="input-group">
+                                    <input 
+                                      type="number" 
+                                      className="form-control" 
+                                      value={referralSettings.artistReferredCoinsReward || 0} 
+                                      onChange={e => {
+                                        const val = Number(e.target.value);
+                                        setReferralSettings({ 
+                                          ...referralSettings, 
+                                          artistReferredCoinsReward: val,
+                                          sellerReferredCoinsReward: val 
+                                        });
+                                      }} 
+                                    />
+                                    <div className="input-group-append">
+                                      <span className="input-group-text bg-white text-muted">
+                                        ≈ {coinSetting.currency} {( (referralSettings.artistReferredCoinsReward || 0) * coinSetting.coinValue).toFixed(2)}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
 
-                    <div className="custom-control custom-switch">
-                      <input
-                        type="checkbox"
-                        className="custom-control-input"
-                        id="referralActiveSwitch"
-                        checked={referralSettings.isActive}
-                        onChange={e => setReferralSettings({ ...referralSettings, isActive: e.target.checked })}
-                      />
-                      <label className="custom-control-label" htmlFor="referralActiveSwitch">
-                        Program Status: <strong>{referralSettings.isActive ? 'Active' : 'Disabled'}</strong>
-                      </label>
-                    </div>
-                  </div>
-                  <div className="body">
-                    <div className="row mb-4">
-                      <div className="col-md-4">
-                        <div className="form-group">
-                          <label><strong>Min Purchase for Reward (₹)</strong></label>
-                          <input type="number" className="form-control" value={referralSettings.minPurchaseForReward || 0} onChange={e => setReferralSettings({ ...referralSettings, minPurchaseForReward: Number(e.target.value) })} min="0" />
-                        </div>
-                      </div>
-                      <div className="col-md-4">
-                        <div className="form-group">
-                          <label><strong>Max Referrals Per User</strong></label>
-                          <input type="number" className="form-control" value={referralSettings.maxReferralsPerUser || 0} onChange={e => setReferralSettings({ ...referralSettings, maxReferralsPerUser: Number(e.target.value) })} min="0" />
-                        </div>
-                      </div>
-                    </div>
+                          {/* Buyer Settings */}
+                          <div className="col-md-6">
 
-                      <div className="row">
-                        {/* Artist & Seller Settings */}
-                        <div className="col-md-6">
                           <div className="card border shadow-none bg-light">
-                            <div className="header"><h6>Artist & Seller Referral Rewards</h6></div>
+                            <div className="header"><h6>Buyer Referral Rewards</h6></div>
                             <div className="body p-3">
                               <div className="form-group">
                                 <label>Referrer Cash (₹)</label>
-                                <input 
-                                  type="number" 
-                                  className="form-control" 
-                                  value={referralSettings.artistReferrerCashReward || 0} 
-                                  onChange={e => {
-                                    const val = Number(e.target.value);
-                                    setReferralSettings({ 
-                                      ...referralSettings, 
-                                      artistReferrerCashReward: val,
-                                      sellerReferrerCashReward: val 
-                                    });
-                                  }} 
-                                />
+                                <input type="number" className="form-control" value={referralSettings.buyerReferrerCashReward || 0} onChange={e => setReferralSettings({ ...referralSettings, buyerReferrerCashReward: Number(e.target.value) })} />
                               </div>
                               <div className="form-group">
                                 <label>Referrer Art Coins</label>
-                                <input 
-                                  type="number" 
-                                  className="form-control" 
-                                  value={referralSettings.artistReferrerCoinsReward || 0} 
-                                  onChange={e => {
-                                    const val = Number(e.target.value);
-                                    setReferralSettings({ 
-                                      ...referralSettings, 
-                                      artistReferrerCoinsReward: val,
-                                      sellerReferrerCoinsReward: val 
-                                    });
-                                  }} 
-                                />
+                                <div className="input-group">
+                                  <input type="number" className="form-control" value={referralSettings.buyerReferrerCoinsReward || 0} onChange={e => setReferralSettings({ ...referralSettings, buyerReferrerCoinsReward: Number(e.target.value) })} />
+                                  <div className="input-group-append">
+                                    <span className="input-group-text bg-white text-muted">
+                                      ≈ {coinSetting.currency} {( (referralSettings.buyerReferrerCoinsReward || 0) * coinSetting.coinValue).toFixed(2)}
+                                    </span>
+                                  </div>
+                                </div>
                               </div>
                               <div className="form-group">
                                 <label>Referred Cash (₹)</label>
-                                <input 
-                                  type="number" 
-                                  className="form-control" 
-                                  value={referralSettings.artistReferredCashReward || 0} 
-                                  onChange={e => {
-                                    const val = Number(e.target.value);
-                                    setReferralSettings({ 
-                                      ...referralSettings, 
-                                      artistReferredCashReward: val,
-                                      sellerReferredCashReward: val 
-                                    });
-                                  }} 
-                                />
+                                <input type="number" className="form-control" value={referralSettings.buyerReferredCashReward || 0} onChange={e => setReferralSettings({ ...referralSettings, buyerReferredCashReward: Number(e.target.value) })} />
                               </div>
                               <div className="form-group">
                                 <label>Referred Art Coins</label>
-                                <input 
-                                  type="number" 
-                                  className="form-control" 
-                                  value={referralSettings.artistReferredCoinsReward || 0} 
-                                  onChange={e => {
-                                    const val = Number(e.target.value);
-                                    setReferralSettings({ 
-                                      ...referralSettings, 
-                                      artistReferredCoinsReward: val,
-                                      sellerReferredCoinsReward: val 
-                                    });
-                                  }} 
-                                />
+                                <div className="input-group">
+                                  <input type="number" className="form-control" value={referralSettings.buyerReferredCoinsReward || 0} onChange={e => setReferralSettings({ ...referralSettings, buyerReferredCoinsReward: Number(e.target.value) })} />
+                                  <div className="input-group-append">
+                                    <span className="input-group-text bg-white text-muted">
+                                      ≈ {coinSetting.currency} {( (referralSettings.buyerReferredCoinsReward || 0) * coinSetting.coinValue).toFixed(2)}
+                                    </span>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Buyer Settings */}
-                        <div className="col-md-6">
-
-                        <div className="card border shadow-none bg-light">
-                          <div className="header"><h6>Buyer Referral Rewards</h6></div>
-                          <div className="body p-3">
-                            <div className="form-group">
-                              <label>Referrer Cash (₹)</label>
-                              <input type="number" className="form-control" value={referralSettings.buyerReferrerCashReward || 0} onChange={e => setReferralSettings({ ...referralSettings, buyerReferrerCashReward: Number(e.target.value) })} />
-                            </div>
-                            <div className="form-group">
-                              <label>Referrer Art Coins</label>
-                              <input type="number" className="form-control" value={referralSettings.buyerReferrerCoinsReward || 0} onChange={e => setReferralSettings({ ...referralSettings, buyerReferrerCoinsReward: Number(e.target.value) })} />
-                            </div>
-                            <div className="form-group">
-                              <label>Referred Cash (₹)</label>
-                              <input type="number" className="form-control" value={referralSettings.buyerReferredCashReward || 0} onChange={e => setReferralSettings({ ...referralSettings, buyerReferredCashReward: Number(e.target.value) })} />
-                            </div>
-                            <div className="form-group">
-                              <label>Referred Art Coins</label>
-                              <input type="number" className="form-control" value={referralSettings.buyerReferredCoinsReward || 0} onChange={e => setReferralSettings({ ...referralSettings, buyerReferredCoinsReward: Number(e.target.value) })} />
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="mt-4">
-                      <button className="btn btn-primary btn-lg" onClick={saveReferralSettings} disabled={isSavingSettings}>
-                        {isSavingSettings ? 'Saving...' : 'Save All Settings'}
-                      </button>
+                      <div className="mt-4">
+                        <button className="btn btn-primary btn-lg" onClick={saveReferralSettings} disabled={isSavingSettings}>
+                          {isSavingSettings ? 'Saving...' : 'Save All Settings'}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
           )}
     </div>
   );

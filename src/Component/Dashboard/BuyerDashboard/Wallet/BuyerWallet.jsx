@@ -108,31 +108,26 @@ const BuyerWallet = () => {
   };
 
     const [referralSettings, setReferralSettings] = useState(null);
-    const [coinSetting, setCoinSetting] = useState({ 
-      coinValue: 0.10, 
-      currency: "INR",
-      transactionReward: 10,
-      referralReward: 100
-    });
+    const [coinSetting, setCoinSetting] = useState({ coinValue: 0.10, currency: "INR", transactionReward: 10 });
 
     const fetchCoinSetting = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/wallet/art-coins/value`);
-        setCoinSetting(res.data);
+        const res = await axios.get(`${API_URL}/api/coin-settings`);
+        if (res.data) setCoinSetting(res.data);
       } catch (err) {
-        console.error("Error fetching coin setting:", err);
+        console.error("Error fetching coin settings:", err);
       }
     };
 
     const fetchReferralSettings = async () => {
-    if (!userId) return;
-    try {
-      const res = await axios.get(`${API_URL}/api/wallet/referral/settings/${userId}`);
-      setReferralSettings(res.data);
-    } catch (err) {
-      console.error("Error fetching referral settings:", err);
-    }
-  };
+      if (!userId) return;
+      try {
+        const res = await axios.get(`${API_URL}/api/wallet/referral/settings/${userId}`);
+        setReferralSettings(res.data);
+      } catch (err) {
+        console.error("Error fetching referral settings:", err);
+      }
+    };
 
   const copyReferralCode = () => {
     if (wallet?.referralCode) {
@@ -356,18 +351,18 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
           </div>
         </div>
 
-        <div className="col-lg-3 col-md-6 col-sm-6">
-          <div className="card top_widget secondary-bg" style={{ backgroundColor: "#F36F21", color: "#ffffff" }}>
-            <div className="body">
-              <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-shopping-basket"></i></div>
+          <div className="col-lg-3 col-md-6 col-sm-6">
+            <div className="card top_widget secondary-bg" style={{ backgroundColor: "#F36F21", color: "#ffffff" }}>
+              <div className="body">
+                <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-shopping-basket"></i></div>
                 <div className="content text-light">
                   <div className="text mb-2 text-uppercase">Art Coins</div>
                   <h4 className="number mb-0">{wallet.artCoins}</h4>
                   <small>Worth {coinSetting.currency} {(wallet.artCoins * coinSetting.coinValue).toFixed(2)}</small>
                 </div>
+              </div>
             </div>
           </div>
-        </div>
 
         <div className="col-lg-3 col-md-6 col-sm-6">
           <div className="card top_widget bg-dark">
@@ -628,19 +623,19 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
         </div>
         )}
 
-        <div className="row clearfix mb-4">
-          <div className="col-sm-12">
-            <div className="card">
-              <div className="header">
-                <h2>Art Coins Benefits</h2>
-              </div>
-            <div className="body">
-              <div className="row">
-                <div className="col-md-4">
+          <div className="row clearfix mb-4">
+            <div className="col-sm-12">
+              <div className="card">
+                <div className="header">
+                  <h2>Art Coins Benefits</h2>
+                </div>
+              <div className="body">
+                <div className="row">
+                  <div className="col-md-4">
                     <h5>How to Earn</h5>
                     <ul>
-                      <li>{coinSetting.transactionReward} coins per transaction</li>
-                      {showReferral && <li>{coinSetting.referralReward} coins on referral signup</li>}
+                      <li>{coinSetting.transactionReward || 10} coins per transaction</li>
+                      {showReferral && <li>{referralSettings?.buyerReferredCoinsReward || 100} coins on referral signup</li>}
                       <li>Bonus coins on special offers</li>
                     </ul>
                   </div>
@@ -651,21 +646,30 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
                       <li>Max 20% discount per order</li>
                       <li>Use during checkout</li>
                     </ul>
-                </div>
-                <div className="col-md-4">
-                  <h5>Important Notes</h5>
-                  <ul>
-                    <li>Minimum withdrawal: ₹100</li>
-                    <li>Daily limit: ₹50,000</li>
-                    <li>Monthly limit: ₹5,00,000</li>
-                    <li>KYC required for ₹1L+/month</li>
-                  </ul>
+                  </div>
+                  <div className="col-md-4">
+                    <div className="p-3 bg-light border rounded">
+                      <h6><i className="fa fa-gift mr-2"></i>Benefit Preview</h6>
+                      <hr />
+                        <div className="d-flex justify-content-between mb-1 small">
+                          <span>Transaction Reward:</span>
+                          <strong className="text-primary">{coinSetting.transactionReward || 10} Coins</strong>
+                        </div>
+                        <div className="d-flex justify-content-between mb-1 small">
+                          <span>Referral Reward:</span>
+                          <strong className="text-primary">{referralSettings?.buyerReferrerCoinsReward || 0} Coins</strong>
+                        </div>
+                        <div className="d-flex justify-content-between mb-1 small">
+                          <span>Signup Bonus:</span>
+                          <strong className="text-primary">{coinSetting[`${userType.toLowerCase()}SignupBonus`] || 0} Coins</strong>
+                        </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
       <div className="row clearfix">
         <div className="col-sm-12">

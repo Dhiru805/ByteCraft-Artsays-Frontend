@@ -7,27 +7,24 @@ const ArtCoinsRedemption = ({ orderAmount, onDiscountApplied, userId }) => {
   const [coinsToRedeem, setCoinsToRedeem] = useState(0);
   const [discountInfo, setDiscountInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-    const [useCoins, setUseCoins] = useState(false);
-    const [coinSetting, setCoinSetting] = useState({ 
-      coinValue: 0.10, 
-      currency: "INR" 
-    });
+  const [useCoins, setUseCoins] = useState(false);
+  const [artCoinValue, setArtCoinValue] = useState(0.10);
 
-    const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL = process.env.REACT_APP_API_URL;
 
-    useEffect(() => {
-      const fetchCoinSetting = async () => {
-        try {
-          const res = await axios.get(`${API_URL}/api/wallet/art-coins/value`);
-          if (res.data) {
-            setCoinSetting(res.data);
-          }
-        } catch (err) {
-          console.error("Error fetching coin value:", err);
+  useEffect(() => {
+    const fetchCoinValue = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/api/wallet/art-coins/value`);
+        if (res.data && res.data.coinValue) {
+          setArtCoinValue(res.data.coinValue);
         }
-      };
-      fetchCoinSetting();
-    }, [API_URL]);
+      } catch (err) {
+        console.error("Error fetching coin value:", err);
+      }
+    };
+    fetchCoinValue();
+  }, [API_URL]);
 
   useEffect(() => {
     const fetchWallet = async () => {
@@ -112,14 +109,14 @@ const ArtCoinsRedemption = ({ orderAmount, onDiscountApplied, userId }) => {
             <span>Available Art Coins:</span>
             <strong>{wallet.artCoins} coins</strong>
           </div>
-            <div className="d-flex justify-content-between mb-3">
-              <span>Coin Value:</span>
-              <span>1 coin = {coinSetting.currency} {coinSetting.coinValue}</span>
-            </div>
-            <div className="d-flex justify-content-between mb-3">
-              <span>Max Discount (20%):</span>
-              <span>{coinSetting.currency} {maxDiscount.toFixed(2)}</span>
-            </div>
+          <div className="d-flex justify-content-between mb-3">
+            <span>Coin Value:</span>
+            <span>1 coin = ₹{artCoinValue}</span>
+          </div>
+          <div className="d-flex justify-content-between mb-3">
+            <span>Max Discount (20%):</span>
+            <span>₹{maxDiscount.toFixed(2)}</span>
+          </div>
 
           <div className="form-group">
             <label>Coins to Redeem</label>
