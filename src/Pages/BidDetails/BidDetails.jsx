@@ -1621,8 +1621,22 @@ const BidDetails = () => {
           <div className="grid grid-cols-1 md:grid-cols-10 gap-6 mt-3">
             {/* IMAGE SECTION */}
             <div className="flex flex-col lg:flex-row-reverse col-span-5 gap-3 relative">
-              <div className="relative w-full product-card">
-                <img src={selectedImage} alt="Main" className="w-full h-[550px] object-contain product-img" />
+              <div className="relative w-full product-card overflow-hidden">
+                  <img
+                    src={selectedImage}
+                    alt="Main"
+                    className={`w-full h-[550px] object-contain product-img transition-all duration-300 ${isBidEnded ? "grayscale blur-[2px]" : ""}`}
+                  />
+
+                  {isBidEnded && (
+                    <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-[1px] pointer-events-none">
+                      <div className="bg-white/90 px-8 py-3 rounded-lg shadow-2xl border border-white/50 transform -rotate-12">
+                        <span className="text-red-600 font-black text-3xl uppercase tracking-widest">
+                          Bid Ended
+                        </span>
+                      </div>
+                    </div>
+                  )}
 
                 <button onClick={() => setShowPopup(true)} className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-[#48372D] text-white text-sm px-3 py-1 rounded-2xl shadow">
                   👁️ View in Room

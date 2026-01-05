@@ -636,35 +636,45 @@ const BiddingArena = () => {
               }}
               className="rounded-2xl shadow bg-white cursor-pointer overflow-hidden"
             >
-              {/* IMAGE + STATUS */}
-              <div className="relative">
-                <span
-                  className={`absolute top-3 left-3 text-white text-xs px-2 py-0.5 rounded-full
-                    ${status === "Upcoming"
-                      ? "bg-red-500"
-                      : status === "Ended"
-                        ? "bg-gray-500"
-                        : "bg-dark"
-                    }`}
-                >
-                  {status}
-                </span>
+                {/* IMAGE + STATUS */}
+                <div className="relative">
+                  <span
+                    className={`absolute top-3 left-3 text-white text-xs px-2 py-0.5 rounded-full
+                      ${status === "Upcoming"
+                        ? "bg-red-500"
+                        : status === "Ended"
+                          ? "bg-gray-500"
+                          : "bg-dark"
+                      }`}
+                  >
+                    {status}
+                  </span>
 
-                <div className="h-40 sm:h-64 bg-gray-100 flex justify-center items-center">
-                  <img
-                    src={`${imageBaseURL}${item.product?.mainImage}`}
-                    alt={item.artworkName}
-                    className="h-full object-contain"
-                  />
+                  <div className="h-40 sm:h-64 bg-gray-100 flex justify-center items-center relative">
+                    <img
+                      src={`${imageBaseURL}${item.product?.mainImage}`}
+                      alt={item.artworkName}
+                      className={`h-full object-contain transition-all duration-300 ${isEnded ? "grayscale blur-[2px]" : ""}`}
+                    />
+
+                    {isEnded && (
+                      <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-[1px]">
+                        <div className="bg-white/90 px-6 py-2 rounded-lg shadow-2xl border border-white/50 transform -rotate-12">
+                          <span className="text-red-600 font-black text-xl uppercase tracking-wider">
+                            Bid Ended
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={(e) => e.stopPropagation()}
+                    className="absolute bottom-3 right-3 bg-dark p-2 rounded-full"
+                  >
+                    <Bell className="w-4 h-4 text-white" />
+                  </button>
                 </div>
-
-                <button
-                  onClick={(e) => e.stopPropagation()}
-                  className="absolute bottom-3 right-3 bg-dark p-2 rounded-full"
-                >
-                  <Bell className="w-4 h-4 text-white" />
-                </button>
-              </div>
 
               {/* INFO */}
               <div className="p-3">

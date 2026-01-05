@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import NavBar from "../Pages/Home/HomeComponents/NavBar";
 import Footer from "../Pages/Home/HomeComponents/Footer";
@@ -14,8 +14,11 @@ import HomeChallengesSkeleton from "../Component/Skeleton/HomeChallengesSkeleton
 import ArtlconSkeleton from "../Component/Skeleton/ArtIconSkeleton";
 import HowToSellSkeleton from "../Component/Skeleton/HowToSellSkeleton";
 import HeaderSkeleton from "../Component/Skeleton/Home/HeaderSkeleton";
+
 const WebsiteLayout = () => {
   const [cssReady, setCssReady] = useState(false);
+  const location = useLocation();
+
   useEffect(() => {
     let mounted = true;
     import("../index.css").then(() => {
@@ -28,19 +31,29 @@ const WebsiteLayout = () => {
   }, []);
 
   if (!cssReady) {
+    if (location.pathname === "/") {
+      return (
+        <div>
+          <HeaderSkeleton />
+          <HeroSectionSkeleton />
+          <BrowserCategorySkeleton />
+          <WhyFromSkeleton />
+          <BiddingArenaSkeleton />
+          <HowToBuySkeleton />
+          <DiscoverArtistSkeleton />
+          <WhyArtsaysDiffSkeleton />
+          <HomeChallengesSkeleton />
+          <ArtlconSkeleton />
+          <HowToSellSkeleton />
+        </div>
+      );
+    }
     return (
       <div>
         <HeaderSkeleton />
-        <HeroSectionSkeleton />
-        <BrowserCategorySkeleton />
-        <WhyFromSkeleton />
-        <BiddingArenaSkeleton />
-        <HowToBuySkeleton />
-        <DiscoverArtistSkeleton />
-        <WhyArtsaysDiffSkeleton />
-        <HomeChallengesSkeleton />
-        <ArtlconSkeleton />
-        <HowToSellSkeleton />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="w-12 h-12 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin"></div>
+        </div>
       </div>
     );
   }
