@@ -1120,17 +1120,17 @@ const AppRoutes = () => {
         <Route path="policy/update-policy" element={<UpdatePolicy />} />
         {/* <Route path="policy/view-policy" element={<ViewPolicy />} /> */}
         {/*How_To_Buy*/}
-          <Route path="how-to-buy" element={<HowToBuyTable />} />
-          <Route path="how-to-buy/create" element={<CreateHowToBuy />} />
-          <Route path="how-to-buy/update" element={<UpdateHowToBuy />} />
-          {/* <Route path="how-to-buy/view" element={<ViewHowToBuy />} />   */}
-          {/*How_To_Sell*/}
-          <Route path="how-to-sell" element={<HowToSellTable />} />
-          <Route path="how-to-sell/create" element={<CreateHowToSell />} />
-          <Route path="how-to-sell/update" element={<UpdateHowToSell />} />
-          {/* <Route path="how-to-sell/view" element={<ViewHowToSell />} />   */}
-          {/*How_To_Resell*/}
-          <Route path="how-to-resell" element={<HowToResellTable />} />
+        <Route path="how-to-buy" element={<HowToBuyTable />} />
+        <Route path="how-to-buy/create" element={<CreateHowToBuy />} />
+        <Route path="how-to-buy/update" element={<UpdateHowToBuy />} />
+        {/* <Route path="how-to-buy/view" element={<ViewHowToBuy />} />   */}
+        {/*How_To_Sell*/}
+        <Route path="how-to-sell" element={<HowToSellTable />} />
+        <Route path="how-to-sell/create" element={<CreateHowToSell />} />
+        <Route path="how-to-sell/update" element={<UpdateHowToSell />} />
+        {/* <Route path="how-to-sell/view" element={<ViewHowToSell />} />   */}
+        {/*How_To_Resell*/}
+        <Route path="how-to-resell" element={<HowToResellTable />} />
         <Route path="how-to-resell/create" element={<CreateHowToResell />} />
         <Route path="how-to-resell/update" element={<UpdateHowToResell />} />
         {/*WhyArtSays */}
@@ -1648,7 +1648,7 @@ const AppRoutes = () => {
         <Route path="/partner" element={<Partner />} />
 
         {/* ----------------------------------------------------social media Route ----------------------------------------------- */}
-        <Route element ={<PrivateRoute allowedRoles={["Buyer","Artist","Seller","Super-Admin"]} />}>
+        <Route element={<PrivateRoute allowedRoles={["Buyer", "Artist", "Seller", "Super-Admin"]} />}>
           <Route path="/artsays-community" element={<Homee />} />
           <Route
             path="/artsays-community/sharepost/:postId"
