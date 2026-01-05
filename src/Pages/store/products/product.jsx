@@ -2015,25 +2015,278 @@ import { toast } from "react-toastify";
 import ProductsSkeliton from "../../../Component/Skeleton/products/ProductsSkeliton";
 const Product = () => {
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   const [loading, setLoading] = useState(false);
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
 
+    const [filters, setFilters] = useState({
+      sortBy: "Relevance",
+      specialTags: [],
+      priceRange: 89700,
+      priceBuckets: [],
+      size: [],
+      mainCategory: [],
+      category: [],
+      subCategory: [],
+      productType: [],
+      productMedium: [],
+      productMaterial: [],
+      productEditionType: [],
+      productSurfaceType: [],
+      search: "",
+    });
+
+  const [options, setOptions] = useState({
+    categories: [],
+    productTypes: [],
+    productMediums: [],
+    productMaterials: [],
+    productEditionTypes: [],
+    productSurfaceTypes: [],
+  });
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
   const [likedProducts, setLikedProducts] = useState({});
+  const [expandedFilters, setExpandedFilters] = useState({});
   const navigate = useNavigate();
+
+  const toggleExpand = (category) => {
+    setExpandedFilters((prev) => ({
+      ...prev,
+      [category]: !prev[category],
+    }));
+  };
+
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+          const [
+            catRes,
+            typeRes,
+            mediumRes,
+            materialRes,
+            editionRes,
+            surfaceRes
+          ] = await Promise.all([
+            getAPI("/api/all-complete", {}, true, false),
+            getAPI("/api/getproducttype", {}, true, false),
+            getAPI("/api/getproductmedium", {}, true, false),
+            getAPI("/api/getproductmaterials", {}, true, false),
+            getAPI("/api/getproducteditiontypes", {}, true, false),
+            getAPI("/api/getproductsurfacetypes", {}, true, false),
+          ]);
+
+          setOptions({
+            categories: catRes?.data?.data?.flattened || [],
+            productTypes: typeRes?.data || [],
+            productMediums: mediumRes?.data || [],
+            productMaterials: materialRes?.data || [],
+            productEditionTypes: editionRes?.data || [],
+            productSurfaceTypes: surfaceRes?.data || [],
+          });
+      } catch (error) {
+        console.error("Error fetching filter options:", error);
+      }
+    };
+    fetchOptions();
+  }, []);
+
+  useEffect(() => {
+    let result = [...products];
+
+    // Search
+    if (filters.search) {
+      result = result.filter((p) =>
+        p.productName.toLowerCase().includes(filters.search.toLowerCase()) ||
+        (p.userId?.name && p.userId.name.toLowerCase().includes(filters.search.toLowerCase())) ||
+        (p.userId?.lastName && p.userId.lastName.toLowerCase().includes(filters.search.toLowerCase()))
+      );
+    }
+
+    // Special Tags
+    if (filters.specialTags.length > 0) {
+      result = result.filter((p) => {
+        return filters.specialTags.some((tag) => {
+          if (tag === "Limited Edition") return p.editionType === "Limited Edition";
+          if (tag === "Exclusive") return p.editionType === "Exclusive";
+          if (tag === "Verified Seller") return p.userId?.status === "Verified";
+          if (tag === "Bestseller") return p.reviewCount > 10; // Simple logic for bestseller
+          return false;
+        });
+      });
+    }
+
+    // Price Range (Slider)
+    result = result.filter((p) => p.sellingPrice <= filters.priceRange);
+
+    // Price Buckets
+    if (filters.priceBuckets.length > 0) {
+      result = result.filter((p) => {
+        return filters.priceBuckets.some((bucket) => {
+          if (bucket === "Under ₹5,000") return p.sellingPrice < 5000;
+          if (bucket === "₹5,000 – ₹10,000") return p.sellingPrice >= 5000 && p.sellingPrice <= 10000;
+          if (bucket === "₹10,000 – ₹25,000") return p.sellingPrice > 10000 && p.sellingPrice <= 25000;
+          if (bucket === "Above ₹25,000") return p.sellingPrice > 25000;
+          return false;
+        });
+      });
+    }
+
+    // Size
+    if (filters.size.length > 0) {
+      result = result.filter((p) => {
+        const width = p.dimensions?.width || 0;
+        const height = p.dimensions?.height || 0;
+        const maxDim = Math.max(width, height);
+        return filters.size.some((s) => {
+          if (s === "Small (<12in)") return maxDim < 12;
+          if (s === "Medium (12–24in)") return maxDim >= 12 && maxDim <= 24;
+          if (s === "Large (24–48in)") return maxDim > 24 && maxDim <= 48;
+          if (s === "Oversized (48in+)") return maxDim > 48;
+          return false;
+        });
+      });
+    }
+
+    // Category
+    const mainCategoryMap = Object.fromEntries(options.categories.filter(c => c.mainCategoryId).map(c => [c.mainCategoryId, c.mainCategoryName]));
+    const categoryMap = Object.fromEntries(options.categories.filter(c => c.categoryId).map(c => [c.categoryId, c.categoryName]));
+    const subCategoryMap = Object.fromEntries(options.categories.filter(c => c.subCategoryId).map(c => [c.subCategoryId, c.subCategoryName]));
+
+    if (filters.mainCategory.length > 0) {
+      result = result.filter((p) => {
+        const name = mainCategoryMap[p.mainCategory] || p.mainCategory;
+        return filters.mainCategory.includes(name);
+      });
+    }
+    if (filters.category.length > 0) {
+      result = result.filter((p) => {
+        const name = categoryMap[p.category] || p.category;
+        return filters.category.includes(name);
+      });
+    }
+    if (filters.subCategory.length > 0) {
+      result = result.filter((p) => {
+        const name = subCategoryMap[p.subCategory] || p.subCategory;
+        return filters.subCategory.includes(name);
+      });
+    }
+
+    // Product Type
+    if (filters.productType.length > 0) {
+      result = result.filter((p) => {
+        if (Array.isArray(p.productType)) {
+          return p.productType.some(type => filters.productType.includes(type));
+        }
+        return filters.productType.includes(p.productType);
+      });
+    }
+
+    // Product Medium
+    if (filters.productMedium.length > 0) {
+      result = result.filter((p) => filters.productMedium.includes(p.medium));
+    }
+
+    // Product Material
+    if (filters.productMaterial.length > 0) {
+      result = result.filter((p) => {
+        if (Array.isArray(p.materials)) {
+          return p.materials.some(mat => filters.productMaterial.includes(mat));
+        }
+        return filters.productMaterial.includes(p.materials);
+      });
+    }
+
+    // Product Edition Type
+    if (filters.productEditionType.length > 0) {
+      result = result.filter((p) => filters.productEditionType.includes(p.editionType));
+    }
+
+    // Product Surface Type
+    if (filters.productSurfaceType.length > 0) {
+      result = result.filter((p) => filters.productSurfaceType.includes(p.surfaceType));
+    }
+
+    // Sort By
+    if (filters.sortBy === "Price Low to High") {
+      result.sort((a, b) => a.sellingPrice - b.sellingPrice);
+    } else if (filters.sortBy === "Price High to Low") {
+      result.sort((a, b) => b.sellingPrice - a.sellingPrice);
+    } else if (filters.sortBy === "New Arrivals") {
+      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else if (filters.sortBy === "Trending") {
+      result.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
+    }
+
+    setFilteredProducts(result);
+    setCurrentPage(1);
+  }, [products, filters, options.categories]);
+
+  const handleFilterChange = (category, value, isChecked) => {
+    setFilters((prev) => {
+      if (category === "sortBy" || category === "priceRange" || category === "search") {
+        return { ...prev, [category]: value };
+      }
+
+      let updatedFilters = { ...prev };
+      const currentList = prev[category] || [];
+
+      if (isChecked) {
+        updatedFilters[category] = [...currentList, value];
+      } else {
+        updatedFilters[category] = currentList.filter((item) => item !== value);
+
+        // Dependency Logic: Clear child filters if parent is unselected
+        if (category === "mainCategory") {
+          // Find all categories belonging to the unselected mainCategory
+          const categoriesToKeep = options.categories
+            .filter(c => updatedFilters.mainCategory.includes(c.mainCategoryName))
+            .map(c => c.categoryName);
+          updatedFilters.category = updatedFilters.category.filter(c => categoriesToKeep.includes(c));
+
+          // Also update subcategories based on remaining categories
+          const subCategoriesToKeep = options.categories
+            .filter(c => updatedFilters.category.includes(c.categoryName))
+            .map(c => c.subCategoryName);
+          updatedFilters.subCategory = updatedFilters.subCategory.filter(sc => subCategoriesToKeep.includes(sc));
+        }
+
+        if (category === "category") {
+          const subCategoriesToKeep = options.categories
+            .filter(c => updatedFilters.category.includes(c.categoryName))
+            .map(c => c.subCategoryName);
+          updatedFilters.subCategory = updatedFilters.subCategory.filter(sc => subCategoriesToKeep.includes(sc));
+        }
+      }
+
+      return updatedFilters;
+    });
+  };
+
+  const mainCategories = [...new Set(options.categories.map(c => c.mainCategoryName))];
+
+  const availableCategories = filters.mainCategory.length > 0
+    ? [...new Set(options.categories.filter(c => filters.mainCategory.includes(c.mainCategoryName)).map(c => c.categoryName))]
+    : [...new Set(options.categories.map(c => c.categoryName))];
+
+  const availableSubCategories = filters.category.length > 0
+    ? [...new Set(options.categories.filter(c => filters.category.includes(c.categoryName)).map(c => c.subCategoryName))]
+    : (filters.mainCategory.length > 0
+      ? [...new Set(options.categories.filter(c => filters.mainCategory.includes(c.mainCategoryName)).map(c => c.subCategoryName))]
+      : [...new Set(options.categories.map(c => c.subCategoryName))]);
 
   const indexOfLastProduct = currentPage * itemsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
-  const currentProducts = products.slice(
+  const currentProducts = filteredProducts.slice(
     indexOfFirstProduct,
     indexOfLastProduct
   );
 
-  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
   const goToNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -2282,6 +2535,8 @@ const Product = () => {
             <input
               type="text"
               placeholder="Search"
+              value={filters.search}
+              onChange={(e) => handleFilterChange("search", e.target.value)}
               className="w-full pl-10 pr-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400"
             />
             <svg
@@ -2316,21 +2571,17 @@ const Product = () => {
             Sort By
           </p>
           <div className="space-y-2 mb-4">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> New Arrivals
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Trending
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Price Low to High
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Price High to Low
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Relevance
-            </label>
+            {["New Arrivals", "Trending", "Price Low to High", "Price High to Low", "Relevance"].map((option) => (
+              <label key={option} className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="sortBy"
+                  checked={filters.sortBy === option}
+                  onChange={() => handleFilterChange("sortBy", option)}
+                  className="mr-2"
+                /> {option}
+              </label>
+            ))}
           </div>
 
           <hr className="mb-3 border-dark" />
@@ -2340,18 +2591,16 @@ const Product = () => {
             Special Tags
           </p>
           <div className="space-y-2 mb-4">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Limited Edition
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Bestseller
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Verified Seller
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Exclusive
-            </label>
+            {["Limited Edition", "Bestseller", "Verified Seller", "Exclusive"].map((tag) => (
+              <label key={tag} className="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={filters.specialTags.includes(tag)}
+                  onChange={(e) => handleFilterChange("specialTags", tag, e.target.checked)}
+                  className="mr-2"
+                /> {tag}
+              </label>
+            ))}
           </div>
 
           <hr className="mb-3 border-dark" />
@@ -2360,24 +2609,29 @@ const Product = () => {
           <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
             Price
           </p>
-          <input type="range" min="295" max="89700" className="w-full" />
+          <input
+            type="range"
+            min="295"
+            max="89700"
+            value={filters.priceRange}
+            onChange={(e) => handleFilterChange("priceRange", Number(e.target.value))}
+            className="w-full accent-red-500"
+          />
           <div className="flex justify-between text-xs text-gray-600 mb-2">
             <span>₹295</span>
-            <span>₹89,700+</span>
+            <span>₹{filters.priceRange.toLocaleString()}</span>
           </div>
           <div className="space-y-2 mb-4 text-sm">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Under ₹5,000
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> ₹5,000 – ₹10,000
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> ₹10,000 – ₹25,000
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Above ₹25,000
-            </label>
+            {["Under ₹5,000", "₹5,000 – ₹10,000", "₹10,000 – ₹25,000", "Above ₹25,000"].map((bucket) => (
+              <label key={bucket} className="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={filters.priceBuckets.includes(bucket)}
+                  onChange={(e) => handleFilterChange("priceBuckets", bucket, e.target.checked)}
+                  className="mr-2"
+                /> {bucket}
+              </label>
+            ))}
           </div>
 
           <hr className="mb-3 border-dark" />
@@ -2387,62 +2641,235 @@ const Product = () => {
             Size
           </p>
           <div className="space-y-2 mb-4">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Small (&lt;12in)
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Medium (12–24in)
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Large (24–48in)
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Oversized (48in+)
-            </label>
+            {["Small (<12in)", "Medium (12–24in)", "Large (24–48in)", "Oversized (48in+)"].map((s) => (
+              <label key={s} className="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={filters.size.includes(s)}
+                  onChange={(e) => handleFilterChange("size", s, e.target.checked)}
+                  className="mr-2"
+                /> {s}
+              </label>
+            ))}
           </div>
 
-          <hr className="mb-3 border-dark" />
+            <hr className="mb-3 border-dark" />
 
-          {/* Style */}
-          <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-            Style
-          </p>
-          <div className="space-y-2 mb-4">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Abstract
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Modern
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Traditional
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Minimalist
-            </label>
-          </div>
+              {/* Main Category */}
+              <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                Main Category
+              </p>
+              <div className="space-y-2 mb-4">
+                {(expandedFilters['mainCategory'] ? mainCategories : mainCategories.slice(0, 5)).map((name) => (
+                  <label key={name} className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.mainCategory.includes(name)}
+                      onChange={(e) => handleFilterChange("mainCategory", name, e.target.checked)}
+                      className="mr-2"
+                    /> {name}
+                  </label>
+                ))}
+                {mainCategories.length > 5 && (
+                  <button
+                    onClick={() => toggleExpand('mainCategory')}
+                    className="text-red-500 text-sm font-semibold mt-2 hover:underline block"
+                  >
+                    {expandedFilters['mainCategory'] ? "Show Less" : `+ ${mainCategories.length - 5} Main Category`}
+                  </button>
+                )}
+              </div>
 
-          <hr className="mb-3 border-dark" />
+              <hr className="mb-3 border-dark" />
 
-          {/* Medium */}
-          <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-            Medium
-          </p>
-          <div className="space-y-2">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Oil
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Acrylic
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Watercolor
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Mixed Media
-            </label>
-          </div>
-        </aside>
+              {/* Category */}
+              <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                Category
+              </p>
+              <div className="space-y-2 mb-4">
+                {(expandedFilters['category'] ? availableCategories : availableCategories.slice(0, 5)).map((name) => (
+                  <label key={name} className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.category.includes(name)}
+                      onChange={(e) => handleFilterChange("category", name, e.target.checked)}
+                      className="mr-2"
+                    /> {name}
+                  </label>
+                ))}
+                {availableCategories.length > 5 && (
+                  <button
+                    onClick={() => toggleExpand('category')}
+                    className="text-red-500 text-sm font-semibold mt-2 hover:underline block"
+                  >
+                    {expandedFilters['category'] ? "Show Less" : `+ ${availableCategories.length - 5} Category`}
+                  </button>
+                )}
+              </div>
+
+              <hr className="mb-3 border-dark" />
+
+              {/* Sub Category */}
+              <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                Sub Category
+              </p>
+              <div className="space-y-2 mb-4">
+                {(expandedFilters['subCategory'] ? availableSubCategories : availableSubCategories.slice(0, 5)).map((name) => (
+                  <label key={name} className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.subCategory.includes(name)}
+                      onChange={(e) => handleFilterChange("subCategory", name, e.target.checked)}
+                      className="mr-2"
+                    /> {name}
+                  </label>
+                ))}
+                {availableSubCategories.length > 5 && (
+                  <button
+                    onClick={() => toggleExpand('subCategory')}
+                    className="text-red-500 text-sm font-semibold mt-2 hover:underline block"
+                  >
+                    {expandedFilters['subCategory'] ? "Show Less" : `+ ${availableSubCategories.length - 5} Sub Category`}
+                  </button>
+                )}
+              </div>
+
+              <hr className="mb-3 border-dark" />
+
+              {/* Product Type */}
+              <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                Product Type
+              </p>
+              <div className="space-y-2 mb-4">
+                {(expandedFilters['productType'] ? options.productTypes : options.productTypes.slice(0, 5)).map((type) => (
+                  <label key={type._id} className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.productType.includes(type.name)}
+                      onChange={(e) => handleFilterChange("productType", type.name, e.target.checked)}
+                      className="mr-2"
+                    /> {type.name}
+                  </label>
+                ))}
+                {options.productTypes.length > 5 && (
+                  <button
+                    onClick={() => toggleExpand('productType')}
+                    className="text-red-500 text-sm font-semibold mt-2 hover:underline block"
+                  >
+                    {expandedFilters['productType'] ? "Show Less" : `+ ${options.productTypes.length - 5} Product Type`}
+                  </button>
+                )}
+              </div>
+
+              <hr className="mb-3 border-dark" />
+
+              {/* Product Medium */}
+              <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                Product Medium
+              </p>
+              <div className="space-y-2 mb-4">
+                {(expandedFilters['productMedium'] ? options.productMediums : options.productMediums.slice(0, 5)).map((m) => (
+                  <label key={m._id} className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.productMedium.includes(m.name)}
+                      onChange={(e) => handleFilterChange("productMedium", m.name, e.target.checked)}
+                      className="mr-2"
+                    /> {m.name}
+                  </label>
+                ))}
+                {options.productMediums.length > 5 && (
+                  <button
+                    onClick={() => toggleExpand('productMedium')}
+                    className="text-red-500 text-sm font-semibold mt-2 hover:underline block"
+                  >
+                    {expandedFilters['productMedium'] ? "Show Less" : `+ ${options.productMediums.length - 5} Product Medium`}
+                  </button>
+                )}
+              </div>
+
+              <hr className="mb-3 border-dark" />
+
+              {/* Product Material */}
+              <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                Product Material
+              </p>
+              <div className="space-y-2 mb-4">
+                {(expandedFilters['productMaterial'] ? options.productMaterials : options.productMaterials.slice(0, 5)).map((mat) => (
+                  <label key={mat._id} className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.productMaterial.includes(mat.name)}
+                      onChange={(e) => handleFilterChange("productMaterial", mat.name, e.target.checked)}
+                      className="mr-2"
+                    /> {mat.name}
+                  </label>
+                ))}
+                {options.productMaterials.length > 5 && (
+                  <button
+                    onClick={() => toggleExpand('productMaterial')}
+                    className="text-red-500 text-sm font-semibold mt-2 hover:underline block"
+                  >
+                    {expandedFilters['productMaterial'] ? "Show Less" : `+ ${options.productMaterials.length - 5} Product Material`}
+                  </button>
+                )}
+              </div>
+
+              <hr className="mb-3 border-dark" />
+
+              {/* Product Edition Type */}
+              <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                Product Edition Type
+              </p>
+              <div className="space-y-2 mb-4">
+                {(expandedFilters['productEditionType'] ? options.productEditionTypes : options.productEditionTypes.slice(0, 5)).map((ed) => (
+                  <label key={ed._id} className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.productEditionType.includes(ed.name)}
+                      onChange={(e) => handleFilterChange("productEditionType", ed.name, e.target.checked)}
+                      className="mr-2"
+                    /> {ed.name}
+                  </label>
+                ))}
+                {options.productEditionTypes.length > 5 && (
+                  <button
+                    onClick={() => toggleExpand('productEditionType')}
+                    className="text-red-500 text-sm font-semibold mt-2 hover:underline block"
+                  >
+                    {expandedFilters['productEditionType'] ? "Show Less" : `+ ${options.productEditionTypes.length - 5} Product Edition Type`}
+                  </button>
+                )}
+              </div>
+
+              <hr className="mb-3 border-dark" />
+
+              {/* Product Surface Type */}
+              <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                Product Surface Type
+              </p>
+              <div className="space-y-2 mb-4">
+                {(expandedFilters['productSurfaceType'] ? options.productSurfaceTypes : options.productSurfaceTypes.slice(0, 5)).map((s) => (
+                  <label key={s._id} className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.productSurfaceType.includes(s.name)}
+                      onChange={(e) => handleFilterChange("productSurfaceType", s.name, e.target.checked)}
+                      className="mr-2"
+                    /> {s.name}
+                  </label>
+                ))}
+                {options.productSurfaceTypes.length > 5 && (
+                  <button
+                    onClick={() => toggleExpand('productSurfaceType')}
+                    className="text-red-500 text-sm font-semibold mt-2 hover:underline block"
+                  >
+                    {expandedFilters['productSurfaceType'] ? "Show Less" : `+ ${options.productSurfaceTypes.length - 5} Product Surface Type`}
+                  </button>
+                )}
+              </div>
+
+          </aside>
 
         {/* Mobile Sidebar Toggle */}
         <div className="md:hidden mb-4">
@@ -2468,161 +2895,327 @@ const Product = () => {
           </button>
 
           {showFilters && (
-            <div className="fixed inset-0 z-50 flex">
+            <div className="fixed inset-0 z-50 flex" style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
               <div
                 className="fixed inset-0 bg-black bg-opacity-50"
                 onClick={() => setShowFilters(false)}
               />
-              <div className="relative bg-white w-72 max-w-full h-full shadow-xl p-5 overflow-y-auto">
-                <button
-                  onClick={() => setShowFilters(false)}
-                  className="absolute top-3 right-3 text-gray-600"
-                >
-                  ✕
-                </button>
-                <h2 className="font-bold text-lg mb-3">Filter by</h2>
-                <hr className="mb-3 border-dark" />
-                {/* Sort By, Special Tags, Price, Size, Style, Medium */}
-                {/* Sort By */}
-                <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-                  Sort By
-                </p>
-                <div className="space-y-2 mb-4">
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> New Arrivals
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Trending
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Price Low to High
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Price High to Low
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Relevance
-                  </label>
-                </div>
+                <div className="relative bg-white w-72 max-w-full h-full shadow-xl p-5 overflow-y-auto">
+                  <button
+                    onClick={() => setShowFilters(false)}
+                    className="absolute top-3 right-3 text-gray-600"
+                  >
+                    ✕
+                  </button>
+                  <h2 className="font-bold text-lg mb-3">Filter by</h2>
+                  <hr className="mb-3 border-dark" />
+                  {/* Sort By */}
+                  <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                    Sort By
+                  </p>
+                  <div className="space-y-2 mb-4">
+                    {["New Arrivals", "Trending", "Price Low to High", "Price High to Low", "Relevance"].map((option) => (
+                      <label key={option} className="flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          name="sortByMobile"
+                          checked={filters.sortBy === option}
+                          onChange={() => handleFilterChange("sortBy", option)}
+                          className="mr-2"
+                        /> {option}
+                      </label>
+                    ))}
+                  </div>
 
-                <hr className="mb-3 border-dark" />
+                  <hr className="mb-3 border-dark" />
 
-                {/* Special Tags */}
-                <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-                  Special Tags
-                </p>
-                <div className="space-y-2 mb-4">
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Limited Edition
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Bestseller
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Verified Seller
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Exclusive
-                  </label>
-                </div>
+                  {/* Special Tags */}
+                  <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                    Special Tags
+                  </p>
+                  <div className="space-y-2 mb-4">
+                    {["Limited Edition", "Bestseller", "Verified Seller", "Exclusive"].map((tag) => (
+                      <label key={tag} className="flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={filters.specialTags.includes(tag)}
+                          onChange={(e) => handleFilterChange("specialTags", tag, e.target.checked)}
+                          className="mr-2"
+                        /> {tag}
+                      </label>
+                    ))}
+                  </div>
 
-                <hr className="mb-3 border-dark" />
+                  <hr className="mb-3 border-dark" />
 
-                {/* Price */}
-                <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-                  Price
-                </p>
-                <div className="flex justify-between text-xs text-gray-600 mb-1">
-                  <span>₹295</span>
-                  <span>₹89,700+</span>
-                </div>
-                <input
-                  type="range"
-                  min="295"
-                  max="89700"
-                  className="w-full mb-3"
-                />
-                <div className="space-y-2 mb-4 text-sm">
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Under ₹5,000
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> ₹5,000 – ₹10,000
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> ₹10,000 – ₹25,000
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Above ₹25,000
-                  </label>
-                </div>
+                  {/* Price */}
+                  <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                    Price
+                  </p>
+                  <div className="flex justify-between text-xs text-gray-600 mb-1">
+                    <span>₹295</span>
+                    <span>₹{filters.priceRange.toLocaleString()}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="295"
+                    max="89700"
+                    value={filters.priceRange}
+                    onChange={(e) => handleFilterChange("priceRange", Number(e.target.value))}
+                    className="w-full mb-3 accent-red-500"
+                  />
+                  <div className="space-y-2 mb-4 text-sm">
+                    {["Under ₹5,000", "₹5,000 – ₹10,000", "₹10,000 – ₹25,000", "Above ₹25,000"].map((bucket) => (
+                      <label key={bucket} className="flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={filters.priceBuckets.includes(bucket)}
+                          onChange={(e) => handleFilterChange("priceBuckets", bucket, e.target.checked)}
+                          className="mr-2"
+                        /> {bucket}
+                      </label>
+                    ))}
+                  </div>
 
-                <hr className="mb-3 border-dark" />
+                  <hr className="mb-3 border-dark" />
 
-                {/* Size */}
-                <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-                  Size
-                </p>
-                <div className="space-y-2 mb-4">
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Small (&lt;12in)
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Medium (12–24in)
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Large (24–48in)
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Oversized (48in+)
-                  </label>
-                </div>
+                  {/* Size */}
+                  <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                    Size
+                  </p>
+                  <div className="space-y-2 mb-4">
+                    {["Small (<12in)", "Medium (12–24in)", "Large (24–48in)", "Oversized (48in+)"].map((s) => (
+                      <label key={s} className="flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={filters.size.includes(s)}
+                          onChange={(e) => handleFilterChange("size", s, e.target.checked)}
+                          className="mr-2"
+                        /> {s}
+                      </label>
+                    ))}
+                  </div>
 
-                <hr className="mb-3 border-dark" />
+                      <hr className="mb-3 border-dark" />
 
-                {/* Style */}
-                <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-                  Style
-                </p>
-                <div className="space-y-2 mb-4">
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Abstract
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Modern
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Traditional
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Minimalist
-                  </label>
-                </div>
+                        {/* Main Category */}
+                        <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                          Main Category
+                        </p>
+                        <div className="space-y-2 mb-4">
+                          {(expandedFilters['mainCategoryMobile'] ? mainCategories : mainCategories.slice(0, 5)).map((name) => (
+                            <label key={name} className="flex items-center cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={filters.mainCategory.includes(name)}
+                                onChange={(e) => handleFilterChange("mainCategory", name, e.target.checked)}
+                                className="mr-2"
+                              /> {name}
+                            </label>
+                          ))}
+                          {mainCategories.length > 5 && (
+                            <button
+                              onClick={() => toggleExpand('mainCategoryMobile')}
+                              className="text-red-500 text-sm font-semibold mt-2 hover:underline block"
+                            >
+                              {expandedFilters['mainCategoryMobile'] ? "Show Less" : `+ ${mainCategories.length - 5} Main Category`}
+                            </button>
+                          )}
+                        </div>
 
-                <hr className="mb-3 border-dark" />
+                        <hr className="mb-3 border-dark" />
 
-                {/* Medium */}
-                <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-                  Medium
-                </p>
-                <div className="space-y-2">
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Oil
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Acrylic
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Watercolor
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Mixed Media
-                  </label>
-                </div>
+                        {/* Category */}
+                        <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                          Category
+                        </p>
+                        <div className="space-y-2 mb-4">
+                          {(expandedFilters['categoryMobile'] ? availableCategories : availableCategories.slice(0, 5)).map((name) => (
+                            <label key={name} className="flex items-center cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={filters.category.includes(name)}
+                                onChange={(e) => handleFilterChange("category", name, e.target.checked)}
+                                className="mr-2"
+                              /> {name}
+                            </label>
+                          ))}
+                          {availableCategories.length > 5 && (
+                            <button
+                              onClick={() => toggleExpand('categoryMobile')}
+                              className="text-red-500 text-sm font-semibold mt-2 hover:underline block"
+                            >
+                              {expandedFilters['categoryMobile'] ? "Show Less" : `+ ${availableCategories.length - 5} Category`}
+                            </button>
+                          )}
+                        </div>
+
+                        <hr className="mb-3 border-dark" />
+
+                        {/* Sub Category */}
+                        <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                          Sub Category
+                        </p>
+                        <div className="space-y-2 mb-4">
+                          {(expandedFilters['subCategoryMobile'] ? availableSubCategories : availableSubCategories.slice(0, 5)).map((name) => (
+                            <label key={name} className="flex items-center cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={filters.subCategory.includes(name)}
+                                onChange={(e) => handleFilterChange("subCategory", name, e.target.checked)}
+                                className="mr-2"
+                              /> {name}
+                            </label>
+                          ))}
+                          {availableSubCategories.length > 5 && (
+                            <button
+                              onClick={() => toggleExpand('subCategoryMobile')}
+                              className="text-red-500 text-sm font-semibold mt-2 hover:underline block"
+                            >
+                              {expandedFilters['subCategoryMobile'] ? "Show Less" : `+ ${availableSubCategories.length - 5} Sub Category`}
+                            </button>
+                          )}
+                        </div>
+
+                      <hr className="mb-3 border-dark" />
+
+                      {/* Product Type */}
+                      <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                        Product Type
+                      </p>
+                      <div className="space-y-2 mb-4">
+                        {(expandedFilters['productTypeMobile'] ? options.productTypes : options.productTypes.slice(0, 5)).map((type) => (
+                          <label key={type._id} className="flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={filters.productType.includes(type.name)}
+                              onChange={(e) => handleFilterChange("productType", type.name, e.target.checked)}
+                              className="mr-2"
+                            /> {type.name}
+                          </label>
+                        ))}
+                        {options.productTypes.length > 5 && (
+                          <button
+                            onClick={() => toggleExpand('productTypeMobile')}
+                            className="text-red-500 text-sm font-semibold mt-2 hover:underline block"
+                          >
+                            {expandedFilters['productTypeMobile'] ? "Show Less" : `+ ${options.productTypes.length - 5} Product Type`}
+                          </button>
+                        )}
+                      </div>
+
+                      <hr className="mb-3 border-dark" />
+
+                      {/* Product Medium */}
+                      <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                        Product Medium
+                      </p>
+                      <div className="space-y-2 mb-4">
+                        {(expandedFilters['productMediumMobile'] ? options.productMediums : options.productMediums.slice(0, 5)).map((m) => (
+                          <label key={m._id} className="flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={filters.productMedium.includes(m.name)}
+                              onChange={(e) => handleFilterChange("productMedium", m.name, e.target.checked)}
+                              className="mr-2"
+                            /> {m.name}
+                          </label>
+                        ))}
+                        {options.productMediums.length > 5 && (
+                          <button
+                            onClick={() => toggleExpand('productMediumMobile')}
+                            className="text-red-500 text-sm font-semibold mt-2 hover:underline block"
+                          >
+                            {expandedFilters['productMediumMobile'] ? "Show Less" : `+ ${options.productMediums.length - 5} Product Medium`}
+                          </button>
+                        )}
+                      </div>
+
+                      <hr className="mb-3 border-dark" />
+
+                      {/* Product Material */}
+                      <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                        Product Material
+                      </p>
+                      <div className="space-y-2 mb-4">
+                        {(expandedFilters['productMaterialMobile'] ? options.productMaterials : options.productMaterials.slice(0, 5)).map((mat) => (
+                          <label key={mat._id} className="flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={filters.productMaterial.includes(mat.name)}
+                              onChange={(e) => handleFilterChange("productMaterial", mat.name, e.target.checked)}
+                              className="mr-2"
+                            /> {mat.name}
+                          </label>
+                        ))}
+                        {options.productMaterials.length > 5 && (
+                          <button
+                            onClick={() => toggleExpand('productMaterialMobile')}
+                            className="text-red-500 text-sm font-semibold mt-2 hover:underline block"
+                          >
+                            {expandedFilters['productMaterialMobile'] ? "Show Less" : `+ ${options.productMaterials.length - 5} Product Material`}
+                          </button>
+                        )}
+                      </div>
+
+                      <hr className="mb-3 border-dark" />
+
+                      {/* Product Edition Type */}
+                      <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                        Product Edition Type
+                      </p>
+                      <div className="space-y-2 mb-4">
+                        {(expandedFilters['productEditionTypeMobile'] ? options.productEditionTypes : options.productEditionTypes.slice(0, 5)).map((ed) => (
+                          <label key={ed._id} className="flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={filters.productEditionType.includes(ed.name)}
+                              onChange={(e) => handleFilterChange("productEditionType", ed.name, e.target.checked)}
+                              className="mr-2"
+                            /> {ed.name}
+                          </label>
+                        ))}
+                        {options.productEditionTypes.length > 5 && (
+                          <button
+                            onClick={() => toggleExpand('productEditionTypeMobile')}
+                            className="text-red-500 text-sm font-semibold mt-2 hover:underline block"
+                          >
+                            {expandedFilters['productEditionTypeMobile'] ? "Show Less" : `+ ${options.productEditionTypes.length - 5} Product Edition Type`}
+                          </button>
+                        )}
+                      </div>
+
+                      <hr className="mb-3 border-dark" />
+
+                      {/* Product Surface Type */}
+                      <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                        Product Surface Type
+                      </p>
+                      <div className="space-y-2 mb-4">
+                        {(expandedFilters['productSurfaceTypeMobile'] ? options.productSurfaceTypes : options.productSurfaceTypes.slice(0, 5)).map((s) => (
+                          <label key={s._id} className="flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={filters.productSurfaceType.includes(s.name)}
+                              onChange={(e) => handleFilterChange("productSurfaceType", s.name, e.target.checked)}
+                              className="mr-2"
+                            /> {s.name}
+                          </label>
+                        ))}
+                        {options.productSurfaceTypes.length > 5 && (
+                          <button
+                            onClick={() => toggleExpand('productSurfaceTypeMobile')}
+                            className="text-red-500 text-sm font-semibold mt-2 hover:underline block"
+                          >
+                            {expandedFilters['productSurfaceTypeMobile'] ? "Show Less" : `+ ${options.productSurfaceTypes.length - 5} Product Surface Type`}
+                          </button>
+                        )}
+                      </div>
+
+                  </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
 
         {/* Products Grid */}
         <main className="md:col-span-3">
