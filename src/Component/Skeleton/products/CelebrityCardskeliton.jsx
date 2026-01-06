@@ -2,33 +2,36 @@ import React from "react";
 
 const CelebrityCardskeliton = () => {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 animate-pulse">
-
-      {[1, 2, 3, 4, 5, 6].map((item) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 animate-pulse">
+      {[...Array(6)].map((_, index) => (
         <div
-          key={item}
-          className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#d4d4d4] bg-[#f3f3f3]"
+          key={index}
+          className="bg-white rounded-[2rem] overflow-hidden shadow-sm border border-gray-100 flex flex-col h-full"
         >
           {/* Name Skeleton */}
-          <div className="px-2 py-4 text-center">
-            <div className="h-5 md:h-8 w-24 md:w-40 mx-auto bg-gray-300 rounded"></div>
-            <div className="mt-3 h-3 md:h-4 w-32 md:w-52 mx-auto bg-gray-200 rounded"></div>
+          <div className="p-6 text-center">
+            <div className="h-7 w-3/4 mx-auto bg-gray-200 rounded-lg"></div>
           </div>
 
           {/* Image Skeleton */}
-          <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-gray-300 overflow-hidden">
-            <div className="w-full h-full bg-gray-300"></div>
+          <div className="relative aspect-square bg-gray-100 border-y border-gray-100">
+            <div className="w-full h-full bg-gray-200"></div>
           </div>
 
-          {/* Button Skeleton (Desktop Only) */}
-          <div className="relative hidden md:block">
-            <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-              <div className="bg-gray-300/60 backdrop-blur-md h-10 w-36 rounded-full"></div>
+          {/* Stats and Button Skeleton */}
+          <div className="p-6 mt-auto space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-gray-200 rounded-full"></div>
+                <div className="h-4 w-24 bg-gray-200 rounded"></div>
+              </div>
+              <div className="h-5 w-16 bg-gray-100 rounded-full"></div>
             </div>
+            
+            <div className="w-full h-12 bg-gray-200 rounded-xl"></div>
           </div>
         </div>
       ))}
-
     </div>
   );
 };

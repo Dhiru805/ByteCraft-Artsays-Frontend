@@ -38,7 +38,7 @@ const TermsPolicyPage = () => {
   }, []);
 
   return (
-    <div className="max-w-[1440px] mx-auto font-[poppins]">
+    <div className="w-full bg-gray-50 min-h-screen font-[poppins]">
      
       <Helmet>
         <meta charSet="utf-8" />
@@ -64,15 +64,21 @@ const TermsPolicyPage = () => {
         {seoData.metaImage && <meta name="twitter:image" content={seoData.metaImage} />}
       </Helmet>
 
-      <HeroImgTermsPolicy />
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6 mt-6">
-        <TermsPolicySidebar
-          selectedPolicyId={selectedPolicyId}
-          onSelect={setSelectedPolicyId}
-        />
-        <main className="md:col-span-3">
-          <TermsPolicyContent selectedPolicyId={selectedPolicyId} />
-        </main>
+      <div className="no-print">
+        <HeroImgTermsPolicy />
+      </div>
+      <div className="w-full max-w-[1440px] mx-auto p-3">
+        <div className="flex flex-col lg:flex-row gap-3 mt-6">
+          <aside className="w-full lg:w-[300px] shrink-0 no-print">
+            <TermsPolicySidebar
+              selectedPolicyId={selectedPolicyId}
+              onSelect={setSelectedPolicyId}
+            />
+          </aside>
+          <main className="flex-grow">
+            <TermsPolicyContent selectedPolicyId={selectedPolicyId} />
+          </main>
+        </div>
       </div>
     </div>
   );
