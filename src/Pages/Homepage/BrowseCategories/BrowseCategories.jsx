@@ -1537,8 +1537,8 @@ const BrowseCategories = () => {
       <div className="max-w-[1440px] mx-auto px-4">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 align-items-center mb-3">
-          <div className="flex flex-col gap-3">
-            <h1 className="text-3xl md:text-5xl font-black text-gray-900 mb-4 tracking-tighter">
+          <div className="flex flex-col gap-6">
+            <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
               {data.heading || "Browse Categories"}
             </h1>
             <p className="text-gray-500 text-lg max-w-2xl font-medium leading-relaxed">
@@ -1548,7 +1548,7 @@ const BrowseCategories = () => {
           {data.buttonName && (
             <button
               onClick={() => navigate(data.buttonLink || "/store")}
-              className="bg-[#6F4D34] text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-gray-900 transition-all shadow-lg shadow-[#6F4D34]/20 transform active:scale-95"
+              className="hidden lg:block bg-[#6F4D34] text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-gray-900 transition-all shadow-lg shadow-[#6F4D34]/20 transform active:scale-95"
             >
               {data.buttonName}
             </button>
@@ -1556,7 +1556,7 @@ const BrowseCategories = () => {
         </div>
 
         {/* Category & Search Controls */}
-        <div className="flex flex-col lg:flex-row gap-6 mb-5 items-center">
+        <div className="flex flex-col lg:flex-row gap-3 mb-12 items-center">
           {/* Search Bar - Matching Store Page */}
           <div className="relative flex-1 w-full group">
             <input
@@ -1564,7 +1564,7 @@ const BrowseCategories = () => {
               placeholder="Search masterpieces or artists..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full p-4 pl-12 bg-white border border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#6F4D34]/10 focus:border-[#6F4D34] transition-all text-lg placeholder:text-gray-400"
+              className="w-full p-3 bg-white border border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#6F4D34]/10 focus:border-[#6F4D34] transition-all text-lg placeholder:text-gray-400"
             />
           </div>
 
@@ -1572,7 +1572,7 @@ const BrowseCategories = () => {
           <div className="w-full lg:w-auto overflow-hidden">
             <div
               ref={scrollRef}
-              className="flex gap-3 overflow-x-auto !scrollbar-hide pb-2 cursor-grab active:cursor-grabbing"
+              className="flex gap-3 overflow-x-auto !scrollbar-hide cursor-grab active:cursor-grabbing"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
               onMouseDown={mouseDown}
               onMouseLeave={mouseLeave}
@@ -1605,7 +1605,7 @@ const BrowseCategories = () => {
 
         {/* Products Grid - Using Premium Card Design */}
         {currentItems.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {currentItems.map((product, index) => {
               const hasDiscount = product.sellingPrice < product.marketPrice;
               const discountPercent = hasDiscount ? Math.round(((product.marketPrice - product.sellingPrice) / product.marketPrice) * 100) : 0;

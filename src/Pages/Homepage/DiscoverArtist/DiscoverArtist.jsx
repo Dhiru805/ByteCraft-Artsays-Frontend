@@ -553,11 +553,13 @@ import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
 import DiscoverArtistSkeleton from "../../../Component/Skeleton/DiscoverArtistSkeleton";
 import ArtistGrid from "../../../Component/ArtistGrid/ArtistGrid";
+import { useNavigate } from "react-router-dom";
 
 const DiscoverArtist = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -587,46 +589,31 @@ const DiscoverArtist = () => {
   if (!data) return <div>No Discover Artist section available</div>;
 
   return (
-    <div className="max-w-[1440px] mx-auto py-4 px-3">
-      <div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3">
-  
-          <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
-            {data.heading}
-          </h1>
-
-          <div className="hidden lg:block justify-self-end relative w-full sm:w-64">
+    <div className="w-full bg-gray-50/50 py-12 font-[poppins]">
+      <div className="max-w-[1440px] mx-auto px-4">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 align-items-center mb-12">
+          <div className="flex flex-col gap-6">
+            <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
+              {data.heading}
+            </h1>
+            <p className="text-gray-500 text-lg max-w-2xl font-medium leading-relaxed">
+              {data.description}
+            </p>
+          </div>
+          <div className="relative justify-items-end">
             <input
               type="text"
-              placeholder="Search"
+              placeholder="Search artists..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400"
+              className="hidden md:flex p-3 bg-white border border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#6F4D34]/10 focus:border-[#6F4D34] transition-all text-lg placeholder:text-gray-400"
             />
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-5 h-5 absolute left-3 top-2.5 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"
-              />
-            </svg>
           </div>
         </div>
 
-        <hr className="my-3 border-dark" />
-
-        <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
-          {data.description}
-        </p>
+        <ArtistGrid limit={8} searchQuery={searchQuery} />
       </div>
-      <ArtistGrid limit={8} searchQuery={searchQuery} />
     </div>
   );
 };

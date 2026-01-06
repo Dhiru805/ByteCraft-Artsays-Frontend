@@ -423,7 +423,7 @@ const ArtistCard = () => {
                         <div className="grid grid-cols-5 gap-2">
                           <button
                             onClick={() => handleFollowToggle(artist.id, isFollowing)}
-                            className={`col-span-2 h-[48px] rounded-2xl font-black text-[12px] uppercase tracking-wider transition-all duration-300 border flex items-center justify-center ${
+                            className={`col-span-2 h-[48px] rounded-2xl font-black text-[12px] hover:!bg-[#6F4D34] hover:text-[#ffffff] uppercase tracking-wider transition-all duration-300 border flex items-center justify-center ${
                               isFollowing 
                                 ? "bg-white border-[#6F4D34] text-[#6F4D34]" 
                                 : "bg-gray-50 border-gray-100 text-gray-900 hover:bg-[#6F4D34] hover:text-white"
@@ -434,7 +434,7 @@ const ArtistCard = () => {
 
                           <button
                             onClick={() => handleStoreVisit(artist.id)}
-                            className="col-span-3 h-[48px] bg-[#6F4D34] text-white hover:!text-[#6F4D34] rounded-2xl font-black text-[12px] uppercase tracking-wider transition-all duration-300 shadow-sm hover:!bg-white border border-[#6F4D34] flex items-center justify-center"
+                            className="col-span-3 h-[48px] bg-[#6F4D34] text-white hover:!text-[#6F4D34] hover:!bg-[#ffffff] rounded-2xl font-black text-[12px] uppercase tracking-wider transition-all duration-300 shadow-sm hover:!bg-white border border-[#6F4D34] flex items-center justify-center"
                           >
                             Visit Store
                           </button>
