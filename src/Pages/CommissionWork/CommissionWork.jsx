@@ -61,8 +61,8 @@ const Commission = () => {
     fetchSEOMetadata();
   }, []);
 
-  return (
-    <div className="max-w-[1440px] mx-auto font-[poppins]">
+    return (
+    <div className="w-full font-[poppins]">
 
       <Helmet>
         <meta charSet="utf-8" />

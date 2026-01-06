@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { Search, ChevronRight, Info, MessageCircle, HelpCircle, Layout } from "lucide-react";
 import axiosInstance from "../../../api/axiosConfig";
+import CommissionContentSkeliton from "../../../Component/Skeleton/Home/Account/CommissionContentSkeliton";
+import "../../store/products/product.css";
 
 const AffiliateBPContent = () => {
     const [pageData, setPageData] = useState(null);
@@ -14,8 +17,8 @@ const AffiliateBPContent = () => {
                 if (res.data.success && res.data.data) {
                     setPageData(res.data.data);
                 }
-            } catch (err) {
-                console.error("Error fetching Affiliate BP page:", err);
+            } catch (error) {
+                console.error("Error fetching Affiliate BP page:", error);
             } finally {
                 setLoading(false);
             }
@@ -24,225 +27,205 @@ const AffiliateBPContent = () => {
         fetchPublishedPage();
     }, []);
 
-    if (loading) return <p className="text-center py-6">{PageSkeleton()}</p>;
-    if (!pageData) return <p className="text-center py-6">No content found</p>;
+    if (loading) return (
+        <div className="w-full bg-gray-50 min-h-screen p-4">
+            <div className="max-w-[1440px] mx-auto">
+                <CommissionContentSkeliton />
+            </div>
+        </div>
+    );
 
-    const filteredArticles = pageData.articles?.filter((a) =>
-        a.articleHeading.toLowerCase().includes(searchTerm.toLowerCase())
+    if (!pageData) return (
+        <div className="w-full bg-gray-50 min-h-screen flex items-center justify-center">
+            <p className="text-xl font-bold text-gray-500">No content found</p>
+        </div>
+    );
+
+    const filteredArticles = pageData.articles?.filter((article) =>
+        article.articleHeading.toLowerCase().includes(searchTerm.toLowerCase())
+    ) || [];
+
+    const SidebarCard = ({ title, icon: Icon, children }) => (
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-4 transition-all hover:shadow-md">
+            <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <Icon size={18} className="text-[#6F4D34]" />
+                {title}
+            </h3>
+            <div className="space-y-4">
+                {children}
+            </div>
+        </div>
     );
 
     return (
-        <div className="max-w-[1440px] mx-auto mb-4">
+        <div className="w-full bg-gray-50 min-h-screen font-[poppins] py-8">
+            <div className="max-w-[1440px] mx-auto px-4 md:px-6">
+                <div className="flex flex-col lg:flex-row gap-8">
+                    
+                    {/* Sidebar */}
+                    <aside className="w-full lg:w-[300px] shrink-0">
+                        <div className="sticky top-6 space-y-4">
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                                <h2 className="text-xl font-bold text-gray-900 mb-1">Partner Info</h2>
+                                <nav className="flex items-center text-sm text-gray-500 mt-2">
+                                    <a href="/" className="hover:text-[#6F4D34] transition-colors">Home</a>
+                                    <ChevronRight size={14} className="mx-2" />
+                                    <span className="text-[#6F4D34] font-medium">Affiliate BP</span>
+                                </nav>
+                            </div>
 
-            <div className="w-full py-3 px-3">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                    <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-                        <a href="/" className="hover:text-red-500">Home</a>
-                        <span>/</span>
-                        <span className="font-medium text-gray-900">Affiliate Brand Partner</span>
-                    </nav>
+                            <SidebarCard title="Why Join?" icon={Info}>
+                                <p className="text-sm text-gray-600 leading-relaxed">
+                                    Joining our brand partner program gives you access to a global network of artists and collectors, driving growth for your brand.
+                                </p>
+                            </SidebarCard>
 
-                    <div className="relative w-full sm:w-64">
-                        <input
-                            type="text"
-                            placeholder="Search"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400"
-                        />
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="w-5 h-5 absolute left-3 top-2.5 text-gray-400"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z" />
-                        </svg>
-                    </div>
-                </div>
-            </div>
+                            <SidebarCard title="Partner Support?" icon={HelpCircle}>
+                                <div className="space-y-3">
+                                    <button className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-[#6F4D34]/5 text-gray-700 hover:text-[#6F4D34] transition-all group">
+                                        <span className="text-sm font-semibold">Contact Manager</span>
+                                        <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                                    </button>
+                                    <button className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-[#6F4D34]/5 text-gray-700 hover:text-[#6F4D34] transition-all group">
+                                        <span className="text-sm font-semibold">Partnership FAQ</span>
+                                        <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                                    </button>
+                                </div>
+                            </SidebarCard>
 
-           
-            <h1 className="text-lg md:text-4xl font-bold text-orange-500 px-3">
-                {pageData.webpageHeading}
-            </h1>
-            <hr className="my-3 border-dark" />
+                            <div className="bg-[#6F4D34] p-6 rounded-2xl shadow-xl text-white relative overflow-hidden group">
+                                <div className="relative z-10">
+                                    <h3 className="text-xl font-bold mb-2">Ready to Partner?</h3>
+                                    <p className="text-sm opacity-90 mb-4">Scale your brand with Artsays.</p>
+                                    <button className="w-full py-3 bg-white text-[#6F4D34] rounded-xl font-bold text-sm hover:bg-gray-100 transition-colors">
+                                        Connect Now
+                                    </button>
+                                </div>
+                                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+                            </div>
+                        </div>
+                    </aside>
 
-       
-            <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
-                {pageData.webpageDescription}
-            </p>
+                    {/* Main Content */}
+                    <main className="flex-grow space-y-3">
+                        {/* Search and Header */}
+                        <div className="space-y-3">
+                            <div className="relative group">
+                                <input
+                                    type="text"
+                                    placeholder="Search partner topics..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full p-4 pl-12 bg-white border border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#6F4D34]/10 focus:border-[#6F4D34] transition-all text-lg placeholder:text-gray-400"
+                                />
+                            </div>
 
-            
-            <div className="grid grid-cols-1 gap-6 px-3 sm:px-6 mt-6">
-                {filteredArticles.map((article, index) => (
-                    <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
-                        {article.bannerImage && (
-                            <aside className={`rounded-xl filter-sidebar content-center ${index % 2 === 1 ? "md:order-2" : "md:order-1"}`}>
-                                <img src={`${imageBaseURL}/${article.bannerImage}`} alt={article.articleHeading} className="w-full h-full object-cover rounded-lg" />
-                            </aside>
-                        )}
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                                <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">
+                                    {pageData.webpageHeading}
+                                </h1>
+                                <div className="w-20 h-1.5 bg-[#6F4D34] rounded-full mb-6" />
+                                <p className="text-lg text-gray-600 leading-relaxed max-w-3xl">
+                                    {pageData.webpageDescription}
+                                </p>
+                            </div>
+                        </div>
 
-                        <main className={`md:col-span-3 flex flex-col justify-center ${index % 2 === 1 ? "md:text-right md:order-1" : "md:text-left md:order-2"}`}>
-                            <h2 className="text-sm md:text-xl font-bold text-orange-500">{article.articleHeading}</h2>
-                            <hr className="my-3 border-dark" />
-                            <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed">{article.articleContent}</p>
+                        {/* Articles */}
+                        <div className="space-y-12 py-8">
+                            {filteredArticles.length > 0 ? (
+                                filteredArticles.map((article, index) => (
+                                    <div
+                                        key={index}
+                                        className={`flex flex-col lg:flex-row gap-6 items-center bg-white p-6 rounded-[32px] shadow-sm border border-gray-100 transition-all hover:shadow-xl group ${
+                                            index % 2 === 1 ? "lg:flex-row-reverse" : ""
+                                        }`}
+                                    >
+                                        {article.bannerImage && (
+                                            <div className="w-full lg:w-2/5 aspect-[4/3] overflow-hidden rounded-2xl">
+                                                <img
+                                                    src={`${imageBaseURL}/${article.bannerImage}`}
+                                                    alt={article.articleHeading}
+                                                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700"
+                                                />
+                                            </div>
+                                        )}
 
+                                        <div className="w-full lg:w-3/5 space-y-3">
+                                            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 group-hover:text-[#6F4D34] transition-colors">
+                                                {article.articleHeading}
+                                            </h2>
+                                            <p className="text-base md:text-lg text-gray-600 leading-relaxed font-medium">
+                                                {article.articleContent}
+                                            </p>
 
-                            {/* {article.buttonName && article.buttonPath && (
-                <a
-                  href={article.buttonPath}
-                  className="mt-4 inline-block px-5 py-2 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 transition-colors"
-                >
-                  {article.buttonName}
-                </a>
-              )} */}
-
-                            {article.buttonName && article.buttonPath && (
-                                <a
-                                    href={article.buttonPath}
-                                    className="mt-4 inline-block w-auto px-4 py-2 bg-orange-600 text-white font-plain rounded-xl hover:bg-orange-500 transition-colors"
-                                    style={{ maxWidth: "fit-content" }}
-                                >
-                                    {article.buttonName}
-                                </a>
+                                            {article.buttonName && article.buttonPath && (
+                                                <div className="pt-4">
+                                                    <a href={article.buttonPath} target="_blank" rel="noopener noreferrer">
+                                                        <button className="px-8 py-3 bg-[#6F4D34] text-white rounded-2xl font-bold text-sm uppercase tracking-widest shadow-lg hover:bg-[#5a3e2a] hover:-translate-y-1 transition-all active:scale-95 flex items-center gap-2 group/btn">
+                                                            {article.buttonName}
+                                                            <ChevronRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
+                                                        </button>
+                                                    </a>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-300">
+                                    <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <Search size={32} className="text-gray-400" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900">No matching articles found</h3>
+                                    <p className="text-gray-500 mt-2">Try searching for something else.</p>
+                                </div>
                             )}
+                        </div>
 
-                        </main>
-                    </div>
-                ))}
-            </div>
-
-            {pageData.cards?.length > 0 && (
-                <div className="my-5">
-
-                    {pageData.cardsHeading && (
-                        <h2 className="text-lg md:text-4xl font-bold text-orange-500 text-center mb-5">
-                            {pageData.cardsHeading}
-                            <hr className="my-3 border-dark" />
-                        </h2>
-
-                    )}
-
-
-                    {pageData.cardsDescription && (
-                        <p className="mt-2 text-sm md:text-lg md:text-dark font-medium text-black text-center mb-5">
-                            {pageData.cardsDescription}
-                        </p>
-                    )}
-
-                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                        {pageData.cards.map((card, idx) => (
-                            <div
-                                key={idx}
-                                className="mx-auto border rounded-2xl shadow-2xl hover:scale-105 transition-transform duration-300 ease-in-out"
-                            >
-
-                                <div className="relative flex items-center justify-center">
-                                    <img
-                                        src={`${imageBaseURL}/${card.cardImage}`}
-                                        alt={card.cardTitle}
-                                        className="w-full h-28 sm:h-44 object-contain rounded-t-2xl p-5 pb-0 product-img"
-                                    />
+                        {/* Cards Section */}
+                        {pageData.cards?.length > 0 && (
+                            <div className="space-y-8 pt-8">
+                                <div className="text-center space-y-4">
+                                    {pageData.cardsHeading && (
+                                        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900">
+                                            {pageData.cardsHeading}
+                                        </h2>
+                                    )}
+                                    <div className="w-20 h-1.5 bg-[#6F4D34] rounded-full mx-auto" />
+                                    {pageData.cardsDescription && (
+                                        <p className="text-lg text-gray-600 max-w-2xl mx-auto font-medium">
+                                            {pageData.cardsDescription}
+                                        </p>
+                                    )}
                                 </div>
 
-
-                                <h2 className="text-base sm:text-lg text-dark font-semibold mt-1 p-3 text-center">
-                                    {card.cardTitle}
-                                </h2>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {pageData.cards.map((card, idx) => (
+                                        <div
+                                            key={idx}
+                                            className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group text-center"
+                                        >
+                                            <div className="relative w-full aspect-square mb-6 overflow-hidden rounded-2xl bg-gray-50 p-6">
+                                                <img
+                                                    src={`${imageBaseURL}/${card.cardImage}`}
+                                                    alt={card.cardTitle}
+                                                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
+                                                />
+                                            </div>
+                                            <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#6F4D34] transition-colors">
+                                                {card.cardTitle}
+                                            </h3>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                        ))}
-                    </div>
+                        )}
+                    </main>
                 </div>
-            )}
+            </div>
         </div>
     );
 };
 
 export default AffiliateBPContent;
-
-
-const PageSkeleton = () => {
-  return (
-    <div className="animate-pulse px-3 sm:px-6">
-
-      {/* PAGE HEADING */}
-      <div className="mt-3">
-        <div className="h-7 md:h-10 w-48 md:w-80 bg-gray-300 rounded"></div>
-        <div className="w-full h-[1px] bg-gray-300 my-3"></div>
-      </div>
-
-      {/* PAGE DESCRIPTION */}
-      <div>
-        <div className="h-4 bg-gray-300 rounded w-full"></div>
-        <div className="h-4 bg-gray-300 rounded w-5/6 mt-2"></div>
-      </div>
-
-      {/* ARTICLE LIST */}
-      <div className="grid grid-cols-1 gap-6 mt-6">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
-
-            {/* Image Skeleton */}
-            <aside className="w-full h-40 md:h-56 bg-gray-300 rounded-xl"></aside>
-
-            {/* Article Text */}
-            <main className="md:col-span-3 flex flex-col justify-center">
-
-              {/* Heading Line */}
-              <div className="h-5 bg-gray-300 rounded w-40 md:w-56"></div>
-
-              <div className="w-full h-[1px] bg-gray-300 my-3"></div>
-
-              {/* Paragraph Lines */}
-              <div className="space-y-2">
-                <div className="h-4 bg-gray-300 rounded w-full"></div>
-                <div className="h-4 bg-gray-300 rounded w-5/6"></div>
-                <div className="h-4 bg-gray-300 rounded w-4/6"></div>
-              </div>
-
-              {/* Button Skeleton */}
-              <div className="h-8 w-28 bg-gray-300 rounded-xl mt-4"></div>
-
-            </main>
-          </div>
-        ))}
-      </div>
-
-      {/* CARDS SECTION */}
-      <div className="my-5">
-
-        {/* Cards Heading */}
-        <div className="text-center mt-8">
-          <div className="h-7 md:h-10 w-48 md:w-80 bg-gray-300 rounded mx-auto"></div>
-          <div className="w-full h-[1px] bg-gray-300 my-3 mx-auto"></div>
-        </div>
-
-        {/* Cards Description */}
-        <div className="text-center">
-          <div className="h-4 bg-gray-300 rounded w-5/6 mx-auto"></div>
-          <div className="h-4 bg-gray-300 rounded w-4/6 mx-auto mt-2"></div>
-        </div>
-
-        {/* Cards Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-6">
-          {[1, 2, 3, 4].map((i) => (
-            <div
-              key={i}
-              className="mx-auto border rounded-2xl shadow-2xl bg-gray-200"
-            >
-              {/* Card Image */}
-              <div className="h-28 sm:h-44 w-full bg-gray-300 rounded-t-2xl"></div>
-
-              {/* Card Title */}
-              <div className="h-5 bg-gray-300 rounded w-24 mx-auto my-4"></div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-    </div>
-  );
-};
-

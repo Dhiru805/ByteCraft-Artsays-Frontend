@@ -61,7 +61,7 @@ const Affiliate = () => {
   }, []);
 
   return (
-    <div className="max-w-[1440px] mx-auto font-[poppins]">
+    <div className="w-full font-[poppins]">
   
       <Helmet>
         <meta charSet="utf-8" />

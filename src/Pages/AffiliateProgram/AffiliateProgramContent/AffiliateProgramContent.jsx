@@ -1,456 +1,249 @@
-// import React, { useState } from "react";
-
-// const CommissionContent = () => {
-//   const [showFilters, setShowFilters] = useState(false);
-
-//   return (
-//     <div className="max-w-[1440px] mx-auto mb-4">
-//       {/* Top Section: Breadcrumb + Search */}
-//       <div className="w-full py-3 px-3">
-//         <div className="flex flex-wrap items-center justify-between gap-3">
-//           {/* Breadcrumb */}
-//           <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-//             <a href="#" className="hover:text-red-500">
-//               Home
-//             </a>
-//             <span>/</span>
-//             <a href="#" className="hover:text-red-500">
-//               Store
-//             </a>
-//             <span>/</span>
-//             <a href="#" className="hover:text-red-500">
-//               Paintings
-//             </a>
-//             <span>/</span>
-//             <span className="font-medium text-gray-900">Abstract</span>
-//           </nav>
-
-//           {/* Search Bar */}
-//           <div className="relative w-full sm:w-64">
-//             <input
-//               type="text"
-//               placeholder="Search"
-//               className="w-full pl-10 pr-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400"
-//             />
-//             <svg
-//               xmlns="http://www.w3.org/2000/svg"
-//               className="w-5 h-5 absolute left-3 top-2.5 text-gray-400"
-//               fill="none"
-//               viewBox="0 0 24 24"
-//               stroke="currentColor"
-//             >
-//               <path
-//                 strokeLinecap="round"
-//                 strokeLinejoin="round"
-//                 strokeWidth="2"
-//                 d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"
-//               />
-//             </svg>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* title */}
-//       <h1 className="text-lg md:text-4xl font-bold text-orange-500 px-3">
-//         ArtSays Social Media & Affiliate Program Benifits
-//       </h1>
-
-//       <hr className="my-3 border-dark" />
-
-//       {/* Subtitle */}
-//       <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
-//         Turn your creativity and influence into income by joining the ArtSays
-//         Affiliate Program. Whether you’re an artist, blogger, content creator,
-//         or simply an art enthusiast, you can earn rewards for sharing the beauty
-//         of art with the world.
-//       </p>
-
-//       {/* Main Layout */}
-//       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6 mt-3">
-//         {/* Sidebar Filters (hidden on mobile, toggleable) */}
-//         <aside className="rounded-xl filter-sidebar content-center">
-//           <img src="/herosectionimg/Shrug-bro 1.png" alt="" />
-//         </aside>
-
-//         {/* <!-- Product Grid --> */}
-//         <main className="md:col-span-3 content-center">
-//           <div>
-//             {/* title */}
-//             <h1 className="text-sm md:text-xl font-bold text-orange-500">
-//               Why Join?
-//             </h1>
-//             <hr className="my-3 border-dark" />
-//             {/* Subtitle */}
-//             <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
-//               <strong>Earn Commission - </strong>Get a percentage of every
-//               successful sale made through your unique affiliate link.
-//               <br />
-//               <br />
-//               <strong> Support Artists - </strong> Every purchase you promote
-//               directly supports independent creators.
-//               <br />
-//               <br />
-//               <strong>Exclusive Perks - </strong>Access early product releases,
-//               discounts, and affiliate-only campaigns.
-//               <br />
-//               <br />
-//               <strong>Flexible Income - </strong>No limits—earn as much as you
-//               promote.
-//             </p>
-//           </div>
-//         </main>
-//       </div>
-
-//       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6 mt-3">
-//         {/* <!-- Product Grid --> */}
-//         <main className="md:col-span-3 content-center text-right !order-2 md:!order-1">
-//           <div>
-//             {/* title */}
-//             <h1 className="text-sm md:text-xl font-bold text-orange-500">
-//               How It Works
-//             </h1>
-//             <hr className="my-3 border-dark" />
-//             {/* Subtitle */}
-//             <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
-//               <strong>1. Sign Up – </strong>Complete the quick affiliate
-//               registration form.
-//               <br />
-//               <br />
-//               <strong>2. Get Your Link – </strong>Receive your unique tracking
-//               link and affiliate dashboard.
-//               <br />
-//               <br />
-//               <strong>3. Promote – </strong>Share ArtSays artworks, collections,
-//               and challenges on your blog, socials, or website.
-//               <br />
-//               <br />
-//               <strong>4. Earn – </strong>Receive commissions on every qualified
-//               sale made through your referral.
-//             </p>
-//           </div>
-//         </main>
-
-//         {/* Sidebar Filters (hidden on mobile, toggleable) */}
-//         <aside className="rounded-xl filter-sidebar content-center !order-1 md:!order-2">
-//           <img src="/herosectionimg/Audit-pana 1.png" alt="" />
-//         </aside>
-//       </div>
-
-//       <div className="my-5">
-//         <h1 className="text-lg md:text-4xl font-bold text-orange-500 px-3 text-center">
-//           Why Choose ArtSays Social?
-//         </h1>
-//         <hr className="my-3 border-dark" />
-//         {/* Subtitle */}
-//         <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3 mb-5 text-center">
-//           Whether you’re an artist, blogger, content creator, or simply an art
-//           enthusiast, you can earn rewards for sharing the beauty of art with
-//           the world.
-//         </p>
-
-//         <main className="md:col-span-3 px-3">
-//           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-//             {/* <!-- Product Card --> */}
-
-//             <div className="mx-auto border rounded-2xl shadow-2xl">
-//               {/* Premium Label */}
-//               <div className="relative">
-//                 {/* Product Image */}
-//                 <img
-//                   src="/herosectionimg/art-focused.png"
-//                   alt="Beauty of Joseon Mandala Art"
-//                   className="w-full h-28 sm:h-44 object-contain rounded-t-2xl p-5 pb-0 product-img"
-//                 />
-//               </div>
-//                <h2 className="text-base sm:text-lg text-dark font-semibold mt-1 p-3 text-center">
-//                   100% Art-Focused
-//                 </h2>
-//             </div>
-
-//             <div className="mx-auto border rounded-2xl shadow-2xl">
-//               {/* Premium Label */}
-//               <div className="relative">
-//                 {/* Product Image */}
-//                 <img
-//                   src="/herosectionimg/art-focused.png"
-//                   alt="Beauty of Joseon Mandala Art"
-//                   className="w-full h-28 sm:h-44 object-contain rounded-t-2xl p-5 pb-0 product-img"
-//                 />
-//               </div>
-//                <h2 className="text-base sm:text-lg text-dark font-semibold mt-1 p-3 text-center">
-//                   100% Art-Focused
-//                 </h2>
-//             </div>
-
-//             <div className="mx-auto border rounded-2xl shadow-2xl">
-//               {/* Premium Label */}
-//               <div className="relative">
-//                 {/* Product Image */}
-//                 <img
-//                   src="/herosectionimg/art-focused.png"
-//                   alt="Beauty of Joseon Mandala Art"
-//                   className="w-full h-28 sm:h-44 object-contain rounded-t-2xl p-5 pb-0 product-img"
-//                 />
-//               </div>
-//                <h2 className="text-base sm:text-lg text-dark font-semibold mt-1 p-3 text-center">
-//                   100% Art-Focused
-//                 </h2>
-//             </div>
-
-//             <div className="mx-auto border rounded-2xl shadow-2xl">
-//               {/* Premium Label */}
-//               <div className="relative">
-//                 {/* Product Image */}
-//                 <img
-//                   src="/herosectionimg/art-focused.png"
-//                   alt="Beauty of Joseon Mandala Art"
-//                   className="w-full h-28 sm:h-44 object-contain rounded-t-2xl p-5 pb-0 product-img"
-//                 />
-//               </div>
-//                <h2 className="text-base sm:text-lg text-dark font-semibold mt-1 p-3 text-center">
-//                   100% Art-Focused
-//                 </h2>
-//             </div>
-
-//           </div>
-//         </main>
-//       </div>
-//     </div>
-//   );
-// };
-// export default CommissionContent;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import React, { useState, useEffect } from "react";
+import { Search, ChevronRight, Info, MessageCircle, HelpCircle, Layout, Users, TrendingUp, Gift, DollarSign } from "lucide-react";
 import axiosInstance from "../../../api/axiosConfig";
+import "../../store/products/product.css";
 
 const AffiliateContent = () => {
-  const [pageData, setPageData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const [pageData, setPageData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
+    const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
-  useEffect(() => {
-    const fetchPublishedPage = async () => {
-      try {
-        const res = await axiosInstance.get("/api/affiliate/published");
-        if (res.data.success && res.data.data) {
-          setPageData(res.data.data);
-        }
-      } catch (err) {
-        console.error("Error fetching Affiliate page:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    useEffect(() => {
+        const fetchPublishedPage = async () => {
+            try {
+                const res = await axiosInstance.get("/api/affiliate/published");
+                if (res.data.success && res.data.data) {
+                    setPageData(res.data.data);
+                }
+            } catch (err) {
+                console.error("Error fetching Affiliate page:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    fetchPublishedPage();
-  }, []);
+        fetchPublishedPage();
+    }, []);
 
-  if (loading) return <p className="text-center py-6">{PageSkeleton()}</p>;
-  if (!pageData) return <p className="text-center py-6">No content found</p>;
-
-  const filteredArticles = pageData.articles?.filter((a) =>
-    a.articleHeading.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  return (
-    <div className="max-w-[1440px] mx-auto mb-4">
-      <div className="w-full py-3 px-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-            <a href="/" className="text-gray-900 hover:text-red-500">Home</a>
-            <span>/</span>
-            <span className="font-medium text-gray-900">Affiliate Program</span>
-          </nav>
-
-          <div className="relative w-full sm:w-64">
-            <input
-              type="text"
-              placeholder="Search"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400"
-            />
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-5 h-5 absolute left-3 top-2.5 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z" />
-            </svg>
-          </div>
+    if (loading) return (
+        <div className="w-full bg-gray-50 min-h-screen p-4">
+            <div className="max-w-[1440px] mx-auto">
+                {PageSkeleton()}
+            </div>
         </div>
-      </div>
+    );
 
-      <h1 className="text-lg md:text-4xl font-bold text-orange-500 px-3">
-        {pageData.webpageHeading}
-      </h1>
-      <hr className="my-3 border-dark" />
+    if (!pageData) return (
+        <div className="w-full bg-gray-50 min-h-screen flex items-center justify-center">
+            <p className="text-xl font-bold text-gray-500">No content found</p>
+        </div>
+    );
 
-      <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
-        {pageData.webpageDescription}
-      </p>
+    const filteredArticles = pageData.articles?.filter((a) =>
+        a.articleHeading.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
-      <div className="grid grid-cols-1 gap-6 px-3 sm:px-6">
-        {filteredArticles.map((article, index) => (
-          <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {article.bannerImage && (
-              <aside className={`rounded-xl filter-sidebar content-center ${index % 2 === 1 ? "md:order-1" : "md:order-2"}`}>
-                <img src={`${imageBaseURL}/${article.bannerImage}`} alt={article.articleHeading} className="w-full h-full object-cover rounded-lg" />
-              </aside>
-            )}
+    const SidebarCard = ({ title, icon: Icon, children }) => (
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-4 transition-all hover:shadow-md">
+            <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <Icon size={18} className="text-[#6F4D34]" />
+                {title}
+            </h3>
+            <div className="space-y-4">
+                {children}
+            </div>
+        </div>
+    );
 
-            <main className={`md:col-span-3 flex flex-col justify-center ${index % 2 === 1 ? "md:text-right md:order-2" : "md:text-left md:order-1"}`}>
-              <h2 className="text-sm md:text-xl font-bold text-orange-500">{article.articleHeading}</h2>
-              <hr className="my-3 border-dark" />
-              <p className="text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed">{article.articleContent}</p>
-            </main>
-          </div>
-        ))}
-      </div>
+    return (
+        <div className="w-full bg-gray-50 min-h-screen font-[poppins] py-8">
+            <div className="max-w-[1440px] mx-auto px-4 md:px-6">
+                <div className="flex flex-col lg:flex-row gap-8">
+                    
+                    {/* Sidebar */}
+                    <aside className="w-full lg:w-[300px] shrink-0">
+                        <div className="sticky top-6 space-y-4">
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                                <h2 className="text-xl font-bold text-gray-900 mb-1">Affiliate Info</h2>
+                                <nav className="flex items-center text-sm text-gray-500 mt-2">
+                                    <a href="/" className="hover:text-[#6F4D34] transition-colors">Home</a>
+                                    <ChevronRight size={14} className="mx-2" />
+                                    <span className="text-[#6F4D34] font-medium">Affiliate Program</span>
+                                </nav>
+                            </div>
 
-      {pageData.cards?.length > 0 && (
-        <div className="my-10 px-3 sm:px-6">
+                            <SidebarCard title="Why Join?" icon={TrendingUp}>
+                                <p className="text-sm text-gray-600 leading-relaxed">
+                                    Earn competitive commissions while promoting high-quality, authentic artwork to your audience.
+                                </p>
+                            </SidebarCard>
 
-          {pageData.cardsHeading && (
-            <h2 className="text-lg md:text-4xl font-bold text-orange-500 text-center">
-              {pageData.cardsHeading}
-            </h2>
-          )}
-          <hr className="my-3 border-dark" />
-          {pageData.cardsDescription && (
-            <p className="text-sm md:text-lg md:text-dark font-medium text-black leading-relaxed px-3 text-center mb-5">
-              {pageData.cardsDescription}
-            </p>
-          )}
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {pageData.cards.map((card, idx) => (
-              <div
-                key={idx}
-                className="w-full mx-auto border rounded-2xl shadow-lg hover:shadow-2xl"
-              >
+                            <SidebarCard title="Support" icon={HelpCircle}>
+                                <div className="space-y-3">
+                                    <button className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-[#6F4D34]/5 text-gray-700 hover:text-[#6F4D34] transition-all group">
+                                        <span className="text-sm font-semibold">Affiliate FAQ</span>
+                                        <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                                    </button>
+                                    <button className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-[#6F4D34]/5 text-gray-700 hover:text-[#6F4D34] transition-all group">
+                                        <span className="text-sm font-semibold">Contact Partner Team</span>
+                                        <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                                    </button>
+                                </div>
+                            </SidebarCard>
 
-                <div className="relative">
-                  <img
-                    src={`${imageBaseURL}/${card.cardImage}`}
-                    alt={card.cardTitle}
-                    className="w-full h-28 sm:h-44 object-contain rounded-t-2xl p-3 md:p-5 pb-0 product-img"
-                  />
+                            <div className="bg-[#6F4D34] p-6 rounded-2xl shadow-xl text-white relative overflow-hidden group">
+                                <div className="relative z-10">
+                                    <h3 className="text-xl font-bold mb-2">Become a Partner</h3>
+                                    <p className="text-sm opacity-90 mb-4">Start earning rewards today.</p>
+                                    <button className="w-full py-3 bg-white text-[#6F4D34] rounded-xl font-bold text-sm hover:bg-gray-100 transition-colors">
+                                        Join Now
+                                    </button>
+                                </div>
+                                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+                            </div>
+                        </div>
+                    </aside>
+
+                    {/* Main Content */}
+                    <main className="flex-grow space-y-6">
+                        {/* Search and Header */}
+                        <div className="space-y-4">
+                            <div className="relative group">
+                                <input
+                                    type="text"
+                                    placeholder="Search affiliate topics..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full p-4 pl-12 bg-white border border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#6F4D34]/10 focus:border-[#6F4D34] transition-all text-lg placeholder:text-gray-400"
+                                />
+                            </div>
+
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                                <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">
+                                    {pageData.webpageHeading}
+                                </h1>
+                                <div className="w-20 h-1.5 bg-[#6F4D34] rounded-full mb-6" />
+                                <p className="text-lg text-gray-600 leading-relaxed max-w-4xl font-medium">
+                                    {pageData.webpageDescription}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Articles */}
+                        <div className="space-y-8">
+                            {filteredArticles.length > 0 ? (
+                                filteredArticles.map((article, index) => (
+                                    <div
+                                        key={index}
+                                        className={`flex flex-col lg:flex-row gap-8 items-center bg-white p-6 md:p-8 rounded-[32px] shadow-sm border border-gray-100 transition-all hover:shadow-xl group ${
+                                            index % 2 === 1 ? "lg:flex-row-reverse" : ""
+                                        }`}
+                                    >
+                                        {article.bannerImage && (
+                                            <div className="w-full lg:w-2/5 aspect-square lg:aspect-[4/3] overflow-hidden rounded-2xl bg-gray-50">
+                                                <img
+                                                    src={`${imageBaseURL}/${article.bannerImage}`}
+                                                    alt={article.articleHeading}
+                                                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700 p-4"
+                                                />
+                                            </div>
+                                        )}
+
+                                        <div className="w-full lg:w-3/5 space-y-4">
+                                            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 group-hover:text-[#6F4D34] transition-colors">
+                                                {article.articleHeading}
+                                            </h2>
+                                            <div className="w-12 h-1 bg-[#6F4D34]/20 rounded-full" />
+                                            <p className="text-base md:text-lg text-gray-600 leading-relaxed font-medium">
+                                                {article.articleContent}
+                                            </p>
+
+                                            {article.buttonName && article.buttonPath && (
+                                                <div className="pt-4">
+                                                    <a href={article.buttonPath} target="_blank" rel="noopener noreferrer">
+                                                        <button className="px-8 py-3 bg-[#6F4D34] text-white rounded-2xl font-bold text-sm uppercase tracking-widest shadow-lg hover:bg-[#5a3e2a] hover:-translate-y-1 transition-all active:scale-95 flex items-center gap-2 group/btn">
+                                                            {article.buttonName}
+                                                            <ChevronRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
+                                                        </button>
+                                                    </a>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-300">
+                                    <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <Search size={32} className="text-gray-400" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900">No matching articles found</h3>
+                                    <p className="text-gray-500 mt-2">Try searching for something else.</p>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Cards Section */}
+                        {pageData.cards?.length > 0 && (
+                            <div className="pt-12 pb-8 space-y-8">
+                                <div className="text-center space-y-4">
+                                    {pageData.cardsHeading && (
+                                        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
+                                            {pageData.cardsHeading}
+                                        </h2>
+                                    )}
+                                    <div className="w-20 h-1.5 bg-[#6F4D34] rounded-full mx-auto" />
+                                    {pageData.cardsDescription && (
+                                        <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto font-medium">
+                                            {pageData.cardsDescription}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                    {pageData.cards.map((card, idx) => (
+                                        <div
+                                            key={idx}
+                                            className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 transition-all hover:shadow-xl hover:-translate-y-1 group flex flex-col items-center text-center"
+                                        >
+                                            <div className="w-full aspect-square mb-6 overflow-hidden rounded-2xl bg-gray-50 p-6">
+                                                <img
+                                                    src={`${imageBaseURL}/${card.cardImage}`}
+                                                    alt={card.cardTitle}
+                                                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
+                                                />
+                                            </div>
+                                            <h3 className="text-lg font-bold text-gray-900 group-hover:text-[#6F4D34] transition-colors px-2">
+                                                {card.cardTitle}
+                                            </h3>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </main>
                 </div>
-
-
-                <h2 className="sm:text-lg text-dark font-semibold p-3 text-center">
-                  {card.cardTitle}
-                </h2>
-              </div>
-            ))}
-          </div>
+            </div>
         </div>
-      )}
-
-
-
-    </div>
-  );
+    );
 };
 
 export default AffiliateContent;
 
 const PageSkeleton = () => {
-  return (
-    <div className="animate-pulse">
-
-      {/* Page Heading */}
-      <div className="px-3">
-        <div className="w-48 md:w-80 h-7 md:h-10 bg-gray-300 rounded"></div>
-        <div className="w-full h-[1px] bg-gray-300 my-3"></div>
-      </div>
-
-      {/* Page Description */}
-      <div className="px-3">
-        <div className="w-full h-4 bg-gray-300 rounded mt-3"></div>
-        <div className="w-5/6 h-4 bg-gray-300 rounded mt-2"></div>
-      </div>
-
-      {/* ARTICLE LIST */}
-      <div className="grid grid-cols-1 gap-6 px-3 sm:px-6 mt-6">
-        {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6 mt-3 items-center"
-          >
-            {/* Image Skeleton */}
-            <aside className="rounded-xl w-full h-40 md:h-56 bg-gray-300"></aside>
-
-            {/* Article Text Skeleton */}
-            <main className="md:col-span-3 flex flex-col justify-center">
-
-              {/* Heading */}
-              <div className="w-40 md:w-56 h-5 bg-gray-300 rounded"></div>
-
-              {/* Divider */}
-              <div className="w-full h-[1px] bg-gray-300 my-3"></div>
-
-              {/* Content Lines */}
-              <div className="space-y-2">
-                <div className="w-full h-4 bg-gray-300 rounded"></div>
-                <div className="w-5/6 h-4 bg-gray-300 rounded"></div>
-                <div className="w-4/6 h-4 bg-gray-300 rounded"></div>
-              </div>
+    return (
+        <div className="flex flex-col lg:flex-row gap-8 py-8">
+            <aside className="w-full lg:w-[300px] space-y-4">
+                <div className="h-32 bg-white rounded-2xl animate-pulse" />
+                <div className="h-40 bg-white rounded-2xl animate-pulse" />
+                <div className="h-40 bg-white rounded-2xl animate-pulse" />
+            </aside>
+            <main className="flex-grow space-y-6">
+                <div className="h-16 bg-white rounded-2xl animate-pulse" />
+                <div className="h-48 bg-white rounded-2xl animate-pulse" />
+                <div className="h-64 bg-white rounded-[32px] animate-pulse" />
+                <div className="h-64 bg-white rounded-[32px] animate-pulse" />
             </main>
-
-          </div>
-        ))}
-      </div>
-
-      {/* CARDS SECTION */}
-      <div className="my-10 px-3 sm:px-6">
-
-        {/* Cards Heading */}
-        <div className="mx-auto text-center">
-          <div className="w-48 md:w-80 h-7 bg-gray-300 rounded mx-auto"></div>
-          <div className="w-full h-[1px] bg-gray-300 my-3"></div>
         </div>
-
-        {/* Cards Description */}
-        <div className="mx-auto text-center">
-          <div className="w-4/6 h-4 bg-gray-300 rounded mx-auto"></div>
-          <div className="w-3/6 h-4 bg-gray-300 rounded mt-2 mx-auto"></div>
-        </div>
-
-        {/* Cards Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-6">
-          {[1, 2, 3, 4].map((i) => (
-            <div
-              key={i}
-              className="mx-auto border rounded-2xl shadow-2xl bg-gray-200"
-            >
-              {/* Card Image Skeleton */}
-              <div className="w-full h-28 sm:h-44 bg-gray-300 rounded-t-2xl"></div>
-
-              {/* Card Title Skeleton */}
-              <div className="h-5 bg-gray-300 rounded mx-auto mt-3 mb-4 w-24"></div>
-            </div>
-          ))}
-        </div>
-
-      </div>
-    </div>
-  );
+    );
 };
-

@@ -84,7 +84,7 @@ const HowToSell = () => {
         <meta name="twitter:image" content={seoData.metaImage} />
       </Helmet>
 
-      <div className="max-w-[1440px] mx-auto font-[poppins]">
+      <div className="w-full font-[poppins]">
         <HeroImgHowToSell />
         <HowToSellContent />
         <Testimonials />
