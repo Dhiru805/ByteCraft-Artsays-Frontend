@@ -1,8 +1,13 @@
-.rules-text ol {
+.rules-text ol, .rules-text-container ol {
     list-style: decimal;
     margin-left: 1.5rem;
     padding-left: 0.5rem;
 }
-.rules-text ol li {
+.rules-text ol li, .rules-text-container ol li {
     margin-bottom: 0.5rem;
+}
+.rules-text-container ul {
+    list-style: disc;
+    margin-left: 1.5rem;
+    padding-left: 0.5rem;
 }
