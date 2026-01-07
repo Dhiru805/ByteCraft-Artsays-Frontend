@@ -77,48 +77,59 @@ const MissionVision = () => {
   if (!data) return <div>Mission & Vision section not available</div>;
 
   return (
-    <div className="bg-[#F8F8F8] py-5">
-      <div className="max-w-[1440px] mx-auto space-y-10">
-        {data.cards?.map((card, index) => {
-          const isImageLeft = index % 2 === 1;
+    <div className="space-y-10">
+      {data.cards?.map((card, index) => {
+        const isImageLeft = index % 2 === 0; // Alternating with WhoWeAre (img left) and WhatWeDo (img right)
 
-          const base = (imageBaseURL || "").replace(/\/+$/, "");
-          const normalize = (p) => (p || "").replace(/\\/g, "/");
-          const stripUploads = (p) => p.replace(/^uploads\//, "");
-          const buildUrl = (p) => {
-            const normalized = normalize(p);
-            const withoutUploads = stripUploads(normalized);
-            return base.includes("/uploads") ? `${base}/${withoutUploads}` : `${base}/${normalized}`;
-          };
+        const base = (imageBaseURL || "").replace(/\/+$/, "");
+        const normalize = (p) => (p || "").replace(/\\/g, "/");
+        const stripUploads = (p) => p.replace(/^uploads\//, "");
+        const buildUrl = (p) => {
+          const normalized = normalize(p);
+          const withoutUploads = stripUploads(normalized);
+          return base.includes("/uploads") ? `${base}/${withoutUploads}` : `${base}/${normalized}`;
+        };
 
-          const sideImageURL = card.sideImage ? buildUrl(card.sideImage) : null;
-          const iconURL = card.icon ? buildUrl(card.icon) : null;
+        const sideImageURL = card.sideImage ? buildUrl(card.sideImage) : null;
+        const iconURL = card.icon ? buildUrl(card.icon) : null;
 
-          return (
-            <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-              {isImageLeft && sideImageURL && (
-                <div className="flex justify-center items-center">
-                  <img src={sideImageURL} alt={card.heading} className="w-full h-auto object-contain rounded-xl" />
-                </div>
-              )}
-
-              <div className="mx-5 bg-white p-6 border rounded-2xl shadow flex flex-col justify-center">
-                <h2 className="flex items-center text-2xl font-bold text-[#6F4D34] pb-3 justify-center">
-                  {iconURL && <img src={iconURL} alt="icon" className="w-6 h-6 mr-3" />}
-                  {card.heading}
-                </h2>
-                <p className="text-center">{card.description}</p>
-              </div>
-
-              {!isImageLeft && sideImageURL && (
-                <div className="flex justify-center items-center">
-                  <img src={sideImageURL} alt={card.heading} className="w-full h-auto object-contain rounded-xl" />
-                </div>
+        return (
+          <div
+            key={index}
+            className={`flex flex-col lg:flex-row gap-10 items-center bg-white p-6 md:p-10 rounded-[32px] shadow-sm border border-gray-100 transition-all hover:shadow-xl group ${isImageLeft ? "" : "lg:flex-row-reverse"
+              }`}
+          >
+            <div className="w-full lg:w-2/5 aspect-[4/3] overflow-hidden rounded-2xl bg-gray-50 flex items-center justify-center">
+              {sideImageURL ? (
+                <img
+                  src={sideImageURL}
+                  alt={card.heading}
+                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
+                />
+              ) : (
+                <div className="text-gray-300">No Image</div>
               )}
             </div>
-          );
-        })}
-      </div>
+
+            <div className="w-full lg:w-3/5 space-y-4">
+              <div className="flex items-center gap-4 mb-2">
+                {iconURL && (
+                  <div className="p-3 bg-[#6F4D34]/5 rounded-xl">
+                    <img src={iconURL} alt="icon" className="w-8 h-8 object-contain" />
+                  </div>
+                )}
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 group-hover:text-[#6F4D34] transition-colors">
+                  {card.heading}
+                </h2>
+              </div>
+              <div className="w-16 h-1 bg-[#6F4D34] rounded-full" />
+              <p className="text-lg text-gray-600 leading-relaxed font-medium">
+                {card.description}
+              </p>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 };

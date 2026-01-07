@@ -100,44 +100,40 @@ const WhoWeAre = () => {
   if (!data) return <div>Who We Are section not available</div>;
 
   return (
-    <div className="bg-[#F8F8F8]">
-      <div className="max-w-[1440px] mx-auto py-3">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-3 sm:px-6 my-5">
-          <div className="content-center justify-items-center">
-            {data.image1 && (
-              <img
-                src={`${imageBaseURL}/${data.image1}`}
-                alt="Who We Are"
-                className="w-full h-auto object-contain rounded-lg"
-              />
-            )}
-          </div>
-          <div className="col-span-2 content-center">
-            <h1 className="text-lg md:text-5xl font-bold text-orange-500 px-3">
-              {data.heading}
-            </h1>
-            <hr className="my-3 border-dark" />
-            <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
-              {data.description}
-            </p>
-          </div>
+    <div className="bg-white p-6 md:p-10 rounded-[32px] shadow-sm border border-gray-100 transition-all hover:shadow-xl group">
+      <div className="flex flex-col lg:flex-row gap-10 items-center">
+        <div className="w-full lg:w-2/5 aspect-[4/3] overflow-hidden rounded-2xl bg-gray-50 flex items-center justify-center">
+          {data.image1 ? (
+            <img
+              src={`${imageBaseURL}/${data.image1}`}
+              alt="Who We Are"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
+            />
+          ) : (
+            <div className="text-gray-300">No Image</div>
+          )}
         </div>
+        <div className="w-full lg:w-3/5 space-y-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 group-hover:text-[#6F4D34] transition-colors">
+            {data.heading || "Who We Are"}
+          </h2>
+          <div className="w-16 h-1 bg-[#6F4D34] rounded-full" />
+          <p className="text-lg text-gray-600 leading-relaxed font-medium">
+            {data.description}
+          </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6 my-5">
-          {data.stats?.map((s, idx) => (
-            <div
-              key={idx}
-              className={`content-center justify-items-center ${idx < 3 ? "md:border-r-2 md:border-[#6F4D34]" : ""
-                }`}
-            >
-              <h1 className="text-3xl md:text-6xl font-bold text-[#6F4D34] px-3">
-                {s.number}
-              </h1>
-              <h1 className="text-lg md:text-2xl font-semibold text-dark px-3 pt-1 md:pt-3">
-                {s.label}
-              </h1>
-            </div>
-          ))}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6">
+            {data.stats?.map((s, idx) => (
+              <div key={idx} className="text-center p-4 bg-gray-50 rounded-2xl border border-gray-100 transition-colors hover:bg-[#6F4D34]/5">
+                <div className="text-2xl md:text-3xl font-bold text-[#6F4D34] mb-1">
+                  {s.number}
+                </div>
+                <div className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider">
+                  {s.label}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

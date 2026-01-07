@@ -1,24 +1,9 @@
-// import React from 'react';
-// import HeroImgHowToResell from './hero-img/hero-img';
-// import HowToResellContent from './HowToResellContent/HowToResellContent';
-
-// const HowToResell = () => {
-//   return (
-//     <div className="max-w-[1440px] mx-auto font-[poppins]">
-//         <HeroImgHowToResell />
-//         <HowToResellContent />
-//     </div>
-//   );
-// };
-
-// export default HowToResell;
-
-
 import React, { useEffect, useState } from "react";
 import HeroImgHowToResell from "./hero-img/hero-img";
 import HowToResellContent from "./HowToResellContent/HowToResellContent";
 import { Helmet } from "react-helmet-async";
 import axiosInstance from "../../api/axiosConfig";
+import Testimonials from "../AboutUs/Testimonials/Testimonials";
 
 const HowToResell = () => {
   const [seoData, setSeoData] = useState({
@@ -58,7 +43,7 @@ const HowToResell = () => {
   }, []);
 
   return (
-    <div className="max-w-[1440px] mx-auto font-[poppins]">
+    <>
       <Helmet>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -84,9 +69,14 @@ const HowToResell = () => {
         <meta name="twitter:image" content={seoData.metaImage} />
       </Helmet>
 
-      <HeroImgHowToResell />
-      <HowToResellContent />
-    </div>
+      <div className="w-full font-[poppins]">
+        <HeroImgHowToResell />
+        <HowToResellContent />
+        <div className="max-w-[1440px] mx-auto px-4 lg:px-6">
+        <Testimonials />
+        </div>
+      </div>
+    </>
   );
 };
 

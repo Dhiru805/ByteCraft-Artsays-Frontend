@@ -99,7 +99,7 @@ import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import getAPI from "../../../api/getAPI";
 
 const WhatWeDo = () => {
-  const [openIndex, setOpenIndex] = useState(0); 
+  const [openIndex, setOpenIndex] = useState(0);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -133,62 +133,62 @@ const WhatWeDo = () => {
     fetchWhatWeDo();
   }, []);
 
-  if (loading) return <div>{WhatWeDoSkeleton() }</div>;
+  if (loading) return <div>{WhatWeDoSkeleton()}</div>;
   if (!data) return <div>What We Do section not available</div>;
 
   return (
-    <div className="max-w-[1440px] mx-auto py-3 my-5">
-    
-      <div>
-        <h1 className="text-lg md:text-4xl font-bold text-orange-500 px-3">
-          {data.heading || "What We Do"}
-        </h1>
-        <hr className="my-3 border-dark" />
-        <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
-          {data.description || "Description not available for this section."}
-        </p>
-      </div>
-
-    
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-3 sm:px-6 my-5">
-        <div className="order-2 md:!order-1 content-center justify-items-center">
-          <div className="space-y-3">
-          {data.cards?.map((card, index) => (
-            <div
-              key={index}
-              className="border rounded-lg shadow" 
-            >
-              <button
-                onClick={() => toggle(index)}
-                className="w-full flex justify-between items-center p-4 text-lg font-bold text-left focus:outline-none"
-              >
-                {card.cardHeading}
-                <span>
-                  {openIndex === index ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                </span>
-              </button>
-
-              <div
-                className={`transition-all duration-500 ease-in-out overflow-hidden ${openIndex === index ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                  }`}
-              >
-                <div className="px-4 pb-4 text-gray-600">{card.cardDescription}</div>
-              </div>
-            </div>
-          ))}
-          </div>
+    <div className="bg-white p-6 md:p-10 rounded-[32px] shadow-sm border border-gray-100 transition-all hover:shadow-xl group">
+      <div className="gap-10 items-center">
+        <div className="space-y-4 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 group-hover:text-[#6F4D34] transition-colors">
+            {data.heading || "What We Do"}
+          </h2>
+          <div className="w-16 h-1 bg-[#6F4D34] rounded-full" />
+          <p className="text-lg text-gray-600 leading-relaxed font-medium">
+            {data.description}
+          </p>
         </div>
+        <div className="flex flex-col lg:flex-row-reverse gap-4">
+          <div className="w-full lg:w-2/5 aspect-[4/3] overflow-hidden rounded-2xl bg-gray-50 flex items-center justify-center">
+            {data.image ? (
+              <img
+                src={`${imageBaseURL}/${data.image}`}
+                alt="What We Do"
+                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
+              />
+            ) : (
+              <div className="text-gray-300">No Image</div>
+            )}
+          </div>
+          <div className="w-full lg:w-3/5 space-y-6">
+            <div className="space-y-3">
+              {data.cards?.map((card, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden transition-all hover:border-[#6F4D34]/30"
+                >
+                  <button
+                    onClick={() => toggle(index)}
+                    className="w-full flex justify-between items-center p-4 text-lg font-bold text-left text-gray-800 focus:outline-none group/btn"
+                  >
+                    <span className="group-hover/btn:text-[#6F4D34] transition-colors">{card.cardHeading}</span>
+                    <span className="text-[#6F4D34]">
+                      {openIndex === index ? <IoIosArrowUp size={20} /> : <IoIosArrowDown size={20} />}
+                    </span>
+                  </button>
 
-
-
-        <div className="order-1 md:!order-2 content-center justify-items-center">
-          {data.image && (
-            <img
-              src={`${imageBaseURL}/${data.image}`}
-              alt="What We Do"
-              className="w-full h-auto object-contain"
-            />
-          )}
+                  <div
+                    className={`transition-all duration-500 ease-in-out overflow-hidden ${openIndex === index ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                      }`}
+                  >
+                    <div className="px-4 pb-4 text-gray-600 text-base leading-relaxed">
+                      {card.cardDescription}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+        </div>
         </div>
       </div>
     </div>
@@ -198,10 +198,10 @@ const WhatWeDo = () => {
 export default WhatWeDo;
 
 // WhatWeDoSkeleton.jsx
- function WhatWeDoSkeleton() {
+function WhatWeDoSkeleton() {
   return (
     <div className="max-w-[1440px] mx-auto py-3 my-5 animate-pulse">
-      
+
       {/* Heading + Description */}
       <div>
         <div className="h-8 w-1/3 bg-gray-300 rounded mx-3"></div>
@@ -217,7 +217,7 @@ export default WhatWeDo;
 
       {/* Cards + Image Layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-3 sm:px-6 my-5">
-        
+
         {/* Left: Accordion Skeletons */}
         <div className="order-2 md:!order-1 flex flex-col items-center space-y-3 w-full">
 
