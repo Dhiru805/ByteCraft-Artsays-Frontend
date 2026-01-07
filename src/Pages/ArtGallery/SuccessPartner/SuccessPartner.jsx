@@ -1,309 +1,10 @@
-// import { useState, useEffect, useRef } from "react";
-// import "../../store/products/product.css";
-
-// const SuccessPartner = () => {
-//     const slides = [
-//         "/herosectionimg/how1.svg",
-//         "/herosectionimg/artsays.png",
-//         "/herosectionimg/how1.svg",
-//         "/herosectionimg/how1.svg",
-//         "/herosectionimg/how1.svg",
-//         "/herosectionimg/how1.svg",
-//         "/herosectionimg/how1.svg",
-//     ];
-
-//     const [current, setCurrent] = useState(0);
-//     const [isDragging, setIsDragging] = useState(false);
-//     const [startX, setStartX] = useState(0);
-//     const [scrollLeft, setScrollLeft] = useState(0);
-//     const sliderRef = useRef(null);
-
-//     // Auto-slide every 3s
-//     useEffect(() => {
-//         const interval = setInterval(() => {
-//             setCurrent((prev) => (prev + 1) % slides.length);
-//         }, 3000);
-//         return () => clearInterval(interval);
-//     }, [slides.length]);
-
-//     // Responsive auto-slide behavior (1 slide on mobile, multiple on desktop)
-//     useEffect(() => {
-//         const slider = sliderRef.current;
-//         if (slider) {
-//             const slideWidth =
-//                 window.innerWidth < 768 ? slider.offsetWidth : 220; // full width on mobile, fixed width desktop
-//             slider.scrollTo({
-//                 left: current * slideWidth,
-//                 behavior: "smooth",
-//             });
-//         }
-//     }, [current]);
-
-//     // Mouse dragging
-//     const handleMouseDown = (e) => {
-//         setIsDragging(true);
-//         setStartX(e.pageX - sliderRef.current.offsetLeft);
-//         setScrollLeft(sliderRef.current.scrollLeft);
-//     };
-//     const handleMouseLeave = () => setIsDragging(false);
-//     const handleMouseUp = () => setIsDragging(false);
-//     const handleMouseMove = (e) => {
-//         if (!isDragging) return;
-//         e.preventDefault();
-//         const x = e.pageX - sliderRef.current.offsetLeft;
-//         const walk = (x - startX) * 1.5;
-//         sliderRef.current.scrollLeft = scrollLeft - walk;
-//     };
-
-//     // Touch dragging (mobile)
-//     const handleTouchStart = (e) => {
-//         setIsDragging(true);
-//         setStartX(e.touches[0].pageX - sliderRef.current.offsetLeft);
-//         setScrollLeft(sliderRef.current.scrollLeft);
-//     };
-//     const handleTouchMove = (e) => {
-//         if (!isDragging) return;
-//         const x = e.touches[0].pageX - sliderRef.current.offsetLeft;
-//         const walk = (x - startX) * 1.5;
-//         sliderRef.current.scrollLeft = scrollLeft - walk;
-//     };
-//     const handleTouchEnd = () => setIsDragging(false);
-
-//     return (
-//         <div className="max-w-[1440px] mx-auto py-4">
-//             <h1 className="text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
-//                 Success Stories
-//             </h1>
-//             <hr className="my-3 border-dark" />
-//             <p className="mt-3 text-xs md:text-lg font-medium text-black leading-relaxed px-3">
-//                 Safeguard your creativity, confidence, and investment — every brushstroke matters.
-//             </p>
-
-//             <div className="relative w-full overflow-hidden">
-//                 <div
-//                     ref={sliderRef}
-//                     className="flex gap-6 px-3 sm:px-6 my-3 overflow-x-scroll scroll-smooth scrollbar-hide select-none cursor-grab active:cursor-grabbing"
-//                     onMouseDown={handleMouseDown}
-//                     onMouseLeave={handleMouseLeave}
-//                     onMouseUp={handleMouseUp}
-//                     onMouseMove={handleMouseMove}
-//                     onTouchStart={handleTouchStart}
-//                     onTouchMove={handleTouchMove}
-//                     onTouchEnd={handleTouchEnd}
-//                 >
-//                     {slides.map((src, index) => (
-//                         <div
-//                             key={index}
-//                             className="flex-shrink-0 w-[85vw] sm:w-[45vw] md:w-[220px] border border-gray-700 rounded-2xl p-3 bg-white transition-transform duration-300"
-//                         >
-//                             <aside className="w-full h-[190px] rounded-xl flex justify-center items-center">
-//                                 <img
-//                                     src={src}
-//                                     alt={`Slide ${index + 1}`}
-//                                     className="max-w-full max-h-full object-contain"
-//                                 />
-//                             </aside>
-//                         </div>
-//                     ))}
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default SuccessPartner;
-
-
-
-
-//cards have name and other data +profile image
-
-// import { useState, useEffect, useRef } from "react";
-// import getAPI from "../../../api/getAPI";
-// import { toast } from "react-toastify";
-// import "../../store/products/product.css";
-
-// const SuccessPartner = () => {
-//   const [slides, setSlides] = useState([]);
-//   const [current, setCurrent] = useState(0);
-//   const [isDragging, setIsDragging] = useState(false);
-//   const [startX, setStartX] = useState(0);
-//   const [scrollLeft, setScrollLeft] = useState(0);
-//   const sliderRef = useRef(null);
-
-//   const API_IMG_BASE = process.env.REACT_APP_API_URL_FOR_IMAGE;
-
-//   useEffect(() => {
-//     const fetchPartners = async () => {
-//       try {
-//         const response = await getAPI("/api/CMS-artsays-gallery/profile-pic");
-
-//         if (response?.data && !response.data.hasError && Array.isArray(response.data.data)) {
-//           setSlides(response.data.data);
-//         } else {
-//           toast.error("No success partners found.");
-//         }
-//       } catch (error) {
-//         console.error("Error fetching success partners:", error);
-//         toast.error("Failed to load success partners.");
-//       }
-//     };
-
-//     fetchPartners();
-//   }, []);
-
-//   useEffect(() => {
-//     if (!slides.length) return;
-//     const interval = setInterval(() => {
-//       setCurrent((prev) => (prev + 1) % slides.length);
-//     }, 3000);
-//     return () => clearInterval(interval);
-//   }, [slides.length]);
-
-//   useEffect(() => {
-//     const slider = sliderRef.current;
-//     if (slider && slides.length > 0) {
-//       const slideWidth = window.innerWidth < 768 ? slider.offsetWidth : 220;
-//       slider.scrollTo({
-//         left: current * slideWidth,
-//         behavior: "smooth",
-//       });
-//     }
-//   }, [current, slides]);
-
-//   const handleMouseDown = (e) => {
-//     setIsDragging(true);
-//     setStartX(e.pageX - sliderRef.current.offsetLeft);
-//     setScrollLeft(sliderRef.current.scrollLeft);
-//   };
-//   const handleMouseLeave = () => setIsDragging(false);
-//   const handleMouseUp = () => setIsDragging(false);
-//   const handleMouseMove = (e) => {
-//     if (!isDragging) return;
-//     e.preventDefault();
-//     const x = e.pageX - sliderRef.current.offsetLeft;
-//     const walk = (x - startX) * 1.5;
-//     sliderRef.current.scrollLeft = scrollLeft - walk;
-//   };
-
-//   const handleTouchStart = (e) => {
-//     setIsDragging(true);
-//     setStartX(e.touches[0].pageX - sliderRef.current.offsetLeft);
-//     setScrollLeft(sliderRef.current.scrollLeft);
-//   };
-//   const handleTouchMove = (e) => {
-//     if (!isDragging) return;
-//     const x = e.touches[0].pageX - sliderRef.current.offsetLeft;
-//     const walk = (x - startX) * 1.5;
-//     sliderRef.current.scrollLeft = scrollLeft - walk;
-//   };
-//   const handleTouchEnd = () => setIsDragging(false);
-
-//   if (!slides.length) {
-//     return (
-//       <div className="max-w-[1440px] mx-auto py-4 text-center">
-//         <h1 className="text-lg md:text-4xl font-bold text-[#6F4D34]">
-//           Success Stories
-//         </h1>
-//         <p className="mt-3 text-gray-500">No success partners found.</p>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="max-w-[1440px] mx-auto py-4">
-//    <div className="relative w-full overflow-hidden">
-//         <div
-//           ref={sliderRef}
-//           className="flex gap-6 px-3 sm:px-6 my-3 overflow-x-scroll scroll-smooth scrollbar-hide select-none cursor-grab active:cursor-grabbing"
-//           onMouseDown={handleMouseDown}
-//           onMouseLeave={handleMouseLeave}
-//           onMouseUp={handleMouseUp}
-//           onMouseMove={handleMouseMove}
-//           onTouchStart={handleTouchStart}
-//           onTouchMove={handleTouchMove}
-//           onTouchEnd={handleTouchEnd}
-//         >
-//           {slides.map((partner, index) => (
-//             <div
-//               key={partner._id || index}
-//               className="flex-shrink-0 w-[85vw] sm:w-[45vw] md:w-[220px] border border-gray-700 rounded-2xl p-3 bg-white transition-transform duration-300 hover:scale-105"
-//             >
-//               <aside className="w-full h-[190px] rounded-xl flex justify-center items-center bg-gray-50">
-//                 <img
-//                   src={
-//                     partner.profilePhoto
-//                       ? `${API_IMG_BASE}${partner.profilePhoto}`
-//                       : "/default-profile.png"
-//                   }
-//                   alt={partner.userName || "Partner"}
-//                   className="w-[100px] h-[100px] rounded-full object-cover border-2 border-gray-300"
-//                 />
-//               </aside>
-//               <h3 className="text-center text-sm font-semibold mt-2">
-//                 {partner.userName}
-//               </h3>
-//               <p className="text-center text-xs text-gray-500">{partner.type}</p>
-//               {partner.curator && (
-//                 <p className="text-center text-[10px] text-gray-400">
-//                   Curator: {partner.curator}
-//                 </p>
-//               )}
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default SuccessPartner;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//cards have only image
-
-
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
 import { toast } from "react-toastify";
-import "../../store/products/product.css";
 
 const SuccessPartner = () => {
   const [slides, setSlides] = useState([]);
-  const [current, setCurrent] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const sliderRef = useRef(null);
-
+  const [loading, setLoading] = useState(true);
   const API_IMG_BASE = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   useEffect(() => {
@@ -312,116 +13,98 @@ const SuccessPartner = () => {
         const response = await getAPI("/api/CMS-artsays-gallery/profile-pic");
         if (response?.data && !response.data.hasError && Array.isArray(response.data.data)) {
           setSlides(response.data.data);
-        } else {
-          toast.error("No success partners found.");
         }
       } catch (error) {
         console.error("Error fetching success partners:", error);
-        toast.error("Failed to load success partners.");
+      } finally {
+        setLoading(false);
       }
     };
-
     fetchPartners();
   }, []);
 
-  useEffect(() => {
-    if (!slides.length) return;
-    const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % slides.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [slides.length]);
+  if (loading) return <SuccessPartnerSkeleton />;
+  if (!slides.length) return null;
 
-  useEffect(() => {
-    const slider = sliderRef.current;
-    if (slider && slides.length > 0) {
-      const slideWidth = window.innerWidth < 768 ? slider.offsetWidth : 220;
-      slider.scrollTo({
-        left: current * slideWidth,
-        behavior: "smooth",
-      });
-    }
-  }, [current, slides]);
-
-  // Mouse drag
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    setStartX(e.pageX - sliderRef.current.offsetLeft);
-    setScrollLeft(sliderRef.current.scrollLeft);
-  };
-  const handleMouseLeave = () => setIsDragging(false);
-  const handleMouseUp = () => setIsDragging(false);
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    const x = e.pageX - sliderRef.current.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    sliderRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  // Touch drag
-  const handleTouchStart = (e) => {
-    setIsDragging(true);
-    setStartX(e.touches[0].pageX - sliderRef.current.offsetLeft);
-    setScrollLeft(sliderRef.current.scrollLeft);
-  };
-  const handleTouchMove = (e) => {
-    if (!isDragging) return;
-    const x = e.touches[0].pageX - sliderRef.current.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    sliderRef.current.scrollLeft = scrollLeft - walk;
-  };
-  const handleTouchEnd = () => setIsDragging(false);
-
-  if (!slides.length) {
-    return (
-      <div className="max-w-[1440px] mx-auto py-4 text-center">
-        <h1 className="text-lg md:text-4xl font-bold text-[#6F4D34]">
-          Success Stories
-        </h1>
-        <p className="mt-3 text-gray-500">No success partners found.</p>
-      </div>
-    );
-  }
+  // Duplicate slides for seamless infinite loop
+  const marqueeItems = [...slides, ...slides, ...slides];
 
   return (
-    <div className="max-w-[1440px] mx-auto py-4">
-     
+    <div className="w-full py-16 bg-white overflow-hidden relative">
+      <div className="max-w-7xl mx-auto px-6 mb-12 text-center">
+        <span className="inline-block px-4 py-1.5 mb-4 text-xs font-bold tracking-widest text-primary-900 uppercase bg-primary-100 rounded-full">
+          Our Network
+        </span>
+        <h2 className="text-3xl md:text-5xl font-bold text-primary-900 mb-4 font-oswald uppercase tracking-tight">
+          Success Stories
+        </h2>
+        <div className="h-1 w-24 bg-primary-600 mx-auto mb-6 rounded-full"></div>
+        <p className="max-w-2xl mx-auto text-gray-600 text-sm md:text-lg leading-relaxed font-light">
+          Empowering creativity and bridging the gap between artists and the global audience.
+        </p>
+      </div>
 
-      <div className="relative w-full overflow-hidden">
-        <div
-          ref={sliderRef}
-          className="flex gap-6 px-3 sm:px-6 my-3 overflow-x-scroll scroll-smooth scrollbar-hide select-none cursor-grab active:cursor-grabbing"
-          onMouseDown={handleMouseDown}
-          onMouseLeave={handleMouseLeave}
-          onMouseUp={handleMouseUp}
-          onMouseMove={handleMouseMove}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
-          {slides.map((partner, index) => (
+      <div className="relative group">
+        {/* Left & Right Fades for seamless transition */}
+        <div className="absolute left-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-r from-white to-transparent z-10"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-l from-white to-transparent z-10"></div>
+
+        <div className="flex animate-marquee group-hover:[animation-play-state:paused]">
+          {marqueeItems.map((partner, index) => (
             <div
-              key={partner._id || index}
-              className="flex-shrink-0 w-[85vw] sm:w-[45vw] md:w-[220px] border border-gray-700 rounded-2xl p-3 bg-white transition-transform duration-300"
+              key={`${partner._id || index}-${index}`}
+              className="flex-shrink-0 mx-4 md:mx-8 w-48 md:w-64 group/card"
             >
-              <aside className="w-full h-[190px] rounded-xl flex justify-center items-center">
-                <img
-                  src={
-                    partner.profilePhoto
-                      ? `${API_IMG_BASE}${partner.profilePhoto}`
-                      : "/default-profile.png"
-                  }
-                  alt={partner.userName || "Partner"}
-                  className="max-w-full max-h-full object-contain rounded-xl"
-                />
-              </aside>
+              <div className="relative overflow-hidden rounded-2xl border border-gray-100 bg-white/50 backdrop-blur-sm p-6 transition-all duration-500 hover:border-primary-400 hover:shadow-xl hover:shadow-primary-900/5 group-hover/card:-translate-y-2">
+                <div className="aspect-[4/3] flex items-center justify-center p-4">
+                  <img
+                    src={
+                      partner.profilePhoto
+                        ? `${API_IMG_BASE}${partner.profilePhoto}`
+                        : "/default-profile.png"
+                    }
+                    alt={partner.userName || "Partner"}
+                    className="max-w-full max-h-full object-contain grayscale opacity-60 transition-all duration-500 group-hover/card:grayscale-0 group-hover/card:opacity-100"
+                  />
+                </div>
+                {partner.userName && (
+                    <div className="mt-4 text-center">
+                        <p className="text-sm font-semibold text-primary-900 truncate uppercase tracking-wider">{partner.userName}</p>
+                        <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-widest">{partner.type || "Official Partner"}</p>
+                    </div>
+                )}
+              </div>
             </div>
           ))}
         </div>
       </div>
+
+      <style>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-33.33%); }
+        }
+        .animate-marquee {
+          animation: marquee 30s linear infinite;
+        }
+      `}</style>
     </div>
   );
 };
+
+const SuccessPartnerSkeleton = () => (
+  <div className="w-full py-16 bg-white animate-pulse">
+    <div className="max-w-7xl mx-auto px-6 mb-12 text-center">
+      <div className="h-6 w-24 bg-gray-200 mx-auto mb-4 rounded-full"></div>
+      <div className="h-10 md:h-12 w-64 md:w-96 bg-gray-200 mx-auto mb-6 rounded-lg"></div>
+      <div className="h-4 w-full max-w-lg bg-gray-100 mx-auto rounded"></div>
+    </div>
+    <div className="flex gap-8 px-8">
+      {[...Array(6)].map((_, i) => (
+        <div key={i} className="flex-shrink-0 w-64 h-48 bg-gray-100 rounded-2xl"></div>
+      ))}
+    </div>
+  </div>
+);
 
 export default SuccessPartner;
