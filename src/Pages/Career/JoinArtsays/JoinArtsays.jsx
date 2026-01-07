@@ -1,148 +1,10 @@
-// import React, { useState } from "react";
-
-// const JoinArtsays = () => {
-//   const [showFilters, setShowFilters] = useState(false);
-
-//   return (
-//     <div className="max-w-[1440px] mx-auto mb-4">
-//       {/* Top Section: Breadcrumb + Search */}
-//       <div className="w-full py-3 px-3">
-//         <div className="flex flex-wrap items-center justify-between gap-3">
-//           {/* Breadcrumb */}
-//           <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-//             <a href="#" className="hover:text-red-500">
-//               Home
-//             </a>
-//             <span>/</span>
-//             <a href="#" className="hover:text-red-500">
-//               Store
-//             </a>
-//             <span>/</span>
-//             <a href="#" className="hover:text-red-500">
-//               Paintings
-//             </a>
-//             <span>/</span>
-//             <span className="font-medium text-gray-900">Abstract</span>
-//           </nav>
-//         </div>
-//       </div>
-
-//       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3">
-//         {/* title */}
-//         <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
-//           Join ArtSays
-//         </h1>
-//         <button className="hidden md:block w-[200px] place-self-end flex-1 bg-red-500 text-white py-2 px-6 rounded-full font-semibold shadow buy-now">
-//           Explore More
-//         </button>
-//       </div>
-
-//       <hr className="my-3 border-dark" />
-
-//       {/* Subtitle */}
-//       <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
-//         At Artsays, we’re building more than just a platform — we’re shaping the
-//         future of how art is shared, discovered, and celebrated. We believe in
-//         creativity, collaboration, and growth. If you’re passionate about
-//         design, technology, and empowering artists worldwide, this is your
-//         place.
-//       </p>
-
-//       <div className="my-5">
-
-//         <main className="md:col-span-3 px-3">
-//           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-//             {/* <!-- Product Card --> */}
-
-//             <div className="w-full mx-auto border rounded-2xl shadow-xl hover:!shadow-2xl">
-//               {/* Premium Label */}
-//               <div className="relative">
-//                 {/* Product Image */}
-//                 <img
-//                   src="/herosectionimg/art-focused.png"
-//                   alt="Beauty of Joseon Mandala Art"
-//                   className="w-full h-28 sm:h-44 object-contain rounded-t-2xl p-5 pb-0 product-img"
-//                 />
-//               </div>
-//               <h2 className="text-base sm:text-lg text-dark font-semibold mt-1 p-3 text-center">
-//                 100% Art-Focused
-//               </h2>
-//             </div>
-
-//             <div className="w-full mx-auto border rounded-2xl shadow-xl hover:!shadow-2xl">
-//               {/* Premium Label */}
-//               <div className="relative">
-//                 {/* Product Image */}
-//                 <img
-//                   src="/herosectionimg/art-focused.png"
-//                   alt="Beauty of Joseon Mandala Art"
-//                   className="w-full h-28 sm:h-44 object-contain rounded-t-2xl p-5 pb-0 product-img"
-//                 />
-//               </div>
-//               <h2 className="text-base sm:text-lg text-dark font-semibold mt-1 p-3 text-center">
-//                 100% Art-Focused
-//               </h2>
-//             </div>
-
-//             <div className="w-full mx-auto border rounded-2xl shadow-xl hover:!shadow-2xl">
-//               {/* Premium Label */}
-//               <div className="relative">
-//                 {/* Product Image */}
-//                 <img
-//                   src="/herosectionimg/art-focused.png"
-//                   alt="Beauty of Joseon Mandala Art"
-//                   className="w-full h-28 sm:h-44 object-contain rounded-t-2xl p-5 pb-0 product-img"
-//                 />
-//               </div>
-//               <h2 className="text-base sm:text-lg text-dark font-semibold mt-1 p-3 text-center">
-//                 100% Art-Focused
-//               </h2>
-//             </div>
-
-//             <div className="w-full mx-auto border rounded-2xl shadow-xl hover:!shadow-2xl">
-//               {/* Premium Label */}
-//               <div className="relative">
-//                 {/* Product Image */}
-//                 <img
-//                   src="/herosectionimg/art-focused.png"
-//                   alt="Beauty of Joseon Mandala Art"
-//                   className="w-full h-28 sm:h-44 object-contain rounded-t-2xl p-5 pb-0 product-img"
-//                 />
-//               </div>
-//               <h2 className="text-base sm:text-lg text-dark font-semibold mt-1 p-3 text-center">
-//                 100% Art-Focused
-//               </h2>
-//             </div>
-
-//             <div className="w-full mx-auto border rounded-2xl shadow-xl hover:!shadow-2xl">
-//               {/* Premium Label */}
-//               <div className="relative">
-//                 {/* Product Image */}
-//                 <img
-//                   src="/herosectionimg/art-focused.png"
-//                   alt="Beauty of Joseon Mandala Art"
-//                   className="w-full h-28 sm:h-44 object-contain rounded-t-2xl p-5 pb-0 product-img"
-//                 />
-//               </div>
-//               <h2 className="text-base sm:text-lg text-dark font-semibold mt-1 p-3 text-center">
-//                 100% Art-Focused
-//               </h2>
-//             </div>
-//           </div>
-//         </main>
-//       </div>
-//     </div>
-//   );
-// };
-// export default JoinArtsays;
-
-
-
 import React, { useEffect, useState } from "react";
+import { ChevronRight } from "lucide-react";
 import getAPI from "../../../api/getAPI"; 
 
 const JoinArtsays = () => {
   const [page, setPage] = useState(null);
+  const [loading, setLoading] = useState(true);
   const base = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   useEffect(() => {
@@ -154,73 +16,98 @@ const JoinArtsays = () => {
         }
       } catch (err) {
         console.error("Failed to fetch careers page", err);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
 
+  if (loading) {
+    return <JoinArtsaysSkeleton />;
+  }
+
   if (!page) {
-    return <div className="p-5 text-center">Loading...</div>;
+    return null;
   }
 
   const s1 = page.section1;
 
   return (
-    <div className="max-w-[1440px] mx-auto mb-4">
+    <div className="max-w-[1440px] mx-auto space-y-6">
+      {/* Title & Description Section */}
+      <div className="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-2">
+            <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+              {s1.heading || "Join Artsays"}
+            </h2>
+            <div className="w-20 h-1.5 bg-[#6F4D34] rounded-full" />
+          </div>
+          
+          {s1.buttonName && (
+            <a
+              href={s1.buttonLink || "#"}
+              className="inline-flex items-center justify-center px-8 py-3 bg-[#6F4D34] text-white rounded-2xl font-bold text-sm uppercase tracking-widest shadow-lg hover:bg-[#5a3e2a] hover:-translate-y-1 transition-all active:scale-95 group"
+            >
+              {s1.buttonName}
+              <ChevronRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+            </a>
+          )}
+        </div>
 
-      {/* Title */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3">
-        <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
-          {s1.heading}
-        </h1>
-
-        {s1.buttonName && (
-          <a
-            href={s1.buttonLink || "#"}
-            className="hidden md:block w-[200px] place-self-end flex-1 bg-red-500 text-white text-center py-2 px-6 rounded-full font-semibold shadow buy-now "
-          >
-            {s1.buttonName}
-          </a>
-        )}
+        <p className="text-lg text-gray-600 leading-relaxed max-w-4xl">
+          {s1.description}
+        </p>
       </div>
 
-      <hr className="my-3 border-dark" />
-
-      {/* Subtitle / Description */}
-      <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
-        {s1.description}
-      </p>
-
-      {/* Cards Section */}
-      <div className="my-5">
-        <main className="md:col-span-3 px-3">
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-
-            {s1.cards.map((card, i) => (
-              <div
-                key={i}
-                className="w-full mx-auto border shadow-xl hover:!shadow-2xl"
-              >
-                <div className="relative">
-                  <img
-                    src={`${base}/${card.image}`}
-                    alt={card.text}
-                    className="w-full h-36 object-contain p-3 product-img"
-                  />
-                </div>
-
-                <h2 className="text-base sm:text-lg text-dark font-semibold mt-1 p-3 text-center">
-                  {card.text}
-                </h2>
-              </div>
-            ))}
-
+      {/* Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        {s1.cards.map((card, i) => (
+          <div
+            key={i}
+            className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center transition-all hover:shadow-xl hover:-translate-y-1 group"
+          >
+            <div className="relative w-full aspect-square mb-4 overflow-hidden rounded-2xl">
+              <img
+                src={`${base}/${card.image}`}
+                alt={card.text}
+                className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
+              />
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 group-hover:text-[#6F4D34] transition-colors">
+              {card.text}
+            </h3>
           </div>
-        </main>
+        ))}
       </div>
     </div>
   );
 };
+
+const JoinArtsaysSkeleton = () => (
+  <div className="w-full space-y-6 animate-pulse">
+    <div className="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 space-y-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="space-y-3">
+          <div className="h-9 w-48 bg-gray-100 rounded-lg" />
+          <div className="w-20 h-1.5 bg-gray-100 rounded-full" />
+        </div>
+        <div className="h-12 w-40 bg-gray-100 rounded-2xl" />
+      </div>
+      <div className="h-4 w-full bg-gray-100 rounded-lg" />
+      <div className="h-4 w-3/4 bg-gray-100 rounded-lg" />
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <div key={i} className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-100 flex flex-col items-center">
+          <div className="w-full aspect-square bg-gray-100 rounded-2xl mb-4" />
+          <div className="h-5 w-24 bg-gray-100 rounded-lg" />
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
 export default JoinArtsays;
