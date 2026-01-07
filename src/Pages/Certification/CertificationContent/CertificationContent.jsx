@@ -177,19 +177,44 @@ const CertificationContent = () => {
                                 <div className="hidden md:block h-px flex-grow mx-8 bg-gray-100" />
                             </div>
 
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                            <div
+                                className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-6
+                scrollbar-hide [scrollbar-width:none]"
+                            >
                                 {itemsToRender.map((name, index) => (
                                     <div
                                         key={index}
-                                        className="group relative bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 flex flex-col items-center text-center overflow-hidden"
+                                        className="snap-center shrink-0
+                        w-[85%] sm:w-[48%] lg:w-[23%]
+                        group relative bg-white p-8 rounded-[32px]
+                        border border-gray-100 shadow-sm
+                        hover:shadow-2xl hover:-translate-y-2
+                        transition-all duration-500
+                        flex flex-col items-center text-center overflow-hidden"
                                     >
                                         {/* Premium Background Pattern */}
                                         <div className="absolute inset-0 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity pointer-events-none">
                                             <svg className="w-full h-full" viewBox="0 0 60 60">
-                                                <pattern id={`cert-pattern-${index}`} x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                                                    <path d="M10 0 L20 10 L10 20 L0 10 Z" fill="none" stroke="#6F4D34" strokeWidth="0.5" />
+                                                <pattern
+                                                    id={`cert-pattern-${index}`}
+                                                    x="0"
+                                                    y="0"
+                                                    width="20"
+                                                    height="20"
+                                                    patternUnits="userSpaceOnUse"
+                                                >
+                                                    <path
+                                                        d="M10 0 L20 10 L10 20 L0 10 Z"
+                                                        fill="none"
+                                                        stroke="#6F4D34"
+                                                        strokeWidth="0.5"
+                                                    />
                                                 </pattern>
-                                                <rect width="60" height="60" fill={`url(#cert-pattern-${index})`} />
+                                                <rect
+                                                    width="60"
+                                                    height="60"
+                                                    fill={`url(#cert-pattern-${index})`}
+                                                />
                                             </svg>
                                         </div>
 
@@ -197,23 +222,35 @@ const CertificationContent = () => {
                                         <div className="relative mb-6">
                                             <div className="absolute inset-0 bg-[#6F4D34]/10 rounded-full scale-150 blur-2xl group-hover:bg-[#6F4D34]/20 transition-all duration-500" />
                                             <div className="relative w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg border border-gray-50 group-hover:border-[#6F4D34]/20 transition-all duration-500">
-                                                <Shield size={32} className="text-[#6F4D34] group-hover:scale-110 transition-transform duration-500" />
+                                                <Shield
+                                                    size={32}
+                                                    className="text-[#6F4D34] group-hover:scale-110 transition-transform duration-500"
+                                                />
                                             </div>
-                                            {/* Small verified check */}
+
+                                            {/* Verified Check */}
                                             <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 text-white rounded-full border-2 border-white flex items-center justify-center shadow-sm scale-0 group-hover:scale-100 transition-transform duration-500 delay-100">
                                                 <CheckCircle2 size={12} strokeWidth={3} />
                                             </div>
                                         </div>
 
+                                        {/* Title */}
                                         <h3 className="relative z-10 font-bold text-gray-900 group-hover:text-[#6F4D34] transition-colors text-base md:text-lg leading-tight mb-4">
                                             {name}
                                         </h3>
 
-                                        <div className="relative z-10 mt-auto flex items-center gap-2 px-5 py-2 rounded-full bg-gray-50 text-[#6F4D34] hover:!text-[#ffffff] text-[10px] font-bold uppercase tracking-[0.15em] border border-gray-100 group-hover:bg-[#6F4D34] group-hover:text-[#ffffff] group-hover:border-[#6F4D34] transition-all duration-300">
+                                        {/* Badge */}
+                                        <div className="relative z-10 mt-auto flex items-center gap-2 px-5 py-2 rounded-full bg-gray-50 text-[#6F4D34]
+                        hover:!text-white text-[10px] font-bold uppercase tracking-[0.15em]
+                        border border-gray-100
+                        group-hover:bg-[#6F4D34]
+                        group-hover:text-[#ffffff]
+                        group-hover:border-[#6F4D34]
+                        transition-all duration-300">
                                             <span>Official Seal</span>
                                         </div>
 
-                                        {/* Decorative side accent */}
+                                        {/* Decorative Side Accent */}
                                         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 bg-[#6F4D34]/20 rounded-r-full group-hover:h-20 transition-all duration-500" />
                                     </div>
                                 ))}
