@@ -80,42 +80,44 @@ const Testimonials = () => {
     return <p className="text-center py-6">Testimonials not available</p>;
 
   return (
-    <div className="max-w-[1440px] mx-auto bg-white p-6 md:p-10 rounded-[32px] shadow-sm border border-gray-100 m-8 transition-all hover:shadow-xl group">
-      <div className="space-y-8">
-        <div className="text-center space-y-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 group-hover:text-[#6F4D34] transition-colors">
-            {data.mainHeading || "Testimonials"}
-          </h2>
-          <div className="w-16 h-1 bg-[#6F4D34] rounded-full mx-auto" />
-          <p className="text-lg text-gray-600 leading-relaxed font-medium max-w-3xl mx-auto">
-            {data.mainDescription || "Hear what people are saying about us."}
-          </p>
-        </div>
+    <div className="w-full bg-gray-50 font-[poppins] py-8 px-4">
+      <div className="max-w-[1440px] mx-auto bg-white p-6 md:p-10 rounded-[32px] shadow-sm border border-gray-100 m-8 transition-all hover:shadow-xl group">
+        <div className="space-y-8">
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 group-hover:text-[#6F4D34] transition-colors">
+              {data.mainHeading || "Testimonials"}
+            </h2>
+            <div className="w-16 h-1 bg-[#6F4D34] rounded-full mx-auto" />
+            <p className="text-lg text-gray-600 leading-relaxed font-medium mx-auto">
+              {data.mainDescription || "Hear what people are saying about us."}
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-6">
-          {data.testimonials?.map((t, i) => (
-            <div key={i} className="bg-gray-50 p-8 rounded-2xl border border-gray-100 shadow-sm relative transition-all hover:bg-white hover:shadow-md hover:-translate-y-1 group/testi">
-              <div className="absolute top-4 right-4 text-[#6F4D34]/10 group-hover/testi:text-[#6F4D34]/20 transition-colors">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 8.44772 14.017 9V12C14.017 12.5523 13.5693 13 13.017 13H12.017V21H14.017ZM5.017 21L5.017 18C5.017 16.8954 5.91243 16 7.017 16H10.017C10.5693 16 11.017 15.5523 11.017 15V9C11.017 8.44772 10.5693 8 10.017 8H6.017C5.46472 8 5.017 8.44772 5.017 9V12C5.017 12.5523 4.56929 13 4.017 13H3.017V21H5.017Z" />
-                </svg>
-              </div>
-              <div className="relative z-10 space-y-6">
-                <p className="text-gray-600 text-lg leading-relaxed italic">
-                  "{t.description}"
-                </p>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-[#6F4D34]/10 flex items-center justify-center text-[#6F4D34] font-bold text-xl">
-                    {t.name?.charAt(0)}
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-gray-900 group-hover/testi:text-[#6F4D34] transition-colors">{t.name}</h4>
-                    <p className="text-sm text-gray-400">Verified User</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-6">
+            {data.testimonials?.map((t, i) => (
+              <div key={i} className="bg-gray-50 p-8 rounded-2xl border border-gray-100 shadow-sm relative transition-all hover:bg-white hover:shadow-md hover:-translate-y-1 group/testi">
+                <div className="absolute top-4 right-4 text-[#6F4D34]/10 group-hover/testi:text-[#6F4D34]/20 transition-colors">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 8.44772 14.017 9V12C14.017 12.5523 13.5693 13 13.017 13H12.017V21H14.017ZM5.017 21L5.017 18C5.017 16.8954 5.91243 16 7.017 16H10.017C10.5693 16 11.017 15.5523 11.017 15V9C11.017 8.44772 10.5693 8 10.017 8H6.017C5.46472 8 5.017 8.44772 5.017 9V12C5.017 12.5523 4.56929 13 4.017 13H3.017V21H5.017Z" />
+                  </svg>
+                </div>
+                <div className="relative z-10 space-y-6">
+                  <p className="text-gray-600 text-lg leading-relaxed italic">
+                    "{t.description}"
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-[#6F4D34]/10 flex items-center justify-center text-[#6F4D34] font-bold text-xl">
+                      {t.name?.charAt(0)}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-gray-900 group-hover/testi:text-[#6F4D34] transition-colors">{t.name}</h4>
+                      <p className="text-sm text-gray-400">Verified User</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>
