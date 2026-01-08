@@ -130,18 +130,23 @@ function CreateCertification() {
       });
 
       const response = await postAPI("/api/create-certification", submissionData, {}, true);
-      if (!response.hasError) {
-        toast.success("Certification(s) created successfully!");
-        setFormData({
-          userType: localStorage.getItem("userType") || "Seller",
-          userId: localStorage.getItem("userId") || "",
-          productId: "",
-          mainCategories: [],
-          certifications: [],
-          certificationProvider: "",
-        });
-        navigate("/seller/certification");
-      } else {
+      // if (!response.hasError) {
+      //   toast.success("Certification(s) created successfully!");
+      //   setFormData({
+      //     userType: localStorage.getItem("userType") || "Seller",
+      //     userId: localStorage.getItem("userId") || "",
+      //     productId: "",
+      //     mainCategories: [],
+      //     certifications: [],
+      //     certificationProvider: "",
+      //   });
+      //   navigate("/seller/certification");
+      // } 
+      
+       if (response?.data?.data?.paymentUrl) {
+              window.location.href = response.data.data.paymentUrl;
+            }
+      else {
         toast.error(`Failed to create certifications: ${response.message}`);
       }
     } catch (error) {

@@ -2,11 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import getAPI from "../../../../api/getAPI";
 
-const ViewMaterialOrder = () => {
+const ViewOrder = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({});
-  const [selectedProduct, setSelectedProduct] = useState("");
   const [address, setAddress] = useState("");
 
   useEffect(() => {
@@ -30,11 +29,9 @@ const ViewMaterialOrder = () => {
         }
 
         // Step 2: Extract the relevant fields safely
-        const deliveryAddress = `${parsedAddress.line1 || ""}, ${
-          parsedAddress.line2 || ""
-        }, ${parsedAddress.city || ""}, ${parsedAddress.state || ""}, ${
-          parsedAddress.country || ""
-        }, ${parsedAddress.pincode || ""}`;
+        const deliveryAddress = `${parsedAddress.line1 || ""}, ${parsedAddress.line2 || ""
+          }, ${parsedAddress.city || ""}, ${parsedAddress.state || ""}, ${parsedAddress.country || ""
+          }, ${parsedAddress.pincode || ""}`;
 
         // Step 3: Set to state
         setFormData((prev) => ({
@@ -50,12 +47,11 @@ const ViewMaterialOrder = () => {
     getUser();
   }, []);
 
- 
-   useEffect(() => {
+  useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
         const userId = localStorage.getItem("userId");
-        const res = await getAPI(`/api/package-material/seller/order/${userId}/${id}`);
+        const res = await getAPI(`/api/package-material/order/${userId}/${id}`);
         console.log("Fetched order details:", res);
 
         if (res.data && res.data.data) {
@@ -109,7 +105,6 @@ const ViewMaterialOrder = () => {
 
     if (id) fetchOrderDetails();
   }, [id, formData.deliveryAddress]);
-  
 
   return (
     <div className="container-fluid">
@@ -120,7 +115,7 @@ const ViewMaterialOrder = () => {
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
                 <span
-                  onClick={() => navigate("/seller/dashboard")}
+                  onClick={() => navigate("/artist/dashboard")}
                   style={{ cursor: "pointer" }}
                 >
                   <i className="fa fa-dashboard"></i>
@@ -128,7 +123,7 @@ const ViewMaterialOrder = () => {
               </li>
               <li className="breadcrumb-item active">
                 <span
-                  onClick={() => navigate("/seller/packaging-material")}
+                  onClick={() => navigate("/artist/packaging-material")}
                   style={{ cursor: "pointer" }}
                 >
                   Packaging Material Order
@@ -154,7 +149,7 @@ const ViewMaterialOrder = () => {
                         value={formData.material?.materialName?._id || ""}
                         disabled
                       >
-                        <option value="">-- Select Type --</option>
+                        <option value="">-- Material Type --</option>
                         {formData.material && (
                           <option key={formData.material?.materialName?._id} value={formData.material?.materialName?._id}>
                             {formData.material?.materialName?.materialName}
@@ -476,4 +471,4 @@ const ViewMaterialOrder = () => {
   );
 };
 
-export default ViewMaterialOrder;
+export default ViewOrder;

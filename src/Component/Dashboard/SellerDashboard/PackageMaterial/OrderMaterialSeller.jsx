@@ -3,13 +3,13 @@ import getAPI from "../../../../api/getAPI";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../../ConfirmationDialog";
 
-const OrderMaterialSeller = () => {
+const OrderMaterial = () => {
   const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
   const [productsPerPage, setProductsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
+
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedOrderToDelete, setSelectedOrderToDelete] = useState(null);
 
@@ -48,17 +48,18 @@ const OrderMaterialSeller = () => {
   const fetchOrders = async () => {
     try {
       const userId = localStorage.getItem("userId");
-      const res = await getAPI(`/api/package-material/seller/${userId}`);
+      const res = await getAPI(`/api/package-material/${userId}`);
 
       if (res.hasError) {
         console.error("Error fetching orders:", res.message);
         setOrders([]);
         return;
       }
-      console.log("Orders data:", res);
+
       const ordersArray = Array.isArray(res.data.data)
         ? res.data.data
         : [res.data.data];
+
       setOrders(ordersArray);
     } catch (error) {
       console.error("Failed to fetch orders:", error);
@@ -69,13 +70,23 @@ const OrderMaterialSeller = () => {
   useEffect(() => {
     fetchOrders();
   }, []);
+  const filteredItems = orders.filter((mat) => {
+    const name =
+      mat.material?.materialName?.materialName ||
+      mat.stamp?.name ||
+      mat.stickers?.name ||
+      mat.vouchers?.name ||
+      mat.card?.name ||
+      "";
 
-  const filteredItems = orders.filter((mat) =>
-    mat.material?.materialName?.materialName
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  );
+    return name.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
   const totalPages = Math.ceil(filteredItems.length / productsPerPage);
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const endIndex = startIndex + productsPerPage;
+
+  const paginatedItems = filteredItems.slice(startIndex, endIndex);
 
   return (
     <>
@@ -96,72 +107,57 @@ const OrderMaterialSeller = () => {
                 <li className="breadcrumb-item">Packaging Material Order</li>
               </ul>
             </div>
+
             <div className="col-lg-6 col-md-6 col-sm-12">
               <div className="d-flex flex-row-reverse">
-                <div className="page_action">
-                  <button
-                    type="button"
-                    className="btn btn-secondary mr-2"
-                    onClick={() =>
-                      navigate(`/seller/packaging-material/create`)
-                    }
-                  >
-                    <i className="fa fa-plus"></i> Create Order
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => navigate(`/artist/packaging-material/create`)}
+                >
+                  <i className="fa fa-plus"></i> Create Order
+                </button>
               </div>
             </div>
           </div>
         </div>
 
+        {/* TABLE SECTION */}
         <div className="row clearfix">
           <div className="col-lg-12">
             <div className="card">
               <div className="header d-flex justify-content-between align-items-center">
-                <div className="d-none d-md-flex align-items-center mb-2 mb-md-0">
-                  <label className="mb-0 mr-2">Show</label>
+                <div className="d-flex align-items-center">
+                  <label className="mr-2">Show</label>
                   <select
-                    name="DataTables_Table_0_length"
-                    aria-controls="DataTables_Table_0"
                     className="form-control form-control-sm"
                     value={productsPerPage}
                     onChange={handleProductsPerPageChange}
-                    style={{ minWidth: "70px" }}
+                    style={{ width: "70px" }}
                   >
-                    {/* <option value="5">5</option> */}
                     <option value="10">10</option>
                     <option value="25">25</option>
                     <option value="50">50</option>
                     <option value="100">100</option>
                   </select>
-                  <label className="mb-0 ml-2">entries</label>
+                  <label className="ml-2">entries</label>
                 </div>
-                <div className="w-100 w-md-auto d-flex justify-content-end">
-                  <div className="input-group" style={{ maxWidth: "150px" }}>
-                    <input
-                      type="text"
-                      className="form-control form-control-sm"
-                      placeholder="Search"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <i
-                      className="fa fa-search"
-                      style={{
-                        position: "absolute",
-                        right: "10px",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        pointerEvents: "none",
-                      }}
-                    ></i>
-                  </div>
+
+                <div>
+                  <input
+                    type="text"
+                    className="form-control form-control-sm"
+                    placeholder="Search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
                 </div>
               </div>
+
               <div className="body">
                 <div className="table-responsive">
                   <table className="table table-hover">
-                    <thead className="thead-dark text-nowrap">
+                    <thead className="thead-dark">
                       <tr>
                         <th>OrderId</th>
                         <th>Material</th>
@@ -172,55 +168,57 @@ const OrderMaterialSeller = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {orders.filter((mat) =>
-                        mat.material?.materialName?.materialName
-                          .toLowerCase()
-                          .includes(searchTerm.toLowerCase())
-                      ).length === 0 ? (
+                      {paginatedItems.length === 0 ? (
                         <tr>
-                          <td colSpan="4" className="text-center">
+                          <td colSpan="6" className="text-center">
                             No data available
                           </td>
                         </tr>
                       ) : (
-                        orders
-                          .filter((mat) =>
-                            mat.material?.materialName?.materialName
-                              .toLowerCase()
-                              .includes(searchTerm.toLowerCase())
-                          )
-                          .map((mat, index) => (
+                        paginatedItems.map((mat, index) => {
+                          const productImage =
+                            mat.material?.materialName?.materialNameImage ||
+                            mat.stamp?.materialStampImage ||
+                            mat.stickers?.materialStickersImage ||
+                            mat.vouchers?.materialVouchersImage ||
+                            mat.card?.materialCardImage;
+
+                          const productName =
+                            mat.material?.materialName?.materialName ||
+                            mat.stamp?.materialStamp ||
+                            mat.stickers?.materialStickers ||
+                            mat.vouchers?.materialVouchers ||
+                            mat.card?.materialCard;
+
+                          return (
                             <tr key={mat._id}>
-                              <td>{(currentPage - 1) * perPage + index + 1}</td>
+                              <td>{startIndex + index + 1}</td>
+
                               <td>
                                 <img
                                   src={
-                                    mat.material?.materialName
-                                      ?.materialNameImage
+                                    productImage
                                       ? `${
                                           process.env
                                             .REACT_APP_API_URL_FOR_IMAGE
-                                        }/${mat.material?.materialName?.materialNameImage.replace(
-                                          /\\/g,
-                                          "/"
-                                        )}`
+                                        }/${productImage.replace(/\\/g, "/")}`
                                       : "/placeholder.jpg"
                                   }
                                   className="rounded-circle"
-                                  alt={mat.materialName}
+                                  alt={productName}
                                   style={{
                                     width: "30px",
                                     height: "30px",
-                                    objectFit: "cover",
                                     marginRight: "10px",
+                                    objectFit: "cover",
                                   }}
                                 />
-                                <span>
-                                  {mat.material?.materialName?.materialName}
-                                </span>
+                                {productName}
                               </td>
+
                               <td>{mat.quantity}</td>
                               <td>{mat.totalPrice}</td>
+
                               <td>
                                 <button
                                   className={`btn btn-sm ${
@@ -242,10 +240,10 @@ const OrderMaterialSeller = () => {
                                   {mat.status}
                                 </button>
                               </td>
+
                               <td>
                                 <button
-                                  type="button"
-                                  className="btn btn-outline-primary btn-sm mr-2"
+                                  className="btn btn-outline-primary btn-sm"
                                   title="View"
                                   onClick={() =>
                                     navigate(
@@ -257,77 +255,58 @@ const OrderMaterialSeller = () => {
                                 </button>
                               </td>
                             </tr>
-                          ))
+                          );
+                        })
                       )}
                     </tbody>
                   </table>
                 </div>
 
-                <div className="pagination d-flex justify-content-between mt-4">
-                  <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                    Showing {(currentPage - 1) * productsPerPage + 1} to{" "}
-                    {Math.min(
-                      currentPage * productsPerPage,
-                      filteredItems.length
-                    )}{" "}
-                    of {filteredItems.length} entries
+                {/* PAGINATION */}
+                <div className="d-flex justify-content-between mt-4">
+                  <span>
+                    Showing {startIndex + 1} to{" "}
+                    {Math.min(endIndex, filteredItems.length)} of{" "}
+                    {filteredItems.length} entries
                   </span>
 
-                  <ul className="pagination d-flex justify-content-end w-100">
+                  <ul className="pagination">
                     <li
-                      className={`paginate_button page-item ${
+                      className={`page-item ${
                         currentPage === 1 ? "disabled" : ""
                       }`}
-                      onClick={handlePrevious}
                     >
-                      <button className="page-link">Previous</button>
+                      <button className="page-link" onClick={handlePrevious}>
+                        Previous
+                      </button>
                     </li>
 
-                    {Array.from({ length: totalPages }, (_, index) => index + 1)
-                      .filter((pageNumber) => pageNumber === currentPage)
-                      .map((pageNumber, index, array) => {
-                        const prevPage = array[index - 1];
-                        if (prevPage && pageNumber - prevPage > 1) {
-                          return (
-                            <React.Fragment key={`ellipsis-${pageNumber}`}>
-                              <li className="page-item disabled">
-                                <span className="page-link">...</span>
-                              </li>
-                              <li
-                                key={pageNumber}
-                                className={`paginate_button page-item ${
-                                  currentPage === pageNumber ? "active" : ""
-                                }`}
-                                onClick={() => setCurrentPage(pageNumber)}
-                              >
-                                <button className="page-link">
-                                  {pageNumber}
-                                </button>
-                              </li>
-                            </React.Fragment>
-                          );
-                        }
-
-                        return (
-                          <li
-                            key={pageNumber}
-                            className={`paginate_button page-item ${
-                              currentPage === pageNumber ? "active" : ""
-                            }`}
-                            onClick={() => setCurrentPage(pageNumber)}
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                      (page) => (
+                        <li
+                          key={page}
+                          className={`page-item ${
+                            currentPage === page ? "active" : ""
+                          }`}
+                        >
+                          <button
+                            className="page-link"
+                            onClick={() => setCurrentPage(page)}
                           >
-                            <button className="page-link">{pageNumber}</button>
-                          </li>
-                        );
-                      })}
+                            {page}
+                          </button>
+                        </li>
+                      )
+                    )}
 
                     <li
-                      className={`paginate_button page-item ${
+                      className={`page-item ${
                         currentPage === totalPages ? "disabled" : ""
                       }`}
-                      onClick={handleNext}
                     >
-                      <button className="page-link">Next</button>
+                      <button className="page-link" onClick={handleNext}>
+                        Next
+                      </button>
                     </li>
                   </ul>
                 </div>
@@ -336,6 +315,7 @@ const OrderMaterialSeller = () => {
           </div>
         </div>
       </div>
+
       {isDeleteDialogOpen && (
         <ConfirmationDialog
           onClose={handleDeleteCancel}
@@ -348,4 +328,4 @@ const OrderMaterialSeller = () => {
   );
 };
 
-export default OrderMaterialSeller;
+export default OrderMaterial;

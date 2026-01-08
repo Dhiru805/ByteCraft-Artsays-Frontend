@@ -337,16 +337,22 @@ const Post = () => {
         amount: value,
       });
 
-      if (res.data.success) {
-        setTipSuccess(true);
-        setTipPopupOpen(false);
+         if (res?.data?.data?.paymentUrl) {
+                    window.location.href = res?.data?.data?.paymentUrl;
+                  } else {
+                    console.error(`Failed to create certifications: ${res.message}`);
+                  }
 
-        setTipAmount(40);
+      // if (res.data.success) {
+      //   setTipSuccess(true);
+      //   setTipPopupOpen(false);
 
-        setTimeout(() => setTipSuccess(false), 2500);
-      } else {
-        setError(res.data.message || "Failed to send tip");
-      }
+      //   setTipAmount(40);
+
+      //   setTimeout(() => setTipSuccess(false), 2500);
+      // } else {
+      //   setError(res.data.message || "Failed to send tip");
+      // }
     } catch (err) {
       console.error("Error sending tip:", err);
       setError("Something went wrong. Try again.");

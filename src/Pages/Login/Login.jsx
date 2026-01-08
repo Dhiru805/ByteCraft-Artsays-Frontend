@@ -518,7 +518,7 @@ const Login = () => {
       <ToastContainer />
       <VerificationPopup show={showPopup} onHide={() => setShowPopup(false)} />
       <div className="container-fluid p-0 min-vh-100 d-flex flex-column flex-lg-row">
-        <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5" style={{ backgroundColor: "white" }}>
+        <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5" >
           <Link to="/" className="text-decoration-none">
             <h1 className="windhavi">Artsays</h1>
           </Link>
@@ -550,7 +550,8 @@ const Login = () => {
                   fontStyle: "italic",
                   fontSize: "1rem",
                   zIndex: "1",
-                  background: "white",
+                background: "#ffffffff",
+
                 }}
               >
                 Email/Phone

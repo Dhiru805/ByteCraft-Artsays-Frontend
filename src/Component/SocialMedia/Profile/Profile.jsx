@@ -811,18 +811,24 @@ const Profile = ({ shareprofileid }) => {
         amount: value,
       });
 
-      if (res.data.success) {
-        setTipSuccess(true);
-        setTipPopupOpen(false);
+             if (res?.data?.data?.paymentUrl) {
+                    window.location.href = res?.data?.data?.paymentUrl;
+                  } else {
+                    console.error(`Failed to create certifications: ${res.message}`);
+                  }
 
-        // reset
-        setTipAmount(40);
+      // if (res.data.success) {
+      //   setTipSuccess(true);
+      //   setTipPopupOpen(false);
 
-        //  Auto-hide after 2.5s if you want
-        setTimeout(() => setTipSuccess(false), 2500);
-      } else {
-        setError(res.data.message || "Failed to send tip");
-      }
+      //   // reset
+      //   setTipAmount(40);
+
+      //   //  Auto-hide after 2.5s if you want
+      //   setTimeout(() => setTipSuccess(false), 2500);
+      // } else {
+      //   setError(res.data.message || "Failed to send tip");
+      // }
     } catch (err) {
       console.error("Error sending tip:", err);
       setError("Something went wrong. Try again.");

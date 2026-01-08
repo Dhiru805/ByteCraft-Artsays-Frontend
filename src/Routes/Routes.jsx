@@ -20,7 +20,30 @@ import ForgotPassword from "../Pages/Login/Forgotpassword";
 import PrivacyPolicy from "../Pages/PrivacyPolicy/PrivacyPolicy";
 import TermsofServices from "../Pages/Terms&Condition/TermsofServices";
 import BiddingPass from "../Pages/Art-Biding/BidingPage";
-// import Challenge from "../Pages/Challenges/Challenge";
+
+//-------------------------------------------Payment Getway------------------------------------//
+import SuccessPage from "../Pages/PaymentGetway/Success";
+import FailurePage from "../Pages/PaymentGetway/Failure";
+
+import CertificationSuccessPage from "../Pages/PaymentGetway/Certification/Success";
+import CertificationFailurePage from "../Pages/PaymentGetway/Certification/Failure";
+
+import PackagematerialSuccessPage from "../Pages/PaymentGetway/Packagematerial/Success";
+import PackagematerialFailurePage from "../Pages/PaymentGetway/Packagematerial/Failure";
+
+import BadgeSuccessPage from "../Pages/PaymentGetway/Badge/Success";
+import BadgeFailurePage from "../Pages/PaymentGetway/Badge/Failure";
+
+import PromotePostSuccessPage from "../Pages/PaymentGetway/PromotePost/Success";
+import PromotePostFailurePage from "../Pages/PaymentGetway/PromotePost/Failure";
+
+import CheckoutorderSuccessPage from "../Pages/PaymentGetway/OrderCheckout/Success";
+import CheckoutorderFailurePage from "../Pages/PaymentGetway/OrderCheckout/Failure";
+
+import PaymentTipSuccessPage from "../Pages/PaymentGetway/PaymentTip/Success";
+import PaymentTipFailurePage from "../Pages/PaymentGetway/PaymentTip/Failure";
+
+
 
 //----------------------------------------My Account-----------------------------------------//
 import MyAccountMainLayout from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/MyAccountMainLayout";
@@ -194,7 +217,8 @@ import EditInsurance from "../Component/Dashboard/Super-AdminDashboard/Insurance
 import EnquiryTable from "../Component/Dashboard/Super-AdminDashboard/Enquiry/table";
 import ViewEnquiry from "../Component/Dashboard/Super-AdminDashboard/Enquiry/view";
 
-import SMSSettingSignup from "../Component/Dashboard/Super-AdminDashboard/SMSSettings/SmsSettingsSignup"
+import SMSSettingSignup from "../Component/Dashboard/Super-AdminDashboard/SMSSettings/SmsSettingsSignup";
+import PaymentGetwaySetting from "../Component/Dashboard/Super-AdminDashboard/Settings/PaymentGetway/PaymentGetway"
 
 //----------------------------------------Homepage Super-Admin Dashboard-----------------------------------------------------------
 import Homepage from "../Component/Dashboard/Super-AdminDashboard/Homepage/table";
@@ -705,6 +729,31 @@ const AppRoutes = () => {
         <Route path="/terms-services" element={<TermsofServices />} />
 
 
+
+      <Route path="/payment/success" element={<SuccessPage />} />
+      <Route path="/payment/failure" element={<FailurePage />} />
+
+       <Route path="/certification-payment/success" element={<CertificationSuccessPage/>} />
+      <Route path="/certification-payment/failure" element={<CertificationFailurePage />} />
+
+      <Route path="/package-material-payment/success" element={<PackagematerialSuccessPage/>} />
+      <Route path="/package-material-payment/failure" element={<PackagematerialFailurePage />} />
+
+      <Route path="/badge-payment/success" element={<BadgeSuccessPage/>} />
+      <Route path="/badge-payment/failure" element={<BadgeFailurePage/>} />
+
+      <Route path="/promote-post/success" element={<PromotePostSuccessPage/>} />
+      <Route path="/promote-post/failure" element={<PromotePostFailurePage/>} />
+
+      <Route path="/checkout/success" element={<CheckoutorderSuccessPage/>} />
+      <Route path="/checkout/failure" element={<CheckoutorderFailurePage/>} />
+
+      
+      <Route path="/tip-payment/success" element={<PaymentTipSuccessPage/>} />
+      <Route path="/tip-payment/failure" element={<PaymentTipFailurePage/>} />
+
+
+
       </Route>
 
       {/*-------------------------------------------Super Admin Routes--------------------------------------------- */}
@@ -1001,6 +1050,8 @@ const AppRoutes = () => {
         <Route path="settings/blog-category" element={<BlogCategory />} />
         <Route path="settings/product-category" element={<ProductCategory />} />
         <Route path="settings/marketing" element={<SuperAdminMarketing />} />
+        <Route path="settings/payment-getway" element={< PaymentGetwaySetting />} />
+ 
         <Route
           path="settings/certification"
           element={<CertificationSetting />}
@@ -1555,7 +1606,7 @@ const AppRoutes = () => {
             <Route path="my-orders/view" element={<MyOrderView />} />
             <Route path="manage-address" element={<ManageAddress />} />
             <Route
-              path="bank-payment-details"
+              path="bank-payment-details" 
               element={<BankPaymentDetails />}
             />
             <Route path="art-gallery" element={<ArtGallery />} />
