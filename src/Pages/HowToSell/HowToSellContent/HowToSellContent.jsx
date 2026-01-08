@@ -1,231 +1,215 @@
-// import "../../store/products/product.css";
-// import React, { useState } from "react";
-
-// const CommissionContent = () => {
-//   const [showFilters, setShowFilters] = useState(false);
-
-//   return (
-//     <div className="max-w-[1440px] mx-auto mb-4">
-//       {/* Top Section: Breadcrumb + Search */}
-//       <div className="w-full py-3 px-3">
-//         <div className="flex flex-wrap items-center justify-between gap-3">
-//           {/* Breadcrumb */}
-//           <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-//             <a href="#" className="hover:text-red-500">
-//               Home
-//             </a>
-//             <span>/</span>
-//             <a href="#" className="hover:text-red-500">
-//               Store
-//             </a>
-//             <span>/</span>
-//             <a href="#" className="hover:text-red-500">
-//               Paintings
-//             </a>
-//             <span>/</span>
-//             <span className="font-medium text-gray-900">Abstract</span>
-//           </nav>
-//         </div>
-//       </div>
-
-//       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3">
-//         {/* title */}
-//         <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
-//           The Seller’s Path
-//         </h1>
-//         <button className="hidden md:block flex-1 bg-red-500 text-white py-2 px-6 rounded-full font-semibold shadow buy-now">
-//           Discover New Arrivals
-//         </button>
-//       </div>
-
-//       <hr className="my-3 border-dark" />
-
-//       {/* Subtitle */}
-//       <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
-//         At ArtSays, we make it simple for you to collaborate directly with
-//         talented artists and bring your creative vision to life. Commissioning
-//         custom artwork is a personalized process designed to give you a unique
-//         piece that reflects your ideas, style, and story.
-//       </p>
-
-//       {/* Main Layout */}
-//       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6 mt-3">
-//         {/* Sidebar Filters (hidden on mobile, toggleable) */}
-//         <aside className="rounded-xl filter-sidebar content-center justify-items-center bg-transparent">
-//           <img src="/herosectionimg/sell1.svg" alt="" />
-//         </aside>
-
-//         {/* <!-- Product Grid --> */}
-//         <main className="md:col-span-3 content-center">
-//           <div>
-//             {/* title */}
-//             <h1 className="text-sm md:text-xl font-bold text-orange-500">
-//               Create Your Artist Account
-//             </h1>
-//             <hr className="my-3 border-dark" />
-//             {/* Subtitle */}
-//             <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
-//               Fill out the Commission Request Form with details about your
-//               concept, size, medium, and budget. <br />
-//               Provide references or inspiration images (optional) to help the
-//               artist understand your vision.
-//             </p>
-//           </div>
-//         </main>
-//       </div>
-//     </div>
-//   );
-// };
-// export default CommissionContent;
-
-import "../../store/products/product.css";
 import React, { useState, useEffect } from "react";
+import { Search, ChevronRight, HelpCircle, DollarSign, ShieldCheck } from "lucide-react";
 import axiosInstance from "../../../api/axiosConfig";
+import CommissionContentSkeliton from "../../../Component/Skeleton/Home/Account/CommissionContentSkeliton";
+import "../../store/products/product.css";
 
 const HowToSellContent = () => {
-  const [pageData, setPageData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const [pageData, setPageData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
+    const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
-  useEffect(() => {
-    const fetchPublishedPage = async () => {
-      try {
-        const res = await axiosInstance.get("/api/howtosell/published");
-        if (res.data.success && res.data.data) {
-          setPageData(res.data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching HowToSell page:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPublishedPage();
-  }, []);
+    useEffect(() => {
+        const fetchPublishedPage = async () => {
+            try {
+                const res = await axiosInstance.get("/api/howtosell/published");
+                if (res.data.success && res.data.data) {
+                    setPageData(res.data.data);
+                }
+            } catch (error) {
+                console.error("Error fetching HowToSell page:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-  if (loading) return <p className="text-center py-6">{HowToSellcontentSkeleton()}</p>;
-  if (!pageData) return <p className="text-center py-6">No content found</p>;
+        fetchPublishedPage();
+    }, []);
 
-  return (
-    <div className="max-w-[1440px] mx-auto mb-4">
-      <div className="w-full py-3 px-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-            <a href="#" className="hover:text-red-500">
-              Home
-            </a>
-            <span>/</span>
-            <a href="#" className="hover:text-red-500">
-              Sell
-            </a>
-            <span>/</span>
-            <span className="font-medium text-gray-900">How To Sell</span>
-          </nav>
+    if (loading) return (
+        <div className="w-full bg-gray-50 min-h-screen p-4">
+            <div className="max-w-[1440px] mx-auto">
+                <CommissionContentSkeliton />
+            </div>
         </div>
-      </div>
+    );
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3">
-        <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
-          {pageData.webpageHeading}
-        </h1>
-        <button className="hidden md:block flex-1 bg-red-500 text-white py-2 px-6 rounded-full font-semibold shadow buy-now">
-          Start Selling
-        </button>
-      </div>
+    if (!pageData) return (
+        <div className="w-full bg-gray-50 min-h-screen flex items-center justify-center">
+            <p className="text-xl font-bold text-gray-500">No content found</p>
+        </div>
+    );
 
-      <hr className="my-3 border-dark" />
+    const filteredArticles = pageData.articles.filter((article) =>
+        article.articleHeading.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        article.articleContent.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
-      <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
-        {pageData.webpageDescription}
-      </p>
+    const SidebarCard = ({ title, icon: Icon, children }) => (
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-4 transition-all hover:shadow-md">
+            <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <Icon size={18} className="text-[#6F4D34]" />
+                {title}
+            </h3>
+            <div className="space-y-4">
+                {children}
+            </div>
+        </div>
+    );
 
-      <div className="grid grid-cols-1 gap-6 px-3 sm:px-6 my-3">
-        {pageData.articles.map((article, index) => (
-          <div
-            key={index}
-            className="grid grid-cols-1 md:grid-cols-4 gap-6 my-3 items-center"
-          >
-            {article.bannerImage && (
-              <aside className="md:col-span-1 flex justify-center">
-                <img
-                  src={`${imageBaseURL}/${article.bannerImage}`}
-                  alt={article.articleHeading}
-                  className="w-full h-full object-cover rounded-lg max-h-[300px]"
-                />
-              </aside>
-            )}
+    return (
+        <div className="w-full bg-gray-50 min-h-screen font-[poppins] py-8">
+            <div className="max-w-[1440px] mx-auto px-4 md:px-6">
+                <div className="flex flex-col lg:flex-row gap-8">
+                    
+                    {/* Sidebar */}
+                    <aside className="w-full lg:w-[300px] shrink-0">
+                        <div className="sticky top-6 space-y-4">
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                                <h2 className="text-xl font-bold text-gray-900 mb-1">Seller Guide</h2>
+                                <p className="text-sm text-gray-500">Step-by-step selling process</p>
+                                <nav className="flex items-center text-sm text-gray-500 mt-2">
+                                    <a href="/" className="hover:text-[#6F4D34] transition-colors">Home</a>
+                                    <ChevronRight size={14} className="mx-2" />
+                                    <span className="text-[#6F4D34] font-medium">How to Sell</span>
+                                </nav>
+                            </div>
 
-            <main className="md:col-span-3 flex flex-col justify-center">
-              <h2 className="text-sm md:text-xl font-bold text-orange-500">
-                {article.articleHeading}
-              </h2>
-              <hr className="my-3 border-dark" />
-              <p className="text-xs md:text-base font-medium text-black leading-relaxed">
-                {article.articleContent}
-              </p>
-            </main>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+                            <SidebarCard title="Why Sell on Artsays?" icon={DollarSign}>
+                                <p className="text-sm text-gray-600 leading-relaxed">
+                                    Reach global art collectors, manage your portfolio easily, and keep more of what you earn with our artist-friendly platform.
+                                </p>
+                            </SidebarCard>
+
+                            <SidebarCard title="Seller Benefits" icon={ShieldCheck}>
+                                <ul className="space-y-2">
+                                    <li className="flex items-start gap-2 text-sm text-gray-600">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-[#6F4D34] mt-1.5 shrink-0" />
+                                        Secure payment processing
+                                    </li>
+                                    <li className="flex items-start gap-2 text-sm text-gray-600">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-[#6F4D34] mt-1.5 shrink-0" />
+                                        Artist protection & copyright
+                                    </li>
+                                    <li className="flex items-start gap-2 text-sm text-gray-600">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-[#6F4D34] mt-1.5 shrink-0" />
+                                        Exhibition opportunities
+                                    </li>
+                                </ul>
+                            </SidebarCard>
+
+                            <SidebarCard title="Need Help?" icon={HelpCircle}>
+                                <div className="space-y-3">
+                                    <button className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-[#6F4D34]/5 text-gray-700 hover:text-[#6F4D34] transition-all group" onClick={() => window.location.href = '/contact-us'}>
+                                        <span className="text-sm font-semibold">Contact Support</span>
+                                        <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                                    </button>
+                                    <button className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-[#6F4D34]/5 text-gray-700 hover:text-[#6F4D34] transition-all group" onClick={() => window.location.href = '/faq'}>
+                                        <span className="text-sm font-semibold">Seller FAQs</span>
+                                        <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                                    </button>
+                                </div>
+                            </SidebarCard>
+
+                            <div className="bg-[#6F4D34] p-6 rounded-2xl shadow-xl text-white relative overflow-hidden group">
+                                <div className="relative z-10">
+                                    <h3 className="text-xl font-bold mb-2">Ready to Sell?</h3>
+                                    <p className="text-sm opacity-90 mb-4">Start your journey as an Artsays artist today.</p>
+                                    <button 
+                                        className="w-full py-3 bg-white text-[#6F4D34] rounded-xl font-bold text-sm hover:bg-gray-100 transition-colors"
+                                        onClick={() => window.location.href = '/register'}
+                                    >
+                                        Create Account
+                                    </button>
+                                </div>
+                                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+                            </div>
+                        </div>
+                    </aside>
+
+                    {/* Main Content */}
+                    <main className="flex-grow space-y-3">
+                        {/* Search and Header */}
+                        <div className="space-y-3">
+                            <div className="relative group">
+                                <input
+                                    type="text"
+                                    placeholder="Search seller topics..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full p-4 pl-12 bg-white border border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#6F4D34]/10 focus:border-[#6F4D34] transition-all text-lg placeholder:text-gray-400"
+                                />
+                            </div>
+
+                            <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+                                <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">
+                                    {pageData.webpageHeading}
+                                </h1>
+                                <div className="w-20 h-1.5 bg-[#6F4D34] rounded-full mb-6" />
+                                <p className="text-lg text-gray-600 leading-relaxed max-w-3xl">
+                                    {pageData.webpageDescription}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Articles */}
+                        <div className="space-y-12">
+                            {filteredArticles.length > 0 ? (
+                                filteredArticles.map((article, index) => (
+                                    <div
+                                        key={index}
+                                        className={`flex flex-col lg:flex-row gap-6 items-center bg-white p-6 md:p-8 rounded-[32px] shadow-sm border border-gray-100 transition-all hover:shadow-xl group ${
+                                            index % 2 === 1 ? "lg:flex-row-reverse" : ""
+                                        }`}
+                                    >
+                                        {article.bannerImage && (
+                                            <div className="w-full lg:w-2/5 aspect-[4/3] overflow-hidden rounded-2xl">
+                                                <img
+                                                    src={`${imageBaseURL}/${article.bannerImage}`}
+                                                    alt={article.articleHeading}
+                                                    className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
+                                                />
+                                            </div>
+                                        )}
+
+                                        <div className="w-full lg:w-3/5 space-y-3">
+                                            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 group-hover:text-[#6F4D34] transition-colors">
+                                                {article.articleHeading}
+                                            </h2>
+                                            
+                                            <p className="text-base md:text-lg text-gray-600 leading-relaxed font-medium">
+                                                {article.articleContent}
+                                            </p>
+
+                                            {article.buttonName && article.buttonPath && (
+                                                <div className="pt-4">
+                                                    <a href={article.buttonPath} target="_blank" rel="noopener noreferrer">
+                                                        <button className="px-8 py-3 bg-[#6F4D34] text-white rounded-2xl font-bold text-sm uppercase tracking-widest shadow-lg hover:bg-[#5a3e2a] hover:-translate-y-1 transition-all active:scale-95 flex items-center gap-2 group/btn">
+                                                            {article.buttonName}
+                                                            <ChevronRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
+                                                        </button>
+                                                    </a>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-300">
+                                    <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <Search size={32} className="text-gray-400" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900 mb-2">No matching topics found</h3>
+                                    <p className="text-gray-500 max-w-sm mx-auto">Try adjusting your search term to find what you're looking for.</p>
+                                </div>
+                            )}
+                        </div>
+                    </main>
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export default HowToSellContent;
-
-const HowToSellcontentSkeleton = () => {
-  return (
-    <>
-      {/* SKELETON WRAPPER */}
-      <div className="animate-pulse">
-        {/* Heading + Button Row */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3 px-3">
-          <div className="md:col-span-3">
-            <div className="h-8 md:h-12 bg-gray-300 rounded w-3/4"></div>
-          </div>
-
-          <div className="hidden md:flex justify-end">
-            <div className="h-10 w-32 bg-gray-300 rounded-full"></div>
-          </div>
-        </div>
-
-        <hr className="my-3 border-gray-400" />
-
-        {/* Description */}
-        <p className="px-3">
-          <div className="h-4 bg-gray-300 rounded w-full mb-2"></div>
-          <div className="h-4 bg-gray-300 rounded w-5/6"></div>
-        </p>
-
-        {/* Articles Skeleton */}
-        <div className="grid grid-cols-1 gap-6 px-3 sm:px-6 my-3">
-          {[...Array(4)].map((_, index) => (
-            <div
-              key={index}
-              className="grid grid-cols-1 md:grid-cols-4 gap-6 my-3 items-center"
-            >
-              {/* Image */}
-              <aside className="md:col-span-1 flex justify-center">
-                <div className="w-full h-[200px] md:h-[300px] bg-gray-300 rounded-lg"></div>
-              </aside>
-
-              {/* Content */}
-              <main className="md:col-span-3">
-                <div className="h-5 bg-gray-300 rounded w-1/2"></div>
-
-                <hr className="my-3 border-gray-400" />
-
-                <div className="space-y-2">
-                  <div className="h-3 bg-gray-300 w-full rounded"></div>
-                  <div className="h-3 bg-gray-300 w-5/6 rounded"></div>
-                  <div className="h-3 bg-gray-300 w-4/6 rounded"></div>
-                  <div className="h-3 bg-gray-300 w-3/4 rounded"></div>
-                </div>
-              </main>
-            </div>
-          ))}
-        </div>
-      </div>
-    </>
-  );
-};

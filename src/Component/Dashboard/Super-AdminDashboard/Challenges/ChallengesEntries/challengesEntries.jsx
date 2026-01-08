@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import getAPI from "../../../../../api/getAPI";
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 
 const ChallengesEntries = () => {
@@ -12,12 +13,13 @@ const ChallengesEntries = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [applications, setApplications] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
-
+const[loading,setLoading]=useState(true)
   const handleApplicationsPerPage = (e) => {
     setApplicationsPerPage(Number(e.target.value))
   }
 
   const fetchChallengeApplications = async () => {
+
     try {
       const response = await getAPI("/api/challenges-applications")
 
@@ -30,6 +32,8 @@ const ChallengesEntries = () => {
     }
     catch (error) {
       console.log("Error fetching challenge applications: ", error)
+    }finally{
+      setLoading(false);
     }
   }
 
@@ -66,6 +70,7 @@ const ChallengesEntries = () => {
     }
   }
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
 

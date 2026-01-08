@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import getAPI from "../../../../api/getAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 
 const ExhibitionTable = () => {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ const ExhibitionTable = () => {
   const [exhibitionsPerPage, setExhibitionsPerPage] = useState(10);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedExhibitionToDelete, setSelectedExhibitionToDelete] = useState(null);
-
+const[loading,setLoading]=useState(true);
 
   useEffect(() => {
     const fetchAllExhibitions = async () => {
@@ -40,6 +41,8 @@ const ExhibitionTable = () => {
         console.error("Error fetching exhibitions:", error);
         toast.error(error.response?.data?.message || "Failed to fetch exhibitions");
         setExhibitions([]);
+      }finally{
+        setLoading(false)
       }
     };
 
@@ -92,6 +95,7 @@ const ExhibitionTable = () => {
     setCurrentPage(1);
   };
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

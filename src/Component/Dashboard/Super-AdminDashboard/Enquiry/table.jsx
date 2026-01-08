@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import getAPI from "../../../../api/getAPI";
 import axiosInstance from "../../../../api/axiosConfig";
 import ConfirmationDialog from "../../ConfirmationDialog";
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 
 const EnquiryTable = () => {
   const [enquiries, setEnquiries] = useState([]);
@@ -16,7 +17,10 @@ const EnquiryTable = () => {
   const [selectedEnquiry, setSelectedEnquiry] = useState(null);
   const location = useLocation();
 const [deleteEnquiry, setDeleteEnquiry] = useState(null);   
+const [loading,setLoading]=useState(true);
+
   const fetchEnquiries = async () => {
+
     try {
       const response = await getAPI("/api/enquiry");
       const data = Array.isArray(response.data.data) ? response.data.data : [];
@@ -25,6 +29,8 @@ const [deleteEnquiry, setDeleteEnquiry] = useState(null);
       console.error("Error fetching enquiries:", error);
       toast.error(error.response?.data?.message || "Failed to fetch enquiries");
       setEnquiries([]);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -78,6 +84,7 @@ const [deleteEnquiry, setDeleteEnquiry] = useState(null);
     return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
   };
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
 

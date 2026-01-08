@@ -3,14 +3,16 @@ import AutoTargetingTable from "./DefaultAutoTargetingTable";
 import AddAutoTargeting from "./CreateDefaultAutoTargeting";
 import getAPI from "../../../../../api/getAPI";
 import { useNavigate } from 'react-router-dom';
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const AutoTargetingSetting = () => {
   const [autoTargetings, setAutoTargetings] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedAutoTargeting, setSelectedAutoTargeting] = useState(null);
   const navigate = useNavigate();
-
+const[loading,setLoading]=useState(true)
   const fetchAutoTargetingData = async () => {
+    setLoading(true)
     try {
       const response = await getAPI(`/api/get-auto-targeting`, {}, true);
       if (
@@ -24,6 +26,8 @@ const AutoTargetingSetting = () => {
       }
     } catch (err) {
       console.error("Error fetching auto-targeting list:", err);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -31,6 +35,7 @@ const AutoTargetingSetting = () => {
     fetchAutoTargetingData();
   }, []);
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

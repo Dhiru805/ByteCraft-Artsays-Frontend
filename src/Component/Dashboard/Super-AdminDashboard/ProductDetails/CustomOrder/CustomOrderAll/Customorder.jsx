@@ -5,13 +5,14 @@ import useUserType from '../../../../urlconfig';
 import { useConfirm } from '../../../../StatusConfirm';
 import { toast } from 'react-toastify';
 import putAPI from '../../../../../../api/putAPI';
+import ProductRequestSkeleton from "../../../../../Skeleton/artist/ProductRequestSkeleton";
 
 
 const Customorder = () => {
 
     const userType = useUserType();
     const confirm = useConfirm();
-
+const[loading,setLoading]=useState(false);
     // //Buyer
     // const [buyerRequests, setBuyerRequests] = useState([]);
     // const fetchBuyerRequests = async () => {
@@ -50,12 +51,15 @@ const Customorder = () => {
 
     const [buyerRequestsAdmin, setBuyerRequestsAdmin] = useState([]);
     const fetchBuyerRequestsAdmin = async () => {
+        setLoading(true)
         try {
             const response = await getAPI("/api/get-data-admin");
             const buyerRequestsData = response.data.buyerRequests;
             setBuyerRequestsAdmin(buyerRequestsData);
         } catch (error) {
             console.error("Error fetching buyer requests:", error);
+        }finally{
+            setLoading(false)
         }
     };
 
@@ -93,7 +97,7 @@ const Customorder = () => {
     };
 
 
-
+if(loading)return <ProductRequestSkeleton/>
     return (
         <>
 

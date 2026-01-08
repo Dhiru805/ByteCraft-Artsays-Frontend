@@ -25,7 +25,7 @@ export default function PreloaderAnimation() {
         overflow: "hidden",
       }}
     >
-      <style jsx global>{`
+      <style>{`
         @font-face {
           font-family: "Windhvi";
           src: url("/fonts/Windhvi.ttf") format("truetype");

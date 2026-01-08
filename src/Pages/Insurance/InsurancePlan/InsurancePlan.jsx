@@ -318,7 +318,7 @@ const InsurancePlan = () => {
     fetchData();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div><InsurancePlanSkaliton /></div>;
   if (!data) return <div>No data found</div>;
 
   return (
@@ -378,14 +378,18 @@ const InsurancePlan = () => {
                 {/* Pointers */}
                 {card.pointers?.length > 0 && (
                   <div className="border my-3 p-3 bg-[#FFF2E7] rounded-xl">
-                    {card.pointers.map((point, idx) => (
-                      <tr key={idx}>
-                        <td>
-                          <FaStar className="text-[#FF725E]" />
-                        </td>
-                        <td className="pl-2">{point}</td>
-                      </tr>
-                    ))}
+                    <table className="w-full">
+                      <tbody>
+                        {card.pointers.map((point, idx) => (
+                          <tr key={idx}>
+                            <td className="w-5 align-top pt-1">
+                              <FaStar className="text-[#FF725E]" />
+                            </td>
+                            <td className="pl-2 pb-2 text-sm md:text-base">{point}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 )}
               </main>
@@ -412,3 +416,60 @@ const InsurancePlan = () => {
 };
 
 export default InsurancePlan;
+
+const InsurancePlanSkaliton=()=>{
+  return(
+    <><div className="max-w-[1440px] mx-auto py-4 animate-pulse">
+
+  {/* Title Skeleton */}
+  <div className="h-7 md:h-10 w-60 bg-gray-300 rounded mx-3 mb-3"></div>
+
+  <hr className="my-3 border-dark" />
+
+  {/* Subtitle Skeleton */}
+  <div className="h-4 w-[95%] bg-gray-300 rounded mx-3 mb-2"></div>
+  <div className="h-4 w-[85%] bg-gray-300 rounded mx-3 mb-6"></div>
+
+  {/* Cards Layout Skeleton */}
+  <div className="md:flex justify-center gap-6 px-3 sm:px-6 my-3 flex-wrap">
+
+    {[1, 2, 3].map((i) => (
+      <div
+        key={i}
+        className="w-full md:w-1/3 border border-gray-300 rounded-2xl p-4 mb-6 shadow-md"
+      >
+        {/* Heading + Description */}
+        <div>
+          <div className="h-5 w-40 bg-gray-300 rounded mb-3"></div>
+          <div className="h-4 w-full bg-gray-300 rounded mb-2"></div>
+          <div className="h-4 w-[90%] bg-gray-300 rounded mb-4"></div>
+        </div>
+
+        {/* Price + Cancel Condition */}
+        <div className="my-5">
+          <div className="h-5 w-24 bg-gray-300 rounded mb-3"></div>
+          <div className="h-4 w-[70%] bg-gray-300 rounded"></div>
+        </div>
+
+        {/* Eligibility */}
+        <div className="my-3">
+          <div className="h-4 w-40 bg-gray-300 rounded"></div>
+        </div>
+
+        {/* Pointer Box */}
+        <div className="border my-3 p-3 bg-gray-100 rounded-xl">
+          <div className="h-4 w-full bg-gray-300 rounded mb-2"></div>
+          <div className="h-4 w-full bg-gray-300 rounded mb-2"></div>
+          <div className="h-4 w-full bg-gray-300 rounded"></div>
+        </div>
+
+        {/* Button */}
+        <div className="w-full h-10 bg-gray-300 rounded-full mt-4"></div>
+      </div>
+    ))}
+
+  </div>
+</div>
+</>
+  )
+}

@@ -1,1131 +1,17 @@
-// import React, { useState } from "react";
-// import { MdVerified } from "react-icons/md";
-// import { FaStar, FaShoppingCart } from "react-icons/fa";
-// import { Heart } from "lucide-react";
-
-// const CollectionsContent = () => {
-//   const [showFilters, setShowFilters] = useState(false);
-
-//   return (
-//     <div className="max-w-[1440px] mx-auto mb-4">
-//       {/* Top Section: Breadcrumb + Search */}
-//       <div className="w-full py-3 px-3">
-//         <div className="flex flex-wrap items-center justify-between gap-3">
-//           {/* Breadcrumb */}
-//           <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-//             <a href="#" className="hover:text-red-500">
-//               Home
-//             </a>
-//             <span>/</span>
-//             <a href="#" className="hover:text-red-500">
-//               Store
-//             </a>
-//             <span>/</span>
-//             <a href="#" className="hover:text-red-500">
-//               Paintings
-//             </a>
-//             <span>/</span>
-//             <span className="font-medium text-gray-900">Abstract</span>
-//           </nav>
-//         </div>
-//       </div>
-
-//       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3">
-//         {/* title */}
-//         <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
-//           Collections
-//         </h1>
-//         <button className="hidden md:block w-[200px] flex-1 bg-red-500 text-white py-2 px-6 justify-self-end rounded-full font-semibold shadow buy-now">
-//           Explore More
-//         </button>
-//       </div>
-
-//       <hr className="my-3 border-dark" />
-
-//       {/* Subtitle */}
-//       <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
-//         At ArtSays, we make it simple for you to collaborate directly with
-//         talented artists and bring your creative vision to life. Commissioning
-//         custom artwork is a personalized process designed to give you a unique
-//         piece that reflects your ideas, style, and story.
-//       </p>
-
-//       {/* Main Layout */}
-//       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-3 sm:px-6 my-5">
-//         {/* Sidebar Filters (hidden on mobile, toggleable) */}
-//         <aside className="rounded-xl filter-sidebar content-center border justify-items-center bg-[#EEEEEE]">
-//           <img
-//             src="/herosectionimg/1.jpg"
-//             className="w-full h-60 sm:h-[600px] object-contain"
-//           />
-//         </aside>
-
-//         {/* <!-- Product Grid --> */}
-//         <main className="content-center">
-//           <div>
-//             <div className="flex text-xs md:text-base font-medium text-black leading-relaxed items-center mb-2 md:!mb-4 gap-2">
-//               <p className="text-xs md:text-base px-3 rounded-full bg-dark text-white leading-relaxed items-center">
-//                 Limited
-//               </p>
-//             </div>
-//             <div className="my-2">
-//               {/* title */}
-//               <h1 className="text-sm md:text-4xl font-bold text-dark">
-//                 Beauty of Joseon Mandala Art By SL
-//               </h1>
-//               <hr className="my-2 border-dark" />
-//               {/* Subtitle */}
-//               <p className="flex text-xs md:text-base font-medium text-black leading-relaxed items-center">
-//                 Pebble Palace Designs{" "}
-//                 <MdVerified className="ml-2 text-blue-600 w-4 h-4" />
-//               </p>
-//             </div>
-//             <div className="flex text-xs md:text-base font-medium text-black leading-relaxed items-center md:my-2 gap-2">
-//               <p className="text-xs md:text-base px-3 rounded-full bg-[#EEEEEE] text-black leading-relaxed items-center">
-//                 Handmade
-//               </p>
-//               <p className="text-xs md:text-base px-3 rounded-full bg-[#EEEEEE] text-black leading-relaxed items-center">
-//                 Photography
-//               </p>
-//             </div>
-//             <div className="grid grid-cols-1 md:grid-cols-3 md:gap-4 sm:px-6">
-//               <div className="hidden md:block content-center justify-items-center">
-//                 <img src="/herosectionimg/limited.svg" alt="" />
-//                 <p>Limited Edition</p>
-//               </div>
-//               <div className="md:col-span-2">
-//                 <div className="py-3 md:p-3">
-//                   {/* Rating */}
-//                   <div className="flex items-center gap-2 mb-2 md:mb-3">
-//                     <span className="text-sm font-bold text-orange-700">
-//                       4.8
-//                     </span>
-//                     <FaStar className="text-yellow-400" />
-//                     <span className="text-gray-500 text-sm">(254 Reviews)</span>
-//                     <span className="text-orange-500 font-semibold text-sm">
-//                       Only 2 left!
-//                     </span>
-//                   </div>
-//                   {/* Price Section */}
-//                   <div className="flex items-center gap-2">
-//                     <span className="hidden md:block bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full discount-badge">
-//                       25% OFF
-//                     </span>
-//                     <span className="text-gray-400 line-through">₹12,999</span>
-//                     <span className="text-lg font-bold text-gray-900">
-//                       ₹9,749
-//                     </span>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//             <div className="flex justify-between gap-3 md:m-3">
-//               <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full py-2 font-semibold add-cart">
-//                 Add to Cart
-//               </button>
-//               <button className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now">
-//                 Buy Now
-//               </button>
-//             </div>
-//           </div>
-//         </main>
-//       </div>
-
-//       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-3 my-5">
-//         <div className="mx-auto product-card">
-//           {/* Premium Label */}
-//           <div className="relative p-img">
-//             <span className="absolute top-3 left-3 text-white bg-dark text-sm font-semibold px-2 py-0.5 rounded-full shadow">
-//               Premium
-//             </span>
-
-//             {/* Product Image */}
-//             <img
-//               src="https://media.istockphoto.com/id/1381637603/photo/mountain-landscape.jpg?s=612x612&w=0&k=20&c=w64j3fW8C96CfYo3kbi386rs_sHH_6BGe8lAAAFS-y4="
-//               alt="Beauty of Joseon Mandala Art"
-//               className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
-//             />
-
-//             {/* Heart Icon */}
-//             <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
-//               <Heart className="w-5 h-5 text-white" />
-//             </button>
-//           </div>
-//           {/* Product Info */}
-//           <div className="p-3 product-info">
-//             <p className="text-gray-500 text-xs sm:text-sm">•Sponsored</p>
-//             <h2 className="text-base sm:text-lg text-dark font-semibold mt-1">
-//               Beauty of Joseon Mandala Art By SL
-//             </h2>
-//             <p className="text-gray-700 text-xs sm:text-sm font-medium flex items-center">
-//               Pebble Palace Designs
-//               <span className="ml-1 text-blue-600">
-//                 <MdVerified className="ml-1 text-blue-600 w-4 h-4" />
-//               </span>
-//             </p>
-
-//             {/* Rating */}
-//             <div className="flex items-center gap-2 mt-2 d-none d-md-flex">
-//               <span className="text-sm font-bold text-orange-700">4.8</span>
-//               <FaStar className="text-yellow-400" />
-//               <span className="text-gray-500 text-sm">(254 Reviews)</span>
-//               <span className="text-orange-500 font-semibold text-sm">
-//                 Only 2 left!
-//               </span>
-//             </div>
-
-//             {/* Price Section */}
-//             <div className="flex items-center gap-2 mt-2">
-//               <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full discount-badge d-none d-md-flex">
-//                 25% OFF
-//                 <span class="timer"> | 2h:59m</span>
-//               </span>
-//               <span className="text-gray-400 line-through">₹12,999</span>
-//               <span className="text-lg font-bold text-gray-900">₹9,749</span>
-//             </div>
-//           </div>
-
-//           <div className="p-3 product-button d-none d-md-block">
-//             {/* Buttons */}
-//             <div className="flex justify-between gap-3">
-//               <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full py-2 font-semibold add-cart">
-//                 Add to Cart
-//               </button>
-//               <button className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now">
-//                 Buy Now
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//         <div className="mx-auto product-card">
-//           {/* Premium Label */}
-//           <div className="relative p-img">
-//             <span className="absolute top-3 left-3 text-white bg-dark text-sm font-semibold px-2 py-0.5 rounded-full shadow">
-//               Premium
-//             </span>
-
-//             {/* Product Image */}
-//             <img
-//               src="/herosectionimg/1.jpg"
-//               alt="Beauty of Joseon Mandala Art"
-//               className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
-//             />
-
-//             {/* Heart Icon */}
-//             <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
-//               <Heart className="w-5 h-5 text-white" />
-//             </button>
-//           </div>
-//           {/* Product Info */}
-//           <div className="p-3 product-info">
-//             <p className="text-gray-500 text-xs sm:text-sm">•Sponsored</p>
-//             <h2 className="text-base sm:text-lg text-dark font-semibold mt-1">
-//               Beauty of Joseon Mandala Art By SL
-//             </h2>
-//             <p className="text-gray-700 text-xs sm:text-sm font-medium flex items-center">
-//               Pebble Palace Designs
-//               <span className="ml-1 text-blue-600">
-//                 <MdVerified className="ml-1 text-blue-600 w-4 h-4" />
-//               </span>
-//             </p>
-
-//             {/* Rating */}
-//             <div className="flex items-center gap-2 mt-2 d-none d-md-flex">
-//               <span className="text-sm font-bold text-orange-700">4.8</span>
-//               <FaStar className="text-yellow-400" />
-//               <span className="text-gray-500 text-sm">(254 Reviews)</span>
-//               <span className="text-orange-500 font-semibold text-sm">
-//                 Only 2 left!
-//               </span>
-//             </div>
-
-//             {/* Price Section */}
-//             <div className="flex items-center gap-2 mt-2">
-//               <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full discount-badge d-none d-md-flex">
-//                 25% OFF
-//                 <span class="timer"> | 2h:59m</span>
-//               </span>
-//               <span className="text-gray-400 line-through">₹12,999</span>
-//               <span className="text-lg font-bold text-gray-900">₹9,749</span>
-//             </div>
-//           </div>
-
-//           <div className="p-3 product-button d-none d-md-block">
-//             {/* Buttons */}
-//             <div className="flex justify-between gap-3">
-//               <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full py-2 font-semibold add-cart">
-//                 Add to Cart
-//               </button>
-//               <button className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now">
-//                 Buy Now
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//         <div className="mx-auto product-card">
-//           {/* Premium Label */}
-//           <div className="relative p-img">
-//             <span className="absolute top-3 left-3 text-white bg-dark text-sm font-semibold px-2 py-0.5 rounded-full shadow">
-//               Premium
-//             </span>
-
-//             {/* Product Image */}
-//             <img
-//               src="/herosectionimg/2.png"
-//               alt="Beauty of Joseon Mandala Art"
-//               className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
-//             />
-
-//             {/* Heart Icon */}
-//             <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
-//               <Heart className="w-5 h-5 text-white" />
-//             </button>
-//           </div>
-//           {/* Product Info */}
-//           <div className="p-3 product-info">
-//             <p className="text-gray-500 text-xs sm:text-sm">•Sponsored</p>
-//             <h2 className="text-base sm:text-lg text-dark font-semibold mt-1">
-//               Beauty of Joseon Mandala Art By SL
-//             </h2>
-//             <p className="text-gray-700 text-xs sm:text-sm font-medium flex items-center">
-//               Pebble Palace Designs
-//               <span className="ml-1 text-blue-600">
-//                 <MdVerified className="ml-1 text-blue-600 w-4 h-4" />
-//               </span>
-//             </p>
-
-//             {/* Rating */}
-//             <div className="flex items-center gap-2 mt-2 d-none d-md-flex">
-//               <span className="text-sm font-bold text-orange-700">4.8</span>
-//               <FaStar className="text-yellow-400" />
-//               <span className="text-gray-500 text-sm">(254 Reviews)</span>
-//               <span className="text-orange-500 font-semibold text-sm">
-//                 Only 2 left!
-//               </span>
-//             </div>
-
-//             {/* Price Section */}
-//             <div className="flex items-center gap-2 mt-2">
-//               <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full discount-badge d-none d-md-flex">
-//                 25% OFF
-//                 <span class="timer"> | 2h:59m</span>
-//               </span>
-//               <span className="text-gray-400 line-through">₹12,999</span>
-//               <span className="text-lg font-bold text-gray-900">₹9,749</span>
-//             </div>
-//           </div>
-
-//           <div className="p-3 product-button d-none d-md-block">
-//             {/* Buttons */}
-//             <div className="flex justify-between gap-3">
-//               <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full py-2 font-semibold add-cart">
-//                 Add to Cart
-//               </button>
-//               <button className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now">
-//                 Buy Now
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//         <div className="mx-auto product-card">
-//           {/* Premium Label */}
-//           <div className="relative p-img">
-//             <span className="absolute top-3 left-3 text-white bg-dark text-sm font-semibold px-2 py-0.5 rounded-full shadow">
-//               Premium
-//             </span>
-
-//             {/* Product Image */}
-//             <img
-//               src="https://media.istockphoto.com/id/1381637603/photo/mountain-landscape.jpg?s=612x612&w=0&k=20&c=w64j3fW8C96CfYo3kbi386rs_sHH_6BGe8lAAAFS-y4="
-//               alt="Beauty of Joseon Mandala Art"
-//               className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
-//             />
-
-//             {/* Heart Icon */}
-//             <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
-//               <Heart className="w-5 h-5 text-white" />
-//             </button>
-//           </div>
-//           {/* Product Info */}
-//           <div className="p-3 product-info">
-//             <p className="text-gray-500 text-xs sm:text-sm">•Sponsored</p>
-//             <h2 className="text-base sm:text-lg text-dark font-semibold mt-1">
-//               Beauty of Joseon Mandala Art By SL
-//             </h2>
-//             <p className="text-gray-700 text-xs sm:text-sm font-medium flex items-center">
-//               Pebble Palace Designs
-//               <span className="ml-1 text-blue-600">
-//                 <MdVerified className="ml-1 text-blue-600 w-4 h-4" />
-//               </span>
-//             </p>
-
-//             {/* Rating */}
-//             <div className="flex items-center gap-2 mt-2 d-none d-md-flex">
-//               <span className="text-sm font-bold text-orange-700">4.8</span>
-//               <FaStar className="text-yellow-400" />
-//               <span className="text-gray-500 text-sm">(254 Reviews)</span>
-//               <span className="text-orange-500 font-semibold text-sm">
-//                 Only 2 left!
-//               </span>
-//             </div>
-
-//             {/* Price Section */}
-//             <div className="flex items-center gap-2 mt-2">
-//               <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full discount-badge d-none d-md-flex">
-//                 25% OFF
-//                 <span class="timer"> | 2h:59m</span>
-//               </span>
-//               <span className="text-gray-400 line-through">₹12,999</span>
-//               <span className="text-lg font-bold text-gray-900">₹9,749</span>
-//             </div>
-//           </div>
-
-//           <div className="p-3 product-button d-none d-md-block">
-//             {/* Buttons */}
-//             <div className="flex justify-between gap-3">
-//               <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full py-2 font-semibold add-cart">
-//                 Add to Cart
-//               </button>
-//               <button className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now">
-//                 Buy Now
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//         <div className="mx-auto product-card">
-//           {/* Premium Label */}
-//           <div className="relative p-img">
-//             <span className="absolute top-3 left-3 text-white bg-dark text-sm font-semibold px-2 py-0.5 rounded-full shadow">
-//               Premium
-//             </span>
-
-//             {/* Product Image */}
-//             <img
-//               src="/herosectionimg/1.jpg"
-//               alt="Beauty of Joseon Mandala Art"
-//               className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
-//             />
-
-//             {/* Heart Icon */}
-//             <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
-//               <Heart className="w-5 h-5 text-white" />
-//             </button>
-//           </div>
-//           {/* Product Info */}
-//           <div className="p-3 product-info">
-//             <p className="text-gray-500 text-xs sm:text-sm">•Sponsored</p>
-//             <h2 className="text-base sm:text-lg text-dark font-semibold mt-1">
-//               Beauty of Joseon Mandala Art By SL
-//             </h2>
-//             <p className="text-gray-700 text-xs sm:text-sm font-medium flex items-center">
-//               Pebble Palace Designs
-//               <span className="ml-1 text-blue-600">
-//                 <MdVerified className="ml-1 text-blue-600 w-4 h-4" />
-//               </span>
-//             </p>
-
-//             {/* Rating */}
-//             <div className="flex items-center gap-2 mt-2 d-none d-md-flex">
-//               <span className="text-sm font-bold text-orange-700">4.8</span>
-//               <FaStar className="text-yellow-400" />
-//               <span className="text-gray-500 text-sm">(254 Reviews)</span>
-//               <span className="text-orange-500 font-semibold text-sm">
-//                 Only 2 left!
-//               </span>
-//             </div>
-
-//             {/* Price Section */}
-//             <div className="flex items-center gap-2 mt-2">
-//               <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full discount-badge d-none d-md-flex">
-//                 25% OFF
-//                 <span class="timer"> | 2h:59m</span>
-//               </span>
-//               <span className="text-gray-400 line-through">₹12,999</span>
-//               <span className="text-lg font-bold text-gray-900">₹9,749</span>
-//             </div>
-//           </div>
-
-//           <div className="p-3 product-button d-none d-md-block">
-//             {/* Buttons */}
-//             <div className="flex justify-between gap-3">
-//               <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full py-2 font-semibold add-cart">
-//                 Add to Cart
-//               </button>
-//               <button className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now">
-//                 Buy Now
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//         <div className="mx-auto product-card">
-//           {/* Premium Label */}
-//           <div className="relative p-img">
-//             <span className="absolute top-3 left-3 text-white bg-dark text-sm font-semibold px-2 py-0.5 rounded-full shadow">
-//               Premium
-//             </span>
-
-//             {/* Product Image */}
-//             <img
-//               src="/herosectionimg/2.png"
-//               alt="Beauty of Joseon Mandala Art"
-//               className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
-//             />
-
-//             {/* Heart Icon */}
-//             <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
-//               <Heart className="w-5 h-5 text-white" />
-//             </button>
-//           </div>
-//           {/* Product Info */}
-//           <div className="p-3 product-info">
-//             <p className="text-gray-500 text-xs sm:text-sm">•Sponsored</p>
-//             <h2 className="text-base sm:text-lg text-dark font-semibold mt-1">
-//               Beauty of Joseon Mandala Art By SL
-//             </h2>
-//             <p className="text-gray-700 text-xs sm:text-sm font-medium flex items-center">
-//               Pebble Palace Designs
-//               <span className="ml-1 text-blue-600">
-//                 <MdVerified className="ml-1 text-blue-600 w-4 h-4" />
-//               </span>
-//             </p>
-
-//             {/* Rating */}
-//             <div className="flex items-center gap-2 mt-2 d-none d-md-flex">
-//               <span className="text-sm font-bold text-orange-700">4.8</span>
-//               <FaStar className="text-yellow-400" />
-//               <span className="text-gray-500 text-sm">(254 Reviews)</span>
-//               <span className="text-orange-500 font-semibold text-sm">
-//                 Only 2 left!
-//               </span>
-//             </div>
-
-//             {/* Price Section */}
-//             <div className="flex items-center gap-2 mt-2">
-//               <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full discount-badge d-none d-md-flex">
-//                 25% OFF
-//                 <span class="timer"> | 2h:59m</span>
-//               </span>
-//               <span className="text-gray-400 line-through">₹12,999</span>
-//               <span className="text-lg font-bold text-gray-900">₹9,749</span>
-//             </div>
-//           </div>
-
-//           <div className="p-3 product-button d-none d-md-block">
-//             {/* Buttons */}
-//             <div className="flex justify-between gap-3">
-//               <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full py-2 font-semibold add-cart">
-//                 Add to Cart
-//               </button>
-//               <button className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now">
-//                 Buy Now
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//         <div className="mx-auto product-card">
-//           {/* Premium Label */}
-//           <div className="relative p-img">
-//             <span className="absolute top-3 left-3 text-white bg-dark text-sm font-semibold px-2 py-0.5 rounded-full shadow">
-//               Premium
-//             </span>
-
-//             {/* Product Image */}
-//             <img
-//               src="https://media.istockphoto.com/id/1381637603/photo/mountain-landscape.jpg?s=612x612&w=0&k=20&c=w64j3fW8C96CfYo3kbi386rs_sHH_6BGe8lAAAFS-y4="
-//               alt="Beauty of Joseon Mandala Art"
-//               className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
-//             />
-
-//             {/* Heart Icon */}
-//             <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
-//               <Heart className="w-5 h-5 text-white" />
-//             </button>
-//           </div>
-//           {/* Product Info */}
-//           <div className="p-3 product-info">
-//             <p className="text-gray-500 text-xs sm:text-sm">•Sponsored</p>
-//             <h2 className="text-base sm:text-lg text-dark font-semibold mt-1">
-//               Beauty of Joseon Mandala Art By SL
-//             </h2>
-//             <p className="text-gray-700 text-xs sm:text-sm font-medium flex items-center">
-//               Pebble Palace Designs
-//               <span className="ml-1 text-blue-600">
-//                 <MdVerified className="ml-1 text-blue-600 w-4 h-4" />
-//               </span>
-//             </p>
-
-//             {/* Rating */}
-//             <div className="flex items-center gap-2 mt-2 d-none d-md-flex">
-//               <span className="text-sm font-bold text-orange-700">4.8</span>
-//               <FaStar className="text-yellow-400" />
-//               <span className="text-gray-500 text-sm">(254 Reviews)</span>
-//               <span className="text-orange-500 font-semibold text-sm">
-//                 Only 2 left!
-//               </span>
-//             </div>
-
-//             {/* Price Section */}
-//             <div className="flex items-center gap-2 mt-2">
-//               <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full discount-badge d-none d-md-flex">
-//                 25% OFF
-//                 <span class="timer"> | 2h:59m</span>
-//               </span>
-//               <span className="text-gray-400 line-through">₹12,999</span>
-//               <span className="text-lg font-bold text-gray-900">₹9,749</span>
-//             </div>
-//           </div>
-
-//           <div className="p-3 product-button d-none d-md-block">
-//             {/* Buttons */}
-//             <div className="flex justify-between gap-3">
-//               <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full py-2 font-semibold add-cart">
-//                 Add to Cart
-//               </button>
-//               <button className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now">
-//                 Buy Now
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//         <div className="mx-auto product-card">
-//           {/* Premium Label */}
-//           <div className="relative p-img">
-//             <span className="absolute top-3 left-3 text-white bg-dark text-sm font-semibold px-2 py-0.5 rounded-full shadow">
-//               Premium
-//             </span>
-
-//             {/* Product Image */}
-//             <img
-//               src="/herosectionimg/1.jpg"
-//               alt="Beauty of Joseon Mandala Art"
-//               className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
-//             />
-
-//             {/* Heart Icon */}
-//             <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
-//               <Heart className="w-5 h-5 text-white" />
-//             </button>
-//           </div>
-//           {/* Product Info */}
-//           <div className="p-3 product-info">
-//             <p className="text-gray-500 text-xs sm:text-sm">•Sponsored</p>
-//             <h2 className="text-base sm:text-lg text-dark font-semibold mt-1">
-//               Beauty of Joseon Mandala Art By SL
-//             </h2>
-//             <p className="text-gray-700 text-xs sm:text-sm font-medium flex items-center">
-//               Pebble Palace Designs
-//               <span className="ml-1 text-blue-600">
-//                 <MdVerified className="ml-1 text-blue-600 w-4 h-4" />
-//               </span>
-//             </p>
-
-//             {/* Rating */}
-//             <div className="flex items-center gap-2 mt-2 d-none d-md-flex">
-//               <span className="text-sm font-bold text-orange-700">4.8</span>
-//               <FaStar className="text-yellow-400" />
-//               <span className="text-gray-500 text-sm">(254 Reviews)</span>
-//               <span className="text-orange-500 font-semibold text-sm">
-//                 Only 2 left!
-//               </span>
-//             </div>
-
-//             {/* Price Section */}
-//             <div className="flex items-center gap-2 mt-2">
-//               <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full discount-badge d-none d-md-flex">
-//                 25% OFF
-//                 <span class="timer"> | 2h:59m</span>
-//               </span>
-//               <span className="text-gray-400 line-through">₹12,999</span>
-//               <span className="text-lg font-bold text-gray-900">₹9,749</span>
-//             </div>
-//           </div>
-
-//           <div className="p-3 product-button d-none d-md-block">
-//             {/* Buttons */}
-//             <div className="flex justify-between gap-3">
-//               <button className="flex items-center justify-center gap-2 flex-1 border border-dark rounded-full py-2 font-semibold add-cart">
-//                 Add to Cart
-//               </button>
-//               <button className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now">
-//                 Buy Now
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//     </div>
-//   );
-// };
-// export default CollectionsContent;
-
-// import React, { useEffect, useState } from "react";
-
-// const ArtGalleryContent = () => {
-//   const [page, setPage] = useState(null);
-//   const [products, setProducts] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState("");
-
-//   useEffect(() => {
-//     const fetchGalleryData = async () => {
-//       setLoading(true);
-//       setError("");
-
-//       try {
-//         const base = process.env.REACT_APP_API_URL || "${process.env.REACT_APP_API_URL}";
-
-//         const cmsRes = await fetch(`${base}/api/CMS-artsays-gallery/published`);
-//         const cmsData = await cmsRes.json();
-
-//         if (!cmsData?.success || !cmsData?.data) {
-//           setPage(null);
-//           setError(cmsData?.message || "No published gallery found.");
-//           setLoading(false);
-//           return;
-//         }
-
-//         setPage(cmsData.data);
-
-//         const allGalleryRes = await fetch(`${base}/api/artsays-gallery`);
-//         const allGalleryData = await allGalleryRes.json();
-
-//         if (!allGalleryData?.success || !allGalleryData?.data || allGalleryData.data.length === 0) {
-//           setProducts([]);
-//           return;
-//         }
-
-//         const latestEntry = allGalleryData.data.reduce((latest, current) => {
-//           const latestTime = new Date(latest.updatedAt || latest.createdAt).getTime();
-//           const currentTime = new Date(current.updatedAt || current.createdAt).getTime();
-//           return currentTime > latestTime ? current : latest;
-//         });
-
-//         const { userType, userId } = latestEntry;
-
-//         const userRes = await fetch(`${base}/api/artsays-gallery/${userId}`);
-//         const userData = await userRes.json();
-//         if (!userData?.success || !userData?.data || !userData.data.userName) {
-//           setProducts([]);
-//           return;
-//         }
-
-//         const userName = userData.data.userName;
-
-//         let productsRes;
-//         if (userType === "Artist") {
-//           productsRes = await fetch(`${base}/api/getartistproductbyid/${userName}`);
-//         } else if (userType === "Seller") {
-//           productsRes = await fetch(`${base}/api/getsellerproductbyid/${userName}`);
-//         }
-
-//         if (productsRes) {
-//           const productsData = await productsRes.json();
-//           setProducts(productsData?.success && productsData?.data ? productsData.data : []);
-//         }
-
-//       } catch (err) {
-//         console.error("Error fetching gallery or products:", err);
-//         setError("Failed to load gallery or products.");
-//         setProducts([]);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchGalleryData();
-//   }, []);
-
-//   return (
-//     <div className="max-w-[1440px] mx-auto mb-4">
-//       <div className="w-full py-3 px-3">
-//         <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-//           <a href="#" className="hover:text-red-500">Home</a>
-//           <span>/</span>
-//           <a href="#" className="hover:text-red-500">Store</a>
-//           <span>/</span>
-//           <a href="#" className="hover:text-red-500">Paintings</a>
-//           <span>/</span>
-//           <span className="font-medium text-gray-900">Abstract</span>
-//         </nav>
-//       </div>
-
-//       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3 px-3">
-//         <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34]">
-//           {loading ? "Loading..." : page ? page.title : "Art Gallery"}
-//         </h1>
-//       </div>
-
-//       <hr className="my-3 border-dark" />
-
-//       <div className="px-3">
-//         {loading ? (
-//           <p className="mt-3 text-xs md:text-base text-gray-600">Loading description...</p>
-//         ) : error ? (
-//           <p className="mt-3 text-xs md:text-base text-red-600">{error}</p>
-//         ) : page ? (
-//           <>
-//             <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
-//               {page.description}
-//             </p>
-
-//             <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-//               {products.length > 0 ? (
-//                 products.map((product) => (
-//                   <div key={product._id} className="border p-3 rounded shadow">
-//                     <h2 className="font-semibold">{product.name}</h2>
-//                     <p className="text-sm text-gray-600">{product.description}</p>
-//                     <p className="font-medium">${product.price}</p>
-//                   </div>
-//                 ))
-//               ) : (
-//                 <p className="text-gray-600">No products available.</p>
-//               )}
-//             </div>
-//           </>
-//         ) : (
-//           <p className="mt-3 text-xs md:text-base text-gray-600">
-//             No published Art Gallery available.
-//           </p>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ArtGalleryContent;
-
-// import React, { useEffect, useState } from "react";
-
-// const ArtGalleryContent = () => {
-//   const [page, setPage] = useState(null);
-//   const [products, setProducts] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState("");
-
-//   useEffect(() => {
-//     const fetchGalleryData = async () => {
-//       setLoading(true);
-//       setError("");
-
-//       try {
-//         const base = process.env.REACT_APP_API_URL || "${process.env.REACT_APP_API_URL}";
-
-//         const cmsRes = await fetch(`${base}/api/CMS-artsays-gallery/published`);
-//         const cmsData = await cmsRes.json();
-
-//         if (!cmsData?.success || !cmsData?.data) {
-//           setPage(null);
-//           setError(cmsData?.message || "No published gallery found.");
-//           setLoading(false);
-//           return;
-//         }
-
-//         setPage(cmsData.data);
-
-//         const allGalleryRes = await fetch(`${base}/api/artsays-gallery`);
-//         const allGalleryData = await allGalleryRes.json();
-
-//         if (!allGalleryData?.success || !allGalleryData?.data || allGalleryData.data.length === 0) {
-//           setProducts([]);
-//           return;
-//         }
-
-//         const latestEntry = allGalleryData.data.reduce((latest, current) => {
-//           const latestTime = new Date(latest.updatedAt || latest.createdAt).getTime();
-//           const currentTime = new Date(current.updatedAt || current.createdAt).getTime();
-//           return currentTime > latestTime ? current : latest;
-//         });
-
-//         const { userType, userId } = latestEntry;
-
-//         const userRes = await fetch(`${base}/api/artsays-gallery/${userId}`);
-//         const userData = await userRes.json();
-
-//         if (!userData?.success || !userData?.data) {
-//           setProducts([]);
-//           return;
-//         }
-
-//         let productsRes;
-//         if (userType === "Artist") {
-//           productsRes = await fetch(`${base}/api/getartistproductbyid/${userId}`);
-//         } else if (userType === "Seller") {
-//           productsRes = await fetch(`${base}/api/getsellerproductbyid/${userId}`);
-//         }
-
-//         if (productsRes) {
-//           const productsData = await productsRes.json();
-//           setProducts(productsData?.success && productsData?.data ? productsData.data : []);
-//         }
-//       } catch (err) {
-//         console.error("Error fetching gallery or products:", err);
-//         setError("Failed to load gallery or products.");
-//         setProducts([]);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchGalleryData();
-//   }, []);
-
-//   return (
-//     <div className="max-w-[1440px] mx-auto mb-4">
-//       <div className="w-full py-3 px-3">
-//         <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-//           <a href="#" className="hover:text-red-500">Home</a>
-//           <span>/</span>
-//           <a href="#" className="hover:text-red-500">Store</a>
-//           <span>/</span>
-//           <a href="#" className="hover:text-red-500">Paintings</a>
-//           <span>/</span>
-//           <span className="font-medium text-gray-900">Abstract</span>
-//         </nav>
-//       </div>
-
-//       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3 px-3">
-//         <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34]">
-//           {loading ? "Loading..." : page ? page.title : "Art Gallery"}
-//         </h1>
-//       </div>
-
-//       <hr className="my-3 border-dark" />
-
-//       <div className="px-3">
-//         {loading ? (
-//           <p className="mt-3 text-xs md:text-base text-gray-600">Loading description...</p>
-//         ) : error ? (
-//           <p className="mt-3 text-xs md:text-base text-red-600">{error}</p>
-//         ) : page ? (
-//           <>
-//             <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
-//               {page.description}
-//             </p>
-
-//             <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-//               {products.length > 0 ? (
-//                 products.map((product) => (
-//                   <div key={product._id} className="border p-3 rounded shadow">
-//                     <h2 className="font-semibold">{product.name}</h2>
-//                     <p className="text-sm text-gray-600">{product.description}</p>
-//                     <p className="font-medium">${product.price}</p>
-//                   </div>
-//                 ))
-//               ) : (
-//                 <p className="text-gray-600">No products available.</p>
-//               )}
-//             </div>
-//           </>
-//         ) : (
-//           <p className="mt-3 text-xs md:text-base text-gray-600">
-//             No published Art Gallery available.
-//           </p>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ArtGalleryContent;
-
-// import React, { useEffect, useState } from "react";
-
-// const ArtGalleryContent = () => {
-//   const [page, setPage] = useState(null);
-//   const [products, setProducts] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState("");
-
-//   useEffect(() => {
-//     const fetchGalleryData = async () => {
-//       setLoading(true);
-//       setError("");
-
-//       try {
-//         const base = process.env.REACT_APP_API_URL;
-
-//         const cmsRes = await fetch(`${base}/api/CMS-artsays-gallery/published`);
-//         const cmsData = await cmsRes.json();
-
-//         console.log("CMS Response:", cmsData);
-
-//         if (!cmsData?.success || !cmsData?.data) {
-//           setPage(null);
-//           setError(cmsData?.message || "No published gallery found.");
-//           setLoading(false);
-//           return;
-//         }
-
-//         setPage({
-//           title: cmsData.data.title || "",
-//           description: cmsData.data.description || "",
-//           sectionTitle: cmsData.data.sectionTitle || "",
-//           sectionDescription: cmsData.data.sectionDescription || "",
-//         });
-
-//         const allGalleryRes = await fetch(`${base}/api/artsays-gallery`);
-//         const allGalleryData = await allGalleryRes.json();
-
-//         if (
-//           !allGalleryData?.success ||
-//           !allGalleryData?.data ||
-//           allGalleryData.data.length === 0
-//         ) {
-//           setProducts([]);
-//           return;
-//         }
-
-//         const latestEntry = allGalleryData.data.reduce((latest, current) => {
-//           const latestTime = new Date(
-//             latest.updatedAt || latest.createdAt
-//           ).getTime();
-//           const currentTime = new Date(
-//             current.updatedAt || current.createdAt
-//           ).getTime();
-//           return currentTime > latestTime ? current : latest;
-//         });
-
-//         const { userType, userId } = latestEntry;
-
-//         const userRes = await fetch(`${base}/api/artsays-gallery/${userId}`);
-//         const userData = await userRes.json();
-
-//         if (!userData?.success || !userData?.data) {
-//           setProducts([]);
-//           return;
-//         }
-
-//         let productsRes;
-//         if (userType === "Artist") {
-//           productsRes = await fetch(
-//             `${base}/api/getartistproductbyid/${userId}`
-//           );
-//         } else if (userType === "Seller") {
-//           productsRes = await fetch(
-//             `${base}/api/getsellerproductbyid/${userId}`
-//           );
-//         }
-
-//         if (productsRes) {
-//           const productsData = await productsRes.json();
-//           setProducts(
-//             productsData?.success && productsData?.data ? productsData.data : []
-//           );
-//         }
-//       } catch (err) {
-//         console.error("Error fetching gallery or products:", err);
-//         setError("Failed to load gallery or products.");
-//         setProducts([]);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchGalleryData();
-//   }, []);
-
-//   return (
-//     <div className="max-w-[1440px] mx-auto mb-4">
-
-//       <div className="w-full py-3 px-3">
-//         <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-//           <a href="#" className="hover:text-red-500">
-//             Home
-//           </a>
-//           <span>/</span>
-//           <a href="#" className="hover:text-red-500">
-//             Store
-//           </a>
-//           <span>/</span>
-//           <a href="#" className="hover:text-red-500">
-//             Paintings
-//           </a>
-//           <span>/</span>
-//           <span className="font-medium text-gray-900">Abstract</span>
-//         </nav>
-//       </div>
-
-//       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3 px-3">
-//         <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34]">
-//           {loading ? "Loading..." : page ? page.title : "Art Gallery"}
-//         </h1>
-//       </div>
-
-//       <hr className="my-3 border-dark" />
-
-//       <div className="px-3">
-//         {loading ? (
-//           <p className="mt-3 text-xs md:text-base text-gray-600">
-//             Loading description...
-//           </p>
-//         ) : error ? (
-//           <p className="mt-3 text-xs md:text-base text-red-600">{error}</p>
-//         ) : page ? (
-//           <>
-//             <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
-//               {page.description}
-//             </p>
-
-//             <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-//               {products.length > 0 ? (
-//                 products.map((product) => (
-//                   <div key={product._id} className="border p-3 rounded shadow">
-//                     <h2 className="font-semibold">{product.name}</h2>
-//                     <p className="text-sm text-gray-600">
-//                       {product.description}
-//                     </p>
-//                     <p className="font-medium">${product.price}</p>
-//                   </div>
-//                 ))
-//               ) : (
-//                 <p className="text-gray-600">No products available.</p>
-//               )}
-//             </div>
-//             <br/>
-//             <br/>
-//             <br/>
-
-//             {page.sectionTitle && (
-//               <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34]">
-//                 {page.sectionTitle}
-//               </h1>
-//             )}
-//             <hr className="my-3 border-dark" />
-
-//             {page.sectionDescription && (
-//               <p className="mt-2 text-sm md:text-base text-gray-700 leading-relaxed">
-//                 {page.sectionDescription}
-//               </p>
-//             )}
-//           </>
-//         ) : (
-//           <p className="mt-3 text-xs md:text-base text-gray-600">
-//             No published Art Gallery available.
-//           </p>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ArtGalleryContent;
-
 import React, { useEffect, useState } from "react";
-import { Heart } from "lucide-react";
-import { FaStar, FaShoppingCart } from "react-icons/fa";
+import { Heart, Search, ChevronRight, ChevronLeft, ShoppingCart, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
 import deleteAPI from "../../../api/deleteAPI";
 import { toast } from "react-toastify";
-import { FiChevronRight } from "react-icons/fi";
-import { FiChevronLeft } from "react-icons/fi";
 import ArtGalleryContentSkeleton from "../../../Component/Skeleton/Home/Account/ArtGalleryContentSkeleton";
+import "../../store/products/product.css";
 
 const ArtGalleryContent = () => {
   const [page, setPage] = useState(null);
-  const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [likedProducts, setLikedProducts] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -1137,27 +23,39 @@ const ArtGalleryContent = () => {
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
 
-  const itemsPerPage = 8;
   const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
 
-  const indexOfLastProduct = currentPage * itemsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
-  const currentProducts = products.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
-  );
-  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const [filters, setFilters] = useState({
+    sortBy: "New Arrivals",
+    specialTags: [],
+    priceRange: 89700,
+    priceBuckets: [],
+    size: [],
+    mainCategory: [],
+    category: [],
+    subCategory: [],
+    productType: [],
+    productMedium: [],
+    productMaterial: [],
+    productEditionType: [],
+    productSurfaceType: [],
+    search: "",
+  });
 
-  const goToNextPage = () =>
-    currentPage < totalPages && setCurrentPage(currentPage + 1);
-  const goToPrevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
-  const goToPage = (page) => setCurrentPage(page);
+  const [options, setOptions] = useState({
+    categories: [],
+    productTypes: [],
+    productMediums: [],
+    productMaterials: [],
+    productEditionTypes: [],
+    productSurfaceTypes: [],
+    periodEras: [],
+  });
 
   const ensureBuyer = () => {
     if (userType !== "Buyer") {
-      toast.warn(
-        "Only buyers can use this feature, Register as a Buyer to continue."
-      );
+      toast.warn("Only buyers can use this feature, Register as a Buyer to continue.");
       return false;
     }
     return true;
@@ -1165,24 +63,16 @@ const ArtGalleryContent = () => {
 
   const handleWishlist = async (productId) => {
     if (!ensureBuyer()) return;
-
     const isLiked = likedProducts[productId];
-
     try {
       if (isLiked) {
-        await deleteAPI("/api/wishlist/remove", {
-          params: { userId, productId },
-        });
+        await deleteAPI("/api/wishlist/remove", { params: { userId, productId } });
         toast.warn("Removed from Wishlist");
       } else {
         await postAPI("/api/wishlist/add", { userId, productId });
         toast.success("Added to Wishlist");
       }
-
-      setLikedProducts((prev) => ({
-        ...prev,
-        [productId]: !isLiked,
-      }));
+      setLikedProducts((prev) => ({ ...prev, [productId]: !isLiked }));
     } catch (err) {
       console.error("Wishlist error:", err);
     }
@@ -1190,7 +80,6 @@ const ArtGalleryContent = () => {
 
   const addToCart = async (productId) => {
     if (!ensureBuyer()) return;
-
     try {
       await postAPI(`/api/cart/addcart/${productId}`, {}, true);
       toast.success("Added to Cart!");
@@ -1199,93 +88,46 @@ const ArtGalleryContent = () => {
     }
   };
 
-  const renderStars = (avg) => {
-    if (!avg)
-      return [...Array(5)].map((_, i) => (
-        <FaStar key={i} className="text-gray-300" />
-      ));
+  const slugify = (text) =>
+    text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
 
-    const filled = Math.round(avg);
-    return [...Array(5)].map((_, i) => (
-      <FaStar
-        key={i}
-        className={i < filled ? "text-yellow-400" : "text-gray-300"}
-      />
+  const renderStars = (averageRating) => {
+    if (averageRating == null) return [1, 2, 3, 4, 5].map((s) => <Star key={s} size={14} className="text-gray-200 fill-gray-200" />);
+    const filled = Math.round(averageRating);
+    return [1, 2, 3, 4, 5].map((s) => (
+      <Star key={s} size={14} className={s <= filled ? "text-yellow-400 fill-yellow-400" : "text-gray-200 fill-gray-200"} />
     ));
   };
 
-  //   useEffect(() => {
-  //   const fetchGalleryData = async () => {
-  //     setLoading(true);
-  //     setError("");
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const [catRes, typeRes, mediumRes, materialRes, editionRes, surfaceRes, eraRes] = await Promise.all([
+          getAPI("/api/all-complete", {}, true, false),
+          getAPI("/api/getproducttype", {}, true, false),
+          getAPI("/api/getproductmedium", {}, true, false),
+          getAPI("/api/getproductmaterials", {}, true, false),
+          getAPI("/api/getproducteditiontypes", {}, true, false),
+          getAPI("/api/getproductsurfacetypes", {}, true, false),
+          getAPI("/api/getperioderas", {}, true, false),
+        ]);
 
-  //     try {
-  //       const cmsRes = await fetch(`${base}/api/CMS-artsays-gallery/published`);
-  //       const cmsData = await cmsRes.json();
+        setOptions({
+          categories: catRes?.data?.data?.flattened || [],
+          productTypes: typeRes?.data || [],
+          productMediums: mediumRes?.data || [],
+          productMaterials: materialRes?.data || [],
+          productEditionTypes: editionRes?.data || [],
+          productSurfaceTypes: surfaceRes?.data || [],
+          periodEras: eraRes?.data || [],
+        });
+      } catch (error) {
+        console.error("Error fetching filter options:", error);
+      }
+    };
+    fetchOptions();
+  }, []);
 
-  //       if (!cmsData?.success || !cmsData?.data) {
-  //         setError("No published gallery found.");
-  //         setLoading(false);
-  //         return;
-  //       }
-
-  //       setPage({
-  //         title: cmsData.data.title,
-  //         description: cmsData.data.description,
-  //         sectionTitle: cmsData.data.sectionTitle,
-  //         sectionDescription: cmsData.data.sectionDescription
-  //       });
-
-  //       const [res1, res2, ratingRes, badgeRes] = await Promise.all([
-  //         getAPI("/api/getstatusapprovedproduct", {}, true, false),
-  //         getAPI("/api/getstatusapprovedproductforSELLER", {}, true, false),
-  //         getAPI("/api/reviews/aggregated", {}, true, false),
-  //         getAPI("/api/products/approved-with-badges", {}, true, false),
-  //       ]);
-
-  //       const products1 = res1?.data?.data?.filter(p => p.status === "Approved") || [];
-  //       const products2 = res2?.data?.data?.filter(p => p.status === "Approved") || [];
-
-  //       const allProducts = [...products1, ...products2].sort(
-  //         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  //       );
-
-  //       const ratings = ratingRes?.data?.data || [];
-
-  //       const productsWithRatings = allProducts.map(product => {
-  //         const r = ratings.find(x => x.productId === product._id);
-
-  //         return {
-  //           ...product,
-  //           averageRating: r?.averageRating ? Number(r.averageRating) : null,
-  //           reviewCount: r?.reviewCount ?? 0,
-  //         };
-  //       });
-
-  //       const badgeData = badgeRes?.data?.data || [];
-
-  //       const finalProducts = productsWithRatings.map(p => {
-  //         const match = badgeData.find(b => b._id === p._id);
-
-  //         return {
-  //           ...p,
-  //           seller: match?.seller || p.seller,
-  //           badges: match?.badges || [],
-  //         };
-  //       });
-
-  //       setProducts(finalProducts);
-
-  //     } catch (err) {
-  //       console.error(err);
-  //       setError("Failed to load products.");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchGalleryData();
-  // }, []);
   useEffect(() => {
     const fetchGalleryData = async () => {
       setLoading(true);
@@ -1308,18 +150,10 @@ const ArtGalleryContent = () => {
           sectionDescription: cmsData.data.sectionDescription,
         });
 
-        const galleryRes = await getAPI(
-          "/api/artsays-gallery/",
-          {},
-          true,
-          false
-        );
+        const galleryRes = await getAPI("/api/artsays-gallery/", {}, true, false);
         const galleryEntries = galleryRes?.data?.data || [];
+        const allowedUserIds = new Set(galleryEntries.map((g) => String(g.userId)));
 
-        //  const allowedUserIds = new Set(galleryEntries.map(g => g.userId));
-        const allowedUserIds = new Set(
-          galleryEntries.map((g) => String(g.userId))
-        );
         const [artistRes, sellerRes, ratingRes, badgeRes] = await Promise.all([
           getAPI("/api/getstatusapprovedproduct", {}, true, false),
           getAPI("/api/getstatusapprovedproductforSELLER", {}, true, false),
@@ -1327,31 +161,16 @@ const ArtGalleryContent = () => {
           getAPI("/api/products/approved-with-badges", {}, true, false),
         ]);
 
-        const artistProducts =
-          artistRes?.data?.data?.filter((p) => p.status === "Approved") || [];
+        const artistProducts = artistRes?.data?.data?.filter((p) => p.status === "Approved") || [];
+        const sellerProducts = sellerRes?.data?.data?.filter((p) => p.status === "Approved") || [];
 
-        const sellerProducts =
-          sellerRes?.data?.data?.filter((p) => p.status === "Approved") || [];
-
-        //  let collectedProducts = [...artistProducts, ...sellerProducts];
-
-        // collectedProducts = collectedProducts.filter(p =>
-        //   allowedUserIds.has(p.userId)
-        // );
         let collectedProducts = [...artistProducts, ...sellerProducts];
-
         collectedProducts = collectedProducts.filter((p) => {
-          const productUserId =
-            typeof p.userId === "object" ? p.userId._id : p.userId;
-
+          const productUserId = typeof p.userId === "object" ? p.userId._id : p.userId;
           return allowedUserIds.has(String(productUserId));
         });
-        collectedProducts = collectedProducts.sort(
-  (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-);
 
         const ratings = ratingRes?.data?.data || [];
-
         const productsWithRatings = collectedProducts.map((product) => {
           const r = ratings.find((x) => x.productId === product._id);
           return {
@@ -1362,7 +181,6 @@ const ArtGalleryContent = () => {
         });
 
         const badgeData = badgeRes?.data?.data || [];
-
         const finalProducts = productsWithRatings.map((p) => {
           const match = badgeData.find((b) => b._id === p._id);
           return {
@@ -1372,7 +190,7 @@ const ArtGalleryContent = () => {
           };
         });
 
-        setProducts(finalProducts);
+        setAllProducts(finalProducts);
       } catch (err) {
         console.error(err);
         setError("Failed to load products.");
@@ -1382,301 +200,194 @@ const ArtGalleryContent = () => {
     };
 
     fetchGalleryData();
-  }, []);
-if(loading)return <div><ArtGalleryContentSkeleton /></div>
+  }, [base]);
+
+  useEffect(() => {
+    let result = [...allProducts];
+
+    if (filters.search) {
+      result = result.filter((p) =>
+        p.productName.toLowerCase().includes(filters.search.toLowerCase()) ||
+        (p.userId?.name && p.userId.name.toLowerCase().includes(filters.search.toLowerCase())) ||
+        (p.userId?.lastName && p.userId.lastName.toLowerCase().includes(filters.search.toLowerCase()))
+      );
+    }
+
+    if (filters.sortBy === "Price Low to High") result.sort((a, b) => a.sellingPrice - b.sellingPrice);
+    else if (filters.sortBy === "Price High to Low") result.sort((a, b) => b.sellingPrice - a.sellingPrice);
+    else if (filters.sortBy === "New Arrivals") result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    else if (filters.sortBy === "Trending") result.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
+
+    setFilteredProducts(result);
+    setCurrentPage(1);
+  }, [allProducts, filters]);
+
+  const handleFilterChange = (category, value) => {
+    setFilters((prev) => ({ ...prev, [category]: value }));
+  };
+
+  const indexOfLastProduct = currentPage * itemsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
+  const goToNextPage = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
+  const goToPrevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
+  const goToPage = (page) => setCurrentPage(page);
+
+  if (loading) return <ArtGalleryContentSkeleton />;
+
   return (
-    <div className="max-w-[1440px] mx-auto mb-4">
-      {/* Breadcrumb */}
-      <div className="w-full py-3 px-3">
-        <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-          <a href="#" className="hover:text-red-500">
-            Home
-          </a>
-          <span>/</span>
-          <a href="#" className="hover:text-red-500">
-            Store
-          </a>
-          <span>/</span>
-          <span className="font-medium text-gray-900">Art Gallery</span>
-        </nav>
-      </div>
+    <div className="w-full bg-gray-50 min-h-screen font-[poppins]">
+      <div className="w-full max-w-[1440px] mx-auto p-3">
+        {/* ---------------- MAIN CONTENT ---------------- */}
+        <main className="w-full">
+          {/* Search Bar */}
+          <div className="relative mb-8 group mx-auto">
+            <input
+              type="text"
+              placeholder="Search masterpieces, artists, or styles in our gallery..."
+              value={filters.search}
+              onChange={(e) => handleFilterChange("search", e.target.value)}
+              className="w-full p-6 pl-16 bg-white border border-gray-200 rounded-full shadow-sm focus:outline-none focus:ring-4 focus:ring-[#6F4D34]/5 focus:border-[#6F4D34] transition-all text-lg placeholder:text-gray-400"
+            />
+          </div>
 
-      {/* Title */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3 px-3">
-        <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34]">
-          {loading ? "Loading..." : page?.title || "Art Gallery"}
-        </h1>
-      </div>
-
-      <hr className="my-3 border-dark" />
-
-      {/* Description */}
-      <div className="px-3">
-        {loading ? (
-          <p className="mt-3 text-xs md:text-base text-gray-600">
-            Loading description...
-          </p>
-        ) : error ? (
-          <p className="mt-3 text-xs md:text-base text-red-600">{error}</p>
-        ) : (
-          <>
-            <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
-              {page?.description}
-            </p>
-            <br />
-            <br />
-            {/* Products Grid */}
-            <main className="md:col-span-3">
-              {/* <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3"> */}
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6">
-                {currentProducts.map((product) => {
-                  const hasDiscount =
-                    product.sellingPrice < product.marketPrice;
-                  const discountPercent = hasDiscount
-                    ? Math.round(
-                        ((product.marketPrice - product.sellingPrice) /
-                          product.marketPrice) *
-                          100
-                      )
-                    : 0;
-
-                  const average = product.averageRating;
-                  const reviewCount = product.reviewCount ?? 0;
-
+          {/* Products Grid */}
+          <div className="mb-12">
+            {currentProducts.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {currentProducts.map((product, index) => {
+                  const hasDiscount = product.sellingPrice < product.marketPrice;
+                  const discountPercent = hasDiscount ? Math.round(((product.marketPrice - product.sellingPrice) / product.marketPrice) * 100) : 0;
                   return (
                     <div
                       key={product._id}
-                      onClick={() =>
-                        navigate(`/product-details/${product._id}`)
-                      }
-                      //className="rounded-2xl shadow-md overflow-hidden flex flex-col justify-between product-card transition-transform duration-300 hover:-translate-y-1 m-3"
-                      className="rounded-2xl shadow-md overflow-hidden flex flex-col justify-between product-card transition-transform duration-300 hover:-translate-y-1 mx-auto w-full max-w-[330px] my-2"
+                      className="group flex flex-col h-full bg-white rounded-[40px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100/50 animate-fade-in-up relative"
+                      style={{ animationDelay: `${index * 50}ms` }}
+                      onClick={() => navigate(`/product-details/${slugify(product.productName)}/${product._id}`)}
                     >
-                      {/* Image */}
-                      <div className="relative p-img">
-                        {product.editionType && (
-                          <span className="absolute top-3 left-3 text-white bg-dark text-sm font-semibold px-2 py-0.5 rounded-full shadow">
-                            {product.editionType}
-                          </span>
-                        )}
+                      <div className="relative aspect-square overflow-hidden bg-[#F8F9FA]">
                         <img
                           src={`${imageBaseURL}${product.mainImage}`}
                           alt={product.productName}
-                          className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
+                          className={`w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 ${(!product.quantity || product.quantity === 0) ? 'blur-[2px]' : ''}`}
                         />
-                        <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
-                          {/* <Heart className="w-5 h-5 text-white" /> */}
-                          <div
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleWishlist(product._id);
-                            }}
-                            className="cursor-pointer"
-                          >
-                            {likedProducts[product._id] ? (
-                              <Heart
-                                size={20}
-                                className="stroke-white"
-                                style={{ fill: "white" }}
-                              />
-                            ) : (
-                              <Heart
-                                size={20}
-                                className="stroke-white"
-                                style={{ fill: "transparent" }}
-                              />
-                            )}
+                        {(!product.quantity || product.quantity === 0) && (
+                          <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-[1px]">
+                            <div className="bg-white px-6 py-2 rounded-lg shadow-2xl border border-white/50 transform -rotate-12"><span className="text-red-600 font-black text-xl uppercase tracking-wider">Sold Out</span></div>
                           </div>
+                        )}
+                        <div className="absolute top-5 left-5 flex flex-col gap-2 z-10">
+                          {product.editionType && (
+                            <div className="bg-white/90 backdrop-blur-md text-[#6F4D34] text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest border border-white/20">{product.editionType}</div>
+                          )}
+                        </div>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleWishlist(product._id); }}
+                          className="absolute top-5 right-5 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-sm hover:bg-white hover:text-red-500 transition-all transform hover:scale-110 group/heart z-10"
+                        >
+                          <Heart size={20} className={`transition-colors ${likedProducts[product._id] ? "text-red-500 fill-red-500" : "text-gray-900 group-hover/heart:text-red-500"}`} />
                         </button>
                       </div>
 
-                      {/* Product Info */}
-                      <div className="p-3 product-info">
-                        <h2
-                          className="text-base sm:text-lg text-dark font-semibold mt-1"
-                          title={product.productName}
-                        >
-                          {product.productName}
-                        </h2>
-                        <div className="flex items-center gap-1 mt-1">
-                          {/* Artist name from populated userId */}
-                          <p
-                            className="text-gray-700 text-xs sm:text-sm font-medium flex items-center"
-                            title={`${product.userId?.name ?? ""} ${
-                              product.userId?.lastName ?? ""
-                            }`}
-                          >
-                            {product.userId?.name ||
-                              product.userId?.firstName ||
-                              "Unknown"}{" "}
-                            {product.userId?.lastName
-                              ? product.userId.lastName
-                              : ""}
-                          </p>
-
-                          {/*badges*/}
-                          {product.badges?.map((img, index) => (
-                            <img
-                              key={index}
-                              src={`${imageBaseURL}${img}`}
-                              className="w-5 h-5 rounded-full"
-                            />
-                          ))}
+                      <div className="flex flex-col flex-grow p-6 gap-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-[#6F4D34] animate-pulse" />
+                            <span className="text-[#6F4D34] text-[10px] font-black uppercase tracking-widest">{product.userId?.name || "Independent Artist"}</span>
+                          </div>
+                          <div className="flex -space-x-2">
+                            {product.badges?.map((img, idx) => (
+                              <img key={idx} src={`${imageBaseURL}${img}`} className="w-5 h-5 rounded-full border-2 border-white shadow-sm" alt="Badge" />
+                            ))}
+                          </div>
                         </div>
-                        {/* Rating */}
-                        {average == null || reviewCount === 0 ? (
-                          <div className="flex items-center gap-2 mt-2 text-gray-500 italic">
-                            No rating available, be the first to review!
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2 mt-2">
-                            <span className="text-sm font-bold text-orange-700">
-                              {Number(average).toFixed(1)}
-                            </span>
-                            <div className="flex items-center">
-                              {renderStars(average)}
-                            </div>
-                            <span className="text-gray-500 text-sm">
-                              ({reviewCount}{" "}
-                              {reviewCount === 1 ? "Review" : "Reviews"})
-                            </span>
-                          </div>
-                        )}
 
-                        {/* Price */}
-                        <div className="flex items-center gap-2 mt-2">
+                        <h3 className="text-xl font-bold text-gray-900 line-clamp-1 group-hover:text-[#6F4D34] transition-colors tracking-tight">{product.productName}</h3>
+
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center bg-gray-50 px-2 py-1 rounded-xl border border-gray-100">
+                            <div className="flex items-center mr-2">{renderStars(product.averageRating)}</div>
+                            <span className="text-xs font-black text-gray-900">{product.averageRating ? product.averageRating.toFixed(1) : "0.0"}</span>
+                          </div>
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">• {product.reviewCount || 0} reviews</span>
+                        </div>
+
+                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
+                          <div className="flex flex-col">
+                            {hasDiscount && <span className="text-sm text-gray-400 line-through font-bold">₹{product.marketPrice.toLocaleString()}</span>}
+                            <span className="text-2xl font-black text-gray-900 tracking-tighter">₹{product.sellingPrice.toLocaleString()}</span>
+                          </div>
                           {hasDiscount && (
-                            <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                              {discountPercent}% OFF
-                            </span>
-                          )}
-                          {hasDiscount ? (
-                            <>
-                              <span className="text-gray-400 line-through">
-                                ₹{product.marketPrice}
-                              </span>
-                              <span className="text-lg font-bold text-gray-900">
-                                ₹{product.sellingPrice}
-                              </span>
-                            </>
-                          ) : (
-                            <span className="text-lg font-bold text-gray-900">
-                              ₹{product.sellingPrice}
-                            </span>
+                            <div className="bg-red-50 text-[#E74C3C] px-3 py-1.5 rounded-2xl border border-red-100/50 shadow-sm"><span className="text-[10px] font-black uppercase tracking-tighter leading-none">{discountPercent}% OFF</span></div>
                           )}
                         </div>
-                      </div>
 
-                      {/* Buttons */}
-                      <div className="p-3 product-button d-none d-md-block">
-                        <div className="flex justify-between gap-3">
+                        <div className="grid grid-cols-5 gap-3">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); addToCart(product._id); }}
+                            disabled={!product.quantity || product.quantity === 0}
+                            className="col-span-1 h-[56px] bg-gray-50 text-gray-900 rounded-2xl hover:bg-[#6F4D34] hover:text-white transition-all duration-300 disabled:opacity-50 border border-gray-100 flex items-center justify-center group/cart shadow-sm"
+                          ><ShoppingCart size={22} className="transition-transform group-hover/cart:scale-110" /></button>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               if (!ensureBuyer()) return;
-
-                              addToCart(product._id);
+                              if (!product.quantity || product.quantity === 0) return;
+                              navigate(`/my-account/check-out/${userId}?productId=${product._id}`);
                             }}
                             disabled={!product.quantity || product.quantity === 0}
-                            className={`flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart hover:bg-dark hover:text-white transition ${(!product.quantity || product.quantity === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}
-                          >
-                            <FaShoppingCart /> Add to Cart
-                          </button>
-
-                          {(!product.quantity || product.quantity === 0) ? (
-                            <button
-                              disabled
-                              className="flex-1 bg-gray-500 text-white py-2 rounded-full font-semibold shadow buy-now cursor-not-allowed"
-                            >
-                              Sold Out
-                            </button>
-                          ) : (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (!ensureBuyer()) return;
-                                navigate(
-                                  `/my-account/check-out/${userId}?productId=${product._id}`
-                                );
-                              }}
-                              className="flex-1 bg-red-500 text-white py-2 rounded-full font-semibold shadow buy-now"
-                            >
-                              Buy Now
-                            </button>
-                          )}
+                            className="col-span-4 h-[56px] bg-[#6F4D34] text-white rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 shadow-sm hover:shadow-xl hover:bg-[#5a3e2a] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed border border-[#6F4D34] transform active:scale-95"
+                          >{(!product.quantity || product.quantity === 0) ? "Sold Out" : "Shop Now"}</button>
                         </div>
                       </div>
                     </div>
                   );
                 })}
               </div>
-              {/* Pagination */}
-              <div className="flex justify-center mt-6">
-                <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
-                  {/* Previous */}
-                  <button
-                    onClick={goToPrevPage}
-                    disabled={currentPage === 1}
-                    className={`px-2 sm:px-3 py-1 flex items-center ${
-                      currentPage === 1
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:text-red-500"
-                    }`}
-                  >
-                    <FiChevronLeft className="self-center flex-shrink-0" />
-                    <span className="ml-1">Previous</span>
-                  </button>
-
-                  {/* Page numbers */}
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                    (page) => (
-                      <button
-                        key={page}
-                        onClick={() => goToPage(page)}
-                        className={`px-2 sm:px-3 py-1 rounded ${
-                          currentPage === page
-                            ? "border border-dark text-dark"
-                            : "hover:text-red-500"
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    )
-                  )}
-
-                  {/* Next */}
-                  <button
-                    onClick={goToNextPage}
-                    disabled={currentPage === totalPages}
-                    className={`px-2 sm:px-3 py-1 flex items-center ${
-                      currentPage === totalPages
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:text-red-500"
-                    }`}
-                  >
-                    <span className="mr-1">Next</span>
-                    <FiChevronRight className="self-center flex-shrink-0" />
-                  </button>
-                </nav>
+            ) : (
+              <div className="py-32 text-center bg-white rounded-[40px] border border-dashed border-gray-200 shadow-sm">
+                <div className="inline-flex items-center justify-center w-24 h-24 bg-gray-50 rounded-full mb-6 text-gray-300"><Search size={48} /></div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">No masterpieces found</h3>
+                <p className="text-gray-500 max-w-sm mx-auto mb-8">Try adjusting your search term to discover more incredible art from our gallery.</p>
+                <button onClick={() => setFilters({ sortBy: "New Arrivals", specialTags: [], priceRange: 89700, priceBuckets: [], size: [], mainCategory: [], category: [], subCategory: [], productType: [], productMedium: [], productMaterial: [], productEditionType: [], productSurfaceType: [], search: "" })} className="text-[#6F4D34] font-bold hover:underline px-8 py-3 border-2 border-[#6F4D34] rounded-full transition-all">Clear Search</button>
               </div>
-            </main>
-
-            {/* ---------------- PRODUCT CARDS END ---------------- */}
-
-            {/* SECTION 2 */}
-            <br />
-            <br />
-            {page.sectionTitle && (
-              <h1 className="text-lg md:text-4xl font-bold text-[#6F4D34]">
-                {page.sectionTitle}
-              </h1>
             )}
-            <hr className="my-3 border-dark" />
-            <p className="text-sm md:text-base text-gray-700 leading-relaxed">
-              {page.sectionDescription}
-            </p>
-          </>
-        )}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-12 pb-12">
+              <nav className="flex items-center gap-2 p-2 bg-white border border-gray-200 rounded-[32px] shadow-sm">
+                <button disabled={currentPage === 1} onClick={goToPrevPage} className="p-4 rounded-2xl text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-colors"><ChevronLeft size={28} /></button>
+                <div className="flex items-center px-4 gap-1">
+                  {Array.from({ length: totalPages }).map((_, i) => {
+                    const pageNum = i + 1;
+                    if (totalPages > 7) {
+                      if (pageNum !== 1 && pageNum !== totalPages && (pageNum < currentPage - 1 || pageNum > currentPage + 1)) {
+                        if (pageNum === currentPage - 2 || pageNum === currentPage + 2) return <span key={pageNum} className="px-2 text-gray-400">...</span>;
+                        return null;
+                      }
+                    }
+                    return (
+                      <button key={pageNum} onClick={() => goToPage(pageNum)} className={`w-12 h-12 flex items-center justify-center rounded-2xl text-base font-bold transition-all ${pageNum === currentPage ? "bg-[#6F4D34] text-white shadow-lg shadow-[#6F4D34]/20 scale-110" : "text-gray-600 hover:bg-gray-50"}`}>{pageNum}</button>
+                    );
+                  })}
+                </div>
+                <button disabled={currentPage === totalPages} onClick={goToNextPage} className="p-4 rounded-2xl text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-colors"><ChevronRight size={28} /></button>
+              </nav>
+            </div>
+          )}
+
+          {/* Bottom CMS Content */}
+          {(page?.sectionTitle || page?.sectionDescription) && (
+            <div className="mt-12 p-8 md:p-12 bg-[#6F4D34]/5 rounded-[48px] border border-[#6F4D34]/10 mb-12">
+              {page.sectionTitle && <h2 className="text-2xl md:text-4xl font-black text-[#6F4D34] mb-6 tracking-tight">{page.sectionTitle}</h2>}
+              {page.sectionDescription && <p className="text-lg text-gray-700 leading-relaxed font-medium">{page.sectionDescription}</p>}
+            </div>
+          )}
+        </main>
       </div>
     </div>
   );

@@ -13,12 +13,23 @@ const stickersArray = ["🔥", "😂", "❤️", "👍", "🎉", "😍", "😭",
 const Uploadpost = () => {
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
+  const username = localStorage.getItem("username");
+  const firstName = localStorage.getItem("firstName");
+  const lastName = localStorage.getItem("lastName");
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showStickers, setShowStickers] = useState(false);
   const [stickerPos, setStickerPos] = useState({ top: 0, left: 0 });
   const emojiBtnRef = useRef(null);
   const stickerRef = useRef(null);
+
+
+
+  const hasValidUsername =
+    typeof username === "string" &&
+    username.trim() !== "" &&
+    username !== "undefined" &&
+    username !== "null";
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -79,7 +90,7 @@ const Uploadpost = () => {
 
       if (res && !res.hasError) {
         toast.success("Post uploaded successfully!");
-        navigate("/social-media/profile");
+        navigate(`/artsays-community/profile/${hasValidUsername ? `${username}` : `${firstName}_${lastName}_${userId}`}`, { state: { userId: userId } });
       } else {
         toast.error(res?.message || "Failed to upload post");
       }
@@ -262,29 +273,29 @@ const Uploadpost = () => {
   };
 
   return (
-    <div className="flex justify-between w-full">
-      <Sidebar className="w-[22%] " />
+    <div className="grid grid-cols-12 gap-2 justify-between w-full">
+      <Sidebar className="col-span-3" />
 
-      <div className="w-[78%] mx-auto flex flex-col ab  lg:mt-8">
+      <div className="col-span-12 lg:col-span-8 w-full mx-auto flex flex-col py-3 lg:!py-4 px-2 lg:!px-0">
         {/* Header */}
-        <div className="w-full bg-[#000000] flex items-center justify-between rounded-t-xl header">
-          <Link to="/social-media/create-post">
+        <div className="w-full grid grid-cols-12 bg-[#000000] flex items-center justify-between rounded-t-xl header">
+          <Link to="/artsays-community/create-post" className="col-span-1">
             <i className="text-[30px] ri-arrow-left-s-line text-white ml-2"></i>
           </Link>
-          <p className="text-lg text-white font-medium">Create new post</p>
+          <p className="text-lg text-center text-white font-medium col-span-11">Create new post</p>
         </div>
 
         {/* Main Section */}
-        <div className="w-full abc flex lg:flex-row flex-col justify-between lg:border-[1.5px] lg:border-[#48372D] rounded-b-lg lg:h-[65vh]">
+        <div className="w-full flex grid grid-cols-12 gap-2 items-center justify-between md:p-2 md:border-2 border-gray-200 rounded-b-lg">
           {/* Image Carousel */}
-          <div className="relative flex items-center justify-center w-[65%] bg-black image-side">
+          <div className="w-full h-[400px] bg-[#EBEBEB] relative flex col-span-12 md:col-span-8 items-center justify-center bg-black border-r-[1.5px] rounded-b-md border-gray-200">
             {images.length > 0 ? (
               <>
                 <button
                   onClick={handlePrev}
-                  className="absolute left-2 text-white text-3xl px-2 py-1 rounded-full z-10"
+                  className="absolute left-2 text-white text-3xl px-2 py-1 rounded-full z-10 focus:outline-none"
                 >
-                  <i className="ri-arrow-left-s-line text-white bg-[#000000CC] opacity-80 rounded-full"></i>
+                  <i className="ri-arrow-left-s-line text-white bg-gray-600 rounded-full"></i>
                 </button>
 
                 <img
@@ -294,14 +305,14 @@ const Uploadpost = () => {
                       : images[currentImageIndex].preview
                   }
                   alt="post"
-                  className="object-contain h-full w-full object-cover rounded-bl-lg"
+                  className="object-contain h-full w-full"
                 />
 
                 <button
                   onClick={handleNext}
-                  className="absolute right-2 text-white text-3xl px-2 py-1 rounded-full z-10"
+                  className="absolute right-2 text-white text-3xl px-2 py-1 rounded-full z-10 focus:outline-none"
                 >
-                  <i className="ri-arrow-right-s-line text-white bg-[#000000CC] opacity-80 rounded-full"></i>
+                  <i className="ri-arrow-right-s-line text-white bg-gray-600 rounded-full"></i>
                 </button>
               </>
             ) : (
@@ -310,7 +321,7 @@ const Uploadpost = () => {
           </div>
 
           {/* Post Info Section */}
-          <div className="flex flex-col items-center justify-center w-[35%] gap-4 mx-4  information-side">
+          <div className="flex flex-col w-full col-span-12 md:col-span-4 items-center justify-center gap-3 md:pr-2 information-side">
             {/* Profile */}
             <div className="w-full flex items-center justify-start gap-3">
               <img
@@ -318,16 +329,15 @@ const Uploadpost = () => {
                   `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}` ||
                   `${DEFAULT_PROFILE_IMAGE}`
                 }
-                className="w-[65px] rounded-full"
+                className="w-12 rounded-full"
                 alt="Profile"
               />
               <p className="text-lg font-medium">{profile?.username}</p>
               {profile?.verified?.length > 0 && (
                 <img
-                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                    profile.verified[profile.verified.length - 1]?.badgeImage
-                  }`}
-                  className="inline-block ml-1 w-6 h-6 object-contain"
+                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]?.badgeImage
+                    }`}
+                  className="inline-block ml-1 w-4 h-4 object-contain"
                   alt={
                     profile.verified[profile.verified.length - 1]?.badgeName ||
                     "badge"
@@ -338,20 +348,19 @@ const Uploadpost = () => {
                 />
               )}{" "}
             </div>
-
             {/* Post Description */}
-            <div className="w-full bg-[#F0EDEB] h-40 flex flex-col items-center justify-between rounded-lg py-2 px-2 relative">
+            <div className="w-full bg-[#EBEBEB] h-40 flex flex-col items-center justify-between rounded-lg py-2 px-2 relative">
               <textarea
                 value={description}
                 onChange={handleDescriptionChange}
-                className="w-full h-full border-none bg-transparent outline-none resize-none my-2 mx-2 overflow-y-auto"
+                className="w-full h-full border-none bg-transparent text-[#000000] placeholder:text-xs outline-none resize-none overflow-y-auto"
                 placeholder="Post Description"
                 maxLength={2000}
               />
 
               {/* Mentions dropdown (below textarea) */}
               {showDescMentions && descMentionSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 mt-1 w-full lg:bg-white bg-[#FAF9F6] border rounded-md shadow-md z-50 max-h-40 overflow-y-auto">
+                <div className="absolute top-full left-0 mt-1 w-full bg-white border border-1 border-gray-200 rounded-md shadow-md z-50 max-h-40 overflow-y-auto">
                   {descMentionSuggestions.map((user) => (
                     <div
                       key={user._id}
@@ -372,32 +381,31 @@ const Uploadpost = () => {
                 </div>
               )}
 
-              <div className="w-full flex items-center justify-between px-2">
+              <div className="w-full flex items-center justify-between">
                 {/* Sticker Button */}
-                <button ref={emojiBtnRef} onClick={toggleStickers}>
-                  <i className="ri-emoji-sticker-line text-sm"></i>
+                <button ref={emojiBtnRef} onClick={toggleStickers} className="focus:outline-none">
+                  <i className="ri-emoji-sticker-line text-[#000000] text-sm"></i>
                 </button>
 
-                <p className="text-sm font-medium text-gray-800">
+                <p className="text-xs font-medium text-gray-400">
                   {description.length}/2000
                 </p>
               </div>
             </div>
-
             {/* Location */}
-            <div className="w-full bg-[#F0EDEB] flex flex-col px-2 rounded-lg relative">
+            <div className="w-full bg-[#EBEBEB] flex flex-col rounded-lg relative">
               <input
                 type="text"
                 value={locationInput}
                 onChange={(e) => setLocationInput(e.target.value)}
-                className="w-full border-none bg-transparent outline-none my-2 mx-2 overflow-scroll placeholder:text-[#1F1E1E] placeholder:font-medium text-sm"
+                className="w-full border-none bg-transparent text-[#000000] outline-none my-2 mx-2 overflow-scroll placeholder:text-xs"
                 placeholder="Add Location"
               />
-              <i className="ri-map-pin-2-fill absolute right-2 top-3 text-lg text-[#1F1E1E]"></i>
+              <i className="ri-map-pin-2-fill absolute right-2 top-1 text-lg text-[#1F1E1E]"></i>
 
               {/* Location Suggestions Dropdown */}
               {locationSuggestions.length > 0 && (
-                <div className="absolute top-12 left-0 w-full bg-white rounded shadow-md max-h-40 overflow-y-auto z-20">
+                <div className="absolute top-10 left-0 w-full bg-white border border-1 border-gray-200 rounded shadow-md max-h-40 overflow-y-auto z-20">
                   {locationSuggestions.map((loc, index) => (
                     <div
                       key={index}
@@ -413,20 +421,19 @@ const Uploadpost = () => {
                 </div>
               )}
             </div>
-
             {/* Collaborators */}
-            <div className="w-full bg-[#F0EDEB] flex flex-col px-2 rounded-lg relative">
+            <div className="w-full bg-[#EBEBEB] flex flex-col rounded-lg relative">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full border-none bg-transparent outline-none my-2 mx-2 overflow-scroll placeholder:text-[#1F1E1E] placeholder:font-medium text-sm"
+                className="w-full border-none bg-transparent text-[#000000] outline-none my-2 mx-2 overflow-scroll placeholder:text-xs"
                 placeholder="Search Collaborators"
               />
 
               {/* Suggestions Dropdown */}
               {suggestions.length > 0 && (
-                <div className="absolute top-12 left-0 w-full lg:bg-white bg-[#F0EDEB] rounded shadow-md max-h-40 overflow-y-auto z-20">
+                <div className="absolute top-10 left-0 w-full bg-white border border-1 border-gray-200 rounded-md shadow-md max-h-40 overflow-y-auto z-20">
                   {suggestions.map((user) => (
                     <div
                       key={user._id}
@@ -440,7 +447,11 @@ const Uploadpost = () => {
                       }}
                     >
                       <img
-                        src={user?.profilePhoto?`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`:`${DEFAULT_PROFILE_IMAGE}`}
+                        src={
+                          user?.profilePhoto
+                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`
+                            : `${DEFAULT_PROFILE_IMAGE}`
+                        }
                         alt={user?.username}
                         className="w-8 h-8 rounded-full mr-2"
                       />
@@ -455,7 +466,7 @@ const Uploadpost = () => {
                 {collaborators.map((c) => (
                   <div
                     key={c._id}
-                    className="flex items-center bg-gray-300 rounded-full px-2 py-1 text-sm"
+                    className="flex items-center bg-gray-300 rounded-md px-2 py-1 text-sm"
                   >
                     <img
                       src={c?.profilePhoto}
@@ -477,12 +488,11 @@ const Uploadpost = () => {
                 ))}
               </div>
             </div>
-            
             {/* Share To */} {/* Post Button */}
-            <div className="w-full flex items-center justify-end">
+            <div className="w-full">
               <input
                 type="submit"
-                className="px-3 bg-[#6E4E37] text-white font-medium text-[21px] py-[1px] rounded-[9px]"
+                className="w-full px-3 py-1 bg-[#48372D] border-2 border-[#48372D] text-white font-medium text-lg rounded-md hover:!bg-[#ffffff] hover:border-2 hover:border-[#48372D] hover:!text-[#48372D]"
                 value="Post"
                 onClick={uploadPost}
               />
@@ -492,11 +502,12 @@ const Uploadpost = () => {
 
         {/* Footer Thumbnails */}
         {images.length > 0 && (
-          <div className="flex gap-2 mt-2 w-full h-[130px] overflow-x-auto">
+          <div className="flex gap-2 p-2 w-full h-full grid grid-cols-3 md:grid-cols-4 overflow-x-auto">
             {images.map((img, index) => (
               <div
                 key={index}
-                className="relative w-22 h-22 rounded overflow-hidden"
+                className={`relative w-22 h-22 rounded overflow-hidden bg-[#EBEBEB] flex items-center justify-center ${currentImageIndex === index ? "ring-2 ring-[#6E4E37]" : ""
+                  }`}
               >
                 <img
                   src={
@@ -505,18 +516,18 @@ const Uploadpost = () => {
                       : img.preview
                   }
                   alt={`thumbnail-${index}`}
-                  className={`w-[150px] h-[150px] object-cover rounded cursor-pointer ${
-                    currentImageIndex === index ? "ring-2 ring-[#6E4E37]" : ""
-                  }`}
+                  className="w-[150px] h-[150px] object-contain rounded cursor-pointer"
                   onClick={() => setCurrentImageIndex(index)}
                 />
+                {images.length > 1 && (
+                  <button
+                    className="absolute top-0 right-0 text-black text-xs p-1 rounded-full"
+                    onClick={() => handleRemoveImage(index)}
+                  >
+                    <i className="ri-close-line text-white bg-gray-900 p-1 rounded-full"></i>
+                  </button>
+                )}
 
-                <button
-                  className="absolute top-0 right-0 text-black text-xs p-1 rounded-full"
-                  onClick={() => handleRemoveImage(index)}
-                >
-                  <i className="ri-close-line text-white bg-gray-900 p-1 rounded-full"></i>
-                </button>
               </div>
             ))}
           </div>

@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import getAPI from "../../../../api/getAPI";
 import axiosInstance from "../../../../api/axiosConfig";
 import ConfirmationDialog from "../../ConfirmationDialog";
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 
 const CertificationTable = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const CertificationTable = () => {
   const [pagesPerPage, setPagesPerPage] = useState(10);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedPageToDelete, setSelectedPageToDelete] = useState(null);
+const[loading,setLoading]=useState(true);
 
   const fetchPages = async () => {
     try {
@@ -28,6 +30,8 @@ const CertificationTable = () => {
         err.response?.data?.message || "Failed to fetch certification pages"
       );
       setPages([]);
+    }finally{
+setLoading(false)
     }
   };
 
@@ -81,6 +85,7 @@ const CertificationTable = () => {
     }
   };
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

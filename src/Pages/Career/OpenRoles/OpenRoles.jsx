@@ -1,181 +1,12 @@
-// import { useEffect, useState } from "react";
-// import getAPI from "../../../api/getAPI";
-// import { useNavigate } from "react-router-dom";
-
-// function OpenRoles() {
-
-//   const [jobs, setJobs] = useState([])
-//   const navigate = useNavigate()
-
-//   const fetchOpenJobs = async () => {
-//     try {
-//       const response = await getAPI('/api/get-career')
-
-//       if (response?.data) {
-//         setJobs(response.data.data)
-//       }
-//     }
-//     catch (error) {
-//       console.log(error)
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchOpenJobs()
-//   }, []);
-
-//   const slugify = (text) => {
-//     return text
-//       .toLowerCase()
-//       .trim()
-//       .replace(/[^a-z0-9]+/g, '-')
-//       .replace(/^-+|-+$/g, '')
-//   };
-
-//   return (
-//     <div className="max-w-[1440px] mx-auto mb-4 px-3">
-//       {/* Title Row */}
-//       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3 items-center">
-//         <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34]">
-//           Open Roles
-//         </h1>
-//       </div>
-
-//       <hr className="my-3 border-gray-400" />
-
-//       {/* Subtitle */}
-//       <p className="mt-3 text-sm md:text-md font-medium text-gray-800 leading-relaxed">
-//         At Artsays, we’re building more than just a platform — we’re shaping the
-//         future of how art is shared, discovered, and celebrated. We believe in
-//         creativity, collaboration, and growth. If you’re passionate about
-//         design, technology, and empowering artists worldwide, this is your
-//         place.
-//       </p>
-
-//       {/* Roles Section */}
-//       <div className="my-5">
-//         <main>
-//           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:!gap-6">
-
-//             {jobs.length > 0 ?
-//               jobs.map((job, index) => (
-//                 <div key={job._id} className="w-full border !border-[#FB5934] !border-t-[20px] rounded-2xl shadow-xl p-2 md:!p-4 hover:shadow-2xl transition">
-//                   <p className="text-md text-red-500">{job.category}</p>
-//                   <h2 className="text-gray-900 font-bold mt-1 text-lg sm:text-xl">{job.jobTitle}</h2>
-//                   <p className="text-sm text-gray-700 font-semibold mt-1">Read Job Description</p>
-//                   <p className="text-sm text-gray-700 mt-2">
-//                     {job.summary.length > 150 ? job.summary.substring(0, 140) + '...' : job.summary}
-//                   </p>
-//                   <div className="text-center my-3">
-//                     <button className="bg-[#48372D] text-[#fff] py-2 px-4 rounded-full font-semibold shadow transition
-//                       hover:bg-[#fff] hover:text-[#48372D] hover:!border border-dark"
-//                       onClick={() => navigate(`/careers/${slugify(job.jobTitle)}-${job._id}`)}>
-//                       Apply Now
-//                     </button>
-//                   </div>
-//                 </div>
-//               )) :
-//               <div className="text-lg font-semibold text-red-500">No open jobs</div>
-//             }
-
-//             {/* Product Card */}
-
-//             {/* <div className="w-full border !border-t-[20px] !border-[#FB5934] rounded-2xl shadow-xl p-2 md:!p-4 hover:shadow-2xl transition">
-//               <p className="text-md text-red-500">Internship</p>
-//               <h2 className="text-lg sm:text-xl text-gray-900 font-bold mt-1">
-//                 Content Writer
-//               </h2>
-//               <p className="text-sm text-gray-700 font-semibold mt-1">
-//                 Read Job Description
-//               </p>
-//               <p className="text-sm text-gray-700 mt-2">
-//                 You’ll help craft seamless, user-friendly experiences for
-//                 thousands of artists. Your words will directly shape how people
-//                 connect with Artsays.
-//               </p>
-//               <div className="text-center">
-//                 <button className="justify-self-end bg-[#48372D] text-white hover:bg-[#ffffff] hover:!text-[#48372D] hover:!border border-dark py-2 px-4 my-3 rounded-full font-semibold shadow transition">
-//                   Apply Now
-//                 </button>
-//               </div>
-//             </div> */}
-
-//             {/* <div className="w-full border !border-t-[20px] !border-[#FB5934] rounded-2xl shadow-xl p-2 md:!p-4 hover:shadow-2xl transition">
-//               <p className="text-md text-red-500">Internship</p>
-//               <h2 className="text-lg sm:text-xl text-gray-900 font-bold mt-1">
-//                 Content Writer
-//               </h2>
-//               <p className="text-sm text-gray-700 font-semibold mt-1">
-//                 Read Job Description
-//               </p>
-//               <p className="text-sm text-gray-700 mt-2">
-//                 You’ll help craft seamless, user-friendly experiences for
-//                 thousands of artists. Your words will directly shape how people
-//                 connect with Artsays.
-//               </p>
-//               <div className="text-center">
-//                 <button className="justify-self-end bg-[#48372D] text-white hover:bg-[#ffffff] hover:!text-[#48372D] hover:!border border-dark py-2 px-4 my-3 rounded-full font-semibold shadow transition">
-//                   Apply Now
-//                 </button>
-//               </div>
-//             </div> */}
-
-//             {/* <div className="w-full border !border-t-[20px] !border-[#FB5934] rounded-2xl shadow-xl p-2 md:!p-4 hover:shadow-2xl transition">
-//               <p className="text-md text-red-500">Internship</p>
-//               <h2 className="text-lg sm:text-xl text-gray-900 font-bold mt-1">
-//                 Content Writer
-//               </h2>
-//               <p className="text-sm text-gray-700 font-semibold mt-1">
-//                 Read Job Description
-//               </p>
-//               <p className="text-sm text-gray-700 mt-2">
-//                 You’ll help craft seamless, user-friendly experiences for
-//                 thousands of artists. Your words will directly shape how people
-//                 connect with Artsays.
-//               </p>
-//               <div className="text-center">
-//                 <button className="justify-self-end bg-[#48372D] text-white hover:bg-[#ffffff] hover:!text-[#48372D] hover:!border border-dark py-2 px-4 my-3 rounded-full font-semibold shadow transition">
-//                   Apply Now
-//                 </button>
-//               </div>
-//             </div> */}
-
-//             {/* <div className="w-full border !border-t-[20px] !border-[#FB5934] rounded-2xl shadow-xl p-2 md:!p-4 hover:shadow-2xl transition">
-//               <p className="text-md text-red-500">Internship</p>
-//               <h2 className="text-lg sm:text-xl text-gray-900 font-bold mt-1">
-//                 Content Writer
-//               </h2>
-//               <p className="text-sm text-gray-700 font-semibold mt-1">
-//                 Read Job Description
-//               </p>
-//               <p className="text-sm text-gray-700 mt-2">
-//                 You’ll help craft seamless, user-friendly experiences for
-//                 thousands of artists. Your words will directly shape how people
-//                 connect with Artsays.
-//               </p>
-//               <div className="text-center">
-//                 <button className="justify-self-end bg-[#48372D] text-white hover:bg-[#ffffff] hover:!text-[#48372D] hover:!border border-dark py-2 px-4 my-3 rounded-full font-semibold shadow transition">
-//                   Apply Now
-//                 </button>
-//               </div>
-//             </div> */}
-
-//           </div>
-//         </main>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default OpenRoles;
-import { useEffect, useState } from "react";
-import getAPI from "../../../api/getAPI";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ChevronRight, Search, Briefcase } from "lucide-react";
+import getAPI from "../../../api/getAPI";
 
-function OpenRoles() {
+const OpenRoles = ({ searchTerm = "" }) => {
   const [jobs, setJobs] = useState([]);
   const [careersPage, setCareersPage] = useState(null);
-
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const fetchOpenJobs = async () => {
@@ -185,7 +16,7 @@ function OpenRoles() {
         setJobs(response.data.data);
       }
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching open jobs:", error);
     }
   };
 
@@ -196,7 +27,9 @@ function OpenRoles() {
         setCareersPage(res.data.data);
       }
     } catch (error) {
-      console.log("Failed to load careers page", error);
+      console.error("Failed to load careers CMS:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -215,69 +48,89 @@ function OpenRoles() {
 
   const section2 = careersPage?.section2;
 
+  const filteredJobs = jobs.filter((job) =>
+    job.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    job.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (loading) return <OpenRolesSkeleton />;
+
   return (
-    <div className="max-w-[1440px] mx-auto mb-4 px-3">
-      {/* Title Row */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3 items-center">
-        <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34]">
-          {section2?.heading || "Open Roles"}
-        </h1>
+    <div className="max-w-[1440px] mx-auto space-y-8">
+      {/* Section Header */}
+      <div className="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-2">
+            <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+              {section2?.heading || "Open Roles"}
+            </h2>
+            <div className="w-20 h-1.5 bg-[#6F4D34] rounded-full" />
+          </div>
+        </div>
+        <p className="text-lg text-gray-600 leading-relaxed max-w-4xl">
+          {section2?.description ||
+            "Join our mission to empower artists worldwide. Discover the right role for you."}
+        </p>
       </div>
 
-      <hr className="my-3 border-gray-400" />
-
-      {/* Subtitle */}
-      <p className="mt-3 text-sm md:text-md font-medium text-gray-800 leading-relaxed">
-        {section2?.description ||
-          `At Artsays, we’re building more than just a platform — 
-           we’re shaping the future of how art is shared, discovered, and celebrated.`}
-      </p>
-
-      {/* Roles Section */}
-      <div className="my-5">
-        <main>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:!gap-6">
-            {jobs.length > 0 ? (
-              jobs.map((job) => (
-                <div
-                  key={job._id}
-                  className="w-full border !border-[#FB5934] !border-t-[20px] rounded-2xl shadow-xl p-2 md:!p-4 hover:shadow-2xl transition"
-                >
-                  <p className="text-md text-red-500">{job.category}</p>
-                  <h2 className="text-gray-900 font-bold mt-1 text-lg sm:text-xl">
-                    {job.jobTitle}
-                  </h2>
-                  <p className="text-sm text-gray-700 font-semibold mt-1">
-                    Read Job Description
-                  </p>
-                  <p className="text-sm text-gray-700 mt-2">
-                    {job.summary.length > 150
-                      ? job.summary.substring(0, 140) + "..."
-                      : job.summary}
-                  </p>
-                  <div className="text-center my-3">
-                    <button
-                      className="bg-[#48372D] text-[#fff] py-2 px-4 rounded-full font-semibold shadow transition
-                      hover:bg-[#fff] hover:text-[#48372D] hover:!border border-dark"
-                      onClick={() =>
-                        navigate(`/careers/${slugify(job.jobTitle)}-${job._id}`)
-                      }
-                    >
-                      Apply Now
-                    </button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-lg font-semibold text-red-500">
-                No open jobs
+      {/* Jobs Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredJobs.length > 0 ? (
+          filteredJobs.map((job) => (
+            <div
+              key={job._id}
+              className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-100 flex flex-col transition-all hover:shadow-xl hover:-translate-y-1 group"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <span className="px-4 py-1.5 bg-[#6F4D34]/5 text-[#6F4D34] text-xs font-bold uppercase tracking-wider rounded-full">
+                  {job.category}
+                </span>
+                <Briefcase size={20} className="text-gray-300 group-hover:text-[#6F4D34] transition-colors" />
               </div>
-            )}
+
+              <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#6F4D34] transition-colors">
+                {job.jobTitle}
+              </h3>
+
+              <p className="text-gray-600 text-sm leading-relaxed mb-6 flex-grow line-clamp-3">
+                {job.summary}
+              </p>
+
+              <button
+                onClick={() => navigate(`/careers/${slugify(job.jobTitle)}-${job._id}`)}
+                className="w-full inline-flex items-center justify-center px-6 py-3 bg-[#6F4D34] text-white rounded-2xl font-bold text-sm uppercase tracking-widest shadow-lg hover:bg-[#5a3e2a] transition-all active:scale-95 group/btn"
+              >
+                Apply Now
+                <ChevronRight size={18} className="ml-2 group-hover/btn:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          ))
+        ) : (
+          <div className="col-span-full py-20 text-center bg-white rounded-[32px] border border-dashed border-gray-200">
+            <div className="bg-gray-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Search size={24} className="text-gray-400" />
+            </div>
+            <h3 className="text-lg font-bold text-gray-900">No matching roles found</h3>
+            <p className="text-gray-500 mt-1">Try adjusting your search criteria.</p>
           </div>
-        </main>
+        )}
       </div>
     </div>
   );
-}
+};
+
+const OpenRolesSkeleton = () => (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+    {[1, 2, 3, 4, 5, 6].map((i) => (
+      <div key={i} className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-100">
+        <div className="h-6 w-24 bg-gray-100 rounded-full mb-4" />
+        <div className="h-7 w-3/4 bg-gray-100 rounded-lg mb-3" />
+        <div className="h-4 w-full bg-gray-100 rounded-lg mb-2" />
+        <div className="h-4 w-[90%] bg-gray-100 rounded-lg mb-6" />
+        <div className="h-12 w-full bg-gray-100 rounded-2xl" />
+      </div>
+    ))}
+  </div>
+);
 
 export default OpenRoles;

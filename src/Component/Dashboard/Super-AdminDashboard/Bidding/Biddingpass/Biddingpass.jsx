@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { toast } from "react-toastify";
 import getAPI from "../../../../../api/getAPI";
-
+import BiddingPassSkeleton from "../../../../Skeleton/biddingpass/BiddingPassSkeleton";
 
 const BiddingPass = () => {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ const BiddingPass = () => {
   const [userType, setUserType] = useState("");
   const [userOptions, setUserOptions] = useState([]);
   const [userId, setUserId] = useState("");
-
+const [loading,setLoading]=useState(false);
   const biddingPasses = [
     {
       id: 'one-time',
@@ -41,6 +41,7 @@ const BiddingPass = () => {
     }
 
     const fetchUsers = async () => {
+      setLoading(true)
       try {
         const response = await getAPI(`/api/users-by-type?userType=${userType}`, {}, true);
         console.log("Fetched users response:", response);
@@ -53,12 +54,15 @@ const BiddingPass = () => {
         }
       } catch (error) {
         toast.error("Error fetching users.");
+      }finally{
+        setLoading(false)
       }
     };
 
     fetchUsers();
   }, [userType]);
 
+  if(loading)return <BiddingPassSkeleton/>
   return (
     <div className="container-fluid mt-3">
       <div className="block-header">

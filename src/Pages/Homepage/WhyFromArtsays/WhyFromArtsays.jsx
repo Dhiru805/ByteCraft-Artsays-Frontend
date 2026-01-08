@@ -242,7 +242,7 @@ const WhyFromArtsays = () => {
 
         <hr className="my-3 border-dark" />
 
-        <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+        <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
           {data.description}
         </p>
 
@@ -252,15 +252,11 @@ const WhyFromArtsays = () => {
               <div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
                 
                 <div className="absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-white shadow-lg [backface-visibility:hidden]">
-                  {card.icon ? (
                     <img
                       src={`${imageBaseURL}/${card.icon}`}
                       alt={card.heading}
-                      className="w-36 h-36 mb-3 object-contain"
+                      className="w-[40%] h-[40%] mb-3 object-contain"
                     />
-                  ) : (
-                    <LiaCoinsSolid className="text-orange-500 text-[7rem] mb-3" />
-                  )}
                   <h2 className="text-lg md:text-xl font-semibold text-brown-900 text-center">
                     {card.heading}
                   </h2>

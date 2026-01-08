@@ -286,7 +286,7 @@ import { useAuth } from "../../AuthContext";
 import postAPI from "../../api/postAPI";
 import VerificationPopup from "./VerificationPopup";
 // import { GoogleLogin } from "@react-oauth/google";
-import { FcGoogle } from "react-icons/fc";
+// import { FcGoogle } from "react-icons/fc";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FaGoogle } from "react-icons/fa";
 
@@ -326,6 +326,7 @@ const Login = () => {
         token: localStorage.getItem("token"),
         userType: localStorage.getItem("userType"),
         status: localStorage.getItem("status"),
+        username: localStorage.getItem("username"),
       },
     });
 
@@ -383,7 +384,17 @@ const Login = () => {
         const res = await postAPI("/auth/googlelogin", { code }, true);
         console.log("google login api response", res);
 
-        const { token, userType, email, userId, status, userrole } = res.data;
+        const {
+          token,
+          userType,
+          email,
+          userId,
+          status,
+          userrole,
+          username,
+          firstName,
+          lastName,
+        } = res.data;
         if (!token || !userType) {
           throw new Error("Invalid response from server");
         }
@@ -393,7 +404,14 @@ const Login = () => {
           ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
           : null;
 
-        login(token, normalizedUserType, normalizedStatus);
+        login(
+          token,
+          normalizedUserType,
+          normalizedStatus,
+          username,
+          firstName,
+          lastName
+        );
 
         localStorage.setItem("token", token);
         localStorage.setItem("userType", normalizedUserType);
@@ -401,6 +419,9 @@ const Login = () => {
         localStorage.setItem("userId", userId);
         localStorage.setItem("status", normalizedStatus);
         localStorage.setItem("userrole", userrole);
+        localStorage.setItem("username", username);
+        localStorage.setItem("firstName", firstName);
+        localStorage.setItem("lastName", lastName);
 
         console.log("localStorage after login:", {
           token: localStorage.getItem("token"),
@@ -442,14 +463,24 @@ const Login = () => {
         },
         true
       );
-
-      const { token, userType, email, userId, status, userrole } = res.data;
+      const {
+        token,
+        userType,
+        email,
+        userId,
+        status,
+        userrole,
+        username,
+        firstName,
+        lastName,
+      } = res.data;
       console.log("Login API response:", {
         token,
         userType,
         email,
         userId,
         status,
+        username,
       });
 
       if (!token || !userType) {
@@ -461,7 +492,7 @@ const Login = () => {
         ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
         : null;
 
-      login(token, normalizedUserType, normalizedStatus);
+      login(token, normalizedUserType, normalizedStatus, username);
 
       localStorage.setItem("token", token);
       localStorage.setItem("userType", normalizedUserType);
@@ -469,8 +500,10 @@ const Login = () => {
       localStorage.setItem("userId", userId);
       localStorage.setItem("status", normalizedStatus);
       localStorage.setItem("userrole", userrole);
-      localStorage.setItem("name", res.data.name);
-
+      localStorage.setItem("username", username);
+      localStorage.setItem("firstName", firstName);
+      localStorage.setItem("lastName", lastName);
+      
       console.log("localStorage after login:", {
         token: localStorage.getItem("token"),
         userType: localStorage.getItem("userType"),

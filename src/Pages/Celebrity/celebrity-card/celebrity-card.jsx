@@ -1,54 +1,148 @@
-import { useState, useEffect } from "react";
-import { FiChevronRight } from "react-icons/fi";
-import { FiChevronLeft } from "react-icons/fi";
+import React, { useState, useEffect } from "react";
+import { Search, ListFilter, X, ChevronRight, ChevronLeft, SortAsc, Star, User, Briefcase, Award, Tag, Filter } from "lucide-react";
 import { ImArrowUpRight2 } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
-import CelebrityCardskeliton from "../../../Component/Skeleton/products/CelebrityCardskeliton";
 import getAPI from "../../../api/getAPI";
+import CelebrityCardskeliton from "../../../Component/Skeleton/products/CelebrityCardskeliton";
 
 const CelebrityCard = () => {
   const navigate = useNavigate();
-
-  const [showFilters, setShowFilters] = useState(false);
   const [celebritiesData, setCelebritiesData] = useState([]);
+  const [filteredCelebrities, setFilteredCelebrities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
+
+    const [filters, setFilters] = useState({
+      sortBy: "New Arrivals",
+      experienceLevel: [],
+      expertise: [],
+      specialTags: [],
+      search: "",
+    });
+
+  const [options, setOptions] = useState({
+    expertise: [],
+  });
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 9;
-  const indexOfLastProduct = currentPage * itemsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
-  const currentProducts = celebritiesData.slice(indexOfFirstProduct, indexOfLastProduct);
-
-  const totalPages = Math.ceil(celebritiesData.length / itemsPerPage);
-
-
-  const goToNextPage = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
-  const goToPrevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
-  const goToPage = (page) => setCurrentPage(page);
-
+  const itemsPerPage = 12;
 
   const fetchCelebritiesData = async () => {
     try {
       const response = await getAPI("/api/celebrities");
       if (response?.hasError === false) {
-        setCelebritiesData(response?.data?.data);
-        fetchartistsData();
-      } else {
-        console.log(response);
+        setCelebritiesData(response?.data?.data || []);
       }
     } catch (error) {
-      console.log(error);
-    }
-    finally {
+      console.error("Error fetching celebrities:", error);
+    } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const res = await getAPI("/api/main-category", true);
+        if (res?.data?.data) {
+          setOptions({
+            expertise: res.data.data.map((c) => c.mainCategoryName),
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching filter options:", error);
+      }
+    };
+    fetchOptions();
     fetchCelebritiesData();
   }, []);
 
+  useEffect(() => {
+    let result = [...celebritiesData];
+
+    // Search filter
+    if (filters.search) {
+      result = result.filter((c) =>
+        c.artistName?.toLowerCase().includes(filters.search.toLowerCase()) ||
+        c.profession?.toLowerCase().includes(filters.search.toLowerCase())
+      );
+    }
+
+    // Expertise filter
+    if (filters.expertise.length > 0) {
+      result = result.filter((c) =>
+        filters.expertise.some((exp) =>
+          c.profession?.toLowerCase().includes(exp.toLowerCase())
+        )
+      );
+    }
+
+    // Special Tags filter
+    if (filters.specialTags.length > 0) {
+      result = result.filter((c) => {
+        return filters.specialTags.some((tag) => {
+          if (tag === "Trending") return parseInt(c.yearsActiveInArt) > 20;
+          if (tag === "Verified") return true; // Most celebrities are verified by default in this view
+          return false;
+        });
+      });
+    }
+
+    // Experience Level filter (mapping yearsActiveInArt)
+    if (filters.experienceLevel.length > 0) {
+      result = result.filter((c) => {
+        const years = parseInt(c.yearsActiveInArt) || 0;
+        return filters.experienceLevel.some((level) => {
+          if (level === "Emerging Artist") return years < 5;
+          if (level === "Mid-Level Artist") return years >= 5 && years < 15;
+          if (level === "Established Artist") return years >= 15 && years < 30;
+          if (level === "Master Artist") return years >= 30;
+          return false;
+        });
+      });
+    }
+
+    // Sort
+    if (filters.sortBy === "New Arrivals") {
+      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else if (filters.sortBy === "Trending") {
+      result.sort((a, b) => (parseInt(b.yearsActiveInArt) || 0) - (parseInt(a.yearsActiveInArt) || 0));
+    } else if (filters.sortBy === "Name (A-Z)") {
+      result.sort((a, b) => a.artistName.localeCompare(b.artistName));
+    } else if (filters.sortBy === "Name (Z-A)") {
+      result.sort((a, b) => b.artistName.localeCompare(a.artistName));
+    }
+
+    setFilteredCelebrities(result);
+    setCurrentPage(1);
+  }, [celebritiesData, filters]);
+
+  const handleFilterChange = (category, value, isChecked) => {
+    setFilters((prev) => {
+      if (category === "sortBy" || category === "search") {
+        return { ...prev, [category]: value };
+      }
+
+      const currentList = prev[category] || [];
+      if (isChecked) {
+        return { ...prev, [category]: [...currentList, value] };
+      } else {
+        return { ...prev, [category]: currentList.filter((item) => item !== value) };
+      }
+    });
+  };
+
+  const indexOfLastProduct = currentPage * itemsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
+  const currentCelebrities = filteredCelebrities.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(filteredCelebrities.length / itemsPerPage);
+
+  const goToNextPage = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
+  const goToPrevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
+  const goToPage = (page) => setCurrentPage(page);
+
   const slugify = (text) => {
+    if (!text) return "";
     return text
       .toLowerCase()
       .trim()
@@ -56,810 +150,245 @@ const CelebrityCard = () => {
       .replace(/^-+|-+$/g, "");
   };
 
-  const fetchartistsData = async () => {
-    try {
-      const response = await getAPI("/artist/artists");
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const FilterSection = ({ title, icon: Icon, children }) => (
+    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-4">
+      <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+        <Icon size={18} className="text-[#6F4D34]" />
+        {title}
+      </h3>
+      <div className="space-y-4">{children}</div>
+    </div>
+  );
 
-  return (
-    <div className="max-w-[1440px] mx-auto mb-4">
-      {/* Top Section: Breadcrumb + Search */}
-      <div className="w-full bg-white py-3 px-3 sm:px-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          {/* Breadcrumb */}
-          <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
-            <a href="#" className="hover:text-red-500">
-              Home
-            </a>
-            <span>/</span>
-            <a href="#" className="hover:text-red-500">
-              Store
-            </a>
-            <span>/</span>
-            <a href="#" className="hover:text-red-500">
-              Paintings
-            </a>
-            <span>/</span>
-            <span className="font-medium text-gray-900">Abstract</span>
-          </nav>
-
-          {/* Search Bar */}
-          <div className="relative w-full sm:w-64">
-            <input
-              type="text"
-              placeholder="Search"
-              className="w-full pl-10 pr-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400"
-            />
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-5 h-5 absolute left-3 top-2.5 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"
-              />
+  const CheckboxItem = ({ label, checked, onChange }) => (
+    <label className="flex items-center group cursor-pointer">
+      <div className="relative flex items-center">
+        <input type="checkbox" className="sr-only" checked={checked} onChange={onChange} />
+        <div className={`w-5 h-5 border-2 rounded-md transition-all flex items-center justify-center ${checked ? "border-[#6F4D34] bg-[#6F4D34]" : "border-gray-300 group-hover:border-[#6F4D34]"}`}>
+          {checked && (
+            <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
             </svg>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6">
-        {/* Sidebar Filters (hidden on mobile, toggleable) */}
-        <aside className="hidden md:block rounded-xl filter-sidebar">
-          {/* All your filter sections here (unchanged) */}
-          <h2 className="font-bold text-lg mb-3">Filter by</h2>
-
-          <hr className="mb-3 border-dark" />
-
-          {/* Sort By */}
-          <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-            Sort By
-          </p>
-          <div className="space-y-2 mb-4">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> New Arrivals
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Trending
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Price Low to High
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Price High to Low
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Relevance
-            </label>
-          </div>
-
-          <hr className="mb-3 border-dark" />
-
-          {/* Art Involvement */}
-          <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-            Art Involvement
-          </p>
-          <div className="space-y-2 mb-4">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Collector
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Creator (they make art)
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Curator / Collaborator
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Investor / Patron
-            </label>
-          </div>
-
-          <hr className="mb-3 border-dark" />
-
-          {/* Price */}
-          <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-            Price
-          </p>
-          <input type="range" min="295" max="89700" className="w-full" />
-          <div className="flex justify-between text-xs text-gray-600 mb-2">
-            <span>₹295</span>
-            <span>₹89,700+</span>
-          </div>
-          <div className="space-y-2 mb-4 text-sm">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Under ₹5,000
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> ₹5,000 – ₹10,000
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> ₹10,000 – ₹25,000
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Above ₹25,000
-            </label>
-          </div>
-
-          <hr className="mb-3 border-dark" />
-
-          {/* Size */}
-          <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-            Size
-          </p>
-          <div className="space-y-2 mb-4">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Small (&lt;12in)
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Medium (12–24in)
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Large (24–48in)
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Oversized (48in+)
-            </label>
-          </div>
-
-          <hr className="mb-3 border-dark" />
-
-          {/* Style */}
-          <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-            Style
-          </p>
-          <div className="space-y-2 mb-4">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Abstract
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Modern
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Traditional
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Minimalist
-            </label>
-          </div>
-
-          <hr className="mb-3 border-dark" />
-
-          {/* Medium */}
-          <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-            Medium
-          </p>
-          <div className="space-y-2">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Oil
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Acrylic
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Watercolor
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Mixed Media
-            </label>
-          </div>
-
-          <hr className="mb-3 border-dark" />
-
-          {/* Experience Level */}
-          <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-            Experience Level
-          </p>
-          <div className="space-y-2">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Emerging Artist
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Mid-Level Artist
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Established Artist
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Master Artist
-            </label>
-          </div>
-        </aside>
-
-        {/* Mobile Sidebar Toggle */}
-        <div className="md:hidden mb-4">
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="w-full py-2 px-4 border border-gray-300 rounded-lg text-sm font-semibold flex items-center justify-center gap-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M3 4h18M3 12h18M3 20h18"
-              />
-            </svg>
-            Filters
-          </button>
-
-          {/* Slide-over sidebar for mobile */}
-          {showFilters && (
-            <div className="fixed inset-0 z-50 flex">
-              {/* Background Overlay */}
-              <div
-                className="fixed inset-0 bg-black bg-opacity-50"
-                onClick={() => setShowFilters(false)}
-              ></div>
-
-              {/* Sidebar */}
-              <div className="relative bg-white w-72 max-w-full h-full shadow-xl p-5 overflow-y-auto">
-                <button
-                  onClick={() => setShowFilters(false)}
-                  className="absolute top-3 right-3 text-gray-600"
-                >
-                  ✕
-                </button>
-
-                <h2 className="font-bold text-lg mb-3">Filter by</h2>
-                <hr className="mb-3 border-dark" />
-
-                {/* ✅ Place the same filters here */}
-                {/* Sort By, Special Tags, Price, Size, Style, Medium */}
-                {/* Sort By */}
-                <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-                  Sort By
-                </p>
-                <div className="space-y-2 mb-4">
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> New Arrivals
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Trending
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Price Low to High
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Price High to Low
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Relevance
-                  </label>
-                </div>
-
-                <hr className="mb-3 border-dark" />
-
-                {/* Art Involvement */}
-                <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-                  Art Involvement
-                </p>
-                <div className="space-y-2 mb-4">
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Collector
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Creator (they
-                    make art)
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Curator /
-                    Collaborator
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Investor / Patron
-                  </label>
-                </div>
-
-                <hr className="mb-3 border-dark" />
-
-                {/* Price */}
-                <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-                  Price
-                </p>
-                <div className="flex justify-between text-xs text-gray-600 mb-1">
-                  <span>₹295</span>
-                  <span>₹89,700+</span>
-                </div>
-                <input
-                  type="range"
-                  min="295"
-                  max="89700"
-                  className="w-full mb-3"
-                />
-                <div className="space-y-2 mb-4 text-sm">
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Under ₹5,000
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> ₹5,000 – ₹10,000
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> ₹10,000 – ₹25,000
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Above ₹25,000
-                  </label>
-                </div>
-
-                <hr className="mb-3 border-dark" />
-
-                {/* Size */}
-                <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-                  Size
-                </p>
-                <div className="space-y-2 mb-4">
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Small (&lt;12in)
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Medium (12–24in)
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Large (24–48in)
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Oversized (48in+)
-                  </label>
-                </div>
-
-                <hr className="mb-3 border-dark" />
-
-                {/* Style */}
-                <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-                  Style
-                </p>
-                <div className="space-y-2 mb-4">
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Abstract
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Modern
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Traditional
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Minimalist
-                  </label>
-                </div>
-
-                <hr className="mb-3 border-dark" />
-
-                {/* Medium */}
-                <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-                  Medium
-                </p>
-                <div className="space-y-2">
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Oil
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Acrylic
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Watercolor
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Mixed Media
-                  </label>
-                </div>
-
-                <hr className="mb-3 border-dark" />
-
-                {/* Experience Level */}
-                <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
-                  Experience Level
-                </p>
-                <div className="space-y-2">
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Emerging Artist
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Mid-Level Artist
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Established
-                    Artist
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Master Artist
-                  </label>
-                </div>
-              </div>
-            </div>
           )}
         </div>
+      </div>
+      <span className={`ml-3 text-sm font-medium transition-colors ${checked ? "text-[#6F4D34]" : "text-gray-600 group-hover:text-gray-900"}`}>{label}</span>
+    </label>
+  );
 
-        {/* <!-- Celebrity Card --> */}
-        <main className="md:col-span-3">
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+  const RadioItem = ({ label, checked, onChange, name }) => (
+    <label className="flex items-center group cursor-pointer">
+      <div className="relative flex items-center">
+        <input type="radio" name={name} className="sr-only" checked={checked} onChange={onChange} />
+        <div className={`w-5 h-5 border-2 rounded-full transition-all ${checked ? "border-[#6F4D34] bg-[#6F4D34]" : "border-gray-300 group-hover:border-[#6F4D34]"}`}>
+          <div className={`w-2 h-2 bg-white rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform ${checked ? "scale-100" : "scale-0"}`} />
+        </div>
+      </div>
+      <span className={`ml-3 text-sm font-medium transition-colors ${checked ? "text-[#6F4D34]" : "text-gray-600 group-hover:text-gray-900"}`}>{label}</span>
+    </label>
+  );
 
-            {/* {celebritiesData.length > 0 ? (
-              celebritiesData.map((celebrity, index) => ( */}
-            {currentProducts.length > 0 ? (
-              currentProducts.map((celebrity, index) => (
+  if (loading) return (
+    <div className="w-full bg-gray-50 min-h-screen p-4">
+      <div className="max-w-[1440px] mx-auto">
+        <CelebrityCardskeliton />
+      </div>
+    </div>
+  );
 
-                <div key={celebrity._id}
-                  className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
+  return (
+    <div className="w-full bg-gray-50 min-h-screen font-[poppins]">
+      <div className="w-full max-w-[1440px] mx-auto p-3">
+        <div className="flex flex-col lg:flex-row gap-3">
+          {/* Sidebar */}
+          <aside className="w-full lg:w-[300px] shrink-0">
+            <div className="lg:hidden mb-4">
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="w-full flex items-center justify-between px-6 py-4 bg-white border border-gray-200 rounded-2xl shadow-sm font-bold text-[#6F4D34]"
+              >
+                <span className="flex items-center gap-2">
+                  <ListFilter size={20} />
+                  {showFilters ? "Hide Filters" : "Show Filters"}
+                </span>
+                {showFilters ? <X size={20} /> : <ChevronRight size={20} />}
+              </button>
+            </div>
 
-                  <div className="relative hidden md:block">
-                    <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
+            <div className={`${showFilters ? "block" : "hidden"} lg:block sticky top-6 space-y-4`}>
+              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h2 className="text-xl font-bold text-gray-900 mb-1">Filter by</h2>
+                <p className="text-sm text-gray-500">Refine celebrity search</p>
+              </div>
+
+                <FilterSection title="Sort Results" icon={SortAsc}>
+                  {["New Arrivals", "Trending", "Name (A-Z)", "Name (Z-A)"].map((option) => (
+                    <RadioItem
+                      key={option}
+                      label={option}
+                      name="sortBy"
+                      checked={filters.sortBy === option}
+                      onChange={() => handleFilterChange("sortBy", option)}
+                    />
+                  ))}
+                </FilterSection>
+
+                <FilterSection title="Special Tags" icon={Tag}>
+                  {["Verified", "Trending"].map((tag) => (
+                    <CheckboxItem
+                      key={tag}
+                      label={tag}
+                      checked={filters.specialTags.includes(tag)}
+                      onChange={(e) => handleFilterChange("specialTags", tag, e.target.checked)}
+                    />
+                  ))}
+                </FilterSection>
+
+                <FilterSection title="Expertise" icon={Filter}>
+                  {options.expertise.map((exp) => (
+                    <CheckboxItem
+                      key={exp}
+                      label={exp}
+                      checked={filters.expertise.includes(exp)}
+                      onChange={(e) => handleFilterChange("expertise", exp, e.target.checked)}
+                    />
+                  ))}
+                </FilterSection>
+
+
+              <FilterSection title="Experience Level" icon={Award}>
+                {["Emerging Artist", "Mid-Level Artist", "Established Artist", "Master Artist"].map((level) => (
+                  <CheckboxItem
+                    key={level}
+                    label={level}
+                    checked={filters.experienceLevel.includes(level)}
+                    onChange={(e) => handleFilterChange("experienceLevel", level, e.target.checked)}
+                  />
+                ))}
+              </FilterSection>
+            </div>
+          </aside>
+
+          {/* Main Content */}
+          <main className="flex-grow">
+            <div className="relative mb-3">
+              <input
+                type="text"
+                placeholder="Search celebrities, professions, or names..."
+                value={filters.search}
+                onChange={(e) => handleFilterChange("search", e.target.value)}
+                className="w-full p-4 pl-12 bg-white border border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#6F4D34]/10 focus:border-[#6F4D34] transition-all text-lg"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+              {currentCelebrities.length > 0 ? (
+                currentCelebrities.map((celebrity, index) => (
+                  <div
+                    key={celebrity._id}
+                    className="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 flex flex-col h-full animate-fade-in-up"
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    <div className="p-6 text-center">
+                      <h2 className="text-xl font-bold text-gray-900 group-hover:text-[#6F4D34] transition-colors">
+                        {celebrity.artistName}
+                      </h2>
+                    </div>
+
+                    <div className="relative aspect-square overflow-hidden bg-gray-50 border-y border-gray-100">
+                      <img
+                        src={celebrity.profilePicture || "/herosectionimg/1.jpg"}
+                        alt={celebrity.artistName}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    </div>
+
+                    <div className="p-6 mt-auto">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <Star size={16} className="text-yellow-400 fill-yellow-400" />
+                          <span className="text-sm font-bold text-gray-900">
+                            {celebrity.yearsActiveInArt}+ Years Active
+                          </span>
+                        </div>
+                        <div className="text-[10px] font-bold text-[#6F4D34] bg-[#6F4D34]/5 px-3 py-1 rounded-full uppercase tracking-wider">
+                          Featured
+                        </div>
+                      </div>
+                      
                       <button
-                        onClick={() =>
-                          navigate(
-                            `/celebrity/${slugify(celebrity.artistName)}`,
-                            { state: { celebrity } }
-                          )
-                        }
-                        className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
+                        onClick={() => navigate(`/celebrity/${slugify(celebrity.artistName)}`, { state: { celebrity } })}
+                        className="w-full flex items-center justify-center gap-2 bg-[#6F4D34] text-white hover:!text-[#6F4D34] py-3 border border-gray-100 rounded-xl font-bold hover:bg-[#ffffff] transition-colors shadow-sm"
                       >
                         View Collection
-                        <span className="text-white text-lg">
-                          <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
-                        </span>
+                        <ImArrowUpRight2 size={14} />
                       </button>
                     </div>
                   </div>
+                ))
+              ) : (
+                <div className="col-span-full py-24 text-center">
+                  <div className="inline-flex items-center justify-center w-24 h-24 bg-gray-100 rounded-full mb-6 text-gray-400">
+                    <Search size={40} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">No celebrities found</h3>
+                  <p className="text-gray-500 max-w-sm mx-auto mb-8">
+                    Try adjusting your filters or search term to discover more incredible talent.
+                  </p>
+                      <button
+                        onClick={() => setFilters({
+                          sortBy: "New Arrivals",
+                          experienceLevel: [],
+                          expertise: [],
+                          specialTags: [],
+                          search: "",
+                        })}
+                        className="text-[#6F4D34] font-bold hover:underline px-6 py-2 border-2 border-[#6F4D34] rounded-full"
+                      >
+                        Clear All Filters
+                      </button>
                 </div>
-              ))
-            ) : (
-              <div>No celebrities data</div>
+              )}
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-12">
+                <nav className="flex items-center gap-2 p-1 bg-white border border-gray-200 rounded-2xl shadow-sm">
+                  <button
+                    disabled={currentPage === 1}
+                    onClick={goToPrevPage}
+                    className="p-3 rounded-xl text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-colors"
+                  >
+                    <ChevronLeft size={24} />
+                  </button>
+                  <div className="flex items-center px-2">
+                    {Array.from({ length: totalPages }).map((_, i) => (
+                      <button
+                        key={i + 1}
+                        onClick={() => goToPage(i + 1)}
+                        className={`w-11 h-11 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
+                          currentPage === i + 1 ? "bg-[#6F4D34] text-white shadow-md" : "text-gray-600 hover:bg-gray-50"
+                        }`}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    disabled={currentPage === totalPages}
+                    onClick={goToNextPage}
+                    className="p-3 rounded-xl text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-colors"
+                  >
+                    <ChevronRight size={24} />
+                  </button>
+                </nav>
+              </div>
             )}
-
-            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              <div className="px-2 py-4 text-center">
-                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
-                  Rohan Malhotra
-                </h2>
-                <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
-                  Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
-                  Energy Of His Music.
-                </p>
-              </div>
-
-              <div>
-                <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
-                  <img
-                    src="/herosectionimg/1.jpg"
-                    alt="Collection Artwork"
-                    className="w-full h-40 sm:h-64 object-contain"
-                  />
-                </div>
-              </div>
-
-              <div className="relative hidden md:block">
-                <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <button
-                    href="#"
-                    className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
-                  >
-                    View Collection
-                    <span className="text-white text-lg">
-                      <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div> */}
-
-            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              <div className="px-2 py-4 text-center">
-                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
-                  Rohan Malhotra
-                </h2>
-                <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
-                  Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
-                  Energy Of His Music.
-                </p>
-              </div>
-
-              <div>
-                <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
-                  <img
-                    src="/herosectionimg/1.jpg"
-                    alt="Collection Artwork"
-                    className="w-full h-40 sm:h-64 object-contain"
-                  />
-                </div>
-              </div>
-
-              <div className="relative hidden md:block">
-                <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <button
-                    href="#"
-                    className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
-                  >
-                    View Collection
-                    <span className="text-white text-lg">
-                      <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div> */}
-
-            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              <div className="px-2 py-4 text-center">
-                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
-                  Rohan Malhotra
-                </h2>
-                <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
-                  Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
-                  Energy Of His Music.
-                </p>
-              </div>
-
-              <div>
-                <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
-                  <img
-                    src="/herosectionimg/1.jpg"
-                    alt="Collection Artwork"
-                    className="w-full h-40 sm:h-64 object-contain"
-                  />
-                </div>
-              </div>
-
-              <div className="relative hidden md:block">
-                <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <button
-                    href="#"
-                    className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
-                  >
-                    View Collection
-                    <span className="text-white text-lg">
-                      <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div> */}
-
-            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              <div className="px-2 py-4 text-center">
-                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
-                  Rohan Malhotra
-                </h2>
-                <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
-                  Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
-                  Energy Of His Music.
-                </p>
-              </div>
-
-              <div>
-                <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
-                  <img
-                    src="/herosectionimg/1.jpg"
-                    alt="Collection Artwork"
-                    className="w-full h-40 sm:h-64 object-contain"
-                  />
-                </div>
-              </div>
-
-              <div className="relative hidden md:block">
-                <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <button
-                    href="#"
-                    className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
-                  >
-                    View Collection
-                    <span className="text-white text-lg">
-                      <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div> */}
-
-            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              <div className="px-2 py-4 text-center">
-                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
-                  Rohan Malhotra
-                </h2>
-                <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
-                  Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
-                  Energy Of His Music.
-                </p>
-              </div>
-
-              <div>
-                <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
-                  <img
-                    src="/herosectionimg/1.jpg"
-                    alt="Collection Artwork"
-                    className="w-full h-40 sm:h-64 object-contain"
-                  />
-                </div>
-              </div>
-
-              <div className="relative hidden md:block">
-                <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <button
-                    href="#"
-                    className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
-                  >
-                    View Collection
-                    <span className="text-white text-lg">
-                      <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div> */}
-
-            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              <div className="px-2 py-4 text-center">
-                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
-                  Rohan Malhotra
-                </h2>
-                <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
-                  Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
-                  Energy Of His Music.
-                </p>
-              </div>
-
-              <div>
-                <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
-                  <img
-                    src="/herosectionimg/1.jpg"
-                    alt="Collection Artwork"
-                    className="w-full h-40 sm:h-64 object-contain"
-                  />
-                </div>
-              </div>
-
-              <div className="relative hidden md:block">
-                <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <button
-                    href="#"
-                    className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
-                  >
-                    View Collection
-                    <span className="text-white text-lg">
-                      <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div> */}
-
-            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              <div className="px-2 py-4 text-center">
-                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
-                  Rohan Malhotra
-                </h2>
-                <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
-                  Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
-                  Energy Of His Music.
-                </p>
-              </div>
-
-              <div>
-                <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
-                  <img
-                    src="/herosectionimg/1.jpg"
-                    alt="Collection Artwork"
-                    className="w-full h-40 sm:h-64 object-contain"
-                  />
-                </div>
-              </div>
-
-              <div className="relative hidden md:block">
-                <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <button
-                    href="#"
-                    className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
-                  >
-                    View Collection
-                    <span className="text-white text-lg">
-                      <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div> */}
-
-            {/* <div className="w-full mx-auto rounded-[2rem] overflow-hidden flex flex-col border-2 border-[#48372D] bg-[#EBEBEB]">
-              <div className="px-2 py-4 text-center">
-                <h2 className="text-sm md:text-2xl font-extrabold text-[#4A3426]">
-                  Rohan Malhotra
-                </h2>
-                <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed">
-                  Rohan Collects Urban Art, That Mirrors The Raw Rhythm, And
-                  Energy Of His Music.
-                </p>
-              </div>
-
-              <div>
-                <div className="w-full h-40 sm:h-64 rounded-[2rem] border-t-2 border-[#48372D] overflow-hidden flex items-center justify-center">
-                  <img
-                    src="/herosectionimg/1.jpg"
-                    alt="Collection Artwork"
-                    className="w-full h-40 sm:h-64 object-contain"
-                  />
-                </div>
-              </div>
-
-              <div className="relative hidden md:block">
-                <div className="absolute bottom-6 left-1/3 transform -translate-x-1/2">
-                  <button
-                    href="#"
-                    className="flex items-center gap-2 bg-white/70 backdrop-blur-md text-gray-800 font-medium px-3 py-2 rounded-full shadow-md hover:bg-white transition"
-                  >
-                    View Collection
-                    <span className="text-white text-lg">
-                      <ImArrowUpRight2 className="bg-black rounded-full h-8 w-8 p-2" />
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div> */}
-          </div>
-
-      {/* </div> */}
-      <div className="flex justify-center mt-6">
-        <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
-          {/* Previous */}
-          <button
-            onClick={goToPrevPage}
-            disabled={currentPage === 1}
-            className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === 1
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:text-red-500"
-              }`}
-          >
-            <FiChevronLeft className="self-center flex-shrink-0" />
-            <span className="ml-1">Previous</span>
-          </button>
-
-          {/* Page numbers */}
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-            (page) => (
-              <button
-                key={page}
-                onClick={() => goToPage(page)}
-                className={`px-2 sm:px-3 py-1 rounded ${currentPage === page
-                    ? "border border-dark text-dark"
-                    : "hover:text-red-500"
-                  }`}
-              >
-                {page}
-              </button>
-            )
-          )}
-
-          {/* Next */}
-          <button
-            onClick={goToNextPage}
-            disabled={currentPage === totalPages}
-            className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === totalPages
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:text-red-500"
-              }`}
-          >
-            <span className="mr-1">Next</span>
-            <FiChevronRight className="self-center flex-shrink-0" />
-          </button>
-        </nav>
+          </main>
+        </div>
       </div>
-    </main>
-      </div >
-    </div >
+    </div>
   );
 };
+
 export default CelebrityCard;

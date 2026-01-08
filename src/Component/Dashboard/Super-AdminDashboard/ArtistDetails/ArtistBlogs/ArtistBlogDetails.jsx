@@ -3,14 +3,14 @@ import { useLocation } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
-
+import { Helmet } from 'react-helmet-async';
+import ProductRequestSkeleton from '../../../../Skeleton/artist/ProductRequestSkeleton';
 function ArtistBlogDetails() {
   const location = useLocation();
   const [blogData] = useState(location.state?.blogData || null);
   const [blogs, setBlogs] = useState([]);
   const navigate = useNavigate();
-
+const[loading,setLoading]=useState(true)
 
   const fetchBlog = async () => {
     try {
@@ -20,6 +20,8 @@ function ArtistBlogDetails() {
       }
     } catch (error) {
       console.error("Error fetching blog:", error);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -28,7 +30,7 @@ function ArtistBlogDetails() {
   }, [blogData._id]);
 
 
-
+if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       {blogs.length > 0 && (

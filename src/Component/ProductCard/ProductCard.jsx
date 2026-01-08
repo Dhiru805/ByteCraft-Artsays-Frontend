@@ -380,19 +380,29 @@ useEffect(() => {
                           //className="rounded-2xl shadow-md overflow-hidden flex flex-col justify-between product-card transition-transform duration-300 hover:-translate-y-1 m-3"
                           className="rounded-2xl shadow-md overflow-hidden flex flex-col justify-between product-card transition-transform duration-300 hover:-translate-y-1 mx-auto w-full max-w-[330px] my-2"
                         >
-                          {/* Image */}
-                          <div className="relative p-img">
-                            {product.editionType && (
-                              <span className="absolute top-3 left-3 text-white bg-dark text-sm font-semibold px-2 py-0.5 rounded-full shadow">
-                                {product.editionType}
-                              </span>
-                            )}
-                            <img
-                              src={`${imageBaseURL}${product.mainImage}`}
-                              alt={product.productName}
-                              className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
-                            />
-                            <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
+                            {/* Image */}
+                            <div className="relative p-img">
+                              {product.editionType && (
+                                <span className="absolute top-3 left-3 text-white bg-dark text-sm font-semibold px-2 py-0.5 rounded-full shadow">
+                                  {product.editionType}
+                                </span>
+                              )}
+                              <img
+                                src={`${imageBaseURL}${product.mainImage}`}
+                                alt={product.productName}
+                                className={`w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img ${(!product.quantity || product.quantity === 0) ? 'blur-[2px]' : ''}`}
+                              />
+
+                              {/* Sold Out Overlay */}
+                              {(!product.quantity || product.quantity === 0) && (
+                                <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-[1px]">
+                                  <div className="bg-white/90 px-6 py-2 rounded-lg shadow-2xl border border-white/50 transform -rotate-12">
+                                    <span className="text-red-600 font-black text-xl uppercase tracking-wider">Sold Out</span>
+                                  </div>
+                                </div>
+                              )}
+
+                              <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
                               {/* <Heart className="w-5 h-5 text-white" /> */}
                               <div
                                 onClick={(e) => {

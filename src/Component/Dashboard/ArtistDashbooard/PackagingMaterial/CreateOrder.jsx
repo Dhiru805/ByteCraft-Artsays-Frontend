@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import postAPI from "../../../../api/postAPI";
 import getAPI from "../../../../api/getAPI";
-
+import { toast } from "react-toastify";
 const CreateOrder = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -60,48 +60,72 @@ const CreateOrder = () => {
   const [quantities, setQuantities] = useState({});
   const [prices, setPrices] = useState({});
   const [currentType, setCurrentType] = useState("");
+  const [allAddress, setAllAddress] = useState([]);
+  //   useEffect(() => {
+  //     const getUser = async () => {
+  //       try {
+  //         const userId = localStorage.getItem("userId");
+  //         const res = await getAPI(`/auth/user/${userId}`);
+  //         console.log("User profile dataaaaaaaaaaaaaaaaa", res);
+
+  //         let address = res.data.address;
+
+  //         // Step 1: Parse the address if it's a string
+  //         let parsedAddress = address;
+  //         if (typeof address === "string") {
+  //           try {
+  //             parsedAddress = JSON.parse(address);
+  //           } catch (err) {
+  //             console.error("Error parsing address:", err);
+  //             parsedAddress = {};
+  //           }
+  //         }
+
+  //         // Step 2: Extract the relevant fields safely
+  //         const deliveryAddress = `${parsedAddress.line1 || ""}, ${
+  //           parsedAddress.line2 || ""
+  //         }, ${parsedAddress.city || ""}, ${parsedAddress.state || ""}, ${
+  //           parsedAddress.country || ""
+  //         }, ${parsedAddress.pincode || ""}`;
+  // console.log("delivery addresssssssssss",deliveryAddress)
+  //         // Step 3: Set to state
+  //         setFormData((prev) => ({
+  //           ...prev,
+  //           deliveryAddress: deliveryAddress,
+  //         }));
+  //         setAddress(deliveryAddress);
+  //       } catch (err) {
+  //         console.error("Error fetching user:", err);
+  //       }
+  //     };
+
+  //     getUser();
+  //   }, []);
 
   useEffect(() => {
-    const getUser = async () => {
+    const userId = localStorage.getItem("userId");
+    const fetchAddresses = async () => {
+      if (!userId) return;
       try {
-        const userId = localStorage.getItem("userId");
-        const res = await getAPI(`/auth/user/${userId}`);
-        console.log("User profile data", res);
-
-        let address = res.data.address;
-
-        // Step 1: Parse the address if it's a string
-        let parsedAddress = address;
-        if (typeof address === "string") {
-          try {
-            parsedAddress = JSON.parse(address);
-          } catch (err) {
-            console.error("Error parsing address:", err);
-            parsedAddress = {};
-          }
+        const response = await getAPI(
+          `/api/get-address/${userId}`,
+          {},
+          true,
+          false
+        );
+        if (!response.hasError) {
+          const addressData = response.data.data || response.data;
+          setAllAddress(
+            Array.isArray(addressData) ? addressData : [addressData]
+          );
         }
-
-        // Step 2: Extract the relevant fields safely
-        const deliveryAddress = `${parsedAddress.line1 || ""}, ${
-          parsedAddress.line2 || ""
-        }, ${parsedAddress.city || ""}, ${parsedAddress.state || ""}, ${
-          parsedAddress.country || ""
-        }, ${parsedAddress.pincode || ""}`;
-
-        // Step 3: Set to state
-        setFormData((prev) => ({
-          ...prev,
-          deliveryAddress: deliveryAddress,
-        }));
-        setAddress(deliveryAddress);
       } catch (err) {
-        console.error("Error fetching user:", err);
+        console.error("Failed to fetch addresses.");
       }
     };
 
-    getUser();
+    fetchAddresses();
   }, []);
-
   useEffect(() => {
     const fetchMaterialNames = async () => {
       try {
@@ -204,52 +228,64 @@ const CreateOrder = () => {
     };
     fetchMaterialCard();
   }, []);
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
 
-    const userId = localStorage.getItem("userId");
-    if (!userId) {
-      setError("User not logged in.");
-      setLoading(false);
-      return;
+const formatAddressLabel = (addr) => {
+  return [
+    addr.addressLine1,
+    addr.addressLine2,
+    addr.landmark,
+    addr.city,
+    addr.state,
+    addr.pincode,
+    addr.country,
+  ]
+    .filter(Boolean)
+    .join(", ");
+};
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError(null);
+
+  const userId = localStorage.getItem("userId");
+  if (!userId) {
+    setError("User not logged in.");
+    setLoading(false);
+    return;
+  }
+
+  const data = new FormData();
+  data.append("userId", userId);
+  data.append("quantity", Number(formData.quantity) || 0);
+  data.append("deliveryAddress", formData.deliveryAddress || "");
+  data.append("totalPrice", Number(formData.totalPrice) || 0);
+
+  if (formData.material) data.append("material", formData.material);
+  if (formData.stamp) data.append("stamp", formData.stamp);
+  if (formData.stickers) data.append("stickers", formData.stickers);
+  if (formData.vouchers) data.append("vouchers", formData.vouchers);
+  if (formData.card) data.append("card", formData.card);
+
+  try {
+    const response = await postAPI("/api/package-material/order/create", data);
+
+    // Assuming backend returns payment URL for payment
+    if (response?.data?.data?.paymentUrl) {
+      window.location.href = response.data.data.paymentUrl;
+    } else {
+      toast.success(response.message || "Order created successfully!");
+      navigate("/artist/packaging-material");
     }
-
-    try {
-      const data = new FormData();
-      data.append("userId", userId);
-
-      // Append only if selected
-      if (formData.material) data.append("material", formData.material);
-      if (formData.stamp) data.append("stamp", formData.stamp);
-      if (formData.stickers) data.append("stickers", formData.stickers);
-      if (formData.vouchers) data.append("vouchers", formData.vouchers);
-      if (formData.card) data.append("card", formData.card);
-
-      data.append("quantity", Number(formData.quantity) || 0);
-      data.append("deliveryAddress", formData.deliveryAddress || "");
-      data.append("totalPrice", Number(formData.totalPrice) || 0);
-
-      const response = await postAPI(
-        "/api/package-material/order/create",
-        data
-      );
-      if (response?.data?.data?.paymentUrl) {
-        window.location.href = response.data.data.paymentUrl;
-      } else {
-        console.error(`Failed to create package-material: ${response.message}`);
-      }
-    } catch (err) {
-      console.error(
-        "Error creating order:",
-        err.response?.data || err.message || err
-      );
-      setError(err.response?.data?.message || "Failed to create order.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (err) {
+    console.error("Error creating order:", err);
+    const errorMessage = err.response?.data?.message || "Failed to create order.";
+    setError(errorMessage);
+    toast.error(errorMessage);
+  } finally {
+    setLoading(false);
+  }
+};
   const handleDropdownChange = (type, id) => {
     try {
       let selectedItem = null;
@@ -266,76 +302,28 @@ const CreateOrder = () => {
                 "/"
               )}`
             : null;
-          setMaterialData({
-            materialName: id || "",
+          setMaterialData((prev) => ({
+            ...prev,
+            materialName: id,
             size: selectedItem?.size?.materialSize || "",
             capacity: selectedItem?.capacity?.materialCapacity || "",
             price: selectedItem?.price || "",
             stockAvailable: selectedItem?.stockAvailable || "",
             minimumOrder: selectedItem?.minimumOrder || "",
             vendorSupplier: selectedItem?.vendorSupplier || "",
-            ecoFriendly: selectedItem?.ecoFriendly ? "Yes" : "No",
+            ecoFriendly: selectedItem?.ecoFriendly ? "Yes" : "No" || "",
             deliveryEstimation: selectedItem?.deliveryEstimation || "",
-          });
+          }));
           setMaterialNameImage(imageUrl);
           break;
-
-        case "stamp":
-          selectedItem = selectedStamp.find((s) => s._id === id);
-          imageUrl = selectedItem?.materialStampImage
-            ? `${
-                process.env.REACT_APP_API_URL_FOR_IMAGE
-              }/${selectedItem.materialStampImage.replace(/\\/g, "/")}`
-            : null;
-          setStampData({ stamp: id || "", price: selectedItem?.price || "" });
-          setMaterialStampImage(imageUrl);
-          break;
-
-        case "stickers":
-          selectedItem = selectedStickers.find((s) => s._id === id);
-          imageUrl = selectedItem?.materialStickersImage
-            ? `${
-                process.env.REACT_APP_API_URL_FOR_IMAGE
-              }/${selectedItem.materialStickersImage.replace(/\\/g, "/")}`
-            : null;
-          setStickerData({
-            sticker: id || "",
-            price: selectedItem?.price || "",
-          });
-          setMaterialStickerImage(imageUrl);
-          break;
-
-        case "vouchers":
-          selectedItem = selectedVouchers.find((s) => s._id === id);
-          imageUrl = selectedItem?.materialVouchersImage
-            ? `${
-                process.env.REACT_APP_API_URL_FOR_IMAGE
-              }/${selectedItem.materialVouchersImage.replace(/\\/g, "/")}`
-            : null;
-          setVoucherData({
-            voucher: id || "",
-            price: selectedItem?.price || "",
-          });
-          setMaterialVoucherImage(imageUrl);
-          break;
-
-        case "card":
-          selectedItem = selectedCard.find((s) => s._id === id);
-          imageUrl = selectedItem?.materialCardImage
-            ? `${
-                process.env.REACT_APP_API_URL_FOR_IMAGE
-              }/${selectedItem.materialCardImage.replace(/\\/g, "/")}`
-            : null;
-          setCardData({ card: id || "", price: selectedItem?.price || "" });
-          setMaterialCardImage(imageUrl);
-          break;
-
         default:
           break;
       }
 
-      const price = selectedItem?.price || 0;
+      // Step 3: Extract price safely
+      const price = selectedItem ? selectedItem.price : 0;
 
+      // Step 4: Update price, type, and form data
       setPrices((prev) => ({
         ...prev,
         [type]: price,
@@ -345,10 +333,11 @@ const CreateOrder = () => {
 
       setFormData((prev) => ({
         ...prev,
-        [type]: id || undefined, // Always send string
+        [type]: id,
+        quantity: "",
       }));
     } catch (error) {
-      console.error("Error in handleDropdownChange:", error);
+      console.error("Error fetching or updating details:", error);
     }
   };
 
@@ -438,9 +427,11 @@ const CreateOrder = () => {
                       >
                         <option value="">-- Select Type --</option>
                         {selectedMaterial.map((mat) => (
-                          <option key={mat._id} value={mat._id}>
-                            {mat.materialName?.materialName}
-                          </option>
+                          <>
+                            <option key={mat._id} value={mat._id}>
+                              {mat.materialName?.materialName}
+                            </option>
+                          </>
                         ))}
                       </select>
                       {formData.material && (
@@ -756,13 +747,22 @@ const CreateOrder = () => {
                 </div>
                 <div className="form-group">
                   <label>Delivery Address</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="deliveryAddress"
+                  
+                  <select
+                    className="form-control mt-2"
                     value={formData.deliveryAddress}
+                    name="deliveryAddress"
                     required
-                  />
+                    onChange={(e)=>setFormData((pre)=>({...pre, [e.target.name]: e.target.value}))}
+                  >
+                    <option value="">Select delivery address</option>
+
+                    {allAddress.map((addr) => (
+                      <option key={addr._id} value={addr._id}>
+                        {formatAddressLabel(addr)}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="form-group">
                   <label>Total Price</label>

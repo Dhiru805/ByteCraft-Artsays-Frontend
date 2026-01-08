@@ -3,6 +3,7 @@ import "./Side-post-sugg.css";
 import { Link, useLocation } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
+import MediaSideBarSkele from "../../Skeleton/Home/Account/MediaSideBarSkele";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -13,6 +14,17 @@ const Sidebar = () => {
   const [user, setUser] = useState({});
   const createRef = useRef(null);
   const userId = localStorage.getItem("userId");
+  const username = localStorage.getItem("username");
+  const firstName = localStorage.getItem("firstName");
+  const lastName = localStorage.getItem("lastName");
+  const [loading, setLoading] = useState(true);
+
+  const hasValidUsername =
+    typeof username === "string" &&
+    username.trim() !== "" &&
+    username !== "undefined" &&
+    username !== "null";
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -28,87 +40,92 @@ const Sidebar = () => {
   }, []);
 
   const items = [
-    { key: "home", icon: "house-fill", label: "Home", link: "/social-media/" },
+    { key: "home", icon: "house-fill", label: "Home", link: "/artsays-community/" },
     {
       key: "search",
       icon: "search",
       label: "Search",
-      link: "/social-media/search",
+      link: "/artsays-community/search",
     },
     {
       key: "explore",
       icon: "compass",
       label: "Explore",
-      link: "/social-media/explore",
+      link: "/artsays-community/explore",
     },
     {
       key: "notification",
       icon: "bell",
       label: "Notification",
-      link: "/social-media/notification",
+      link: "/artsays-community/notification",
     },
     {
       key: "create",
       icon: "plus-square",
       label: "Create",
-      link: "/social-media/create-post",
+      link: "/artsays-community/create-post",
     },
     {
       key: "live",
       icon: "broadcast-pin",
       label: "Live",
-      link: "/social-media/create-live",
+      link: "/artsays-community/create-live",
     },
     {
       key: "profile",
       icon: "person",
       label: "Profile",
-      link: "/social-media/profile",
+      link: `/artsays-community/profile/${hasValidUsername ? `${username}` : `${firstName}_${lastName}_${userId}`}`,
     },
     {
       key: "saved",
       icon: "bookmark",
       label: "Saved",
-      link: "/social-media/saved",
+      link: "/artsays-community/saved",
     },
     {
       key: "settings",
       icon: "gear",
       label: "Settings",
-      link: "/social-media/setting",
+      link: "/artsays-community/setting",
     },
     {
       key: "logout",
       icon: "box-arrow-left",
       label: "Logout",
-      link: "/social-media/logout",
+      link: "/artsays-community/logout",
     },
   ];
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
-      setUser(result.data.user);
+      try {
+        const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
+        setUser(result.data.user);
+      } catch (err) {
+        console.log("fetch userid err", err);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchUserData();
   }, [userId]);
 
+  if (loading) return <MediaSideBarSkele />
   return (
     <>
       {/* Sidebar */}
       <div
-        className={`sidebar-container-s ${
-          isPinned ? "pinned" : ""
-        } w-[22%] mx-auto`}
+        className={`sidebar-container-s ${isPinned ? "pinned" : ""
+          } w-full col-span-3 mx-auto px-2 py-4 justify-content-center`}
       >
-        <div className="sidebar-icons-s">
+        <div className="sidebar-icons-s justify-content-between pb-4">
           {items.map((item, idx) => (
             <Link to={`${item.link}`} key={item.key}>
               <div
                 key={item.key}
-                className={`icon-wrapper-s ${
-                  isActive(item.link) ? "active" : ""
-                } ${idx === 7 ? "" : ""}`}
+                className={`icon-wrapper-s ${isActive(item.link) ? "active" : ""
+                  } ${idx === 7 ? "" : ""}`}
               >
                 <i className={` bi-${item.icon}`}></i>
               </div>
@@ -116,7 +133,7 @@ const Sidebar = () => {
           ))}
         </div>
 
-        <div className="sidebar-expanded-s d-flex flex-column justify-content-between">
+        <div className="sidebar-expanded-s justify-content-between pb-4">
           <div className="toggle-btn-s" onClick={() => setIsPinned(!isPinned)}>
             <i className=" bi-square-half"></i>
           </div>
@@ -124,9 +141,8 @@ const Sidebar = () => {
             <Link to={`${item.link}`} key={item.key}>
               <div
                 key={item.key}
-                className={`label-wrapper-s ${
-                  isActive(item.link) ? "active" : ""
-                } ${idx === 8 ? "" : ""}`}
+                className={`label-wrapper-s ${isActive(item.link) ? "active" : ""
+                  } ${idx === 8 ? "" : ""}`}
               >
                 <i className={` bi-${item.icon}`}></i>
                 {item.label}
@@ -163,7 +179,7 @@ const Sidebar = () => {
             </div>
             {showCreate && (
               <div className="create-options-s flex" ref={createRef}>
-                <Link to="/social-media/create-post">
+                <Link to="/artsays-community/create-post">
                   <div
                     className="create-option-s"
                     onClick={() => console.log("Post")}
@@ -172,7 +188,7 @@ const Sidebar = () => {
                     <span>Post</span>
                   </div>
                 </Link>
-                <Link to="/social-media/create-live">
+                <Link to="/artsays-community/create-live">
                   <div
                     className="create-option-s"
                     onClick={() => console.log("Live")}
@@ -237,9 +253,8 @@ const Sidebar = () => {
                 <Link to={`${item.link}`}>
                   <div
                     key={item.key}
-                    className={`profile-item-s  ${
-                      isActive(item.link) ? "active" : ""
-                    }`}
+                    className={`profile-item-s  ${isActive(item.link) ? "active" : ""
+                      }`}
                   >
                     <i className={`bi-${item.icon}`}></i>
                     <span>{item.label}</span>

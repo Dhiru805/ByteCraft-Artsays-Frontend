@@ -270,7 +270,7 @@ function Exhibition() {
         toast.success(response.data.message || "Failed to create exhibition");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Error creating exhibition");
+      console.error(error.response?.data?.message || "Error creating exhibition");
     } finally {
       setLoading(false);
     }

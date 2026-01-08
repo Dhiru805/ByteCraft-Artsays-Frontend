@@ -17,8 +17,9 @@
 import React, { useEffect, useState } from "react";
 import HeroImgHowToBuy from "./hero-img/hero-img";
 import HowToBuyContent from "./HowToBuyContent/HowToBuyContent";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import axiosInstance from "../../api/axiosConfig";
+import Testimonials from "../AboutUs/Testimonials/Testimonials";
 
 const HowToBuy = () => {
   const [seoData, setSeoData] = useState({
@@ -57,8 +58,8 @@ const HowToBuy = () => {
     fetchSEOMetadata();
   }, []);
 
-  return (
-    <div className="max-w-[1440px] mx-auto font-[poppins]">
+    return (
+    <div className="w-full font-[poppins]">
       <Helmet>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -86,6 +87,7 @@ const HowToBuy = () => {
 
       <HeroImgHowToBuy />
       <HowToBuyContent />
+      <Testimonials />
     </div>
   );
 };

@@ -17,8 +17,9 @@
 import React, { useEffect, useState } from "react";
 import HeroImgHowToSell from "./hero-img/hero-img";
 import HowToSellContent from "./HowToSellContent/HowToSellContent";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import axiosInstance from "../../api/axiosConfig";
+import Testimonials from "../AboutUs/Testimonials/Testimonials";
 
 const HowToSell = () => {
   const [seoData, setSeoData] = useState({
@@ -83,9 +84,10 @@ const HowToSell = () => {
         <meta name="twitter:image" content={seoData.metaImage} />
       </Helmet>
 
-      <div className="max-w-[1440px] mx-auto font-[poppins]">
+      <div className="w-full font-[poppins]">
         <HeroImgHowToSell />
         <HowToSellContent />
+        <Testimonials />
       </div>
     </>
   );

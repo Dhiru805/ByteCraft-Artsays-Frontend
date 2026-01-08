@@ -3,12 +3,9 @@ import { useNavigate } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
 import deleteAPI from "../../../api/deleteAPI";
-import "./searchb.css";
-import { IoMic } from "react-icons/io5";
 import { MdVerified } from "react-icons/md";
 import { Link } from "react-router-dom";
 // import { BsBroadcast } from "react-icons/bs";
-
 
 // const suggestedVideo = [
 //   {
@@ -85,7 +82,6 @@ const SearchBar = () => {
 
   const [activeMenuId, setActiveMenuId] = useState(null);
   const menuRef = useRef(null);
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -99,23 +95,21 @@ const SearchBar = () => {
   const handleFollowToggle = async (targetUserId, isFollowing) => {
     try {
       if (isFollowing) {
-       const response= await postAPI(
+        const response = await postAPI(
           `/api/social-media/unfollow/${targetUserId}`,
           { userId },
           true,
           true
         );
         console.log("unfollow success56325412", response);
-
       } else {
-       const response= await postAPI(
+        const response = await postAPI(
           `/api/social-media/follow/${targetUserId}`,
           { userId },
           true,
           true
         );
         console.log("follow success56325412", response);
-
       }
 
       setSuggestionForUser((prevUsers) =>
@@ -148,7 +142,7 @@ const SearchBar = () => {
     };
     if (userId) fetchRecentAndSuggestions();
   }, [userId]);
-
+  console.log("kkkkkkkkkkkkkkkk", { recentSearches, suggestionForUser });
   //  Handle search input
   const handleSearch = async (e) => {
     const value = e.target.value;
@@ -183,8 +177,8 @@ const SearchBar = () => {
 
       setShowDropdown(
         result.users?.length > 0 ||
-          result.tags?.length > 0 ||
-          result.posts?.length > 0
+        result.tags?.length > 0 ||
+        result.posts?.length > 0
       );
     } catch (err) {
       console.error("Search error:", err);
@@ -233,7 +227,7 @@ const SearchBar = () => {
     const userId = localStorage.getItem("userId");
     try {
       const res = await deleteAPI(
-        `/api/social-media/recent-searches/${userId}/clear`, 
+        `/api/social-media/recent-searches/${userId}/clear`,
         {},
         true,
         true
@@ -250,13 +244,18 @@ const SearchBar = () => {
   const handleUserClick = (user) => {
     addRecentSearch(user.username, user._id, "user");
     setShowDropdown(false);
-    navigate("/social-media/profile", { state: { userId: user._id } });
+    navigate(
+      `/artsays-community/profile/${user?.username
+        ? `${user?.username}`
+        : `${user?.name}_${user?.lastName}_${user?._id}`
+      }`, { state: { userId: user?._id } }
+    );
   };
 
   //  handle hashtag click
   const handleHashtagClick = async (tag) => {
     try {
-      const hashtag = `#${tag}`; 
+      const hashtag = `#${tag}`;
       setQuery(hashtag);
       const endpoint = `/api/social-media/search?tag=${tag}`;
       const res = await getAPI(endpoint, {}, true, true);
@@ -275,30 +274,29 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="lg:w-[56%] w-full max-w-6xl mx-auto flex flex-col gap-3 sm:mt-6 mt-3 sm:px-4 px-2">
-
+    <div className="col-span-12 lg:col-span-6 w-full mx-auto flex flex-col gap-3 sm:mt-6 mt-3 sm:px-4 px-2">
       {/* Search Bar */}
       <div className="relative w-full">
-        <div className="bg-[#FDE8D3] px-4 py-2 rounded-xl flex items-center justify-between">
-          <div className="flex items-center w-full gap-3">
+        <div className="bg-[#FDE8D3] px-2.5 py-1 rounded-xl flex items-center justify-between">
+          <div className="flex items-center w-full gap-2">
             <i className="ri-search-line text-xl font-bold text-[#000000]"></i>
             <input
               type="text"
               value={query}
               onChange={handleSearch}
               placeholder="Search or type #tag"
-              className="bg-transparent ml-2 w-full text-gray-900 outline-none font-medium text-base"
+              className="bg-transparent w-full text-gray-900 outline-none font-medium text-base"
             />
           </div>
-          <div className="flex items-center gap-3 text-xl text-[#6E4E37]">
+          {/* <div className="flex items-center gap-3 text-xl text-[#6E4E37]">
             <IoMic className="text-3xl" />
-          </div>
+          </div> */}
         </div>
 
         {/* Dropdown */}
         {showDropdown &&
           (suggestedUsers.length > 0 || suggestedTags.length > 0) && (
-            <div className="absolute inset-0 top-full left-0 w-full h-[calc(100vh-70px)] bg-white z-[9999] overflow-y-auto p-3">
+            <div className="absolute inset-0 top-full left-0 w-full h-[calc(100vh-70px)] bg-white z-[9999] overflow-y-auto py-2">
               {/* Tags */}
               {suggestedTags.length > 0 && (
                 <div className="flex flex-col gap-2 mb-3">
@@ -307,7 +305,7 @@ const SearchBar = () => {
                     <div
                       key={index}
                       onClick={() => handleHashtagClick(tag)}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#F5F5F5] cursor-pointer hover:bg-[#EDEDED]"
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer hover:bg-[#EBEBEB]"
                     >
                       <span className="text-blue-500 font-bold">#{tag}</span>
                     </div>
@@ -352,28 +350,32 @@ const SearchBar = () => {
       <div>
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-medium text-[#000000]">
-            Recent searches
+            Recent Searches
           </h3>
           <button
-            className="text-lg font-medium text-[#6F4D34]"
+            className="text-xs font-medium text-[#6F4D34]"
             onClick={clearAllRecent}
           >
             Clear all
           </button>
         </div>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex gap-2 overflow-x-auto whitespace-nowrap" style={{ scrollbarWidth: "none" }}>
           {recentSearches.map((item) => (
             <div
               key={item._id}
-              className="txt bg-[#ECE6E6] px-3 py-2 rounded-xl font-medium text-sm text-[#000000] flex items-center gap-2"
+              className="bg-[#ECE6E6] px-2 py-1 rounded-md font-medium text-sm text-[#000000] flex items-center gap-2 min-w-max"
             >
               <span
-                className="cursor-pointer"
+                className="cursor-pointer whitespace-nowrap"
                 onClick={() => {
                   if (item.type === "user") {
-                    navigate("/social-media/profile", {
-                      state: { userId: item.refId },
-                    });
+                    navigate(
+                      `/artsays-community/profile/${item.username
+                        ? item.username
+                        : `${item.name}_${item.lastName}_${item._id}`
+                      }`,
+                      { state: { userId: item._id } }
+                    );
                   } else if (item.type === "hashtag") {
                     handleHashtagClick(item.tag);
                   }
@@ -381,32 +383,34 @@ const SearchBar = () => {
               >
                 {item.label}
               </span>
+
               <button
                 className="text-[#000000] text-xs hover:text-red-500"
                 onClick={() => removeRecentSearch(item._id)}
               >
-                X
+                ✕
               </button>
             </div>
           ))}
         </div>
+
       </div>
 
       {/* Full-page Post Grid */}
       {showPostGrid && suggestedPosts.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3">
           {suggestedPosts.map((post) => (
-            <Link to={`/social-media/single-post/${post._id}`}>
-            <div key={post._id} className="relative">
-              <img
-                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
-                alt="post"
-                className="w-full h-40 sm:h-52 object-cover rounded-lg"
-              />
-              <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
-                {post.caption}
+            <Link to={`/artsays-community/single-post/${post._id}`}>
+              <div key={post._id} className="relative">
+                <img
+                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
+                  alt="post"
+                  className="w-full h-40 sm:h-52 object-cover rounded-lg"
+                />
+                <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
+                  {post.caption}
+                </div>
               </div>
-            </div>
             </Link>
           ))}
         </div>
@@ -417,14 +421,14 @@ const SearchBar = () => {
         {suggestionForUser.map((user) => (
           <div
             key={user._id}
-            className="sgu flex justify-between items-center bg-[#FEE2CC] rounded-xl p-2"
+            className="border-l-[14px] border-[#E56500] flex justify-between items-center bg-[#FEE2CC] rounded-xl p-2"
           >
             <div className="flex items-center gap-3 w-full">
               <img
                 src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`}
                 alt={user?.username}
                 onClick={() => handleUserClick(user)}
-                className="w-14 h-14 lg:w-16 lg:h-16 rounded-full border object-cover cursor-pointer"
+                className="w-14 h-14 rounded-full border object-cover cursor-pointer"
               />
               <div className="flex flex-col">
                 <span
@@ -441,11 +445,10 @@ const SearchBar = () => {
               {/* Follow/Unfollow Toggle */}
               <button
                 onClick={() => handleFollowToggle(user._id, user.isFollowing)}
-                className={`${
-                  user.isFollowing
-                    ? "bg-gray-300 text-[#48372D]"
-                    : "bg-[#48372D] text-[#FEE2CC]"
-                } sm:text-[17px] text-[16px] rounded-lg px-3 py-1 font-bold`}
+                className={`${user.isFollowing
+                  ? "bg-gray-300 text-[#48372D]"
+                  : "bg-[#48372D] text-[#FEE2CC]"
+                  } sm:text-md text-sm rounded-lg px-2 py-1 font-bold`}
               >
                 {user.isFollowing ? "Unfollow" : "Follow"}
               </button>
@@ -462,7 +465,7 @@ const SearchBar = () => {
                     setSuggestionForUser(res.data.suggestedUsers || []);
                   })
                 }
-                className="text-[#000000] sm:px-3 sm:py-1 rounded-lg text-2xl font-semibold"
+                className="text-[#000000] sm:px-3 sm:py-1 rounded-lg text-lg font-semibold"
               >
                 <i className="ri-close-line"></i>
               </button>
@@ -471,7 +474,7 @@ const SearchBar = () => {
         ))}
       </div>
 
-        {/* Suggested Videos */}
+      {/* Suggested Videos */}
       {/* <div>
         <div className="flex flex-col gap-3">
           {suggestedVideo.map((item) => (
@@ -479,36 +482,36 @@ const SearchBar = () => {
               key={item.id}
               className="vid bg-[#FEE2CC] rounded-xl p-2 flex sm:flex-row flex-col w-full gap-3.5 relative"
             > */}
-              {/* Thumbnail and Play Button Overlay */}
-              {/* <div className="relative w-full sm:w-[350px] h-48 sm:h-56 rounded-lg overflow-hidden"> */}
-                {/* <img
+      {/* Thumbnail and Play Button Overlay */}
+      {/* <div className="relative w-full sm:w-[350px] h-48 sm:h-56 rounded-lg overflow-hidden"> */}
+      {/* <img
                   src={`https://img.youtube.com/vi/SsnKbRSMCNw/hqdefault.jpg`}
                   alt="video"
                   className="w-full h-full object-cover rounded-lg"
                 /> */}
 
-                {/* Play Button Centered */}
-                {/* <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+      {/* Play Button Centered */}
+      {/* <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
                   <i className="ri-play-circle-fill text-white text-5xl sm:text-6xl opacity-90" />
                 </div> */}
 
-                {/* LIVE or NEW Label */}
-                {/* {item.isLive ? (
+      {/* LIVE or NEW Label */}
+      {/* {item.isLive ? (
                   <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-md flex items-center gap-1">
                     <BsBroadcast className="text-lg" /> LIVE
                   </div>
                 ) : null} */}
 
-                {/* Duration Label */}
-                {/* {item.duration && (
+      {/* Duration Label */}
+      {/* {item.duration && (
                   <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-[2px] rounded">
                     {item.duration}
                   </div>
                 )}
               </div> */}
 
-              {/* Video Details */}
-              {/* <div className="flex flex-col items-start sm:gap-1">
+      {/* Video Details */}
+      {/* <div className="flex flex-col items-start sm:gap-1">
                 <div className="flex flex-row vdo-head justify-between gap-3">
                   <div className="text-xl font-bold vdo-title text-[#000000] w-full break-words  ">
                     {item.title}
@@ -523,8 +526,8 @@ const SearchBar = () => {
                       }
                     ></i> */}
 
-                    {/* Dropdown Menu */}
-                    {/* {openDropdownId === item.id && (
+      {/* Dropdown Menu */}
+      {/* {openDropdownId === item.id && (
                       <div
                         className="absolute right-0 sm:top-6 top-6 vid-drop z-[999] flex flex-col items-center   bg-white text-black text-sm rounded-xl  shadow-lg  w-40"
                         ref={dropdownRef}
@@ -561,7 +564,7 @@ const SearchBar = () => {
                   </div>
                 </div> */}
 
-                {/* <div className="flex items-center gap-2">
+      {/* <div className="flex items-center gap-2">
                   <span className="text-[#000000] text-sm">
                     {item.views} views
                   </span>
@@ -580,7 +583,7 @@ const SearchBar = () => {
                 </div>
                 <div className="text-sm text-[#0000000]">{item.about}</div> */}
 
-                {/* {item.state === "new" ? (
+      {/* {item.state === "new" ? (
                   <div className=" bg-[#6E4E37] text-white text-sm font-medium px-2 py-1 rounded-md">
                     NEW
                   </div>

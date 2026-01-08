@@ -5,6 +5,7 @@ import putAPI from '../../../../api/putAPI';
 import ConfirmationDialog from '../../ConfirmationDialog';
 import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
 import { toast } from 'react-toastify';
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 
 const Product = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const Product = () => {
   const [currentImages, setCurrentImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE
-
+const[loading,setLoading]=useState(true);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -29,6 +30,8 @@ const Product = () => {
         console.log(result.data.data);
       } catch (error) {
         console.error("Error fetching products:", error);
+      }finally{
+        setLoading(false)
       }
     };
     fetchProducts();
@@ -105,6 +108,8 @@ const Product = () => {
       toast.error("Failed to close the campaign");
     }
   };
+
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

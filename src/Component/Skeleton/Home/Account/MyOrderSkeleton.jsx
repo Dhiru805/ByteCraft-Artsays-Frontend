@@ -1,6 +1,6 @@
 export const MyOrderSkeleton = () => {
   return (
-    <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 lg:px-0 space-y-6">
+    <div className="w-full max-w-[1076px] mx-auto px-4 space-y-6">
 
       {/* HEADER SKELETON */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">

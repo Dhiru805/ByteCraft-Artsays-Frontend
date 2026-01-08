@@ -17,11 +17,15 @@
 import React, { useEffect, useState } from "react";
 import HeroImgWhyArtsays from "./hero-img/hero-img";
 import WhyArtsaysContent from "./WhyArtsaysContent/WhyArtsaysContent";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
+import Testimonials from "../AboutUs/Testimonials/Testimonials";
+import WhyArtsaysPageSkeleton from "../../Component/Skeleton/WhyArtsaysPageSkeleton";
 
 const WhyArtsays = () => {
+  const [loading, setLoading] = useState(true);
+  const [pageData, setPageData] = useState(null);
   const [seoData, setSeoData] = useState({
     metaTitle: "Why ArtSays",
     metaDescription: "",
@@ -30,29 +34,55 @@ const WhyArtsays = () => {
     metaImage: null,
   });
 
-  const fetchSEOMetadata = async () => {
+    const fetchData = async () => {
+    setLoading(true);
     try {
-      const response = await axiosInstance.get("/api/whyartsays/getSEO");
-      const meta = response.data?.data || {};
-      setSeoData({
-        metaTitle: meta.metaTitle || "Why ArtSays",
-        metaDescription: meta.metaDescription || "",
-        metaKeywords: (meta.metaKeywords || []).join(", "),
-        metaAuthor: meta.metaAuthor || "",
-        metaImage: meta.metaImage || null,
-      });
+      // Fetch SEO and Page data in parallel
+      const [seoRes, pageRes] = await Promise.allSettled([
+        axiosInstance.get("/api/whyartsays/getSEO"),
+        axiosInstance.get("/api/whyartsays/published")
+      ]);
+
+      // Handle SEO Data
+      if (seoRes.status === "fulfilled" && seoRes.value.data?.success) {
+        const meta = seoRes.value.data.data || {};
+        setSeoData({
+          metaTitle: meta.metaTitle || "Why ArtSays",
+          metaDescription: meta.metaDescription || "",
+          metaKeywords: Array.isArray(meta.metaKeywords) ? meta.metaKeywords.join(", ") : (meta.metaKeywords || ""),
+          metaAuthor: meta.metaAuthor || "",
+          metaImage: meta.metaImage || null,
+        });
+      } else {
+        console.warn("SEO data fetch failed or returned no data:", seoRes.reason || "No data");
+      }
+
+      // Handle Page Content
+      if (pageRes.status === "fulfilled" && pageRes.value.data.success && pageRes.value.data.data) {
+        setPageData(pageRes.value.data.data);
+      } else {
+        // If the main content fails, we should throw to the catch block
+        throw new Error("Main content fetch failed");
+      }
     } catch (error) {
-      console.error("Error fetching SEO metadata:", error);
-      toast.error("Failed to load SEO metadata");
+      console.error("Error fetching WhyArtsays data:", error);
+      toast.error("Failed to load page content");
+    } finally {
+      // Adding a small delay for smoother transition
+      setTimeout(() => setLoading(false), 800);
     }
   };
 
   useEffect(() => {
-    fetchSEOMetadata();
+    fetchData();
   }, []);
 
+  if (loading) {
+    return <WhyArtsaysPageSkeleton />;
+  }
+
   return (
-    <div className="max-w-[1440px] mx-auto font-[poppins]">
+    <div className="w-full font-[poppins]">
      
       <Helmet>
         <meta charSet="utf-8" />
@@ -79,7 +109,8 @@ const WhyArtsays = () => {
       </Helmet>
 
       <HeroImgWhyArtsays />
-      <WhyArtsaysContent />
+      <WhyArtsaysContent initialData={pageData} />
+      <Testimonials />
     </div>
   );
 };

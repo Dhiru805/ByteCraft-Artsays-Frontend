@@ -150,8 +150,8 @@ const [cancelComment, setCancelComment] = useState("");
 if(loading)return <div><MyOrderSkeleton/></div>
   return (
     <>
-      <div className="w-full max-w-[1076px] mx-auto px-4 sm:px-6 lg:px-0 space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      <div className="w-full space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h2 className="text-xl font-semibold">Orders ({orders.length})</h2>
 
           <div className="text-sm flex items-center gap-2">

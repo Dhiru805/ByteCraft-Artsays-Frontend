@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import getAPI from '../../../../../api/getAPI';
 import putAPI from '../../../../../api/putAPI';
 import { useNavigate } from 'react-router-dom';
-
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const BlogRequest = () => {
     const [blogs, setBlogs] = useState([]);
@@ -19,10 +19,11 @@ const BlogRequest = () => {
     const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
     const [rejectionComment, setRejectionComment] = useState('');
     const [selectedArtistToReject, setSelectedArtistToReject] = useState(null);
-
+const [loading,setLoading]=useState(false);
 
     useEffect(() => {
         const fetchBlogs = async () => {
+            setLoading(true);
             try {
                 const result = await getAPI("/Blog-Post/all-blogs", {}, true, false);
                 if (result.data) {
@@ -33,6 +34,7 @@ const BlogRequest = () => {
             } catch (error) {
                 console.error("Error fetching blogs:", error);
             }
+            setLoading(false)
         };
 
         fetchBlogs();
@@ -150,7 +152,7 @@ const BlogRequest = () => {
     };
 
 
-
+if(loading)return <ProductRequestSkeleton/>
     return (
         <div className="container-fluid">
             <div className="block-header">

@@ -12,16 +12,16 @@ const Createpost = () => {
     preview: URL.createObjectURL(file), // for showing in carousel
   }));
      if (fileData.length > 0) {
-       navigate("/social-media/upload-post", { state: { images: fileData } });
+       navigate("/artsays-community/upload-post", { state: { images: fileData } });
      }
   };
 
   return (
-    <div className="lg:mt-8 w-[56%] mx-auto flex flex-col items-center create-post-container">
+    <div className="col-span-12 lg:col-span-6 w-full py-2 flex flex-col items-center create-post-container">
       {/* Header */}
-      <div className="w-[90%] bg-gradient-to-b from-[#3c2a20] to-[#db8435] text-white py-3 rounded-[60px] text-center shadow create-post-header">
+      <div className="w-full bg-gradient-to-b from-[#3c2a20] to-[#db8435] text-white py-3 rounded-[60px] text-center shadow create-post-header">
         <p className="text-4xl font-semibold py-4 create-post-paragraph">
-          Create new Post
+          Create New Post
         </p>
 
         {/* Upload Box */}

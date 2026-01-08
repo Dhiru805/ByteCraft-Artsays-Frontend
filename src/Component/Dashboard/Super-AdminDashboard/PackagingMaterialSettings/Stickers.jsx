@@ -3,7 +3,7 @@ import postAPI from "../../../../api/postAPI";
 import getAPI from "../../../../api/getAPI";
 import putAPI from "../../../../api/putAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
-
+import { toast } from "react-toastify";
 const Stickers = () => {
   const [showPopUp, setShowPopUp] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -120,7 +120,10 @@ const Stickers = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+if (!materialStickersImage) {
+      toast.error("Upload Material Sticker Image");
+      return;
+    }
     try {
       const formData = new FormData();
       formData.append("userId", localStorage.getItem("userId"));

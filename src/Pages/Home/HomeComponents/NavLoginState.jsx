@@ -54,7 +54,7 @@ export const NavGuestState = () => {
         const response = await getAPI(`/auth/userid/${storedUserId}`, {}, true, false);
         console.log('Profile API response:', response.data);
         const profileData = response.data.user;
-        const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE || '${process.env.REACT_APP_API_URL}';
+          const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE || process.env.REACT_APP_API_URL;
         const profilePhotoUrl = profileData?.profilePhoto
           ? `${BASE_URL}${profileData.profilePhoto}`
           : DEFAULT_PROFILE_IMAGE;
@@ -109,6 +109,10 @@ export const NavGuestState = () => {
     localStorage.removeItem('email');
     localStorage.removeItem('userId');
     localStorage.removeItem('profilePhoto'); // Clear profile photo
+    localStorage.removeItem("username");
+    localStorage.removeItem("firstName");
+    localStorage.removeItem("lastName");
+    
     setProfileImage(DEFAULT_PROFILE_IMAGE);
     window.dispatchEvent(new Event('profilePhotoUpdated')); // Notify other components
     window.location.href = '/';

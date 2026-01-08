@@ -2,24 +2,29 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../../api/getAPI";
 import { toast } from "react-toastify";
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 function VerificationBadges() {
   const [badges, setBadges] = useState([]);
   const navigate = useNavigate();
-
+const[loading,setLoading]=useState(true)
   useEffect(() => {
     const fetchBadges = async () => {
+      
       try {
         const response = await getAPI("/api/badges", {}, true);
         setBadges(response.data.data || []);
       } catch (error) {
         console.error("Error fetching badges:", error);
         toast.error("Failed to load badges");
+      }finally{
+        setLoading(false)
       }
     };
     fetchBadges();
   }, []);
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

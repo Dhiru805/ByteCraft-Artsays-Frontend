@@ -129,50 +129,50 @@ const NotificationBar = () => {
   }, []);
 
   return (
-    <div className="lg:w-[56%] w-full px-2 md:px-4 lg:px-20 py-4">
+    <div className="col-span-12 lg:col-span-6 w-full my-4">
       {/* Notification Tab Bar */}
       <div className="flex flex-row  items-center justify-between sm:gap-4 gap-1 bg-[#E8DAB2] p-2.5 rounded-xl shadow-sm">
-        <div className="flex flex-wrap sm:gap-5 gap-1">
-          <button className="text-black nt-btn sm:text-lg text-[15px] px-2 py-1 font-semibold sm:px-3.5 sm:py-2.5 rounded-full">All</button>
-          <button className="text-black nt-btn sm:text-lg text-[15px] px-2 py-1 font-semibold sm:px-3.5 sm:py-2.5 rounded-full">Mentions</button>
-          <button className="text-black nt-btn sm:text-lg text-[15px] px-2 py-1 font-semibold sm:px-3.5 sm:py-2.5 rounded-full">My post</button>
+        <div className="flex flex-wrap sm:gap-2 gap-1">
+          <button className="hover:!text-[#ffffff] hover:bg-[#48372D] nt-btn text-sm px-2 py-1 font-semibold rounded-md">All</button>
+          <button className="hover:!text-[#ffffff] hover:bg-[#48372D] nt-btn text-sm px-2 py-1 font-semibold rounded-md">Mentions</button>
+          <button className="hover:!text-[#ffffff] hover:bg-[#48372D] nt-btn text-sm px-2 py-1 font-semibold rounded-md">My Post</button>
         </div>
         <div>
-          <button className="text-black nt-btn sm:text-lg text-[15px] px-2 py-1 font-semibold sm:px-3.5 sm:py-2.5 rounded-full">Mark all as read</button>
+          <button className="hover:!text-[#ffffff] hover:bg-[#48372D] nt-btn text-sm px-2 py-1 font-semibold rounded-full">Mark All as Read</button>
         </div>
       </div>
 
       {/* Notification List */}
-      <div className="mt-4 flex flex-col gap-3">
+      <div className="mt-3 flex flex-col gap-2">
         {notificationData.map((item) => (
           <div
             key={item.id + item.time}
-            className={` ${item.readed ? 'bg-[#48372D]' : 'bg-white'} ${item.readed ? 'text-white ' : 'text-[#0000000] font-medium'} ${!item.readed ? 'border-[1px] border-[#48372D]' : ''} sm:p-3 p-1.5 rounded-xl flex justify-between gap-4 shadow-sm relative`}
+            className={` ${item.readed ? 'bg-[#48372D]' : 'bg-white'} ${item.readed ? 'text-white ' : 'text-[#0000000] font-medium'} ${!item.readed ? 'border-[1px] border-[#48372D]' : ''} p-2 rounded-xl flex justify-between gap-2 shadow-sm relative`}
           >
             {/* Left Section */}
-            <div className="flex gap-3 w-full">
-              <div className="flex gap-2">
+            <div className="flex gap-2 w-full">
+              <div className="flex gap-2 align-items-center">
                 <div className="h-full flex items-center justify-between">
                   <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full flex-shrink-0"></div>
                 </div>
-               <div className="w-12 h-12 min-w-[3rem] min-h-[3rem] rounded-full overflow-hidden flex items-center justify-center">
-  <img
-    src={item.profilepic && item.profilepic.trim() !== "" ? item.profilepic : "https://www.w3schools.com/howto/img_avatar.png"}
-    alt={item.username}
-    onError={(e) => {
-      e.target.onerror = null;
-      e.target.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-    }}
-    className="w-full h-full object-cover"
-  />
-</div>
+                <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center">
+                  <img
+                    src={item.profilepic && item.profilepic.trim() !== "" ? item.profilepic : "https://www.w3schools.com/howto/img_avatar.png"}
+                    alt={item.username}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                    }}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
 
 
               </div>
               <div className="flex flex-col justify-center text-sm">
                 <span>
-                  <span className="font-semibold text-lg">{item.username} :</span>{" "}
-                  <span className="break-words ">{item.description}</span>
+                  <span className="font-bold text-md">{item.username} :</span>{" "}
+                  <span className="break-words text-sm">{item.description}</span>
 
                 </span>
               </div>
@@ -180,27 +180,27 @@ const NotificationBar = () => {
 
             {/* Right Section */}
             <div className="flex flex-col items-end justify-between min-w-fit h-full gap-1 relative" ref={dropdownRef}>
-              <span className={`text-sm ${item.readed ? 'text-white' : 'text-[#000000]'} whitespace-nowrap`}>{item.time}</span>
               <i
-                className={`ri-more-fill ${item.readed ? 'text-white' : 'text-[#000000]'} text-lg cursor-pointer hover:text-gray-300`}
+                className={`ri-more-fill ${item.readed ? 'text-white' : 'text-[#000000]'} text-sm cursor-pointer hover:text-gray-300`}
                 onClick={() =>
                   setOpenDropdownId((prev) => (prev === item.id ? null : item.id))
                 }
               ></i>
+              <span className={`text-xs ${item.readed ? 'text-white' : 'text-[#000000]'} whitespace-nowrap`}>{item.time}</span>
 
               {/* Dropdown Menu */}
               {openDropdownId === item.id && (
-                <div className="absolute right-0 sm:top-12 top-11  text-black shadow-md rounded-lg z-[999] w-40 md:w-40 sm:w-32 bg-gray-200   ">
-                <button className="w-full sm:px-2 sm:py-2 p-1 text-[#000000] hover:bg-gray-100">
+                <div className="absolute right-0 top-5  text-black shadow-md rounded-xl z-[999] whitespace-nowrap bg-white justify-items-center">
+                  <button className="w-full px-3 py-2 text-[#000000] hover:bg-gray-200 rounded-t-xl font-semibold">
                     Delete Notification
                   </button>
-                  <hr className="my-1 border-gray-300" />
-                  <button className="w-full sm:px-2 sm:py-2 p-1 text-[#000000] hover:bg-gray-100">
-                   Report
+                  <hr className="w-[80%] border-t border-gray-400" />
+                  <button className="w-full px-3 py-2 text-[#000000] hover:bg-gray-200 font-semibold">
+                    Report
                   </button>
-                  <hr className="my-1 border-gray-300" />
-                  <button className="w-full sm:px-2 sm:py-2 p-1 text-[#000000] hover:bg-gray-100">
-                     Mark as Read
+                  <hr className="w-[80%] border-t border-gray-400" />
+                  <button className="w-full px-3 py-2 text-[#000000] hover:bg-gray-200 rounded-b-xl font-semibold">
+                    Mark as Read
                   </button>
                 </div>
               )}

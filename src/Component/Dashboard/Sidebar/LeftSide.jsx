@@ -3,7 +3,7 @@ import Sidebarprofile from './Sidebarprofile';
 import Sidebar from './sidebar';
 import SettingsPanel from './seetingpanel'
 import getAPI from "../../../api/getAPI"
-
+import SidebarSkeleton from "../../Skeleton/Home/SidebarSkeleton";
 const UserAccount = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -193,7 +193,7 @@ const UserAccount = () => {
   
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div><SidebarSkeleton/></div>;
   }
 
   if (error) {
@@ -218,11 +218,11 @@ const UserAccount = () => {
               Menu
             </a>
           </li>
-          <li className="nav-item">
-            <a className="nav-link" data-toggle="tab" href="#setting">
-              <i class="fa fa-cog" aria-hidden="true"></i>
-            </a>
-          </li>
+            <li className="nav-item">
+              <a className="nav-link" data-toggle="tab" href="#setting">
+                <i className="fa fa-cog" aria-hidden="true"></i>
+              </a>
+            </li>
         </ul>
         <div className="tab-content padding-0">
           <div className="tab-pane active" id="menu">

@@ -135,12 +135,12 @@ import CreatePolicy from "../Component/Dashboard/Super-AdminDashboard/Policys/cr
 import UpdatePolicy from "../Component/Dashboard/Super-AdminDashboard/Policys/editPolicy";
 //import ViewPolicy from '../Component/Dashboard/Super-AdminDashboard/Policys/PolicyView';
 
-import How_To_Buy from "../Component/Dashboard/Super-AdminDashboard/HowToBuy/buyTable";
+import HowToBuyTable from "../Component/Dashboard/Super-AdminDashboard/HowToBuy/buyTable";
 import CreateHowToBuy from "../Component/Dashboard/Super-AdminDashboard/HowToBuy/create";
 import UpdateHowToBuy from "../Component/Dashboard/Super-AdminDashboard/HowToBuy/edit";
 //import ViewHowToBuy from "../Component/Dashboard/Super-AdminDashboard/HowToBuy/view";
 
-import How_To_Sell from "../Component/Dashboard/Super-AdminDashboard/HowToSell/sellTable";
+import HowToSellTable from "../Component/Dashboard/Super-AdminDashboard/HowToSell/sellTable";
 import CreateHowToSell from "../Component/Dashboard/Super-AdminDashboard/HowToSell/create";
 import UpdateHowToSell from "../Component/Dashboard/Super-AdminDashboard/HowToSell/edit";
 //import ViewHowToSell from "../Component/Dashboard/Super-AdminDashboard/HowToSell/view";
@@ -150,7 +150,7 @@ import CreateCelebrities from "../Component/Dashboard/Super-AdminDashboard/Celeb
 import ViewCelebrity from "../Component/Dashboard/Super-AdminDashboard/Celebraties/ViewCelebrity";
 import UpdateCelebrity from "../Component/Dashboard/Super-AdminDashboard/Celebraties/UpdateCelebrity";
 
-import How_To_Resell from "../Component/Dashboard/Super-AdminDashboard/HowToResell/resellTable";
+import HowToResellTable from "../Component/Dashboard/Super-AdminDashboard/HowToResell/resellTable";
 import CreateHowToResell from "../Component/Dashboard/Super-AdminDashboard/HowToResell/create";
 import UpdateHowToResell from "../Component/Dashboard/Super-AdminDashboard/HowToResell/edit";
 
@@ -468,8 +468,8 @@ import ArtistUpdateExhibition from "../Component/Dashboard/ArtistDashbooard/Exhi
 import ArtistViewExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/exhibitionView";
 import ArtistSponser from "../Component/Dashboard/ArtistDashbooard/Advertise/Sponser";
 import ArtistProductCouponCodes from "../Component/Dashboard/ArtistDashbooard/ProductSetting/ProductCouponCode/ProductCouponCode";
-import UpdateProductArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/UpdateProduct/productUploade"
-import ProductViewArtist from '../Component/Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/productUploade';
+import UpdateProductArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/UpdateProduct/productUploade";
+// import ProductViewArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/productUploade";
 //-----------------------------Blogs--------------------------//
 import BlogList from "../Component/Dashboard/ArtistDashbooard/Blog/BlogList";
 import BlogPost from "../Component/Dashboard/ArtistDashbooard/Blog/BlogPost";
@@ -545,7 +545,7 @@ import CelebrityContent from "../Pages/Celebrity/celebrityContent/celebrityConte
 import JobRoles from "../Pages/Career/JobRoles";
 import Blogs from "../Pages/blogs/Blogs";
 import BlogCardDetails from "../Pages/blogDetails/BlogCardDetails";
-import ChallengesContent from "../Pages/Challenges/ChallengesContent/ChallengesContent";
+// import ChallengesContent from "../Pages/Challenges/ChallengesContent/ChallengesContent";
 import JoinChallenges from "../Pages/Challenges/JoinChallenges/JoinChallenges";
 import ProductDetails from "../Pages/ProductDetails/ProductDetails";
 import ProductDetailsTemplate from "../Pages/ProductDetails/ProductDetails copy";
@@ -556,7 +556,7 @@ import Insurance from "../Pages/Insurance/Insurance";
 import Partner from "../Pages/Partner/Partner";
 import SellerProductCouponCodes from "../Component/Dashboard/SellerDashboard/ProductSetting/ProductCouponCode/ProductCouponCode";
 import UpdateProductSeller from "../Component/Dashboard/SellerDashboard/ProductsDetails/UpdateProduct/productUploade";
-import ProductViewSeller from '../Component/Dashboard/SellerDashboard/ProductsDetails/UpdateProduct/productUploade';
+import ProductViewSeller from "../Component/Dashboard/SellerDashboard/ProductsDetails/UpdateProduct/productUploade";
 
 //-----------------------------Artist Premium Badges--------------------------//
 
@@ -577,7 +577,7 @@ import ViewMaterialOrder from "../Component/Dashboard/SellerDashboard/PackageMat
 
 //----------------------------------------Social Media----------------------------------//
 import Homee from "../Pages/socialMedia/Homee";
-import Saved from "../Pages/socialMedia/Saved"
+import Saved from "../Pages/socialMedia/Saved";
 import Notification from "../Pages/socialMedia/Notification";
 import Search from "../Pages/socialMedia/Search";
 import Explore from "../Pages/socialMedia/Explore";
@@ -647,6 +647,12 @@ const PublicRoute = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const authPages = [
+      "/login",
+      "/register",
+      "/artist-seller-register",
+      "/forgotpassword",
+    ];
     if (isAuthenticated && authPages.includes(location.pathname)) {
       if (
         (userType === "Artist" || userType === "Seller") &&
@@ -662,30 +668,29 @@ const PublicRoute = ({ children }) => {
     }
   }, [isAuthenticated, userType, userStatus, location.pathname, navigate]);
 
-  const authPages = [
-    "/login",
-    "/register",
-    "/artist-seller-register",
-    "/forgotpassword",
-  ];
-
   return children ? children : <Outlet />;
 };
 
 const WebsiteWrapper = () => {
-  const [showAnimation, setShowAnimation] = useState(true);
+  const [showAnimation, setShowAnimation] = useState(() => {
+    if (typeof window !== "undefined") {
+      return !localStorage.getItem("hasSeenPreloader");
+    }
+    return true;
+  });
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname === "/") {
+    if (location.pathname === "/" && showAnimation) {
       const timer = setTimeout(() => {
         setShowAnimation(false);
-      }, 6000); // Preloader duration (6 seconds)
+        localStorage.setItem("hasSeenPreloader", "true");
+      }, 9000); // Synchronized with PreloaderAnimation duration (~8.8s + buffer)
       return () => clearTimeout(timer);
     } else {
-      setShowAnimation(false); // Skip preloader for other routes
+      setShowAnimation(false); // Skip preloader for other routes or if already seen
     }
-  }, [location.pathname]);
+  }, [location.pathname, showAnimation]);
 
   return showAnimation && location.pathname === "/" ? (
     <PreloaderAnimation />
@@ -719,7 +724,6 @@ const AppRoutes = () => {
       <Route element={<PublicRoute />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/bidding" element={<BiddingPass />} />
         <Route
           path="/artist-seller-register"
           element={<ArtistSellerRegister />}
@@ -860,10 +864,10 @@ const AppRoutes = () => {
           path="artist/allartistproduct/productdetails/:userId"
           element={<ArtistProductsDetails />}
         />
-        <Route
+        {/* <Route
           path="artist/allartistproduct/productdetails/:userId"
           element={<ArtistProductsDetails />}
-        />
+        /> */}
         <Route path="artist/bidding-pass" element={<ArtistProductBidding />} />
         {/* Buyer Management */}
         <Route path="buyer/management" element={<BuyerManagement />} />
@@ -1070,7 +1074,10 @@ const AppRoutes = () => {
         />
         <Route path="settings/user-role" element={<UserRole />} />
         <Route path="settings/create-user-role" element={<CreateRole />} />
-        <Route path="product-settings/token-standard" element={<TokenStandards />} />
+        <Route
+          path="product-settings/token-standard"
+          element={<TokenStandards />}
+        />
         <Route path="product-settings/period-era" element={<PeriodEras />} />
         <Route path="settings/gst" element={<GSTSetting />} />
         <Route path="settings/insurance" element={<InsuranceSetting />} />
@@ -1165,17 +1172,17 @@ const AppRoutes = () => {
         <Route path="policy/update-policy" element={<UpdatePolicy />} />
         {/* <Route path="policy/view-policy" element={<ViewPolicy />} /> */}
         {/*How_To_Buy*/}
-        <Route path="how-to-buy" element={<How_To_Buy />} />
+        <Route path="how-to-buy" element={<HowToBuyTable />} />
         <Route path="how-to-buy/create" element={<CreateHowToBuy />} />
         <Route path="how-to-buy/update" element={<UpdateHowToBuy />} />
         {/* <Route path="how-to-buy/view" element={<ViewHowToBuy />} />   */}
         {/*How_To_Sell*/}
-        <Route path="how-to-sell" element={<How_To_Sell />} />
+        <Route path="how-to-sell" element={<HowToSellTable />} />
         <Route path="how-to-sell/create" element={<CreateHowToSell />} />
         <Route path="how-to-sell/update" element={<UpdateHowToSell />} />
         {/* <Route path="how-to-sell/view" element={<ViewHowToSell />} />   */}
         {/*How_To_Resell*/}
-        <Route path="how-to-resell" element={<How_To_Resell />} />
+        <Route path="how-to-resell" element={<HowToResellTable />} />
         <Route path="how-to-resell/create" element={<CreateHowToResell />} />
         <Route path="how-to-resell/update" element={<UpdateHowToResell />} />
         {/*WhyArtSays */}
@@ -1456,7 +1463,10 @@ const AppRoutes = () => {
         {/* Premium Badges */}
         <Route path="premium-badges" element={<ArtistPremiumBages />} />
 
-        <Route path="products-settings/product-coupon-code" element={<ArtistProductCouponCodes />} />
+        <Route
+          path="products-settings/product-coupon-code"
+          element={<ArtistProductCouponCodes />}
+        />
 
         <Route path="product-purchase" element={<Productpurchase />} />
         {/* Packaging Material */}
@@ -1567,7 +1577,10 @@ const AppRoutes = () => {
         />
 
         <Route path="premium-badges" element={<SellerPremiumBages />} />
-        <Route path="products-settings/product-coupon-code" element={<SellerProductCouponCodes />} />
+        <Route
+          path="products-settings/product-coupon-code"
+          element={<SellerProductCouponCodes />}
+        />
         <Route path="SellerProductUpload" element={<SellerProductUpload />} />
         <Route path="purchased-product" element={<SellerPurchasedProducts />} />
         <Route path="packaging-material" element={<OrderMaterialSeller />} />
@@ -1675,7 +1688,7 @@ const AppRoutes = () => {
         <Route path="/blogs" element={<Blogs />} />
         <Route path="/blog/:blogId" element={<BlogCardDetails />} />
 
-        <Route path="/challenge" element={<ChallengesContent />} />
+        <Route path="/challenge" element={<Challenge />} />
         <Route path="/challenge/:theme" element={<JoinChallenges />} />
 
         <Route path="/product-details" element={<ProductDetailsTemplate />} />
@@ -1687,45 +1700,55 @@ const AppRoutes = () => {
         <Route path="/partner" element={<Partner />} />
 
         {/* ----------------------------------------------------social media Route ----------------------------------------------- */}
-        <Route path="/social-media" element={<Homee />} />
-        <Route path="/social-media/sharepost/:postId" element={<SharePost />} />
-        {/* <Route path="/social-media/share-profile/:viewedUserId" element={<ShareProfile />} /> */}
+        <Route element={<PrivateRoute allowedRoles={["Buyer", "Artist", "Seller", "Super-Admin"]} />}>
+          <Route path="/artsays-community" element={<Homee />} />
+          <Route
+            path="/artsays-community/sharepost/:postId"
+            element={<SharePost />}
+          />
+          {/* <Route path="/artsays-community/share-profile/:viewedUserId" element={<ShareProfile />} /> */}
 
-        <Route
-          path="/social-media/single-post/:postId"
-          element={<SinglePost />}
-        />
-        <Route path="/social-media/notification" element={<Notification />} />
-        <Route path="/social-media/search" element={<Search />} />
-        <Route path="/social-media/explore" element={<Explore />} />
-        <Route path="/social-media/create-post" element={<CreatePost />} />
-        <Route path="/social-media/upload-post" element={<UploadPost />} />
-        <Route path="/social-media/profile/:shareProfileId?" element={<SocialProfile />} />
-        {/* this router for woner profile,share profile,and uselocation.state profile */}
-        <Route
-          path="/social-media/profile/product-view"
-          element={<ProductViewing />}
-        />
-        <Route
-          path="/social-media/profile/suggestion"
-          element={<SuggestedProfile />}
-        />
-        <Route
-          path="/social-media/profile/promote-profile"
-          element={<PromoteProfile />}
-        />
-        <Route
-          path="/social-media/profile/promote-post"
-          element={<PromotePost />}
-        />
-        <Route path="/social-media/create-live" element={<CreateLive />} />
-        <Route path="/social-media/:streamKey/:username" element={<MyLive />} />
-        <Route path="/social-media/live/:streamKey" element={<Live />} />
-        <Route path="/social-media/test" element={<Test />} />
-        <Route path="/social-media/setting" element={<Settings />} />
-        <Route path="/social-media/saved" element={<Saved />} />
-        <Route path="/social-media/logout" element={<ProfileLogout />} />
-
+          <Route
+            path="/artsays-community/single-post/:postId"
+            element={<SinglePost />}
+          />
+          <Route path="/artsays-community/notification" element={<Notification />} />
+          <Route path="/artsays-community/search" element={<Search />} />
+          <Route path="/artsays-community/explore" element={<Explore />} />
+          <Route path="/artsays-community/create-post" element={<CreatePost />} />
+          <Route path="/artsays-community/upload-post" element={<UploadPost />} />
+          <Route
+            path="/artsays-community/profile/:ProfileUserId"
+            element={<SocialProfile />}
+          />
+          {/* this router for woner profile,share profile,and uselocation.state profile */}
+          <Route
+            path="/artsays-community/profile/product-view"
+            element={<ProductViewing />}
+          />
+          <Route
+            path="/artsays-community/profile/suggestion"
+            element={<SuggestedProfile />}
+          />
+          <Route
+            path="/artsays-community/profile/promote-profile"
+            element={<PromoteProfile />}
+          />
+          <Route
+            path="/artsays-community/profile/promote-post"
+            element={<PromotePost />}
+          />
+          <Route path="/artsays-community/create-live" element={<CreateLive />} />
+          <Route
+            path="/artsays-community/:streamKey/:username"
+            element={<MyLive />}
+          />
+          <Route path="/artsays-community/live/:streamKey" element={<Live />} />
+          <Route path="/artsays-community/test" element={<Test />} />
+          <Route path="/artsays-community/setting" element={<Settings />} />
+          <Route path="/artsays-community/saved" element={<Saved />} />
+          <Route path="/artsays-community/logout" element={<ProfileLogout />} />
+        </Route>
         <Route path="/invoice" element={<EdprowiseInvoice />} />
         <Route path="/invoice1" element={<Invoice />} />
       </Route>

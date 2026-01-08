@@ -11,6 +11,9 @@ const ProfileLogout = () => {
     localStorage.removeItem("email");
     localStorage.removeItem("userId");
     localStorage.removeItem("profilePhoto");
+    localStorage.removeItem("username");
+    localStorage.removeItem("firstName");
+    localStorage.removeItem("lastName");
     window.dispatchEvent(new Event("profilePhotoUpdated"));
     window.location.href = "/";
   };

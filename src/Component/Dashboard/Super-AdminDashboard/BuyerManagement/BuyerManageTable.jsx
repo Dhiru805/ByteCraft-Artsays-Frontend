@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ConfirmationDialog from '../../ConfirmationDialog';
-import VerifyModal from "./VerifyModal"
+import ConfirmationDialog from "../../ConfirmationDialog";
+import VerifyModal from "./VerifyModal";
 import CreateBuyerModal from "./Createmodal";
-import useUserType from '../../urlconfig';
+import useUserType from "../../urlconfig";
 import getAPI from "../../../../api/getAPI";
 import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
 import * as XLSX from "xlsx-js-style";
 import { saveAs } from "file-saver";
 
 
+import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 
 function BuyerManageTable() {
   const [buyers, setBuyers] = useState([]);
@@ -21,15 +22,16 @@ function BuyerManageTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [products, setProducts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage, setProductsPerPage] = useState(10);
-
+  const [loading, setLoading] = useState(false);
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   const navigate = useNavigate();
 
   const fetchBuyers = async () => {
+    setLoading(true);
     try {
       const response = await getAPI("/api/buyers/get-Allbuyer");
       const buyersData = response.data;
@@ -49,6 +51,8 @@ function BuyerManageTable() {
       setBuyers(parsedBuyers);
     } catch (error) {
       console.error("Error fetching buyers:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,9 +66,7 @@ function BuyerManageTable() {
   };
 
   const handleDeleteConfirmed = (id) => {
-    setBuyers((prevBuyers) =>
-      prevBuyers.filter((buyer) => buyer._id !== id)
-    );
+    setBuyers((prevBuyers) => prevBuyers.filter((buyer) => buyer._id !== id));
 
     setIsDeleteDialogOpen(false);
   };
@@ -83,14 +85,12 @@ function BuyerManageTable() {
     return fullName.includes(searchTerm.toLowerCase());
   });
 
-
   const totalPages = Math.ceil(filteredBuyers.length / productsPerPage);
 
   const displayedBuyers = filteredBuyers.slice(
     (currentPage - 1) * productsPerPage,
     currentPage * productsPerPage
   );
-
 
   const handlePrevious = () => {
     if (currentPage > 1) {
@@ -199,6 +199,7 @@ function BuyerManageTable() {
     saveAs(blob, "buyer_details.xlsx");
   };
 
+  if(loading) return <ProductRequestSkeleton/>
   return (
     <>
       <div className="container-fluid">
@@ -208,7 +209,10 @@ function BuyerManageTable() {
               <h2>Buyer Management</h2>
               <ul className="breadcrumb">
                 <li className="breadcrumb-item">
-                  <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
+                  <span
+                    onClick={() => navigate("/super-admin/dashboard")}
+                    style={{ cursor: "pointer" }}
+                  >
                     <i className="fa fa-dashboard"></i>
                   </span>
                 </li>
@@ -225,7 +229,6 @@ function BuyerManageTable() {
                   >
                     <i className="fa fa-plus"></i>
                   </button>
-
                 </div>
               </div>
             </div>
@@ -244,7 +247,7 @@ function BuyerManageTable() {
                     className="form-control form-control-sm"
                     value={productsPerPage}
                     onChange={handleProductsPerPageChange}
-                    style={{ minWidth: '70px' }}
+                    style={{ minWidth: "70px" }}
                   >
                     {/* <option value="5">5</option> */}
                     <option value="10">10</option>
@@ -255,7 +258,7 @@ function BuyerManageTable() {
                   <label className="mb-0 ml-2">entries</label>
                 </div>
                 <div className="w-100 w-md-auto d-flex justify-content-end">
-                  <div className="input-group" style={{ maxWidth: '150px' }}>
+                  <div className="input-group" style={{ maxWidth: "150px" }}>
                     <input
                       type="text"
                       className="form-control form-control-sm"
@@ -266,11 +269,11 @@ function BuyerManageTable() {
                     <i
                       className="fa fa-search"
                       style={{
-                        position: 'absolute',
-                        right: '10px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        pointerEvents: 'none',
+                        position: "absolute",
+                        right: "10px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        pointerEvents: "none",
                       }}
                     ></i>
                   </div>
@@ -297,7 +300,9 @@ function BuyerManageTable() {
                     <tbody>
                       {displayedBuyers.map((buyer, index) => (
                         <tr key={buyer._id}>
-                          <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
+                          <td>
+                            {(currentPage - 1) * productsPerPage + index + 1}
+                          </td>
                           <td>
                             <img
                               src={
@@ -308,9 +313,9 @@ function BuyerManageTable() {
                               className="rounded-circle avatar"
                               alt=""
                               style={{
-                                width: '30px',
-                                height: '30px',
-                                objectFit: 'cover',
+                                width: "30px",
+                                height: "30px",
+                                objectFit: "cover",
                               }}
                             />
 
@@ -332,7 +337,13 @@ function BuyerManageTable() {
                             </address>
                           </td>
                           <td>
-                            <button className={`btn btn-sm ${buyer.status === 'Verified' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
+                            <button
+                              className={`btn btn-sm ${
+                                buyer.status === "Verified"
+                                  ? "btn-outline-success"
+                                  : "btn-outline-danger"
+                              }`}
+                            >
                               {buyer.status}
                             </button>
                           </td>
@@ -343,9 +354,11 @@ function BuyerManageTable() {
                               className="btn btn-outline-primary btn-sm mr-2"
                               title="Navigate"
                               onClick={() =>
-                                navigate("/super-admin/buyer/management/productview/", { state: { buyer } })
+                                navigate(
+                                  "/super-admin/buyer/management/productview/",
+                                  { state: { buyer } }
+                                )
                               }
-
                             >
                               <i className="fa fa-eye"></i>
                             </button>
@@ -354,7 +367,10 @@ function BuyerManageTable() {
                               className="btn btn-outline-info btn-sm mr-2"
                               title="Edit"
                               onClick={() =>
-                                navigate("/super-admin/buyer/management/productedit/", { state: { buyer } })
+                                navigate(
+                                  "/super-admin/buyer/management/productedit/",
+                                  { state: { buyer } }
+                                )
                               }
                             >
                               <i className="fa fa-pencil"></i>
@@ -371,7 +387,10 @@ function BuyerManageTable() {
                               className="btn btn-outline-success btn-sm"
                               onClick={() => openModal(buyer)}
                             >
-                              <i className="fa fa-info-circle" style={{ color: "green" }}></i>
+                              <i
+                                className="fa fa-info-circle"
+                                style={{ color: "green" }}
+                              ></i>
                             </button>
                           </td>
                         </tr>
@@ -381,12 +400,19 @@ function BuyerManageTable() {
                 </div>
                 <div className="pagination d-flex justify-content-between mt-4">
                   <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, filteredBuyers.length)} of {filteredBuyers.length} entries
+                    Showing {(currentPage - 1) * productsPerPage + 1} to{" "}
+                    {Math.min(
+                      currentPage * productsPerPage,
+                      filteredBuyers.length
+                    )}{" "}
+                    of {filteredBuyers.length} entries
                   </span>
 
                   <ul className="pagination d-flex justify-content-end w-100">
                     <li
-                      className={`paginate_button page-item ${currentPage === 1 ? 'disabled' : ''}`}
+                      className={`paginate_button page-item ${
+                        currentPage === 1 ? "disabled" : ""
+                      }`}
                       onClick={handlePrevious}
                     >
                       <button className="page-link">Previous</button>
@@ -399,13 +425,19 @@ function BuyerManageTable() {
                         if (prevPage && pageNumber - prevPage > 1) {
                           return (
                             <React.Fragment key={`ellipsis-${pageNumber}`}>
-                              <li className="page-item disabled"><span className="page-link">...</span></li>
+                              <li className="page-item disabled">
+                                <span className="page-link">...</span>
+                              </li>
                               <li
                                 key={pageNumber}
-                                className={`paginate_button page-item ${currentPage === pageNumber ? 'active' : ''}`}
+                                className={`paginate_button page-item ${
+                                  currentPage === pageNumber ? "active" : ""
+                                }`}
                                 onClick={() => setCurrentPage(pageNumber)}
                               >
-                                <button className="page-link">{pageNumber}</button>
+                                <button className="page-link">
+                                  {pageNumber}
+                                </button>
                               </li>
                             </React.Fragment>
                           );
@@ -414,7 +446,9 @@ function BuyerManageTable() {
                         return (
                           <li
                             key={pageNumber}
-                            className={`paginate_button page-item ${currentPage === pageNumber ? 'active' : ''}`}
+                            className={`paginate_button page-item ${
+                              currentPage === pageNumber ? "active" : ""
+                            }`}
                             onClick={() => setCurrentPage(pageNumber)}
                           >
                             <button className="page-link">{pageNumber}</button>
@@ -423,14 +457,15 @@ function BuyerManageTable() {
                       })}
 
                     <li
-                      className={`paginate_button page-item ${currentPage === totalPages ? 'disabled' : ''}`}
+                      className={`paginate_button page-item ${
+                        currentPage === totalPages ? "disabled" : ""
+                      }`}
                       onClick={handleNext}
                     >
                       <button className="page-link">Next</button>
                     </li>
                   </ul>
                 </div>
-
               </div>
             </div>
           </div>
@@ -457,8 +492,6 @@ function BuyerManageTable() {
           fetchBuyers={fetchBuyers}
         />
       )}
-
-
     </>
   );
 }

@@ -7,7 +7,7 @@ const UploadPost = () => {
      
 
       {/* Main layout: Sidebar | Post | Suggestion */}
-      <main className='flex flex-row gap-4 lg:w-[96%] w-full mx-auto'>
+      <main className='flex flex-row w-full mx-auto'>
         <Uploadpost />
       </main>
      

@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from './AuthContext';
 import ChatIcon from "./Component/chatbot/ChatIcon";
 import ScrollToTop from "./Component/ScrollToTop";
 import WonBidPopup from "./Component/WonBidPopup/WonBidPopup";
+import { HelmetProvider } from "react-helmet-async";
 
 const AppContent = () => {
   const { isAuthenticated } = useAuth();
@@ -38,14 +39,16 @@ const AppContent = () => {
 function App() {
   return (
     <React.StrictMode>
-      <BrowserRouter>
-       <ScrollToTop />
-        <AuthProvider>
-          <CookiesProvider>
-            <AppContent />
-          </CookiesProvider>
-        </AuthProvider>
-      </BrowserRouter>
+      <HelmetProvider>
+        <BrowserRouter>
+         <ScrollToTop />
+          <AuthProvider>
+            <CookiesProvider>
+              <AppContent />
+            </CookiesProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </HelmetProvider>
     </React.StrictMode>
   );
 }

@@ -33,10 +33,10 @@ async function getAPI(
         data: response.data,
       };
     }
-  } catch (error) {
-    console.error("Error during API request:", error);
-    throw error;
-  }
+    } catch (error) {
+      console.error("Error during API request:", error.response ? error.response.data : error.message);
+      throw error;
+    }
 }
 
 export default getAPI;

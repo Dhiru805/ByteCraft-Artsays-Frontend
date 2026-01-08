@@ -3,18 +3,21 @@ import getAPI from "../../../../../api/getAPI";
 import ProductPackagingTypeTable from "./ProductPackagingTypeTable";
 import CreateProductPackagingTypeModal from "./CreateProductPackagingType";
 import { useNavigate } from 'react-router-dom';
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const ProductPackagingType = () => {
     const [productPackagingTypes, setProductPackagingTypes] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
-
+const[loading,setLoading]=useState(true)
     const fetchProductPackagingTypes = async () => {
         try {
             const response = await getAPI("/api/getproductpackagingtypes");
             setProductPackagingTypes(response.data);
         } catch (error) {
             console.error("Error fetching product packaging types:", error);
+        }finally{
+            setLoading(false)
         }
     };
     
@@ -22,6 +25,7 @@ const ProductPackagingType = () => {
         fetchProductPackagingTypes();
     }, []);
 
+    if(loading)return <ProductRequestSkeleton/>
     return (
         <div className="container-fluid">
             <div className="block-header">

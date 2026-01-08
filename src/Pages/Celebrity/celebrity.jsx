@@ -4,7 +4,7 @@ import CelebrityCard from './celebrity-card/celebrity-card';
 
 const Celebrity = () => {
   return (
-    <div className="max-w-[1440px] mx-auto font-[poppins]">
+    <div className="w-full font-[poppins]">
         <HeroImgCelebrity/>
         <CelebrityCard/>
     </div>

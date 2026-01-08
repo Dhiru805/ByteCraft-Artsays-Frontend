@@ -3,11 +3,13 @@ import getAPI from "../../../../../api/getAPI";
 import ProductEditionTypeTable from "./ProductEditionTypeTable";
 import CreateProductEditionTypeModal from "./CreateProductEditionType";
 import { useNavigate } from 'react-router-dom';
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const ProductEditionType = () => {
     const [productEditionTypes, setProductEditionTypes] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
+const [loading,setLoading]=useState(true)
 
     const fetchProductEditionTypes = async () => {
         try {
@@ -15,6 +17,8 @@ const ProductEditionType = () => {
             setProductEditionTypes(response.data);
         } catch (error) {
             console.error("Error fetching product edition types:", error);
+        }finally{
+            setLoading(false)
         }
     };
     
@@ -22,6 +26,7 @@ const ProductEditionType = () => {
         fetchProductEditionTypes();
     }, []);
 
+    if(loading)return <ProductRequestSkeleton/>
     return (
         <div className="container-fluid">
             <div className="block-header">

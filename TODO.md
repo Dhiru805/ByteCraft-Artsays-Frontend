@@ -1,0 +1,3 @@
+- [ ] Remove duplicate incomplete Privacy Center panel block in Setting.jsx
+- [ ] Remove duplicate Success Popup block in Setting.jsx
+- [ ] Verify the file structure and fix any remaining syntax errors

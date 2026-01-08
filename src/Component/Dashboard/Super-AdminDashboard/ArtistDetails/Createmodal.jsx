@@ -85,7 +85,7 @@ const CreateArtistModal = ({ onClose, fetchArtists }) => {
   };
   return (
     <div className="modal show d-block" style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}>
-      <div className="modal-dialog">
+      <div className="modal-dialog" >
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Create Artist</h5>
@@ -93,8 +93,9 @@ const CreateArtistModal = ({ onClose, fetchArtists }) => {
               <span>&times;</span>
             </button>
           </div>
-          <div className="modal-body">
+          <div className="modal-body" >
             <form onSubmit={handleSubmit}>
+              <div style={{ maxHeight: "30vh", overflowY: "auto" }}>
               <div className="form-group">
                 <label>First Name</label>
                 <input type="text" className="form-control" name="firstName" value={formData.firstName} onChange={handleChange} required />
@@ -154,6 +155,7 @@ const CreateArtistModal = ({ onClose, fetchArtists }) => {
                     </span>
                   </div>
                 </div>
+              </div>
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={onClose}>

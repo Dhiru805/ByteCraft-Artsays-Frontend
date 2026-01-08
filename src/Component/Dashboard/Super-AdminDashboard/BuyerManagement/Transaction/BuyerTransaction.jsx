@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const Transaction = () => {
     const [products, setProducts] = useState([]);
@@ -9,7 +10,7 @@ const Transaction = () => {
     const [productsPerPage, setProductsPerPage] = useState(10);
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
     const [searchTerm, setSearchTerm] = useState('');
-
+const[loading,setLoading]=useState(false);
 
 
     const navigate = useNavigate();
@@ -17,6 +18,7 @@ const Transaction = () => {
 
     useEffect(() => {
         const fetchProducts = async () => {
+            setLoading(true)
             try {
                 const result = await getAPI("/api/gettransactionbuyer", {}, true, false);
                 console.log("Full API Response:", result);
@@ -32,6 +34,8 @@ const Transaction = () => {
             } catch (error) {
                 console.error("Error fetching products:", error);
                 setProducts([]);
+            }finally{
+                setLoading(false)
             }
         };
 
@@ -63,6 +67,7 @@ const Transaction = () => {
     };
 
 
+    if(loading)return <ProductRequestSkeleton/>
     return (
         <div className="container-fluid">
             <div className="block-header">
@@ -143,7 +148,7 @@ const Transaction = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {displayedProducts.map((product, index) => {
+                                        {displayedProducts?.map((product, index) => {
                                             const productData = product.product || product.resellProduct;
                                             return (
                                                 <tr key={product._id}>

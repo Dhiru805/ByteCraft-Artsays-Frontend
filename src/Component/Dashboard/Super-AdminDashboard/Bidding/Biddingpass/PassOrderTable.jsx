@@ -285,6 +285,7 @@ import getAPI from "../../../../../api/getAPI";
 import putAPI from "../../../../../api/putAPI";
 import deleteAPI from "../../../../../api/deleteAPI";
 import { toast } from "react-toastify";
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
 const PassOrderTable = () => {
   const navigate = useNavigate();
@@ -296,13 +297,16 @@ const PassOrderTable = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
-
+const[loading,setLoading]=useState(false);
   const fetchOrders = async () => {
+    setLoading(true)
     try {
       const res = await getAPI("/api/bidding/pass-orders", {}, true);
       setOrders(Array.isArray(res?.data?.data) ? res.data.data : []);
     } catch (e) {
       setOrders([]);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -392,6 +396,7 @@ const PassOrderTable = () => {
     }
   };
 
+  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
       <div className="block-header">

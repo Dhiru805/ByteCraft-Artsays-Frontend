@@ -743,8 +743,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import getAPI from "../../api/getAPI";
-import postAPI from "../../api/postAPI"; 
-import deleteAPI from "../../api/deleteAPI"; 
+import postAPI from "../../api/postAPI";
+import deleteAPI from "../../api/deleteAPI";
 import { MdVerified } from "react-icons/md";
 import { BsTelegram } from "react-icons/bs";
 import { FaChevronCircleRight, FaChevronCircleLeft } from "react-icons/fa";
@@ -754,7 +754,7 @@ import { Star, MapPin, ArrowRight, Heart, Zap, ShoppingCart } from "lucide-react
 import { HiMiniPercentBadge } from "react-icons/hi2";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 
@@ -772,24 +772,24 @@ const resolveMediaUrl = (path) => {
 
 const BidDetails = () => {
   //const { bidId } = useParams();
-const { bidSlug, bidId } = useParams();
+  const { bidSlug, bidId } = useParams();
 
   const [bidData, setBidData] = useState(null);
   const [productData, setProductData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-const [showBidSidebar, setShowBidSidebar] = useState(false);
-const [isBidEnded, setIsBidEnded] = useState(false);
+  const [showBidSidebar, setShowBidSidebar] = useState(false);
+  const [isBidEnded, setIsBidEnded] = useState(false);
 
-const [manualBid, setManualBid] = useState("");
-const [confirmPopup, setConfirmPopup] = useState(false);
-const [bidToConfirm, setBidToConfirm] = useState(null);
+  const [manualBid, setManualBid] = useState("");
+  const [confirmPopup, setConfirmPopup] = useState(false);
+  const [bidToConfirm, setBidToConfirm] = useState(null);
 
   const [activeTab, setActiveTab] = useState("description");
   const [selectedImage, setSelectedImage] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
 
-const [winnerAlertShown, setWinnerAlertShown] = useState(false);
+  const [winnerAlertShown, setWinnerAlertShown] = useState(false);
 
   const [categoryData, setCategoryData] = useState({
     mainCategories: [],
@@ -809,42 +809,42 @@ const [winnerAlertShown, setWinnerAlertShown] = useState(false);
 
   const artworkSize = { width: 100, height: 70 };
 
-  const [badgesData, setBadgesData] = useState([]); 
-  const [reviews, setReviews] = useState([]); 
+  const [badgesData, setBadgesData] = useState([]);
+  const [reviews, setReviews] = useState([]);
 
   const [showBid, setShowBid] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
-  
-const [liveBids, setLiveBids] = useState([]);
-const [userBid, setUserBid] = useState(null);
 
-// const winner = useMemo(() => {
-//   if (!isBidEnded || liveBids.length === 0) return null;
-  
-//   const top = liveBids[0];
-//   return {
-//     amount: top.amount,
-//     name: top.userId?.username 
-//    || `${top.userId?.name || ""} ${top.userId?.lastName || ""}`.trim()
-//    || "User",
+  const [liveBids, setLiveBids] = useState([]);
+  const [userBid, setUserBid] = useState(null);
 
-//   };
-// }, [isBidEnded, liveBids]);
-const winner = useMemo(() => {
-  if (!isBidEnded || liveBids.length === 0) return null;
+  // const winner = useMemo(() => {
+  //   if (!isBidEnded || liveBids.length === 0) return null;
 
-  const top = liveBids[0];
+  //   const top = liveBids[0];
+  //   return {
+  //     amount: top.amount,
+  //     name: top.userId?.username 
+  //    || `${top.userId?.name || ""} ${top.userId?.lastName || ""}`.trim()
+  //    || "User",
 
-  return {
-    amount: top.amount,
-    userId: top.userId?._id,  
-    name:
-      top.userId?.username ||
-      `${top.userId?.name || ""} ${top.userId?.lastName || ""}`.trim() ||
-      "User",
-  };
-}, [isBidEnded, liveBids]);
+  //   };
+  // }, [isBidEnded, liveBids]);
+  const winner = useMemo(() => {
+    if (!isBidEnded || liveBids.length === 0) return null;
+
+    const top = liveBids[0];
+
+    return {
+      amount: top.amount,
+      userId: top.userId?._id,
+      name:
+        top.userId?.username ||
+        `${top.userId?.name || ""} ${top.userId?.lastName || ""}`.trim() ||
+        "User",
+    };
+  }, [isBidEnded, liveBids]);
 
 
   const getMainCategoryById = (id) =>
@@ -871,68 +871,68 @@ const winner = useMemo(() => {
     fetchCategories();
   }, []);
 
-// useEffect(() => {
-//   if (!isBidEnded || !winner || winnerAlertShown) return;
+  // useEffect(() => {
+  //   if (!isBidEnded || !winner || winnerAlertShown) return;
 
-//   const userId = localStorage.getItem("userId");
-//   if (!userId) return;
+  //   const userId = localStorage.getItem("userId");
+  //   if (!userId) return;
 
-//   if (winner.userId === userId) {
-//     setWinnerAlertShown(true);
+  //   if (winner.userId === userId) {
+  //     setWinnerAlertShown(true);
 
-//     toast.success(
-//       `Congratulations! You won ${finalData.bid.artworkName} at ₹${winner.amount}. It has been added to your cart.`,
-//       { autoClose: 4000 }
-//     );
+  //     toast.success(
+  //       `Congratulations! You won ${finalData.bid.artworkName} at ₹${winner.amount}. It has been added to your cart.`,
+  //       { autoClose: 4000 }
+  //     );
 
-//     postAPI("/api/cart/add-won-bid", {
-//       userId,
-//       productId: finalData._id,
-//       bidId: finalData.bid.biddingId,
-//       amount: winner.amount
-//     });
-//   }
-// }, [isBidEnded, winner]);
+  //     postAPI("/api/cart/add-won-bid", {
+  //       userId,
+  //       productId: finalData._id,
+  //       bidId: finalData.bid.biddingId,
+  //       amount: winner.amount
+  //     });
+  //   }
+  // }, [isBidEnded, winner]);
 
 
-// const handleRemoveFromCart = async (productId) => {
-//   const userId = localStorage.getItem("userId");
+  // const handleRemoveFromCart = async (productId) => {
+  //   const userId = localStorage.getItem("userId");
 
-//   const res = await deleteAPI(`/api/cart/remove?userId=${userId}&productId=${productId}`, {
-//     userId,
-//     productId
-//   });
+  //   const res = await deleteAPI(`/api/cart/remove?userId=${userId}&productId=${productId}`, {
+  //     userId,
+  //     productId
+  //   });
 
-//   if (res.data.success) {
-//     toast.warn(
-//       "You removed your winning bid item. It will be awarded to the next highest bidder.",
-//       { autoClose: 5000 }
-//     );
+  //   if (res.data.success) {
+  //     toast.warn(
+  //       "You removed your winning bid item. It will be awarded to the next highest bidder.",
+  //       { autoClose: 5000 }
+  //     );
 
-//     await postAPI("/api/bidding/carry-forward", {
-//       bidId: finalData.bid.biddingId
-//     });
-//   }
-// };
+  //     await postAPI("/api/bidding/carry-forward", {
+  //       bidId: finalData.bid.biddingId
+  //     });
+  //   }
+  // };
 
-const handleRemoveFromCart = async (productId) => {
-  const userId = localStorage.getItem("userId");
+  const handleRemoveFromCart = async (productId) => {
+    const userId = localStorage.getItem("userId");
 
-  let isBidWinnerItem = false;
-  try {
-    const cartRes = await getAPI(`/api/cart/${userId}`, {}, true, false);
-    const cartItem = cartRes?.data?.items?.find(
-      (item) => item.product && String(item.product._id) === String(productId)
-    );
-    isBidWinnerItem = cartItem?.isBidWinnerItem === true;
-  } catch (err) {
-    console.error("Error checking cart:", err);
-  }
+    let isBidWinnerItem = false;
+    try {
+      const cartRes = await getAPI(`/api/cart/${userId}`, {}, true, false);
+      const cartItem = cartRes?.data?.items?.find(
+        (item) => item.product && String(item.product._id) === String(productId)
+      );
+      isBidWinnerItem = cartItem?.isBidWinnerItem === true;
+    } catch (err) {
+      console.error("Error checking cart:", err);
+    }
 
-  if (isBidWinnerItem) {
-    const result = await Swal.fire({
-      title: "Remove Bid Winner Product?",
-      html: `
+    if (isBidWinnerItem) {
+      const result = await Swal.fire({
+        title: "Remove Bid Winner Product?",
+        html: `
         <div style="text-align: left; padding: 10px 0;">
           <p style="margin-bottom: 15px; font-size: 16px; color: #333;">
             <strong>⚠️ Important Notice:</strong>
@@ -947,57 +947,57 @@ const handleRemoveFromCart = async (productId) => {
           </p>
         </div>
       `,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d32f2f",
-      cancelButtonColor: "#6c757d",
-      confirmButtonText: "Yes, Remove It",
-      cancelButtonText: "Cancel",
-      reverseButtons: true,
-      width: "500px",
-    });
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d32f2f",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, Remove It",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+        width: "500px",
+      });
 
-    if (!result.isConfirmed) {
-      return;
-    }
-  }
-
-  try {
-  const res = await deleteAPI(`/api/cart/remove?userId=${userId}&productId=${productId}`, {
-    userId,
-    productId
-  });
-
-  if (res.data.success) {
-      if (isBidWinnerItem) {
-        Swal.fire({
-          title: "Removed",
-          text: "The product has been removed and will be awarded to the next highest bidder.",
-          icon: "info",
-          timer: 3000,
-          showConfirmButton: false,
-        });
-
-    await postAPI("/api/bidding/carry-forward", {
-      bidId: finalData.bid.biddingId
-    });
-      } else {
-        toast.success("Item removed from cart");
+      if (!result.isConfirmed) {
+        return;
       }
     }
-  } catch (err) {
-    console.error("Remove error:", err);
-    if (isBidWinnerItem) {
-      Swal.fire({
-        title: "Error",
-        text: "Failed to remove item from cart. Please try again.",
-        icon: "error",
+
+    try {
+      const res = await deleteAPI(`/api/cart/remove?userId=${userId}&productId=${productId}`, {
+        userId,
+        productId
       });
-    } else {
-      toast.error("Failed to remove item from cart");
+
+      if (res.data.success) {
+        if (isBidWinnerItem) {
+          Swal.fire({
+            title: "Removed",
+            text: "The product has been removed and will be awarded to the next highest bidder.",
+            icon: "info",
+            timer: 3000,
+            showConfirmButton: false,
+          });
+
+          await postAPI("/api/bidding/carry-forward", {
+            bidId: finalData.bid.biddingId
+          });
+        } else {
+          toast.success("Item removed from cart");
+        }
+      }
+    } catch (err) {
+      console.error("Remove error:", err);
+      if (isBidWinnerItem) {
+        Swal.fire({
+          title: "Error",
+          text: "Failed to remove item from cart. Please try again.",
+          icon: "error",
+        });
+      } else {
+        toast.error("Failed to remove item from cart");
+      }
     }
-  }
-};
+  };
 
   useEffect(() => {
     const fetchBidProduct = async () => {
@@ -1042,8 +1042,8 @@ const handleRemoveFromCart = async (productId) => {
           reviewsRes?.data?.reviews || reviewsRes?.data?.data || [];
         const sortedReviews = Array.isArray(reviewPayload)
           ? [...reviewPayload].sort(
-              (a, b) => new Date(b?.createdAt || 0) - new Date(a?.createdAt || 0)
-            )
+            (a, b) => new Date(b?.createdAt || 0) - new Date(a?.createdAt || 0)
+          )
           : [];
         setReviews(sortedReviews);
 
@@ -1073,60 +1073,60 @@ const handleRemoveFromCart = async (productId) => {
     };
   }, [bidData, productData]);
 
-useEffect(() => {
-  if (!isBidEnded || !winner || !finalData) return;
+  useEffect(() => {
+    if (!isBidEnded || !winner || !finalData) return;
 
-  const loggedInUser = localStorage.getItem("userId");
-  if (!loggedInUser) return;
+    const loggedInUser = localStorage.getItem("userId");
+    if (!loggedInUser) return;
 
-  if (localStorage.getItem(`won_${finalData._id}`)) return;
+    if (localStorage.getItem(`won_${finalData._id}`)) return;
 
-  if (String(winner.userId) !== String(loggedInUser)) return;
+    if (String(winner.userId) !== String(loggedInUser)) return;
 
-  localStorage.setItem(`won_${finalData._id}`, "true");
+    localStorage.setItem(`won_${finalData._id}`, "true");
 
-  toast.success(
-    `Congratulations! You won ${finalData.bid.artworkName} at ₹${winner.amount}. The product is now added to your cart.`,
-    { autoClose: 4000 }
-  );
+    toast.success(
+      `Congratulations! You won ${finalData.bid.artworkName} at ₹${winner.amount}. The product is now added to your cart.`,
+      { autoClose: 4000 }
+    );
 
-  postAPI(`/api/cart/${loggedInUser}/add-won-bid`, {
-    userId: loggedInUser,
-    //productId: finalData._id,
-    productId: bidData.product?._id,
-    bidId: finalData.bid.biddingId,
-    amount: winner.amount,
-  }).catch((err) => console.error("Add-to-cart error:", err));
+    postAPI(`/api/cart/${loggedInUser}/add-won-bid`, {
+      userId: loggedInUser,
+      //productId: finalData._id,
+      productId: bidData.product?._id,
+      bidId: finalData.bid.biddingId,
+      amount: winner.amount,
+    }).catch((err) => console.error("Add-to-cart error:", err));
 
-}, [isBidEnded, winner, finalData]);
+  }, [isBidEnded, winner, finalData]);
 
-useEffect(() => {
-  if (!finalData?.bid?.biddingId) return;
+  useEffect(() => {
+    if (!finalData?.bid?.biddingId) return;
 
-  const bidId = finalData.bid.biddingId;
-  const userId = localStorage.getItem("userId");
+    const bidId = finalData.bid.biddingId;
+    const userId = localStorage.getItem("userId");
 
-  const fetchBidData = async () => {
-    try {
-      const [allBidsRes, userBidRes] = await Promise.all([
-        getAPI(`/api/bidding/all/${bidId}`, {}, true, false),
-        getAPI(`/api/bidding/user/${bidId}/${userId}`, {}, true, false),
-      ]);
+    const fetchBidData = async () => {
+      try {
+        const [allBidsRes, userBidRes] = await Promise.all([
+          getAPI(`/api/bidding/all/${bidId}`, {}, true, false),
+          getAPI(`/api/bidding/user/${bidId}/${userId}`, {}, true, false),
+        ]);
 
-      setLiveBids(allBidsRes?.data?.bids || []);
-      setUserBid(userBidRes?.data?.bid || null);
+        setLiveBids(allBidsRes?.data?.bids || []);
+        setUserBid(userBidRes?.data?.bid || null);
 
-    } catch (err) {
-      console.log("Bid stream error:", err);
-    }
-  };
+      } catch (err) {
+        console.log("Bid stream error:", err);
+      }
+    };
 
-  fetchBidData();
+    fetchBidData();
 
-  const interval = setInterval(fetchBidData, 3000);
+    const interval = setInterval(fetchBidData, 3000);
 
-  return () => clearInterval(interval);
-}, [finalData]);
+    return () => clearInterval(interval);
+  }, [finalData]);
 
   useEffect(() => {
     if (!finalData || categoryData.mainCategories.length === 0) return;
@@ -1146,159 +1146,159 @@ useEffect(() => {
     return [...(mainImg ? [mainImg] : []), ...others];
   }, [finalData]);
 
-useEffect(() => {
-  const handleClickOutside = (e) => {
-    if (!showBidSidebar) return;
-    if (!document.getElementById("bid-input-box")?.contains(e.target)) {
-      setShowBidSidebar(false);
-      setManualBid("");
-    }
-  };
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!showBidSidebar) return;
+      if (!document.getElementById("bid-input-box")?.contains(e.target)) {
+        setShowBidSidebar(false);
+        setManualBid("");
+      }
+    };
 
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => document.removeEventListener("mousedown", handleClickOutside);
-}, [showBidSidebar]);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showBidSidebar]);
 
 
   useEffect(() => {
     if (images.length > 0) setSelectedImage(images[0]);
   }, [images]);
 
-const [timeLeft, setTimeLeft] = React.useState("");
-const [isLastDay, setIsLastDay] = React.useState(false);
+  const [timeLeft, setTimeLeft] = React.useState("");
+  const [isLastDay, setIsLastDay] = React.useState(false);
 
-const calculateTimeLeft = () => {
-  if (!finalData?.bid?.bidEnd) return "";
+  const calculateTimeLeft = () => {
+    if (!finalData?.bid?.bidEnd) return "";
 
-  const now = new Date().getTime();
-  const end = new Date(finalData.bid.bidEnd).getTime();
-  const diff = end - now;
+    const now = new Date().getTime();
+    const end = new Date(finalData.bid.bidEnd).getTime();
+    const diff = end - now;
 
-  if (diff <= 0) {
-  setIsBidEnded(true);
-  setIsLastDay(true);
-  return "00:00:00";
-}
-
-
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-  if (days >= 1) {
-    setIsLastDay(false);
-    return `${days} day${days > 1 ? "s" : ""} left`;
-  }
-
-  setIsLastDay(true);
-
-  const hours = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, "0");
-  const minutes = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, "0");
-  const seconds = String(Math.floor((diff / 1000) % 60)).padStart(2, "0");
-
-  return `${hours}:${minutes}:${seconds}`;
-};
-
-useEffect(() => {
-  if (!finalData?.bid?.bidEnd) return;
-
-  setTimeLeft(calculateTimeLeft());
-
-  const timer = setInterval(() => {
-    setTimeLeft(calculateTimeLeft());
-  }, 1000);
-
-  return () => clearInterval(timer);
-}, [finalData?.bid?.bidEnd]);
-
-useEffect(() => {
-  if (!finalData?.bid?.bidEnd) return;
-
-  const update = () => {
-    const t = calculateTimeLeft();
-    setTimeLeft(t);
-
-    if (t === "00:00:00") {
+    if (diff <= 0) {
       setIsBidEnded(true);
+      setIsLastDay(true);
+      return "00:00:00";
+    }
+
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+    if (days >= 1) {
+      setIsLastDay(false);
+      return `${days} day${days > 1 ? "s" : ""} left`;
+    }
+
+    setIsLastDay(true);
+
+    const hours = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, "0");
+    const minutes = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, "0");
+    const seconds = String(Math.floor((diff / 1000) % 60)).padStart(2, "0");
+
+    return `${hours}:${minutes}:${seconds}`;
+  };
+
+  useEffect(() => {
+    if (!finalData?.bid?.bidEnd) return;
+
+    setTimeLeft(calculateTimeLeft());
+
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [finalData?.bid?.bidEnd]);
+
+  useEffect(() => {
+    if (!finalData?.bid?.bidEnd) return;
+
+    const update = () => {
+      const t = calculateTimeLeft();
+      setTimeLeft(t);
+
+      if (t === "00:00:00") {
+        setIsBidEnded(true);
+      }
+    };
+
+    update();
+    const timer = setInterval(update, 1000);
+
+    return () => clearInterval(timer);
+  }, [finalData?.bid?.bidEnd]);
+
+
+  const formatBidTime = (bid) => {
+    const ts = bid.updatedAt || bid.createdAt;
+    if (!ts) return "";
+
+    const date = new Date(ts);
+    const now = new Date();
+    const diff = (now - date) / 1000;
+
+    if (diff < 60) return "Just now";
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+
+    return date.toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+
+  const fetchBidData = async () => {
+    try {
+      const bidId = finalData.bid.biddingId;
+      const userId = localStorage.getItem("userId");
+
+      const [allBidsRes, userBidRes] = await Promise.all([
+        getAPI(`/api/bidding/all/${bidId}`, {}, true, false),
+        getAPI(`/api/bidding/user/${bidId}/${userId}`, {}, true, false),
+      ]);
+
+      setLiveBids(allBidsRes?.data?.bids || []);
+      setUserBid(userBidRes?.data?.bid || null);
+
+    } catch (err) {
+      console.log("Bid stream error:", err);
     }
   };
 
-  update();
-  const timer = setInterval(update, 1000);
 
-  return () => clearInterval(timer);
-}, [finalData?.bid?.bidEnd]);
+  const handleBidSubmit = async (amount) => {
+    try {
+      setConfirmPopup(false);
 
+      const userId = localStorage.getItem("userId");
 
-const formatBidTime = (bid) => {
-  const ts = bid.updatedAt || bid.createdAt; 
-  if (!ts) return "";
+      const res = await postAPI(
+        `/api/bidding/place-bid`,
+        {
+          bidId: finalData.bid.biddingId,
+          userId,
+          amount,
+        },
+        true,
+        false
+      );
 
-  const date = new Date(ts);
-  const now = new Date();
-  const diff = (now - date) / 1000;
+      if (res?.data?.success) {
+        toast.success("Bid submitted successfully!");
 
-  if (diff < 60) return "Just now";
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+        setManualBid("");
+        setShowBidSidebar(false);
 
-  return date.toLocaleString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
+        fetchBidData();
+      }
 
-
-const fetchBidData = async () => {
-  try {
-    const bidId = finalData.bid.biddingId;
-    const userId = localStorage.getItem("userId");
-
-    const [allBidsRes, userBidRes] = await Promise.all([
-      getAPI(`/api/bidding/all/${bidId}`, {}, true, false),
-      getAPI(`/api/bidding/user/${bidId}/${userId}`, {}, true, false),
-    ]);
-
-    setLiveBids(allBidsRes?.data?.bids || []);
-    setUserBid(userBidRes?.data?.bid || null);
-
-  } catch (err) {
-    console.log("Bid stream error:", err);
-  }
-};
-
-
-const handleBidSubmit = async (amount) => {
-  try {
-    setConfirmPopup(false);
-
-    const userId = localStorage.getItem("userId");
-
-    const res = await postAPI(
-      `/api/bidding/place-bid`,
-      {
-        bidId: finalData.bid.biddingId,
-        userId,
-        amount,
-      },
-      true,
-      false
-    );
-
-    if (res?.data?.success) {
-      toast.success("Bid submitted successfully!");
-
-      setManualBid("");
-      setShowBidSidebar(false);
-
-      fetchBidData();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to place bid!");
     }
-
-  } catch (err) {
-    console.error(err);
-    toast.error("Failed to place bid!");
-  }
-};
+  };
 
 
   const handleShare = () => {
@@ -1400,12 +1400,12 @@ const handleBidSubmit = async (amount) => {
   if (!finalData) return <p className="text-center py-10 text-xl text-red-500">Product not found.</p>;
 
   const seoTitle = `${finalData?.bid?.artworkName} | Live Art Auction`;
-const seoDesc = finalData?.description
-  ? finalData.description.substring(0, 150)
-  : `Bid on ${finalData?.bid?.artworkName}. Starting at ₹${finalData?.bid?.basePrice}.`;
+  const seoDesc = finalData?.description
+    ? finalData.description.substring(0, 150)
+    : `Bid on ${finalData?.bid?.artworkName}. Starting at ₹${finalData?.bid?.basePrice}.`;
 
-const seoImg = selectedImage || images[0] || "/default-auction.jpg";
-const seoUrl = window.location.href;
+  const seoImg = selectedImage || images[0] || "/default-auction.jpg";
+  const seoUrl = window.location.href;
 
   const Section = ({ title, children }) => (
     <div className="mb-8">
@@ -1459,8 +1459,8 @@ const seoUrl = window.location.href;
   const artist = finalData.userId || finalData.seller || null;
   const minIncrement = 300;
   const currentHighest = liveBids.length > 0
-  ? liveBids[0].amount
-  : finalData.bid.basePrice;
+    ? liveBids[0].amount
+    : finalData.bid.basePrice;
 
   const deliveryText = finalData.estimatedDelivery ? `${finalData.estimatedDelivery} days` : "5-7 days";
 
@@ -1553,62 +1553,62 @@ const seoUrl = window.location.href;
 
     return blocks.length ? <div className="flex gap-2 mt-3 justify-between flex-wrap">{blocks}</div> : null;
   };
-  
 
-const hasAnyValue = (obj) => {
-  return Object.values(obj).some(
-    (v) => v !== undefined && v !== null && v !== "" && v !== false
-  );
-};
+
+  const hasAnyValue = (obj) => {
+    return Object.values(obj).some(
+      (v) => v !== undefined && v !== null && v !== "" && v !== false
+    );
+  };
 
   return (
     <div className="max-w-[1440px] mx-auto font-[Poppins] bg-white text-[#111] p-6">
-     <Helmet>
-  <title>{seoTitle}</title>
+      <Helmet>
+        <title>{seoTitle}</title>
 
-  <meta name="description" content={seoDesc} />
-  <meta name="keywords" content={`${finalData?.bid?.artworkName}, art auction, bidding, ${artist?.name}`} />
+        <meta name="description" content={seoDesc} />
+        <meta name="keywords" content={`${finalData?.bid?.artworkName}, art auction, bidding, ${artist?.name}`} />
 
-  {/* Canonical */}
-  <link rel="canonical" href={seoUrl} />
+        {/* Canonical */}
+        <link rel="canonical" href={seoUrl} />
 
-  {/* Open Graph */}
-  <meta property="og:title" content={seoTitle} />
-  <meta property="og:description" content={seoDesc} />
-  <meta property="og:image" content={seoImg} />
-  <meta property="og:url" content={seoUrl} />
-  <meta property="og:type" content="product" />
+        {/* Open Graph */}
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDesc} />
+        <meta property="og:image" content={seoImg} />
+        <meta property="og:url" content={seoUrl} />
+        <meta property="og:type" content="product" />
 
-  {/* Twitter */}
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content={seoTitle} />
-  <meta name="twitter:description" content={seoDesc} />
-  <meta name="twitter:image" content={seoImg} />
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDesc} />
+        <meta name="twitter:image" content={seoImg} />
 
-  {/* JSON-LD Auction Schema */}
-  <script type="application/ld+json">
-    {JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Auction",
-      "name": finalData?.bid?.artworkName,
-      "image": seoImg,
-      "description": seoDesc,
-      "url": seoUrl,
-      "startDate": finalData?.bid?.bidStart,
-      "endDate": finalData?.bid?.bidEnd,
-      "offers": {
-        "@type": "Offer",
-        "priceCurrency": "INR",
-        "price": currentHighest,
-        "availability": isBidEnded ? "https://schema.org/Discontinued" : "https://schema.org/InStock"
-      },
-      "seller": {
-        "@type": "Person",
-        "name": artist?.name || artist?.username
-      }
-    })}
-  </script>
-</Helmet>
+        {/* JSON-LD Auction Schema */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Auction",
+            "name": finalData?.bid?.artworkName,
+            "image": seoImg,
+            "description": seoDesc,
+            "url": seoUrl,
+            "startDate": finalData?.bid?.bidStart,
+            "endDate": finalData?.bid?.bidEnd,
+            "offers": {
+              "@type": "Offer",
+              "priceCurrency": "INR",
+              "price": currentHighest,
+              "availability": isBidEnded ? "https://schema.org/Discontinued" : "https://schema.org/InStock"
+            },
+            "seller": {
+              "@type": "Person",
+              "name": artist?.name || artist?.username
+            }
+          })}
+        </script>
+      </Helmet>
 
 
       {/* BREADCRUMB */}
@@ -1621,8 +1621,22 @@ const hasAnyValue = (obj) => {
           <div className="grid grid-cols-1 md:grid-cols-10 gap-6 mt-3">
             {/* IMAGE SECTION */}
             <div className="flex flex-col lg:flex-row-reverse col-span-5 gap-3 relative">
-              <div className="relative w-full product-card">
-                <img src={selectedImage} alt="Main" className="w-full h-[550px] object-contain product-img" />
+              <div className="relative w-full product-card overflow-hidden">
+                  <img
+                    src={selectedImage}
+                    alt="Main"
+                    className={`w-full h-[550px] object-contain product-img transition-all duration-300 ${isBidEnded ? "grayscale blur-[2px]" : ""}`}
+                  />
+
+                  {isBidEnded && (
+                    <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-[1px] pointer-events-none">
+                      <div className="bg-white/90 px-8 py-3 rounded-lg shadow-2xl border border-white/50 transform -rotate-12">
+                        <span className="text-red-600 font-black text-3xl uppercase tracking-widest">
+                          Bid Ended
+                        </span>
+                      </div>
+                    </div>
+                  )}
 
                 <button onClick={() => setShowPopup(true)} className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-[#48372D] text-white text-sm px-3 py-1 rounded-2xl shadow">
                   👁️ View in Room
@@ -1709,33 +1723,33 @@ const hasAnyValue = (obj) => {
                   ))}
                 </div>
               </div> */}
-<div className="items-center mt-4">
-  <p className="text-lg font-semibold">Place Bid</p>
+              <div className="items-center mt-4">
+                <p className="text-lg font-semibold">Place Bid</p>
 
-  <div className="flex mt-1 gap-2 overflow-auto scrollbar-hide sm:flex-wrap">
-    {[300, 500, 1000, 3000, 5000].map((increment) => {
-      const dynamicValue = currentHighest + increment;
+                <div className="flex mt-1 gap-2 overflow-auto scrollbar-hide sm:flex-wrap">
+                  {[300, 500, 1000, 3000, 5000].map((increment) => {
+                    const dynamicValue = currentHighest + increment;
 
-      return (
-        <button
-          key={increment}
-          onClick={() => {
-            if (isBidEnded) return toast.warn("This bid has ended.");
-            setShowBidSidebar(true);      
-            setManualBid(dynamicValue); 
-          }}
-           disabled={isBidEnded}
-  className={`bg-[#48372D] text-white text-sm px-3 py-1 rounded-full flex
+                    return (
+                      <button
+                        key={increment}
+                        onClick={() => {
+                          if (isBidEnded) return toast.warn("This bid has ended.");
+                          setShowBidSidebar(true);
+                          setManualBid(dynamicValue);
+                        }}
+                        disabled={isBidEnded}
+                        className={`bg-[#48372D] text-white text-sm px-3 py-1 rounded-full flex
     items-center transition 
     ${isBidEnded ? "opacity-40 cursor-not-allowed" : "hover:bg-[#3a2d24]"}`}
-        >
-          <ImHammer2 className="mr-1" /> 
-          ₹{dynamicValue}
-        </button>
-      );
-    })}
-  </div>
-</div>
+                      >
+                        <ImHammer2 className="mr-1" />
+                        ₹{dynamicValue}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
               <p className="text-orange-700 mt-4">Ending Soon!</p>
               <p className="mt-2 text-sm text-gray-600">Delivery in {deliveryText} after payment.</p>
@@ -1929,36 +1943,36 @@ const hasAnyValue = (obj) => {
     );
   })
 )} */}
-{liveBids.length === 0 ? (
-  <p className="text-gray-500 text-sm">No bids yet.</p>
-) : (
-  liveBids.slice(0, 10).map((bid, index) => {
-    const isUserHighest =
-      index === 0 &&
-      bid.userId?._id === localStorage.getItem("userId");
+                      {liveBids.length === 0 ? (
+                        <p className="text-gray-500 text-sm">No bids yet.</p>
+                      ) : (
+                        liveBids.slice(0, 10).map((bid, index) => {
+                          const isUserHighest =
+                            index === 0 &&
+                            bid.userId?._id === localStorage.getItem("userId");
 
-    return (
-      <div
-        key={index}
-        className={`flex justify-between items-center border-b py-3 px-3
+                          return (
+                            <div
+                              key={index}
+                              className={`flex justify-between items-center border-b py-3 px-3
         ${isUserHighest ? "bg-yellow-100 font-semibold" : "hover:bg-gray-50"}`}
-      >
-        <div className="flex flex-col">
-          <span className="text-sm text-gray-900 font-semibold">
-            {bid.userId?.username || `${bid.userId?.name || ""} ${bid.userId?.lastName || ""}`.trim() || "User"}
-          </span>
-          <span className="text-xs text-gray-500">
-           {formatBidTime(bid)}
-          </span>
-        </div>
+                            >
+                              <div className="flex flex-col">
+                                <span className="text-sm text-gray-900 font-semibold">
+                                  {bid.userId?.username || `${bid.userId?.name || ""} ${bid.userId?.lastName || ""}`.trim() || "User"}
+                                </span>
+                                <span className="text-xs text-gray-500">
+                                  {formatBidTime(bid)}
+                                </span>
+                              </div>
 
-        <p className="text-sm font-bold text-gray-900">
-          ₹{bid.amount}
-        </p>
-      </div>
-    );
-  })
-)}
+                              <p className="text-sm font-bold text-gray-900">
+                                ₹{bid.amount}
+                              </p>
+                            </div>
+                          );
+                        })
+                      )}
 
 
                     </div>
@@ -2029,92 +2043,92 @@ const hasAnyValue = (obj) => {
         </div>
 
         {/* RIGHT SIDEBAR */}
-<div className="col-span-2 hidden md:block">
-  <div className="sticky top-10 w-full max-w-sm bg-white rounded-2xl shadow-lg border border-dark px-3 py-3">
+        <div className="col-span-2 hidden md:block">
+          <div className="sticky top-10 w-full max-w-sm bg-white rounded-2xl shadow-lg border border-dark px-3 py-3">
 
-    <p className="text-3xl font-bold">Bidding Rules</p>
+            <p className="text-3xl font-bold">Bidding Rules</p>
 
-    {/* ICON CARDS */}
-    <div className="relative bg-[#FCE9E9] text-black max-w-lg py-2 pl-4 pr-2 clip-path-custom flex items-center shadow-sm mt-2">
-      <div className="absolute left-4 w-12 h-12 flex items-center justify-center">
-        <img src='/herosectionimg/price.png' alt="price" className="w-full h-9 object-contain" />
-      </div>
-      <div className="ml-10">
-        <p className="font-semibold text-md">Starting Price:</p>
-        <p className="text-xs text-gray-800">₹{finalData.bid.basePrice}</p>
-      </div>
-    </div>
+            {/* ICON CARDS */}
+            <div className="relative bg-[#FCE9E9] text-black max-w-lg py-2 pl-4 pr-2 clip-path-custom flex items-center shadow-sm mt-2">
+              <div className="absolute left-4 w-12 h-12 flex items-center justify-center">
+                <img src='/herosectionimg/price.png' alt="price" className="w-full h-9 object-contain" />
+              </div>
+              <div className="ml-10">
+                <p className="font-semibold text-md">Starting Price:</p>
+                <p className="text-xs text-gray-800">₹{finalData.bid.basePrice}</p>
+              </div>
+            </div>
 
-    <div className="relative bg-[#FCE9E9] text-black max-w-lg py-2 pl-4 pr-2 clip-path-custom flex items-center shadow-sm mt-1">
-      <div className="absolute left-4 w-12 h-12 flex items-center justify-center">
-        <img src='/herosectionimg/increment.png' alt="increment" className="w-full h-9 object-contain" />
-      </div>
-      <div className="ml-10">
-        <p className="font-semibold text-md">Bid Increment:</p>
-        <p className="text-xs text-gray-800">₹{minIncrement}</p>
-      </div>
-    </div>
+            <div className="relative bg-[#FCE9E9] text-black max-w-lg py-2 pl-4 pr-2 clip-path-custom flex items-center shadow-sm mt-1">
+              <div className="absolute left-4 w-12 h-12 flex items-center justify-center">
+                <img src='/herosectionimg/increment.png' alt="increment" className="w-full h-9 object-contain" />
+              </div>
+              <div className="ml-10">
+                <p className="font-semibold text-md">Bid Increment:</p>
+                <p className="text-xs text-gray-800">₹{minIncrement}</p>
+              </div>
+            </div>
 
-    <div className="relative bg-[#FCE9E9] text-black max-w-lg py-2 pl-4 pr-2 clip-path-custom flex items-center shadow-sm mt-1">
-      <div className="absolute left-4 w-12 h-12 flex items-center justify-center">
-        <img src='/herosectionimg/duration.png' alt="duration" className="w-full h-9 object-contain" />
-      </div>
-      <div className="ml-10">
-        <p className="font-semibold text-md">Auction Ends In:</p>
-        <p className="text-xs text-gray-800">{timeLeft}</p>
-      </div>
-    </div>
+            <div className="relative bg-[#FCE9E9] text-black max-w-lg py-2 pl-4 pr-2 clip-path-custom flex items-center shadow-sm mt-1">
+              <div className="absolute left-4 w-12 h-12 flex items-center justify-center">
+                <img src='/herosectionimg/duration.png' alt="duration" className="w-full h-9 object-contain" />
+              </div>
+              <div className="ml-10">
+                <p className="font-semibold text-md">Auction Ends In:</p>
+                <p className="text-xs text-gray-800">{timeLeft}</p>
+              </div>
+            </div>
 
-    <div className="relative bg-[#FCE9E9] text-black max-w-lg py-2 pl-4 pr-2 clip-path-custom flex items-center shadow-sm mt-1">
-      <div className="absolute left-4 w-12 h-12 flex items-center justify-center">
-        <img src='/herosectionimg/winner.png' alt="winner" className="w-full h-9 object-contain" />
-      </div>
-      <div className="ml-10">
-        {/* <p className="font-semibold text-md">Winner:</p>
+            <div className="relative bg-[#FCE9E9] text-black max-w-lg py-2 pl-4 pr-2 clip-path-custom flex items-center shadow-sm mt-1">
+              <div className="absolute left-4 w-12 h-12 flex items-center justify-center">
+                <img src='/herosectionimg/winner.png' alt="winner" className="w-full h-9 object-contain" />
+              </div>
+              <div className="ml-10">
+                {/* <p className="font-semibold text-md">Winner:</p>
         <p className="text-xs text-gray-800">Highest bid at closing wins.</p> */}
-        <p className="font-semibold text-md">Winner:</p>
+                <p className="font-semibold text-md">Winner:</p>
 
-{!isBidEnded ? (
-  <p className="text-xs text-gray-800">Highest bid at closing wins.</p>
-) : winner ? (
-  <p className="text-xs text-green-700 font-semibold">
-    {winner.name} — ₹{winner.amount}
-  </p>
-) : (
-  <p className="text-xs text-gray-600">No bids placed.</p>
-)}
+                {!isBidEnded ? (
+                  <p className="text-xs text-gray-800">Highest bid at closing wins.</p>
+                ) : winner ? (
+                  <p className="text-xs text-green-700 font-semibold">
+                    {winner.name} — ₹{winner.amount}
+                  </p>
+                ) : (
+                  <p className="text-xs text-gray-600">No bids placed.</p>
+                )}
 
-      </div>
-    </div>
+              </div>
+            </div>
 
-    <div className="relative bg-[#FCE9E9] text-black max-w-lg py-2 pl-4 pr-2 clip-path-custom flex items-center shadow-sm mt-1">
-      <div className="absolute left-4 w-12 h-12 flex items-center justify-center">
-        <img src='/herosectionimg/cancellations.png' alt="cancellations" className="w-full h-9 object-contain" />
-      </div>
-      <div className="ml-10">
-        <p className="font-semibold text-md">No Cancellations:</p>
-        <p className="text-xs text-gray-800">All bids are final.</p>
-      </div>
-    </div>
+            <div className="relative bg-[#FCE9E9] text-black max-w-lg py-2 pl-4 pr-2 clip-path-custom flex items-center shadow-sm mt-1">
+              <div className="absolute left-4 w-12 h-12 flex items-center justify-center">
+                <img src='/herosectionimg/cancellations.png' alt="cancellations" className="w-full h-9 object-contain" />
+              </div>
+              <div className="ml-10">
+                <p className="font-semibold text-md">No Cancellations:</p>
+                <p className="text-xs text-gray-800">All bids are final.</p>
+              </div>
+            </div>
 
-    <div className="relative bg-[#FCE9E9] text-black max-w-lg py-2 pl-4 pr-2 clip-path-custom flex items-center shadow-sm mt-1">
-      <div className="absolute left-4 w-12 h-12 flex items-center justify-center">
-        <img src='/herosectionimg/deadline.png' alt="deadline" className="w-full h-9 object-contain" />
-      </div>
-      <div className="ml-10">
-        <p className="font-semibold text-md">Payment Deadline:</p>
-        <p className="text-xs text-gray-800">Pay within 48 hours.</p>
-      </div>
-    </div>
+            <div className="relative bg-[#FCE9E9] text-black max-w-lg py-2 pl-4 pr-2 clip-path-custom flex items-center shadow-sm mt-1">
+              <div className="absolute left-4 w-12 h-12 flex items-center justify-center">
+                <img src='/herosectionimg/deadline.png' alt="deadline" className="w-full h-9 object-contain" />
+              </div>
+              <div className="ml-10">
+                <p className="font-semibold text-md">Payment Deadline:</p>
+                <p className="text-xs text-gray-800">Pay within 48 hours.</p>
+              </div>
+            </div>
 
-<div className="mt-2 flex flex-col gap-2">
-    {/* Countdown pill */}
-    <button className="flex items-center justify-center gap-2 flex-1 border border-dark text-lg rounded-full text-dark py-2 font-semibold add-cart">
-      {isLastDay ? `Ends in ${timeLeft}` : `${timeLeft}`}
-    </button>
+            <div className="mt-2 flex flex-col gap-2">
+              {/* Countdown pill */}
+              <button className="flex items-center justify-center gap-2 flex-1 border border-dark text-lg rounded-full text-dark py-2 font-semibold add-cart">
+                {isLastDay ? `Ends in ${timeLeft}` : `${timeLeft}`}
+              </button>
 
-    {/* PLACE BID */}
-     {/* <div className="flex justify-center items-center mt-2">
+              {/* PLACE BID */}
+              {/* <div className="flex justify-center items-center mt-2">
       <AnimatePresence mode="wait">
         {!showBidSidebar ? (
           <motion.button
@@ -2145,176 +2159,178 @@ const hasAnyValue = (obj) => {
         )}
       </AnimatePresence>
    */}
- 
-<div className="flex justify-center items-center mt-2 w-full">
-  <AnimatePresence mode="wait">
-    {!showBidSidebar ? (
-//       <motion.button
-//         key="place-bid"
-//         initial={{ scale: 0.9, opacity: 0 }}
-//         animate={{ scale: 1, opacity: 1 }}
-//         exit={{ scale: 0.8, opacity: 0 }}
-//         transition={{ duration: 0.3 }}
-//         onClick={() => setShowBidSidebar(true)}
-//         className={`flex items-center justify-center gap-2 w-full py-2 rounded-full font-semibold
-//   ${isBidEnded ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-red-500 text-white"}`}
-// disabled={isBidEnded}
 
-//       >
-//         Place Your Bid <ImHammer2 />
-//       </motion.button>
-<motion.button
-  key="place-bid"
-  initial={{ scale: 0.9, opacity: 0 }}
-  animate={{ scale: 1, opacity: 1 }}
-  exit={{ scale: 0.8, opacity: 0 }}
-  transition={{ duration: 0.3 }}
-  onClick={() => {
-    if (isBidEnded) {
-      toast.warn("This bid has ended.");
-      return;
-    }
-    setShowBidSidebar(true);
-  }}
-  className={`flex items-center justify-center gap-2 w-full py-2 rounded-full font-semibold
-    ${isBidEnded 
-      ? "bg-gray-300 text-gray-600 cursor-not-allowed opacity-60" 
-      : "bg-red-500 text-white"
-    }
+              <div className="flex justify-center items-center mt-2 w-full">
+                <AnimatePresence mode="wait">
+                  {!showBidSidebar ? (
+                    //       <motion.button
+                    //         key="place-bid"
+                    //         initial={{ scale: 0.9, opacity: 0 }}
+                    //         animate={{ scale: 1, opacity: 1 }}
+                    //         exit={{ scale: 0.8, opacity: 0 }}
+                    //         transition={{ duration: 0.3 }}
+                    //         onClick={() => setShowBidSidebar(true)}
+                    //         className={`flex items-center justify-center gap-2 w-full py-2 rounded-full font-semibold
+                    //   ${isBidEnded ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-red-500 text-white"}`}
+                    // disabled={isBidEnded}
+
+                    //       >
+                    //         Place Your Bid <ImHammer2 />
+                    //       </motion.button>
+                    <motion.button
+                      key="place-bid"
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.8, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      onClick={() => {
+                        if (isBidEnded) {
+                          toast.warn("This bid has ended.");
+                          return;
+                        }
+                        setShowBidSidebar(true);
+                      }}
+                      className={`flex items-center justify-center gap-2 w-full py-2 rounded-full font-semibold
+    ${isBidEnded
+                          ? "bg-gray-300 text-gray-600 cursor-not-allowed opacity-60"
+                          : "bg-red-500 text-white"
+                        }
   `}
->
-  Place Your Bid <ImHammer2 />
-</motion.button>
+                    >
+                      Place Your Bid <ImHammer2 />
+                    </motion.button>
 
-    ) : (
-//       <motion.div
-//         key="bid-input"
-//         initial={{ width: "150px", opacity: 0 }}
-//         animate={{ width: "100%", opacity: 1 }}
-//         exit={{ opacity: 0 }}
-//         transition={{ duration: 0.4, ease: "easeInOut" }}
-//         className="flex items-center border border-dark rounded-full px-4 py-2 w-full bg-white"
-//       >
-//  <span className="text-lg font-semibold text-black mr-1">₹</span>
-        
-        // <input
-        //   type="number"
-        //   value={manualBid}
-        //   onChange={(e) => setManualBid(e.target.value)}
-        //   placeholder={`${currentHighest + minIncrement}`}
-        //   className="
-        //     w-[100%]        
-        //     text-lg
-        //     font-semibold
-        //     text-black
-        //     bg-transparent
-        //     outline-none
-        //     appearance-none
-        //   "
-        // />
-   
-      //   <button
-      //     onClick={() => {
-      //       const amt = Number(manualBid);
-      //       if (!amt) return alert('Enter a valid amount');
-      //       if (amt < currentHighest + minIncrement)
-      //         return alert(`Bid must be at least ₹${currentHighest + minIncrement}`);
+                  ) : (
+                    //       <motion.div
+                    //         key="bid-input"
+                    //         initial={{ width: "150px", opacity: 0 }}
+                    //         animate={{ width: "100%", opacity: 1 }}
+                    //         exit={{ opacity: 0 }}
+                    //         transition={{ duration: 0.4, ease: "easeInOut" }}
+                    //         className="flex items-center border border-dark rounded-full px-4 py-2 w-full bg-white"
+                    //       >
+                    //  <span className="text-lg font-semibold text-black mr-1">₹</span>
 
-      //       setBidToConfirm(amt);
-      //       setConfirmPopup(true);
-      //     }}
-      //     className="
-      //       flex 
-      //       items-center 
-      //       justify-center
-      //       w-12              
-      //       h-10 
-      //       ml-auto            
-      //       rounded-full 
-      //       border 
-      //       border-dark 
-      //       bg-[#F5F5F5]
-      //     "
-      //   >
-      //     <ImHammer2 className="text-black text-lg" />
-      //   </button>
+                    // <input
+                    //   type="number"
+                    //   value={manualBid}
+                    //   onChange={(e) => setManualBid(e.target.value)}
+                    //   placeholder={`${currentHighest + minIncrement}`}
+                    //   className="
+                    //     w-[100%]        
+                    //     text-lg
+                    //     font-semibold
+                    //     text-black
+                    //     bg-transparent
+                    //     outline-none
+                    //     appearance-none
+                    //   "
+                    // />
 
-      // </motion.div>
-      <motion.div
-  key="bid-input"
-  initial={{ width: "150px", opacity: 0 }}
-  animate={{ width: "100%", opacity: 1 }}
-  exit={{ opacity: 0 }}
-  transition={{ duration: 0.4, ease: "easeInOut" }}
-  className="flex items-center border border-dark rounded-full px-4 py-2 w-full bg-white"
-  id="bid-input-box"          
->
-  <span className="text-lg font-semibold text-black mr-1">₹</span>
+                    //   <button
+                    //     onClick={() => {
+                    //       const amt = Number(manualBid);
+                    //       if (!amt) return alert('Enter a valid amount');
+                    //       if (amt < currentHighest + minIncrement)
+                    //         return alert(`Bid must be at least ₹${currentHighest + minIncrement}`);
 
-  <input
-    type="number"
-    value={manualBid}
-    onChange={(e) => setManualBid(e.target.value)}
-    placeholder={`${currentHighest + minIncrement}`}
-    className="w-[100%] text-lg font-semibold text-black bg-transparent outline-none"
-  />
+                    //       setBidToConfirm(amt);
+                    //       setConfirmPopup(true);
+                    //     }}
+                    //     className="
+                    //       flex 
+                    //       items-center 
+                    //       justify-center
+                    //       w-12              
+                    //       h-10 
+                    //       ml-auto            
+                    //       rounded-full 
+                    //       border 
+                    //       border-dark 
+                    //       bg-[#F5F5F5]
+                    //     "
+                    //   >
+                    //     <ImHammer2 className="text-black text-lg" />
+                    //   </button>
 
-  <button
-    onClick={() => {
-  if (isBidEnded) return toast.warn("This bid has ended.");
+                    // </motion.div>
+                    <motion.div
+                      key="bid-input"
+                      initial={{ width: "150px", opacity: 0 }}
+                      animate={{ width: "100%", opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.4, ease: "easeInOut" }}
+                      className="flex items-center border border-dark rounded-full px-4 py-2 w-full bg-white"
+                      id="bid-input-box"
+                    >
+                      <span className="text-lg font-semibold text-black mr-1">₹</span>
 
-  const amt = Number(manualBid);
-  if (!amt) return toast.error("Enter a valid amount");
-  if (amt < currentHighest + minIncrement)
-    return toast.error(`Bid must be at least ₹${currentHighest + minIncrement}`);
+                      <input
+                        type="number"
+                        value={manualBid}
+                        onChange={(e) => setManualBid(e.target.value)}
+                        placeholder={`${currentHighest + minIncrement}`}
+                        className="w-[100%] text-lg font-semibold text-black bg-transparent outline-none"
+                      />
 
-  setBidToConfirm(amt);
-  setConfirmPopup(true);
-}}
+                      <button
+                        onClick={() => {
+                          if (isBidEnded) return toast.warn("This bid has ended.");
 
-    className="flex items-center justify-center w-12 h-10 ml-auto rounded-full border border-dark bg-[#F5F5F5]"
-  >
-    <ImHammer2 className="text-black text-lg" />
-  </button>
-</motion.div>
+                          const amt = Number(manualBid);
+                          if (!amt) return toast.error("Enter a valid amount");
+                          if (amt < currentHighest + minIncrement)
+                            return toast.error(`Bid must be at least ₹${currentHighest + minIncrement}`);
 
-    )}
-  </AnimatePresence>
+                          setBidToConfirm(amt);
+                          setConfirmPopup(true);
+                        }}
+
+                        className="flex items-center justify-center w-12 h-10 ml-auto rounded-full border border-dark bg-[#F5F5F5]"
+                      >
+                        <ImHammer2 className="text-black text-lg" />
+                      </button>
+                    </motion.div>
+
+                  )}
+                </AnimatePresence>
 
 
-  {/* Confirmation popup */}
-  {confirmPopup && (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[999]">
-      <div className="bg-white p-6 rounded-xl w-[350px] shadow-xl text-center">
-        <h2 className="text-lg font-semibold mb-2">Confirm Your Bid</h2>
-        <p className="text-sm text-gray-700">You're placing a bid of:</p>
-        <p className="text-2xl font-bold mt-3 text-[#48372D]">₹{bidToConfirm}</p>
+                {/* Confirmation popup */}
+                {confirmPopup && (
+                  <div className="modal show d-block" style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}>
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[999]">
+                      <div className="bg-white p-6 rounded-xl w-[350px] shadow-xl text-center">
+                        <h2 className="text-lg font-semibold mb-2">Confirm Your Bid</h2>
+                        <p className="text-sm text-gray-700">You're placing a bid of:</p>
+                        <p className="text-2xl font-bold mt-3 text-[#48372D]">₹{bidToConfirm}</p>
 
-        <div className="flex gap-3 mt-5">
-          <button
-            onClick={() => setConfirmPopup(false)}
-            className="flex-1 py-2 rounded-full border border-gray-400 text-gray-600"
-          >
-            Cancel
-          </button>
+                        <div className="flex gap-3 mt-5">
+                          <button
+                            onClick={() => setConfirmPopup(false)}
+                            className="flex-1 py-2 rounded-full border border-gray-400 text-gray-600"
+                          >
+                            Cancel
+                          </button>
 
-          <button
-            onClick={() => handleBidSubmit(bidToConfirm)}
-            className="flex-1 py-2 rounded-full bg-[#48372D] text-white"
-          >
-            Confirm
-          </button>
+                          <button
+                            onClick={() => handleBidSubmit(bidToConfirm)}
+                            className="flex-1 py-2 rounded-full bg-[#48372D] text-white"
+                          >
+                            Confirm
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+
+              </div>
+
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  )}
-
-
-</div>
-
-    </div>
-  </div>
-</div>
 
       </div>
     </div>

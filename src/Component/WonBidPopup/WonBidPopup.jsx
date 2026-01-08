@@ -7,42 +7,35 @@ const WonBidPopup = ({ userId, isAuthenticated }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [currentBidIndex, setCurrentBidIndex] = useState(0);
 
-  useEffect(() => {
-    if (!isAuthenticated || !userId) {
-      console.log("WonBidPopup: Not authenticated or no userId", { isAuthenticated, userId });
-      return;
-    }
-
-    const fetchWonBids = async () => {
-      try {
-        console.log("WonBidPopup: Fetching won bids for userId:", userId);
-        const res = await getAPI(`/api/cart/won-bids/${userId}`, {}, true, false);
-        console.log("WonBidPopup: API response:", res);
-        const bids = res?.data?.wonBids || res?.data?.data?.wonBids || [];
-        console.log("WonBidPopup: Won bids found:", bids);
-
-        if (bids.length > 0) {
-          const shownBids = localStorage.getItem("shownWonBids")
-            ? JSON.parse(localStorage.getItem("shownWonBids"))
-            : [];
-
-          const newBids = bids.filter(
-            (bid) => !shownBids.includes(String(bid.bidId))
-          );
-
-          console.log("WonBidPopup: New bids to show:", newBids);
-
-          if (newBids.length > 0) {
-            setWonBids(newBids);
-            setShowPopup(true);
-            setCurrentBidIndex(0);
-            console.log("WonBidPopup: Showing popup");
-          }
-        }
-      } catch (err) {
-        console.error("WonBidPopup: Error fetching won bids:", err);
+    useEffect(() => {
+      if (!isAuthenticated || !userId) {
+        return;
       }
-    };
+  
+      const fetchWonBids = async () => {
+        try {
+          const res = await getAPI(`/api/cart/won-bids/${userId}`, {}, true, false);
+          const bids = res?.data?.wonBids || res?.data?.data?.wonBids || [];
+  
+          if (bids.length > 0) {
+            const shownBids = localStorage.getItem("shownWonBids")
+              ? JSON.parse(localStorage.getItem("shownWonBids"))
+              : [];
+  
+            const newBids = bids.filter(
+              (bid) => !shownBids.includes(String(bid.bidId))
+            );
+  
+            if (newBids.length > 0) {
+              setWonBids(newBids);
+              setShowPopup(true);
+              setCurrentBidIndex(0);
+            }
+          }
+        } catch (err) {
+          console.error("WonBidPopup: Error fetching won bids:", err);
+        }
+      };
 
     const timer = setTimeout(() => {
       fetchWonBids();

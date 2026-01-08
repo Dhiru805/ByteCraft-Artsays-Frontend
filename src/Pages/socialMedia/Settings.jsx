@@ -7,7 +7,7 @@ const Settings = () => {
     
 
       {/* Main layout: Sidebar | Post | Suggestion */}
-      <main className='flex  flex-row lg:bg-white  w-full mx-auto'>
+      <main className='flex grid grid-cols-12 flex-row lg:bg-white gap-2 w-full mx-auto px-2'>
        <Sidebar />
        <Setting/>
        

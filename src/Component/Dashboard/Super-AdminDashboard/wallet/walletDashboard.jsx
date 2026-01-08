@@ -442,6 +442,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import BuyerWalletSkeleton from "../../../Skeleton/wallet/BuyerWalletSkeleton";
+
 const WalletDashboard = () => {
   const [wallet, setWallet] = useState(null);
   const [transactions, setTransactions] = useState([]);
@@ -646,7 +648,7 @@ const WalletDashboard = () => {
     fetchWithdrawals();
   }, []);
 
-  if (!wallet) return <div>Loading...</div>;
+  if (!wallet) return <div><BuyerWalletSkeleton/></div>;
 
   return (
     <div className="container-fluid">

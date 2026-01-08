@@ -3,7 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import postAPI from "../../../../../api/postAPI";
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import ReactQuill from "react-quill";
 
 

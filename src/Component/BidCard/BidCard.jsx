@@ -164,12 +164,22 @@ const BidGrid = ({ overrideProducts = null }) => {
                 </span>
 
                 {/* IMAGE */}
-                <div className="w-full h-40 sm:h-64 bg-gray-100 flex items-center justify-center rounded-t-2xl overflow-hidden">
-                  <img
-                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.product?.mainImage}`}
-                    alt={item.artworkName}
-                    className="h-full object-contain"
-                  />
+                <div className="w-full h-40 sm:h-64 bg-gray-100 flex items-center justify-center rounded-t-2xl overflow-hidden relative">
+                    <img
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.product?.mainImage}`}
+                      alt={item.artworkName}
+                      className={`h-full object-contain transition-all duration-300 ${isEnded ? "grayscale blur-[2px]" : ""}`}
+                    />
+                  
+                    {isEnded && (
+                      <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-[1px]">
+                        <div className="bg-white/90 px-6 py-2 rounded-lg shadow-2xl border border-white/50 transform -rotate-12">
+                          <span className="text-red-600 font-black text-xl uppercase tracking-wider">
+                            Bid Ended
+                          </span>
+                        </div>
+                      </div>
+                    )}
                 </div>
 
                 {/* BELL ICON */}
