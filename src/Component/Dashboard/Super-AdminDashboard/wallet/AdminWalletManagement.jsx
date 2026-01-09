@@ -1569,21 +1569,28 @@ const[loading,setLoading]=useState(true)
               <div className="row mb-3">
                 <div className="col-md-4">
                   <select
-                    className="form-control"
-                    value={selectedUserForDestination}
-                    onChange={e => {
-                      const userId = e.target.value;
-                      setSelectedUserForDestination(userId);
-                      fetchUserDestination(userId);
-                    }}
-                  >
-                    <option value="">Select User</option>
-                    {wallets.map(wallet => (
-                      <option key={wallet._id} value={wallet.userId}>
-                        {wallet.name} {wallet.lastName}
-                      </option>
-                    ))}
-                  </select>
+  className="form-control"
+  value={selectedUserForDestination}
+  onChange={e => {
+    const userId = e.target.value;
+    setSelectedUserForDestination(userId);
+    fetchUserDestination(userId);
+  }}
+  style={{
+    minHeight: "38px",
+    lineHeight: "1.5",
+    fontSize: "14px",
+    padding: "6px 12px",
+  }}
+>
+  <option value="">Select User</option>
+  {wallets.map(wallet => (
+    <option key={wallet._id} value={wallet.userId}>
+      {wallet.name || "Unknown"} {wallet.lastName || ""}
+    </option>
+  ))}
+</select>
+
                 </div>
               </div>
 
@@ -1671,186 +1678,7 @@ const[loading,setLoading]=useState(true)
         <div className="col-sm-12">
           <div className="card">
 
-            <div className="header d-flex justify-content-between align-items-center mb-3">
-              <h2>Recent Transactions</h2>
-
-              <div className="d-flex  px-3" style={{ gap: '10px' }}>
-                {/* Export Button */}
-                <button
-                  type="button"
-                  className="btn btn-outline-success btn-sm"
-                  style={{ height: '32px', minWidth: '80px' }}
-                  onClick={handleExport}
-                  disabled={isExporting || (!filterRole && !filterUser && !filterAllUser)}
-                >
-                  {isExporting ? (
-                    <>
-                      <i className="fa fa-spinner fa-spin mr-1"></i> Exporting...
-                    </>
-                  ) : (
-                    <>
-                      <i className="fa fa-upload mr-1"></i> Export
-                    </>
-                  )}
-                </button>
-
-                {/* Date Sort */}
-
-                <div style={{ position: "relative" }}>
-                  <button
-                    className="btn btn-outline-primary"
-                    onClick={() => setShowCalendar(!showCalendar)}
-                  >
-                    {startDate && endDate
-                      ? `${startDate} → ${endDate}`
-                      : "Select Date Range"}
-                  </button>
-
-                  {showCalendar && (
-                    <div
-                      style={{
-                        position: "absolute",
-                        zIndex: 100,
-                        background: "white",
-                        boxShadow: "0 2px 15px rgba(0,0,0,0.2)",
-                      }}
-                    >
-                      <DateRange
-                        editableDateInputs={true}
-                        moveRangeOnFirstSelection={false}
-                        ranges={dateRange}
-                        onChange={(item) => {
-                          setDateRange([item.selection]);
-
-                          const s = item.selection.startDate;
-                          const e = item.selection.endDate;
-
-                          setStartDate(s.toISOString().split("T")[0]);
-                          setEndDate(e.toISOString().split("T")[0]);
-                        }}
-                        locale={enUS}
-                      />
-
-                    </div>
-                  )}
-                </div>
-
-
-                {/* Role Filter */}
-                <select
-                  className="form-control"
-                  style={{ width: "120px", height: "36px" }}
-                  value={filterRole}
-                  onChange={(e) => {
-                    setFilterRole(e.target.value);
-                    setFilterUser("");
-                    setFilterAllUser("");
-                    setPage(1);
-                  }}
-                >
-                  <option value="">All Roles</option>
-                  {roleOptions.map(role => (
-                    <option key={role} value={role}>
-                      {role.charAt(0).toUpperCase() + role.slice(1)}
-                    </option>
-                  ))}
-                </select>
-
-                {/* User Filter (appears when role is selected) */}
-                {filterRole && (
-                  <select
-                    className="form-control"
-                    style={{ width: "150px", height: "36px" }}
-                    value={filterUser}
-                    onChange={(e) => {
-                      setFilterUser(e.target.value);
-                      setFilterAllUser("");
-                      setPage(1);
-                    }}
-                  >
-                    <option value="">
-                      All {filterRole.charAt(0).toUpperCase() + filterRole.slice(1)}s
-                    </option>
-                    {wallets
-                      .filter(
-                        (w) => (w.role || "").toLowerCase().trim() === filterRole.toLowerCase()
-                      )
-                      .map((w) => {
-                        const fullName = `${w.name || ""} ${w.lastName || ""}`.trim();
-                        return (
-                          <option key={w.userId} value={w.userId}>
-                            {fullName.length > 0 ? fullName : w.userId}
-                          </option>
-                        );
-                      })}
-                  </select>
-
-                )}
-
-                {/* All Users Filter (independent filter) */}
-                <select
-                  className="form-control"
-                  style={{ width: '170px', height: '36px' }}
-                  value={filterAllUser}
-                  onChange={e => {
-                    const selectedUserId = e.target.value;
-                    setFilterAllUser(selectedUserId);
-
-
-                    if (selectedUserId) {
-                      setFilterRole("");
-                      setFilterUser("");
-                    }
-
-                    setPage(1);
-                  }}
-                >
-                  <option value="">All Users</option>
-                  {wallets.map(wallet => {
-                    const fullName = `${wallet.name || ""} ${wallet.lastName || ""}`.trim();
-                    return (
-                      <option key={wallet._id} value={wallet.userId}>
-                        {fullName.length > 0 ? fullName : wallet.userId}
-                      </option>
-                    );
-                  })}
-
-                </select>
-
-                {/* Transaction Type Filter */}
-                <select
-                  className="form-control"
-                  style={{ width: '120px', height: '36px' }}
-                  value={filterType}
-                  onChange={e => {
-                    setFilterType(e.target.value);
-                    setPage(1);
-                  }}
-                >
-                  <option value="">All Types</option>
-                  <option value="credit">Credit</option>
-                  <option value="debit">Debit</option>
-                </select>
-
-                {/* Status Filter */}
-                <select
-                  className="form-control"
-                  style={{ width: '120px', height: '36px' }}
-                  value={filterStatus}
-                  onChange={e => {
-                    setFilterStatus(e.target.value);
-                    setPage(1);
-                  }}
-                >
-                  <option value="">All Status</option>
-                  <option value="success">Success</option>
-                  <option value="pending">Pending</option>
-                  <option value="failed">Failed</option>
-                </select>
-              </div>
-            </div> */}
-
-            <div className="header d-flex justify-content-between align-items-center mb-3">
+            {/* <div className="header d-flex justify-content-between align-items-center mb-3">
               <h2>Recent Transactions</h2>
 
               <div className="d-flex flex-wrap align-items-center px-3" style={{ gap: '10px' }}>
@@ -1963,7 +1791,184 @@ const[loading,setLoading]=useState(true)
                   <option value="failed">Failed</option>
                 </select>
               </div>
-            </div>
+            </div> */}
+            <div className="header d-flex justify-content-between align-items-center mb-3">
+  <h2>Recent Transactions</h2>
+
+  <div className="d-flex flex-wrap align-items-center px-3" style={{ gap: "10px" }}>
+    
+    {/* Export */}
+    <button
+      type="button"
+      className="btn btn-outline-success btn-sm"
+      style={{ height: "36px" }}
+      onClick={handleExport}
+    >
+      <i className="fa fa-upload mr-1"></i> Export
+    </button>
+
+    {/* Select Date Range */}
+    <div style={{ position: "relative" }}>
+      <button
+        className="btn btn-outline-primary"
+        style={{ height: "36px" }}
+        onClick={() => setShowCalendar(!showCalendar)}
+      >
+        {startDate && endDate
+          ? `${startDate} → ${endDate}`
+          : "Select Date Range"}
+      </button>
+
+      {showCalendar && (
+        <div
+          style={{
+            position: "absolute",
+            zIndex: 100,
+            background: "white",
+            boxShadow: "0 2px 15px rgba(0,0,0,0.2)",
+          }}
+        >
+          <DateRange
+            editableDateInputs={true}
+            moveRangeOnFirstSelection={false}
+            ranges={dateRange}
+            onChange={(item) => {
+              setDateRange([item.selection]);
+
+              const s = item.selection.startDate;
+              const e = item.selection.endDate;
+
+              setStartDate(s.toISOString().split("T")[0]);
+              setEndDate(e.toISOString().split("T")[0]);
+              setPage(1);
+            }}
+            locale={enUS}
+          />
+        </div>
+      )}
+    </div>
+
+    {/* Sort Order */}
+    <select
+      className="form-control"
+      style={{ width: "130px", height: "36px" }}
+      value={sortOrder}
+      onChange={(e) => {
+        setSortOrder(e.target.value);
+        setPage(1);
+        fetchTransactions();
+      }}
+    >
+      <option value="desc">Newest First</option>
+      <option value="asc">Oldest First</option>
+    </select>
+
+    {/* Role Filter */}
+    <select
+      className="form-control"
+      style={{ width: "120px", height: "36px" }}
+      value={filterRole}
+      onChange={(e) => {
+        setFilterRole(e.target.value);
+        setExportRole(e.target.value);
+        setFilterUser("");
+        setExportUserId("");
+        setPage(1);
+      }}
+    >
+      <option value="">All Roles</option>
+      {roleOptions.map((role) => (
+        <option key={role} value={role}>
+          {role.charAt(0).toUpperCase() + role.slice(1)}
+        </option>
+      ))}
+    </select>
+
+    {/* Role-based User Filter */}
+    {filterRole && (
+      <select
+        className="form-control"
+        style={{ width: "120px", height: "36px" }}
+        value={filterUser}
+        onChange={(e) => {
+          setFilterUser(e.target.value);
+          setExportUserId(e.target.value);
+          setPage(1);
+        }}
+      >
+        <option value="">Select User</option>
+        {wallets
+          .filter(
+            (w) =>
+              (w.role || "").toLowerCase().trim() ===
+              filterRole.toLowerCase()
+          )
+          .map((w) => {
+            const fullName = `${w.name || ""} ${w.lastName || ""}`.trim();
+            return (
+              <option key={w.userId} value={w.userId}>
+                {fullName || w.userId}
+              </option>
+            );
+          })}
+      </select>
+    )}
+
+    {/* All Users */}
+    <select
+      className="form-control"
+      style={{ width: "170px", height: "36px" }}
+      value={filterAllUser}
+      onChange={(e) => {
+        setFilterAllUser(e.target.value);
+        setFilterRole("");
+        setFilterUser("");
+        setPage(1);
+      }}
+    >
+      <option value="">All Users</option>
+      {wallets.map(wallet => (
+  <option key={wallet._id} value={wallet.userId}>
+    {wallet.name} {wallet.lastName}
+  </option>
+))}
+
+    </select>
+
+    {/* Transaction Type */}
+    <select
+      className="form-control"
+      style={{ width: "120px", height: "36px" }}
+      value={filterType}
+      onChange={(e) => {
+        setFilterType(e.target.value);
+        setPage(1);
+      }}
+    >
+      <option value="">All Types</option>
+      <option value="credit">Credit</option>
+      <option value="debit">Debit</option>
+    </select>
+
+    {/* Status */}
+    <select
+      className="form-control"
+      style={{ width: "120px", height: "36px" }}
+      value={filterStatus}
+      onChange={(e) => {
+        setFilterStatus(e.target.value);
+        setPage(1);
+      }}
+    >
+      <option value="">All Status</option>
+      <option value="success">Success</option>
+      <option value="pending">Pending</option>
+      <option value="failed">Failed</option>
+    </select>
+
+  </div>
+</div>
+
 
             <div className="body table-responsive">
               <table className="table table-hover mb-0">

@@ -566,23 +566,28 @@ const ArtistBiddingProducts = () => {
   const navigate = useNavigate();
 
   const fetchProducts = async () => {
-    try {
-      const result = await getAPI(`/api/bidding/products/user/${userId}`, {}, true, false);
+  try {
+    const result = await getAPI(`/api/bidding/products/user/${userId}`, {}, true, false);
 
-      let list = [];
+    let list = [];   // ✅ declare FIRST
 
-      if (Array.isArray(result)) list = result;
-      else if (Array.isArray(result?.data)) list = result.data;
-      else if (Array.isArray(result?.data?.bids)) list = result.data.bids;
-      else if (Array.isArray(result?.data?.products)) list = result.data.products;
-      else list = [];
-
-      setProducts(list);
-    } catch (err) {
-      console.error("Error fetching products:", err);
-      setProducts([]);
+    if (Array.isArray(result)) {
+      list = result;
+    } else if (Array.isArray(result?.data)) {
+      list = result.data;
+    } else if (Array.isArray(result?.data?.bids)) {
+      list = result.data.bids;
+    } else if (Array.isArray(result?.data?.products)) {
+      list = result.data.products;
     }
-  };
+
+    setProducts(list);   // ✅ now safe
+  } catch (err) {
+    console.error("Error fetching products:", err);
+    setProducts([]);
+  }
+};
+
 
   useEffect(() => {
     fetchProducts();

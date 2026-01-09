@@ -375,8 +375,8 @@ if(loading){
                   disabled={!selectedReason}
                   className={`px-4 py-2 rounded-lg text-white font-medium ${
                     selectedReason
-                      ? "bg-red-500 hover:bg-red-600"
-                      : "bg-gray-400 cursor-not-allowed"
+                      ? "bg-#6e4e37 hover:bg-white"
+                      : "bg-#6e4e37 cursor-not-allowed"
                   }`}
                 >
                   Submit
@@ -425,7 +425,7 @@ if(loading){
               <div className="flex justify-center gap-3">
                 <button
                   onClick={handleBlockUser} // ✅ hook your block API
-                  className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
+                  className="px-4 py-2 rounded-lg bg-#6e4e37 text-white hover:bg-white"
                 >
                   Block
                 </button>

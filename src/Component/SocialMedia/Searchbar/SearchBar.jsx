@@ -375,13 +375,15 @@ const SearchBar = () => {
                     // navigate("/artsays-community/profile", {
                     //   state: { userId: item.refId },
                     // });
-                    navigate(
-                      `/artsays-community/profile/${
-                        item.username
-                          ? `${item.username}`
-                          : `${item.name}_${item.lastName}_${item._id}`
-                      }`,{state:{userId:item._id}}
-                    );
+                   navigate(
+  `/artsays-community/profile/${
+    item.username
+      ? item.username
+      : `${item.name}_${item.lastName}_${item.refId}`
+  }`,
+  { state: { userId: item.refId } }
+);
+
                   } else if (item.type === "hashtag") {
                     handleHashtagClick(item.tag);
                   }

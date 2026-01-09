@@ -106,30 +106,64 @@ const [cancelComment, setCancelComment] = useState("");
     setCurrentImageIndex(0);
   };
 
-  const cancelOrderInstant = async (orderIdParam) => {
-    const id = orderIdParam || cancelOrderId;
-    if (!id) return;
+  // const cancelOrderInstant = async (orderIdParam) => {
+  //   const id = orderIdParam || cancelOrderId;
+  //   if (!id) return;
 
-    try {
-      const res = await putAPI(`/api/buyer-order-list/cancel/${id}`, {
-        cancelReason: cancelReason || "Cancelled by user",
-        cancelComment: cancelComment || "Cancelled by user",
-      });
+  //   try {
+  //     const res = await putAPI(`/api/buyer-order-list/cancel/${id}`, {
+  //       cancelReason: cancelReason || "Cancelled by user",
+  //       cancelComment: cancelComment || "Cancelled by user",
+  //     });
 
-      console.log("ORDER CANCELLED:", res.data);
+  //     console.log("ORDER CANCELLED:", res.data);
 
-      setOrders((prev) =>
-        prev.map((o) =>
-          o.orderId === id ? { ...o, orderStatus: "Cancelled" } : o
-        )
-      );
+  //     setOrders((prev) =>
+  //       prev.map((o) =>
+  //         o.orderId === id ? { ...o, orderStatus: "Cancelled" } : o
+  //       )
+  //     );
 
-      setShowCancelModal(false);
-      setCancelReason("");
-    } catch (err) {
-      console.error("Cancel Error:", err);
-    }
-  };
+  //     setShowCancelModal(false);
+  //     setCancelReason("");
+  //   } catch (err) {
+  //     console.error("Cancel Error:", err);
+  //   }
+  // };
+const cancelOrderInstant = async (orderIdParam) => {
+  const id = orderIdParam || cancelOrderId;
+  if (!id) return;
+
+ 
+  if (!cancelReason) {
+    alert("Please select a cancellation reason.");
+    return;
+  }
+
+  if (!cancelComment.trim()) {
+    alert("Please enter cancellation remarks.");
+    return;
+  }
+
+  try {
+    await putAPI(`/api/buyer-order-list/cancel/${id}`, {
+      cancelReason,
+      cancelComment,
+    });
+
+    setOrders((prev) =>
+      prev.map((o) =>
+        o.orderId === id ? { ...o, orderStatus: "Cancelled" } : o
+      )
+    );
+
+    setShowCancelModal(false);
+    setCancelReason("");
+    setCancelComment("");
+  } catch (err) {
+    console.error("Cancel Error:", err);
+  }
+};
 
   const handleViewOrder = (order) => {
     navigate("/my-account/my-orders/view", { state: { order } });

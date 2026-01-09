@@ -131,46 +131,55 @@ const hasValidUsername =
     }
   };
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const userId = localStorage.getItem("userId");
+  const userId = localStorage.getItem("userId");
 
-    const formData = new FormData();
-    formData.append("userId", userId);
-    formData.append("name", name);
-    formData.append("username", username);
-    formData.append("website", website);
-    formData.append("bio", bio);
+  const formData = new FormData();
 
-    if (profilePhotoFile) {
-      formData.append("profilePhoto", profilePhotoFile); // actual file
+  // ✅ FIXED field names
+  formData.append("userId", userId);
+  formData.append("firstName", name);
+  formData.append("username", username?.trim());
+  formData.append("website", website?.trim());
+  formData.append("bio", bio?.trim());
+
+ 
+  if (profilePhotoFile) {
+    formData.append("profilePhoto", profilePhotoFile);
+  }
+
+
+  console.log(
+    "Submitting profile update:",
+    [...formData.entries()]
+  );
+
+  try {
+    const res = await putAPI(
+      "/api/social-media/profile/update",
+      formData,
+      true,
+      true,
+      { "Content-Type": "multipart/form-data" }
+    );
+
+    if (res && !res.hasError) {
+      toast.success("Profile updated successfully!");
+      fetchProfile(); 
+    } else {
+      toast.error(res?.message || "Failed to update profile");
     }
-    console.log("Submitting profile update:", formData);
-    try {
-      const res = await putAPI(
-        `/api/social-media/profile/update`,
-        formData,
-        true, // auth
-        true, // multipart
-        { "Content-Type": "multipart/form-data" } // header
-      );
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message ||
+      error.message ||
+      "Something went wrong. Please try again.";
+    toast.error(errorMessage);
+  }
+};
 
-      if (res && !res.hasError) {
-        toast.success("Profile updated successfully!");
-        console.log(res.data.user);
-      } else {
-        toast.error(res?.message || "Failed to update profile");
-      }
-    } catch (error) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error.message ||
-        "Something went wrong. Please try again.";
-      toast.error(errorMessage);
-    }
-  };
-  // privacy center panel
-  const [policies, setPolicies] = useState([]);
+const [policies, setPolicies] = useState([]);
   const [selectedPolicy, setSelectedPolicy] = useState(null);
 
   // Fetch published policies
@@ -415,7 +424,7 @@ const hasValidUsername =
       }
     } catch (err) {
       console.error("Apply Badge Error:", err);
-      toast.error("Error applying badge");
+      toast.error("Error applying badge 123");
     }
   };
 
@@ -722,99 +731,106 @@ const hasValidUsername =
                 </h1>
               </div>
 
-              {/* Avatar + change photo */}
-              <div className="flex items-center justify-between bg-[#f1f4f8] rounded-lg overflow-hidden h-16">
-                <div className="flex items-center ml-2">
-                  <img
-                    src={
-                      profilePhoto?.startsWith("blob:")
-                        ? profilePhoto // show preview
-                        : `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profilePhoto}` // show from backend
-                    }
-                    alt="avatar"
-                    className="w-16 h-16 rounded-full object-cover"
-                  />
-                </div>
-                <div className="h-full flex items-center">
-                  <label className="cursor-pointer bg-[#48372D] text-[16px] text-white px-6 py-3 h-full flex items-center">
-                    Change photo
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handlePhotoChange}
-                    />
-                  </label>
-                </div>
-              </div>
+ <div className="flex items-center justify-between bg-[#f1f4f8] rounded-lg overflow-hidden h-16">
+  <div className="flex items-center ml-2">
+    <img
+      src={
+        profilePhoto?.startsWith("blob:")
+          ? profilePhoto
+          : `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profilePhoto}`
+      }
+      alt="avatar"
+      className="w-16 h-16 rounded-full object-cover"
+    />
+  </div>
+  <div className="h-full flex items-center">
+    <label className="cursor-pointer bg-[#48372D] text-[16px] text-white px-6 py-3 h-full flex items-center">
+      Change photo
+      <input
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handlePhotoChange}
+      />
+    </label>
+  </div>
+</div>
 
-              {/* Name */}
-              <div>
-                <label className="block text-[18px] font-semibold text-[#000000] mb-1">
-                  Name
-                </label>
-                <input
-                  placeholder={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-[#f1f4f8] rounded-md px-4 py-3 text-sm placeholder-[#000000] outline-none"
-                />
-              </div>
+{/* Name */}
+<div>
+  <label className="block text-[18px] font-semibold text-[#000000] mb-1">
+    Name
+  </label>
+  <input
+    value={name}
+    onChange={(e) => setName(e.target.value)}
+    className="w-full bg-[#f1f4f8] rounded-md px-4 py-3 text-sm placeholder-[#000000] outline-none"
+  />
+</div>
 
-              {/* Username */}
-              <div>
-                <label className="block text-[18px] font-semibold text-[#000000] mb-1">
-                  User Name
-                </label>
-                <input
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-[#f1f4f8] rounded-md px-4 py-3 text-sm placeholder-[#000000] outline-none"
-                />
-              </div>
+{/* Username */}
+<div>
+  <label className="block text-[18px] font-semibold text-[#000000] mb-1">
+    User Name
+  </label>
+  <input
+    value={username}
+    onChange={(e) =>
+  setUsername(
+    e.target.value
+      .toLowerCase()
+      .replace(/\s+/g, "_")
+  )
+}
 
-              {/* Website */}
-              <div>
-                <label className="block text-[18px] font-semibold text-[#000000] mb-1">
-                  Website
-                </label>
-                <input
-                  value={website}
-                  onChange={(e) => setWebsite(e.target.value)}
-                  placeholder="https://example.com"
-                  className="w-full bg-[#f1f4f8] rounded-md px-4 py-3 text-sm placeholder-[#000000] outline-none"
-                />
-              </div>
+    className="w-full bg-[#f1f4f8] rounded-md px-4 py-3 text-sm placeholder-[#000000] outline-none"
+  />
+</div>
 
-              {/* Bio */}
-              <div>
-                <label className="block text-[18px] font-semibold text-[#000000] mb-1">
-                  Bio
-                </label>
-                <div className="relative">
-                  <textarea
-                    value={bio}
-                    onChange={(e) => {
-                      if (e.target.value.length <= bioMax)
-                        setBio(e.target.value);
-                    }}
-                    placeholder="Write your bio"
-                    className="w-full bg-[#f1f4f8] rounded-md px-4 py-2 text-sm resize-none min-h-[65px] outline-none placeholder-[#000000]"
-                  />
-                  <div className="absolute bottom-2 right-3 text-xs text-gray-500">
-                    {remaining}/{bioMax}
-                  </div>
-                </div>
-              </div>
+{/* Website */}
+<div>
+  <label className="block text-[18px] font-semibold text-[#000000] mb-1">
+    Website
+  </label>
+  <input
+    type="url"
+    value={website}
+    onChange={(e) => setWebsite(e.target.value)}
+    placeholder="https://example.com"
+    className="w-full bg-[#f1f4f8] rounded-md px-4 py-3 text-sm placeholder-[#000000] outline-none"
+  />
+</div>
 
-              {/* Contact */}
-              <div className="mb-4">
-                <label className="block text-[18px] font-semibold text-[#000000] mb-1">
-                  Contact
-                </label>
-                <div className="w-full bg-[#f1f4f8] rounded-md px-4 py-3 text-sm outline-none">
-                  {profile?.email}
-                </div>
-              </div>
+{/* Bio */}
+<div>
+  <label className="block text-[18px] font-semibold text-[#000000] mb-1">
+    Bio
+  </label>
+  <div className="relative">
+    <textarea
+      value={bio}
+      onChange={(e) => {
+        if (e.target.value.length <= bioMax) setBio(e.target.value);
+      }}
+      placeholder="Write your bio"
+      className="w-full bg-[#f1f4f8] rounded-md px-4 py-2 text-sm resize-none min-h-[65px] outline-none placeholder-[#000000]"
+    />
+    <div className="absolute bottom-2 right-3 text-xs text-gray-500">
+      {remaining}/{bioMax}
+    </div>
+  </div>
+</div>
+
+{/* Contact */}
+<div className="mb-4">
+  <label className="block text-[18px] font-semibold text-[#000000] mb-1">
+    Contact
+  </label>
+  <div className="w-full bg-[#f1f4f8] rounded-md px-4 py-3 text-sm outline-none">
+    {profile?.email}
+  </div>
+</div>
+
 
               {/* Account suggestion toggle */}
               <div className="flex items-center gap-20">
@@ -911,7 +927,7 @@ const hasValidUsername =
                     className="text-[24px] font-bold text-[#000000]"
                     onClick={() => setLgActive(false)}
                   >
-                    <i class="ri-arrow-left-s-line"></i>
+                    <i className="ri-arrow-left-s-line"></i>
                   </button>
                 )}
                 <h1 className="text-[24px] font-bold text-[#000000]">
@@ -1462,7 +1478,7 @@ const hasValidUsername =
                   className="text-[24px] font-bold text-[#000000]"
                   onClick={() => setLgActive(false)}
                 >
-                  <i class="ri-arrow-left-s-line"></i>
+                  <i className="ri-arrow-left-s-line"></i>
                 </button>
               )}
               <h1 className="text-[24px] font-bold text-[#000000]">
@@ -1782,7 +1798,7 @@ const hasValidUsername =
                     className="text-[24px] font-bold text-[#000000]"
                     onClick={() => setLgActive(false)}
                   >
-                    <i class="ri-arrow-left-s-line"></i>
+                    <i className="ri-arrow-left-s-line"></i>
                   </button>
                 )}
                 <h1 className="text-[25px] text-[#000000] font-bold px-2">
@@ -1997,7 +2013,7 @@ const hasValidUsername =
             {/* Purchase Popup */}
             {showPopup && activeBadge && (
               <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
-                <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative animate-fadeIn">
+                <div className="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-screen overflow-y-auto relative animate-fadeIn">
                   {/* Close Button */}
                   <button
                     onClick={handleClosePopup}

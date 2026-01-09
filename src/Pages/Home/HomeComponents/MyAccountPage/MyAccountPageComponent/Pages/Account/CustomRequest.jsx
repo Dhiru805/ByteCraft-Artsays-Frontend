@@ -24,6 +24,8 @@ const AddCustomRequestForm = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [artistId, setArtistId] = useState("");
   const [requests, setRequests] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [showForm, setShowForm] = useState(false);
   const [colorPref, setColorPref] = useState("");
   const [colorPreferences, setColorPreferences] = useState([]);
@@ -90,21 +92,29 @@ const AddCustomRequestForm = () => {
       setIsFetching(true);
       setFetchError(null);
       const response = await getAPI(`/auth/userid/${userId}`);
-      console.log("Fetched user data:", response.data.user);
+      const userAddresses = response.data?.user?.address || [];
 
-      if (
-        response.data?.user?.address &&
-        Array.isArray(response.data.user.address)
-      ) {
-        setAddresses(response.data.user.address);
-        setSelectedAddressId(response.data.user.selectedAddress || null);
+      if (Array.isArray(userAddresses) && userAddresses.length > 0) {
+        const normalizedAddresses = userAddresses.map((addr) => ({
+          ...addr,
+          _id: String(addr._id || addr.id),
+        }));
+
+        setAddresses(normalizedAddresses);
+        console.log("API wala response:", response.data);
+
+        if (!selectedAddressId) {
+          const defaultAddressId =
+            response.data.user.selectedAddress || normalizedAddresses[0]._id;
+
+          setSelectedAddressId(defaultAddressId);
+        }
       } else {
         setAddresses([]);
         setSelectedAddressId(null);
       }
     } catch (error) {
       setFetchError("Failed to load addresses. Please try again later.");
-      // toast.error('Failed to load addresses');
       console.error("Error fetching addresses:", error);
     } finally {
       setIsFetching(false);
@@ -120,6 +130,10 @@ const AddCustomRequestForm = () => {
       // toast.error("Failed to fetch requests");
     }
   };
+  useEffect(() => {
+  fetchRequests();
+}, []);
+
 
   useEffect(() => {
     const fetchArtists = async () => {
@@ -161,7 +175,7 @@ const AddCustomRequestForm = () => {
   };
 
   const handleAddressChange = (addressId) => {
-    setSelectedAddressId(addressId);
+    setSelectedAddressId(String(addressId));
   };
 
   const handleDescriptionChange = (value) => {
@@ -269,8 +283,6 @@ const AddCustomRequestForm = () => {
             !categoryResponse.hasError &&
             Array.isArray(categoryResponse.data?.data)
           ) {
-           
-          
             for (const cat of categoryResponse.data.data) {
               const categoryId = cat._id || cat.id;
 
@@ -336,87 +348,156 @@ const AddCustomRequestForm = () => {
   // const handleImageClick = () => {
   //   setShowFullImage((prev) => !prev);
   // };
+const validateForm = () => {
+  if (!formData.productName.trim()) {
+    toast.error("Product Name is required");
+    return false;
+  }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  if (!artistId) {
+    toast.error("Artist is required");
+    return false;
+  }
 
-    const tempElement = document.createElement("div");
-    tempElement.innerHTML = formData.description;
-    const plainTextDescription = tempElement.innerText.trim();
+  if (!formData.artType) {
+    toast.error("Art Type is required");
+    return false;
+  }
 
-    if (!formData.productName.trim()) {
-      toast.error("Product name is required");
-      return;
-    }
+  if (!formData.size) {
+    toast.error("Size is required");
+    return false;
+  }
 
-    if (!artistId) {
-      toast.error("Please select an artist");
-      return;
-    }
+  if (!selectedAddressId) {
+    toast.error("Delivery address is required");
+    return false;
+  }
 
-    if (!formData.artType) {
-      toast.error("Art type is required");
-      return;
-    }
+  if (!formData.minBudget || !formData.maxBudget) {
+    toast.error("Budget is required");
+    return false;
+  }
 
-    if (!formData.size) {
-      toast.error("Size is required");
-      return;
-    }
+  if (Number(formData.minBudget) > Number(formData.maxBudget)) {
+    toast.error("Minimum budget cannot be greater than maximum budget");
+    return false;
+  }
 
-    if (!formData.minBudget) {
-      toast.error("Minimum budget is required");
-      return;
-    }
+  if (!formData.paymentTerm) {
+    toast.error("Payment term is required");
+    return false;
+  }
 
-    if (!formData.maxBudget) {
-      toast.error("Maximum budget is required");
-      return;
-    }
+  if (
+    formData.paymentTerm === "Installment" &&
+    !formData.installmentDuration
+  ) {
+    toast.error("Installment duration is required");
+    return false;
+  }
 
-    if (!formData.paymentTerm) {
-      toast.error("Payment term is required");
-      return;
-    }
+  if (!formData.expectedDeadline) {
+    toast.error("Expected deadline is required");
+    return false;
+  }
 
-    if (!formData.expectedDeadline) {
-      toast.error("Expected deadline is required");
-      return;
-    }
+  if (!formData.description || !formData.description.trim()) {
+    toast.error("Detailed description is required");
+    return false;
+  }
 
-    if (!formData.paymentTerm) {
-      toast.error("Please select a payment term.");
-      return;
-    }
+  if (!formData.comments || !formData.comments.trim()) {
+    toast.error("Notes / comments are required");
+    return false;
+  }
 
-    if (
-      formData.paymentTerm === "Installment" &&
-      !formData.installmentDuration
-    ) {
-      toast.error("Please select an installment duration.");
-      return;
-    }
-    if (!selectedAddressId) {
-      toast.error("Please select a delivery address");
-      return;
-    }
+  return true;
+};
 
-    if (!plainTextDescription) {
-      toast.error("Description is required");
-      setDescriptionError(true);
-      return;
-    }
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!selectedAddressId) {
-      toast.error("Please select a delivery address.");
-      setIsSubmitting(false);
-      return;
-    }
+  // 🔹 Convert ReactQuill HTML to plain text
+  const tempElement = document.createElement("div");
+  tempElement.innerHTML = formData.description;
+  const plainTextDescription = tempElement.innerText.trim();
 
-    setDescriptionError(false);
-    setIsSubmitting(true);
+  // 🔹 COMMON VALIDATION (fixes Buyer bug)
+  if (!formData.productName.trim()) {
+    toast.error("Product name is required");
+    return;
+  }
 
+  if (!artistId) {
+    toast.error("Please select an artist");
+    return;
+  }
+
+  if (!formData.artType) {
+    toast.error("Art type is required");
+    return;
+  }
+
+  if (!formData.size) {
+    toast.error("Size is required");
+    return;
+  }
+
+  if (!formData.minBudget) {
+    toast.error("Minimum budget is required");
+    return;
+  }
+
+  if (!formData.maxBudget) {
+    toast.error("Maximum budget is required");
+    return;
+  }
+
+  if (Number(formData.minBudget) > Number(formData.maxBudget)) {
+    toast.error("Minimum budget cannot be greater than maximum budget");
+    return;
+  }
+
+  if (!formData.paymentTerm) {
+    toast.error("Payment term is required");
+    return;
+  }
+
+  if (
+    formData.paymentTerm === "Installment" &&
+    !formData.installmentDuration
+  ) {
+    toast.error("Please select an installment duration");
+    return;
+  }
+
+  if (!formData.expectedDeadline) {
+    toast.error("Expected deadline is required");
+    return;
+  }
+
+  if (!plainTextDescription) {
+    toast.error("Detailed description is required");
+    setDescriptionError(true);
+    return;
+  }
+  if (!formData.comments || !formData.comments.trim()) {
+    toast.error("Notes / comments are required");
+    return;
+  }
+
+  if (!selectedAddressId) {
+    toast.error("Please select a delivery address");
+    return;
+  }
+
+  setDescriptionError(false);
+  setIsSubmitting(true);
+
+  try {
     const formPayload = new FormData();
+
     formPayload.append("ProductName", formData.productName);
     formPayload.append("Description", plainTextDescription);
     formPayload.append("ArtType", formData.artType);
@@ -425,150 +506,127 @@ const AddCustomRequestForm = () => {
     formPayload.append("MinBudget", formData.minBudget);
     formPayload.append("MaxBudget", formData.maxBudget);
     formPayload.append("PaymentTerm", formData.paymentTerm);
-    if (formData.paymentTerm === "Installment") {
-      formPayload.append("InstallmentDuration", formData.installmentDuration);
-    }
     formPayload.append("ExpectedDeadline", formData.expectedDeadline);
     formPayload.append("Comments", formData.comments);
-    formPayload.append("ColourPreferences", JSON.stringify(colorPreferences));
+    formPayload.append(
+      "ColourPreferences",
+      JSON.stringify(colorPreferences)
+    );
+
+    if (formData.paymentTerm === "Installment") {
+      formPayload.append(
+        "InstallmentDuration",
+        formData.installmentDuration
+      );
+    }
 
     if (formData.buyerImage) {
       formPayload.append("BuyerImage", formData.buyerImage);
     }
 
-    if (!artistId) {
-      toast.error("Please select an artist.");
-      setIsSubmitting(false);
-      return;
-    }
+    // 🔹 Artist
     const selectedArtist = artists.find((a) => a._id === artistId);
     if (!selectedArtist) {
-      toast.error("Selected artist not found.");
-      setIsSubmitting(false);
+      toast.error("Selected artist not found");
+      return;
+    }
+    formPayload.append("Artist", selectedArtist._id);
+
+    // 🔹 Address
+    const selectedAddress = addresses.find(
+      (addr) => addr._id === selectedAddressId
+    );
+    if (!selectedAddress) {
+      toast.error("Selected address not found");
       return;
     }
 
-    formPayload.append("Artist", selectedArtist._id);
+    formPayload.append(
+      "BuyerSelectedAddress[line1]",
+      selectedAddress.line1 || ""
+    );
+    formPayload.append(
+      "BuyerSelectedAddress[line2]",
+      selectedAddress.line2 || ""
+    );
+    formPayload.append(
+      "BuyerSelectedAddress[landmark]",
+      selectedAddress.landmark || ""
+    );
+    formPayload.append(
+      "BuyerSelectedAddress[city]",
+      selectedAddress.city || ""
+    );
+    formPayload.append(
+      "BuyerSelectedAddress[state]",
+      selectedAddress.state || ""
+    );
+    formPayload.append(
+      "BuyerSelectedAddress[country]",
+      selectedAddress.country || ""
+    );
+    formPayload.append(
+      "BuyerSelectedAddress[pincode]",
+      selectedAddress.pincode || ""
+    );
 
-    // Append the selected address to the form payload
-    if (selectedAddressId) {
-      const selectedAddress = addresses.find(
-        (addr) => addr._id === selectedAddressId
+    // 🔹 API CALL
+    let response;
+    if (editingId) {
+      response = await putAPI(
+        `/api/update-buyer-request/${editingId}`,
+        formPayload,
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
-      if (selectedAddress) {
-        formPayload.append(
-          "BuyerSelectedAddress[line1]",
-          selectedAddress.line1 || ""
-        );
-        formPayload.append(
-          "BuyerSelectedAddress[line2]",
-          selectedAddress.line2 || ""
-        );
-        formPayload.append(
-          "BuyerSelectedAddress[landmark]",
-          selectedAddress.landmark || ""
-        );
-        formPayload.append(
-          "BuyerSelectedAddress[city]",
-          selectedAddress.city || ""
-        );
-        formPayload.append(
-          "BuyerSelectedAddress[state]",
-          selectedAddress.state || ""
-        );
-        formPayload.append(
-          "BuyerSelectedAddress[country]",
-          selectedAddress.country || ""
-        );
-        formPayload.append(
-          "BuyerSelectedAddress[pincode]",
-          selectedAddress.pincode || ""
-        );
-      } else {
-        toast.error("Selected address not found.");
-        setIsSubmitting(false);
-        return;
-      }
+    } else {
+      response = await postAPI(
+        "/api/buyer-request",
+        formPayload,
+        { headers: { "Content-Type": "multipart/form-data" } },
+        true
+      );
     }
 
-    try {
-      let response;
-      if (editingId) {
-        response = await putAPI(
-          `/api/update-buyer-request/${editingId}`,
-          formPayload,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
-          }
-        );
-      } else {
-        response = await postAPI(
-          "/api/buyer-request",
-          formPayload,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
-          },
-          true
-        );
-      }
+    toast.success(
+      response?.data?.message || "Request submitted successfully"
+    );
 
-      const data = response.data;
+    await fetchRequests();
 
-      if (response && response.data) {
-        toast.success(data.message || "Request created successfully!");
-        await fetchRequests();
-        setFormData({
-          productName: "",
-          description: "",
-          artType: "",
-          size: "",
-          isFramed: false,
-          minBudget: "",
-          maxBudget: "",
-          paymentTerm: "",
-          expectedDeadline: "",
-          buyerImage: null,
-          comments: "",
-        });
-        setColorPreferences([]);
-        setEditingId(null);
-        setShowForm(false);
-        setArtistId("");
-        setImagePreview(null);
-        setFileType(null);
-        setSelectedArtistName("");
-        setSelectedAddressId(null);
-      } else {
-        toast.error(data.message || "Submission failed");
-      }
-    } catch (error) {
-      console.error("Submit error:", error);
-      const message = error?.response?.data?.message || "An error occurred";
-      toast.error(message);
-    } finally {
-      setFormData({
-        productName: "",
-        description: "",
-        artType: "",
-        size: "",
-        isFramed: false,
-        minBudget: "",
-        maxBudget: "",
-        paymentTerm: "",
-        expectedDeadline: "",
-        buyerImage: null,
-        comments: "",
-      });
-      setColorPreferences([]);
-      setEditingId(null);
-      setShowForm(false);
-      setArtistId("");
-      setSelectedArtistName("");
-      setIsSubmitting(false);
-      setSelectedAddressId(null);
-      await fetchRequests();
-    }
-  };
+    // 🔹 RESET FORM
+    setFormData({
+      productName: "",
+      description: "",
+      artType: "",
+      size: "",
+      isFramed: false,
+      minBudget: "",
+      maxBudget: "",
+      paymentTerm: "",
+      installmentDuration: "",
+      expectedDeadline: "",
+      buyerImage: null,
+      comments: "",
+    });
+
+    setColorPreferences([]);
+    setEditingId(null);
+    setShowForm(false);
+    setArtistId("");
+    setSelectedArtistName("");
+    setImagePreview(null);
+    setFileType(null);
+    setSelectedAddressId(null);
+  } catch (error) {
+    console.error("Submit error:", error);
+    toast.error(
+      error?.response?.data?.message || "An error occurred"
+    );
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   const handleViewRequest = (req) => {
     setShowForm(false);
@@ -607,19 +665,43 @@ const AddCustomRequestForm = () => {
     }
   };
 
-  const handleNegotiationSubmit = async (updatedRequest) => {
-    try {
+const handleNegotiationSubmit = async (updatedRequest) => {
+  try {
+    setLoading(true);
+
+    // Submit negotiation to backend
+    const response = await putAPI(
+      `/api/update-negiotaite-Buyer-budget/${updatedRequest._id}`,
+      updatedRequest
+    );
+
+    if (response && response.data) {
       toast.success("Negotiation submitted successfully!");
+
+      // 1️⃣ Update local state immediately so Buyer sees the button
+      setRequests((prevRequests) =>
+        prevRequests.map((req) =>
+          req._id === updatedRequest._id ? { ...req, ...updatedRequest } : req
+        )
+      );
+
+      // 2️⃣ Optionally, re-fetch requests from backend to be extra safe
       await fetchRequests();
-    } catch (error) {
-      console.error("Negotiation error:", error);
-      toast.error("Failed to update negotiation");
-    } finally {
+
       setShowNegotiationModal(false);
       setSelectedRequest(null);
-      await fetchRequests();
+    } else {
+      toast.error("Failed to update negotiation");
     }
-  };
+  } catch (error) {
+    console.error("Negotiation error:", error);
+    toast.error("Failed to update negotiation");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
 
   const handleCancel = () => {
     setShowForm(false);
@@ -680,6 +762,30 @@ const AddCustomRequestForm = () => {
     req.ProductName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Compute current page items
+  const indexOfLastItem = currentPage * rowsPerPage;
+  const indexOfFirstItem = indexOfLastItem - rowsPerPage;
+  const currentRequests = filteredRequests.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+
+  // Compute total pages
+  const totalPages = Math.ceil(filteredRequests.length / rowsPerPage);
+
+  // Handlers
+  const handlePreviousPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const handleRowsPerPageChange = (e) => {
+    setRowsPerPage(Number(e.target.value));
+    setCurrentPage(1); // Reset to first page on rows change
+  };
   const handleImageClick = (imagePath) => {
     const fullPath = `${BASE_URL}/${imagePath}`;
     setCurrentImages([fullPath]);
@@ -689,18 +795,40 @@ const AddCustomRequestForm = () => {
 
   return (
     <div className="w-full">
+      {/* Header & Add Request Button */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <h2 className="text-2xl text-gray-950 font-semibold">
           Custom Requests
         </h2>
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto">
+          <div className="flex items-center gap-2 whitespace-nowrap">
+            <span className="text-sm text-gray-600">Show</span>
+
+            <select
+              value={rowsPerPage}
+              onChange={(e) => {
+                setRowsPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none"
+            >
+              <option value={10}>10</option>
+              <option value={15}>15</option>
+              <option value={20}>20</option>
+            </select>
+
+            <span className="text-sm text-gray-600">entries</span>
+          </div>
           <div className="relative w-full sm:w-[200px]">
             <input
               type="text"
               placeholder="Search request"
               className="w-full border-2 border-gray-300 rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none transition"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
             />
             <FiSearch className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-400 text-lg" />
           </div>
@@ -716,6 +844,8 @@ const AddCustomRequestForm = () => {
           </button>
         </div>
       </div>
+
+      {/* Table */}
       <div className="border-2 rounded-3xl w-full bg-white">
         <div className="overflow-x-auto pb-4 rounded-3xl w-full">
           <table className="lg:min-w-[1100px] table-auto w-full text-sm text-left whitespace-nowrap">
@@ -738,15 +868,18 @@ const AddCustomRequestForm = () => {
               </tr>
             </thead>
             <tbody className="text-center">
-              {filteredRequests.length > 0 ? (
-                filteredRequests.map((req, index) => (
+              {currentRequests.length > 0 ? (
+                currentRequests.map((req, index) => (
                   <tr key={req._id} className="border-b">
-                    <td className="px-4 py-2">{index + 1}</td>
+                    <td className="px-4 py-2">
+                      {(currentPage - 1) * rowsPerPage + index + 1}
+                    </td>
+
                     <td className="px-4 py-2 flex items-center gap-2">
                       {req.BuyerImage ? (
                         <img
                           src={`${BASE_URL}/${req.BuyerImage}`}
-                          className="w-8 h-8 rounded-full object-cover"
+                          className="w-8 h-8 rounded-full object-cover cursor-pointer"
                           alt="Buyer"
                           onClick={() => handleImageClick(req.BuyerImage)}
                           onError={(e) => {
@@ -895,9 +1028,7 @@ const AddCustomRequestForm = () => {
                           >
                             <div
                               className="modal-content"
-                              style={{
-                                maxHeight: "80vh",
-                              }}
+                              style={{ maxHeight: "80vh" }}
                             >
                               <div className="modal-header">
                                 <h5 className="modal-title">Reject Request</h5>
@@ -910,10 +1041,7 @@ const AddCustomRequestForm = () => {
                               </div>
                               <div
                                 className="modal-body"
-                                style={{
-                                  overflowY: "auto",
-                                  maxHeight: "60vh",
-                                }}
+                                style={{ overflowY: "auto", maxHeight: "60vh" }}
                               >
                                 <label
                                   htmlFor="rejectComment"
@@ -982,8 +1110,41 @@ const AddCustomRequestForm = () => {
               )}
             </tbody>
           </table>
+          <div className="flex justify-between items-center mt-4">
+            <span className="text-sm text-gray-600">
+              Showing {(currentPage - 1) * rowsPerPage + 1} to{" "}
+              {Math.min(currentPage * rowsPerPage, filteredRequests.length)} of{" "}
+              {filteredRequests.length} entries
+            </span>
+
+            <div className="flex gap-2">
+              <button
+                onClick={handlePreviousPage}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 border rounded ${
+                  currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                Previous
+              </button>
+
+              <button
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+                className={`px-3 py-1 border rounded ${
+                  currentPage === totalPages
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                }`}
+              >
+                Next
+              </button>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Add/Edit Form */}
       {showForm && (
         <div className="w-full max-w-[1076px] mx-auto px-0 sm:px-0 lg:px-0">
           <form onSubmit={handleSubmit} className="space-y-5 py-6">
@@ -1390,6 +1551,22 @@ const AddCustomRequestForm = () => {
           />
         </div>
       )}
+
+      {/* View Modal */}
+      {showViewModal && viewRequest && (
+        <div className="mt-6 p-6 bg-gray-50 border-2 rounded-3xl">
+          <ViewBuyerRequest
+            request={viewRequest}
+            onClose={() => {
+              setShowViewModal(false);
+              setViewRequest(null);
+              fetchRequests();
+            }}
+          />
+        </div>
+      )}
+
+      {/* Negotiation Modal */}
       {showNegotiationModal && selectedRequest && (
         <NegotiateModal
           request={selectedRequest}
@@ -1401,6 +1578,8 @@ const AddCustomRequestForm = () => {
           onSubmit={handleNegotiationSubmit}
         />
       )}
+
+      {/* Image Preview Popup */}
       {showPopup && (
         <div
           onClick={() => setShowPopup(false)}
@@ -1432,7 +1611,6 @@ const AddCustomRequestForm = () => {
               overflow: "hidden",
             }}
           >
-            {/* Image */}
             <img
               src={currentImages[currentImageIndex]}
               alt="Popup"

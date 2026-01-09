@@ -272,38 +272,41 @@ function CreateChallenge() {
                         Start Date & Time <span className="text-danger">*</span>
                       </label>
                       <input
-                        type="date"
-                        id="startDate"
-                        name="startDate"
-                        className="form-control"
-                        onChange={handleChange}
-                      />
+  type="datetime-local"
+  id="startDate"
+  name="startDate"
+  className="form-control"
+  onChange={handleChange}
+/>
+
                     </div>
 
                     <div className="col-md-4 form-group">
                       <label htmlFor="endDate">
                         End Date & Time <span className="text-danger">*</span>
                       </label>
-                      <input
-                        type="date"
-                        id="endDate"
-                        name="endDate"
-                        className="form-control"
-                        onChange={handleChange}
-                      />
+                     <input
+  type="datetime-local"
+  id="endDate"
+  name="endDate"
+  className="form-control"
+  onChange={handleChange}
+/>
+
                     </div>
 
                     <div className="col-md-4 form-group">
                       <label htmlFor="submissionDeadline">
                         Submission Deadline <span className="text-danger">*</span>
                       </label>
-                      <input
-                        type="date"
-                        id="submissionDeadline"
-                        name="submissionDeadline"
-                        className="form-control"
-                        onChange={handleChange}
-                      />
+                     <input
+  type="datetime-local"
+  id="submissionDeadline"
+  name="submissionDeadline"
+  className="form-control"
+  onChange={handleChange}
+/>
+
                     </div>
                   </div>
 

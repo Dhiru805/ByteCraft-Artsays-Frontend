@@ -61,43 +61,43 @@ const CreateMaterialOrder = () => {
      const [prices, setPrices] = useState({});
      const [currentType, setCurrentType] = useState("");
    
-     useEffect(() => {
-     const getUser = async () => {
-       try {
-         const userId = localStorage.getItem("userId");
-         const res = await getAPI(`/auth/user/${userId}`);
-         console.log("User profile data", res);
+  //    useEffect(() => {
+  //    const getUser = async () => {
+  //      try {
+  //        const userId = localStorage.getItem("userId");
+  //        const res = await getAPI(`/auth/user/${userId}`);
+  //        console.log("User profile data", res);
    
-         let address = res.data.address;
+  //        let address = res.data.address;
    
-         // Step 1: Parse the address if it's a string
-         let parsedAddress = address;
-         if (typeof address === "string") {
-           try {
-             parsedAddress = JSON.parse(address);
-           } catch (err) {
-             console.error("Error parsing address:", err);
-             parsedAddress = {};
-           }
-         }
+  //        // Step 1: Parse the address if it's a string
+  //        let parsedAddress = address;
+  //        if (typeof address === "string") {
+  //          try {
+  //            parsedAddress = JSON.parse(address);
+  //          } catch (err) {
+  //            console.error("Error parsing address:", err);
+  //            parsedAddress = {};
+  //          }
+  //        }
    
-         // Step 2: Extract the relevant fields safely
-         const deliveryAddress = `${parsedAddress.line1 || ""}, ${parsedAddress.line2 || ""}, ${parsedAddress.city || ""}, ${parsedAddress.state || ""}, ${parsedAddress.country || ""}, ${parsedAddress.pincode || ""}`;
+  //        // Step 2: Extract the relevant fields safely
+  //        const deliveryAddress = `${parsedAddress.line1 || ""}, ${parsedAddress.line2 || ""}, ${parsedAddress.city || ""}, ${parsedAddress.state || ""}, ${parsedAddress.country || ""}, ${parsedAddress.pincode || ""}`;
    
-         // Step 3: Set to state
-         setFormData((prev) => ({
-           ...prev,
-           deliveryAddress: deliveryAddress
-         }));
-         setAddress(deliveryAddress);
+  //        // Step 3: Set to state
+  //        setFormData((prev) => ({
+  //          ...prev,
+  //          deliveryAddress: deliveryAddress
+  //        }));
+  //        setAddress(deliveryAddress);
    
-       } catch (err) {
-         console.error("Error fetching user:", err);
-       }
-     };
+  //      } catch (err) {
+  //        console.error("Error fetching user:", err);
+  //      }
+  //    };
    
-     getUser();
-   }, []);
+  //    getUser();
+  //  }, []);
    
    
      useEffect(() => {
@@ -195,54 +195,109 @@ const CreateMaterialOrder = () => {
        fetchMaterialCard();
      }, [])
    
-     const handleSubmit = async (e) => {
-       e.preventDefault();
-       setLoading(true);
-       setError(null);
+    //  const handleSubmit = async (e) => {
+    //    e.preventDefault();
+    //    setLoading(true);
+    //    setError(null);
    
-       const userId = localStorage.getItem("userId");
-       if (!userId) {
-         setError("User not logged in.");
-         setLoading(false);
-         return;
-       }
+    //    const userId = localStorage.getItem("userId");
+    //    if (!userId) {
+    //      setError("User not logged in.");
+    //      setLoading(false);
+    //      return;
+    //    }
    
-       console.log("UserId in handlesubmit", userId);
+    //    console.log("UserId in handlesubmit", userId);
    
-       // Create FormData object for multipart/form-data
-       const data = new FormData();
-       data.append("userId", userId);
-       data.append("material", formData.material);
-       data.append("stamp", formData.stamp);
-       data.append("stickers", formData.stickers);
-       data.append("vouchers", formData.vouchers);
-       data.append("card", formData.card);
-       data.append("quantity", formData.quantity);
-       data.append("deliveryAddress", formData.deliveryAddress);
-       data.append("totalPrice", formData.totalPrice);
+    //    // Create FormData object for multipart/form-data
+    //    const data = new FormData();
+    //    data.append("userId", userId);
+    //    data.append("material", formData.material);
+    //    data.append("stamp", formData.stamp);
+    //    data.append("stickers", formData.stickers);
+    //    data.append("vouchers", formData.vouchers);
+    //    data.append("card", formData.card);
+    //    data.append("quantity", formData.quantity);
+    //    data.append("deliveryAddress", formData.deliveryAddress);
+    //    data.append("totalPrice", formData.totalPrice);
    
-       try {
-         // Send POST request to backend
-         const response = await postAPI(
-           "/api/package-material/seller/order/create",
-           data
-         );
+    //    try {
+    //      // Send POST request to backend
+    //      const response = await postAPI(
+    //        "/api/package-material/seller/order/create",
+    //        data
+    //      );
    
-         // Handle success
-         console.log("In handleSubmit", response);
-         navigate("/seller/packaging-material"); // Redirect to material list
-       } catch (err) {
-         // Handle error
-         console.error(
-           "Error in postAPI:",
-           err.response?.data || err.message || err
-         );
-         setError(err.response?.data?.message || "Failed to create order.");
-       } finally {
-         setLoading(false);
-       }
-     };
-   
+    //      // Handle success
+    //      console.log("In handleSubmit", response);
+    //      navigate("/seller/packaging-material"); // Redirect to material list
+    //    } catch (err) {
+    //      // Handle error
+    //      console.error(
+    //        "Error in postAPI:",
+    //        err.response?.data || err.message || err
+    //      );
+    //      setError(err.response?.data?.message || "Failed to create order.");
+    //    } finally {
+    //      setLoading(false);
+    //    }
+    //  };
+   const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError(null);
+
+  const userId = localStorage.getItem("userId");
+  if (!userId) {
+    setError("User not logged in.");
+    setLoading(false);
+    return;
+  }
+
+  const data = {
+    userId,
+    quantity: Number(formData.quantity),
+    totalPrice: Number(formData.totalPrice),
+    deliveryAddress: formData.deliveryAddress,
+  };
+
+  // Only add the selected product
+  if (selectedProduct === "material") data.material = formData.material;
+  if (selectedProduct === "stamp") data.stamp = formData.stamp;
+  if (selectedProduct === "stickers") data.stickers = formData.stickers;
+  if (selectedProduct === "vouchers") data.vouchers = formData.vouchers;
+  if (selectedProduct === "card") data.card = formData.card;
+
+  try {
+  
+    const response = await postAPI("/api/package-material/seller/order/create", data);
+
+    if (response.data.success) {
+      alert(response.data.message); // show success message
+     
+      setFormData({
+        userId: localStorage.getItem("userId") || "",
+        material: "",
+        stamp: "",
+        stickers: "",
+        vouchers: "",
+        card: "",
+        quantity: "",
+        deliveryAddress: "",
+        totalPrice: "",
+      });
+      navigate("/seller/packaging-material"); // redirect to order list
+    } else {
+      alert("Order creation failed!");
+    }
+  } catch (err) {
+    console.error("Error creating order:", err);
+    alert(err.response?.data?.message || "Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
+
       const handleDropdownChange = async (type, id) => {
   try {
     const userId = localStorage.getItem("userId");
@@ -746,15 +801,17 @@ const CreateMaterialOrder = () => {
                      />
                    </div>
                    <div className="form-group">
-                     <label>Delivery Address</label>
-                     <input
-                       type="text"
-                       className="form-control"
-                       name="deliveryAddress"
-                       value={formData.deliveryAddress}
-                       required
-                     />
-                   </div>
+  <label>Delivery Address</label>
+  <input
+    type="text"
+    className="form-control"
+    name="deliveryAddress"
+    value={formData.deliveryAddress}
+    onChange={(e) => setFormData({ ...formData, deliveryAddress: e.target.value })}
+    required
+  />
+</div>
+
                    <div className="form-group">
                      <label>Total Price</label>
                      <input

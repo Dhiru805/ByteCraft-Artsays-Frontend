@@ -60,7 +60,7 @@ const OrderMaterial = () => {
         ? res.data.data
         : [res.data.data];
 
-      setOrders(ordersArray);
+      setOrders(ordersArray.reverse());
     } catch (error) {
       console.error("Failed to fetch orders:", error);
       setOrders([]);

@@ -289,7 +289,7 @@
 
 
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import BuyerWalletSkeleton from "../../../Skeleton/wallet/BuyerWalletSkeleton";
@@ -303,6 +303,7 @@ const BuyerWallet = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const transactionsRef = useRef(null);
 
   const API_URL = process.env.REACT_APP_API_URL;
   const RAZORPAY_KEY = process.env.REACT_APP_RAZORPAY_KEY;
@@ -367,64 +368,194 @@ const BuyerWallet = () => {
     }
   };
 
-  const addMoneyViaRazorpay = async () => {
-    if (!amount || Number(amount) <= 0) return alert("Enter deposit amount");
+  // const addMoneyViaRazorpay = async () => {
+  //   if (!amount || Number(amount) <= 0) return alert("Enter deposit amount");
 
+  //   if (!RAZORPAY_KEY) {
+  //     toast.warning("Razorpay key not configured. Using test mode...");
+  //     setTimeout(async () => {
+  //       await fetchWallet();
+  //       await fetchTransactions();
+  //       toast.success("Test payment completed!");
+  //     }, 1000);
+  //     return;
+  //   }
+
+  //   const ok = await loadRazorpayScript();
+  //   if (!ok) return toast.error("Failed to load payment SDK");
+
+  //   try {
+  //     const init = await axios.post(`${API_URL}/api/wallet/add-money-initiate/${userId}`, { amount: Number(amount) });
+  //     const { id: orderId, amount: razorpayAmount, currency } = init.data;
+
+  //     const options = {
+  //       key: RAZORPAY_KEY,
+  //       amount: razorpayAmount,
+  //       currency: currency || "INR",
+  //       name: "Artsays Wallet",
+  //       description: "Add Money to Wallet",
+  //       order_id: orderId,
+  //       handler: async function (response) {
+  //         toast.success("Payment successful! Updating wallet...");
+  //         setTimeout(async () => {
+  //           await fetchWallet();
+  //           await fetchTransactions();
+  //         }, 1500);
+  //       },
+  //       prefill: { name: "Artsays User", email: "user@artsays.com" },
+  //       theme: { color: "#121212" },
+  //       modal: { ondismiss: function () { toast.info("Payment cancelled"); } }
+  //     };
+
+  //     const rz = new window.Razorpay(options);
+  //     rz.on("payment.failed", function (response) {
+  //       toast.error("Payment failed: " + (response.error?.description || "Unknown error"));
+  //     });
+  //     rz.open();
+  //   } catch (err) {
+  //     console.error("Error initiating payment:", err);
+  //     toast.error("Failed to start payment: " + (err.response?.data?.error || err.message));
+  //   }
+  // };
+const addMoneyViaRazorpay = async () => {
+  if (!amount || Number(amount) <= 0) {
+    toast.error("Enter a valid amount");
+    return;
+  }
+
+  setIsLoading(true);
+
+  try {
+    // 🔹 TEST MODE (NO RAZORPAY KEY)
     if (!RAZORPAY_KEY) {
-      toast.warning("Razorpay key not configured. Using test mode...");
-      setTimeout(async () => {
-        await fetchWallet();
-        await fetchTransactions();
-        toast.success("Test payment completed!");
-      }, 1000);
+      const res = await axios.post(
+        `${API_URL}/api/wallet/add-money/${userId}`,
+        { amount: Number(amount), source: "test" }
+      );
+
+      setWallet(res.data.wallet);
+      setTransactions(prev => [res.data.transaction, ...prev]);
+      setAmount("");
+
+      toast.success("Payment successful! Wallet credited.");
       return;
     }
 
+    // 🔹 REAL RAZORPAY FLOW
     const ok = await loadRazorpayScript();
-    if (!ok) return toast.error("Failed to load payment SDK");
-
-    try {
-      const init = await axios.post(`${API_URL}/api/wallet/add-money-initiate/${userId}`, { amount: Number(amount) });
-      const { id: orderId, amount: razorpayAmount, currency } = init.data;
-
-      const options = {
-        key: RAZORPAY_KEY,
-        amount: razorpayAmount,
-        currency: currency || "INR",
-        name: "Artsays Wallet",
-        description: "Add Money to Wallet",
-        order_id: orderId,
-        handler: async function (response) {
-          toast.success("Payment successful! Updating wallet...");
-          setTimeout(async () => {
-            await fetchWallet();
-            await fetchTransactions();
-          }, 1500);
-        },
-        prefill: { name: "Artsays User", email: "user@artsays.com" },
-        theme: { color: "#121212" },
-        modal: { ondismiss: function () { toast.info("Payment cancelled"); } }
-      };
-
-      const rz = new window.Razorpay(options);
-      rz.on("payment.failed", function (response) {
-        toast.error("Payment failed: " + (response.error?.description || "Unknown error"));
-      });
-      rz.open();
-    } catch (err) {
-      console.error("Error initiating payment:", err);
-      toast.error("Failed to start payment: " + (err.response?.data?.error || err.message));
+    if (!ok) {
+      toast.error("Unable to load payment gateway");
+      return;
     }
-  };
+
+    const init = await axios.post(
+      `${API_URL}/api/wallet/add-money-initiate/${userId}`,
+      { amount: Number(amount) }
+    );
+
+    const { id: orderId, amount: razorpayAmount, currency } = init.data;
+
+    const options = {
+      key: RAZORPAY_KEY,
+      amount: razorpayAmount,
+      currency: currency || "INR",
+      name: "Artsays Wallet",
+      description: "Add Money to Wallet",
+      order_id: orderId,
+      handler: async () => {
+        toast.success("Payment successful!");
+
+        await fetchWallet();
+        await fetchTransactions();
+      },
+      modal: {
+        ondismiss: () => toast.info("Payment cancelled")
+      }
+    };
+
+    const rz = new window.Razorpay(options);
+    rz.on("payment.failed", () => {
+      toast.error("Payment failed");
+    });
+    rz.open();
+  } catch (err) {
+    console.error(err);
+    toast.error("Payment failed. Please try again.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+  const isValidUpi = (upi) => {
+  const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
+  return upiRegex.test(upi);
+};
+const isValidName = (name) => {
+  return /^[A-Za-z\s]{3,50}$/.test(name);
+};
+
+const isValidAccountNumber = (acc) => {
+  return /^[0-9]{9,18}$/.test(acc);
+};
+
+const isValidIFSC = (ifsc) => {
+  return /^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc);
+};
+
+const isValidText = (text) => {
+  return text && text.trim().length >= 3;
+};
+
 
   const requestWithdrawal = async () => {
     if (!withdrawAmount || Number(withdrawAmount) <= 0) return alert("Enter amount to withdraw");
 
-    if (withdrawMethod === "upi" && !withdrawDestination.upi) return alert("Enter UPI ID");
+
+    if (withdrawMethod === "upi") {
+  if (!withdrawDestination.upi) {
+    toast.error("Please enter UPI ID");
+    return;
+  }
+
+  if (!isValidUpi(withdrawDestination.upi)) {
+    toast.error("Invalid UPI ID format (example: name@bank)");
+    return;
+  }
+}
+
+    // if (withdrawMethod === "bank") {
+    //   const { name, accountNumber, ifsc, bankName, purpose } = withdrawDestination;
+    //   if (!name || !accountNumber || !ifsc || !bankName || !purpose) return alert("Fill all bank transfer details");
+    // }
     if (withdrawMethod === "bank") {
-      const { name, accountNumber, ifsc, bankName, purpose } = withdrawDestination;
-      if (!name || !accountNumber || !ifsc || !bankName || !purpose) return alert("Fill all bank transfer details");
-    }
+  const { name, accountNumber, ifsc, bankName, purpose } = withdrawDestination;
+
+  if (!isValidName(name)) {
+    toast.error("Enter a valid beneficiary name (letters only)");
+    return;
+  }
+
+  if (!isValidAccountNumber(accountNumber)) {
+    toast.error("Enter a valid account number (9–18 digits)");
+    return;
+  }
+
+  if (!isValidIFSC(ifsc)) {
+    toast.error("Enter a valid IFSC code (example: SBIN0001234)");
+    return;
+  }
+
+  if (!isValidText(bankName)) {
+    toast.error("Enter a valid bank name and branch");
+    return;
+  }
+
+  if (!isValidText(purpose)) {
+    toast.error("Purpose of transfer is required");
+    return;
+  }
+}
+
 
     if (Number(withdrawAmount) > (wallet?.balance || 0)) return alert("Insufficient balance");
     if (Number(withdrawAmount) < 100) return alert("Minimum withdrawal amount is ₹100");
@@ -457,6 +588,19 @@ const BuyerWallet = () => {
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
   }, [transactions.length, pageSize, totalPages]);
+ useEffect(() => {
+  if (transactionsRef.current) {
+    const yOffset = -20;
+    const y =
+      transactionsRef.current.getBoundingClientRect().top +
+      window.pageYOffset +
+      yOffset;
+
+    window.scrollTo({ top: y, behavior: "smooth" });
+  }
+}, [page]);
+
+
 
   if (!wallet) return <div><BuyerWalletSkeleton/></div>;
 
@@ -686,7 +830,9 @@ const BuyerWallet = () => {
                 entries
               </div>
             </div>
-            <div className="body table-responsive">
+            {/* <div className="body table-responsive"> */}
+            <div className="body table-responsive" ref={transactionsRef}>
+
               <table className="table table-hover mb-0">
                 <thead>
                   <tr>

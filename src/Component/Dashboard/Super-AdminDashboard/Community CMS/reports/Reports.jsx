@@ -14,10 +14,14 @@ function Reports() {
     userId: null,
     username: "",
   });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(5);
+
   const navigate = useNavigate();
 
   const fetchReports = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       const response = await getAPI("/api/admin/reports", {}, true);
       if (response.data?.success) {
@@ -37,7 +41,18 @@ function Reports() {
     fetchReports();
   }, []);
 
-  const groupedReports = reports.reduce((groups, report) => {
+  const filteredReports = reports.filter((report) => {
+    const username = report.reportedUser?.username || "";
+    return username.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
+  const totalPages = Math.ceil(filteredReports.length / entriesPerPage);
+  const displayedReports = filteredReports.slice(
+    (currentPage - 1) * entriesPerPage,
+    currentPage * entriesPerPage
+  );
+
+  const groupedReports = displayedReports.reduce((groups, report) => {
     const userId = report.reportedUser?._id || "unknown";
     if (!groups[userId]) groups[userId] = [];
     groups[userId].push(report);
@@ -106,17 +121,12 @@ function Reports() {
     if (!confirmModal.show) return null;
 
     const { type, username, userId } = confirmModal;
-
     const action =
       type === "permanent"
         ? () => handleSuspendUser(userId, true)
         : () => handleUnsuspendUser(userId);
-
     const title =
-      type === "permanent"
-        ? "Confirm Permanent Suspension"
-        : "Confirm Unsuspension";
-
+      type === "permanent" ? "Confirm Permanent Suspension" : "Confirm Unsuspension";
     const description =
       type === "permanent"
         ? `Are you sure you want to permanently suspend @${username}? This will restrict their account indefinitely.`
@@ -137,9 +147,7 @@ function Reports() {
               Cancel
             </button>
             <button
-              className={`btn btn-sm ${
-                type === "permanent" ? "btn-danger" : "btn-success"
-              }`}
+              className={`btn btn-sm ${type === "permanent" ? "btn-danger" : "btn-success"}`}
               onClick={action}
             >
               {type === "permanent" ? "Suspend" : "Unsuspend"}
@@ -150,58 +158,106 @@ function Reports() {
     );
   };
 
-  if (loading) {
-    return (
-        <Reportskeleton/>
-    );
-  }
+  const handlePrevious = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
 
   return (
     <div className="container-fluid mt-4">
       <ConfirmDialog />
+
       <div className="mb-4">
         <h2 className="fw-bold">User Reports Summary</h2>
       </div>
 
+     
       <div className="card shadow-sm">
         <div className="card-body">
-          {Object.keys(groupedReports).length === 0 ? (
-            <p className="text-center text-muted">No reports found.</p>
-          ) : (
-            <div className="table-responsive">
-              <table className="table table-hover align-middle">
-                <thead className="table-dark">
+         
+          <div className="d-flex justify-content-between mb-3 flex-wrap align-items-center">
+            <div className="d-flex align-items-center mb-2 mb-md-0">
+              <label className="mb-0 me-2">Show</label>
+              <select
+                className="form-control form-control-sm"
+                value={entriesPerPage}
+                onChange={(e) => {
+                  setEntriesPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                style={{ minWidth: "70px" }}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+              </select>
+              <label className="mb-0 ms-2">entries</label>
+            </div>
+
+            <div className="d-flex align-items-center">
+              <input
+                type="text"
+                className="form-control form-control-sm"
+                placeholder="Search username"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{ maxWidth: "200px" }}
+              />
+              <i
+                className="fa fa-search"
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  pointerEvents: "none",
+                }}
+              ></i>
+            </div>
+          </div>
+
+          <div className="table-responsive">
+            <table className="table table-hover align-middle">
+              <thead className="table-dark">
+                <tr>
+                  <th>#</th>
+                  <th>User</th>
+                  <th>Reports Count</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <Reportskeleton />
+                ) : Object.keys(groupedReports).length === 0 ? (
                   <tr>
-                    <th>#</th>
-                    <th>User</th>
-                    <th>Reports Count</th>
-                    <th>Actions</th>
+                    <td colSpan="4" className="text-center text-muted">
+                      No reports found.
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {Object.entries(groupedReports).map(([userId, userReports], index) => {
+                ) : (
+                  Object.entries(groupedReports).map(([userId, userReports], index) => {
                     const user = userReports[0].reportedUser;
                     const isPermanentSuspended =
                       user?.isSuspended && user?.suspension?.permanent;
 
                     return (
                       <tr key={userId}>
-                        <td>{index + 1}</td>
+                        <td>{(currentPage - 1) * entriesPerPage + index + 1}</td>
                         <td>
                           <div>
                             <p className="fw-semibold mb-0">{user?.username}</p>
                             <small className="text-muted">ID: {user?._id}</small>
                           </div>
                         </td>
-                        <td>
-                          <span className="fw-semibold">{userReports.length}</span>
-                        </td>
+                        <td>{userReports.length}</td>
                         <td>
                           {isPermanentSuspended ? (
                             <>
-                              <span className="badge bg-dark me-2">
-                                Permanently Suspended
-                              </span>
+                              <span className="badge bg-dark me-2">Permanently Suspended</span>
                               <button
                                 className="btn btn-success btn-sm"
                                 onClick={() =>
@@ -254,24 +310,59 @@ function Reports() {
                               <button
                                 className="btn btn-outline-primary btn-sm"
                                 onClick={() =>
-                                  navigate(
-                                    "/super-admin/community-cms/reports/view",
-                                    { state: { userReports } }
-                                  )
+                                  navigate("/super-admin/community-cms/reports/view", {
+                                    state: { userReports },
+                                  })
                                 }
                               >
-                                 <i className="fa fa-eye"></i>
+                                <i className="fa fa-eye"></i>
                               </button>
                             </>
                           )}
                         </td>
                       </tr>
                     );
-                  })}
-                </tbody>
-              </table>
+                  })
+                )}
+              </tbody>
+            </table>
+
+            {/* Pagination */}
+            <div className="pagination d-flex justify-content-between mt-4">
+              <span>
+                Showing{" "}
+                {filteredReports.length === 0
+                  ? 0
+                  : (currentPage - 1) * entriesPerPage + 1}{" "}
+                to{" "}
+                {Math.min(currentPage * entriesPerPage, filteredReports.length)}{" "}
+                of {filteredReports.length} entries
+              </span>
+              <ul className="pagination d-flex">
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+                  onClick={handlePrevious}
+                >
+                  <button className="page-link">Previous</button>
+                </li>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <li
+                    key={page}
+                    className={`page-item ${currentPage === page ? "active" : ""}`}
+                    onClick={() => setCurrentPage(page)}
+                  >
+                    <button className="page-link">{page}</button>
+                  </li>
+                ))}
+                <li
+                  className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
+                  onClick={handleNext}
+                >
+                  <button className="page-link">Next</button>
+                </li>
+              </ul>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>
@@ -281,52 +372,12 @@ function Reports() {
 export default Reports;
 
 
-const Reportskeleton=()=>{
-  return(
-    <>
-  <div className="animate-pulse">
-    {/* Header Skeleton */}
-    <div className="h-7 w-56 bg-gray-300 rounded mb-4"></div>
-
-    {/* Card */}
-    <div className="bg-white shadow-sm rounded-lg p-4">
-      {/* Table Header Skeleton */}
-      <div className="grid grid-cols-4 gap-4 bg-gray-200 p-3 rounded mb-3">
-        <div className="h-4 bg-gray-300 rounded"></div>
-        <div className="h-4 bg-gray-300 rounded"></div>
-        <div className="h-4 bg-gray-300 rounded"></div>
-        <div className="h-4 bg-gray-300 rounded"></div>
-      </div>
-
-      {/* Table Rows Skeleton */}
-      {Array.from({ length: 5 }).map((_, i) => (
-        <div
-          key={i}
-          className="grid grid-cols-4 gap-4 items-center border-b py-3"
-        >
-          {/* # */}
-          <div className="h-4 w-6 bg-gray-300 rounded"></div>
-
-          {/* User */}
-          <div>
-            <div className="h-4 w-32 bg-gray-300 rounded mb-2"></div>
-            <div className="h-3 w-20 bg-gray-200 rounded"></div>
-          </div>
-
-          {/* Report Count */}
-          <div className="h-4 w-10 bg-gray-300 rounded"></div>
-
-          {/* Actions */}
-          <div className="flex gap-2">
-            <div className="h-8 w-20 bg-gray-300 rounded"></div>
-            <div className="h-8 w-28 bg-gray-300 rounded"></div>
-            <div className="h-8 w-10 bg-gray-300 rounded"></div>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-
-</>
-  )
-}
+const Reportskeleton = () => {
+  return (
+    <tr>
+      <td colSpan={4} className="text-center text-muted">
+        Loading...
+      </td>
+    </tr>
+  );
+};

@@ -2182,35 +2182,37 @@ const ProductDetails = () => {
                   className="fixed inset-0 bg-opacity-60 backdrop-blur-md flex items-center justify-center z-[999]"
                   style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
                 >
-                  <div className="relative bg-white rounded-xl shadow-lg max-w-5xl w-full p-4">
+                  <div className="relative bg-white rounded-xl shadow-lg w-[90%] max-w-3xl max-h-[90vh] overflow-y-auto p-4">
+
                     <button
                       onClick={() => setShowPopup(false)}
                       className="absolute top-3 right-3 text-gray-700 text-xl font-bold"
                     >
                       ✕
                     </button>
-                    <div className="relative w-full h-[550px] overflow-hidden rounded-lg">
+                    <div className="relative w-full h-[420px] overflow-hidden rounded-lg">
                       <img
                         src={selectedRoom}
                         alt="room"
                         className="w-full h-full object-contain"
                       />
-                      <div className="absolute bottom-[200px] inset-0 flex justify-center items-center">
-                        <div className="relative">
-                          <img
-                            src={selectedImage}
-                            alt="art"
-                            className="object-contain rounded-lg mb-3"
-                            style={{
-                              width: `${artworkSize.width * 3}px`,
-                              height: `${artworkSize.height * 3}px`,
-                            }}
-                          />
-                          <div className="absolute -bottom-6 w-full text-center text-sm font-medium bg-white py-1 rounded-md">
-                            {artworkSize.width} × {artworkSize.height} cm
-                          </div>
-                        </div>
-                      </div>
+                      <div className="absolute inset-0 flex justify-center item-center -translate-y-14">
+  <div className="relative mt-[18%]">
+    <img
+      src={selectedImage}
+      alt="art"
+      className="object-contain rounded-lg mb-3"
+      style={{
+        width: `${artworkSize.width * 2.2}px`,
+        height: `${artworkSize.height * 2.2}px`,
+      }}
+    />
+    <div className="absolute -bottom-6 w-full text-center text-sm font-medium bg-white py-1 rounded-md">
+      {artworkSize.width} × {artworkSize.height} cm
+    </div>
+  </div>
+</div>
+
                     </div>
 
                     <div className="flex justify-center gap-3 mt-4">

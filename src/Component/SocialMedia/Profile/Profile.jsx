@@ -156,6 +156,7 @@ const Profile = ({ shareprofileid }) => {
   const [tipAmount, setTipAmount] = useState(40);
   const [tipSuccess, setTipSuccess] = useState(false);
   const [activeSection, setActiveSection] = useState(null);
+  const [showUnfollowConfirm, setShowUnfollowConfirm] = useState(false);
   const [activeIndex, setActiveIndex] = useState(null);
   const productPosts =
     profile?.posts?.filter(
@@ -482,6 +483,16 @@ const Profile = ({ shareprofileid }) => {
       console.error("Error following/unfollowing user:", error);
     }
   };
+  const handleFollowClick = () => {
+  if (!follow) {
+    
+    handleFollowToggle(viewedUserId, false);
+  } else {
+   
+    setShowUnfollowConfirm(true);
+  }
+};
+
 
   // Handle swipe start
   const handleTouchStart = (e) => {
@@ -1895,16 +1906,18 @@ const navigateToProfile=(profile)=>{
                 ) : (
                   //  Visitor sees Follow + User icon + Menu
                   <div className="flex gap-2 items-center relative">
-                    <button
-                      onClick={() => handleFollowToggle(viewedUserId, follow)}
-                      className={`px-2 py-1 rounded-md text-[16px] font-bold ${
-                        follow
-                          ? "bg-white text-[#6F4D34] border-[1px] border-[#6F4D34]"
-                          : "bg-[#6F4D34] text-white"
-                      }`}
-                    >
-                      {follow ? "Unfollow" : "Follow"}
-                    </button>
+                   <button
+  onClick={handleFollowClick}
+  className={`px-2 py-1 min-w-[90px] sm:min-w-[100px] text-center rounded-md text-[16px] font-bold ${
+    follow
+      ? "bg-white text-[#6F4D34] border border-[#6F4D34]"
+      : "bg-[#6F4D34] text-white"
+  }`}
+>
+  {follow ? "Following" : "Follow"}
+</button>
+
+
 
                     {follow && (
                       <button className="flex items-center gap-1 px-2 py-1 bg-[#6F4D34] font-bold text-white rounded-md text-base">
@@ -2241,16 +2254,16 @@ const navigateToProfile=(profile)=>{
           </div>
         ) : (
           <div className="sm:hidden flex gap-6 justify-between items-center ">
-            <button
-              onClick={() => handleFollowToggle(viewedUserId, follow)}
-              className={`flw-btn rounded-md text-[16px] font-bold transition ${
-                follow
-                  ? "bg-white text-[#6F4D34] border-[1px] border-[#6F4D34]"
-                  : "bg-[#6F4D34] text-white"
-              }`}
-            >
-              {follow ? "Unfollow" : "Follow"}
-            </button>
+           <button
+  onClick={handleFollowClick}
+  className={`flw-btn rounded-md text-[16px] font-bold transition ${
+    follow
+      ? "bg-white text-[#6F4D34] border-[1px] border-[#6F4D34]"
+      : "bg-[#6F4D34] text-white"
+  }`}
+>
+  {follow ? "Following" : "Follow"}
+</button>
 
             {follow && (
               <button className=" bg-[#6F4D34] text-white px-4 py-2 font-bold rounded-md text-lg">
@@ -2385,7 +2398,8 @@ const navigateToProfile=(profile)=>{
 
         {/* post tabs */}
         {onPosts && (
-          <div className="grid grid-cols-3 sm:gap-4 gap-1 w-full">
+          <div className="grid grid-cols-3 sm:gap-4 gap-1 w-full mb-16">
+
             {reversedPosts.map((post, index) => (
               <div
                 key={post._id}
@@ -2541,7 +2555,8 @@ const navigateToProfile=(profile)=>{
         {/* Tagged */}
         {onTag &&
           (collaboratedPosts?.length !== 0 ? (
-            <div className="grid grid-cols-3 sm:gap-4 gap-1 w-full">
+           <div className="grid grid-cols-3 sm:gap-4 gap-1 w-full mb-16">
+
               {collaboratedPosts.map((post, index) => (
                 <div key={post._id} className="relative cursor-pointer">
                   {post.images?.length > 0 && (
@@ -2575,7 +2590,8 @@ const navigateToProfile=(profile)=>{
           >
             <div
               onClick={(e)=>e.stopPropagation()}
-              className="relative bg-white rounded-xl shadow-xl p-5 w-80 animate-fadeIn"
+              className="relative bg-white rounded-xl shadow-xl p-6 w-[420px] md:w-[480px] animate-fadeIn"
+
             >
               {/* ❌ Close (cross) button */}
               <button
@@ -2589,7 +2605,8 @@ const navigateToProfile=(profile)=>{
                 All Followers
               </h3>
 
-              <ul className="space-y-2 max-h-48 overflow-y-auto">
+              <ul className="space-y-3 max-h-72 overflow-y-auto">
+
                 {profile?.followers.map((c) => {
                   return (
                     <li
@@ -2628,7 +2645,8 @@ const navigateToProfile=(profile)=>{
           >
             <div
               onClick={(e)=>e.stopPropagation()}
-              className="relative bg-white rounded-xl shadow-xl p-5 w-80 animate-fadeIn"
+             className="relative bg-white rounded-xl shadow-xl p-6 w-[420px] md:w-[480px] animate-fadeIn"
+
             >
               {/* ❌ Close (cross) button */}
               <button
@@ -2642,7 +2660,8 @@ const navigateToProfile=(profile)=>{
                 All Followings
               </h3>
 
-              <ul className="space-y-2 max-h-48 overflow-y-auto">
+              <ul className="space-y-3 max-h-72 overflow-y-auto">
+
                 {profile?.following.map((c) => {
                   return (
                     <li
@@ -2673,6 +2692,45 @@ const navigateToProfile=(profile)=>{
           </div>
         )}
       </div>
+      {showUnfollowConfirm && (
+  <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+    <div className="bg-white p-5 rounded-lg w-[300px]">
+      <p className="mb-4 text-sm">
+        Do you want to unfollow?
+      </p>
+
+      <div className="flex justify-end gap-3">
+        <button
+          onClick={() => setShowUnfollowConfirm(false)}
+          className="border px-3 py-1 rounded"
+        >
+          Cancel
+        </button>
+
+        {/* <button
+          onClick={() => {
+            handleFollowToggle(viewedUserId, true);
+            setShowUnfollowConfirm(false);
+          }}
+          className="px-2 py-1 rounded-md text-[16px] font-bold bg-[#6F4D34] text-white"
+        >
+          Unfollow
+        </button> */}
+        <button
+  onClick={() => {
+    handleFollowToggle(viewedUserId, true);
+    setShowUnfollowConfirm(false);
+  }}
+  className="px-2 py-1 min-w-[90px] sm:min-w-[100px] text-center rounded-md text-[16px] font-bold bg-[#6F4D34] text-white"
+>
+  Unfollow
+</button>
+
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
@@ -2719,6 +2777,7 @@ const ProfileSkeleton = () => {
           ></div>
         ))}
       </div>
+      
     </div>
   );
 };

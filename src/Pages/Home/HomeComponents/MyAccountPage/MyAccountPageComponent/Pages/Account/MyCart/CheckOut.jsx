@@ -548,6 +548,24 @@ const CheckOut = () => {
   // };
   const placeOrder = async () => {
     try {
+      const requiredFields = [
+      "firstName",
+      "lastName",
+      "email",
+      "phone",
+      "country",
+      "street",
+      "city",
+      "state",
+      "zip",
+    ];
+
+    for (const field of requiredFields) {
+      if (!formData[field] || formData[field].trim() === "") {
+        toast.error(`Please fill the ${field} field`);
+        return;
+      }
+    }
       if (!paymentMethod) {
         toast.error("Please select a payment method before proceeding.");
         return;

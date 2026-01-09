@@ -59,6 +59,16 @@ function BuyerManageTable() {
   useEffect(() => {
     fetchBuyers();
   }, []);
+useEffect(() => {
+  if (isModalOpen) {
+    document.body.style.overflow = "hidden"; // stop background scroll
+  } else {
+    document.body.style.overflow = "auto"; // restore scroll
+  }
+  return () => {
+    document.body.style.overflow = "auto"; // cleanup on unmount
+  };
+}, [isModalOpen]);
 
   const handleDeleteCancel = () => {
     setIsDeleteDialogOpen(false);

@@ -48,11 +48,13 @@ const[loading,setLoading]=useState(false);
         fetchProducts();
     }, []);
 
-    const filteredProducts = products.filter((product) => {
-        const user = product.userId || {};
-        const fullName = `${user.name || ''} ${user.lastName || ''}`.trim().toLowerCase();
-        return fullName.includes(searchTerm.toLowerCase().trim());
-    });
+  const filteredProducts = products.filter((product) => {
+    const user = product.userId || {};
+    const fullName = `${user.name || ''} ${user.lastName || ''}`.trim().toLowerCase();
+    const isApproved = product.status === "Approved";  // Only approved
+    return isApproved && fullName.includes(searchTerm.toLowerCase().trim());
+});
+
 
     const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
     const displayedProducts = filteredProducts.slice(

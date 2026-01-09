@@ -281,23 +281,26 @@ const mainCategoryName = product?.mainCategory || "N/A";
                                     </div>
                                 )}
 
-                                {/* BUYER DETAILS TAB */}
-                                {activeTab === "buyer" && (
-                                    <div>
-                                        {buyers.length === 0 ? (
-                                            <p className="text-muted">No buyers yet.</p>
-                                        ) : (
-                                            buyers.map((b, idx) => (
-                                                <div key={idx} className="border rounded p-2 mb-2">
-                                                    <p><strong>Name:</strong> {b.buyerName}</p>
-                                                    <p><strong>Email:</strong> {b.buyerEmail}</p>
-                                                    <p><strong>Quantity Purchased:</strong> {b.quantityPurchased}</p>
-                                                    <p><strong>Purchase Date:</strong> {new Date(b.purchaseDate).toLocaleDateString()}</p>
-                                                </div>
-                                            ))
-                                        )}
-                                    </div>
-                                )}
+                               {/* BUYER DETAILS TAB */}
+{activeTab === "buyer" && (
+    <div>
+        {buyers.filter(b => b.buyerName && b.buyerEmail).length === 0 ? (
+            <p className="text-muted">No buyers yet.</p>
+        ) : (
+            buyers
+                .filter(b => b.buyerName && b.buyerEmail) // filter only valid buyers
+                .map((b, idx) => (
+                    <div key={idx} className="border rounded p-2 mb-2">
+                        <p><strong>Name:</strong> {b.buyerName}</p>
+                        <p><strong>Email:</strong> {b.buyerEmail}</p>
+                        <p><strong>Quantity Purchased:</strong> {b.quantityPurchased}</p>
+                        <p><strong>Purchase Date:</strong> {new Date(b.purchaseDate).toLocaleDateString()}</p>
+                    </div>
+                ))
+        )}
+    </div>
+)}
+
 
                                 {/* PRICING TAB */}
                                 {/* {activeTab === "pricing" && (

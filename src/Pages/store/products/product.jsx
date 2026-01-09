@@ -2002,7 +2002,7 @@
 // export default Product;
 
 //------IMPROVED RATING UI AND ADDED ARTIST/SELLER NAME FETCHING ALONG WITH PAGINATION , also added badge fetch api(uncommented one)----------------------------//
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useRef } from "react";
 import { Heart } from "lucide-react";
 import { FaStar, FaShoppingCart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -2014,6 +2014,7 @@ import deleteAPI from "../../../api/deleteAPI";
 import { toast } from "react-toastify";
 import ProductsSkeliton from "../../../Component/Skeleton/products/ProductsSkeliton";
 const Product = () => {
+  const [searchText, setSearchText] = useState("");
   const [products, setProducts] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
@@ -2022,6 +2023,8 @@ const Product = () => {
   const userType = localStorage.getItem("userType");
 
   const [currentPage, setCurrentPage] = useState(1);
+  const productListRef = useRef(null);
+
   const itemsPerPage = 12;
   const [likedProducts, setLikedProducts] = useState({});
   const navigate = useNavigate();
@@ -2032,6 +2035,10 @@ const Product = () => {
     indexOfFirstProduct,
     indexOfLastProduct
   );
+  const filteredProducts = currentProducts.filter((product) =>
+  product.productName.toLowerCase().includes(searchText.toLowerCase())
+);
+
 
   const totalPages = Math.ceil(products.length / itemsPerPage);
 
@@ -2285,11 +2292,13 @@ const Product = () => {
           </nav>
 
           <div className="relative w-full sm:w-64">
-            <input
-              type="text"
-              placeholder="Search"
-              className="w-full pl-10 pr-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400"
-            />
+           <input
+  type="text"
+  placeholder="Search"
+  value={searchText}
+  onChange={(e) => setSearchText(e.target.value)}
+  className="w-full pl-10 pr-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400"
+/>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="w-5 h-5 absolute left-3 top-2.5 text-gray-400"
@@ -2631,9 +2640,10 @@ const Product = () => {
         </div>
 
         {/* Products Grid */}
-        <main className="md:col-span-3">
+       <main ref={productListRef} className="md:col-span-3">
+
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {currentProducts.map((product) => {
+            {filteredProducts.map((product) => {
               const hasDiscount = product.sellingPrice < product.marketPrice;
               const discountPercent = hasDiscount
                 ? Math.round(
@@ -2814,51 +2824,66 @@ const Product = () => {
             })}
           </div>
           {/* Pagination */}
-          <div className="flex justify-center mt-6">
-            <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
-              {/* Previous */}
-              <button
-                onClick={goToPrevPage}
-                disabled={currentPage === 1}
-                className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === 1
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:text-red-500"
-                  }`}
-              >
-                <FiChevronLeft className="self-center flex-shrink-0" />
-                <span className="ml-1">Previous</span>
-              </button>
+        <div className="flex justify-center mt-6">
+  <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
 
-              {/* Page numbers */}
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    onClick={() => goToPage(page)}
-                    className={`px-2 sm:px-3 py-1 rounded ${currentPage === page
-                      ? "border border-dark text-dark"
-                      : "hover:text-red-500"
-                      }`}
-                  >
-                    {page}
-                  </button>
-                )
-              )}
+    {/* Previous */}
+    <button
+      type="button"
+      onClick={(e) => {
+        goToPrevPage();
+        productListRef.current?.scrollIntoView({ behavior: "smooth" });
+        e.currentTarget.blur(); // remove focus to prevent jump
+      }}
+      disabled={currentPage === 1}
+      className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === 1
+        ? "opacity-50 cursor-not-allowed"
+        : "hover:text-red-500"
+        }`}
+    >
+      <FiChevronLeft className="self-center flex-shrink-0" />
+      <span className="ml-1">Previous</span>
+    </button>
 
-              {/* Next */}
-              <button
-                onClick={goToNextPage}
-                disabled={currentPage === totalPages}
-                className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === totalPages
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:text-red-500"
-                  }`}
-              >
-                <span className="mr-1">Next</span>
-                <FiChevronRight className="self-center flex-shrink-0" />
-              </button>
-            </nav>
-          </div>
+    {/* Page numbers */}
+    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+      <button
+        key={page}
+        type="button"
+        onClick={(e) => {
+          goToPage(page);
+          productListRef.current?.scrollIntoView({ behavior: "smooth" });
+          e.currentTarget.blur(); // remove focus
+        }}
+        className={`px-2 sm:px-3 py-1 rounded ${currentPage === page
+          ? "border border-dark text-dark"
+          : "hover:text-red-500"
+          }`}
+      >
+        {page}
+      </button>
+    ))}
+
+    {/* Next */}
+    <button
+      type="button"
+      onClick={(e) => {
+        goToNextPage();
+        productListRef.current?.scrollIntoView({ behavior: "smooth" });
+        e.currentTarget.blur(); // remove focus
+      }}
+      disabled={currentPage === totalPages}
+      className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === totalPages
+        ? "opacity-50 cursor-not-allowed"
+        : "hover:text-red-500"
+        }`}
+    >
+      <span className="mr-1">Next</span>
+      <FiChevronRight className="self-center flex-shrink-0" />
+    </button>
+  </nav>
+</div>
+
         </main>
       </div>
     </div>

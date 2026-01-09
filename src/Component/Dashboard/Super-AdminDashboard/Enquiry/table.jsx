@@ -1,4 +1,578 @@
 
+// // import React, { useEffect, useState } from "react";
+// // import { toast } from "react-toastify";
+// // import { useLocation } from "react-router-dom";
+// // import getAPI from "../../../../api/getAPI";
+// // import axiosInstance from "../../../../api/axiosConfig";
+// // import ConfirmationDialog from "../../ConfirmationDialog";
+// // import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
+
+// // const EnquiryTable = () => {
+// //   const [enquiries, setEnquiries] = useState([]);
+// //   const [searchTerm, setSearchTerm] = useState("");
+// //   const [currentPage, setCurrentPage] = useState(1);
+// //   const [perPage, setPerPage] = useState(10);
+// //   const [deleteType, setDeleteType] = useState("");
+// //   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+// //   const [selectedEnquiry, setSelectedEnquiry] = useState(null);
+// //   const location = useLocation();
+// // const [deleteEnquiry, setDeleteEnquiry] = useState(null);   
+// // const [loading,setLoading]=useState(true);
+
+// //   const fetchEnquiries = async () => {
+
+// //     try {
+// //       const response = await getAPI("/api/enquiry");
+// //       const data = Array.isArray(response.data.data) ? response.data.data : [];
+// //       setEnquiries(data);
+// //     } catch (error) {
+// //       console.error("Error fetching enquiries:", error);
+// //       toast.error(error.response?.data?.message || "Failed to fetch enquiries");
+// //       setEnquiries([]);
+// //     }finally{
+// //       setLoading(false)
+// //     }
+// //   };
+
+// //   useEffect(() => {
+// //     fetchEnquiries();
+// //   }, []);
+
+// //   useEffect(() => {
+// //     if (location.state?.reload) {
+// //       fetchEnquiries();
+// //       window.history.replaceState({}, document.title);
+// //     }
+// //   }, [location.state?.reload]);
+
+// //   // const handleDeleteConfirmed = async (id) => {
+// //   //   try {
+// //   //     await axiosInstance.delete(`/api/Enquiry/delete/${id}`);
+// //   //     setEnquiries((prev) => prev.filter((e) => e._id !== id));
+// //   //     toast.success("Enquiry deleted successfully!");
+// //   //   } catch (error) {
+// //   //     toast.error(error.response?.data?.message || "Failed to delete enquiry.");
+// //   //   } finally {
+// //   //     setIsDeleteDialogOpen(false);
+// //   //     setSelectedEnquiry(null);
+// //   //     setIsDeleteDialogOpen(false);
+// //   //   setDeleteEnquiry(null);
+// //   //   }
+// //   // };
+// // const handleDeleteConfirmed = async (id) => {
+// //   try {
+// //     await axiosInstance.delete(`/api/Enquiry/delete/${id}`);
+// //     await fetchEnquiries();
+
+// //     toast.success("Enquiry deleted successfully!");
+// //   } catch (error) {
+// //     toast.error(error.response?.data?.message || "Failed to delete enquiry.");
+// //   } finally {
+// //     setIsDeleteDialogOpen(false);
+// //     setDeleteEnquiry(null);
+// //   }
+// // };
+
+// //   const openDeleteDialog = (enquiry) => {
+// //     setDeleteEnquiry(enquiry); 
+// //     setIsDeleteDialogOpen(true);
+// //     setDeleteType("enquiry");
+// //   };
+
+// //   const handleDeleteCancel = () => {
+// //     setIsDeleteDialogOpen(false);
+// //     setDeleteEnquiry(null);
+// //   };
+
+// //   const filtered = enquiries.filter((e) =>
+// //     e.name?.toLowerCase().includes(searchTerm.toLowerCase())
+// //   );
+
+// //   const totalPages = Math.ceil(filtered.length / perPage);
+// //   const displayed = filtered.slice((currentPage - 1) * perPage, currentPage * perPage);
+
+// //   const formatDate = (dateStr) => {
+// //     if (!dateStr) return "-";
+// //     const date = new Date(dateStr);
+// //     return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+// //   };
+
+// //   if(loading)return <ProductRequestSkeleton/>
+// //   return (
+// //     <div className="container-fluid">
+
+// //       <div className={selectedEnquiry ? "blur-background" : ""}>
+// //         <div className="block-header">
+// //           <h2>Enquiries</h2>
+// //         </div>
+
+// //         <div className="row clearfix">
+// //           <div className="col-lg-12">
+// //             <div className="card">
+// //               <div className="header d-flex justify-content-between align-items-center">
+// //                 <div className="d-flex align-items-center mb-2 mb-md-0">
+// //                   <label className="mb-0 mr-2">Show</label>
+// //                   <select
+// //                     className="form-control form-control-sm"
+// //                     value={perPage}
+// //                     onChange={(e) => {
+// //                       setPerPage(Number(e.target.value));
+// //                       setCurrentPage(1);
+// //                     }}
+// //                     style={{ minWidth: "70px" }}
+// //                   >
+// //                     <option value="10">10</option>
+// //                     <option value="25">25</option>
+// //                     <option value="50">50</option>
+// //                     <option value="100">100</option>
+// //                   </select>
+// //                   <label className="mb-0 ml-2">entries</label>
+// //                 </div>
+// //                 <div className="w-100 w-md-auto d-flex justify-content-end">
+// //                   <input
+// //                     type="text"
+// //                     className="form-control form-control-sm"
+// //                     placeholder="Search by name"
+// //                     value={searchTerm}
+// //                     onChange={(e) => setSearchTerm(e.target.value)}
+// //                     style={{ maxWidth: "200px" }}
+// //                   />
+// //                 </div>
+// //               </div>
+
+// //               <div className="body">
+// //                 <div className="table-responsive">
+// //                   <table className="table table-hover">
+// //                     <thead className="thead-dark">
+// //                       <tr>
+// //                         <th className="text-center">#</th>
+// //                         <th className="text-center">Name</th>
+// //                         <th className="text-center">Email</th>
+// //                         <th className="text-center">Contact Number</th>
+// //                         <th className="text-center">Action</th>
+// //                       </tr>
+// //                     </thead>
+// //                     <tbody>
+// //                       {displayed.map((enquiry, index) => (
+// //                         <tr key={enquiry._id}>
+// //                           <td className="text-center">{(currentPage - 1) * perPage + index + 1}</td>
+// //                           <td className="text-center">{enquiry.name || "-"}</td>
+// //                           <td className="text-center">{enquiry.email || "-"}</td>
+// //                           <td className="text-center">{enquiry.contactNumber || "-"}</td>
+// //                           <td className="text-center">
+// //                             <button
+// //                               className="btn btn-outline-info btn-sm mr-1"
+// //                               title="View"
+// //                               onClick={() => setSelectedEnquiry(enquiry)}
+// //                             >
+// //                               <i className="fa fa-eye"></i>
+// //                             </button>
+// //                             <button
+// //                               className="btn btn-outline-danger btn-sm"
+// //                               title="Delete"
+// //                               onClick={() => openDeleteDialog(enquiry)}
+// //                             >
+// //                               <i className="fa fa-trash-o"></i>
+// //                             </button>
+// //                           </td>
+// //                         </tr>
+// //                       ))}
+// //                       {displayed.length === 0 && (
+// //                         <tr>
+// //                           <td colSpan="5" className="text-center">
+// //                             No enquiries found.
+// //                           </td>
+// //                         </tr>
+// //                       )}
+// //                     </tbody>
+// //                   </table>
+// //                 </div>
+
+          
+// //                 <div className="pagination d-flex justify-content-between mt-4">
+// //                   <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
+// //                     Showing{" "}
+// //                     {filtered.length === 0 ? 0 : (currentPage - 1) * perPage + 1}{" "}
+// //                     to {Math.min(currentPage * perPage, filtered.length)} of {filtered.length} entries
+// //                   </span>
+// //                   <ul className="pagination d-flex justify-content-end w-100">
+// //                     <li
+// //                       className={`paginate_button page-item ${currentPage === 1 ? "disabled" : ""}`}
+// //                       onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
+// //                     >
+// //                       <button className="page-link">Previous</button>
+// //                     </li>
+// //                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
+// //                       <li
+// //                         key={pageNumber}
+// //                         className={`paginate_button page-item ${currentPage === pageNumber ? "active" : ""}`}
+// //                         onClick={() => setCurrentPage(pageNumber)}
+// //                       >
+// //                         <button className="page-link">{pageNumber}</button>
+// //                       </li>
+// //                     ))}
+// //                     <li
+// //                       className={`paginate_button page-item ${currentPage === totalPages ? "disabled" : ""}`}
+// //                       onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}
+// //                     >
+// //                       <button className="page-link">Next</button>
+// //                     </li>
+// //                   </ul>
+// //                 </div>
+// //               </div>
+// //             </div>
+// //           </div>
+// //         </div>
+// //       </div>
+
+// //       {selectedEnquiry && (
+// //         <div className="modal show d-block" tabIndex="-1" role="dialog"  style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}>
+// //           <div className="modal-dialog modal-dialog-centered" role="document">
+// //             <div className="modal-content">
+// //               <div className="modal-header">
+// //                 <h5 className="modal-title">Enquiry Details</h5>
+// //                 <button
+// //                   type="button"
+// //                   className="close"
+// //                   onClick={() => setSelectedEnquiry(null)}
+// //                 >
+// //                   <span>&times;</span>
+// //                 </button>
+// //               </div>
+// //               <div className="modal-body">
+// //                 <p><strong>Name:</strong> {selectedEnquiry.name}</p>
+// //                 <p><strong>Email:</strong> {selectedEnquiry.email}</p>
+// //                 <p><strong>Contact Number:</strong> {selectedEnquiry.contactNumber}</p>
+// //                 <p><strong>Category:</strong> {selectedEnquiry.categoryName || "-"}</p>
+// //                 <p><strong>Message:</strong> {selectedEnquiry.message}</p>
+// //                 <p><strong>Received At:</strong> {new Date(selectedEnquiry.createdAt).toLocaleString()}</p>
+// //               </div>
+// //               <div className="modal-footer">
+// //                 <button
+// //                   type="button"
+// //                   className="btn btn-secondary"
+// //                   onClick={() => setSelectedEnquiry(null)}
+// //                 >
+// //                   Close
+// //                 </button>
+// //               </div>
+// //             </div>
+// //           </div>
+// //         </div>
+// //       )}
+
+// //       {isDeleteDialogOpen && (
+// //         <ConfirmationDialog
+// //   onClose={handleDeleteCancel}
+// //   deleteType={deleteType}
+// //   id={deleteEnquiry?._id}
+// //   onConfirm={() => handleDeleteConfirmed(deleteEnquiry._id)}                                                                  
+// // /> 
+
+// //       )}
+// //     </div>
+// //   );
+// // };
+
+// // export default EnquiryTable;
+// import React, { useEffect, useState } from "react";
+// import { toast } from "react-toastify";
+// import { useLocation } from "react-router-dom";
+// import getAPI from "../../../../api/getAPI";
+// import axiosInstance from "../../../../api/axiosConfig";
+// import ConfirmationDialog from "../../ConfirmationDialog";
+// import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
+
+// const EnquiryTable = () => {
+//   const [enquiries, setEnquiries] = useState([]);
+//   const [searchTerm, setSearchTerm] = useState("");
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const [perPage, setPerPage] = useState(10);
+//   const [deleteType, setDeleteType] = useState("");
+//   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+//   const [selectedEnquiry, setSelectedEnquiry] = useState(null);
+//   const [deleteEnquiry, setDeleteEnquiry] = useState(null);   
+//   const [loading, setLoading] = useState(true);
+//   const location = useLocation();
+
+//   const fetchEnquiries = async () => {
+//     try {
+//       const response = await getAPI("/api/enquiry");
+//       const data = Array.isArray(response.data.data) ? response.data.data : [];
+//       setEnquiries(data);
+//     } catch (error) {
+//       console.error("Error fetching enquiries:", error);
+//       toast.error(error.response?.data?.message || "Failed to fetch enquiries");
+//       setEnquiries([]);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchEnquiries();
+//   }, []);
+
+//   useEffect(() => {
+//     if (location.state?.reload) {
+//       fetchEnquiries();
+//       window.history.replaceState({}, document.title);
+//     }
+//   }, [location.state?.reload]);
+
+//   // const handleDeleteConfirmed = async (id) => {
+//   //   try {
+//   //     await axiosInstance.delete(`/api/Enquiry/delete/${id}`);
+//   //     await fetchEnquiries();
+//   //     toast.success("Enquiry deleted successfully!");
+
+//   //     // Reset current page if it exceeds total pages
+//   //     const totalPagesAfterDelete = Math.ceil(
+//   //       (enquiries.length - 1) / perPage
+//   //     );
+//   //     if (currentPage > totalPagesAfterDelete) {
+//   //       setCurrentPage(totalPagesAfterDelete || 1);
+//   //     }
+//   //   } catch (error) {
+//   //     toast.error(error.response?.data?.message || "Failed to delete enquiry.");
+//   //   } finally {
+//   //     setIsDeleteDialogOpen(false);
+//   //     setDeleteEnquiry(null);
+//   //   }
+//   // };
+
+// const handleDeleteConfirmed = async (id) => {
+//   try {
+//     await axiosInstance.delete(`/api/Enquiry/delete/${id}`);
+
+//     setEnquiries(prevEnquiries => {
+//       // Remove the deleted enquiry
+//       const updatedEnquiries = prevEnquiries.filter(e => e._id !== id);
+
+//       // Adjust current page if needed
+//       const totalPagesAfterDelete = Math.ceil(updatedEnquiries.length / perPage);
+//       if (currentPage > totalPagesAfterDelete) {
+//         setCurrentPage(totalPagesAfterDelete || 1);
+//       }
+
+//       return updatedEnquiries;
+//     });
+
+//     toast.success("Enquiry deleted successfully!");
+//   } catch (error) {
+//     toast.error(error.response?.data?.message || "Failed to delete enquiry.");
+//   } finally {
+//     setIsDeleteDialogOpen(false);
+//     setDeleteEnquiry(null);
+//   }
+// };
+
+
+//   const openDeleteDialog = (enquiry) => {
+//     setDeleteEnquiry(enquiry); 
+//     setIsDeleteDialogOpen(true);
+//     setDeleteType("enquiry");
+//   };
+
+//   const handleDeleteCancel = () => {
+//     setIsDeleteDialogOpen(false);
+//     setDeleteEnquiry(null);
+//   };
+
+//   // Filtered enquiries based on search
+//   const filtered = enquiries.filter((e) =>
+//     e.name?.toLowerCase().includes(searchTerm.toLowerCase())
+//   );
+
+//   // Pagination calculations
+//   const totalPages = Math.ceil(filtered.length / perPage);
+//   const displayed = filtered.slice(
+//     (currentPage - 1) * perPage,
+//     currentPage * perPage
+//   );
+
+//   if (loading) return <ProductRequestSkeleton />;
+
+//   return (
+//     <div className="container-fluid">
+//       <div className={selectedEnquiry ? "blur-background" : ""}>
+//         <div className="block-header">
+//           <h2>Enquiries</h2>
+//         </div>
+
+//         <div className="row clearfix">
+//           <div className="col-lg-12">
+//             <div className="card">
+//               <div className="header d-flex justify-content-between align-items-center">
+//                 <div className="d-flex align-items-center mb-2 mb-md-0">
+//                   <label className="mb-0 mr-2">Show</label>
+//                   <select
+//                     className="form-control form-control-sm"
+//                     value={perPage}
+//                     onChange={(e) => {
+//                       setPerPage(Number(e.target.value));
+//                       setCurrentPage(1); // Reset page on perPage change
+//                     }}
+//                     style={{ minWidth: "70px" }}
+//                   >
+//                     <option value="10">10</option>
+//                     <option value="25">25</option>
+//                     <option value="50">50</option>
+//                     <option value="100">100</option>
+//                   </select>
+//                   <label className="mb-0 ml-2">entries</label>
+//                 </div>
+
+//                 <div className="w-100 w-md-auto d-flex justify-content-end">
+//                   <input
+//                     type="text"
+//                     className="form-control form-control-sm"
+//                     placeholder="Search by name"
+//                     value={searchTerm}
+//                     onChange={(e) => {
+//                       setSearchTerm(e.target.value);
+//                       setCurrentPage(1); // Reset page on search
+//                     }}
+//                     style={{ maxWidth: "200px" }}
+//                   />
+//                 </div>
+//               </div>
+
+//               <div className="body">
+//                 <div className="table-responsive">
+//                   <table className="table table-hover">
+//                     <thead className="thead-dark">
+//                       <tr>
+//                         <th className="text-center">#</th>
+//                         <th className="text-center">Name</th>
+//                         <th className="text-center">Email</th>
+//                         <th className="text-center">Contact Number</th>
+//                         <th className="text-center">Action</th>
+//                       </tr>
+//                     </thead>
+//                     <tbody>
+//                       {displayed.map((enquiry, index) => (
+//                         <tr key={enquiry._id}>
+//                           <td className="text-center">
+//                             {(currentPage - 1) * perPage + index + 1}
+//                           </td>
+//                           <td className="text-center">{enquiry.name || "-"}</td>
+//                           <td className="text-center">{enquiry.email || "-"}</td>
+//                           <td className="text-center">{enquiry.contactNumber || "-"}</td>
+//                           <td className="text-center">
+//                             <button
+//                               className="btn btn-outline-info btn-sm mr-1"
+//                               title="View"
+//                               onClick={() => setSelectedEnquiry(enquiry)}
+//                             >
+//                               <i className="fa fa-eye"></i>
+//                             </button>
+//                             <button
+//                               className="btn btn-outline-danger btn-sm"
+//                               title="Delete"
+//                               onClick={() => openDeleteDialog(enquiry)}
+//                             >
+//                               <i className="fa fa-trash-o"></i>
+//                             </button>
+//                           </td>
+//                         </tr>
+//                       ))}
+
+//                       {displayed.length === 0 && (
+//                         <tr>
+//                           <td colSpan="5" className="text-center">
+//                             No enquiries found.
+//                           </td>
+//                         </tr>
+//                       )}
+//                     </tbody>
+//                   </table>
+//                 </div>
+
+//                 {/* Pagination */}
+//                 <div className="pagination d-flex justify-content-between mt-4">
+//                   <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
+//                     Showing{" "}
+//                     {filtered.length === 0 ? 0 : (currentPage - 1) * perPage + 1}{" "}
+//                     to {Math.min(currentPage * perPage, filtered.length)} of{" "}
+//                     {filtered.length} entries
+//                   </span>
+
+//                   <ul className="pagination d-flex justify-content-end w-100">
+//                     <li
+//                       className={`paginate_button page-item ${currentPage === 1 ? "disabled" : ""}`}
+//                       onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
+//                     >
+//                       <button className="page-link">Previous</button>
+//                     </li>
+
+//                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
+//                       <li
+//                         key={pageNumber}
+//                         className={`paginate_button page-item ${currentPage === pageNumber ? "active" : ""}`}
+//                         onClick={() => setCurrentPage(pageNumber)}
+//                       >
+//                         <button className="page-link">{pageNumber}</button>
+//                       </li>
+//                     ))}
+
+//                     <li
+//                       className={`paginate_button page-item ${currentPage === totalPages ? "disabled" : ""}`}
+//                       onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}
+//                     >
+//                       <button className="page-link">Next</button>
+//                     </li>
+//                   </ul>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Enquiry Details Modal */}
+//       {selectedEnquiry && (
+//         <div className="modal show d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}>
+//           <div className="modal-dialog modal-dialog-centered" role="document">
+//             <div className="modal-content">
+//               <div className="modal-header">
+//                 <h5 className="modal-title">Enquiry Details</h5>
+//                 <button type="button" className="close" onClick={() => setSelectedEnquiry(null)}>
+//                   <span>&times;</span>
+//                 </button>
+//               </div>
+//               <div className="modal-body">
+//                 <p><strong>Name:</strong> {selectedEnquiry.name}</p>
+//                 <p><strong>Email:</strong> {selectedEnquiry.email}</p>
+//                 <p><strong>Contact Number:</strong> {selectedEnquiry.contactNumber}</p>
+//                 <p><strong>Category:</strong> {selectedEnquiry.categoryName || "-"}</p>
+//                 <p><strong>Message:</strong> {selectedEnquiry.message}</p>
+//                 <p><strong>Received At:</strong> {new Date(selectedEnquiry.createdAt).toLocaleString()}</p>
+//               </div>
+//               <div className="modal-footer">
+//                 <button type="button" className="btn btn-secondary" onClick={() => setSelectedEnquiry(null)}>
+//                   Close
+//                 </button>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+
+//       {/* Delete Confirmation Dialog */}
+//       {isDeleteDialogOpen && (
+//         <ConfirmationDialog
+//           onClose={handleDeleteCancel}
+//           deleteType={deleteType}
+//           id={deleteEnquiry?._id}
+//           onConfirm={() => handleDeleteConfirmed(deleteEnquiry._id)}
+//         />
+//       )}
+//     </div>
+//   );
+// };
+
+// export default EnquiryTable;
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
@@ -12,15 +586,14 @@ const EnquiryTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
-  const [deleteType, setDeleteType] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deleteEnquiry, setDeleteEnquiry] = useState(null);
   const [selectedEnquiry, setSelectedEnquiry] = useState(null);
+  const [loading, setLoading] = useState(true);
   const location = useLocation();
-const [deleteEnquiry, setDeleteEnquiry] = useState(null);   
-const [loading,setLoading]=useState(true);
 
+  // Fetch enquiries from API
   const fetchEnquiries = async () => {
-
     try {
       const response = await getAPI("/api/enquiry");
       const data = Array.isArray(response.data.data) ? response.data.data : [];
@@ -29,8 +602,8 @@ const [loading,setLoading]=useState(true);
       console.error("Error fetching enquiries:", error);
       toast.error(error.response?.data?.message || "Failed to fetch enquiries");
       setEnquiries([]);
-    }finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,25 +618,21 @@ const [loading,setLoading]=useState(true);
     }
   }, [location.state?.reload]);
 
-  const handleDeleteConfirmed = async (id) => {
-    try {
-      await axiosInstance.delete(`/api/Enquiry/delete/${id}`);
-      setEnquiries((prev) => prev.filter((e) => e._id !== id));
-      toast.success("Enquiry deleted successfully!");
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to delete enquiry.");
-    } finally {
-      setIsDeleteDialogOpen(false);
-      setSelectedEnquiry(null);
-      setIsDeleteDialogOpen(false);
-    setDeleteEnquiry(null);
-    }
-  };
+  // Delete enquiry immediately from state without re-fetching
+const handleDeleteConfirmed = (id) => {
+  setEnquiries(prev =>
+    prev.filter(enquiry => enquiry._id !== id)
+  );
+
+  setIsDeleteDialogOpen(false);
+  setDeleteEnquiry(null);
+};
+
+
 
   const openDeleteDialog = (enquiry) => {
-    setDeleteEnquiry(enquiry); 
+    setDeleteEnquiry(enquiry);
     setIsDeleteDialogOpen(true);
-    setDeleteType("enquiry");
   };
 
   const handleDeleteCancel = () => {
@@ -71,23 +640,20 @@ const [loading,setLoading]=useState(true);
     setDeleteEnquiry(null);
   };
 
-  const filtered = enquiries.filter((e) =>
+  // Filtered enquiries based on search term
+  const filteredEnquiries = enquiries.filter(e =>
     e.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filtered.length / perPage);
-  const displayed = filtered.slice((currentPage - 1) * perPage, currentPage * perPage);
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredEnquiries.length / perPage);
+  const startIndex = (currentPage - 1) * perPage;
+  const displayed = filteredEnquiries.slice(startIndex, startIndex + perPage);
 
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "-";
-    const date = new Date(dateStr);
-    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-  };
+  if (loading) return <ProductRequestSkeleton />;
 
-  if(loading)return <ProductRequestSkeleton/>
   return (
     <div className="container-fluid">
-
       <div className={selectedEnquiry ? "blur-background" : ""}>
         <div className="block-header">
           <h2>Enquiries</h2>
@@ -108,20 +674,24 @@ const [loading,setLoading]=useState(true);
                     }}
                     style={{ minWidth: "70px" }}
                   >
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
                   </select>
                   <label className="mb-0 ml-2">entries</label>
                 </div>
+
                 <div className="w-100 w-md-auto d-flex justify-content-end">
                   <input
                     type="text"
                     className="form-control form-control-sm"
                     placeholder="Search by name"
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      setCurrentPage(1);
+                    }}
                     style={{ maxWidth: "200px" }}
                   />
                 </div>
@@ -132,76 +702,62 @@ const [loading,setLoading]=useState(true);
                   <table className="table table-hover">
                     <thead className="thead-dark">
                       <tr>
-                        <th className="text-center">#</th>
-                        <th className="text-center">Name</th>
-                        <th className="text-center">Email</th>
-                        <th className="text-center">Contact Number</th>
-                        <th className="text-center">Action</th>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Contact Number</th>
+                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {displayed.map((enquiry, index) => (
-                        <tr key={enquiry._id}>
-                          <td className="text-center">{(currentPage - 1) * perPage + index + 1}</td>
-                          <td className="text-center">{enquiry.name || "-"}</td>
-                          <td className="text-center">{enquiry.email || "-"}</td>
-                          <td className="text-center">{enquiry.contactNumber || "-"}</td>
-                          <td className="text-center">
-                            <button
-                              className="btn btn-outline-info btn-sm mr-1"
-                              title="View"
-                              onClick={() => setSelectedEnquiry(enquiry)}
-                            >
-                              <i className="fa fa-eye"></i>
-                            </button>
-                            <button
-                              className="btn btn-outline-danger btn-sm"
-                              title="Delete"
-                              onClick={() => openDeleteDialog(enquiry)}
-                            >
-                              <i className="fa fa-trash-o"></i>
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                      {displayed.length === 0 && (
+                      {displayed.length === 0 ? (
                         <tr>
-                          <td colSpan="5" className="text-center">
-                            No enquiries found.
-                          </td>
+                          <td colSpan={5} className="text-center">No enquiries found.</td>
                         </tr>
+                      ) : (
+                        displayed.map((enquiry, index) => (
+                          <tr key={enquiry._id}>
+                            <td>{startIndex + index + 1}</td>
+                            <td>{enquiry.name || "-"}</td>
+                            <td>{enquiry.email || "-"}</td>
+                            <td>{enquiry.contactNumber || "-"}</td>
+                            <td>
+                              <button
+                                className="btn btn-outline-info btn-sm mr-1"
+                                onClick={() => setSelectedEnquiry(enquiry)}
+                              >
+                                <i className="fa fa-eye"></i>
+                              </button>
+                              <button
+                                className="btn btn-outline-danger btn-sm"
+                                onClick={() => openDeleteDialog(enquiry)}
+                              >
+                                <i className="fa fa-trash-o"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        ))
                       )}
                     </tbody>
                   </table>
                 </div>
 
-          
+                {/* Pagination */}
                 <div className="pagination d-flex justify-content-between mt-4">
                   <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                    Showing{" "}
-                    {filtered.length === 0 ? 0 : (currentPage - 1) * perPage + 1}{" "}
-                    to {Math.min(currentPage * perPage, filtered.length)} of {filtered.length} entries
+                    Showing {filteredEnquiries.length === 0 ? 0 : startIndex + 1} to {Math.min(currentPage * perPage, filteredEnquiries.length)} of {filteredEnquiries.length} entries
                   </span>
+
                   <ul className="pagination d-flex justify-content-end w-100">
-                    <li
-                      className={`paginate_button page-item ${currentPage === 1 ? "disabled" : ""}`}
-                      onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
-                    >
+                    <li className={`paginate_button page-item ${currentPage === 1 ? "disabled" : ""}`} onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}>
                       <button className="page-link">Previous</button>
                     </li>
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
-                      <li
-                        key={pageNumber}
-                        className={`paginate_button page-item ${currentPage === pageNumber ? "active" : ""}`}
-                        onClick={() => setCurrentPage(pageNumber)}
-                      >
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNumber => (
+                      <li key={pageNumber} className={`paginate_button page-item ${currentPage === pageNumber ? "active" : ""}`} onClick={() => setCurrentPage(pageNumber)}>
                         <button className="page-link">{pageNumber}</button>
                       </li>
                     ))}
-                    <li
-                      className={`paginate_button page-item ${currentPage === totalPages ? "disabled" : ""}`}
-                      onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}
-                    >
+                    <li className={`paginate_button page-item ${currentPage === totalPages ? "disabled" : ""}`} onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}>
                       <button className="page-link">Next</button>
                     </li>
                   </ul>
@@ -212,19 +768,14 @@ const [loading,setLoading]=useState(true);
         </div>
       </div>
 
+      {/* Enquiry Details Modal */}
       {selectedEnquiry && (
-        <div className="modal show d-block" tabIndex="-1" role="dialog"  style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}>
-          <div className="modal-dialog modal-dialog-centered" role="document">
+        <div className="modal show d-block" style={{ backgroundColor: "rgba(0,0,0,0.7)" }}>
+          <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Enquiry Details</h5>
-                <button
-                  type="button"
-                  className="close"
-                  onClick={() => setSelectedEnquiry(null)}
-                >
-                  <span>&times;</span>
-                </button>
+                <button className="close" onClick={() => setSelectedEnquiry(null)}>&times;</button>
               </div>
               <div className="modal-body">
                 <p><strong>Name:</strong> {selectedEnquiry.name}</p>
@@ -235,27 +786,21 @@ const [loading,setLoading]=useState(true);
                 <p><strong>Received At:</strong> {new Date(selectedEnquiry.createdAt).toLocaleString()}</p>
               </div>
               <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setSelectedEnquiry(null)}
-                >
-                  Close
-                </button>
+                <button className="btn btn-secondary" onClick={() => setSelectedEnquiry(null)}>Close</button>
               </div>
             </div>
           </div>
         </div>
       )}
 
+      {/* Delete Confirmation Dialog */}
       {isDeleteDialogOpen && (
-        <ConfirmationDialog
+      <ConfirmationDialog
   onClose={handleDeleteCancel}
-  deleteType={deleteType}
+  deleteType="enquiry"
   id={deleteEnquiry?._id}
-  onConfirm={() => handleDeleteConfirmed(deleteEnquiry._id)}                                                                  
-/> 
-// gayatri
+  onDeleted={handleDeleteConfirmed}
+/>
 
       )}
     </div>

@@ -1029,7 +1029,7 @@ const Post = () => {
                       : "bg-gray-400 cursor-not-allowed"
                   }`}
                 >
-                  Submit
+                  Submit 
                 </button>
               </div>
             </form>

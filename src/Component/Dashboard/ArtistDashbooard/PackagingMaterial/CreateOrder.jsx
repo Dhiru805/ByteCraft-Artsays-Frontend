@@ -56,7 +56,7 @@ const CreateOrder = () => {
   const [selectedVouchers, setSelectedVouchers] = useState([]);
   const [selectedCard, setSelectedCard] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState("");
-  const [address, setAddress] = useState("");
+
   const [quantities, setQuantities] = useState({});
   const [prices, setPrices] = useState({});
   const [currentType, setCurrentType] = useState("");
@@ -229,19 +229,25 @@ const CreateOrder = () => {
     fetchMaterialCard();
   }, []);
 
-const formatAddressLabel = (addr) => {
-  return [
-    addr.addressLine1,
-    addr.addressLine2,
-    addr.landmark,
-    addr.city,
-    addr.state,
-    addr.pincode,
-    addr.country,
-  ]
-    .filter(Boolean)
-    .join(", ");
-};
+  const formatAddressLabel = (addr) => {
+    if (!addr) return "Invalid address";
+
+    const values = [
+      addr.addressLine1,
+      addr.addressLine2,
+      addr.landmark,
+      addr.city,
+      addr.state,
+      addr.country,
+      addr.pincode,
+    ]
+      .map((v) => (typeof v === "string" ? v.trim() : ""))
+      .filter((v) => v.length > 0);
+
+    return values.length > 0
+      ? values.join(", ")
+      : "Incomplete address (update required)";
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -257,9 +263,22 @@ const formatAddressLabel = (addr) => {
 
     // Create FormData object for multipart/form-data
     const data = new FormData();
+
     data.append("userId", userId);
     data.append("quantity", formData.quantity);
-    data.append("deliveryAddress", formData.deliveryAddress);
+    const selectedAddressObj = allAddress.find(
+      (addr) => addr._id === formData.deliveryAddress
+    );
+
+    if (!selectedAddressObj) {
+      setError("Please select a delivery address");
+      setLoading(false);
+      return;
+    }
+
+    // Send full address object as string
+    data.append("deliveryAddress", JSON.stringify(selectedAddressObj));
+
     data.append("totalPrice", formData.totalPrice);
 
     if (formData.material) {
@@ -837,13 +856,18 @@ const formatAddressLabel = (addr) => {
                 </div>
                 <div className="form-group">
                   <label>Delivery Address</label>
-                  
+
                   <select
                     className="form-control mt-2"
                     value={formData.deliveryAddress}
                     name="deliveryAddress"
                     required
-                    onChange={(e)=>setFormData((pre)=>({...pre, [e.target.name]: e.target.value}))}
+                    onChange={(e) =>
+                      setFormData((pre) => ({
+                        ...pre,
+                        [e.target.name]: e.target.value,
+                      }))
+                    }
                   >
                     <option value="">Select delivery address</option>
 
