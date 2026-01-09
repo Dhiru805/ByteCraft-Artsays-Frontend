@@ -5,6 +5,7 @@ import { Star, Heart, MapPin, ArrowRight, ShoppingCart, Zap, ChevronLeft, Chevro
 import { HiMiniPercentBadge } from "react-icons/hi2";
 import getAPI from "../../api/getAPI";
 import postAPI from "../../api/postAPI";
+import deleteAPI from "../../api/deleteAPI";
 import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
 import { useAuth } from "../../AuthContext";
@@ -50,10 +51,41 @@ const ProductDetails = () => {
   const [pinCode, setPinCode] = useState("");
   const [address, setAddress] = useState("");
   const [activeTab, setActiveTab] = useState("description");
-  const [offerIndex, setOfferIndex] = useState(0);
-  const [previewImage, setPreviewImage] = useState(null);
+    const [offerIndex, setOfferIndex] = useState(0);
+    const [previewImage, setPreviewImage] = useState(null);
+    const [likedProducts, setLikedProducts] = useState({});
 
-  const navigateToArtistProfile = (artist) => {
+    const handleShare = () => {
+      navigator.clipboard.writeText(window.location.href);
+      toast.success("Link copied to clipboard!");
+    };
+
+    const handleWishlist = async (productId, e) => {
+      if (e) e.stopPropagation();
+      if (!ensureBuyer()) return;
+
+      const isLiked = likedProducts[productId];
+
+      try {
+        if (isLiked) {
+          await deleteAPI("/api/wishlist/remove", { params: { userId, productId } });
+          toast.warn("Removed from Wishlist");
+        } else {
+          await postAPI("/api/wishlist/add", { userId, productId });
+          toast.success("Added to Wishlist");
+        }
+
+        setLikedProducts((prev) => ({
+          ...prev,
+          [productId]: !isLiked,
+        }));
+      } catch (err) {
+        console.error("Wishlist error:", err);
+      }
+    };
+
+    const navigateToArtistProfile = (artist) => {
+
     if (!artist) return;
     const profileSlug = artist.username || `${artist.name}_${artist.lastName}_${artist._id}`;
     navigate(`/artsays-community/profile/${profileSlug}`, { state: { userId: artist._id } });
@@ -159,10 +191,29 @@ const ProductDetails = () => {
         console.error("Failed to load categories:", err);
       }
     };
-    fetchCategories();
-  }, []);
+      fetchCategories();
+    }, []);
 
-  const mainCategoryName = useMemo(() => 
+    useEffect(() => {
+      const fetchWishlist = async () => {
+        if (!userId) return;
+        try {
+          const res = await getAPI(`/api/wishlist/${userId}`, {}, true, false);
+          const wishlistArray = res?.data?.wishlist || [];
+          const obj = {};
+          wishlistArray.forEach((item) => {
+            obj[item._id] = true;
+          });
+          setLikedProducts(obj);
+        } catch (error) {
+          console.log("Error loading wishlist:", error);
+        }
+      };
+      fetchWishlist();
+    }, [userId]);
+
+    const mainCategoryName = useMemo(() => 
+
     categoryData.mainCategories.find((c) => c && String(c._id) === String(product?.mainCategory))?.mainCategoryName || "N/A"
   , [product, categoryData]);
 
@@ -230,17 +281,21 @@ const ProductDetails = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Left Column: Gallery */}
-          <div className="lg:col-span-7 space-y-6">
-            <ProductGallery 
-              images={images} 
-              product={product} 
-              username={product.userId?.username || "Artist"}
-              imageBaseURL={imageBaseURL}
-              navigate={navigate}
-              navigateToArtistProfile={navigateToArtistProfile}
-              resolveMediaUrl={resolveMediaUrl}
-            />
-          </div>
+            <div className="lg:col-span-7 space-y-6">
+              <ProductGallery 
+                images={images} 
+                product={product} 
+                username={product.userId?.username || "Artist"}
+                imageBaseURL={imageBaseURL}
+                navigate={navigate}
+                navigateToArtistProfile={navigateToArtistProfile}
+                resolveMediaUrl={resolveMediaUrl}
+                handleShare={handleShare}
+                handleWishlist={handleWishlist}
+                likedProducts={likedProducts}
+              />
+            </div>
+
 
           {/* Right Column: Info & Purchase */}
           <div className="lg:col-span-5">
@@ -406,10 +461,12 @@ const ProductDetails = () => {
 
 /* --- Sub-Components --- */
 
-const ProductGallery = ({ images, product, username, imageBaseURL, navigate, navigateToArtistProfile, resolveMediaUrl }) => {
+const ProductGallery = ({ images, product, username, imageBaseURL, navigate, navigateToArtistProfile, resolveMediaUrl, handleShare, handleWishlist, likedProducts }) => {
   const [selected, setSelected] = useState(images[0]);
   const [showRoom, setShowRoom] = useState(false);
   const [roomBg, setRoomBg] = useState("/artimages/viewintheroom.jpg");
+  const [zoomStyle, setZoomStyle] = useState({ transformOrigin: 'center', transform: 'scale(1)' });
+  const [isZoomed, setIsZoomed] = useState(false);
   
   const roomBgs = ["/artimages/viewintheroom.jpg", "/artimages/wall3.jpg", "/artimages/wall4.webp"];
 
@@ -419,10 +476,32 @@ const ProductGallery = ({ images, product, username, imageBaseURL, navigate, nav
     }
   }, [images]);
 
+  const handleMouseMove = (e) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setZoomStyle({
+      transformOrigin: `${x}% ${y}%`,
+      transform: 'scale(2.5)',
+    });
+    setIsZoomed(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsZoomed(false);
+  };
+
   return (
     <div className="space-y-4">
       <div className="relative aspect-square md:aspect-[4/3] bg-white rounded-[40px] overflow-hidden border border-gray-100 shadow-sm group">
-        <img src={selected} alt="Product" className="w-full h-full object-contain bg-[#F8F9FA] group-hover:scale-105 transition-transform duration-700" />
+        <img 
+          src={selected} 
+          alt="Product" 
+          className={`w-full h-full object-contain bg-[#F8F9FA] transition-transform duration-200 ease-out cursor-zoom-in ${!isZoomed ? 'group-hover:scale-105' : ''}`} 
+          style={isZoomed ? zoomStyle : {}}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+        />
         
         {product.iframeLink && (
           <button 
@@ -433,14 +512,21 @@ const ProductGallery = ({ images, product, username, imageBaseURL, navigate, nav
           </button>
         )}
 
-        <div className="absolute top-6 right-6 flex flex-col gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button className="w-12 h-12 bg-white rounded-2xl shadow-xl flex items-center justify-center text-gray-600 hover:text-[#6F4D34] transition-all">
-            <Share2 size={20} />
-          </button>
-          <button className="w-12 h-12 bg-white rounded-2xl shadow-xl flex items-center justify-center text-gray-600 hover:text-red-500 transition-all">
-            <Heart size={20} />
-          </button>
-        </div>
+          <div className="absolute top-6 right-6 flex flex-col gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button 
+              onClick={(e) => { e.stopPropagation(); handleShare(); }}
+              className="w-12 h-12 bg-white rounded-2xl shadow-xl flex items-center justify-center text-gray-600 hover:text-[#6F4D34] transition-all"
+            >
+              <Share2 size={20} />
+            </button>
+            <button 
+              onClick={(e) => { e.stopPropagation(); handleWishlist(product._id, e); }}
+              className={`w-12 h-12 bg-white rounded-2xl shadow-xl flex items-center justify-center transition-all ${likedProducts[product._id] ? "text-red-500" : "text-gray-600 hover:text-red-500"}`}
+            >
+              <Heart size={20} fill={likedProducts[product._id] ? "currentColor" : "none"} />
+            </button>
+          </div>
+
 
         <button 
           onClick={() => setShowRoom(true)}
