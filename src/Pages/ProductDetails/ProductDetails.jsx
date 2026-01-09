@@ -51,6 +51,7 @@ const ProductDetails = () => {
   const [address, setAddress] = useState("");
   const [activeTab, setActiveTab] = useState("description");
   const [offerIndex, setOfferIndex] = useState(0);
+  const [previewImage, setPreviewImage] = useState(null);
 
   const navigateToArtistProfile = (artist) => {
     if (!artist) return;
@@ -372,13 +373,36 @@ const ProductDetails = () => {
               </div>
             )}
 
-            {activeTab === "reviews" && <ReviewsList reviews={productReviews} resolveMediaUrl={resolveMediaUrl} />}
+              {activeTab === "reviews" && <ReviewsList reviews={productReviews} resolveMediaUrl={resolveMediaUrl} onImageClick={setPreviewImage} />}
+            </div>
           </div>
         </div>
+
+        {/* Image Preview Modal */}
+        {previewImage && (
+          <div 
+            className="fixed inset-0 z-[2000] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 md:p-10 cursor-zoom-out"
+            onClick={() => setPreviewImage(null)}
+          >
+            <div className="relative max-w-5xl max-h-full flex items-center justify-center">
+              <button 
+                onClick={(e) => { e.stopPropagation(); setPreviewImage(null); }} 
+                className="absolute -top-12 right-0 md:-right-12 w-10 h-10 bg-white/10 text-white rounded-full hover:bg-white/20 transition-all flex items-center justify-center z-50"
+              >
+                ✕
+              </button>
+              <img 
+                src={previewImage} 
+                alt="Preview" 
+                className="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl animate-in zoom-in duration-300"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+          </div>
+        )}
       </div>
-    </div>
-  );
-};
+    );
+  };
 
 /* --- Sub-Components --- */
 
@@ -929,7 +953,7 @@ const DetailsGrid = ({ product, categoryInfo, imageBaseURL, resolveMediaUrl }) =
   );
 };
 
-const ReviewsList = ({ reviews, resolveMediaUrl }) => {
+const ReviewsList = ({ reviews, resolveMediaUrl, onImageClick }) => {
   if (reviews.length === 0) return (
     <div className="text-center py-12 bg-gray-50 rounded-[32px] border border-dashed border-gray-200">
       <MessageCircle size={48} className="mx-auto text-gray-300 mb-4" />
@@ -962,7 +986,13 @@ const ReviewsList = ({ reviews, resolveMediaUrl }) => {
           {review.photos?.length > 0 && (
             <div className="flex gap-2">
               {review.photos.map((photo, k) => (
-                <img key={k} src={resolveMediaUrl(photo)} className="w-16 h-16 rounded-xl object-cover border border-gray-100" alt="Review" />
+                <img 
+                  key={k} 
+                  src={resolveMediaUrl(photo)} 
+                  className="w-16 h-16 rounded-xl object-cover border border-gray-100 cursor-pointer hover:border-[#6F4D34]/50 hover:scale-105 transition-all" 
+                  alt="Review" 
+                  onClick={() => onImageClick?.(resolveMediaUrl(photo))}
+                />
               ))}
             </div>
           )}
