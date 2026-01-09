@@ -1,116 +1,8 @@
-// import { FaPalette, FaDollarSign, FaCertificate, FaStar, FaCamera, FaBoxOpen } from "react-icons/fa";
-
-// const features = [
-//     {
-//       title: "Artist Support",
-//       desc: "Fair commissions, useful tools, and direct connections with collectors.",
-//       color: "bg-green-500",
-//       textColor: "text-green-500",
-//       icon: <FaPalette size={40} />,
-//     },
-//     {
-//       title: "Transparent Transactions",
-//       desc: "Fees, shipping, taxes, and provenance details are displayed up front.",
-//       color: "bg-sky-500",
-//       textColor: "text-sky-500",
-//       icon: <FaDollarSign size={40} />,
-//     },
-//     {
-//       title: "Authentication",
-//       desc: "Artist-signed COAs and third-party certification ensure traceability.",
-//       color: "bg-yellow-500",
-//       textColor: "text-yellow-500",
-//       icon: <FaCertificate size={40} />,
-//     },
-//     {
-//       title: "Selection Curated",
-//       desc: "Specialists curate collections to ensure quality and relevance.",
-//       color: "bg-lime-500",
-//       textColor: "text-lime-500",
-//       icon: <FaStar size={40} />,
-//     },
-//     {
-//       title: "Elevated Buying Experience",
-//       desc: "High-resolution imagery and flexible payment options.",
-//       color: "bg-purple-500",
-//       textColor: "text-purple-500",
-//       icon: <FaCamera size={40} />,
-//     },
-//     {
-//       title: "Trusted Packing & Delivery",
-//       desc: "Integrated shipping ensures safe delivery for high-value items.",
-//       color: "bg-orange-500",
-//       textColor: "text-orange-500",
-//       icon: <FaBoxOpen size={40} />,
-//     },
-//   ];
-
-
-// const WhyArtsaysDifferent = () => {
-//   return (
-//     <div className="bg-[#F8F8F8]">
-//       <div className="max-w-[1440px] mx-auto py-4 px-3">
-//         <div>
-//           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3">
-//             {/* title */}
-//             <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
-//               Why Artsays Is Different
-//             </h1>
-//             <button className="hidden md:block flex-1 bg-red-500 text-white py-2 px-6 rounded-full font-semibold shadow buy-now">
-//               More Details
-//             </button>
-//           </div>
-
-//           <hr className="my-3 border-dark" />
-
-//           {/* Subtitle */}
-//           <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
-//             At ArtSays, we make it simple for you to collaborate directly with
-//             talented artists and bring your creative vision to life.
-//           </p>
-//         </div>
-
-//         {/* Grid */}
-//         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
-//           {features.map((f, i) => (
-//             <div key={i} className="flex flex-col items-center relative">
-//               {/* Pin Icon */}
-//               <div className="relative mb-0 z-[90]">
-//                 <div
-//                   className={`${f.color} relative w-24 h-24 rounded-full flex items-center justify-center text-white text-4xl shadow-lg`}
-//                 >
-//                   <div className="z-[99]">{f.icon}</div>
-//                   {/* Point (triangle) */}
-//                   <div
-//                     className={`${f.color} absolute bottom-[-10px] z-1 left-1/2 transform -translate-x-1/2 rotate-45 w-12 h-12`}
-//                   ></div>
-//                 </div>
-//               </div>
-
-//               {/* Card */}
-//               <div className="bg-white rounded-2xl shadow-lg p-6 w-full h-[200px] pt-10 text-center relative z-10">
-//                 <h3 className="text-xl font-bold text-green-600">{f.title}</h3>
-//                 <p className="text-gray-600 text-sm mt-2">{f.desc}</p>
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-// export default WhyArtsaysDifferent;
-
-
-
-
-
-
-
-
 import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
 import WhyArtsaysDiffSkeleton from "../../../Component/Skeleton/WhyArtsaysDiffSkeleton";
+import { ChevronRight } from "lucide-react";
+
 const WhyArtsaysDifferent = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -142,84 +34,90 @@ const WhyArtsaysDifferent = () => {
   if (!data) return <div>No "Why Artsays Is Different" section available</div>;
 
   return (
-    <div className="bg-[#F8F8F8]">
-      <div className="max-w-[1440px] mx-auto py-4 px-3">
-     
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3">
-          <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
-            {data.heading}
-          </h1>
+    <div className="w-full bg-gray-50 font-[poppins] py-16 px-4 md:px-6">
+      <div className="max-w-[1440px] mx-auto">
+        
+        {/* Header - Matching HomeChallenges Style */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 align-items-center mb-16">
+          <div className="flex flex-col gap-6">
+            <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
+              {data.heading}
+            </h1>
+            <p className="text-gray-500 text-lg max-w-3xl font-medium leading-relaxed">
+              {data.description}
+            </p>
+          </div>
           {data.buttonName && (
             <a
               href={data.buttonLink || "#"}
-              className="hidden md:block flex-1 bg-red-500 text-white py-2 px-6 rounded-full font-semibold shadow buy-now text-center"
+              className="hidden lg:flex items-center gap-2 bg-[#6F4D34] text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-gray-900 transition-all shadow-lg shadow-[#6F4D34]/20 transform active:scale-95 group"
             >
               {data.buttonName}
+              <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </a>
           )}
         </div>
 
-        <hr className="my-3 border-dark" />
-
-        <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
-          {data.description}
-        </p>
-
-        {/* <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+        {/* Creative Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
           {data.cards?.map((card, i) => (
-            <div key={i} className="flex flex-col items-center relative"> */}
-      
-        {/* <div className="relative mb-0 z-[90]">
-                <div
+            <div 
+              key={i} 
+              className="group relative bg-white p-12 rounded-[40px] shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col items-center text-center overflow-hidden"
+            >
+              {/* Background Decorative Element */}
+              <div 
+                className="absolute -right-12 -top-12 w-48 h-48 rounded-full opacity-5 group-hover:opacity-10 transition-all duration-700 blur-2xl"
+                style={{ backgroundColor: card.hexColor }}
+              />
+              
+              {/* Icon Container with Glassmorphism */}
+              <div className="relative mb-10 transform group-hover:scale-110 group-hover:-translate-y-2 transition-all duration-500">
+                <div 
+                  className="w-24 h-24 rounded-[32px] flex items-center justify-center shadow-2xl relative z-10 overflow-hidden"
                   style={{ backgroundColor: card.hexColor }}
-                  className="relative w-24 h-24 rounded-full flex items-center justify-center text-white text-4xl shadow-lg"
                 >
-                  <img src={`${imageBaseURL}/${card.icon}`} alt={card.title} className="w-10 h-10" /> */}
-    
-        {/* <div
-                    style={{ backgroundColor: card.hexColor }}
-                    className="absolute bottom-[-10px] z-1  left-1/2 transform -translate-x-1/2 rotate-45 w-12 h-12"></div>
-                </div>
-              </div> */}
-
-        {/* <div className="bg-white rounded-2xl shadow-lg p-6 w-full h-[200px] pt-10 text-center relative z-10">
-                <h3 className="text-xl font-bold" style={{ color: card.hexColor }}>
-                  {card.title}
-                </h3>
-                <p className="text-gray-600 text-sm mt-2">{card.description}</p>
-              </div>
-            </div>
-          ))}
-        </div> */}
-        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
-          {data.cards?.map((card, i) => (
-            <div key={i} className="flex flex-col items-center relative">
-           
-              <div className="relative mb-0 z-[90] flex flex-col items-center">
-            
-                <div
-                  style={{ backgroundColor: card.hexColor }}
-                  className="absolute bottom-[-10px] z-1  left-1/2 transform -translate-x-1/2 rotate-45 w-12 h-12"
-                ></div>
-               
-                <div
-                  style={{ backgroundColor: card.hexColor }}
-                  className="relative w-24 h-24 rounded-full flex items-center justify-center text-white text-4xl shadow-lg -mt-6 z-10"
-                >
-                  <img
-                    src={`${imageBaseURL}/${card.icon}`}
-                    alt={card.title}
-                    className="w-10 h-10 z-20"
+                  {/* Inner Glass Glow */}
+                  <img 
+                    src={`${imageBaseURL}/${card.icon}`} 
+                    alt={card.title} 
+                    className="w-12 h-12 relative z-20" 
                   />
                 </div>
+                {/* Outer Glow Effect */}
+                <div 
+                  className="absolute inset-0 blur-3xl opacity-30 rounded-full scale-125 group-hover:opacity-50 transition-opacity duration-500"
+                  style={{ backgroundColor: card.hexColor }}
+                />
               </div>
 
-              <div className="bg-white rounded-2xl shadow-lg p-6 w-full h-[200px] pt-10 text-center relative z-10">
-                <h3 className="text-xl font-bold" style={{ color: card.hexColor }}>
-                  {card.title}
-                </h3>
-                <p className="text-gray-600 text-sm mt-2">{card.description}</p>
-              </div>
+              {/* Text Content */}
+              <h3 
+                className="text-2xl font-black mb-4 tracking-tight"
+                style={{ color: card.hexColor }}
+              >
+                {card.title}
+              </h3>
+              
+              <p className="text-gray-500 font-medium leading-relaxed text-base">
+                {card.description}
+              </p>
+
+              {/* Interactive Bottom Border Accent */}
+              <div 
+                className="absolute bottom-0 left-0 w-full h-1.5 scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"
+                style={{ backgroundColor: card.hexColor }}
+              />
+
+              {/* Hover Floating Dots */}
+              <div 
+                className="absolute top-8 left-8 w-2 h-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100"
+                style={{ backgroundColor: card.hexColor }}
+              />
+              <div 
+                className="absolute bottom-20 right-10 w-3 h-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 delay-200"
+                style={{ backgroundColor: card.hexColor }}
+              />
             </div>
           ))}
         </div>
@@ -230,6 +128,3 @@ const WhyArtsaysDifferent = () => {
 };
 
 export default WhyArtsaysDifferent;
-
-
-
