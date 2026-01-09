@@ -409,15 +409,20 @@ const Setting = () => {
         userId,
         badgeId,
       });
-      if (res.data.success) {
-        toast.success(res.data.message);
-        setShowPopup(false);
-        setShowSuccessPopup(true);
-        fetchBadges();
-        fetchProfile();
-      } else {
-        toast.error(res.data.message || "Failed to apply badge");
-      }
+      // if (res.data.success) {
+      //   toast.success(res.data.message);
+      //   setShowPopup(false);
+      //   setShowSuccessPopup(true);
+      //   fetchBadges();
+      //   fetchProfile();
+      // } else {
+      //   toast.error(res.data.message || "Failed to apply badge");
+      // }
+         if (res.data?.data?.paymentUrl) {
+              window.location.href = res.data.data.paymentUrl;
+            } else {
+              toast.error(`Failed to create certifications: ${res.message}`);
+            }
     } catch (err) {
       console.error("Apply Badge Error:", err);
       toast.error("Error applying badge");

@@ -274,7 +274,7 @@ const Register = () => {
           </Link>
         </div>
 
-        <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5" style={{ backgroundColor: "white" }}>
+        <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5">
           <Link to="/" className="text-decoration-none">
             <h1 className="windhavi">Artsays</h1>
           </Link>

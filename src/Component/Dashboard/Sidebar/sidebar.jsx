@@ -330,6 +330,7 @@ const Sidebar = () => {
           { label: "Product Category", subtabId: "stg11", path: `/super-admin/settings/product-category` },
           { label: "Blog Category", subtabId: "stg12", path: `/super-admin/settings/blog-category` },
           { label: "Email Setting", subtabId: "stg13", path: `/super-admin/settings/email-setting` },
+          { label: "Payment Getway", path: `/super-admin/settings/payment-getway` },
           { label: "Marketing", subtabId: "stg14", path: `/super-admin/settings/marketing` },
           { label: "User Role", subtabId: "stg15", path: `/super-admin/settings/user-role` },
           { label: "Certification", path: `/super-admin/settings/certification` },
@@ -338,6 +339,8 @@ const Sidebar = () => {
           { label: "Default Auto Targeting", path: `/super-admin/settings/auto-targeting` },
           { label: "Auto Targeting Group", path: `/super-admin/settings/group-targeting` },
           { label: "Keyword Targeting", path: `/super-admin/settings/keyword-targeting` },
+       
+       
         ],
       },
        {

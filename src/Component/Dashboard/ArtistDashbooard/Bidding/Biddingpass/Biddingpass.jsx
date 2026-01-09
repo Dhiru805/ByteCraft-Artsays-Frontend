@@ -346,12 +346,12 @@ const BiddingPass = () => {
         {},
         true
       );
-      if (!res?.hasError) {
-        toast.success("Pass purchased successfully!");
-        navigate("/artist/bidding-pass-table");
-      } else {
-        toast.error(res?.message || "Failed to purchase pass");
-      }
+    if (res?.data?.data?.paymentUrl) {
+  window.location.href = res.data.data.paymentUrl;
+} else {
+  toast.error("Payment link not received");
+}
+
     } catch {
       toast.error("Something went wrong");
     }

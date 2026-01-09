@@ -91,18 +91,17 @@ const PromotePost = () => {
         true,
         true
       );
-      if (res?.data?.success) {
-        toast.success("Post promoted successfully!");
-        navigate(
-          `/artsays-community/profile/${hasValidUsername
-            ? `${username}`
-            : `${firstName}_${lastName}_${userId}`
-          }`,
-          { state: { userId: userId } }
-        );
-      } else {
-        toast.error(res?.data?.message || "Failed to promote post.");
-      }
+      // if (res?.data?.success) {
+      //   toast.success("Post promoted successfully!");
+      //   navigate("/social-media/profile");
+      // } else {
+      //   toast.error(res?.data?.message || "Failed to promote post.");
+      // }
+       if (res?.data?.data?.paymentUrl) {
+              window.location.href = res.data.data.paymentUrl;
+            } else {
+              toast.error(`Failed to create certifications: ${res.message}`);
+            }
     } catch (error) {
       toast.error("Error promoting post. Please try again.");
       console.error("PromotePost Error:", error);
