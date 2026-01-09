@@ -19,7 +19,7 @@ import ForgotPassword from "../Pages/Login/Forgotpassword";
 //-----public routes-----//
 import PrivacyPolicy from "../Pages/PrivacyPolicy/PrivacyPolicy";
 import TermsofServices from "../Pages/Terms&Condition/TermsofServices";
-import BiddingPass from "../Pages/Art-Biding/BidingPage";
+// import BiddingPass from "../Pages/Art-Biding/BidingPage";
 
 //-------------------------------------------Payment Getway------------------------------------//
 import SuccessPage from "../Pages/PaymentGetway/Success";

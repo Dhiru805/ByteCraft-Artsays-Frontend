@@ -18,7 +18,7 @@ const UpgradePass = () => {
   const [confirmLoading, setConfirmLoading] = useState(false);
 
   const userId = localStorage.getItem("userId");
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const parsePrice = (value) => {
     if (value == null) return null;
     if (typeof value === "number") return value;
