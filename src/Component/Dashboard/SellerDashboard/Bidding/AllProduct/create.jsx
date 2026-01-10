@@ -156,7 +156,7 @@ const fetchAlreadyBidded = async () => {
       <div className="block-header">
         <div className="row">
           <div className="col-lg-8 col-md-8 col-sm-12">
-            <h2>Add Bidding Product</h2>
+            <h2>Add Bidding Product </h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
                 <span onClick={() => navigate("/seller/dashboard")} style={{ cursor: "pointer" }}>

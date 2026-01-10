@@ -11,7 +11,7 @@ const Order = () => {
   const [productsPerPage, setProductsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
+  
   const [refreshData, setRefreshData] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -34,10 +34,11 @@ const Order = () => {
 
   const fetchOrders = async () => {
     try {
-      const [resUser, resSeller] = await Promise.all([
-        getAPI(`/api/package-material/`),
-        getAPI(`/api/package-material/seller/order/`),
-      ]);
+     const [resUser, resSeller] = await Promise.all([
+  getAPI(`/api/package-material/`), 
+  getAPI(`/api/package-material/seller/order/`), 
+]);
+
 
       if (resUser.hasError || resSeller.hasError) {
         console.error(
@@ -83,18 +84,28 @@ const Order = () => {
   useEffect(() => {
     fetchOrders();
   }, []);
+  
 
   const filteredItems = orders.filter((mat) =>
     mat.material?.materialName?.materialName
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
   );
-  const totalPages = Math.ceil(filteredItems.length / productsPerPage);
+ 
+
+const startIndex = (currentPage - 1) * productsPerPage;
+const endIndex = startIndex + productsPerPage;
+
+const paginatedItems = filteredItems.slice(startIndex, endIndex);
+
+const totalPages = Math.ceil(filteredItems.length / productsPerPage);
+
 
   const handleStatusChange = async (e, id) => {
     const newStatus = e.target.value;
     const originalStatus = orders.find((order) => order._id === id)?.status;
     const selectElement = e.target;
+    
 
     try {
       const res = await putAPI(`/api/package-material/order/status/${id}`, {
@@ -170,7 +181,7 @@ return (
                   navigate("/super-admin/packaging-material/order")
                 }
               >
-                Packaging Material Order
+                Packaging Material Order 
               </li>
             </ul>
           </div>
@@ -236,26 +247,19 @@ return (
                     </tr>
                   </thead>
                   <tbody>
-                    {orders?.filter((mat) =>
-                      mat.material?.materialName?.materialName
-                        .toLowerCase()
-                        .includes(searchTerm.toLowerCase())
-                    ).length === 0 ? (
+                   {paginatedItems.length === 0 ? (
+
                       <tr>
                         <td colSpan="4" className="text-center">
                           No data available
                         </td>
                       </tr>
                     ) : (
-                      orders
-                        .filter((mat) =>
-                          mat.material?.materialName?.materialName
-                            .toLowerCase()
-                            .includes(searchTerm.toLowerCase())
-                        )
-                        .map((mat, index) => (
+                     paginatedItems.map((mat, index) => (
+
                           <tr key={mat._id}>
-                            <td>{(currentPage - 1) * perPage + index + 1}</td>
+                            <td>{startIndex + index + 1}</td>
+
                             <td>
                               {mat.deliveryAddress
                                 ? `${mat.deliveryAddress.name} ${mat.deliveryAddress.lastName}`
@@ -324,18 +328,22 @@ return (
                                 <i className="fa fa-eye"></i>
                               </button>
                               <select
-                                className="form-control form-control-sm"
-                                style={{
-                                  width: "160px",
-                                  minWidth: "150px",
-                                  display: "inline-block",
-                                }}
-                                value={mat.status}
-                                onChange={(e) => {
-                                  handleStatusChange(e, mat._id);
-                                  handleChange(e, mat._id);
-                                }}
-                              >
+  className="form-control form-control-sm"
+  style={{
+    width: "160px",
+    minWidth: "150px",
+    display: "inline-block",
+  }}
+  value={mat.status}
+  onChange={(e) => {
+    if (mat.source === "Artist") {
+      handleStatusChange(e, mat._id);
+    } else {
+      handleChange(e, mat._id);
+    }
+  }}
+>
+
                                 <option value="">Select Status</option>
                                 <option value="Work in Progress">
                                   {" "}

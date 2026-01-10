@@ -134,9 +134,9 @@ const Setting = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const userId = localStorage.getItem("userId");
+  const userId = localStorage.getItem("userId");
 
     const formData = new FormData();
     formData.append("userId", userId);
@@ -145,33 +145,38 @@ const Setting = () => {
     formData.append("username", username);
     formData.append("website", website);
     formData.append("bio", bio);
+ 
+  if (profilePhotoFile) {
+    formData.append("profilePhoto", profilePhotoFile);
+  }
 
-    if (profilePhotoFile) {
-      formData.append("profilePhoto", profilePhotoFile); // actual file
+
+  console.log(
+    "Submitting profile update:",
+    [...formData.entries()]
+  );
+
+  try {
+    const res = await putAPI(
+      "/api/social-media/profile/update",
+      formData,
+      true,
+      true,
+      { "Content-Type": "multipart/form-data" }
+    );
+
+    if (res && !res.hasError) {
+      toast.success("Profile updated successfully!");
+      fetchProfile(); 
+    } else {
+      toast.error(res?.message || "Failed to update profile");
     }
-    console.log("Submitting profile update:", formData);
-    try {
-      const res = await putAPI(
-        `/api/social-media/profile/update`,
-        formData,
-        true, // auth
-        true, // multipart
-        { "Content-Type": "multipart/form-data" } // header
-      );
-
-      if (res && !res.hasError) {
-        toast.success("Profile updated successfully!");
-        console.log(res.data.user);
-        fetchProfile(); // Refetch profile to update UI with new data
-      } else {
-        toast.error(res?.message || "Failed to update profile");
-      }
-    } catch (error) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error.message ||
-        "Something went wrong. Please try again.";
-      toast.error(errorMessage);
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message ||
+      error.message ||
+      "Something went wrong. Please try again.";
+    toast.error(errorMessage);
     }
   };
   // privacy center panel
@@ -425,7 +430,7 @@ const Setting = () => {
             }
     } catch (err) {
       console.error("Apply Badge Error:", err);
-      toast.error("Error applying badge");
+      toast.error("Error applying badge 123");
     }
   };
 

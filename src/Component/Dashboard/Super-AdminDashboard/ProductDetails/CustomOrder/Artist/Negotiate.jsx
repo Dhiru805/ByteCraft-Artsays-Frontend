@@ -12,35 +12,55 @@ const UpdateModal = ({ request, onClose, onSubmit }) => {
   );
   const [maxBudget, setMaxBudget] = useState(request?.MaxBudget || "");
   const [minBudget, setMinBudget] = useState(request?.MinBudget || "");
+  
   const [notes, setNotes] = useState(request?.Notes || "");
   const [negotiateBudget, setNegotiateBudget] = useState(request?.NegotiatedBudget|| "");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await putAPI(
-        `${process.env.REACT_APP_API_URL}/api/update-negiotaite-budget/${request._id}`,
-        {
-          ProductName: request?.ProductName || "",
-          Description: request?.Description || "",
-          MaxBudget: maxBudget, 
-          MinBudget: minBudget,
-          NegotiatedBudget: negotiateBudget, 
-          Notes: notes,
-        }
-      )
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-      if (response && response.data) {
-        toast.success(response.data.successMessage || "Buyer request updated successfully");
-        onSubmit(response.data.updatedRequest);
-      } else {
-        toast.error(response?.message || "Failed to update buyer request");
+  if (!maxBudget) {
+    toast.error("Max Budget is required");
+    return;
+  }
+  if (!minBudget) {
+    toast.error("Min Budget is required");
+    return;
+  }
+  if (!negotiateBudget) {
+    toast.error("Negotiated Budget is required");
+    return;
+  }
+
+  // Trim Notes safely
+  const cleanNotes = notes ? notes.trim() : "";
+
+  try {
+    const response = await putAPI(
+      `${process.env.REACT_APP_API_URL}/api/update-negiotaite-budget/${request._id}`,
+      {
+        ProductName: request?.ProductName?.trim() || "Unknown Product",
+        Description: request?.Description?.trim() || "No Description",
+        MaxBudget: Number(maxBudget) || 0,
+        MinBudget: Number(minBudget) || 0,
+        NegotiatedBudget: Number(negotiateBudget) || 0,
+        Notes: cleanNotes, // send trimmed or empty string
       }
-    } catch (error) {
-      console.error("Error updating buyer request:", error);
-      toast.error(error.response?.data?.message || "Error updating buyer request");
+    );
+
+    if (response && response.data) {
+      toast.success(response.data.successMessage || "Buyer request updated successfully");
+      onSubmit(response.data.updatedRequest);
+    } else {
+      toast.error(response?.message || "Failed to update buyer request");
     }
-  };
+  } catch (error) {
+    console.error("Error updating buyer request:", error);
+    toast.error(error.response?.data?.message || "Error updating buyer request");
+  }
+};
+
+
 
   return (
     <div

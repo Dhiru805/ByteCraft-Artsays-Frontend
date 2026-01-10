@@ -20,6 +20,35 @@ const Suggestion = () => {
     window.addEventListener("resize", handleResize());
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+  useEffect(() => {
+  const fetchSuggestedUsers = async () => {
+    try {
+      if (!userId) return;
+
+      const res = await getAPI(
+        `/api/social-media/suggested-users?userId=${userId}`,
+        { userId, userType }
+      );
+
+      // Map users to include followStatus
+      const usersWithStatus = (res?.data?.suggestedUsers || []).map(user => {
+        const isFollowing = Array.isArray(user?.profile?.followers)
+          ? user.profile.followers.map(String).includes(String(userId))
+          : false;
+        return { ...user, followStatus: isFollowing ? "Unfollow" : "Follow" };
+      });
+
+      setUsers(usersWithStatus);
+    } catch (error) {
+      console.error("Error fetching suggested users:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchSuggestedUsers();
+}, []);
+
 
   const adImages = [
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3oql1QTjEkuSfZYyT2Rxsxb_CNSSjwUeyXg&s",
@@ -113,51 +142,61 @@ const Suggestion = () => {
 
     fetchSuggestedUsers();
   }, []);
-  const handleFollowToggle = async (targetUserId, isFollowing) => {
-    try {
-      let response;
+  const handleFollowToggle = async (targetUserId, currentStatus) => {
+  // Immediately set intermediate state to "Following"
+  setUsers(prev =>
+    prev.map(user =>
+      user._id === targetUserId ? { ...user, followStatus: "Following" } : user
+    )
+  );
 
-      if (isFollowing) {
-        response = await postAPI(
-          `/api/social-media/unfollow/${targetUserId}`,
-          { userId },
-          true,
-          true
-        );
-      } else {
-        response = await postAPI(
-          `/api/social-media/follow/${targetUserId}`,
-          { userId },
-          true,
-          true
-        );
-
-      }
-      // ❗ Only update UI if backend confirmed success
-      if (response?.data?.status === 200) {
-        setUsers((prev) =>
-          prev.map((user) =>
-            user._id === targetUserId
-              ? {
-                ...user,
-                profile: {
-                  ...user.profile,
-                  followers: isFollowing
-                    ? user.profile.followers.filter((id) => id !== userId)
-                    : [...user.profile.followers, userId],
-                },
-              }
-              : user
-          )
-        );
-      } else {
-        console.warn("API did not respond with success, UI not updated.");
-      }
-
-    } catch (error) {
-      console.error("Error following/unfollowing user:", error);
+  try {
+    let response;
+    if (currentStatus === "Follow") {
+      response = await postAPI(
+        `/api/social-media/follow/${targetUserId}`,
+        { userId },
+        true,
+        true
+      );
+    } else {
+      response = await postAPI(
+        `/api/social-media/unfollow/${targetUserId}`,
+        { userId },
+        true,
+        true
+      );
     }
-  };
+
+    if (response?.data?.status === 200) {
+      // Success → final state
+      setUsers(prev =>
+        prev.map(user =>
+          user._id === targetUserId
+            ? { ...user, followStatus: currentStatus === "Follow" ? "Unfollow" : "Follow" }
+            : user
+        )
+      );
+    } else {
+      // Failure → revert to original
+      setUsers(prev =>
+        prev.map(user =>
+          user._id === targetUserId ? { ...user, followStatus: currentStatus } : user
+        )
+      );
+      toast.error("Action failed. Try again.");
+    }
+  } catch (error) {
+    // Error → revert
+    setUsers(prev =>
+      prev.map(user =>
+        user._id === targetUserId ? { ...user, followStatus: currentStatus } : user
+      )
+    );
+    console.error("Error following/unfollowing user:", error);
+  }
+};
+
 
 
   const navigateToProfile = (user) => {

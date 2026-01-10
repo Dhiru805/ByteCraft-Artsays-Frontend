@@ -83,11 +83,8 @@ const ManageAddress = () => {
     fetchDefaultAddress();
   }, [userId]);
 
-  const handleInputChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+  const handleInputChange = e => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const isValidPhone = (phone) => {
@@ -193,13 +190,28 @@ const ManageAddress = () => {
           position: "top-right",
           autoClose: 3000,
         });
+
+        const responsePut = await putAPI(
+          `/auth/users/${userId}`,
+          { selectedAddress: addressId },
+          { "Content-Type": "application/json" }
+        );
+
+        if (!responsePut.hasError) {
+          setSelectedAddressId(addressId);
+        }
       }
     } catch (err) {
+      console.error(err);
       toast.error("Failed to set default address.");
     } finally {
       setLoading(false);
     }
   };
+
+
+
+
 
   return (
     <div className="w-full space-y-6">
@@ -226,7 +238,7 @@ const ManageAddress = () => {
           }`}
         >
           {addresses.map((addr, index) => (
-            <div key={index}>
+            <div key={addr._id}>
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                   <p className="font-semibold text-lg text-gray-900">
@@ -280,9 +292,7 @@ const ManageAddress = () => {
                 />
               )}
 
-              {addresses.length > 1 && index < addresses.length - 1 && (
-                <hr className="border-t border-gray-300 my-2" />
-              )}
+              {addresses.length > 1 && index < addresses.length - 1 && <hr className="border-t border-gray-300 my-2" />}
             </div>
           ))}
         </div>
@@ -306,7 +316,6 @@ const ManageAddress = () => {
               required
             />
           </div>
-
           <div>
             <label className="block text-sm">Address Line 2 *</label>
             <input
@@ -317,76 +326,40 @@ const ManageAddress = () => {
               placeholder="Address Line 2"
             />
           </div>
-
           <div>
             <label className="block text-sm">Land Mark</label>
-            <input
-              name="landmark"
-              value={formData.landmark}
-              onChange={handleInputChange}
-              className="w-full border-2 px-3 py-2 rounded-xl"
-              placeholder="Land Mark"
-            />
+            <input name="landmark" value={formData.landmark} onChange={handleInputChange} className="w-full border-2 px-3 py-2 rounded-xl" placeholder="Land Mark" />
           </div>
-
           <div>
             <label className="block text-sm">Country *</label>
-            <select
-              name="country"
-              value={formData.country}
-              onChange={handleInputChange}
-              className="w-full border-2 px-3 py-2 rounded-xl"
-              required
-            >
+            <select name="country" value={formData.country} onChange={handleInputChange} className="w-full border-2 px-3 py-2 rounded-xl" required>
               <option value="">Select Country</option>
               <option value="India">India</option>
               <option value="USA">USA</option>
               <option value="Germany">Germany</option>
             </select>
           </div>
-
           <div>
             <label className="block text-sm">State *</label>
-            <select
-              name="state"
-              value={formData.state}
-              onChange={handleInputChange}
-              className="w-full border-2 px-3 py-2 rounded-xl"
-              required
-            >
+            <select name="state" value={formData.state} onChange={handleInputChange} className="w-full border-2 px-3 py-2 rounded-xl" required>
               <option value="">Select State</option>
               <option value="Assam">Assam</option>
               <option value="Maharashtra">Maharashtra</option>
               <option value="Delhi">Delhi</option>
             </select>
           </div>
-
           <div>
             <label className="block text-sm">City *</label>
-            <select
-              name="city"
-              value={formData.city}
-              onChange={handleInputChange}
-              className="w-full border-2 px-3 py-2 rounded-xl"
-              required
-            >
+            <select name="city" value={formData.city} onChange={handleInputChange} className="w-full border-2 px-3 py-2 rounded-xl" required>
               <option value="">Select City</option>
               <option value="Guwahati">Guwahati</option>
               <option value="Mumbai">Mumbai</option>
               <option value="Delhi">Delhi</option>
             </select>
           </div>
-
           <div>
             <label className="block text-sm">Pincode *</label>
-            <input
-              name="pincode"
-              value={formData.pincode}
-              onChange={handleInputChange}
-              className="w-full border-2 px-3 py-2 rounded-xl"
-              placeholder="Enter Pincode"
-              required
-            />
+            <input name="pincode" value={formData.pincode} onChange={handleInputChange} className="w-full border-2 px-3 py-2 rounded-xl" placeholder="Enter Pincode" required />
           </div>
           <div>
             <label className="block text-sm">Phonw Number *</label>

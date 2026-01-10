@@ -308,26 +308,6 @@ function ViewBuyerRequest() {
                                         <ReactQuill value={description} readOnly theme="snow" modules={{ toolbar: false }} />
                                     </div>
 
-                                    {request?.NegiotaiteBudget || request?.BuyerNotes ? <hr /> : null}
-
-                                    {request?.NegiotaiteBudget && request?.BuyerNotes && (
-                                        <label className="mt-3 d-block">Negotiation By Buyer</label>
-                                    )}
-
-                                    {request?.NegiotaiteBudget && (
-                                        <div className="form-group mt-3">
-                                            <label>Negotiate Budget</label>
-                                            <input type="text" className="form-control" value={request.NegiotaiteBudget} readOnly />
-                                        </div>
-                                    )}
-
-                                    {request?.Notes && (
-                                        <div className="form-group mt-3">
-                                            <label>Notes</label>
-                                            <textarea className="form-control" value={request.BuyerNotes} readOnly />
-                                        </div>
-                                    )}
-
                                     {request?.NegiotaiteBudget || request?.Notes ? <hr /> : null}
 
                                     {request?.NegiotaiteBudget && request?.Notes && (
@@ -367,7 +347,8 @@ function ViewBuyerRequest() {
                                                     {request.ArtistNegotiatedBudgets.map((budget, index) => {
                                                         const position = ["1st", "2nd", "3rd"];
                                                         const label = position[index] || `${index + 1}th`;
-                                                        const estimatedCreationDays = request.ArtistEstimatedCreationDaysHistory[index];
+                                                       const estimatedCreationDays = request.BuyerEstimatedCreationDaysHistory?.[index] ?? "N/A";
+
 
                                                         return (
                                                             <div key={index} className="row mb-2">
@@ -375,7 +356,7 @@ function ViewBuyerRequest() {
                                                                     <input
                                                                         type="text"
                                                                         className="form-control"
-                                                                        value={`${label} Negotiation:          ₹${budget}`}
+                                                                        value={`${label} Negotiation: ₹${budget}`}
                                                                         readOnly
                                                                         disabled
                                                                     />
@@ -407,7 +388,8 @@ function ViewBuyerRequest() {
                                                     {request.BuyerNegotiatedBudgets.map((budget, index) => {
                                                         const position = ["1st", "2nd", "3rd"];
                                                         const label = position[index] || `${index + 1}th`;
-                                                        const estimatedCreationDays = request.BuyerEstimatedCreationDaysHistory[index + 1];
+                                                        const estimatedCreationDays = request.BuyerEstimatedCreationDaysHistory?.[index] ?? "N/A";
+
 
                                                         return (
                                                             <div key={index} className="row mb-2">
@@ -415,7 +397,7 @@ function ViewBuyerRequest() {
                                                                     <input
                                                                         type="text"
                                                                         className="form-control"
-                                                                        value={`${label} Negotiation:          ₹${budget}`}
+                                                                        value={`${label} Negotiation: ₹${budget}`}
                                                                         readOnly
                                                                         disabled
                                                                     />

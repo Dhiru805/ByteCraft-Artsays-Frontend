@@ -843,63 +843,63 @@ const OrderView = () => {
     setShowPopup(true);
   };
 
-  const handleCancelOrder = async () => {
-    if (!orderId) {
-      toast.error("Order id not available");
-      return;
-    }
-    if (!cancelReason) {
-      toast.error("Please select reason");
-      return;
-    }
+  // const handleCancelOrder = async () => {
+  //   if (!orderId) {
+  //     toast.error("Order id not available");
+  //     return;
+  //   }
+  //   if (!cancelReason) {
+  //     toast.error("Please select reason");
+  //     return;
+  //   }
 
-    setLoadingCancel(true);
+  //   setLoadingCancel(true);
 
-    const payloads = [
-      {
-        status: "Cancelled",
-        reason: cancelReason,
-        comment: cancelComment,
-        userId: buyer?.id || buyer?._id || order?.Buyer?.id || null,
-      },
-      {
-        cancelReason: cancelReason,
-        comment: cancelComment,
-      },
-    ];
+  //   const payloads = [
+  //     {
+  //       status: "Cancelled",
+  //       reason: cancelReason,
+  //       comment: cancelComment,
+  //       userId: buyer?.id || buyer?._id || order?.Buyer?.id || null,
+  //     },
+  //     {
+  //       cancelReason: cancelReason,
+  //       comment: cancelComment,
+  //     },
+  //   ];
 
-    let success = false;
-    let lastErr = null;
+  //   let success = false;
+  //   let lastErr = null;
 
-    for (let i = 0; i < CANCEL_ENDPOINTS.length; i++) {
-      const url = CANCEL_ENDPOINTS[i](orderId);
-      const payload = i === 0 ? payloads[0] : payloads[1];
-      try {
-        const res = await putAPI(url, payload);
-        if (res && (res.status === 200 || res.status === 201 || res.data?.success)) {
-          success = true;
-          break;
-        }
-      } catch (err) {
-        lastErr = err;
+  //   for (let i = 0; i < CANCEL_ENDPOINTS.length; i++) {
+  //     const url = CANCEL_ENDPOINTS[i](orderId);
+  //     const payload = i === 0 ? payloads[0] : payloads[1];
+  //     try {
+  //       const res = await putAPI(url, payload);
+  //       if (res && (res.status === 200 || res.status === 201 || res.data?.success)) {
+  //         success = true;
+  //         break;
+  //       }
+  //     } catch (err) {
+  //       lastErr = err;
 
-      }
-    }
+  //     }
+  //   }
 
-    setLoadingCancel(false);
+  //   setLoadingCancel(false);
 
-    if (success) {
-      toast.success("Order cancelled");
+  //   if (success) {
+  //     toast.success("Order cancelled");
 
-      setOrder((prev) => (prev ? { ...prev, orderStatus: "Cancelled", OrderStatus: "Cancelled" } : prev));
-      setShowCancelModal(false);
+  //     setOrder((prev) => (prev ? { ...prev, orderStatus: "Cancelled", OrderStatus: "Cancelled" } : prev));
+  //     setShowCancelModal(false);
 
-      navigate("/my-account/my-orders");
-    } else {
-      console.error("Cancel failed:", lastErr);
-      toast.error("Failed to cancel order. Try again.");
-    }
-  };
+  //     navigate("/my-account/my-orders");
+  //   } else {
+  //     console.error("Cancel failed:", lastErr);
+  //     toast.error("Failed to cancel order. Try again.");
+  //   }
+  // };
 
   // const handleSubmitReview = async () => {
   //   if (!reviewTitle || !reviewDescription || rating === 0) {
@@ -941,6 +941,57 @@ const OrderView = () => {
   //     toast.error("Failed to submit review.");
   //   }
   // };
+const handleCancelOrder = async () => {
+  if (!orderId) {
+    toast.error("Order id not available");
+    return;
+  }
+
+  if (!cancelReason) {
+    toast.error("Please select reason");
+    return;
+  }
+
+  if (cancelReason === "Other" && !cancelComment.trim()) {
+    toast.error("Please enter a comment");
+    return;
+  }
+
+  try {
+    setLoadingCancel(true);
+
+    const payload = {
+      cancelReason,
+      cancelComment
+    };
+
+    console.log("Cancel payload:", payload);
+
+    const res = await putAPI(
+      `/api/buyer-order-list/cancel/${orderId}`,
+      payload
+    );
+
+    // ✅ FIX IS HERE
+    if (res?.message) {
+      toast.success(res.message);
+
+      setOrder(prev =>
+        prev ? { ...prev, orderStatus: "Cancelled" } : prev
+      );
+
+      setShowCancelModal(false);
+      navigate("/my-account/my-orders");
+    } else {
+      throw new Error("Cancel failed");
+    }
+  } catch (err) {
+    console.error("Cancel error:", err);
+    toast.error(err?.message || "Failed to cancel order. Try again.");
+  } finally {
+    setLoadingCancel(false);
+  }
+};
 
   const handleSubmitReview = async () => {
     if (!reviewTitle || !reviewDescription || rating === 0) {
@@ -1300,7 +1351,7 @@ const OrderView = () => {
         <AnimatePresence>
           <motion.div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} transition={{ duration: 0.15 }} className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">Cancel Order</h2>
+              <h2 className="text-lg font-semibold text-gray-800 mb-4">Cancel Order 111</h2>
 
               <label className="block text-sm font-medium text-gray-700 mb-1">Reason</label>
               <select value={cancelReason} onChange={(e) => setCancelReason(e.target.value)} className="w-full border rounded-lg px-3 py-2 mb-3 text-sm">

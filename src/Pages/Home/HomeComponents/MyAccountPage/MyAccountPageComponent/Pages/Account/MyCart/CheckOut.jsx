@@ -546,134 +546,143 @@ const PaymentButton = ({ value, label }) => {
 //     console.log("ORDER ERROR:", err);
 //   }
 // };
-const placeOrder = async () => {
- try {
-   if (!paymentMethod) {
-  toast.error("Please select a payment method before proceeding.");
-  return;
-}
-
-    if (cartItems.length === 0) {
-      console.log("No items in cart");
-      return;
-    }
-
-    const itemsWithArtist = await Promise.all(
-      cartItems.map(async (item) => {
-        try {
-          const artistRes = await getAPI(`/artist/getproduct/${item.productId}`);
-          if (artistRes?.data?.data?.creator) {
-            const art = artistRes.data.data.creator;
-            return {
-              ...item,
-              artistId: art._id,
-              artistName: art.name,
-              artistLastName: art.lastName || "",
-            };
-          }
-        } catch (e) {}
-
-        try {
-          const sellerRes = await getAPI(`/api/getproduct/${item.productId}`);
-          if (sellerRes?.data?.data?.userId) {
-            const art = sellerRes.data.data.userId;
-            return {
-              ...item,
-              artistId: art._id,
-              artistName: art.name,
-              artistLastName: art.lastName || "",
-            };
-          }
-        } catch (e) {}
-
-        return { ...item, artistId: null, artistName: "Unknown", artistLastName: "" };
-      })
-    );
-
-    const deliveryAddressObj = {
-      line1: formData.street || "",
-      line2: "",
-      landmark: "",
-      city: formData.city || "",
-      state: formData.state || "",
-      country: formData.country || "",
-      pincode: formData.zip || "",
-    };
-
-    const buyerBlock = {
-      id: userId,
-      name: `${formData.firstName} ${formData.lastName}`,
-      email: formData.email,
-    };
-
-    // let artistBlock = {};
-    // if (itemsWithArtist.length === 1) {
-    //   artistBlock = {
-    //     id: itemsWithArtist[0].artistId,
-    //     name: itemsWithArtist[0].artistName,
-    //     lastName: itemsWithArtist[0].artistLastName,
-    //   };
-    // }
-const artistBlock = {
-  id: itemsWithArtist[0].artistId,
-  name: itemsWithArtist[0].artistName,
-  lastName: itemsWithArtist[0].artistLastName,
-};
-
-    const orderPayload = {
-      buyer: buyerBlock,
-      artist: artistBlock,
-      items: itemsWithArtist.map((i) => ({
-        productId: i.productId,
-        name: i.name,
-        quantity: i.qty,
-        price: i.price,
-        subtotal: i.subtotal,
-      })),
-
-      deliveryAddress: deliveryAddressObj,
-      totalAmount: cartItems.reduce((a, b) => a + b.subtotal, 0),
-      paymentMethod: paymentMethod,
-
-    };
-
-    const response = await postAPI("/api/buyer-order-list/create", orderPayload);
-
-    const savedOrder = response?.data?.data;
-
-        if (response?.data?.data?.paymentUrl) {
-          window.location.href = response.data.data.paymentUrl;
-        } else {
-          toast.error(`Failed to create certifications: ${response.message}`);
-        }
-
+  const placeOrder = async () => {
     try {
-      for (const item of cartItems) {
-        if (!item.productId) continue;
-        await deleteAPI("/api/cart/remove", {
-          params: { userId, productId: item.productId },
+      const requiredFields = [
+        "firstName",
+        "lastName",
+        "email",
+        "phone",
+        "country",
+        "street",
+        "city",
+        "state",
+        "zip",
+      ];
+
+      for (const field of requiredFields) {
+        if (!formData[field] || formData[field].trim() === "") {
+          toast.error(`Please fill the ${field} field`);
+          return;
+        }
+      }
+
+      if (!paymentMethod) {
+        toast.error("Please select a payment method before proceeding.");
+        return;
+      }
+
+      if (cartItems.length === 0) {
+        console.log("No items in cart");
+        return;
+      }
+
+      const itemsWithArtist = await Promise.all(
+        cartItems.map(async (item) => {
+          try {
+            const artistRes = await getAPI(`/artist/getproduct/${item.productId}`);
+            if (artistRes?.data?.data?.creator) {
+              const art = artistRes.data.data.creator;
+              return {
+                ...item,
+                artistId: art._id,
+                artistName: art.name,
+                artistLastName: art.lastName || "",
+              };
+            }
+          } catch (e) { }
+
+          try {
+            const sellerRes = await getAPI(`/api/getproduct/${item.productId}`);
+            if (sellerRes?.data?.data?.userId) {
+              const art = sellerRes.data.data.userId;
+              return {
+                ...item,
+                artistId: art._id,
+                artistName: art.name,
+                artistLastName: art.lastName || "",
+              };
+            }
+          } catch (e) { }
+
+          return { ...item, artistId: null, artistName: "Unknown", artistLastName: "" };
+        })
+      );
+
+      const deliveryAddressObj = {
+        line1: formData.street || "",
+        line2: "",
+        landmark: "",
+        city: formData.city || "",
+        state: formData.state || "",
+        country: formData.country || "",
+        pincode: formData.zip || "",
+      };
+
+      const buyerBlock = {
+        id: userId,
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+      };
+
+      const artistBlock = {
+        id: itemsWithArtist[0]?.artistId || null,
+        name: itemsWithArtist[0]?.artistName || "Unknown",
+        lastName: itemsWithArtist[0]?.artistLastName || "",
+      };
+
+      const orderPayload = {
+        buyer: buyerBlock,
+        artist: artistBlock,
+        items: itemsWithArtist.map((i) => ({
+          productId: i.productId,
+          name: i.name,
+          quantity: i.qty,
+          price: i.price,
+          subtotal: i.subtotal,
+        })),
+        deliveryAddress: deliveryAddressObj,
+        totalAmount: cartItems.reduce((a, b) => a + b.subtotal, 0),
+        paymentMethod: paymentMethod,
+      };
+
+      const response = await postAPI("/api/buyer-order-list/create", orderPayload);
+      const savedOrder = response?.data?.data;
+
+      console.log("ORDER SUCCESS ===> ", savedOrder);
+
+      try {
+        for (const item of cartItems) {
+          if (!item.productId) continue;
+          await deleteAPI("/api/cart/remove", {
+            params: { userId, productId: item.productId },
+          });
+        }
+      } catch (clearErr) {
+        console.log("Failed to clear cart after order:", clearErr);
+      }
+
+      if (response?.data?.data?.paymentUrl) {
+        window.location.href = response.data.data.paymentUrl;
+      } else {
+        navigate(`/my-account/order-completed/${userId}`, {
+          state: {
+            order: savedOrder,
+            items: cartItems,
+            productIds: cartItems.map((i) => i.productId),
+          },
         });
       }
-    } catch (clearErr) {
-      console.log("Failed to clear cart after order:", clearErr);
+    } catch (err) {
+      console.log("ORDER ERROR:", err);
+      const message =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        "Failed to place order. Please try again.";
+      toast.error(message);
     }
+  };
 
-    // navigate(`/my-account/order-completed/${userId}`, {
-    //   state: {
-    //     order: savedOrder,
-    //     items: cartItems,
-    //     productIds: cartItems.map((i) => i.productId),
-    //   },
-    // });
-  } catch (err) {
-    console.log("ORDER ERROR:", err);
-    const message =
-      err?.response?.data?.message ||
-      err?.response?.data?.error ||
-      "Failed to place order. Please try again.";
-    toast.error(message);
-  }
-};
 
   return (
     <div className="max-w-[1464px] px-4 sm:px-6 lg:px-12 py-10">

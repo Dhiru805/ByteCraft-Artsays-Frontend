@@ -306,7 +306,7 @@ export default function ChatBox({ closeBox }) {
         </div>
 
         {/* Body */}
-        <div className="h-[300px] md:h-[420px] px-2 md:px-4 py-2 md:py-3 overflow-y-auto bg-[#ffffff]">
+        <div className="h-[300px] md:h-[250px] px-2 md:px-4 py-2 md:py-3 overflow-y-auto bg-[#ffffff]">
           <div className="flex flex-col gap-4">
             <AnimatePresence initial={false} mode="popLayout">
               {messages.map((m, idx) => {

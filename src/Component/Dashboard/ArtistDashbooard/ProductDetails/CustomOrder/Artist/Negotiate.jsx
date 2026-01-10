@@ -31,10 +31,11 @@ const NegotiateModalforartist = ({ request, onClose, onSubmit }) => {
   const [showYesNoButtons, setShowYesNoButtons] = useState(true);
 
 
-  const latestBuyerDays =
+ const latestBuyerDays =
     request?.BuyerEstimatedCreationDaysHistory?.length > 0
       ? request.BuyerEstimatedCreationDaysHistory[request.BuyerEstimatedCreationDaysHistory.length - 1]
-      : null;
+      : request?.ExpectedDeadline || "";
+
 
 
   const canArtistUpdate = () => {
@@ -49,53 +50,64 @@ const NegotiateModalforartist = ({ request, onClose, onSubmit }) => {
     );
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const parsedBudget = parseFloat(newBudget);
-    if (isNaN(parsedBudget)) {
-      toast.error("Please enter a valid number for the budget");
-      return;
-    }
+  if (!notes || !notes.trim()) {
+    toast.error("Notes is required");
+    return;
+  }
 
-    if (!canArtistUpdate()) {
-      toast.error("Cannot update now. Please wait for buyer's response or you have reached the maximum updates.");
-      return;
-    }
+  const parsedBudget = parseFloat(newBudget);
+  if (isNaN(parsedBudget)) {
+    toast.error("Please enter a valid number for the budget");
+    return;
+  }
 
-    setLoading(true);
-    try {
-      const response = await putAPI(
-        `/api/update-negiotaite-budget/${request._id}`,
-        {
-          ProductName: request?.ProductName || "",
-          Description: request?.Description || "",
-          MaxBudget: maxBudget,
-          MinBudget: minBudget,
-          NegotiatedBudget: parsedBudget,
-          Notes: notes,
-          EstimatedCreationDays: isCustomCreationDays ? customCreationDays : request?.ExpectedDeadline, // Send custom or default days
-        }
-      );
+  if (!canArtistUpdate()) {
+    toast.error(
+      "Cannot update now. Please wait for buyer's response or you have reached the maximum updates."
+    );
+    return;
+  }
 
-      if (response && response.data) {
-        toast.success(response.data.successMessage || "Buyer request updated successfully");
-        window.location.reload();
-        setNewBudget("");
-        onSubmit?.();
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-      } else {
-        toast.error(response?.message || "Failed to update buyer request");
+  setLoading(true);
+  try {
+    const response = await putAPI(
+      `/api/update-negiotaite-budget/${request._id}`,
+      {
+        ProductName: request?.ProductName || "",
+        Description: request?.Description || "",
+        MaxBudget: maxBudget,
+        MinBudget: minBudget,
+        NegotiatedBudget: parsedBudget,
+        Notes: notes,
+        EstimatedCreationDays: isCustomCreationDays
+          ? customCreationDays
+          : request?.ExpectedDeadline,
       }
-    } catch (error) {
-      console.error("Error updating buyer request:", error);
-      toast.error(error.response?.data?.message || "Error updating buyer request");
-    } finally {
-      setLoading(false);
+    );
+
+    if (response && response.data) {
+      toast.success(
+        response.data.successMessage || "Buyer request updated successfully"
+      );
+      onSubmit?.();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } else {
+      toast.error(response?.message || "Failed to update buyer request");
     }
-  };
+  } catch (error) {
+    toast.error(
+      error.response?.data?.message || "Error updating buyer request"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div
@@ -218,13 +230,13 @@ const NegotiateModalforartist = ({ request, onClose, onSubmit }) => {
                         </div>
                       )}
 
-                      {request?.BuyerEstimatedCreationDaysHistory?.[index + 1] && (
+                      {request?.BuyerEstimatedCreationDaysHistory?.[index] && (
                         <div className="col">
                           <label className="form-label">Estimated Creation Days</label>
                           <input
                             type="number"
                             className="form-control"
-                            value={request?.BuyerEstimatedCreationDaysHistory?.[index + 1] || ""}
+                            value={request?.BuyerEstimatedCreationDaysHistory?.[index ] || ""}
                             readOnly
                           />
                         </div>

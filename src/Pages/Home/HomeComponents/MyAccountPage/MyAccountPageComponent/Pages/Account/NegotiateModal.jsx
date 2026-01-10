@@ -49,7 +49,10 @@ const NegotiateModalforBuyer = ({ request, onClose, onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  if (!notes || !notes.trim()) {
+    toast.error("Notes is required");
+    return;
+  }
     if (!canBuyerUpdate()) {
       toast.error("Cannot update now. Please wait for artist's response or you have reached the maximum updates.");
       return;

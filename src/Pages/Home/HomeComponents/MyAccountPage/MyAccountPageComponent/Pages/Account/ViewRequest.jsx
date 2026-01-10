@@ -325,7 +325,7 @@ function ViewBuyerRequest({ request, onClose }) {
                                                     {request.BuyerNegotiatedBudgets.map((budget, index) => {
                                                         const position = ["1st", "2nd", "3rd"];
                                                         const label = position[index] || `${index + 1}th`;
-                                                        const estimatedCreationDays = request.BuyerEstimatedCreationDaysHistory[index +1];
+                                                        const estimatedCreationDays = request.BuyerEstimatedCreationDaysHistory[index];
 
                                                         return (
                                                             <div key={index} className="row mb-2">

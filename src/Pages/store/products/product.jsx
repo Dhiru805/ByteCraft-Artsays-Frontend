@@ -10,6 +10,7 @@ import ProductsSkeliton from "../../../Component/Skeleton/products/ProductsSkeli
 import "./product.css";
 
 const Product = () => {
+  const [searchText, setSearchText] = useState("");
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [showFilters, setShowFilters] = useState(false);

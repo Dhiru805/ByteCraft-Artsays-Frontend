@@ -905,27 +905,27 @@ function ProductUpload() {
 
   };
 
-  const handleTabClick = (targetTab) => {
+ const handleTabClick = (targetTab) => {
     const currentIndex = tabOrder.indexOf(activeTab);
     const targetIndex = tabOrder.indexOf(targetTab);
 
-    if (targetIndex <= currentIndex) {
-      setActiveTab(targetTab);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
+    // Allow backward navigation freely
+    if (targetIndex < currentIndex) {
+        setActiveTab(targetTab);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
     }
 
-    for (let i = currentIndex; i < targetIndex; i++) {
-      const tabKey = tabOrder[i];
-      const validator = tabValidators[tabKey];
-      if (validator && !validator()) {
-        return;
-      }
+    // Moving forward: validate only the current tab
+    const currentTabValidator = tabValidators[activeTab];
+    if (currentTabValidator && !currentTabValidator()) {
+        return; // Stop if current tab is invalid
     }
 
     setActiveTab(targetTab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+};
+
 
   const handleNextTab = () => {
     const currentIndex = tabOrder.indexOf(activeTab);

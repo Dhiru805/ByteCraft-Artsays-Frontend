@@ -9,7 +9,6 @@ const OrderMaterial = () => {
   const [productsPerPage, setProductsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedOrderToDelete, setSelectedOrderToDelete] = useState(null);
 
@@ -67,26 +66,71 @@ const OrderMaterial = () => {
     }
   };
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-  const filteredItems = orders.filter((mat) => {
-    const name =
-      mat.material?.materialName?.materialName ||
-      mat.stamp?.name ||
-      mat.stickers?.name ||
-      mat.vouchers?.name ||
-      mat.card?.name ||
-      "";
+    useEffect(() => {
+      fetchOrders();
+    }, []);
 
-    return name.toLowerCase().includes(searchTerm.toLowerCase());
+    // Filter based on search term
+    const filteredItems = orders.filter((mat) => {
+    const names = [
+      mat.material?.materialName?.materialName,
+      mat.stamp?.materialStamp,
+      mat.stickers?.materialStickers,
+      mat.vouchers?.materialVouchers,
+      mat.card?.materialCard,
+    ];
+    return names.some(
+      (name) =>
+        name && name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   });
 
   const totalPages = Math.ceil(filteredItems.length / productsPerPage);
   const startIndex = (currentPage - 1) * productsPerPage;
   const endIndex = startIndex + productsPerPage;
+  const paginatedOrders = filteredItems.slice(
+    startIndex,
+    startIndex + productsPerPage
+  );
 
-  const paginatedItems = filteredItems.slice(startIndex, endIndex);
+  const getOrderName = (order) => {
+    if (order.material?.materialName?.materialName)
+      return order.material.materialName.materialName;
+    if (order.stamp?.materialStamp) return order.stamp.materialStamp;
+    if (order.stickers?.materialStickers) return order.stickers.materialStickers;
+    if (order.vouchers?.materialVouchers) return order.vouchers.materialVouchers;
+    if (order.card?.materialCard) return order.card.materialCard;
+    return "-";
+  };
+
+  const getOrderImage = (order) => {
+    if (order.material?.materialName?.materialNameImage)
+      return `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${order.material.materialName.materialNameImage.replace(
+        /\\/g,
+        "/"
+      )}`;
+    if (order.stamp?.materialStampImage)
+      return `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${order.stamp.materialStampImage.replace(
+        /\\/g,
+        "/"
+      )}`;
+    if (order.stickers?.materialStickersImage)
+      return `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${order.stickers.materialStickersImage.replace(
+        /\\/g,
+        "/"
+      )}`;
+    if (order.vouchers?.materialVouchersImage)
+      return `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${order.vouchers.materialVouchersImage.replace(
+        /\\/g,
+        "/"
+      )}`;
+    if (order.card?.materialCardImage)
+      return `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${order.card.materialCardImage.replace(
+        /\\/g,
+        "/"
+      )}`;
+    return "/placeholder.jpg";
+  };
 
   return (
     <>
@@ -168,95 +212,67 @@ const OrderMaterial = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {paginatedItems.length === 0 ? (
+                      {paginatedOrders.length === 0 ? (
                         <tr>
                           <td colSpan="6" className="text-center">
                             No data available
                           </td>
                         </tr>
                       ) : (
-                        paginatedItems.map((mat, index) => {
-                          const productImage =
-                            mat.material?.materialName?.materialNameImage ||
-                            mat.stamp?.materialStampImage ||
-                            mat.stickers?.materialStickersImage ||
-                            mat.vouchers?.materialVouchersImage ||
-                            mat.card?.materialCardImage;
-
-                          const productName =
-                            mat.material?.materialName?.materialName ||
-                            mat.stamp?.materialStamp ||
-                            mat.stickers?.materialStickers ||
-                            mat.vouchers?.materialVouchers ||
-                            mat.card?.materialCard;
-
-                          return (
-                            <tr key={mat._id}>
-                              <td>{startIndex + index + 1}</td>
-
-                              <td>
-                                <img
-                                  src={
-                                    productImage
-                                      ? `${
-                                          process.env
-                                            .REACT_APP_API_URL_FOR_IMAGE
-                                        }/${productImage.replace(/\\/g, "/")}`
-                                      : "/placeholder.jpg"
-                                  }
-                                  className="rounded-circle"
-                                  alt={productName}
-                                  style={{
-                                    width: "30px",
-                                    height: "30px",
-                                    marginRight: "10px",
-                                    objectFit: "cover",
-                                  }}
-                                />
-                                {productName}
-                              </td>
-
-                              <td>{mat.quantity}</td>
-                              <td>{mat.totalPrice}</td>
-
-                              <td>
-                                <button
-                                  className={`btn btn-sm ${
-                                    mat.status === "Pending"
-                                      ? "btn-outline-warning"
-                                      : mat.status === "Approved"
-                                      ? "btn-outline-success"
-                                      : mat.status === "Work in Progress"
-                                      ? "btn-outline-info"
-                                      : mat.status === "Ready for Transit"
-                                      ? "btn-outline-primary"
-                                      : mat.status === "In-Transit"
-                                      ? "btn-outline-secondary"
-                                      : mat.status === "Delivered"
-                                      ? "btn-outline-success"
-                                      : "btn-outline-danger"
-                                  }`}
-                                >
-                                  {mat.status}
-                                </button>
-                              </td>
-
-                              <td>
-                                <button
-                                  className="btn btn-outline-primary btn-sm"
-                                  title="View"
-                                  onClick={() =>
-                                    navigate(
-                                      `/seller/packaging-material/view/${mat._id}`
-                                    )
-                                  }
-                                >
-                                  <i className="fa fa-eye"></i>
-                                </button>
-                              </td>
-                            </tr>
-                          );
-                        })
+                        paginatedOrders.map((mat, index) => (
+                          <tr key={mat._id}>
+                            <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
+                            <td>
+                              <img
+                                src={getOrderImage(mat)}
+                                className="rounded-circle"
+                                alt={getOrderName(mat)}
+                                style={{
+                                  width: "30px",
+                                  height: "30px",
+                                  objectFit: "cover",
+                                  marginRight: "10px",
+                                }}
+                              />
+                              <span>{getOrderName(mat)}</span>
+                            </td>
+                            <td>{mat.quantity}</td>
+                            <td>{mat.totalPrice}</td>
+                            <td>
+                              <button
+                                className={`btn btn-sm ${
+                                  mat.status === "Pending"
+                                    ? "btn-outline-warning"
+                                    : mat.status === "Approved"
+                                    ? "btn-outline-success"
+                                    : mat.status === "Work in Progress"
+                                    ? "btn-outline-info"
+                                    : mat.status === "Ready for Transit"
+                                    ? "btn-outline-primary"
+                                    : mat.status === "In-Transit"
+                                    ? "btn-outline-secondary"
+                                    : mat.status === "Delivered"
+                                    ? "btn-outline-success"
+                                    : "btn-outline-danger"
+                                }`}
+                              >
+                                {mat.status}
+                              </button>
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                className="btn btn-outline-primary btn-sm mr-2"
+                                title="View"
+                                onClick={() =>
+                                  navigate(`/seller/packaging-material/view/${mat._id}`)
+                                }
+                              >
+                                <i className="fa fa-eye"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        ))
                       )}
                     </tbody>
                   </table>
@@ -272,9 +288,8 @@ const OrderMaterial = () => {
 
                   <ul className="pagination">
                     <li
-                      className={`page-item ${
-                        currentPage === 1 ? "disabled" : ""
-                      }`}
+                      className={`paginate_button page-item ${currentPage === 1 ? "disabled" : ""}`}
+                      onClick={handlePrevious}
                     >
                       <button className="page-link" onClick={handlePrevious}>
                         Previous
@@ -282,27 +297,20 @@ const OrderMaterial = () => {
                     </li>
 
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                      (page) => (
+                      (pageNumber) => (
                         <li
-                          key={page}
-                          className={`page-item ${
-                            currentPage === page ? "active" : ""
-                          }`}
+                          key={pageNumber}
+                          className={`paginate_button page-item ${currentPage === pageNumber ? "active" : ""}`}
+                          onClick={() => setCurrentPage(pageNumber)}
                         >
-                          <button
-                            className="page-link"
-                            onClick={() => setCurrentPage(page)}
-                          >
-                            {page}
-                          </button>
+                          <button className="page-link">{pageNumber}</button>
                         </li>
                       )
                     )}
 
                     <li
-                      className={`page-item ${
-                        currentPage === totalPages ? "disabled" : ""
-                      }`}
+                      className={`paginate_button page-item ${currentPage === totalPages ? "disabled" : ""}`}
+                      onClick={handleNext}
                     >
                       <button className="page-link" onClick={handleNext}>
                         Next

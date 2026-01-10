@@ -163,105 +163,184 @@ const BlockHeader = () => {
                         </div>
                     </div>
                 </div>
+<div className="row clearfix row-deck">
+  <div className="col-lg-6 col-md-12 col-sm-12">
+    <div className="card">
+      <div className="header">
+        <h2>New Orders</h2>
+      </div>
+      <div className="body">
+        <table
+          className="table table-hover mb-0"
+          style={{ tableLayout: "fixed", width: "100%" }}
+        >
+          <thead>
+            <tr>
+              <th style={{ width: "50px" }}>#</th>
+              <th style={{ width: "120px" }}>Product</th>
+              <th style={{ width: "150px" }}>Customers</th>
+              <th style={{ width: "80px", textAlign: "right" }}>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>01</td>
+              <td>IPONE-7</td>
+              <td>
+                <ul className="list-unstyled team-info margin-0">
+                  <li>
+                    <img
+                      src="DashboardAssets/assets/images/xs/avatar1.jpg"
+                      title="Avatar"
+                      alt="Avatar"
+                    />
+                  </li>
+                  <li>
+                    <img
+                      src="DashboardAssets/assets/images/xs/avatar6.jpg"
+                      title="Avatar"
+                      alt="Avatar"
+                    />
+                  </li>
+                </ul>
+              </td>
+              <td style={{ textAlign: "right", whiteSpace: "nowrap" }}>$ 356</td>
+            </tr>
 
-                <div className="row clearfix row-deck">
-                    <div className="col-lg-4 col-md-12 col-sm-12">
-                        <div className="card">
-                            <div className="header">
-                                <h2>New Orders</h2>
-                            </div>
-                            <div className="body">
-                                <table className="table table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Product</th>
-                                            <th>Customers</th>
-                                            <th>Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>01</td>
-                                            <td>IPONE-7</td>
-                                            <td>
-                                                <ul className="list-unstyled team-info margin-0">
-                                                    <li><img src="DashboardAssets/assets/images/xs/avatar1.jpg" title="Avatar" alt="Avatar" /></li>
-                                                    <li><img src="DashboardAssets/assets/images/xs/avatar6.jpg" title="Avatar" alt="Avatar" /></li>
-                                                </ul>
-                                            </td>
-                                            <td>$ 356</td>
-                                        </tr>
-                                        <tr>
-                                            <td>02</td>
-                                            <td>NOKIA-8</td>
-                                            <td>
-                                                <ul classNameName="list-unstyled team-info margin-0">
-                                                    <li><img src="DashboardAssets/assets/images/xs/avatar1.jpg" title="Avatar" alt="Avatar" /></li>
-                                                    <li><img src="DashboardAssets/assets/images/xs/avatar5.jpg" title="Avatar" alt="Avatar" /></li>
-                                                    <li><img src="DashboardAssets/assets/images/xs/avatar9.jpg" title="Avatar" alt="Avatar" /></li>
-                                                </ul>
-                                            </td>
-                                            <td>$ 542</td>
-                                        </tr>
-                                        <tr>
-                                            <td>03</td>
-                                            <td>Laptop HP</td>
-                                            <td>
-                                                <ul className="list-unstyled team-info margin-0">
-                                                    <li><img src="DashboardAssets/assets/images/xs/avatar5.jpg" title="Avatar" alt="Avatar" /></li>
-                                                </ul>
-                                            </td>
-                                            <td>$ 356</td>
-                                        </tr>
-                                        <tr>
-                                            <td>04</td>
-                                            <td>NOKIA-8</td>
-                                            <td>
-                                                <ul className="list-unstyled team-info margin-0">
-                                                    <li><img src="DashboardAssets/assets/images/xs/avatar3.jpg" title="Avatar" alt="Avatar" /></li>
-                                                    <li><img src="DashboardAssets/assets/images/xs/avatar2.jpg" title="Avatar" alt="Avatar" /></li>
-                                                </ul>
-                                            </td>
-                                            <td>$ 542</td>
-                                        </tr>
-                                        <tr>
-                                            <td>05</td>
-                                            <td>Tablet 4g</td>
-                                            <td>
-                                                <ul className="list-unstyled team-info margin-0">
-                                                    <li><img src="DashboardAssets/assets/images/xs/avatar3.jpg" title="Avatar" alt="Avatar" /></li>
-                                                    <li><img src="DashboardAssets/assets/images/xs/avatar2.jpg" title="Avatar" alt="Avatar" /></li>
-                                                </ul>
-                                            </td>
-                                            <td>$ 542</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-lg-8 col-md-12 col-sm-12">
-                        <div className="card">
-                            <div className="header">
-                                <h2>Top Selling Country</h2>
-                                <ul className="header-dropdown">
-                                    <li className="dropdown">
-                                        <a href="javascript:void(0);" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"></a>
-                                        <ul className="dropdown-menu dropdown-menu-right">
-                                            <li><a href="javascript:void(0);">Action</a></li>
-                                            <li><a href="javascript:void(0);">Another Action</a></li>
-                                            <li><a href="javascript:void(0);">Something else</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div className="body">
-                                <div id="world-map-markers" className="jvector-map" style={{ height: "300px" }}></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <tr>
+              <td>02</td>
+              <td>NOKIA-8</td>
+              <td>
+                <ul className="list-unstyled team-info margin-0">
+                  <li>
+                    <img
+                      src="DashboardAssets/assets/images/xs/avatar1.jpg"
+                      title="Avatar"
+                      alt="Avatar"
+                    />
+                  </li>
+                  <li>
+                    <img
+                      src="DashboardAssets/assets/images/xs/avatar5.jpg"
+                      title="Avatar"
+                      alt="Avatar"
+                    />
+                  </li>
+                  <li>
+                    <img
+                      src="DashboardAssets/assets/images/xs/avatar9.jpg"
+                      title="Avatar"
+                      alt="Avatar"
+                    />
+                  </li>
+                </ul>
+              </td>
+              <td style={{ textAlign: "right", whiteSpace: "nowrap" }}>$ 542</td>
+            </tr>
+
+            <tr>
+              <td>03</td>
+              <td>Laptop HP</td>
+              <td>
+                <ul className="list-unstyled team-info margin-0">
+                  <li>
+                    <img
+                      src="DashboardAssets/assets/images/xs/avatar5.jpg"
+                      title="Avatar"
+                      alt="Avatar"
+                    />
+                  </li>
+                </ul>
+              </td>
+              <td style={{ textAlign: "right", whiteSpace: "nowrap" }}>$ 356</td>
+            </tr>
+
+            <tr>
+              <td>04</td>
+              <td>NOKIA-8</td>
+              <td>
+                <ul className="list-unstyled team-info margin-0">
+                  <li>
+                    <img
+                      src="DashboardAssets/assets/images/xs/avatar3.jpg"
+                      title="Avatar"
+                      alt="Avatar"
+                    />
+                  </li>
+                  <li>
+                    <img
+                      src="DashboardAssets/assets/images/xs/avatar2.jpg"
+                      title="Avatar"
+                      alt="Avatar"
+                    />
+                  </li>
+                </ul>
+              </td>
+              <td style={{ textAlign: "right", whiteSpace: "nowrap" }}>$ 542</td>
+            </tr>
+
+            <tr>
+              <td>05</td>
+              <td>Tablet 4g</td>
+              <td>
+                <ul className="list-unstyled team-info margin-0">
+                  <li>
+                    <img
+                      src="DashboardAssets/assets/images/xs/avatar3.jpg"
+                      title="Avatar"
+                      alt="Avatar"
+                    />
+                  </li>
+                  <li>
+                    <img
+                      src="DashboardAssets/assets/images/xs/avatar2.jpg"
+                      title="Avatar"
+                      alt="Avatar"
+                    />
+                  </li>
+                </ul>
+              </td>
+              <td style={{ textAlign: "right", whiteSpace: "nowrap" }}>$ 542</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div className="col-lg-6 col-md-12 col-sm-12">
+    <div className="card">
+      <div className="header">
+        <h2>Top Selling Country</h2>
+        <ul className="header-dropdown">
+          <li className="dropdown">
+            <a
+              href="javascript:void(0);"
+              className="dropdown-toggle"
+              data-toggle="dropdown"
+              role="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            ></a>
+            <ul className="dropdown-menu dropdown-menu-right">
+              <li><a href="javascript:void(0);">Action</a></li>
+              <li><a href="javascript:void(0);">Another Action</a></li>
+              <li><a href="javascript:void(0);">Something else</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div className="body">
+        <div
+          id="world-map-markers"
+          className="jvector-map"
+          style={{ height: "300px" }}
+        ></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
                 <div className="row clearfix">
                     <div className="col-sm-12 col-md-12 col-lg-12">

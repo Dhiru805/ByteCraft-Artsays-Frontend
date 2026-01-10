@@ -157,6 +157,7 @@ const Profile = ({ shareprofileid }) => {
   const [tipAmount, setTipAmount] = useState(40);
   const [tipSuccess, setTipSuccess] = useState(false);
   const [activeSection, setActiveSection] = useState(null);
+  const [showUnfollowConfirm, setShowUnfollowConfirm] = useState(false);
   const [activeIndex, setActiveIndex] = useState(null);
   const productPosts =
     profile?.posts?.filter(
@@ -494,6 +495,16 @@ const Profile = ({ shareprofileid }) => {
       console.error("Error following/unfollowing user:", error);
     }
   };
+  const handleFollowClick = () => {
+  if (!follow) {
+    
+    handleFollowToggle(viewedUserId, false);
+  } else {
+   
+    setShowUnfollowConfirm(true);
+  }
+};
+
 
   // Handle swipe start
   const handleTouchStart = (e) => {
@@ -2798,6 +2809,45 @@ const Profile = ({ shareprofileid }) => {
           </div>
         )}
       </div>
+      {showUnfollowConfirm && (
+  <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+    <div className="bg-white p-5 rounded-lg w-[300px]">
+      <p className="mb-4 text-sm">
+        Do you want to unfollow?
+      </p>
+
+      <div className="flex justify-end gap-3">
+        <button
+          onClick={() => setShowUnfollowConfirm(false)}
+          className="border px-3 py-1 rounded"
+        >
+          Cancel
+        </button>
+
+        {/* <button
+          onClick={() => {
+            handleFollowToggle(viewedUserId, true);
+            setShowUnfollowConfirm(false);
+          }}
+          className="px-2 py-1 rounded-md text-[16px] font-bold bg-[#6F4D34] text-white"
+        >
+          Unfollow
+        </button> */}
+        <button
+  onClick={() => {
+    handleFollowToggle(viewedUserId, true);
+    setShowUnfollowConfirm(false);
+  }}
+  className="px-2 py-1 min-w-[90px] sm:min-w-[100px] text-center rounded-md text-[16px] font-bold bg-[#6F4D34] text-white"
+>
+  Unfollow
+</button>
+
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
@@ -2842,6 +2892,7 @@ const ProfileSkeleton = () => {
           ></div>
         ))}
       </div>
+      
     </div>
   );
 };

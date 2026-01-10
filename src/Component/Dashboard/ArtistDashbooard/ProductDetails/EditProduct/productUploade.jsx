@@ -441,12 +441,14 @@ function ProductUpload() {
       case 'legal':
         return (
           <LegalCompliance
-            formData={formData}
-            isSubmitting={isSubmitting}
-            handleInputChange={handleInputChange}
-            handleSelectChange={handleSelectChange}
-            setFormData={setFormData}
-          />
+  formData={formData}
+  isSubmitting={isSubmitting}
+  handleInputChange={handleInputChange}
+  handleSelectChange={handleSelectChange}
+  setFormData={setFormData}
+  isFinalSubmit={isSubmitting}
+/>
+
         );
       default:
         return null;
