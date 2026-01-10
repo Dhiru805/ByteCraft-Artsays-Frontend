@@ -68,12 +68,9 @@ const NotificationAndPreferences = () => {
             await fetchSubCategoryData(cat.value, false);
           })
         );
-      } else {
-        toast.error(`Failed to load categories for main category ID ${mainCategoryId}.`);
       }
     } catch (err) {
-      console.error(`Error fetching categories for main category ID ${mainCategoryId}:`, err);
-      toast.error("Error fetching categories.");
+      console.warn(`Could not fetch categories for main category ID ${mainCategoryId}`);
     } finally {
       setSearchLoading(false);
     }
@@ -94,15 +91,12 @@ const NotificationAndPreferences = () => {
           ...prev.filter((sub) => sub.categoryId !== categoryId), // Remove old subcategories for this category
           ...formattedSubCategories,
         ]);
-        if (setDropdown) {
-          setSubCategories(formattedSubCategories);
+          if (setDropdown) {
+            setSubCategories(formattedSubCategories);
+          }
         }
-      } else {
-        toast.error(`Failed to load subcategories for category ID ${categoryId}.`);
-      }
-    } catch (err) {
-      console.error(`Error fetching subcategories for category ID ${categoryId}:`, err);
-      toast.error("Error fetching subcategories.");
+      } catch (err) {
+      console.warn(`Could not fetch subcategories for category ID ${categoryId}`);
     } finally {
       setSearchLoading(false);
     }
