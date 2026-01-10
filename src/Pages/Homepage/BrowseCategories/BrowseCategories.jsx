@@ -1727,13 +1727,14 @@ const BrowseCategories = () => {
                         <ShoppingCart size={20} className="transition-transform group-hover/cart:scale-110" />
                       </button>
 
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (!ensureBuyer()) return;
-                          if (!product.quantity || product.quantity === 0) return;
-                          navigate(`/my-account/check-out/${userId}?productId=${product._id}`);
-                        }}
+                        <button
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            if (!ensureBuyer()) return;
+                            if (!product.quantity || product.quantity === 0) return;
+                            await addToCart(product._id);
+                            navigate(`/my-account/check-out/${userId}?productId=${product._id}`);
+                          }}
                         disabled={!product.quantity || product.quantity === 0}
                         className="col-span-4 h-[48px] bg-[#6F4D34] text-white hover:!text-[#6F4D34] rounded-2xl font-black text-[12px] uppercase tracking-[0.1em] transition-all duration-300 shadow-sm hover:!bg-[#ffffff] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed border border-gray-100 transform active:scale-95 flex items-center justify-center overflow-hidden relative"
                       >

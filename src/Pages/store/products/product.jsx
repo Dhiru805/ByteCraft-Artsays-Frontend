@@ -902,10 +902,11 @@ const Product = () => {
                             </button>
 
                             <button
-                              onClick={(e) => {
+                              onClick={async (e) => {
                                 e.stopPropagation();
                                 if (!ensureBuyer()) return;
                                 if (!product.quantity || product.quantity === 0) return;
+                                await addToCart(product._id);
                                 navigate(`/my-account/check-out/${userId}?productId=${product._id}`);
                               }}
                               disabled={!product.quantity || product.quantity === 0}

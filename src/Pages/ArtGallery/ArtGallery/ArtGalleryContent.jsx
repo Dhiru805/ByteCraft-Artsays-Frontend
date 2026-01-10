@@ -330,13 +330,14 @@ const ArtGalleryContent = () => {
                             disabled={!product.quantity || product.quantity === 0}
                             className="col-span-1 h-[56px] bg-gray-50 text-gray-900 rounded-2xl hover:bg-[#6F4D34] hover:text-white transition-all duration-300 disabled:opacity-50 border border-gray-100 flex items-center justify-center group/cart shadow-sm"
                           ><ShoppingCart size={22} className="transition-transform group-hover/cart:scale-110" /></button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (!ensureBuyer()) return;
-                              if (!product.quantity || product.quantity === 0) return;
-                              navigate(`/my-account/check-out/${userId}?productId=${product._id}`);
-                            }}
+                            <button
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                if (!ensureBuyer()) return;
+                                if (!product.quantity || product.quantity === 0) return;
+                                await addToCart(product._id);
+                                navigate(`/my-account/check-out/${userId}?productId=${product._id}`);
+                              }}
                             disabled={!product.quantity || product.quantity === 0}
                             className="col-span-4 h-[56px] bg-[#6F4D34] text-white rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 shadow-sm hover:shadow-xl hover:bg-[#5a3e2a] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed border border-[#6F4D34] transform active:scale-95"
                           >{(!product.quantity || product.quantity === 0) ? "Sold Out" : "Shop Now"}</button>
