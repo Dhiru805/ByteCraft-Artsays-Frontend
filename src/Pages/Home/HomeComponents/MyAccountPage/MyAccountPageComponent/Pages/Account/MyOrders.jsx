@@ -523,7 +523,7 @@ if(loading)return <div><MyOrderSkeleton/></div>
         </div>
       )}
       {showCancelModal && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+        <div className="fixed inset-0 flex justify-center items-center z-[999]" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}>
           <div className="bg-white p-6 rounded-xl w-[350px]">
             <h2 className="text-lg font-semibold mb-2">Cancel Order</h2>
             <p className="text-sm text-gray-600 mb-3">
