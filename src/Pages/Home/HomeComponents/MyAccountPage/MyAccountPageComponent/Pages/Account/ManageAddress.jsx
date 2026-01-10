@@ -56,32 +56,42 @@ const ManageAddress = () => {
     }
   };
 
-  const fetchDefaultAddress = async () => {
-    if (!userId) return;
-    setLoading(true);
-    try {
-      const response = await getAPI(
-        `/api/get-default-address/${userId}`,
-        {},
-        true,
-        false
-      );
-      if (!response.hasError && response.data?.data) {
-        setSelectedAddressId(response.data.data.addressId);
-      } else {
-        setSelectedAddressId(null);
+    const fetchDefaultAddress = async () => {
+      if (!userId) return;
+      setLoading(true);
+      try {
+        const response = await getAPI(
+          `/api/get-default-address/${userId}`,
+          {},
+          true,
+          false
+        );
+        if (!response.hasError && response.data?.data) {
+          setSelectedAddressId(response.data.data.addressId);
+        } else {
+          setSelectedAddressId(null);
+        }
+      } catch (err) {
+        console.log("Failed to fetch default address.");
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.log("Failed to fetch default address.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
   useEffect(() => {
-    fetchAddresses();
-    fetchDefaultAddress();
-  }, [userId]);
+    if (!isFetching && !loading && addresses.length > 0) {
+      const isCurrentDefaultValid = addresses.some(addr => addr._id === selectedAddressId);
+      if (!selectedAddressId || !isCurrentDefaultValid) {
+        handleSelectAddress(addresses[0]._id);
+      }
+    }
+  }, [addresses, selectedAddressId, isFetching, loading]);
+
+    useEffect(() => {
+      fetchAddresses();
+      fetchDefaultAddress();
+    }, [userId]);
+
 
   const handleInputChange = e => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -163,11 +173,14 @@ const ManageAddress = () => {
     // setEditIndex(index);
   };
 
-  const handleDeleteConfirmed = (id) => {
-    setAddresses((prev) => prev.filter((addr) => addr._id !== id));
-    setIsDeleteDialogOpen(false);
-    setSelectedAddressId(null);
-  };
+    const handleDeleteConfirmed = (id) => {
+      setAddresses((prev) => prev.filter((addr) => addr._id !== id));
+      setIsDeleteDialogOpen(false);
+      if (selectedAddressId === id) {
+        setSelectedAddressId(null);
+      }
+    };
+
 
   const handleDeleteCancel = () => {
     setIsDeleteDialogOpen(false);
@@ -267,19 +280,15 @@ const ManageAddress = () => {
                   >
                     Delete
                   </button>
-                  <button
-                    onClick={() => handleSelectAddress(addr._id)}
-                    className={`hover:text-green-700 ${
-                      selectedAddressId === addr._id
-                        ? "px-2 py-1 rounded-lg text-white bg-green-600 font-semibold"
-                        : "text-[#6F3E2D]"
-                    }`}
-                    disabled={loading}
-                  >
-                    {selectedAddressId === addr._id
-                      ? "Default"
-                      : "Make Default"}
-                  </button>
+                    {selectedAddressId !== addr._id && (
+                      <button
+                        onClick={() => handleSelectAddress(addr._id)}
+                        className="text-[#6F3E2D] hover:text-green-700"
+                        disabled={loading}
+                      >
+                        Make Default
+                      </button>
+                    )}
                 </div>
               </div>
 

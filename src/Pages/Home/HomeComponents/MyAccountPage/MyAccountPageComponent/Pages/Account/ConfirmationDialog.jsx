@@ -64,13 +64,19 @@ const DELETE_CONFIG = {
     errorMessage: "Failed to delete Blog Category.",
     idKey: "BlogCategoryId",
   },
-  address: {
-    getEndpoint: (id) => null, // No direct endpoint; deletion handled by parent component
-    successMessage: "Address successfully deleted!",
-    errorMessage: "Failed to delete address.",
-    idKey: "AddressIndex",
-  },
-};
+    address: {
+      getEndpoint: (id) => null, // No direct endpoint; deletion handled by parent component
+      successMessage: "Address successfully deleted!",
+      errorMessage: "Failed to delete address.",
+      idKey: "AddressIndex",
+    },
+    buyeraddress: {
+      getEndpoint: (id) => `/api/delete-buyerAddress/${id}`,
+      successMessage: "Address successfully deleted!",
+      errorMessage: "Failed to delete address.",
+      idKey: "AddressId",
+    },
+  };
 
 function ConfirmationDialog({ onClose, deleteType, id, onDeleted }) {
   const handleDelete = async () => {
