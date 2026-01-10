@@ -1283,16 +1283,30 @@ const BrowseCategories = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
   const navigate = useNavigate();
   const [likedProducts, setLikedProducts] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
+
+  const fetchCart = async () => {
+    if (!userId || userType !== "Buyer") return;
+    try {
+      const res = await getAPI(`/api/cart/${userId}`);
+      setCartItems(res?.data?.items || []);
+    } catch (err) {
+      console.error("Error fetching cart:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchCart();
+  }, [userId, userType]);
 
   const addToCart = async (productId) => {
     if (!userId) {
@@ -1302,6 +1316,7 @@ const BrowseCategories = () => {
     try {
       await postAPI(`/api/cart/addcart/${productId}`, {}, true);
       toast.success("Added to Cart!");
+      fetchCart();
     } catch (err) {
       console.error("Add to cart error:", err);
       toast.error("Failed to add to cart");
@@ -1716,16 +1731,26 @@ const BrowseCategories = () => {
                       </div>
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="grid grid-cols-5 gap-2 mt-2">
-                      <button
-                        onClick={(e) => { e.stopPropagation(); addToCart(product._id); }}
-                        disabled={!product.quantity || product.quantity === 0}
-                        className="col-span-1 h-[48px] bg-gray-50 text-gray-900 hover:text-[#ffffff] rounded-2xl hover:bg-[#6F4D34] hover:text-white transition-all duration-300 disabled:opacity-50 border border-gray-100 flex items-center justify-center group/cart shadow-sm"
-                        title="Add to Cart"
-                      >
-                        <ShoppingCart size={20} className="transition-transform group-hover/cart:scale-110" />
-                      </button>
+                      {/* Action Buttons */}
+                      <div className="grid grid-cols-5 gap-2 mt-2">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); addToCart(product._id); }}
+                          disabled={!product.quantity || product.quantity === 0}
+                          className="col-span-1 h-[48px] bg-gray-50 text-gray-900 hover:text-[#ffffff] rounded-2xl hover:bg-[#6F4D34] hover:text-white transition-all duration-300 disabled:opacity-50 border border-gray-100 flex items-center justify-center group/cart shadow-sm"
+                          title="Add to Cart"
+                        >
+                          <div className="relative">
+                            <ShoppingCart size={20} className="transition-transform group-hover/cart:scale-110" />
+                            {(() => {
+                              const cartItem = cartItems.find((item) => item.product?._id === product._id);
+                              return cartItem && cartItem.quantity > 0 ? (
+                                <span className="absolute -top-3 -right-3 bg-red-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center shadow-lg border-2 border-white flex items-center justify-center">
+                                  {cartItem.quantity}
+                                </span>
+                              ) : null;
+                            })()}
+                          </div>
+                        </button>
 
                         <button
                           onClick={async (e) => {
