@@ -37,8 +37,8 @@ const HomeChallenges = () => {
         }
 
         const detailedRes = await getAPI("/api/getchallengedata");
-        if (detailedRes?.hasError === false) {
-          const allChallenges = detailedRes?.data?.challenges || [];
+        if (detailedRes?.hasError === false && detailedRes?.data?.data?.challenges) {
+          const allChallenges = detailedRes?.data?.data?.challenges || [];
           const liveChallenges = allChallenges.filter(challenge => challenge.status === "live");
           const sortedChallenges = liveChallenges.sort((a, b) => {
             const dateA = new Date(a.createdAt);
@@ -113,12 +113,12 @@ const HomeChallenges = () => {
                 }`}
               >
                 {/* Image Section */}
-                <div className="w-full lg:w-2/5 aspect-[4/3] overflow-hidden rounded-2xl bg-[#F5F5F5] flex items-center justify-center relative">
-                  <img
-                    src={challenge?.bannerImage}
-                    alt={challenge?.title}
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
-                  />
+                  <div className="w-full lg:w-2/5 aspect-[4/3] overflow-hidden rounded-2xl bg-[#F5F5F5] flex items-center justify-center relative">
+                    <img
+                      src={challenge?.bannerImage?.startsWith("http") ? challenge.bannerImage : `${process.env.REACT_APP_API_URL_FOR_IMAGE}${challenge.bannerImage}`}
+                      alt={challenge?.title}
+                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
+                    />
                   <div className="absolute top-4 right-4 lg:hidden">
                     <span className="flex items-center gap-1 px-3 py-1 bg-[#6F4D34] text-white rounded-full text-xs font-bold shadow-lg">
                       <GoDotFill className="animate-pulse" /> {daysLeft(challenge?.endDate)}

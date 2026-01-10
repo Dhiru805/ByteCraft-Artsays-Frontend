@@ -28,20 +28,20 @@ const ChallengesContent = () => {
 
   const navigate = useNavigate();
 
-  const fetchChallenges = async () => {
-    try {
-      const response = await getAPI("/api/getchallengedata");
-      if (response?.hasError === false && response?.data?.challenges) {
-        // Fetch all challenges that are either live or upcoming
-        const filtered = response.data.challenges.filter(
-          (challenge) => challenge?.status === "live" || challenge?.status === "upcoming"
-        );
-        setChallengesData(filtered);
+    const fetchChallenges = async () => {
+      try {
+        const response = await getAPI("/api/getchallengedata");
+        if (response?.hasError === false && response?.data?.data?.challenges) {
+          // Fetch all challenges that are either live or upcoming
+          const filtered = response.data.data.challenges.filter(
+            (challenge) => challenge?.status === "live" || challenge?.status === "upcoming"
+          );
+          setChallengesData(filtered);
+        }
+      } catch (error) {
+        console.log("Error fetching challenges:", error);
       }
-    } catch (error) {
-      console.log("Error fetching challenges:", error);
-    }
-  };
+    };
 
   const fetchChallengeCMS = async () => {
     try {
@@ -214,7 +214,7 @@ const ChallengesContent = () => {
                     {/* Image Section */}
                     <div className="w-full lg:w-2/5 aspect-[4/3] overflow-hidden rounded-2xl bg-[#F5F5F5] flex items-center justify-center relative">
                       <img
-                        src={challenge?.bannerImage}
+                        src={challenge?.bannerImage?.startsWith("http") ? challenge.bannerImage : `${process.env.REACT_APP_API_URL_FOR_IMAGE}${challenge.bannerImage}`}
                         alt={challenge?.title}
                         className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
                       />

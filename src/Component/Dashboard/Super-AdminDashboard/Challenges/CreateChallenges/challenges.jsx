@@ -428,7 +428,7 @@ const ChallengesTable = () => {
       console.log("Fetched challenges:", data);
 
       if (!data.hasError) {
-        const validChallenges = (data.data?.challenges || []).filter(
+        const validChallenges = (data.data?.data?.challenges || []).filter(
           (c) => c.title
         );
         setChallenges(validChallenges);
