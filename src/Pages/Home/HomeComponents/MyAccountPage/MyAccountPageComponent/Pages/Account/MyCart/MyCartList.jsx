@@ -257,7 +257,7 @@ const MyCartList = () => {
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 py-8">
+    <div className="max-w-[1440px] mx-auto">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
           My Cart

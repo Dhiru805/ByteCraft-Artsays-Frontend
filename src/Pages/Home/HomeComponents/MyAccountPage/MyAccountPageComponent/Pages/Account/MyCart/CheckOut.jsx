@@ -6,6 +6,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { ChevronRight, Truck } from "lucide-react";
 import { LocationSelector } from "../../../../../../../../Component/Common/LocationSelector";
+import CheckOutSkeleton from "../../../../../../../../Component/Skeleton/Home/Account/CheckOutSkeleton.jsx";
 
 const CheckOut = () => {
   const userId = localStorage.getItem("userId");
@@ -24,6 +25,7 @@ const CheckOut = () => {
     const [cartItems, setCartItems] = useState([]);
     const [paymentMethod] = useState("Online");
     const [allAddresses, setAllAddresses] = useState([]);
+    const [loading, setLoading] = useState(true);
 
   // Address selection states
   const [selectedDeliveryAddrId, setSelectedDeliveryAddrId] = useState("");
@@ -211,9 +213,19 @@ const CheckOut = () => {
   };
 
   useEffect(() => {
-    loadOrderItems();
-    loadUserAndAddresses();
+    const init = async () => {
+      try {
+        await Promise.all([loadOrderItems(), loadUserAndAddresses()]);
+      } catch (err) {
+        console.error("Initialization error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    init();
   }, [userId]);
+
+  if (loading) return <CheckOutSkeleton />;
 
   const totalMRP = cartItems.reduce((acc, item) => acc + (item.marketSubtotal || item.subtotal), 0);
   const totalSellingPrice = cartItems.reduce((acc, item) => acc + item.subtotal, 0);
