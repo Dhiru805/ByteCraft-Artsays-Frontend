@@ -4,6 +4,9 @@ import getAPI from "../../../../../../../api/getAPI";
 import { toast } from "react-toastify";
 import ConfirmationDialog from "./ConfirmationDialog";
 import postAPI from "../../../../../../../api/postAPI";
+import Select from "react-select";
+import { Country, State, City } from "country-state-city";
+
 const ManageAddress = () => {
   const [addresses, setAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
@@ -17,6 +20,62 @@ const ManageAddress = () => {
     pincode: "",
     phone: "",
   });
+
+  const [countryOptions, setCountryOptions] = useState([]);
+  const [stateOptions, setStateOptions] = useState([]);
+  const [cityOptions, setCityOptions] = useState([]);
+
+  useEffect(() => {
+    const countries = Country.getAllCountries().map((c) => ({
+      value: c.isoCode,
+      label: c.name,
+    }));
+    setCountryOptions(countries);
+  }, []);
+
+  useEffect(() => {
+    if (formData.country) {
+      const selectedCountry = countryOptions.find(
+        (c) => c.label === formData.country || c.value === formData.country
+      );
+      if (selectedCountry) {
+        const states = State.getStatesOfCountry(selectedCountry.value).map(
+          (s) => ({
+            value: s.isoCode,
+            label: s.name,
+          })
+        );
+        setStateOptions(states);
+      }
+    } else {
+      setStateOptions([]);
+      setCityOptions([]);
+    }
+  }, [formData.country, countryOptions]);
+
+  useEffect(() => {
+    if (formData.state && formData.country) {
+      const selectedCountry = countryOptions.find(
+        (c) => c.label === formData.country || c.value === formData.country
+      );
+      const selectedState = stateOptions.find(
+        (s) => s.label === formData.state || s.value === formData.state
+      );
+      if (selectedCountry && selectedState) {
+        const cities = City.getCitiesOfState(
+          selectedCountry.value,
+          selectedState.value
+        ).map((c) => ({
+          value: c.name,
+          label: c.name,
+        }));
+        setCityOptions(cities);
+      }
+    } else {
+      setCityOptions([]);
+    }
+  }, [formData.state, formData.country, countryOptions, stateOptions]);
+
   const [loading, setLoading] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedItemToDelete, setSelectedItemToDelete] = useState(null);
@@ -24,6 +83,32 @@ const ManageAddress = () => {
   const [fetchError, setFetchError] = useState(null);
   const [submitType, setSubmitType] = useState("Submit");
   const userId = localStorage.getItem("userId");
+
+  const customSelectStyles = {
+    control: (provided) => ({
+      ...provided,
+      borderRadius: "0.75rem",
+      borderWidth: "2px",
+      borderColor: "rgb(229, 231, 235)",
+      padding: "2px 4px",
+      boxShadow: "none",
+      "&:hover": {
+        borderColor: "rgb(209, 213, 219)",
+      },
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected
+        ? "#6F4D34"
+        : state.isFocused
+        ? "#f3f4f6"
+        : "white",
+      color: state.isSelected ? "white" : "black",
+      "&:active": {
+        backgroundColor: "#6F4D34",
+      },
+    }),
+  };
 
   const fetchAddresses = async () => {
     if (!userId) {
@@ -93,8 +178,21 @@ const ManageAddress = () => {
     }, [userId]);
 
 
-  const handleInputChange = e => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleInputChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSelectChange = (name, selectedOption) => {
+    setFormData((prev) => {
+      const newData = { ...prev, [name]: selectedOption ? selectedOption.label : "" };
+      if (name === "country") {
+        newData.state = "";
+        newData.city = "";
+      } else if (name === "state") {
+        newData.city = "";
+      }
+      return newData;
+    });
   };
 
   const isValidPhone = (phone) => {
@@ -103,7 +201,13 @@ const ManageAddress = () => {
   };
   const handleAddAddress = async (e) => {
     e.preventDefault();
-    if (!isValidPhone(formData.phone)){
+
+    if (!formData.country || !formData.state || !formData.city) {
+      toast.error("Please select country, state and city");
+      return;
+    }
+
+    if (!isValidPhone(formData.phone)) {
       toast.error("enter valid number")
       return
     }
@@ -340,31 +444,39 @@ const ManageAddress = () => {
             <input name="landmark" value={formData.landmark} onChange={handleInputChange} className="w-full border-2 px-3 py-2 rounded-xl" placeholder="Land Mark" />
           </div>
           <div>
-            <label className="block text-sm">Country *</label>
-            <select name="country" value={formData.country} onChange={handleInputChange} className="w-full border-2 px-3 py-2 rounded-xl" required>
-              <option value="">Select Country</option>
-              <option value="India">India</option>
-              <option value="USA">USA</option>
-              <option value="Germany">Germany</option>
-            </select>
+            <label className="block text-sm mb-1">Country *</label>
+            <Select
+              options={countryOptions}
+              value={countryOptions.find((c) => c.label === formData.country)}
+              onChange={(val) => handleSelectChange("country", val)}
+              placeholder="Select Country"
+              styles={customSelectStyles}
+              required
+            />
           </div>
           <div>
-            <label className="block text-sm">State *</label>
-            <select name="state" value={formData.state} onChange={handleInputChange} className="w-full border-2 px-3 py-2 rounded-xl" required>
-              <option value="">Select State</option>
-              <option value="Assam">Assam</option>
-              <option value="Maharashtra">Maharashtra</option>
-              <option value="Delhi">Delhi</option>
-            </select>
+            <label className="block text-sm mb-1">State *</label>
+            <Select
+              options={stateOptions}
+              value={stateOptions.find((s) => s.label === formData.state)}
+              onChange={(val) => handleSelectChange("state", val)}
+              placeholder="Select State"
+              styles={customSelectStyles}
+              isDisabled={!formData.country}
+              required
+            />
           </div>
           <div>
-            <label className="block text-sm">City *</label>
-            <select name="city" value={formData.city} onChange={handleInputChange} className="w-full border-2 px-3 py-2 rounded-xl" required>
-              <option value="">Select City</option>
-              <option value="Guwahati">Guwahati</option>
-              <option value="Mumbai">Mumbai</option>
-              <option value="Delhi">Delhi</option>
-            </select>
+            <label className="block text-sm mb-1">City *</label>
+            <Select
+              options={cityOptions}
+              value={cityOptions.find((c) => c.label === formData.city)}
+              onChange={(val) => handleSelectChange("city", val)}
+              placeholder="Select City"
+              styles={customSelectStyles}
+              isDisabled={!formData.state}
+              required
+            />
           </div>
           <div>
             <label className="block text-sm">Pincode *</label>

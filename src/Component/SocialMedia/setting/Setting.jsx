@@ -156,14 +156,13 @@ const Setting = () => {
     [...formData.entries()]
   );
 
-  try {
-    const res = await putAPI(
-      "/api/social-media/profile/update",
-      formData,
-      true,
-      true,
-      { "Content-Type": "multipart/form-data" }
-    );
+    try {
+      const res = await putAPI(
+        "/api/social-media/profile/update",
+        formData,
+        {},
+        true
+      );
 
     if (res && !res.hasError) {
       toast.success("Profile updated successfully!");
@@ -249,7 +248,7 @@ const Setting = () => {
       const res = await putAPI(
         "/api/social-media/settings/collab-mention",
         { userId, ...updates },
-        true,
+        {},
         true
       );
       if (!res.data.success) {
@@ -283,7 +282,7 @@ const Setting = () => {
       const res = await putAPI(
         "/api/social-media/comment-settings",
         body,
-        true,
+        {},
         true
       );
       // if using axios.put wrap with postAPI
@@ -345,8 +344,8 @@ const Setting = () => {
       const res = await putAPI(
         "/api/social-media/block-unblock",
         { userId, targetUserId }, // 👈 send both IDs
-        true, // private API
-        true
+        {}, // config object
+        true // private API
       );
 
       if (res?.data?.success) {
