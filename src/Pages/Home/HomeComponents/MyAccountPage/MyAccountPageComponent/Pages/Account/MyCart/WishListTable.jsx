@@ -309,6 +309,7 @@ const WishlistTable = () => {
   const { userId } = useParams();
 
   const [wishlist, setWishlist] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [categoryData, setCategoryData] = useState({
     mainCategories: [],
     categories: [],
@@ -390,30 +391,41 @@ const WishlistTable = () => {
       console.log("Error clearing wishlist:", err);
     }
   };
-const addToCart = async (productId) => {
-  try {
-    await postAPI(`/api/cart/addcart/${productId}`, {}, true);
-    await deleteAPI("/api/wishlist/remove", { params: { userId, productId } });
-    setWishlist((prev) => prev.filter((item) => item._id !== productId));
-    toast.success("Successfully added to cart");
-  } catch (err) {
-    console.log("Error adding to cart:", err);
-    toast.error("Failed to add to cart");
-  }
-};
-const addAllToCart = async () => {
-  try {
-    for (const item of wishlist) {
-      await postAPI(`/api/cart/addcart/${item._id}`, {}, true);
-      await deleteAPI("/api/wishlist/remove", { params: { userId, productId: item._id } });
+  const addToCart = async (productId) => {
+    if (loading) return;
+    setLoading(true);
+    try {
+      await postAPI(`/api/cart/addcart/${productId}`, {}, true);
+      await deleteAPI("/api/wishlist/remove", { params: { userId, productId } });
+      setWishlist((prev) => prev.filter((item) => item._id !== productId));
+      toast.success("Successfully added to cart");
+    } catch (err) {
+      console.log("Error adding to cart:", err);
+      toast.error("Failed to add to cart");
+    } finally {
+      setLoading(false);
     }
-    setWishlist([]);
-    toast.success("All items successfully added to cart");
-  } catch (err) {
-    console.log("Error adding all items:", err);
-    toast.error("Failed to add all items to cart");
-  }
-};
+  };
+
+  const addAllToCart = async () => {
+    if (loading || wishlist.length === 0) return;
+    setLoading(true);
+    try {
+      for (const item of wishlist) {
+        await postAPI(`/api/cart/addcart/${item._id}`, {}, true);
+        await deleteAPI("/api/wishlist/remove", {
+          params: { userId, productId: item._id },
+        });
+      }
+      setWishlist([]);
+      toast.success("All items successfully added to cart");
+    } catch (err) {
+      console.log("Error adding all items:", err);
+      toast.error("Failed to add all items to cart");
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   return (
@@ -458,13 +470,11 @@ const addAllToCart = async () => {
 
                     <div className="font-semibold">
                       <p className="text-gray-800">{item.productName}</p>
-                    <p className="text-xs text-gray-500">
- {item.userId
-  ? item.userId.username ||
-    `${item.userId.name || ""} ${item.userId.lastName || ""}`.trim()
-  : "Unknown Seller"}
-
-</p>
+                      <p className="text-xs text-gray-500">
+                        {item.userId
+                          ? `${item.userId.name || ""} ${item.userId.lastName || ""}`.trim() || item.userId.username || "Unknown Seller"
+                          : "Unknown Seller"}
+                      </p>
 
                     </div>
                   </td>
@@ -476,14 +486,24 @@ const addAllToCart = async () => {
 
                   <td className="py-4 px-4">{item.status || "Available"}</td>
 
-                  <td className="py-4 px-4 text-right">
-                    <button 
-                    onClick={() => addToCart(item._id)}
-                    className="bg-[#5C4033] hover:bg-[#4b3327] text-white px-4 py-2 rounded-full text-sm whitespace-nowrap">
-                      Add to Cart
-                      
-                    </button>
-                  </td>
+                    <td className="py-4 px-4 text-right">
+                      <button
+                        onClick={() => addToCart(item._id)}
+                        disabled={loading}
+                        className={`bg-[#5C4033] hover:bg-[#4b3327] text-white px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all flex items-center gap-2 ${
+                          loading ? "opacity-50 cursor-not-allowed" : ""
+                        }`}
+                      >
+                        {loading ? (
+                          <>
+                            <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            Adding...
+                          </>
+                        ) : (
+                          "Add to Cart"
+                        )}
+                      </button>
+                    </td>
                 </tr>
               ))
             )}
@@ -495,15 +515,31 @@ const addAllToCart = async () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between mt-6 gap-4 w-full overflow-hidden">
         <div className="flex flex-col sm:flex-row items-center gap-4 justify-end w-full md:w-auto">
           <button
-            className="text-sm text-[#5C4033] underline hover:text-[#3e2c1e]"
+            className={`text-sm text-[#5C4033] underline hover:text-[#3e2c1e] ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             onClick={clearWishlist}
+            disabled={loading}
           >
             Clear Wishlist
           </button>
-          <button 
-          onClick={addAllToCart}
-          className="bg-[#5C4033] hover:bg-[#4b3327] text-white text-sm rounded-full px-4 py-2">
-            Add All to Cart
+          <button
+            onClick={addAllToCart}
+            disabled={loading || wishlist.length === 0}
+            className={`bg-[#5C4033] hover:bg-[#4b3327] text-white text-sm rounded-full px-4 py-2 flex items-center gap-2 transition-all ${
+              loading || wishlist.length === 0
+                ? "opacity-50 cursor-not-allowed"
+                : ""
+            }`}
+          >
+            {loading ? (
+              <>
+                <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Processing...
+              </>
+            ) : (
+              "Add All to Cart"
+            )}
           </button>
         </div>
       </div>
