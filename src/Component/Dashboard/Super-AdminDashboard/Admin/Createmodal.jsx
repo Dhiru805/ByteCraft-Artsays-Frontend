@@ -79,7 +79,7 @@ const CreateAdminModal = ({ onClose, fetchAdmins }) => {
       className="modal show d-block"
       style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}
     >
-      <div className="modal-dialog">
+      <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Create Admin</h5>
@@ -89,7 +89,7 @@ const CreateAdminModal = ({ onClose, fetchAdmins }) => {
           </div>
           <div className="modal-body">
             <form onSubmit={handleSubmit}>
-              <div style={{ maxHeight: "30vh", overflowY: "auto" }}>
+              <div>
                 <div className="form-group">
                   <label>First Name</label>
                   <input
