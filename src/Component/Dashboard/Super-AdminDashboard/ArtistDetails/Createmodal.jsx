@@ -83,9 +83,10 @@ const CreateArtistModal = ({ onClose, fetchArtists }) => {
       toast.error(error.response?.data?.message || "An unexpected error occurred");
     }
   };
+
   return (
     <div className="modal show d-block" style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}>
-      <div className="modal-dialog" >
+      <div className="modal-dialog modal-dialog-centered modal-lg">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Create Artist</h5>
@@ -93,71 +94,109 @@ const CreateArtistModal = ({ onClose, fetchArtists }) => {
               <span>&times;</span>
             </button>
           </div>
-          <div className="modal-body" >
+          <div className="modal-body">
             <form onSubmit={handleSubmit}>
-              <div style={{ maxHeight: "30vh", overflowY: "auto" }}>
-              <div className="form-group">
-                <label>First Name</label>
-                <input type="text" className="form-control" name="firstName" value={formData.firstName} onChange={handleChange} required />
-              </div>
-              <div className="form-group">
-                <label>Last Name</label>
-                <input type="text" className="form-control" name="lastName" value={formData.lastName} onChange={handleChange} required />
-              </div>
-              <div className="form-group">
-                <label>Email or Phone</label>
-                <input 
-                  type="text" 
-                  className="form-control" 
-                  name="emailOrPhone" 
-                  value={formData.emailOrPhone} 
-                  onChange={handleChange} 
-                  placeholder="Email or phone "
-                  required 
-                />
+              <div style={{ maxHeight: "calc(100vh - 200px)", overflowY: "auto", overflowX: "hidden", padding: "10px" }}>
+                <div className="row">
+                  <div className="col-md-6 col-12">
+                    <div className="form-group">
+                      <label>First Name</label>
+                      <input type="text" className="form-control" name="firstName" value={formData.firstName} onChange={handleChange} required />
+                    </div>
+                  </div>
+                  <div className="col-md-6 col-12">
+                    <div className="form-group">
+                      <label>Last Name</label>
+                      <input type="text" className="form-control" name="lastName" value={formData.lastName} onChange={handleChange} required />
+                    </div>
+                  </div>
                 </div>
-              <div className="form-group">
-                <label>Artist Name</label>
-                <input type="text" className="form-control" name="artistName" value={formData.artistName} onChange={handleChange} required />
-              </div>
-              <div className="form-group position-relative">
-                <label>Password</label>
-                <div className="input-group">
-                  <input 
-                    type={showPassword ? "text" : "password"} 
-                    className="form-control" 
-                    name="password" 
-                    value={formData.password} 
-                    onChange={handleChange} 
-                    required 
-                  />
-                  <div className="input-group-append">
-                    <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
-                      <i className={`fa ${showPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
-                    </span>
+                <div className="row">
+                  <div className="col-md-6 col-12">
+                    <div className="form-group">
+                      <label>Email or Phone</label>
+                      <input 
+                        type="text" 
+                        className="form-control" 
+                        name="emailOrPhone" 
+                        value={formData.emailOrPhone} 
+                        onChange={handleChange} 
+                        placeholder="Email or phone "
+                        required 
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-6 col-12">
+                    <div className="form-group">
+                      <label>Artist Name</label>
+                      <input type="text" className="form-control" name="artistName" value={formData.artistName} onChange={handleChange} required />
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6 col-12">
+                    <div className="form-group">
+                      <label>Password</label>
+                      <div className="position-relative">
+                        <input 
+                          type={showPassword ? "text" : "password"} 
+                          className="form-control" 
+                          name="password" 
+                          value={formData.password} 
+                          onChange={handleChange} 
+                          style={{ paddingRight: "40px" }}
+                          required 
+                        />
+                        <span 
+                          className="position-absolute" 
+                          style={{ 
+                            right: "15px", 
+                            top: "50%", 
+                            transform: "translateY(-50%)", 
+                            cursor: "pointer",
+                            zIndex: 10,
+                            color: "#666"
+                          }}
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          <i className={`fa ${showPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-6 col-12">
+                    <div className="form-group">
+                      <label>Confirm Password</label>
+                      <div className="position-relative">
+                        <input 
+                          type={showConfirmPassword ? "text" : "password"} 
+                          className="form-control" 
+                          name="confirmPassword" 
+                          value={formData.confirmPassword} 
+                          onChange={handleChange} 
+                          style={{ paddingRight: "40px" }}
+                          required 
+                        />
+                        <span 
+                          className="position-absolute" 
+                          style={{ 
+                            right: "15px", 
+                            top: "50%", 
+                            transform: "translateY(-50%)", 
+                            cursor: "pointer",
+                            zIndex: 10,
+                            color: "#666"
+                          }}
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        >
+                          <i className={`fa ${showConfirmPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="form-group position-relative">
-                <label>Confirm Password</label>
-                <div className="input-group">
-                  <input 
-                    type={showConfirmPassword ? "text" : "password"} 
-                    className="form-control" 
-                    name="confirmPassword" 
-                    value={formData.confirmPassword} 
-                    onChange={handleChange} 
-                    required 
-                  />
-                  <div className="input-group-append">
-                    <span className="input-group-text" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                      <i className={`fa ${showConfirmPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
-                    </span>
-                  </div>
-                </div>
-              </div>
-              </div>
-              <div className="modal-footer">
+              <div className="modal-footer px-0 pb-0 pt-3">
                 <button type="button" className="btn btn-secondary" onClick={onClose}>
                   Cancel
                 </button>
