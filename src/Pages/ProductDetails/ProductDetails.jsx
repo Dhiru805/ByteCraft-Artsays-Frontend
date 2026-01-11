@@ -267,6 +267,32 @@ const ProductDetails = () => {
       <Helmet>
         <title>{product.productName} | Artsays</title>
         <meta name="description" content={product.description?.slice(0, 150)} />
+        <meta property="og:title" content={`${product.productName} | Artsays`} />
+        <meta property="og:description" content={product.description?.slice(0, 150)} />
+        <meta property="og:image" content={images[0]} />
+        <meta property="og:url" content={window.location.href} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": product.productName,
+            "image": images[0],
+            "description": product.description,
+            "brand": {
+              "@type": "Brand",
+              "name": "Artsays"
+            },
+            "offers": {
+              "@type": "Offer",
+              "url": window.location.href,
+              "priceCurrency": "INR",
+              "price": product.sellingPrice,
+              "availability": product.quantity > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+              "itemCondition": "https://schema.org/NewCondition"
+            }
+          })}
+        </script>
       </Helmet>
 
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-6">
