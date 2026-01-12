@@ -397,7 +397,7 @@ import ProductTableView from "../Component/Dashboard/Super-AdminDashboard/Produc
 import CustomOrderView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/CustomOrderAll/Customorder";
 import PurchaseTable from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductPurchased/ProductPurchased";
 import PurchaseTableView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductPurchased/ProductPurchasedDetails";
-import ProductUploads from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductUpload/productUploade";
+
 // import ProductRequestView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist";
 import ViewCustomRequestsuperadmin from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist";
 import SellerProductDetails from '../Component/Dashboard/Super-AdminDashboard/Seller/SellerProducts/SellerProductDetails';
@@ -939,7 +939,7 @@ const AppRoutes = () => {
         />
         <Route path="purchasetable" element={<PurchaseTable />} />
         <Route path="purchasetable/view/:productId" element={<PurchaseTableView />} />
-        <Route path="product-upload" element={<ProductUploads />} />
+
         {/* Bidding Management */}
         <Route path="bidding/allproduct" element={<AllBiddingProduct />} />
         <Route path="bidding/bidded-product" element={<BiddedProduct />} />
