@@ -8,6 +8,7 @@ import Preferences from './Pereferences/Pereferences';
 import Products from './Products/Product';
 import Productrequest from './ProductRequest/ProductRequestTable'
 import SoldProduct from './SoldProduct/SoldProduct'
+import Customrequest from '../../BuyerManagement/BuyerUserProdileView/CustomRequest/Customorder'
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import Settings from './UserProfile/BasicInformation';
@@ -156,6 +157,7 @@ const UserProfileForm = () => {
     { name: 'Products', component: Products },
     { name: 'Product Request', component: Productrequest },
     { name: 'Sold Product', component: SoldProduct },
+    { name: 'Custom Request', component: Customrequest },
     { name: 'Preferences', component: Preferences },
   ];
 

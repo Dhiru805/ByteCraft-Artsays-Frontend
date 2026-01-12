@@ -36,8 +36,8 @@ function BuyerManageTable() {
       const response = await getAPI("/api/buyers/get-Allbuyer");
       const buyersData = response.data;
 
-      const parsedBuyers = buyersData.map((buyer) => {
-        const parsedAddress = buyer.address
+      const parsedBuyers = (buyersData || []).map((buyer) => {
+        const parsedAddress = buyer?.address
           ? typeof buyer.address === "string"
             ? JSON.parse(buyer.address)
             : buyer.address
@@ -47,7 +47,7 @@ function BuyerManageTable() {
           ...buyer,
           address: parsedAddress,
         };
-      });
+      }).filter(buyer => buyer !== null);
       setBuyers(parsedBuyers);
     } catch (error) {
       console.error("Error fetching buyers:", error);
@@ -91,7 +91,8 @@ useEffect(() => {
   };
 
   const filteredBuyers = buyers.filter((buyer) => {
-    const fullName = `${buyer.name} ${buyer.lastName}`.toLowerCase();
+    if (!buyer) return false;
+    const fullName = `${buyer.name || ''} ${buyer.lastName || ''}`.toLowerCase();
     return fullName.includes(searchTerm.toLowerCase());
   });
 
@@ -316,7 +317,7 @@ useEffect(() => {
                           <td>
                             <img
                               src={
-                                buyer.profilePhoto
+                                buyer?.profilePhoto
                                   ? `${BASE_URL}${buyer.profilePhoto}`
                                   : DEFAULT_PROFILE_IMAGE
                               }
@@ -342,8 +343,8 @@ useEffect(() => {
                           <td>
                             <address>
                               <i className="zmdi zmdi-pin"></i>
-                              {buyer.address.city && `${buyer.address.city}, `}
-                              {buyer.address.country && buyer.address.country}
+                              {buyer.address?.city && `${buyer.address.city}, `}
+                              {buyer.address?.country && buyer.address.country}
                             </address>
                           </td>
                           <td>

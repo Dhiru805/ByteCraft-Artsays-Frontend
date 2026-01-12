@@ -6,8 +6,6 @@ import Preferences from './Pereferences/Pereferences';
 import ProductPurchased from './ProductPurchased/ProductPurchased';
 import Customrequest from './CustomRequest/Customorder'
 import Transaction from './Transaction/BuyerTransaction'
-import RsellProduct from './ResellProductRequest/ProductRequestTable'
-import SodlProduct from './Soldproduct/SoldProduct'
 import getAPI from '../../../../../api/getAPI';
 import putAPI from '../../../../../api/putAPI';
 import { Link } from 'react-router-dom';

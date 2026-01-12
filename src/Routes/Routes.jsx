@@ -879,8 +879,6 @@ const AppRoutes = () => {
           path="buyer/productpurchased/view"
           element={<BuyerProductPurchaseView />}
         />
-        <Route path="buyer/resellproduct" element={<BuyerProductRequest />} />
-        <Route path="buyer/soldproduct" element={<BuyerSoldProduct />} />
         <Route path="buyer/transaction" element={<BuyerTransaction />} />
         <Route
           path="buyer/packagingmaterial"

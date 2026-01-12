@@ -4,11 +4,8 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Preferences from './Pereferences/Pereferences';
 // import Products from './Products/Product';
-import Transaction from './Transaction/BuyerTransaction';
 import Customrequest from './CustomRequest/Customorder'
-import SoldProduct from './Soldproduct/SoldProduct'
 import Productpurchased from './ProductPurchased/ProductPurchased'
-import RsellProduct from './ResellProductRequest/ProductRequestTable'
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import Settings from './UserProfile/BasicInformation';
@@ -127,7 +124,6 @@ const UserProfileForm = () => {
     { name: 'Product Purchased', component: Productpurchased },
     { name: 'Custom Request', component: Customrequest },
     // { name: 'Products', component: Products },
-    { name: 'Transaction', component: Transaction },
     { name: 'Preferences', component: Preferences },
 
   ];

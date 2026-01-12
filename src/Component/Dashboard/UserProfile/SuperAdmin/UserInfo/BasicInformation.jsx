@@ -223,16 +223,9 @@ const handleDeleteImage = async () => {
                 name="email"
                 value={profileData.email}
                 onChange={handleChange}
-                style={{
-                  backgroundImage: 'url("data:image/png',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundSize: 20,
-                  backgroundPosition: '97% center',
-                  cursor: 'auto',
-                }}
-                data-temp-mail-org={0}
-                fdprocessedid="yelneg"
-              />
+                  data-temp-mail-org={0}
+                  fdprocessedid="yelneg"
+                />
             </div>
             <div className="form-group">
               <label htmlFor="phone">Phone Number <span style={{ color: 'red' }}>*</span></label>
