@@ -164,7 +164,6 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   const tabs = [
     { name: 'Settings', component: Settings },
     { name: 'Products', component: Products },
-    { name: 'Transaction', component: Transaction },
     { name: 'Sold Products', component: SoldProduct },
     { name: 'Preferences', component: Preferences },
 

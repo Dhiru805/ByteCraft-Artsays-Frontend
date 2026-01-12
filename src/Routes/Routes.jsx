@@ -1231,14 +1231,14 @@ const AppRoutes = () => {
           element={<UpdateChallenge />}
         />
         <Route path="challenges-entries" element={<ChallengesEntries />} />
-        <Route
-          path="challenges/view-application"
-          element={<ViewChallengeApplication />}
-        />
-        <Route
-          path="challenges/update-application"
-          element={<UpdateChallengeApplication />}
-        />
+          <Route
+            path="challenges/view-application"
+            element={<ViewChallengeApplication />}
+          />
+          <Route
+            path="challenges/update-application/:id"
+            element={<UpdateChallengeApplication />}
+          />
         {/* Celebraties */}
         <Route path="celebrities" element={<Celebrities />} />
         <Route path="celebrities/create" element={<CreateCelebrities />} />

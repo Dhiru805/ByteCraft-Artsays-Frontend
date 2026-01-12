@@ -283,7 +283,7 @@ function CreateCertification() {
                 )}
                 <div className="form-group">
                   <label htmlFor="certifications">
-                    Certifications (Price: ₹99 each)
+                    Certifications
                   </label>
                   <Select
                     id="certifications"
