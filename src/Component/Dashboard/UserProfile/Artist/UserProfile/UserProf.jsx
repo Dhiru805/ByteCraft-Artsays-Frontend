@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Preferences from './Preferences/Pereferences';
-import Billings from './Billings/Billings';
 // import ViewBlogRequest from './BlogRequest/ViewBlogRequest';
 // import Blogs from "./Blogs/Blogs"
 // import Products from "./Products/Product"
@@ -204,7 +203,6 @@ console.log("profiledataaaaaaaaaaaaaaaaaa",profileData)
     // { name: 'Transaction', component: Transaction },
     // { name: 'Packaging Material', component: Packagingmaterial },
     // { name: 'Sold Product', component: Soldproduct },
-    { name: 'Billings', component: Billings },
     { name: 'Preferences', component: Preferences },
   ];
 

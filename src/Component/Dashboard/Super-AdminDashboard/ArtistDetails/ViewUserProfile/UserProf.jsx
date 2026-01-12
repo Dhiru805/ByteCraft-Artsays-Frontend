@@ -5,12 +5,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import ViewBlogRequest from "./BlogRequest/ViewBlogRequest"
 import Blogs from "./Blogs/Blogs"
 import Preferences from './Pereferences/Pereferences';
-import Billings from './Billings/Billings';
 import Products from './Products/Product';
 import Productrequest from './ProductRequest/ProductRequestTable'
-import Transaction from './Transaction/Transaction';
 import SoldProduct from './SoldProduct/SoldProduct'
-import Packagingmaterial from './PackagingMaterial/ProductPurchasedArtist'
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import Settings from './UserProfile/BasicInformation';
@@ -158,10 +155,7 @@ const UserProfileForm = () => {
     { name: 'Blog Request', component: ViewBlogRequest },
     { name: 'Products', component: Products },
     { name: 'Product Request', component: Productrequest },
-    { name: 'Transaction', component: Transaction },
-    { name: 'Packaging Material', component: Packagingmaterial },
     { name: 'Sold Product', component: SoldProduct },
-    { name: 'Billings', component: Billings },
     { name: 'Preferences', component: Preferences },
   ];
 

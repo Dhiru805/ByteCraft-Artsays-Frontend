@@ -31,8 +31,11 @@ const BankPaymentDetails = ({ userId }) => {
                     });
                 }
             } catch (error) {
-                console.error("Error fetching bank details:", error);
-                // toast.error("Failed to fetch bank details");
+                if (error.response && error.response.status === 404) {
+                    console.log("Bank details not found for this user");
+                } else {
+                    console.error("Error fetching bank details:", error);
+                }
             }
         };
     

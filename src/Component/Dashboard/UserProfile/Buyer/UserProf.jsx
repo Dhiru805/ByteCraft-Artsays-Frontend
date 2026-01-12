@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Preferences from './Pereferences/Pereferences';
-import Billings from './Billings/Billings';
 import getAPI from '../../../../api/getAPI';
 import putAPI from '../../../../api/putAPI';
 import Settings from './UserProfile/BasicInformation';
@@ -185,7 +184,6 @@ const UserProfileForm = () => {
 
   const tabs = [
     { name: 'Settings', component: Settings },
-    { name: 'Billings', component: Billings },
     { name: 'Preferences', component: Preferences },
   ];
 

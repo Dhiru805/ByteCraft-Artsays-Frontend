@@ -3,11 +3,9 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Preferences from './Pereferences/Pereferences';
-import Billings from './Billings/Billings';
 import Products from './Products/Product';
 import Transaction from './Transaction/Transaction';
-import SoldProduct  from './SoldProduct/SoldProduct'
-import Packagingmaterial from './PackagingMaterial/ProductPurchasedSeller'
+import SoldProduct from './SoldProduct/SoldProduct'
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import Settings from './UserProfile/BasicInformation';
@@ -86,10 +84,15 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
-    navigate({
-      pathname: location.pathname,
-      search: `?tab=${tabName}`,
-    });
+    navigate(
+      {
+        pathname: location.pathname,
+        search: `?tab=${tabName}`,
+      },
+      {
+        state: { seller },
+      }
+    );
   };
 
   const handleChange = (e) => {
@@ -163,8 +166,6 @@ const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
     { name: 'Products', component: Products },
     { name: 'Transaction', component: Transaction },
     { name: 'Sold Products', component: SoldProduct },
-    { name: 'Packaging Material', component: Packagingmaterial },
-    { name: 'Billings', component: Billings },
     { name: 'Preferences', component: Preferences },
 
   ];
