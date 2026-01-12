@@ -1147,81 +1147,48 @@ const InsuranceEdit = () => {
 
       const submission = new FormData();
       submission.append("section1Heading", formData.section1Heading.trim());
-      submission.append(
-        "section1Description",
-        formData.section1Description.trim()
-      );
+      submission.append("section1Description", formData.section1Description.trim());
       submission.append("section2Heading", formData.section2Heading.trim());
-      submission.append(
-        "section2Description",
-        formData.section2Description.trim()
-      );
+      submission.append("section2Description", formData.section2Description.trim());
       submission.append("section3Heading", formData.section3Heading.trim());
-      submission.append(
-        "section3Description",
-        formData.section3Description.trim()
-      );
+      submission.append("section3Description", formData.section3Description.trim());
       submission.append("status", formData.status);
 
+      // Section 1 Cards: send structure as JSON
+      const section1CardsMetadata = formData.section1Cards.map((c) => ({
+        title: (c.title || "").trim(),
+        description: (c.description || "").trim(),
+        image: c.existingImage,
+      }));
+      submission.append("section1Cards", JSON.stringify(section1CardsMetadata));
+
       formData.section1Cards.forEach((c, i) => {
-        submission.append(`section1Cards[${i}][title]`, (c.title || "").trim());
-        submission.append(
-          `section1Cards[${i}][description]`,
-          (c.description || "").trim()
-        );
         if (c.image instanceof File) {
           submission.append(`section1Cards[${i}][image]`, c.image);
-        } else if (c.existingImage) {
-          submission.append(
-            `section1Cards[${i}][existingImage]`,
-            c.existingImage
-          );
         }
       });
 
-      formData.section2Cards.forEach((c, i) => {
-        submission.append(`section2Cards[${i}][title]`, (c.title || "").trim());
-        submission.append(
-          `section2Cards[${i}][description]`,
-          (c.description || "").trim()
-        );
-        submission.append(`section2Cards[${i}][price]`, (c.price || "").trim());
-        submission.append(
-          `section2Cards[${i}][cancelCondition]`,
-          (c.cancelCondition || "").trim()
-        );
-      });
+      // Section 2 Cards: send structure as JSON
+      const section2CardsMetadata = formData.section2Cards.map((c) => ({
+        title: (c.title || "").trim(),
+        description: (c.description || "").trim(),
+        price: (c.price || "").trim(),
+        cancelCondition: (c.cancelCondition || "").trim(),
+      }));
+      submission.append("section2Cards", JSON.stringify(section2CardsMetadata));
 
-      formData.section3Cards.forEach((c, i) => {
-        submission.append(
-          `section3Cards[${i}][heading]`,
-          (c.heading || "").trim()
-        );
-        submission.append(
-          `section3Cards[${i}][description]`,
-          (c.description || "").trim()
-        );
-        submission.append(`section3Cards[${i}][price]`, (c.price || "").trim());
-        submission.append(
-          `section3Cards[${i}][cancelCondition]`,
-          (c.cancelCondition || "").trim()
-        );
-        submission.append(
-          `section3Cards[${i}][eligibility]`,
-          (c.eligibility || "").trim()
-        );
-        c.pointers.forEach((p, j) => {
-          submission.append(`section3Cards[${i}][pointers][${j}]`, p);
-        });
-        submission.append(
-          `section3Cards[${i}][buttonName]`,
-          (c.buttonName || "").trim()
-        );
-        submission.append(
-          `section3Cards[${i}][buttonLink]`,
-          (c.buttonLink || "").trim()
-        );
-      });
+      // Section 3 Cards: send structure as JSON
+      const section3CardsMetadata = formData.section3Cards.map((c) => ({
+        heading: (c.heading || "").trim(),
+        description: (c.description || "").trim(),
+        price: (c.price || "").trim(),
+        cancelCondition: (c.cancelCondition || "").trim(),
+        eligibility: (c.eligibility || "").trim(),
+        pointers: c.pointers,
+        buttonName: (c.buttonName || "").trim(),
+        buttonLink: (c.buttonLink || "").trim(),
+      }));
+      submission.append("section3Cards", JSON.stringify(section3CardsMetadata));
 
       const res = await putAPI(
         `/api/insurance/update/${page._id}`,

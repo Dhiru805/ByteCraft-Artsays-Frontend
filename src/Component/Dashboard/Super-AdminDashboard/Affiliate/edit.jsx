@@ -178,19 +178,31 @@ const UpdateAffiliate = () => {
       submissionData.append("cardsHeading", formData.cardsHeading.trim());
       submissionData.append("cardsDescription", formData.cardsDescription.trim());
       
+      const articlesMetadata = formData.articles.map((a) => ({
+        articleHeading: a.articleHeading,
+        articleContent: a.articleContent,
+        buttonName: a.buttonName,
+        buttonPath: a.buttonPath,
+        existingBanner: a.existingBanner,
+      }));
+      submissionData.append("articles", JSON.stringify(articlesMetadata));
+
       formData.articles.forEach((a, i) => {
-        submissionData.append(`articles[${i}][articleHeading]`, a.articleHeading);
-        submissionData.append(`articles[${i}][articleContent]`, a.articleContent);
-        submissionData.append(`articles[${i}][buttonName]`, a.buttonName);
-        submissionData.append(`articles[${i}][buttonPath]`, a.buttonPath);
-        if (a.bannerImage instanceof File) submissionData.append(`articles[${i}][bannerImage]`, a.bannerImage);
-        else if (a.existingBanner) submissionData.append(`articles[${i}][existingBanner]`, a.existingBanner);
+        if (a.bannerImage instanceof File) {
+          submissionData.append(`articles[${i}][bannerImage]`, a.bannerImage);
+        }
       });
 
+      const cardsMetadata = formData.cards.map((c) => ({
+        cardTitle: c.cardTitle,
+        existingCardImage: c.existingCardImage,
+      }));
+      submissionData.append("cards", JSON.stringify(cardsMetadata));
+
       formData.cards.forEach((c, i) => {
-        submissionData.append(`cards[${i}][cardTitle]`, c.cardTitle);
-        if (c.cardImage instanceof File) submissionData.append(`cards[${i}][cardImage]`, c.cardImage);
-        else if (c.existingCardImage) submissionData.append(`cards[${i}][existingCardImage]`, c.existingCardImage);
+        if (c.cardImage instanceof File) {
+          submissionData.append(`cards[${i}][cardImage]`, c.cardImage);
+        }
       });
 
       const response = await putAPI(`/api/affiliate/update/${page._id}`, submissionData, {
