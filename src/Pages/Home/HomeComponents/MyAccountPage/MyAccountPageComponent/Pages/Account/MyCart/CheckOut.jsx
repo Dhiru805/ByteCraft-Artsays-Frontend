@@ -103,9 +103,9 @@ const CheckOut = () => {
             name: p.productName,
             artistName: `${p.userId?.name || p.creator?.name || ""} ${p.userId?.lastName || p.creator?.lastName || ""}`.trim() || p.userId?.username || p.creator?.username || "Artist",
             qty: buyNowQty,
-            price: p.sellingPrice,
+            price: p.finalPrice || p.sellingPrice,
             marketPrice: p.marketPrice || p.sellingPrice,
-            subtotal: buyNowQty * p.sellingPrice,
+            subtotal: buyNowQty * (p.finalPrice || p.sellingPrice),
             marketSubtotal: buyNowQty * (p.marketPrice || p.sellingPrice),
           },
         ]);
@@ -121,9 +121,9 @@ const CheckOut = () => {
           name: item.product.productName,
           artistName: `${item.product.userId?.name || ""} ${item.product.userId?.lastName || ""}`.trim() || item.product.userId?.username || "Artist",
           qty: item.quantity,
-          price: item.product.sellingPrice,
+          price: item.product.finalPrice || item.product.sellingPrice,
           marketPrice: item.product.marketPrice || item.product.sellingPrice,
-          subtotal: item.quantity * item.product.sellingPrice,
+          subtotal: item.quantity * (item.product.finalPrice || item.product.sellingPrice),
           marketSubtotal: item.quantity * (item.product.marketPrice || item.product.sellingPrice),
         }));
 

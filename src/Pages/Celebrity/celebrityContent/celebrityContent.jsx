@@ -312,17 +312,18 @@ const CelebrityContent = () => {
       });
     }
 
-    result = result.filter((p) => p.sellingPrice <= filters.priceRange);
+    result = result.filter((p) => (p.finalPrice || p.sellingPrice) <= filters.priceRange);
 
     if (filters.priceBuckets.length > 0) {
       result = result.filter((p) => {
+        const displayPrice = p.finalPrice || p.sellingPrice;
         return filters.priceBuckets.some((bucket) => {
-          if (bucket === "Under ₹5,000") return p.sellingPrice < 5000;
+          if (bucket === "Under ₹5,000") return displayPrice < 5000;
           if (bucket === "₹5,000 – ₹10,000")
-            return p.sellingPrice >= 5000 && p.sellingPrice <= 10000;
+            return displayPrice >= 5000 && displayPrice <= 10000;
           if (bucket === "₹10,000 – ₹25,000")
-            return p.sellingPrice > 10000 && p.sellingPrice <= 25000;
-          if (bucket === "Above ₹25,000") return p.sellingPrice > 25000;
+            return displayPrice > 10000 && displayPrice <= 25000;
+          if (bucket === "Above ₹25,000") return displayPrice > 25000;
           return false;
         });
       });
@@ -425,9 +426,9 @@ const CelebrityContent = () => {
     }
 
     if (filters.sortBy === "Price Low to High") {
-      result.sort((a, b) => a.sellingPrice - b.sellingPrice);
+      result.sort((a, b) => (a.finalPrice || a.sellingPrice) - (b.finalPrice || b.sellingPrice));
     } else if (filters.sortBy === "Price High to Low") {
-      result.sort((a, b) => b.sellingPrice - a.sellingPrice);
+      result.sort((a, b) => (b.finalPrice || b.sellingPrice) - (a.finalPrice || a.sellingPrice));
     } else if (filters.sortBy === "New Arrivals") {
       result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     } else if (filters.sortBy === "Trending") {
@@ -967,29 +968,29 @@ const CelebrityContent = () => {
             <div className="mb-12">
               {filteredProducts.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
-                  {filteredProducts.map((product, index) => {
-                    const hasDiscount =
-                      product.sellingPrice < product.marketPrice;
-                    const discountPercent = hasDiscount
-                      ? Math.round(
-                          ((product.marketPrice - product.sellingPrice) /
-                            product.marketPrice) *
-                            100
-                        )
-                      : 0;
+                    {filteredProducts.map((product, index) => {
+                      const displayPrice = product.finalPrice || product.sellingPrice;
+                      const hasDiscount = displayPrice < product.marketPrice;
+                      const discountPercent = hasDiscount
+                        ? Math.round(
+                            ((product.marketPrice - displayPrice) /
+                              product.marketPrice) *
+                              100
+                          )
+                        : 0;
 
-                    return (
-                      <div
-                        key={product._id}
-                        className="group flex flex-col h-full bg-white rounded-[32px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100 relative"
-                        style={{ animationDelay: `${index * 50}ms` }}
-                        onClick={() => {
-                          const slug = slugify(product.productName);
-                          navigate(
-                            `/product-details/${slug}/${product._id}`
-                          );
-                        }}
-                      >
+                      return (
+                        <div
+                          key={product._id}
+                          className="group flex flex-col h-full bg-white rounded-[32px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100 relative"
+                          style={{ animationDelay: `${index * 50}ms` }}
+                          onClick={() => {
+                            const slug = slugify(product.productName);
+                            navigate(
+                              `/product-details/${slug}/${product._id}`
+                            );
+                          }}
+                        >
                         {/* Image Container */}
                         <div className="relative aspect-square overflow-hidden bg-[#F8F9FA]">
                           <img
@@ -1064,9 +1065,9 @@ const CelebrityContent = () => {
                                   ₹{product.marketPrice.toLocaleString()}
                                 </span>
                               )}
-                              <span className="text-2xl font-black text-gray-900 tracking-tighter">
-                                ₹{product.sellingPrice.toLocaleString()}
-                              </span>
+                                <span className="text-2xl font-black text-gray-900 tracking-tighter">
+                                  ₹{displayPrice.toLocaleString()}
+                                </span>
                             </div>
                             {hasDiscount && (
                               <div className="bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-black">

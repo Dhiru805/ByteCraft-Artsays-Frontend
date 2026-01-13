@@ -208,7 +208,7 @@ const MyCartList = () => {
   };
 
   const calculateTotal = () => {
-    return cart.reduce((acc, item) => acc + (item.product.sellingPrice * item.quantity), 0);
+    return cart.reduce((acc, item) => acc + ((item.product.finalPrice || item.product.sellingPrice) * item.quantity), 0);
   };
 
   const calculateTotalMRP = () => {
@@ -335,10 +335,10 @@ const MyCartList = () => {
                       {/* Pricing & Controls */}
                       <div className="flex flex-wrap items-center justify-between md:justify-end gap-8 md:gap-12">
                         {/* Price */}
-                        <div className="space-y-1 text-left md:text-right">
-                          <p className="text-2xl font-black text-gray-900 tracking-tight">
-                            ₹{item.product.sellingPrice.toLocaleString()}
-                          </p>
+                          <div className="space-y-1 text-left md:text-right">
+                            <p className="text-2xl font-black text-gray-900 tracking-tight">
+                              ₹{(item.product.finalPrice || item.product.sellingPrice).toLocaleString()}
+                            </p>
                           {item.product.marketPrice && item.product.marketPrice > item.product.sellingPrice && (
                             <p className="text-xs text-gray-400 line-through font-medium">
                               ₹{item.product.marketPrice.toLocaleString()}

@@ -1622,16 +1622,17 @@ const BrowseCategories = () => {
         {currentItems.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {currentItems.map((product, index) => {
-              const hasDiscount = product.sellingPrice < product.marketPrice;
-              const discountPercent = hasDiscount ? Math.round(((product.marketPrice - product.sellingPrice) / product.marketPrice) * 100) : 0;
+                const displayPrice = product.finalPrice || product.sellingPrice;
+                const hasDiscount = displayPrice < product.marketPrice;
+                const discountPercent = hasDiscount ? Math.round(((product.marketPrice - displayPrice) / product.marketPrice) * 100) : 0;
 
-              return (
-                <div
-                  key={product._id}
-                  className="group flex flex-col h-full bg-white rounded-[24px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100/50 animate-fade-in-up relative"
-                  style={{ animationDelay: `${index * 50}ms` }}
-                  onClick={() => { const slug = slugify(product.productName); navigate(`/product-details/${slug}/${product._id}`); }}
-                >
+                return (
+                  <div
+                    key={product._id}
+                    className="group flex flex-col h-full bg-white rounded-[24px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100/50 animate-fade-in-up relative"
+                    style={{ animationDelay: `${index * 50}ms` }}
+                    onClick={() => { const slug = slugify(product.productName); navigate(`/product-details/${slug}/${product._id}`); }}
+                  >
                   {/* Image Container */}
                   <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
                     <img
@@ -1725,9 +1726,9 @@ const BrowseCategories = () => {
                             ₹{product.marketPrice.toLocaleString()}
                           </span>
                         )}
-                        <span className="text-2xl font-black text-gray-900 tracking-tighter">
-                          ₹{product.sellingPrice.toLocaleString()}
-                        </span>
+                          <span className="text-2xl font-black text-gray-900 tracking-tighter">
+                            ₹{displayPrice.toLocaleString()}
+                          </span>
                       </div>
                     </div>
 

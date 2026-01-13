@@ -169,7 +169,7 @@ const WishlistTable = () => {
   };
 
   const calculateTotalValue = () => {
-    return wishlist.reduce((acc, item) => acc + (item.sellingPrice || 0), 0);
+    return wishlist.reduce((acc, item) => acc + (item.finalPrice || item.sellingPrice || 0), 0);
   };
 
   if (loading) return <MyCartListSkeleton />;
@@ -266,10 +266,10 @@ const WishlistTable = () => {
                       {/* Pricing & Controls */}
                       <div className="flex flex-wrap items-center justify-between md:justify-end gap-8 md:gap-12">
                         {/* Price */}
-                        <div className="space-y-1 text-left md:text-right">
-                          <p className="text-2xl font-black text-gray-900 tracking-tight">
-                            ₹{item.sellingPrice?.toLocaleString()}
-                          </p>
+                          <div className="space-y-1 text-left md:text-right">
+                            <p className="text-2xl font-black text-gray-900 tracking-tight">
+                              ₹{(item.finalPrice || item.sellingPrice)?.toLocaleString()}
+                            </p>
                           {item.marketPrice && item.marketPrice > item.sellingPrice && (
                             <p className="text-xs text-gray-400 line-through font-medium">
                               ₹{item.marketPrice.toLocaleString()}

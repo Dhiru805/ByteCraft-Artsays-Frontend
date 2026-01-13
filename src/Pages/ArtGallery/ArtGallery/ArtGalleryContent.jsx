@@ -229,8 +229,8 @@ const ArtGalleryContent = () => {
       );
     }
 
-    if (filters.sortBy === "Price Low to High") result.sort((a, b) => a.sellingPrice - b.sellingPrice);
-    else if (filters.sortBy === "Price High to Low") result.sort((a, b) => b.sellingPrice - a.sellingPrice);
+    if (filters.sortBy === "Price Low to High") result.sort((a, b) => (a.finalPrice || a.sellingPrice) - (b.finalPrice || b.sellingPrice));
+    else if (filters.sortBy === "Price High to Low") result.sort((a, b) => (b.finalPrice || b.sellingPrice) - (a.finalPrice || a.sellingPrice));
     else if (filters.sortBy === "New Arrivals") result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     else if (filters.sortBy === "Trending") result.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
 
@@ -273,10 +273,11 @@ const ArtGalleryContent = () => {
           <div className="mb-12">
             {currentProducts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                {currentProducts.map((product, index) => {
-                  const hasDiscount = product.sellingPrice < product.marketPrice;
-                  const discountPercent = hasDiscount ? Math.round(((product.marketPrice - product.sellingPrice) / product.marketPrice) * 100) : 0;
-                  return (
+                  {currentProducts.map((product, index) => {
+                    const displayPrice = product.finalPrice || product.sellingPrice;
+                    const hasDiscount = displayPrice < product.marketPrice;
+                    const discountPercent = hasDiscount ? Math.round(((product.marketPrice - displayPrice) / product.marketPrice) * 100) : 0;
+                    return (
                     <div
                       key={product._id}
                       className="group flex flex-col h-full bg-white rounded-[40px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100/50 animate-fade-in-up relative"
@@ -333,7 +334,7 @@ const ArtGalleryContent = () => {
                         <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
                           <div className="flex flex-col">
                             {hasDiscount && <span className="text-sm text-gray-400 line-through font-bold">₹{product.marketPrice.toLocaleString()}</span>}
-                            <span className="text-2xl font-black text-gray-900 tracking-tighter">₹{product.sellingPrice.toLocaleString()}</span>
+                            <span className="text-2xl font-black text-gray-900 tracking-tighter">₹{displayPrice.toLocaleString()}</span>
                           </div>
                           {hasDiscount && (
                             <div className="bg-red-50 text-[#E74C3C] px-3 py-1.5 rounded-2xl border border-red-100/50 shadow-sm"><span className="text-[10px] font-black uppercase tracking-tighter leading-none">{discountPercent}% OFF</span></div>

@@ -139,15 +139,16 @@ const Product = () => {
       });
     }
 
-    result = result.filter((p) => p.sellingPrice <= filters.priceRange);
+    result = result.filter((p) => (p.finalPrice || p.sellingPrice) <= filters.priceRange);
 
     if (filters.priceBuckets.length > 0) {
       result = result.filter((p) => {
+        const price = p.finalPrice || p.sellingPrice;
         return filters.priceBuckets.some((bucket) => {
-          if (bucket === "Under ₹5,000") return p.sellingPrice < 5000;
-          if (bucket === "₹5,000 – ₹10,000") return p.sellingPrice >= 5000 && p.sellingPrice <= 10000;
-          if (bucket === "₹10,000 – ₹25,000") return p.sellingPrice > 10000 && p.sellingPrice <= 25000;
-          if (bucket === "Above ₹25,000") return p.sellingPrice > 25000;
+          if (bucket === "Under ₹5,000") return price < 5000;
+          if (bucket === "₹5,000 – ₹10,000") return price >= 5000 && price <= 10000;
+          if (bucket === "₹10,000 – ₹25,000") return price > 10000 && price <= 25000;
+          if (bucket === "Above ₹25,000") return price > 25000;
           return false;
         });
       });
@@ -234,9 +235,9 @@ const Product = () => {
     }
 
     if (filters.sortBy === "Price Low to High") {
-      result.sort((a, b) => a.sellingPrice - b.sellingPrice);
+      result.sort((a, b) => (a.finalPrice || a.sellingPrice) - (b.finalPrice || b.sellingPrice));
     } else if (filters.sortBy === "Price High to Low") {
-      result.sort((a, b) => b.sellingPrice - a.sellingPrice);
+      result.sort((a, b) => (b.finalPrice || b.sellingPrice) - (a.finalPrice || a.sellingPrice));
     } else if (filters.sortBy === "New Arrivals") {
       result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     } else if (filters.sortBy === "Trending") {
@@ -796,8 +797,9 @@ const Product = () => {
               {currentProducts.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
                   {currentProducts.map((product, index) => {
-                    const hasDiscount = product.sellingPrice < product.marketPrice;
-                    const discountPercent = hasDiscount ? Math.round(((product.marketPrice - product.sellingPrice) / product.marketPrice) * 100) : 0;
+                    const displayPrice = product.finalPrice || product.sellingPrice;
+                    const hasDiscount = displayPrice < product.marketPrice;
+                    const discountPercent = hasDiscount ? Math.round(((product.marketPrice - displayPrice) / product.marketPrice) * 100) : 0;
 
                     return (
                       <div
@@ -899,9 +901,9 @@ const Product = () => {
                                   ₹{product.marketPrice.toLocaleString()}
                                 </span>
                               )}
-                              <span className="text-2xl font-black text-gray-900 tracking-tighter">
-                                ₹{product.sellingPrice.toLocaleString()}
-                              </span>
+                                <span className="text-2xl font-black text-gray-900 tracking-tighter">
+                                  ₹{(product.finalPrice || product.sellingPrice).toLocaleString()}
+                                </span>
                             </div>
 
                             

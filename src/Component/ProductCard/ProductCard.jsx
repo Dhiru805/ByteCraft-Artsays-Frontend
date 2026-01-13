@@ -373,16 +373,16 @@ useEffect(() => {
      <main className="md:col-span-3">
                   {/* <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3"> */}
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6">
-                    {currentProducts.map((product) => {
-                      const hasDiscount =
-                        product.sellingPrice < product.marketPrice;
-                      const discountPercent = hasDiscount
-                        ? Math.round(
-                            ((product.marketPrice - product.sellingPrice) /
-                              product.marketPrice) *
-                              100
-                          )
-                        : 0;
+                      {currentProducts.map((product) => {
+                        const displayPrice = product.finalPrice || product.sellingPrice;
+                        const hasDiscount = displayPrice < product.marketPrice;
+                        const discountPercent = hasDiscount
+                          ? Math.round(
+                              ((product.marketPrice - displayPrice) /
+                                product.marketPrice) *
+                                100
+                            )
+                          : 0;
     
                       const average = product.averageRating;
                       const reviewCount = product.reviewCount ?? 0;
@@ -504,20 +504,20 @@ useEffect(() => {
                                   {discountPercent}% OFF
                                 </span>
                               )}
-                              {hasDiscount ? (
-                                <>
-                                  <span className="text-gray-400 line-through">
-                                    ₹{product.marketPrice}
-                                  </span>
+                                {hasDiscount ? (
+                                  <>
+                                    <span className="text-gray-400 line-through">
+                                      ₹{product.marketPrice}
+                                    </span>
+                                    <span className="text-lg font-bold text-gray-900">
+                                      ₹{displayPrice}
+                                    </span>
+                                  </>
+                                ) : (
                                   <span className="text-lg font-bold text-gray-900">
-                                    ₹{product.sellingPrice}
+                                    ₹{displayPrice}
                                   </span>
-                                </>
-                              ) : (
-                                <span className="text-lg font-bold text-gray-900">
-                                  ₹{product.sellingPrice}
-                                </span>
-                              )}
+                                )}
                             </div>
                           </div>
     
