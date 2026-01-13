@@ -58,31 +58,31 @@ const WhatWeDoEdit = () => {
   }, [existingData]);
 
 
-  useEffect(() => {
-    const loadIfMissing = async () => {
-      if (existingData) return;
-      try {
-        const res = await getAPI("/api/about-us");
-        const pages = Array.isArray(res.data.data) ? res.data.data : [];
-        const page = pages[0] || null;
-        const s = page?.whatWeDo || null;
-        if (s) {
-          setFormData({
-            heading: s.heading || "",
-            description: s.description || "",
-            bannerImage: null,
-            cards: s.cards?.length ? s.cards : [],
-            status: s.status || "draft",
-          });
-          setBannerPreview(s.image || null);
+    useEffect(() => {
+      const loadIfMissing = async () => {
+        if (existingData) return;
+        try {
+          const res = await getAPI("/api/about-us");
+          const pages = Array.isArray(res.data.data) ? res.data.data : [];
+          const page = pages[0] || null;
+          const s = page?.whatWeDo || null;
+          if (s) {
+            setFormData({
+              heading: s.heading || "",
+              description: s.description || "",
+              bannerImage: null,
+              cards: s.cards?.length ? s.cards : [],
+              status: s.status || "draft",
+            });
+            setBannerPreview(s.image || null);
+          }
+        } catch (err) {
+           
         }
-      } catch (err) {
-       
-      }
-    };
-    loadIfMissing();
-
-  }, []);
+      };
+        loadIfMissing();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [existingData]);
 
   const validateImageFile = (file, type) => {
     if (!file.type.match(/image\/(jpeg|png)/)) {
@@ -154,7 +154,7 @@ const WhatWeDoEdit = () => {
         }
       }
 
-    const submissionData = new FormData();
+      const submissionData = new FormData();
       submissionData.append("aboutUsId", aboutUsId);
       submissionData.append("heading", formData.heading.trim());
       submissionData.append("description", formData.description.trim());
@@ -166,24 +166,24 @@ const WhatWeDoEdit = () => {
         submissionData.append(`cards[${idx}][cardDescription]`, c.cardDescription.trim());
       });
 
-    const sectionId = existingData?._id || 'current';
+      const sectionId = existingData?._id || 'current';
 
-    let res;
-    try {
-      res = await axiosInstance.put(
-        `/api/about-us-sections/what-we-do/update/${sectionId}`,
-        submissionData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-    } catch (putErr) {
-      res = await axiosInstance.post(
-        `/api/about-us-sections/what-we-do/update/${sectionId}`,
-        submissionData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-    }
+      let res;
+      try {
+        res = await axiosInstance.put(
+          `/api/about-us-sections/what-we-do/update/${sectionId}`,
+          submissionData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+      } catch (putErr) {
+        res = await axiosInstance.post(
+          `/api/about-us-sections/what-we-do/update/${sectionId}`,
+          submissionData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+      }
 
-    if (res.data.success) {
+      if (res.data.success) {
         toast.success(res.data.message || "WhatWeDo section updated successfully!");
         navigate("/super-admin/about-us/edit", { state: { reload: true } });
       } else {
@@ -206,7 +206,7 @@ const WhatWeDoEdit = () => {
           <div className="card">
             <div className="body">
               <form onSubmit={handleSubmit} encType="multipart/form-data">
-          
+            
                 <div className="form-group">
                   <label>Heading *</label>
                   <input
