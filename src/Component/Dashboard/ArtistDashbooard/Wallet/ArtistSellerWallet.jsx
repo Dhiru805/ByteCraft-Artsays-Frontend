@@ -88,12 +88,8 @@ export function ArtistSellerWallet() {
     if (!amount || amount <= 0) return toast.error("Please enter a valid amount");
     setIsLoading(true);
     try {
-      await axios.post(`${API_URL}/api/wallet/add-money-direct`, {
-        userId,
-        amount: Number(amount),
-        purpose: "direct_deposit"
-      });
-      toast.success("Money added successfully!");
+      await axios.post(`${API_URL}/api/wallet/add-money/${userId}`, { amount: Number(amount) });
+      toast.success("Money Added Successfully!");
       setAmount("");
       fetchWallet();
       fetchTransactions();
@@ -108,38 +104,27 @@ export function ArtistSellerWallet() {
     if (!amount || amount <= 0) return toast.error("Please enter a valid amount");
     setIsLoading(true);
     try {
-      const orderRes = await axios.post(`${API_URL}/api/wallet/create-razorpay-order`, {
-        userId,
+      const orderRes = await axios.post(`${API_URL}/api/wallet/add-money-initiate/${userId}`, {
         amount: Number(amount)
       });
 
       const options = {
-        key: process.env.REACT_APP_RAZORPAY_KEY_ID,
+        key: process.env.REACT_APP_RAZORPAY_KEY,
         amount: orderRes.data.amount,
-        currency: orderRes.data.currency,
+        currency: orderRes.data.currency || "INR",
         name: "Artsays Wallet",
         description: "Add money to wallet",
         order_id: orderRes.data.id,
         handler: async function (response) {
-          try {
-            await axios.post(`${API_URL}/api/wallet/verify-razorpay-payment`, {
-              userId,
-              amount: Number(amount),
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature
-            });
-            toast.success("Payment successful!");
-            setAmount("");
+          toast.success("Payment successful! Updating wallet...");
+          setTimeout(() => {
             fetchWallet();
             fetchTransactions();
-          } catch (err) {
-            toast.error("Payment verification failed");
-          }
+          }, 2000);
         },
         prefill: {
-          name: localStorage.getItem("Artsays_name") || "",
-          email: localStorage.getItem("Artsays_email") || ""
+          name: localStorage.getItem("firstName") + " " + localStorage.getItem("lastName") || "",
+          email: localStorage.getItem("email") || ""
         },
         theme: { color: "#4B2E05" }
       };
@@ -156,25 +141,28 @@ export function ArtistSellerWallet() {
   const requestWithdrawal = async () => {
     if (!withdrawAmount || withdrawAmount < 100) return toast.error("Minimum withdrawal is ₹100");
     if (withdrawAmount > wallet.balance) return toast.error("Insufficient balance");
-    if (!withdrawDestination.upi && (!withdrawDestination.accountNumber || !withdrawDestination.ifsc)) {
-      return toast.error("Please provide withdrawal destination details");
+    
+    if (withdrawMethod === "upi" && !withdrawDestination.upi) return toast.error("Please enter UPI ID");
+    if (withdrawMethod === "bank") {
+      const { name, accountNumber, ifsc, bankName, purpose } = withdrawDestination;
+      if (!name || !accountNumber || !ifsc || !bankName || !purpose) return toast.error("Please fill all bank transfer details");
     }
 
     setIsLoading(true);
     try {
-      await axios.post(`${API_URL}/api/wallet/withdraw`, {
-        userId,
+      await axios.post(`${API_URL}/api/wallet/withdraw/${userId}`, {
         amount: Number(withdrawAmount),
         method: withdrawMethod,
-        destination: withdrawDestination
+        destination: withdrawMethod === "upi" ? withdrawDestination.upi : withdrawDestination
       });
-      toast.success("Withdrawal request submitted!");
+      toast.success("Withdrawal requested successfully!");
       setWithdrawAmount("");
+      setWithdrawDestination({});
       fetchWallet();
       fetchWithdrawals();
       fetchLimits();
     } catch (err) {
-      toast.error(err.response?.data?.error || "Failed to submit withdrawal request");
+      toast.error(err.response?.data?.message || "Failed to request withdrawal");
     } finally {
       setIsLoading(false);
     }
