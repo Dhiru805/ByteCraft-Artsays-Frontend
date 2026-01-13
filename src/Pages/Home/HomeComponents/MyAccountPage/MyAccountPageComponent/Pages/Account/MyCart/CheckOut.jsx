@@ -27,6 +27,11 @@ const CheckOut = () => {
     const [allAddresses, setAllAddresses] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    const [couponCode, setCouponCode] = useState("");
+    const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+    const [couponDiscountAmount, setCouponDiscountAmount] = useState(0);
+    const [appliedCoupons, setAppliedCoupons] = useState([]);
+
   // Address selection states
   const [selectedDeliveryAddrId, setSelectedDeliveryAddrId] = useState("");
   const [selectedBillingAddrId, setSelectedBillingAddrId] = useState("");
@@ -225,11 +230,56 @@ const CheckOut = () => {
     init();
   }, [userId]);
 
-  if (loading) return <CheckOutSkeleton />;
+    if (loading) return <CheckOutSkeleton />;
 
-  const totalMRP = cartItems.reduce((acc, item) => acc + (item.marketSubtotal || item.subtotal), 0);
-  const totalSellingPrice = cartItems.reduce((acc, item) => acc + item.subtotal, 0);
-  const totalDiscount = totalMRP - totalSellingPrice;
+    const handleApplyCoupon = async () => {
+      if (!couponCode.trim()) {
+        toast.error("Please enter a coupon code");
+        return;
+      }
+
+      setIsApplyingCoupon(true);
+      try {
+        const productIds = cartItems.map(item => item.productId);
+        const response = await postAPI("/api/validate-coupon", {
+          couponName: couponCode,
+          productIds
+        });
+
+        if (response.data.success) {
+          const matchedCoupons = response.data.coupons;
+          setAppliedCoupons(matchedCoupons);
+          
+          // Calculate total discount
+          let totalDiscount = 0;
+          cartItems.forEach(item => {
+            const coupon = matchedCoupons.find(c => c.productId === item.productId);
+            if (coupon) {
+              totalDiscount += (item.price * item.qty * coupon.discountPercentage) / 100;
+            }
+          });
+
+          setCouponDiscountAmount(totalDiscount);
+          toast.success(response.data.message);
+        } else {
+          toast.error(response.data.message || "Invalid coupon");
+          setCouponDiscountAmount(0);
+          setAppliedCoupons([]);
+        }
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Error applying coupon");
+        setCouponDiscountAmount(0);
+        setAppliedCoupons([]);
+      } finally {
+        setIsApplyingCoupon(false);
+      }
+    };
+
+    const totalMRP = cartItems.reduce((acc, item) => acc + (item.marketSubtotal || item.subtotal), 0);
+    const baseSellingPrice = cartItems.reduce((acc, item) => acc + item.subtotal, 0);
+    const totalSellingPrice = Math.max(0, baseSellingPrice - couponDiscountAmount);
+    const totalDiscount = totalMRP - baseSellingPrice + couponDiscountAmount;
+
 
   const handleDeliveryAddrChange = (id) => {
     if (id === "new") {
@@ -641,35 +691,66 @@ const CheckOut = () => {
           <div className="sticky top-10 space-y-6">
             <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-xl">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Order Summary</h2>
-              <div className="space-y-4 mb-8">
-                {cartItems.map((g, i) => (
-                  <div key={i} className="flex justify-between items-start text-sm border-b border-gray-50 pb-3">
-                    <div className="flex-1 pr-4">
-                      <p className="font-semibold text-gray-900 line-clamp-1">{g.name}</p>
-                      <p className="text-[10px] text-gray-400 font-medium">by {g.artistName}</p>
-                      <p className="text-xs text-gray-500 mt-0.5">Qty: {g.qty} × ₹{g.price.toLocaleString()}</p>
+                <div className="space-y-4 mb-8">
+                  {cartItems.map((g, i) => (
+                    <div key={i} className="flex justify-between items-start text-sm border-b border-gray-50 pb-3">
+                      <div className="flex-1 pr-4">
+                        <p className="font-semibold text-gray-900 line-clamp-1">{g.name}</p>
+                        <p className="text-[10px] text-gray-400 font-medium">by {g.artistName}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">Qty: {g.qty} × ₹{g.price.toLocaleString()}</p>
+                      </div>
+                      <div className="font-bold text-gray-900">₹{g.subtotal.toLocaleString()}</div>
                     </div>
-                    <div className="font-bold text-gray-900">₹{g.subtotal.toLocaleString()}</div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
 
-              <div className="space-y-4 mb-8">
-                <div className="flex justify-between text-gray-600">
-                  <span>Total MRP</span>
-                  <span className="font-semibold text-gray-900">₹{totalMRP.toLocaleString()}</span>
-                </div>
-                {totalDiscount > 0 && (
-                  <div className="flex justify-between text-green-600">
-                    <span>Discount</span>
-                    <span className="font-semibold">- ₹{totalDiscount.toLocaleString()}</span>
+                <div className="mb-8">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Enter Coupon Code"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                      className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-[#5C4033]"
+                    />
+                    <button
+                      onClick={handleApplyCoupon}
+                      disabled={isApplyingCoupon || !couponCode}
+                      className="bg-[#5C4033] text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-[#4b3327] transition-all disabled:opacity-50"
+                    >
+                      {isApplyingCoupon ? "..." : "Apply"}
+                    </button>
                   </div>
-                )}
-                <div className="flex justify-between items-center pt-4 border-t border-dashed">
-                  <span className="text-lg font-bold text-gray-900">Total Amount</span>
-                  <span className="text-2xl font-black text-gray-900">₹{totalSellingPrice.toLocaleString()}</span>
+                  {couponDiscountAmount > 0 && (
+                    <p className="text-green-600 text-xs mt-2 font-medium">
+                      Coupon applied! You saved ₹{couponDiscountAmount.toLocaleString()}
+                    </p>
+                  )}
                 </div>
-              </div>
+
+                <div className="space-y-4 mb-8">
+                  <div className="flex justify-between text-gray-600">
+                    <span>Total MRP</span>
+                    <span className="font-semibold text-gray-900">₹{totalMRP.toLocaleString()}</span>
+                  </div>
+                  {totalDiscount > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Discount</span>
+                      <span className="font-semibold">- ₹{totalDiscount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  {couponDiscountAmount > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Coupon Discount</span>
+                      <span className="font-semibold">- ₹{couponDiscountAmount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center pt-4 border-t border-dashed">
+                    <span className="text-lg font-bold text-gray-900">Total Amount</span>
+                    <span className="text-2xl font-black text-gray-900">₹{totalSellingPrice.toLocaleString()}</span>
+                  </div>
+                </div>
+
 
                 <button
                   onClick={placeOrder}

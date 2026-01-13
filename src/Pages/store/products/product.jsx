@@ -344,7 +344,8 @@ const Product = () => {
       fetchCart();
     } catch (err) {
       console.error("Add to cart error:", err);
-      toast.error("Failed to add to cart");
+      const errorMessage = err.response?.data?.message || "Failed to add to cart";
+      toast.error(errorMessage);
     }
   };
 

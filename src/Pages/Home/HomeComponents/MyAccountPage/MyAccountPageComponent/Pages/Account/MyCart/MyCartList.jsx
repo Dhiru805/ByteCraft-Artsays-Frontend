@@ -140,7 +140,8 @@ const MyCartList = () => {
       );
     } catch (err) {
       console.log("Qty update error:", err);
-      toast.error("Failed to update quantity");
+      const errorMessage = err.response?.data?.message || "Failed to update quantity";
+      toast.error(errorMessage);
     }
   };
 
