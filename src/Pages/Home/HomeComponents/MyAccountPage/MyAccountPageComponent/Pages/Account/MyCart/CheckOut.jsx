@@ -31,8 +31,14 @@ const CheckOut = () => {
     const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
     const [couponDiscountAmount, setCouponDiscountAmount] = useState(0);
     const [appliedCoupons, setAppliedCoupons] = useState([]);
+  
+    const [wallet, setWallet] = useState(null);
+    const [useWallet, setUseWallet] = useState(false);
+    const [useArtCoins, setUseArtCoins] = useState(false);
+    const [coinSetting, setCoinSetting] = useState({ coinValue: 0.10, currency: "INR" });
+  
+    // Address selection states
 
-  // Address selection states
   const [selectedDeliveryAddrId, setSelectedDeliveryAddrId] = useState("");
   const [selectedBillingAddrId, setSelectedBillingAddrId] = useState("");
   const [isAddingNewDelivery, setIsAddingNewDelivery] = useState(false);
@@ -133,102 +139,117 @@ const CheckOut = () => {
     }
   };
 
-  const loadUserAndAddresses = async () => {
-    try {
-      // 1. Load User Data
-      const userRes = await getAPI(`/auth/userid/${userId}`);
-      const user = userRes.data?.user;
-      if (!user) return;
-      setUserData(user);
-
-      // 2. Load Multiple Addresses from new endpoint
-      const addrRes = await getAPI(`/user-address/get-addresses/${userId}`);
-      const addresses = Array.isArray(addrRes.data?.addresses) ? addrRes.data.addresses : [];
-      setAllAddresses(addresses);
-
-      const defaultAddr = addresses.find((a) => a._id === user.selectedAddress) || addresses[0] || null;
-      if (defaultAddr) {
-        setSelectedDeliveryAddrId(defaultAddr._id);
-        setDeliveryFormData({
-          firstName: user.name || "",
-          lastName: user.lastName || "",
-          company: "",
-          email: user.email || "",
-          phone: user.phone || "",
-          country: defaultAddr.country || "",
-          street: defaultAddr.addressLine1 || "",
-          city: defaultAddr.city || "",
-          state: defaultAddr.state || "",
-          zip: defaultAddr.pincode || "",
-          landmark: defaultAddr.landmark || "",
-          addressLine2: defaultAddr.addressLine2 || "",
-        });
-        
-        setBillingFormData({
-          firstName: user.name || "",
-          lastName: user.lastName || "",
-          company: "",
-          email: user.email || "",
-          phone: user.phone || "",
-          country: defaultAddr.country || "",
-          street: defaultAddr.addressLine1 || "",
-          city: defaultAddr.city || "",
-          state: defaultAddr.state || "",
-          zip: defaultAddr.pincode || "",
-          landmark: defaultAddr.landmark || "",
-          addressLine2: defaultAddr.addressLine2 || "",
-        });
-      } else {
-        setIsAddingNewDelivery(true);
-        setDeliveryFormData({
-          firstName: user.name || "",
-          lastName: user.lastName || "",
-          company: "",
-          email: user.email || "",
-          phone: user.phone || "",
-          country: "",
-          street: "",
-          city: "",
-          state: "",
-          zip: "",
-          landmark: "",
-          addressLine2: "",
-        });
-        setBillingFormData({
-          firstName: user.name || "",
-          lastName: user.lastName || "",
-          company: "",
-          email: user.email || "",
-          phone: user.phone || "",
-          country: "",
-          street: "",
-          city: "",
-          state: "",
-          zip: "",
-          landmark: "",
-          addressLine2: "",
-        });
-      }
-
-    } catch (err) {
-      console.log("Error loading user data:", err);
-      setIsAddingNewDelivery(true);
-      setAllAddresses([]);
-    }
-  };
-
-  useEffect(() => {
-    const init = async () => {
+    const loadUserAndAddresses = async () => {
       try {
-        await Promise.all([loadOrderItems(), loadUserAndAddresses()]);
+        // 1. Load User Data
+        const userRes = await getAPI(`/auth/userid/${userId}`);
+        const user = userRes.data?.user;
+        if (!user) return;
+        setUserData(user);
+  
+        // 2. Load Multiple Addresses from new endpoint
+        const addrRes = await getAPI(`/user-address/get-addresses/${userId}`);
+        const addresses = Array.isArray(addrRes.data?.addresses) ? addrRes.data.addresses : [];
+        setAllAddresses(addresses);
+  
+        const defaultAddr = addresses.find((a) => a._id === user.selectedAddress) || addresses[0] || null;
+        if (defaultAddr) {
+          setSelectedDeliveryAddrId(defaultAddr._id);
+          setDeliveryFormData({
+            firstName: user.name || "",
+            lastName: user.lastName || "",
+            company: "",
+            email: user.email || "",
+            phone: user.phone || "",
+            country: defaultAddr.country || "",
+            street: defaultAddr.addressLine1 || "",
+            city: defaultAddr.city || "",
+            state: defaultAddr.state || "",
+            zip: defaultAddr.pincode || "",
+            landmark: defaultAddr.landmark || "",
+            addressLine2: defaultAddr.addressLine2 || "",
+          });
+          
+          setBillingFormData({
+            firstName: user.name || "",
+            lastName: user.lastName || "",
+            company: "",
+            email: user.email || "",
+            phone: user.phone || "",
+            country: defaultAddr.country || "",
+            street: defaultAddr.addressLine1 || "",
+            city: defaultAddr.city || "",
+            state: defaultAddr.state || "",
+            zip: defaultAddr.pincode || "",
+            landmark: defaultAddr.landmark || "",
+            addressLine2: defaultAddr.addressLine2 || "",
+          });
+        } else {
+          setIsAddingNewDelivery(true);
+          setDeliveryFormData({
+            firstName: user.name || "",
+            lastName: user.lastName || "",
+            company: "",
+            email: user.email || "",
+            phone: user.phone || "",
+            country: "",
+            street: "",
+            city: "",
+            state: "",
+            zip: "",
+            landmark: "",
+            addressLine2: "",
+          });
+          setBillingFormData({
+            firstName: user.name || "",
+            lastName: user.lastName || "",
+            company: "",
+            email: user.email || "",
+            phone: user.phone || "",
+            country: "",
+            street: "",
+            city: "",
+            state: "",
+            zip: "",
+            landmark: "",
+            addressLine2: "",
+          });
+        }
+  
       } catch (err) {
-        console.error("Initialization error:", err);
-      } finally {
-        setLoading(false);
+        console.log("Error loading user data:", err);
+        setIsAddingNewDelivery(true);
+        setAllAddresses([]);
       }
     };
-    init();
-  }, [userId]);
+  
+    const loadWalletData = async () => {
+      try {
+        const walletRes = await getAPI(`/api/wallet/${userId}`);
+        setWallet(walletRes.data);
+  
+        const coinSettingsRes = await getAPI("/api/coin-settings");
+        if (coinSettingsRes.data) {
+          setCoinSetting(coinSettingsRes.data);
+        }
+      } catch (err) {
+        console.error("Error loading wallet data:", err);
+      }
+    };
+  
+    useEffect(() => {
+      const init = async () => {
+        try {
+          await Promise.all([loadOrderItems(), loadUserAndAddresses(), loadWalletData()]);
+        } catch (err) {
+          console.error("Initialization error:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      init();
+    }, [userId]);
+
 
     if (loading) return <CheckOutSkeleton />;
 
@@ -275,10 +296,15 @@ const CheckOut = () => {
       }
     };
 
-    const totalMRP = cartItems.reduce((acc, item) => acc + (item.marketSubtotal || item.subtotal), 0);
-    const baseSellingPrice = cartItems.reduce((acc, item) => acc + item.subtotal, 0);
-    const totalSellingPrice = Math.max(0, baseSellingPrice - couponDiscountAmount);
-    const totalDiscount = totalMRP - baseSellingPrice + couponDiscountAmount;
+      const totalMRP = cartItems.reduce((acc, item) => acc + (item.marketSubtotal || item.subtotal), 0);
+      const baseSellingPrice = cartItems.reduce((acc, item) => acc + item.subtotal, 0);
+      
+      const artCoinDiscount = useArtCoins ? Math.min(5, (wallet?.artCoins || 0) * coinSetting.coinValue) : 0;
+      const totalSellingPrice = Math.max(0, baseSellingPrice - couponDiscountAmount - artCoinDiscount);
+      const totalDiscount = totalMRP - baseSellingPrice + couponDiscountAmount + artCoinDiscount;
+  
+      const canUseWallet = wallet?.balance >= totalSellingPrice;
+
 
 
   const handleDeliveryAddrChange = (id) => {
@@ -399,15 +425,18 @@ const CheckOut = () => {
         pincode: billingFormData.zip || "",
       };
 
-      const orderPayload = {
-        buyer: { id: userId, name: `${deliveryFormData.firstName} ${deliveryFormData.lastName}`, email: deliveryFormData.email },
-        artist: { id: itemsWithArtist[0]?.artistId || null, name: itemsWithArtist[0]?.artistName || "Unknown", lastName: itemsWithArtist[0]?.artistLastName || "" },
-        items: itemsWithArtist.map((i) => ({ productId: i.productId, name: i.name, quantity: i.qty, price: i.price, subtotal: i.subtotal })),
-        deliveryAddress: deliveryAddressObj,
-        billingAddress: billingAddressObj,
-        totalAmount: totalSellingPrice,
-        paymentMethod: paymentMethod,
-      };
+        const orderPayload = {
+          buyer: { id: userId, name: `${deliveryFormData.firstName} ${deliveryFormData.lastName}`, email: deliveryFormData.email },
+          artist: { id: itemsWithArtist[0]?.artistId || null, name: itemsWithArtist[0]?.artistName || "Unknown", lastName: itemsWithArtist[0]?.artistLastName || "" },
+          items: itemsWithArtist.map((i) => ({ productId: i.productId, name: i.name, quantity: i.qty, price: i.price, subtotal: i.subtotal })),
+          deliveryAddress: deliveryAddressObj,
+          billingAddress: billingAddressObj,
+          totalAmount: totalSellingPrice,
+          paymentMethod: useWallet ? "Wallet" : paymentMethod,
+          useArtCoins: useArtCoins,
+          artCoinDiscount: artCoinDiscount,
+        };
+
 
       const response = await postAPI("/api/buyer-order-list/create", orderPayload);
       const savedOrder = response?.data?.data;
@@ -704,29 +733,74 @@ const CheckOut = () => {
                   ))}
                 </div>
 
-                <div className="mb-8">
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Enter Coupon Code"
-                      value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value)}
-                      className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-[#5C4033]"
-                    />
-                    <button
-                      onClick={handleApplyCoupon}
-                      disabled={isApplyingCoupon || !couponCode}
-                      className="bg-[#5C4033] text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-[#4b3327] transition-all disabled:opacity-50"
-                    >
-                      {isApplyingCoupon ? "..." : "Apply"}
-                    </button>
+                  <div className="mb-8 space-y-4">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="Enter Coupon Code"
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value)}
+                        className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-[#5C4033]"
+                      />
+                      <button
+                        onClick={handleApplyCoupon}
+                        disabled={isApplyingCoupon || !couponCode}
+                        className="bg-[#5C4033] text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-[#4b3327] transition-all disabled:opacity-50"
+                      >
+                        {isApplyingCoupon ? "..." : "Apply"}
+                      </button>
+                    </div>
+                    {couponDiscountAmount > 0 && (
+                      <p className="text-green-600 text-xs mt-2 font-medium">
+                        Coupon applied! You saved ₹{couponDiscountAmount.toLocaleString()}
+                      </p>
+                    )}
+
+                    {/* Art Coins Option */}
+                    <div className={`p-4 rounded-2xl border transition-all ${useArtCoins ? "border-[#5C4033] bg-[#5C4033]/5" : "border-gray-100 bg-gray-50"}`}>
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={useArtCoins}
+                          onChange={(e) => setUseArtCoins(e.target.checked)}
+                          disabled={!wallet?.artCoins}
+                          className="w-5 h-5 accent-[#5C4033] rounded-lg"
+                        />
+                        <div className="flex-1">
+                          <p className="font-bold text-gray-900 text-sm">Use Art Coins</p>
+                          <p className="text-[10px] text-gray-500">
+                            Available: {wallet?.artCoins || 0} coins (Worth ₹{((wallet?.artCoins || 0) * coinSetting.coinValue).toFixed(2)})
+                          </p>
+                        </div>
+                        {useArtCoins && <span className="font-bold text-green-600 text-sm">-₹{artCoinDiscount.toFixed(2)}</span>}
+                      </label>
+                    </div>
+
+                    {/* Wallet Payment Option */}
+                    <div className={`p-4 rounded-2xl border transition-all ${useWallet ? "border-[#5C4033] bg-[#5C4033]/5" : "border-gray-100 bg-gray-50"} ${!canUseWallet && !useWallet ? "opacity-60 grayscale" : ""}`}>
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={useWallet}
+                          onChange={(e) => {
+                            if (!canUseWallet && e.target.checked) {
+                              toast.warning("Insufficient wallet balance for this order");
+                              return;
+                            }
+                            setUseWallet(e.target.checked);
+                          }}
+                          disabled={!canUseWallet && !useWallet}
+                          className="w-5 h-5 accent-[#5C4033] rounded-lg"
+                        />
+                        <div className="flex-1">
+                          <p className="font-bold text-gray-900 text-sm">Pay from Wallet</p>
+                          <p className="text-[10px] text-gray-500">Available Balance: ₹{wallet?.balance || 0}</p>
+                        </div>
+                        {useWallet && <span className="font-bold text-[#5C4033] text-sm">Selected</span>}
+                      </label>
+                    </div>
                   </div>
-                  {couponDiscountAmount > 0 && (
-                    <p className="text-green-600 text-xs mt-2 font-medium">
-                      Coupon applied! You saved ₹{couponDiscountAmount.toLocaleString()}
-                    </p>
-                  )}
-                </div>
+
 
                 <div className="space-y-4 mb-8">
                   <div className="flex justify-between text-gray-600">
@@ -739,17 +813,30 @@ const CheckOut = () => {
                       <span className="font-semibold">- ₹{totalDiscount.toLocaleString()}</span>
                     </div>
                   )}
-                  {couponDiscountAmount > 0 && (
-                    <div className="flex justify-between text-green-600">
-                      <span>Coupon Discount</span>
-                      <span className="font-semibold">- ₹{couponDiscountAmount.toLocaleString()}</span>
+                    {couponDiscountAmount > 0 && (
+                      <div className="flex justify-between text-green-600">
+                        <span>Coupon Discount</span>
+                        <span className="font-semibold">- ₹{couponDiscountAmount.toLocaleString()}</span>
+                      </div>
+                    )}
+                    {useArtCoins && (
+                      <div className="flex justify-between text-green-600">
+                        <span>Art Coins Discount</span>
+                        <span className="font-semibold">- ₹{artCoinDiscount.toFixed(2)}</span>
+                      </div>
+                    )}
+                    {useWallet && (
+                      <div className="flex justify-between text-[#5C4033]">
+                        <span>Paid by Wallet</span>
+                        <span className="font-semibold">- ₹{totalSellingPrice.toLocaleString()}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between items-center pt-4 border-t border-dashed">
+                      <span className="text-lg font-bold text-gray-900">Total Amount</span>
+                      <span className="text-2xl font-black text-gray-900">₹{useWallet ? "0" : totalSellingPrice.toLocaleString()}</span>
                     </div>
-                  )}
-                  <div className="flex justify-between items-center pt-4 border-t border-dashed">
-                    <span className="text-lg font-bold text-gray-900">Total Amount</span>
-                    <span className="text-2xl font-black text-gray-900">₹{totalSellingPrice.toLocaleString()}</span>
                   </div>
-                </div>
+
 
 
                 <button

@@ -255,7 +255,7 @@ const ProductDetails = () => {
     return Math.round(((market - sell) / market) * 100);
   };
 
-  const displayPrice = product?.finalPrice || product?.sellingPrice;
+  const displayPrice = product?.finalPrice;
   const discountPercent = calculateDiscount(displayPrice, product?.marketPrice);
   const ratingValue = Number(product?.averageRating ?? 0);
   const reviewCount = Number(product?.reviewCount ?? 0);
@@ -288,7 +288,7 @@ const ProductDetails = () => {
               "@type": "Offer",
               "url": window.location.href,
               "priceCurrency": "INR",
-                "price": product.finalPrice || product.sellingPrice,
+                "price": product.finalPrice,
               "availability": product.quantity > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
               "itemCondition": "https://schema.org/NewCondition"
             }
@@ -676,7 +676,7 @@ const ProductInfo = ({ product, discountPercent, ratingValue, reviewCount, artis
             <div className="space-y-1">
               <p className="text-[10px] font-black text-[#6F4D34] uppercase tracking-[0.2em]">Collector's Investment</p>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-black text-gray-900 tracking-tighter">₹ {(product.finalPrice || product.sellingPrice)?.toLocaleString()}</span>
+                  <span className="text-5xl font-black text-gray-900 tracking-tighter">₹ {(product.finalPrice)?.toLocaleString()}</span>
                   <span className="text-sm font-bold text-gray-400">INR</span>
                 </div>
             </div>

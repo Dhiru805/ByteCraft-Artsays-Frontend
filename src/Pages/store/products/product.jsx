@@ -139,11 +139,11 @@ const Product = () => {
       });
     }
 
-    result = result.filter((p) => (p.finalPrice || p.sellingPrice) <= filters.priceRange);
+    result = result.filter((p) => (p.finalPrice) <= filters.priceRange);
 
     if (filters.priceBuckets.length > 0) {
       result = result.filter((p) => {
-        const price = p.finalPrice || p.sellingPrice;
+        const price = p.finalPrice;
         return filters.priceBuckets.some((bucket) => {
           if (bucket === "Under ₹5,000") return price < 5000;
           if (bucket === "₹5,000 – ₹10,000") return price >= 5000 && price <= 10000;
@@ -235,9 +235,9 @@ const Product = () => {
     }
 
     if (filters.sortBy === "Price Low to High") {
-      result.sort((a, b) => (a.finalPrice || a.sellingPrice) - (b.finalPrice || b.sellingPrice));
+      result.sort((a, b) => (a.finalPrice) - (b.finalPrice));
     } else if (filters.sortBy === "Price High to Low") {
-      result.sort((a, b) => (b.finalPrice || b.sellingPrice) - (a.finalPrice || a.sellingPrice));
+      result.sort((a, b) => (b.finalPrice) - (a.finalPrice));
     } else if (filters.sortBy === "New Arrivals") {
       result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     } else if (filters.sortBy === "Trending") {
@@ -797,7 +797,7 @@ const Product = () => {
               {currentProducts.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
                   {currentProducts.map((product, index) => {
-                    const displayPrice = product.finalPrice || product.sellingPrice;
+                          const displayPrice = product.finalPrice;
                     const hasDiscount = displayPrice < product.marketPrice;
                     const discountPercent = hasDiscount ? Math.round(((product.marketPrice - displayPrice) / product.marketPrice) * 100) : 0;
 
@@ -901,9 +901,9 @@ const Product = () => {
                                   ₹{product.marketPrice.toLocaleString()}
                                 </span>
                               )}
-                                <span className="text-2xl font-black text-gray-900 tracking-tighter">
-                                  ₹{(product.finalPrice || product.sellingPrice).toLocaleString()}
-                                </span>
+                                  <span className="text-2xl font-black text-gray-900 tracking-tighter">
+                                    ₹{(product.finalPrice).toLocaleString()}
+                                  </span>
                             </div>
 
                             

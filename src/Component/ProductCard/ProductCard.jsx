@@ -374,7 +374,7 @@ useEffect(() => {
                   {/* <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3"> */}
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6">
                       {currentProducts.map((product) => {
-                        const displayPrice = product.finalPrice || product.sellingPrice;
+                        const displayPrice = product.finalPrice;
                         const hasDiscount = displayPrice < product.marketPrice;
                         const discountPercent = hasDiscount
                           ? Math.round(
@@ -504,20 +504,20 @@ useEffect(() => {
                                   {discountPercent}% OFF
                                 </span>
                               )}
-                                {hasDiscount ? (
-                                  <>
-                                    <span className="text-gray-400 line-through">
-                                      ₹{product.marketPrice}
-                                    </span>
+                                  {hasDiscount ? (
+                                    <>
+                                      <span className="text-gray-400 line-through">
+                                        ₹{product.marketPrice}
+                                      </span>
+                                      <span className="text-lg font-bold text-gray-900">
+                                        ₹{product.finalPrice}
+                                      </span>
+                                    </>
+                                  ) : (
                                     <span className="text-lg font-bold text-gray-900">
-                                      ₹{displayPrice}
+                                      ₹{product.finalPrice}
                                     </span>
-                                  </>
-                                ) : (
-                                  <span className="text-lg font-bold text-gray-900">
-                                    ₹{displayPrice}
-                                  </span>
-                                )}
+                                  )}
                             </div>
                           </div>
     
