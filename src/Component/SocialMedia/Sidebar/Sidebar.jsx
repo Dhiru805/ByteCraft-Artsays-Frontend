@@ -154,17 +154,16 @@ const Sidebar = () => {
 
       {/* Bottom Navigation */}
       <nav className="bottom-nav-s">
-        <ul className="nav-items-s">
-          {items.slice(0, 2).map((item) => (
-            <Link to={`${item.link}`}>
-              <li
-                key={item.key}
-                className={`nav-item-s ${isActive(item.link) ? "active" : ""}`}
-              >
-                <i className={` bi-${item.icon}`}></i>
-              </li>
-            </Link>
-          ))}
+          <ul className="nav-items-s">
+            {items.slice(0, 2).map((item) => (
+              <Link to={`${item.link}`} key={item.key}>
+                <li
+                  className={`nav-item-s ${isActive(item.link) ? "active" : ""}`}
+                >
+                  <i className={` bi-${item.icon}`}></i>
+                </li>
+              </Link>
+            ))}
 
           {/* Create Button */}
           <li id="createTrigger">
@@ -201,16 +200,15 @@ const Sidebar = () => {
             )}
           </li>
 
-          {items.slice(2, 3).map((item) => (
-            <Link to={`${item.link}`}>
-              <li
-                key={item.key}
-                className={`nav-item-s  ${isActive(item.link) ? "active" : ""}`}
-              >
-                <i className={` bi-${item.icon}`}></i>
-              </li>
-            </Link>
-          ))}
+            {items.slice(2, 3).map((item) => (
+              <Link to={`${item.link}`} key={item.key}>
+                <li
+                  className={`nav-item-s  ${isActive(item.link) ? "active" : ""}`}
+                >
+                  <i className={` bi-${item.icon}`}></i>
+                </li>
+              </Link>
+            ))}
 
           <li
             className={`nav-item-s  ${showProfileMenu ? "active" : ""}`}
@@ -248,20 +246,19 @@ const Sidebar = () => {
               </div>
               <div className="profile-category-s">{user.role}</div>
             </div>
-            <div className="profile-content-s">
-              {items.map((item) => (
-                <Link to={`${item.link}`}>
-                  <div
-                    key={item.key}
-                    className={`profile-item-s  ${isActive(item.link) ? "active" : ""
-                      }`}
-                  >
-                    <i className={`bi-${item.icon}`}></i>
-                    <span>{item.label}</span>
-                  </div>
-                </Link>
-              ))}
-            </div>
+              <div className="profile-content-s">
+                {items.map((item) => (
+                  <Link to={`${item.link}`} key={item.key}>
+                    <div
+                      className={`profile-item-s  ${isActive(item.link) ? "active" : ""
+                        }`}
+                    >
+                      <i className={`bi-${item.icon}`}></i>
+                      <span>{item.label}</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
           </div>
           <div
             className={`overlay-s ${showProfileMenu ? "active" : ""}`}

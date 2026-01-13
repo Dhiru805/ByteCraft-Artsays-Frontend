@@ -16,6 +16,7 @@ import { BiUserPlus } from "react-icons/bi";
 import getAPI from "../../../../src/api/getAPI";
 import postAPI from "../../../../src/api/postAPI";
 import putAPI from "../../../../src/api/putAPI";
+import deleteAPI from "../../../../src/api/deleteAPI";
 import { toast } from "react-toastify";
 import { FaCheckCircle } from "react-icons/fa";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
@@ -148,6 +149,7 @@ const Profile = ({ shareprofileid }) => {
   const [selectedReason, setSelectedReason] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [copyMsg, setCopyMsg] = useState("");
   const [sharePost, setSharePost] = useState(false);
   const [shareProfile, setShareProfile] = useState(false);
@@ -257,7 +259,7 @@ const Profile = ({ shareprofileid }) => {
   }, [menuOpenId, showMenu, activeIndex]);
 
   useEffect(() => {
-    const shouldLockScroll = activePost || reportPopupOpen || tipPopupOpen;
+    const shouldLockScroll = activePost || reportPopupOpen || tipPopupOpen || deleteConfirmId;
 
     document.body.style.overflow = shouldLockScroll ? "hidden" : "auto";
 
@@ -774,6 +776,30 @@ const Profile = ({ shareprofileid }) => {
     }
   };
 
+  const handleDeletePost = (postId) => {
+    setDeleteConfirmId(postId);
+    setMenuOpenId(null);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirmId) return;
+    try {
+    const res = await deleteAPI(`/api/social-media/posts/${deleteConfirmId}`, {}, true);
+    if (res && !res.hasError) {
+      toast.success("Post deleted successfully");
+      setProfile((prev) => ({
+        ...prev,
+        posts: prev.posts.filter((p) => p._id !== deleteConfirmId),
+      }));
+      setActiveIndex(null);
+      setDeleteConfirmId(null);
+    }
+    } catch (err) {
+      console.error("Error deleting post:", err);
+      toast.error(err.response?.data?.message || "Error deleting post");
+    }
+  };
+
   const handleSignOut = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userType");
@@ -1101,14 +1127,24 @@ const Profile = ({ shareprofileid }) => {
                             ref={popupref1}
                             className="absolute flex flex-col rounded-xl items-center justify-between right-0 top-8 w-40 bg-white border shadow-lg z-10"
                           >
-                            <li
-                              className="w-full px-3 py-2 flex items-center text-[#000000] justify-center font-semibold cursor-pointer hover:bg-gray-200"
-                              onClick={() => handleSave(activePost?._id)}
-                            >
-                              {activePost.isSaved ? "Unsave" : "Save"}
-                            </li>
-                            <hr className="w-[80%] border-t border-gray-800" />
-                            {/* Cancel */}
+                              <li
+                                className="w-full px-3 py-2 flex items-center text-[#000000] justify-center font-semibold cursor-pointer hover:bg-gray-200"
+                                onClick={() => handleSave(activePost?._id)}
+                              >
+                                {activePost.isSaved ? "Unsave" : "Save"}
+                              </li>
+                              <hr className="w-[80%] border-t border-gray-800" />
+
+                              {/* Delete Post */}
+                              <li
+                                className="w-full px-3 py-2 flex items-center text-red-600 justify-center font-semibold cursor-pointer hover:bg-red-200"
+                                onClick={() => handleDeletePost(activePost._id)}
+                              >
+                                Delete
+                              </li>
+                              <hr className="w-[80%] border-t border-gray-800" />
+
+                              {/* Cancel */}
                             <li
                               className="w-full px-3 py-2 flex items-center justify-center font-semibold cursor-pointer hover:bg-red-200 text-red-500 rounded-b-xl"
                               onClick={() => setMenuOpenId(null)}
@@ -2809,6 +2845,30 @@ const Profile = ({ shareprofileid }) => {
           </div>
         )}
       </div>
+
+      {deleteConfirmId && (
+        <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
+          <div className="bg-white rounded-xl shadow-xl p-6 w-[400px]">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Delete Post?</h2>
+            <p className="text-gray-600 mb-6 text-center">Are you sure you want to delete this post? This action cannot be undone.</p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => setDeleteConfirmId(null)}
+                className="px-6 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-6 py-2 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showUnfollowConfirm && (
   <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
     <div className="bg-white p-5 rounded-lg w-[300px]">

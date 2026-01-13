@@ -469,7 +469,7 @@ import ArtistViewExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibi
 import ArtistSponser from "../Component/Dashboard/ArtistDashbooard/Advertise/Sponser";
 import ArtistProductCouponCodes from "../Component/Dashboard/ArtistDashbooard/ProductSetting/ProductCouponCode/ProductCouponCode";
 import UpdateProductArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/UpdateProduct/productUploade";
-// import ProductViewArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/productUploade";
+import ProductViewArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/productUploade";
 //-----------------------------Blogs--------------------------//
 import BlogList from "../Component/Dashboard/ArtistDashbooard/Blog/BlogList";
 import BlogPost from "../Component/Dashboard/ArtistDashbooard/Blog/BlogPost";
@@ -556,7 +556,7 @@ import Insurance from "../Pages/Insurance/Insurance";
 import Partner from "../Pages/Partner/Partner";
 import SellerProductCouponCodes from "../Component/Dashboard/SellerDashboard/ProductSetting/ProductCouponCode/ProductCouponCode";
 import UpdateProductSeller from "../Component/Dashboard/SellerDashboard/ProductsDetails/UpdateProduct/productUploade";
-import ProductViewSeller from "../Component/Dashboard/SellerDashboard/ProductsDetails/UpdateProduct/productUploade";
+import ProductViewSeller from "../Component/Dashboard/SellerDashboard/ProductsDetails/ViewProduct/productUploade";
 
 //-----------------------------Artist Premium Badges--------------------------//
 
@@ -1396,7 +1396,7 @@ const AppRoutes = () => {
         <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
         <Route path="custom-order" element={<CustomOrder />} />
         <Route path="product/view-product" element={<ProductView />} />
-        <Route path="product-fetch-view-artist/:productId" element={<ArtistProductFetchView />} />
+        <Route path="product-fetch-view-artist/:productId" element={<ProductViewArtist />} />
         <Route
           path="custom-order/view-request"
           element={<ViewCustomRequest />}
@@ -1520,7 +1520,7 @@ const AppRoutes = () => {
         <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
         <Route path="SellerProductUpload" element={<SellerProductUpload />} />
         <Route path="purchased-product" element={<SellerPurchasedProducts />} />
-        <Route path="product-fetch-view-seller/:productId" element={<SellerProductFetchView />} />
+        <Route path="product-fetch-view-seller/:productId" element={<ProductViewSeller />} />
 
         {/* Advertise Routes */}
         <Route path="advertise" element={<SellerAdvertise />} />

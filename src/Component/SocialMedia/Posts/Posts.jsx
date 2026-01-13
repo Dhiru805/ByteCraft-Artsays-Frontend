@@ -2,8 +2,9 @@ import React, { useEffect, useState, useRef } from "react";
 import "../Sidebar/Side-post-sugg.css";
 import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
+import deleteAPI from "../../../api/deleteAPI";
 import { FaCheckCircle } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import putAPI from "../../../api/putAPI";
 import { timeAgo } from "./../../../utils/TimeAgo.js";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables.jsx";
@@ -31,6 +32,7 @@ const Post = () => {
   const [description, setDescription] = useState("");
   const [reportedUser, setReportedUser] = useState(null);
   const [sharePost, setSharePost] = useState(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [copyMsg, setCopyMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState({});
@@ -55,7 +57,7 @@ const Post = () => {
   const finalPost = [...productsPost, ...normalPost];
   const activePost = activeIndex !== null ? finalPost[activeIndex] : null;
   useEffect(() => {
-    const shouldLockScroll = activePost || reportPopupOpen || tipPopupOpen;
+    const shouldLockScroll = activePost || reportPopupOpen || tipPopupOpen || deleteConfirmId;
 
     document.body.style.overflow = shouldLockScroll ? "hidden" : "auto";
 
@@ -186,6 +188,26 @@ const Post = () => {
       );
     } catch (err) {
       console.error("Error saving/unsaving:", err);
+    }
+  };
+
+  const handleDeletePost = (postId) => {
+    setDeleteConfirmId(postId);
+    setMenuOpenId(null);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirmId) return;
+    try {
+    const res = await deleteAPI(`/api/social-media/posts/${deleteConfirmId}`, {}, true);
+    if (res && !res.hasError) {
+      toast.success("Post deleted successfully");
+      setPosts((prev) => prev.filter((p) => p._id !== deleteConfirmId));
+      setDeleteConfirmId(null);
+    }
+    } catch (err) {
+      console.error("Error deleting post:", err);
+      toast.error(err.response?.data?.message || "Error deleting post");
     }
   };
 
@@ -1369,6 +1391,19 @@ const Post = () => {
 
                 <hr className="w-[80%] border-t border-gray-400" />
 
+                {/* Delete Post (Owner only) */}
+                {post.user._id === userId && (
+                  <div className="w-full flex flex-col items-center justify-center">
+                    <li
+                      className="w-full px-3 py-2 flex font-semibold items-center justify-center cursor-pointer hover:bg-red-200 text-red-600"
+                      onClick={() => handleDeletePost(post._id)}
+                    >
+                      Delete
+                    </li>
+                    <hr className="w-[80%] border-t border-gray-400" />
+                  </div>
+                )}
+
                 {/* Cancel */}
                 <li
                   className="w-full px-3 py-2 flex font-semibold items-center justify-center cursor-pointer hover:bg-red-200 text-red-500 rounded-b-xl"
@@ -1656,6 +1691,30 @@ const Post = () => {
                 </li>
               )}
             </ul>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
+          <div className="bg-white rounded-xl shadow-xl p-6 w-[400px]">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Delete Post?</h2>
+            <p className="text-gray-600 mb-6 text-center">Are you sure you want to delete this post? This action cannot be undone.</p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => setDeleteConfirmId(null)}
+                className="px-6 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-6 py-2 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}
