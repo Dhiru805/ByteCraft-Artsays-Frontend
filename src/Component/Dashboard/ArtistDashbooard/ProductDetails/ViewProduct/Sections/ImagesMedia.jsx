@@ -69,20 +69,36 @@ const ImagesMedia = ({
         <div 
           className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
           style={{ 
-            backgroundColor: 'rgba(0,0,0,0.8)', 
-            zIndex: 9999,
-            cursor: 'zoom-out'
+            backgroundColor: 'rgba(0,0,0,0.85)', 
+            zIndex: 99999,
+            cursor: 'zoom-out',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh'
           }}
           onClick={() => setSelectedImage(null)}
         >
-          <div className="position-relative p-2 bg-white rounded shadow-lg" style={{ maxWidth: '90%', maxHeight: '90%' }}>
+          <div 
+            className="position-relative p-2 bg-white rounded shadow-lg d-flex align-items-center justify-content-center" 
+            style={{ 
+              maxWidth: '95%', 
+              maxHeight: '95%',
+              cursor: 'default'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
             <button 
               className="btn btn-dark position-absolute top-0 end-0 m-2"
-              style={{ borderRadius: '50%', width: '40px', height: '40px', zIndex: 10000 }}
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedImage(null);
+              style={{ 
+                borderRadius: '50%', 
+                width: '40px', 
+                height: '40px', 
+                zIndex: 100000,
+                boxShadow: '0 2px 10px rgba(0,0,0,0.3)'
               }}
+              onClick={() => setSelectedImage(null)}
             >
               <i className="fa fa-times"></i>
             </button>
@@ -90,7 +106,11 @@ const ImagesMedia = ({
               src={selectedImage} 
               alt="Full size" 
               className="img-fluid rounded" 
-              style={{ maxHeight: '80vh', objectFit: 'contain' }}
+              style={{ 
+                maxHeight: '90vh', 
+                maxWidth: '100%',
+                objectFit: 'contain' 
+              }}
             />
           </div>
         </div>,
