@@ -328,173 +328,191 @@ export const AccountForm = () => {
     return <PersonalInformationSkeleton />;
   }
   return (
-    <form className="w-full space-y-6" onSubmit={handleSubmit}>
-      <h3 className="text-xl font-semibold">Personal Information</h3>
+    <div className="max-w-[1440px] mx-auto">
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+          Personal Information
+        </h1>
+      </div>
 
-      <div className='grid md:grid-cols-3'>
-        <div className="flex flex-col md:col-span-1 items-center gap-4">
-          <div className="relative">
-            <div className="w-[10rem] h-[10rem] bg-gray-300 rounded-full overflow-hidden">
-              <img
-                src={profileImage || DEFAULT_PROFILE_IMAGE}
-                alt="Profile Preview"
-                className="w-full h-full object-cover"
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-gray-100 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50/50 transition-all duration-500">
+          <div className='grid md:grid-cols-3 gap-8'>
+            <div className="flex flex-col md:col-span-1 items-center gap-6">
+              <div className="relative group">
+                <div className="w-36 h-36 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl overflow-hidden shadow-lg ring-4 ring-white">
+                  <img
+                    src={profileImage || DEFAULT_PROFILE_IMAGE}
+                    alt="Profile Preview"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+
+                {profileImage && profileImage !== DEFAULT_PROFILE_IMAGE && (
+                  <button
+                    type="button"
+                    onClick={handleDeleteImage}
+                    className="absolute -bottom-2 -right-2 w-10 h-10 bg-rose-500 rounded-2xl flex items-center justify-center shadow-lg shadow-rose-200 hover:bg-rose-600 transition-all duration-300 active:scale-90"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-5 h-5 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 18M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2m4 0H5m1 0v12a2 2 0 002 2h8a2 2 0 002-2V6"
+                      />
+                    </svg>
+                  </button>
+                )}
+              </div>
+              <div>
+                <input
+                  id="profileUpload"
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  className="hidden"
+                  onChange={handleImageUpload}
+                />
+                <label
+                  htmlFor="profileUpload"
+                  className="inline-flex items-center gap-2 bg-[#5C4033] hover:bg-[#4b3327] text-white text-sm font-bold py-3 px-6 rounded-2xl cursor-pointer shadow-lg shadow-[#5C4033]/20 transition-all duration-300 active:scale-95"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  Upload Photo
+                </label>
+              </div>
+            </div>
+            <div className='md:col-span-2 space-y-6'>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">First Name *</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Nelson"
+                  className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Last Name *</label>
+                <input
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="D."
+                  className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-gray-100 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50/50 transition-all duration-500">
+          <h3 className="text-lg font-bold text-gray-900 mb-6">Account Details</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Username *</label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="mrstark"
+                className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
               />
             </div>
 
-            {profileImage && profileImage !== DEFAULT_PROFILE_IMAGE && (
-              <button
-                type="button"
-                onClick={handleDeleteImage}
-                className="absolute bottom-0 right-0 w-8 h-8 bg-[#6F3E2D] rounded-full flex items-center justify-center border border-white cursor-pointer"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4 text-white hover:text-red-500 transition-colors duration-200"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="example@gmail.com"
+                className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Phone *</label>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="+91 93656 00000"
+                className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Date of Birth</label>
+              <input
+                type="date"
+                value={birthdate}
+                onChange={(e) => setBirthdate(e.target.value)}
+                className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-3">Gender</label>
+              <div className="flex gap-4">
+                <button
+                  type="button"
+                  onClick={() => handleGenderSelect('Male')}
+                  className={`flex-1 py-3 rounded-2xl text-center font-semibold transition-all duration-300 ${gender === 'Male' 
+                    ? 'bg-[#5C4033] text-white shadow-lg shadow-[#5C4033]/20' 
+                    : 'bg-gray-50 border border-gray-200 text-gray-600 hover:bg-gray-100'
+                  }`}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 18M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2m4 0H5m1 0v12a2 2 0 002 2h8a2 2 0 002-2V6"
-                  />
-                </svg>
-
-              </button>
-            )}
-
-          </div>
-          <div>
-            <input
-              id="profileUpload"
-              type="file"
-              accept="image/*"
-              ref={fileInputRef}
-              className="hidden"
-              onChange={handleImageUpload}
-            />
-            <label
-              htmlFor="profileUpload"
-              className="bg-[#6F4D34] text-white text-sm font-semibold py-2 px-4 rounded-3xl cursor-pointer"
-            >
-              Upload Profile Image
-            </label>
+                  Male
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleGenderSelect('Female')}
+                  className={`flex-1 py-3 rounded-2xl text-center font-semibold transition-all duration-300 ${gender === 'Female' 
+                    ? 'bg-[#5C4033] text-white shadow-lg shadow-[#5C4033]/20' 
+                    : 'bg-gray-50 border border-gray-200 text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  Female
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-        <div className='md:col-span-2 space-y-6 content-center'>
+
+        <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-gray-100 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50/50 transition-all duration-500">
+          <h3 className="text-lg font-bold text-gray-900 mb-6">About You</h3>
           <div>
-            <label className="block text-sm">First Name *</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Nelson"
-              className="w-full border-2 px-3 py-2 rounded-xl"
-            />
-          </div>
-          <div>
-            <label className="block text-sm">Last Name *</label>
-            <input
-              type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              placeholder="D."
-              className="w-full border-2 px-3 py-2 rounded-xl"
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Bio</label>
+            <textarea
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              rows="4"
+              placeholder="Write something about yourself..."
+              className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none resize-none"
             />
           </div>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="md:col-span-1">
-          <label className="block text-sm">Username *</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="mrstark"
-            className="w-full border-2 px-3 py-2 rounded-xl"
-          />
-        </div>
-
-        <div className="md:col-span-1">
-          <label className="block text-sm">Email *</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="example@gmail.com"
-            className="w-full border-2 px-3 py-2 rounded-xl"
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="md:col-span-1">
-          <label className="block text-sm">Phone *</label>
-          <input
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="+91 93656 00000"
-            className="w-full border-2 px-3 py-2 rounded-xl"
-          />
-        </div>
-
-        <div className="md:col-span-1">
-          <label className="block text-sm mb-2">Date of Birth</label>
-          <input
-            type="date"
-            value={birthdate}
-            onChange={(e) => setBirthdate(e.target.value)}
-            className="w-full border-2 px-3 py-2 rounded-xl"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm mb-2">Gender</label>
-          <div className="flex gap-4 text-lg text-gray-500 font-normal">
-            <button
-              type="button"
-              onClick={() => handleGenderSelect('Male')}
-              className={`flex-1 min-w-[120px] py-2 rounded-xl text-center ${gender === 'Male' ? 'bg-[#6F3E2D] text-white' : 'border-2 border-gray-300'
-                }`}
-            >
-              Male
-            </button>
-            <button
-              type="button"
-              onClick={() => handleGenderSelect('Female')}
-              className={`flex-1 min-w-[120px] py-2 rounded-xl text-center ${gender === 'Female' ? 'bg-[#6F3E2D] text-white' : 'border-2 border-gray-400 text-black'
-                }`}
-            >
-              Female
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm mb-2">Bio</label>
-        <textarea
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
-          rows="4"
-          placeholder="Write something about yourself..."
-          className="w-full border-2 px-3 py-2 rounded-xl resize-none"
-        />
-      </div>
-
-      <button
-        type="submit"
-        className="bg-[#6F4D34] text-white text-[17px] font-semibold w-full sm:w-[200px] py-2 px-4 rounded-3xl"
-        disabled={loading}
-      >
-        {loading ? 'Updating...' : 'Update Changes'}
-      </button>
-    </form>
+        <button
+          type="submit"
+          className="group relative flex items-center justify-center gap-3 bg-[#5C4033] hover:bg-[#4b3327] text-white py-4 px-8 rounded-2xl font-bold text-lg shadow-lg shadow-[#5C4033]/20 transition-all transform active:scale-95 overflow-hidden"
+          disabled={loading}
+        >
+          <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+          {loading ? 'Updating...' : 'Update Changes'}
+        </button>
+      </form>
+    </div>
   );
 };

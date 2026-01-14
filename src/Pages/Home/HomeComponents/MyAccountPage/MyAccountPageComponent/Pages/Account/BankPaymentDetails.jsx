@@ -122,104 +122,122 @@ const BankPaymentDetails = () => {
   };
 
   return (
-    <div className="w-full space-y-6">
-      <h2 className="text-2xl text-gray-950 font-semibold">
-        Bank/Payment Details (For Payments & Withdrawals)
-      </h2>
+    <div className="max-w-[1440px] mx-auto">
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+          Bank Payment Details
+        </h1>
+      </div>
 
-      <form
-        className="grid grid-cols-1 md:grid-cols-2 gap-6"
-        onSubmit={handleSubmit}
-      >
-        {/* Account Holder Name */}
-        <div>
-          <label className="block mb-2 font-medium text-sm text-gray-800">
-            Account Holder Name <span className="text-red-600">*</span>
-          </label>
-          <input
-            type="text"
-            className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
-            placeholder="Account Holder Name"
-            name="accountHolderName"
-            value={formData.accountHolderName}
-            onChange={handleChange}
-            required
-          />
+      <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-gray-100 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50/50 transition-all duration-500">
+        <div className="flex items-center gap-4 mb-8">
+          <div className="w-12 h-12 bg-[#5C4033]/10 rounded-2xl flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-[#5C4033]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-gray-900">Payment & Withdrawals</h3>
+            <p className="text-sm text-gray-500">Manage your bank account details for seamless transactions</p>
+          </div>
         </div>
 
-        {/* Bank Name */}
-        <div>
-          <label className="block mb-2 font-medium text-sm text-gray-800">
-            Bank Name <span className="text-red-600">*</span>
-          </label>
-          <input
-            type="text"
-            className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
-            placeholder="Bank Name"
-            name="bankName"
-            value={formData.bankName}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        <form
+          className="space-y-6"
+          onSubmit={handleSubmit}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Account Holder Name */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Account Holder Name <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="text"
+                className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+                placeholder="Enter account holder name"
+                name="accountHolderName"
+                value={formData.accountHolderName}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-        {/* Account Number */}
-        <div>
-          <label className="block mb-2 font-medium text-sm text-gray-800">
-            Account Number <span className="text-red-600">*</span>
-          </label>
-          <input
-            type="number"
-            className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
-            placeholder="1234567890"
-            name="accountNumber"
-            value={formData.accountNumber}
-            onChange={handleChange}
-            required
-          />
-        </div>
+            {/* Bank Name */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Bank Name <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="text"
+                className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+                placeholder="Enter bank name"
+                name="bankName"
+                value={formData.bankName}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-        {/* IFSC Code */}
-        <div>
-          <label className="block mb-2 font-medium text-sm text-gray-800">
-            IFSC Code <span className="text-red-600">*</span>
-          </label>
-          <input
-            type="text"
-            className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
-            placeholder="IFSC Code"
-            name="ifscCode"
-            value={formData.ifscCode}
-            onChange={handleChange}
-            required
-          />
-        </div>
+            {/* Account Number */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Account Number <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="number"
+                className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+                placeholder="Enter account number"
+                name="accountNumber"
+                value={formData.accountNumber}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-        {/* UPI ID */}
-        <div>
-          <label className="block mb-2 font-medium text-sm text-gray-800">
-            UPI ID
-          </label>
-          <input
-            type="text"
-            className="border-2 px-3 py-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#6F3E2D]"
-            placeholder="UPI Id"
-            name="upiId"
-            value={formData.upiId}
-            onChange={handleChange}
-          />
-        </div>
+            {/* IFSC Code */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                IFSC Code <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="text"
+                className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+                placeholder="Enter IFSC code"
+                name="ifscCode"
+                value={formData.ifscCode}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-        {/* Submit Button */}
-        <div className="md:col-span-2">
+            {/* UPI ID */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                UPI ID
+              </label>
+              <input
+                type="text"
+                className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+                placeholder="Enter UPI ID (e.g., username@bank)"
+                name="upiId"
+                value={formData.upiId}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          {/* Submit Button */}
           <button
             type="submit"
-            className="bg-[#6F4D34] text-white px-10 py-2 rounded-full text-sm font-medium"
+            disabled={loading}
+            className="group relative flex items-center justify-center gap-3 bg-[#5C4033] hover:bg-[#4b3327] text-white py-4 px-10 rounded-2xl font-bold text-lg shadow-lg shadow-[#5C4033]/20 transition-all transform active:scale-95 overflow-hidden"
           >
-            {loading ? "Updating..." : "Update"}
+            <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+            {loading ? "Updating..." : "Update Bank Details"}
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };
