@@ -546,7 +546,7 @@ const Product = () => {
                 />
                 <div className="flex justify-between text-sm font-bold text-[#6F4D34] mb-6">
                   <span>₹295</span>
-                  <span>₹{filters.priceRange.toLocaleString()}</span>
+                  <span>₹{(filters.priceRange || 0).toLocaleString()}</span>
                 </div>
                 <div className="space-y-4">
                   {["Under ₹5,000", "₹5,000 – ₹10,000", "₹10,000 – ₹25,000", "Above ₹25,000"].map((bucket) => (
@@ -898,11 +898,11 @@ const Product = () => {
                             <div className="flex items-center gap-2">
                               {hasDiscount && (
                                 <span className="text-lg text-gray-400 line-through font-bold">
-                                  ₹{product.marketPrice.toLocaleString()}
+                                  ₹{(product.marketPrice || 0).toLocaleString()}
                                 </span>
                               )}
                                   <span className="text-2xl font-black text-gray-900 tracking-tighter">
-                                    ₹{(product.finalPrice).toLocaleString()}
+                                    ₹{(product.finalPrice || 0).toLocaleString()}
                                   </span>
                             </div>
 
