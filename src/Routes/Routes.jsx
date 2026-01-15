@@ -19,31 +19,7 @@ import ForgotPassword from "../Pages/Login/Forgotpassword";
 //-----public routes-----//
 import PrivacyPolicy from "../Pages/PrivacyPolicy/PrivacyPolicy";
 import TermsofServices from "../Pages/Terms&Condition/TermsofServices";
-// import BiddingPass from "../Pages/Art-Biding/BidingPage";
-
-//-------------------------------------------Payment Getway------------------------------------//
-import SuccessPage from "../Pages/PaymentGetway/Success";
-import FailurePage from "../Pages/PaymentGetway/Failure";
-
-import CertificationSuccessPage from "../Pages/PaymentGetway/Certification/Success";
-import CertificationFailurePage from "../Pages/PaymentGetway/Certification/Failure";
-
-import PackagematerialSuccessPage from "../Pages/PaymentGetway/Packagematerial/Success";
-import PackagematerialFailurePage from "../Pages/PaymentGetway/Packagematerial/Failure";
-
-import BadgeSuccessPage from "../Pages/PaymentGetway/Badge/Success";
-import BadgeFailurePage from "../Pages/PaymentGetway/Badge/Failure";
-
-import PromotePostSuccessPage from "../Pages/PaymentGetway/PromotePost/Success";
-import PromotePostFailurePage from "../Pages/PaymentGetway/PromotePost/Failure";
-
-import CheckoutorderSuccessPage from "../Pages/PaymentGetway/OrderCheckout/Success";
-import CheckoutorderFailurePage from "../Pages/PaymentGetway/OrderCheckout/Failure";
-
-import PaymentTipSuccessPage from "../Pages/PaymentGetway/PaymentTip/Success";
-import PaymentTipFailurePage from "../Pages/PaymentGetway/PaymentTip/Failure";
-
-
+// import Challenge from "../Pages/Challenges/Challenge";
 
 //----------------------------------------My Account-----------------------------------------//
 import MyAccountMainLayout from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/MyAccountMainLayout";
@@ -135,12 +111,12 @@ import CreatePolicy from "../Component/Dashboard/Super-AdminDashboard/Policys/cr
 import UpdatePolicy from "../Component/Dashboard/Super-AdminDashboard/Policys/editPolicy";
 //import ViewPolicy from '../Component/Dashboard/Super-AdminDashboard/Policys/PolicyView';
 
-import HowToBuyTable from "../Component/Dashboard/Super-AdminDashboard/HowToBuy/buyTable";
+import How_To_Buy from "../Component/Dashboard/Super-AdminDashboard/HowToBuy/buyTable";
 import CreateHowToBuy from "../Component/Dashboard/Super-AdminDashboard/HowToBuy/create";
 import UpdateHowToBuy from "../Component/Dashboard/Super-AdminDashboard/HowToBuy/edit";
 //import ViewHowToBuy from "../Component/Dashboard/Super-AdminDashboard/HowToBuy/view";
 
-import HowToSellTable from "../Component/Dashboard/Super-AdminDashboard/HowToSell/sellTable";
+import How_To_Sell from "../Component/Dashboard/Super-AdminDashboard/HowToSell/sellTable";
 import CreateHowToSell from "../Component/Dashboard/Super-AdminDashboard/HowToSell/create";
 import UpdateHowToSell from "../Component/Dashboard/Super-AdminDashboard/HowToSell/edit";
 //import ViewHowToSell from "../Component/Dashboard/Super-AdminDashboard/HowToSell/view";
@@ -150,7 +126,7 @@ import CreateCelebrities from "../Component/Dashboard/Super-AdminDashboard/Celeb
 import ViewCelebrity from "../Component/Dashboard/Super-AdminDashboard/Celebraties/ViewCelebrity";
 import UpdateCelebrity from "../Component/Dashboard/Super-AdminDashboard/Celebraties/UpdateCelebrity";
 
-import HowToResellTable from "../Component/Dashboard/Super-AdminDashboard/HowToResell/resellTable";
+import How_To_Resell from "../Component/Dashboard/Super-AdminDashboard/HowToResell/resellTable";
 import CreateHowToResell from "../Component/Dashboard/Super-AdminDashboard/HowToResell/create";
 import UpdateHowToResell from "../Component/Dashboard/Super-AdminDashboard/HowToResell/edit";
 
@@ -217,8 +193,7 @@ import EditInsurance from "../Component/Dashboard/Super-AdminDashboard/Insurance
 import EnquiryTable from "../Component/Dashboard/Super-AdminDashboard/Enquiry/table";
 import ViewEnquiry from "../Component/Dashboard/Super-AdminDashboard/Enquiry/view";
 
-import SMSSettingSignup from "../Component/Dashboard/Super-AdminDashboard/SMSSettings/SmsSettingsSignup";
-import PaymentGetwaySetting from "../Component/Dashboard/Super-AdminDashboard/Settings/PaymentGetway/PaymentGetway"
+import SMSSettingSignup from "../Component/Dashboard/Super-AdminDashboard/SMSSettings/SmsSettingsSignup"
 
 //----------------------------------------Homepage Super-Admin Dashboard-----------------------------------------------------------
 import Homepage from "../Component/Dashboard/Super-AdminDashboard/Homepage/table";
@@ -397,7 +372,7 @@ import ProductTableView from "../Component/Dashboard/Super-AdminDashboard/Produc
 import CustomOrderView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/CustomOrderAll/Customorder";
 import PurchaseTable from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductPurchased/ProductPurchased";
 import PurchaseTableView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductPurchased/ProductPurchasedDetails";
-
+import ProductUploads from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductUpload/productUploade";
 // import ProductRequestView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist";
 import ViewCustomRequestsuperadmin from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist";
 import SellerProductDetails from '../Component/Dashboard/Super-AdminDashboard/Seller/SellerProducts/SellerProductDetails';
@@ -556,7 +531,7 @@ import Insurance from "../Pages/Insurance/Insurance";
 import Partner from "../Pages/Partner/Partner";
 import SellerProductCouponCodes from "../Component/Dashboard/SellerDashboard/ProductSetting/ProductCouponCode/ProductCouponCode";
 import UpdateProductSeller from "../Component/Dashboard/SellerDashboard/ProductsDetails/UpdateProduct/productUploade";
-import ProductViewSeller from "../Component/Dashboard/SellerDashboard/ProductsDetails/ViewProduct/productUploade";
+import ProductViewSeller from "../Component/Dashboard/SellerDashboard/ProductsDetails/UpdateProduct/productUploade";
 
 //-----------------------------Artist Premium Badges--------------------------//
 
@@ -647,12 +622,6 @@ const PublicRoute = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const authPages = [
-      "/login",
-      "/register",
-      "/artist-seller-register",
-      "/forgotpassword",
-    ];
     if (isAuthenticated && authPages.includes(location.pathname)) {
       if (
         (userType === "Artist" || userType === "Seller") &&
@@ -668,29 +637,30 @@ const PublicRoute = ({ children }) => {
     }
   }, [isAuthenticated, userType, userStatus, location.pathname, navigate]);
 
+  const authPages = [
+    "/login",
+    "/register",
+    "/artist-seller-register",
+    "/forgotpassword",
+  ];
+
   return children ? children : <Outlet />;
 };
 
 const WebsiteWrapper = () => {
-  const [showAnimation, setShowAnimation] = useState(() => {
-    if (typeof window !== "undefined") {
-      return !localStorage.getItem("hasSeenPreloader");
-    }
-    return true;
-  });
+  const [showAnimation, setShowAnimation] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname === "/" && showAnimation) {
+    if (location.pathname === "/") {
       const timer = setTimeout(() => {
         setShowAnimation(false);
-        localStorage.setItem("hasSeenPreloader", "true");
-      }, 9000); // Synchronized with PreloaderAnimation duration (~8.8s + buffer)
+      }, 6000); // Preloader duration (6 seconds)
       return () => clearTimeout(timer);
     } else {
-      setShowAnimation(false); // Skip preloader for other routes or if already seen
+      setShowAnimation(false); // Skip preloader for other routes
     }
-  }, [location.pathname, showAnimation]);
+  }, [location.pathname]);
 
   return showAnimation && location.pathname === "/" ? (
     <PreloaderAnimation />
@@ -731,31 +701,6 @@ const AppRoutes = () => {
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-services" element={<TermsofServices />} />
-
-
-
-      <Route path="/payment/success" element={<SuccessPage />} />
-      <Route path="/payment/failure" element={<FailurePage />} />
-
-       <Route path="/certification-payment/success" element={<CertificationSuccessPage/>} />
-      <Route path="/certification-payment/failure" element={<CertificationFailurePage />} />
-
-      <Route path="/package-material-payment/success" element={<PackagematerialSuccessPage/>} />
-      <Route path="/package-material-payment/failure" element={<PackagematerialFailurePage />} />
-
-      <Route path="/badge-payment/success" element={<BadgeSuccessPage/>} />
-      <Route path="/badge-payment/failure" element={<BadgeFailurePage/>} />
-
-      <Route path="/promote-post/success" element={<PromotePostSuccessPage/>} />
-      <Route path="/promote-post/failure" element={<PromotePostFailurePage/>} />
-
-      <Route path="/checkout/success" element={<CheckoutorderSuccessPage/>} />
-      <Route path="/checkout/failure" element={<CheckoutorderFailurePage/>} />
-
-      
-      <Route path="/tip-payment/success" element={<PaymentTipSuccessPage/>} />
-      <Route path="/tip-payment/failure" element={<PaymentTipFailurePage/>} />
-
 
 
       </Route>
@@ -879,6 +824,8 @@ const AppRoutes = () => {
           path="buyer/productpurchased/view"
           element={<BuyerProductPurchaseView />}
         />
+        <Route path="buyer/resellproduct" element={<BuyerProductRequest />} />
+        <Route path="buyer/soldproduct" element={<BuyerSoldProduct />} />
         <Route path="buyer/transaction" element={<BuyerTransaction />} />
         <Route
           path="buyer/packagingmaterial"
@@ -937,7 +884,7 @@ const AppRoutes = () => {
         />
         <Route path="purchasetable" element={<PurchaseTable />} />
         <Route path="purchasetable/view/:productId" element={<PurchaseTableView />} />
-
+        <Route path="product-upload" element={<ProductUploads />} />
         {/* Bidding Management */}
         <Route path="bidding/allproduct" element={<AllBiddingProduct />} />
         <Route path="bidding/bidded-product" element={<BiddedProduct />} />
@@ -1052,8 +999,6 @@ const AppRoutes = () => {
         <Route path="settings/blog-category" element={<BlogCategory />} />
         <Route path="settings/product-category" element={<ProductCategory />} />
         <Route path="settings/marketing" element={<SuperAdminMarketing />} />
-        <Route path="settings/payment-getway" element={< PaymentGetwaySetting />} />
- 
         <Route
           path="settings/certification"
           element={<CertificationSetting />}
@@ -1170,17 +1115,17 @@ const AppRoutes = () => {
         <Route path="policy/update-policy" element={<UpdatePolicy />} />
         {/* <Route path="policy/view-policy" element={<ViewPolicy />} /> */}
         {/*How_To_Buy*/}
-        <Route path="how-to-buy" element={<HowToBuyTable />} />
+        <Route path="how-to-buy" element={<How_To_Buy />} />
         <Route path="how-to-buy/create" element={<CreateHowToBuy />} />
         <Route path="how-to-buy/update" element={<UpdateHowToBuy />} />
         {/* <Route path="how-to-buy/view" element={<ViewHowToBuy />} />   */}
         {/*How_To_Sell*/}
-        <Route path="how-to-sell" element={<HowToSellTable />} />
+        <Route path="how-to-sell" element={<How_To_Sell />} />
         <Route path="how-to-sell/create" element={<CreateHowToSell />} />
         <Route path="how-to-sell/update" element={<UpdateHowToSell />} />
         {/* <Route path="how-to-sell/view" element={<ViewHowToSell />} />   */}
         {/*How_To_Resell*/}
-        <Route path="how-to-resell" element={<HowToResellTable />} />
+        <Route path="how-to-resell" element={<How_To_Resell />} />
         <Route path="how-to-resell/create" element={<CreateHowToResell />} />
         <Route path="how-to-resell/update" element={<UpdateHowToResell />} />
         {/*WhyArtSays */}
@@ -1231,14 +1176,14 @@ const AppRoutes = () => {
           element={<UpdateChallenge />}
         />
         <Route path="challenges-entries" element={<ChallengesEntries />} />
-          <Route
-            path="challenges/view-application"
-            element={<ViewChallengeApplication />}
-          />
-          <Route
-            path="challenges/update-application/:id"
-            element={<UpdateChallengeApplication />}
-          />
+        <Route
+          path="challenges/view-application"
+          element={<ViewChallengeApplication />}
+        />
+        <Route
+          path="challenges/update-application"
+          element={<UpdateChallengeApplication />}
+        />
         {/* Celebraties */}
         <Route path="celebrities" element={<Celebrities />} />
         <Route path="celebrities/create" element={<CreateCelebrities />} />
@@ -1396,7 +1341,7 @@ const AppRoutes = () => {
         <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
         <Route path="custom-order" element={<CustomOrder />} />
         <Route path="product/view-product" element={<ProductView />} />
-        <Route path="product-fetch-view-artist/:productId" element={<ProductViewArtist />} />
+        <Route path="product-fetch-view-artist/:productId" element={<ArtistProductFetchView />} />
         <Route
           path="custom-order/view-request"
           element={<ViewCustomRequest />}
@@ -1520,7 +1465,7 @@ const AppRoutes = () => {
         <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
         <Route path="SellerProductUpload" element={<SellerProductUpload />} />
         <Route path="purchased-product" element={<SellerPurchasedProducts />} />
-        <Route path="product-fetch-view-seller/:productId" element={<ProductViewSeller />} />
+        <Route path="product-fetch-view-seller/:productId" element={<SellerProductFetchView />} />
 
         {/* Advertise Routes */}
         <Route path="advertise" element={<SellerAdvertise />} />
@@ -1617,7 +1562,7 @@ const AppRoutes = () => {
             <Route path="my-orders/view" element={<MyOrderView />} />
             <Route path="manage-address" element={<ManageAddress />} />
             <Route
-              path="bank-payment-details" 
+              path="bank-payment-details"
               element={<BankPaymentDetails />}
             />
             <Route path="art-gallery" element={<ArtGallery />} />
@@ -1698,7 +1643,7 @@ const AppRoutes = () => {
         <Route path="/partner" element={<Partner />} />
 
         {/* ----------------------------------------------------social media Route ----------------------------------------------- */}
-        <Route element={<PrivateRoute allowedRoles={["Buyer", "Artist", "Seller", "Super-Admin"]} />}>
+        <Route element ={<PrivateRoute allowedRoles={["Buyer","Artist","Seller","Super-Admin"]} />}>
           <Route path="/artsays-community" element={<Homee />} />
           <Route
             path="/artsays-community/sharepost/:postId"

@@ -91,34 +91,23 @@ const AddCustomRequestForm = () => {
     try {
       setIsFetching(true);
       setFetchError(null);
-      const response = await getAPI(
-        `/api/get-address/${userId}`,
-        {},
-        true,
-        false
-      );
+      const response = await getAPI(`/auth/userid/${userId}`);
+      const userAddresses = response.data?.user?.address || [];
 
-      if (response.data?.data && Array.isArray(response.data.data)) {
-        const userAddresses = response.data.data;
+      if (Array.isArray(userAddresses) && userAddresses.length > 0) {
         const normalizedAddresses = userAddresses.map((addr) => ({
           ...addr,
           _id: String(addr._id || addr.id),
-          // Map fields to match CustomRequest expectations
-          line1: addr.addressLine1 || addr.line1 || "",
-          line2: addr.addressLine2 || addr.line2 || "",
-          landmark: addr.landmark || "",
-          city: addr.city || "",
-          state: addr.state || "",
-          country: addr.country || "",
-          pincode: addr.pincode || "",
         }));
 
         setAddresses(normalizedAddresses);
+        console.log("API wala response:", response.data);
 
         if (!selectedAddressId) {
-          // Check for a default address if possible, otherwise select first
-          const defaultAddress = normalizedAddresses.find(a => a.isDefault);
-          setSelectedAddressId(defaultAddress?._id || normalizedAddresses[0]._id);
+          const defaultAddressId =
+            response.data.user.selectedAddress || normalizedAddresses[0]._id;
+
+          setSelectedAddressId(defaultAddressId);
         }
       } else {
         setAddresses([]);
@@ -135,13 +124,16 @@ const AddCustomRequestForm = () => {
   const fetchRequests = async () => {
     try {
       const response = await getAPI("/api/get-buyer-request");
-      const fetchedRequests = response.data.buyerRequests || [];
-      const sortedRequests = [...fetchedRequests].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      setRequests(sortedRequests);
+      setRequests(response.data.buyerRequests || []);
     } catch (error) {
       console.error("Error fetching requests:", error);
+      // toast.error("Failed to fetch requests");
     }
   };
+  useEffect(() => {
+  fetchRequests();
+}, []);
+
 
   useEffect(() => {
     const fetchArtists = async () => {
@@ -150,6 +142,7 @@ const AddCustomRequestForm = () => {
         setArtists(response.data);
       } catch (error) {
         console.error("Error fetching artists:", error);
+        // toast.error("Failed to fetch Artists");
       }
     };
 
@@ -184,7 +177,6 @@ const AddCustomRequestForm = () => {
   const handleAddressChange = (addressId) => {
     setSelectedAddressId(String(addressId));
   };
-
 
   const handleDescriptionChange = (value) => {
     setFormData({ ...formData, description: value });
@@ -223,12 +215,14 @@ const AddCustomRequestForm = () => {
       let artistId = "";
       if (existingData.Artist?.id) {
         artistId = existingData.Artist.id._id || "";
-        artistName = `${existingData.Artist.id.name || ""} ${existingData.Artist.id.lastName || ""
-          }`.trim();
+        artistName = `${existingData.Artist.id.name || ""} ${
+          existingData.Artist.id.lastName || ""
+        }`.trim();
       } else if (existingData.Artist) {
         artistId = existingData.Artist._id || "";
-        artistName = `${existingData.Artist.name || ""} ${existingData.Artist.lastName || ""
-          }`.trim();
+        artistName = `${existingData.Artist.name || ""} ${
+          existingData.Artist.lastName || ""
+        }`.trim();
       }
       setArtistId(artistId);
       setSelectedArtistName(artistName);
@@ -239,9 +233,13 @@ const AddCustomRequestForm = () => {
       ) {
         const matchingAddress = addresses.find(
           (addr) =>
-            (addr.line1 || "").trim() === (existingData.BuyerSelectedAddress.line1 || "").trim() &&
-            (addr.city || "").trim() === (existingData.BuyerSelectedAddress.city || "").trim() &&
-            (addr.pincode || "").trim() === (existingData.BuyerSelectedAddress.pincode || "").trim()
+            addr.line1 === existingData.BuyerSelectedAddress.line1 &&
+            addr.line2 === existingData.BuyerSelectedAddress.line2 &&
+            addr.landmark === existingData.BuyerSelectedAddress.landmark &&
+            addr.city === existingData.BuyerSelectedAddress.city &&
+            addr.state === existingData.BuyerSelectedAddress.state &&
+            addr.country === existingData.BuyerSelectedAddress.country &&
+            addr.pincode === existingData.BuyerSelectedAddress.pincode
         );
         setSelectedAddressId(matchingAddress?._id || null);
       } else {
@@ -319,7 +317,8 @@ const AddCustomRequestForm = () => {
                   categoryList.push(...subCategories);
                 }
               } catch (err) {
-                // Expected case: some categories might not have sub-categories
+                // Expected case: no sub-categories
+                console.warn(`No sub-categories for category ${categoryId}`);
               }
             }
           }
@@ -349,217 +348,284 @@ const AddCustomRequestForm = () => {
   // const handleImageClick = () => {
   //   setShowFullImage((prev) => !prev);
   // };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const validateForm = () => {
+  if (!formData.productName.trim()) {
+    toast.error("Product Name is required");
+    return false;
+  }
 
-    // 🔹 Convert ReactQuill HTML to plain text
-    const tempElement = document.createElement("div");
-    tempElement.innerHTML = formData.description;
-    const plainTextDescription = tempElement.innerText.trim();
+  if (!artistId) {
+    toast.error("Artist is required");
+    return false;
+  }
 
-    // 🔹 COMMON VALIDATION (fixes Buyer bug)
-    if (!formData.productName.trim()) {
-      toast.error("Product name is required");
-      return;
-    }
+  if (!formData.artType) {
+    toast.error("Art Type is required");
+    return false;
+  }
 
-    if (!artistId) {
-      toast.error("Please select an artist");
-      return;
-    }
+  if (!formData.size) {
+    toast.error("Size is required");
+    return false;
+  }
 
-    if (!formData.artType) {
-      toast.error("Art type is required");
-      return;
-    }
+  if (!selectedAddressId) {
+    toast.error("Delivery address is required");
+    return false;
+  }
 
-    if (!formData.size) {
-      toast.error("Size is required");
-      return;
-    }
+  if (!formData.minBudget || !formData.maxBudget) {
+    toast.error("Budget is required");
+    return false;
+  }
 
-    if (!formData.minBudget) {
-      toast.error("Minimum budget is required");
-      return;
-    }
+  if (Number(formData.minBudget) > Number(formData.maxBudget)) {
+    toast.error("Minimum budget cannot be greater than maximum budget");
+    return false;
+  }
 
-    if (!formData.maxBudget) {
-      toast.error("Maximum budget is required");
-      return;
-    }
+  if (!formData.paymentTerm) {
+    toast.error("Payment term is required");
+    return false;
+  }
 
-    if (Number(formData.minBudget) > Number(formData.maxBudget)) {
-      toast.error("Minimum budget cannot be greater than maximum budget");
-      return;
-    }
+  if (
+    formData.paymentTerm === "Installment" &&
+    !formData.installmentDuration
+  ) {
+    toast.error("Installment duration is required");
+    return false;
+  }
 
-    if (!formData.paymentTerm) {
-      toast.error("Payment term is required");
-      return;
-    }
+  if (!formData.expectedDeadline) {
+    toast.error("Expected deadline is required");
+    return false;
+  }
 
-    if (
-      formData.paymentTerm === "Installment" &&
-      !formData.installmentDuration
-    ) {
-      toast.error("Please select an installment duration");
-      return;
-    }
+  if (!formData.description || !formData.description.trim()) {
+    toast.error("Detailed description is required");
+    return false;
+  }
 
-    if (!formData.expectedDeadline) {
-      toast.error("Expected deadline is required");
-      return;
-    }
+  if (!formData.comments || !formData.comments.trim()) {
+    toast.error("Notes / comments are required");
+    return false;
+  }
 
-    if (!plainTextDescription) {
-      toast.error("Detailed description is required");
-      setDescriptionError(true);
-      return;
-    }
-    if (!formData.comments || !formData.comments.trim()) {
-      toast.error("Notes / comments are required");
-      return;
-    }
+  return true;
+};
 
-    if (!selectedAddressId) {
-      toast.error("Please select a delivery address");
-      return;
-    }
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    setDescriptionError(false);
-    setIsSubmitting(true);
+  // 🔹 Convert ReactQuill HTML to plain text
+  const tempElement = document.createElement("div");
+  tempElement.innerHTML = formData.description;
+  const plainTextDescription = tempElement.innerText.trim();
 
-    try {
-      const formPayload = new FormData();
+  // 🔹 COMMON VALIDATION (fixes Buyer bug)
+  if (!formData.productName.trim()) {
+    toast.error("Product name is required");
+    return;
+  }
 
-      formPayload.append("ProductName", formData.productName);
-      formPayload.append("Description", plainTextDescription);
-      formPayload.append("ArtType", formData.artType);
-      formPayload.append("Size", formData.size);
-      formPayload.append("IsFramed", formData.isFramed);
-      formPayload.append("MinBudget", formData.minBudget);
-      formPayload.append("MaxBudget", formData.maxBudget);
-      formPayload.append("PaymentTerm", formData.paymentTerm);
-      formPayload.append("ExpectedDeadline", formData.expectedDeadline);
-      formPayload.append("Comments", formData.comments);
+  if (!artistId) {
+    toast.error("Please select an artist");
+    return;
+  }
+
+  if (!formData.artType) {
+    toast.error("Art type is required");
+    return;
+  }
+
+  if (!formData.size) {
+    toast.error("Size is required");
+    return;
+  }
+
+  if (!formData.minBudget) {
+    toast.error("Minimum budget is required");
+    return;
+  }
+
+  if (!formData.maxBudget) {
+    toast.error("Maximum budget is required");
+    return;
+  }
+
+  if (Number(formData.minBudget) > Number(formData.maxBudget)) {
+    toast.error("Minimum budget cannot be greater than maximum budget");
+    return;
+  }
+
+  if (!formData.paymentTerm) {
+    toast.error("Payment term is required");
+    return;
+  }
+
+  if (
+    formData.paymentTerm === "Installment" &&
+    !formData.installmentDuration
+  ) {
+    toast.error("Please select an installment duration");
+    return;
+  }
+
+  if (!formData.expectedDeadline) {
+    toast.error("Expected deadline is required");
+    return;
+  }
+
+  if (!plainTextDescription) {
+    toast.error("Detailed description is required");
+    setDescriptionError(true);
+    return;
+  }
+  if (!formData.comments || !formData.comments.trim()) {
+    toast.error("Notes / comments are required");
+    return;
+  }
+
+  if (!selectedAddressId) {
+    toast.error("Please select a delivery address");
+    return;
+  }
+
+  setDescriptionError(false);
+  setIsSubmitting(true);
+
+  try {
+    const formPayload = new FormData();
+
+    formPayload.append("ProductName", formData.productName);
+    formPayload.append("Description", plainTextDescription);
+    formPayload.append("ArtType", formData.artType);
+    formPayload.append("Size", formData.size);
+    formPayload.append("IsFramed", formData.isFramed);
+    formPayload.append("MinBudget", formData.minBudget);
+    formPayload.append("MaxBudget", formData.maxBudget);
+    formPayload.append("PaymentTerm", formData.paymentTerm);
+    formPayload.append("ExpectedDeadline", formData.expectedDeadline);
+    formPayload.append("Comments", formData.comments);
+    formPayload.append(
+      "ColourPreferences",
+      JSON.stringify(colorPreferences)
+    );
+
+    if (formData.paymentTerm === "Installment") {
       formPayload.append(
-        "ColourPreferences",
-        JSON.stringify(colorPreferences)
+        "InstallmentDuration",
+        formData.installmentDuration
       );
-
-      if (formData.paymentTerm === "Installment") {
-        formPayload.append(
-          "InstallmentDuration",
-          formData.installmentDuration
-        );
-      }
-
-      if (formData.buyerImage) {
-        formPayload.append("BuyerImage", formData.buyerImage);
-      }
-
-      // 🔹 Artist
-      const selectedArtist = artists.find((a) => a._id === artistId);
-      if (!selectedArtist) {
-        toast.error("Selected artist not found");
-        return;
-      }
-      formPayload.append("Artist", selectedArtist._id);
-
-      // 🔹 Address
-      const selectedAddress = addresses.find(
-        (addr) => addr._id === selectedAddressId
-      );
-      if (!selectedAddress) {
-        toast.error("Selected address not found");
-        return;
-      }
-
-      formPayload.append(
-        "BuyerSelectedAddress[line1]",
-        selectedAddress.line1 || ""
-      );
-      formPayload.append(
-        "BuyerSelectedAddress[line2]",
-        selectedAddress.line2 || ""
-      );
-      formPayload.append(
-        "BuyerSelectedAddress[landmark]",
-        selectedAddress.landmark || ""
-      );
-      formPayload.append(
-        "BuyerSelectedAddress[city]",
-        selectedAddress.city || ""
-      );
-      formPayload.append(
-        "BuyerSelectedAddress[state]",
-        selectedAddress.state || ""
-      );
-      formPayload.append(
-        "BuyerSelectedAddress[country]",
-        selectedAddress.country || ""
-      );
-      formPayload.append(
-        "BuyerSelectedAddress[pincode]",
-        selectedAddress.pincode || ""
-      );
-
-      // 🔹 API CALL
-      let response;
-      if (editingId) {
-        response = await putAPI(
-          `/api/update-buyer-request/${editingId}`,
-          formPayload,
-          { headers: { "Content-Type": "multipart/form-data" } }
-        );
-      } else {
-        response = await postAPI(
-          "/api/buyer-request",
-          formPayload,
-          { headers: { "Content-Type": "multipart/form-data" } },
-          true
-        );
-      }
-
-      toast.success(
-        response?.data?.message || "Request submitted successfully"
-      );
-
-      await fetchRequests();
-
-      // 🔹 RESET FORM
-      setFormData({
-        productName: "",
-        description: "",
-        artType: "",
-        size: "",
-        isFramed: false,
-        minBudget: "",
-        maxBudget: "",
-        paymentTerm: "",
-        installmentDuration: "",
-        expectedDeadline: "",
-        buyerImage: null,
-        comments: "",
-      });
-
-      setColorPreferences([]);
-      setEditingId(null);
-      setShowForm(false);
-      setArtistId("");
-      setSelectedArtistName("");
-      setImagePreview(null);
-      setFileType(null);
-      setSelectedAddressId(null);
-    } catch (error) {
-      console.error("Submit error:", error);
-      toast.error(
-        error?.response?.data?.message || "An error occurred"
-      );
-    } finally {
-      setIsSubmitting(false);
     }
-  };
+
+    if (formData.buyerImage) {
+      formPayload.append("BuyerImage", formData.buyerImage);
+    }
+
+    // 🔹 Artist
+    const selectedArtist = artists.find((a) => a._id === artistId);
+    if (!selectedArtist) {
+      toast.error("Selected artist not found");
+      return;
+    }
+    formPayload.append("Artist", selectedArtist._id);
+
+    // 🔹 Address
+    const selectedAddress = addresses.find(
+      (addr) => addr._id === selectedAddressId
+    );
+    if (!selectedAddress) {
+      toast.error("Selected address not found");
+      return;
+    }
+
+    formPayload.append(
+      "BuyerSelectedAddress[line1]",
+      selectedAddress.line1 || ""
+    );
+    formPayload.append(
+      "BuyerSelectedAddress[line2]",
+      selectedAddress.line2 || ""
+    );
+    formPayload.append(
+      "BuyerSelectedAddress[landmark]",
+      selectedAddress.landmark || ""
+    );
+    formPayload.append(
+      "BuyerSelectedAddress[city]",
+      selectedAddress.city || ""
+    );
+    formPayload.append(
+      "BuyerSelectedAddress[state]",
+      selectedAddress.state || ""
+    );
+    formPayload.append(
+      "BuyerSelectedAddress[country]",
+      selectedAddress.country || ""
+    );
+    formPayload.append(
+      "BuyerSelectedAddress[pincode]",
+      selectedAddress.pincode || ""
+    );
+
+    // 🔹 API CALL
+    let response;
+    if (editingId) {
+      response = await putAPI(
+        `/api/update-buyer-request/${editingId}`,
+        formPayload,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+    } else {
+      response = await postAPI(
+        "/api/buyer-request",
+        formPayload,
+        { headers: { "Content-Type": "multipart/form-data" } },
+        true
+      );
+    }
+
+    toast.success(
+      response?.data?.message || "Request submitted successfully"
+    );
+
+    await fetchRequests();
+
+    // 🔹 RESET FORM
+    setFormData({
+      productName: "",
+      description: "",
+      artType: "",
+      size: "",
+      isFramed: false,
+      minBudget: "",
+      maxBudget: "",
+      paymentTerm: "",
+      installmentDuration: "",
+      expectedDeadline: "",
+      buyerImage: null,
+      comments: "",
+    });
+
+    setColorPreferences([]);
+    setEditingId(null);
+    setShowForm(false);
+    setArtistId("");
+    setSelectedArtistName("");
+    setImagePreview(null);
+    setFileType(null);
+    setSelectedAddressId(null);
+  } catch (error) {
+    console.error("Submit error:", error);
+    toast.error(
+      error?.response?.data?.message || "An error occurred"
+    );
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
 
   const handleViewRequest = (req) => {
@@ -599,41 +665,41 @@ const AddCustomRequestForm = () => {
     }
   };
 
-  const handleNegotiationSubmit = async (updatedRequest) => {
-    try {
-      setLoading(true);
+const handleNegotiationSubmit = async (updatedRequest) => {
+  try {
+    setLoading(true);
 
-      // Submit negotiation to backend
-      const response = await putAPI(
-        `/api/update-negiotaite-Buyer-budget/${updatedRequest._id}`,
-        updatedRequest
+    // Submit negotiation to backend
+    const response = await putAPI(
+      `/api/update-negiotaite-Buyer-budget/${updatedRequest._id}`,
+      updatedRequest
+    );
+
+    if (response && response.data) {
+      toast.success("Negotiation submitted successfully!");
+
+      // 1️⃣ Update local state immediately so Buyer sees the button
+      setRequests((prevRequests) =>
+        prevRequests.map((req) =>
+          req._id === updatedRequest._id ? { ...req, ...updatedRequest } : req
+        )
       );
 
-      if (response && response.data) {
-        toast.success("Negotiation submitted successfully!");
+      // 2️⃣ Optionally, re-fetch requests from backend to be extra safe
+      await fetchRequests();
 
-        // 1️⃣ Update local state immediately so Buyer sees the button
-        setRequests((prevRequests) =>
-          prevRequests.map((req) =>
-            req._id === updatedRequest._id ? { ...req, ...updatedRequest } : req
-          )
-        );
-
-        // 2️⃣ Optionally, re-fetch requests from backend to be extra safe
-        await fetchRequests();
-
-        setShowNegotiationModal(false);
-        setSelectedRequest(null);
-      } else {
-        toast.error("Failed to update negotiation");
-      }
-    } catch (error) {
-      console.error("Negotiation error:", error);
+      setShowNegotiationModal(false);
+      setSelectedRequest(null);
+    } else {
       toast.error("Failed to update negotiation");
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (error) {
+    console.error("Negotiation error:", error);
+    toast.error("Failed to update negotiation");
+  } finally {
+    setLoading(false);
+  }
+};
 
 
 
@@ -728,660 +794,744 @@ const AddCustomRequestForm = () => {
   };
 
   return (
-    <div className="max-w-[1440px] mx-auto">
+    <div className="w-full">
       {/* Header & Add Request Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <h2 className="text-2xl text-gray-950 font-semibold">
           Custom Requests
-          <span className="text-sm font-normal text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-            {requests.length} {requests.length === 1 ? 'request' : 'requests'}
-          </span>
-        </h1>
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4 w-full sm:w-auto">
-          <div className="flex items-center gap-3 bg-white p-1.5 rounded-2xl border border-gray-100 shadow-sm">
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider pl-3">Show</span>
+        </h2>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto">
+          <div className="flex items-center gap-2 whitespace-nowrap">
+            <span className="text-sm text-gray-600">Show</span>
+
             <select
               value={rowsPerPage}
               onChange={(e) => {
                 setRowsPerPage(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="bg-gray-50 border-none rounded-xl px-3 py-1.5 text-sm font-bold text-gray-700 focus:ring-0 cursor-pointer"
+              className="border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none"
             >
               <option value={10}>10</option>
               <option value={15}>15</option>
               <option value={20}>20</option>
             </select>
-          </div>
 
+            <span className="text-sm text-gray-600">entries</span>
+          </div>
+          <div className="relative w-full sm:w-[200px]">
+            <input
+              type="text"
+              placeholder="Search request"
+              className="w-full border-2 border-gray-300 rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none transition"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+            />
+            <FiSearch className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-400 text-lg" />
+          </div>
           <button
             onClick={() => {
               setShowForm(true);
               setShowViewModal(false);
               setViewRequest(null);
             }}
-            className="group relative flex items-center justify-center gap-2 bg-[#5C4033] hover:bg-[#4b3327] text-white py-3 px-6 rounded-2xl font-bold shadow-lg shadow-[#5C4033]/20 transition-all transform active:scale-95 overflow-hidden"
+            className="bg-[#6F4D34] text-white text-[15px] font-semibold px-4 py-2 rounded-xl flex items-center justify-center"
           >
-            <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-            <FaPlus className="text-sm" />
-            <span>Add Request</span>
+            <FaPlus className="mr-2" /> Add Request
           </button>
         </div>
       </div>
 
-      {/* Table Section */}
-      {!showForm && !showViewModal && (
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-100/50 overflow-hidden transition-all duration-500 hover:border-blue-200">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-gray-50/50 border-b border-gray-100">
-                  <th className="px-4 py-3 text-[10px] text-nowrap font-black uppercase tracking-[0.15em] text-gray-400">#</th>
-                  <th className="px-4 py-3 text-[10px] text-nowrap font-black uppercase tracking-[0.15em] text-gray-400">Product Details</th>
-                  <th className="px-4 py-3 text-[10px] text-nowrap font-black uppercase tracking-[0.15em] text-gray-400">Artist</th>
-                  <th className="px-4 py-3 text-[10px] text-nowrap font-black uppercase tracking-[0.15em] text-gray-400 text-center">Negotiated Budget</th>
-                  <th className="px-4 py-3 text-[10px] text-nowrap font-black uppercase tracking-[0.15em] text-gray-400 text-center">Date</th>
-                  <th className="px-4 py-3 text-[10px] text-nowrap font-black uppercase tracking-[0.15em] text-gray-400 text-center">Status</th>
-                  <th className="px-4 py-3 text-[10px] text-nowrap font-black uppercase tracking-[0.15em] text-gray-400 text-center">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {currentRequests.length > 0 ? (
-                  currentRequests.map((req, index) => (
-                    <tr key={req._id} className="group/row hover:bg-gray-50/50 transition-colors">
-                      <td className="px-4 py-3 text-nowrap text-sm font-bold text-gray-400">
-                        {(currentPage - 1) * rowsPerPage + index + 1}
-                      </td>
-                      <td className="px-4 py-3 text-nowrap">
-                        <div className="flex items-center gap-4">
-                          <div className="relative group/img flex-shrink-0">
-                            <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 border border-gray-100 shadow-sm transition-transform duration-300 group-hover/row:scale-110">
-                              {req.BuyerImage ? (
-                                <img
-                                  src={`${BASE_URL}/${req.BuyerImage}`}
-                                  className="w-full h-full object-cover"
-                                  alt="Product"
-                                  onClick={() => handleImageClick(req.BuyerImage)}
-                                  onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = DEFAULT_PROFILE_IMAGE;
-                                  }}
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-gray-50">
-                                  <svg className="w-6 h-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                  </svg>
-                                </div>
-                              )}
-                            </div>
+      {/* Table */}
+      <div className="border-2 rounded-3xl w-full bg-white">
+        <div className="overflow-x-auto pb-4 rounded-3xl w-full">
+          <table className="lg:min-w-[1100px] table-auto w-full text-sm text-left whitespace-nowrap">
+            <thead className="bg-[#6F4D34] text-white">
+              <tr className="text-center">
+                <th className="px-4 py-7 whitespace-nowrap">#</th>
+                <th className="px-4 py-2 whitespace-nowrap">Product Name</th>
+                <th className="px-4 py-2 whitespace-nowrap">Artist Name</th>
+                <th className="px-4 py-2 whitespace-nowrap">
+                  Artist Negotiated Budget
+                </th>
+                <th className="px-4 py-2 whitespace-nowrap">Request Date</th>
+                <th className="px-4 py-2 whitespace-nowrap">
+                  Artist Request Status
+                </th>
+                <th className="px-4 py-2 whitespace-nowrap">
+                  Buyer Request Status
+                </th>
+                <th className="px-4 py-2 whitespace-nowrap">Action</th>
+              </tr>
+            </thead>
+            <tbody className="text-center">
+              {currentRequests.length > 0 ? (
+                currentRequests.map((req, index) => (
+                  <tr key={req._id} className="border-b">
+                    <td className="px-4 py-2">
+                      {(currentPage - 1) * rowsPerPage + index + 1}
+                    </td>
+
+                    <td className="px-4 py-2 flex items-center gap-2">
+                      {req.BuyerImage ? (
+                        <img
+                          src={`${BASE_URL}/${req.BuyerImage}`}
+                          className="w-8 h-8 rounded-full object-cover cursor-pointer"
+                          alt="Buyer"
+                          onClick={() => handleImageClick(req.BuyerImage)}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = DEFAULT_PROFILE_IMAGE;
+                          }}
+                        />
+                      ) : (
+                        <img
+                          src={DEFAULT_PROFILE_IMAGE}
+                          className="w-8 h-8 rounded-full object-cover"
+                          alt="Default Buyer"
+                        />
+                      )}
+                      {req.ProductName || "—"}
+                    </td>
+                    <td className="px-4 py-2">
+                      {req.Artist?.id?.name || ""}{" "}
+                      {req.Artist?.id?.lastName || ""}
+                    </td>
+                    <td className="px-4 py-2">
+                      {getLatestNegotiatedBudget(req)}
+                    </td>
+                    <td className="px-4 py-2">
+                      {req?.createdAt
+                        ? new Date(req.createdAt).toLocaleDateString()
+                        : "—"}
+                    </td>
+                    <td className="px-4 py-2">
+                      <button
+                        className={`px-3 py-1 rounded-lg border text-sm ${
+                          req.RequestStatus === "Approved"
+                            ? "text-green-500 border-green-500 bg-white"
+                            : req.RequestStatus === "Pending"
+                            ? "text-yellow-500 border-yellow-500 bg-white"
+                            : "text-red-500 border-red-500 bg-white"
+                        }`}
+                      >
+                        {req.RequestStatus || "Pending"}
+                      </button>
+                    </td>
+                    <td className="px-4 py-2">
+                      <button
+                        className={`px-3 py-1 rounded-lg border text-sm ${
+                          req.BuyerStatus === "Approved"
+                            ? "text-green-500 border-green-500 bg-white"
+                            : req.BuyerStatus === "Pending"
+                            ? "text-yellow-500 border-yellow-500 bg-white"
+                            : "text-red-500 border-red-500 bg-white"
+                        }`}
+                      >
+                        {req.BuyerStatus || "Pending"}
+                      </button>
+                    </td>
+                    <td className="px-4 py-2 flex gap-2 text-gray-700">
+                      <FaEye
+                        onClick={() => handleViewRequest(req)}
+                        className="cursor-pointer text-2xl text-cyan-600 border border-cyan-400 p-1 rounded-lg"
+                        title="View"
+                      />
+                      {req.BuyerNegotiatedBudgets.length === 0 &&
+                        req.ArtistNegotiatedBudgets.length < 2 &&
+                        req.RequestStatus === "Pending" && (
+                          <GoPencil
+                            onClick={() => handleEditRequest(req._id)}
+                            className="cursor-pointer text-2xl text-sky-600 border border-sky-400 p-1 rounded-lg"
+                            title="Edit"
+                          />
+                        )}
+                      {((req.BuyerNegotiatedBudgets.length === 0 &&
+                        req.ArtistNegotiatedBudgets.length === 1) ||
+                        (req.BuyerNegotiatedBudgets.length === 1 &&
+                          req.ArtistNegotiatedBudgets.length === 2) ||
+                        (req.BuyerNegotiatedBudgets.length === 2 &&
+                          req.ArtistNegotiatedBudgets.length === 3)) &&
+                        req.RequestStatus === "Pending" &&
+                        (loading ? (
+                          <div className="w-6 h-6 flex items-center justify-center border border-green-400 rounded-lg">
+                            <FaSpinner
+                              className="animate-spin text-2xl text-green-600 p-1 rounded-lg"
+                              title="Loading..."
+                            />
                           </div>
-                            <div>
-                              <p className="text-sm font-bold text-gray-900 group-hover/row:text-[#5C4033] transition-colors">
-                                {req.ProductName ? (req.ProductName.length > 10 ? req.ProductName.substring(0, 10) + "..." : req.ProductName) : "—"}
-                              </p>
-                              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{req.ArtType || "General"}</p>
-                            </div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-nowrap">
-                        <p className="text-sm font-semibold text-gray-700">
-                          {req.Artist?.id?.name || req.Artist?.name || ""} {req.Artist?.id?.lastName || req.Artist?.lastName || ""}
-                        </p>
-                      </td>
-                      <td className="px-4 py-3 text-nowrap text-center">
-                        <span className="text-sm font-black text-gray-900">{getLatestNegotiatedBudget(req)}</span>
-                      </td>
-                      <td className="px-4 py-3 text-nowrap text-center">
-                        <p className="text-xs font-bold text-gray-500">
-                          {req?.createdAt ? new Date(req.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : "—"}
-                        </p>
-                      </td>
-                      <td className="px-4 py-3 text-nowrap">
-                        <div className="flex flex-col items-center gap-1.5">
-                          <div className="flex gap-2">
-                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${req.RequestStatus === "Approved" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                                req.RequestStatus === "Pending" ? "bg-amber-50 text-amber-600 border-amber-100" :
-                                  "bg-rose-50 text-rose-600 border-rose-100"
-                              }`}>
-                              Artist: {req.RequestStatus || "Pending"}
-                            </span>
-                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${req.BuyerStatus === "Approved" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                                req.BuyerStatus === "Pending" ? "bg-amber-50 text-amber-600 border-amber-100" :
-                                  "bg-rose-50 text-rose-600 border-rose-100"
-                              }`}>
-                              Buyer: {req.BuyerStatus || "Pending"}
-                            </span>
+                        ) : (
+                          <FaCheck
+                            onClick={() =>
+                              handleStatusUpdate("Approved", "", req._id)
+                            }
+                            className="cursor-pointer text-2xl text-green-600 border border-green-400 p-1 rounded-lg"
+                            title="Accept"
+                          />
+                        ))}
+                      {((req.BuyerNegotiatedBudgets.length === 0 &&
+                        req.ArtistNegotiatedBudgets.length === 1) ||
+                        (req.BuyerNegotiatedBudgets.length === 1 &&
+                          req.ArtistNegotiatedBudgets.length === 2)) &&
+                        req.RequestStatus === "Pending" && (
+                          <LuHandshake
+                            onClick={() => {
+                              setSelectedRequest(req);
+                              setShowNegotiationModal(true);
+                            }}
+                            className="cursor-pointer text-2xl text-white bg-gray-500 p-1 rounded-lg"
+                            title="Negotiate"
+                          />
+                        )}
+                      {req.RequestStatus === "Approved" && (
+                        <FaRupeeSign
+                          className="cursor-pointer text-2xl text-blue-500 p-1 border rounded-lg"
+                          title="Payment"
+                        />
+                      )}
+                      {req.BuyerNegotiatedBudgets.length === 2 &&
+                        req.ArtistNegotiatedBudgets.length === 3 &&
+                        req.RequestStatus !== "Approved" &&
+                        req.RequestStatus !== "Rejected" &&
+                        (loading ? (
+                          <div className="w-8 h-8 flex items-center justify-center border border-green-400 rounded-lg">
+                            <FaSpinner
+                              className="animate-spin text-2xl text-red-600 p-1 rounded-lg"
+                              title="Loading..."
+                            />
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-nowrap">
-                        <div className="flex items-center justify-center gap-2">
-                          <button
-                            onClick={() => handleViewRequest(req)}
-                            className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:bg-cyan-50 hover:text-cyan-600 transition-all shadow-sm active:scale-90"
-                            title="View Details"
+                        ) : (
+                          <RiProhibited2Line
+                            onClick={() => setShowRejectModal(true)}
+                            className="cursor-pointer text-2xl text-red-600 border border-red-400 p-1 rounded-lg"
+                            title="Reject"
+                          />
+                        ))}
+                      {showRejectModal && (
+                        <div
+                          className="modal fade show"
+                          style={{
+                            display: "block",
+                            backgroundColor: "rgba(0, 0, 0, 0.5)",
+                            zIndex: 1050,
+                          }}
+                        >
+                          <div
+                            className="modal-dialog modal-dialog-scrollable"
+                            style={{
+                              maxWidth: "500px",
+                              margin: "1.75rem auto",
+                            }}
                           >
-                            <FaEye className="text-sm" />
-                          </button>
-
-                          {req.BuyerNegotiatedBudgets.length === 0 &&
-                            req.ArtistNegotiatedBudgets.length < 2 &&
-                            req.RequestStatus === "Pending" && (
-                              <button
-                                onClick={() => handleEditRequest(req._id)}
-                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:bg-sky-50 hover:text-sky-600 transition-all shadow-sm active:scale-90"
-                                title="Edit Request"
-                              >
-                                <GoPencil className="text-sm" />
-                              </button>
-                            )}
-
-                          {((req.BuyerNegotiatedBudgets.length === 0 && req.ArtistNegotiatedBudgets.length === 1) ||
-                            (req.BuyerNegotiatedBudgets.length === 1 && req.ArtistNegotiatedBudgets.length === 2) ||
-                            (req.BuyerNegotiatedBudgets.length === 2 && req.ArtistNegotiatedBudgets.length === 3)) &&
-                            req.RequestStatus === "Pending" && (
-                              <button
-                                onClick={() => handleStatusUpdate("Approved", "", req._id)}
-                                disabled={loading}
-                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-all shadow-sm active:scale-90"
-                                title="Accept & Approve"
-                              >
-                                {loading ? <FaSpinner className="animate-spin" /> : <FaCheck className="text-sm" />}
-                              </button>
-                            )}
-
-                          {((req.BuyerNegotiatedBudgets.length === 0 && req.ArtistNegotiatedBudgets.length === 1) ||
-                            (req.BuyerNegotiatedBudgets.length === 1 && req.ArtistNegotiatedBudgets.length === 2)) &&
-                            req.RequestStatus === "Pending" && (
-                              <button
-                                onClick={() => {
-                                  setSelectedRequest(req);
-                                  setShowNegotiationModal(true);
-                                }}
-                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-[#5C4033]/10 text-[#5C4033] hover:bg-[#5C4033]/20 transition-all shadow-sm active:scale-90"
-                                title="Negotiate Budget"
-                              >
-                                <LuHandshake className="text-sm" />
-                              </button>
-                            )}
-
-                          {req.RequestStatus === "Approved" && (
-                            <button
-                              className="w-9 h-9 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all shadow-sm active:scale-90"
-                              title="Make Payment"
+                            <div
+                              className="modal-content"
+                              style={{ maxHeight: "80vh" }}
                             >
-                              <FaRupeeSign className="text-sm" />
-                            </button>
-                          )}
+                              <div className="modal-header">
+                                <h5 className="modal-title">Reject Request</h5>
+                                <button
+                                  className="btn-close"
+                                  onClick={() => setShowRejectModal(false)}
+                                  disabled={loading}
+                                  aria-label="Close"
+                                ></button>
+                              </div>
+                              <div
+                                className="modal-body"
+                                style={{ overflowY: "auto", maxHeight: "60vh" }}
+                              >
+                                <label
+                                  htmlFor="rejectComment"
+                                  className="form-label"
+                                >
+                                  Rejection Comment
+                                </label>
+                                <textarea
+                                  className="form-control"
+                                  id="rejectComment"
+                                  name="rejectComment"
+                                  rows="4"
+                                  value={rejectComment}
+                                  onChange={(e) =>
+                                    setRejectComment(e.target.value)
+                                  }
+                                  disabled={loading}
+                                />
+                              </div>
+                              <div className="modal-footer">
+                                <button
+                                  type="button"
+                                  className="text-[16px] py-1 px-3 text-zinc-900 border-[1.6px] rounded-lg border-zinc-600"
+                                  onClick={() => setShowRejectModal(false)}
+                                  disabled={loading}
+                                >
+                                  Close
+                                </button>
+                                <button
+                                  type="button"
+                                  className="btn btn-danger"
+                                  onClick={() => {
+                                    if (!rejectComment.trim()) {
+                                      toast.error(
+                                        "Please enter a rejection comment before saving."
+                                      );
+                                      return;
+                                    }
+                                    handleStatusUpdate(
+                                      "Rejected",
+                                      rejectComment,
+                                      req._id
+                                    );
+                                  }}
+                                  disabled={loading}
+                                >
+                                  {loading ? "Rejecting" : "Save Rejection"}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="7" className="px-6 py-20 text-center">
-                      <div className="flex flex-col items-center gap-4">
-                        <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center">
-                          <svg className="w-8 h-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                          </svg>
-                        </div>
-                        <p className="text-gray-400 font-bold">No custom requests found</p>
-                      </div>
+                      )}
                     </td>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="10"
+                    className="px-4 py-4 text-center text-gray-500"
+                  >
+                    No requests found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          <div className="flex justify-between items-center mt-4">
+            <span className="text-sm text-gray-600">
+              Showing {(currentPage - 1) * rowsPerPage + 1} to{" "}
+              {Math.min(currentPage * rowsPerPage, filteredRequests.length)} of{" "}
+              {filteredRequests.length} entries
+            </span>
 
-          {/* Pagination */}
-          <div className="px-6 py-5 bg-gray-50/50 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-              Showing <span className="text-gray-900">{(currentPage - 1) * rowsPerPage + 1}</span> to <span className="text-gray-900">{Math.min(currentPage * rowsPerPage, filteredRequests.length)}</span> of <span className="text-gray-900">{filteredRequests.length}</span> entries
-            </p>
             <div className="flex gap-2">
               <button
                 onClick={handlePreviousPage}
                 disabled={currentPage === 1}
-                className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-gray-100 text-gray-400 hover:text-[#5C4033] hover:border-[#5C4033]/30 disabled:opacity-50 disabled:hover:text-gray-400 disabled:hover:border-gray-100 transition-all shadow-sm"
+                className={`px-3 py-1 border rounded ${
+                  currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-                </svg>
+                Previous
               </button>
-              <div className="flex gap-1.5">
-                {[...Array(totalPages)].map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentPage(i + 1)}
-                    className={`w-10 h-10 rounded-xl font-bold text-sm transition-all ${currentPage === i + 1
-                        ? 'bg-[#5C4033] text-white shadow-lg shadow-[#5C4033]/20'
-                        : 'bg-white border border-gray-100 text-gray-400 hover:text-gray-900 hover:bg-gray-50'
-                      }`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-              </div>
+
               <button
                 onClick={handleNextPage}
                 disabled={currentPage === totalPages}
-                className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-gray-100 text-gray-400 hover:text-[#5C4033] hover:border-[#5C4033]/30 disabled:opacity-50 disabled:hover:text-gray-400 disabled:hover:border-gray-100 transition-all shadow-sm"
+                className={`px-3 py-1 border rounded ${
+                  currentPage === totalPages
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                }`}
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                </svg>
+                Next
               </button>
             </div>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Add/Edit Form */}
       {showForm && (
-        <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-gray-100 shadow-2xl shadow-blue-50/50">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-2xl font-bold text-gray-900">
-              {editingId ? "Edit Custom Request" : "Add New Custom Request"}
+        <div className="w-full max-w-[1076px] mx-auto px-0 sm:px-0 lg:px-0">
+          <form onSubmit={handleSubmit} className="space-y-5 py-6">
+            <h3 className="text-xl font-semibold">
+              {editingId ? "Edit Custom Request" : "Add Custom Request"}
             </h3>
-            <button onClick={handleCancel} className="text-gray-400 hover:text-rose-500 transition-colors">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Product Name */}
-              <div className="md:col-span-2">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Product Name <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="productName"
-                  value={formData.productName}
-                  onChange={handleChange}
-                  placeholder="What would you like to request?"
-                  className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
-                  required
-                />
-              </div>
-
-              {/* Artist & Art Type */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Select Artist <span className="text-rose-500">*</span>
-                </label>
-                <div className="relative">
-                  <select
-                    id="artistSelect"
-                    name="artist"
-                    value={artistId}
-                    onChange={(e) => {
-                      const selectedId = e.target.value;
-                      setArtistId(selectedId);
-                      const selectedArtist = artists.find(a => a._id === selectedId);
-                      setSelectedArtistName(selectedArtist ? `${selectedArtist.name} ${selectedArtist.lastName || ""}`.trim() : "");
-                    }}
-                    className="w-full appearance-none border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none cursor-pointer"
-                    required
-                  >
-                    <option value="">Choose an Artist</option>
-                    {artists.map((artist) => (
-                      <option key={artist._id} value={artist._id}>
-                        {artist.name} {artist.lastName}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Art Type <span className="text-rose-500">*</span>
-                </label>
-                <CreatableSelect
-                  options={allCategories}
-                  onChange={(selectedOption) => {
-                    setFormData(prev => ({
-                      ...prev,
-                      artType: selectedOption ? selectedOption.label : "",
-                    }));
-                  }}
-                  value={
-                    allCategories.find(cat => cat.label === formData.artType) ||
-                    (formData.artType ? { label: formData.artType, value: formData.artType } : null)
-                  }
-                  isClearable
-                  placeholder="Select or type art type"
-                  styles={{
-                    control: (provided, state) => ({
-                      ...provided,
-                      borderRadius: "1rem",
-                      borderWidth: "1px",
-                      borderColor: state.isFocused ? "#5C4033" : "rgb(229, 231, 235)",
-                      padding: "6px 4px",
-                      backgroundColor: state.isFocused ? "white" : "rgb(249, 250, 251)",
-                    }),
-                  }}
-                />
-              </div>
-
-              {/* Size & Address */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Select Size <span className="text-rose-500">*</span>
-                </label>
-                <CreatableSelect
-                  options={sizeOptions}
-                  onChange={(selectedOption) => {
-                    setFormData(prev => ({
-                      ...prev,
-                      size: selectedOption ? selectedOption.label : "",
-                    }));
-                  }}
-                  value={
-                    sizeOptions.find(opt => opt.label === formData.size) ||
-                    (formData.size ? { label: formData.size, value: formData.size } : null)
-                  }
-                  isClearable
-                  placeholder="Select or type size"
-                  styles={{
-                    control: (provided, state) => ({
-                      ...provided,
-                      borderRadius: "1rem",
-                      borderWidth: "1px",
-                      borderColor: state.isFocused ? "#5C4033" : "rgb(229, 231, 235)",
-                      padding: "6px 4px",
-                      backgroundColor: state.isFocused ? "white" : "rgb(249, 250, 251)",
-                    }),
-                  }}
-                />
-              </div>
-
-              {/* Colors & Frame */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Color Preferences</label>
-                <div className="flex items-center gap-2 p-1.5 bg-gray-50 rounded-2xl border border-gray-200">
-                  <input
-                    type="text"
-                    value={colorPref}
-                    onChange={(e) => setColorPref(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleAddColor(); } }}
-                    placeholder="e.g. Royal Blue"
-                    className="flex-grow bg-transparent px-3 py-1.5 text-sm outline-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddColor}
-                    className="bg-[#5C4033] text-white px-4 py-1.5 text-sm font-bold rounded-xl shadow-md active:scale-95 transition-all"
-                  >
-                    Add
-                  </button>
-                </div>
-                <div className="flex flex-wrap gap-2 mt-3">
-                  {colorPreferences.map((color, index) => (
-                    <span key={index} className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-100 rounded-full text-xs font-bold text-gray-600 shadow-sm">
-                      {color}
-                      <button
-                        type="button"
-                        onClick={() => setColorPreferences(colorPreferences.filter((_, i) => i !== index))}
-                        className="text-gray-400 hover:text-rose-500"
-                      >
-                        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" /></svg>
-                      </button>
-                    </span>
+            <div>
+              <label className="block font-medium mb-1">
+                Product Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="productName"
+                value={formData.productName}
+                onChange={handleChange}
+                placeholder="Enter product name"
+                className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
+                required
+              />
+            </div>
+            <div>
+              <label className="block font-medium mb-1">
+                Select Artist <span className="text-red-500">*</span>
+              </label>
+              <select
+                id="artistSelect"
+                name="artist"
+                value={artistId}
+                onChange={(e) => {
+                  const selectedId = e.target.value;
+                  setArtistId(selectedId);
+                  const selectedArtist = artists.find(
+                    (a) => a._id === selectedId
+                  );
+                  setSelectedArtistName(
+                    selectedArtist
+                      ? `${selectedArtist.name} ${
+                          selectedArtist.lastName || ""
+                        }`.trim()
+                      : ""
+                  );
+                }}
+                className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
+                required
+              >
+                <option value="">
+                  Select an artist <span className="text-red-500">*</span>
+                </option>
+                {artists.map((artist) => (
+                  <option key={artist._id} value={artist._id}>
+                    {artist.name} {artist.lastName}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block font-medium mb-1">
+                Art Type <span className="text-red-500">*</span>
+              </label>
+              <CreatableSelect
+                options={allCategories}
+                onChange={(selectedOption) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    artType: selectedOption ? selectedOption.label : "",
+                  }));
+                }}
+                value={
+                  allCategories.find((cat) => cat.label === formData.artType) ||
+                  (formData.artType
+                    ? { label: formData.artType, value: formData.artType }
+                    : null)
+                }
+                isClearable
+                isSearchable
+                placeholder="Select or type art type"
+                className="w-full"
+                classNamePrefix="react-select"
+              />
+            </div>
+            <div>
+              <label className="block font-medium mb-1">
+                Select Size <span className="text-red-500">*</span>
+              </label>
+              <CreatableSelect
+                options={sizeOptions}
+                onChange={(selectedOption) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    size: selectedOption ? selectedOption.label : "",
+                  }));
+                }}
+                value={
+                  sizeOptions.find((opt) => opt.label === formData.size) ||
+                  (formData.size
+                    ? { label: formData.size, value: formData.size }
+                    : null)
+                }
+                isClearable
+                isSearchable
+                placeholder="Select or type size"
+                className="w-full"
+                classNamePrefix="react-select"
+              />
+            </div>
+            <div>
+              <label className="block font-medium mb-1">
+                Select Delivery Address <span className="text-red-500">*</span>
+              </label>
+              {isFetching ? (
+                <p>Loading addresses...</p>
+              ) : fetchError ? (
+                <p className="text-red-500">{fetchError}</p>
+              ) : addresses.length > 0 ? (
+                <div className="space-y-2">
+                  {addresses.map((address) => (
+                    <div key={address._id} className="flex items-center">
+                      <input
+                        type="radio"
+                        name="selectedAddress"
+                        value={address._id}
+                        checked={selectedAddressId === address._id}
+                        onChange={() => handleAddressChange(address._id)}
+                        className="mr-2"
+                        required
+                      />
+                      <label>
+                        {address.line1},{" "}
+                        {address.line2 ? `${address.line2}, ` : ""}
+                        {address.landmark ? `${address.landmark}, ` : ""}
+                        {address.city}, {address.state}, {address.country},{" "}
+                        {address.pincode}
+                      </label>
+                    </div>
                   ))}
                 </div>
+              ) : (
+                <p>
+                  No addresses found. Please add an address in your profile.
+                </p>
+              )}
+            </div>
+            <div>
+              <label className="block font-medium mb-1">
+                Color Preferences{" "}
+              </label>
+              <div className="flex w-full items-center border-2 border-gray-300 rounded-xl px-2">
+                <input
+                  type="text"
+                  value={colorPref}
+                  onChange={(e) => setColorPref(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddColor();
+                    }
+                  }}
+                  placeholder="Add a color"
+                  className="flex-grow px-3 py-2 outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddColor}
+                  className="bg-[#6F4D34] text-white px-3 py-1 font-semibold rounded"
+                >
+                  Add
+                </button>
               </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Delivery Address <span className="text-rose-500">*</span>
-                </label>
-                <div className="space-y-3 p-3 bg-gray-50 rounded-2xl border border-gray-100">
-                  {isFetching ? (
-                    <div className="flex items-center gap-2 text-gray-400 text-sm italic">
-                      <FaSpinner className="animate-spin" /> Loading addresses...
-                    </div>
-                  ) : fetchError ? (
-                    <p className="text-rose-500 text-sm">{fetchError}</p>
-                  ) : addresses.length > 0 ? (
-                    addresses.map((address) => (
-                      <label key={address._id} className="flex items-start gap-3 cursor-pointer group/addr">
-                        <div className="relative flex items-center mt-1">
-                          <input
-                            type="radio"
-                            name="selectedAddress"
-                            value={address._id}
-                            checked={String(selectedAddressId) === String(address._id)}
-                            onChange={() => handleAddressChange(address._id)}
-                              className="peer h-5 w-5 cursor-pointer appearance-none rounded-full border-2 border-gray-300 checked:bg-[#5C4033] checked:border-white checked:border-[4px] ring-1 ring-[#5C4033] transition-all duration-300"
-
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <p className={`text-sm font-bold ${String(selectedAddressId) === String(address._id) ? 'text-[#5C4033]' : 'text-gray-600'} transition-colors`}>
-                            {address.city}, {address.state}
-                          </p>
-                          <p className="text-xs text-gray-400 line-clamp-1">
-                            {address.line1}, {address.pincode}
-                          </p>
-                        </div>
-                      </label>
-                    ))
-                  ) : (
-                    <p className="text-sm text-gray-400 italic">No addresses found. Please add one in profile.</p>
-                  )}
-                </div>
+              <div className="pt-2 text-sm text-gray-400">
+                Click "Add" to include each colour preference
               </div>
-
-              {/* Budgets */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Min Budget (₹) <span className="text-rose-500">*</span></label>
-                  <input
-                    type="number"
-                    name="minBudget"
-                    value={formData.minBudget}
-                    onChange={handleChange}
-                    className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
-                    placeholder="0"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Max Budget (₹) <span className="text-rose-500">*</span></label>
-                  <input
-                    type="number"
-                    name="maxBudget"
-                    value={formData.maxBudget}
-                    onChange={handleChange}
-                    className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
-                    placeholder="5000"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center">
-                <div className={`group flex items-center justify-between p-4 w-full rounded-2xl border transition-all duration-300 cursor-pointer ${formData.isFramed ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-200 hover:border-blue-200'}`} onClick={() => setFormData({ ...formData, isFramed: !formData.isFramed })}>
-                  <div className="flex items-center gap-3">
-                    <div className={`!w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${formData.isFramed ? 'bg-emerald-500 text-white' : 'bg-white text-gray-400 shadow-sm'}`}>
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 8h8v8H8z" /></svg>
-                    </div>
-                    <span className={`font-bold text-sm ${formData.isFramed ? 'text-emerald-900' : 'text-gray-600'}`}>Frame Required</span>
-                  </div>
-                  <div className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 ${formData.isFramed ? 'bg-emerald-500' : 'bg-gray-300'}`}>
-                    <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${formData.isFramed ? 'translate-x-6' : ''}`}></div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Payment & Deadline */}
-              <div className="flex flex-col md:flex-row gap-4">
-                <div className={formData.paymentTerm === "Installment" ? "md:w-1/2 w-full" : "w-full"}>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Payment Term <span className="text-rose-500">*</span></label>
-                  <div className="relative">
-                    <select
-                      id="paymentTerm"
-                      name="paymentTerm"
-                      value={formData.paymentTerm}
-                      onChange={handleChange}
-                      className="w-full appearance-none border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none cursor-pointer"
-                      required
-                    >
-                      <option value="">Select Payment Option</option>
-                      <option value="Full Payment">Full Payment</option>
-                      <option value="Installment">Installment</option>
-                      <option value="Two Step Payment">Two Step Payment</option>
-                    </select>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
-                    </div>
-                  </div>
-                </div>
-
-                {formData.paymentTerm === "Installment" && (
-                  <div className="md:w-1/2 w-full">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Duration <span className="text-rose-500">*</span></label>
-                    <div className="relative">
-                      <select
-                        name="installmentDuration"
-                        value={formData.installmentDuration}
-                        onChange={handleChange}
-                        className="w-full appearance-none border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none cursor-pointer"
-                      >
-                        <option value="">Select Duration</option>
-                        <option value="3">3 Months</option>
-                        <option value="6">6 Months</option>
-                        <option value="9">9 Months</option>
-                        <option value="12">12 Months</option>
-                      </select>
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
+              {colorPreferences.length > 0 && (
+                <ul className="mt-2 text-sm text-gray-700 list-disc pl-5">
+                  {colorPreferences.map((color, index) => (
+                    <li key={index}>{color}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <div className="flex items-center space-x-3">
+              <label className="font-medium">Frame Required </label>
+              <input
+                type="checkbox"
+                name="isFramed"
+                checked={formData.isFramed}
+                onChange={handleChange}
+                className="w-5 h-5"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Expected Deadline (Days) <span className="text-rose-500">*</span></label>
+                <label className="block font-medium mb-1">
+                  Minimum Budget ($) <span className="text-red-500">*</span>
+                </label>
                 <input
                   type="number"
-                  name="expectedDeadline"
-                  value={formData.expectedDeadline}
+                  name="minBudget"
+                  value={formData.minBudget}
                   onChange={handleChange}
-                  min="0"
-                  className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
-                  placeholder="30"
+                  className="w-full border-2 border-gray-300 rounded-xl px-3 py-2 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
                 />
               </div>
-
-              {/* Reference Image */}
-              <div className="md:col-span-2">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Reference Document/Image <span className="text-rose-500">*</span></label>
-                <div className="relative group/upload">
-                  <input
-                    type="file"
-                    name="buyerImage"
-                    id="buyerImage"
-                    accept="image/*,application/pdf"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      handleChange(e);
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        if (file.type.startsWith("image/")) {
-                          setImagePreview(reader.result);
-                          setFileType("image");
-                        } else if (file.type === "application/pdf") {
-                          setImagePreview(reader.result);
-                          setFileType("pdf");
-                        }
-                      };
-                      reader.readAsDataURL(file);
-                    }}
-                    className="hidden"
-                  />
-                  <label htmlFor="buyerImage" className="flex flex-col items-center justify-center w-full min-h-[140px] border-2 border-dashed border-gray-200 rounded-[2rem] bg-gray-50 hover:bg-white hover:border-[#5C4033]/50 transition-all cursor-pointer group-hover/upload:shadow-inner">
-                    <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center mb-2 group-hover/upload:scale-110 transition-transform">
-                      <svg className="w-5 h-5 text-[#5C4033]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
-                    </div>
-                    <span className="text-xs font-bold text-gray-700">Click to upload reference file</span>
-                    <span className="text-[10px] text-gray-400 mt-1 uppercase tracking-widest font-black">Images or PDF</span>
-                  </label>
-                </div>
-                {imagePreview && (
-                  <div className="mt-4 flex items-center gap-4 p-3 bg-gray-50 rounded-2xl border border-gray-100">
-                    {fileType === "image" ? (
-                      <div className="w-20 h-20 rounded-xl overflow-hidden shadow-sm border border-white ring-2 ring-gray-100">
-                        <img src={imagePreview} className="w-full h-full object-cover" alt="Preview" />
-                      </div>
-                    ) : (
-                      <div className="w-20 h-20 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-500 shadow-sm">
-                        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                      </div>
-                    )}
-                    <div className="flex-1">
-                      <p className="text-sm font-bold text-gray-700">File Selected</p>
-                      <button type="button" onClick={() => { setImagePreview(null); setFileType(null); }} className="text-xs font-black uppercase tracking-widest text-rose-500 hover:text-rose-600 mt-1">Remove File</button>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Comments & Description */}
-              <div className="md:col-span-2">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Additional Notes <span className="text-rose-500">*</span></label>
-                <textarea
-                  name="comments"
-                  value={formData.comments}
+              <div>
+                <label className="block font-medium mb-1">
+                  Maximum Budget ($) <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="number"
+                  name="maxBudget"
+                  value={formData.maxBudget}
                   onChange={handleChange}
-                  rows="3"
-                  className="w-full border border-gray-200 p-4 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all outline-none resize-none"
-                  placeholder="Anything else the artist should know?"
-                  required
+                  className="w-full border-2 border-gray-300 rounded-xl px-3 py-2 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
                 />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Detailed Description <span className="text-rose-500">*</span></label>
-                <div className={`rounded-[2rem] overflow-hidden border transition-all ${descriptionError ? 'border-rose-300 ring-4 ring-rose-50' : 'border-gray-200'}`}>
-                  <ReactQuill
-                    id="description"
-                    value={formData.description}
-                    onChange={handleDescriptionChange}
-                    placeholder="Provide a thorough breakdown of your vision..."
-                    modules={modules}
-                    theme="snow"
-                    style={editorStyle}
-                    className="bg-gray-50"
-                  />
-                </div>
               </div>
             </div>
+            <div className="flex flex-col md:flex-row gap-4">
+              <div
+                className={
+                  formData.paymentTerm === "Installment"
+                    ? "md:w-1/2 w-full"
+                    : "w-full"
+                }
+              >
+                <label className="block font-medium mb-1">
+                  Payment Term <span className="text-red-500">*</span>
+                </label>
+                <select
+                  id="paymentTerm"
+                  name="paymentTerm"
+                  value={formData.paymentTerm}
+                  onChange={handleChange}
+                  className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
+                  required
+                >
+                  <option value="">Select payment option</option>
+                  <option value="Full Payment">Full Payment</option>
+                  <option value="Installment">Installment</option>
+                  <option value="Two Step Payment">Two Step Payment</option>
+                </select>
+              </div>
 
-            <div className="flex items-center gap-4 pt-6">
+              {/* Show only when Installment is selected */}
+              {formData.paymentTerm === "Installment" && (
+                <div className="md:w-1/2 w-full">
+                  <label className="block font-medium mb-1">
+                    Installment Duration <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    id="installmentDuration"
+                    name="installmentDuration"
+                    value={formData.installmentDuration}
+                    onChange={handleChange}
+                    className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
+                  >
+                    <option value="">Select duration</option>
+                    <option value="3">3 Months</option>
+                    <option value="6">6 Months</option>
+                    <option value="9">9 Months</option>
+                    <option value="12">12 Months</option>
+                  </select>
+                </div>
+              )}
+            </div>{" "}
+            <div>
+              <label className="block font-medium mb-1">
+                Expected Deadline (days) <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="number"
+                name="expectedDeadline"
+                value={formData.expectedDeadline}
+                onChange={handleChange}
+                min="0"
+                className="w-full border-2 border-gray-300 rounded-xl px-3 py-2 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
+              />
+            </div>
+            <div>
+              <label className="block font-medium mb-1">
+                Reference Image <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="file"
+                name="buyerImage"
+                accept="image/*,application/pdf"
+                onChange={(e) => {
+                  const file =
+                    e.target.files && e.target.files.length > 0
+                      ? e.target.files[0]
+                      : null;
+                  if (!file) return;
+                  handleChange(e);
+                  const fileType = file.type;
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    if (fileType.startsWith("image/")) {
+                      setImagePreview(reader.result);
+                      setFileType("image");
+                    } else if (fileType === "application/pdf") {
+                      setImagePreview(reader.result);
+                      setFileType("pdf");
+                    } else {
+                      setImagePreview(null);
+                      setFileType(null);
+                    }
+                  };
+                  reader.readAsDataURL(file);
+                }}
+                className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
+              />
+              {fileType === "image" && imagePreview && (
+                <div className="mt-2">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="max-w-full max-h-[200px] rounded-md border p-1"
+                    onClick={handleImageClick}
+                    style={{ cursor: "pointer" }}
+                  />
+                </div>
+              )}
+              {fileType === "pdf" && imagePreview && (
+                <a
+                  href={imagePreview}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-gray-200 text-sm w-[120px] px-6 py-2 rounded-xl border mt-2 text-center"
+                >
+                  View PDF
+                </a>
+              )}
+              {showFullImage && fileType === "image" && imagePreview && (
+                <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+                  <div className="relative">
+                    <img
+                      src={imagePreview}
+                      alt="Full Image"
+                      className="max-w-[90vw] max-h-[90vh] rounded-lg shadow-lg"
+                    />
+                    <button
+                      className="absolute top-2 right-2 text-red-600 text-3xl"
+                      onClick={() => setShowFullImage(false)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div>
+              <label className="block font-medium mb-1">
+                Additional Comments
+              </label>
+              <textarea
+                name="comments"
+                value={formData.comments}
+                onChange={handleChange}
+                rows="4"
+                className="w-full border-2 border-gray-300 rounded-xl px-3 py-2"
+              ></textarea>
+            </div>
+            <div className="form-group mt-3">
+              <label htmlFor="description">
+                Detailed Description <span className="text-red-500">*</span>
+              </label>
+              <ReactQuill
+                id="description"
+                value={formData.description}
+                onChange={handleDescriptionChange}
+                placeholder="Describe your request in detail..."
+                modules={modules}
+                theme="snow"
+                style={editorStyle}
+                required
+              />
+            </div>
+            <div className="flex gap-4">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="group relative flex-1 sm:flex-none flex items-center justify-center gap-3 bg-[#5C4033] hover:bg-[#4b3327] text-white py-4 px-8 rounded-2xl font-bold text-lg shadow-lg shadow-[#5C4033]/20 transition-all transform active:scale-95 overflow-hidden"
+                className="bg-[#6F4D34] text-white font-semibold px-11 py-2 rounded-full"
               >
-                <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                {isSubmitting ? <FaSpinner className="animate-spin" /> : editingId ? "Update Request" : "Submit Request"}
+                {isSubmitting ? "Submitting..." : "Submit"}
               </button>
               <button
                 type="button"
                 onClick={handleCancel}
-                className="flex-1 sm:flex-none py-4 px-12 rounded-2xl font-bold text-lg text-gray-500 hover:bg-gray-50 transition-all active:scale-95"
+                className="bg-gray-300 text-gray-700 font-semibold px-11 py-2 rounded-full"
               >
                 Cancel
               </button>
@@ -1389,19 +1539,30 @@ const AddCustomRequestForm = () => {
           </form>
         </div>
       )}
-
       {showViewModal && viewRequest && (
-        <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-gray-100 shadow-2xl transition-all duration-500">
-          <div className="flex items-center justify-between mb-8">
-            <button
-              onClick={() => { setShowViewModal(false); setViewRequest(null); fetchRequests(); }}
-              className="group flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors"
-            >
-              <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-              <span className="text-sm font-bold uppercase tracking-widest">Back to List</span>
-            </button>
-          </div>
-          <ViewBuyerRequest request={viewRequest} onClose={() => { setShowViewModal(false); setViewRequest(null); fetchRequests(); }} />
+        <div className="mt-6 p-6 bg-gray-50 border-2 rounded-3xl">
+          <ViewBuyerRequest
+            request={viewRequest}
+            onClose={() => {
+              setShowViewModal(false);
+              setViewRequest(null);
+              fetchRequests();
+            }}
+          />
+        </div>
+      )}
+
+      {/* View Modal */}
+      {showViewModal && viewRequest && (
+        <div className="mt-6 p-6 bg-gray-50 border-2 rounded-3xl">
+          <ViewBuyerRequest
+            request={viewRequest}
+            onClose={() => {
+              setShowViewModal(false);
+              setViewRequest(null);
+              fetchRequests();
+            }}
+          />
         </div>
       )}
 
@@ -1422,25 +1583,44 @@ const AddCustomRequestForm = () => {
       {showPopup && (
         <div
           onClick={() => setShowPopup(false)}
-          className="fixed inset-0 bg-black/80 backdrop-blur-md flex justify-center items-center z-[1000] p-4"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.65)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-2xl bg-white rounded-[2rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300"
+            style={{
+              position: "relative",
+              width: "500px",
+              height: "600px",
+              backgroundColor: "#111",
+              borderRadius: "12px",
+              boxShadow: "0 0 20px rgba(255, 255, 255, 0.2)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              overflow: "hidden",
+            }}
           >
-            <button
-              onClick={() => setShowPopup(false)}
-              className="absolute top-6 right-6 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-gray-400 hover:text-rose-500 shadow-lg transition-all z-10"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-            </button>
-            <div className="w-full aspect-square bg-gray-50">
-              <img
-                src={currentImages[currentImageIndex]}
-                alt="Popup"
-                className="w-full h-full object-contain"
-              />
-            </div>
+            <img
+              src={currentImages[currentImageIndex]}
+              alt="Popup"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                borderRadius: "12px",
+              }}
+            />
           </div>
         </div>
       )}

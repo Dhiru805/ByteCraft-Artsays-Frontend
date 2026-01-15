@@ -231,12 +231,6 @@ const PricingOffers = ({
 
     const finalPriceWithEverything = priceWithGst + (insuranceInfo?.total || 0);
 
-    useEffect(() => {
-        handlePricingChange({
-            target: { name: "finalPrice", value: finalPriceWithEverything.toFixed(2) }
-        });
-    }, [finalPriceWithEverything]);
-
 
     const commissionAmount = useMemo(() => {
         if (!subcategory?.commissionTerm || !finalPriceWithEverything) return 0;

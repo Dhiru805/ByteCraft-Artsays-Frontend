@@ -286,7 +286,7 @@ import { useAuth } from "../../AuthContext";
 import postAPI from "../../api/postAPI";
 import VerificationPopup from "./VerificationPopup";
 // import { GoogleLogin } from "@react-oauth/google";
-// import { FcGoogle } from "react-icons/fc";
+import { FcGoogle } from "react-icons/fc";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FaGoogle } from "react-icons/fa";
 
@@ -551,7 +551,7 @@ const Login = () => {
       <ToastContainer />
       <VerificationPopup show={showPopup} onHide={() => setShowPopup(false)} />
       <div className="container-fluid p-0 min-vh-100 d-flex flex-column flex-lg-row">
-        <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5" >
+        <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5" style={{ backgroundColor: "white" }}>
           <Link to="/" className="text-decoration-none">
             <h1 className="windhavi">Artsays</h1>
           </Link>
@@ -583,8 +583,7 @@ const Login = () => {
                   fontStyle: "italic",
                   fontSize: "1rem",
                   zIndex: "1",
-                background: "#ffffffff",
-
+                  background: "white",
                 }}
               >
                 Email/Phone

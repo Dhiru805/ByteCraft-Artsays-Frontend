@@ -135,7 +135,7 @@ const BankPaymentDetails = ({ userId }) => {
                         <div className="form-group">
                             <label>Account Number <span style={{ color: 'red' }}>*</span></label>
                             <input 
-                                type="text" 
+                                type="number" 
                                 className="form-control" 
                                 name="accountNumber" 
                                 value={formData.accountNumber} 

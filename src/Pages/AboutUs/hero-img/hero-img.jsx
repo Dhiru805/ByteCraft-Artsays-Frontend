@@ -1,35 +1,34 @@
-import React from "react";
-import "../../store/hero-img/hero-img.css";
-
 const HeroImgAboutUs = () => {
-    const mainImage = "/banners/about-us.png"; // Assuming there is an about-us banner or using a fallback
-    return (
-        <div className="relative w-full h-[300px] sm:h-[250px] md:h-[300px] overflow-hidden flex items-center justify-center">
-            <img
-                src={mainImage}
-                alt="About Us Hero"
-                className="absolute inset-0 w-full h-full object-cover scale-105"
-                onError={(e) => {
-                    e.target.src = "/herosectionimg/store.png";
-                }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#000000]/90 to-transparent flex items-center">
-                <div className="container mx-auto px-6 md:px-12 max-w-[1440px]">
-                    <div className="w-full">
-                        <span className="inline-block px-3 py-1 bg-white text-[#000000] backdrop-blur-md rounded-full text-[10px] md:text-sm font-bold tracking-widest uppercase mb-4 animate-fade-in">
-                            About Artsays
-                        </span>
-                        <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold mb-4 md:mb-6 text-white leading-tight drop-shadow-lg">
-                            Our Story & Vision
-                        </h1>
-                        <p className="text-sm sm:text-lg md:text-xl font-medium text-white leading-relaxed opacity-90 line-clamp-3 md:line-clamp-none max-w-2xl">
-                            Empowering creators and connecting art lovers across the globe through a revolutionary marketplace.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
+  return (
+    // Banner
+    <div className="max-w-[1440px] mx-auto banner">
+      <img
+        src="/herosectionimg/store.png"
+        className="w-full max-h-[200px] "
+        alt="Banner"
+      />
 
+      <div className="w-full py-3 px-3 sm:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          {/* Breadcrumb */}
+          <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
+            <a href="#" className="hover:text-red-500">
+              Home
+            </a>
+            <span>/</span>
+            <a href="#" className="hover:text-red-500">
+              Store
+            </a>
+            <span>/</span>
+            <a href="#" className="hover:text-red-500">
+              Paintings
+            </a>
+            <span>/</span>
+            <span className="font-medium text-gray-900">Abstract</span>
+          </nav>
+        </div>
+      </div>
+    </div>
+  );
+};
 export default HeroImgAboutUs;

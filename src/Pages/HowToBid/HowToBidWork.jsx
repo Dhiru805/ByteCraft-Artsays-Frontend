@@ -17,7 +17,7 @@
 import React, { useEffect, useState } from "react";
 import HeroImgHowToBid from "./hero-img/hero-img";
 import HowToBidContent from "./HowToBidContent/bidContent";
-import { Helmet } from "react-helmet-async";
+import { Helmet } from "react-helmet";
 import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 
@@ -59,10 +59,9 @@ const HowToBid = () => {
     fetchSEOMetadata();
   }, []);
 
-    return (
-    <div className="w-full font-[poppins]">
+  return (
+    <div className="max-w-[1440px] mx-auto font-[poppins]">
       <Helmet>
-
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="robots" content="index, follow" />

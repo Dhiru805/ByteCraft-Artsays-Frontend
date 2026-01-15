@@ -136,18 +136,16 @@ const UpdateLicensing = () => {
       submissionData.append("webpageDescription", formData.webpageDescription.trim());
       submissionData.append("status", formData.status);
 
-      const articlesMetadata = formData.articles.map((a) => ({
-        articleHeading: a.articleHeading,
-        articleContent: a.articleContent,
-        buttonName: a.buttonName,
-        buttonPath: a.buttonPath,
-        existingBanner: a.existingBanner,
-      }));
-      submissionData.append("articles", JSON.stringify(articlesMetadata));
-
       formData.articles.forEach((article, i) => {
+        submissionData.append(`articles[${i}][articleHeading]`, article.articleHeading);
+        submissionData.append(`articles[${i}][articleContent]`, article.articleContent);
+        submissionData.append(`articles[${i}][buttonName]`, article.buttonName);
+        submissionData.append(`articles[${i}][buttonPath]`, article.buttonPath);
+
         if (article.bannerImage instanceof File) {
           submissionData.append(`articles[${i}][bannerImage]`, article.bannerImage);
+        } else if (article.existingBanner) {
+          submissionData.append(`articles[${i}][existingBanner]`, article.existingBanner);
         }
       });
 
@@ -239,14 +237,15 @@ const UpdateLicensing = () => {
                         />
                       </div>
 
-                        <div className="form-group">
-                          <label>Banner Image *</label>
-                          <input
-                            type="file"
-                            accept="image/jpeg,image/png"
-                            onChange={(e) => handleChange(e, idx, "bannerImage")}
-                            className="form-control"
-                          />
+                      <div className="form-group">
+                        <label>Banner Image *</label>
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png"
+                          onChange={(e) => handleChange(e, idx, "bannerImage")}
+                          className="form-control"
+                          required
+                        />
                         {bannerPreviews[idx] && (
                           <div className="mt-2">
                             <img

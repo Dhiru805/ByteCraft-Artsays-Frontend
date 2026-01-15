@@ -400,16 +400,23 @@ const NavBar = () => {
                 {isLoggedIn && (
                   <div className="flex items-center">
                     <div className="dropdown position-relative">
-                        <div
-                          className="ms-4 user-icon"
-                          style={{
-                            borderRadius: "50%",
-                            cursor: "pointer",
-                            border: "2px solid #3e2e22",
-                          }}
-                          onClick={handleUserIconClick}
-                        >
-                          <img
+                      <div
+                        className="ms-4 user-icon"
+                        style={{
+                          borderRadius: "50%",
+                          cursor: "pointer",
+                          border: "2px solid #3e2e22",
+                        }}
+                        onClick={handleUserIconClick}
+                      >
+                        {console.log("user saved data", {
+                          token: localStorage.getItem("token"),
+                          usertype: localStorage.getItem("usertype"),
+                          profilePhoto: localStorage.getItem("profilePhoto"),
+                          username: localStorage.getItem("username"),
+                        })}
+                        {console.log("BASE_URL:", BASE_URL)}
+                        <img
                           src={
                             user.profilePhoto
                               ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`
@@ -506,14 +513,14 @@ const NavBar = () => {
                           >
                             <i className="fas fa-bell me-2" /> Notification
                           </Link>
-                            <Link to={`/my-account/wishlist/${userId}`}>
-                              <div
-                                className="dropdown-item-h"
-                                onClick={handleUserIconClick}
-                              >
-                                <i className="fas fa-heart me-2" /> Wishlist
-                              </div>
-                            </Link>
+                          <Link to={`/my-account/wishlist/${userId}`}>
+                            <div
+                              className="dropdown-item-h"
+                              onClick={handleUserIconClick}
+                            >
+                              <i className="fas fa-heart me-2" /> Wishlist
+                            </div>
+                          </Link>
                           <div
                             className="dropdown-item-h"
                             onClick={handleSignOut}
@@ -715,7 +722,7 @@ const NavBar = () => {
                     handleDashboardClick(Usertype);
                   }}
                 >
-                  <i className="bi bi-person-fill" />
+                  <i class="bi bi-person-fill" />
                   <span>My Dashboard</span>
                 </div>
                 {!isOnSocialMedia ? (

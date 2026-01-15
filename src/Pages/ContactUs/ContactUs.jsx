@@ -14,7 +14,7 @@
 
 
 import React, { useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
+import { Helmet } from "react-helmet";
 import { toast } from "react-toastify";
 import axiosInstance from "../../api/axiosConfig";
 
@@ -59,7 +59,7 @@ const ContactUs = () => {
   }, []);
 
   return (
-    <div className="w-full font-[poppins]">
+    <div className="max-w-[1440px] mx-auto font-[poppins]">
  
       <Helmet>
         <meta charSet="utf-8" />

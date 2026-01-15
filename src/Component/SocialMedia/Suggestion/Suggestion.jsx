@@ -11,7 +11,7 @@ const Suggestion = () => {
   const [users, setUsers] = useState([]);
   const [activeAdIndex, setActiveAdIndex] = useState(0);
   // const [mainCategories, setMainCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
+const[loading,setLoading]=useState(true);
   const [isNarrow, setIsNarrow] = useState(
     typeof window !== "undefined" ? window.innerWidth <= 1024 : false
   );
@@ -57,7 +57,7 @@ const Suggestion = () => {
   ];
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
-  const navigate = useNavigate();
+const navigate=useNavigate();
   // helper: normalize array -> [ids]
   // const toIdArray = (arr) =>
   //   Array.isArray(arr)
@@ -135,7 +135,7 @@ const Suggestion = () => {
         setUsers(res?.data?.suggestedUsers || []);
       } catch (error) {
         console.error("Error fetching suggested users:", error);
-      } finally {
+      }finally{
         setLoading(false)
       }
     };
@@ -199,22 +199,23 @@ const Suggestion = () => {
 
 
 
-  const navigateToProfile = (user) => {
-    navigate(
-      `/artsays-community/profile/${user?.username
-        ? `${user?.username}`
-        : `${user?.name}_${user?.lastName}_${user?._id}`
-      }`, { state: { userId: user?._id } }
+  const navigateToProfile=(user)=>{
+     navigate(
+      `/artsays-community/profile/${
+        user?.username
+          ? `${user?.username}`
+          : `${user?.name}_${user?.lastName}_${user?._id}`
+      }`,{state:{userId:user?._id}}
     );
   }
-  if (loading) return <MediaSideSuggestionSkele />
+  if(loading)return <MediaSideSuggestionSkele/>
   return (
-    <div className="suggestion sticky top-0 h-screen hidden lg:block col-span-3 px-2 py-2">
-      <h3 className="text-lg font-bold my-2 ml-1">Discover Creators</h3>
+    <div className="suggestion sticky top-0 overflow-y-auto lg:h-[90vh] hidden lg:flex lg:flex-col lg:w-[22%] px-2 mt-4">
+      <h3 className="text-lg font-bold my-2 ml-1">Suggested for you</h3>
 
       {users.map((user, index) => {
         let isFollowing = Array.isArray(user?.profile?.followers)
-          ? user.profile.followers.map(String).includes(String(userId))
+          ?  user.profile.followers.map(String).includes(String(userId))
           : false;
 
         const displayUsername = isNarrow
@@ -223,48 +224,55 @@ const Suggestion = () => {
 
         return (
           <div
-            key={index} onClick={() => navigateToProfile(user)}
-            className="suggested grid grid-cols-7 flex flex-col sm:flex-row p-1 items-start sm:items-center justify-between mb-2 gap-1 border-[#6E4E37]"
+            key={index} onClick={()=>navigateToProfile(user)}
+            className="suggested flex flex-col sm:flex-row p-1 items-start sm:items-center justify-between mb-2 gap-2 border-[#6E4E37]"
           >
             {/* Avatar + Name */}
-            <div className="col-span-5 flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <img
-                src={user?.profilePhoto ?
+                src={user?.profilePhoto?
                   `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}` : `${DEFAULT_PROFILE_IMAGE}`
                 }
                 alt="avatar"
                 className="rounded-full w-9 h-9 object-cover"
               />
+              {/* <div className="flex flex-col">
+                <p className="text-sm font-semibold text-gray-800">
+                  {user.username}
+                </p>
+                <p className="text-[8px] text-gray-600">Suggested for you</p>
+              </div> */}
               <div className="flex flex-col max-w-[80px] lg:max-w-fit">
-                <p className="text-xs font-semibold text-gray-800 truncate lg:truncate-none">
-                  {displayUsername}
-                </p>
-                <p className="text-[8px] text-gray-600">
-                  Suggested for you
-                </p>
-              </div>
+  <p className="text-sm font-semibold text-gray-800 truncate lg:truncate-none">
+    {displayUsername}
+  </p>
+  <p className="text-[8px] text-gray-600">
+    Suggested for you
+  </p>
+</div>
 
             </div>
 
             {/* Buttons */}
-            <div className="col-span-2 flex flex-row gap-1 items-center sm:ml-auto">
+            <div className="flex flex-row gap-1 items-center sm:ml-auto">
               <button
-                className={`${isFollowing
+                className={`${
+                  isFollowing
                     ? "bg-gray-200 text-black"
                     : "bg-[#6F4D34] text-white"
-                  } text-xs px-2 py-1 rounded-lg border border-gray-300 font-semibold transition-colors duration-300 whitespace-nowrap`}
+                } text-[11px] sm:text-sm px-2 py-[5px] rounded-lg border border-gray-300 font-semibold transition-colors duration-300 whitespace-nowrap`}
                 onClick={() => handleFollowToggle(user._id, isFollowing)}
               >
                 {isFollowing ? "Unfollow" : "Follow"}
               </button>
-              {/* <button
-                className="text-[#6E4E37] text-sm font-bold leading-none"
+              <button
+                className="text-[#6E4E37] text-xl leading-none"
                 onClick={() =>
                   setUsers((prev) => prev.filter((u) => u._id !== user._id))
                 }
               >
                 <i className="ri-close-line"></i>
-              </button> */}
+              </button>
             </div>
           </div>
         );
@@ -281,8 +289,9 @@ const Suggestion = () => {
               <div
                 key={idx}
                 onClick={() => setActiveAdIndex(idx)}
-                className={`cursor-pointer transition-all duration-300 ease-in overflow-hidden ${idx === 0 ? "border-l-0" : "border-l-4 border-l-[#2C211B]"
-                  }`}
+                className={`cursor-pointer transition-all duration-300 ease-in overflow-hidden ${
+                  idx === 0 ? "border-l-0" : "border-l-4 border-l-[#2C211B]"
+                }`}
                 style={{
                   flexGrow: isActive ? 5 : 1,
                   flexBasis: isActive ? "65%" : "15%",
@@ -303,7 +312,7 @@ const Suggestion = () => {
         <p className="w-full text-sm text-[#564138] p-1.5 rounded-xl border-2 border-[#4C3427] font-bold text-[#333]">
           The art drop you didn’t know you needed!!
         </p>
-        {/* 
+{/* 
         <button className="text-xs mt-2 sm:text-sm w-full font-semibold text-white bg-[#6F4D34] px-3 sm:px-4 py-2 rounded hover:bg-[#cc3e0e] transition">
           Explore Now
         </button> */}

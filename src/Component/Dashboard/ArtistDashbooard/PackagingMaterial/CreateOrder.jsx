@@ -249,17 +249,17 @@ const CreateOrder = () => {
       : "Incomplete address (update required)";
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError(null);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-  const userId = localStorage.getItem("userId");
-  if (!userId) {
-    setError("User not logged in.");
-    setLoading(false);
-    return;
-  }
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      setError("User not logged in.");
+      setLoading(false);
+      return;
+    }
 
     // Create FormData object for multipart/form-data
     const data = new FormData();
@@ -281,43 +281,132 @@ const handleSubmit = async (e) => {
 
     data.append("totalPrice", formData.totalPrice);
 
-  if (formData.material) data.append("material", formData.material);
-  if (formData.stamp) data.append("stamp", formData.stamp);
-  if (formData.stickers) data.append("stickers", formData.stickers);
-  if (formData.vouchers) data.append("vouchers", formData.vouchers);
-  if (formData.card) data.append("card", formData.card);
-
-  try {
-    const response = await postAPI("/api/package-material/order/create", data);
-
-    // Assuming backend returns payment URL for payment
-    if (response?.data?.data?.paymentUrl) {
-      window.location.href = response.data.data.paymentUrl;
-    } else {
-      toast.success(response.message || "Order created successfully!");
-      navigate("/artist/packaging-material");
+    if (formData.material) {
+      data.append("material", formData.material);
     }
-  } catch (err) {
-    console.error("Error creating order:", err);
-    const errorMessage = err.response?.data?.message || "Failed to create order.";
-    setError(errorMessage);
-    toast.error(errorMessage);
-  } finally {
-    setLoading(false);
-  }
-};
-  const handleDropdownChange = (type, id) => {
+    if (formData.stamp) {
+      data.append("stamp", formData.stamp);
+    }
+    if (formData.stickers) {
+      data.append("stickers", formData.stickers);
+    }
+    if (formData.vouchers) {
+      data.append("vouchers", formData.vouchers);
+    }
+    if (formData.card) {
+      data.append("card", formData.card);
+    }
     try {
+      // Send POST request to backend
+      const response = await postAPI(
+        "/api/package-material/order/create",
+        data
+      );
+      toast.success(response.message);
+      // Handle success
+      navigate("/artist/packaging-material"); // Redirect to material list
+    } catch (err) {
+      // Handle error
+      console.error(
+        "Error in postAPI:",
+        err.response?.data || err.message || err
+      );
+      setError(err.response?.data?.message || "Failed to create order.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDropdownChange = async (type, id) => {
+    try {
+      const userId = localStorage.getItem("userId");
+
+      if (type === "material") {
+        setMaterialData(selectedMaterial);
+      }
+
+      if (type === "stamp") {
+        setStampData(selectedStamp);
+      }
+
+      if (type === "sticker") {
+        setStickerData(selectedStickers);
+      }
+
+      if (type === "vouchers") {
+        setVoucherData(selectedVouchers);
+      }
+
+      if (type === "card") {
+        setCardData(selectedCard);
+      }
+
+      // Step 2: Find the selected item from respective array
       let selectedItem = null;
-      let imageUrl = null;
 
       switch (type) {
-        case "material":
-          selectedItem = selectedMaterial.find((s) => s._id === id);
-          imageUrl = selectedItem?.materialName?.materialNameImage
+        case "stamp":
+          selectedItem = selectedStamp.find((s) => s._id === id);
+          const stampUrl = selectedItem?.materialStampImage
             ? `${
                 process.env.REACT_APP_API_URL_FOR_IMAGE
-              }/${selectedItem.materialName.materialNameImage.replace(
+              }/${selectedItem?.materialStampImage.replace(/\\/g, "/")}`
+            : null;
+          setStampData((prev) => ({
+            ...prev,
+            stamp: id,
+            price: selectedItem?.price || "",
+          }));
+          setMaterialStampImage(stampUrl);
+          break;
+        case "stickers":
+          selectedItem = selectedStickers.find((s) => s._id === id);
+          const stickerUrl = selectedItem?.materialStickersImage
+            ? `${
+                process.env.REACT_APP_API_URL_FOR_IMAGE
+              }/${selectedItem?.materialStickersImage.replace(/\\/g, "/")}`
+            : null;
+          setStickerData((prev) => ({
+            ...prev,
+            sticker: id,
+            price: selectedItem?.price || "",
+          }));
+          setMaterialStickerImage(stickerUrl);
+          break;
+        case "vouchers":
+          selectedItem = selectedVouchers.find((s) => s._id === id);
+          const VoucherUrl = selectedItem?.materialVouchersImage
+            ? `${
+                process.env.REACT_APP_API_URL_FOR_IMAGE
+              }/${selectedItem?.materialVouchersImage.replace(/\\/g, "/")}`
+            : null;
+          setVoucherData((prev) => ({
+            ...prev,
+            voucher: id,
+            price: selectedItem?.price || "",
+          }));
+          setMaterialVoucherImage(VoucherUrl);
+          break;
+        case "card":
+          selectedItem = selectedCard.find((s) => s._id === id);
+          const cardUrl = selectedItem?.materialCardImage
+            ? `${
+                process.env.REACT_APP_API_URL_FOR_IMAGE
+              }/${selectedItem?.materialCardImage.replace(/\\/g, "/")}`
+            : null;
+          setCardData((prev) => ({
+            ...prev,
+            card: id,
+            price: selectedItem?.price || "",
+          }));
+          setMaterialCardImage(cardUrl);
+          break;
+        case "material":
+          selectedItem = selectedMaterial.find((s) => s._id === id);
+          const imageUrl = selectedItem?.materialName?.materialNameImage
+            ? `${
+                process.env.REACT_APP_API_URL_FOR_IMAGE
+              }/${selectedItem?.materialName?.materialNameImage.replace(
                 /\\/g,
                 "/"
               )}`

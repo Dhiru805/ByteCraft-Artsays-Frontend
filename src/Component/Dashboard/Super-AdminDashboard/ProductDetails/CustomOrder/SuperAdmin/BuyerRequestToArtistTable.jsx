@@ -391,7 +391,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                 </div>
                                 <div className="pagination d-flex justify-content-between mt-4">
                                     <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                                        Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, filteredRequests.length)} of {filteredRequests.length} entries
+                                        Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, buyerRequests.length)} of {buyerRequests.length} entries
                                     </span>
 
                                     <ul className="pagination d-flex justify-content-end w-100">

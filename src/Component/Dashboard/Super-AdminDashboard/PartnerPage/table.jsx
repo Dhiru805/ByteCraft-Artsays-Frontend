@@ -69,11 +69,12 @@ const[loading,setLoading]=useState(true)
     setSelectedPageToDelete(null);
   };
 
-    const handleDeleteConfirmed = async (id) => {
-      try {
-        // await axiosInstance.delete(`/api/partner/delete/${id}`);
-        setPages((prev) => prev.filter((p) => p._id !== id));
-      } catch (err) {
+  const handleDeleteConfirmed = async (id) => {
+    try {
+      await axiosInstance.delete(`/api/partner/delete/${id}`);
+      setPages((prev) => prev.filter((p) => p._id !== id));
+      toast.success("Partner page deleted successfully!");
+    } catch (err) {
       toast.error(err.response?.data?.message || "Failed to delete page.");
     } finally {
       setIsDeleteDialogOpen(false);

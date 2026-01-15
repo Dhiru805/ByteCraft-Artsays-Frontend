@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import { useParams } from "react-router-dom";
-// import NavBar from "../Home/HomeComponents/NavBar";
+import NavBar from "../Home/HomeComponents/NavBar";
 import { MdOutlineEmojiEmotions } from "react-icons/md";
 import { FaRegHeart } from "react-icons/fa";
 import { FaCamera, FaRegEyeSlash  } from "react-icons/fa";
@@ -18,16 +18,14 @@ import putAPI from "../../api/putAPI";
 import postAPI from "../../api/postAPI";
 
 const MyLive = () => {
-  const { streamKey } = useParams();
+  const { streamKey, username } = useParams();
   const [showChat, setShowChat] = useState(true);
   const [liveDetail, setLiveDetail] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [ stream, setStream ] = useState(null);
   const [micOn, setMicOn] = useState(false);
   const videoRef = useRef(null);
-  // eslint-disable-next-line no-unused-vars
   const [youtubeUrl, setYoutubeUrl] = useState("");
-  // eslint-disable-next-line no-unused-vars
   const [isYoutubeActive, setIsYoutubeActive] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [showKey, setShowKey] = useState(false);
@@ -46,8 +44,9 @@ const MyLive = () => {
   const capSecondsRef = useRef(120);
   const socketRef = useRef(null);
   const [currentViewers, setCurrentViewers] = useState(0);
-  // eslint-disable-next-line no-unused-vars
   const [isLiked, setIsLiked] = useState(false);
+  const [peerConnection, setPeerConnection] = useState(null);
+  const [remoteStream, setRemoteStream] = useState(null);
 
    // WebRTC Configuration - Enhanced for better compatibility
     const rtcConfig = {
@@ -70,9 +69,7 @@ const MyLive = () => {
 };
 
 const peerConnectionsRef = useRef({}); // Store peer connections for multiple viewers
-// eslint-disable-next-line no-unused-vars
 const [ isConnecting, setIsConnecting ] = useState(false);
-// eslint-disable-next-line no-unused-vars
 const [streamer, setStreamer] = useState(null);
 const [streamerMessage, setStreamerMessage] = useState("");
 
@@ -163,7 +160,6 @@ useEffect(() => {
     });
     peerConnectionsRef.current = {};
   };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [liveDetail?.live?.streamKey]);
 
 const initializePeerConnection = (viewerSocketId) => {
@@ -377,7 +373,6 @@ const initializePeerConnection = (viewerSocketId) => {
     };
   }, [liveDetail?.live?.streamUrl]);
 
-  // eslint-disable-next-line no-unused-vars
   const handleToggleLike = () => {
     const userId = localStorage.getItem("userId");
     const streamUrl = liveDetail?.live?.streamUrl;
@@ -482,11 +477,10 @@ const formatDuration = (milliseconds) => {
         mediaRecorderRef.current = null;
       }
       if (videoRef.current) {
-          videoRef.current.srcObject = null;
-        }
-      };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        videoRef.current.srcObject = null;
+      }
+    };
+  }, []);
 
    //Mic Function
   const handleMicToggle = () => {
@@ -563,7 +557,6 @@ const formatDuration = (milliseconds) => {
     return () => {
       stopLiveStream();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -572,11 +565,9 @@ const formatDuration = (milliseconds) => {
         stream.getTracks().forEach(track => track.stop());
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stream]);
 
     //handleYoutubeShare
-    // eslint-disable-next-line no-unused-vars
     const handleYoutubeShare = () => {
     const link = prompt("Enter YouTube video link:");
     if (link) {
@@ -585,7 +576,6 @@ const formatDuration = (milliseconds) => {
     }
     };
 
-    // eslint-disable-next-line no-unused-vars
     const stopYoutubeShare = () => {
       setYoutubeUrl("");
       setIsYoutubeActive(false);
@@ -632,7 +622,6 @@ const formatDuration = (milliseconds) => {
     
     useEffect(() => {
       fetchLive();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [streamKey]);
 
     useEffect(() => {

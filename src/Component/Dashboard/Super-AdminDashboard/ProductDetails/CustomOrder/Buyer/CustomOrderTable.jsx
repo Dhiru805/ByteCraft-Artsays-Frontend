@@ -118,25 +118,13 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests }) {
                                                         {request.Artist ? `${request.Artist.id.name} ${request.Artist.id.lastName}` : 'N/A'}
                                                     </td>
                                                     <td>
-                                                        {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.MaxBudget || 0).replace(/\.00$/, '')}
+                                                        {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.MaxBudget).replace(/\.00$/, '')}
                                                     </td>
                                                     <td>
-                                                        {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.MinBudget || 0).replace(/\.00$/, '')}
+                                                        {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.MinBudget).replace(/\.00$/, '')}
                                                     </td>
                                                     <td>
-                                                        {(() => {
-                                                            const artistBudgets = request.ArtistNegotiatedBudgets || [];
-                                                            const buyerBudgets = request.BuyerNegotiatedBudgets || [];
-                                                            const latestBudget = artistBudgets.length >= buyerBudgets.length && artistBudgets.length > 0
-                                                                ? artistBudgets[artistBudgets.length - 1]
-                                                                : buyerBudgets.length > 0
-                                                                    ? buyerBudgets[buyerBudgets.length - 1]
-                                                                    : request.NegotiatedBudget || 0;
-                                                            
-                                                            return latestBudget > 0 
-                                                                ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(latestBudget).replace(/\.00$/, '')
-                                                                : "—";
-                                                        })()}
+                                                        {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(request.NegotiatedBudget).replace(/\.00$/, '')}
                                                     </td>
                                                     <td>{new Date(request.createdAt).toLocaleDateString()}</td>
                                                     <td>

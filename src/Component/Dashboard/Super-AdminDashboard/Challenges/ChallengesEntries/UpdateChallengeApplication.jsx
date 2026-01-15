@@ -263,33 +263,28 @@ import { toast } from "react-toastify";
 function UpdateChallengeApplication() {
   const { id } = useParams(); // Get the application ID from URL
   const navigate = useNavigate();
-  const location = useLocation();
-  const applicationFromState = location?.state?.application;
 
   const [formData, setFormData] = useState({
-    fullName: applicationFromState?.fullName || "",
-    email: applicationFromState?.email || "",
-    contactNumber: applicationFromState?.contactNumber || "",
-    userName: applicationFromState?.artistUsername || "",
-    description: applicationFromState?.description || "",
-    guidelines: applicationFromState?.guidelines || false,
-    challenge: applicationFromState?.challenge || "",
-    category: applicationFromState?.category || "",
-    work: applicationFromState?.work || "",
+    fullName: "",
+    email: "",
+    contactNumber: "",
+    userName: "",
+    description: "",
+    guidelines: false,
+    challenge: "",
+    category: "",
   });
 
   const [works, setWorks] = useState(null);
   const [bannerFile, setBannerFile] = useState(null); // New file to upload
-  const [existingBanner, setExistingBanner] = useState(applicationFromState?.bannerImage || null); // Existing banner URL
+  const [existingBanner, setExistingBanner] = useState(null); // Existing banner URL
   const [loading, setLoading] = useState(false);
 
-  // Fetch application on component mount if not provided in state
+  // Fetch application on component mount
   useEffect(() => {
     const fetchApplication = async () => {
-      if (applicationFromState) return; // Skip fetch if we already have data from state
-
       try {
-        const response = await getAPI(`/api/challenges-applications/${id}`);
+        const response = await getAPI(`/api/challenge-applications/applications/${id}`);
         if (response.hasError === false) {
           const app = response.data;
           setFormData({
@@ -301,7 +296,6 @@ function UpdateChallengeApplication() {
             guidelines: app.guidelines || false,
             challenge: app.challenge || "",
             category: app.category || "",
-            work: app.work || "",
           });
           setExistingBanner(app.bannerImage || null);
         } else {

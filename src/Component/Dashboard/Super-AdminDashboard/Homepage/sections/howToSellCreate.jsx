@@ -393,10 +393,10 @@ const HowToSellCreate = () => {
             buttonName: s.buttonName || "",
             buttonLink: s.buttonLink || "",
             cards: (s.cards || []).map(c => ({
-              image: c.image || null,
+              image: null,
               title: c.title || c.heading || "",
               description: c.description || "",
-              icons: (c.icons || []).map((icon) => icon || null),
+              icons: (c.icons || []).map(() => null),
             }))
           });
 
@@ -408,20 +408,20 @@ const HowToSellCreate = () => {
 
           setExistingCardImages(
             (s.cards || []).map(c =>
-              c.image ? `${BASE_URL}/${c.image.replace(/\\/g, "/")}` : null
+              c.image ? `${BASE_URL}/${c.image}` : null
             )
           );
 
           setImagePreviews(
             (s.cards || []).map(c =>
-              c.image ? `${BASE_URL}/${c.image.replace(/\\/g, "/")}` : null
+              c.image ? `${BASE_URL}/${c.image}` : null
             )
           );
 
           setExistingIcons(
             (s.cards || []).map(c =>
               (c.icons || []).map(icon =>
-                icon ? `${BASE_URL}/${icon.replace(/\\/g, "/")}` : null
+                icon ? `${BASE_URL}/${icon}` : null
               )
             )
           );
@@ -429,7 +429,7 @@ const HowToSellCreate = () => {
           setIconPreviews(
             (s.cards || []).map(c =>
               (c.icons || []).map(icon =>
-                icon ? `${BASE_URL}/${icon.replace(/\\/g, "/")}` : null
+                icon ? `${BASE_URL}/${icon}` : null
               )
             )
           );
@@ -439,8 +439,8 @@ const HowToSellCreate = () => {
         toast.error(err.response?.data?.message || "Failed to load Homepage");
       }
     };
-      loadHomepageAndSection();
-      }, [navigate]);
+    loadHomepageAndSection();
+  }, []);
 
   const validateImageFile = (file, type) => {
     if (!file.type.match(/image\/(jpeg|png|svg|jpg)/)) {
@@ -640,14 +640,14 @@ const HowToSellCreate = () => {
                 {formData.cards.map((c, idx) => (
                   <div key={idx} className="border mb-3 p-3 rounded shadow">
                     <div className="form-group">
-                        <label>Card Image *</label>
-                        <input
-                          type="file"
-                          accept="image/jpeg,image/png,image/svg+xml"
-                          onChange={(e) => handleChange(e, idx, "image")}
-                          className="form-control"
-                          required={!existingCardImages[idx]}
-                        />
+                      <label>Card Image *</label>
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/svg+xml"
+                        onChange={(e) => handleChange(e, idx, "image")}
+                        className="form-control"
+                        required
+                      />
                       {(imagePreviews[idx] || existingCardImages[idx]) && (
                         <img src={imagePreviews[idx] || existingCardImages[idx]} alt="Card Preview" style={{ maxWidth: "200px", maxHeight: "200px", marginTop: "5px" }} />
                       )}

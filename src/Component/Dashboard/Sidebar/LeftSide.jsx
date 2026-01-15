@@ -218,11 +218,11 @@ const UserAccount = () => {
               Menu
             </a>
           </li>
-            <li className="nav-item">
-              <a className="nav-link" data-toggle="tab" href="#setting">
-                <i className="fa fa-cog" aria-hidden="true"></i>
-              </a>
-            </li>
+          <li className="nav-item">
+            <a className="nav-link" data-toggle="tab" href="#setting">
+              <i class="fa fa-cog" aria-hidden="true"></i>
+            </a>
+          </li>
         </ul>
         <div className="tab-content padding-0">
           <div className="tab-pane active" id="menu">

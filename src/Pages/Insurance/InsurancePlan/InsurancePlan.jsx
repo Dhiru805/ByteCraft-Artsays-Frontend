@@ -378,18 +378,14 @@ const InsurancePlan = () => {
                 {/* Pointers */}
                 {card.pointers?.length > 0 && (
                   <div className="border my-3 p-3 bg-[#FFF2E7] rounded-xl">
-                    <table className="w-full">
-                      <tbody>
-                        {card.pointers.map((point, idx) => (
-                          <tr key={idx}>
-                            <td className="w-5 align-top pt-1">
-                              <FaStar className="text-[#FF725E]" />
-                            </td>
-                            <td className="pl-2 pb-2 text-sm md:text-base">{point}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                    {card.pointers.map((point, idx) => (
+                      <tr key={idx}>
+                        <td>
+                          <FaStar className="text-[#FF725E]" />
+                        </td>
+                        <td className="pl-2">{point}</td>
+                      </tr>
+                    ))}
                   </div>
                 )}
               </main>

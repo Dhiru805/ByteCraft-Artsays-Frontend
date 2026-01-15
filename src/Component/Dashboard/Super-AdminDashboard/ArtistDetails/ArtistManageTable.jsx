@@ -393,14 +393,14 @@ function ArtistManageTable() {
                                   "selectedArtistId",
                                   artist._id
                                 );
-                                  navigate(
-                                    "/super-admin/artist/management/artisteditreuqest/",
-                                    { state: { artist } }
-                                  );
-                                }}
-                              >
-                                <i className="fa fa-pencil"></i>
-                              </button>
+                                navigate(
+                                  "/super-admin/artist/management/artisteditreuqest/",
+                                  { state: { artist } }
+                                );
+                              }}
+                            >
+                              <i class="fa fa-pencil"></i>
+                            </button>
                             <button
                               type="button"
                               className="btn btn-outline-danger btn-sm mr-2"

@@ -42,11 +42,7 @@ const ArtworkPricingDetails = ({ userId }) => {
                     console.warn("No artwork data found in API response.");
                 }
             } catch (error) {
-                if (error.response && error.response.status === 404) {
-                    console.log("Artwork details not found for this user");
-                } else {
-                    console.error("Error fetching details:", error);
-                }
+                console.error("Error fetching details:", error);
             }
         };
 

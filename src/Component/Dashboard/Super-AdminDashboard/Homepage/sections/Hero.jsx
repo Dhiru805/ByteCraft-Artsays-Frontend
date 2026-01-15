@@ -38,30 +38,34 @@ const HeroSectionCreate = () => {
           const section = sectionRes.data.data;
           setSectionId(section._id);
 
-            setFormData({
-              title: section.title || "",
-              description: section.description || "",
-              buttons: section.buttons?.length ? section.buttons : [{ name: "", link: "" }],
-              recurrentTitles: section.recurrentTitles?.length ? section.recurrentTitles.map(rt => ({
-                title: rt.title || "",
-                image: rt.image || null,
-                duration: rt.duration || ""
-              })) : [{ title: "", image: null, duration: "" }]
-            });
+          setFormData({
+            title: section.title || "",
+            description: section.description || "",
+            buttons: section.buttons?.length ? section.buttons : [{ name: "", link: "" }],
+            recurrentTitles: section.recurrentTitles?.length ? section.recurrentTitles.map(rt => ({
+              title: rt.title || "",
+              image: null,
+              duration: rt.duration || ""
+            })) : [{ title: "", image: null, duration: "" }]
+          });
 
-            const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE || `${process.env.REACT_APP_API_URL}`;
-            const existingImgs = (section.recurrentTitles || []).map(rt =>
-              rt.image ? `${BASE_URL}/${rt.image.replace(/\\/g, "/")}` : (rt.imageUrl ? `${BASE_URL}/${rt.imageUrl.replace(/\\/g, "/")}` : null)
-            );
-            setExistingImages(existingImgs.length ? existingImgs : [null]);
-            setImagePreviews(existingImgs.length ? existingImgs : [null]);
+          // const existingImgs = section.recurrentTitles?.map(rt => rt.image || rt.imageUrl || null) || [null];
+          // setExistingImages(existingImgs);
+          // setImagePreviews(existingImgs);
+
+          const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE || `${process.env.REACT_APP_API_URL}`;
+          const existingImgs = (section.recurrentTitles || []).map(rt =>
+            rt.image ? `${BASE_URL}/${rt.image}` : (rt.imageUrl ? `${BASE_URL}/${rt.imageUrl}` : null)
+          );
+          setExistingImages(existingImgs.length ? existingImgs : [null]);
+          setImagePreviews(existingImgs.length ? existingImgs : [null]);
         }
       } catch (err) {
         toast.error(err.response?.data?.message || "Failed to load Homepage");
       }
     };
-      loadHomepageAndSection();
-      }, [navigate]);
+    loadHomepageAndSection();
+  }, []);
 
   const validateImageFile = (file, type) => {
     if (!file.type.match(/image\/(jpeg|png|svg|jpg)/)) {
@@ -231,11 +235,11 @@ const HeroSectionCreate = () => {
                       <label>Title *</label>
                       <input type="text" value={rt.title} onChange={(e) => handleRecurrentChange(e, idx, "title")} className="form-control" required />
                     </div>
-                      <div className="form-group">
-                        <label>Image *</label>
-                        <input type="file" accept="image/jpeg,image/png,image/svg+xml" onChange={(e) => handleRecurrentChange(e, idx, "image")} className="form-control" />
-                        {(imagePreviews[idx] || existingImages[idx]) && <img src={imagePreviews[idx] || existingImages[idx]} alt="Recurrent Preview" style={{ maxWidth: "200px", maxHeight: "200px", marginTop: "5px" }} />}
-                      </div>
+                    <div className="form-group">
+                      <label>Image *</label>
+                      <input type="file" accept="image/jpeg,image/png,image/svg+xml" onChange={(e) => handleRecurrentChange(e, idx, "image")} className="form-control" required />
+                      {(imagePreviews[idx] || existingImages[idx]) && <img src={imagePreviews[idx] || existingImages[idx]} alt="Recurrent Preview" style={{ maxWidth: "200px", maxHeight: "200px", marginTop: "5px" }} />}
+                    </div>
                     <div className="form-group">
                       <label>Duration (seconds) *</label>
                       <input type="number" value={rt.duration} onChange={(e) => handleRecurrentChange(e, idx, "duration")} className="form-control" required />

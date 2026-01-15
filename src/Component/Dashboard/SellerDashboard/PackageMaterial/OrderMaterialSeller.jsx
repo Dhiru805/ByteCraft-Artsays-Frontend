@@ -3,7 +3,7 @@ import getAPI from "../../../../api/getAPI";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../../ConfirmationDialog";
 
-const OrderMaterial = () => {
+const OrderMaterialSeller = () => {
   const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
   const [productsPerPage, setProductsPerPage] = useState(10);
@@ -47,18 +47,17 @@ const OrderMaterial = () => {
   const fetchOrders = async () => {
     try {
       const userId = localStorage.getItem("userId");
-      const res = await getAPI(`/api/package-material/${userId}`);
+      const res = await getAPI(`/api/package-material/seller/${userId}`);
 
       if (res.hasError) {
         console.error("Error fetching orders:", res.message);
         setOrders([]);
         return;
       }
-
+      console.log("Orders data:", res);
       const ordersArray = Array.isArray(res.data.data)
         ? res.data.data
         : [res.data.data];
-
       setOrders(ordersArray);
     } catch (error) {
       console.error("Failed to fetch orders:", error);
@@ -66,12 +65,12 @@ const OrderMaterial = () => {
     }
   };
 
-    useEffect(() => {
-      fetchOrders();
-    }, []);
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
-    // Filter based on search term
-    const filteredItems = orders.filter((mat) => {
+  // Filter based on search term
+  const filteredItems = orders.filter((mat) => {
     const names = [
       mat.material?.materialName?.materialName,
       mat.stamp?.materialStamp,
@@ -87,7 +86,6 @@ const OrderMaterial = () => {
 
   const totalPages = Math.ceil(filteredItems.length / productsPerPage);
   const startIndex = (currentPage - 1) * productsPerPage;
-  const endIndex = startIndex + productsPerPage;
   const paginatedOrders = filteredItems.slice(
     startIndex,
     startIndex + productsPerPage
@@ -151,57 +149,70 @@ const OrderMaterial = () => {
                 <li className="breadcrumb-item">Packaging Material Order</li>
               </ul>
             </div>
-
             <div className="col-lg-6 col-md-6 col-sm-12">
               <div className="d-flex flex-row-reverse">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => navigate(`/artist/packaging-material/create`)}
-                >
-                  <i className="fa fa-plus"></i> Create Order
-                </button>
+                <div className="page_action">
+                  <button
+                    type="button"
+                    className="btn btn-secondary mr-2"
+                    onClick={() =>
+                      navigate(`/seller/packaging-material/create`)
+                    }
+                  >
+                    <i className="fa fa-plus"></i> Create Order
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* TABLE SECTION */}
         <div className="row clearfix">
           <div className="col-lg-12">
             <div className="card">
               <div className="header d-flex justify-content-between align-items-center">
-                <div className="d-flex align-items-center">
-                  <label className="mr-2">Show</label>
+                <div className="d-none d-md-flex align-items-center mb-2 mb-md-0">
+                  <label className="mb-0 mr-2">Show</label>
                   <select
                     className="form-control form-control-sm"
                     value={productsPerPage}
                     onChange={handleProductsPerPageChange}
-                    style={{ width: "70px" }}
+                    style={{ minWidth: "70px" }}
                   >
                     <option value="10">10</option>
                     <option value="25">25</option>
                     <option value="50">50</option>
                     <option value="100">100</option>
                   </select>
-                  <label className="ml-2">entries</label>
+                  <label className="mb-0 ml-2">entries</label>
                 </div>
-
-                <div>
-                  <input
-                    type="text"
-                    className="form-control form-control-sm"
-                    placeholder="Search"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
+                <div className="w-100 w-md-auto d-flex justify-content-end">
+                  <div className="input-group" style={{ maxWidth: "150px" }}>
+                    <input
+                      type="text"
+                      className="form-control form-control-sm"
+                      placeholder="Search"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    <i
+                      className="fa fa-search"
+                      style={{
+                        position: "absolute",
+                        right: "10px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        pointerEvents: "none",
+                      }}
+                    ></i>
+                  </div>
                 </div>
               </div>
 
               <div className="body">
                 <div className="table-responsive">
                   <table className="table table-hover">
-                    <thead className="thead-dark">
+                    <thead className="thead-dark text-nowrap">
                       <tr>
                         <th>OrderId</th>
                         <th>Material</th>
@@ -278,22 +289,22 @@ const OrderMaterial = () => {
                   </table>
                 </div>
 
-                {/* PAGINATION */}
-                <div className="d-flex justify-content-between mt-4">
-                  <span>
-                    Showing {startIndex + 1} to{" "}
-                    {Math.min(endIndex, filteredItems.length)} of{" "}
-                    {filteredItems.length} entries
+                <div className="pagination d-flex justify-content-between mt-4">
+                  <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
+                    Showing {(currentPage - 1) * productsPerPage + 1} to{" "}
+                    {Math.min(
+                      currentPage * productsPerPage,
+                      filteredItems.length
+                    )}{" "}
+                    of {filteredItems.length} entries
                   </span>
 
-                  <ul className="pagination">
+                  <ul className="pagination d-flex justify-content-end w-100">
                     <li
                       className={`paginate_button page-item ${currentPage === 1 ? "disabled" : ""}`}
                       onClick={handlePrevious}
                     >
-                      <button className="page-link" onClick={handlePrevious}>
-                        Previous
-                      </button>
+                      <button className="page-link">Previous</button>
                     </li>
 
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map(
@@ -312,9 +323,7 @@ const OrderMaterial = () => {
                       className={`paginate_button page-item ${currentPage === totalPages ? "disabled" : ""}`}
                       onClick={handleNext}
                     >
-                      <button className="page-link" onClick={handleNext}>
-                        Next
-                      </button>
+                      <button className="page-link">Next</button>
                     </li>
                   </ul>
                 </div>
@@ -336,4 +345,4 @@ const OrderMaterial = () => {
   );
 };
 
-export default OrderMaterial;
+export default OrderMaterialSeller;

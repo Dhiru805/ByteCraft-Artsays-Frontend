@@ -1,9 +1,301 @@
+// import React, { useEffect, useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import getAPI from "../../../../../api/getAPI";
+// import postAPI from "../../../../../api/postAPI";
+// import putAPI from "../../../../../api/putAPI";
+// import { toast } from "react-toastify";
+
+// const UpgradePass = () => {
+//   const navigate = useNavigate();
+//   const [passes, setPasses] = useState([]);
+//   const [selectedPass, setSelectedPass] = useState(null);
+//   const [currentPassId, setCurrentPassId] = useState(null);
+//   const [currentPassPrice, setCurrentPassPrice] = useState(null);
+//   const [activeOrderId, setActiveOrderId] = useState(null);
+//   const userId = localStorage.getItem("userId");
+
+//   const parsePrice = (value) => {
+//     if (value == null) return null;
+//     if (typeof value === "number") return value;
+//     const str = String(value);
+//     const match = str.match(/[0-9]+(?:\.[0-9]+)?/);
+//     if (!match) return null;
+//     const parsed = parseFloat(match[0]);
+//     return isNaN(parsed) ? null : parsed;
+//   };
+
+//   const getPassPrice = (passObj) => {
+//     if (!passObj) return null;
+//     return parsePrice(passObj.pricing ?? passObj.price ?? passObj.amount);
+//   };
+
+//   const deriveCurrentPrice = (list, activeOrder, activePass) => {
+//     let price = activePass ? getPassPrice(activePass) : null;
+//     if (
+//       price == null &&
+//       activeOrder &&
+//       activeOrder.pass &&
+//       typeof activeOrder.pass === "object"
+//     ) {
+//       price = getPassPrice(activeOrder.pass);
+//     }
+//     if (
+//       price == null &&
+//       activeOrder &&
+//       activeOrder.pass &&
+//       typeof activeOrder.pass === "object"
+//     ) {
+//       const byName = list.find(
+//         (pp) =>
+//           (pp?.name || "").toLowerCase() ===
+//           (activeOrder.pass.name || "").toLowerCase()
+//       );
+//       if (byName) price = getPassPrice(byName);
+//     }
+//     return price;
+//   };
+
+//   useEffect(() => {
+//     const load = async () => {
+//       try {
+//         const [p, o] = await Promise.all([
+//           getAPI("/api/bidding/passes", {}, true),
+//           getAPI(`/api/bidding/pass-orders/my?userId=${userId}`, {}, true),
+//         ]);
+//         const list = Array.isArray(p?.data?.data) ? p.data.data : [];
+//         setPasses(list);
+//         const orders = Array.isArray(o?.data?.data) ? o.data.data : [];
+//         const activeOrder = orders.find((x) => x && x.active);
+//         const activePassId =
+//           activeOrder &&
+//           (activeOrder.passId ||
+//             activeOrder.pass ||
+//             activeOrder.pass_id ||
+//             activeOrder.passID);
+//         const activePass =
+//           list.find(
+//             (pp) => pp && (pp._id === activePassId || pp.id === activePassId)
+//           ) ||
+//           (activeOrder && typeof activeOrder.pass === "object"
+//             ? activeOrder.pass
+//             : null);
+//         const price = deriveCurrentPrice(list, activeOrder, activePass);
+//         setCurrentPassId(activePass ? activePass._id || activePass.id : null);
+//         setCurrentPassPrice(price);
+//         setActiveOrderId(
+//           activeOrder ? activeOrder._id || activeOrder.id : null
+//         );
+//       } catch {
+//         setPasses([]);
+//       }
+//     };
+//     load();
+//   }, []);
+
+//   const confirmUpgrade = async () => {
+//     if (!selectedPass) {
+//       toast.info("Select a pass");
+//       return;
+//     }
+//     if (!activeOrderId) {
+//       toast.error("No active pass to upgrade");
+//       return;
+//     }
+//     try {
+//       const deactivate = await putAPI(
+//         `/api/bidding/pass-orders/${activeOrderId}/status`,
+//         { active: false },
+//         {},
+//         true
+//       );
+//       if (deactivate?.hasError) {
+//         toast.error(deactivate?.message || "Failed to deactivate current pass");
+//         return;
+//       }
+//       const res = await postAPI(
+//         "/api/bidding/pass-orders",
+//         { passId: selectedPass, userId },
+//         {},
+//         true
+//       );
+//       if (!res?.hasError) {
+//         toast.success("Pass upgraded");
+//         navigate("/artist/bidding-pass-table");
+//       } else {
+//         toast.error(res?.message || "Failed");
+//       }
+//     } catch {
+//       toast.error("Failed");
+//     }
+//   };
+
+//   const visiblePasses = (() => {
+//     const list = Array.isArray(passes) ? passes : [];
+//     return list.filter((pp) => {
+//       const price = getPassPrice(pp);
+//       const id = pp?._id || pp?.id;
+//       const byPrice =
+//         currentPassPrice != null && price != null && price > currentPassPrice;
+//       return id !== currentPassId && byPrice;
+//     });
+//   })();
+
+//   return (
+//     <div className="container-fluid mt-3">
+//       <div className="block-header">
+//         <div className="row">
+//           <div className="col-lg-6 col-md-6 col-sm-12">
+//             <h2>Upgrade Bidding Pass</h2>
+//           </div>
+//         </div>
+//       </div>
+
+//       <div className="row clearfix">
+//         {visiblePasses.length === 0 ? (
+//           <div className="col-12">
+//             <div className="alert alert-info" role="alert">
+//               You have the latest plan.
+//             </div>
+//           </div>
+//         ) : (
+//           visiblePasses.map((pass, index) => {
+//             const isActive = selectedPass === pass._id;
+//             return (
+//               <div
+//                 key={pass._id || index}
+//                 className="col-lg-4 col-md-6 col-sm-12 mb-4"
+//               >
+//                 <div
+//                   className={`card position-relative ${
+//                     isActive ? "border-primary" : ""
+//                   }`}
+//                   style={{ cursor: "pointer" }}
+//                   onClick={() => setSelectedPass(pass._id)}
+//                 >
+//                   <div className="d-flex justify-content-between align-items-center px-4 pt-4 pb-2">
+//                     <input
+//                       type="radio"
+//                       name="passPlan"
+//                       checked={isActive}
+//                       onChange={() => setSelectedPass(pass._id)}
+//                       className="form-check-input"
+//                       style={{
+//                         width: "20px",
+//                         height: "20px",
+//                         marginLeft: "1px",
+//                         cursor: "pointer",
+//                       }}
+//                     />
+//                     <label
+//                       className="form-check-label fw-bold mb-0"
+//                       style={{
+//                         fontSize: "2rem",
+//                         marginLeft: "50px",
+//                         cursor: "pointer",
+//                       }}
+//                     >
+//                       {pass.name}
+//                     </label>
+//                   </div>
+//                   <ul className={`pricing body ${isActive ? "active" : ""}`}>
+//                     <li>
+//                       <strong>Validity:</strong> {pass.validityPeriod ? `${pass.validityPeriod} days` : "-"}
+//                     </li>
+//                     <li>
+//                       <strong>Product Upload Limit:</strong>{" "}
+//                       {pass.productUploadLimit || "-"}
+//                     </li>
+//                     <li>
+//                       <strong>Base Price Range:</strong>{" "}
+//                       {pass.basePriceRange
+//                         ? (() => {
+//                             const parts = String(pass.basePriceRange).split('-');
+//                             if (parts.length === 2) {
+//                               return `₹${parts[0].trim()} - ₹${parts[1].trim()}`;
+//                             } else {
+//                               return pass.basePriceRange;
+//                             }
+//                           })()
+//                         : "-"}
+//                     </li>
+//                     <li>
+//                       <strong>Bid Visibility:</strong>{" "}
+//                       {pass.bidVisibility || "-"}
+//                     </li>
+//                     <li>
+//                       <strong>Bidding Analytics:</strong>{" "}
+//                       {pass.biddingAnalytics || "-"}
+//                     </li>
+//                     <li>
+//                       <strong>Add-on Access:</strong>{" "}
+//                       {pass.addonAccess && pass.addonAccess.length
+//                         ? pass.addonAccess.join(", ")
+//                         : "-"}
+//                     </li>
+//                     <li>
+//                       <strong>Support Priority:</strong>{" "}
+//                       {pass.supportPriority || "-"}
+//                     </li>
+//                     <li>
+//                       <strong>Refund / Cancellation:</strong>{" "}
+//                       {pass.refundPolicy || "-"}
+//                     </li>
+//                     <li>
+//                       <strong>Early Renewal Bonus:</strong>{" "}
+//                       {pass.earlyRenewalBonus || "-"}
+//                     </li>
+//                     <li>
+//                       <strong>Custom Bid Time Control:</strong>{" "}
+//                       {pass.customBidTimeControl || "-"}
+//                     </li>
+//                     <li>
+//                       <strong>Exclusive Auctions Access:</strong>{" "}
+//                       {pass.exclusiveAuctionsAccess ? "Yes" : "No"}
+//                     </li>
+//                     <li>
+//                       <strong>Dashboard Features:</strong>{" "}
+//                       {pass.dashboardFeatures || "-"}
+//                     </li>
+//                     <li className="mt-1">
+//                       <div className="text-center">
+//                         <strong>PRICE</strong>
+//                         <div
+//                           className="fw-bold text-primary"
+//                           style={{ fontSize: "2rem", lineHeight: 1 }}
+//                         >
+//                           {pass.pricing ? `₹${pass.pricing}` : "-"}
+//                         </div>
+//                       </div>
+//                     </li>
+//                   </ul>
+//                 </div>
+//               </div>
+//             );
+//           })
+//         )}
+//       </div>
+
+//       <div className="pt-2 pb-4">
+//         <button
+//           type="button"
+//           className="btn btn-secondary"
+//           disabled={!selectedPass}
+//           onClick={confirmUpgrade}
+//         >
+//           <i className="bi-gem pr-1"></i> Confirm Upgrade
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default UpgradePass;
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../../api/getAPI";
 import postAPI from "../../../../../api/postAPI";
 import putAPI from "../../../../../api/putAPI";
-import ConfirmModal from "./ConfirmModal";
 import { toast } from "react-toastify";
 
 const UpgradePass = () => {
@@ -13,12 +305,8 @@ const UpgradePass = () => {
   const [currentPassId, setCurrentPassId] = useState(null);
   const [currentPassPrice, setCurrentPassPrice] = useState(null);
   const [activeOrderId, setActiveOrderId] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
-
   const userId = localStorage.getItem("userId");
-  // const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const parsePrice = (value) => {
     if (value == null) return null;
     if (typeof value === "number") return value;
@@ -103,97 +391,40 @@ const UpgradePass = () => {
     load();
   }, []);
 
-  // const confirmUpgrade = async () => {
-  //   if (!selectedPass) {
-  //     toast.info("Select a pass");
-  //     return;
-  //   }
-  //   if (!activeOrderId) {
-  //     toast.error("No active pass to upgrade");
-  //     return;
-  //   }
-  //   try {
-  //     const deactivate = await putAPI(
-  //       `/api/bidding/pass-orders/${activeOrderId}/status`,
-  //       { active: false },
-  //       {},
-  //       true
-  //     );
-  //     if (deactivate?.hasError) {
-  //       toast.error(deactivate?.message || "Failed to deactivate current pass");
-  //       return;
-  //     }
-  //     const res = await postAPI(
-  //       "/api/bidding/pass-orders",
-  //       { passId: selectedPass, userId },
-  //       {},
-  //       true
-  //     );
-  //     if (!res?.hasError) {
-  //       toast.success("Pass upgraded");
-  //       navigate("/artist/bidding-pass-table");
-  //     } else {
-  //       toast.error(res?.message || "Failed");
-  //     }
-  //   } catch {
-  //     toast.error("Failed");
-  //   }
-  // };
-
-  const confirmUpgrade = () => {
+  const confirmUpgrade = async () => {
     if (!selectedPass) {
-      toast.info("Please select a pass to upgrade to");
+      toast.info("Select a pass");
       return;
     }
-
     if (!activeOrderId) {
-      toast.error("No active pass found to upgrade");
+      toast.error("No active pass to upgrade");
       return;
     }
-
-    setShowConfirm(true); // OPEN MODAL
-  };
-
-  const handleUpgradeConfirmed = async () => {
-    setConfirmLoading(true);
-    setLoading(true);
-
     try {
-      const deactivateRes = await putAPI(
+      const deactivate = await putAPI(
         `/api/bidding/pass-orders/${activeOrderId}/status`,
         { active: false },
         {},
         true
       );
-
-      if (deactivateRes?.hasError) {
-        toast.error(
-          deactivateRes?.message || "Failed to deactivate current pass"
-        );
+      if (deactivate?.hasError) {
+        toast.error(deactivate?.message || "Failed to deactivate current pass");
         return;
       }
-
-      toast.success("Current pass deactivated");
-
-      const purchaseRes = await postAPI(
+      const res = await postAPI(
         "/api/bidding/pass-orders",
-       { passId: selectedPass, userId },
+        { passId: selectedPass, userId },
         {},
         true
       );
-
-      if (purchaseRes?.data?.data?.paymentUrl) {
-        window.location.href = purchaseRes.data.data.paymentUrl;
+      if (!res?.hasError) {
+        toast.success("Pass upgraded");
+        navigate("/artist/bidding-pass-table");
       } else {
-        toast.error("Payment link not received");
+        toast.error(res?.message || "Failed");
       }
-    } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong during upgrade");
-    } finally {
-      setConfirmLoading(false);
-      setLoading(false);
-      setShowConfirm(false);
+    } catch {
+      toast.error("Failed");
     }
   };
 
@@ -775,21 +1006,12 @@ const UpgradePass = () => {
         <button
           type="button"
           className="btn btn-primary"
-          disabled={!selectedPass || loading}
+          disabled={!selectedPass}
           onClick={confirmUpgrade}
         >
-          <i className="bi bi-gem me-1"></i>
-          {loading ? "Processing Upgrade..." : "Confirm Upgrade"}
+          <i className="bi-gem pr-1"></i> Confirm Upgrade
         </button>
       </div>
-      <ConfirmModal
-        show={showConfirm}
-        title="Confirm Upgrade"
-        message="Upgrading will deactivate your current pass and initiate payment for the new one. Do you want to continue?"
-        loading={confirmLoading}
-        onConfirm={handleUpgradeConfirmed}
-        onCancel={() => setShowConfirm(false)}
-      />
     </div>
   );
 };

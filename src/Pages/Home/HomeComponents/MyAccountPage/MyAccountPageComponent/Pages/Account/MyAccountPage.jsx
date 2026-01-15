@@ -46,32 +46,30 @@ const isOrderCompleted = pathname.startsWith('/my-account/order-completed');
 
   return (
     <>
-      <div className="min-h-[200px] w-full px-4 md:px-12 py-12 bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center">
+      {/* Top Section */}
+      <div className="h-full w-full p-4 md:p-12 bg-[#E8E8E8] flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight">{heading}</h2>
-          <p className="text-sm text-gray-500 mt-4 flex items-center justify-center gap-2">
-            <Link to="/" className="text-gray-500 hover:text-[#5C4033] transition-colors">
+          <h2 className="text-4xl font-bold text-zinc-900">{heading}</h2>
+          <p className="text-sm text-gray-500 mt-4">
+            <Link to="/" className="text-gray-500 hover:underline cursor-pointer">
               Home
-            </Link>
-            <span className="text-gray-400">/</span>
-            <span className="text-[#5C4033] font-medium">{heading}</span>
+            </Link> &gt; {heading}
           </p>
         </div>
       </div>
 
+      {/* Main Layout */}
       {!(isTrackOrder || isWishlist || isOrderCompleted || isMyCart || isCheckOut) ? (
-        <div className="w-full max-w-[1440px] mx-auto gap-6 bg-white grid grid-cols-1 lg:grid-cols-12 py-8">
-          <div className="hidden lg:block lg:col-span-3">
-            <div className="sticky top-10">
-              <AccountSidebar />
-            </div>
+        <div className="w-full max-w-[1440px] mx-auto gap-6 bg-white grid grid-cols-8 py-4 px-3 md:px-0">
+            <div className="hidden lg:block w-full col-span-2">
+            <AccountSidebar />
           </div>
-          <div className="lg:col-span-9 px-3 md:!px-0">
+          <div className="w-full col-span-8 md:col-span-6">
             <Outlet />
           </div>
         </div>
       ) : (
-        <div className="w-full max-w-[1440px] mx-auto bg-white py-8">
+        <div className="w-full max-w-[1440px] mx-auto gap-6 bg-white py-4 px-3 md:px-0">
           <Outlet />
         </div>
       )}

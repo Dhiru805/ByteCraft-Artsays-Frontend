@@ -68,9 +68,12 @@ const NotificationAndPreferences = () => {
             await fetchSubCategoryData(cat.value, false);
           })
         );
+      } else {
+        toast.error(`Failed to load categories for main category ID ${mainCategoryId}.`);
       }
     } catch (err) {
-      console.warn(`Could not fetch categories for main category ID ${mainCategoryId}`);
+      console.error(`Error fetching categories for main category ID ${mainCategoryId}:`, err);
+      toast.error("Error fetching categories.");
     } finally {
       setSearchLoading(false);
     }
@@ -91,12 +94,15 @@ const NotificationAndPreferences = () => {
           ...prev.filter((sub) => sub.categoryId !== categoryId), // Remove old subcategories for this category
           ...formattedSubCategories,
         ]);
-          if (setDropdown) {
-            setSubCategories(formattedSubCategories);
-          }
+        if (setDropdown) {
+          setSubCategories(formattedSubCategories);
         }
-      } catch (err) {
-      console.warn(`Could not fetch subcategories for category ID ${categoryId}`);
+      } else {
+        toast.error(`Failed to load subcategories for category ID ${categoryId}.`);
+      }
+    } catch (err) {
+      console.error(`Error fetching subcategories for category ID ${categoryId}:`, err);
+      toast.error("Error fetching subcategories.");
     } finally {
       setSearchLoading(false);
     }
@@ -341,221 +347,122 @@ const NotificationAndPreferences = () => {
   };
 
   return (
-    <div className="max-w-[1440px] mx-auto">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-          Notification & Preferences
-        </h1>
+    <div className="w-full space-y-6">
+      <h2 className="text-2xl font-semibold text-gray-950">Notification and Preferences</h2>
+
+      {/* Search Category */}
+      <div>
+        <label className="block mb-2 font-medium">Search Category</label>
+        <Select
+          className="w-full text-gray-700"
+          options={searchableCategories}
+          getOptionLabel={e => e.fullLabel}
+          getOptionValue={e => e.value}
+          placeholder="Search for any category..."
+          isClearable
+          onChange={handleSearchCategoryChange}
+          isDisabled={loading}
+          isLoading={searchLoading}
+          formatOptionLabel={(option) => (
+            <div style={{ paddingLeft: option.type === 'subCategory' ? 20 : option.type === 'category' ? 10 : 0 }}>
+              {option.fullLabel}
+            </div>
+          )}
+        />
       </div>
 
-      <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-gray-100 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50/50 transition-all duration-500">
-        <div className="flex items-center gap-4 mb-8">
-          <div className="w-12 h-12 bg-[#5C4033]/10 rounded-2xl flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-[#5C4033]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-gray-900">Personalize Your Experience</h3>
-            <p className="text-sm text-gray-500">Choose your interests and how you want to be notified</p>
-          </div>
+      {/* Main Category */}
+      <div>
+        <label className="block mb-2 font-medium">Main Category</label>
+        <Select
+          className="w-full text-gray-700"
+          value={formData.preferredArtCategories[0] || null}
+          onChange={(option) => handleCategoryChange(option, "main")}
+          options={mainCategories}
+          placeholder="Select main category..."
+          isDisabled={loading}
+        />
+      </div>
+
+      {/* Category */}
+      <div>
+        <label className="block mb-2 font-medium">Category</label>
+        <Select
+          className="w-full text-gray-700"
+          value={formData.preferredArtCategories[1] || null}
+          onChange={(option) => handleCategoryChange(option, "category")}
+          options={categories}
+          placeholder="Select category..."
+          isDisabled={!formData.preferredArtCategories[0] || loading}
+        />
+      </div>
+
+      {/* Subcategory */}
+      <div>
+        <label className="block mb-2 font-medium">Subcategory</label>
+        <Select
+          className="w-full text-gray-700"
+          value={formData.preferredArtCategories[2] || null}
+          onChange={(option) => handleCategoryChange(option, "subcategory")}
+          options={subCategories}
+          placeholder="Select subcategory..."
+          isDisabled={!formData.preferredArtCategories[1] || loading}
+        />
+      </div>
+
+      {/* Newsletter */}
+      <div>
+        <label className="block mb-2 font-medium">Subscribe to Newsletters</label>
+        <div className="flex space-x-6">
+          <label className="flex items-center space-x-2">
+            <input
+              type="radio"
+              name="subscribeNewsletters"
+              value="yes"
+              checked={formData.subscribeNewsletters === "yes"}
+              onChange={handleInputChange}
+              className="accent-[#6F4D34]"
+              disabled={loading}
+            />
+            <span>Yes</span>
+          </label>
+          <label className="flex items-center space-x-2">
+            <input
+              type="radio"
+              name="subscribeNewsletters"
+              value="no"
+              checked={formData.subscribeNewsletters === "no"}
+              onChange={handleInputChange}
+              className="accent-[#6F4D34]"
+              disabled={loading}
+            />
+            <span>No</span>
+          </label>
         </div>
+      </div>
 
-        <div className="space-y-8">
-          {/* Categories Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Search Category</label>
-              <Select
-                options={searchableCategories}
-                getOptionLabel={e => e.fullLabel}
-                getOptionValue={e => e.value}
-                placeholder="Quick search for any category..."
-                isClearable
-                onChange={handleSearchCategoryChange}
-                isDisabled={loading}
-                isLoading={searchLoading}
-                styles={{
-                  control: (provided, state) => ({
-                    ...provided,
-                    borderRadius: "1rem",
-                    borderWidth: "1px",
-                    borderColor: state.isFocused ? "#5C4033" : "rgb(229, 231, 235)",
-                    padding: "6px 4px",
-                    boxShadow: state.isFocused ? "0 0 0 2px rgba(92, 64, 51, 0.1)" : "none",
-                    backgroundColor: state.isFocused ? "white" : "rgb(249, 250, 251)",
-                    "&:hover": { borderColor: "#5C4033" },
-                  }),
-                  option: (provided, state) => ({
-                    ...provided,
-                    backgroundColor: state.isSelected ? "#5C4033" : state.isFocused ? "#f3f4f6" : "white",
-                    color: state.isSelected ? "white" : "black",
-                    borderRadius: "0.5rem",
-                    margin: "2px 4px",
-                    width: "calc(100% - 8px)",
-                  }),
-                }}
-                formatOptionLabel={(option) => (
-                  <div className={`px-2 py-1 ${option.type === 'subCategory' ? 'pl-8' : option.type === 'category' ? 'pl-4' : 'font-bold'}`}>
-                    {option.fullLabel}
-                  </div>
-                )}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Main Category</label>
-              <Select
-                value={formData.preferredArtCategories[0] || null}
-                onChange={(option) => handleCategoryChange(option, "main")}
-                options={mainCategories}
-                placeholder="Select main category"
-                isDisabled={loading}
-                styles={{
-                  control: (provided, state) => ({
-                    ...provided,
-                    borderRadius: "1rem",
-                    borderWidth: "1px",
-                    borderColor: state.isFocused ? "#5C4033" : "rgb(229, 231, 235)",
-                    padding: "6px 4px",
-                    boxShadow: state.isFocused ? "0 0 0 2px rgba(92, 64, 51, 0.1)" : "none",
-                    backgroundColor: state.isFocused ? "white" : "rgb(249, 250, 251)",
-                    "&:hover": { borderColor: "#5C4033" },
-                  }),
-                  option: (provided, state) => ({
-                    ...provided,
-                    backgroundColor: state.isSelected ? "#5C4033" : state.isFocused ? "#f3f4f6" : "white",
-                    color: state.isSelected ? "white" : "black",
-                    borderRadius: "0.5rem",
-                    margin: "2px 4px",
-                    width: "calc(100% - 8px)",
-                  }),
-                }}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Category</label>
-              <Select
-                value={formData.preferredArtCategories[1] || null}
-                onChange={(option) => handleCategoryChange(option, "category")}
-                options={categories}
-                placeholder="Select category"
-                isDisabled={!formData.preferredArtCategories[0] || loading}
-                styles={{
-                  control: (provided, state) => ({
-                    ...provided,
-                    borderRadius: "1rem",
-                    borderWidth: "1px",
-                    borderColor: state.isFocused ? "#5C4033" : "rgb(229, 231, 235)",
-                    padding: "6px 4px",
-                    boxShadow: state.isFocused ? "0 0 0 2px rgba(92, 64, 51, 0.1)" : "none",
-                    backgroundColor: state.isFocused ? "white" : "rgb(249, 250, 251)",
-                    "&:hover": { borderColor: "#5C4033" },
-                  }),
-                  option: (provided, state) => ({
-                    ...provided,
-                    backgroundColor: state.isSelected ? "#5C4033" : state.isFocused ? "#f3f4f6" : "white",
-                    color: state.isSelected ? "white" : "black",
-                    borderRadius: "0.5rem",
-                    margin: "2px 4px",
-                    width: "calc(100% - 8px)",
-                  }),
-                }}
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Subcategory</label>
-              <Select
-                value={formData.preferredArtCategories[2] || null}
-                onChange={(option) => handleCategoryChange(option, "subcategory")}
-                options={subCategories}
-                placeholder="Select subcategory"
-                isDisabled={!formData.preferredArtCategories[1] || loading}
-                styles={{
-                  control: (provided, state) => ({
-                    ...provided,
-                    borderRadius: "1rem",
-                    borderWidth: "1px",
-                    borderColor: state.isFocused ? "#5C4033" : "rgb(229, 231, 235)",
-                    padding: "6px 4px",
-                    boxShadow: state.isFocused ? "0 0 0 2px rgba(92, 64, 51, 0.1)" : "none",
-                    backgroundColor: state.isFocused ? "white" : "rgb(249, 250, 251)",
-                    "&:hover": { borderColor: "#5C4033" },
-                  }),
-                  option: (provided, state) => ({
-                    ...provided,
-                    backgroundColor: state.isSelected ? "#5C4033" : state.isFocused ? "#f3f4f6" : "white",
-                    color: state.isSelected ? "white" : "black",
-                    borderRadius: "0.5rem",
-                    margin: "2px 4px",
-                    width: "calc(100% - 8px)",
-                  }),
-                }}
-              />
-            </div>
-          </div>
-
-          <div className="h-px bg-gray-100 my-8"></div>
-
-          {/* Subscriptions Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-4">
-              <h4 className="font-bold text-gray-900">Email Newsletters</h4>
-              <p className="text-sm text-gray-500">Stay updated with the latest art trends, exhibitions, and community news.</p>
-              <div className="flex gap-4">
-                <button
-                  type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, subscribeNewsletters: "yes" }))}
-                  className={`flex-1 py-3 rounded-2xl text-center font-semibold transition-all duration-300 ${formData.subscribeNewsletters === 'yes' 
-                    ? 'bg-[#5C4033] text-white shadow-lg shadow-[#5C4033]/20' 
-                    : 'bg-gray-50 border border-gray-200 text-gray-600 hover:bg-gray-100'
-                  }`}
-                  disabled={loading}
-                >
-                  Subscribed
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, subscribeNewsletters: "no" }))}
-                  className={`flex-1 py-3 rounded-2xl text-center font-semibold transition-all duration-300 ${formData.subscribeNewsletters === 'no' 
-                    ? 'bg-[#5C4033] text-white shadow-lg shadow-[#5C4033]/20' 
-                    : 'bg-gray-50 border border-gray-200 text-gray-600 hover:bg-gray-100'
-                  }`}
-                  disabled={loading}
-                >
-                  Unsubscribed
-                </button>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h4 className="font-bold text-gray-900">Real-time Alerts</h4>
-              <p className="text-sm text-gray-500">Get instant SMS and Email notifications for bids, offers, and order status updates.</p>
-              <div 
-                className={`group relative flex items-center justify-between p-4 rounded-2xl border transition-all duration-300 cursor-pointer ${formData.smsEmailAlerts ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-200 hover:border-blue-200'}`}
-                onClick={handleToggle}
-              >
-                <span className={`font-semibold ${formData.smsEmailAlerts ? 'text-emerald-700' : 'text-gray-600'}`}>
-                  {formData.smsEmailAlerts ? 'Alerts Enabled' : 'Alerts Disabled'}
-                </span>
-                <div className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 ${formData.smsEmailAlerts ? 'bg-emerald-500' : 'bg-gray-300'}`}>
-                  <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${formData.smsEmailAlerts ? 'translate-x-6' : ''}`}></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="group relative flex items-center justify-center gap-3 bg-[#5C4033] hover:bg-[#4b3327] text-white py-4 px-10 rounded-2xl font-bold text-lg shadow-lg shadow-[#5C4033]/20 transition-all transform active:scale-95 overflow-hidden mt-8"
-          >
-            <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-            {loading ? "Updating..." : "Update Preferences"}
-          </button>
+      {/* Alerts Toggle */}
+      <div>
+        <label className="block mb-2 font-medium">SMS/Email Alerts for Bids & Offers</label>
+        <div
+          className={`w-10 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${formData.smsEmailAlerts ? 'bg-[#6B5A5C]' : 'bg-gray-300'}`}
+          onClick={handleToggle}
+        >
+          <div
+            className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${formData.smsEmailAlerts ? 'translate-x-4' : ''}`}
+          ></div>
         </div>
+      </div>
+
+      {/* Submit */}
+      <div>
+        <button
+          className="bg-[#6F4D34] text-white px-9 py-2 rounded-full disabled:opacity-60"
+          onClick={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? "Updating..." : "Update"}
+        </button>
       </div>
     </div>
   );

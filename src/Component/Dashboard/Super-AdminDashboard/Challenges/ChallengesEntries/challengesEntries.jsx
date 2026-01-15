@@ -468,13 +468,13 @@ const ChallengesEntries = () => {
                             >
                               <i className="fa fa-eye"></i>
                             </button>
-                              <button
-                                className="btn btn-outline-info btn-sm"
-                                title="Update"
-                                onClick={() =>
-                                  navigate(`/super-admin/challenges/update-application/${app._id}`, { state: { application: app } })
-                                }
-                              >
+                            <button
+                              className="btn btn-outline-info btn-sm"
+                              title="Update"
+                              onClick={() =>
+                                navigate('/super-admin/challenges/update-application', { state: { application: app } })
+                              }
+                            >
                               <i className="fa fa-pencil"></i>
                             </button>
                           </td>

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
 import { timeAgo } from "../../../utils/TimeAgo";
 import postAPI from "../../../api/postAPI";
-import { Helmet } from "react-helmet-async";
+import { Helmet } from "react-helmet";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 const SharePost = () => {
   const [sharePostData, setSharePostData] = useState(null);
@@ -48,7 +48,7 @@ const SharePost = () => {
     }
   };
   return (
-    <div className="max-w-[50%] mx-auto my-4">
+    <div className="max-w-[50%] mx-auto mt-6">
       {sharePostData && (
         <Helmet>
           <meta charSet="utf-8" />
@@ -94,32 +94,33 @@ const SharePost = () => {
       )}
 
       {sharePostData && (
-        <div className="w-full flex flex-col relative p-2 rounded-xl shadow-sm border">
+        <div className="w-full flex flex-col mb-4 relative">
           {/* Post Header */}
           <div className="flex justify-between items-center">
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 p-2 items-center">
               <img
                 src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData?.user?.profilePhoto}`}
                 alt="profile"
                 className="h-11 w-11 rounded-full cursor-pointer"
-              // onClick={() => goToProfile(sharePostData.user._id)}
+                // onClick={() => goToProfile(sharePostData.user._id)}
               />
 
               <div>
                 <div className="flex items-center">
                   <h3
                     className="font-extrabold cursor-pointer"
-                  // onClick={() => goToProfile(sharePostData.user._id)}
+                    // onClick={() => goToProfile(sharePostData.user._id)}
                   >
                     {sharePostData?.user?.username}
                   </h3>
 
                   {sharePostData?.user?.verified?.length > 0 && (
                     <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData?.user?.verified[
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                        sharePostData?.user?.verified[
                           sharePostData?.user?.verified.length - 1
                         ]?.badgeImage
-                        }`}
+                      }`}
                       className="inline-block ml-1 w-5 h-5 object-contain"
                       alt={
                         sharePostData?.user?.verified[
@@ -132,7 +133,7 @@ const SharePost = () => {
 
                 {/* Time + Sponsored */}
                 <div className="flex items-center gap-1 text-xs font-light text-gray-500">
-                  <p>{timeAgo(sharePostData.createdAt)}</p>
+                  <p>• {timeAgo(sharePostData.createdAt)}</p>
                   {sharePostData.isPromoted && (
                     <span className="text-[11px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">
                       Sponsored
@@ -143,7 +144,7 @@ const SharePost = () => {
             </div>
 
             {/* CTA + Buttons */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mr-1">
               {sharePostData?.isPromoted && (
                 <>
                   {sharePostData?.promotionDetails?.goal ===
@@ -187,14 +188,15 @@ const SharePost = () => {
             </div>
           </div>
           {/* Post Image Carousel */}
-          <div className="relative">
+          <div className="mx-1 relative">
             {sharePostData.images && sharePostData.images.length > 0 && (
               <>
                 <img
-                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.images[sharePostData.activeImageIndex || 0]
-                    }`}
+                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
+                    sharePostData.images[sharePostData.activeImageIndex || 0]
+                  }`}
                   alt="Post content"
-                  className="w-full h-full"
+                  className="w-full lg:h-[600px] sm:h-[480px] h-[300px] rounded-lg "
                 />
 
                 {/* Left Arrow (only if not on first image) */}
@@ -202,31 +204,45 @@ const SharePost = () => {
                   (sharePostData.activeImageIndex || 0) > 0 && (
                     <button
                       onClick={() =>
-                        setSharePostData((prev) => ({
-                          ...prev,
-                          activeImageIndex: (prev.activeImageIndex || 0) - 1,
-                        }))
+                        setSharePostData((prev) =>
+                          prev.map((p) =>
+                            p._id === sharePostData._id
+                              ? {
+                                  ...p,
+                                  activeImageIndex:
+                                    (p.activeImageIndex || 0) - 1,
+                                }
+                              : p
+                          )
+                        )
                       }
-                      className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-40 text-white rounded-full p-2 focus:outline-none"
+                      className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-40 text-white rounded-full p-2"
                     >
-                      <i className="ri-arrow-left-s-line text-xl bg-gray-600 rounded-full"></i>
+                      <i className="ri-arrow-left-s-line text-xl"></i>
                     </button>
                   )}
 
                 {/* Right Arrow (only if not on last image) */}
                 {sharePostData.images.length > 1 &&
                   (sharePostData.activeImageIndex || 0) <
-                  sharePostData.images.length - 1 && (
+                    sharePostData.images.length - 1 && (
                     <button
                       onClick={() =>
-                        setSharePostData((prev) => ({
-                          ...prev,
-                          activeImageIndex: (prev.activeImageIndex || 0) + 1,
-                        }))
+                        setSharePostData((prev) =>
+                          prev.map((p) =>
+                            p._id === sharePostData._id
+                              ? {
+                                  ...p,
+                                  activeImageIndex:
+                                    (p.activeImageIndex || 0) + 1,
+                                }
+                              : p
+                          )
+                        )
                       }
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-40 text-white rounded-full p-2 focus:outline-none"
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-40 text-white rounded-full p-2"
                     >
-                      <i className="ri-arrow-right-s-line text-xl bg-gray-600 rounded-full"></i>
+                      <i className="ri-arrow-right-s-line text-xl"></i>
                     </button>
                   )}
 
@@ -236,10 +252,11 @@ const SharePost = () => {
                     {sharePostData.images.map((_, idx) => (
                       <span
                         key={idx}
-                        className={`h-2 w-2 rounded-full ${(sharePostData.activeImageIndex || 0) === idx
-                            ? "bg-white"
-                            : "bg-[#000000]"
-                          }`}
+                        className={`h-2 w-2 rounded-full ${
+                          (sharePostData.activeImageIndex || 0) === idx
+                            ? "bg-gray-100"
+                            : "bg-gray-400"
+                        }`}
                       ></span>
                     ))}
                   </div>
@@ -249,20 +266,18 @@ const SharePost = () => {
           </div>
           {/* Post Actions */}
           <div className="flex flex-col gap-1.5 mx-1">
-            <div className="flex flex-row items-center gap-3">
+            <div className="flex flex-row items-center justify-between">
               <div className="flex flex-row gap-4">
-                <button onClick={() => handleLike(postId)} className="focus:outline-none">
+                <button onClick={() => handleLike(postId)}>
                   <i
-                    className={`${sharePostData.likes.includes(userId)
+                    className={`${
+                      sharePostData.likes.includes(userId)
                         ? "ri-heart-fill text-red-500"
                         : "ri-heart-line"
-                      } text-xl font-medium`}
+                    } text-xl font-medium`}
                   ></i>
-                </button> 
+                </button>
               </div>
-              <div className="text-sm font-bold">
-              {sharePostData.likes.length} likes
-            </div>
             </div>
 
             {/* Likes */}

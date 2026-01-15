@@ -1,61 +1,1088 @@
+
+// import "./artist-card.css";
+// import React, { useState } from "react";
+// import { FiChevronRight } from "react-icons/fi";
+// import { FiChevronLeft } from "react-icons/fi";
+// import { RiPoliceBadgeFill } from "react-icons/ri";
+// import { HiBadgeCheck } from "react-icons/hi";
+
+
+// const ArtistCard = () => {
+//   const [showFilters, setShowFilters] = useState(false);
+
+//   return (
+//     <div className="max-w-[1440px] mx-auto mb-4">
+//       {/* Top Section: Breadcrumb + Search */}
+//       <div className="w-full bg-white py-3 px-3 sm:px-6">
+//         <div className="flex flex-wrap items-center justify-between gap-3">
+//           {/* Breadcrumb */}
+//           <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
+//             <a href="#" className="hover:text-red-500">
+//               Home
+//             </a>
+//             <span>/</span>
+//             <a href="#" className="hover:text-red-500">
+//               Store
+//             </a>
+//             <span>/</span>
+//             <a href="#" className="hover:text-red-500">
+//               Paintings
+//             </a>
+//             <span>/</span>
+//             <span className="font-medium text-gray-900">Abstract</span>
+//           </nav>
+
+//           {/* Search Bar */}
+//           <div className="relative w-full sm:w-64">
+//             <input
+//               type="text"
+//               placeholder="Search"
+//               className="w-full pl-10 pr-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400"
+//             />
+//             <svg
+//               xmlns="http://www.w3.org/2000/svg"
+//               className="w-5 h-5 absolute left-3 top-2.5 text-gray-400"
+//               fill="none"
+//               viewBox="0 0 24 24"
+//               stroke="currentColor"
+//             >
+//               <path
+//                 strokeLinecap="round"
+//                 strokeLinejoin="round"
+//                 strokeWidth="2"
+//                 d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"
+//               />
+//             </svg>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Main Layout */}
+//       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6">
+//         {/* Sidebar Filters (hidden on mobile, toggleable) */}
+//         <aside className="hidden md:block rounded-xl filter-sidebar">
+//           {/* All your filter sections here (unchanged) */}
+//           <h2 className="font-bold text-lg mb-3">Filter by</h2>
+
+//           <hr className="mb-3 border-dark" />
+
+//           {/* Sort By */}
+//           <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//             Sort By
+//           </p>
+//           <div className="space-y-2 mb-4">
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> New Arrivals
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Trending
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Price Low to High
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Price High to Low
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Relevance
+//             </label>
+//           </div>
+
+//           <hr className="mb-3 border-dark" />
+
+//           {/* Special Tags */}
+//           <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//             Special Tags
+//           </p>
+//           <div className="space-y-2 mb-4">
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Limited Edition
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Bestseller
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Verified Seller
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Exclusive
+//             </label>
+//           </div>
+
+//           <hr className="mb-3 border-dark" />
+
+//           {/* Price */}
+//           <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//             Price
+//           </p>
+//           <input type="range" min="295" max="89700" className="w-full" />
+//           <div className="flex justify-between text-xs text-gray-600 mb-2">
+//             <span>₹295</span>
+//             <span>₹89,700+</span>
+//           </div>
+//           <div className="space-y-2 mb-4 text-sm">
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Under ₹5,000
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> ₹5,000 – ₹10,000
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> ₹10,000 – ₹25,000
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Above ₹25,000
+//             </label>
+//           </div>
+
+//           <hr className="mb-3 border-dark" />
+
+//           {/* Size */}
+//           <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//             Size
+//           </p>
+//           <div className="space-y-2 mb-4">
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Small (&lt;12in)
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Medium (12–24in)
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Large (24–48in)
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Oversized (48in+)
+//             </label>
+//           </div>
+
+//           <hr className="mb-3 border-dark" />
+
+//           {/* Style */}
+//           <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//             Style
+//           </p>
+//           <div className="space-y-2 mb-4">
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Abstract
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Modern
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Traditional
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Minimalist
+//             </label>
+//           </div>
+
+//           <hr className="mb-3 border-dark" />
+
+//           {/* Medium */}
+//           <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//             Medium
+//           </p>
+//           <div className="space-y-2">
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Oil
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Acrylic
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Watercolor
+//             </label>
+//             <label className="flex items-center">
+//               <input type="checkbox" className="mr-2" /> Mixed Media
+//             </label>
+//           </div>
+//         </aside>
+
+//         {/* Mobile Sidebar Toggle */}
+//         <div className="md:hidden mb-4">
+//           <button
+//             onClick={() => setShowFilters(!showFilters)}
+//             className="w-full py-2 px-4 border border-gray-300 rounded-lg text-sm font-semibold flex items-center justify-center gap-2"
+//           >
+//             <svg
+//               xmlns="http://www.w3.org/2000/svg"
+//               className="w-5 h-5"
+//               fill="none"
+//               viewBox="0 0 24 24"
+//               stroke="currentColor"
+//             >
+//               <path
+//                 strokeLinecap="round"
+//                 strokeLinejoin="round"
+//                 strokeWidth="2"
+//                 d="M3 4h18M3 12h18M3 20h18"
+//               />
+//             </svg>
+//             Filters
+//           </button>
+
+//           {/* Slide-over sidebar for mobile */}
+//           {showFilters && (
+//             <div className="fixed inset-0 z-50 flex">
+//               {/* Background Overlay */}
+//               <div
+//                 className="fixed inset-0 bg-black bg-opacity-50"
+//                 onClick={() => setShowFilters(false)}
+//               ></div>
+
+//               {/* Sidebar */}
+//               <div className="relative bg-white w-72 max-w-full h-full shadow-xl p-5 overflow-y-auto">
+//                 <button
+//                   onClick={() => setShowFilters(false)}
+//                   className="absolute top-3 right-3 text-gray-600"
+//                 >
+//                   ✕
+//                 </button>
+
+//                 <h2 className="font-bold text-lg mb-3">Filter by</h2>
+//                 <hr className="mb-3 border-dark" />
+
+//                 {/* ✅ Place the same filters here */}
+//                 {/* Sort By, Special Tags, Price, Size, Style, Medium */}
+//                 {/* Sort By */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Sort By
+//                 </p>
+//                 <div className="space-y-2 mb-4">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> New Arrivals
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Trending
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Price Low to High
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Price High to Low
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Relevance
+//                   </label>
+//                 </div>
+
+//                 <hr className="mb-3 border-dark" />
+
+//                 {/* Special Tags */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Special Tags
+//                 </p>
+//                 <div className="space-y-2 mb-4">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Limited Edition
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Bestseller
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Verified Seller
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Exclusive
+//                   </label>
+//                 </div>
+
+//                 <hr className="mb-3 border-dark" />
+
+//                 {/* Price */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Price
+//                 </p>
+//                 <div className="flex justify-between text-xs text-gray-600 mb-1">
+//                   <span>₹295</span>
+//                   <span>₹89,700+</span>
+//                 </div>
+//                 <input
+//                   type="range"
+//                   min="295"
+//                   max="89700"
+//                   className="w-full mb-3"
+//                 />
+//                 <div className="space-y-2 mb-4 text-sm">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Under ₹5,000
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> ₹5,000 – ₹10,000
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> ₹10,000 – ₹25,000
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Above ₹25,000
+//                   </label>
+//                 </div>
+
+//                 <hr className="mb-3 border-dark" />
+
+//                 {/* Size */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Size
+//                 </p>
+//                 <div className="space-y-2 mb-4">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Small (&lt;12in)
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Medium (12–24in)
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Large (24–48in)
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Oversized (48in+)
+//                   </label>
+//                 </div>
+
+//                 <hr className="mb-3 border-dark" />
+
+//                 {/* Style */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Style
+//                 </p>
+//                 <div className="space-y-2 mb-4">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Abstract
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Modern
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Traditional
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Minimalist
+//                   </label>
+//                 </div>
+
+//                 <hr className="mb-3 border-dark" />
+
+//                 {/* Medium */}
+//                 <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+//                   Medium
+//                 </p>
+//                 <div className="space-y-2">
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Oil
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Acrylic
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Watercolor
+//                   </label>
+//                   <label className="flex items-center">
+//                     <input type="checkbox" className="mr-2" /> Mixed Media
+//                   </label>
+//                 </div>
+//               </div>
+//             </div>
+//           )}
+//         </div>
+
+//         {/* <!-- Product Grid --> */}
+//         <main className="md:col-span-3">
+//           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+//             {/* <!-- Product Card --> */}
+//             <div className="w-full mx-auto product-card artist-card border-5">
+//               {/* Premium Label */}
+//               <div className="relative p-img artist-img">
+//                 {/* Product Image */}
+//                 <img
+//                   src="/herosectionimg/1.jpg"
+//                   alt="Beauty of Joseon Mandala Art"
+//                   className="w-full h-40 sm:h-64 object-contain product-img a-product-img"
+//                 />
+//               </div>
+//               {/* Product Category */}
+//               <div className="p-1 text-center product-info product-cat">
+//                 <p className="text-brown-500 text-[10px] md:text-xs font-bold">
+//                   Featured Art Work
+//                 </p>
+//               </div>
+
+//               <div class="py-4 px-2">
+//                 <div class="flex items-stretch justify-between">
+//                   {/* <!-- Left Big Container (80%) --> */}
+//                   <div class="w-full md:w-4/5 flex flex-col justify-between">
+//                     {/* <!-- Top: Name --> */}
+//                     <div>
+//                       <h2 class="text-white text-sm md:text-lg font-bold flex items-center">
+//                         Ananya Kapoor
+//                         <span class="ml-2 text-orange-500 text-md">
+//                           <RiPoliceBadgeFill />
+//                         </span>
+//                       </h2>
+//                     </div>
+//                     {/* <!-- Bottom: Tag --> */}
+//                     <div class="mt-2">
+//                       <span class="bg-[#29221C] text-white text-[10px] px-2 md:px-3 py-1 rounded-full">
+//                         Contemporary Portraits
+//                       </span>
+//                     </div>
+//                   </div>
+
+//                   {/* <!-- Divider --> */}
+//                   <div class="w-px bg-gray-600 mx-3 hidden md:block"></div>
+
+//                   {/* <!-- Right Big Container (20%) --> */}
+//                   <div class="w-1/5 flex flex-col justify-between items-end place-items-center hidden md:block">
+//                     {/* <!-- Top: Follow --> */}
+//                     <div>
+//                       <button class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded-full font-medium text-xs">
+//                         Follow
+//                       </button>
+//                     </div>
+//                     {/* <!-- Bottom: Visit Store --> */}
+//                     <div class="mt-2">
+//                       <a
+//                         href="#"
+//                         class="text-white underline text-xs hover:text-gray-300"
+//                       >
+//                         Visit Store
+//                       </a>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//             <div className="w-full mx-auto product-card artist-card border-5">
+//               {/* Premium Label */}
+//               <div className="relative p-img artist-img">
+//                 {/* Product Image */}
+//                 <img
+//                   src="/herosectionimg/1.jpg"
+//                   alt="Beauty of Joseon Mandala Art"
+//                   className="w-full h-40 sm:h-64 object-contain product-img a-product-img"
+//                 />
+//               </div>
+//               {/* Product Category */}
+//               <div className="p-1 text-center product-info product-cat">
+//                 <p className="text-brown-500 text-[10px] md:text-xs font-bold">
+//                   Featured Art Work
+//                 </p>
+//               </div>
+
+//               <div class="py-4 px-2">
+//                 <div class="flex items-stretch justify-between">
+//                   {/* <!-- Left Big Container (80%) --> */}
+//                   <div class="w-full md:w-4/5 flex flex-col justify-between">
+//                     {/* <!-- Top: Name --> */}
+//                     <div>
+//                       <h2 class="text-white text-sm md:text-lg font-bold flex items-center">
+//                         Ananya Kapoor
+//                         <span class="ml-2 text-blue-700 text-md">
+//                           <HiBadgeCheck />
+//                         </span>
+//                       </h2>
+//                     </div>
+//                     {/* <!-- Bottom: Tag --> */}
+//                     <div class="mt-2">
+//                       <span class="bg-[#29221C] text-white text-[10px] px-2 md:px-3 py-1 rounded-full">
+//                         Contemporary Portraits
+//                       </span>
+//                     </div>
+//                   </div>
+
+//                   {/* <!-- Divider --> */}
+//                   <div class="w-px bg-gray-600 mx-3 hidden md:block"></div>
+
+//                   {/* <!-- Right Big Container (20%) --> */}
+//                   <div class="w-1/5 flex flex-col justify-between items-end place-items-center hidden md:block">
+//                     {/* <!-- Top: Follow --> */}
+//                     <div>
+//                       <button class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded-full font-medium text-xs">
+//                         Follow
+//                       </button>
+//                     </div>
+//                     {/* <!-- Bottom: Visit Store --> */}
+//                     <div class="mt-2">
+//                       <a
+//                         href="#"
+//                         class="text-white underline text-xs hover:text-gray-300"
+//                       >
+//                         Visit Store
+//                       </a>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//             <div className="w-full mx-auto product-card artist-card border-5">
+//               {/* Premium Label */}
+//               <div className="relative p-img artist-img">
+//                 {/* Product Image */}
+//                 <img
+//                   src="/herosectionimg/1.jpg"
+//                   alt="Beauty of Joseon Mandala Art"
+//                   className="w-full h-40 sm:h-64 object-contain product-img a-product-img"
+//                 />
+//               </div>
+//               {/* Product Category */}
+//               <div className="p-1 text-center product-info product-cat">
+//                 <p className="text-brown-500 text-[10px] md:text-xs font-bold">
+//                   Featured Art Work
+//                 </p>
+//               </div>
+
+//               <div class="py-4 px-2">
+//                 <div class="flex items-stretch justify-between">
+//                   {/* <!-- Left Big Container (80%) --> */}
+//                   <div class="w-full md:w-4/5 flex flex-col justify-between">
+//                     {/* <!-- Top: Name --> */}
+//                     <div>
+//                       <h2 class="text-white text-sm md:text-lg font-bold flex items-center">
+//                         Ananya Kapoor
+//                         <span class="ml-2 text-orange-500 text-md">
+//                           <RiPoliceBadgeFill />
+//                         </span>
+//                       </h2>
+//                     </div>
+//                     {/* <!-- Bottom: Tag --> */}
+//                     <div class="mt-2">
+//                       <span class="bg-[#29221C] text-white text-[10px] px-2 md:px-3 py-1 rounded-full">
+//                         Contemporary Portraits
+//                       </span>
+//                     </div>
+//                   </div>
+
+//                   {/* <!-- Divider --> */}
+//                   <div class="w-px bg-gray-600 mx-3 hidden md:block"></div>
+
+//                   {/* <!-- Right Big Container (20%) --> */}
+//                   <div class="w-1/5 flex flex-col justify-between items-end place-items-center hidden md:block">
+//                     {/* <!-- Top: Follow --> */}
+//                     <div>
+//                       <button class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded-full font-medium text-xs">
+//                         Follow
+//                       </button>
+//                     </div>
+//                     {/* <!-- Bottom: Visit Store --> */}
+//                     <div class="mt-2">
+//                       <a
+//                         href="#"
+//                         class="text-white underline text-xs hover:text-gray-300"
+//                       >
+//                         Visit Store
+//                       </a>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//             <div className="w-full mx-auto product-card artist-card border-5">
+//               {/* Premium Label */}
+//               <div className="relative p-img artist-img">
+//                 {/* Product Image */}
+//                 <img
+//                   src="/herosectionimg/1.jpg"
+//                   alt="Beauty of Joseon Mandala Art"
+//                   className="w-full h-40 sm:h-64 object-contain product-img a-product-img"
+//                 />
+//               </div>
+//               {/* Product Category */}
+//               <div className="p-1 text-center product-info product-cat">
+//                 <p className="text-brown-500 text-[10px] md:text-xs font-bold">
+//                   Featured Art Work
+//                 </p>
+//               </div>
+
+//               <div class="py-4 px-2">
+//                 <div class="flex items-stretch justify-between">
+//                   {/* <!-- Left Big Container (80%) --> */}
+//                   <div class="w-full md:w-4/5 flex flex-col justify-between">
+//                     {/* <!-- Top: Name --> */}
+//                     <div>
+//                       <h2 class="text-white text-sm md:text-lg font-bold flex items-center">
+//                         Ananya Kapoor
+//                         <span class="ml-2 text-blue-700 text-md">
+//                           <HiBadgeCheck />
+//                         </span>
+//                       </h2>
+//                     </div>
+//                     {/* <!-- Bottom: Tag --> */}
+//                     <div class="mt-2">
+//                       <span class="bg-[#29221C] text-white text-[10px] px-2 md:px-3 py-1 rounded-full">
+//                         Contemporary Portraits
+//                       </span>
+//                     </div>
+//                   </div>
+
+//                   {/* <!-- Divider --> */}
+//                   <div class="w-px bg-gray-600 mx-3 hidden md:block"></div>
+
+//                   {/* <!-- Right Big Container (20%) --> */}
+//                   <div class="w-1/5 flex flex-col justify-between items-end place-items-center hidden md:block">
+//                     {/* <!-- Top: Follow --> */}
+//                     <div>
+//                       <button class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded-full font-medium text-xs">
+//                         Follow
+//                       </button>
+//                     </div>
+//                     {/* <!-- Bottom: Visit Store --> */}
+//                     <div class="mt-2">
+//                       <a
+//                         href="#"
+//                         class="text-white underline text-xs hover:text-gray-300"
+//                       >
+//                         Visit Store
+//                       </a>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//             <div className="w-full mx-auto product-card artist-card border-5">
+//               {/* Premium Label */}
+//               <div className="relative p-img artist-img">
+//                 {/* Product Image */}
+//                 <img
+//                   src="/herosectionimg/1.jpg"
+//                   alt="Beauty of Joseon Mandala Art"
+//                   className="w-full h-40 sm:h-64 object-contain product-img a-product-img"
+//                 />
+//               </div>
+//               {/* Product Category */}
+//               <div className="p-1 text-center product-info product-cat">
+//                 <p className="text-brown-500 text-[10px] md:text-xs font-bold">
+//                   Featured Art Work
+//                 </p>
+//               </div>
+
+//               <div class="py-4 px-2">
+//                 <div class="flex items-stretch justify-between">
+//                   {/* <!-- Left Big Container (80%) --> */}
+//                   <div class="w-full md:w-4/5 flex flex-col justify-between">
+//                     {/* <!-- Top: Name --> */}
+//                     <div>
+//                       <h2 class="text-white text-sm md:text-lg font-bold flex items-center">
+//                         Ananya Kapoor
+//                         <span class="ml-2 text-orange-500 text-md">
+//                           <RiPoliceBadgeFill />
+//                         </span>
+//                       </h2>
+//                     </div>
+//                     {/* <!-- Bottom: Tag --> */}
+//                     <div class="mt-2">
+//                       <span class="bg-[#29221C] text-white text-[10px] px-2 md:px-3 py-1 rounded-full">
+//                         Contemporary Portraits
+//                       </span>
+//                     </div>
+//                   </div>
+
+//                   {/* <!-- Divider --> */}
+//                   <div class="w-px bg-gray-600 mx-3 hidden md:block"></div>
+
+//                   {/* <!-- Right Big Container (20%) --> */}
+//                   <div class="w-1/5 flex flex-col justify-between items-end place-items-center hidden md:block">
+//                     {/* <!-- Top: Follow --> */}
+//                     <div>
+//                       <button class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded-full font-medium text-xs">
+//                         Follow
+//                       </button>
+//                     </div>
+//                     {/* <!-- Bottom: Visit Store --> */}
+//                     <div class="mt-2">
+//                       <a
+//                         href="#"
+//                         class="text-white underline text-xs hover:text-gray-300"
+//                       >
+//                         Visit Store
+//                       </a>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//             <div className="w-full mx-auto product-card artist-card border-5">
+//               {/* Premium Label */}
+//               <div className="relative p-img artist-img">
+//                 {/* Product Image */}
+//                 <img
+//                   src="/herosectionimg/1.jpg"
+//                   alt="Beauty of Joseon Mandala Art"
+//                   className="w-full h-40 sm:h-64 object-contain product-img a-product-img"
+//                 />
+//               </div>
+//               {/* Product Category */}
+//               <div className="p-1 text-center product-info product-cat">
+//                 <p className="text-brown-500 text-[10px] md:text-xs font-bold">
+//                   Featured Art Work
+//                 </p>
+//               </div>
+
+//               <div class="py-4 px-2">
+//                 <div class="flex items-stretch justify-between">
+//                   {/* <!-- Left Big Container (80%) --> */}
+//                   <div class="w-full md:w-4/5 flex flex-col justify-between">
+//                     {/* <!-- Top: Name --> */}
+//                     <div>
+//                       <h2 class="text-white text-sm md:text-lg font-bold flex items-center">
+//                         Ananya Kapoor
+//                         <span class="ml-2 text-blue-700 text-md">
+//                           <HiBadgeCheck />
+//                         </span>
+//                       </h2>
+//                     </div>
+//                     {/* <!-- Bottom: Tag --> */}
+//                     <div class="mt-2">
+//                       <span class="bg-[#29221C] text-white text-[10px] px-2 md:px-3 py-1 rounded-full">
+//                         Contemporary Portraits
+//                       </span>
+//                     </div>
+//                   </div>
+
+//                   {/* <!-- Divider --> */}
+//                   <div class="w-px bg-gray-600 mx-3 hidden md:block"></div>
+
+//                   {/* <!-- Right Big Container (20%) --> */}
+//                   <div class="w-1/5 flex flex-col justify-between items-end place-items-center hidden md:block">
+//                     {/* <!-- Top: Follow --> */}
+//                     <div>
+//                       <button class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded-full font-medium text-xs">
+//                         Follow
+//                       </button>
+//                     </div>
+//                     {/* <!-- Bottom: Visit Store --> */}
+//                     <div class="mt-2">
+//                       <a
+//                         href="#"
+//                         class="text-white underline text-xs hover:text-gray-300"
+//                       >
+//                         Visit Store
+//                       </a>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//             <div className="w-full mx-auto product-card artist-card border-5">
+//               {/* Premium Label */}
+//               <div className="relative p-img artist-img">
+//                 {/* Product Image */}
+//                 <img
+//                   src="/herosectionimg/1.jpg"
+//                   alt="Beauty of Joseon Mandala Art"
+//                   className="w-full h-40 sm:h-64 object-contain product-img a-product-img"
+//                 />
+//               </div>
+//               {/* Product Category */}
+//               <div className="p-1 text-center product-info product-cat">
+//                 <p className="text-brown-500 text-[10px] md:text-xs font-bold">
+//                   Featured Art Work
+//                 </p>
+//               </div>
+
+//               <div class="py-4 px-2">
+//                 <div class="flex items-stretch justify-between">
+//                   {/* <!-- Left Big Container (80%) --> */}
+//                   <div class="w-full md:w-4/5 flex flex-col justify-between">
+//                     {/* <!-- Top: Name --> */}
+//                     <div>
+//                       <h2 class="text-white text-sm md:text-lg font-bold flex items-center">
+//                         Ananya Kapoor
+//                         <span class="ml-2 text-orange-500 text-md">
+//                           <RiPoliceBadgeFill />
+//                         </span>
+//                       </h2>
+//                     </div>
+//                     {/* <!-- Bottom: Tag --> */}
+//                     <div class="mt-2">
+//                       <span class="bg-[#29221C] text-white text-[10px] px-2 md:px-3 py-1 rounded-full">
+//                         Contemporary Portraits
+//                       </span>
+//                     </div>
+//                   </div>
+
+//                   {/* <!-- Divider --> */}
+//                   <div class="w-px bg-gray-600 mx-3 hidden md:block"></div>
+
+//                   {/* <!-- Right Big Container (20%) --> */}
+//                   <div class="w-1/5 flex flex-col justify-between items-end place-items-center hidden md:block">
+//                     {/* <!-- Top: Follow --> */}
+//                     <div>
+//                       <button class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded-full font-medium text-xs">
+//                         Follow
+//                       </button>
+//                     </div>
+//                     {/* <!-- Bottom: Visit Store --> */}
+//                     <div class="mt-2">
+//                       <a
+//                         href="#"
+//                         class="text-white underline text-xs hover:text-gray-300"
+//                       >
+//                         Visit Store
+//                       </a>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//             <div className="w-full mx-auto product-card artist-card border-5">
+//               {/* Premium Label */}
+//               <div className="relative p-img artist-img">
+//                 {/* Product Image */}
+//                 <img
+//                   src="/herosectionimg/1.jpg"
+//                   alt="Beauty of Joseon Mandala Art"
+//                   className="w-full h-40 sm:h-64 object-contain product-img a-product-img"
+//                 />
+//               </div>
+//               {/* Product Category */}
+//               <div className="p-1 text-center product-info product-cat">
+//                 <p className="text-brown-500 text-[10px] md:text-xs font-bold">
+//                   Featured Art Work
+//                 </p>
+//               </div>
+
+//               <div class="py-4 px-2">
+//                 <div class="flex items-stretch justify-between">
+//                   {/* <!-- Left Big Container (80%) --> */}
+//                   <div class="w-full md:w-4/5 flex flex-col justify-between">
+//                     {/* <!-- Top: Name --> */}
+//                     <div>
+//                       <h2 class="text-white text-sm md:text-lg font-bold flex items-center">
+//                         Ananya Kapoor
+//                         <span class="ml-2 text-blue-700 text-md">
+//                           <HiBadgeCheck />
+//                         </span>
+//                       </h2>
+//                     </div>
+//                     {/* <!-- Bottom: Tag --> */}
+//                     <div class="mt-2">
+//                       <span class="bg-[#29221C] text-white text-[10px] px-2 md:px-3 py-1 rounded-full">
+//                         Contemporary Portraits
+//                       </span>
+//                     </div>
+//                   </div>
+
+//                   {/* <!-- Divider --> */}
+//                   <div class="w-px bg-gray-600 mx-3 hidden md:block"></div>
+
+//                   {/* <!-- Right Big Container (20%) --> */}
+//                   <div class="w-1/5 flex flex-col justify-between items-end place-items-center hidden md:block">
+//                     {/* <!-- Top: Follow --> */}
+//                     <div>
+//                       <button class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded-full font-medium text-xs">
+//                         Follow
+//                       </button>
+//                     </div>
+//                     {/* <!-- Bottom: Visit Store --> */}
+//                     <div class="mt-2">
+//                       <a
+//                         href="#"
+//                         class="text-white underline text-xs hover:text-gray-300"
+//                       >
+//                         Visit Store
+//                       </a>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//           {/* <!-- Pagination --> */}
+//           <div className="flex justify-center mt-6">
+//             <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
+//               <FiChevronLeft className="self-center flex-shrink-0" />
+//               <button className="px-1 sm:px-3 py-1">Previous</button>
+//               <button className="px-3 sm:px-3 py-1 rounded border border-dark text-dark">
+//                 1
+//               </button>
+//               <button className="px-1 sm:px-3 py-1">2</button>
+//               <button className="px-1 sm:px-3 py-1">3</button>
+//               <button className="px-1 sm:px-3 py-1">. . .</button>
+//               <button className="px-1 sm:px-3 py-1">10</button>
+//               <button className="px-1 sm:px-3 py-1">Next</button>
+//               <FiChevronRight className="self-center flex-shrink-0" />
+//             </nav>
+//           </div>
+//         </main>
+//       </div>
+//     </div>
+//   );
+// };
+// export default ArtistCard;
+
+
 import "./artist-card.css";
 import React, { useEffect, useMemo, useState } from "react";
-  import { 
-    Search, ListFilter, X, ChevronRight, ChevronLeft, 
-    Tag, SortAsc, UserCheck, TrendingUp, Filter 
-  } from "lucide-react";
-import { FiChevronRight, FiChevronLeft } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { FiChevronRight } from "react-icons/fi";
+import { FiChevronLeft } from "react-icons/fi";
 import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
+import { useNavigate } from "react-router-dom";
 import { DEFAULT_PROFILE_IMAGE } from "./constant";
-import ProductsSkeliton from "../../../Component/Skeleton/products/ProductsSkeliton";
-import HeroImgArtist from "../hero-img/hero-img";
+import { toast } from "react-toastify";
 
 const ArtistCard = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [artists, setArtists] = useState([]);
   const [myFollowing, setMyFollowing] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 12;
   const navigate = useNavigate();
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
   const userId = localStorage.getItem("userId");
 
-  const [filters, setFilters] = useState({
-    sortBy: "Newest",
-    specialTags: [],
-    expertise: [],
-    search: "",
-  });
 
-  const [options, setOptions] = useState({
-    expertise: [],
-  });
 
   const normalizeIds = (arr) =>
     Array.isArray(arr)
       ? arr
-          .map((f) => (typeof f === "object" ? f?._id || f?.id || f?.user || f : f))
-          .filter(Boolean)
-          .map(String)
+        .map((f) =>
+          typeof f === "object" ? f?._id || f?.id || f?.user || f : f
+        )
+        .filter(Boolean)
+        .map(String)
       : [];
 
+  //   useEffect(() => {
+  //     if (!userId) return; 
+  // //  useEffect(() => {
+  // //   if (!userId) {
+  // //     loadPublicArtists();
+  // //     return;
+  // //   }
+
+  // //   loadPrivateArtists();
+  // // }, [userId]);
+
+
+  //     let cancelled = false;
+  //     const loadData = async () => {
+  //       try {
+  //         const [artistsRes, categoriesRes, badgeRes, suggestedRes, myProfileRes] = await Promise.all([
+  //           getAPI("/artist/artists", {}, true, false),
+  //           getAPI("/api/main-category", true),
+  //           getAPI("/api/products/approved-with-badges", {}, true, false),
+  //           userId
+  //             ? getAPI(
+  //                 `/api/social-media/suggested-users?userId=${userId}`,
+  //                 { userId },
+  //                 true,
+  //                 true
+  //               ).catch(() => null)
+  //             : Promise.resolve(null),
+  //           userId
+  //             ? getAPI(`/api/social-media/profile/${userId}`, {}, true, true).catch(
+  //                 () => null
+  //               )
+  //             : Promise.resolve(null),
+  //         ]);
+
+  //         const artistList =
+  //           artistsRes?.data?.artists ||
+  //           artistsRes?.data?.data ||
+  //           artistsRes?.data ||
+  //           [];
+  //         const mainCategories = categoriesRes?.data?.data || [];
+  //         const badgeData = badgeRes?.data?.data || [];
+
+  //         const suggestedUsers = suggestedRes?.data?.suggestedUsers || [];
+  //         const suggestedFollowersMap = suggestedUsers.reduce((acc, u) => {
+  //           acc[String(u._id)] =
+  //             u?.profile?.followers || u?.followers || [];
+  //           return acc;
+  //         }, {});
+
+  //         const detailed = await Promise.all(
+  //           artistList.map(async (artist) => {
+  //             const aid = artist?._id || artist?.id || artist?.userId;
+  //             const [detailsRes, userRes, profileRes] = await Promise.all([
+  //               getAPI(`/auth/getartistdetails/${aid}`, {}, true, false).catch(
+  //                 () => null
+  //               ),
+  //               getAPI(`/auth/userid/${aid}`, {}, true, false).catch(() => null),
+  //               getAPI(`/social-media/profile/${aid}`, {}, true, true).catch(
+  //                 () => null
+  //               ),
+  //             ]);
+
+  //             const details = detailsRes?.data || {};
+  //             const user = userRes?.data?.user || artist || {};
+  //             const categoryId = Array.isArray(details?.artCategories)
+  //               ? details.artCategories[0]
+  //               : null;
+  //             const mainCategory =
+  //               mainCategories.find(
+  //                 (c) => String(c._id) === String(categoryId || "")
+  //               ) || {};
+  //             const badgeEntry =
+  //               badgeData.find(
+  //                 (b) =>
+  //                   String(b?.userId?._id || b?.userId) === String(aid || "")
+  //               ) || {};
+
+  //             const followersArr = normalizeIds(
+  //               profileRes?.data?.profile?.followers ||
+  //                 suggestedFollowersMap[String(aid)] ||
+  //                 user?.profile?.followers ||
+  //                 user?.followers ||
+  //                 []
+  //             );
+  //             const isFollowingArtist = followersArr.includes(String(userId || ""));
+
+  //             return {
+  //               id: aid,
+  //               profilePhoto: user?.profilePhoto,
+  //               username: user?.username || "",
+  //               name: user?.name || user?.firstName || "",
+  //               lastName: user?.lastName || "",
+  //               badges: badgeEntry?.badges || user?.badges || [],
+  //               mainCategoryName: mainCategory?.mainCategoryName || "Unknown",
+  //               followers: followersArr,
+  //               isFollowing: isFollowingArtist,
+  //             };
+  //           })
+  //         );
+
+  //         if (!cancelled) {
+  //           setArtists(detailed.filter((a) => a.id));
+  //           const myFollowingIds = normalizeIds(
+  //             myProfileRes?.data?.profile?.following || []
+  //           );
+  //           setMyFollowing(myFollowingIds);
+  //         }
+  //       } catch (err) {
+  //         console.error("Error loading artists", err);
+  //       }
+  //     };
+
+  //     loadData();
+  //     return () => {
+  //       cancelled = true;
+  //     };
+  //   }, [userId]);
   useEffect(() => {
     let cancelled = false;
 
     const loadData = async () => {
-      setLoading(true);
+      if (!userId) {
+        await loadPublicArtists();
+        return;
+      }
+
       try {
-        const [artistsRes, categoriesRes, badgeRes, myProfileRes] = await Promise.all([
+        const [
+          artistsRes, categoriesRes, badgeRes, suggestedRes, myProfileRes
+        ] = await Promise.all([
           getAPI("/artist/artists", {}, true, false),
           getAPI("/api/main-category", true),
           getAPI("/api/products/approved-with-badges", {}, true, false),
-          userId
-            ? getAPI(`/api/social-media/profile/${userId}`, {}, true, true).catch(() => null)
-            : Promise.resolve(null),
+
+          getAPI(`/api/social-media/suggested-users?userId=${userId}`,
+            { userId }, true, true
+          ).catch(() => null),
+
+          getAPI(`/api/social-media/profile/${userId}`, {}, true, true)
+            .catch(() => null),
         ]);
 
         const artistList =
@@ -66,10 +1093,6 @@ const ArtistCard = () => {
 
         const mainCategories = categoriesRes?.data?.data || [];
         const badgeData = badgeRes?.data?.data || [];
-        
-        setOptions({
-          expertise: mainCategories.map(c => c.mainCategoryName),
-        });
 
         const detailed = await Promise.all(
           artistList.map(async (artist) => {
@@ -78,7 +1101,7 @@ const ArtistCard = () => {
             const [detailsRes, userRes, profileRes] = await Promise.all([
               getAPI(`/auth/getartistdetails/${aid}`, {}, true, false).catch(() => null),
               getAPI(`/auth/userid/${aid}`, {}, true, false).catch(() => null),
-              getAPI(`/api/social-media/profile/${aid}`, {}, true, true).catch(() => null),
+              getAPI(`/social-media/profile/${aid}`, {}, true, true).catch(() => null),
             ]);
 
             const details = detailsRes?.data || {};
@@ -93,7 +1116,8 @@ const ArtistCard = () => {
             );
 
             const badgeEntry = badgeData.find(
-              (b) => String(b?.userId?._id || b?.userId) === String(aid)
+              (b) =>
+                String(b?.userId?._id || b?.userId) === String(aid)
             );
 
             const followersArr = normalizeIds(
@@ -112,7 +1136,6 @@ const ArtistCard = () => {
               mainCategoryName: mainCategory?.mainCategoryName || "Unknown",
               followers: followersArr,
               isFollowing: isFollowingArtist,
-              createdAt: user.createdAt || new Date(),
             };
           })
         );
@@ -120,17 +1143,14 @@ const ArtistCard = () => {
         if (!cancelled) {
           setArtists(detailed.filter((a) => a.id));
 
-          if (myProfileRes) {
-            const myFollowingIds = normalizeIds(
-              myProfileRes?.data?.profile?.following || []
-            );
-            setMyFollowing(myFollowingIds);
-          }
+          const myFollowingIds = normalizeIds(
+            myProfileRes?.data?.profile?.following || []
+          );
+
+          setMyFollowing(myFollowingIds);
         }
       } catch (err) {
         console.error("Error loading artists", err);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -141,88 +1161,65 @@ const ArtistCard = () => {
     };
   }, [userId]);
 
-  const handleFilterChange = (category, value, isChecked) => {
-    setFilters((prev) => {
-      if (category === "sortBy" || category === "search") {
-        return { ...prev, [category]: value };
-      }
+  const loadPublicArtists = async () => {
+    try {
+      const artistsRes = await getAPI("/artist/artists", {}, false, false);
 
-      const currentList = prev[category] || [];
-      if (isChecked) {
-        return { ...prev, [category]: [...currentList, value] };
-      } else {
-        return { ...prev, [category]: currentList.filter((item) => item !== value) };
-      }
-    });
-    setCurrentPage(1);
-  };
+      const artistList =
+        artistsRes?.data?.artists ||
+        artistsRes?.data?.data ||
+        artistsRes?.data ||
+        [];
 
-  const filteredArtists = useMemo(() => {
-    let result = [...artists];
-
-    if (filters.search) {
-      const search = filters.search.toLowerCase();
-      result = result.filter(
-        (a) =>
-          a.username.toLowerCase().includes(search) ||
-          a.name.toLowerCase().includes(search) ||
-          a.lastName.toLowerCase().includes(search) ||
-          a.mainCategoryName.toLowerCase().includes(search)
+      setArtists(
+        artistList.map(a => ({
+          id: a._id,
+          profilePhoto: a.profilePhoto,
+          username: a.username,
+          name: a.name,
+          lastName: a.lastName,
+          badges: a.badges || [],
+          mainCategoryName: "Artist",
+          followers: [],
+          isFollowing: false,
+        }))
       );
-    }
 
-    if (filters.specialTags.length > 0) {
-      result = result.filter((a) => {
-        return filters.specialTags.some((tag) => {
-          if (tag === "Verified Artist") return a.badges.length > 0;
-          if (tag === "Trending") return a.followers.length > 5;
-          return false;
-        });
-      });
+    } catch (err) {
+      console.error("Public artist load failed:", err);
     }
-
-    if (filters.expertise.length > 0) {
-      result = result.filter((a) => filters.expertise.includes(a.mainCategoryName));
-    }
-
-    if (filters.sortBy === "Newest") {
-      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    } else if (filters.sortBy === "Trending") {
-      result.sort((a, b) => b.followers.length - a.followers.length);
-    } else if (filters.sortBy === "Name (A-Z)") {
-      result.sort((a, b) => a.name.localeCompare(b.name));
-    } else if (filters.sortBy === "Name (Z-A)") {
-      result.sort((a, b) => b.name.localeCompare(a.name));
-    }
-
-    return result;
-  }, [artists, filters]);
+  };
 
   const paginatedArtists = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
-    return filteredArtists.slice(start, start + pageSize);
-  }, [filteredArtists, currentPage]);
+    return artists.slice(start, start + pageSize);
+  }, [artists, currentPage]);
 
-  const totalPages = Math.ceil(filteredArtists.length / pageSize);
+  const totalPages = Math.max(1, Math.ceil(artists.length / pageSize));
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
-
   const handleFollowToggle = async (targetUserId, isFollowing) => {
-    if (!userId) {
-      toast.error("Please login to follow artist");
-      return;
-    }
     try {
       if (isFollowing) {
-        await postAPI(`/api/social-media/unfollow/${targetUserId}`, { userId }, true, true);
+        await postAPI(
+          `/api/social-media/unfollow/${targetUserId}`,
+          { userId },
+          true,
+          true
+        );
       } else {
-        await postAPI(`/api/social-media/follow/${targetUserId}`, { userId }, true, true);
+        await postAPI(
+          `/api/social-media/follow/${targetUserId}`,
+          { userId },
+          true,
+          true
+        );
       }
 
       setArtists((prev) =>
         prev.map((a) => {
           if (String(a.id) !== String(targetUserId)) return a;
           const followers = normalizeIds(a.followers);
-          const uid = String(userId);
+          const uid = String(userId || "");
           const idx = followers.indexOf(uid);
           if (idx !== -1) followers.splice(idx, 1);
           else followers.push(uid);
@@ -233,273 +1230,521 @@ const ArtistCard = () => {
           };
         })
       );
+
+      setMyFollowing((prev) => {
+        const tid = String(targetUserId);
+        const exists = prev.includes(tid);
+        if (isFollowing && exists) {
+          return prev.filter((id) => id !== tid);
+        }
+        if (!isFollowing && !exists) {
+          return [...prev, tid];
+        }
+        return prev;
+      });
     } catch (error) {
       console.error("Error following/unfollowing user:", error);
     }
   };
 
   const handleStoreVisit = (artistId) => {
-    navigate(`/api/social-media/profile/product-view?artistId=${artistId}`);
+    navigate(`/social-media/profile/product-view?artistId=${artistId}`);
   };
 
-  const FilterSection = ({ title, icon: Icon, children }) => (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-4 animate-slide-up">
-      <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-        <Icon size={18} className="text-[#6F4D34]" />
-        {title}
-      </h3>
-      <div className="space-y-4">{children}</div>
-    </div>
-  );
+  return (
+    <div className="max-w-[1440px] mx-auto mb-4">
+      <div className="w-full bg-white py-3 px-3 sm:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <nav className="flex text-sm text-gray-600 space-x-2 overflow-x-auto">
+            <a href="/" className="text-gray-900 hover:text-red-500">
+              Home
+            </a>
+            <span>/</span>
+            <a href="#" className="text-gray-900 hover:text-red-500">
+              Artists
+            </a>
+          </nav>
 
-  const CheckboxItem = ({ label, checked, onChange }) => (
-    <label className="flex items-center group cursor-pointer">
-      <div className="relative flex items-center">
-        <input type="checkbox" className="sr-only" checked={checked} onChange={onChange} />
-        <div className={`w-5 h-5 border-2 rounded-md transition-all flex items-center justify-center ${checked ? "border-[#6F4D34] bg-[#6F4D34]" : "border-gray-300 group-hover:border-[#6F4D34]"}`}>
-          {checked && (
-            <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
+          <div className="relative w-full sm:w-64">
+            <input
+              type="text"
+              placeholder="Search"
+              className="w-full pl-10 pr-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400"
+            />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-5 h-5 absolute left-3 top-2.5 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"
+              />
             </svg>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-3 sm:px-6">
+        <aside className="hidden md:block rounded-xl filter-sidebar">
+          <h2 className="font-bold text-lg mb-3">Filter by</h2>
+
+          <hr className="mb-3 border-dark" />
+
+          <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+            Sort By
+          </p>
+          <div className="space-y-2 mb-4">
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> New Arrivals
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Trending
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Price Low to High
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Price High to Low
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Relevance
+            </label>
+          </div>
+
+          <hr className="mb-3 border-dark" />
+
+          <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+            Special Tags
+          </p>
+          <div className="space-y-2 mb-4">
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Limited Edition
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Bestseller
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Verified Seller
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Exclusive
+            </label>
+          </div>
+
+          <hr className="mb-3 border-dark" />
+
+          <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+            Price
+          </p>
+          <input type="range" min="295" max="89700" className="w-full" />
+          <div className="flex justify-between text-xs text-gray-600 mb-2">
+            <span>₹295</span>
+            <span>₹89,700+</span>
+          </div>
+          <div className="space-y-2 mb-4 text-sm">
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Under ₹5,000
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> ₹5,000 – ₹10,000
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> ₹10,000 – ₹25,000
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Above ₹25,000
+            </label>
+          </div>
+
+          <hr className="mb-3 border-dark" />
+
+          <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+            Size
+          </p>
+          <div className="space-y-2 mb-4">
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Small (&lt;12in)
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Medium (12–24in)
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Large (24–48in)
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Oversized (48in+)
+            </label>
+          </div>
+
+          <hr className="mb-3 border-dark" />
+
+          <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+            Style
+          </p>
+          <div className="space-y-2 mb-4">
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Abstract
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Modern
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Traditional
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Minimalist
+            </label>
+          </div>
+
+          <hr className="mb-3 border-dark" />
+
+          <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+            Medium
+          </p>
+          <div className="space-y-2">
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Oil
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Acrylic
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Watercolor
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" /> Mixed Media
+            </label>
+          </div>
+        </aside>
+
+        <div className="md:hidden mb-4">
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="w-full py-2 px-4 border border-gray-300 rounded-lg text-sm font-semibold flex items-center justify-center gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M3 4h18M3 12h18M3 20h18"
+              />
+            </svg>
+            Filters
+          </button>
+
+          {showFilters && (
+            <div className="fixed inset-0 z-50 flex">
+              <div
+                className="fixed inset-0 bg-black bg-opacity-50"
+                onClick={() => setShowFilters(false)}
+              ></div>
+
+              <div className="relative bg-white w-72 max-w-full h-full shadow-xl p-5 overflow-y-auto">
+                <button
+                  onClick={() => setShowFilters(false)}
+                  className="absolute top-3 right-3 text-gray-600"
+                >
+                  ✕
+                </button>
+
+                <h2 className="font-bold text-lg mb-3">Filter by</h2>
+                <hr className="mb-3 border-dark" />
+
+                <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                  Sort By
+                </p>
+                <div className="space-y-2 mb-4">
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> New Arrivals
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Trending
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Price Low to High
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Price High to Low
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Relevance
+                  </label>
+                </div>
+
+                <hr className="mb-3 border-dark" />
+
+                <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                  Special Tags
+                </p>
+                <div className="space-y-2 mb-4">
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Limited Edition
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Bestseller
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Verified Seller
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Exclusive
+                  </label>
+                </div>
+
+                <hr className="mb-3 border-dark" />
+
+                <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                  Price
+                </p>
+                <div className="flex justify-between text-xs text-gray-600 mb-1">
+                  <span>₹295</span>
+                  <span>₹89,700+</span>
+                </div>
+                <input
+                  type="range"
+                  min="295"
+                  max="89700"
+                  className="w-full mb-3"
+                />
+                <div className="space-y-2 mb-4 text-sm">
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Under ₹5,000
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> ₹5,000 – ₹10,000
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> ₹10,000 – ₹25,000
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Above ₹25,000
+                  </label>
+                </div>
+
+                <hr className="mb-3 border-dark" />
+
+                <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                  Size
+                </p>
+                <div className="space-y-2 mb-4">
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Small (&lt;12in)
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Medium (12–24in)
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Large (24–48in)
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Oversized (48in+)
+                  </label>
+                </div>
+
+                <hr className="mb-3 border-dark" />
+
+                <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                  Style
+                </p>
+                <div className="space-y-2 mb-4">
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Abstract
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Modern
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Traditional
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Minimalist
+                  </label>
+                </div>
+
+                <hr className="mb-3 border-dark" />
+
+                <p className="font-bold text-dark mb-2 before:content-['—'] before:mr-2">
+                  Medium
+                </p>
+                <div className="space-y-2">
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Oil
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Acrylic
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Watercolor
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="mr-2" /> Mixed Media
+                  </label>
+                </div>
+              </div>
+            </div>
           )}
         </div>
-      </div>
-      <span className={`ml-3 text-sm font-medium transition-colors ${checked ? "text-[#6F4D34]" : "text-gray-600 group-hover:text-gray-900"}`}>
-        {label}
-      </span>
-    </label>
-  );
 
-  const RadioItem = ({ label, checked, onChange, name }) => (
-    <label className="flex items-center group cursor-pointer">
-      <div className="relative flex items-center">
-        <input type="radio" name={name} className="sr-only" checked={checked} onChange={onChange} />
-        <div className={`w-5 h-5 border-2 rounded-full transition-all ${checked ? "border-[#6F4D34] bg-[#6F4D34]" : "border-gray-300 group-hover:border-[#6F4D34]"}`}>
-          <div className={`w-2 h-2 bg-white rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform ${checked ? "scale-100" : "scale-0"}`} />
-        </div>
-      </div>
-      <span className={`ml-3 text-sm font-medium transition-colors ${checked ? "text-[#6F4D34]" : "text-gray-600 group-hover:text-gray-900"}`}>
-        {label}
-      </span>
-    </label>
-  );
+        <main className="md:col-span-3">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {paginatedArtists.map((artist) => {
+              const normalizedFollowers = normalizeIds(artist.followers);
+              // const isFollowing =
+              //   artist.isFollowing ||
+              //   normalizedFollowers.includes(String(userId || "")) ||
+              //   myFollowing.includes(String(artist.id));
+              const isFollowing =
+                userId &&
+                (
+                  artist.isFollowing ||
+                  normalizedFollowers.includes(String(userId)) ||
+                  myFollowing.includes(String(artist.id))
+                );
 
-  if (loading) return (
-    <div className="w-full bg-gray-50 min-h-screen font-[poppins]">
-      <div className="max-w-[1440px] mx-auto p-4">
-        <ProductsSkeliton />
-      </div>
-    </div>
-  );
+              return (
+                <div
+                  key={artist.id}
+                  className="w-full mx-auto product-card artist-card border-5"
+                >
+                  <div className="relative p-img artist-img">
+                    <img
+                      src={
+                        artist.profilePhoto
+                          ? `${imageBaseURL}${artist.profilePhoto}`
+                          : DEFAULT_PROFILE_IMAGE
+                      }
+                      onError={(e) => {
+                        if (e?.target) e.target.src = DEFAULT_PROFILE_IMAGE;
+                      }}
+                      alt={artist.username || "Artist"}
+                      className="w-full h-40 sm:h-64 object-contain product-img a-product-img"
+                    />
+                  </div>
 
-  return (
-    <div className="w-full min-h-screen font-[poppins]">
-      <div className="w-full max-w-[1440px] mx-auto p-3">
-        <div className="flex flex-col lg:flex-row gap-3">
-          
-          <aside className="w-full lg:w-[300px] shrink-0">
-            <div className="lg:hidden mb-4">
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className="w-full flex items-center justify-between px-6 py-4 bg-white border border-gray-200 rounded-2xl shadow-sm font-bold text-[#6F4D34]"
-              >
-                <span className="flex items-center gap-2">
-                  <ListFilter size={20} />
-                  {showFilters ? "Hide Filters" : "Show Filters"}
-                </span>
-                {showFilters ? <X size={20} /> : <ChevronRight size={20} />}
-              </button>
-            </div>
+                  <div className="p-1 text-center product-info product-cat">
+                    <p className="text-brown-500 text-[10px] md:text-xs font-bold">
+                      {artist.username || "Artist"}
+                    </p>
+                  </div>
 
-            <div className={`${showFilters ? "block" : "hidden"} lg:block sticky top-6 space-y-4`}>
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <h2 className="text-xl font-bold text-gray-900 mb-1">Discover Artists</h2>
-                <p className="text-sm text-gray-500">Find your favorite creators</p>
-              </div>
-
-              <FilterSection title="Sort By" icon={SortAsc}>
-                {["Newest", "Trending", "Name (A-Z)", "Name (Z-A)"].map((option) => (
-                  <RadioItem
-                    key={option}
-                    label={option}
-                    name="sortBy"
-                    checked={filters.sortBy === option}
-                    onChange={() => handleFilterChange("sortBy", option)}
-                  />
-                ))}
-              </FilterSection>
-
-              <FilterSection title="Special Tags" icon={Tag}>
-                {["Verified Artist", "Trending"].map((tag) => (
-                  <CheckboxItem
-                    key={tag}
-                    label={tag}
-                    checked={filters.specialTags.includes(tag)}
-                    onChange={(e) => handleFilterChange("specialTags", tag, e.target.checked)}
-                  />
-                ))}
-              </FilterSection>
-
-              <FilterSection title="Expertise" icon={Filter}>
-                {options.expertise.map((exp) => (
-                  <CheckboxItem
-                    key={exp}
-                    label={exp}
-                    checked={filters.expertise.includes(exp)}
-                    onChange={(e) => handleFilterChange("expertise", exp, e.target.checked)}
-                  />
-                ))}
-              </FilterSection>
-            </div>
-          </aside>
-
-          <main className="flex-grow">
-            <div className="relative mb-3 group">
-              <input
-                type="text"
-                placeholder="Search artists by name or category..."
-                value={filters.search}
-                onChange={(e) => handleFilterChange("search", e.target.value)}
-                className="w-full p-4 pl-12 bg-white border border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#6F4D34]/10 focus:border-[#6F4D34] transition-all text-lg placeholder:text-gray-400"
-              />
-            </div>
-
-            {paginatedArtists.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
-                {paginatedArtists.map((artist, index) => {
-                  const isFollowing = userId && (artist.isFollowing || myFollowing.includes(String(artist.id)));
-                  return (
-                    <div
-                      key={artist.id}
-                      className="group flex flex-col h-full bg-white rounded-[24px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100/50 animate-fade-in-up relative"
-                      style={{ animationDelay: `${index * 50}ms` }}
-                    >
-                      <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
-                        <img
-                          src={artist.profilePhoto ? `${imageBaseURL}${artist.profilePhoto}` : DEFAULT_PROFILE_IMAGE}
-                          onError={(e) => { e.target.src = DEFAULT_PROFILE_IMAGE; }}
-                          alt={artist.username}
-                          className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
-                        />
-                        <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
-                          {artist.badges.length > 0 && (
-                            <div className="bg-white backdrop-blur-md text-[#6F4D34] text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest border border-white/20">
-                              Verified Artist
-                            </div>
-                          )}
-                          </div>
-                        </div>
-
-                      <div className="flex flex-col flex-grow p-3 gap-3">
-                        <div className="flex items-center gap-1">
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-[#6F4D34] animate-pulse" />
-                            <span className="text-[#6F4D34] text-[10px] font-black uppercase tracking-widest">
-                              @{artist.username || "artist"}
-                            </span>
-                          </div>
-                          <div className="flex -space-x-1.5">
+                  <div className="py-4 px-2">
+                    <div className="flex items-stretch justify-between">
+                      <div className="w-full md:w-3.5/5 flex flex-col justify-between">
+                        <div>
+                          <h2 className="text-white text-sm md:text-lg font-bold flex items-center">
+                            {`${artist.name} ${artist.lastName}`.trim() || "Unknown"}
                             {artist.badges?.map((img, idx) => (
-                              <div key={idx}>
-                                <img src={`${imageBaseURL}${img}`} className="w-4 h-4 rounded-full border border-white" alt="Badge" />
-                              </div>
+                              <span key={idx} className="ml-2 text-orange-500 text-md">
+                                <img
+                                  src={`${imageBaseURL}${img}`}
+                                  className="w-5 h-5 rounded-full object-contain"
+                                />
+                              </span>
                             ))}
-                          </div>
+                          </h2>
                         </div>
-
-                        <h3 className="text-xl font-bold text-gray-900 line-clamp-1 group-hover:text-[#6F4D34] transition-colors tracking-tight">
-                          {`${artist.name} ${artist.lastName}`.trim() || "Artist Name"}
-                        </h3>
-
-                        <div className="flex items-center gap-2">
-                          <span className="bg-[#6F4D34]/5 text-[#6F4D34] text-[11px] font-bold px-3 py-1 rounded-full border border-[#6F4D34]/10">
+                        <div className="mt-2">
+                          <span className="bg-[#29221C] text-white text-[10px] px-2 md:px-3 py-1 rounded-full">
                             {artist.mainCategoryName}
                           </span>
-                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
-                            • {artist.followers.length} followers
-                          </span>
                         </div>
+                      </div>
 
-                        <div className="grid grid-cols-5 gap-2">
+                      <div className="w-px bg-gray-600 mx-3 hidden md:block"></div>
+
+                      <div className="w-1.5/5 flex flex-col justify-between items-end place-items-center hidden md:block">
+                        <div>
                           <button
-                            onClick={() => handleFollowToggle(artist.id, isFollowing)}
-                            className={`col-span-2 h-[48px] rounded-2xl font-black text-[12px] hover:!bg-[#6F4D34] hover:text-[#ffffff] uppercase tracking-wider transition-all duration-300 border flex items-center justify-center ${
-                              isFollowing 
-                                ? "bg-white border-[#6F4D34] text-[#6F4D34]" 
-                                : "bg-gray-50 border-gray-100 text-gray-900 hover:bg-[#6F4D34] hover:text-white"
-                            }`}
+                            className={`bg-orange-500 text-white px-3 py-1 rounded-full font-medium text-xs
+                                      ${!userId ? "opacity-60" : "hover:bg-orange-600"}
+                                      `}
+                            onClick={() => {
+                              if (!userId) {
+                                toast.error("Please login to follow artist");
+                                return;
+                              }
+                              handleFollowToggle(artist.id, isFollowing);
+                            }}
+
                           >
                             {isFollowing ? "Unfollow" : "Follow"}
                           </button>
 
+                        </div>
+                        <div className="mt-2">
                           <button
                             onClick={() => handleStoreVisit(artist.id)}
-                            className="col-span-3 h-[48px] bg-[#6F4D34] text-white hover:!text-[#6F4D34] hover:!bg-[#ffffff] rounded-2xl font-black text-[12px] uppercase tracking-wider transition-all duration-300 shadow-sm hover:!bg-white border border-[#6F4D34] flex items-center justify-center"
+                            className="text-white underline text-xs hover:text-gray-300"
                           >
                             Visit Store
                           </button>
                         </div>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="py-24 text-center bg-white rounded-3xl border border-gray-100">
-                <div className="inline-flex items-center justify-center w-24 h-24 bg-gray-50 rounded-full mb-6 text-gray-300">
-                  <Search size={40} />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">No artists found</h3>
-                <p className="text-gray-500 max-w-sm mx-auto mb-8">
-                  Try adjusting your filters or search term to discover amazing creators.
-                </p>
-                <button
-                  onClick={() => setFilters({ sortBy: "Newest", specialTags: [], expertise: [], search: "" })}
-                  className="text-[#6F4D34] font-bold hover:underline px-8 py-3 border-2 border-[#6F4D34] rounded-full transition-all hover:bg-[#6F4D34] hover:text-white"
-                >
-                  Clear All Filters
-                </button>
-              </div>
-            )}
-
-            {totalPages > 1 && (
-              <div className="flex justify-center mt-8">
-                <nav className="flex items-center gap-2 p-1 bg-white border border-gray-200 rounded-2xl shadow-sm">
-                  <button
-                    disabled={currentPage === 1}
-                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                    className="p-3 rounded-xl text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-colors"
-                  >
-                    <ChevronLeft size={24} />
-                  </button>
-                  <div className="flex items-center px-2 gap-1">
-                    {pages.map((page) => (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`w-11 h-11 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
-                          page === currentPage ? "bg-[#6F4D34] text-white shadow-md" : "text-gray-600 hover:bg-gray-50"
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    ))}
                   </div>
-                  <button
-                    disabled={currentPage === totalPages}
-                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                    className="p-3 rounded-xl text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-colors"
-                  >
-                    <ChevronRight size={24} />
-                  </button>
-                </nav>
-              </div>
-            )}
-          </main>
-        </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="flex justify-center mt-6">
+            <nav className="flex flex-wrap sm:flex-nowrap items-center space-x-2 rounded border border-dark px-2 sm:px-3 py-2 text-sm sm:text-lg font-semibold overflow-x-auto no-scrollbar">
+
+              {/* Previous */}
+              <button
+                className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === 1
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:text-red-500"
+                  }`}
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              >
+                <FiChevronLeft className="self-center flex-shrink-0" />
+                <span className="ml-1">Previous</span>
+              </button>
+
+              {/* Page Numbers */}
+              {pages.map((page) => (
+                <button
+                  key={page}
+                  className={`px-3 py-1 rounded ${page === currentPage
+                    ? "border border-dark text-dark"
+                    : "hover:text-red-500"
+                    }`}
+                  onClick={() => setCurrentPage(page)}
+                >
+                  {page}
+                </button>
+              ))}
+
+              {/* Next */}
+              <button
+                className={`px-2 sm:px-3 py-1 flex items-center ${currentPage === totalPages
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:text-red-500"
+                  }`}
+                disabled={currentPage >= totalPages}
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              >
+                <span className="mr-1">Next</span>
+                <FiChevronRight className="self-center flex-shrink-0" />
+              </button>
+            </nav>
+          </div>
+        </main>
       </div>
     </div>
   );
 };
-
 export default ArtistCard;

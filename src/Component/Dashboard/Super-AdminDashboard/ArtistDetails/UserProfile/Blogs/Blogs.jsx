@@ -100,13 +100,12 @@ const Blogs = ({ userId: propUserId, profileData, previewImage }) => {
         <div className="col-lg-9 col-md-12">
           <div className="tab-content padding-0">
             <div className="tab-pane active" id="Overview">
-                {blogs.length > 0 ? (
-                  blogs.map((blog) => (
-                    <div
-                      key={blog._id}
-                      className="card single_post mx-auto mb-4"
-                      onMouseEnter={() => setHoveredBlogId(blog._id)}
-
+              {blogs.length > 0 ? (
+                blogs.map((blog) => (
+                  <div
+                    key={blog.id}
+                    className="card single_post mx-auto mb-4"
+                    onMouseEnter={() => setHoveredBlogId(blog._id)}
                     onMouseLeave={() => setHoveredBlogId(null)}
                   >
                     <div

@@ -40,7 +40,7 @@ const MeetTeamEdit = () => {
     };
     ensureAboutUsPage();
  
-    }, [aboutUsId, passedSection, sectionId]);
+  }, []);
 
   useEffect(() => {
     if (!sectionId && !passedSection) return;
@@ -62,22 +62,16 @@ const MeetTeamEdit = () => {
         const res = await getAPI(`/api/about-us`);
         const pages = Array.isArray(res.data.data) ? res.data.data : [];
         const page = pages[0] || null;
-          const s = page?.meetTeam || null;
-          if (s) {
-            setFormData({
-              mainHeading: s.mainHeading || "",
-              mainDescription: s.mainDescription || "",
-              status: s.status || "draft",
-              teamMembers: (Array.isArray(s.teamMembers) ? s.teamMembers : []).map(m => ({
-                ...m,
-                existingImagePath: m.image ? m.image.replace(/\\/g, "/") : null
-              })),
-            });
-            setImagePreviews((Array.isArray(s.teamMembers) ? s.teamMembers : []).map(m => {
-              const relativePath = m.image ? m.image.replace(/\\/g, "/") : null;
-              return relativePath ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${relativePath}` : null;
-            }));
-          } else {
+        const s = page?.meetTeam || null;
+        if (s) {
+          setFormData({
+            mainHeading: s.mainHeading || "",
+            mainDescription: s.mainDescription || "",
+            status: s.status || "draft",
+            teamMembers: Array.isArray(s.teamMembers) ? s.teamMembers : [],
+          });
+          setImagePreviews((Array.isArray(s.teamMembers) ? s.teamMembers : []).map(m => m.image || null));
+        } else {
           setFormData((prev) => ({ ...prev, teamMembers: [] }));
           setImagePreviews([]);
         }
@@ -113,7 +107,6 @@ const MeetTeamEdit = () => {
         if (!validateImageFile(file)) return;
 
         updatedMembers[index][field] = file;
-        updatedMembers[index].existingImagePath = null;
         previews[index] = URL.createObjectURL(file);
         setImagePreviews(previews);
       } else {
@@ -165,7 +158,7 @@ const MeetTeamEdit = () => {
           setLoading(false);
           return;
         }
-        if (!member.image && !member.existingImagePath) {
+        if (!member.image && !imagePreviews[i]) {
           toast.error(`Team member ${i + 1} requires an image`);
           setLoading(false);
           return;
@@ -182,11 +175,7 @@ const MeetTeamEdit = () => {
         submissionData.append(`teamMembers[${idx}][name]`, m.name.trim());
         submissionData.append(`teamMembers[${idx}][role]`, m.role.trim());
         submissionData.append(`teamMembers[${idx}][description]`, m.description.trim());
-        if (m.image instanceof File) {
-          submissionData.append(`teamMembers[${idx}][image]`, m.image);
-        } else if (m.existingImagePath) {
-          submissionData.append(`teamMembers[${idx}][image]`, m.existingImagePath);
-        }
+        if (m.image) submissionData.append(`teamMembers[${idx}][image]`, m.image);
       });
 
       const effectiveSectionId = sectionId || 'current';

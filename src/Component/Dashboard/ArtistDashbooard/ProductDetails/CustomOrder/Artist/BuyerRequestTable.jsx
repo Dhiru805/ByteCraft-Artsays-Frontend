@@ -479,6 +479,11 @@ function BuyerManageTable({ buyerRequests }) {
                               {(currentPage - 1) * productsPerPage + index + 1}
                             </td>
 
+                            <td>
+                              {request.Buyer.id.name}{" "}
+                              {request.Buyer.id.lastName}
+                            </td>
+
                             <td className="d-flex align-items-center">
                               <img
                                 src={`${BASE_URL}/${request.BuyerImage?.replace(

@@ -14,8 +14,6 @@ function AllProduct() {
   // const navigate = useNavigate();
   const userType = useUserType();
 
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
@@ -34,7 +32,7 @@ function AllProduct() {
 
           const initialSelectedImages = {};
           productData.forEach((product) => {
-            initialSelectedImages[product._id] = `${BASE_URL}${product.mainImage}`;
+            initialSelectedImages[product._id] = product.mainImage;
           });
           setSelectedImages(initialSelectedImages);
         } else {
@@ -49,12 +47,12 @@ function AllProduct() {
       }
     };
     fetchProduct();
-  }, [productId, BASE_URL]);
+  }, [productId]);
 
   const handleImageClick = (productId, image) => {
     setSelectedImages((prevState) => ({
       ...prevState,
-      [productId]: `${BASE_URL}${image}`,
+      [productId]: image,
     }));
   };
 
@@ -78,12 +76,12 @@ function AllProduct() {
             <h2>Sold Product Details</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <Link to="/super-admin/dashboard">
+                <a href="index.html">
                   <i className="fa fa-dashboard"></i>
-                </Link>
+                </a>
               </li>
               <li className="breadcrumb-item active">
-                <Link to="/super-admin/artist/sold-product">
+                <Link to={`/${userType}/Dashboard/artistsoldproduct`}>
                   Artist Sold Product
                 </Link>
               </li>
@@ -103,7 +101,7 @@ function AllProduct() {
                     <div className="preview-pic tab-content">
                       <div className="tab-pane active">
                         <img
-                          src={selectedImages[product._id] || `${BASE_URL}${product.mainImage}`}
+                          src={selectedImages[product._id] || product.mainImage}
                           className="img-fluid"
                           style={{
                             width: "350px",
@@ -111,7 +109,6 @@ function AllProduct() {
                             objectFit: "cover",
                           }}
                           alt="Product Preview"
-                          onError={(e) => { e.target.src = "https://via.placeholder.com/350?text=Image+Not+Found"; }}
                         />
                       </div>
                     </div>
@@ -124,7 +121,7 @@ function AllProduct() {
                       ].map((image, imgIndex) => (
                         <div key={imgIndex} style={{ margin: "5px" }}>
                           <img
-                            src={`${BASE_URL}${image}`}
+                            src={image}
                             className="img-thumbnail"
                             alt={`Thumbnail ${imgIndex + 1}`}
                             style={{
@@ -137,7 +134,6 @@ function AllProduct() {
                               outline: "none",
                             }}
                             onClick={() => handleImageClick(product._id, image)}
-                            onError={(e) => { e.target.src = "https://via.placeholder.com/55?text=NA"; }}
                             onMouseEnter={(e) => {
                               e.target.style.transform = "scale(1.1)";
                               e.target.style.border = "none";

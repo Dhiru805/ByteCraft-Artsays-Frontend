@@ -39,7 +39,7 @@ const profileId = isValidUserId ? lastPart : null;
     <div className=" flex flex-col bg-[#fff]">
     
       {/* Main layout: Sidebar | Post | Suggestion */}
-      <main className='grid grid-cols-12 gap-2 p-2'>
+      <main className='flex flex-row gap-4 w-[96%] mx-auto '>
         <Sidebar />
         <Profile {...(profileId && { shareprofileid: profileId })}/>
         <Suggestion />

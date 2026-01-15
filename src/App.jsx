@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Routes from "./Routes/Routes";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CookieConsent from "./CookieConsent/CookieConsent";
 import { CookiesProvider } from "react-cookie";
@@ -9,54 +9,10 @@ import { AuthProvider, useAuth } from './AuthContext';
 import ChatIcon from "./Component/chatbot/ChatIcon";
 import ScrollToTop from "./Component/ScrollToTop";
 import WonBidPopup from "./Component/WonBidPopup/WonBidPopup";
-import { HelmetProvider } from "react-helmet-async";
-import { io } from "socket.io-client";
-import { jwtDecode } from "jwt-decode";
 
 const AppContent = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
   const userId = localStorage.getItem("userId");
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      try {
-        const decoded = jwtDecode(token);
-        const sessionId = decoded.sessionId;
-
-        if (sessionId) {
-          const socket = io(process.env.REACT_APP_API_URL || "http://localhost:3001");
-
-          socket.on("connect", () => {
-            socket.emit("joinSessionRoom", sessionId);
-          });
-
-          socket.on("sessionRevoked", (data) => {
-            console.warn("Session revoked via Socket.IO:", data.message);
-            toast.error(data.message || "Your session has been revoked. Logging out...", {
-              autoClose: 3000,
-            });
-
-            // Clear local data and logout
-            localStorage.clear();
-            sessionStorage.clear();
-            
-            setTimeout(() => {
-              window.location.href = "/login";
-            }, 1500);
-          });
-
-          return () => {
-            socket.disconnect();
-          };
-        }
-      } catch (error) {
-        console.error("Error setting up session socket:", error);
-      }
-    }
-  }, [isAuthenticated, logout]);
 
   return (
     <div className="App">
@@ -82,16 +38,14 @@ const AppContent = () => {
 function App() {
   return (
     <React.StrictMode>
-      <HelmetProvider>
-        <BrowserRouter>
-         <ScrollToTop />
-          <AuthProvider>
-            <CookiesProvider>
-              <AppContent />
-            </CookiesProvider>
-          </AuthProvider>
-        </BrowserRouter>
-      </HelmetProvider>
+      <BrowserRouter>
+       <ScrollToTop />
+        <AuthProvider>
+          <CookiesProvider>
+            <AppContent />
+          </CookiesProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </React.StrictMode>
   );
 }

@@ -104,17 +104,15 @@ const UpdateWhyArtSays = () => {
       submissionData.append("webpageHeading", formData.webpageHeading.trim());
       submissionData.append("webpageDescription", formData.webpageDescription.trim());
       submissionData.append("status", formData.status);
-      
-      const articlesMetadata = formData.articles.map((a) => ({
-        articleHeading: a.articleHeading,
-        articleContent: a.articleContent,
-        existingBanner: a.existingBanner,
-      }));
-      submissionData.append("articles", JSON.stringify(articlesMetadata));
 
       formData.articles.forEach((article, i) => {
+        submissionData.append(`articles[${i}][articleHeading]`, article.articleHeading);
+        submissionData.append(`articles[${i}][articleContent]`, article.articleContent);
+
         if (article.bannerImage instanceof File) {
           submissionData.append(`articles[${i}][bannerImage]`, article.bannerImage);
+        } else if (article.existingBanner) {
+          submissionData.append(`articles[${i}][existingBanner]`, article.existingBanner);
         }
       });
 
@@ -205,15 +203,16 @@ const UpdateWhyArtSays = () => {
                       />
                     </div>
 
-                      <div className="form-group">
-                        <label>Banner Image (Optional if existing exists)</label>
-                        <input
-                          type="file"
-                          accept="image/jpeg,image/png"
-                          onChange={(e) => handleChange(e, idx, "bannerImage")}
-                          className="form-control"
-                        />
-                        {bannerPreviews[idx] && (
+                    <div className="form-group">
+                      <label>Banner Image *</label>
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png"
+                        onChange={(e) => handleChange(e, idx, "bannerImage")}
+                        className="form-control"
+                        required
+                      />
+                      {bannerPreviews[idx] && (
                         <div className="mt-2">
                           <img
                             src={bannerPreviews[idx]}

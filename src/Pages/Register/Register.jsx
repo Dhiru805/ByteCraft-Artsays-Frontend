@@ -278,7 +278,7 @@ const Register = () => {
           </Link>
         </div>
 
-        <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5">
+        <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center p-4 p-md-5" style={{ backgroundColor: "white" }}>
           <Link to="/" className="text-decoration-none">
             <h1 className="windhavi">Artsays</h1>
           </Link>
@@ -449,6 +449,42 @@ const Register = () => {
                       letterSpacing: '10px'
                     }}
                   />
+                  <button
+                    type="button"
+                    onClick={handleVerifyOTP}
+                    disabled={loadingOTP || otp.length !== 6}
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: '#6b4f36',
+                      color: 'white',
+                      border: 'none',
+                      padding: '8px 16px',
+                      borderRadius: '4px',
+                      fontSize: '14px'
+                    }}
+                  >
+                    Enter OTP
+                  </button>
+                  <div style={{ position: "relative" }}>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="otp"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value)}
+                      placeholder="Enter 6-digit OTP"
+                      maxLength={6}
+                      style={{
+                        height: "48px",
+                        border: "1px solid #6b4f36",
+                        fontSize: "16px",
+                        color: "black",
+                        paddingRight: "80px",
+                      }}
+                    />
                     <button
                       type="button"
                       style={{
@@ -469,6 +505,7 @@ const Register = () => {
                     >
                       {loadingOTP ? "Verifying..." : "Verify"}
                     </button>
+                  </div>
                 </div>
               </div>
             )}

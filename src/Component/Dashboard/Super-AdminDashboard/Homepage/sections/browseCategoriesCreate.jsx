@@ -294,27 +294,27 @@ const BrowseCategoriesCreate = () => {
           // setExistingIcons(existingIconsList);
           // setIconPreviews(existingIconsList);
 
-            const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+          const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
-            const existingIconsList =
-              section.tags?.map(tag => {
-                const iconPath = tag.icon || tag.iconUrl;
-                return iconPath
-                  ? `${BASE_URL}/${iconPath.replace(/\\/g, "/")}`
-                  : null;
-              }) || [null];
+          const existingIconsList =
+            section.tags?.map(tag =>
+              tag.icon
+                ? `${BASE_URL}/${tag.icon}`
+                : tag.iconUrl
+                  ? `${BASE_URL}/${tag.iconUrl}`
+                  : null
+            ) || [null];
 
-            setExistingIcons(existingIconsList);
-            setIconPreviews(existingIconsList);
-
+          setExistingIcons(existingIconsList);
+          setIconPreviews(existingIconsList);
 
         }
       } catch (err) {
         toast.error(err.response?.data?.message || "Failed to load Homepage");
       }
     };
-      loadHomepageAndSection();
-      }, [navigate]);
+    loadHomepageAndSection();
+  }, []);
 
   const validateImageFile = (file, type) => {
     if (!file.type.match(/image\/(jpeg|png|svg|jpg)/)) {
@@ -381,7 +381,7 @@ const BrowseCategoriesCreate = () => {
 
       for (let i = 0; i < formData.tags.length; i++) {
         const tag = formData.tags[i];
-        if (!tag.title.trim() || (!tag.icon && !existingIcons[i])) {
+        if (!tag.title.trim() || !tag.icon) {
           toast.error(`Tag ${i + 1} requires a title and icon`);
           setLoading(false);
           return;
@@ -466,11 +466,11 @@ const BrowseCategoriesCreate = () => {
                       <input type="text" value={tag.title} onChange={(e) => handleChange(e, idx, "title")} className="form-control" required />
                     </div>
 
-                      <div className="form-group">
-                        <label>Tag Icon *</label>
-                        <input type="file" accept="image/jpeg,image/png,image/svg+xml" onChange={(e) => handleChange(e, idx, "icon")} className="form-control" required={!existingIcons[idx]} />
-                        {(iconPreviews[idx] || existingIcons[idx]) && <img src={iconPreviews[idx] || existingIcons[idx]} alt="Icon Preview" style={{ maxWidth: "80px", maxHeight: "80px", marginTop: "5px" }} />}
-                      </div>
+                    <div className="form-group">
+                      <label>Tag Icon *</label>
+                      <input type="file" accept="image/jpeg,image/png,image/svg+xml" onChange={(e) => handleChange(e, idx, "icon")} className="form-control" required />
+                      {(iconPreviews[idx] || existingIcons[idx]) && <img src={iconPreviews[idx] || existingIcons[idx]} alt="Icon Preview" style={{ maxWidth: "80px", maxHeight: "80px", marginTop: "5px" }} />}
+                    </div>
 
                     <button type="button" className="btn btn-danger btn-sm mt-2" onClick={() => removeTag(idx)}>Remove Tag</button>
                   </div>

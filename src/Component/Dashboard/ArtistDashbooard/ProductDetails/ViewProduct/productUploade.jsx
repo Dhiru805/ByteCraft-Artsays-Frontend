@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation, useParams } from "react-router-dom";
+// src/components/productUpload/ProductUpload.js
+import React, { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import useUserType from "../../../urlconfig";
 import { toast } from "react-toastify";
-import getAPI from "../../../../../api/getAPI";
+import putAPI from "../../../../../api/putAPI";
 import BasicDetails from "./Sections/BasicDetails";
 import ImagesMedia from "./Sections/ImagesMedia";
 import ArtworkDetails from "./Sections/ArtworkDetails";
@@ -14,29 +15,11 @@ import NFTDetails from "./Sections/NFTDetails";
 import AntiqueVintageDetails from "./Sections/AntiqueVintageDetails";
 import useProductForm from "./hooks/useProductForm";
 
-function ProductViewArtist() {
+function ProductUpload() {
   const navigate = useNavigate();
-  const { productId } = useParams();
   const [activeTab, setActiveTab] = useState("basic");
   const { state } = useLocation();
-  const [productData, setProductData] = useState(state?.productData);
-
-  useEffect(() => {
-    if (!productData && productId) {
-      const fetchProduct = async () => {
-        try {
-          const res = await getAPI(`/api/product/details/${productId}`, {}, true, false);
-          if (res?.data?.success) {
-            setProductData(res.data.product);
-          }
-        } catch (err) {
-          console.error("Error fetching product:", err);
-          toast.error("Failed to load product details");
-        }
-      };
-      fetchProduct();
-    }
-  }, [productId, productData]);
+  const product = state?.productData;
 
   const {
     formData,
@@ -78,7 +61,15 @@ function ProductViewArtist() {
     getCategoriesByMainCategory,
     getSubCategoriesByCategory,
     profileData,
-  } = useProductForm(productData);
+  } = useProductForm(product);
+
+
+
+
+
+
+
+
 
   const isNFTArtSelected = formData.category?.label === "NFT Art" ||
     formData.subCategory?.label === "NFT Art";
@@ -104,7 +95,6 @@ function ProductViewArtist() {
             getCategoriesByMainCategory={getCategoriesByMainCategory}
             getSubCategoriesByCategory={getSubCategoriesByCategory}
             handleSelectChange={handleSelectChange}
-            readOnly={true}
           />
         );
       case 'nft':
@@ -116,7 +106,6 @@ function ProductViewArtist() {
             handleSelectChange={handleSelectChange}
             userId={userId}
             profileData={profileData}
-            readOnly={true}
           />
         );
       case 'antique':
@@ -129,7 +118,6 @@ function ProductViewArtist() {
             handleSelectChange={handleSelectChange}
             userId={userId}
             profileData={profileData}
-            readOnly={true}
           />
         );
       case 'images':
@@ -144,7 +132,6 @@ function ProductViewArtist() {
             handleReplaceImage={handleReplaceImage}
             handleMoveImage={handleMoveImage}
             handleInputChange={handleInputChange}
-            readOnly={true}
           />
         );
       case 'artwork':
@@ -163,7 +150,6 @@ function ProductViewArtist() {
             handleMultiSelectChange={handleMultiSelectChange}
             handleInputChange={handleInputChange}
             mainCategoryId={formData.mainCategory?.value}
-            readOnly={true}
           />
         );
       case 'pricing':
@@ -177,7 +163,6 @@ function ProductViewArtist() {
             handleInstallmentDurationChange={handleInstallmentDurationChange}
             offerOptions={offerOptions}
             mainCategoryId={formData.mainCategory?.value}
-            readOnly={true}
           />
         );
       case 'shipping':
@@ -189,7 +174,6 @@ function ProductViewArtist() {
             packagingOptions={packagingOptions}
             handleInputChange={handleInputChange}
             handleSelectChange={handleSelectChange}
-            readOnly={true}
           />
         );
       case 'payoutDetails':
@@ -199,7 +183,6 @@ function ProductViewArtist() {
             isSubmitting={isSubmitting}
             handleInputChange={handleInputChange}
             setFormData={setFormData}
-            readOnly={true}
           />
         );
       case 'legal':
@@ -210,7 +193,6 @@ function ProductViewArtist() {
             handleInputChange={handleInputChange}
             handleSelectChange={handleSelectChange}
             setFormData={setFormData}
-            readOnly={true}
           />
         );
       default:
@@ -219,13 +201,29 @@ function ProductViewArtist() {
   };
   const tabOrder = ['basic', ...(isNFTArtSelected ? ['nft'] : []), ...(isAntiqueVintageSelected ? ['antique'] : []), 'images', 'artwork', 'pricing', 'shipping', 'payoutDetails', 'legal'];
 
+
+
   const handleTabClick = (targetTab) => {
+    const currentIndex = tabOrder.indexOf(activeTab);
+    const targetIndex = tabOrder.indexOf(targetTab);
+
+    if (targetIndex <= currentIndex) {
+      setActiveTab(targetTab);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+
+
     setActiveTab(targetTab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleNextTab = () => {
     const currentIndex = tabOrder.indexOf(activeTab);
+  
+
+  
     const nextTab = tabOrder[currentIndex + 1];
     if (nextTab) {
       setActiveTab(nextTab);
@@ -233,14 +231,12 @@ function ProductViewArtist() {
     }
   };
 
-  if (!productData) return <p className="text-center mt-4">Loading details...</p>;
-
   return (
     <div className="container-fluid">
       <div className="block-header">
         <div className="row">
           <div className="col-lg-6 col-md-6 col-sm-12">
-            <h2>View Product</h2>
+            <h2>Create Product</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
                 <span onClick={() => navigate('/artist/dashboard')} style={{ cursor: 'pointer' }}>
@@ -252,7 +248,7 @@ function ProductViewArtist() {
                   All Product
                 </span>
               </li>
-              <li className="breadcrumb-item">View Product</li>
+              <li className="breadcrumb-item">Create Product</li>
             </ul>
           </div>
         </div>
@@ -261,7 +257,7 @@ function ProductViewArtist() {
       <div className="row clearfix">
         <div className="col-lg-12">
           <div className="card">
-            <div className="bg-white p-4 rounded">
+            <form  className="bg-white p-4 rounded">
               {/* Tabs Navigation */}
               <ul className="nav nav-tabs mb-4">
                 <li className="nav-item">
@@ -388,7 +384,7 @@ function ProductViewArtist() {
                 </div>
 
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>
@@ -396,4 +392,4 @@ function ProductViewArtist() {
   );
 }
 
-export default ProductViewArtist;
+export default ProductUpload;

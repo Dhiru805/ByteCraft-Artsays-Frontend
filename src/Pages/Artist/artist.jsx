@@ -4,7 +4,7 @@ import ArtistCard from './artist-card/artist-card';
 
 const Artist = () => {
   return (
-    <div className="w-full mx-auto font-[poppins]">
+    <div className="max-w-[1440px] mx-auto font-[poppins]">
         <HeroImgArtist/>
         <ArtistCard/>
     </div>

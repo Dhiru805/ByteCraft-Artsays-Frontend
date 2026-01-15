@@ -46,7 +46,7 @@ const Navbar = () => {
 
 const SearchForm = () => (
   <form id="navbar-search" className="navbar-form search-form">
-    <input defaultValue="" className="form-control" placeholder="Search here..." type="text" />
+    <input value="" className="form-control" placeholder="Search here..." type="text" />
     <button type="button" className="btn btn-default">
       <FontAwesomeIcon icon={faSearch} />
     </button>

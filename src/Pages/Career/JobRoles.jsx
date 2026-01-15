@@ -3,7 +3,7 @@ import RolesContent from './RolesContent';
 
 function JobRoles() {
   return (
-    <div className="w-full font-[poppins]">
+    <div className="max-w-[1440px] mx-auto font-[poppins]">
       <HeroImgCareer />
       <RolesContent />
     </div>

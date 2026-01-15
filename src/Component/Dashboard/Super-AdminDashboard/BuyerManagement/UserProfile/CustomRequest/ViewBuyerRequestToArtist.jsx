@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, Link, useParams } from "react-router-dom";
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
-import useUserType from '../../../../urlconfig';
+import useUserType from '../../../urlconfig';
 
 function ViewBuyerRequest() {
     const location = useLocation();

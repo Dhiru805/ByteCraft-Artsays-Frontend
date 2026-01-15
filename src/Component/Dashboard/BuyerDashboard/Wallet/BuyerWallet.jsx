@@ -293,7 +293,6 @@ import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import BuyerWalletSkeleton from "../../../Skeleton/wallet/BuyerWalletSkeleton";
-
 const BuyerWallet = () => {
   const [wallet, setWallet] = useState(null);
   const [transactions, setTransactions] = useState([]);
@@ -304,22 +303,14 @@ const BuyerWallet = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [activeTab, setActiveTab] = useState("transactions");
-  const [withdrawals, setWithdrawals] = useState([]);
-  const [limits, setLimits] = useState(null);
-  const [referralData, setReferralData] = useState(null);
-  const [referralCodeInput, setReferralCodeInput] = useState("");
-  const [isApplyingReferral, setIsApplyingReferral] = useState(false);
-
   const transactionsRef = useRef(null);
 
   const API_URL = process.env.REACT_APP_API_URL;
-    const RAZORPAY_KEY = process.env.REACT_APP_RAZORPAY_KEY;
-    const userId = localStorage.getItem("userId");
-    const userType = localStorage.getItem("userType");
+  const RAZORPAY_KEY = process.env.REACT_APP_RAZORPAY_KEY;
+  const userId = localStorage.getItem("userId");
+  const userType = localStorage.getItem("userType") || "buyer";
 
-    const totalPages = Math.max(1, Math.ceil(transactions.length / pageSize));
-
+  const totalPages = Math.max(1, Math.ceil(transactions.length / pageSize));
   const displayedTransactions = transactions.slice((page - 1) * pageSize, page * pageSize);
 
   const fetchWallet = async () => {
@@ -346,85 +337,6 @@ const BuyerWallet = () => {
       setTransactions(res.data || []);
     } catch (err) {
       console.error("Error fetching transactions:", err);
-    }
-  };
-
-  const fetchWithdrawals = async () => {
-    if (!userId) return;
-    try {
-      const res = await axios.get(`${API_URL}/api/wallet/withdrawals/user/${userId}`);
-      setWithdrawals(res.data.withdrawals || []);
-    } catch (err) {
-      console.error("Error fetching withdrawals:", err);
-    }
-  };
-
-  const fetchLimits = async () => {
-    if (!userId) return;
-    try {
-      const res = await axios.get(`${API_URL}/api/wallet/limits/${userId}`);
-      setLimits(res.data);
-    } catch (err) {
-      console.error("Error fetching limits:", err);
-    }
-  };
-
-  const fetchReferralData = async () => {
-    if (!userId) return;
-    try {
-      const res = await axios.get(`${API_URL}/api/wallet/referral/stats/${userId}`);
-      setReferralData(res.data);
-    } catch (err) {
-      console.error("Error fetching referral data:", err);
-    }
-  };
-
-  const applyReferralCode = async () => {
-    if (!referralCodeInput.trim()) return toast.error("Please enter a referral code");
-    if (wallet?.referredBy) return toast.error("You have already used a referral code");
-    setIsApplyingReferral(true);
-    try {
-      const res = await axios.post(`${API_URL}/api/wallet/referral/apply`, {
-        userId,
-        referralCode: referralCodeInput.trim().toUpperCase()
-      });
-      toast.success(res.data.message || "Referral code applied successfully!");
-      setReferralCodeInput("");
-      fetchWallet();
-      fetchReferralData();
-    } catch (err) {
-      toast.error(err.response?.data?.error || "Failed to apply referral code");
-    } finally {
-      setIsApplyingReferral(false);
-    }
-  };
-
-    const [referralSettings, setReferralSettings] = useState(null);
-    const [coinSetting, setCoinSetting] = useState({ coinValue: 0.10, currency: "INR", transactionReward: 10 });
-
-    const fetchCoinSetting = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/api/coin-settings`);
-        if (res.data) setCoinSetting(res.data);
-      } catch (err) {
-        console.error("Error fetching coin settings:", err);
-      }
-    };
-
-    const fetchReferralSettings = async () => {
-      if (!userId) return;
-      try {
-        const res = await axios.get(`${API_URL}/api/wallet/referral/settings/${userId}`);
-        setReferralSettings(res.data);
-      } catch (err) {
-        console.error("Error fetching referral settings:", err);
-      }
-    };
-
-  const copyReferralCode = () => {
-    if (wallet?.referralCode) {
-      navigator.clipboard.writeText(wallet.referralCode);
-      toast.success("Referral code copied to clipboard!");
     }
   };
 
@@ -659,90 +571,20 @@ const isValidText = (text) => {
       setTransactions(prev => [res.data.transaction, ...prev]);
       setWithdrawAmount("");
       setWithdrawDestination({});
-      fetchWithdrawals();
-      fetchLimits();
       toast.success("Withdrawal requested successfully! Admin will process it soon.");
     } catch (err) {
       console.error("Error requesting withdrawal:", err);
-      toast.error(err.response?.data?.message || "Failed to request withdrawal");
+      toast.error("Failed to request withdrawal");
     } finally {
       setIsLoading(false);
     }
   };
 
-
-
-  const downloadReceipt = async (txnId) => {
-    try {
-      const res = await axios.get(`${API_URL}/api/wallet/transaction/receipt/${txnId}`);
-      const receipt = res.data;
-      
-      const receiptContent = `
-========================================
-           ARTSAYS RECEIPT
-========================================
-Receipt No: ${receipt.receiptNumber}
-Date: ${new Date(receipt.date).toLocaleString()}
-
-Transaction Details:
---------------------
-Type: ${receipt.type.toUpperCase()}
-Amount: ₹${receipt.amount}
-Purpose: ${receipt.purpose}
-Status: ${receipt.status}
-
-User: ${receipt.user.name}
-Email: ${receipt.user.email}
-
-Balance After: ₹${receipt.balanceAfter}
-Art Coins: ${receipt.artCoinsEarned > 0 ? '+' : ''}${receipt.artCoinsEarned}
-
-Generated: ${new Date(receipt.generatedAt).toLocaleString()}
-========================================
-      `;
-      
-      const blob = new Blob([receiptContent], { type: 'text/plain' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `receipt_${receipt.receiptNumber}.txt`;
-      a.click();
-      window.URL.revokeObjectURL(url);
-      toast.success("Receipt downloaded");
-    } catch (err) {
-      toast.error("Failed to download receipt");
-    }
-  };
-
-  const exportTransactions = async (format = "csv") => {
-    try {
-      const res = await axios.get(`${API_URL}/api/wallet/transactions/export/${userId}?format=${format}`);
-      if (format === "csv") {
-        const blob = new Blob([res.data], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `transactions_${Date.now()}.csv`;
-        a.click();
-        window.URL.revokeObjectURL(url);
-      }
-      toast.success("Transactions exported");
-    } catch (err) {
-      toast.error("Failed to export transactions");
-    }
-  };
-
-    useEffect(() => {
-      if (!userId) return;
-      fetchWallet();
-      fetchTransactions();
-      fetchWithdrawals();
-      fetchLimits();
-      fetchReferralData();
-      fetchReferralSettings();
-      fetchCoinSetting();
-    }, [userId]);
-
+  useEffect(() => {
+    if (!userId) return;
+    fetchWallet();
+    fetchTransactions();
+  }, [userId]);
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
   }, [transactions.length, pageSize, totalPages]);
@@ -760,19 +602,15 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
 
 
 
-    const showReferral = referralSettings?.isActive || userType === "Super-Admin";
+  if (!wallet) return <div><BuyerWalletSkeleton/></div>;
 
-    if (!wallet) {
-      return <BuyerWalletSkeleton />;
-    }
-
-    return (
-
+  return (
     <div className="container-fluid">
       <div className="block-header mb-4">
         <h2>My Wallet</h2>
       </div>
 
+      {/* Balance Cards */}
       <div className="row clearfix row-deck mb-4">
         <div className="col-lg-3 col-md-6 col-sm-6">
           <div className="card top_widget primary-bg" style={{ backgroundColor: "#4B2E05", color: "#ffffff" }}>
@@ -786,24 +624,24 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
           </div>
         </div>
 
-          <div className="col-lg-3 col-md-6 col-sm-6">
-            <div className="card top_widget secondary-bg" style={{ backgroundColor: "#F36F21", color: "#ffffff" }}>
-              <div className="body">
-                <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-shopping-basket"></i></div>
-                <div className="content text-light">
-                  <div className="text mb-2 text-uppercase">Art Coins</div>
-                  <h4 className="number mb-0">{wallet.artCoins}</h4>
-                  <small>Worth {coinSetting.currency} {(wallet.artCoins * coinSetting.coinValue).toFixed(2)}</small>
-                </div>
+        <div className="col-lg-3 col-md-6 col-sm-6">
+          <div className="card top_widget secondary-bg" style={{ backgroundColor: "#F36F21", color: "#ffffff" }}>
+            <div className="body">
+              <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-shopping-basket"></i></div>
+              <div className="content text-light">
+                <div className="text mb-2 text-uppercase">Art Coins</div>
+                <h4 className="number mb-0">{wallet.artCoins}</h4>
               </div>
             </div>
           </div>
+        </div>
+
+
 
         <div className="col-lg-3 col-md-6 col-sm-6">
-          <div className="card top_widget bg-dark">
+          <div className="card top_widget bg-dark" >
             <div className="body">
-              <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-history"></i></div>
-              <div className="content text-light">
+              <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-history" ></i></div><div className="content text-light">
                 <div className="text mb-2 text-uppercase">All Transactions</div>
                 <h4 className="number mb-0">{transactions.length}</h4>
               </div>
@@ -824,48 +662,7 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
         </div>
       </div>
 
-      {limits && (
-        <div className="row clearfix mb-4">
-          <div className="col-12">
-            <div className="card">
-              <div className="header"><h2>Withdrawal Limits</h2></div>
-              <div className="body">
-                <div className="row">
-                  <div className="col-md-6">
-                      <div className="progress-container">
-                        <label>Daily Limit</label>
-                      <div className="progress" style={{ height: "20px" }}>
-                        <div
-                          className="progress-bar"
-                          style={{ width: `${(limits.dailyUsed / limits.dailyLimit) * 100}%`, backgroundColor: "#4B2E05" }}
-                        >
-                          ₹{limits.dailyUsed} / ₹{limits.dailyLimit}
-                        </div>
-                      </div>
-                      <small className="text-muted">Remaining: ₹{limits.dailyRemaining}</small>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                      <div className="progress-container">
-                        <label>Monthly Limit</label>
-                        <div className="progress" style={{ height: "20px" }}>
-                          <div
-                            className="progress-bar bg-success"
-                            style={{ width: `${(limits.monthlyUsed / limits.monthlyLimit) * 100}%` }}
-                          >
-                            ₹{limits.monthlyUsed} / ₹{limits.monthlyLimit}
-                          </div>
-                        </div>
-                        <small className="text-muted">Remaining: ₹{limits.monthlyRemaining}</small>
-                      </div>
-                    </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
+      {/* Add Money & Withdraw */}
       <div className="row clearfix mb-4">
         <div className="col-lg-6 col-md-12">
           <div className="card">
@@ -905,6 +702,7 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
           </div>
         </div>
 
+        {/* Withdraw Card */}
         <div className="col-lg-6 col-md-12">
           <div className="card">
             <div className="header"><h2>Request Withdrawal</h2></div>
@@ -1014,379 +812,84 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
         </div>
       </div>
 
-      {showReferral && referralData && (
-        <div className="row clearfix mb-4">
-          <div className="col-12">
-            <div className="card">
-              <div className="header"><h2>Referral Program</h2></div>
-              <div className="body">
-                <div className="row">
-                  <div className="col-md-4">
-                    <div className="form-group">
-                      <label>Your Referral Code</label>
-                      <div className="input-group">
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={referralData.referralCode || ""}
-                          readOnly
-                        />
-                        <div className="input-group-append">
-                          <button className="btn btn-primary" onClick={copyReferralCode} style={{ backgroundColor: "#4B2E05", borderColor: "#4B2E05" }}>
-                            <i className="fa fa-copy"></i> Copy
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-4">
-                    <label>Total Referrals</label>
-                    <h4>{referralData.totalReferrals || 0}</h4>
-                  </div>
-                  <div className="col-md-4">
-                    <label>Referral Earnings</label>
-                    <h4>₹{referralData.totalEarnings || 0}</h4>
-                  </div>
-                </div>
-                <hr />
-                <small className="text-muted">
-                  Share your referral code with friends. When they sign up and make their first purchase, you earn ₹50 + 100 Art Coins!
-                </small>
-              </div>
-            </div>
-          </div>
-        </div>
-        )}
-
-          <div className="row clearfix mb-4">
-            <div className="col-sm-12">
-              <div className="card">
-                <div className="header">
-                  <h2>Art Coins Benefits</h2>
-                </div>
-              <div className="body">
-                <div className="row">
-                  <div className="col-md-4">
-                    <h5>How to Earn</h5>
-                    <ul>
-                      <li>{coinSetting.transactionReward || 10} coins per transaction</li>
-                      {showReferral && <li>{referralSettings?.buyerReferredCoinsReward || 100} coins on referral signup</li>}
-                      <li>Bonus coins on special offers</li>
-                    </ul>
-                  </div>
-                  <div className="col-md-4">
-                    <h5>How to Use</h5>
-                    <ul>
-                      <li>1 coin = {coinSetting.currency} {coinSetting.coinValue.toFixed(2)} discount</li>
-                      <li>Max 20% discount per order</li>
-                      <li>Use during checkout</li>
-                    </ul>
-                  </div>
-                  <div className="col-md-4">
-                    <div className="p-3 bg-light border rounded">
-                      <h6><i className="fa fa-gift mr-2"></i>Benefit Preview</h6>
-                      <hr />
-                        <div className="d-flex justify-content-between mb-1 small">
-                          <span>Transaction Reward:</span>
-                          <strong className="text-primary">{coinSetting.transactionReward || 10} Coins</strong>
-                        </div>
-                        <div className="d-flex justify-content-between mb-1 small">
-                          <span>Referral Reward:</span>
-                          <strong className="text-primary">{referralSettings?.buyerReferrerCoinsReward || 0} Coins</strong>
-                        </div>
-                        <div className="d-flex justify-content-between mb-1 small">
-                          <span>Signup Bonus:</span>
-                          <strong className="text-primary">{coinSetting[`${userType.toLowerCase()}SignupBonus`] || 0} Coins</strong>
-                        </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
+      {/* Recent Transactions */}
       <div className="row clearfix">
         <div className="col-sm-12">
           <div className="card">
-            <div className="header">
-              <ul className="nav nav-tabs">
-                <li className="nav-item">
-                  <button
-                    className={`nav-link ${activeTab === 'transactions' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('transactions')}
-                  >
-                    Transactions
-                  </button>
-                </li>
-                    <li className="nav-item">
-                      <button
-                        className={`nav-link ${activeTab === 'withdrawals' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('withdrawals')}
-                      >
-                        Withdrawal History
-                      </button>
-                    </li>
-                    {showReferral && (
-                      <li className="nav-item">
-                        <button
-                          className={`nav-link ${activeTab === 'referral' ? 'active' : ''}`}
-                          onClick={() => setActiveTab('referral')}
-                        >
-                          Referral Program
-                        </button>
-                      </li>
-                    )}
-                  </ul>
+            <div className="header d-flex justify-content-between align-items-center">
+              <h2>Recent Transactions</h2>
+              <div>
+                Show
+                <select
+                  className="form-control d-inline-block w-auto ml-2"
+                  value={pageSize}
+                  onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
+                >
+                  {[5, 10, 15, 20, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
+                </select>
+                entries
+              </div>
+            </div>
+            {/* <div className="body table-responsive"> */}
+            <div className="body table-responsive" ref={transactionsRef}>
 
+              <table className="table table-hover mb-0">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Purpose</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {displayedTransactions.map((txn, idx) => (
+                    <tr key={txn._id || idx}>
+                      <td>{(page - 1) * pageSize + idx + 1}</td>
+                      <td>
+                        <span className={`badge ${txn.type === 'credit' ? 'badge-success' : 'badge-danger'}`}>
+                          {txn.type}
+                        </span>
+                      </td>
+                      <td>₹{txn.amount}</td>
+                      <td>{txn.purpose}</td>
+                      <td>
+                        <span className={`badge ${txn.status === 'success' ? 'badge-success' :
+                          txn.status === 'pending' ? 'badge-warning' : 'badge-danger'}`}>
+                          {txn.status}
+                        </span>
+                      </td>
+                      <td>{txn.createdAt ? new Date(txn.createdAt).toLocaleString() : "-"}</td>
+                    </tr>
+                  ))}
+                  {displayedTransactions.length === 0 && (
+                    <tr>
+                      <td colSpan="6" className="text-center">No transactions yet</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
 
-            {activeTab === 'transactions' && (
-              <>
-                <div className="header d-flex justify-content-between align-items-center">
-                  <h2>Recent Transactions</h2>
-                  <div>
-                    <button className="btn btn-sm btn-outline-primary mr-2" onClick={() => exportTransactions('csv')}>
-                      <i className="fa fa-download"></i> Export CSV
-                    </button>
-                    Show
-                    <select
-                      className="form-control d-inline-block w-auto ml-2"
-                      value={pageSize}
-                      onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
-                    >
-                      {[5, 10, 15, 20, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
-                    </select>
-                    entries
-                  </div>
-                </div>
-                <div className="body table-responsive">
-                  <table className="table table-hover mb-0">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Type</th>
-                        <th>Amount</th>
-                        <th>Purpose</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th>Receipt</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {displayedTransactions.map((txn, idx) => (
-                        <tr key={txn._id || idx}>
-                          <td>{(page - 1) * pageSize + idx + 1}</td>
-                          <td>
-                            <span className={`badge ${txn.type === 'credit' ? 'badge-success' : 'badge-danger'}`}>
-                              {txn.type}
-                            </span>
-                          </td>
-                          <td>₹{txn.amount}</td>
-                          <td>{txn.purpose}</td>
-                          <td>
-                            <span className={`badge ${txn.status === 'success' ? 'badge-success' :
-                              txn.status === 'pending' ? 'badge-warning' : 'badge-danger'}`}>
-                              {txn.status}
-                            </span>
-                          </td>
-                          <td>{txn.createdAt ? new Date(txn.createdAt).toLocaleString() : "-"}</td>
-                          <td>
-                            <button
-                              className="btn btn-sm btn-outline-secondary"
-                              onClick={() => downloadReceipt(txn._id)}
-                            >
-                              <i className="fa fa-download"></i>
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                      {displayedTransactions.length === 0 && (
-                        <tr>
-                          <td colSpan="7" className="text-center">No transactions yet</td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+            {/* Pagination */}
+            <div className="d-flex justify-content-end align-items-center mt-3 px-3 py-3">
+              <ul className="pagination mb-0">
+                <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
+                  <button className="page-link" onClick={() => setPage(prev => Math.max(prev - 1, 1))}>&laquo;</button>
+                </li>
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <li key={i} className={`page-item ${page === i + 1 ? 'active' : ''}`}>
+                    <button className="page-link" onClick={() => setPage(i + 1)}>{i + 1}</button>
+                  </li>
+                ))}
+                <li className={`page-item ${page === totalPages ? 'disabled' : ''}`}>
+                  <button className="page-link" onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}>&raquo;</button>
+                </li>
+              </ul>
+            </div>
 
-                <div className="d-flex justify-content-end align-items-center mt-3 px-3 py-3">
-                  <ul className="pagination mb-0">
-                    <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
-                      <button className="page-link" onClick={() => setPage(prev => Math.max(prev - 1, 1))}>&laquo;</button>
-                    </li>
-                    {Array.from({ length: totalPages }, (_, i) => (
-                      <li key={i} className={`page-item ${page === i + 1 ? 'active' : ''}`}>
-                        <button className="page-link" onClick={() => setPage(i + 1)}>{i + 1}</button>
-                      </li>
-                    ))}
-                    <li className={`page-item ${page === totalPages ? 'disabled' : ''}`}>
-                      <button className="page-link" onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}>&raquo;</button>
-                    </li>
-                  </ul>
-                </div>
-              </>
-            )}
-
-            {activeTab === 'withdrawals' && (
-                <div className="body table-responsive">
-                  <table className="table table-hover mb-0">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Amount</th>
-                        <th>Method</th>
-                        <th>Status</th>
-                        <th>Requested</th>
-                        <th>Processed</th>
-                        <th>Admin Note</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {withdrawals.map((w, idx) => (
-                        <tr key={w._id}>
-                          <td>{idx + 1}</td>
-                          <td>₹{w.amount}</td>
-                          <td>{w.method?.toUpperCase()}</td>
-                          <td>
-                            <span className={`badge badge-${
-                              w.status === 'paid' ? 'success' :
-                              w.status === 'approved' ? 'info' :
-                              w.status === 'pending' ? 'warning' : 'danger'
-                            }`}>
-                              {w.status}
-                            </span>
-                          </td>
-                          <td>{new Date(w.createdAt).toLocaleString()}</td>
-                          <td>{w.processedAt ? new Date(w.processedAt).toLocaleString() : '-'}</td>
-                          <td>{w.adminNote || '-'}</td>
-                        </tr>
-                      ))}
-                      {withdrawals.length === 0 && (
-                        <tr>
-                          <td colSpan="7" className="text-center">No withdrawal requests yet</td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-                {showReferral && activeTab === 'referral' && (
-                  <div className="body">
-
-                  <div className="row">
-                    <div className="col-md-6">
-                      <div className="card bg-light">
-                        <div className="card-body">
-                          <h5>Your Referral Code</h5>
-                          <div className="input-group mb-3">
-                            <input
-                              type="text"
-                              className="form-control form-control-lg text-center font-weight-bold"
-                              value={wallet?.referralCode || "Not Generated"}
-                              readOnly
-                              style={{ letterSpacing: "2px" }}
-                            />
-                            <div className="input-group-append">
-                              <button 
-                                className="btn btn-primary" 
-                                onClick={copyReferralCode}
-                                disabled={!wallet?.referralCode}
-                                style={{ backgroundColor: "#4B2E05", borderColor: "#4B2E05" }}
-                              >
-                                <i className="fa fa-copy"></i> Copy
-                              </button>
-                            </div>
-                          </div>
-                          <p className="text-muted mb-0">Share this code with friends to earn rewards!</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="col-md-6">
-                      <div className="card bg-light">
-                        <div className="card-body">
-                          <h5>Enter Referral Code</h5>
-                          {wallet?.referredBy ? (
-                            <div className="alert alert-success">
-                              <i className="fa fa-check-circle"></i> You joined using code: <strong>{wallet.referredBy}</strong>
-                            </div>
-                          ) : (
-                            <>
-                              <div className="input-group mb-3">
-                                <input
-                                  type="text"
-                                  className="form-control"
-                                  placeholder="Enter friend's referral code"
-                                  value={referralCodeInput}
-                                  onChange={e => setReferralCodeInput(e.target.value.toUpperCase())}
-                                  maxLength={10}
-                                />
-                                <div className="input-group-append">
-                                  <button 
-                                    className="btn btn-success" 
-                                    onClick={applyReferralCode}
-                                    disabled={isApplyingReferral || !referralCodeInput.trim()}
-                                  >
-                                    {isApplyingReferral ? "Applying..." : "Apply"}
-                                  </button>
-                                </div>
-                              </div>
-                              <p className="text-muted mb-0">Enter a referral code to get bonus Art Coins!</p>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="row mt-4">
-                    <div className="col-md-4">
-                      <div className="card text-center" style={{ backgroundColor: "#4B2E05", color: "#fff" }}>
-                        <div className="card-body">
-                          <h3>{referralData?.totalReferrals || wallet?.referralCount || 0}</h3>
-                          <p className="mb-0">Friends Referred</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4">
-                      <div className="card text-center" style={{ backgroundColor: "#F36F21", color: "#fff" }}>
-                        <div className="card-body">
-                          <h3>₹{referralData?.totalEarnings || wallet?.referralEarnings || 0}</h3>
-                          <p className="mb-0">Referral Earnings</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4">
-                      <div className="card text-center bg-success text-white">
-                        <div className="card-body">
-                          <h3>
-                            {referralSettings 
-                              ? `₹${referralSettings.referrerCash} + ${referralSettings.referrerCoins} Coins` 
-                              : "₹50 + 100 Coins"}
-                          </h3>
-                          <p className="mb-0">Per Referral Reward</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="alert alert-info mt-4">
-                    <h5><i className="fa fa-info-circle"></i> How Referrals Work</h5>
-                    <ul className="mb-0">
-                      <li>Share your referral code with friends</li>
-                      <li>When they sign up and enter your code, both of you get rewards</li>
-                      <li>
-                        You earn {referralSettings ? `₹${referralSettings.referrerCash} cash + ${referralSettings.referrerCoins} Art Coins` : "₹50 cash + 100 Art Coins"} per successful referral
-                      </li>
-                      <li>
-                        Your friend gets {referralSettings ? `${referralSettings.referredCoins} Art Coins ${referralSettings.referredCash > 0 ? `+ ₹${referralSettings.referredCash} cash` : ''}` : "50 Art Coins"} as a welcome bonus
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              )}
           </div>
         </div>
       </div>

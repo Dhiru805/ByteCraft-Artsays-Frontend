@@ -459,19 +459,19 @@ const MissionVisionCreate = () => {
           //       existingSideImage: c.sideImageUrl || c.sideImage || null,
           //     }))
           //   : [{ icon: null, heading: "", description: "", sideImage: null, existingIcon: null, existingSideImage: null }];
-            const existingCards = s.cards?.length
-              ? s.cards.map(c => ({
-                icon: c.icon || null, // store relative path
-                heading: c.heading,
-                description: c.description,
-                sideImage: c.sideImage || null, // store relative path
-                existingIcon: c.icon
-                  ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${c.icon.replace(/\\/g, "/")}`
-                  : c.iconUrl || null,
-                existingSideImage: c.sideImage
-                  ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${c.sideImage.replace(/\\/g, "/")}`
-                  : c.sideImageUrl || null,
-              }))
+          const existingCards = s.cards?.length
+            ? s.cards.map(c => ({
+              icon: null,
+              heading: c.heading,
+              description: c.description,
+              sideImage: null,
+              existingIcon: c.icon
+                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${c.icon}`
+                : c.iconUrl || null,
+              existingSideImage: c.sideImage
+                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${c.sideImage}`
+                : c.sideImageUrl || null,
+            }))
             : [{ icon: null, heading: "", description: "", sideImage: null, existingIcon: null, existingSideImage: null }];
           setCards(existingCards);
           setIconPreviews(existingCards.map(c => c.existingIcon || null));

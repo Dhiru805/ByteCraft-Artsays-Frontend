@@ -169,7 +169,7 @@ const AddCategory = ({ onClose, fetchSubCategoryData }) => {
             <form onSubmit={handleSubmit}>
               {categoryRows.map((row, index) => (
                 <div className="row mb-2" key={index}>
-                  <div className="col-md-3">
+                  <div className="col-md-4">
                     {showOtherFields ? (
                       <>
                         <label htmlFor={`mainCategory-${index}`} className="form-label">
@@ -232,7 +232,7 @@ const AddCategory = ({ onClose, fetchSubCategoryData }) => {
                     )}
                   </div>
 
-                  <div className="col-md-3">
+                  <div className="col-md-4">
                     {showOtherFields ? (
                       <>
                         <label htmlFor={`category-${index}`} className="form-label">
@@ -329,7 +329,7 @@ const AddCategory = ({ onClose, fetchSubCategoryData }) => {
                   </div>
 
                   {/* Commission */}
-                  <div className="col-md-2">
+                  <div className="col-lg-2 col-md-6">
                     <label className="form-label">Commission</label>
                     <input
                       type="text"
@@ -342,7 +342,7 @@ const AddCategory = ({ onClose, fetchSubCategoryData }) => {
                   </div>
 
                   {/* + / - Button */}
-                  <div className="col-md-1 align-self-end mt-2">
+                  <div className="col-lg-1 col-md-2 col-sm-2 w-sm:space-y-2 d-flex align-items-end w-4 h-4">
                     {!showOtherFields && (
                       <>
                         {index === 0 ? (

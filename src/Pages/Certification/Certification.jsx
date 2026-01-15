@@ -1,12 +1,18 @@
 import React from 'react';
 import HeroImgCertification from './hero-img/hero-img';
-import CertificationContent from './CertificationContent/CertificationContent';
+import Certificate from './Certificate/Certificate';
+import Benifits from './Benifits/Benifits';
+import Path from './Path/Path';
+import Examples from './Examples/Examples';
 
 const Certification = () => {
   return (
-    <div className="w-full font-[poppins]">
+    <div className="max-w-[1440px] mx-auto font-[poppins]">
         <HeroImgCertification/>
-        <CertificationContent/>
+        <Certificate/>
+        <Benifits/>
+        <Path/>
+        <Examples/>
     </div>
   );
 };

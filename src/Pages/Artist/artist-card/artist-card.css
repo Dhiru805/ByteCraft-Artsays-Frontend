@@ -1,71 +1,21 @@
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+.artist-card {
+    background-color: #48372D;
+    border: 10px solid #48372D;
 }
-
-@keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+.artist-button {
+    background-color: #48372D;
+    border-radius: 0px;
 }
-
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+.artist-img {
+    border-bottom: 0px;
+    background-color: #ffffff;
+    border-radius: 30px 30px 0px 0px;
 }
-
-.animate-fade-in {
-    animation: fadeIn 1s ease-out forwards;
+.a-product-img {
+    background-color: #EBEBEB;
+    border-bottom: 2px solid #48372D;
 }
-
-.animate-slide-up {
-    animation: slideUp 0.6s ease-out forwards;
-}
-
-.animate-fade-in-up {
-    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Custom Scrollbar for Sidebar */
-aside::-webkit-scrollbar {
-    width: 4px;
-}
-
-aside::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-aside::-webkit-scrollbar-thumb {
-    background: #e2e8f0;
-    border-radius: 10px;
-}
-
-aside::-webkit-scrollbar-thumb:hover {
-    background: #cbd5e1;
-}
-
-/* Hide scrollbar for Chrome, Safari and Opera */
-.no-scrollbar::-webkit-scrollbar {
-    display: none;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
-.no-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-}
-
-/* Artist Card Specific Styles */
-.artist-card-image-zoom {
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.group:hover .artist-card-image-zoom {
-    transform: scale(1.05);
-}
-
-.line-clamp-1 {
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+.product-cat {
+    border-bottom: 2px solid #48372D;
+    border-radius: 0px 0px 30px 30px;
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet';
 import ProductRequestSkeleton from '../../../../Skeleton/artist/ProductRequestSkeleton';
 function ArtistBlogDetails() {
   const location = useLocation();

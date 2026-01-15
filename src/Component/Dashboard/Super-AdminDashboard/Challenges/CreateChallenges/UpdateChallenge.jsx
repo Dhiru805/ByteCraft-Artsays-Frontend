@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import putAPI from "../../../../../api/putAPI";
 import getAPI from "../../../../../api/getAPI";
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet';
 import ReactQuill from "react-quill";
 
 function UpdateChallenge() {
@@ -147,14 +147,14 @@ function UpdateChallenge() {
                 formValues.startDate &&
                 formValues.endDate &&
                 formValues.submissionDeadline &&
-                (formValues.entryFee !== undefined && formValues.entryFee !== "") &&
+                formValues.entryFee &&
                 formValues.prizeDetails &&
                 formValues.judgingCriteria &&
-                (formValues.maxParticipants !== undefined && formValues.maxParticipants !== "") &&
+                formValues.maxParticipants &&
                 formValues.status &&
                 formValues.rules &&
                 tags.length > 0 &&
-                (bannerFile || imagePreview);
+                bannerFile;
         } else {
             // For Draft, only the essential fields and status should be validated.
             requiredFieldsFilled =
@@ -367,21 +367,19 @@ function UpdateChallenge() {
 
                                     {/* Entry fee & Prize details */}
                                     <div className="row">
-                                            <div className="col-md-6 form-group">
-                                                <label htmlFor="entryFee">
-                                                    Entry Fee <span className="text-danger">*</span>
-                                                </label>
-                                                <input
-                                                    type="number"
-                                                    id="entryFee"
-                                                    name="entryFee"
-                                                    min="0"
-                                                    step="0.01"
-                                                    className="form-control"
-                                                    value={formValues.entryFee || ""}
-                                                    onChange={handleChange}
-                                                />
-                                            </div>
+                                        <div className="col-md-6 form-group">
+                                            <label htmlFor="entryFee">
+                                                Entry Fee <span className="text-danger">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="entryFee"
+                                                name="entryFee"
+                                                className="form-control"
+                                                value={formValues.entryFee || ""}
+                                                onChange={handleChange}
+                                            />
+                                        </div>
 
                                         <div className="col-md-6 form-group">
                                             <label htmlFor="prizeDetails">

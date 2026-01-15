@@ -404,20 +404,20 @@ const HowToBuyCreate = () => {
 
           setExistingCardImages(
             (s.cards || []).map(c =>
-              c.image ? `${BASE_URL}/${c.image}`.replace(/\\/g, "/") : null
+              c.image ? `${BASE_URL}/${c.image}` : null
             )
           );
 
           setImagePreviews(
             (s.cards || []).map(c =>
-              c.image ? `${BASE_URL}/${c.image}`.replace(/\\/g, "/") : null
+              c.image ? `${BASE_URL}/${c.image}` : null
             )
           );
 
           setExistingIcons(
             (s.cards || []).map(c =>
               (c.icons || []).map(icon =>
-                icon ? `${BASE_URL}/${icon}`.replace(/\\/g, "/") : null
+                icon ? `${BASE_URL}/${icon}` : null
               )
             )
           );
@@ -425,7 +425,7 @@ const HowToBuyCreate = () => {
           setIconPreviews(
             (s.cards || []).map(c =>
               (c.icons || []).map(icon =>
-                icon ? `${BASE_URL}/${icon}`.replace(/\\/g, "/") : null
+                icon ? `${BASE_URL}/${icon}` : null
               )
             )
           );
@@ -435,8 +435,8 @@ const HowToBuyCreate = () => {
         toast.error(err.response?.data?.message || "Failed to load Homepage");
       }
     };
-      loadHomepageAndSection();
-      }, [navigate]);
+    loadHomepageAndSection();
+  }, []);
 
   const validateImageFile = (file, type) => {
     if (!file.type.match(/image\/(jpeg|png|svg|jpg)/)) {
@@ -635,13 +635,13 @@ const HowToBuyCreate = () => {
                   <div key={idx} className="border mb-3 p-3 rounded shadow">
                     <div className="form-group">
                       <label>Card Image *</label>
-                        <input
-                          type="file"
-                          accept="image/jpeg,image/png,image/svg+xml"
-                          onChange={(e) => handleChange(e, idx, "image")}
-                          className="form-control"
-                          required={!existingCardImages[idx]}
-                        />
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/svg+xml"
+                        onChange={(e) => handleChange(e, idx, "image")}
+                        className="form-control"
+                        required
+                      />
                       {(imagePreviews[idx] || existingCardImages[idx]) && (
                         <img src={imagePreviews[idx] || existingCardImages[idx]}
                          alt="Card Preview"

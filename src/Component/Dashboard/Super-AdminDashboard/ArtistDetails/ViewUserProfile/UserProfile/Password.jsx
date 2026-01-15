@@ -11,14 +11,10 @@ const UserProfileForm = ({ userId, email, phoneNumber, username }) => {
     const [PhoneNumber, setPhoneNumber] = useState('');
     const [Username, setUsername] = useState('');  
 
-    const [showCurrent, setShowCurrent] = useState(false);
-    const [showNew, setShowNew] = useState(false);
-    const [showConfirm, setShowConfirm] = useState(false);
-
     useEffect(() => {
-        setNewEmail(email || '');
-        setPhoneNumber(phoneNumber || '');
-        setUsername(username || ''); 
+        setNewEmail(email);
+        setPhoneNumber(phoneNumber);
+        setUsername(username); 
     }, [email, phoneNumber, username]);  
 
     const handleSubmit = async (event) => {
@@ -76,6 +72,14 @@ const UserProfileForm = ({ userId, email, phoneNumber, username }) => {
                             placeholder="Email"
                             value={Email}  
                             onChange={(e) => setNewEmail(e.target.value)}
+                            style={{
+                                backgroundImage: 'url("data:image/png',
+                                backgroundRepeat: 'no-repeat',
+                                backgroundSize: 20,
+                                backgroundPosition: '97% center',
+                                cursor: 'auto',
+                            }}
+                            data-temp-mail-org={0}
                             fdprocessedid="yelneg"
                         />
                     </div>
@@ -93,55 +97,34 @@ const UserProfileForm = ({ userId, email, phoneNumber, username }) => {
                 <div className="col-lg-6 col-md-12">
                     <h6>Change Password</h6>
                     <div className="form-group">
-                        <div className="input-group">
-                            <input
-                                type={showCurrent ? "text" : "password"}
-                                className="form-control"
-                                placeholder="Current Password"
-                                value={currentPassword}
-                                onChange={(e) => setCurrentPassword(e.target.value)}
-                                fdprocessedid="mc3qbb"
-                            />
-                            <div className="input-group-append">
-                                <span className="input-group-text" onClick={() => setShowCurrent(!showCurrent)} style={{ cursor: 'pointer' }}>
-                                    <i className={`fa ${showCurrent ? 'fa-eye-slash' : 'fa-eye'}`}></i>
-                                </span>
-                            </div>
-                        </div>
+                        <input
+                            type="password"
+                            className="form-control"
+                            placeholder="Current Password"
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            fdprocessedid="mc3qbb"
+                        />
                     </div>
                     <div className="form-group">
-                        <div className="input-group">
-                            <input
-                                type={showNew ? "text" : "password"}
-                                className="form-control"
-                                placeholder="New Password"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                fdprocessedid="dwmakn"
-                            />
-                            <div className="input-group-append">
-                                <span className="input-group-text" onClick={() => setShowNew(!showNew)} style={{ cursor: 'pointer' }}>
-                                    <i className={`fa ${showNew ? 'fa-eye-slash' : 'fa-eye'}`}></i>
-                                </span>
-                            </div>
-                        </div>
+                        <input
+                            type="password"
+                            className="form-control"
+                            placeholder="New Password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            fdprocessedid="dwmakn"
+                        />
                     </div>
                     <div className="form-group">
-                        <div className="input-group">
-                            <input
-                                type={showConfirm ? "text" : "password"}
-                                className="form-control"
-                                placeholder="Confirm New Password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                fdprocessedid="ccwtcy"
-                            />
-                            <div className="input-group-append">
-                                <span className="input-group-text" onClick={() => setShowConfirm(!showConfirm)} style={{ cursor: 'pointer' }}>
-                                    <i className={`fa ${showConfirm ? 'fa-eye-slash' : 'fa-eye'}`}></i>
-                                </span>
-                            </div>
-                        </div>
+                        <input
+                            type="password"
+                            className="form-control"
+                            placeholder="Confirm New Password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            fdprocessedid="ccwtcy"
+                        />
                     </div>
                 </div>
             </div>

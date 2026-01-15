@@ -4,7 +4,7 @@ import BidProduct from './bidProduct/bidProduct';
 
 const Bid = () => {
   return (
-    <div className="w-full mx-auto font-[poppins]">
+    <div className="max-w-[1440px] mx-auto font-[poppins]">
         <HeroImgBid/>
         <BidProduct/>
     </div>

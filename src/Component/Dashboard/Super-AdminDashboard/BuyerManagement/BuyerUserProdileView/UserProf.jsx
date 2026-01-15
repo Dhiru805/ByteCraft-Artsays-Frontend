@@ -3,9 +3,14 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Preferences from './Pereferences/Pereferences';
+import Billings from './Billings/Billings';
 // import Products from './Products/Product';
+import Transaction from './Transaction/BuyerTransaction';
 import Customrequest from './CustomRequest/Customorder'
+import Packagingmaterial from './PackagingMaterial/ProductPurchasedBuyer'
+import SoldProduct from './Soldproduct/SoldProduct'
 import Productpurchased from './ProductPurchased/ProductPurchased'
+import RsellProduct from './ResellProductRequest/ProductRequestTable'
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import Settings from './UserProfile/BasicInformation';
@@ -124,6 +129,11 @@ const UserProfileForm = () => {
     { name: 'Product Purchased', component: Productpurchased },
     { name: 'Custom Request', component: Customrequest },
     // { name: 'Products', component: Products },
+    { name: 'Transaction', component: Transaction },
+    { name: 'Packaging Material', component: Packagingmaterial },
+    // { name: 'Resell Product', component: RsellProduct },
+    // { name: 'Sold Product', component: SoldProduct },
+    { name: 'Billings', component: Billings },
     { name: 'Preferences', component: Preferences },
 
   ];

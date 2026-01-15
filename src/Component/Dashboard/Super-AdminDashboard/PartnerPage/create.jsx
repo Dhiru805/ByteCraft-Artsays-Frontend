@@ -471,43 +471,29 @@ const PartnerCreate = () => {
     try {
       const data = new FormData();
 
-      // Append simple fields
       Object.keys(formData).forEach((key) => {
         if (Array.isArray(formData[key])) return;
-        data.append(key, formData[key]);
+        if (key !== "cards" && key !== "section1Images" && key !== "section2Cards") {
+          data.append(key, formData[key]);
+        }
       });
-
-      // Append cards structure and files
-      const cardsMetadata = formData.cards.map((card) => ({
-        title: card.title,
-        sectionHeading: card.sectionHeading,
-        sectionDescription: card.sectionDescription,
-      }));
-      data.append("cards", JSON.stringify(cardsMetadata));
 
       formData.cards.forEach((card, i) => {
-        if (card.image) data.append(`cards[${i}][image]`, card.image);
-        if (card.sectionImage)
-          data.append(`cards[${i}][sectionImage]`, card.sectionImage);
+        data.append(`cards[${i}][title]`, card.title);
+        data.append(`cards[${i}][image]`, card.image);
+        data.append(`cards[${i}][sectionHeading]`, card.sectionHeading);
+        data.append(`cards[${i}][sectionDescription]`, card.sectionDescription);
+        data.append(`cards[${i}][sectionImage]`, card.sectionImage);
       });
-
-      // Append section1 images structure and files
-      const section1Metadata = formData.section1Images.map(() => null);
-      data.append("section1Images", JSON.stringify(section1Metadata));
 
       formData.section1Images.forEach((img, i) => {
         if (img) data.append(`section1Images[${i}]`, img);
       });
 
-      // Append section2 cards structure and files
-      const section2Metadata = formData.section2Cards.map((card) => ({
-        title: card.title,
-        description: card.description,
-      }));
-      data.append("section2Cards", JSON.stringify(section2Metadata));
-
       formData.section2Cards.forEach((card, i) => {
-        if (card.image) data.append(`section2Cards[${i}][image]`, card.image);
+        data.append(`section2Cards[${i}][title]`, card.title);
+        data.append(`section2Cards[${i}][description]`, card.description);
+        data.append(`section2Cards[${i}][image]`, card.image);
       });
 
       await postAPI("/api/partner/create", data, {

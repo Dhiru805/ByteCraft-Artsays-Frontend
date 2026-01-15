@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import putAPI from "../../../../../api/putAPI";
 import getAPI from "../../../../../api/getAPI";
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet';
 
 function UpdateChallenges() {
   const navigate = useNavigate();

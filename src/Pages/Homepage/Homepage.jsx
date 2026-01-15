@@ -31,10 +31,10 @@
 
 
 import React, { useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
+import { Helmet } from "react-helmet";
 import { toast } from "react-toastify";
 import axiosInstance from "../../api/axiosConfig";
-// import NavBar from "../Home/HomeComponents/NavBar";
+import NavBar from "../Home/HomeComponents/NavBar";
 
 import Hero from "./Hero/Hero";
 import BrowseCategories from "./BrowseCategories/BrowseCategories";

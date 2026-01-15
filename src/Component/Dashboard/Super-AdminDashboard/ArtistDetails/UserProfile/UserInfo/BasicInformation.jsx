@@ -372,17 +372,24 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
             </div>
             <div className="form-group">
               <label htmlFor="email">Email <span style={{ color: 'red' }}>*</span></label>
-                <input
-                  type="email"
-                  className="form-control"
-                  id="email"
-                  placeholder="Email"
-                  name="email"
-                  value={profileData.email}
-                  onChange={handleChange}
-                  data-temp-mail-org={0}
-                  fdprocessedid="yelneg"
-                />
+              <input
+                type="email"
+                className="form-control"
+                id="email"
+                placeholder="Email"
+                name="email"
+                value={profileData.email}
+                onChange={handleChange}
+                style={{
+                  backgroundImage: 'url("data:image/png',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: 20,
+                  backgroundPosition: '97% center',
+                  cursor: 'auto',
+                }}
+                data-temp-mail-org={0}
+                fdprocessedid="yelneg"
+              />
             </div>
             <div className="form-group">
               <label htmlFor="phone">Phone Number <span style={{ color: 'red' }}>*</span></label>
@@ -485,19 +492,15 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
         <button type="button"
           className="btn btn-primary mx-2"
           disabled={loading}
-          onClick={async (e) => {
+          onClick={(e) => {
             if (!validateRequired()) return;
             setLoading(true);
-            try {
-              const result = await handleSubmit(e);
-              if (result) {
+            Promise.resolve(handleSubmit(e))
+              .then(() => {
                 window.location.reload();
-              }
-            } catch (err) {
-              console.error(err);
-            } finally {
-              setLoading(false);
-            }
+              })
+              .catch(console.error)
+              .finally(() => setLoading(false));
           }}
         >{loading ? "Updating..." : "Update"}</button>
       </div>

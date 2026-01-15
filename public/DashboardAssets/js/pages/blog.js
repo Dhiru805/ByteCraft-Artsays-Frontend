@@ -58,14 +58,12 @@ $(function() {
 			}
 		}
 
-		var element = document.querySelector("#Return-Visitor-Information");
-		if (element) {
-			var chart = new ApexCharts(
-				element,
-				options
-			);
-			chart.render();
-		}
+		var chart = new ApexCharts(
+			document.querySelector("#Return-Visitor-Information"),
+			options
+		);
+
+		chart.render();
 	});
 
 	// Bounce Rate
@@ -108,14 +106,12 @@ $(function() {
 				}
 			}]
 		}
-		var element = document.querySelector("#Bounce-Rate");
-		if (element) {
-			var chart = new ApexCharts(
-				element,
-				options
-			);
-			chart.render();
-		}
+		var chart = new ApexCharts(
+			document.querySelector("#Bounce-Rate"),
+			options
+		);
+
+		chart.render();
 	});
 
 	// Map

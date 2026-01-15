@@ -3,12 +3,14 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Preferences from './Preferences/Pereferences';
+import Billings from './Billings/Billings';
 import ViewBlogRequest from './BlogRequest/ViewBlogRequest';
 import Blogs from "./Blogs/Blogs"
 import Products from "./Products/Product"
 import Productrequest from "./ProductRequest/ProductRequestTable"
+import Transaction from "./Transaction/Transaction"
+import Packagingmaterial from "./PackagingMaterial/ProductPurchasedArtist"
 import Soldproduct from "./SoldProduct/SoldProduct"
-import Customrequest from "../../BuyerManagement/BuyerUserProdileView/CustomRequest/Customorder"
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import Settings from './UserInfo/BasicInformation';
@@ -58,28 +60,24 @@ const UserProfileForm = () => {
     newPassword: '',
     confirmPassword: '',
   });
-    const [profileData, setProfileData] = useState({
-      name: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      userType: '',
-      address: {
-        line1: '',
-        line2: '',
-        city: '',
-        state: '',
-        country: '',
-        pincode: '',
-        landmark: ''
-      },
-      gender: '',
-      birthdate: '',
-      website: '',
-      bio: '',
-      username: ''
-    });
-
+  const [profileData, setProfileData] = useState({
+    name: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    userType: '',
+    address: {
+      line1: '',
+      line2: '',
+      city: '',
+      state: '',
+      country: '',
+      pincode: ''
+    },
+    gender: '',
+    birthdate: '',
+    website: ''
+  });
 
   const fetchProfile = async () => {
     try {
@@ -198,6 +196,7 @@ const UserProfileForm = () => {
 
       const result = await putAPI(`/auth/user/${userId}`, formData, {}, true);
 
+
       if (result?.message === 'Profile updated successfully') {
         toast.success(result.message);
         setPasswordData({
@@ -205,15 +204,12 @@ const UserProfileForm = () => {
           newPassword: '',
           confirmPassword: '',
         });
-        return result;
       } else {
         toast.error(result?.message || 'Failed to update profile.');
-        return null;
       }
     } catch (error) {
       console.error("Caught error in try-catch:", error);
       toast.error('Error updating profile. Please try again.');
-      return null;
     }
   };
 
@@ -223,8 +219,10 @@ const UserProfileForm = () => {
     { name: 'Blog Request', component: ViewBlogRequest },
     { name: 'Products', component: Products },
     { name: 'Product Request', component: Productrequest },
+    { name: 'Transaction', component: Transaction },
+    { name: 'Packaging Material', component: Packagingmaterial },
     { name: 'Sold Product', component: Soldproduct },
-    { name: 'Custom Request', component: Customrequest },
+    { name: 'Billings', component: Billings },
     { name: 'Preferences', component: Preferences },
   ];
 

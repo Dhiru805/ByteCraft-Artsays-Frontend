@@ -367,48 +367,39 @@ const PartnerEdit = () => {
       submission.append("section2Description", (formData.section2Description || "").trim());
       submission.append("status", formData.status);
 
-      // Section 1 Images: send structure as JSON
-      const section1Metadata = formData.section1Images.map((img) =>
-        typeof img === "string" ? img : null
-      );
-      submission.append("section1Images", JSON.stringify(section1Metadata));
-
       formData.section1Images.forEach((img, i) => {
         if (img instanceof File) {
           submission.append(`section1Images[${i}]`, img);
+        } else if (typeof img === "string") {
+          submission.append(`section1ImagesExisting[${i}]`, img);
         }
       });
-
-      // Cards: send structure as JSON
-      const cardsMetadata = formData.cards.map((c) => ({
-        title: (c.title || "").trim(),
-        image: c.existingImage,
-        sectionHeading: (c.sectionHeading || "").trim(),
-        sectionDescription: (c.sectionDescription || "").trim(),
-        sectionImage: c.sectionExistingImage,
-      }));
-      submission.append("cards", JSON.stringify(cardsMetadata));
 
       formData.cards.forEach((c, i) => {
+        submission.append(`cards[${i}][title]`, (c.title || "").trim());
+        submission.append(`cards[${i}][sectionHeading]`, (c.sectionHeading || "").trim());
+        submission.append(`cards[${i}][sectionDescription]`, (c.sectionDescription || "").trim());
+
         if (c.image instanceof File) {
           submission.append(`cards[${i}][image]`, c.image);
+        } else if (c.existingImage) {
+          submission.append(`cards[${i}][existingImage]`, c.existingImage);
         }
+
         if (c.sectionImage instanceof File) {
           submission.append(`cards[${i}][sectionImage]`, c.sectionImage);
+        } else if (c.sectionExistingImage) {
+          submission.append(`cards[${i}][sectionExistingImage]`, c.sectionExistingImage);
         }
       });
 
-      // Section 2 Cards: send structure as JSON
-      const section2Metadata = formData.section2Cards.map((c) => ({
-        title: (c.title || "").trim(),
-        description: (c.description || "").trim(),
-        image: c.existingImage,
-      }));
-      submission.append("section2Cards", JSON.stringify(section2Metadata));
-
       formData.section2Cards.forEach((c, i) => {
+        submission.append(`section2Cards[${i}][title]`, (c.title || "").trim());
+        submission.append(`section2Cards[${i}][description]`, (c.description || "").trim());
         if (c.image instanceof File) {
           submission.append(`section2Cards[${i}][image]`, c.image);
+        } else if (c.existingImage) {
+          submission.append(`section2Cards[${i}][existingImage]`, c.existingImage);
         }
       });
 

@@ -3,7 +3,6 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import CreatableSelect from 'react-select/creatable';
 import putAPI from '../../../../../../api/putAPI';
-import getAPI from '../../../../../../api/getAPI';
 
 const predefinedArtCategories = [
     { value: 'Mandala', label: 'Mandala' },
@@ -28,36 +27,26 @@ const predefinedAchievements = [
 
 const ArtistInfo = ({ userId }) => {
     const [formData, setFormData] = useState({
-        artistName: '',
         artCategories: [],
         mediumUsed: [],
         yearsOfExperience: '',
         portfolioLink: '',
         achievements: [],
-        description: '',
     });
 
     useEffect(() => {
         const fetchArtistData = async () => {
             try {
-                const response = await getAPI(`/auth/getartistdetails/${userId}`);
-                if (response && response.data) {
+                const response = await axios.get(`/auth/getartistdetails/${userId}`);
+                if (response.data) {
                     setFormData({
                         ...response.data,
-                        artistName: response.data.artistName || '',
-                        artCategories: response.data.artCategories?.length ? response.data.artCategories[0].split(',') : [],
-                        mediumUsed: response.data.mediumUsed?.length ? response.data.mediumUsed[0].split(',') : [],
-                        achievements: response.data.achievements?.length ? response.data.achievements[0].split(',') : [],
-                        description: response.data.description || '',
+                        artCategories: response.data.artCategories.length ? response.data.artCategories[0].split(',') : [],
+                        mediumUsed: response.data.mediumUsed.length ? response.data.mediumUsed[0].split(',') : [],
+                        achievements: response.data.achievements.length ? response.data.achievements[0].split(',') : [],
                     });
                 }
             } catch (error) {
-                if (error.response && error.response.status === 404) {
-                    console.log("Artist details not found, using default state");
-                } else {
-                    console.error("Error fetching artist data:", error);
-                }
-            } finally {
                 console.log("Fetch attempt completed");
             }
         };
@@ -96,17 +85,13 @@ const [loading,setLoading]=useState(false);
                 achievements: formData.achievements.join(','),
             });
 
-            if (result && result.data && result.data._id) {
+            if (result) {
                 toast.success('Artist details updated successfully');
-                return true;
             } else {
-                toast.error(result?.message || 'Failed to update artist details');
-                return false;
+                toast.error('Failed to update artist details');
             }
         } catch (error) {
-            console.error('Error updating artist details:', error);
-            toast.error(error?.response?.data?.message || 'Error updating artist details');
-            return false;
+            toast.error('Error updating artist details');
         }
     };
 
@@ -251,19 +236,15 @@ const [loading,setLoading]=useState(false);
         <button type="button"
           className="btn btn-primary mx-2"
           disabled={loading}
-          onClick={async (e) => {
+          onClick={(e) => {
             if (!validateRequiredFields()) return;
             setLoading(true);
-            try {
-              const success = await handleSubmit(e);
-              if (success) {
-                window.location.reload();
-              }
-            } catch (err) {
-              console.error(err);
-            } finally {
-              setLoading(false);
-            }
+            Promise.resolve(handleSubmit(e))
+              .then(() => {
+                 window.location.reload();
+              })
+              .catch(console.error)
+              .finally(() => setLoading(false));
           }}
         >{loading ? "Updating..." : "Update"}</button>
             </form>

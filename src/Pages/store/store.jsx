@@ -4,7 +4,7 @@ import Product from "./products/product";
 
 const Store = () => {
   return (
-    <div className="w-full font-[poppins]">
+    <div className="max-w-[1440px] mx-auto font-[poppins]">
         <HeroImg/>
         <Product/>
     </div>

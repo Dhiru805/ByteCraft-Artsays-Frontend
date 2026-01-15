@@ -17,11 +17,11 @@ const Createpost = () => {
   };
 
   return (
-    <div className="col-span-12 lg:col-span-6 w-full py-2 flex flex-col items-center create-post-container">
+    <div className="lg:mt-8 w-[56%] mx-auto flex flex-col items-center create-post-container">
       {/* Header */}
-      <div className="w-full bg-gradient-to-b from-[#3c2a20] to-[#db8435] text-white py-3 rounded-[60px] text-center shadow create-post-header">
+      <div className="w-[90%] bg-gradient-to-b from-[#3c2a20] to-[#db8435] text-white py-3 rounded-[60px] text-center shadow create-post-header">
         <p className="text-4xl font-semibold py-4 create-post-paragraph">
-          Create New Post
+          Create new Post
         </p>
 
         {/* Upload Box */}

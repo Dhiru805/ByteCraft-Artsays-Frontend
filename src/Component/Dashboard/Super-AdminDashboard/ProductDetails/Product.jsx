@@ -28,6 +28,17 @@ function Product() {
               </ul>
             </div>
             <div className="col-lg-6 col-md-6 col-sm-12">
+              <div className="d-flex flex-row-reverse">
+                <div className="page_action">
+                  <button
+                    type="button"
+                    className="btn btn-secondary mr-2"
+                    onClick={() => navigate(`/super-admin/product-upload`)}
+                  >
+                    <i className="fa fa-plus"></i> Add Product
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

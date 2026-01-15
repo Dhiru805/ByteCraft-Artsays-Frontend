@@ -409,9 +409,9 @@ const SoldProduct = ({ userId }) => {
                                 </tr>
                             </thead>
 
-                              <tbody>
+                            <tbody>
                                 {displayedProducts.map((p, index) => (
-                                    <tr key={`${p.productId}-${index}`}>
+                                    <tr key={p.productId}>
                                         <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
 
                                         <td>{p.artistName}</td>

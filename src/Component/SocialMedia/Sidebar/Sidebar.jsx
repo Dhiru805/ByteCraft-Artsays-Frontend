@@ -19,11 +19,11 @@ const Sidebar = () => {
   const lastName = localStorage.getItem("lastName");
   const [loading, setLoading] = useState(true);
 
-  const hasValidUsername =
-    typeof username === "string" &&
-    username.trim() !== "" &&
-    username !== "undefined" &&
-    username !== "null";
+const hasValidUsername =
+  typeof username === "string" &&
+  username.trim() !== "" &&
+  username !== "undefined" &&
+  username !== "null";
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -75,7 +75,7 @@ const Sidebar = () => {
       key: "profile",
       icon: "person",
       label: "Profile",
-      link: `/artsays-community/profile/${hasValidUsername ? `${username}` : `${firstName}_${lastName}_${userId}`}`,
+      link: `/artsays-community/profile/${hasValidUsername? `${username}`:`${firstName}_${lastName}_${userId}`}`,
     },
     {
       key: "saved",
@@ -103,7 +103,7 @@ const Sidebar = () => {
         const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
         setUser(result.data.user);
       } catch (err) {
-        console.log("fetch userid err", err);
+        console.log("fetch userid err",err);
       } finally {
         setLoading(false);
       }
@@ -111,21 +111,23 @@ const Sidebar = () => {
     fetchUserData();
   }, [userId]);
 
-  if (loading) return <MediaSideBarSkele />
+  if(loading)return <MediaSideBarSkele/>
   return (
     <>
       {/* Sidebar */}
       <div
-        className={`sidebar-container-s ${isPinned ? "pinned" : ""
-          } w-full col-span-3 mx-auto px-2 py-4 justify-content-center`}
+        className={`sidebar-container-s ${
+          isPinned ? "pinned" : ""
+        } w-[22%] mx-auto`}
       >
-        <div className="sidebar-icons-s justify-content-between pb-4">
+        <div className="sidebar-icons-s">
           {items.map((item, idx) => (
             <Link to={`${item.link}`} key={item.key}>
               <div
                 key={item.key}
-                className={`icon-wrapper-s ${isActive(item.link) ? "active" : ""
-                  } ${idx === 7 ? "" : ""}`}
+                className={`icon-wrapper-s ${
+                  isActive(item.link) ? "active" : ""
+                } ${idx === 7 ? "" : ""}`}
               >
                 <i className={` bi-${item.icon}`}></i>
               </div>
@@ -133,7 +135,7 @@ const Sidebar = () => {
           ))}
         </div>
 
-        <div className="sidebar-expanded-s justify-content-between pb-4">
+        <div className="sidebar-expanded-s d-flex flex-column justify-content-between">
           <div className="toggle-btn-s" onClick={() => setIsPinned(!isPinned)}>
             <i className=" bi-square-half"></i>
           </div>
@@ -141,8 +143,9 @@ const Sidebar = () => {
             <Link to={`${item.link}`} key={item.key}>
               <div
                 key={item.key}
-                className={`label-wrapper-s ${isActive(item.link) ? "active" : ""
-                  } ${idx === 8 ? "" : ""}`}
+                className={`label-wrapper-s ${
+                  isActive(item.link) ? "active" : ""
+                } ${idx === 8 ? "" : ""}`}
               >
                 <i className={` bi-${item.icon}`}></i>
                 {item.label}
@@ -154,16 +157,17 @@ const Sidebar = () => {
 
       {/* Bottom Navigation */}
       <nav className="bottom-nav-s">
-          <ul className="nav-items-s">
-            {items.slice(0, 2).map((item) => (
-              <Link to={`${item.link}`} key={item.key}>
-                <li
-                  className={`nav-item-s ${isActive(item.link) ? "active" : ""}`}
-                >
-                  <i className={` bi-${item.icon}`}></i>
-                </li>
-              </Link>
-            ))}
+        <ul className="nav-items-s">
+          {items.slice(0, 2).map((item) => (
+            <Link to={`${item.link}`}>
+              <li
+                key={item.key}
+                className={`nav-item-s ${isActive(item.link) ? "active" : ""}`}
+              >
+                <i className={` bi-${item.icon}`}></i>
+              </li>
+            </Link>
+          ))}
 
           {/* Create Button */}
           <li id="createTrigger">
@@ -200,15 +204,16 @@ const Sidebar = () => {
             )}
           </li>
 
-            {items.slice(2, 3).map((item) => (
-              <Link to={`${item.link}`} key={item.key}>
-                <li
-                  className={`nav-item-s  ${isActive(item.link) ? "active" : ""}`}
-                >
-                  <i className={` bi-${item.icon}`}></i>
-                </li>
-              </Link>
-            ))}
+          {items.slice(2, 3).map((item) => (
+            <Link to={`${item.link}`}>
+              <li
+                key={item.key}
+                className={`nav-item-s  ${isActive(item.link) ? "active" : ""}`}
+              >
+                <i className={` bi-${item.icon}`}></i>
+              </li>
+            </Link>
+          ))}
 
           <li
             className={`nav-item-s  ${showProfileMenu ? "active" : ""}`}
@@ -246,19 +251,21 @@ const Sidebar = () => {
               </div>
               <div className="profile-category-s">{user.role}</div>
             </div>
-              <div className="profile-content-s">
-                {items.map((item) => (
-                  <Link to={`${item.link}`} key={item.key}>
-                    <div
-                      className={`profile-item-s  ${isActive(item.link) ? "active" : ""
-                        }`}
-                    >
-                      <i className={`bi-${item.icon}`}></i>
-                      <span>{item.label}</span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
+            <div className="profile-content-s">
+              {items.map((item) => (
+                <Link to={`${item.link}`}>
+                  <div
+                    key={item.key}
+                    className={`profile-item-s  ${
+                      isActive(item.link) ? "active" : ""
+                    }`}
+                  >
+                    <i className={`bi-${item.icon}`}></i>
+                    <span>{item.label}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
           <div
             className={`overlay-s ${showProfileMenu ? "active" : ""}`}

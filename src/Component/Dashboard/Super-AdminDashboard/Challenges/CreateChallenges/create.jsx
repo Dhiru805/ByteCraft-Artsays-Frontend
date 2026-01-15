@@ -3,7 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import postAPI from "../../../../../api/postAPI";
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet';
 
 
 function Challenges() {

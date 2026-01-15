@@ -1,39 +1,66 @@
-import React from "react";
-
 const ArtGalleryContentSkeleton = () => {
   return (
-    <div className="w-full bg-gray-50 min-h-screen font-[poppins] animate-pulse">
-      <div className="w-full max-w-[1440px] mx-auto p-3">
-        {/* Main Content Skeleton */}
-        <main className="w-full">
-          {/* Search Bar Skeleton */}
-          <div className="h-16 bg-white border border-gray-200 rounded-full mb-8 max-w-4xl mx-auto"></div>
+    <div className="max-w-[1440px] mx-auto mb-4 animate-pulse">
 
-          {/* Grid Skeleton */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <div key={i} className="bg-white rounded-[40px] overflow-hidden border border-gray-100 shadow-sm">
-                <div className="aspect-square bg-gray-100"></div>
-                <div className="p-6 space-y-4">
-                  <div className="flex justify-between">
-                    <div className="h-4 w-24 bg-gray-100 rounded"></div>
-                    <div className="h-4 w-12 bg-gray-100 rounded"></div>
-                  </div>
-                  <div className="h-6 w-full bg-gray-100 rounded"></div>
-                  <div className="h-4 w-32 bg-gray-100 rounded"></div>
-                  <div className="flex justify-between pt-4 border-t border-gray-50">
-                    <div className="h-8 w-24 bg-gray-100 rounded"></div>
-                    <div className="h-8 w-16 bg-gray-100 rounded"></div>
-                  </div>
-                  <div className="grid grid-cols-5 gap-3 pt-2">
-                    <div className="h-14 bg-gray-100 rounded-2xl"></div>
-                    <div className="col-span-4 h-14 bg-gray-100 rounded-2xl"></div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </main>
+      {/* Breadcrumb Skeleton */}
+      <div className="w-full py-3 px-3">
+        <div className="flex text-sm space-x-3 overflow-x-auto">
+          <div className="h-4 w-10 bg-gray-300 rounded"></div>
+          <span>/</span>
+          <div className="h-4 w-10 bg-gray-300 rounded"></div>
+          <span>/</span>
+          <div className="h-4 w-14 bg-gray-300 rounded"></div>
+          <span>/</span>
+          <div className="h-4 w-16 bg-gray-300 rounded"></div>
+        </div>
+      </div>
+
+      {/* Title Skeleton */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3 px-3">
+        <div className="md:col-span-3">
+          <div className="h-8 w-40 bg-gray-300 rounded"></div>
+        </div>
+      </div>
+
+      <hr className="my-3 border-dark" />
+
+      {/* Body Skeleton */}
+      <div className="px-3">
+
+        {/* Description Skeleton */}
+        <div className="mt-3 space-y-3">
+          <div className="h-4 w-full bg-gray-300 rounded"></div>
+          <div className="h-4 w-2/3 bg-gray-300 rounded"></div>
+        </div>
+
+        {/* Product Grid Skeleton */}
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[1,2,3].map((item) => (
+            <div
+              key={item}
+              className="border p-3 rounded shadow space-y-3"
+            >
+              <div className="h-5 w-32 bg-gray-300 rounded"></div>
+              <div className="h-4 w-full bg-gray-300 rounded"></div>
+              <div className="h-4 w-3/4 bg-gray-300 rounded"></div>
+              <div className="h-5 w-20 bg-gray-300 rounded"></div>
+            </div>
+          ))}
+        </div>
+
+        {/* Section Title Skeleton */}
+        <div className="mt-10">
+          <div className="h-8 w-48 bg-gray-300 rounded"></div>
+        </div>
+
+        <hr className="my-3 border-dark" />
+
+        {/* Section Description Skeleton */}
+        <div className="space-y-3 mt-3">
+          <div className="h-4 w-full bg-gray-300 rounded"></div>
+          <div className="h-4 w-4/5 bg-gray-300 rounded"></div>
+          <div className="h-4 w-2/3 bg-gray-300 rounded"></div>
+        </div>
       </div>
     </div>
   );

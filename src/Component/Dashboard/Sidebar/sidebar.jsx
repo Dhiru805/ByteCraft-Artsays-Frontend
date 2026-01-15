@@ -121,6 +121,17 @@ const Sidebar = () => {
         subTabs: [
           { label: "Management", subtabId: "byr11", path: `/super-admin/buyer/management` },
           { label: "Product Purchased", subtabId: "byr12", path: `/super-admin/buyer/productpurchased` },
+          { label: "Resell Product Request", subtabId: "byr13", path: `/super-admin/buyer/resellproduct` },
+          { label: "Sold Product", subtabId: "byr14", path: `/super-admin/buyer/soldproduct` }
+          // icon: "fa-handshake",
+          // path: `#Buyer-management`,
+          // subTabs: [
+          //   { label: "Management", path: `/super-admin/buyer/management` },
+          //   { label: "Product Purchased", path: `/super-admin/buyer/productpurchased` },
+          //   { label: "Resell Product Request", path: `/super-admin/buyer/resellproduct` },
+          //   { label: "Sold Product", path: `/super-admin/buyer/soldproduct` },
+          // { label: "Transaction", path: `/super-admin/buyertransaction` },
+          // { label: "Packaging Material", path: `/super-admin/buyerpackagingmaterial` },
         ]
       },
       {
@@ -319,7 +330,6 @@ const Sidebar = () => {
           { label: "Product Category", subtabId: "stg11", path: `/super-admin/settings/product-category` },
           { label: "Blog Category", subtabId: "stg12", path: `/super-admin/settings/blog-category` },
           { label: "Email Setting", subtabId: "stg13", path: `/super-admin/settings/email-setting` },
-          { label: "Payment Getway", path: `/super-admin/settings/payment-getway` },
           { label: "Marketing", subtabId: "stg14", path: `/super-admin/settings/marketing` },
           { label: "User Role", subtabId: "stg15", path: `/super-admin/settings/user-role` },
           { label: "Certification", path: `/super-admin/settings/certification` },
@@ -328,8 +338,6 @@ const Sidebar = () => {
           { label: "Default Auto Targeting", path: `/super-admin/settings/auto-targeting` },
           { label: "Auto Targeting Group", path: `/super-admin/settings/group-targeting` },
           { label: "Keyword Targeting", path: `/super-admin/settings/keyword-targeting` },
-       
-       
         ],
       },
        {
@@ -464,14 +472,8 @@ const Sidebar = () => {
       },
       {
         label: "Packaging Material",
-        icon: "fa-archive",
+        icon: "fa fa-archive",
         path: "/artist/packaging-material",
-        subTabs: []
-      },
-      {
-        label: "Wallet",
-        icon: "fa-credit-card",
-        path: "/artist/wallet",
         subTabs: []
       },
     ],
@@ -537,12 +539,6 @@ const Sidebar = () => {
         label: "Packaging Material",
         icon: "fa fa-archive",
         path: "/seller/packaging-material",
-        subTabs: []
-      },
-      {
-        label: "Wallet",
-        icon: "fa-credit-card",
-        path: "/seller/wallet",
         subTabs: []
       },
       {

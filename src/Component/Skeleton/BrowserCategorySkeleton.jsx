@@ -35,48 +35,6 @@ const BrowserCategorySkeleton = () => {
           </div>
         ))}
       </div>
-
-      {/* Product Grid Skeleton */}
-      <div className={styles.productGrid}>
-        {Array.from({ length: 8 }).map((_, index) => (
-          <div key={index} className={styles.productCard}>
-            {/* Image Area */}
-            <div className={styles.imageArea}>
-              <div className={styles.floatingBadge} />
-              <div className={styles.heartButton} />
-            </div>
-
-            {/* Content Area */}
-            <div className={styles.contentArea}>
-              {/* Artist Info */}
-              <div className={styles.artistInfo}>
-                <div className={styles.artistDot} />
-                <div className={styles.artistName} />
-              </div>
-
-              {/* Title */}
-              <div className={styles.productTitle} />
-
-              {/* Rating */}
-              <div className={styles.ratingArea}>
-                <div className={styles.ratingBadge} />
-                <div className={styles.reviewCount} />
-              </div>
-
-              {/* Price Area */}
-              <div className={styles.priceArea}>
-                <div className={styles.price} />
-              </div>
-
-              {/* Action Buttons */}
-              <div className={styles.actionButtons}>
-                <div className={styles.cartButton} />
-                <div className={styles.buyButton} />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };

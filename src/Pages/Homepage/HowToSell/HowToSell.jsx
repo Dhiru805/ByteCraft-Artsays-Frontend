@@ -1,19 +1,215 @@
+// const steps = [
+//   {
+//     title: "Browse Products/Categories",
+//     desc: "Explore our handpicked collection across categories.",
+//     img: "/images/browse.png", // replace with your image path
+//   },
+//   {
+//     title: "Add to Cart or Buy Now",
+//     desc: "Hit Add to Cart to continue browsing Or Buy Now to go directly to checkout.",
+//     img: "/images/add-to-cart.png",
+//   },
+//   {
+//     title: "Enter Shipping Information",
+//     desc: "Provide your full name, delivery address, and contact number so we can safely deliver your artwork.",
+//     img: "/images/shipping.png",
+//   },
+//   {
+//     title: "Review Your Cart",
+//     desc: "Check your selected artworks. Confirm quantities, framing choices, shipping fees, and estimated delivery time.",
+//     img: "/images/review.png",
+//   },
+//   {
+//     title: "Choose a Payment Method",
+//     desc: "We support: Mastercard, Visa, UPI, Rupay, Paytm.",
+//     img: "/images/payment.png",
+//   },
+//   {
+//     title: "Confirm & Place Order",
+//     desc: "Review all details. Click Place Order to complete your purchase.",
+//     img: "/images/place-order.png",
+//   },
+// ];
+
+// const HowToSell = () => {
+//   return (
+//       <div className="max-w-[1440px] mx-auto py-4 px-3">
+//         <div>
+//           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3">
+//             {/* title */}
+//             <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
+//               The Seller's Path
+//             </h1>
+//             <button className="hidden md:block flex-1 bg-red-500 text-white py-2 px-6 rounded-full font-semibold shadow buy-now">
+//               Discover More Products
+//             </button>
+//           </div>
+
+//           <hr className="my-3 border-dark" />
+
+//           {/* Subtitle */}
+//           <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+//             At ArtSays, we make it simple for you to collaborate directly with
+//             talented artists and bring your creative vision to life.
+//           </p>
+//         </div>
+
+//         <section className="w-full py-16">
+//           {/* Steps Row 1 */}
+//           <div className="flex flex-col lg:flex-row items-stretch justify-center gap-10 md:gap-0 mb-8">
+//             {/* Card 1 */}
+//             <div className="flex-1 bg-[#F8F8F8] rounded-2xl shadow-md p-6 text-center relative z-10">
+//               <img
+//                 src="/herosectionimg/Shrug-bro 1.png"
+//                 alt="Browse"
+//                 className="mx-auto mb-4 w-full h-40 object-contain"
+//               />
+//               <h3 className="text-lg font-semibold">
+//                 Browse Products/Categories
+//               </h3>
+//               <p className="text-gray-600 mt-2 text-sm">
+//                 Explore our handpicked collection across categories.
+//               </p>
+//             </div>
+
+//             {/* Connector */}
+//             <div className="hidden lg:flex items-center justify-center relative z-0 w-6">
+//               <div className="h-[10%] w-full bg-[#F8F8F8] shadow-md absolute top-1/2 -translate-y-1/2"></div>
+//             </div>
+
+//             {/* Card 2 */}
+//             <div className="flex-1 bg-[#F8F8F8] rounded-2xl shadow-md p-6 text-center relative z-10">
+//               <img
+//                 src="/herosectionimg/Shrug-bro 1.png"
+//                 alt="Cart"
+//                 className="mx-auto mb-4 w-40 h-40 object-contain"
+//               />
+//               <h3 className="text-lg font-semibold">Add to Cart or Buy Now</h3>
+//               <p className="text-gray-600 mt-2 text-sm">
+//                 Hit Add to Cart to continue browsing
+//                 <br />
+//                 Or Buy Now to go directly to checkout.
+//               </p>
+//             </div>
+
+//             {/* Connector */}
+//             <div className="hidden lg:flex items-center justify-center relative z-0 w-6">
+//               <div className="h-[10%] w-full bg-[#F8F8F8] shadow-md absolute top-1/2 -translate-y-1/2"></div>
+//             </div>
+
+//             {/* Card 3 */}
+//             <div className="flex-1 bg-[#F8F8F8] rounded-2xl shadow-md p-6 text-center relative z-10">
+//               <img
+//                 src="/herosectionimg/Shrug-bro 1.png"
+//                 alt="Shipping"
+//                 className="mx-auto mb-4 w-40 h-40 object-contain"
+//               />
+//               <h3 className="text-lg font-semibold">
+//                 Enter Shipping Information
+//               </h3>
+//               <p className="text-gray-600 mt-2 text-sm">
+//                 Provide your full name, delivery address, and contact number so
+//                 we can safely deliver your artwork.
+//               </p>
+//             </div>
+//           </div>
+
+//           {/* Steps Row 2 */}
+//           <div className="flex flex-col lg:flex-row items-stretch justify-center gap-10 md:gap-0">
+//             {/* Card 4 */}
+//             <div className="flex-1 bg-[#F8F8F8] rounded-2xl shadow-md p-6 text-center relative z-10">
+//               <img
+//                 src="/herosectionimg/Shrug-bro 1.png"
+//                 alt="Review Cart"
+//                 className="mx-auto mb-4 w-40 h-40 object-contain"
+//               />
+//               <h3 className="text-lg font-semibold">Review Your Cart</h3>
+//               <p className="text-gray-600 mt-2 text-sm">
+//                 Check your selected artworks. Confirm quantities, framing
+//                 choices, shipping fees, and estimated delivery time.
+//               </p>
+//             </div>
+
+//             {/* Connector */}
+//             <div className="hidden lg:flex items-center justify-center relative z-0 w-6">
+//               <div className="h-[10%] w-full bg-[#F8F8F8] shadow-md absolute top-1/2 -translate-y-1/2"></div>
+//             </div>
+
+//             {/* Card 5 */}
+//             <div className="flex-1 bg-[#F8F8F8] rounded-2xl shadow-md p-6 text-center relative z-10">
+//               <img
+//                 src="/herosectionimg/Shrug-bro 1.png"
+//                 alt="Payment"
+//                 className="mx-auto mb-4 w-40 h-40 object-contain"
+//               />
+//               <h3 className="text-lg font-semibold">Choose a Payment Method</h3>
+//               <p className="text-gray-600 mt-2 text-sm">We support:</p>
+//               <div className="flex justify-center gap-3 mt-3">
+//                 <img
+//                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXnXkBmw2uSAI7UPnfI8ZWleOP_9jguz46rQ&s"
+//                   className="h-6"
+//                   alt="Mastercard"
+//                 />
+//                 <img
+//                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvGspplJJLok3PvZdIoyIpKQ6q-TtIEy5PzQ&s"
+//                   className="h-6"
+//                   alt="Visa"
+//                 />
+//                 <img
+//                   src="https://icon2.cleanpng.com/20180330/qzq/avc3fqk7p.webp"
+//                   className="h-6"
+//                   alt="UPI"
+//                 />
+//                 <img
+//                   src="https://img.favpng.com/2/7/19/paytm-logo-brand-service-product-png-favpng-G3rLWKWtLxF4jUFAz8akrHjzx.jpg"
+//                   className="h-6"
+//                   alt="Paytm"
+//                 />
+//                 <img
+//                   src="https://w7.pngwing.com/pngs/332/615/png-transparent-phonepe-india-unified-payments-interface-india-purple-violet-text.png"
+//                   className="h-6"
+//                   alt="Phonepe"
+//                 />
+//                 <img
+//                   src="https://toppng.com/uploads/small/11735759504pvxnd3mon8eobctp8qktesr6ayeytipihdlcxiotspns27ljc8xuhkl76cxstyyuftl5e38e1pq1tycfmezlpbrmtro5v5rglc58.webp"
+//                   className="h-6"
+//                   alt="Google Pay"
+//                 />
+//               </div>
+//             </div>
+
+//             {/* Connector */}
+//             <div className="hidden lg:flex items-center justify-center relative z-0 w-6">
+//               <div className="h-[10%] w-full bg-[#F8F8F8] shadow-md absolute top-1/2 -translate-y-1/2"></div>
+//             </div>
+
+//             {/* Card 6 */}
+//             <div className="flex-1 bg-[#F8F8F8] rounded-2xl shadow-md p-6 text-center relative z-10">
+//               <img
+//                 src="/herosectionimg/Shrug-bro 1.png"
+//                 alt="Place Order"
+//                 className="mx-auto mb-4 w-40 h-40 object-contain"
+//               />
+//               <h3 className="text-lg font-semibold">Confirm & Place Order</h3>
+//               <p className="text-gray-600 mt-2 text-sm">
+//                 Review all details.
+//                 <br />
+//                 Click Place Order to complete your purchase.
+//               </p>
+//             </div>
+//           </div>
+//         </section>
+//       </div>
+//   );
+// };
+// export default HowToSell;
+
+
+
+
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { 
-  ArrowRight, 
-  Sparkles, 
-  ChevronRight,
-  ShoppingBag,
-  Clock,
-  CheckCircle2,
-  TrendingUp,
-  UserCheck,
-  Package
-} from "lucide-react";
 import getAPI from "../../../api/getAPI";
 import HowToSellSkeleton from "../../../Component/Skeleton/HowToSellSkeleton";
-
 const HowToSell = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -45,169 +241,67 @@ const HowToSell = () => {
   if (loading) return <div><HowToSellSkeleton /></div>;
   if (!data) return <div>How To Sell section not available</div>;
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15
-      }
-    }
-  };
-
-  const cardVariants = {
-    hidden: { y: 30, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 12
-      }
-    }
-  };
-
   return (
-    <div className="w-full bg-white font-[poppins] py-20 px-4 md:px-6 overflow-hidden relative">
-      {/* Decorative background elements */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-[#6F4D34]/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-amber-500/5 rounded-full blur-[100px]" />
-      </div>
+    <div className="max-w-[1440px] mx-auto py-4 px-3">
+      <div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3">
 
-      <div className="max-w-[1440px] mx-auto relative z-10">
-        {/* Header Section - Matching HomeChallenges style */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16">
-          <motion.div 
-            initial={{ x: -50, opacity: 0 }}
-            whileInView={{ x: 0, opacity: 1 }}
-            viewport={{ once: true }}
-            className="flex flex-col gap-6 flex-1"
-          >
-            <div className="flex items-center gap-2 text-[#6F4D34] font-bold tracking-[0.2em] uppercase text-sm">
-              <Sparkles size={18} className="animate-pulse" />
-              <span>Step-by-step Guide</span>
-            </div>
-            <h1 className="text-4xl md:text-6xl font-black text-gray-900 tracking-tighter leading-[1.1]">
-              {data.heading}
-            </h1>
-            <p className="text-gray-500 text-lg md:text-xl max-w-2xl font-medium leading-relaxed">
-              {data.description}
-            </p>
-          </motion.div>
+          <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
+            {data.heading}
+          </h1>
 
           {data.buttonName && (
-            <motion.div
-              initial={{ x: 50, opacity: 0 }}
-              whileInView={{ x: 0, opacity: 1 }}
-              viewport={{ once: true }}
+            <a
+              href={data.buttonLink || "#"}
+              // className="hidden md:inline-flex items-center justify-center bg-red-500 text-white font-semibold rounded-full shadow px-5 py-2 min-w-[120px]"
+              className="hidden md:inline-flex items-center justify-center bg-red-500 text-white font-semibold rounded-full shadow px-6 py-2 min-w-[0] text-center"
+              style={{ minWidth: 'auto' }}
             >
-              <a
-                href={data.buttonLink || "#"}
-                className="group relative inline-flex items-center gap-3 bg-[#6F4D34] text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-all shadow-2xl shadow-[#6F4D34]/30 hover:bg-gray-900 hover:-translate-y-1 active:scale-95 overflow-hidden"
-              >
-                <span className="relative z-10">{data.buttonName}</span>
-                <ChevronRight size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-              </a>
-            </motion.div>
+              {data.buttonName}
+            </a>
           )}
         </div>
 
-        {/* Steps Grid */}
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          {data.cards?.map((card, idx) => (
-            <motion.div
-              key={idx}
-              variants={cardVariants}
-              whileHover={{ y: -10 }}
-              className="group relative bg-gray-50/50 rounded-[48px] p-8 md:p-10 border border-gray-100 transition-all hover:bg-white hover:shadow-[0_40px_80px_-15px_rgba(111,77,52,0.12)] hover:border-[#6F4D34]/20"
-            >
-              {/* Step Number Badge */}
-              <div className="absolute top-8 right-8 w-14 h-14 rounded-2xl bg-white shadow-sm border border-gray-100 flex items-center justify-center group-hover:bg-[#6F4D34] group-hover:text-white group-hover:rotate-12 transition-all duration-500">
-                <span className="text-2xl font-black italic">0{idx + 1}</span>
-              </div>
+        <hr className="my-3 border-dark" />
 
-              {/* Icon/Image Container */}
-              <div className="mb-10 relative">
-                <div className="w-24 h-24 rounded-3xl bg-white shadow-xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500 overflow-hidden">
-                  {card.image ? (
-                    <img
-                      src={`${imageBaseURL}/${card.image}`}
-                      alt={card.title}
-                      className="w-14 h-14 object-contain group-hover:rotate-6 transition-transform"
-                    />
-                  ) : (
-                    <Package className="w-10 h-10 text-[#6F4D34]" />
-                  )}
-                </div>
-                
-                {/* Decorative dots for the first card */}
-                {idx === 0 && (
-                   <div className="absolute -left-4 -top-4 w-20 h-20 bg-[#6F4D34]/10 rounded-full blur-2xl -z-10" />
-                )}
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="text-2xl md:text-3xl font-black text-gray-900 group-hover:text-[#6F4D34] transition-colors tracking-tight">
-                  {card.title}
-                </h3>
-                <p className="text-gray-600 text-lg leading-relaxed font-medium">
-                  {card.description}
-                </p>
-              </div>
-
-              {/* Bottom Interactive Bar */}
-              <div className="mt-8 flex items-center justify-between">
-                {card.icons?.length > 0 && (
-                  <div className="flex -space-x-2">
-                    {card.icons.map((icon, i) => (
-                      <div key={i} className="w-10 h-10 rounded-full bg-white border-2 border-gray-50 p-1.5 shadow-sm overflow-hidden hover:z-10 transition-all hover:-translate-y-1">
-                        <img
-                          src={`${imageBaseURL}/${icon}`}
-                          alt="tech"
-                          className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <div className="w-12 h-1.5 bg-gray-200 rounded-full group-hover:bg-[#6F4D34] group-hover:w-24 transition-all duration-700" />
-              </div>
-
-              {/* Hover Glow Effect */}
-              <div className="absolute inset-0 rounded-[48px] bg-gradient-to-br from-[#6F4D34]/0 via-transparent to-[#6F4D34]/0 opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none" />
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Floating Decorative Elements */}
-        <div className="mt-20 flex justify-center">
-          <div className="flex items-center gap-8 py-6 px-10 bg-gray-50 rounded-full border border-gray-100">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="text-green-500" size={20} />
-              <span className="text-gray-700 font-bold text-sm">Safe Delivery</span>
-            </div>
-            <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />
-            <div className="flex items-center gap-2">
-              <UserCheck className="text-blue-500" size={20} />
-              <span className="text-gray-700 font-bold text-sm">Verified Sellers</span>
-            </div>
-            <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />
-            <div className="flex items-center gap-2">
-              <TrendingUp className="text-amber-500" size={20} />
-              <span className="text-gray-700 font-bold text-sm">Instant Selling</span>
-            </div>
-          </div>
-        </div>
+        <p className="mt-3 text-xs md:text-lg md:text-dark font-medium text-black leading-relaxed px-3">
+          {data.description}
+        </p>
       </div>
+
+      <section className="w-full py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          {data.cards?.map((card, idx) => (
+            <div
+              key={idx}
+              className="flex-1 bg-[#F8F8F8] rounded-2xl shadow-md p-6 text-center relative z-10"
+            >
+              {card.image && (
+                <img
+                  src={`${imageBaseURL}/${card.image}`}
+                  alt={card.title}
+                  className="mx-auto mb-4 w-full h-40 object-contain"
+                />
+              )}
+              <h3 className="text-lg font-semibold">{card.title}</h3>
+              <p className="text-gray-600 mt-2 text-sm">{card.description}</p>
+
+              {card.icons?.length > 0 && (
+                <div className="flex justify-center gap-3 mt-3">
+                  {card.icons.map((icon, i) => (
+                    <img
+                      key={i}
+                      src={`${imageBaseURL}/${icon}`}
+                      alt="icon"
+                      className="h-6"
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };

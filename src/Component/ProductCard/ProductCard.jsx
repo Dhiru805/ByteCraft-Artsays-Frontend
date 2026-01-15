@@ -196,7 +196,6 @@ import { FiChevronLeft } from "react-icons/fi";
 const ProductGrid = ({ overrideProducts = null }) => {
   const [products, setProducts] = useState([]);
   const [likedProducts, setLikedProducts] = useState({});
-  const [cartItems, setCartItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   const itemsPerPage = 12;
@@ -205,20 +204,6 @@ const ProductGrid = ({ overrideProducts = null }) => {
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
   const navigate = useNavigate();
-
-  const fetchCart = async () => {
-    if (!userId || userType !== "Buyer") return;
-    try {
-      const res = await getAPI(`/api/cart/${userId}`);
-      setCartItems(res?.data?.items || []);
-    } catch (err) {
-      console.error("Error fetching cart:", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchCart();
-  }, [userId, userType]);
 
 const baseList = overrideProducts 
   ? overrideProducts.map(op => products.find(p => p._id === op._id) || op) 
@@ -348,7 +333,6 @@ useEffect(() => {
     try {
       await postAPI(`/api/cart/addcart/${productId}`, {}, true);
       toast.success("Added to Cart!");
-      fetchCart();
     } catch (err) {
       console.error("Add to cart error:", err);
       toast.error("Failed to add to cart");
@@ -373,16 +357,16 @@ useEffect(() => {
      <main className="md:col-span-3">
                   {/* <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3"> */}
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6">
-                      {currentProducts.map((product) => {
-                        const displayPrice = product.finalPrice;
-                        const hasDiscount = displayPrice < product.marketPrice;
-                        const discountPercent = hasDiscount
-                          ? Math.round(
-                              ((product.marketPrice - displayPrice) /
-                                product.marketPrice) *
-                                100
-                            )
-                          : 0;
+                    {currentProducts.map((product) => {
+                      const hasDiscount =
+                        product.sellingPrice < product.marketPrice;
+                      const discountPercent = hasDiscount
+                        ? Math.round(
+                            ((product.marketPrice - product.sellingPrice) /
+                              product.marketPrice) *
+                              100
+                          )
+                        : 0;
     
                       const average = product.averageRating;
                       const reviewCount = product.reviewCount ?? 0;
@@ -396,29 +380,19 @@ useEffect(() => {
                           //className="rounded-2xl shadow-md overflow-hidden flex flex-col justify-between product-card transition-transform duration-300 hover:-translate-y-1 m-3"
                           className="rounded-2xl shadow-md overflow-hidden flex flex-col justify-between product-card transition-transform duration-300 hover:-translate-y-1 mx-auto w-full max-w-[330px] my-2"
                         >
-                            {/* Image */}
-                            <div className="relative p-img">
-                              {product.editionType && (
-                                <span className="absolute top-3 left-3 text-white bg-dark text-sm font-semibold px-2 py-0.5 rounded-full shadow">
-                                  {product.editionType}
-                                </span>
-                              )}
-                              <img
-                                src={`${imageBaseURL}${product.mainImage}`}
-                                alt={product.productName}
-                                className={`w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img ${(!product.quantity || product.quantity === 0) ? 'blur-[2px]' : ''}`}
-                              />
-
-                              {/* Sold Out Overlay */}
-                              {(!product.quantity || product.quantity === 0) && (
-                                <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-[1px]">
-                                  <div className="bg-white/90 px-6 py-2 rounded-lg shadow-2xl border border-white/50 transform -rotate-12">
-                                    <span className="text-red-600 font-black text-xl uppercase tracking-wider">Sold Out</span>
-                                  </div>
-                                </div>
-                              )}
-
-                              <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
+                          {/* Image */}
+                          <div className="relative p-img">
+                            {product.editionType && (
+                              <span className="absolute top-3 left-3 text-white bg-dark text-sm font-semibold px-2 py-0.5 rounded-full shadow">
+                                {product.editionType}
+                              </span>
+                            )}
+                            <img
+                              src={`${imageBaseURL}${product.mainImage}`}
+                              alt={product.productName}
+                              className="w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img"
+                            />
+                            <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
                               {/* <Heart className="w-5 h-5 text-white" /> */}
                               <div
                                 onClick={(e) => {
@@ -504,49 +478,38 @@ useEffect(() => {
                                   {discountPercent}% OFF
                                 </span>
                               )}
-                                  {hasDiscount ? (
-                                    <>
-                                      <span className="text-gray-400 line-through">
-                                        ₹{product.marketPrice}
-                                      </span>
-                                      <span className="text-lg font-bold text-gray-900">
-                                        ₹{product.finalPrice}
-                                      </span>
-                                    </>
-                                  ) : (
-                                    <span className="text-lg font-bold text-gray-900">
-                                      ₹{product.finalPrice}
-                                    </span>
-                                  )}
+                              {hasDiscount ? (
+                                <>
+                                  <span className="text-gray-400 line-through">
+                                    ₹{product.marketPrice}
+                                  </span>
+                                  <span className="text-lg font-bold text-gray-900">
+                                    ₹{product.sellingPrice}
+                                  </span>
+                                </>
+                              ) : (
+                                <span className="text-lg font-bold text-gray-900">
+                                  ₹{product.sellingPrice}
+                                </span>
+                              )}
                             </div>
                           </div>
     
                           {/* Buttons */}
                           <div className="p-3 product-button d-none d-md-block">
                             <div className="flex justify-between gap-3">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (!ensureBuyer()) return;
-      
-                                    addToCart(product._id, e);
-                                  }}
-                                  disabled={!product.quantity || product.quantity === 0}
-                                  className={`flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart hover:bg-dark hover:text-white transition ${(!product.quantity || product.quantity === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                >
-                                  <div className="relative flex items-center gap-2">
-                                    <FaShoppingCart />
-                                    {(() => {
-                                      const cartItem = cartItems.find((item) => item.product?._id === product._id);
-                                      return cartItem && cartItem.quantity > 0 ? (
-                                        <span className="absolute -top-3 -left-4 bg-red-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center shadow-lg border-2 border-white flex items-center justify-center">
-                                          {cartItem.quantity}
-                                        </span>
-                                      ) : null;
-                                    })()}
-                                    Add to Cart
-                                  </div>
-                                </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (!ensureBuyer()) return;
+    
+                                  addToCart(product._id);
+                                }}
+                                disabled={!product.quantity || product.quantity === 0}
+                                className={`flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart hover:bg-dark hover:text-white transition ${(!product.quantity || product.quantity === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                              >
+                                <FaShoppingCart /> Add to Cart
+                              </button>
     
                               {(!product.quantity || product.quantity === 0) ? (
                                 <button

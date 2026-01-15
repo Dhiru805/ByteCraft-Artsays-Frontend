@@ -97,32 +97,30 @@ const UpdateHowToBuy = () => {
   };
 
   
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const submissionData = new FormData();
-      submissionData.append("webpageHeading", formData.webpageHeading.trim());
-      submissionData.append("webpageDescription", formData.webpageDescription.trim());
-      submissionData.append("status", formData.status);
-      
-      const articlesMetadata = formData.articles.map((a) => ({
-        articleHeading: a.articleHeading,
-        articleContent: a.articleContent,
-        existingBanner: a.existingBanner,
-      }));
-      submissionData.append("articles", JSON.stringify(articlesMetadata));
+  try {
+    const submissionData = new FormData();
+    submissionData.append("webpageHeading", formData.webpageHeading.trim());
+    submissionData.append("webpageDescription", formData.webpageDescription.trim());
+    submissionData.append("status", formData.status);
+    
+    formData.articles.forEach((article, i) => {
+      submissionData.append(`articles[${i}][articleHeading]`, article.articleHeading);
+      submissionData.append(`articles[${i}][articleContent]`, article.articleContent);
 
-      formData.articles.forEach((article, i) => {
-        if (article.bannerImage instanceof File) {
-          submissionData.append(`articles[${i}][bannerImage]`, article.bannerImage);
-        }
-      });
+      if (article.bannerImage instanceof File) {
+        submissionData.append(`articles[${i}][bannerImage]`, article.bannerImage);
+      } else if (article.existingBanner) {
+        submissionData.append(`articles[${i}][existingBanner]`, article.existingBanner);
+      }
+    });
 
-      const response = await putAPI(`/api/howtobuy/update/${page._id}`, submissionData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+    const response = await putAPI(`/api/howtobuy/update/${page._id}`, submissionData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
 
     if (response.data.data) {
       toast.success("How To Buy page updated successfully!");
@@ -211,14 +209,15 @@ const UpdateHowToBuy = () => {
                         />
                       </div>
 
-                        <div className="form-group">
-                          <label>Banner Image *</label>
-                          <input
-                            type="file"
-                            accept="image/jpeg,image/png"
-                            onChange={(e) => handleChange(e, idx, "bannerImage")}
-                            className="form-control"
-                          />
+                      <div className="form-group">
+                        <label>Banner Image *</label>
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png"
+                          onChange={(e) => handleChange(e, idx, "bannerImage")}
+                          className="form-control"
+                          required
+                        />
                         {bannerPreviews[idx] && (
                           <div className="mt-2">
                             <img

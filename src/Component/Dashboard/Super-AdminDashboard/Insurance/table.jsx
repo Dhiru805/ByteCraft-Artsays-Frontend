@@ -71,8 +71,9 @@ const[loading,setLoading]=useState(true)
 
   const handleDeleteConfirmed = async (id) => {
     try {
-      // await axiosInstance.delete(`/api/insurance/delete/${id}`);
+      await axiosInstance.delete(`/api/insurance/delete/${id}`);
       setPages((prev) => prev.filter((p) => p._id !== id));
+      toast.success("Insurance page deleted successfully!");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to delete insurance page.");
     } finally {

@@ -8,7 +8,7 @@
 
 /* Desktop Sidebar Styles */
 .sidebar-container-s {
-  /* width: 22%; */
+  width: 22%;
   position: sticky;
   top: 0;
   left: 0;
@@ -24,7 +24,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 0 0 0;
+  padding: 60px 0;
   border-radius: 10px;
   max-height:90vh ; 
    overflow-y:auto ;
@@ -36,7 +36,7 @@
   padding: 10px;
   color: white;
   font-size: 1.3rem;
-  /* margin: 12px 0; */
+  margin: 12px 0;
   border-radius: 12px;
   transition: 0.3s;
   background-color: transparent;
@@ -64,7 +64,7 @@
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   transition: width 0.3s ease;
   border-radius: 0 10px 10px 0;
-  padding: 40px 0 0 0;
+  padding: 60px 0;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -75,7 +75,7 @@
 }
 
 .sidebar-container-s:hover .sidebar-expanded-s:hover {
-  width: 100%;
+  width: 230px;
 }
 
 .label-wrapper-s {
@@ -85,7 +85,7 @@
   color: #4a372b;
   font-weight: 600;
   border-radius: 0px 12px 12px 0px;
-  /* margin: 12px 0; */
+  margin: 12px 0;
   margin-right: 15px;
   transition: background 0.3s, border 0.3s;
   height: 45px;
@@ -116,11 +116,11 @@
 }
 
 .sidebar-container-s.pinned .sidebar-expanded-s {
-  width: 100%;
+  width: 230px;
 }
 
 .sidebar-container-s:not(.pinned):hover .sidebar-expanded-s {
-  width: 100%;
+  width: 230px;
 }
 
 .sidebar-container-s:not(.pinned) .sidebar-expanded-s {
@@ -134,13 +134,13 @@
   font-size: 1.2rem;
   cursor: pointer;
   z-index: 1001;
-  /* background: white; */
+  background: white;
   width: 30px;
   height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
 }
 

@@ -259,28 +259,26 @@ const WhoWeAreCreate = () => {
           return;
         }
         setAboutUsId(page._id);
-          const whoWeAreRes = await getAPI(`/api/about-us-sections/who-we-are/${page._id}`);
-          const section = whoWeAreRes.data.data;
-          if (section) {
-            setFormData({
-              heading: section.heading || "",
-              description: section.description || "",
-              image1: null,
-              stats: section.stats?.length ? section.stats : [{ number: "", label: "" }],
-            });
-            if (section.image1) {
-              const normalizedPath = section.image1.replace(/\\/g, "/");
-              setExistingImage(normalizedPath);
-              setImagePreview(`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${normalizedPath}`);
-            }
+        const whoWeAreRes = await getAPI(`/api/about-us-sections/who-we-are/${page._id}`);
+        const section = whoWeAreRes.data.data;
+        if (section) {
+          setFormData({
+            heading: section.heading || "",
+            description: section.description || "",
+            image1: null,
+            stats: section.stats?.length ? section.stats : [{ number: "", label: "" }],
+          });
+          if (section.image1) {
+            setExistingImage(section.image1);
+            setImagePreview(`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${section.image1}`);
           }
-
+        }
       } catch (err) {
         toast.error(err.response?.data?.message || "Failed to load section data");
       }
     };
-      loadAboutUs();
-      }, [navigate]);
+    loadAboutUs();
+  }, []);
 
   const validateImageFile = (file) => {
     if (!file.type.match(/image\/(jpeg|png)/)) {
@@ -362,7 +360,7 @@ const WhoWeAreCreate = () => {
   return (
     <div className="container-fluid">
       <div className="block-header">
-        <h2>{existingImage ? "Edit" : "Create"} Who We Are Section</h2>
+        <h2>Create Who We Are Section</h2>
         <div className="col-lg-12">
           <div className="card">
             <div className="body">
@@ -433,7 +431,7 @@ const WhoWeAreCreate = () => {
                 </button>
                 <div className="d-flex align-items-center mb-3" style={{ gap: "10px" }}>
                   <button type="submit" className="btn btn-primary" disabled={loading}>
-                    {loading ? (existingImage ? "Saving..." : "Creating...") : (existingImage ? "Save WhoWeAre Section" : "Create WhoWeAre Section")}
+                    {loading ? "Creating..." : "Create WhoWeAre Section"}
                   </button>
                 </div>
               </form>
