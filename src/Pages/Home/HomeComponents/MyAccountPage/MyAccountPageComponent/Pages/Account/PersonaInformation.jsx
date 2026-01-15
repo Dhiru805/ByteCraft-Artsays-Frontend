@@ -4,8 +4,11 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import putAPI from '../../../../../../../api/putAPI';
 import getAPI from '../../../../../../../api/getAPI';
+import postAPI from '../../../../../../../api/postAPI';
 import { DEFAULT_PROFILE_IMAGE } from './constant';
 import PersonalInformationSkeleton from '../../../../../../../Component/Skeleton/Home/Account/PersonalInformationSkeleton';
+import { FaCheck } from 'react-icons/fa';
+
 export const AccountForm = () => {
   const fileInputRef = useRef(null);
 
@@ -22,45 +25,63 @@ export const AccountForm = () => {
   const [loading, setLoading] = useState(false);
   const [profileData, setProfileData] = useState(null);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const userId = localStorage.getItem('userId');
-        if (!userId) {
-          toast.error('User ID not found. Please log in again.');
-          return;
-        }
-        const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
-        if (result.data.user) {
-          const userData = result.data.user;
-          const formattedBirthdate = userData.birthdate
-            ? new Date(userData.birthdate).toISOString().split('T')[0]
-            : '';
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [phoneVerified, setPhoneVerified] = useState(false);
+  const [originalEmail, setOriginalEmail] = useState('');
+  const [originalPhone, setOriginalPhone] = useState('');
 
-          setProfileData(userData);
-          setName(userData.name || '');
-          setLastName(userData.lastName || '');
-          setUsername(userData.username || '');
-          setEmail(userData.email || '');
-          setPhone(userData.phone || '');
-          setBio(userData.bio || '');
-          setGender(userData.gender || 'Male');
-          setBirthdate(formattedBirthdate);
+  const [showEmailOtpModal, setShowEmailOtpModal] = useState(false);
+  const [showPhoneOtpModal, setShowPhoneOtpModal] = useState(false);
+  const [emailOtp, setEmailOtp] = useState('');
+  const [phoneOtp, setPhoneOtp] = useState('');
+  const [sendingEmailOtp, setSendingEmailOtp] = useState(false);
+  const [sendingPhoneOtp, setSendingPhoneOtp] = useState(false);
+  const [verifyingEmailOtp, setVerifyingEmailOtp] = useState(false);
+  const [verifyingPhoneOtp, setVerifyingPhoneOtp] = useState(false);
 
-          // Set preview image
-          const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-          const profilePhotoUrl = userData.profilePhoto
-            ? `${BASE_URL}${userData.profilePhoto}`
-            : DEFAULT_PROFILE_IMAGE;
-          setProfileImage(profilePhotoUrl);
-          localStorage.setItem('profilePhoto', profilePhotoUrl);
-        }
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-        toast.error(error?.response?.data?.message || 'Error fetching profile data');
+  const fetchProfile = async () => {
+    try {
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        toast.error('User ID not found. Please log in again.');
+        return;
       }
-    };
+      const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
+      if (result.data.user) {
+        const userData = result.data.user;
+        const formattedBirthdate = userData.birthdate
+          ? new Date(userData.birthdate).toISOString().split('T')[0]
+          : '';
 
+        setProfileData(userData);
+        setName(userData.name || '');
+        setLastName(userData.lastName || '');
+        setUsername(userData.username || '');
+        setEmail(userData.email || '');
+        setPhone(userData.phone || '');
+        setBio(userData.bio || '');
+        setGender(userData.gender || 'Male');
+        setBirthdate(formattedBirthdate);
+
+        setEmailVerified(userData.emailVerified || false);
+        setPhoneVerified(userData.numberVerified || false);
+        setOriginalEmail(userData.email || '');
+        setOriginalPhone(userData.phone || '');
+
+        const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+        const profilePhotoUrl = userData.profilePhoto
+          ? `${BASE_URL}${userData.profilePhoto}`
+          : DEFAULT_PROFILE_IMAGE;
+        setProfileImage(profilePhotoUrl);
+        localStorage.setItem('profilePhoto', profilePhotoUrl);
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      toast.error(error?.response?.data?.message || 'Error fetching profile data');
+    }
+  };
+
+  useEffect(() => {
     fetchProfile();
   }, []);
 
@@ -74,47 +95,11 @@ export const AccountForm = () => {
       setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfileImage(reader.result); // for preview
+        setProfileImage(reader.result);
       };
       reader.readAsDataURL(file);
     }
   };
-
-  // const handleDeleteImage = async () => {
-  //   try {
-  //     const token = localStorage.getItem('token');
-  //     const userId = localStorage.getItem('userId');
-
-  //     if (!token || !userId) {
-  //       toast.error('Please log in again.');
-  //       return;
-  //     }
-
-  //     setLoading(true);
-  //     await putAPI(
-  //       `/auth/users/${userId}`,
-  //       { profilePhoto: null },
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-  //     setProfileImage(DEFAULT_PROFILE_IMAGE);
-  //     setImageFile(null);
-
-  //     if (fileInputRef.current) {
-  //       fileInputRef.current.value = '';
-  //     }
-
-  //     toast.success('Profile image deleted successfully!');
-  //   } catch (error) {
-  //     console.error('Error deleting profile image:', error.response?.data || error.message);
-  //     toast.error(error?.response?.data?.message || 'Failed to delete profile image');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleDeleteImage = async () => {
     try {
@@ -143,9 +128,8 @@ export const AccountForm = () => {
         fileInputRef.current.value = '';
       }
 
-      // Update localStorage and dispatch custom event
       localStorage.setItem('profilePhoto', DEFAULT_PROFILE_IMAGE);
-      window.dispatchEvent(new Event('profilePhotoUpdated')); // Dispatch event
+      window.dispatchEvent(new Event('profilePhotoUpdated'));
 
       toast.success('Profile image deleted successfully!');
     } catch (error) {
@@ -156,88 +140,127 @@ export const AccountForm = () => {
     }
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   console.log('Form submitted');
+  const handleEmailChange = (e) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    if (newEmail !== originalEmail) {
+      setEmailVerified(false);
+    }
+  };
 
-  //   const formData = new FormData();
-  //   formData.append('name', name);
-  //   formData.append('lastName', lastName);
-  //   formData.append('username', username);
-  //   formData.append('email', email);
-  //   formData.append('phone', phone);
-  //   formData.append('gender', gender);
-  //   formData.append('birthdate', birthdate);
-  //   formData.append('bio', bio);
+  const handlePhoneChange = (e) => {
+    const newPhone = e.target.value;
+    setPhone(newPhone);
+    if (newPhone !== originalPhone) {
+      setPhoneVerified(false);
+    }
+  };
 
-  //   if (imageFile) {
-  //     formData.append('profilePhoto', imageFile);
-  //   }
-  //   try {
-  //     const token = localStorage.getItem('token');
-  //     const userId = localStorage.getItem('userId');
-  //     if (!token) {
-  //       toast.error('No token found. Please log in again.');
-  //       return;
-  //     }
-  //     if (!userId) {
-  //       toast.error('User ID not found. Please log in again.');
-  //       return;
-  //     }
-  //     setLoading(true);
-  //     const res = await putAPI(
-  //       `/auth/users/${userId}`,
-  //       formData,
-  //       {
-  //         headers: {
-  //           'Content-Type': 'multipart/form-data',
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-  //     toast.success(res.message || 'Profile updated successfully!');
+    const handleSendEmailOtp = async () => {
+      if (!email) {
+        toast.error('Please enter an email address');
+        return;
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        toast.error('Please enter a valid email address');
+        return;
+      }
+      try {
+        setSendingEmailOtp(true);
+        const userId = localStorage.getItem('userId');
+        const response = await postAPI('/auth/send-otp', { email, mode: 'profile', userId });
+        if (response.data?.success) {
+          toast.success('OTP sent to your email');
+          setShowEmailOtpModal(true);
+        }
+      } catch (error) {
+        toast.error(error?.response?.data?.message || 'Failed to send OTP');
+      } finally {
+        setSendingEmailOtp(false);
+      }
+    };
 
-  //     console.log('Updated user:', res.data.user);
+  const handleVerifyEmailOtp = async () => {
+    if (!emailOtp || emailOtp.length !== 6) {
+      toast.error('Please enter a valid 6-digit OTP');
+      return;
+    }
+    try {
+      setVerifyingEmailOtp(true);
+      const response = await postAPI('/auth/verify-otp', { email, otp: emailOtp });
+      if (response.data?.success) {
+        const userId = localStorage.getItem('userId');
+        const token = localStorage.getItem('token');
+        await putAPI(`/auth/users/${userId}`, { email, emailVerified: true }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        toast.success('Email verified successfully');
+        setEmailVerified(true);
+        setOriginalEmail(email);
+        setShowEmailOtpModal(false);
+        setEmailOtp('');
+        fetchProfile();
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || 'Failed to verify OTP');
+    } finally {
+      setVerifyingEmailOtp(false);
+    }
+  };
 
-  //     if (res.hasError) {
-  //       toast.error(res.message);
-  //     } else {
-  //       const fetchUpdatedProfile = async () => {
-  //         try {
-  //           const updated = await getAPI(`/auth/userid/${userId}`, {}, true, false);
-  //           const user = updated.data.user;
-  //           setName(user.name || '');
-  //           setLastName(user.lastName || '');
-  //           setUsername(user.username || '');
-  //           setEmail(user.email || '');
-  //           setPhone(user.phone || '');
-  //           setGender(user.gender || 'Male');
-  //           setBio(user.bio || '');
-  //           const formattedBirthdate = user.birthdate
-  //             ? new Date(user.birthdate).toISOString().split('T')[0]
-  //             : '';
-  //           setBirthdate(formattedBirthdate);
+    const handleSendPhoneOtp = async () => {
+      if (!phone) {
+        toast.error('Please enter a phone number');
+        return;
+      }
+      const cleanPhone = phone.replace(/\D/g, '').replace(/^(\+91|91)/, '');
+      if (cleanPhone.length !== 10) {
+        toast.error('Please enter a valid 10-digit phone number');
+        return;
+      }
+      try {
+        setSendingPhoneOtp(true);
+        const userId = localStorage.getItem('userId');
+        const response = await postAPI('/auth/send-otp', { phone, mode: 'profile', userId });
+        if (response.data?.success) {
+          toast.success('OTP sent to your phone');
+          setShowPhoneOtpModal(true);
+        }
+      } catch (error) {
+        toast.error(error?.response?.data?.message || 'Failed to send OTP');
+      } finally {
+        setSendingPhoneOtp(false);
+      }
+    };
 
-  //           const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-  //           const profilePhotoUrl = user.profilePhoto
-  //             ? `${BASE_URL}${user.profilePhoto}`
-  //             : DEFAULT_PROFILE_IMAGE;
-  //           setProfileImage(profilePhotoUrl);
-  //         } catch (e) {
-  //           console.error('Error refreshing profile after update:', e);
-  //           toast.error(e?.response?.data?.message || 'Error refreshing profile');
-  //         }
-  //       };
-  //       fetchUpdatedProfile();
-  //     }
-  //   } catch (error) {
-  //     console.error('Update failed:', error.response?.data || error.message);
-  //     toast.error(error?.response?.data?.message || 'Failed to update profile');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
+  const handleVerifyPhoneOtp = async () => {
+    if (!phoneOtp || phoneOtp.length !== 6) {
+      toast.error('Please enter a valid 6-digit OTP');
+      return;
+    }
+    try {
+      setVerifyingPhoneOtp(true);
+      const response = await postAPI('/auth/verify-otp', { phone, otp: phoneOtp });
+      if (response.data?.success) {
+        const userId = localStorage.getItem('userId');
+        const token = localStorage.getItem('token');
+        await putAPI(`/auth/users/${userId}`, { phone, numberVerified: true }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        toast.success('Phone verified successfully');
+        setPhoneVerified(true);
+        setOriginalPhone(phone);
+        setShowPhoneOtpModal(false);
+        setPhoneOtp('');
+        fetchProfile();
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || 'Failed to verify OTP');
+    } finally {
+      setVerifyingPhoneOtp(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -285,37 +308,9 @@ export const AccountForm = () => {
       if (res.hasError) {
         toast.error(res.message);
       } else {
-        const fetchUpdatedProfile = async () => {
-          try {
-            const updated = await getAPI(`/auth/userid/${userId}`, {}, true, false);
-            const user = updated.data.user;
-            setName(user.name || '');
-            setLastName(user.lastName || '');
-            setUsername(user.username || '');
-            setEmail(user.email || '');
-            setPhone(user.phone || '');
-            setGender(user.gender || 'Male');
-            setBio(user.bio || '');
-            const formattedBirthdate = user.birthdate
-              ? new Date(user.birthdate).toISOString().split('T')[0]
-              : '';
-            setBirthdate(formattedBirthdate);
-
-            const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-            const profilePhotoUrl = user.profilePhoto
-              ? `${BASE_URL}${user.profilePhoto}`
-              : DEFAULT_PROFILE_IMAGE;
-            setProfileImage(profilePhotoUrl);
-
-            // Update localStorage and dispatch custom event
-            localStorage.setItem('profilePhoto', profilePhotoUrl);
-            window.dispatchEvent(new Event('profilePhotoUpdated')); // Dispatch event
-          } catch (e) {
-            console.error('Error refreshing profile after update:', e);
-            toast.error(e?.response?.data?.message || 'Error refreshing profile');
-          }
-        };
-        fetchUpdatedProfile();
+        fetchProfile();
+        localStorage.setItem('profilePhoto', profileImage);
+        window.dispatchEvent(new Event('profilePhotoUpdated'));
       }
     } catch (error) {
       console.error('Update failed:', error.response?.data || error.message);
@@ -324,9 +319,11 @@ export const AccountForm = () => {
       setLoading(false);
     }
   };
+
   if (loading && !profileData) {
     return <PersonalInformationSkeleton />;
   }
+
   return (
     <div className="max-w-[1440px] mx-auto">
       <div className="flex items-center justify-between mb-8">
@@ -432,24 +429,64 @@ export const AccountForm = () => {
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="example@gmail.com"
-                className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
-              />
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={handleEmailChange}
+                    placeholder="example@gmail.com"
+                    readOnly={emailVerified && email === originalEmail}
+                    className={`w-full border border-gray-200 px-4 py-3 pr-24 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none ${emailVerified && email === originalEmail ? 'bg-green-50 border-green-200' : ''}`}
+                  />
+                  {emailVerified && email === originalEmail && (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 text-green-600 text-xs font-medium bg-green-50 px-2 py-1 rounded-lg">
+                      <FaCheck className="w-3 h-3" /> Verified
+                    </span>
+                  )}
+                </div>
+                {(!emailVerified || email !== originalEmail) && (
+                  <button
+                    type="button"
+                    onClick={handleSendEmailOtp}
+                    disabled={sendingEmailOtp}
+                    className="px-4 py-3 bg-[#5C4033] hover:bg-[#4b3327] text-white text-sm font-semibold rounded-2xl transition-all duration-300 whitespace-nowrap"
+                  >
+                    {sendingEmailOtp ? 'Sending...' : 'Verify'}
+                  </button>
+                )}
+              </div>
             </div>
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">Phone *</label>
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+91 93656 00000"
-                className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
-              />
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={handlePhoneChange}
+                    placeholder="+91 93656 00000"
+                    readOnly={phoneVerified && phone === originalPhone}
+                    className={`w-full border border-gray-200 px-4 py-3 pr-24 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none ${phoneVerified && phone === originalPhone ? 'bg-green-50 border-green-200' : ''}`}
+                  />
+                  {phoneVerified && phone === originalPhone && (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 text-green-600 text-xs font-medium bg-green-50 px-2 py-1 rounded-lg">
+                      <FaCheck className="w-3 h-3" /> Verified
+                    </span>
+                  )}
+                </div>
+                {(!phoneVerified || phone !== originalPhone) && (
+                  <button
+                    type="button"
+                    onClick={handleSendPhoneOtp}
+                    disabled={sendingPhoneOtp}
+                    className="px-4 py-3 bg-[#5C4033] hover:bg-[#4b3327] text-white text-sm font-semibold rounded-2xl transition-all duration-300 whitespace-nowrap"
+                  >
+                    {sendingPhoneOtp ? 'Sending...' : 'Verify'}
+                  </button>
+                )}
+              </div>
             </div>
 
             <div>
@@ -513,6 +550,90 @@ export const AccountForm = () => {
           {loading ? 'Updating...' : 'Update Changes'}
         </button>
       </form>
+
+      {showEmailOtpModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} onClick={() => setShowEmailOtpModal(false)}>
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-xl font-bold text-gray-900 mb-4">Verify Email</h3>
+            <p className="text-gray-600 mb-4">Enter the 6-digit OTP sent to {email}</p>
+            <input
+              type="text"
+              value={emailOtp}
+              onChange={(e) => setEmailOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              placeholder="Enter OTP"
+              className="w-full border border-gray-200 px-4 py-3 rounded-xl mb-4 text-center text-2xl tracking-widest"
+              maxLength={6}
+            />
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => { setShowEmailOtpModal(false); setEmailOtp(''); }}
+                className="flex-1 py-3 border border-gray-200 rounded-xl font-semibold text-gray-600 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleVerifyEmailOtp}
+                disabled={verifyingEmailOtp || emailOtp.length !== 6}
+                className="flex-1 py-3 bg-[#5C4033] text-white rounded-xl font-semibold hover:bg-[#4b3327] disabled:opacity-50"
+              >
+                {verifyingEmailOtp ? 'Verifying...' : 'Verify'}
+              </button>
+            </div>
+            <button
+              type="button"
+              onClick={handleSendEmailOtp}
+              disabled={sendingEmailOtp}
+              className="w-full mt-3 text-[#5C4033] text-sm font-medium hover:underline"
+            >
+              {sendingEmailOtp ? 'Sending...' : 'Resend OTP'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showPhoneOtpModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} onClick={() => setShowPhoneOtpModal(false)}>
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-xl font-bold text-gray-900 mb-4">Verify Phone</h3>
+            <p className="text-gray-600 mb-4">Enter the 6-digit OTP sent to {phone}</p>
+            <input
+              type="text"
+              value={phoneOtp}
+              onChange={(e) => setPhoneOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              placeholder="Enter OTP"
+              className="w-full border border-gray-200 px-4 py-3 rounded-xl mb-4 text-center text-2xl tracking-widest"
+              maxLength={6}
+            />
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => { setShowPhoneOtpModal(false); setPhoneOtp(''); }}
+                className="flex-1 py-3 border border-gray-200 rounded-xl font-semibold text-gray-600 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleVerifyPhoneOtp}
+                disabled={verifyingPhoneOtp || phoneOtp.length !== 6}
+                className="flex-1 py-3 bg-[#5C4033] text-white rounded-xl font-semibold hover:bg-[#4b3327] disabled:opacity-50"
+              >
+                {verifyingPhoneOtp ? 'Verifying...' : 'Verify'}
+              </button>
+            </div>
+            <button
+              type="button"
+              onClick={handleSendPhoneOtp}
+              disabled={sendingPhoneOtp}
+              className="w-full mt-3 text-[#5C4033] text-sm font-medium hover:underline"
+            >
+              {sendingPhoneOtp ? 'Sending...' : 'Resend OTP'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

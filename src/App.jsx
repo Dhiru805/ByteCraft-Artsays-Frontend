@@ -35,13 +35,13 @@ const AppContent = () => {
 
           socket.on("sessionRevoked", (data) => {
             console.warn("Session revoked via Socket.IO:", data.message);
+            
+            // Clear data and state using the safe logout function
+            logout(); 
+
             toast.error(data.message || "Your session has been revoked. Logging out...", {
               autoClose: 3000,
             });
-
-            // Clear local data and logout
-            localStorage.clear();
-            sessionStorage.clear();
             
             setTimeout(() => {
               window.location.href = "/login";
