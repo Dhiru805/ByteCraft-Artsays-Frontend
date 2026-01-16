@@ -1,308 +1,57 @@
-import React, { useState, useEffect, useRef } from "react";
-import { io } from "socket.io-client";
-import { useParams } from "react-router-dom";
-// import NavBar from "../Home/HomeComponents/NavBar";
-import { MdOutlineEmojiEmotions } from "react-icons/md";
-import { FaRegHeart } from "react-icons/fa";
-import { FaCamera, FaRegEyeSlash  } from "react-icons/fa";
-import { IoMic } from "react-icons/io5";
-import { MdOutlineIosShare } from "react-icons/md";
-import { IoPaperPlaneOutline } from "react-icons/io5";
-import { RiMoneyDollarCircleFill } from "react-icons/ri";
-import { FaUserGroup } from "react-icons/fa6";
-import getAPI from "../../api/getAPI";
-import { toast } from "react-toastify";
-import EditLiveModal from "../../Pages/socialMedia/CreateModalLive";
-import { LuEye } from "react-icons/lu";
-import putAPI from "../../api/putAPI";
-import postAPI from "../../api/postAPI";
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import io from 'socket.io-client';
+import axios from 'axios';
+import EditLiveModal from './CreateModalLive';
+import { 
+  FaUsers, 
+  FaThumbsUp, 
+  FaCamera, 
+  FaMicrophone, 
+  FaPaperPlane, 
+  FaChevronDown, 
+  FaEllipsisV, 
+  FaTimes, 
+  FaSmile, 
+  FaGlobeAmericas, 
+  FaEyeSlash, 
+  FaEye,
+  FaLock, 
+  FaQuestionCircle,
+  FaUpload
+} from 'react-icons/fa';
+
+const SOCKET_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+
+// WebRTC Configuration
+const rtcConfig = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' }
+  ]
+};
+
+const EMOJI_CATEGORIES = [
+  {
+    name: "Smileys & People",
+    emojis: ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '🥰', '😍', '🤩', '😘', '😋', '😎']
+  },
+  {
+    name: "Gestures",
+    emojis: ['👋', '🤚', '🖐', '✋', '🖖', '👌', '✌️', '🤞', '🤟', '🤘', '🤙', '👈', '👉', '👆', '👇', '👍', '👎', '👏', '🙌', '🙏', '💪']
+  },
+  {
+    name: "Hearts & Objects",
+    emojis: ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔', '🎉', '🎊', '🎁', '🎈']
+  }
+];
 
 const MyLive = () => {
   const { streamKey } = useParams();
-  const [showChat, setShowChat] = useState(true);
-  const [liveDetail, setLiveDetail] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [ stream, setStream ] = useState(null);
-  const [micOn, setMicOn] = useState(false);
-  const videoRef = useRef(null);
-  // eslint-disable-next-line no-unused-vars
-  const [youtubeUrl, setYoutubeUrl] = useState("");
-  // eslint-disable-next-line no-unused-vars
-  const [isYoutubeActive, setIsYoutubeActive] = useState(false);
-  const [showShare, setShowShare] = useState(false);
-  const [showKey, setShowKey] = useState(false);
-  const [categories, setCategories] = useState();
-  const [recordedUrl, setRecordedUrl] = useState(null);
-  const mediaRecorderRef = useRef();
-  const chunksRef = useRef([]);
-  const delayedVideoRef = useRef(null);
-  const [delay, setDelay] = useState(0);
-  const timerRef = useRef(null);
-  const streamStartTimeRef = useRef(null);
-  const finalizeOnStopRef = useRef(false);
-  const delayIntervalRef = useRef(null);
-  const delayedUrlRef = useRef(null);
-  const lastAppliedLenRef = useRef(0);
-  const capSecondsRef = useRef(120);
-  const socketRef = useRef(null);
-  const [currentViewers, setCurrentViewers] = useState(0);
-  // eslint-disable-next-line no-unused-vars
-  const [isLiked, setIsLiked] = useState(false);
+  const navigate = useNavigate();
+  const viewerUrl = `${window.location.origin}/artsays-community/live/${streamKey}`;
 
-   // WebRTC Configuration - Enhanced for better compatibility
-    const rtcConfig = {
-  iceServers: [
-    // Primary STUN servers
-    { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
-    { urls: 'stun:stun2.l.google.com:19302' },
-    { urls: 'stun:stun3.l.google.com:19302' },
-    { urls: 'stun:stun4.l.google.com:19302' },
-    { urls: 'stun:stun.stunprotocol.org:3478' },
-    { urls: 'stun:stun.nextcloud.com:443' }
-  ],
-  iceTransportPolicy: 'all',
-  iceCandidatePoolSize: 10,
-  // Enhanced codec preferences for better compatibility
-  sdpSemantics: 'unified-plan',
-  bundlePolicy: 'max-bundle',
-  rtcpMuxPolicy: 'require'
-};
-
-const peerConnectionsRef = useRef({}); // Store peer connections for multiple viewers
-// eslint-disable-next-line no-unused-vars
-const [ isConnecting, setIsConnecting ] = useState(false);
-// eslint-disable-next-line no-unused-vars
-const [streamer, setStreamer] = useState(null);
-const [streamerMessage, setStreamerMessage] = useState("");
-
-// Socket setup for streamer
-useEffect(() => {
-  const socket = io(process.env.REACT_APP_API_BASE, { 
-    transports: ["websocket", "polling"],
-    timeout: 5000
-  });
-  socketRef.current = socket;
-
-  socket.on("connect", () => {
-    console.log("Streamer socket connected:", socket.id);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("Streamer socket disconnected");
-  });
-
-  socket.on("connect_error", (error) => {
-    console.error("Streamer socket connection error:", error);
-  });
-
-  // Handle viewer joining
-  socket.on("viewerJoined", (data) => {
-    const { roomName, viewerSocketId } = data;
-    const expectedRoom = `live-room-${liveDetail?.live?.streamKey}`;
-    if (roomName === expectedRoom && !peerConnectionsRef.current[viewerSocketId]) {
-      console.log(`New viewer joined room ${roomName}:`, viewerSocketId);
-      initializePeerConnection(viewerSocketId);
-    }
-  });
-
-  // Handle viewer answer
-  socket.on("viewerAnswer", async (data) => {
-    const { roomName, answer } = data;
-    const expectedRoom = `live-room-${liveDetail?.live?.streamKey}`;
-    if (roomName === expectedRoom) {
-      // Find the correct peer connection for this viewer
-      const viewerSocketId = Object.keys(peerConnectionsRef.current).find(id => 
-        peerConnectionsRef.current[id] && !peerConnectionsRef.current[id].closed
-      );
-      
-      if (viewerSocketId && peerConnectionsRef.current[viewerSocketId]) {
-        try {
-          await peerConnectionsRef.current[viewerSocketId].setRemoteDescription(new RTCSessionDescription(answer));
-          console.log(`Set remote description for viewer ${viewerSocketId}`);
-        } catch (error) {
-          console.error(`Error setting remote description for ${viewerSocketId}:`, error);
-        }
-      } else {
-        console.warn(`No active peer connection found for viewer answer in room ${roomName}`);
-      }
-    }
-  });
-
-  // Handle viewer ICE candidate
-  socket.on("viewerIceCandidate", async (data) => {
-    const { roomName, candidate } = data;
-    const expectedRoom = `live-room-${liveDetail?.live?.streamKey}`;
-    if (roomName === expectedRoom) {
-      // Find the correct peer connection for this viewer
-      const viewerSocketId = Object.keys(peerConnectionsRef.current).find(id => 
-        peerConnectionsRef.current[id] && !peerConnectionsRef.current[id].closed
-      );
-      
-      if (viewerSocketId && peerConnectionsRef.current[viewerSocketId]) {
-        try {
-          await peerConnectionsRef.current[viewerSocketId].addIceCandidate(new RTCIceCandidate(candidate));
-          console.log(`Added ICE candidate from viewer ${viewerSocketId}`);
-        } catch (error) {
-          console.error(`Error adding ICE candidate from ${viewerSocketId}:`, error);
-        }
-      } else {
-        console.warn(`No active peer connection found for ICE candidate in room ${roomName}`);
-      }
-    }
-  });
-
-  return () => {
-    if (socketRef.current) {
-      socketRef.current.disconnect();
-      socketRef.current = null;
-    }
-    // Close all peer connections
-    Object.values(peerConnectionsRef.current).forEach((pc) => {
-      if (pc) pc.close();
-    });
-    peerConnectionsRef.current = {};
-  };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [liveDetail?.live?.streamKey]);
-
-const initializePeerConnection = (viewerSocketId) => {
-  if (!stream) {
-    console.error("No local stream available for peer connection");
-    return;
-  }
-
-  const pc = new RTCPeerConnection(rtcConfig);
-  peerConnectionsRef.current[viewerSocketId] = pc;
-
-  // Add local stream tracks to peer connection
-  stream.getTracks().forEach((track) => {
-    pc.addTrack(track, stream);
-    console.log(`Added track to peer connection: ${track.kind}`);
-  });
-
-  pc.onicecandidate = (event) => {
-    if (event.candidate && socketRef.current) {
-      const roomName = `live-room-${liveDetail?.live?.streamKey}`;
-      socketRef.current.emit("streamerIceCandidate", {
-        roomName: roomName,
-        candidate: event.candidate,
-        viewerSocketId: viewerSocketId
-      });
-      console.log(`Generated ICE candidate for viewer ${viewerSocketId}`);
-    }
-  };
-
-  pc.onconnectionstatechange = () => {
-    console.log(`Peer connection state for ${viewerSocketId}:`, pc.connectionState);
-    if (pc.connectionState === 'failed') {
-      console.error(`Peer connection failed for ${viewerSocketId}`);
-      // Clean up failed connection
-      delete peerConnectionsRef.current[viewerSocketId];
-      pc.close();
-    }
-  };
-
-  pc.oniceconnectionstatechange = () => {
-    console.log(`ICE connection state for ${viewerSocketId}:`, pc.iceConnectionState);
-  };
-
-  // Create and send offer with enhanced codec preferences
-  pc.createOffer({
-    offerToReceiveAudio: true,
-    offerToReceiveVideo: true
-  })
-    .then(async (offer) => {
-      // Modify SDP to prefer VP8/VP9 over H.264 for better browser compatibility
-      offer.sdp = offer.sdp.replace(/m=video (\d+) RTP\/SAVPF (\d+)/, (match, port, payloadTypes) => {
-        // Prefer VP8 (96), VP9 (98), H.264 (100) in that order
-        return `m=video ${port} RTP/SAVPF 96 98 100`;
-      });
-      
-      // Add codec-specific parameters for better compatibility
-      offer.sdp = offer.sdp.replace(/a=rtpmap:96 VP8\/90000/, 'a=rtpmap:96 VP8/90000\r\na=fmtp:96 max-fr=60;max-fs=8192');
-      offer.sdp = offer.sdp.replace(/a=rtpmap:98 VP9\/90000/, 'a=rtpmap:98 VP9/90000\r\na=fmtp:98 max-fr=60;max-fs=8192');
-      
-      await pc.setLocalDescription(offer);
-      
-      const roomName = `live-room-${liveDetail?.live?.streamKey}`;
-      if (socketRef.current) {
-        socketRef.current.emit("streamerOffer", {
-          roomName: roomName,
-          offer: offer,
-          viewerSocketId: viewerSocketId
-        });
-        console.log(`Sent enhanced streamerOffer to viewer ${viewerSocketId} in room ${roomName}`);
-      }
-    })
-    .catch((error) => {
-      console.error(`Error creating offer for viewer ${viewerSocketId}:`, error);
-      // Clean up on error
-      delete peerConnectionsRef.current[viewerSocketId];
-      pc.close();
-    });
-};
-
-
-
-// Logic added till here from above
-
-  // Start or restart MediaRecorder on the provided stream
-  const startRecorder = (srcStream) => {
-    if (!srcStream) return;
-    try {
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-        try { mediaRecorderRef.current.stop(); } catch (_) {}
-      }
-      const preferredMime = "video/webm;codecs=vp8,opus";
-      const mimeType = (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(preferredMime))
-        ? preferredMime
-        : "video/webm";
-      const recorder = new MediaRecorder(srcStream, { mimeType });
-      recorder.ondataavailable = (e) => {
-        if (e.data && e.data.size > 0) {
-          chunksRef.current.push(e.data);
-          // Trim rolling buffer to avoid unbounded growth
-          const maxKeep = Math.max(60, Number(capSecondsRef.current || 120));
-          if (chunksRef.current.length > maxKeep) {
-            chunksRef.current.splice(0, chunksRef.current.length - maxKeep);
-          }
-        }
-      };
-      recorder.onstop = () => {
-        // Only finalize into a single blob when explicitly ending the session
-        if (finalizeOnStopRef.current) {
-          try {
-            const blob = new Blob(chunksRef.current, { type: "video/webm" });
-            const url = URL.createObjectURL(blob);
-            setRecordedUrl(url);
-          } catch (_) {}
-          chunksRef.current = [];
-          finalizeOnStopRef.current = false;
-        }
-      };
-      recorder.start(1000);
-      mediaRecorderRef.current = recorder;
-      console.log("MediaRecorder started with:", mimeType);
-    } catch (err) {
-      console.error("Failed to start MediaRecorder:", err);
-    }
-  };
-
-  //Fetch Categories
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await getAPI("/api/main-category", true); 
-        if (!response.hasError) {
-          setCategories(response.data.data);
-        } else {
-          console.error(`Failed to fetch categories:, ${response.message}`);
-        }
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
   
   // State
   const [liveDetail, setLiveDetail] = useState(null);
@@ -378,74 +127,14 @@ const initializePeerConnection = (viewerSocketId) => {
     setNewMessage('');
     
     if (socketRef.current) {
-      try { socketRef.current.disconnect(); } catch (_) {}
-      socketRef.current = null;
-    }
-    const socket = io(process.env.REACT_APP_API_BASE, { transports: ["websocket"] });
-    socketRef.current = socket;
-
-    // Join room and request like status
-    socket.emit("joinLive", { streamUrl, userId });
-    socket.emit("getLikeStatus", { streamUrl, userId });
-
-    // Listeners
-    const handleViewers = (payload) => {
-      if (!payload || payload.streamUrl !== streamUrl) return;
-      if (typeof payload.currentViewers === "number") setCurrentViewers(payload.currentViewers);
-      if (typeof payload.totalViews === "number") {
-        setLiveDetail((prev) => ({
-          ...prev,
-          live: { ...prev?.live, viewCount: payload.totalViews },
-        }));
-      }
-    };
-    socket.on("viewersCountUpdated", handleViewers);
-
-    const handleLikeCount = (payload) => {
-      if (!payload || payload.streamUrl !== streamUrl) return;
-      if (typeof payload.likeCount === "number") {
-        setLiveDetail((prev) => ({
-          ...prev,
-          live: { ...prev?.live, likeCount: payload.likeCount },
-        }));
-      }
-      if (typeof payload.isLiked === "boolean" && payload.userId === userId) setIsLiked(payload.isLiked);
-    };
-    socket.on("likeCountUpdated", handleLikeCount);
-    socket.on("likeToggleSuccess", handleLikeCount);
-
-    const handleLikeStatus = (payload) => {
-      if (!payload || payload.streamUrl !== streamUrl) return;
-      if (typeof payload.isLiked === "boolean") setIsLiked(payload.isLiked);
-    };
-    socket.on("likeStatus", handleLikeStatus);
-
-    return () => {
-      try {
-        socket.emit("leaveLive", { streamUrl, userId });
-        socket.off("viewersCountUpdated", handleViewers);
-        socket.off("likeCountUpdated", handleLikeCount);
-        socket.off("likeToggleSuccess", handleLikeCount);
-        socket.off("likeStatus", handleLikeStatus);
-        socket.disconnect();
-      } catch (_) {}
-      socketRef.current = null;
-    };
-  }, [liveDetail?.live?.streamUrl]);
-
-  // eslint-disable-next-line no-unused-vars
-  const handleToggleLike = () => {
-    const userId = localStorage.getItem("userId");
-    const streamUrl = liveDetail?.live?.streamUrl;
-    if (!userId || !streamUrl || !socketRef.current) return;
-    socketRef.current.emit("toggleLike", { streamUrl, userId });
-  };
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(liveDetail?.live?.streamUrl);
-    } catch (err) {
-      console.error("Copy failed:", err);
+      socketRef.current.emit('sendMessage', {
+        streamKey,
+        message: newMessage,
+        userId,
+        username,
+        profilePhoto,
+        isCreator: true
+      });
     }
   };
 
@@ -475,26 +164,9 @@ const initializePeerConnection = (viewerSocketId) => {
     const outputCtx = outputCanvas.getContext('2d');
     canvasRef.current = outputCanvas;
 
-  useEffect(() => {
-    return () => {
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop());
-        setStream(null);
-      }
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-        mediaRecorderRef.current.stop();
-        mediaRecorderRef.current = null;
-      }
-      if (videoRef.current) {
-          videoRef.current.srcObject = null;
-        }
-      };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    // Fill output with black initially
+    outputCtx.fillStyle = 'black';
+    outputCtx.fillRect(0, 0, 1280, 720);
 
     // Create hidden video element to capture frames
     const hiddenVideo = document.createElement('video');
@@ -546,38 +218,12 @@ const initializePeerConnection = (viewerSocketId) => {
         }
       }
 
-  // Cleanup stream on unmount
-  useEffect(() => {
-    return () => {
-      stopLiveStream();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stream]);
-
-    //handleYoutubeShare
-    // eslint-disable-next-line no-unused-vars
-    const handleYoutubeShare = () => {
-    const link = prompt("Enter YouTube video link:");
-    if (link) {
-      setYoutubeUrl(link);
-      setIsYoutubeActive(true);
-    }
+      requestAnimationFrame(captureAndRender);
     };
 
-    // eslint-disable-next-line no-unused-vars
-    const stopYoutubeShare = () => {
-      setYoutubeUrl("");
-      setIsYoutubeActive(false);
-    };
+    // Use a marker to track if delay is active
+    delayIntervalRef.current = true;
+    requestAnimationFrame(captureAndRender);
 
     // Create delayed video stream from output canvas
     const delayedVideoStream = outputCanvas.captureStream(30);
@@ -593,107 +239,6 @@ const initializePeerConnection = (viewerSocketId) => {
         if (audioContextRef.current) {
           audioContextRef.current.close();
         }
-
-        if (!streamKey) {
-          toast.error("Stream key not found in URL");
-          return;
-        }
-
-        const res = await getAPI(`/api/social-media/live/${streamKey}`); 
-        console.log("API Response:", res.data);
-
-        const live = res?.data?.liveData;
-
-        if (live) {
-          // Reset streamDuration to 00:00 if not currently live
-          const updatedLive = {
-            ...live,
-            live: {
-              ...live.live,
-              streamDuration: live.live?.isLive ? live.live.streamDuration : "00:00"
-            }
-          };
-          setLiveDetail(updatedLive); 
-        } else {
-          toast.error(res.data?.message || "Failed to load live details");
-          setLiveDetail(null); 
-        }
-      } catch (err) {
-        console.error("Fetch live error:", err);
-        toast.error("Error fetching live details");
-        setLiveDetail(null); 
-      }
-    };
-    
-    useEffect(() => {
-      fetchLive();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [streamKey]);
-
-    useEffect(() => {
-      console.log("videoRef updated:", videoRef.current);
-    }, [videoRef]);
-
-    // Request camera access
-  const startLiveStream = async () => {
-    console.log("startLiveStream called, videoRef.current:", videoRef.current);
-    try {
-      console.log("Starting live stream...");
-      if (stream) {
-        console.log("Stopping existing stream...");
-        stream.getTracks().forEach((track) => track.stop());
-        setStream(null);
-        if (videoRef.current) {
-          console.log("Clearing video srcObject...");
-          videoRef.current.srcObject = null;
-        }
-      }
-
-      if (timerRef.current) {
-        console.log("Clearing existing timer...");
-        clearInterval(timerRef.current);
-      }
-      streamStartTimeRef.current = Date.now();
-      timerRef.current = setInterval(updateStreamDuration, 1000);
-      console.log("Timer started, start time:", streamStartTimeRef.current);
-
-      // Ensure duration is reset to 00:00 when starting
-      setLiveDetail((prev) => ({
-        ...prev,
-        live: {
-          ...prev?.live,
-          streamDuration: "00:00",
-        },
-      }));
-
-      console.log("Requesting media stream...");
-      let newStream;
-      try {
-        // Enhanced video constraints for better compatibility
-        const videoConstraints = {
-          width: { ideal: 1280, max: 1920 },
-          height: { ideal: 720, max: 1080 },
-          frameRate: { ideal: 30, max: 60 },
-          facingMode: "user",
-          // Prefer hardware acceleration
-          advanced: [
-            { width: 1280, height: 720 },
-            { width: 854, height: 480 },
-            { width: 640, height: 360 }
-          ]
-        };
-
-        const audioConstraints = {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-          sampleRate: 44100
-        };
-
-        newStream = await navigator.mediaDevices.getUserMedia({
-          video: videoConstraints,
-          audio: audioConstraints,
-        });
         
         audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
         const source = audioContextRef.current.createMediaStreamSource(new MediaStream([audioTrack]));
@@ -1130,15 +675,9 @@ const initializePeerConnection = (viewerSocketId) => {
   };
 
   return (
-    <div className="flex flex-col w-full bg-[#F9F9F9]">
+    <div className="flex flex-col w-[1440px] justify-self-center h-full bg-[#F9F9F9] my-8">
       <div 
-        className="mx-auto w-full bg-white border border-[#48372D] rounded-[10px] p-6 shadow-sm mb-[-30px]"
-        style={{ 
-          width: '1216.65px', 
-          minHeight: '1372.98px',
-          marginTop: '20px',
-          maxWidth: '95%'
-        }}
+        className="mx-auto w-full h-full bg-white border border-[#48372D] rounded-[10px] p-6 shadow-sm"
       >
         {/* Top Section: Video and Chat */}
         <div className="flex flex-col lg:flex-row gap-4 mb-6">

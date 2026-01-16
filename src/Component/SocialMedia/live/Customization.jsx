@@ -444,7 +444,7 @@ const Customization = () => {
   }
 };
 return (
-  <div className="lg:w-[75%] w-full sm:mx-auto sm:border-[0.5px] sm:border-[#48372D] mt-6 bg-white flex flex-col sm:h-[80vh] sm:rounded-t-xl sm:rounded-b-xl">
+  <div className="w-full sm:mx-auto sm:border-[0.5px] sm:border-[#48372D] mt-6 bg-white flex flex-col sm:h-[80vh] sm:rounded-t-xl sm:rounded-b-xl">
     {/* Header Tabs */}
     <header className="flex flex-col w-full border-b border-[#48372D] mb-2 sm:mb-0 ">
       <div className="flex justify-evenly w-full rounded-t-xl border-b border-[#48372D]">

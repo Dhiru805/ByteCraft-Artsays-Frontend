@@ -78,9 +78,9 @@ const CreateLive = () => {
      </header> */}
 
       {/* Main layout: Sidebar | Post | Suggestion */}
-      <main className='flex  flex-row items-start sm:gap-4 w-full sm:w-[96%] mx-auto '>
+      <main className='grid grid-cols-12 gap-2 p-2'>
         <Sidebar />
-        <div className="flex-1 relative z-10">
+        <div className="col-span-12 lg:col-span-6 w-full my-4 flex flex-col mx-auto">
           <Customization/>
         </div>
         <Suggestion/>
