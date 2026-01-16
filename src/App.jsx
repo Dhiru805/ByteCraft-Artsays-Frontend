@@ -14,6 +14,47 @@ const AppContent = () => {
   const { isAuthenticated } = useAuth();
   const userId = localStorage.getItem("userId");
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      try {
+        const decoded = jwtDecode(token);
+        const sessionId = decoded.sessionId;
+
+        if (sessionId) {
+          const socket = io(process.env.REACT_APP_API_URL || "http://localhost:3001");
+
+          socket.on("connect", () => {
+            socket.emit("joinSessionRoom", sessionId);
+          });
+
+          socket.on("sessionRevoked", (data) => {
+            console.warn("Session revoked via Socket.IO:", data.message);
+            
+            // Clear data and state using the safe logout function
+            logout(); 
+
+            toast.error(data.message || "Your session has been revoked. Logging out...", {
+              autoClose: 3000,
+            });
+            
+            setTimeout(() => {
+              window.location.href = "/login";
+            }, 1500);
+          });
+
+          return () => {
+            socket.disconnect();
+          };
+        }
+      } catch (error) {
+        console.error("Error setting up session socket:", error);
+      }
+    }
+  }, [isAuthenticated, logout]);
+
   return (
     <div className="App">
       <Routes />

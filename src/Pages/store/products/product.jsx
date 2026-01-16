@@ -2557,6 +2557,7 @@ const Product = () => {
                   max="89700"
                   className="w-full mb-3"
                 />
+<<<<<<< HEAD
                 <div className="space-y-2 mb-4 text-sm">
                   <label className="flex items-center">
                     <input type="checkbox" className="mr-2" /> Under ₹5,000
@@ -2570,6 +2571,11 @@ const Product = () => {
                   <label className="flex items-center">
                     <input type="checkbox" className="mr-2" /> Above ₹25,000
                   </label>
+=======
+                <div className="flex justify-between text-sm font-bold text-[#6F4D34] mb-6">
+                  <span>₹295</span>
+                  <span>₹{(filters.priceRange || 0).toLocaleString()}</span>
+>>>>>>> dffbc597a317ca568008367ea505aa36a2c0f46d
                 </div>
 
                 <hr className="mb-3 border-dark" />
@@ -2637,6 +2643,263 @@ const Product = () => {
               </div>
             </div>
           )}
+          </aside>
+
+          {/* ---------------- MAIN CONTENT ---------------- */}
+          <main className="flex-grow">
+            {/* Search Bar */}
+            <div className="relative mb-3 group">
+              <input
+                type="text"
+                placeholder="Search masterpieces, artists, or styles..."
+                value={filters.search}
+                onChange={(e) => handleFilterChange("search", e.target.value)}
+                className="w-full p-4 pl-12 bg-white border border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#6F4D34]/10 focus:border-[#6F4D34] transition-all text-lg placeholder:text-gray-400"
+              />
+            </div>
+
+            {/* Products Grid */}
+            <div className="mb-6">
+              {currentProducts.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                  {currentProducts.map((product, index) => {
+                          const displayPrice = product.finalPrice;
+                    const hasDiscount = displayPrice < product.marketPrice;
+                    const discountPercent = hasDiscount ? Math.round(((product.marketPrice - displayPrice) / product.marketPrice) * 100) : 0;
+
+                    return (
+                      <div
+                        key={product._id}
+                        className="group flex flex-col h-full bg-white rounded-[24px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100/50 animate-fade-in-up relative"
+                        style={{ animationDelay: `${index * 50}ms` }}
+                        onClick={() => { const slug = slugify(product.productName); navigate(`/product-details/${slug}/${product._id}`); }}
+                      >
+                        {/* Image Container */}
+                        <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
+                          <img
+                            src={`${imageBaseURL}${product.mainImage}`}
+                            alt={product.productName}
+                            className={`w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 ${(!product.quantity || product.quantity === 0) ? 'blur-[2px]' : ''}`}
+                          />
+
+                          {/* Sold Out Overlay */}
+                          {(!product.quantity || product.quantity === 0) && (
+                            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-[1px]">
+                              <div className="bg-white px-6 py-2 rounded-lg shadow-2xl border border-white/50 transform -rotate-12">
+                                <span className="text-red-600 font-black text-xl uppercase tracking-wider">Sold Out</span>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Floating Badges */}
+                          <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                            {product.editionType && (
+                              <div className="bg-white backdrop-blur-md text-[#6F4D34] text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest border border-white/20">
+                                {product.editionType}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Heart Button */}
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleWishlist(product._id); }}
+                            className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-sm hover:bg-white hover:text-red-500 transition-all transform hover:scale-110 group/heart z-10"
+                          >
+                            <Heart
+                              size={18}
+                              className={`transition-colors ${likedProducts[product._id] ? "text-red-500 fill-red-500" : "text-gray-900 group-hover/heart:text-red-500"}`}
+                            />
+                          </button>
+
+                          {/* Hover Overlay */}
+                          <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex flex-col flex-grow p-3 gap-3">
+                          {/* Artist Info & Badges */}
+                          <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 rounded-full bg-[#6F4D34] animate-pulse" />
+                              <span className="text-[#6F4D34] text-[10px] font-black uppercase tracking-widest">
+                                {product.userId?.name || "Independent Artist"}
+                              </span>
+                            </div>
+                            <div className="flex -space-x-1.5">
+                              {product.badges?.map((img, idx) => (
+                                <div key={idx}>
+                                  <img src={`${imageBaseURL}${img}`} className="w-4 h-4 rounded-full" alt="Badge" />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Title */}
+                          <h3 className="text-lg font-bold text-gray-900 line-clamp-1 group-hover:text-[#6F4D34] transition-colors tracking-tight">
+                            {product.productName}
+                          </h3>
+
+                          {/* Rating & Review Count */}
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center bg-gray-50 px-2 py-0.5 rounded-lg border border-gray-100">
+                              <div className="flex items-center mr-1.5">
+                                {renderStars(product.averageRating)}
+                              </div>
+                              <span className="text-[11px] font-black text-gray-900">
+                                {product.averageRating ? product.averageRating.toFixed(1) : "0.0"}
+                              </span>
+                            </div>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                              • {product.reviewCount || 0} reviews
+                            </span>
+                            {hasDiscount && (
+                              <div className="flex items-center justify-center bg-red-50 text-[#E74C3C] px-2 py-1 rounded-2xl border border-red-100/50 shadow-sm">
+                                <span className="text-[8px] font-black uppercase tracking-tighter leading-none">{discountPercent}% Save</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Pricing & Discount */}
+                          <div className="flex items-center justify-between mt-auto border-t border-gray-50">
+                            <div className="flex items-center gap-2">
+                              {hasDiscount && (
+                                <span className="text-lg text-gray-400 line-through font-bold">
+                                  ₹{(product.marketPrice || 0).toLocaleString()}
+                                </span>
+                              )}
+                                  <span className="text-2xl font-black text-gray-900 tracking-tighter">
+                                    ₹{(product.finalPrice || 0).toLocaleString()}
+                                  </span>
+                            </div>
+
+                            
+                          </div>
+
+                            {/* Action Buttons */}
+                            <div className="grid grid-cols-5 gap-2">
+                              <button
+                                onClick={(e) => { e.stopPropagation(); if (!ensureBuyer()) return; addToCart(product._id); }}
+                                disabled={!product.quantity || product.quantity === 0}
+                                className="col-span-1 h-[48px] bg-gray-50 text-gray-900 hover:text-[#ffffff] rounded-2xl hover:bg-[#6F4D34] hover:text-white transition-all duration-300 disabled:opacity-50 border border-gray-100 flex items-center justify-center group/cart shadow-sm"
+                                title="Add to Cart"
+                              >
+                                <div className="relative">
+                                  <ShoppingCart size={20} className="transition-transform group-hover/cart:scale-110" />
+                                  {(() => {
+                                    const cartItem = cartItems.find((item) => item.product?._id === product._id);
+                                    return cartItem && cartItem.quantity > 0 ? (
+                                      <span className="absolute -top-3 -right-3 bg-red-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center shadow-lg border-2 border-white flex items-center justify-center">
+                                        {cartItem.quantity}
+                                      </span>
+                                    ) : null;
+                                  })()}
+                                </div>
+                              </button>
+
+                              <button
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                if (!ensureBuyer()) return;
+                                if (!product.quantity || product.quantity === 0) return;
+                                await addToCart(product._id);
+                                navigate(`/my-account/check-out/${userId}?productId=${product._id}`);
+                              }}
+                              disabled={!product.quantity || product.quantity === 0}
+                              className="col-span-4 h-[48px] bg-[#6F4D34] text-white hover:!text-[#6F4D34] rounded-2xl font-black text-[12px] uppercase tracking-[0.1em] transition-all duration-300 shadow-sm hover:!bg-[#ffffff] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed border border-gray-100 transform active:scale-95 flex items-center justify-center overflow-hidden relative"
+                            >
+                              <span className="relative z-10">
+                                {(!product.quantity || product.quantity === 0) ? "Sold Out" : "Shop Now"}
+                              </span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="py-24 text-center">
+                  <div className="inline-flex items-center justify-center w-24 h-24 bg-gray-100 rounded-full mb-6 text-gray-400">
+                    <Search size={40} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">No masterpieces found</h3>
+                  <p className="text-gray-500 max-w-sm mx-auto mb-8">
+                    Try adjusting your filters or search term to discover more incredible art.
+                  </p>
+                    <button
+                      onClick={() => setFilters({
+                        sortBy: "New Arrivals",
+                        specialTags: [],
+                      priceRange: 89700,
+                      priceBuckets: [],
+                      size: [],
+                      mainCategory: [],
+                      category: [],
+                      subCategory: [],
+                      productType: [],
+                      productMedium: [],
+                      productMaterial: [],
+                      productEditionType: [],
+                      productSurfaceType: [],
+                      search: "",
+                    })}
+                    className="text-[#6F4D34] font-bold hover:underline px-6 py-2 border-2 border-[#6F4D34] rounded-full"
+                  >
+                    Clear All Filters
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* ---------------- STYLISH PAGINATION ---------------- */}
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-8">
+                <nav className="flex items-center gap-2 p-1 bg-white border border-gray-200 rounded-2xl shadow-sm">
+                  <button
+                    disabled={currentPage === 1}
+                    onClick={goToPrevPage}
+                    className="p-3 rounded-xl text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+                  >
+                    <ChevronLeft size={24} />
+                  </button>
+
+                  <div className="flex items-center px-2">
+                    {Array.from({ length: totalPages }).map((_, i) => {
+                      const page = i + 1;
+                      if (totalPages > 7) {
+                        if (page !== 1 && page !== totalPages && (page < currentPage - 1 || page > currentPage + 1)) {
+                          if (page === currentPage - 2 || page === currentPage + 2) return <span key={page} className="px-1 text-gray-400">...</span>;
+                          return null;
+                        }
+                      }
+
+                      return (
+                        <button
+                          key={page}
+                          onClick={() => goToPage(page)}
+                          className={`w-11 h-11 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${page === currentPage
+                              ? "bg-[#6F4D34] text-white shadow-md shadow-[#6F4D34]/20"
+                              : "text-gray-600 hover:bg-gray-50"
+                            }`}
+                        >
+                          {page}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    disabled={currentPage === totalPages}
+                    onClick={goToNextPage}
+                    className="p-3 rounded-xl text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+                  >
+                    <ChevronRight size={24} />
+                  </button>
+                </nav>
+              </div>
+            )}
+          </main>
+
         </div>
 
         {/* Products Grid */}

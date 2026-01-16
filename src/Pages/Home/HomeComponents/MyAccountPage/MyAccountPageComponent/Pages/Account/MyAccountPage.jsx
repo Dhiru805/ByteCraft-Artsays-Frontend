@@ -46,17 +46,33 @@ const isOrderCompleted = pathname.startsWith('/my-account/order-completed');
 
   return (
     <>
-      {/* Top Section */}
-      <div className="h-full w-full p-4 md:p-12 bg-[#E8E8E8] flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-4xl font-bold text-zinc-900">{heading}</h2>
-          <p className="text-sm text-gray-500 mt-4">
-            <Link to="/" className="text-gray-500 hover:underline cursor-pointer">
-              Home
-            </Link> &gt; {heading}
-          </p>
+      <div className="relative w-full h-[300px] sm:h-[250px] md:h-[300px] overflow-hidden flex items-center justify-center">
+          <div className="absolute inset-0 bg-gradient-to-r from-[#5C4033] via-[#4A3328] to-[#3D2920]"></div>
+          <div className="absolute inset-0">
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#8B6914]/30 rounded-full blur-[120px] animate-pulse"></div>
+            <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[#D4A574]/20 rounded-full blur-[100px] animate-pulse" style={{animationDelay: '1s'}}></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-[#FFD700]/10 to-[#B8860B]/10 rounded-full blur-[150px]"></div>
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#5C4033]/70 to-transparent flex items-center">
+            <div className="container mx-auto px-6 md:px-12 max-w-[1440px]">
+              <div className="w-full">
+                <span className="inline-block px-3 py-1 bg-white text-[#000000] backdrop-blur-md rounded-full text-[10px] md:text-sm font-bold tracking-widest uppercase mb-4 animate-fade-in">
+                  Account Dashboard
+                </span>
+                <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold mb-4 md:mb-6 text-white leading-tight drop-shadow-lg">
+                  {heading}
+                </h1>
+                <p className="text-sm sm:text-lg md:text-xl font-medium text-white leading-relaxed opacity-90 flex items-center gap-2">
+                  <Link to="/" className="text-white/80 hover:text-white transition-colors">
+                    Home
+                  </Link>
+                  <span className="text-white/60">/</span>
+                  <span className="text-amber-300 font-medium">{heading}</span>
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
       {/* Main Layout */}
       {!(isTrackOrder || isWishlist || isOrderCompleted || isMyCart || isCheckOut) ? (

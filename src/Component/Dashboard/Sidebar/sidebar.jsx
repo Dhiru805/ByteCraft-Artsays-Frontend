@@ -557,7 +557,10 @@ const Sidebar = () => {
 
   useEffect(() => {
     const fetchTabsForRole = async () => {
-      if (!userrole) return;
+      if (!userrole || userrole === "undefined" || userrole === "null") {
+        setRoleData({});
+        return;
+      }
       try {
         const response = await getAPI(`/api/get-role-by-role/${userrole}`);
         setRoleData(response.data);
@@ -579,7 +582,10 @@ const Sidebar = () => {
   useEffect(() => {
     const roleKey = localStorage.getItem('userType');
 
-    if (!roleKey) return;
+    if (!roleKey || roleKey === "undefined" || roleKey === "null") {
+      setFetchedTabs([]);
+      return;
+    }
 
     const roleMenu = menuConfig[roleKey] || [];
 

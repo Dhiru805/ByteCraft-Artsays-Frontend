@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
     setStatus(userStatus);
   };
 
-  const logout = () => {
+  const logout = (isExpired = false) => {
     localStorage.removeItem("token");
     localStorage.removeItem("userType");
     localStorage.removeItem("email");
@@ -40,11 +40,15 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("status");
     localStorage.removeItem("username");
     localStorage.removeItem("firstName");
-    localStorage.removeItem("lastName")
-    setIsAuthenticated(false);
+    localStorage.removeItem("lastName");
+    
     setUserType(null);
     setStatus(null);
-    toast.info("Session expired after 48 hours. Please log in again.");
+    setIsAuthenticated(false);
+
+    if (isExpired) {
+      toast.info("Session expired after 48 hours. Please log in again.");
+    }
   };
 
   useEffect(() => {
