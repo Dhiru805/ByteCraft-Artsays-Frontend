@@ -696,40 +696,65 @@ const AddCustomRequestForm = () => {
     req.ProductName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Compute current page items
+  const indexOfLastItem = currentPage * rowsPerPage;
+  const indexOfFirstItem = indexOfLastItem - rowsPerPage;
+  const currentRequests = filteredRequests.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+
+  // Compute total pages
+  const totalPages = Math.ceil(filteredRequests.length / rowsPerPage);
+
+  // Handlers
+  const handlePreviousPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const handleRowsPerPageChange = (e) => {
+    setRowsPerPage(Number(e.target.value));
+    setCurrentPage(1); // Reset to first page on rows change
+  };
+
   const handleInitiatePayment = async (requestId, amount) => {
-  if (!amount || amount === "—" || !requestId) {
-    toast.error("Cannot initiate payment: Invalid amount or request");
-    return;
-  }
-
-  try {
-    toast.info("Initiating payment...");
-
-    const response = await postAPI(
-      "/api/custom-payment-request", 
-      {
-        userId: localStorage.getItem("userId"),
-        customRequestId: requestId,
-        amount: Number(amount.replace("₹", "").trim()), 
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-
-    if (response.data?.success && response.data?.data?.paymentUrl) {
-      window.location.href = response.data.data.paymentUrl;
-    } else {
-      toast.error(response.data?.message || "Failed to get payment URL");
+    if (!amount || amount === "—" || !requestId) {
+      toast.error("Cannot initiate payment: Invalid amount or request");
+      return;
     }
-  } catch (error) {
-    console.error("Payment initiation error:", error);
-    const msg = error?.response?.data?.message || "Something went wrong";
-    toast.error(msg);
-  }
-};
+
+    try {
+      toast.info("Initiating payment...");
+
+      const response = await postAPI(
+        "/api/custom-payment-request",
+        {
+          userId: localStorage.getItem("userId"),
+          customRequestId: requestId,
+          amount: Number(amount.replace("₹", "").trim()),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (response.data?.success && response.data?.data?.paymentUrl) {
+        window.location.href = response.data.data.paymentUrl;
+      } else {
+        toast.error(response.data?.message || "Failed to get payment URL");
+      }
+    } catch (error) {
+      console.error("Payment initiation error:", error);
+      const msg = error?.response?.data?.message || "Something went wrong";
+      toast.error(msg);
+    }
+  };
 
   const handleImageClick = (imagePath) => {
     const fullPath = `${BASE_URL}/${imagePath}`;
@@ -779,224 +804,181 @@ const AddCustomRequestForm = () => {
           </button>
         </div>
       </div>
-    <div className="border-2 rounded-3xl w-full bg-white">
-  <div className="overflow-x-auto pb-4 rounded-3xl w-full">
-    <table className="lg:min-w-[1100px] table-auto w-full text-sm text-left whitespace-nowrap">
-      <thead className="bg-[#6F4D34] text-white">
-        <tr className="text-center">
-          <th className="px-4 py-7 whitespace-nowrap">#</th>
-          <th className="px-4 py-2 whitespace-nowrap">Product Name</th>
-          <th className="px-4 py-2 whitespace-nowrap">Artist Name</th>
-          <th className="px-4 py-2 whitespace-nowrap">Artist Negotiated Budget</th>
-          <th className="px-4 py-2 whitespace-nowrap">Request Date</th>
-          <th className="px-4 py-2 whitespace-nowrap">Artist Request Status</th>
-          <th className="px-4 py-2 whitespace-nowrap">Buyer Request Status</th>
-          <th className="px-4 py-2 whitespace-nowrap">Action</th>
-        </tr>
-      </thead>
 
-      <tbody className="text-center">
-        {filteredRequests.length > 0 ? (
-          filteredRequests.map((req, index) => (
-            <tr key={req._id} className="border-b hover:bg-gray-50/50 transition-colors">
-              <td className="px-4 py-3">{index + 1}</td>
+      {/* Table Section */}
+      {!showForm && !showViewModal && (
+        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-100/50 overflow-hidden transition-all duration-500 hover:border-blue-200">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-gray-50/50 border-b border-gray-100">
+                  <th className="px-4 py-3 text-[10px] text-nowrap font-black uppercase tracking-[0.15em] text-gray-400">#</th>
+                  <th className="px-4 py-3 text-[10px] text-nowrap font-black uppercase tracking-[0.15em] text-gray-400">Product Details</th>
+                  <th className="px-4 py-3 text-[10px] text-nowrap font-black uppercase tracking-[0.15em] text-gray-400">Artist</th>
+                  <th className="px-4 py-3 text-[10px] text-nowrap font-black uppercase tracking-[0.15em] text-gray-400 text-center">Negotiated Budget</th>
+                  <th className="px-4 py-3 text-[10px] text-nowrap font-black uppercase tracking-[0.15em] text-gray-400 text-center">Date</th>
+                  <th className="px-4 py-3 text-[10px] text-nowrap font-black uppercase tracking-[0.15em] text-gray-400 text-center">Status</th>
+                  <th className="px-4 py-3 text-[10px] text-nowrap font-black uppercase tracking-[0.15em] text-gray-400 text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {currentRequests.length > 0 ? (
+                  currentRequests.map((req, index) => (
+                    <tr key={req._id} className="group/row hover:bg-gray-50/50 transition-colors">
+                      <td className="px-4 py-3 text-nowrap text-sm font-bold text-gray-400">
+                        {(currentPage - 1) * rowsPerPage + index + 1}
+                      </td>
+                      <td className="px-4 py-3 text-nowrap">
+                        <div className="flex items-center gap-4">
+                          <div className="relative group/img flex-shrink-0">
+                            <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 border border-gray-100 shadow-sm transition-transform duration-300 group-hover/row:scale-110">
+                              {req.BuyerImage ? (
+                                <img
+                                  src={`${BASE_URL}/${req.BuyerImage}`}
+                                  className="w-full h-full object-cover"
+                                  alt="Product"
+                                  onClick={() => handleImageClick(req.BuyerImage)}
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = DEFAULT_PROFILE_IMAGE;
+                                  }}
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                                  <svg className="w-6 h-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-gray-900 group-hover/row:text-[#5C4033] transition-colors">
+                              {req.ProductName ? (req.ProductName.length > 10 ? req.ProductName.substring(0, 10) + "..." : req.ProductName) : "—"}
+                            </p>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{req.ArtType || "General"}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-nowrap">
+                        <p className="text-sm font-semibold text-gray-700">
+                          {req.Artist?.id?.name || req.Artist?.name || ""} {req.Artist?.id?.lastName || req.Artist?.lastName || ""}
+                        </p>
+                      </td>
+                      <td className="px-4 py-3 text-nowrap text-center">
+                        <span className="text-sm font-black text-gray-900">{getLatestNegotiatedBudget(req)}</span>
+                      </td>
+                      <td className="px-4 py-3 text-nowrap text-center">
+                        <p className="text-xs font-bold text-gray-500">
+                          {req?.createdAt ? new Date(req.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : "—"}
+                        </p>
+                      </td>
+                      <td className="px-4 py-3 text-nowrap">
+                        <div className="flex flex-col items-center gap-1.5">
+                          <div className="flex gap-2">
+                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${req.RequestStatus === "Approved" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                              req.RequestStatus === "Pending" ? "bg-amber-50 text-amber-600 border-amber-100" :
+                                "bg-rose-50 text-rose-600 border-rose-100"
+                              }`}>
+                              Artist: {req.RequestStatus || "Pending"}
+                            </span>
+                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${req.BuyerStatus === "Approved" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                              req.BuyerStatus === "Pending" ? "bg-amber-50 text-amber-600 border-amber-100" :
+                                "bg-rose-50 text-rose-600 border-rose-100"
+                              }`}>
+                              Buyer: {req.BuyerStatus || "Pending"}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-nowrap">
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            onClick={() => handleViewRequest(req)}
+                            className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:bg-cyan-50 hover:text-cyan-600 transition-all shadow-sm active:scale-90"
+                            title="View Details"
+                          >
+                            <FaEye className="text-sm" />
+                          </button>
 
-              {/* Product Name + Image */}
-              <td className="px-4 py-3">
-                <div className="flex items-center gap-3 justify-center">
-                  {req.BuyerImage ? (
-                    <img
-                      src={`${BASE_URL}/${req.BuyerImage}`}
-                      className="w-10 h-10 rounded-full object-cover border border-gray-200 cursor-pointer"
-                      alt="Reference"
-                      onClick={() => handleImageClick(req.BuyerImage)}
-                      onError={(e) => {
-                        e.target.src = DEFAULT_PROFILE_IMAGE;
-                      }}
-                    />
-                  ) : (
-                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                  )}
-                  <div className="text-left">
-                    <p className="text-sm font-semibold text-gray-900">
-                      {req.ProductName?.length > 18 ? req.ProductName.substring(0, 18) + '...' : req.ProductName || '—'}
-                    </p>
-                    <p className="text-xs text-gray-500">{req.ArtType || 'General'}</p>
-                  </div>
-                </div>
-              </td>
+                          {req.BuyerNegotiatedBudgets.length === 0 &&
+                            req.ArtistNegotiatedBudgets.length < 2 &&
+                            req.RequestStatus === "Pending" && (
+                              <button
+                                onClick={() => handleEditRequest(req._id)}
+                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:bg-sky-50 hover:text-sky-600 transition-all shadow-sm active:scale-90"
+                                title="Edit Request"
+                              >
+                                <GoPencil className="text-sm" />
+                              </button>
+                            )}
 
-              {/* Artist Name */}
-              <td className="px-4 py-3">
-                <p className="text-sm font-medium text-gray-800">
-                  {req.Artist?.id?.name || req.Artist?.name || ''}{' '}
-                  {req.Artist?.id?.lastName || req.Artist?.lastName || ''}
-                </p>
-              </td>
+                          {((req.BuyerNegotiatedBudgets.length === 0 && req.ArtistNegotiatedBudgets.length === 1) ||
+                            (req.BuyerNegotiatedBudgets.length === 1 && req.ArtistNegotiatedBudgets.length === 2) ||
+                            (req.BuyerNegotiatedBudgets.length === 2 && req.ArtistNegotiatedBudgets.length === 3)) &&
+                            req.RequestStatus === "Pending" && (
+                              <button
+                                onClick={() => handleStatusUpdate("Approved", "", req._id)}
+                                disabled={loading}
+                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-all shadow-sm active:scale-90"
+                                title="Accept & Approve"
+                              >
+                                {loading ? <FaSpinner className="animate-spin" /> : <FaCheck className="text-sm" />}
+                              </button>
+                            )}
 
-              {/* Latest Negotiated Budget */}
-              <td className="px-4 py-3">
-                <span className="text-sm font-bold text-gray-900">
-                  {getLatestNegotiatedBudget(req)}
-                </span>
-              </td>
+                          {((req.BuyerNegotiatedBudgets.length === 0 && req.ArtistNegotiatedBudgets.length === 1) ||
+                            (req.BuyerNegotiatedBudgets.length === 1 && req.ArtistNegotiatedBudgets.length === 2)) &&
+                            req.RequestStatus === "Pending" && (
+                              <button
+                                onClick={() => {
+                                  setSelectedRequest(req);
+                                  setShowNegotiationModal(true);
+                                }}
+                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-[#5C4033]/10 text-[#5C4033] hover:bg-[#5C4033]/20 transition-all shadow-sm active:scale-90"
+                                title="Negotiate Budget"
+                              >
+                                <LuHandshake className="text-sm" />
+                              </button>
+                            )}
 
-              {/* Request Date */}
-              <td className="px-4 py-3">
-                <p className="text-sm text-gray-600">
-                  {req?.createdAt
-                    ? new Date(req.createdAt).toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric'
-                      })
-                    : '—'}
-                </p>
-              </td>
-
-              {/* Artist Status */}
-              <td className="px-4 py-3">
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${
-                    req.RequestStatus === 'Approved'
-                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                      : req.RequestStatus === 'Pending'
-                      ? 'bg-amber-50 text-amber-700 border-amber-200'
-                      : 'bg-rose-50 text-rose-700 border-rose-200'
-                  }`}
-                >
-                  {req.RequestStatus || 'Pending'}
-                </span>
-              </td>
-
-              {/* Buyer Status */}
-              <td className="px-4 py-3">
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${
-                    req.BuyerStatus === 'Approved'
-                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                      : req.BuyerStatus === 'Pending'
-                      ? 'bg-amber-50 text-amber-700 border-amber-200'
-                      : 'bg-rose-50 text-rose-700 border-rose-200'
-                  }`}
-                >
-                  {req.BuyerStatus || 'Pending'}
-                </span>
-              </td>
-
-              {/* Actions */}
-              <td className="px-4 py-3">
-                <div className="flex items-center justify-center gap-2 flex-wrap">
-                  {/* View */}
-                  <button
-                    onClick={() => handleViewRequest(req)}
-                    className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-50 text-gray-500 hover:bg-cyan-50 hover:text-cyan-600 transition-all shadow-sm active:scale-95"
-                    title="View Details"
-                  >
-                    <FaEye className="text-base" />
-                  </button>
-
-                  {/* Edit - only very early stage */}
-                  {req.BuyerNegotiatedBudgets.length === 0 &&
-                    req.ArtistNegotiatedBudgets.length < 2 &&
-                    req.RequestStatus === 'Pending' && (
-                      <button
-                        onClick={() => handleEditRequest(req._id)}
-                        className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-50 text-gray-500 hover:bg-sky-50 hover:text-sky-600 transition-all shadow-sm active:scale-95"
-                        title="Edit Request"
-                      >
-                        <GoPencil className="text-base" />
-                      </button>
-                    )}
-
-                  {/* Accept / Approve */}
-                  {req.RequestStatus === 'Pending' &&
-                    ((req.BuyerNegotiatedBudgets.length === 0 && req.ArtistNegotiatedBudgets.length === 1) ||
-                      (req.BuyerNegotiatedBudgets.length === 1 && req.ArtistNegotiatedBudgets.length === 2) ||
-                      (req.BuyerNegotiatedBudgets.length === 2 && req.ArtistNegotiatedBudgets.length === 3)) && (
-                      <button
-                        onClick={() => handleStatusUpdate('Approved', '', req._id)}
-                        disabled={loading}
-                        className="w-9 h-9 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-all shadow-sm active:scale-95 disabled:opacity-50"
-                        title="Accept & Approve"
-                      >
-                        {loading ? <FaSpinner className="animate-spin text-base" /> : <FaCheck className="text-base" />}
-                      </button>
-                    )}
-
-                  {/* Negotiate */}
-                  {req.RequestStatus === 'Pending' &&
-                    ((req.BuyerNegotiatedBudgets.length === 0 && req.ArtistNegotiatedBudgets.length === 1) ||
-                      (req.BuyerNegotiatedBudgets.length === 1 && req.ArtistNegotiatedBudgets.length === 2)) && (
-                      <button
-                        onClick={() => {
-                          setSelectedRequest(req);
-                          setShowNegotiationModal(true);
-                        }}
-                        className="w-9 h-9 flex items-center justify-center rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-100 transition-all shadow-sm active:scale-95"
-                        title="Negotiate Budget"
-                      >
-                        <LuHandshake className="text-base" />
-                      </button>
-                    )}
-
-                  {/* Make Payment */}
-                  {req.RequestStatus === 'Approved' && (
-                    <button
-                      onClick={() => {
-                        const amount = getLatestNegotiatedBudget(req);
-                        if (amount === '—') {
-                          toast.warn('No negotiated amount available yet');
-                          return;
-                        }
-                        handleInitiatePayment(req._id, amount);
-                      }}
-                      className="w-9 h-9 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all shadow-sm active:scale-95"
-                      title="Proceed to Payment"
-                    >
-                      <FaRupeeSign className="text-base" />
-                    </button>
-                  )}
-
-                  {/* Reject - final stage */}
-                  {req.BuyerNegotiatedBudgets.length === 2 &&
-                    req.ArtistNegotiatedBudgets.length === 3 &&
-                    req.RequestStatus !== 'Approved' &&
-                    req.RequestStatus !== 'Rejected' && (
-                      <button
-                        onClick={() => setShowRejectModal(true)}
-                        disabled={loading}
-                        className="w-9 h-9 flex items-center justify-center rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 transition-all shadow-sm active:scale-95 disabled:opacity-50"
-                        title="Reject Request"
-                      >
-                        {loading ? <FaSpinner className="animate-spin text-base" /> : <RiProhibited2Line className="text-base" />}
-                      </button>
-                    )}
-                </div>
-              </td>
-            </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan={8} className="px-6 py-20 text-center">
-              <div className="flex flex-col items-center gap-4">
-                <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center">
-                  <svg className="w-10 h-10 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                </div>
-                <p className="text-lg font-medium text-gray-500">No custom requests found</p>
-              </div>
-            </td>
-          </tr>
-        )}
-      </tbody>
-    </table>
-  </div>
+                          {req.RequestStatus === "Approved" && (
+                            <button
+                              onClick={() => {
+                                const amount = getLatestNegotiatedBudget(req);
+                                if (amount === '—') {
+                                  toast.warn('No negotiated amount available yet');
+                                  return;
+                                }
+                                handleInitiatePayment(req._id, amount);
+                              }}
+                              className="w-9 h-9 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all shadow-sm active:scale-90"
+                              title="Proceed to Payment"
+                            >
+                              <FaRupeeSign className="text-sm" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" className="px-6 py-20 text-center">
+                      <div className="flex flex-col items-center gap-4">
+                        <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center">
+                          <svg className="w-8 h-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        </div>
+                        <p className="text-gray-400 font-bold">No custom requests found</p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
 
           {/* Pagination */}
           <div className="px-6 py-5 bg-gray-50/50 flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -1019,8 +1001,8 @@ const AddCustomRequestForm = () => {
                     key={i}
                     onClick={() => setCurrentPage(i + 1)}
                     className={`w-10 h-10 rounded-xl font-bold text-sm transition-all ${currentPage === i + 1
-                        ? 'bg-[#5C4033] text-white shadow-lg shadow-[#5C4033]/20'
-                        : 'bg-white border border-gray-100 text-gray-400 hover:text-gray-900 hover:bg-gray-50'
+                      ? 'bg-[#5C4033] text-white shadow-lg shadow-[#5C4033]/20'
+                      : 'bg-white border border-gray-100 text-gray-400 hover:text-gray-900 hover:bg-gray-50'
                       }`}
                   >
                     {i + 1}
@@ -1039,7 +1021,7 @@ const AddCustomRequestForm = () => {
             </div>
           </div>
         </div>
-      
+      )}
 
       {/* Add/Edit Form */}
       {showForm && (
@@ -1225,7 +1207,7 @@ const AddCustomRequestForm = () => {
                             value={address._id}
                             checked={String(selectedAddressId) === String(address._id)}
                             onChange={() => handleAddressChange(address._id)}
-                              className="peer h-5 w-5 cursor-pointer appearance-none rounded-full border-2 border-gray-300 checked:bg-[#5C4033] checked:border-white checked:border-[4px] ring-1 ring-[#5C4033] transition-all duration-300"
+                            className="peer h-5 w-5 cursor-pointer appearance-none rounded-full border-2 border-gray-300 checked:bg-[#5C4033] checked:border-white checked:border-[4px] ring-1 ring-[#5C4033] transition-all duration-300"
 
                           />
                         </div>

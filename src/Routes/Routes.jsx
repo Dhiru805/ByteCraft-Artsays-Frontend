@@ -489,7 +489,10 @@ import ArtistViewExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibi
 import ArtistSponser from "../Component/Dashboard/ArtistDashbooard/Advertise/Sponser";
 import ArtistProductCouponCodes from "../Component/Dashboard/ArtistDashbooard/ProductSetting/ProductCouponCode/ProductCouponCode";
 import UpdateProductArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/UpdateProduct/productUploade";
-// import ProductViewArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/productUploade";
+import ProductViewArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/productUploade";
+import ArtistIsnaurance from "../Component/Dashboard/ArtistDashbooard/Insurance/Insurance";
+import CreateInsuranceArtist from "../Component/Dashboard/ArtistDashbooard/Insurance/create";
+import ViewInsuranceArtist from "../Component/Dashboard/ArtistDashbooard/Insurance/view";
 //-----------------------------Blogs--------------------------//
 import BlogList from "../Component/Dashboard/ArtistDashbooard/Blog/BlogList";
 import BlogPost from "../Component/Dashboard/ArtistDashbooard/Blog/BlogPost";
@@ -781,6 +784,8 @@ const AppRoutes = () => {
 
        <Route path="/payment/challenge-success" element={<ChallengeSuccessPage/>} />
       <Route path="/payment/challenge-failure" element={<ChallengeFailurePage/>} />
+      <Route path="/challenge-payment/success" element={<ChallengeSuccessPage/>} />
+      <Route path="/challenge-payment/failure" element={<ChallengeFailurePage/>} />
 
       
        <Route path="/payment/custom/success" element={<CustomrequestSuccessPage/>} />
