@@ -328,7 +328,7 @@ const BuyerSoldProduct = ({ userId }) => {
     return (
         <div className="container-fluid">
             <div className="block-header">
-                <h2>Buyer Ordered Products</h2>
+                <h2>Buyer Ordered Products </h2>
             </div>
 
             <div className="card">

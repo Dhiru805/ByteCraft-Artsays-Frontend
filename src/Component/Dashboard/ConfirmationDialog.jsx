@@ -128,6 +128,7 @@ company: {
 // },
 
 
+
 howtobuy : {
   getEndpoint: (id) => `/api/howtobuy/delete/${id}`,
   successMessage: "Successfully deleted!",
@@ -156,11 +157,12 @@ whyartsays: {
   idKey: "WhyArtSaysId",
 },
 
+
 challenge: {
- getEndpoint: (id) => `/api/deleteChallenge/${id}`,
+  getEndpoint: (id) => `/api/deleteChallenge/${id}`,
   successMessage: "Successfully deleted!",
   errorMessage: "Failed to delete.",
-  idKey: "ChallengesId",
+  idKey: "_id",  
 },
 
 licensing: {
@@ -308,12 +310,7 @@ campaign: {
   errorMessage: "Failed to delete campaign.",
   idKey: "CampaignId",
 },
-challenge: {
-    getEndpoint: (id) => `/api/deleteChallenge/${id}`,
-    successMessage: "Challenge successfully deleted!",
-    errorMessage: "Failed to delete challenge.",
-    idKey: "ChallengeId",
-  },
+
 
 partner: {
     getEndpoint: (id) => `/api/partner/delete/${id}`,
@@ -511,7 +508,8 @@ console.log("DELETE URL:", config.getEndpoint(id));
     }
 
     try {
-      const response = await deleteAPI(endpoint, {}, true);
+      const response = await deleteAPI(endpoint);
+
 
       if (!response.hasError) {
         console.log(`${deleteType} deleted successfully`, response.data);

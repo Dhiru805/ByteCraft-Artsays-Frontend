@@ -718,12 +718,7 @@ const OurValuesCreate = () => {
             ? s.cards.map(c => ({
               cardTitle: c.cardTitle,
               cardImage: null,
-              existingCardImage:
-                c.cardImageUrl
-                  ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${c.cardImageUrl}`
-                  : c.cardImage
-                    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${c.cardImage}`
-                    : null,
+              existingCardImage: c.cardImage || c.cardImageUrl || null,
             }))
             : [{ cardTitle: "", cardImage: null, existingCardImage: null }];
           setFormData({
@@ -732,7 +727,11 @@ const OurValuesCreate = () => {
             cards,
           });
 
-          setCardPreviews(cards.map(c => c.existingCardImage || null));
+          setCardPreviews(cards.map(c => 
+            c.existingCardImage 
+              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${c.existingCardImage.replace(/\\/g, "/")}` 
+              : null
+          ));
         }
       } catch (err) {
         toast.error(err.response?.data?.message || "Failed to load About Us page");
@@ -827,7 +826,11 @@ const OurValuesCreate = () => {
 
       formData.cards.forEach((c, idx) => {
         submissionData.append(`cards[${idx}][cardTitle]`, c.cardTitle.trim());
-        if (c.cardImage) submissionData.append(`cards[${idx}][cardImage]`, c.cardImage);
+        if (c.cardImage) {
+          submissionData.append(`cards[${idx}][cardImage]`, c.cardImage);
+        } else if (c.existingCardImage) {
+          submissionData.append(`cards[${idx}][existingCardImage]`, c.existingCardImage);
+        }
       });
 
       const res = sectionId

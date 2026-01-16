@@ -11,8 +11,8 @@ const Live = () => {
      </header> */}
 
       {/* Main layout: Sidebar | Post | Suggestion */}
-      <main className='flex  flex-row gap-4 sm:w-[96%] w-full mx-auto'>
-       <Sidebar />
+      <main className='place-self-center p-2'>
+       {/* <Sidebar /> */}
        <OthersLive />
        
       </main>

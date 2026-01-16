@@ -8,6 +8,8 @@ import {
   useNavigate,
 } from "react-router-dom";
 import WebsiteLayout from "../Layouts/WebsiteLayout";
+import PostLive from "../Pages/socialMedia/PostLive";
+import LiveHistory from "../Pages/socialMedia/LiveHistory";
 import { useAuth } from "../AuthContext";
 import PreloaderAnimation from "../Pages/Animation/PreloaderAnimation";
 
@@ -415,7 +417,7 @@ import ProductTableView from "../Component/Dashboard/Super-AdminDashboard/Produc
 import CustomOrderView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/CustomOrderAll/Customorder";
 import PurchaseTable from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductPurchased/ProductPurchased";
 import PurchaseTableView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductPurchased/ProductPurchasedDetails";
-import ProductUploads from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/ProductUpload/productUploade";
+
 // import ProductRequestView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist";
 import ViewCustomRequestsuperadmin from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/SuperAdmin/ViewBuyerRequestToArtist";
 import SellerProductDetails from '../Component/Dashboard/Super-AdminDashboard/Seller/SellerProducts/SellerProductDetails';
@@ -488,9 +490,6 @@ import ArtistSponser from "../Component/Dashboard/ArtistDashbooard/Advertise/Spo
 import ArtistProductCouponCodes from "../Component/Dashboard/ArtistDashbooard/ProductSetting/ProductCouponCode/ProductCouponCode";
 import UpdateProductArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/UpdateProduct/productUploade";
 // import ProductViewArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/productUploade";
-import CreateInsuranceArtist from "../Component/Dashboard/ArtistDashbooard/Insurance/create";
-import ArtistIsnaurance from "../Component/Dashboard/ArtistDashbooard/Insurance/Insurance";
-import ViewInsuranceArtist from "../Component/Dashboard/ArtistDashbooard/Insurance/view"
 //-----------------------------Blogs--------------------------//
 import BlogList from "../Component/Dashboard/ArtistDashbooard/Blog/BlogList";
 import BlogPost from "../Component/Dashboard/ArtistDashbooard/Blog/BlogPost";
@@ -580,7 +579,7 @@ import Insurance from "../Pages/Insurance/Insurance";
 import Partner from "../Pages/Partner/Partner";
 import SellerProductCouponCodes from "../Component/Dashboard/SellerDashboard/ProductSetting/ProductCouponCode/ProductCouponCode";
 import UpdateProductSeller from "../Component/Dashboard/SellerDashboard/ProductsDetails/UpdateProduct/productUploade";
-import ProductViewSeller from "../Component/Dashboard/SellerDashboard/ProductsDetails/UpdateProduct/productUploade";
+import ProductViewSeller from "../Component/Dashboard/SellerDashboard/ProductsDetails/ViewProduct/productUploade";
 
 //-----------------------------Artist Premium Badges--------------------------//
 
@@ -919,8 +918,6 @@ const AppRoutes = () => {
           path="buyer/productpurchased/view"
           element={<BuyerProductPurchaseView />}
         />
-        <Route path="buyer/resellproduct" element={<BuyerProductRequest />} />
-        <Route path="buyer/soldproduct" element={<BuyerSoldProduct />} />
         <Route path="buyer/transaction" element={<BuyerTransaction />} />
         <Route
           path="buyer/packagingmaterial"
@@ -979,7 +976,7 @@ const AppRoutes = () => {
         />
         <Route path="purchasetable" element={<PurchaseTable />} />
         <Route path="purchasetable/view/:productId" element={<PurchaseTableView />} />
-        <Route path="product-upload" element={<ProductUploads />} />
+
         {/* Bidding Management */}
         <Route path="bidding/allproduct" element={<AllBiddingProduct />} />
         <Route path="bidding/bidded-product" element={<BiddedProduct />} />
@@ -1274,14 +1271,14 @@ const AppRoutes = () => {
           element={<UpdateChallenge />}
         />
         <Route path="challenges-entries" element={<ChallengesEntries />} />
-        <Route
-          path="challenges/view-application"
-          element={<ViewChallengeApplication />}
-        />
-        <Route
-          path="challenges/update-application"
-          element={<UpdateChallengeApplication />}
-        />
+          <Route
+            path="challenges/view-application"
+            element={<ViewChallengeApplication />}
+          />
+          <Route
+            path="challenges/update-application/:id"
+            element={<UpdateChallengeApplication />}
+          />
         {/* Celebraties */}
         <Route path="celebrities" element={<Celebrities />} />
         <Route path="celebrities/create" element={<CreateCelebrities />} />
@@ -1439,7 +1436,7 @@ const AppRoutes = () => {
         <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
         <Route path="custom-order" element={<CustomOrder />} />
         <Route path="product/view-product" element={<ProductView />} />
-        <Route path="product-fetch-view-artist/:productId" element={<ArtistProductFetchView />} />
+        <Route path="product-fetch-view-artist/:productId" element={<ProductViewArtist />} />
         <Route
           path="custom-order/view-request"
           element={<ViewCustomRequest />}
@@ -1568,7 +1565,7 @@ const AppRoutes = () => {
         <Route path="custom-order/view-request" element={<ViewCustomRequest />} />
         <Route path="SellerProductUpload" element={<SellerProductUpload />} />
         <Route path="purchased-product" element={<SellerPurchasedProducts />} />
-        <Route path="product-fetch-view-seller/:productId" element={<SellerProductFetchView />} />
+        <Route path="product-fetch-view-seller/:productId" element={<ProductViewSeller />} />
 
         {/* Advertise Routes */}
         <Route path="advertise" element={<SellerAdvertise />} />
@@ -1789,17 +1786,20 @@ const AppRoutes = () => {
             path="/artsays-community/profile/promote-post"
             element={<PromotePost />}
           />
+          <Route path="/artsays-community/post-live" element={<PostLive />} />
+          <Route path="/artsays-community/live-history" element={<LiveHistory />} />
           <Route path="/artsays-community/create-live" element={<CreateLive />} />
           <Route
             path="/artsays-community/:streamKey/:username"
             element={<MyLive />}
           />
-          <Route path="/artsays-community/live/:streamKey" element={<Live />} />
           <Route path="/artsays-community/test" element={<Test />} />
           <Route path="/artsays-community/setting" element={<Settings />} />
           <Route path="/artsays-community/saved" element={<Saved />} />
           <Route path="/artsays-community/logout" element={<ProfileLogout />} />
         </Route>
+        {/* Public live stream viewing - no authentication required */}
+        <Route path="/artsays-community/live/:streamKey" element={<Live />} />
         <Route path="/invoice" element={<EdprowiseInvoice />} />
         <Route path="/invoice1" element={<Invoice />} />
       </Route>

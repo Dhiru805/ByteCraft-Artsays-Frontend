@@ -14,7 +14,10 @@ const ProductRequest = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
-    const [loadingIds, setLoadingIds] = useState([]);
+    // const [loadingIds, setLoadingIds] = useState([]);
+    const [loadingApproveIds, setLoadingApproveIds] = useState([]);
+const [loadingRejectIds, setLoadingRejectIds] = useState([]);
+
     const [showPopup, setShowPopup] = useState(false);
     const [currentImages, setCurrentImages] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -82,13 +85,21 @@ const [loading,setLoading]=useState(false);
         }
     };
 
+    // const handleReject = async (productId) => {
+    //     confirm(async () => {
+    //         setLoadingIds(prev => [...prev, productId]);
+    //         await updateProductStatus(productId, 'Rejected');
+    //         setLoadingIds(prev => prev.filter(id => id !== productId));
+    //     }, "Are you sure you want to reject this product?");
+    // };
     const handleReject = async (productId) => {
-        confirm(async () => {
-            setLoadingIds(prev => [...prev, productId]);
-            await updateProductStatus(productId, 'Rejected');
-            setLoadingIds(prev => prev.filter(id => id !== productId));
-        }, "Are you sure you want to reject this product?");
-    };
+    confirm(async () => {
+        setLoadingRejectIds(prev => [...prev, productId]);
+        await updateProductStatus(productId, 'Rejected');
+        setLoadingRejectIds(prev => prev.filter(id => id !== productId));
+    }, "Are you sure you want to reject this product?");
+};
+
 
     const handleDeleteCancel = () => {
         setIsDeleteDialogOpen(false);
@@ -281,7 +292,7 @@ if(loading)return <ProductRequestSkeleton/>
                                                     >
                                                         <i className="fa fa-eye"></i>
                                                     </button>
-                                                    <button
+                                                    {/* <button
                                                         className="btn btn-sm btn-outline-success mr-2"
                                                         title="Approved"
                                                         disabled={loadingIds.includes(product._id)}
@@ -296,10 +307,26 @@ if(loading)return <ProductRequestSkeleton/>
                                                         ) : (
                                                             <i className="fa fa-check"></i>
                                                         )}
-                                                    </button>
+                                                    </button> */}
+<button
+    className="btn btn-sm btn-outline-success mr-2"
+    title="Approved"
+    disabled={loadingApproveIds.includes(product._id)}
+    onClick={async () => {
+        setLoadingApproveIds(prev => [...prev, product._id]);
+        await updateProductStatus(product._id, 'Approved');
+        setLoadingApproveIds(prev => prev.filter(id => id !== product._id));
+    }}
+>
+    {loadingApproveIds.includes(product._id) ? (
+        <i className="fa fa-spinner fa-spin"></i>
+    ) : (
+        <i className="fa fa-check"></i>
+    )}
+</button>
 
                                                     {/* Reject button loading state and disabling */}
-                                                    <button
+                                                    {/* <button
                                                         className="btn btn-sm btn-outline-danger mr-2"
                                                         title="Declined"
                                                         disabled={loadingIds.includes(product._id)}
@@ -310,7 +337,23 @@ if(loading)return <ProductRequestSkeleton/>
                                                         ) : (
                                                             <i className="fa fa-ban"></i>
                                                         )}
-                                                    </button>
+                                                    </button> */}
+<button
+    className="btn btn-sm btn-outline-danger mr-2"
+    title="Declined"
+    disabled={loadingRejectIds.includes(product._id)}
+    onClick={async () => {
+        setLoadingRejectIds(prev => [...prev, product._id]);
+        await handleReject(product._id);
+        setLoadingRejectIds(prev => prev.filter(id => id !== product._id));
+    }}
+>
+    {loadingRejectIds.includes(product._id) ? (
+        <i className="fa fa-spinner fa-spin"></i>
+    ) : (
+        <i className="fa fa-ban"></i>
+    )}
+</button>
 
                                                     <button
                                                         type="button"

@@ -57,50 +57,50 @@ useEffect(() => {
         <div className="col-lg-9 col-md-12">
           <div className="tab-content padding-0">
             <div className="tab-pane active" id="Overview">
-              {blogs.length > 0 ? (
-                blogs.map((blog) => (
-                  <div
-                    key={blog.id}
-                    className="card single_post mx-auto mb-4"
-                    onMouseEnter={() => setHoveredBlogId(blog._id)}
-                    onMouseLeave={() => setHoveredBlogId(null)}
-                  >
+                {blogs.length > 0 ? (
+                  blogs.map((blog) => (
                     <div
-                      className={`status-dot ${blog.blogStatus === 'Pending' ? 'bg-warning' : blog.blogStatus === 'Approved' ? 'bg-success' : 'bg-danger'}`}
-                      style={{
-                        position: 'absolute',
-                        top: '5px',
-                        left: '98%',
-                        width: '10px',
-                        height: '10px',
-                        borderRadius: '50%',
-                        zIndex: 1
-                      }}
-                    ></div>
-                    <div className="body p-4">
-                      <div className="img-post" style={{
-                        width: '100%',
-                        height: '300px',
-                        objectFit: 'cover'
-                      }}>
-                        <img
-                          className="d-block img-fluid rounded"
-                          src={
-                            blog.blogImage
-                              ? `${BASE_URL}${blog.blogImage.replace(/\\/g, "/")}`
-                              : "/placeholder.jpg"
-                          }
-                          alt={blog.blogName}
-                          style={{
-                            width: '100%',
-                            height: '300px',
-                            objectFit: 'cover'
-                          }}
-                        />
-                      </div>
-                      <h3>
-                        <a href="#">{blog.blogName}</a>
-                      </h3>
+                      key={blog._id}
+                      className="card single_post mx-auto mb-4"
+                      onMouseEnter={() => setHoveredBlogId(blog._id)}
+                      onMouseLeave={() => setHoveredBlogId(null)}
+                    >
+                      <div
+                        className={`status-dot ${blog.blogStatus === 'Pending' ? 'bg-warning' : blog.blogStatus === 'Approved' ? 'bg-success' : 'bg-danger'}`}
+                        style={{
+                          position: 'absolute',
+                          top: '5px',
+                          left: '98%',
+                          width: '10px',
+                          height: '10px',
+                          borderRadius: '50%',
+                          zIndex: 1
+                        }}
+                      ></div>
+                      <div className="body p-4">
+                        <div className="img-post" style={{
+                          width: '100%',
+                          height: '300px',
+                          objectFit: 'cover'
+                        }}>
+                          <img
+                            className="d-block img-fluid rounded"
+                            src={
+                              blog.blogImage
+                                ? `${BASE_URL}${blog.blogImage.replace(/\\/g, "/")}`
+                                : "/placeholder.jpg"
+                            }
+                            alt={blog.blogName}
+                            style={{
+                              width: '100%',
+                              height: '300px',
+                              objectFit: 'cover'
+                            }}
+                          />
+                        </div>
+                        <h3>
+                          <a href="#!" onClick={(e) => e.preventDefault()}>{blog.blogName}</a>
+                        </h3>
                       <p style={{
                         display: "-webkit-box",
                         WebkitBoxOrient: "vertical",

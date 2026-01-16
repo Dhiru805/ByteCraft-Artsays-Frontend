@@ -119,7 +119,7 @@ const HowToPartner = () => {
         const res = await getAPI("/api/partner");
         const partnerData = Array.isArray(res.data.data)
           ? res.data.data.find((p) => p.status === "published") ||
-            res.data.data[0]
+          res.data.data[0]
           : res.data.data;
         setData(partnerData);
       } catch (err) {
@@ -131,7 +131,7 @@ const HowToPartner = () => {
     fetchData();
   }, []);
 
-  if (loading) return <div className="text-center py-4"><HowToPartnerSkaliton/></div>;
+  if (loading) return <div className="text-center py-4"><HowToPartnerSkaliton /></div>;
   if (error)
     return <div className="text-center py-4 text-red-500">Error: {error}</div>;
   if (!data) return <div className="text-center py-4">No data available</div>;
@@ -145,17 +145,17 @@ const HowToPartner = () => {
 
   return (
     <div className="max-w-[1440px] mx-auto py-4">
-      <h1 className="text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
-        {data.section2Heading || "How to Partner"}
-      </h1>
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <h1 className="text-lg md:text-4xl font-bold text-[#6F4D34] px-3 mb-4">
+          {data.section2Heading || "How to Partner"}
+        </h1>
 
-      <hr className="my-3 border-dark" />
-
-      <p className="mt-3 text-xs md:text-lg font-medium text-black leading-relaxed px-3">
-        {data.section2Description ||
-          "Let’s create meaningful experiences together."}
-      </p>
-
+        <div className="w-20 h-1.5 bg-[#6F4D34] rounded-full mb-6"></div>
+        <p className="mt-3 text-xs md:text-lg font-medium text-black leading-relaxed px-3">
+          {data.section2Description ||
+            "Let’s create meaningful experiences together."}
+        </p>
+      </div>
       <div className="justify-center gap-6 my-3">
         {cards.length > 0 && (
           <>

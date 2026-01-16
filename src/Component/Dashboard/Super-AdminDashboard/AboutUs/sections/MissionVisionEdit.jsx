@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import postAPI from "../../../../../api/postAPI";
 import getAPI from "../../../../../api/getAPI";
 import axiosInstance from "../../../../../api/axiosConfig";
 
@@ -55,17 +54,17 @@ const MissionVisionEdit = () => {
       const res = await getAPI(`/api/about-us`);
       const page = Array.isArray(res.data.data) ? res.data.data[0] : null;
       const section = page?.missionVision || {};
-      if (section?.cards) {
-        setCards(section.cards.map(c => ({
-          icon: c.icon || null,
-          heading: c.heading,
-          description: c.description,
-          sideImage: c.sideImage || null,
-          _id: c._id,
-        })));
-        setIconPreviews(section.cards.map(c => c.icon || null));
-        setSideImagePreviews(section.cards.map(c => c.sideImage || null));
-      }
+        if (section?.cards) {
+          setCards(section.cards.map(c => ({
+            icon: c.icon || null,
+            heading: c.heading,
+            description: c.description,
+            sideImage: c.sideImage || null,
+            _id: c._id,
+          })));
+          setIconPreviews(section.cards.map(c => c.icon ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${c.icon.replace(/\\/g, "/")}` : null));
+          setSideImagePreviews(section.cards.map(c => c.sideImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${c.sideImage.replace(/\\/g, "/")}` : null));
+        }
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to fetch data");
     }

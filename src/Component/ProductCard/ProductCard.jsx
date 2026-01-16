@@ -196,6 +196,7 @@ import { FiChevronLeft } from "react-icons/fi";
 const ProductGrid = ({ overrideProducts = null }) => {
   const [products, setProducts] = useState([]);
   const [likedProducts, setLikedProducts] = useState({});
+  const [cartItems, setCartItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   const itemsPerPage = 12;
@@ -204,6 +205,20 @@ const ProductGrid = ({ overrideProducts = null }) => {
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
   const navigate = useNavigate();
+
+  const fetchCart = async () => {
+    if (!userId || userType !== "Buyer") return;
+    try {
+      const res = await getAPI(`/api/cart/${userId}`);
+      setCartItems(res?.data?.items || []);
+    } catch (err) {
+      console.error("Error fetching cart:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchCart();
+  }, [userId, userType]);
 
 const baseList = overrideProducts 
   ? overrideProducts.map(op => products.find(p => p._id === op._id) || op) 
@@ -333,6 +348,7 @@ useEffect(() => {
     try {
       await postAPI(`/api/cart/addcart/${productId}`, {}, true);
       toast.success("Added to Cart!");
+      fetchCart();
     } catch (err) {
       console.error("Add to cart error:", err);
       toast.error("Failed to add to cart");
@@ -357,16 +373,16 @@ useEffect(() => {
      <main className="md:col-span-3">
                   {/* <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3"> */}
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6">
-                    {currentProducts.map((product) => {
-                      const hasDiscount =
-                        product.sellingPrice < product.marketPrice;
-                      const discountPercent = hasDiscount
-                        ? Math.round(
-                            ((product.marketPrice - product.sellingPrice) /
-                              product.marketPrice) *
-                              100
-                          )
-                        : 0;
+                      {currentProducts.map((product) => {
+                        const displayPrice = product.finalPrice;
+                        const hasDiscount = displayPrice < product.marketPrice;
+                        const discountPercent = hasDiscount
+                          ? Math.round(
+                              ((product.marketPrice - displayPrice) /
+                                product.marketPrice) *
+                                100
+                            )
+                          : 0;
     
                       const average = product.averageRating;
                       const reviewCount = product.reviewCount ?? 0;
@@ -488,38 +504,49 @@ useEffect(() => {
                                   {discountPercent}% OFF
                                 </span>
                               )}
-                              {hasDiscount ? (
-                                <>
-                                  <span className="text-gray-400 line-through">
-                                    ₹{product.marketPrice}
-                                  </span>
-                                  <span className="text-lg font-bold text-gray-900">
-                                    ₹{product.sellingPrice}
-                                  </span>
-                                </>
-                              ) : (
-                                <span className="text-lg font-bold text-gray-900">
-                                  ₹{product.sellingPrice}
-                                </span>
-                              )}
+                                  {hasDiscount ? (
+                                    <>
+                                      <span className="text-gray-400 line-through">
+                                        ₹{product.marketPrice}
+                                      </span>
+                                      <span className="text-lg font-bold text-gray-900">
+                                        ₹{product.finalPrice}
+                                      </span>
+                                    </>
+                                  ) : (
+                                    <span className="text-lg font-bold text-gray-900">
+                                      ₹{product.finalPrice}
+                                    </span>
+                                  )}
                             </div>
                           </div>
     
                           {/* Buttons */}
                           <div className="p-3 product-button d-none d-md-block">
                             <div className="flex justify-between gap-3">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  if (!ensureBuyer()) return;
-    
-                                  addToCart(product._id);
-                                }}
-                                disabled={!product.quantity || product.quantity === 0}
-                                className={`flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart hover:bg-dark hover:text-white transition ${(!product.quantity || product.quantity === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}
-                              >
-                                <FaShoppingCart /> Add to Cart
-                              </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (!ensureBuyer()) return;
+      
+                                    addToCart(product._id, e);
+                                  }}
+                                  disabled={!product.quantity || product.quantity === 0}
+                                  className={`flex items-center justify-center gap-2 flex-1 border border-dark rounded-full text-dark py-2 font-semibold add-cart hover:bg-dark hover:text-white transition ${(!product.quantity || product.quantity === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                >
+                                  <div className="relative flex items-center gap-2">
+                                    <FaShoppingCart />
+                                    {(() => {
+                                      const cartItem = cartItems.find((item) => item.product?._id === product._id);
+                                      return cartItem && cartItem.quantity > 0 ? (
+                                        <span className="absolute -top-3 -left-4 bg-red-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center shadow-lg border-2 border-white flex items-center justify-center">
+                                          {cartItem.quantity}
+                                        </span>
+                                      ) : null;
+                                    })()}
+                                    Add to Cart
+                                  </div>
+                                </button>
     
                               {(!product.quantity || product.quantity === 0) ? (
                                 <button

@@ -2,14 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../api/getAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
-import CreateAdminModal from "./Createmodal";
+import AdminModal from "./AdminModal";
 import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
 import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
+
 function AdminManageTable() {
   const [admins, setAdmins] = useState([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedAdminToDelete, setSelectedAdminToDelete] = useState(null);
-  const [isCreateAdminModalOpen, setIsCreateAdminModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState("create"); // "create", "edit", "view"
+  const [selectedAdmin, setSelectedAdmin] = useState(null);
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
@@ -82,11 +85,16 @@ function AdminManageTable() {
             </div>
             <div className="col-lg-6 col-md-6 col-sm-12">
               <div className="d-flex flex-row-reverse">
-                <button
-                  type="button"
-                  className="btn btn-secondary mr-2"
-                  onClick={() => setIsCreateAdminModalOpen(true)}
-                >
+                  <button
+                    type="button"
+                    className="btn btn-secondary mr-2"
+                    onClick={() => {
+                      setModalMode("create");
+                      setSelectedAdmin(null);
+                      setIsModalOpen(true);
+                    }}
+                  >
+
                   <i className="fa fa-plus"></i>
                 </button>
               </div>
@@ -100,19 +108,19 @@ function AdminManageTable() {
               <div className="header d-flex justify-content-between align-items-center">
                 <div className="d-flex align-items-center">
                   <label className="mb-0 mr-2">Show</label>
-                  <select
-                    name="DataTables_Table_0_length"
-                    aria-controls="DataTables_Table_0"
-                    className="form-control form-control-sm"
-                    onChange={(e) => setItemsPerPage(parseInt(e.target.value))}
-                    value={itemsPerPage}
-                  >
-                    <option value="10">5</option>
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                  </select>
+                    <select
+                      name="DataTables_Table_0_length"
+                      aria-controls="DataTables_Table_0"
+                      className="form-control form-control-sm"
+                      onChange={(e) => setItemsPerPage(parseInt(e.target.value))}
+                      value={itemsPerPage}
+                    >
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
                   <label className="mb-0 ml-2">entries</label>
                 </div>
               </div>
@@ -174,40 +182,46 @@ function AdminManageTable() {
                               <td>{admin.userrole}</td>
                               {/* <td>{admin.phone}</td> */}
                               <td>{admin.phone}</td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="btn btn-outline-primary btn-sm mr-2"
-                                  title="View"
-                                  onClick={() =>
-                                    navigate("/super-admin/admin/viewprofile", {
-                                      state: { admin },
-                                    })
-                                  }
-                                >
-                                  <i className="fa fa-eye"></i>
-                                </button>
-                                <button
-                                  type="button"
-                                  className="btn btn-outline-info btn-sm mr-2"
-                                  title="Edit"
-                                  onClick={() =>
-                                    navigate("/super-admin/admin/editprofile", {
-                                      state: { admin },
-                                    })
-                                  }
-                                >
-                                  <i className="fa fa-pencil"></i>
-                                </button>
-                                <button
-                                  type="button"
-                                  className="btn btn-outline-danger btn-sm"
-                                  title="Delete"
-                                  onClick={() => openDeleteDialog(admin)}
-                                >
-                                  <i className="fa fa-trash-o"></i>
-                                </button>
-                              </td>
+                                  <td>
+                                    <div className="d-flex flex-wrap">
+                                      <button
+                                        type="button"
+                                        className="btn btn-outline-primary btn-sm mr-2 mb-1 d-flex align-items-center justify-content-center"
+                                        style={{ width: "32px", height: "32px", borderRadius: "50%" }}
+                                        title="View"
+                                        onClick={() => {
+                                          setModalMode("view");
+                                          setSelectedAdmin(admin);
+                                          setIsModalOpen(true);
+                                        }}
+                                      >
+                                        <i className="fa fa-eye"></i>
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className="btn btn-outline-info btn-sm mr-2 mb-1 d-flex align-items-center justify-content-center"
+                                        style={{ width: "32px", height: "32px", borderRadius: "50%" }}
+                                        title="Edit"
+                                        onClick={() => {
+                                          setModalMode("edit");
+                                          setSelectedAdmin(admin);
+                                          setIsModalOpen(true);
+                                        }}
+                                      >
+                                        <i className="fa fa-pencil"></i>
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className="btn btn-outline-danger btn-sm mb-1 d-flex align-items-center justify-content-center"
+                                        style={{ width: "32px", height: "32px", borderRadius: "50%" }}
+                                        title="Delete"
+                                        onClick={() => openDeleteDialog(admin)}
+                                      >
+                                        <i className="fa fa-trash-o"></i>
+                                      </button>
+                                    </div>
+                                  </td>
+
                             </tr>
                           ))
                       )}
@@ -224,14 +238,13 @@ function AdminManageTable() {
                     >
                       <button className="page-link">Previous</button>
                     </li>
-                    {Array.from({ length: totalPages }, (_, index) => index + 1)
-                      .filter(
-                        (pageNumber) =>
-                          // pageNumber >= currentPage &&
-                          // pageNumber < currentPage + 3
-                          pageNumber === currentPage
-                      )
-                      .map((pageNumber) => (
+                      {Array.from({ length: totalPages }, (_, index) => index + 1)
+                        .filter(
+                          (pageNumber) =>
+                            pageNumber >= currentPage - 2 &&
+                            pageNumber <= currentPage + 2
+                        )
+                        .map((pageNumber) => (
                         <li
                           key={pageNumber}
                           className={`paginate_button page-item ${
@@ -267,12 +280,15 @@ function AdminManageTable() {
         />
       )}
 
-      {isCreateAdminModalOpen && (
-        <CreateAdminModal
-          onClose={() => setIsCreateAdminModalOpen(false)}
-          fetchAdmins={fetchAdmins}
-        />
-      )}
+        {isModalOpen && (
+          <AdminModal
+            mode={modalMode}
+            adminData={selectedAdmin}
+            onClose={() => setIsModalOpen(false)}
+            fetchAdmins={fetchAdmins}
+          />
+        )}
+
     </>
   );
 }

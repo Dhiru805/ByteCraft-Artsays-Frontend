@@ -1,9 +1,8 @@
-// src/components/productUpload/ProductUpload.js
-import React, { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation, useParams } from "react-router-dom";
 import useUserType from "../../../urlconfig";
 import { toast } from "react-toastify";
-import putAPI from "../../../../../api/putAPI";
+import getAPI from "../../../../../api/getAPI";
 import BasicDetails from "./Sections/BasicDetails";
 import ImagesMedia from "./Sections/ImagesMedia";
 import ArtworkDetails from "./Sections/ArtworkDetails";
@@ -15,11 +14,29 @@ import NFTDetails from "./Sections/NFTDetails";
 import AntiqueVintageDetails from "./Sections/AntiqueVintageDetails";
 import useProductForm from "./hooks/useProductForm";
 
-function ProductUpload() {
+function ProductViewSeller() {
   const navigate = useNavigate();
+  const { productId } = useParams();
   const [activeTab, setActiveTab] = useState("basic");
   const { state } = useLocation();
-  const product = state?.productData;
+  const [productData, setProductData] = useState(state?.productData);
+
+  useEffect(() => {
+    if (!productData && productId) {
+      const fetchProduct = async () => {
+        try {
+          const res = await getAPI(`/api/product/details/${productId}`, {}, true, false);
+          if (res?.data?.success) {
+            setProductData(res.data.product);
+          }
+        } catch (err) {
+          console.error("Error fetching product:", err);
+          toast.error("Failed to load product details");
+        }
+      };
+      fetchProduct();
+    }
+  }, [productId, productData]);
 
   const {
     formData,
@@ -61,15 +78,7 @@ function ProductUpload() {
     getCategoriesByMainCategory,
     getSubCategoriesByCategory,
     profileData,
-  } = useProductForm(product);
-
-
-
-
-
-
-
-
+  } = useProductForm(productData);
 
   const isNFTArtSelected = formData.category?.label === "NFT Art" ||
     formData.subCategory?.label === "NFT Art";
@@ -95,6 +104,7 @@ function ProductUpload() {
             getCategoriesByMainCategory={getCategoriesByMainCategory}
             getSubCategoriesByCategory={getSubCategoriesByCategory}
             handleSelectChange={handleSelectChange}
+            readOnly={true}
           />
         );
       case 'nft':
@@ -106,6 +116,7 @@ function ProductUpload() {
             handleSelectChange={handleSelectChange}
             userId={userId}
             profileData={profileData}
+            readOnly={true}
           />
         );
       case 'antique':
@@ -118,6 +129,7 @@ function ProductUpload() {
             handleSelectChange={handleSelectChange}
             userId={userId}
             profileData={profileData}
+            readOnly={true}
           />
         );
       case 'images':
@@ -132,6 +144,7 @@ function ProductUpload() {
             handleReplaceImage={handleReplaceImage}
             handleMoveImage={handleMoveImage}
             handleInputChange={handleInputChange}
+            readOnly={true}
           />
         );
       case 'artwork':
@@ -150,6 +163,7 @@ function ProductUpload() {
             handleMultiSelectChange={handleMultiSelectChange}
             handleInputChange={handleInputChange}
             mainCategoryId={formData.mainCategory?.value}
+            readOnly={true}
           />
         );
       case 'pricing':
@@ -163,6 +177,7 @@ function ProductUpload() {
             handleInstallmentDurationChange={handleInstallmentDurationChange}
             offerOptions={offerOptions}
             mainCategoryId={formData.mainCategory?.value}
+            readOnly={true}
           />
         );
       case 'shipping':
@@ -174,6 +189,7 @@ function ProductUpload() {
             packagingOptions={packagingOptions}
             handleInputChange={handleInputChange}
             handleSelectChange={handleSelectChange}
+            readOnly={true}
           />
         );
       case 'payoutDetails':
@@ -183,6 +199,7 @@ function ProductUpload() {
             isSubmitting={isSubmitting}
             handleInputChange={handleInputChange}
             setFormData={setFormData}
+            readOnly={true}
           />
         );
       case 'legal':
@@ -193,6 +210,7 @@ function ProductUpload() {
             handleInputChange={handleInputChange}
             handleSelectChange={handleSelectChange}
             setFormData={setFormData}
+            readOnly={true}
           />
         );
       default:
@@ -201,29 +219,13 @@ function ProductUpload() {
   };
   const tabOrder = ['basic', ...(isNFTArtSelected ? ['nft'] : []), ...(isAntiqueVintageSelected ? ['antique'] : []), 'images', 'artwork', 'pricing', 'shipping', 'payoutDetails', 'legal'];
 
-
-
   const handleTabClick = (targetTab) => {
-    const currentIndex = tabOrder.indexOf(activeTab);
-    const targetIndex = tabOrder.indexOf(targetTab);
-
-    if (targetIndex <= currentIndex) {
-      setActiveTab(targetTab);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
-
-
     setActiveTab(targetTab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleNextTab = () => {
     const currentIndex = tabOrder.indexOf(activeTab);
-  
-
-  
     const nextTab = tabOrder[currentIndex + 1];
     if (nextTab) {
       setActiveTab(nextTab);
@@ -231,12 +233,14 @@ function ProductUpload() {
     }
   };
 
+  if (!productData) return <p className="text-center mt-4">Loading details...</p>;
+
   return (
     <div className="container-fluid">
       <div className="block-header">
         <div className="row">
           <div className="col-lg-6 col-md-6 col-sm-12">
-            <h2>Create Product</h2>
+            <h2>View Product</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
                 <span onClick={() => navigate('/seller/dashboard')} style={{ cursor: 'pointer' }}>
@@ -248,7 +252,7 @@ function ProductUpload() {
                   All Product
                 </span>
               </li>
-              <li className="breadcrumb-item">Create Product</li>
+              <li className="breadcrumb-item">View Product</li>
             </ul>
           </div>
         </div>
@@ -257,7 +261,7 @@ function ProductUpload() {
       <div className="row clearfix">
         <div className="col-lg-12">
           <div className="card">
-            <form  className="bg-white p-4 rounded">
+            <div className="bg-white p-4 rounded">
               {/* Tabs Navigation */}
               <ul className="nav nav-tabs mb-4">
                 <li className="nav-item">
@@ -384,7 +388,7 @@ function ProductUpload() {
                 </div>
 
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>
@@ -392,4 +396,4 @@ function ProductUpload() {
   );
 }
 
-export default ProductUpload;
+export default ProductViewSeller;

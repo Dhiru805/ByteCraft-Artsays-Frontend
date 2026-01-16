@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../../../../../api/axiosConfig';
 import { toast } from 'react-toastify';
 import CreatableSelect from 'react-select/creatable';
  
@@ -32,22 +32,32 @@ const ArtistInfo = ({ userId }) => {
         yearsOfExperience: '',
         portfolioLink: '',
         achievements: [],
+        artistName: '',
+        description: ''
     });
 
     useEffect(() => {
         const fetchArtistData = async () => {
             try {
-                const response = await axios.get(`/auth/getartistdetails/${userId}`);
+                const response = await axiosInstance.get(`/auth/getartistdetails/${userId}`);
                 if (response.data) {
                     setFormData({
                         ...response.data,
-                        artCategories: response.data.artCategories.length ? response.data.artCategories[0].split(',') : [],
-                        mediumUsed: response.data.mediumUsed.length ? response.data.mediumUsed[0].split(',') : [],
-                        achievements: response.data.achievements.length ? response.data.achievements[0].split(',') : [],
+                        artCategories: response.data.artCategories && response.data.artCategories.length ? response.data.artCategories[0].split(',') : [],
+                        mediumUsed: response.data.mediumUsed && response.data.mediumUsed.length ? response.data.mediumUsed[0].split(',') : [],
+                        achievements: response.data.achievements && response.data.achievements.length ? response.data.achievements[0].split(',') : [],
+                        artistName: response.data.artistName || '',
+                        portfolioLink: response.data.portfolioLink || '',
+                        yearsOfExperience: response.data.yearsOfExperience || '',
+                        description: response.data.description || ''
                     });
                 }
             } catch (error) {
-                console.log("Fetch attempt completed");
+                if (error.response && error.response.status === 404) {
+                    console.log("Artist professional info not found");
+                } else {
+                    console.error("Error fetching artist details:", error);
+                }
             }
         };
 

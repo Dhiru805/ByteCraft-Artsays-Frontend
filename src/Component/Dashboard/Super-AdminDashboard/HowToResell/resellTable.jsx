@@ -331,9 +331,8 @@ const[loading,setLoading]=useState(true)
 
   const handleDeleteConfirmed = async (id) => {
     try {
-      await axiosInstance.delete(`/api/how-to-resell/delete/${id}`);
+      // await axiosInstance.delete(`/api/how-to-resell/delete/${id}`);
       setPages((prevPages) => prevPages.filter((page) => page._id !== id));
-      toast.success("Page deleted successfully!");
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to delete page.");
     } finally {

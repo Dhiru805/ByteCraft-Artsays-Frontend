@@ -8,6 +8,31 @@ const ViewOrder = () => {
   const [formData, setFormData] = useState({});
   const [address, setAddress] = useState("");
 const [loading,setLoading]=useState(false);
+const formatDeliveryAddress = (deliveryAddress) => {
+  if (!deliveryAddress) return "";
+
+  if (deliveryAddress.address && Array.isArray(deliveryAddress.address) && deliveryAddress.address.length > 0) {
+    const addr = deliveryAddress.address[0];
+    return [addr.line1, addr.line2, addr.city, addr.state, addr.country, addr.pincode]
+      .filter(Boolean)
+      .join(", ");
+  }
+
+  
+  if (deliveryAddress.line1 || deliveryAddress.city) {
+    return [deliveryAddress.line1, deliveryAddress.line2, deliveryAddress.city, deliveryAddress.state, deliveryAddress.country, deliveryAddress.pincode]
+      .filter(Boolean)
+      .join(", ");
+  }
+
+ 
+  if (typeof deliveryAddress === "string") {
+    return deliveryAddress;
+  }
+
+  return "";
+};
+
 
   useEffect(() => {
     const getUser = async () => {
@@ -16,30 +41,15 @@ const [loading,setLoading]=useState(false);
         const res = await getAPI(`/auth/user/${userId}`);
         console.log("User profile data", res);
 
-        let address = res.data.address;
+        const deliveryAddress = formatDeliveryAddress(
+  typeof res.data.address === "string" ? JSON.parse(res.data.address) : res.data.address
+);
 
-        // Step 1: Parse the address if it's a string
-        let parsedAddress = address;
-        if (typeof address === "string") {
-          try {
-            parsedAddress = JSON.parse(address);
-          } catch (err) {
-            console.error("Error parsing address:", err);
-            parsedAddress = {};
-          }
-        }
-
-        // Step 2: Extract the relevant fields safely
-        const deliveryAddress = `${parsedAddress.line1 || ""}, ${parsedAddress.line2 || ""
-          }, ${parsedAddress.city || ""}, ${parsedAddress.state || ""}, ${parsedAddress.country || ""
-          }, ${parsedAddress.pincode || ""}`;
-
-        // Step 3: Set to state
-        setFormData((prev) => ({
-          ...prev,
-          deliveryAddress: deliveryAddress,
-        }));
-        setAddress(deliveryAddress);
+setFormData((prev) => ({
+  ...prev,
+  deliveryAddress,
+}));
+setAddress(deliveryAddress);
       } catch (err) {
         console.error("Error fetching user:", err);
       }
@@ -49,67 +59,42 @@ const [loading,setLoading]=useState(false);
   }, []);
 
   useEffect(() => {
-    const fetchOrderDetails = async () => {
-      setLoading(true)
-      try {
-        const userId = localStorage.getItem("userId");
-        const res = await getAPI(`/api/package-material/order/${userId}/${id}`);
-        console.log("Fetched order details:", res);
+  const fetchOrderDetails = async () => {
+    setLoading(true)
+    try {
+      const userId = localStorage.getItem("userId");
+      const res = await getAPI(`/api/package-material/order/${userId}/${id}`);
+      console.log("Fetched order details:", res);
 
-        if (res.data && res.data.data) {
-          const order = res.data.data;
+      if (res.data && res.data.data) {
+        const order = res.data.data; 
 
-          let orderDeliveryAddress = "";
-          if (
-            order.deliveryAddress &&
-            typeof order.deliveryAddress === "object" &&
-            order.deliveryAddress.address
-          ) {
-            const a = order.deliveryAddress.address;
-            const addressFields = [
-              a.line1,
-              a.line2,
-              a.city,
-              a.state,
-              a.country,
-              a.pincode,
-            ];
-            if (addressFields.every((field) => !field)) {
-              orderDeliveryAddress = address; // always fallback to user profile address
-            } else {
-              orderDeliveryAddress = addressFields.filter(Boolean).join(", ");
-            }
-          } else if (
-            order.deliveryAddress &&
-            typeof order.deliveryAddress === "string"
-          ) {
-            orderDeliveryAddress = order.deliveryAddress;
-          } else {
-            orderDeliveryAddress = address; // always fallback to user profile address
-          }
+        let orderDeliveryAddress = formatDeliveryAddress(order.deliveryAddress);
+       
 
-          setFormData({
-            userId: order.userId || localStorage.getItem("userId") || "",
-            material: order.material || "",
-            stamp: order.stamp || "",
-            stickers: order.stickers || "",
-            vouchers: order.vouchers || "",
-            card: order.card || "",
-            quantity: order.quantity || "",
-            deliveryAddress: orderDeliveryAddress,
-            totalPrice: order.totalPrice || "",
-          });
-        }
-      } catch (err) {
-        console.error("Error fetching order details:", err);
+       setFormData({
+  ...formData,
+  userId: order.userId || localStorage.getItem("userId") || "",
+  material: order.material || "",
+  stamp: order.stamp || "",
+  stickers: order.stickers || "",
+  vouchers: order.vouchers || "",
+  card: order.card || "",
+  quantity: order.quantity || "",
+  deliveryAddress: orderDeliveryAddress,
+  totalPrice: order.totalPrice || "",
+});
       }
-      finally{
-        setLoading(false)
-      }
-    };
+    } catch (err) {
+      console.error("Error fetching order details:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    if (id) fetchOrderDetails();
-  }, [id, formData.deliveryAddress]);
+  if (id) fetchOrderDetails();
+}, [id]);
+
 if(loading)return <ViewOrderSkeleton/>
   return (
     <div className="container-fluid">

@@ -7,12 +7,14 @@ const useSidebarToggle = () => {
 
     if (isSmallScreen) {
       const sidebar = document.getElementById('left-sidebar');
-      sidebar.classList.toggle('open');
+      if (sidebar) {
+        sidebar.classList.toggle('open');
 
-      if (sidebar.classList.contains('open')) {
-        document.body.classList.add('offcanvas-active');
-      } else {
-        document.body.classList.remove('offcanvas-active');
+        if (sidebar.classList.contains('open')) {
+          document.body.classList.add('offcanvas-active');
+        } else {
+          document.body.classList.remove('offcanvas-active');
+        }
       }
     } else {
       document.body.classList.toggle('layout-fullwidth');

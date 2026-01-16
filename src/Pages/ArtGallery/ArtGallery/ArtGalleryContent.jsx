@@ -13,6 +13,7 @@ const ArtGalleryContent = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [likedProducts, setLikedProducts] = useState({});
+  const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -22,6 +23,20 @@ const ArtGalleryContent = () => {
 
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
+
+  const fetchCart = async () => {
+    if (!userId || userType !== "Buyer") return;
+    try {
+      const res = await getAPI(`/api/cart/${userId}`);
+      setCartItems(res?.data?.items || []);
+    } catch (err) {
+      console.error("Error fetching cart:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchCart();
+  }, [userId, userType]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
@@ -83,6 +98,7 @@ const ArtGalleryContent = () => {
     try {
       await postAPI(`/api/cart/addcart/${productId}`, {}, true);
       toast.success("Added to Cart!");
+      fetchCart();
     } catch (err) {
       toast.error("Failed to add to cart");
     }
@@ -213,8 +229,8 @@ const ArtGalleryContent = () => {
       );
     }
 
-    if (filters.sortBy === "Price Low to High") result.sort((a, b) => a.sellingPrice - b.sellingPrice);
-    else if (filters.sortBy === "Price High to Low") result.sort((a, b) => b.sellingPrice - a.sellingPrice);
+    if (filters.sortBy === "Price Low to High") result.sort((a, b) => (a.finalPrice || a.sellingPrice) - (b.finalPrice || b.sellingPrice));
+    else if (filters.sortBy === "Price High to Low") result.sort((a, b) => (b.finalPrice || b.sellingPrice) - (a.finalPrice || a.sellingPrice));
     else if (filters.sortBy === "New Arrivals") result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     else if (filters.sortBy === "Trending") result.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
 
@@ -257,10 +273,11 @@ const ArtGalleryContent = () => {
           <div className="mb-12">
             {currentProducts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                {currentProducts.map((product, index) => {
-                  const hasDiscount = product.sellingPrice < product.marketPrice;
-                  const discountPercent = hasDiscount ? Math.round(((product.marketPrice - product.sellingPrice) / product.marketPrice) * 100) : 0;
-                  return (
+                  {currentProducts.map((product, index) => {
+                    const displayPrice = product.finalPrice || product.sellingPrice;
+                    const hasDiscount = displayPrice < product.marketPrice;
+                    const discountPercent = hasDiscount ? Math.round(((product.marketPrice - displayPrice) / product.marketPrice) * 100) : 0;
+                    return (
                     <div
                       key={product._id}
                       className="group flex flex-col h-full bg-white rounded-[40px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100/50 animate-fade-in-up relative"
@@ -317,26 +334,39 @@ const ArtGalleryContent = () => {
                         <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
                           <div className="flex flex-col">
                             {hasDiscount && <span className="text-sm text-gray-400 line-through font-bold">₹{product.marketPrice.toLocaleString()}</span>}
-                            <span className="text-2xl font-black text-gray-900 tracking-tighter">₹{product.sellingPrice.toLocaleString()}</span>
+                            <span className="text-2xl font-black text-gray-900 tracking-tighter">₹{displayPrice.toLocaleString()}</span>
                           </div>
                           {hasDiscount && (
                             <div className="bg-red-50 text-[#E74C3C] px-3 py-1.5 rounded-2xl border border-red-100/50 shadow-sm"><span className="text-[10px] font-black uppercase tracking-tighter leading-none">{discountPercent}% OFF</span></div>
                           )}
                         </div>
 
-                        <div className="grid grid-cols-5 gap-3">
-                          <button
-                            onClick={(e) => { e.stopPropagation(); addToCart(product._id); }}
-                            disabled={!product.quantity || product.quantity === 0}
-                            className="col-span-1 h-[56px] bg-gray-50 text-gray-900 rounded-2xl hover:bg-[#6F4D34] hover:text-white transition-all duration-300 disabled:opacity-50 border border-gray-100 flex items-center justify-center group/cart shadow-sm"
-                          ><ShoppingCart size={22} className="transition-transform group-hover/cart:scale-110" /></button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (!ensureBuyer()) return;
-                              if (!product.quantity || product.quantity === 0) return;
-                              navigate(`/my-account/check-out/${userId}?productId=${product._id}`);
-                            }}
+                          <div className="grid grid-cols-5 gap-3">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); addToCart(product._id); }}
+                              disabled={!product.quantity || product.quantity === 0}
+                              className="col-span-1 h-[56px] bg-gray-50 text-gray-900 rounded-2xl hover:bg-[#6F4D34] hover:text-white transition-all duration-300 disabled:opacity-50 border border-gray-100 flex items-center justify-center group/cart shadow-sm"
+                            >
+                              <div className="relative">
+                                <ShoppingCart size={22} className="transition-transform group-hover/cart:scale-110" />
+                                {(() => {
+                                  const cartItem = cartItems.find((item) => item.product?._id === product._id);
+                                  return cartItem && cartItem.quantity > 0 ? (
+                                    <span className="absolute -top-3 -right-3 bg-red-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center shadow-lg border-2 border-white flex items-center justify-center">
+                                      {cartItem.quantity}
+                                    </span>
+                                  ) : null;
+                                })()}
+                              </div>
+                            </button>
+                              <button
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                if (!ensureBuyer()) return;
+                                if (!product.quantity || product.quantity === 0) return;
+                                await addToCart(product._id);
+                                navigate(`/my-account/check-out/${userId}?productId=${product._id}`);
+                              }}
                             disabled={!product.quantity || product.quantity === 0}
                             className="col-span-4 h-[56px] bg-[#6F4D34] text-white rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 shadow-sm hover:shadow-xl hover:bg-[#5a3e2a] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed border border-[#6F4D34] transform active:scale-95"
                           >{(!product.quantity || product.quantity === 0) ? "Sold Out" : "Shop Now"}</button>

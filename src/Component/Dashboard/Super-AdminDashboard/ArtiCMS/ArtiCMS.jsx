@@ -16,8 +16,8 @@ const ArtiCMS = () => {
     try {
       const response = await getAPI("/api/company-info/get");
 
-      if (!response.hasError && response.data) {
-        setCompanyInfo(response.data);
+      if (!response.hasError && response.data && response.data.data) {
+        setCompanyInfo(response.data.data);
       }
     } catch (err) {
       console.error("Failed to fetch company info", err);
@@ -30,7 +30,7 @@ const ArtiCMS = () => {
 
   return (
     <div className="container-fluid p-4">
-      {/* Header */}
+
       <div className="block-header">
         <div className="row">
           <div className="col-lg-6 col-md-6 col-sm-12">

@@ -1,4 +1,0 @@
-const IMAGES ={
-    ChoiceImage:require('./')
-
-}

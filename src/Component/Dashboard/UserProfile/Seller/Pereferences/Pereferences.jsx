@@ -1,171 +1,97 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import getAPI from '../../../../../api/getAPI';
+import deleteAPI from '../../../../../api/deleteAPI';
+import { toast } from 'react-toastify';
 
-const Preferences = () => {
+const Preferences = ({ userId }) => {
+  const [sessions, setSessions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchSessions = async () => {
+    try {
+      const id = userId || localStorage.getItem('userId');
+      const response = await getAPI(`/auth/sessions/${id}`, {}, true);
+      if (response && response.data) {
+        setSessions(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching sessions:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSessions();
+  }, [userId]);
+
+  const handleRevokeSession = async (sessionId) => {
+    try {
+      const response = await deleteAPI(`/auth/sessions/${sessionId}`, {}, true);
+      if (response && response.message === "Session revoked successfully") {
+        toast.success("Session revoked successfully");
+        setSessions(sessions.filter(s => s._id !== sessionId));
+      }
+    } catch (error) {
+      console.error("Error revoking session:", error);
+      toast.error("Error revoking session");
+    }
+  };
+
+  const getDeviceIcon = (device) => {
+    switch (device) {
+      case 'Mobile': return 'fa-mobile';
+      case 'Tablet': return 'fa-tablet';
+      default: return 'fa-laptop';
+    }
+  };
 
   return (
     <div className="tab-pane" id="preferences">
-    <div className="row clearfix">
-      <div className="col-lg-6 col-md-12">
-        <div className="body">
-          <h6>Your Login Sessions</h6>
-          <ul className="list-unstyled list-login-session">
-            <li>
-              <div className="login-session">
-                <i className="fa fa-laptop device-icon" />
-                <div className="login-info">
-                  <h3 className="login-title">
-                    Mac - New York, United States
-                  </h3>
-                  <span className="login-detail">
-                    Chrome -{" "}
-                    <span className="text-success">Active Now</span>
-                  </span>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div className="login-session">
-                <i className="fa fa-desktop device-icon" />
-                <div className="login-info">
-                  <h3 className="login-title">
-                    Windows 10 - New York, United States
-                  </h3>
-                  <span className="login-detail">
-                    Firefox - about an hour ago
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  className="btn btn-link btn-logout"
-                  data-container="body"
-                  data-toggle="tooltip"
-                  title=""
-                  data-original-title="Close this login session"
-                >
-                  <i className="fa fa-times-circle text-danger" />
-                </button>
-              </div>
-            </li>
-            <li>
-              <div className="login-session">
-                <i className="fa fa-mobile fa-fw device-icon" />
-                <div className="login-info">
-                  <h3 className="login-title">
-                    Android - New York, United States
-                  </h3>
-                  <span className="login-detail">
-                    Android Browser - yesterday
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  className="btn btn-link btn-logout"
-                  data-container="body"
-                  data-toggle="tooltip"
-                  title=""
-                  data-original-title="Close this login session"
-                >
-                  <i className="fa fa-times-circle text-danger" />
-                </button>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div className="col-lg-6 col-md-12">
-        <div className="body">
-          <h6>Connected Social Media</h6>
-          <ul className="list-unstyled list-connected-app">
-            <li>
-              <div className="connected-app">
-                <i className="fa fa-facebook app-icon" />
-                <div className="connection-info">
-                  <h3 className="app-title">FaceBook</h3>
-                  <span className="actions">
-                    <a href="javascript:void(0);">View Permissions</a>{" "}
-                    <a
-                      href="javascript:void(0);"
-                      className="text-danger"
-                    >
-                      Revoke Access
-                    </a>
-                  </span>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div className="connected-app">
-                <i className="fa fa-twitter app-icon" />
-                <div className="connection-info">
-                  <h3 className="app-title">Twitter</h3>
-                  <span className="actions">
-                    <a href="javascript:void(0);">View Permissions</a>{" "}
-                    <a
-                      href="javascript:void(0);"
-                      className="text-danger"
-                    >
-                      Revoke Access
-                    </a>
-                  </span>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div className="connected-app">
-                <i className="fa fa-instagram app-icon" />
-                <div className="connection-info">
-                  <h3 className="app-title">Instagram</h3>
-                  <span className="actions">
-                    <a href="javascript:void(0);">View Permissions</a>{" "}
-                    <a
-                      href="javascript:void(0);"
-                      className="text-danger"
-                    >
-                      Revoke Access
-                    </a>
-                  </span>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div className="connected-app">
-                <i className="fa fa-linkedin app-icon" />
-                <div className="connection-info">
-                  <h3 className="app-title">Linkedin</h3>
-                  <span className="actions">
-                    <a href="javascript:void(0);">View Permissions</a>{" "}
-                    <a
-                      href="javascript:void(0);"
-                      className="text-danger"
-                    >
-                      Revoke Access
-                    </a>
-                  </span>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div className="connected-app">
-                <i className="fa fa-vimeo app-icon" />
-                <div className="connection-info">
-                  <h3 className="app-title">Vimeo</h3>
-                  <span className="actions">
-                    <a href="javascript:void(0);">View Permissions</a>{" "}
-                    <a
-                      href="javascript:void(0);"
-                      className="text-danger"
-                    >
-                      Revoke Access
-                    </a>
-                  </span>
-                </div>
-              </div>
-            </li>
-          </ul>
+      <div className="row clearfix">
+        <div className="col-lg-12 col-md-12">
+          <div className="body">
+            <h6>Your Login Sessions</h6>
+            {loading ? (
+              <p>Loading sessions...</p>
+            ) : sessions.length === 0 ? (
+              <p>No active sessions found.</p>
+            ) : (
+              <ul className="list-unstyled list-login-session">
+                {sessions.map((session) => (
+                  <li key={session._id}>
+                    <div className="login-session">
+                      <i className={`fa ${getDeviceIcon(session.device)} device-icon`} />
+                      <div className="login-info">
+                        <h3 className="login-title">
+                          {session.device} - {session.location} ({session.ipAddress})
+                        </h3>
+                        <span className="login-detail">
+                          {session.browser} -{" "}
+                          <span className={session.status === 'active' ? 'text-success' : ''}>
+                            {session.status === 'active' ? 'Active' : session.status}
+                          </span>
+                          <br />
+                          <small>Last active: {new Date(session.lastActive).toLocaleString()}</small>
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        className="btn btn-link btn-logout"
+                        onClick={() => handleRevokeSession(session._id)}
+                        title="Close this login session"
+                      >
+                        <i className="fa fa-times-circle text-danger" />
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       </div>
     </div>
-  </div>
   );
 };
 

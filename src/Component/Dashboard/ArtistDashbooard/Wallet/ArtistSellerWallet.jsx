@@ -146,7 +146,6 @@ const ArtistWallet = () => {
   const requestWithdrawal = async () => {
     if (!withdrawAmount || withdrawAmount < 100) return toast.error("Minimum withdrawal is ₹100");
     if (withdrawAmount > wallet.balance) return toast.error("Insufficient balance");
-
     if (withdrawMethod === "upi" && !withdrawDestination.upi) return toast.error("Please enter UPI ID");
     if (withdrawMethod === "bank") {
       const { name, accountNumber, ifsc, bankName, purpose } = withdrawDestination;

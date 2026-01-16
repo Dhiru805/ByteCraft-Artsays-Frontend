@@ -248,7 +248,7 @@ const SuccessPage = () => {
         {}
         <button
         onClick={() =>
-  navigate("/my-account")
+  navigate("/my-account/my-orders")
 }
           style={{
             padding: "14px 24px",

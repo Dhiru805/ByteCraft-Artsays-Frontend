@@ -10,6 +10,7 @@ import Switch from "react-switch";
 import getAPI from "../../../../../../api/getAPI";
 
 
+
 function BuyerRequest() {
   const navigate = useNavigate();
   const userType = useUserType();
@@ -89,7 +90,7 @@ function BuyerRequest() {
     formData.append('MinBudget', minBudget);
     formData.append('MaxBudget', maxBudget);
     formData.append('PaymentTerm', paymentTerm);
-    formData.append('ExpectedDeadline', expectedDeadline);
+    formData.append('EstimatedCreationDays', expectedDeadline);
     formData.append('Comments', comments);
 
     if (artistId) {

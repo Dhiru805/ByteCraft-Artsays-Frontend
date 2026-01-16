@@ -10,6 +10,7 @@ import ProductsSkeliton from "../../../Component/Skeleton/products/ProductsSkeli
 import "./product.css";
 
 const Product = () => {
+  const [searchText, setSearchText] = useState("");
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -53,7 +54,22 @@ const Product = () => {
   const itemsPerPage = 24;
   const [likedProducts, setLikedProducts] = useState({});
   const [expandedFilters, setExpandedFilters] = useState({});
+  const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
+
+  const fetchCart = async () => {
+    if (!userId || userType !== "Buyer") return;
+    try {
+      const res = await getAPI(`/api/cart/${userId}`);
+      setCartItems(res?.data?.items || []);
+    } catch (err) {
+      console.error("Error fetching cart:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchCart();
+  }, [userId, userType]);
 
   const toggleExpand = (category) => {
     setExpandedFilters((prev) => ({
@@ -123,15 +139,16 @@ const Product = () => {
       });
     }
 
-    result = result.filter((p) => p.sellingPrice <= filters.priceRange);
+    result = result.filter((p) => (p.finalPrice) <= filters.priceRange);
 
     if (filters.priceBuckets.length > 0) {
       result = result.filter((p) => {
+        const price = p.finalPrice;
         return filters.priceBuckets.some((bucket) => {
-          if (bucket === "Under ₹5,000") return p.sellingPrice < 5000;
-          if (bucket === "₹5,000 – ₹10,000") return p.sellingPrice >= 5000 && p.sellingPrice <= 10000;
-          if (bucket === "₹10,000 – ₹25,000") return p.sellingPrice > 10000 && p.sellingPrice <= 25000;
-          if (bucket === "Above ₹25,000") return p.sellingPrice > 25000;
+          if (bucket === "Under ₹5,000") return price < 5000;
+          if (bucket === "₹5,000 – ₹10,000") return price >= 5000 && price <= 10000;
+          if (bucket === "₹10,000 – ₹25,000") return price > 10000 && price <= 25000;
+          if (bucket === "Above ₹25,000") return price > 25000;
           return false;
         });
       });
@@ -218,9 +235,9 @@ const Product = () => {
     }
 
     if (filters.sortBy === "Price Low to High") {
-      result.sort((a, b) => a.sellingPrice - b.sellingPrice);
+      result.sort((a, b) => (a.finalPrice) - (b.finalPrice));
     } else if (filters.sortBy === "Price High to Low") {
-      result.sort((a, b) => b.sellingPrice - a.sellingPrice);
+      result.sort((a, b) => (b.finalPrice) - (a.finalPrice));
     } else if (filters.sortBy === "New Arrivals") {
       result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     } else if (filters.sortBy === "Trending") {
@@ -325,9 +342,11 @@ const Product = () => {
     try {
       await postAPI(`/api/cart/addcart/${productId}`, {}, true);
       toast.success("Added to Cart!");
+      fetchCart();
     } catch (err) {
       console.error("Add to cart error:", err);
-      toast.error("Failed to add to cart");
+      const errorMessage = err.response?.data?.message || "Failed to add to cart";
+      toast.error(errorMessage);
     }
   };
 
@@ -527,7 +546,7 @@ const Product = () => {
                 />
                 <div className="flex justify-between text-sm font-bold text-[#6F4D34] mb-6">
                   <span>₹295</span>
-                  <span>₹{filters.priceRange.toLocaleString()}</span>
+                  <span>₹{(filters.priceRange || 0).toLocaleString()}</span>
                 </div>
                 <div className="space-y-4">
                   {["Under ₹5,000", "₹5,000 – ₹10,000", "₹10,000 – ₹25,000", "Above ₹25,000"].map((bucket) => (
@@ -778,8 +797,9 @@ const Product = () => {
               {currentProducts.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
                   {currentProducts.map((product, index) => {
-                    const hasDiscount = product.sellingPrice < product.marketPrice;
-                    const discountPercent = hasDiscount ? Math.round(((product.marketPrice - product.sellingPrice) / product.marketPrice) * 100) : 0;
+                          const displayPrice = product.finalPrice;
+                    const hasDiscount = displayPrice < product.marketPrice;
+                    const discountPercent = hasDiscount ? Math.round(((product.marketPrice - displayPrice) / product.marketPrice) * 100) : 0;
 
                     return (
                       <div
@@ -878,33 +898,44 @@ const Product = () => {
                             <div className="flex items-center gap-2">
                               {hasDiscount && (
                                 <span className="text-lg text-gray-400 line-through font-bold">
-                                  ₹{product.marketPrice.toLocaleString()}
+                                  ₹{(product.marketPrice || 0).toLocaleString()}
                                 </span>
                               )}
-                              <span className="text-2xl font-black text-gray-900 tracking-tighter">
-                                ₹{product.sellingPrice.toLocaleString()}
-                              </span>
+                                  <span className="text-2xl font-black text-gray-900 tracking-tighter">
+                                    ₹{(product.finalPrice || 0).toLocaleString()}
+                                  </span>
                             </div>
 
                             
                           </div>
 
-                          {/* Action Buttons */}
-                          <div className="grid grid-cols-5 gap-2">
-                            <button
-                              onClick={(e) => { e.stopPropagation(); if (!ensureBuyer()) return; addToCart(product._id); }}
-                              disabled={!product.quantity || product.quantity === 0}
-                              className="col-span-1 h-[48px] bg-gray-50 text-gray-900 hover:text-[#ffffff] rounded-2xl hover:bg-[#6F4D34] hover:text-white transition-all duration-300 disabled:opacity-50 border border-gray-100 flex items-center justify-center group/cart shadow-sm"
-                              title="Add to Cart"
-                            >
-                              <ShoppingCart size={20} className="transition-transform group-hover/cart:scale-110" />
-                            </button>
+                            {/* Action Buttons */}
+                            <div className="grid grid-cols-5 gap-2">
+                              <button
+                                onClick={(e) => { e.stopPropagation(); if (!ensureBuyer()) return; addToCart(product._id); }}
+                                disabled={!product.quantity || product.quantity === 0}
+                                className="col-span-1 h-[48px] bg-gray-50 text-gray-900 hover:text-[#ffffff] rounded-2xl hover:bg-[#6F4D34] hover:text-white transition-all duration-300 disabled:opacity-50 border border-gray-100 flex items-center justify-center group/cart shadow-sm"
+                                title="Add to Cart"
+                              >
+                                <div className="relative">
+                                  <ShoppingCart size={20} className="transition-transform group-hover/cart:scale-110" />
+                                  {(() => {
+                                    const cartItem = cartItems.find((item) => item.product?._id === product._id);
+                                    return cartItem && cartItem.quantity > 0 ? (
+                                      <span className="absolute -top-3 -right-3 bg-red-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center shadow-lg border-2 border-white flex items-center justify-center">
+                                        {cartItem.quantity}
+                                      </span>
+                                    ) : null;
+                                  })()}
+                                </div>
+                              </button>
 
-                            <button
-                              onClick={(e) => {
+                              <button
+                              onClick={async (e) => {
                                 e.stopPropagation();
                                 if (!ensureBuyer()) return;
                                 if (!product.quantity || product.quantity === 0) return;
+                                await addToCart(product._id);
                                 navigate(`/my-account/check-out/${userId}?productId=${product._id}`);
                               }}
                               disabled={!product.quantity || product.quantity === 0}

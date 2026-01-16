@@ -34,8 +34,11 @@ const BankPaymentDetails = ({ userId }) => {
                     });
                 }
             } catch (error) {
-                console.error("Error fetching bank details:", error);
-                // toast.error("Failed to fetch bank details");
+                if (error.response && error.response.status === 404) {
+                    console.log("Bank details not found, using default state");
+                } else {
+                    console.error("Error fetching bank details:", error);
+                }
             }
         };
     
@@ -52,18 +55,21 @@ const BankPaymentDetails = ({ userId }) => {
     };
 
     const handleSubmit = async (event) => {
-        event.preventDefault();
+        if (event) event.preventDefault();
         try {
             const url = `/auth/updatebankdetails/${userId}`;
             const result = await putAPI(url, formData);
 
-            if (result) {
+            if (result && !result.hasError) {
                 toast.success('Bank details updated successfully');
+                return true;
             } else {
-                toast.error('Failed to update bank details');
+                toast.error(result?.message || 'Failed to update bank details');
+                return false;
             }
         } catch (error) {
             toast.error('Error updating bank details');
+            return false;
         }
     };
 
@@ -134,7 +140,7 @@ const BankPaymentDetails = ({ userId }) => {
                         <div className="form-group">
                             <label>Account Number <span style={{ color: 'red' }}>*</span></label>
                             <input 
-                                type="number" 
+                                type="text" 
                                 className="form-control" 
                                 name="accountNumber" 
                                 value={formData.accountNumber} 
@@ -158,17 +164,20 @@ const BankPaymentDetails = ({ userId }) => {
         <button type="button"
           className="btn btn-primary mx-2"
           disabled={loading}
-          onClick={(e) => {
-            if (!validateRequiredFields()) return;
+            onClick={(e) => {
+              if (!validateRequiredFields()) return;
 
-            setLoading(true);
-            Promise.resolve(handleSubmit(e))
-              .then(() => {
-                 window.location.reload();
-              })
-              .catch(console.error)
-              .finally(() => setLoading(false));
-          }}
+              setLoading(true);
+              handleSubmit(e)
+                .then((success) => {
+                   if (success) {
+                       window.location.reload();
+                   }
+                })
+                .catch(console.error)
+                .finally(() => setLoading(false));
+            }}
+
         >{loading ? "Updating..." : "Update"}</button>
 
             </form>

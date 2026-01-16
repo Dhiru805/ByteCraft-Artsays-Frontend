@@ -47,6 +47,12 @@ const NavBar = () => {
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(false);
   useEffect(() => {
+    if (!userId) {
+      setUser({});
+      setProfile({});
+      return;
+    }
+
     const fetchUserData = async () => {
       setLoading(true);
       try {
@@ -506,14 +512,14 @@ const NavBar = () => {
                           >
                             <i className="fas fa-bell me-2" /> Notification
                           </Link>
-                          <Link to={`//wishlist/${userId}`}>
-                            <div
-                              className="dropdown-item-h"
-                              onClick={handleUserIconClick}
-                            >
-                              <i className="fas fa-heart me-2" /> Wishlist
-                            </div>
-                          </Link>
+                            <Link to={`/my-account/wishlist/${userId}`}>
+                              <div
+                                className="dropdown-item-h"
+                                onClick={handleUserIconClick}
+                              >
+                                <i className="fas fa-heart me-2" /> Wishlist
+                              </div>
+                            </Link>
                           <div
                             className="dropdown-item-h"
                             onClick={handleSignOut}

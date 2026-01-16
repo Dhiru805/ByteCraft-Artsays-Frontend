@@ -4,7 +4,7 @@ import { format } from "date-fns";
 function ViewChallengeApplication() {
 
     const location = useLocation()
-    const application = location?.state.applicantion
+    const application = location?.state?.application;
 
     return (
         <div className="container-fluid">
@@ -123,7 +123,11 @@ function ViewChallengeApplication() {
                                     <label>Joined Date</label>
                                     <input
                                         className="form-control"
-                                        // value={application?.date ? format(new Date(application.date), "dd MMM yyyy") : ""}
+                                        value={
+                                            application?.joinedDate ? format(new Date(application.joinedDate), "dd MMM yyyy") :
+                                            application?.createdAt ? format(new Date(application.createdAt), "dd MMM yyyy") : 
+                                            ""
+                                        }
                                         disabled
                                     />
                                 </div>

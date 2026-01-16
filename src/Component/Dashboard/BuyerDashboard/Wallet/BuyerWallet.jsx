@@ -1,4 +1,295 @@
-import React, { useEffect, useState } from "react";
+// import React, { useEffect, useState } from "react";
+// import axios from "axios";
+// import { toast } from "react-toastify";
+
+// const BuyerWallet = () => {
+//   const [wallet, setWallet] = useState(null);
+//   const [transactions, setTransactions] = useState([]);
+//   const [amount, setAmount] = useState("");
+//   const [isLoading, setIsLoading] = useState(false);
+
+//   const API_URL = process.env.REACT_APP_API_URL;
+//   const RAZORPAY_KEY = process.env.REACT_APP_RAZORPAY_KEY;
+//   const userId = localStorage.getItem("userId");
+
+//   const fetchWallet = async () => {
+//     if (!userId) return;
+//     try {
+//       const res = await axios.get(`${API_URL}/api/wallet/${userId}`);
+//       setWallet(res.data);
+//     } catch (err) {
+//       if (err.response && err.response.status === 404) {
+//         const createRes = await axios.post(`${API_URL}/api/wallet/ensure/${userId}`);
+//         setWallet(createRes.data);
+//       } else console.error("Error fetching wallet:", err);
+//     }
+//   };
+
+//   const fetchTransactions = async () => {
+//     if (!userId) return;
+//     try {
+//       const res = await axios.get(`${API_URL}/api/wallet/transactions/${userId}`);
+//       setTransactions(res.data);
+//     } catch (err) {
+//       console.error("Error fetching transactions:", err);
+//     }
+//   };
+
+//   const loadRazorpayScript = () => new Promise((resolve) => {
+//     if (document.getElementById("razorpay-sdk")) return resolve(true);
+//     const script = document.createElement("script");
+//     script.id = "razorpay-sdk";
+//     script.src = "https://checkout.razorpay.com/v1/checkout.js";
+//     script.onload = () => resolve(true);
+//     script.onerror = () => resolve(false);
+//     document.body.appendChild(script);
+//   });
+
+//   const addMoneyDirect = async () => {
+//     if (!amount) return alert("Enter deposit amount");
+//     setIsLoading(true);
+//     try {
+//       const res = await axios.post(`${API_URL}/api/wallet/add-money/${userId}`, { amount: Number(amount) });
+//       setWallet(res.data.wallet);
+//       setTransactions([res.data.transaction, ...transactions]);
+//       setAmount("");
+//       toast.success("Wallet credited");
+//     } catch (err) {
+//       console.error("Error adding money:", err);
+//       toast.error("Failed to add money");
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   const addMoneyViaRazorpay = async () => {
+//     if (!amount) return alert("Enter deposit amount");
+
+//     if (!RAZORPAY_KEY) {
+//       toast.warning("Razorpay key not configured. Using test mode...");
+//       setTimeout(async () => {
+//         await fetchWallet();
+//         await fetchTransactions();
+//         toast.success("Test payment completed!");
+//       }, 1000);
+//       return;
+//     }
+
+//     const ok = await loadRazorpayScript();
+//     if (!ok) return toast.error("Failed to load payment SDK");
+//     try {
+//       const init = await axios.post(`${API_URL}/api/wallet/add-money-initiate/${userId}`, { amount: Number(amount) });
+//       const { id: orderId, amount: razorpayAmount, currency } = init.data;
+
+//       const options = {
+//         key: RAZORPAY_KEY,
+//         amount: razorpayAmount,
+//         currency: currency || "INR",
+//         name: "Artsays Wallet",
+//         description: "Add Money to Wallet",
+//         order_id: orderId,
+//         handler: async function (response) {
+//           toast.success("Payment successful! Updating wallet...");
+//           setTimeout(async () => {
+//             await fetchWallet();
+//             await fetchTransactions();
+//           }, 2000);
+//         },
+//         prefill: {
+//           name: "Artsays User",
+//           email: "user@artsays.com"
+//         },
+//         theme: { color: "#121212" },
+//         modal: {
+//           ondismiss: function() {
+//             toast.info("Payment cancelled");
+//           }
+//         }
+//       };
+
+//       const rz = new window.Razorpay(options);
+//       rz.on('payment.failed', function (response) {
+//         toast.error("Payment failed: " + response.error.description);
+//       });
+//       rz.open();
+//     } catch (err) {
+//       console.error("Error initiating payment:", err);
+//       toast.error("Failed to start payment: " + (err.response?.data?.error || err.message));
+//     }
+//   };
+
+//   useEffect(() => {
+//     if (!userId) return;
+//     fetchWallet();
+//     fetchTransactions();
+//   }, [userId]);
+
+//   if (!wallet) return <div>Loading...</div>;
+
+//   return (
+//     <div className="container-fluid">
+//       <div className="block-header mb-4">
+//         <h2>My Wallet</h2>
+//       </div>
+
+//       {/* Balance Cards */}
+//       <div className="row clearfix row-deck mb-4">
+//         <div className="col-lg-4 col-md-6 col-sm-6">
+//           <div className="card top_widget primary-bg">
+//             <div className="body">
+//               <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-rupee"></i></div>
+//               <div className="content text-light">
+//                 <div className="text mb-2 text-uppercase">Available Balance</div>
+//                 <h4 className="number mb-0">₹{wallet.balance}</h4>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+
+//         <div className="col-lg-4 col-md-6 col-sm-6">
+//           <div className="card top_widget secondary-bg">
+//             <div className="body">
+//               <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-shopping-basket"></i></div>
+//               <div className="content text-light">
+//                 <div className="text mb-2 text-uppercase">Art Coins</div>
+//                 <h4 className="number mb-0">{wallet.artCoins}</h4>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+
+//         <div className="col-lg-4 col-md-6 col-sm-6">
+//           <div className="card top_widget bg-dark">
+//             <div className="body">
+//               <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-history"></i></div>
+//               <div className="content text-light">
+//                 <div className="text mb-2 text-uppercase">Total Transactions</div>
+//                 <h4 className="number mb-0">{transactions.length}</h4>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Add Money Section */}
+//       <div className="row clearfix mb-4">
+//         <div className="col-lg-6 col-md-12">
+//           <div className="card">
+//             <div className="header">
+//               <h2>Add Money to Wallet</h2>
+//             </div>
+//             <div className="body">
+//               <div className="form-group">
+//                 <label>Amount (₹)</label>
+//                 <input
+//                   type="number"
+//                   className="form-control"
+//                   placeholder="Enter amount"
+//                   value={amount}
+//                   onChange={e => setAmount(e.target.value)}
+//                   min="1"
+//                 />
+//               </div>
+//               <div className="d-flex gap-2">
+//                 <button 
+//                   disabled={isLoading} 
+//                   className="btn btn-primary" 
+//                   onClick={addMoneyDirect}
+//                 >
+//                   Quick Add
+//                 </button>
+//                 <button 
+//                   disabled={isLoading} 
+//                   className="btn btn-success" 
+//                   onClick={addMoneyViaRazorpay}
+//                 >
+//                   Pay via Razorpay
+//                 </button>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+
+//         <div className="col-lg-6 col-md-12">
+//           <div className="card">
+//             <div className="header">
+//               <h2>Wallet Benefits</h2>
+//             </div>
+//             <div className="body">
+//               <ul className="list-unstyled">
+//                 <li><i className="fa fa-check text-success"></i> Instant payments for purchases</li>
+//                 <li><i className="fa fa-check text-success"></i> Secure bidding with wallet balance</li>
+//                 <li><i className="fa fa-check text-success"></i> Earn Art Coins with every transaction</li>
+//                 <li><i className="fa fa-check text-success"></i> Automatic refunds for failed bids</li>
+//                 <li><i className="fa fa-check text-success"></i> No transaction fees</li>
+//               </ul>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Recent Transactions */}
+//       <div className="row clearfix">
+//         <div className="col-sm-12">
+//           <div className="card">
+//             <div className="header">
+//               <h2>Recent Transactions</h2>
+//             </div>
+//             <div className="body table-responsive">
+//               <table className="table table-hover mb-0">
+//                 <thead>
+//                   <tr>
+//                     <th>#</th>
+//                     <th>Type</th>
+//                     <th>Amount</th>
+//                     <th>Purpose</th>
+//                     <th>Status</th>
+//                     <th>Date</th>
+//                   </tr>
+//                 </thead>
+//                 <tbody>
+//                   {transactions.slice(0, 10).map((txn, idx) => (
+//                     <tr key={txn._id}>
+//                       <td>{idx + 1}</td>
+//                       <td>
+//                         <span className={`badge ${txn.type === 'credit' ? 'badge-success' : 'badge-danger'}`}>
+//                           {txn.type}
+//                         </span>
+//                       </td>
+//                       <td>₹{txn.amount}</td>
+//                       <td>{txn.purpose}</td>
+//                       <td>
+//                         <span className={`badge ${
+//                           txn.status === 'success' ? 'badge-success' : 
+//                           txn.status === 'pending' ? 'badge-warning' : 'badge-danger'
+//                         }`}>
+//                           {txn.status}
+//                         </span>
+//                       </td>
+//                       <td>{new Date(txn.createdAt).toLocaleString()}</td>
+//                     </tr>
+//                   ))}
+//                   {transactions.length === 0 && (
+//                     <tr>
+//                       <td colSpan="6" className="text-center">No transactions yet</td>
+//                     </tr>
+//                   )}
+//                 </tbody>
+//               </table>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default BuyerWallet;
+
+
+
+
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import BuyerWalletSkeleton from "../../../Skeleton/wallet/BuyerWalletSkeleton";
@@ -20,6 +311,7 @@ const BuyerWallet = () => {
   const [referralCodeInput, setReferralCodeInput] = useState("");
   const [isApplyingReferral, setIsApplyingReferral] = useState(false);
 
+  const transactionsRef = useRef(null);
 
   const API_URL = process.env.REACT_APP_API_URL;
     const RAZORPAY_KEY = process.env.REACT_APP_RAZORPAY_KEY;
@@ -164,64 +456,194 @@ const BuyerWallet = () => {
     }
   };
 
-  const addMoneyViaRazorpay = async () => {
-    if (!amount || Number(amount) <= 0) return alert("Enter deposit amount");
+  // const addMoneyViaRazorpay = async () => {
+  //   if (!amount || Number(amount) <= 0) return alert("Enter deposit amount");
 
+  //   if (!RAZORPAY_KEY) {
+  //     toast.warning("Razorpay key not configured. Using test mode...");
+  //     setTimeout(async () => {
+  //       await fetchWallet();
+  //       await fetchTransactions();
+  //       toast.success("Test payment completed!");
+  //     }, 1000);
+  //     return;
+  //   }
+
+  //   const ok = await loadRazorpayScript();
+  //   if (!ok) return toast.error("Failed to load payment SDK");
+
+  //   try {
+  //     const init = await axios.post(`${API_URL}/api/wallet/add-money-initiate/${userId}`, { amount: Number(amount) });
+  //     const { id: orderId, amount: razorpayAmount, currency } = init.data;
+
+  //     const options = {
+  //       key: RAZORPAY_KEY,
+  //       amount: razorpayAmount,
+  //       currency: currency || "INR",
+  //       name: "Artsays Wallet",
+  //       description: "Add Money to Wallet",
+  //       order_id: orderId,
+  //       handler: async function (response) {
+  //         toast.success("Payment successful! Updating wallet...");
+  //         setTimeout(async () => {
+  //           await fetchWallet();
+  //           await fetchTransactions();
+  //         }, 1500);
+  //       },
+  //       prefill: { name: "Artsays User", email: "user@artsays.com" },
+  //       theme: { color: "#121212" },
+  //       modal: { ondismiss: function () { toast.info("Payment cancelled"); } }
+  //     };
+
+  //     const rz = new window.Razorpay(options);
+  //     rz.on("payment.failed", function (response) {
+  //       toast.error("Payment failed: " + (response.error?.description || "Unknown error"));
+  //     });
+  //     rz.open();
+  //   } catch (err) {
+  //     console.error("Error initiating payment:", err);
+  //     toast.error("Failed to start payment: " + (err.response?.data?.error || err.message));
+  //   }
+  // };
+const addMoneyViaRazorpay = async () => {
+  if (!amount || Number(amount) <= 0) {
+    toast.error("Enter a valid amount");
+    return;
+  }
+
+  setIsLoading(true);
+
+  try {
+    // 🔹 TEST MODE (NO RAZORPAY KEY)
     if (!RAZORPAY_KEY) {
-      toast.warning("Razorpay key not configured. Using test mode...");
-      setTimeout(async () => {
-        await fetchWallet();
-        await fetchTransactions();
-        toast.success("Test payment completed!");
-      }, 1000);
+      const res = await axios.post(
+        `${API_URL}/api/wallet/add-money/${userId}`,
+        { amount: Number(amount), source: "test" }
+      );
+
+      setWallet(res.data.wallet);
+      setTransactions(prev => [res.data.transaction, ...prev]);
+      setAmount("");
+
+      toast.success("Payment successful! Wallet credited.");
       return;
     }
 
+    // 🔹 REAL RAZORPAY FLOW
     const ok = await loadRazorpayScript();
-    if (!ok) return toast.error("Failed to load payment SDK");
-
-    try {
-      const init = await axios.post(`${API_URL}/api/wallet/add-money-initiate/${userId}`, { amount: Number(amount) });
-      const { id: orderId, amount: razorpayAmount, currency } = init.data;
-
-      const options = {
-        key: RAZORPAY_KEY,
-        amount: razorpayAmount,
-        currency: currency || "INR",
-        name: "Artsays Wallet",
-        description: "Add Money to Wallet",
-        order_id: orderId,
-        handler: async function (response) {
-          toast.success("Payment successful! Updating wallet...");
-          setTimeout(async () => {
-            await fetchWallet();
-            await fetchTransactions();
-          }, 1500);
-        },
-        prefill: { name: "Artsays User", email: "user@artsays.com" },
-        theme: { color: "#121212" },
-        modal: { ondismiss: function () { toast.info("Payment cancelled"); } }
-      };
-
-      const rz = new window.Razorpay(options);
-      rz.on("payment.failed", function (response) {
-        toast.error("Payment failed: " + (response.error?.description || "Unknown error"));
-      });
-      rz.open();
-    } catch (err) {
-      console.error("Error initiating payment:", err);
-      toast.error("Failed to start payment: " + (err.response?.data?.error || err.message));
+    if (!ok) {
+      toast.error("Unable to load payment gateway");
+      return;
     }
-  };
+
+    const init = await axios.post(
+      `${API_URL}/api/wallet/add-money-initiate/${userId}`,
+      { amount: Number(amount) }
+    );
+
+    const { id: orderId, amount: razorpayAmount, currency } = init.data;
+
+    const options = {
+      key: RAZORPAY_KEY,
+      amount: razorpayAmount,
+      currency: currency || "INR",
+      name: "Artsays Wallet",
+      description: "Add Money to Wallet",
+      order_id: orderId,
+      handler: async () => {
+        toast.success("Payment successful!");
+
+        await fetchWallet();
+        await fetchTransactions();
+      },
+      modal: {
+        ondismiss: () => toast.info("Payment cancelled")
+      }
+    };
+
+    const rz = new window.Razorpay(options);
+    rz.on("payment.failed", () => {
+      toast.error("Payment failed");
+    });
+    rz.open();
+  } catch (err) {
+    console.error(err);
+    toast.error("Payment failed. Please try again.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+  const isValidUpi = (upi) => {
+  const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
+  return upiRegex.test(upi);
+};
+const isValidName = (name) => {
+  return /^[A-Za-z\s]{3,50}$/.test(name);
+};
+
+const isValidAccountNumber = (acc) => {
+  return /^[0-9]{9,18}$/.test(acc);
+};
+
+const isValidIFSC = (ifsc) => {
+  return /^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc);
+};
+
+const isValidText = (text) => {
+  return text && text.trim().length >= 3;
+};
+
 
   const requestWithdrawal = async () => {
     if (!withdrawAmount || Number(withdrawAmount) <= 0) return alert("Enter amount to withdraw");
 
-    if (withdrawMethod === "upi" && !withdrawDestination.upi) return alert("Enter UPI ID");
+
+    if (withdrawMethod === "upi") {
+  if (!withdrawDestination.upi) {
+    toast.error("Please enter UPI ID");
+    return;
+  }
+
+  if (!isValidUpi(withdrawDestination.upi)) {
+    toast.error("Invalid UPI ID format (example: name@bank)");
+    return;
+  }
+}
+
+    // if (withdrawMethod === "bank") {
+    //   const { name, accountNumber, ifsc, bankName, purpose } = withdrawDestination;
+    //   if (!name || !accountNumber || !ifsc || !bankName || !purpose) return alert("Fill all bank transfer details");
+    // }
     if (withdrawMethod === "bank") {
-      const { name, accountNumber, ifsc, bankName, purpose } = withdrawDestination;
-      if (!name || !accountNumber || !ifsc || !bankName || !purpose) return alert("Fill all bank transfer details");
-    }
+  const { name, accountNumber, ifsc, bankName, purpose } = withdrawDestination;
+
+  if (!isValidName(name)) {
+    toast.error("Enter a valid beneficiary name (letters only)");
+    return;
+  }
+
+  if (!isValidAccountNumber(accountNumber)) {
+    toast.error("Enter a valid account number (9–18 digits)");
+    return;
+  }
+
+  if (!isValidIFSC(ifsc)) {
+    toast.error("Enter a valid IFSC code (example: SBIN0001234)");
+    return;
+  }
+
+  if (!isValidText(bankName)) {
+    toast.error("Enter a valid bank name and branch");
+    return;
+  }
+
+  if (!isValidText(purpose)) {
+    toast.error("Purpose of transfer is required");
+    return;
+  }
+}
+
 
     if (Number(withdrawAmount) > (wallet?.balance || 0)) return alert("Insufficient balance");
     if (Number(withdrawAmount) < 100) return alert("Minimum withdrawal amount is ₹100");
@@ -324,6 +746,19 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
   }, [transactions.length, pageSize, totalPages]);
+ useEffect(() => {
+  if (transactionsRef.current) {
+    const yOffset = -20;
+    const y =
+      transactionsRef.current.getBoundingClientRect().top +
+      window.pageYOffset +
+      yOffset;
+
+    window.scrollTo({ top: y, behavior: "smooth" });
+  }
+}, [page]);
+
+
 
     const showReferral = referralSettings?.isActive || userType === "Super-Admin";
 

@@ -15,39 +15,67 @@ const ExhibitionTable = () => {
   const [selectedExhibitionToDelete, setSelectedExhibitionToDelete] = useState(null);
 const[loading,setLoading]=useState(true);
 
-  useEffect(() => {
-    const fetchAllExhibitions = async () => {
-      try {
-        const userType = localStorage.getItem("userType");
-        if (!userType) {
-          toast.error("User type not found. Please log in again.");
-          navigate("/login");
-          return;
-        }
 
-        const superAdminRes = await getAPI(`/api/get-exhibition/${userType}`);
-        const superAdminData = Array.isArray(superAdminRes.data.data) ? superAdminRes.data.data : [];
+  // useEffect(() => {
+  //   const fetchAllExhibitions = async () => {
+  //     try {
+  //       const userType = localStorage.getItem("userType");
+  //       if (!userType) {
+  //         toast.error("User type not found. Please log in again.");
+  //         navigate("/login");
+  //         return;
+  //       }
+  //  console.log("User Type:", userType);
+      
+  //       const superAdminRes = await getAPI(`/api/get-exhibition/${userType}`);
+  //       console.log("Super Admin Response:", superAdminRes.data);
+  //       const superAdminData = Array.isArray(superAdminRes.data.data) ? superAdminRes.data.data : [];
 
-        const artistSellerRes = await getAPI(`/api/get-exhibition-artistseller`);
-        const artistSellerData = Array.isArray(artistSellerRes.data.data) ? artistSellerRes.data.data : [];
-        const approvedArtistSellerExhibitions = artistSellerData.filter(
-          exhibition => exhibition.status === "Approved"
-        );
+  //       const artistSellerRes = await getAPI(`/api/get-exhibition-artistseller`);
+  //       const artistSellerData = Array.isArray(artistSellerRes.data.data) ? artistSellerRes.data.data : [];
+  //       const approvedArtistSellerExhibitions = artistSellerData.filter(
+  //         exhibition => exhibition.status === "Approved"
+  //       );
 
-        const combinedExhibitions = [...superAdminData, ...approvedArtistSellerExhibitions];
+  //       const combinedExhibitions = [...superAdminData, ...approvedArtistSellerExhibitions];
 
-        setExhibitions(combinedExhibitions);
-      } catch (error) {
-        console.error("Error fetching exhibitions:", error);
-        toast.error(error.response?.data?.message || "Failed to fetch exhibitions");
-        setExhibitions([]);
-      }finally{
-        setLoading(false)
-      }
-    };
+  //       setExhibitions(combinedExhibitions);
+  //     } catch (error) {
+  //       console.error("Error fetching exhibitions:", error);
+  //       toast.error(error.response?.data?.message || "Failed to fetch exhibitions");
+  //       setExhibitions([]);
+  //     }finally{
+  //       setLoading(false)
+  //     }
+  //   };
+   
+  //   fetchAllExhibitions();
+  // }, []);
+useEffect(() => {
+  const fetchAllExhibitions = async () => {
+    try {
+      // Fetch all artist/seller exhibitions
+      const artistSellerRes = await getAPI(`/api/get-exhibition-artistseller`);
 
-    fetchAllExhibitions();
-  }, []);
+      // Make sure data is an array
+      const artistSellerData = Array.isArray(artistSellerRes.data.data) ? artistSellerRes.data.data : [];
+
+      // Only show approved exhibitions
+      const approvedExhibitions = artistSellerData.filter(ex => ex.status === "Approved");
+
+      // Set state
+      setExhibitions(approvedExhibitions);
+    } catch (error) {
+      console.error("Error fetching exhibitions:", error);
+      toast.error(error.response?.data?.message || "Failed to fetch exhibitions");
+      setExhibitions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchAllExhibitions();
+}, []);
 
 
   const handleDeleteCancel = () => {

@@ -519,14 +519,15 @@ const AddressModal = ({ isOpen, onClose, productId }) => {
         )}
 
         { }
-        {isDeleteDialogOpen && (
-          <ConfirmationDialog
-            onClose={handleDeleteCancel}
-            deleteType="shippingaddress"
-            id={selectedAddressId}
-            onDeleted={handleDeleteConfirmed}
-          />
-        )}
+       {isDeleteDialogOpen && (
+  <ConfirmationDialog
+    onClose={handleDeleteCancel}
+    deleteType="address"
+    id={selectedAddressId}
+    onDeleted={handleDeleteConfirmed}
+  />
+)}
+
 
         { }
         <SetDefaultConfirmationDialog

@@ -5,6 +5,7 @@ import { Star, Heart, MapPin, ArrowRight, ShoppingCart, Zap, ChevronLeft, Chevro
 import { HiMiniPercentBadge } from "react-icons/hi2";
 import getAPI from "../../api/getAPI";
 import postAPI from "../../api/postAPI";
+import deleteAPI from "../../api/deleteAPI";
 import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
 import { useAuth } from "../../AuthContext";
@@ -50,9 +51,41 @@ const ProductDetails = () => {
   const [pinCode, setPinCode] = useState("");
   const [address, setAddress] = useState("");
   const [activeTab, setActiveTab] = useState("description");
-  const [offerIndex, setOfferIndex] = useState(0);
+    const [offerIndex, setOfferIndex] = useState(0);
+    const [previewImage, setPreviewImage] = useState(null);
+    const [likedProducts, setLikedProducts] = useState({});
 
-  const navigateToArtistProfile = (artist) => {
+    const handleShare = () => {
+      navigator.clipboard.writeText(window.location.href);
+      toast.success("Link copied to clipboard!");
+    };
+
+    const handleWishlist = async (productId, e) => {
+      if (e) e.stopPropagation();
+      if (!ensureBuyer()) return;
+
+      const isLiked = likedProducts[productId];
+
+      try {
+        if (isLiked) {
+          await deleteAPI("/api/wishlist/remove", { params: { userId, productId } });
+          toast.warn("Removed from Wishlist");
+        } else {
+          await postAPI("/api/wishlist/add", { userId, productId });
+          toast.success("Added to Wishlist");
+        }
+
+        setLikedProducts((prev) => ({
+          ...prev,
+          [productId]: !isLiked,
+        }));
+      } catch (err) {
+        console.error("Wishlist error:", err);
+      }
+    };
+
+    const navigateToArtistProfile = (artist) => {
+
     if (!artist) return;
     const profileSlug = artist.username || `${artist.name}_${artist.lastName}_${artist._id}`;
     navigate(`/artsays-community/profile/${profileSlug}`, { state: { userId: artist._id } });
@@ -158,10 +191,29 @@ const ProductDetails = () => {
         console.error("Failed to load categories:", err);
       }
     };
-    fetchCategories();
-  }, []);
+      fetchCategories();
+    }, []);
 
-  const mainCategoryName = useMemo(() => 
+    useEffect(() => {
+      const fetchWishlist = async () => {
+        if (!userId) return;
+        try {
+          const res = await getAPI(`/api/wishlist/${userId}`, {}, true, false);
+          const wishlistArray = res?.data?.wishlist || [];
+          const obj = {};
+          wishlistArray.forEach((item) => {
+            obj[item._id] = true;
+          });
+          setLikedProducts(obj);
+        } catch (error) {
+          console.log("Error loading wishlist:", error);
+        }
+      };
+      fetchWishlist();
+    }, [userId]);
+
+    const mainCategoryName = useMemo(() => 
+
     categoryData.mainCategories.find((c) => c && String(c._id) === String(product?.mainCategory))?.mainCategoryName || "N/A"
   , [product, categoryData]);
 
@@ -203,7 +255,8 @@ const ProductDetails = () => {
     return Math.round(((market - sell) / market) * 100);
   };
 
-  const discountPercent = calculateDiscount(product?.sellingPrice, product?.marketPrice);
+  const displayPrice = product?.finalPrice;
+  const discountPercent = calculateDiscount(displayPrice, product?.marketPrice);
   const ratingValue = Number(product?.averageRating ?? 0);
   const reviewCount = Number(product?.reviewCount ?? 0);
 
@@ -215,6 +268,32 @@ const ProductDetails = () => {
       <Helmet>
         <title>{product.productName} | Artsays</title>
         <meta name="description" content={product.description?.slice(0, 150)} />
+        <meta property="og:title" content={`${product.productName} | Artsays`} />
+        <meta property="og:description" content={product.description?.slice(0, 150)} />
+        <meta property="og:image" content={images[0]} />
+        <meta property="og:url" content={window.location.href} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": product.productName,
+            "image": images[0],
+            "description": product.description,
+            "brand": {
+              "@type": "Brand",
+              "name": "Artsays"
+            },
+            "offers": {
+              "@type": "Offer",
+              "url": window.location.href,
+              "priceCurrency": "INR",
+                "price": product.finalPrice,
+              "availability": product.quantity > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+              "itemCondition": "https://schema.org/NewCondition"
+            }
+          })}
+        </script>
       </Helmet>
 
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-6">
@@ -229,17 +308,21 @@ const ProductDetails = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Left Column: Gallery */}
-          <div className="lg:col-span-7 space-y-6">
-            <ProductGallery 
-              images={images} 
-              product={product} 
-              username={product.userId?.username || "Artist"}
-              imageBaseURL={imageBaseURL}
-              navigate={navigate}
-              navigateToArtistProfile={navigateToArtistProfile}
-              resolveMediaUrl={resolveMediaUrl}
-            />
-          </div>
+            <div className="lg:col-span-7 space-y-6">
+              <ProductGallery 
+                images={images} 
+                product={product} 
+                username={product.userId?.username || "Artist"}
+                imageBaseURL={imageBaseURL}
+                navigate={navigate}
+                navigateToArtistProfile={navigateToArtistProfile}
+                resolveMediaUrl={resolveMediaUrl}
+                handleShare={handleShare}
+                handleWishlist={handleWishlist}
+                likedProducts={likedProducts}
+              />
+            </div>
+
 
           {/* Right Column: Info & Purchase */}
           <div className="lg:col-span-5">
@@ -372,20 +455,45 @@ const ProductDetails = () => {
               </div>
             )}
 
-            {activeTab === "reviews" && <ReviewsList reviews={productReviews} resolveMediaUrl={resolveMediaUrl} />}
+              {activeTab === "reviews" && <ReviewsList reviews={productReviews} resolveMediaUrl={resolveMediaUrl} onImageClick={setPreviewImage} />}
+            </div>
           </div>
         </div>
+
+        {/* Image Preview Modal */}
+        {previewImage && (
+          <div 
+            className="fixed inset-0 z-[2000] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 md:p-10 cursor-zoom-out"
+            onClick={() => setPreviewImage(null)}
+          >
+            <div className="relative max-w-5xl max-h-full flex items-center justify-center">
+              <button 
+                onClick={(e) => { e.stopPropagation(); setPreviewImage(null); }} 
+                className="absolute -top-12 right-0 md:-right-12 w-10 h-10 bg-white/10 text-white rounded-full hover:bg-white/20 transition-all flex items-center justify-center z-50"
+              >
+                ✕
+              </button>
+              <img 
+                src={previewImage} 
+                alt="Preview" 
+                className="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl animate-in zoom-in duration-300"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+          </div>
+        )}
       </div>
-    </div>
-  );
-};
+    );
+  };
 
 /* --- Sub-Components --- */
 
-const ProductGallery = ({ images, product, username, imageBaseURL, navigate, navigateToArtistProfile, resolveMediaUrl }) => {
+const ProductGallery = ({ images, product, username, imageBaseURL, navigate, navigateToArtistProfile, resolveMediaUrl, handleShare, handleWishlist, likedProducts }) => {
   const [selected, setSelected] = useState(images[0]);
   const [showRoom, setShowRoom] = useState(false);
   const [roomBg, setRoomBg] = useState("/artimages/viewintheroom.jpg");
+  const [zoomStyle, setZoomStyle] = useState({ transformOrigin: 'center', transform: 'scale(1)' });
+  const [isZoomed, setIsZoomed] = useState(false);
   
   const roomBgs = ["/artimages/viewintheroom.jpg", "/artimages/wall3.jpg", "/artimages/wall4.webp"];
 
@@ -395,10 +503,32 @@ const ProductGallery = ({ images, product, username, imageBaseURL, navigate, nav
     }
   }, [images]);
 
+  const handleMouseMove = (e) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setZoomStyle({
+      transformOrigin: `${x}% ${y}%`,
+      transform: 'scale(2.5)',
+    });
+    setIsZoomed(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsZoomed(false);
+  };
+
   return (
     <div className="space-y-4">
       <div className="relative aspect-square md:aspect-[4/3] bg-white rounded-[40px] overflow-hidden border border-gray-100 shadow-sm group">
-        <img src={selected} alt="Product" className="w-full h-full object-contain bg-[#F8F9FA] group-hover:scale-105 transition-transform duration-700" />
+        <img 
+          src={selected} 
+          alt="Product" 
+          className={`w-full h-full object-contain bg-[#F8F9FA] transition-transform duration-200 ease-out cursor-zoom-in ${!isZoomed ? 'group-hover:scale-105' : ''}`} 
+          style={isZoomed ? zoomStyle : {}}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+        />
         
         {product.iframeLink && (
           <button 
@@ -409,14 +539,21 @@ const ProductGallery = ({ images, product, username, imageBaseURL, navigate, nav
           </button>
         )}
 
-        <div className="absolute top-6 right-6 flex flex-col gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button className="w-12 h-12 bg-white rounded-2xl shadow-xl flex items-center justify-center text-gray-600 hover:text-[#6F4D34] transition-all">
-            <Share2 size={20} />
-          </button>
-          <button className="w-12 h-12 bg-white rounded-2xl shadow-xl flex items-center justify-center text-gray-600 hover:text-red-500 transition-all">
-            <Heart size={20} />
-          </button>
-        </div>
+          <div className="absolute top-6 right-6 flex flex-col gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button 
+              onClick={(e) => { e.stopPropagation(); handleShare(); }}
+              className="w-12 h-12 bg-white rounded-2xl shadow-xl flex items-center justify-center text-gray-600 hover:text-[#6F4D34] transition-all"
+            >
+              <Share2 size={20} />
+            </button>
+            <button 
+              onClick={(e) => { e.stopPropagation(); handleWishlist(product._id, e); }}
+              className={`w-12 h-12 bg-white rounded-2xl shadow-xl flex items-center justify-center transition-all ${likedProducts[product._id] ? "text-red-500" : "text-gray-600 hover:text-red-500"}`}
+            >
+              <Heart size={20} fill={likedProducts[product._id] ? "currentColor" : "none"} />
+            </button>
+          </div>
+
 
         <button 
           onClick={() => setShowRoom(true)}
@@ -538,10 +675,10 @@ const ProductInfo = ({ product, discountPercent, ratingValue, reviewCount, artis
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <p className="text-[10px] font-black text-[#6F4D34] uppercase tracking-[0.2em]">Collector's Investment</p>
-              <div className="flex items-baseline gap-2">
-                <span className="text-5xl font-black text-gray-900 tracking-tighter">₹ {product.sellingPrice?.toLocaleString()}</span>
-                <span className="text-sm font-bold text-gray-400">INR</span>
-              </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-5xl font-black text-gray-900 tracking-tighter">₹ {(product.finalPrice)?.toLocaleString()}</span>
+                  <span className="text-sm font-bold text-gray-400">INR</span>
+                </div>
             </div>
             
             {discountPercent > 0 && (
@@ -929,7 +1066,7 @@ const DetailsGrid = ({ product, categoryInfo, imageBaseURL, resolveMediaUrl }) =
   );
 };
 
-const ReviewsList = ({ reviews, resolveMediaUrl }) => {
+const ReviewsList = ({ reviews, resolveMediaUrl, onImageClick }) => {
   if (reviews.length === 0) return (
     <div className="text-center py-12 bg-gray-50 rounded-[32px] border border-dashed border-gray-200">
       <MessageCircle size={48} className="mx-auto text-gray-300 mb-4" />
@@ -962,7 +1099,13 @@ const ReviewsList = ({ reviews, resolveMediaUrl }) => {
           {review.photos?.length > 0 && (
             <div className="flex gap-2">
               {review.photos.map((photo, k) => (
-                <img key={k} src={resolveMediaUrl(photo)} className="w-16 h-16 rounded-xl object-cover border border-gray-100" alt="Review" />
+                <img 
+                  key={k} 
+                  src={resolveMediaUrl(photo)} 
+                  className="w-16 h-16 rounded-xl object-cover border border-gray-100 cursor-pointer hover:border-[#6F4D34]/50 hover:scale-105 transition-all" 
+                  alt="Review" 
+                  onClick={() => onImageClick?.(resolveMediaUrl(photo))}
+                />
               ))}
             </div>
           )}

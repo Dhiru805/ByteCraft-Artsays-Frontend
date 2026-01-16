@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { MdHistory } from "react-icons/md";
 import { LuArchive, LuSquareUserRound } from "react-icons/lu";
 import {
   FaBookmark,
@@ -16,8 +17,9 @@ import { BiUserPlus } from "react-icons/bi";
 import getAPI from "../../../../src/api/getAPI";
 import postAPI from "../../../../src/api/postAPI";
 import putAPI from "../../../../src/api/putAPI";
+import deleteAPI from "../../../../src/api/deleteAPI";
 import { toast } from "react-toastify";
-import { FaCheckCircle } from "react-icons/fa";
+import { FaCheckCircle, FaGlobe, FaLock, FaEye, FaThumbsUp, FaComment, FaCalendarAlt, FaPlay, FaEllipsisH } from "react-icons/fa";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 import { Helmet } from "react-helmet-async";
 
@@ -148,6 +150,7 @@ const Profile = ({ shareprofileid }) => {
   const [selectedReason, setSelectedReason] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [copyMsg, setCopyMsg] = useState("");
   const [sharePost, setSharePost] = useState(false);
   const [shareProfile, setShareProfile] = useState(false);
@@ -157,6 +160,7 @@ const Profile = ({ shareprofileid }) => {
   const [tipAmount, setTipAmount] = useState(40);
   const [tipSuccess, setTipSuccess] = useState(false);
   const [activeSection, setActiveSection] = useState(null);
+  const [showUnfollowConfirm, setShowUnfollowConfirm] = useState(false);
   const [activeIndex, setActiveIndex] = useState(null);
   const productPosts =
     profile?.posts?.filter(
@@ -203,6 +207,9 @@ const Profile = ({ shareprofileid }) => {
   const [onSave, setOnSave] = useState(false);
   const [onItem, setOnItem] = useState(false);
   const [onTag, setOnTag] = useState(false);
+  const [onLiveHistory, setOnLiveHistory] = useState(false);
+  const [liveHistory, setLiveHistory] = useState([]);
+  const [liveHistoryLoading, setLiveHistoryLoading] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [follow, setFollow] = useState(false);
   const [suggestionOn, setSuggestionOn] = useState(false);
@@ -256,7 +263,7 @@ const Profile = ({ shareprofileid }) => {
   }, [menuOpenId, showMenu, activeIndex]);
 
   useEffect(() => {
-    const shouldLockScroll = activePost || reportPopupOpen || tipPopupOpen;
+    const shouldLockScroll = activePost || reportPopupOpen || tipPopupOpen || deleteConfirmId;
 
     document.body.style.overflow = shouldLockScroll ? "hidden" : "auto";
 
@@ -470,6 +477,29 @@ const Profile = ({ shareprofileid }) => {
     }
   }, [viewedUserId, profile]);
 
+  useEffect(() => {
+    const fetchLiveHistory = async () => {
+      if (onLiveHistory && viewedUserId) {
+        setLiveHistoryLoading(true);
+        try {
+          // Assuming the API endpoint supports getting history for a specific user ID
+          // Reusing endpoint from LiveHistory.jsx but targeting viewedUserId
+          console.log("Fetching live history for:", viewedUserId);
+          const response = await getAPI(`/api/social-media/live-history/${viewedUserId}`);
+          console.log("Live History Response:", response);
+          if (!response.hasError && response.data.success) {
+            setLiveHistory(response.data.data);
+          }
+        } catch (error) {
+          console.error("Error fetching live history:", error);
+        } finally {
+          setLiveHistoryLoading(false);
+        }
+      }
+    };
+    fetchLiveHistory();
+  }, [onLiveHistory, viewedUserId]);
+
   const handleFollowToggle = async (targetUserId, isFollowing) => {
     const userId = localStorage.getItem("userId");
     try {
@@ -494,6 +524,16 @@ const Profile = ({ shareprofileid }) => {
       console.error("Error following/unfollowing user:", error);
     }
   };
+  const handleFollowClick = () => {
+  if (!follow) {
+    
+    handleFollowToggle(viewedUserId, false);
+  } else {
+   
+    setShowUnfollowConfirm(true);
+  }
+};
+
 
   // Handle swipe start
   const handleTouchStart = (e) => {
@@ -760,6 +800,30 @@ const Profile = ({ shareprofileid }) => {
     } catch (err) {
       console.error("Error submitting report:", err);
       setError("Server error while submitting report");
+    }
+  };
+
+  const handleDeletePost = (postId) => {
+    setDeleteConfirmId(postId);
+    setMenuOpenId(null);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirmId) return;
+    try {
+    const res = await deleteAPI(`/api/social-media/posts/${deleteConfirmId}`, {}, true);
+    if (res && !res.hasError) {
+      toast.success("Post deleted successfully");
+      setProfile((prev) => ({
+        ...prev,
+        posts: prev.posts.filter((p) => p._id !== deleteConfirmId),
+      }));
+      setActiveIndex(null);
+      setDeleteConfirmId(null);
+    }
+    } catch (err) {
+      console.error("Error deleting post:", err);
+      toast.error(err.response?.data?.message || "Error deleting post");
     }
   };
 
@@ -1090,14 +1154,24 @@ const Profile = ({ shareprofileid }) => {
                             ref={popupref1}
                             className="absolute flex flex-col rounded-xl items-center justify-between right-0 top-8 w-40 bg-white border shadow-lg z-10"
                           >
-                            <li
-                              className="w-full px-3 py-2 flex items-center text-[#000000] justify-center font-semibold cursor-pointer hover:bg-gray-200"
-                              onClick={() => handleSave(activePost?._id)}
-                            >
-                              {activePost.isSaved ? "Unsave" : "Save"}
-                            </li>
-                            <hr className="w-[80%] border-t border-gray-800" />
-                            {/* Cancel */}
+                              <li
+                                className="w-full px-3 py-2 flex items-center text-[#000000] justify-center font-semibold cursor-pointer hover:bg-gray-200"
+                                onClick={() => handleSave(activePost?._id)}
+                              >
+                                {activePost.isSaved ? "Unsave" : "Save"}
+                              </li>
+                              <hr className="w-[80%] border-t border-gray-800" />
+
+                              {/* Delete Post */}
+                              <li
+                                className="w-full px-3 py-2 flex items-center text-red-600 justify-center font-semibold cursor-pointer hover:bg-red-200"
+                                onClick={() => handleDeletePost(activePost._id)}
+                              >
+                                Delete
+                              </li>
+                              <hr className="w-[80%] border-t border-gray-800" />
+
+                              {/* Cancel */}
                             <li
                               className="w-full px-3 py-2 flex items-center justify-center font-semibold cursor-pointer hover:bg-red-200 text-red-500 rounded-b-xl"
                               onClick={() => setMenuOpenId(null)}
@@ -2459,6 +2533,7 @@ const Profile = ({ shareprofileid }) => {
               setOnSave(false);
               setOnItem(false);
               setOnTag(false);
+              setOnLiveHistory(false);
             }}
             className={`${onPosts ? "bg-[#48372D] text-white rounded-full py-1 px-5 " : ""
               } p-3 focus:outline-none`}
@@ -2472,6 +2547,7 @@ const Profile = ({ shareprofileid }) => {
                 setOnSave(true);
                 setOnItem(false);
                 setOnTag(false);
+                setOnLiveHistory(false);
               }}
               className={`${onSave ? "bg-[#48372D] text-white rounded-full  py-1 px-5" : ""
                 } p-3 focus:outline-none`}
@@ -2479,6 +2555,23 @@ const Profile = ({ shareprofileid }) => {
               <FaRegBookmark className="text-2xl" />
             </button>
           )}
+
+          {/* Past Lives History Tab */}
+           <button
+            onClick={() => {
+              setOnPosts(false);
+              setOnSave(false);
+              setOnItem(false);
+              setOnTag(false);
+              setOnLiveHistory(true);
+            }}
+            className={`${
+              onLiveHistory ? "bg-[#48372D] text-white rounded-full  py-1 px-5" : ""
+            } p-3`}
+          >
+            <MdHistory className="text-2xl" />
+          </button>
+
           {userType !== "Buyer" && profile?.postProductsEnabled && (
             <button
               onClick={() => {
@@ -2486,6 +2579,7 @@ const Profile = ({ shareprofileid }) => {
                 setOnSave(false);
                 setOnItem(true);
                 setOnTag(false);
+                setOnLiveHistory(false);
               }}
               className={`${onItem ? "bg-[#48372D] text-white rounded-full  py-1 px-5" : ""
                 } p-3 focus:outline-none`}
@@ -2499,6 +2593,7 @@ const Profile = ({ shareprofileid }) => {
               setOnSave(false);
               setOnItem(false);
               setOnTag(true);
+              setOnLiveHistory(false);
             }}
             className={`${onTag ? "bg-[#48372D] text-white rounded-full  py-1 px-5" : ""
               } p-3 focus:outline-none`}
@@ -2692,6 +2787,94 @@ const Profile = ({ shareprofileid }) => {
             <div className="text-center text-gray-500">No tagged posts</div>
           ))}
 
+        {/* Live History */}
+        {onLiveHistory && (
+          <div className="w-full">
+            {liveHistoryLoading ? (
+            <div className="text-center py-10 text-gray-500">Loading history...</div>
+            ) : liveHistory.length === 0 ? (
+            <div className="text-center py-10 text-gray-500">
+                <p>No past live streams found.</p>
+            </div>
+            ) : (
+             <div className="flex flex-col gap-4 w-full">
+                {liveHistory.map((stream) => (
+                  <div key={stream._id} className="relative flex flex-row bg-[#FFE5D9] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 min-h-[140px] pl-3">
+                    {/* Left Accent Bar */}
+                    <div className="absolute left-0 top-0 bottom-0 w-3 bg-[#FF6B6B] z-10"></div>
+                    
+                    {/* Layout Container with Padding */}
+                    <div className="flex flex-row w-full p-2 py-3 gap-3 md:gap-4 items-start">
+                        
+                        {/* Thumbnail Section */}
+                        <div className="relative w-[160px] sm:w-[240px] aspect-video flex-shrink-0">
+                             <div className="w-full h-full rounded-xl overflow-hidden relative group cursor-pointer bg-black/10">
+                                <img 
+                                    src={stream.thumbnail ? (stream.thumbnail.startsWith('http') ? stream.thumbnail : `${process.env.REACT_APP_API_URL}/${stream.thumbnail.replace(/\\/g, '/')}`) : 'https://via.placeholder.com/300x169?text=No+Thumbnail'} 
+                                    alt={stream.title} 
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                />
+                                {/* Overlay & Play Button */}
+                                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center text-white border border-white/50 group-hover:scale-110 transition-transform">
+                                        <FaPlay className="ml-1 text-xs sm:text-sm" />
+                                    </div>
+                                </div>
+                                {/* Duration Badge */}
+                                <div className="absolute bottom-1 right-1 bg-black/80 text-white px-1.5 py-0.5 rounded text-[10px] font-medium">
+                                    {stream.live?.streamDuration || "00:00"}
+                                </div>
+                             </div>
+                        </div>
+
+                        {/* Content Section */}
+                        <div className="flex-1 flex flex-col justify-between h-full min-h-[90px] text-[#48372D]">
+                           <div>
+                                <div className="flex justify-between items-start mb-0.5">
+                                    <h3 className="font-bold text-sm sm:text-lg text-[#48372D] leading-tight line-clamp-2" title={stream.title}>
+                                        {stream.title}
+                                    </h3>
+                                    <button className="text-[#48372D] hover:text-black p-1 shrink-0">
+                                        <FaEllipsisH />
+                                    </button>
+                                </div>
+
+                                <div className="text-[10px] sm:text-xs text-gray-600 mb-2 flex items-center gap-1 flex-wrap">
+                                    <span>{stream.live?.viewCount || 0} views</span>
+                                    <span>•</span>
+                                    <span>Streamed {new Date(stream.createdAt).toLocaleDateString()}</span>
+                                </div>
+
+                                {/* User Info */}
+                                <div className="flex items-center gap-2 mb-2">
+                                    <img
+                                        src={profile?.profilePhoto ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.profilePhoto}` : DEFAULT_PROFILE_IMAGE}
+                                        alt={profile?.username}
+                                        className="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover"
+                                    />
+                                    <span className="text-[10px] sm:text-xs font-semibold text-gray-700">{profile?.username || "User"}</span>
+                                </div>
+
+                                <p className="text-[10px] sm:text-xs text-gray-600 line-clamp-2 mb-2 leading-relaxed hidden sm:block">
+                                    {stream.description}
+                                </p>
+                           </div>
+
+                            {/* Tags/Category Button */}
+                            <div className="mt-auto">
+                                <span className="bg-[#5D4037] text-white text-[10px] px-2 py-0.5 sm:py-1 rounded inline-block">
+                                    {stream.category || "New"}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+            )}
+          </div>
+        )}
+
         {/* all followers */}
         {showFollowers && profile?.followers.length > 0 && (
           <div
@@ -2798,6 +2981,69 @@ const Profile = ({ shareprofileid }) => {
           </div>
         )}
       </div>
+
+      {deleteConfirmId && (
+        <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
+          <div className="bg-white rounded-xl shadow-xl p-6 w-[400px]">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Delete Post?</h2>
+            <p className="text-gray-600 mb-6 text-center">Are you sure you want to delete this post? This action cannot be undone.</p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => setDeleteConfirmId(null)}
+                className="px-6 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-6 py-2 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showUnfollowConfirm && (
+  <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+    <div className="bg-white p-5 rounded-lg w-[300px]">
+      <p className="mb-4 text-sm">
+        Do you want to unfollow?
+      </p>
+
+      <div className="flex justify-end gap-3">
+        <button
+          onClick={() => setShowUnfollowConfirm(false)}
+          className="border px-3 py-1 rounded"
+        >
+          Cancel
+        </button>
+
+        {/* <button
+          onClick={() => {
+            handleFollowToggle(viewedUserId, true);
+            setShowUnfollowConfirm(false);
+          }}
+          className="px-2 py-1 rounded-md text-[16px] font-bold bg-[#6F4D34] text-white"
+        >
+          Unfollow
+        </button> */}
+        <button
+  onClick={() => {
+    handleFollowToggle(viewedUserId, true);
+    setShowUnfollowConfirm(false);
+  }}
+  className="px-2 py-1 min-w-[90px] sm:min-w-[100px] text-center rounded-md text-[16px] font-bold bg-[#6F4D34] text-white"
+>
+  Unfollow
+</button>
+
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
@@ -2842,6 +3088,7 @@ const ProfileSkeleton = () => {
           ></div>
         ))}
       </div>
+      
     </div>
   );
 };

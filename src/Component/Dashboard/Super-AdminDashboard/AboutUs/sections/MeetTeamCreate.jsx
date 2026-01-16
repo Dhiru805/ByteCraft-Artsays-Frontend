@@ -289,69 +289,64 @@ import getAPI from "../../../../../api/getAPI";
 const MeetTeamCreate = () => {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    mainHeading: "",
-    mainDescription: "",
-    teamMembers: [{ name: "", role: "", description: "", image: null, existingImage: null }],
-  });
+    const [formData, setFormData] = useState({
+      mainHeading: "",
+      mainDescription: "",
+      teamMembers: [{ name: "", role: "", description: "", image: null, existingImage: null, existingImagePath: null }],
+    });
 
-  const [imagePreviews, setImagePreviews] = useState([null]);
-  const [loading, setLoading] = useState(false);
-  const [aboutUsId, setAboutUsId] = useState(null);
-  const [sectionId, setSectionId] = useState(null);
+    const [imagePreviews, setImagePreviews] = useState([null]);
+    const [loading, setLoading] = useState(false);
+    const [aboutUsId, setAboutUsId] = useState(null);
+    const [sectionId, setSectionId] = useState(null);
 
-  useEffect(() => {
-    const fetchAboutUsPage = async () => {
-      try {
-        const res = await getAPI("/api/about-us");
-        let page = res.data.data?.[0];
+    useEffect(() => {
+      const fetchAboutUsPage = async () => {
+        try {
+          const res = await getAPI("/api/about-us");
+          let page = res.data.data?.[0];
 
-        if (!page) {
-          const createRes = await postAPI("/api/about-us/create", { title: "About Us" });
-          page = createRes.data.data;
+          if (!page) {
+            const createRes = await postAPI("/api/about-us/create", { title: "About Us" });
+            page = createRes.data.data;
+          }
+          setAboutUsId(page._id);
+
+          const sectionRes = await getAPI(`/api/about-us-sections/meet-team/${page._id}`);
+          if (sectionRes.data.success && sectionRes.data.data) {
+            const section = sectionRes.data.data;
+            setSectionId(section._id);
+
+            const members = section.teamMembers?.length
+              ? section.teamMembers.map(m => {
+                const relativePath = m.image ? m.image.replace(/\\/g, "/") : null;
+                return {
+                  name: m.name,
+                  role: m.role,
+                  description: m.description,
+                  image: null,
+                  existingImagePath: relativePath,
+                  existingImage: relativePath
+                    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${relativePath}`
+                    : m.imageUrl || null,
+                };
+              })
+              : [{ name: "", role: "", description: "", image: null, existingImage: null, existingImagePath: null }];
+
+            setFormData({
+              mainHeading: section.mainHeading || "",
+              mainDescription: section.mainDescription || "",
+              teamMembers: members,
+            });
+
+            setImagePreviews(members.map(m => m.existingImage || null));
+          }
+        } catch (err) {
+          toast.error(err.response?.data?.message || "Failed to load About Us page");
         }
-        setAboutUsId(page._id);
-
-        const sectionRes = await getAPI(`/api/about-us-sections/meet-team/${page._id}`);
-        if (sectionRes.data.success && sectionRes.data.data) {
-          const section = sectionRes.data.data;
-          setSectionId(section._id);
-
-          // const members = section.teamMembers?.length
-          //   ? section.teamMembers.map(m => ({
-          //       name: m.name,
-          //       role: m.role,
-          //       description: m.description,
-          //       image: null,
-          //       existingImage: m.imageUrl || m.image || null,
-          //     }))
-          //   : [{ name: "", role: "", description: "", image: null, existingImage: null }];
-          const members = section.teamMembers?.length
-            ? section.teamMembers.map(m => ({
-              name: m.name,
-              role: m.role,
-              description: m.description,
-              image: null,
-              existingImage: m.image
-                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${m.image}`
-                : m.imageUrl || null,
-            }))
-            : [{ name: "", role: "", description: "", image: null, existingImage: null }];
-
-          setFormData({
-            mainHeading: section.mainHeading || "",
-            mainDescription: section.mainDescription || "",
-            teamMembers: members,
-          });
-
-          setImagePreviews(members.map(m => m.existingImage || null));
-        }
-      } catch (err) {
-        toast.error(err.response?.data?.message || "Failed to load About Us page");
-      }
-    };
-    fetchAboutUsPage();
-  }, []);
+      };
+      fetchAboutUsPage();
+    }, []);
 
   const validateImageFile = (file) => {
     if (!file.type.match(/image\/(jpeg|png)/)) {
@@ -378,6 +373,7 @@ const MeetTeamCreate = () => {
 
         updatedMembers[index][field] = file;
         updatedMembers[index].existingImage = null;
+        updatedMembers[index].existingImagePath = null;
         previews[index] = URL.createObjectURL(file);
         setImagePreviews(previews);
       } else {
@@ -424,7 +420,7 @@ const MeetTeamCreate = () => {
 
       for (let i = 0; i < formData.teamMembers.length; i++) {
         const member = formData.teamMembers[i];
-        if (!member.name.trim() || !member.role.trim() || !member.description.trim() || (!member.image && !member.existingImage)) {
+        if (!member.name.trim() || !member.role.trim() || !member.description.trim() || (!member.image && !member.existingImagePath)) {
           toast.error(`Team member ${i + 1} requires all fields and an image`);
           setLoading(false);
           return;
@@ -440,7 +436,11 @@ const MeetTeamCreate = () => {
         submissionData.append(`teamMembers[${idx}][name]`, m.name.trim());
         submissionData.append(`teamMembers[${idx}][role]`, m.role.trim());
         submissionData.append(`teamMembers[${idx}][description]`, m.description.trim());
-        if (m.image) submissionData.append(`teamMembers[${idx}][image]`, m.image);
+        if (m.image) {
+          submissionData.append(`teamMembers[${idx}][image]`, m.image);
+        } else if (m.existingImagePath) {
+          submissionData.append(`teamMembers[${idx}][image]`, m.existingImagePath);
+        }
       });
 
       const endpoint = sectionId

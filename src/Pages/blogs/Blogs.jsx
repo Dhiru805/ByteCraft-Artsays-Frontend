@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import "./Blogs.css";
 import { ListFilter, ChevronLeft, ChevronRight, Search, Clock, Tag, SortAsc, X } from "lucide-react";
 import getAPI from "../../api/getAPI";
@@ -8,7 +8,6 @@ import BlogCard from "./BlogCard";
 import { BlogGridSkeleton } from "../../Component/Skeleton/Blog/BlogSkeleton";
 
 function Blogs() {
-
     const [showFilters, setShowFilters] = useState(false);
     const [blogs, setBlogs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -23,7 +22,10 @@ function Blogs() {
 
     const ITEMS_PER_PAGE = 12;
 
-    // ---------------- FETCH BLOGS ----------------
+   
+    const blogGridRef = useRef(null);
+
+   
     const fetchBlogsData = async () => {
         setLoading(true);
         try {
@@ -41,7 +43,9 @@ function Blogs() {
             const response = await getAPI(url);
             if (response?.data?.blogs) {
                 setBlogs(response.data.blogs);
-                setTotalPages(Math.ceil(response.data.blogs.length / ITEMS_PER_PAGE));
+                setTotalPages(
+                    Math.ceil(response.data.blogs.length / ITEMS_PER_PAGE)
+                );
             }
         } catch (error) {
             console.log(error);
@@ -83,7 +87,7 @@ function Blogs() {
         fetchCategories();
     }, []);
 
-    // ---------------- PAGINATION LOGIC ----------------
+   
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
     const currentBlogs = blogs.slice(startIndex, endIndex);
@@ -112,6 +116,15 @@ function Blogs() {
     const handleReadingTimeChange = (range) => {
         setSelectedReadingTime(prev => prev === range ? "" : range);
     };
+
+    useLayoutEffect(() => {
+        if (blogGridRef.current) {
+            blogGridRef.current.scrollIntoView({
+                behavior: "auto",
+                block: "start",
+            });
+        }
+    }, [currentPage]);
 
     return (
         <div className="w-full bg-gray-50 min-h-screen">
@@ -147,6 +160,7 @@ function Blogs() {
                         {/* Mobile Filter Toggle */}
                         <div className="lg:hidden">
                             <button
+                                type="button"
                                 onClick={() => setShowFilters(!showFilters)}
                                 className="w-full flex items-center justify-between px-6 py-3 bg-white border border-gray-200 rounded-xl shadow-sm font-bold text-[#6F4D34]"
                             >
@@ -331,6 +345,7 @@ function Blogs() {
                             <div className="mt-4 flex justify-center">
                                 <nav className="flex items-center gap-2 p-1 bg-white border border-gray-200 rounded-2xl shadow-sm">
                                     <button
+                                        type="button"
                                         disabled={currentPage === 1}
                                         onClick={handleToPreviousPage}
                                         className="p-2 rounded-xl text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
@@ -366,6 +381,7 @@ function Blogs() {
                                     </div>
 
                                     <button
+                                        type="button"
                                         disabled={currentPage === totalPages}
                                         onClick={handleToNextPage}
                                         className="p-2 rounded-xl text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"

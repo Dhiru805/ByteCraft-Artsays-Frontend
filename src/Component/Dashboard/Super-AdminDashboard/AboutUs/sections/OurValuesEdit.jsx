@@ -23,75 +23,76 @@ const OurValuesEdit = () => {
   const [aboutUsId, setAboutUsId] = useState(passedAboutUsId || null);
   const [sectionId, setSectionId] = useState((passedSection && passedSection._id) || (initialData && initialData._id) || null);
 
-  useEffect(() => {
-    const ensureAboutUsPage = async () => {
-      try {
-        if (!aboutUsId) {
-          const res = await getAPI("/api/about-us");
-          let page = res.data.data?.[0];
+    useEffect(() => {
+      const ensureAboutUsPage = async () => {
+        try {
+          if (!aboutUsId) {
+            const res = await getAPI("/api/about-us");
+            let page = res.data.data?.[0];
 
-          if (!page) {
-            const createRes = await axiosInstance.post("/api/about-us/create", { title: "About Us" });
-            page = createRes.data.data;
+            if (!page) {
+              const createRes = await axiosInstance.post("/api/about-us/create", { title: "About Us" });
+              page = createRes.data.data;
+            }
+
+            setAboutUsId(page._id);
           }
+          if (!sectionId && passedSection && passedSection._id) {
+            setSectionId(passedSection._id);
+          }
+        } catch (err) {
+          toast.error(err.response?.data?.message || "Failed to load About Us page");
+        }
+      };
+        ensureAboutUsPage();
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [aboutUsId, sectionId]);
 
-          setAboutUsId(page._id);
-        }
-        if (!sectionId && passedSection && passedSection._id) {
-          setSectionId(passedSection._id);
-        }
-      } catch (err) {
-        toast.error(err.response?.data?.message || "Failed to load About Us page");
+    useEffect(() => {
+      if (initialData) {
+        setFormData({
+          heading: initialData.heading || "",
+          description: initialData.description || "",
+          status: initialData.status || "draft",
+          cards: initialData.cards?.map((c) => ({
+            cardTitle: c.cardTitle || "",
+            cardImage: null,
+            existingImage: c.cardImage || "",
+          })) || [{ cardTitle: "", cardImage: null }],
+        });
+
+        setCardPreviews(initialData.cards?.map((c) => c.cardImage) || [null]);
       }
-    };
-    ensureAboutUsPage();
-  }, []);
+    }, [initialData]);
 
-  useEffect(() => {
-    if (initialData) {
-      setFormData({
-        heading: initialData.heading || "",
-        description: initialData.description || "",
-        status: initialData.status || "draft",
-        cards: initialData.cards?.map((c) => ({
-          cardTitle: c.cardTitle || "",
-          cardImage: null,
-          existingImage: c.cardImage || "",
-        })) || [{ cardTitle: "", cardImage: null }],
-      });
-
-      setCardPreviews(initialData.cards?.map((c) => c.cardImage) || [null]);
-    }
-  }, [initialData]);
-
-  useEffect(() => {
-    const loadIfMissing = async () => {
-      if (initialData) return;
-      try {
-        const res = await getAPI("/api/about-us");
-        const pages = Array.isArray(res.data.data) ? res.data.data : [];
-        const page = pages[0] || null;
-        const s = page?.ourValues || null;
-        if (s) {
-          setFormData({
-            heading: s.heading || "",
-            description: s.description || "",
-            status: s.status || "draft",
-            cards: s.cards?.map((c) => ({
-              cardTitle: c.cardTitle || "",
-              cardImage: null,
-              existingImage: c.cardImage || "",
-            })) || [{ cardTitle: "", cardImage: null }],
-          });
-          setCardPreviews(s.cards?.map((c) => c.cardImage) || [null]);
-          if (!sectionId && s._id) setSectionId(s._id);
+    useEffect(() => {
+      const loadIfMissing = async () => {
+        if (initialData) return;
+        try {
+          const res = await getAPI("/api/about-us");
+          const pages = Array.isArray(res.data.data) ? res.data.data : [];
+          const page = pages[0] || null;
+          const s = page?.ourValues || null;
+          if (s) {
+            setFormData({
+              heading: s.heading || "",
+              description: s.description || "",
+              status: s.status || "draft",
+              cards: s.cards?.map((c) => ({
+                cardTitle: c.cardTitle || "",
+                cardImage: null,
+                existingImage: c.cardImage || "",
+              })) || [{ cardTitle: "", cardImage: null }],
+            });
+            setCardPreviews(s.cards?.map((c) => c.cardImage) || [null]);
+            if (!sectionId && s._id) setSectionId(s._id);
+          }
+        } catch (err) {
         }
-      } catch (err) {
-      }
-    };
-    loadIfMissing();
-   
-  }, []);
+      };
+        loadIfMissing();
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [initialData, sectionId]);
 
   const validateImageFile = (file, type) => {
     if (!file.type.match(/image\/(jpeg|png|svg\+xml)/)) {
@@ -224,7 +225,7 @@ const OurValuesEdit = () => {
           <div className="card">
             <div className="body">
               <form onSubmit={handleSubmit} encType="multipart/form-data">
-           
+             
                 <div className="form-group">
                   <label>Heading *</label>
                   <input type="text" name="heading" value={formData.heading} onChange={handleChange} className="form-control" required />
