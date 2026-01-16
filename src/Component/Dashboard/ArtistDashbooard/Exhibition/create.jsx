@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import postAPI from "../../../../api/postAPI";
+import getAPI from "../../../../api/getAPI";
 
 function Exhibition() {
   const navigate = useNavigate();
@@ -46,7 +47,9 @@ function Exhibition() {
     certificateDistribution: false,
     awardDistribution: false,
     eventPromotion: "Invite",
+    promotionPlanId: "",
   });
+
   const [couponCodeInput, setCouponCodeInput] = useState("");
   const [couponDiscountInput, setCouponDiscountInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -55,6 +58,8 @@ function Exhibition() {
   const [currentImages, setCurrentImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showPopup, setShowPopup] = useState(false);
+
+  const [promotionPlans, setPromotionPlans] = useState([]);
 
   const handleImageClick = (imageUrl) => {
     const images = [imageUrl];
@@ -78,6 +83,20 @@ function Exhibition() {
       navigate("/login");
     }
   }, [navigate]);
+
+  useEffect(() => {
+    const fetchPromotionPlans = async () => {
+      try {
+        const response = await getAPI("/api/get-exhibition-plans", {}, true);
+        if (!response.hasError && Array.isArray(response.data?.data)) {
+          setPromotionPlans(response.data.data);
+        }
+      } catch (err) {
+        console.error("Failed to load promotion plans:", err);
+      }
+    };
+    fetchPromotionPlans();
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -124,6 +143,14 @@ function Exhibition() {
         entryType: value,
         ticketPrice: value === "Free" ? "" : formData.ticketPrice,
       });
+    } else if (name === "eventPromotion") {
+      setFormData({
+        ...formData,
+        eventPromotion: value,
+        promotionPlanId: value === "Promotion" ? "" : "",
+      });
+    } else if (name === "promotionPlanId") {
+      setFormData({ ...formData, promotionPlanId: value });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -147,10 +174,18 @@ function Exhibition() {
       e.preventDefault();
       const code = couponCodeInput.trim();
       const discount = couponDiscountInput.trim();
-      if (code && discount && !isNaN(discount) && !formData.earlyBirdDiscounts.some((c) => c.code === code)) {
+      if (
+        code &&
+        discount &&
+        !isNaN(discount) &&
+        !formData.earlyBirdDiscounts.some((c) => c.code === code)
+      ) {
         setFormData({
           ...formData,
-          earlyBirdDiscounts: [...formData.earlyBirdDiscounts, { code, discount: Number(discount) }],
+          earlyBirdDiscounts: [
+            ...formData.earlyBirdDiscounts,
+            { code, discount: Number(discount) },
+          ],
         });
         setCouponCodeInput("");
         setCouponDiscountInput("");
@@ -167,7 +202,9 @@ function Exhibition() {
   const removeCoupon = (index) => {
     setFormData({
       ...formData,
-      earlyBirdDiscounts: formData.earlyBirdDiscounts.filter((_, i) => i !== index),
+      earlyBirdDiscounts: formData.earlyBirdDiscounts.filter(
+        (_, i) => i !== index
+      ),
     });
   };
 
@@ -189,30 +226,55 @@ function Exhibition() {
         { field: formData.coverBanner, name: "Cover Banner" },
         { field: formData.logo, name: "Logo" },
         { field: formData.contactDetails.fullName, name: "Contact Full Name" },
-        { field: formData.contactDetails.mobileNo, name: "Contact Mobile Number" },
+        {
+          field: formData.contactDetails.mobileNo,
+          name: "Contact Mobile Number",
+        },
         { field: formData.contactDetails.email, name: "Contact Email" },
       ];
 
       if (formData.type !== "Virtual") {
         requiredFields.push(
-          { field: formData.eventLocation.address, name: "Event Location Address" },
+          {
+            field: formData.eventLocation.address,
+            name: "Event Location Address",
+          },
           { field: formData.eventLocation.city, name: "Event Location City" },
-          { field: formData.eventLocation.country, name: "Event Location Country" }
+          {
+            field: formData.eventLocation.country,
+            name: "Event Location Country",
+          }
         );
       } else {
         requiredFields.push({ field: formData.eventUrl, name: "Event URL" });
       }
 
       if (formData.entryType === "Ticket") {
-        requiredFields.push({ field: formData.ticketPrice, name: "Ticket Price" });
+        requiredFields.push({
+          field: formData.ticketPrice,
+          name: "Ticket Price",
+        });
+      }
+
+      if (
+        formData.eventPromotion === "Promotion" &&
+        !formData.promotionPlanId
+      ) {
+        toast.error("Please select a promotion plan when choosing Promotion");
+        setLoading(false);
+        return;
       }
 
       const missingFields = requiredFields
-        .filter(({ field }) => !field || (typeof field === "string" && !field.trim()))
+        .filter(
+          ({ field }) => !field || (typeof field === "string" && !field.trim())
+        )
         .map(({ name }) => name);
 
       if (missingFields.length > 0) {
-        toast.error(`Please fill the required fields: ${missingFields.join(", ")}`);
+        toast.error(
+          `Please fill the required fields: ${missingFields.join(", ")}`
+        );
         setLoading(false);
         return;
       }
@@ -230,23 +292,51 @@ function Exhibition() {
       submissionData.append("type", formData.type);
       submissionData.append("startDate", formData.startDate);
       submissionData.append("endDate", formData.endDate);
-      submissionData.append("eventLocation", JSON.stringify(formData.eventLocation));
-      submissionData.append("eventUrl", formData.eventUrl ? formData.eventUrl.trim() : "");
+      submissionData.append(
+        "eventLocation",
+        JSON.stringify(formData.eventLocation)
+      );
+      submissionData.append(
+        "eventUrl",
+        formData.eventUrl ? formData.eventUrl.trim() : ""
+      );
       submissionData.append("dailyTiming", formData.dailyTiming.trim());
       submissionData.append("entryType", formData.entryType);
-      submissionData.append("ticketPrice", formData.ticketPrice ? formData.ticketPrice.trim() : "");
+      submissionData.append(
+        "ticketPrice",
+        formData.ticketPrice ? formData.ticketPrice.trim() : ""
+      );
       submissionData.append("language", formData.language.trim());
       submissionData.append("coverBanner", formData.coverBanner);
       submissionData.append("logo", formData.logo);
       submissionData.append("hostedBy", formData.hostedBy.trim());
-      submissionData.append("contactDetails", JSON.stringify(formData.contactDetails));
-      submissionData.append("guestSpeaker", formData.guestSpeaker ? formData.guestSpeaker.trim() : "");
-      submissionData.append("earlyBirdDiscounts", JSON.stringify(formData.earlyBirdDiscounts));
+      submissionData.append(
+        "contactDetails",
+        JSON.stringify(formData.contactDetails)
+      );
+      submissionData.append(
+        "guestSpeaker",
+        formData.guestSpeaker ? formData.guestSpeaker.trim() : ""
+      );
+      submissionData.append(
+        "earlyBirdDiscounts",
+        JSON.stringify(formData.earlyBirdDiscounts)
+      );
       submissionData.append("maxCapacity", formData.maxCapacity);
       submissionData.append("liveBidding", formData.liveBidding.toString());
-      submissionData.append("certificateDistribution", formData.certificateDistribution.toString());
-      submissionData.append("awardDistribution", formData.awardDistribution.toString());
+      submissionData.append(
+        "certificateDistribution",
+        formData.certificateDistribution.toString()
+      );
+      submissionData.append(
+        "awardDistribution",
+        formData.awardDistribution.toString()
+      );
       submissionData.append("eventPromotion", formData.eventPromotion);
+
+      if (formData.eventPromotion === "Promotion" && formData.promotionPlanId) {
+        submissionData.append("promotionPlanId", formData.promotionPlanId);
+      }
 
       for (const [key, value] of submissionData.entries()) {
         console.log(`${key}: ${value instanceof File ? value.name : value}`);
@@ -257,8 +347,18 @@ function Exhibition() {
           "Content-Type": "multipart/form-data",
         },
       });
+      if (response.data.paymentRequired && response.data.paymentUrl) {
+        toast.info("Redirecting to payment gateway...");
+
+        window.location.href = response.data.paymentUrl;
+        return;
+      }
+
       if (response.data.data) {
-        toast.success(response.data.message || "Exhibition created successfully!");
+        toast.success(
+          response.data.message || "Exhibition created successfully!"
+        );
+
         setCoverBannerPreview(null);
         setLogoPreview(null);
         setCouponCodeInput("");
@@ -268,7 +368,11 @@ function Exhibition() {
         toast.error(response.data.message || "Failed to create exhibition");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Error creating exhibition");
+      console.error("Submission error:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "Error creating exhibition. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -291,7 +395,7 @@ function Exhibition() {
                 </a>
               </li>
               <li className="breadcrumb-item active">
-                <Link to="/super-admin/exhibition">Exhibition</Link>
+                <Link to="/artist/exhibition">Exhibition</Link>
               </li>
               <li className="breadcrumb-item">Create Exhibition</li>
             </ul>
@@ -500,7 +604,10 @@ function Exhibition() {
                   </div>
                   <div className="col-md-6 form-group">
                     <label htmlFor="ticketPrice">
-                      Ticket Price {formData.entryType === "Ticket" && <span className="text-danger">*</span>}
+                      Ticket Price{" "}
+                      {formData.entryType === "Ticket" && (
+                        <span className="text-danger">*</span>
+                      )}
                     </label>
                     <input
                       type="text"
@@ -518,7 +625,10 @@ function Exhibition() {
                 {formData.entryType === "Ticket" && (
                   <div className="form-group">
                     <label>Early Bird Discounts</label>
-                    <div className="d-flex flex-wrap align-items-center form-control p-2" style={{ minHeight: "44px" }}>
+                    <div
+                      className="d-flex flex-wrap align-items-center form-control p-2"
+                      style={{ minHeight: "44px" }}
+                    >
                       {formData.earlyBirdDiscounts.map((coupon, index) => (
                         <div
                           key={index}
@@ -549,7 +659,9 @@ function Exhibition() {
                         <input
                           type="text"
                           value={couponDiscountInput}
-                          onChange={(e) => handleCouponInputChange(e, "discount")}
+                          onChange={(e) =>
+                            handleCouponInputChange(e, "discount")
+                          }
                           onKeyDown={handleAddCoupon}
                           className="border-0 px-2"
                           style={{ outline: "none", minWidth: "100px" }}
@@ -558,7 +670,8 @@ function Exhibition() {
                       </div>
                     </div>
                     <small className="form-text text-muted">
-                      Enter coupon code and discount percentage, then press Enter or comma to add.
+                      Enter coupon code and discount percentage, then press
+                      Enter or comma to add.
                     </small>
                   </div>
                 )}
@@ -614,40 +727,43 @@ function Exhibition() {
                           <div
                             onClick={() => setShowPopup(false)}
                             style={{
-                              position: 'fixed',
+                              position: "fixed",
                               top: 0,
                               left: 0,
                               right: 0,
                               bottom: 0,
-                              backgroundColor: 'rgba(0, 0, 0, 0.65)',
-                              display: 'flex',
-                              justifyContent: 'center',
-                              alignItems: 'center',
+                              backgroundColor: "rgba(0, 0, 0, 0.65)",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
                               zIndex: 1000,
                             }}
                           >
                             <div
                               onClick={(e) => e.stopPropagation()}
                               style={{
-                                position: 'relative',
-                                height: '50%',
-                                backgroundColor: '#111',
-                                borderRadius: '12px',
-                                boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                overflow: 'hidden',
+                                position: "relative",
+                                height: "50%",
+                                backgroundColor: "#111",
+                                borderRadius: "12px",
+                                boxShadow: "0 0 20px rgba(255, 255, 255, 0.2)",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                overflow: "hidden",
                               }}
                             >
                               <img
-                                src={currentImages[currentImageIndex]?.replace(/\\/g, '/')}
+                                src={currentImages[currentImageIndex]?.replace(
+                                  /\\/g,
+                                  "/"
+                                )}
                                 alt="Popup"
                                 style={{
-                                  width: '100%',
-                                  height: '100%',
-                                  objectFit: 'cover',
-                                  borderRadius: '12px',
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                  borderRadius: "12px",
                                 }}
                               />
                             </div>
@@ -657,9 +773,12 @@ function Exhibition() {
                         <img
                           src={coverBannerPreview}
                           alt="Cover Banner Preview"
-                          style={{ maxWidth: "200px", maxHeight: "200px", objectFit: "contain" }}
+                          style={{
+                            maxWidth: "200px",
+                            maxHeight: "200px",
+                            objectFit: "contain",
+                          }}
                           onClick={() => handleImageClick(coverBannerPreview)}
-
                         />
                       </div>
                     )}
@@ -682,9 +801,12 @@ function Exhibition() {
                         <img
                           src={logoPreview}
                           alt="Logo Preview"
-                          style={{ maxWidth: "200px", maxHeight: "200px", objectFit: "contain" }}
+                          style={{
+                            maxWidth: "200px",
+                            maxHeight: "200px",
+                            objectFit: "contain",
+                          }}
                           onClick={() => handleImageClick(logoPreview)}
-
                         />
                       </div>
                     )}
@@ -782,7 +904,9 @@ function Exhibition() {
                 </div>
                 <div className="row">
                   <div className="col-md-6 form-group">
-                    <label htmlFor="guestSpeaker">Guest Speaker/Celebrity</label>
+                    <label htmlFor="guestSpeaker">
+                      Guest Speaker/Celebrity
+                    </label>
                     <input
                       type="text"
                       id="guestSpeaker"
@@ -811,9 +935,7 @@ function Exhibition() {
                 </div>
                 <div className="row">
                   <div className="col-md-3 form-group">
-                    <label htmlFor="liveBidding">
-                      Live Bidding Event
-                    </label>
+                    <label htmlFor="liveBidding">Live Bidding Event</label>
                     <div className="custom-control custom-switch">
                       <input
                         type="checkbox"
@@ -823,7 +945,10 @@ function Exhibition() {
                         checked={formData.liveBidding}
                         onChange={() => handleToggle("liveBidding")}
                       />
-                      <label className="custom-control-label" htmlFor="liveBidding">
+                      <label
+                        className="custom-control-label"
+                        htmlFor="liveBidding"
+                      >
                         {formData.liveBidding ? "Yes" : "No"}
                       </label>
                     </div>
@@ -841,7 +966,10 @@ function Exhibition() {
                         checked={formData.certificateDistribution}
                         onChange={() => handleToggle("certificateDistribution")}
                       />
-                      <label className="custom-control-label" htmlFor="certificateDistribution">
+                      <label
+                        className="custom-control-label"
+                        htmlFor="certificateDistribution"
+                      >
                         {formData.certificateDistribution ? "Yes" : "No"}
                       </label>
                     </div>
@@ -859,14 +987,18 @@ function Exhibition() {
                         checked={formData.awardDistribution}
                         onChange={() => handleToggle("awardDistribution")}
                       />
-                      <label className="custom-control-label" htmlFor="awardDistribution">
+                      <label
+                        className="custom-control-label"
+                        htmlFor="awardDistribution"
+                      >
                         {formData.awardDistribution ? "Yes" : "No"}
                       </label>
                     </div>
                   </div>
                   <div className="col-md-3 form-group">
                     <label htmlFor="eventPromotion">
-                      Event Promotion/Invite <span className="text-danger">*</span>
+                      Event Promotion/Invite{" "}
+                      <span className="text-danger">*</span>
                     </label>
                     <select
                       id="eventPromotion"
@@ -874,7 +1006,7 @@ function Exhibition() {
                       value={formData.eventPromotion}
                       onChange={handleChange}
                       className="form-control show-tick"
-                     required
+                      required
                     >
                       {eventPromotionOptions.map((option) => (
                         <option key={option} value={option}>
@@ -882,9 +1014,37 @@ function Exhibition() {
                         </option>
                       ))}
                     </select>
-                 
+
+                    {}
+                    {formData.eventPromotion === "Promotion" && (
+                      <div className="mt-3">
+                        <label htmlFor="promotionPlanId">
+                          Select Promotion Plan{" "}
+                          <span className="text-danger">*</span>
+                        </label>
+                        <select
+                          id="promotionPlanId"
+                          name="promotionPlanId"
+                          value={formData.promotionPlanId}
+                          onChange={handleChange}
+                          className="form-control show-tick"
+                          required
+                        >
+                          <option value="">Select Plan</option>
+                          {promotionPlans
+                            .filter((plan) => plan.isActive)
+                            .map((plan) => (
+                              <option key={plan._id} value={plan._id}>
+                                {plan.planName} ({plan.planType}) - ₹
+                                {plan.price}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+                    )}
                   </div>
                 </div>
+
                 <button
                   type="submit"
                   className="btn btn-block btn-primary mt-3"

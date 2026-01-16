@@ -154,7 +154,7 @@ function CreateCertification() {
           certificationId: certId,
           certificationProvider: formData.certificationProvider,
           estimatedDays: cert ? cert.estimatedDays : 0,
-          certificationPrice: 99,
+          certificationPrice: cert.price||99,
         };
       });
 
@@ -202,7 +202,7 @@ function CreateCertification() {
 
   const certificationOptions = certifications.map((cert) => ({
     value: cert._id,
-    label: `${cert.certificationName} (₹99)`,
+    label: `${cert.certificationName} ₹${cert.price ||99}`,
   }));
 
   return (
@@ -283,7 +283,7 @@ function CreateCertification() {
                 )}
                 <div className="form-group">
                   <label htmlFor="certifications">
-                    Certifications (Price: ₹99 each)
+                    Certifications
                   </label>
                   <Select
                     id="certifications"
@@ -326,7 +326,7 @@ function CreateCertification() {
                             <tr key={cert._id}>
                               <td>{cert.certificationName}</td>
                               <td>{cert.estimatedDays}</td>
-                              <td>₹99</td>
+                              <td>{cert.price}</td>
                             </tr>
                           ) : null;
                         })}

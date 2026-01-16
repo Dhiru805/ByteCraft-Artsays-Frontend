@@ -14,6 +14,7 @@ const EditCertificationModal = ({
   const [mainCategoryId, setMainCategoryId] = useState("");
   const [certificationName, setCertificationName] = useState("");
   const [estimatedDays, setEstimatedDays] = useState("");
+  const [price, setPrice] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -37,6 +38,7 @@ const EditCertificationModal = ({
       setMainCategoryId(certification.mainCategoryId?._id || certification.mainCategoryId || "");
       setCertificationName(certification.certificationName || "");
       setEstimatedDays(certification.estimatedDays || "");
+      setPrice(certification.price != null ? certification.price : "");
     }
   }, [certification]);
 
@@ -47,17 +49,18 @@ const EditCertificationModal = ({
     try {
       if (!mainCategoryId) {
         toast.error("Please select a main category.");
-        setLoading(false);
         return;
       }
       if (!certificationName.trim()) {
         toast.error("Please enter a certification name.");
-        setLoading(false);
         return;
       }
       if (!Number.isInteger(Number(estimatedDays)) || Number(estimatedDays) < 1) {
         toast.error("Please enter a valid positive integer for estimated days.");
-        setLoading(false);
+        return;
+      }
+      if (price === "" || isNaN(price) || Number(price) < 0) {
+        toast.error("Please enter a valid non-negative price.");
         return;
       }
 
@@ -67,6 +70,7 @@ const EditCertificationModal = ({
           certificationName: certificationName.trim(),
           mainCategoryId,
           estimatedDays: Number(estimatedDays),
+          price: Number(price),
         },
         {},
         true
@@ -91,25 +95,21 @@ const EditCertificationModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="modal" style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}>
+    <div className="modal fade show" style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}>
       <div className="modal-dialog modal-lg">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Update Certification</h5>
             <button
-              className="btn"
+              className="btn-close"
               onClick={onClose}
-              style={{
-                border: "none",
-                background: "transparent",
-                fontSize: "1.0rem",
-              }}
-            >
-              ✕
-            </button>
+              style={{ background: "transparent", border: "none" }}
+            ></button>
           </div>
-          <form onSubmit={handleUpdate}>
-            <div className="row mb-2 ml-2">
+
+          <div className="modal-body">
+            <form onSubmit={handleUpdate}>
+              <div className="row g-3">
               <div className="col-md-4">
                 <div className="mb-3">
                   <label className="form-label">Main Category</label>
@@ -121,18 +121,15 @@ const EditCertificationModal = ({
                   >
                     <option value="">Select Main Category</option>
                     {mainCategories.map((mainCategory) => (
-                      <option
-                        key={mainCategory._id}
-                        value={mainCategory._id}
-                      >
+                      <option key={mainCategory._id} value={mainCategory._id}>
                         {mainCategory.mainCategoryName}
                       </option>
                     ))}
                   </select>
                 </div>
               </div>
-              <div className="col-md-4">
-                <div className="mb-3">
+
+                <div className="col-md-4">
                   <label className="form-label">Certification Name</label>
                   <input
                     type="text"
@@ -140,44 +137,58 @@ const EditCertificationModal = ({
                     value={certificationName}
                     onChange={(e) => setCertificationName(e.target.value)}
                     disabled={!mainCategoryId}
-                    placeholder={mainCategoryId ? "Enter certification name" : "Select main category first"}
+                    placeholder={mainCategoryId ? "Enter certification name" : "Select category first"}
                     required
                   />
                 </div>
-              </div>
-              <div className="col-md-4">
-                <div className="mb-3">
-                  <label className="form-label">Estimated Days</label>
+
+                <div className="col-md-2">
+                  <label className="form-label">Est. Days</label>
                   <input
                     type="number"
                     className="form-control"
                     value={estimatedDays}
                     onChange={(e) => setEstimatedDays(e.target.value)}
                     disabled={!mainCategoryId}
-                    placeholder={mainCategoryId ? "Enter days" : ""}
                     min="1"
                     required
                   />
                 </div>
+
+                <div className="col-md-2">
+                  <label className="form-label">Price (₹)</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    disabled={!mainCategoryId}
+                    min="0"
+                    step="1"
+                    required
+                  />
+                </div>
               </div>
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={onClose}
-              >
-                Close
-              </button>
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={loading}
-              >
-                {loading ? "Updating..." : "Update"}
-              </button>
-            </div>
-          </form>
+
+              <div className="modal-footer mt-4">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={onClose}
+                  disabled={loading}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={loading}
+                >
+                  {loading ? "Updating..." : "Update Certification"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>

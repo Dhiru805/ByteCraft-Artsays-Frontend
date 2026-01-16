@@ -482,7 +482,12 @@ address:{
   idKey: "addressId",
 },
 
-
+exhibitionplan:{
+  getEndpoint: (id) => `/api/delete-exhibition-plan/${id}`,
+  successMessage: " exhibition plan successfully deleted!",
+  errorMessage: "Failed to delete  exhibition plan.",
+  idKey: "exhibitionplanId",
+},
 
 };
 

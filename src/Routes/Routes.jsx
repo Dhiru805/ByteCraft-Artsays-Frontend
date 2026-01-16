@@ -43,6 +43,21 @@ import CheckoutorderFailurePage from "../Pages/PaymentGetway/OrderCheckout/Failu
 import PaymentTipSuccessPage from "../Pages/PaymentGetway/PaymentTip/Success";
 import PaymentTipFailurePage from "../Pages/PaymentGetway/PaymentTip/Failure";
 
+import ChallengeSuccessPage from "../Pages/PaymentGetway/Challenge/Success";
+import ChallengeFailurePage from "../Pages/PaymentGetway/Challenge/Failure";
+
+import CustomrequestSuccessPage from "../Pages/PaymentGetway/Customrequest/Success";
+import CustomrequestFailurePage from "../Pages/PaymentGetway/Customrequest/Failure";
+
+import AddwalletSuccessPage from "../Pages/PaymentGetway/AddMoneywallet/Success";
+import AddwalletFailurePage from "../Pages/PaymentGetway/AddMoneywallet/Failure";
+
+import InsuranceSuccessPage from "../Pages/PaymentGetway/Insurance/Success";
+import InsuranceFailurePage from "../Pages/PaymentGetway/Insurance/Failure";
+
+import ExhibitionSuccessPage from "../Pages/PaymentGetway/Exhibition/Success";
+import ExhibitionFailurePage from "../Pages/PaymentGetway/Exhibition/Failure";
+
 
 
 //----------------------------------------My Account-----------------------------------------//
@@ -319,6 +334,7 @@ import UpdateChallengeApplication from "../Component/Dashboard/Super-AdminDashbo
 // import ChallengesEntries from '../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/challengesEntries';
 import GSTSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/GST/GST';
 import InsuranceSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/Insurance/InsuranceSetting'
+import ExhibitionSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/Exhibition/ExhibitionSetting'
 
 //------------------------------PackagingMaterial--------------------------------//
 import Material from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/Material";
@@ -365,6 +381,8 @@ import ArtistProductBidding from "../Component/Dashboard/Super-AdminDashboard/Ar
 import ArtistPDet from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/UserProfile/Products/ArtistProductDetails";
 //import ArtistSoldProduct from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/UserProfile/SoldProduct/SoldProductDetails";
 import ArtistProductFetchView from "../Component/ArtistProductFetchView/ArtistProductFetchView";
+
+
 
 import BuyerManagement from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/BuyerManageTable";
 import BuyerProductPurchase from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductPurchased/ProductPurchased";
@@ -470,6 +488,9 @@ import ArtistSponser from "../Component/Dashboard/ArtistDashbooard/Advertise/Spo
 import ArtistProductCouponCodes from "../Component/Dashboard/ArtistDashbooard/ProductSetting/ProductCouponCode/ProductCouponCode";
 import UpdateProductArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/UpdateProduct/productUploade";
 // import ProductViewArtist from "../Component/Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/productUploade";
+import CreateInsuranceArtist from "../Component/Dashboard/ArtistDashbooard/Insurance/create";
+import ArtistIsnaurance from "../Component/Dashboard/ArtistDashbooard/Insurance/Insurance";
+import ViewInsuranceArtist from "../Component/Dashboard/ArtistDashbooard/Insurance/view"
 //-----------------------------Blogs--------------------------//
 import BlogList from "../Component/Dashboard/ArtistDashbooard/Blog/BlogList";
 import BlogPost from "../Component/Dashboard/ArtistDashbooard/Blog/BlogPost";
@@ -505,6 +526,9 @@ import SellerBidPassTable from "../Component/Dashboard/SellerDashboard/Bidding/B
 import SellerBidPassUpgrade from "../Component/Dashboard/SellerDashboard/Bidding/Biddingpass/UpgradePass";
 import SellerCertification from "../Component/Dashboard/SellerDashboard/Certification/Certification";
 import CreateSellerCertifications from "../Component/Dashboard/SellerDashboard/Certification/create";
+import CreateInsuranceSeller from "../Component/Dashboard/SellerDashboard/Insurance/create";
+import SellerIsnaurance from "../Component/Dashboard/SellerDashboard/Insurance/Insurance";
+import ViewInsuranceSeller from "../Component/Dashboard/SellerDashboard/Insurance/view"
 
 import SellerExhibition from "../Component/Dashboard/SellerDashboard/Exhibition/exhibition";
 import SellerCreateExhibition from "../Component/Dashboard/SellerDashboard/Exhibition/create";
@@ -756,7 +780,23 @@ const AppRoutes = () => {
       <Route path="/tip-payment/success" element={<PaymentTipSuccessPage/>} />
       <Route path="/tip-payment/failure" element={<PaymentTipFailurePage/>} />
 
+       <Route path="/payment/challenge-success" element={<ChallengeSuccessPage/>} />
+      <Route path="/payment/challenge-failure" element={<ChallengeFailurePage/>} />
 
+      
+       <Route path="/payment/custom/success" element={<CustomrequestSuccessPage/>} />
+      <Route path="/payment/custom/failure" element={<CustomrequestFailurePage/>} />
+
+      <Route path="/payment/wallet/success" element={<AddwalletSuccessPage/>} />
+      <Route path="/payment/wallet/failure" element={<AddwalletFailurePage/>} />
+
+        <Route path="/insurance-payment/success" element={<InsuranceSuccessPage/>} />
+      <Route path="/insurance-payment/failure" element={<InsuranceFailurePage/>} />
+
+         <Route path="/exhibition-payment/success" element={<ExhibitionSuccessPage/>} />
+      <Route path="/exhibition-payment/failure" element={<ExhibitionFailurePage/>} />
+
+     
 
       </Route>
 
@@ -1081,6 +1121,7 @@ const AppRoutes = () => {
         <Route path="product-settings/period-era" element={<PeriodEras />} />
         <Route path="settings/gst" element={<GSTSetting />} />
         <Route path="settings/insurance" element={<InsuranceSetting />} />
+         <Route path="settings/exhibition" element={<ExhibitionSetting />} />
         {/* Advertise Routes */}
         <Route path="advertise" element={<SuperAdminArtistAdvertise />} />
         <Route path="advertise/sponser" element={<SuperAdminArtistSponsor />} />
@@ -1410,6 +1451,11 @@ const AppRoutes = () => {
         {/* Advertise Routes */}
         <Route path="advertise" element={<ArtistAdvertise />} />
         <Route path="advertise/sponser" element={<ArtistSponser />} />
+        {/* Artist Insurance Routes */}
+          <Route path="insurance" element={<ArtistIsnaurance />} />
+        <Route path="insurance/create" element={< CreateInsuranceArtist/>} />
+         <Route path="insurance/view" element={< ViewInsuranceArtist/>} />
+       
 
         {/* Bidding Routes */}
         <Route
@@ -1560,6 +1606,11 @@ const AppRoutes = () => {
           path="certification/create-certification"
           element={<CreateSellerCertifications />}
         />
+
+           {/* Artist Insurance Routes */}
+          <Route path="insurance" element={<SellerIsnaurance />} />
+        <Route path="insurance/create" element={< CreateInsuranceSeller/>} />
+         <Route path="insurance/view" element={< ViewInsuranceSeller/>} />
 
         {/* Exhibition */}
         <Route path="exhibition" element={<SellerExhibition />} />

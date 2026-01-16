@@ -161,6 +161,7 @@ const ExhibitionTable = () => {
                       <th>Type</th>
                       <th>Hosted By</th>
                       <th>Start Date</th>
+                      <th>Invite/Promotion</th>
                       <th>Status</th>
                       <th>Action</th>
                     </tr>
@@ -173,6 +174,7 @@ const ExhibitionTable = () => {
                         <td>{exhibition.type || "-"}</td>
                         <td>{exhibition.hostedBy || "-"}</td>
                         <td>{new Date(exhibition.startDate).toLocaleDateString() || "-"}</td>
+                        <td>{exhibition.eventPromotion|| "-"}</td>
                         <td>
                           <button className={`btn btn-sm  ${exhibition.status === 'Pending' ? 'btn-outline-warning' : exhibition.status === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
                             {exhibition.status}

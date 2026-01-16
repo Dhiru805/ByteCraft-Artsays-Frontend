@@ -676,6 +676,41 @@ const AddCustomRequestForm = () => {
     req.ProductName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleInitiatePayment = async (requestId, amount) => {
+  if (!amount || amount === "—" || !requestId) {
+    toast.error("Cannot initiate payment: Invalid amount or request");
+    return;
+  }
+
+  try {
+    toast.info("Initiating payment...");
+
+    const response = await postAPI(
+      "/api/custom-payment-request", 
+      {
+        userId: localStorage.getItem("userId"),
+        customRequestId: requestId,
+        amount: Number(amount.replace("₹", "").trim()), 
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    if (response.data?.success && response.data?.data?.paymentUrl) {
+      window.location.href = response.data.data.paymentUrl;
+    } else {
+      toast.error(response.data?.message || "Failed to get payment URL");
+    }
+  } catch (error) {
+    console.error("Payment initiation error:", error);
+    const msg = error?.response?.data?.message || "Something went wrong";
+    toast.error(msg);
+  }
+};
+
   const handleImageClick = (imagePath) => {
     const fullPath = `${BASE_URL}/${imagePath}`;
     setCurrentImages([fullPath]);
@@ -847,12 +882,20 @@ const AddCustomRequestForm = () => {
                             title="Negotiate"
                           />
                         )}
-                      {req.RequestStatus === "Approved" && (
-                        <FaRupeeSign
-                          className="cursor-pointer text-2xl text-blue-500 p-1 border rounded-lg"
-                          title="Payment"
-                        />
-                      )}
+                  {req.RequestStatus === "Approved" && (
+  <FaRupeeSign
+    onClick={() => {
+      const latestAmount = getLatestNegotiatedBudget(req);
+      if (latestAmount === "—") {
+        toast.warn("No negotiated amount available yet");
+        return;
+      }
+      handleInitiatePayment(req._id, latestAmount);
+    }}
+    className="cursor-pointer text-2xl text-blue-600 hover:text-blue-800 p-1 border border-blue-400 rounded-lg transition-colors"
+    title="Proceed to Payment"
+  />
+)}
                       {req.BuyerNegotiatedBudgets.length === 2 &&
                         req.ArtistNegotiatedBudgets.length === 3 &&
                         req.RequestStatus !== "Approved" &&

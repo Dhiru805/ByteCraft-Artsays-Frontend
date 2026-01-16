@@ -39,6 +39,7 @@ const JoinChallenges = () => {
     challengeName: challengeDetails?.title || "",
     description: "",
     guidelines: false,
+    entryFee:challengeDetails?.entryFee
   });
   const [works, setWorks] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -99,6 +100,9 @@ const JoinChallenges = () => {
     formData.append("description", applicationData.description);
     formData.append("guidelines", applicationData.guidelines);
     formData.append("works", works);
+    formData.append("entryFee", challengeDetails?.entryFee );
+
+
 
     try {
       const response = await postAPI(
@@ -107,23 +111,27 @@ const JoinChallenges = () => {
         {},
         false
       );
-
-      if (response?.hasError === false) {
-        toast.success(response?.message || "Application submitted successfully!");
-        setApplicationData({
-          fullName: "",
-          email: "",
-          contactNumber: "",
-          userName: "",
-          category: "",
-          challengeName: challengeDetails?.title || "",
-          description: "",
-          guidelines: false,
-        });
-        setWorks(null);
-      } else {
-        toast.error(response?.message || "Something went wrong");
-      }
+   if (response?.data?.data?.paymentUrl) {
+  window.location.href = response.data.data.paymentUrl;
+} else {
+  toast.error("Payment link not received");
+}
+      // if (response?.hasError === false) {
+      //   toast.success(response?.message || "Application submitted successfully!");
+      //   setApplicationData({
+      //     fullName: "",
+      //     email: "",
+      //     contactNumber: "",
+      //     userName: "",
+      //     category: "",
+      //     challengeName: challengeDetails?.title || "",
+      //     description: "",
+      //     guidelines: false,
+      //   });
+      //   setWorks(null);
+      // } else {
+      //   toast.error(response?.message || "Something went wrong");
+      // }
     } catch (error) {
       console.error("Error submitting application: ", error);
       toast.error("Failed to submit application");

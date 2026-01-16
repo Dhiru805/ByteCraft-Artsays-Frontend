@@ -8,6 +8,7 @@ import postAPI from "../../../../api/postAPI";
 
 function CreateCertification() {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     userType: "",
     userId: "",
@@ -15,156 +16,168 @@ function CreateCertification() {
     mainCategories: [],
     certifications: [],
     certificationProvider: "",
+    payOrFree: "pay",
   });
+
   const [users, setUsers] = useState([]);
   const [products, setProducts] = useState([]);
-  const [mainCategories, setMainCategories] = useState([]);
   const [certifications, setCertifications] = useState([]);
   const [loading, setLoading] = useState(false);
-
 
   const typeOptions = [
     { value: "Artist", label: "Artist" },
     { value: "Seller", label: "Seller" },
   ];
 
-
   const certificationProviderOptions = [
     { value: "inhouse", label: "In-house Certification" },
     { value: "thirdparty", label: "Third Party Certification" },
   ];
 
+  const payOrFreeOptions = [
+    { value: "pay", label: "Paid Certification" },
+    { value: "free", label: "Free Certification" },
+  ];
 
   useEffect(() => {
-    if (formData.userType) {
-      const fetchUsers = async () => {
-        try {
-          const response = await getAPI(`/api/users-by-type?userType=${formData.userType}`, {}, true);
-          if (!response.hasError) {
-            setUsers(response.data.data);
-            setFormData((prev) => ({ ...prev, userId: "", productId: "", mainCategories: [], certifications: [] }));
-            setProducts([]);
-            setMainCategories([]);
-          } else {
-            toast.error(`Failed to fetch users: ${response.message}`);
-          }
-        } catch (error) {
-          toast.error("An error occurred while fetching users.");
-        }
-      };
-      fetchUsers();
-    } else {
+    if (!formData.userType) {
       setUsers([]);
-      setFormData((prev) => ({ ...prev, userId: "", productId: "", mainCategories: [], certifications: [] }));
-      setProducts([]);
-      setMainCategories([]);
+      resetDependentFields();
+      return;
     }
+
+    const fetchUsers = async () => {
+      try {
+        const res = await getAPI(
+          `/api/users-by-type?userType=${formData.userType}`,
+          {},
+          true
+        );
+
+        if (!res.hasError) {
+          const userList = res.data?.data || [];
+          setUsers(userList);
+
+          if (userList.length === 1 && !formData.userId) {
+            setFormData((prev) => ({
+              ...prev,
+              userId: userList[0]._id,
+            }));
+          }
+        } else {
+          toast.error(res.message || "Failed to load users");
+        }
+      } catch (err) {
+        toast.error("Error while loading users");
+      }
+    };
+
+    fetchUsers();
   }, [formData.userType]);
 
-
   useEffect(() => {
-    if (formData.userId) {
-      const fetchProducts = async () => {
-        try {
-          const response = await getAPI(`/api/products-by-user?userId=${formData.userId}`, {}, true);
-          if (!response.hasError) {
-            setProducts(response.data.data);
-            setFormData((prev) => ({ ...prev, productId: "", mainCategories: [], certifications: [] }));
-            const categories = [...new Set(response.data.data.map((product) => product.mainCategory._id))];
-            setMainCategories(categories);
-          } else {
-            toast.error(`Failed to fetch products: ${response.message}`);
-          }
-        } catch (error) {
-          toast.error("An error occurred while fetching products.");
-        }
-      };
-      fetchProducts();
-    } else {
+    if (!formData.userId) {
       setProducts([]);
-      setMainCategories([]);
-      setFormData((prev) => ({ ...prev, productId: "", mainCategories: [], certifications: [] }));
+      resetDependentFields();
+      return;
     }
+
+    const fetchProducts = async () => {
+      try {
+        const res = await getAPI(
+          `/api/products-by-user?userId=${formData.userId}`,
+          {},
+          true
+        );
+
+        if (!res.hasError) {
+          setProducts(res.data?.data || []);
+        } else {
+          toast.error(res.message || "Failed to load products");
+        }
+      } catch (err) {
+        toast.error("Error while loading products");
+      }
+    };
+
+    fetchProducts();
   }, [formData.userId]);
 
-
   useEffect(() => {
-    if (formData.mainCategories.length > 0) {
-      const fetchCertifications = async () => {
-        try {
-          const response = await getAPI(`/api/get-certification-setting`, {}, true);
-          if (!response.hasError && Array.isArray(response.data.data)) {
-            const filteredCertifications = response.data.data.filter((cert) =>
-              formData.mainCategories.includes(cert.mainCategoryId?._id)
-            );
-            setCertifications(filteredCertifications);
-            if (filteredCertifications.length === 0) {
-              toast.warn("No certifications available for the selected product's category.");
-            }
-          } else {
-            toast.error("Failed to fetch certifications.");
-          }
-        } catch (error) {
-          toast.error("An error occurred while fetching certifications.");
-        }
-      };
-      fetchCertifications();
-    } else {
+    if (formData.mainCategories.length === 0) {
       setCertifications([]);
       setFormData((prev) => ({ ...prev, certifications: [] }));
+      return;
     }
+
+    const fetchCertifications = async () => {
+      try {
+        const res = await getAPI("/api/get-certification-setting", {}, true);
+
+        if (!res.hasError && Array.isArray(res.data?.data)) {
+          const filtered = res.data.data.filter((cert) =>
+            formData.mainCategories.includes(cert.mainCategoryId?._id)
+          );
+          setCertifications(filtered);
+        } else {
+          toast.error("Failed to load certification settings");
+        }
+      } catch (err) {
+        toast.error("Error loading certifications");
+      }
+    };
+
+    fetchCertifications();
   }, [formData.mainCategories]);
 
+  const resetDependentFields = () => {
+    setFormData((prev) => ({
+      ...prev,
+      userId: "",
+      productId: "",
+      mainCategories: [],
+      certifications: [],
+    }));
+    setProducts([]);
+    setCertifications([]);
+  };
 
   const handleChange = (name, value) => {
     if (name === "certifications") {
-      setFormData((prev) => ({ ...prev, [name]: value ? value.map((option) => option.value) : [] }));
-    } else if (name === "productId") {
-      const selectedProduct = products.find((product) => product._id === value);
       setFormData((prev) => ({
         ...prev,
-        [name]: value,
-        mainCategories: selectedProduct ? [selectedProduct.mainCategory._id] : [],
+        certifications: value ? value.map((opt) => opt.value) : [],
+      }));
+    } else if (name === "productId") {
+      const selected = products.find((p) => p._id === value);
+      setFormData((prev) => ({
+        ...prev,
+        productId: value || "",
+        mainCategories: selected
+          ? [selected.mainCategory?._id].filter(Boolean)
+          : [],
         certifications: [],
       }));
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      setFormData((prev) => ({ ...prev, [name]: value || "" }));
     }
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      if (!formData.userType) {
-        toast.error("Please select a type.");
-        setLoading(false);
-        return;
-      }
-      if (!formData.userId) {
-        toast.error(`Please select an ${formData.userType.toLowerCase()}.`);
-        setLoading(false);
-        return;
-      }
-      if (!formData.productId) {
-        toast.error("Please select a product.");
-        setLoading(false);
-        return;
-      }
-      if (formData.certifications.length === 0) {
-        toast.error("Please select at least one certification.");
-        setLoading(false);
-        return;
-      }
-      if (!formData.certificationProvider) {
-        toast.error("Please select a certification provider.");
-        setLoading(false);
-        return;
-      }
+      if (!formData.userType) return toast.error("Please select type");
+      if (!formData.userId) return toast.error("Please select user");
+      if (!formData.productId) return toast.error("Please select product");
+      if (formData.certifications.length === 0)
+        return toast.error("Please select at least one certification");
+      if (!formData.certificationProvider)
+        return toast.error("Please select certification provider");
+      if (!formData.payOrFree) return toast.error("Please select payment type");
 
-      const submissionData = formData.certifications.map((certId) => {
+      const payload = formData.certifications.map((certId) => {
         const cert = certifications.find((c) => c._id === certId);
         return {
           userType: formData.userType,
@@ -173,14 +186,29 @@ function CreateCertification() {
           mainCategoryId: formData.mainCategories[0],
           certificationId: certId,
           certificationProvider: formData.certificationProvider,
-          estimatedDays: cert ? cert.estimatedDays : 0,
-          certificationPrice: 99,
+          estimatedDays: cert?.estimatedDays || 7,
+          certificationPrice:
+            formData.payOrFree === "free" ? 0 : cert?.price || 99,
+          payOrFree: formData.payOrFree,
         };
       });
 
-      const response = await postAPI("/api/create-certification", submissionData, {}, true);
+      const response = await postAPI("/api/create-certification-superadmin", payload, {}, true);
+
       if (!response.hasError) {
-        toast.success("Certification(s) created successfully!");
+        const result = response.data?.data;
+
+        if (formData.payOrFree === "free") {
+          toast.success("Free certification(s) created successfully!");
+          navigate("/super-admin/certification");
+        } else if (result?.paymentUrl) {
+          toast.info("Payment Link sent on mail");
+             navigate("/super-admin/certification");
+        } else {
+          toast.success("Certification request created successfully");
+          navigate("/super-admin/certification");
+        }
+
         setFormData({
           userType: "",
           userId: "",
@@ -188,56 +216,40 @@ function CreateCertification() {
           mainCategories: [],
           certifications: [],
           certificationProvider: "",
+          payOrFree: "pay",
         });
-        navigate("/super-admin/certification");
       } else {
-        toast.error(`Failed to create certifications: ${response.message}`);
+        toast.error(response.message || "Operation failed");
       }
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || "An error occurred while creating the certifications.";
-      toast.error(errorMessage);
+      toast.error(error.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
   };
 
-  const selectedProduct = products.find((product) => product._id === formData.productId);
+  const selectedProduct = products.find((p) => p._id === formData.productId);
 
-  const userOptions = users.map((user) => ({
-    value: user._id,
-    label: `${user.name} ${user.lastName || ""}`,
+  const userOptions = users.map((u) => ({
+    value: u._id,
+    label:
+      `${u.name || ""} ${u.lastName || ""}`.trim() || u.email || "Unknown user",
   }));
 
-  const productOptions = products.map((product) => ({
-    value: product._id,
-    label: product.productName,
+  const productOptions = products.map((p) => ({
+    value: p._id,
+    label: p.productName || "Unnamed product",
   }));
 
-  const certificationOptions = certifications.map((cert) => ({
-    value: cert._id,
-    label: `${cert.certificationName} (₹99)`,
+  const certificationOptions = certifications.map((c) => ({
+    value: c._id,
+    label: `${c.certificationName} — ₹${c.price || 99}`,
   }));
 
   return (
     <div className="container-fluid">
       <div className="block-header">
-        <div className="row">
-          <div className="col-lg-6 col-md-6 col-sm-12">
-            <h2>Create Certification</h2>
-            <ul className="breadcrumb">
-              <li className="breadcrumb-item">
-                <span onClick={() => navigate("/super-admin/dashboard")} style={{ cursor: "pointer" }}>
-                  <i className="fa fa-dashboard"></i>
-                </span>
-              </li>
-              <li className="breadcrumb-item">
-                <a href="/super-admin/certification">Certification </a>
-              </li>
-              <li className="breadcrumb-item active">Create Certification</li>
-            </ul>
-          </div>
-        </div>
+        <h2>Create Certification</h2>
       </div>
 
       <div className="row clearfix">
@@ -245,129 +257,155 @@ function CreateCertification() {
           <div className="card">
             <div className="body">
               <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label htmlFor="userType">Type</label>
+                {}
+                <div className="form-group mb-3">
+                  <label className="form-label">Type *</label>
                   <Select
-                    id="userType"
-                    name="userType"
                     options={typeOptions}
-                    value={typeOptions.find((option) => option.value === formData.userType) || null}
-                    onChange={(option) => handleChange("userType", option ? option.value : "")}
-                    placeholder="Select Type"
+                    value={
+                      typeOptions.find((o) => o.value === formData.userType) ||
+                      null
+                    }
+                    onChange={(opt) => handleChange("userType", opt?.value)}
+                    placeholder="Select type"
                     isClearable
                   />
                 </div>
-                <div className="form-group">
-                  <label htmlFor="userId">{formData.userType || "Artist or Seller"}</label>
+
+                {}
+                <div className="form-group mb-3">
+                  <label className="form-label">User *</label>
                   <Select
-                    id="userId"
-                    name="userId"
                     options={userOptions}
-                    value={userOptions.find((option) => option.value === formData.userId) || null}
-                    onChange={(option) => handleChange("userId", option ? option.value : "")}
-                    placeholder={`Select ${formData.userType || "Artist or Seller"}`}
+                    value={
+                      userOptions.find((o) => o.value === formData.userId) ||
+                      null
+                    }
+                    onChange={(opt) => handleChange("userId", opt?.value)}
+                    placeholder="Select user"
+                    isDisabled={!formData.userType || users.length === 0}
                     isClearable
-                    isDisabled={!formData.userType}
                   />
+
+                  {formData.userType && users.length > 0 && (
+                    <small className="form-text text-muted mt-1">
+                      {users.length === 1
+                        ? "Only 1 user found – auto selected"
+                        : `${users.length} ${formData.userType.toLowerCase()}${
+                            users.length > 1 ? "s" : ""
+                          } available`}
+                    </small>
+                  )}
                 </div>
-                <div className="form-group">
-                  <label htmlFor="productId">Product</label>
+
+                {}
+                <div className="form-group mb-3">
+                  <label className="form-label">Product *</label>
                   <Select
-                    id="productId"
-                    name="productId"
                     options={productOptions}
-                    value={productOptions.find((option) => option.value === formData.productId) || null}
-                    onChange={(option) => handleChange("productId", option ? option.value : "")}
-                    placeholder="Select Product"
-                    isClearable
+                    value={
+                      productOptions.find(
+                        (o) => o.value === formData.productId
+                      ) || null
+                    }
+                    onChange={(opt) => handleChange("productId", opt?.value)}
+                    placeholder="Select product"
                     isDisabled={!formData.userId}
+                    isClearable
                   />
                 </div>
+
+                {}
                 {selectedProduct && (
-                  <div className="form-group">
-                    <label>Product Details</label>
-                    <div className="d-flex align-items-center">
-                      <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedProduct.mainImage}`}
-                        alt={selectedProduct.productName}
-                        className="img-thumbnail mr-3"
-                        style={{ maxWidth: "100px", maxHeight: "100px" }}
-                      />
+                  <div className="form-group mb-4">
+                    <label className="form-label">Selected Product</label>
+                    <div className="d-flex align-items-center gap-3 p-3 bg-light rounded">
+                      {selectedProduct.mainImage && (
+                        <img
+                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedProduct.mainImage}`}
+                          alt={selectedProduct.productName}
+                          style={{
+                            width: "90px",
+                            height: "90px",
+                            objectFit: "cover",
+                            borderRadius: "8px",
+                          }}
+                        />
+                      )}
                       <div>
-                        <p><strong>Product Name:</strong> {selectedProduct.productName}</p>
-                        <p>
-                          <strong>Main Category:</strong>{" "}
-                          {selectedProduct.mainCategory?.mainCategoryName || selectedProduct.mainCategory?._id || "Unknown"}
-                        </p>
-                        <p><strong>Product Type:</strong> {selectedProduct.productType}</p>
+                        <div className="fw-bold">
+                          {selectedProduct.productName}
+                        </div>
+                        <small className="text-muted">
+                          {selectedProduct.mainCategory?.mainCategoryName ||
+                            "—"}
+                        </small>
                       </div>
                     </div>
                   </div>
                 )}
-                <div className="form-group">
-                  <label htmlFor="certifications">Certifications (Price: ₹99 each)</label>
+
+                {}
+                <div className="form-group mb-3">
+                  <label className="form-label">Certifications *</label>
                   <Select
-                    id="certifications"
-                    name="certifications"
-                    options={certificationOptions}
-                    value={certificationOptions.filter((option) => formData.certifications.includes(option.value))}
-                    onChange={(options) => handleChange("certifications", options)}
-                    placeholder="Select Certifications"
                     isMulti
-                    isDisabled={formData.mainCategories.length === 0 || certifications.length === 0}
+                    options={certificationOptions}
+                    value={certificationOptions.filter((o) =>
+                      formData.certifications.includes(o.value)
+                    )}
+                    onChange={(opts) => handleChange("certifications", opts)}
+                    placeholder="Select certifications..."
+                    isDisabled={certifications.length === 0}
                   />
-                  <small className="form-text text-muted">
-                    Select one or more certifications
-                  </small>
                 </div>
-                {formData.certifications.length > 0 && (
-                  <div className="form-group">
-                    <label>Selected Certifications</label>
-                    <table className="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th>Certification Name</th>
-                          <th>Estimated Days</th>
-                          <th>Price (INR)</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {formData.certifications.map((certId) => {
-                          const cert = certifications.find((c) => c._id === certId);
-                          return cert ? (
-                            <tr key={cert._id}>
-                              <td>{cert.certificationName}</td>
-                              <td>{cert.estimatedDays}</td>
-                              <td>₹99</td>
-                            </tr>
-                          ) : null;
-                        })}
-                      </tbody>
-                    </table>
-                    <p><strong>Estimated Delivery:</strong> {Math.max(...formData.certifications.map((certId) => {
-                      const cert = certifications.find((c) => c._id === certId);
-                      return cert ? cert.estimatedDays : 0;
-                    }))} days</p>
-                  </div>
-                )}
-                <div className="form-group">
-                  <label htmlFor="certificationProvider">Certification Provider</label>
+
+                {}
+                <div className="form-group mb-3">
+                  <label className="form-label">Provider *</label>
                   <Select
-                    id="certificationProvider"
-                    name="certificationProvider"
                     options={certificationProviderOptions}
-                    value={certificationProviderOptions.find((option) => option.value === formData.certificationProvider) || null}
-                    onChange={(option) => handleChange("certificationProvider", option ? option.value : "")}
-                    placeholder="Select Certification Provider"
+                    value={
+                      certificationProviderOptions.find(
+                        (o) => o.value === formData.certificationProvider
+                      ) || null
+                    }
+                    onChange={(opt) =>
+                      handleChange("certificationProvider", opt?.value)
+                    }
+                    placeholder="Select provider"
                     isClearable
                   />
                 </div>
+
+                {}
+                <div className="form-group mb-4">
+                  <label className="form-label">Certification Type *</label>
+                  <Select
+                    options={payOrFreeOptions}
+                    value={
+                      payOrFreeOptions.find(
+                        (o) => o.value === formData.payOrFree
+                      ) || null
+                    }
+                    onChange={(opt) => handleChange("payOrFree", opt?.value)}
+                    placeholder="Choose type"
+                  />
+                  <small className="form-text text-muted">
+                    Free → instant creation • Paid → payment gateway
+                  </small>
+                </div>
+
                 <button
                   type="submit"
-                  className="btn btn-block btn-primary mt-3"
+                  className="btn btn-primary btn-lg w-100 mt-3"
                   disabled={loading}
                 >
-                  {loading ? "Creating Certification..." : "Create Certification"}
+                  {loading
+                    ? "Processing..."
+                    : formData.payOrFree === "free"
+                    ? "Create Free Certification"
+                    : "Proceed to Payment"}
                 </button>
               </form>
             </div>

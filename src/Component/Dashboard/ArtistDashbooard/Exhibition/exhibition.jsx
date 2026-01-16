@@ -172,6 +172,7 @@ const ExhibitionTable = () => {
                       <th>Type</th>
                       <th>Hosted By</th>
                       <th>Start Date</th>
+                       <th>Invite/Promotion</th>
                       <th>Status</th>
                       <th>Action</th>
                     </tr>
@@ -191,6 +192,7 @@ const ExhibitionTable = () => {
                               exhibition.startDate
                             ).toLocaleDateString() || "-"}
                           </td>
+                          <td>{exhibition.eventPromotion|| "-"}</td>
                           <td>
                             <button
                               className={`btn btn-sm  ${

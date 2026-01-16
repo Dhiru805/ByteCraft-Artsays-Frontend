@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import getAPI from '../../../api/getAPI';
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import getAPI from "../../../api/getAPI";
 import { Scroll } from "lucide-react";
 
 const Sidebar = () => {
@@ -18,14 +18,11 @@ const Sidebar = () => {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [activeSubTab, setActiveSubTab] = useState(null);
 
-
-  const userrole = localStorage.getItem('userrole');
+  const userrole = localStorage.getItem("userrole");
 
   const roleAliases = {
     "Super-Admin": userrole ? userrole.toLowerCase() : "super-admin",
   };
-
-
 
   const getDisplayPath = (path) => {
     const alias = roleAliases[userrole] || userrole?.toLowerCase();
@@ -56,18 +53,20 @@ const Sidebar = () => {
         tabId: "dbd1",
         icon: "fa-dashboard",
         path: "/super-admin/dashboard",
-        subTabs: []
+        subTabs: [],
       },
       // ...(email === "shantu131201@gmail.com"
       //   ? [
       ...(userType?.toLowerCase() === "super-admin"
-        ? [{
-          label: "Wallet Management",
-          icon: "bi-wallet-fill",
-          path: `/${userType.toLowerCase()}/wallet-management`,
-          state: { _id: userId },
-          subTabs: []
-        }]
+        ? [
+            {
+              label: "Wallet Management",
+              icon: "bi-wallet-fill",
+              path: `/${userType.toLowerCase()}/wallet-management`,
+              state: { _id: userId },
+              subTabs: [],
+            },
+          ]
         : []),
 
       {
@@ -75,7 +74,7 @@ const Sidebar = () => {
         tabId: "adn1",
         icon: "fas fa-user",
         path: "/super-admin/admin",
-        subTabs: []
+        subTabs: [],
       },
       //   ]
       // : []),
@@ -84,21 +83,45 @@ const Sidebar = () => {
         tabId: "bgs1",
         icon: "fa fa-newspaper",
         path: "/super-admin/blog",
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Artist",
         tabId: "att1",
         icon: "fa fa-paint-brush",
         path: `#artist-management`,
-        basePath: "/super-admin/artist",  //Common prefix for all Artist sub-routes
+        basePath: "/super-admin/artist", //Common prefix for all Artist sub-routes
         subTabs: [
-          { label: "Management", subtabId: "att11", path: `/super-admin/artist/management` },
-          { label: "Blog Request", subtabId: "att12", path: `/super-admin/artist/blogrequest` },
-          { label: "Blogs", subtabId: "att13", path: `/super-admin/artist/blogs` },
-          { label: "Product Request", subtabId: "att14", path: `/super-admin/artist/artistproductrequest` },
-          { label: "Products", subtabId: "att15", path: `/super-admin/artist/allartistproduct` },
-          { label: "Sold Product", subtabId: "att16", path: `/super-admin/artist/sold-product` }
+          {
+            label: "Management",
+            subtabId: "att11",
+            path: `/super-admin/artist/management`,
+          },
+          {
+            label: "Blog Request",
+            subtabId: "att12",
+            path: `/super-admin/artist/blogrequest`,
+          },
+          {
+            label: "Blogs",
+            subtabId: "att13",
+            path: `/super-admin/artist/blogs`,
+          },
+          {
+            label: "Product Request",
+            subtabId: "att14",
+            path: `/super-admin/artist/artistproductrequest`,
+          },
+          {
+            label: "Products",
+            subtabId: "att15",
+            path: `/super-admin/artist/allartistproduct`,
+          },
+          {
+            label: "Sold Product",
+            subtabId: "att16",
+            path: `/super-admin/artist/sold-product`,
+          },
           // icon: "fa fa-paint-brush",
           // path: `#artist-management`,
           // subTabs: [
@@ -110,7 +133,7 @@ const Sidebar = () => {
           //   { label: "Sold Product ", path: `/super-admin/artist/sold-product` },
           // { label: "Transaction", path: `/super-admin/artisttransaction`},
           // { label: "Packaging Material", path: `/super-admin/artistpackagingmaterial` },
-        ]
+        ],
       },
       {
         label: "Buyer",
@@ -119,10 +142,26 @@ const Sidebar = () => {
         path: `#Buyer-management`,
         basePath: "/super-admin/buyer",
         subTabs: [
-          { label: "Management", subtabId: "byr11", path: `/super-admin/buyer/management` },
-          { label: "Product Purchased", subtabId: "byr12", path: `/super-admin/buyer/productpurchased` },
-          { label: "Resell Product Request", subtabId: "byr13", path: `/super-admin/buyer/resellproduct` },
-          { label: "Sold Product", subtabId: "byr14", path: `/super-admin/buyer/soldproduct` }
+          {
+            label: "Management",
+            subtabId: "byr11",
+            path: `/super-admin/buyer/management`,
+          },
+          {
+            label: "Product Purchased",
+            subtabId: "byr12",
+            path: `/super-admin/buyer/productpurchased`,
+          },
+          {
+            label: "Resell Product Request",
+            subtabId: "byr13",
+            path: `/super-admin/buyer/resellproduct`,
+          },
+          {
+            label: "Sold Product",
+            subtabId: "byr14",
+            path: `/super-admin/buyer/soldproduct`,
+          },
           // icon: "fa-handshake",
           // path: `#Buyer-management`,
           // subTabs: [
@@ -132,7 +171,7 @@ const Sidebar = () => {
           //   { label: "Sold Product", path: `/super-admin/buyer/soldproduct` },
           // { label: "Transaction", path: `/super-admin/buyertransaction` },
           // { label: "Packaging Material", path: `/super-admin/buyerpackagingmaterial` },
-        ]
+        ],
       },
       {
         label: "Seller",
@@ -141,25 +180,41 @@ const Sidebar = () => {
         path: `#Seller-management`,
         basePath: "/super-admin/seller",
         subTabs: [
-          { label: "Management", subtabId: "slr11", path: `/super-admin/seller/management` },
-          { label: "Products", subtabId: "slr12", path: `/super-admin/seller/product` },
-          { label: "Product Request", subtabId: "slr13", path: `/super-admin/seller/productrequest` },
-          { label: "Sold Product", subtabId: "slr14", path: `/super-admin/seller/soldproduct` }
-        ]
+          {
+            label: "Management",
+            subtabId: "slr11",
+            path: `/super-admin/seller/management`,
+          },
+          {
+            label: "Products",
+            subtabId: "slr12",
+            path: `/super-admin/seller/product`,
+          },
+          {
+            label: "Product Request",
+            subtabId: "slr13",
+            path: `/super-admin/seller/productrequest`,
+          },
+          {
+            label: "Sold Product",
+            subtabId: "slr14",
+            path: `/super-admin/seller/soldproduct`,
+          },
+        ],
       },
       {
         label: "Celebrities",
         tabId: "cls1",
         icon: "fas fa-user",
         path: "/super-admin/celebrities",
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Product",
         tabId: "pdt1",
         icon: "fa fa-cart-plus",
         path: `/super-admin/product-table`,
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Custom Order",
@@ -167,7 +222,7 @@ const Sidebar = () => {
         icon: "fa fa-cart-plus",
         path: `/super-admin/customordertable`,
 
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Product Purchased",
@@ -175,7 +230,7 @@ const Sidebar = () => {
         icon: "fa fa-cart-plus",
         path: `/super-admin/purchasetable`,
 
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Bidding",
@@ -184,11 +239,27 @@ const Sidebar = () => {
         path: `#Bidding`,
         basePath: "/super-admin/bidding",
         subTabs: [
-          { label: "All Products", subtabId: "bdg11", path: `/super-admin/bidding/allproduct` },
-          { label: "Bidded Product", subtabId: "bdg12", path: `/super-admin/bidding/bidded-product` },
-          { label: "Bidding Pass", subtabId: "bdg13", path: `/super-admin/bidding/pass-table` },
-          { label: "Bidding Pass Order", subtabId: "bdg14", path: `/super-admin/bidding/pass-order-table` }
-        ]
+          {
+            label: "All Products",
+            subtabId: "bdg11",
+            path: `/super-admin/bidding/allproduct`,
+          },
+          {
+            label: "Bidded Product",
+            subtabId: "bdg12",
+            path: `/super-admin/bidding/bidded-product`,
+          },
+          {
+            label: "Bidding Pass",
+            subtabId: "bdg13",
+            path: `/super-admin/bidding/pass-table`,
+          },
+          {
+            label: "Bidding Pass Order",
+            subtabId: "bdg14",
+            path: `/super-admin/bidding/pass-order-table`,
+          },
+        ],
       },
       {
         label: "Certification Services",
@@ -197,7 +268,7 @@ const Sidebar = () => {
         path: `/super-admin/certification`,
         basePath: "/super-admin/certification",
 
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Challenges",
@@ -212,7 +283,11 @@ const Sidebar = () => {
             subtabId: "clg11",
             path: `/super-admin/challenges`,
           },
-          { label: "Challenges Entries", subtabId: "clg12", path: `/super-admin/challenges-entries` },
+          {
+            label: "Challenges Entries",
+            subtabId: "clg12",
+            path: `/super-admin/challenges-entries`,
+          },
         ],
       },
       {
@@ -220,30 +295,30 @@ const Sidebar = () => {
         tabId: "spr1",
         icon: "fa fa-bullhorn",
         path: `/super-admin/advertise`,
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "FAQ",
         icon: "fa fa-question-circle",
         path: `/super-admin/faq`,
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Arty CMS",
         icon: "fa fa-cog",
         path: `/super-admin/artCMS`,
         basePath: "/super-admin/artCMS",
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Career",
         icon: "fa fa-briefcase",
-        path: '#Career',
+        path: "#Career",
         basePath: "/super-admin/career",
         subTabs: [
-          { label: "Openings", path: '/super-admin/career' },
-          { label: "Applications", path: '/super-admin/career/applications' }
-        ]
+          { label: "Openings", path: "/super-admin/career" },
+          { label: "Applications", path: "/super-admin/career/applications" },
+        ],
       },
       {
         label: "Exhibition",
@@ -252,23 +327,25 @@ const Sidebar = () => {
         basePath: "/super-admin/exhibition",
         subTabs: [
           { label: "Exhibition", path: `/super-admin/exhibition` },
-          { label: "Exhibition Request", path: `/super-admin/exhibition-request` },
-
-        ]
+          {
+            label: "Exhibition Request",
+            path: `/super-admin/exhibition-request`,
+          },
+        ],
       },
       {
         label: "Enquiry",
         icon: "fa fa-mail-forward",
         path: `/super-admin/enquiry`,
         basePath: "/super-admin/enquiry",
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Art Gallery",
         icon: "fa fa-image",
         path: `/super-admin/art-gallery`,
         basePath: "/super-admin/art-gallery",
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Product Settings",
@@ -276,18 +353,51 @@ const Sidebar = () => {
         path: `#product-settings`,
         basePath: "/super-admin/product-settings",
         subTabs: [
-          { label: "Product Type", path: `/super-admin/product-settings/product-type` },
-          { label: "Product Medium", path: `/super-admin/product-settings/product-medium` },
-          { label: "Product Materia ", path: `/super-admin/product-settings/product-material` },
-          { label: "Product Edition Type", path: `/super-admin/product-settings/product-edition-type` },
-          { label: "Product Surface Type", path: `/super-admin/product-settings/product-surface-type` },
-          { label: "Product Coupon Code", path: `/super-admin/product-settings/product-coupon-code` },
-          { label: "Product Packaging Type", path: `/super-admin/product-settings/product-packaging-type` },
-          { label: "Copyrights Rights", path: `/super-admin/product-settings/copyrights-rights` },
-          { label: "Period/Era", path: `/super-admin/product-settings/period-era` },
-          { label: "Blockchain Network", path: `/super-admin/product-settings/blockchain-network` },
-          { label: "Token Standard", path: `/super-admin/product-settings/token-standard` },
-        ]
+          {
+            label: "Product Type",
+            path: `/super-admin/product-settings/product-type`,
+          },
+          {
+            label: "Product Medium",
+            path: `/super-admin/product-settings/product-medium`,
+          },
+          {
+            label: "Product Materia ",
+            path: `/super-admin/product-settings/product-material`,
+          },
+          {
+            label: "Product Edition Type",
+            path: `/super-admin/product-settings/product-edition-type`,
+          },
+          {
+            label: "Product Surface Type",
+            path: `/super-admin/product-settings/product-surface-type`,
+          },
+          {
+            label: "Product Coupon Code",
+            path: `/super-admin/product-settings/product-coupon-code`,
+          },
+          {
+            label: "Product Packaging Type",
+            path: `/super-admin/product-settings/product-packaging-type`,
+          },
+          {
+            label: "Copyrights Rights",
+            path: `/super-admin/product-settings/copyrights-rights`,
+          },
+          {
+            label: "Period/Era",
+            path: `/super-admin/product-settings/period-era`,
+          },
+          {
+            label: "Blockchain Network",
+            path: `/super-admin/product-settings/blockchain-network`,
+          },
+          {
+            label: "Token Standard",
+            path: `/super-admin/product-settings/token-standard`,
+          },
+        ],
       },
       {
         label: "Website CMS",
@@ -296,27 +406,103 @@ const Sidebar = () => {
         path: `#website-cms`,
         basePath: "/super-admin/website-cms",
         subTabs: [
-          { label: "Homepage", subtabId: "wcms11", path: `/super-admin/homepage` },
-          { label: "About Us", subtabId: "wcms12", path: `/super-admin/about-us` },
-          { label: "Affiliate Program", subtabId: "wcms19", path: `/super-admin/affiliate` },
-          { label: "Affiliate Brand Partner", subtabId: "wcms19", path: `/super-admin/affiliate-bp` },
-          { label: "How to Bid", subtabId: "wcms15", path: `/super-admin/how-to-bid` },
-          { label: "How to Buy", subtabId: "wcms15", path: `/super-admin/how-to-buy` },
-          { label: "How to Sell", subtabId: "wcms16", path: `/super-admin/how-to-sell` },
-          { label: "How to Re-Sell", subtabId: "wcms16", path: `/super-admin/how-to-resell` },
-          { label: "Why-ArtSays", subtabId: "wcms16", path: `/super-admin/why-artsays` },
-          { label: "Challenges", subtabId: "wcms19", path: `/super-admin/challenge-CMS` },
+          {
+            label: "Homepage",
+            subtabId: "wcms11",
+            path: `/super-admin/homepage`,
+          },
+          {
+            label: "About Us",
+            subtabId: "wcms12",
+            path: `/super-admin/about-us`,
+          },
+          {
+            label: "Affiliate Program",
+            subtabId: "wcms19",
+            path: `/super-admin/affiliate`,
+          },
+          {
+            label: "Affiliate Brand Partner",
+            subtabId: "wcms19",
+            path: `/super-admin/affiliate-bp`,
+          },
+          {
+            label: "How to Bid",
+            subtabId: "wcms15",
+            path: `/super-admin/how-to-bid`,
+          },
+          {
+            label: "How to Buy",
+            subtabId: "wcms15",
+            path: `/super-admin/how-to-buy`,
+          },
+          {
+            label: "How to Sell",
+            subtabId: "wcms16",
+            path: `/super-admin/how-to-sell`,
+          },
+          {
+            label: "How to Re-Sell",
+            subtabId: "wcms16",
+            path: `/super-admin/how-to-resell`,
+          },
+          {
+            label: "Why-ArtSays",
+            subtabId: "wcms16",
+            path: `/super-admin/why-artsays`,
+          },
+          {
+            label: "Challenges",
+            subtabId: "wcms19",
+            path: `/super-admin/challenge-CMS`,
+          },
           { label: "Blogs", subtabId: "wcms19", path: `/super-admin/CMS-Blog` },
           //{ label: "Policys", subtabId: "wcms19", path: `/super-admin/policy` },
-          { label: "Policies", subtabId: "wcms21", path: `/super-admin/policy` },
-          { label: "Commissions", subtabId: "wcms19", path: `/super-admin/commission` },
-          { label: "Certificate", subtabId: "wcms19", path: `/super-admin/certificate` },
-          { label: "Partner", subtabId: "wcms19", path: `/super-admin/partner` },
-          { label: "Insurance", subtabId: "wcms19", path: `/super-admin/insurance` },
-          { label: "Licensing Partner", subtabId: "wcms19", path: `/super-admin/licensing` },
-          { label: "Art Gallery", subtabId: "wcms19", path: `/super-admin/CMS-art-gallery` },
-          { label: "Contact Us", subtabId: "wcms19", path: `/super-admin/contactus` },
-          { label: "Career", subtabId: "wcms19", path: `/super-admin/career-CMS` },
+          {
+            label: "Policies",
+            subtabId: "wcms21",
+            path: `/super-admin/policy`,
+          },
+          {
+            label: "Commissions",
+            subtabId: "wcms19",
+            path: `/super-admin/commission`,
+          },
+          {
+            label: "Certificate",
+            subtabId: "wcms19",
+            path: `/super-admin/certificate`,
+          },
+          {
+            label: "Partner",
+            subtabId: "wcms19",
+            path: `/super-admin/partner`,
+          },
+          {
+            label: "Insurance",
+            subtabId: "wcms19",
+            path: `/super-admin/insurance`,
+          },
+          {
+            label: "Licensing Partner",
+            subtabId: "wcms19",
+            path: `/super-admin/licensing`,
+          },
+          {
+            label: "Art Gallery",
+            subtabId: "wcms19",
+            path: `/super-admin/CMS-art-gallery`,
+          },
+          {
+            label: "Contact Us",
+            subtabId: "wcms19",
+            path: `/super-admin/contactus`,
+          },
+          {
+            label: "Career",
+            subtabId: "wcms19",
+            path: `/super-admin/career-CMS`,
+          },
         ],
       },
       {
@@ -327,23 +513,58 @@ const Sidebar = () => {
         path: `#settings`,
         basePath: "/super-admin/settings",
         subTabs: [
-          { label: "Product Category", subtabId: "stg11", path: `/super-admin/settings/product-category` },
-          { label: "Blog Category", subtabId: "stg12", path: `/super-admin/settings/blog-category` },
-          { label: "Email Setting", subtabId: "stg13", path: `/super-admin/settings/email-setting` },
-          { label: "Payment Getway", path: `/super-admin/settings/payment-getway` },
-          { label: "Marketing", subtabId: "stg14", path: `/super-admin/settings/marketing` },
-          { label: "User Role", subtabId: "stg15", path: `/super-admin/settings/user-role` },
-          { label: "Certification", path: `/super-admin/settings/certification` },
+          {
+            label: "Product Category",
+            subtabId: "stg11",
+            path: `/super-admin/settings/product-category`,
+          },
+          {
+            label: "Blog Category",
+            subtabId: "stg12",
+            path: `/super-admin/settings/blog-category`,
+          },
+          {
+            label: "Email Setting",
+            subtabId: "stg13",
+            path: `/super-admin/settings/email-setting`,
+          },
+          {
+            label: "Payment Getway",
+            path: `/super-admin/settings/payment-getway`,
+          },
+          {
+            label: "Marketing",
+            subtabId: "stg14",
+            path: `/super-admin/settings/marketing`,
+          },
+          {
+            label: "User Role",
+            subtabId: "stg15",
+            path: `/super-admin/settings/user-role`,
+          },
+          {
+            label: "Certification",
+            path: `/super-admin/settings/certification`,
+          },
           { label: "GST", path: `/super-admin/settings/GST` },
           { label: "Insurance", path: `/super-admin/settings/insurance` },
-          { label: "Default Auto Targeting", path: `/super-admin/settings/auto-targeting` },
-          { label: "Auto Targeting Group", path: `/super-admin/settings/group-targeting` },
-          { label: "Keyword Targeting", path: `/super-admin/settings/keyword-targeting` },
+          { label: "exhibition setting", path: `/super-admin/settings/exhibition` },
        
-       
+          {
+            label: "Default Auto Targeting",
+            path: `/super-admin/settings/auto-targeting`,
+          },
+          {
+            label: "Auto Targeting Group",
+            path: `/super-admin/settings/group-targeting`,
+          },
+          {
+            label: "Keyword Targeting",
+            path: `/super-admin/settings/keyword-targeting`,
+          },
         ],
       },
-       {
+      {
         label: "SMS Settings",
         tabId: "sms1",
         label: "SMS Settings",
@@ -351,8 +572,11 @@ const Sidebar = () => {
         path: `#sms-settings`,
         basePath: "/super-admin/sms-settings",
         subTabs: [
-          { label: "Signup-sms", subtabId: "sms11", path: `/super-admin/sms-settings/signup-sms` },
-
+          {
+            label: "Signup-sms",
+            subtabId: "sms11",
+            path: `/super-admin/sms-settings/signup-sms`,
+          },
         ],
       },
       // ----------------------------------------------Community CMS-----------------------------------------------------//
@@ -363,15 +587,18 @@ const Sidebar = () => {
         basePath: "/super-admin/Community-CMS",
         subTabs: [
           { label: " Policies", path: `/super-admin/community-cms/policies` },
-          { label: "Verification badge", path: `/super-admin/community-cms/verification-badge` },
+          {
+            label: "Verification badge",
+            path: `/super-admin/community-cms/verification-badge`,
+          },
           { label: "Reports", path: `/super-admin/community-cms/reports` },
           { label: "Sponsors", path: `/super-admin/community-cms/sponsors` },
-          { label: "Purchase Badge", path: `/super-admin/community-cms/purchase-badge` },
-
-        ]
+          {
+            label: "Purchase Badge",
+            path: `/super-admin/community-cms/purchase-badge`,
+          },
+        ],
       },
-
-
 
       // {
       //   label: "Transaction",
@@ -391,10 +618,13 @@ const Sidebar = () => {
         path: `#Packaging-Material`,
         basePath: "/super-admin/Packaging-Material",
         subTabs: [
-          { label: "Material", path: `/super-admin/packaging-material/material` },
+          {
+            label: "Material",
+            path: `/super-admin/packaging-material/material`,
+          },
           { label: "Order", path: `/super-admin/packaging-material/order` },
           // { label: "Transaction", path: `/super-admin/packagingproducttransaction` },
-        ]
+        ],
       },
       {
         label: "Packaging Material Setting",
@@ -402,54 +632,74 @@ const Sidebar = () => {
         path: `#Packaging-Material-Setting`,
         basePath: "/super-admin/Packaging-Material-Setting",
         subTabs: [
-          { label: "Material Name", path: `/super-admin/packaging-material-setting/material-name` },
-          { label: "Material Size", path: `/super-admin/packaging-material-setting/material-size` },
-          { label: "Capacity", path: `/super-admin/packaging-material-setting/capacity` },
-          { label: "Stamp", path: `/super-admin/packaging-material-setting/stamp` },
-          { label: "Stickers", path: `/super-admin/packaging-material-setting/stickers` },
-          { label: "Vouchers", path: `/super-admin/packaging-material-setting/vouchers` },
-          { label: "Card", path: `/super-admin/packaging-material-setting/card` }
-        ]
+          {
+            label: "Material Name",
+            path: `/super-admin/packaging-material-setting/material-name`,
+          },
+          {
+            label: "Material Size",
+            path: `/super-admin/packaging-material-setting/material-size`,
+          },
+          {
+            label: "Capacity",
+            path: `/super-admin/packaging-material-setting/capacity`,
+          },
+          {
+            label: "Stamp",
+            path: `/super-admin/packaging-material-setting/stamp`,
+          },
+          {
+            label: "Stickers",
+            path: `/super-admin/packaging-material-setting/stickers`,
+          },
+          {
+            label: "Vouchers",
+            path: `/super-admin/packaging-material-setting/vouchers`,
+          },
+          {
+            label: "Card",
+            path: `/super-admin/packaging-material-setting/card`,
+          },
+        ],
       },
     ],
     // ----------------------------------------------Artist-----------------------------------------------------//
-    "Artist": [
+    Artist: [
       {
         label: "Dashboard",
         icon: "fa-dashboard",
         path: "/artist/dashboard",
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Blogs",
         icon: "fa fa-newspaper",
         path: "/artist/bloglist",
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Product",
         icon: "fa fa-cart-plus",
         path: "/artist/product",
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Custom Order",
         icon: "fa fa-cart-plus",
         path: "/artist/custom-order",
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Product Purchased",
         icon: "fa fa-cart-plus",
         path: "/artist/product-purchase",
-        subTabs: []
-
+        subTabs: [],
       },
       {
         label: "Advertise",
         icon: "fa fa-bullhorn",
         path: `/artist/advertise`,
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Bidding",
@@ -458,62 +708,68 @@ const Sidebar = () => {
         subTabs: [
           { label: "All Products", path: `/artist/bidding-products-table` },
           { label: "Bidded Product", path: `/artist/bidded-products-table` },
-          { label: "Bidding Pass", path: `/artist/bidding-pass-table` }
-        ]
+          { label: "Bidding Pass", path: `/artist/bidding-pass-table` },
+        ],
       },
       {
         label: "Certification Services",
         icon: "fa fa-certificate",
         path: `/artist/certification`,
-        subTabs: []
+        subTabs: [],
+      },
+      {
+        label: "Product Insurance",
+        icon: "fa fa-bullhorn",
+        path: `/artist/insurance`,
+        subTabs: [],
       },
       {
         label: "Exhibition",
         icon: "fa fa-picture-o",
         path: `/artist/exhibition`,
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Packaging Material",
         icon: "fa-archive",
         path: "/artist/packaging-material",
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Wallet",
         icon: "fa-credit-card",
         path: "/artist/wallet",
-        subTabs: []
+        subTabs: [],
       },
     ],
     // ----------------------------------------------Buyer-----------------------------------------------------//
-    "Buyer": [
+    Buyer: [
       {
         label: "Dashboard",
         icon: "fa-dashboard",
         path: "/buyer/dashboard",
-        subTabs: []
+        subTabs: [],
       },
     ],
     // ----------------------------------------------Seller-----------------------------------------------------//
-    "Seller": [
+    Seller: [
       {
         label: "Dashboard",
         icon: "fa-dashboard",
         path: "/seller/dashboard",
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Product",
         icon: "fa fa-cart-plus",
         path: "/seller/product-details",
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Product Purchased",
         icon: "fa fa-cart-plus",
         path: "/seller/purchased-product",
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Bidding",
@@ -522,51 +778,57 @@ const Sidebar = () => {
         subTabs: [
           { label: "All Products", path: `/seller/bidding-products-table` },
           { label: "Bidded Product", path: `/seller/bidded-products-table` },
-          { label: "Bidding Pass", path: `/seller/bidding-pass-table` }
-        ]
+          { label: "Bidding Pass", path: `/seller/bidding-pass-table` },
+        ],
       },
       {
         label: "Advertise",
         icon: "fa fa-bullhorn",
         path: `/seller/advertise`,
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Certification Services",
         icon: "fa fa-certificate",
         path: `#`,
         path: `/seller/certification`,
-        subTabs: []
+        subTabs: [],
+      },
+      {
+        label: "Product Insurance",
+        icon: "fa fa-bullhorn",
+        path: `/seller/insurance`,
+        subTabs: [],
       },
       {
         label: "Exhibition",
         icon: "fa fa-picture-o",
         path: `/seller/exhibition`,
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Packaging Material",
         icon: "fa fa-archive",
         path: "/seller/packaging-material",
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Wallet",
         icon: "fa-credit-card",
         path: "/seller/wallet",
-        subTabs: []
+        subTabs: [],
       },
       {
         label: "Product Settings",
         icon: "fa fa-cog",
         path: `#Settings`,
         subTabs: [
-          { label: "Product Coupon Code", path: `/seller/products-settings/product-coupon-code` },
-        ]
+          {
+            label: "Product Coupon Code",
+            path: `/seller/products-settings/product-coupon-code`,
+          },
+        ],
       },
-
-
-
     ],
   };
 
@@ -592,7 +854,7 @@ const Sidebar = () => {
   }, []);
 
   useEffect(() => {
-    const roleKey = localStorage.getItem('userType');
+    const roleKey = localStorage.getItem("userType");
 
     if (!roleKey) return;
 
@@ -609,21 +871,24 @@ const Sidebar = () => {
     if (roleKey === "Super-Admin") {
       if (roleData?.tabs && roleData.tabs.length > 0) {
         const filteredTabs = roleData.tabs
-          .map(apiTab => {
-            const matchingConfigTab = roleMenu.find(cfgTab => cfgTab.tabId === apiTab.tabId);
+          .map((apiTab) => {
+            const matchingConfigTab = roleMenu.find(
+              (cfgTab) => cfgTab.tabId === apiTab.tabId
+            );
             if (!matchingConfigTab) return null;
 
             const visibleSubTabs = (apiTab.subTabs || [])
-              .filter(sub => sub.permissions?.view)
-              .map(apiSub => {
+              .filter((sub) => sub.permissions?.view)
+              .map((apiSub) => {
                 const matchConfigSub = matchingConfigTab.subTabs?.find(
-                  s => s.subtabId === apiSub.subtabId
+                  (s) => s.subtabId === apiSub.subtabId
                 );
                 return matchConfigSub || null;
               })
               .filter(Boolean);
 
-            const shouldShowTab = apiTab.permissions?.view || visibleSubTabs.length > 0;
+            const shouldShowTab =
+              apiTab.permissions?.view || visibleSubTabs.length > 0;
             if (!shouldShowTab) return null;
 
             return { ...matchingConfigTab, subTabs: visibleSubTabs };
@@ -646,7 +911,6 @@ const Sidebar = () => {
     }
   }, []);
 
-
   // useEffect(() => {
   //   const activeTabs = fetchedTabs.reduce((acc, item) => {
   //     const isParentMatch = location.pathname.startsWith(item.path);
@@ -659,7 +923,6 @@ const Sidebar = () => {
   //   setIsActive(activeTabs);
   // }, [location.pathname, fetchedTabs]);
 
-
   // useEffect(() => {
   //   const activeTabs = fetchedTabs.reduce((acc, item) => {
   //     const parentPath = item.basePath || item.path;
@@ -670,7 +933,6 @@ const Sidebar = () => {
   //     const isActive = isParentMatch || isSubTabMatch;
   //     acc[item.label] = isActive;
 
-
   //     if (isActive) {
   //       setExpandedTab(item.label);
   //     }
@@ -680,15 +942,13 @@ const Sidebar = () => {
   //   setIsActive(activeTabs);
   // }, [location.pathname, fetchedTabs]);
 
-
-
   // const handleTabToggle = (label) => {
   //   setExpandedTab(prev => (prev === label ? null : label));
   // };
 
   const handleTabToggle = (label) => {
-    setExpandedTab(prev => (prev === label ? null : label));
-    setIsActive(prev => {
+    setExpandedTab((prev) => (prev === label ? null : label));
+    setIsActive((prev) => {
       const reset = Object.keys(prev).reduce((acc, key) => {
         acc[key] = false;
         return acc;
@@ -701,7 +961,7 @@ const Sidebar = () => {
   const handleSubTabClick = (path, parentLabel) => {
     setActiveSubTab(path); // Track by path
     setExpandedTab(parentLabel);
-    setIsActive(prev => {
+    setIsActive((prev) => {
       const reset = Object.keys(prev).reduce((acc, key) => {
         acc[key] = false;
         return acc;
@@ -709,9 +969,6 @@ const Sidebar = () => {
       return { ...reset, [parentLabel]: true };
     });
   };
-
-
-
 
   //       // path: `/super-admin/sponsor`,
   //       subTabs: []
@@ -776,11 +1033,9 @@ const Sidebar = () => {
   //   }
   // }, [location.pathname, userType]);
 
-
   // const handleTabToggle = (label) => {
   //   setExpandedTab(prevTab => (prevTab === label ? null : label));
   // };
-
 
   return (
     // <nav id="left-sidebar-nav" className="sidebar-nav">
@@ -813,41 +1068,55 @@ const Sidebar = () => {
     // </nav>
     <nav id="left-sidebar-nav" className="sidebar-nav">
       <ul id="main-menu" className="metismenu">
-        {fetchedTabs.map((item, index) => (          // Changed: Use fetchedTabs instead of menuItems
-          <li key={index} className={`menu-item ${isActive[item.label] ? 'active' : ''}`}>
-            <Link
-              to={item.path}
-              onClick={() => handleTabToggle(item.label)}
-              className={item.subTabs.length ? 'has-arrow' : ''}
+        {fetchedTabs.map(
+          (
+            item,
+            index // Changed: Use fetchedTabs instead of menuItems
+          ) => (
+            <li
+              key={index}
+              className={`menu-item ${isActive[item.label] ? "active" : ""}`}
             >
-              <i className={`fa ${item.icon}`}></i>
-              <span>{item.label}</span>
-            </Link>
-            {item.subTabs.length > 0 && (
-              <ul className={`collapse ${expandedTab === item.label ? 'in' : ''}`}>
-                {item.subTabs.map((subTab, subIndex) => (
-                  <li
-                    key={subIndex}
-                    className={activeSubTab === subTab.path ? 'active' : ''}
-                  >
-                    <Link to={subTab.path} onClick={() => handleSubTabClick(subTab.path, item.label)}>
-                      {subTab.label}
-                    </Link>
-                  </li>
-
-                ))}
-              </ul>
-            )}
-          </li>
-        ))}
+              <Link
+                to={item.path}
+                onClick={() => handleTabToggle(item.label)}
+                className={item.subTabs.length ? "has-arrow" : ""}
+              >
+                <i className={`fa ${item.icon}`}></i>
+                <span>{item.label}</span>
+              </Link>
+              {item.subTabs.length > 0 && (
+                <ul
+                  className={`collapse ${
+                    expandedTab === item.label ? "in" : ""
+                  }`}
+                >
+                  {item.subTabs.map((subTab, subIndex) => (
+                    <li
+                      key={subIndex}
+                      className={activeSubTab === subTab.path ? "active" : ""}
+                    >
+                      <Link
+                        to={subTab.path}
+                        onClick={() =>
+                          handleSubTabClick(subTab.path, item.label)
+                        }
+                      >
+                        {subTab.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          )
+        )}
       </ul>
     </nav>
-
   );
 };
 
 export default Sidebar;
-
 
 // import React, { useEffect, useState } from "react";
 // import { Link, useLocation } from "react-router-dom";

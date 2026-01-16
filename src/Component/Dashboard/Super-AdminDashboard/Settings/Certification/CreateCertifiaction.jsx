@@ -7,7 +7,7 @@ import postAPI from "../../../../../api/postAPI";
 const AddCertification = ({ onClose, fetchSubCertificationData }) => {
   const [mainCategories, setMainCategories] = useState([]);
   const [certificationRows, setCertificationRows] = useState([
-    { mainCategoryId: "", certificationName: "", estimatedDays: "" },
+    { mainCategoryId: "", certificationName: "", estimatedDays: "", price: "" },
   ]);
   const [loading, setLoading] = useState(false);
 
@@ -29,12 +29,19 @@ const AddCertification = ({ onClose, fetchSubCertificationData }) => {
 
   const handleRowChange = (index, field, value) => {
     const updatedRows = [...certificationRows];
-    updatedRows[index][field] = field === "estimatedDays" ? (value === "" ? "" : parseInt(value)) : value;
+    if (field === "estimatedDays" || field === "price") {
+      updatedRows[index][field] = value === "" ? "" : Number(value);
+    } else {
+      updatedRows[index][field] = value;
+    }
     setCertificationRows(updatedRows);
   };
 
   const addRow = () => {
-    setCertificationRows([...certificationRows, { mainCategoryId: "", certificationName: "", estimatedDays: "" }]);
+    setCertificationRows([
+      ...certificationRows,
+      { mainCategoryId: "", certificationName: "", estimatedDays: "", price: "" },
+    ]);
   };
 
   const removeRow = (index) => {
@@ -50,11 +57,20 @@ const AddCertification = ({ onClose, fetchSubCertificationData }) => {
 
     try {
       const validRows = certificationRows.filter(
-        (row) => row.mainCategoryId && row.certificationName.trim() && Number.isInteger(row.estimatedDays) && row.estimatedDays > 0
+        (row) =>
+          row.mainCategoryId &&
+          row.certificationName.trim() &&
+          Number.isInteger(row.estimatedDays) &&
+          row.estimatedDays > 0 &&
+          row.price !== "" &&
+          !isNaN(row.price) &&
+          row.price >= 0
       );
 
       if (validRows.length === 0) {
-        toast.error("Please provide at least one valid certification with a main category, name, and positive estimated days.");
+        toast.error(
+          "Please provide at least one valid certification with main category, name, positive days and non-negative price."
+        );
         setLoading(false);
         return;
       }
@@ -63,6 +79,7 @@ const AddCertification = ({ onClose, fetchSubCertificationData }) => {
         certificationName: row.certificationName.trim(),
         mainCategoryId: row.mainCategoryId,
         estimatedDays: row.estimatedDays,
+        price: row.price,
       }));
 
       const response = await postAPI("/api/create-certification-setting", certificationData, {}, true);
@@ -74,9 +91,8 @@ const AddCertification = ({ onClose, fetchSubCertificationData }) => {
         toast.error(`Failed to create certifications: ${response.message}`);
       }
     } catch (error) {
-      console.error("Error response:", error.response);
-      const errorMessage =
-        error.response?.data?.message || "An error occurred while creating the certifications.";
+      console.error("Error:", error);
+      const errorMessage = error.response?.data?.message || "An error occurred while creating certifications.";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -85,7 +101,7 @@ const AddCertification = ({ onClose, fetchSubCertificationData }) => {
 
   return (
     <div className="modal fade show" style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}>
-      <div className="modal-dialog modal-lg">
+      <div className="modal-dialog modal-xl">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Add Certifications</h5>
@@ -96,62 +112,71 @@ const AddCertification = ({ onClose, fetchSubCertificationData }) => {
           <div className="modal-body">
             <form onSubmit={handleSubmit}>
               {certificationRows.map((row, index) => (
-                <div className="row mb-2" key={index}>
-                  <div className="col-md-4">
-                    <label htmlFor={`mainCategoryId-${index}`} className="form-label">
-                      Main Category
-                    </label>
+                <div className="row mb-3 align-items-end" key={index}>
+                  <div className="col-md-3">
+                    <label className="form-label">Main Category</label>
                     <select
                       required
                       className="form-control"
-                      id={`mainCategoryId-${index}`}
                       value={row.mainCategoryId}
                       onChange={(e) => handleRowChange(index, "mainCategoryId", e.target.value)}
                     >
                       <option value="">Select Main Category</option>
-                      {mainCategories.map((mainCategory) => (
-                        <option key={mainCategory._id} value={mainCategory._id}>
-                          {mainCategory.mainCategoryName}
+                      {mainCategories.map((cat) => (
+                        <option key={cat._id} value={cat._id}>
+                          {cat.mainCategoryName}
                         </option>
                       ))}
                     </select>
                   </div>
-                  <div className="col-md-4">
-                    <label htmlFor={`certificationName-${index}`} className="form-label">
-                      Certification Name
-                    </label>
+
+                  <div className="col-md-3">
+                    <label className="form-label">Certification Name</label>
                     <input
                       type="text"
                       className="form-control"
-                      id={`certificationName-${index}`}
                       value={row.certificationName}
                       onChange={(e) => handleRowChange(index, "certificationName", e.target.value)}
                       disabled={!row.mainCategoryId}
-                      placeholder={row.mainCategoryId ? "Enter certification name" : "Select main category first"}
+                      placeholder={row.mainCategoryId ? "Enter certification name" : "Select category first"}
                       required
                     />
                   </div>
+
                   <div className="col-md-2">
-                    <label htmlFor={`estimatedDays-${index}`} className="form-label">
-                      Estimated Days
-                    </label>
+                    <label className="form-label">Est. Days</label>
                     <input
                       type="number"
                       className="form-control"
-                      id={`estimatedDays-${index}`}
                       value={row.estimatedDays}
                       onChange={(e) => handleRowChange(index, "estimatedDays", e.target.value)}
                       disabled={!row.mainCategoryId}
-                      placeholder={row.mainCategoryId ? "Enter days" : ""}
+                      placeholder="Days"
                       min="1"
                       required
                     />
                   </div>
+
+                  <div className="col-md-2">
+                    <label className="form-label">Price (₹)</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={row.price}
+                      onChange={(e) => handleRowChange(index, "price", e.target.value)}
+                      disabled={!row.mainCategoryId}
+                      placeholder="Price"
+                      min="0"
+                      step="1"
+                      required
+                    />
+                  </div>
+
                   <div className="col-md-2 d-flex align-items-end">
                     {certificationRows.length > 1 && (
                       <button
                         type="button"
-                        className="btn btn-outline-danger btn-sm mr-2"
+                        className="btn btn-outline-danger btn-sm me-2"
                         onClick={() => removeRow(index)}
                       >
                         <i className="fa fa-trash-o"></i>
@@ -169,19 +194,12 @@ const AddCertification = ({ onClose, fetchSubCertificationData }) => {
                   </div>
                 </div>
               ))}
-              <div className="d-flex justify-content-end mt-3 mx-2">
-                <button
-                  type="button"
-                  className="btn btn-secondary mr-2"
-                  onClick={onClose}
-                >
+
+              <div className="d-flex justify-content-end mt-4 gap-2">
+                <button type="button" className="btn btn-secondary" onClick={onClose}>
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  disabled={loading}
-                >
+                <button type="submit" className="btn btn-primary" disabled={loading}>
                   {loading ? "Adding..." : "Add Certifications"}
                 </button>
               </div>
