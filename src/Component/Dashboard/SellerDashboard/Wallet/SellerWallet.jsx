@@ -91,51 +91,15 @@ const SellerWallet = () => {
     if (!amount || amount <= 0) return toast.error("Please enter a valid amount");
     setIsLoading(true);
     try {
-      await axios.post(`${API_URL}/api/wallet/add-money/${userId}`, { amount: Number(amount) });
-      toast.success("Wallet credited");
+      const res = await axios.post(`${API_URL}/api/wallet/add-money/initiate/${userId}`, { amount: Number(amount) });
+      if (res.data.success && res.data.data.paymentUrl) {
+        window.location.href = res.data.data.paymentUrl;
+      }
       setAmount("");
       fetchWallet();
       fetchTransactions();
     } catch (err) {
       toast.error("Failed to add money");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const addMoneyViaRazorpay = async () => {
-    if (!amount || amount <= 0) return toast.error("Please enter a valid amount");
-    setIsLoading(true);
-    try {
-      const orderRes = await axios.post(`${API_URL}/api/wallet/add-money-initiate/${userId}`, {
-        amount: Number(amount)
-      });
-
-      const options = {
-        key: process.env.REACT_APP_RAZORPAY_KEY,
-        amount: orderRes.data.amount,
-        currency: orderRes.data.currency || "INR",
-        name: "Artsays Wallet",
-        description: "Add money to wallet",
-        order_id: orderRes.data.id,
-        handler: async function (response) {
-          toast.success("Payment successful! Updating wallet...");
-          setTimeout(() => {
-            fetchWallet();
-            fetchTransactions();
-          }, 2000);
-        },
-        prefill: {
-          name: localStorage.getItem("firstName") + " " + localStorage.getItem("lastName") || "",
-          email: localStorage.getItem("email") || ""
-        },
-        theme: { color: "#4B2E05" }
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-    } catch (err) {
-      toast.error("Failed to initiate payment");
     } finally {
       setIsLoading(false);
     }
@@ -279,21 +243,14 @@ const SellerWallet = () => {
                 />
               </div>
               <div className="d-flex gap-2">
-                <button
-                  disabled={isLoading}
-                  className="btn btn-primary"
-                  onClick={addMoneyDirect}
-                >
-                  Quick Add
-                </button>
-                <button
-                  disabled={isLoading}
-                  className="btn btn-success"
-                  onClick={addMoneyViaRazorpay}
-                >
-                  Pay via Razorpay
-                </button>
-              </div>
+                  <button
+                    disabled={isLoading}
+                    className="btn btn-primary"
+                    onClick={addMoneyDirect}
+                  >
+                    Add Money in wallet
+                  </button>
+                </div>
             </div>
           </div>
         </div>
