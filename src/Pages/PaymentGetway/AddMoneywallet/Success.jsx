@@ -17,11 +17,13 @@ const SuccessPage = () => {
 };
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const txnid = params.get("txnid");
+    const txnid = params.get("txnid") || params.get("txn");
     const orderId = params.get("orderId");
+    const amount = params.get("amount");
+    const status = params.get("status");
 
-    if (txnid || orderId) {
-      setPaymentInfo({ txnid, orderId });
+    if (txnid || orderId || amount) {
+      setPaymentInfo({ txnid, orderId, amount, status });
     }
 
     sessionStorage.removeItem("easebuzzPayment");
@@ -94,59 +96,77 @@ const SuccessPage = () => {
         </p>
 
         {}
-        <div
-          style={{
-            background: "#f0fff4",
-            borderRadius: "12px",
-            padding: "25px",
-            marginBottom: "30px",
-            textAlign: "left",
-            borderLeft: "4px solid #38a169",
-          }}
-        >
-          {paymentInfo?.txnid && (
-            <div style={{ marginBottom: "15px", fontSize: "14px" }}>
-              <span style={{ color: "#718096", fontWeight: "500" }}>
-                Transaction ID
-              </span>
-              <p
-                style={{
-                  margin: "5px 0 0 0",
-                  color: "#1a1a1a",
-                  fontWeight: "600",
-                  fontSize: "15px",
-                  wordBreak: "break-all",
-                }}
-              >
-                {paymentInfo.txnid}
-              </p>
-            </div>
-          )}
+          <div
+            style={{
+              background: "#f0fff4",
+              borderRadius: "12px",
+              padding: "25px",
+              marginBottom: "30px",
+              textAlign: "left",
+              borderLeft: "4px solid #38a169",
+            }}
+          >
+            {paymentInfo?.amount && (
+              <div style={{ marginBottom: "15px", fontSize: "14px" }}>
+                <span style={{ color: "#718096", fontWeight: "500" }}>
+                  Amount Added
+                </span>
+                <p
+                  style={{
+                    margin: "5px 0 0 0",
+                    color: "#38a169",
+                    fontWeight: "700",
+                    fontSize: "24px",
+                  }}
+                >
+                  ₹{paymentInfo.amount}
+                </p>
+              </div>
+            )}
 
-          {paymentInfo?.orderId && (
-            <div style={{ marginBottom: "15px", fontSize: "14px" }}>
-              <span style={{ color: "#718096", fontWeight: "500" }}>
-                Order ID
-              </span>
-              <p
-                style={{
-                  margin: "5px 0 0 0",
-                  color: "#1a1a1a",
-                  fontWeight: "600",
-                  fontSize: "15px",
-                }}
-              >
-                {paymentInfo.orderId}
-              </p>
-            </div>
-          )}
+            {paymentInfo?.txnid && (
+              <div style={{ marginBottom: "15px", fontSize: "14px" }}>
+                <span style={{ color: "#718096", fontWeight: "500" }}>
+                  Transaction ID
+                </span>
+                <p
+                  style={{
+                    margin: "5px 0 0 0",
+                    color: "#1a1a1a",
+                    fontWeight: "600",
+                    fontSize: "15px",
+                    wordBreak: "break-all",
+                  }}
+                >
+                  {paymentInfo.txnid}
+                </p>
+              </div>
+            )}
 
-          {!paymentInfo && (
-            <p style={{ color: "#718096", fontStyle: "italic" }}>
-              Loading payment details...
-            </p>
-          )}
-        </div>
+            {paymentInfo?.orderId && (
+              <div style={{ marginBottom: "15px", fontSize: "14px" }}>
+                <span style={{ color: "#718096", fontWeight: "500" }}>
+                  Order ID
+                </span>
+                <p
+                  style={{
+                    margin: "5px 0 0 0",
+                    color: "#1a1a1a",
+                    fontWeight: "600",
+                    fontSize: "15px",
+                  }}
+                >
+                  {paymentInfo.orderId}
+                </p>
+              </div>
+            )}
+
+            {!paymentInfo && (
+              <p style={{ color: "#718096", fontStyle: "italic" }}>
+                Loading payment details...
+              </p>
+            )}
+          </div>
 
         {}
         <div style={{ textAlign: "left", marginBottom: "30px" }}>

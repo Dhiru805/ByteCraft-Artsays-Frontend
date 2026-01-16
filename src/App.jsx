@@ -61,17 +61,18 @@ const AppContent = () => {
   return (
     <div className="App">
       <Routes />
-      <ToastContainer
-      //  position="top-right"
-      //  autoClose={5000}
-      //  hideProgressBar={false}
-      //  newestOnTop={false}
-      //  closeOnClick
-      //  rtl={false}
-      //  pauseOnFocusLoss
-      //  draggable
-      //  pauseOnHover
-      />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       <CookieConsent />
       <ChatIcon />
       <WonBidPopup userId={userId} isAuthenticated={isAuthenticated} />

@@ -482,6 +482,7 @@ import ArtistBiddingTablePass from "../Component/Dashboard/ArtistDashbooard/Bidd
 import ArtistBiddingTablePassUpgrade from "../Component/Dashboard/ArtistDashbooard/Bidding/Biddingpass/UpgradePass";
 import ArtistCertification from "../Component/Dashboard/ArtistDashbooard/Certification/Certification";
 import CreateArtitstCertifications from "../Component/Dashboard/ArtistDashbooard/Certification/create";
+import ViewArtistCertification from "../Component/Dashboard/ArtistDashbooard/Certification/view";
 import ArtistExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/exhibition";
 import ArtistCreateExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/create";
 import ArtistUpdateExhibition from "../Component/Dashboard/ArtistDashbooard/Exhibition/editExhibition";
@@ -1491,6 +1492,10 @@ const AppRoutes = () => {
         <Route
           path="certification/create-certification"
           element={<CreateArtitstCertifications />}
+        />
+        <Route
+          path="certification/view/:id"
+          element={<ViewArtistCertification />}
         />
 
         {/* Exhibition */}

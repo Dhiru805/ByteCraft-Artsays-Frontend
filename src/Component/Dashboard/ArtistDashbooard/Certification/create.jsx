@@ -123,30 +123,31 @@ function CreateCertification() {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      setLoading(true);
 
-    try {
-      if (!formData.productId) {
-        toast.error("Please select a product.");
-        setLoading(false);
-        return;
-      }
-      if (formData.certifications.length === 0) {
-        toast.error("Please select at least one certification.");
-        setLoading(false);
-        return;
-      }
-      if (!formData.certificationProvider) {
-        toast.error("Please select a certification provider.");
-        setLoading(false);
-        return;
-      }
+      try {
+        if (!formData.productId) {
+          toast.error("Please select a product.");
+          setLoading(false);
+          return;
+        }
+        if (formData.certifications.length === 0) {
+          toast.error("Please select a certification.");
+          setLoading(false);
+          return;
+        }
+        if (!formData.certificationProvider) {
+          toast.error("Please select a certification provider.");
+          setLoading(false);
+          return;
+        }
 
-      const submissionData = formData.certifications.map((certId) => {
+        const certId = formData.certifications[0];
         const cert = certifications.find((c) => c._id === certId);
-        return {
+        
+        const submissionData = {
           userType: formData.userType,
           userId: formData.userId,
           productId: formData.productId,
@@ -154,42 +155,33 @@ function CreateCertification() {
           certificationId: certId,
           certificationProvider: formData.certificationProvider,
           estimatedDays: cert ? cert.estimatedDays : 0,
-          certificationPrice: cert.price||99,
+          certificationPrice: cert?.price || 99,
         };
-      });
 
-      const response = await postAPI(
-        "/api/create-certification",
-        submissionData,
-        {},
-        true
-      );
-      // if (!response.hasError) {
-      //   toast.success("Certification(s) created successfully!");
-      //   setFormData({
-      //     userType: localStorage.getItem("userType") || "Artist",
-      //     userId: localStorage.getItem("userId") || "",
-      //     productId: "",
-      //     mainCategories: [],
-      //     certifications: [],
-      //     certificationProvider: "",
-      //   });
-      //   navigate("/artist/certification");
-      // }
-      if (response?.data?.data?.paymentUrl) {
-        window.location.href = response.data.data.paymentUrl;
-      } else {
-        toast.error(`Failed to create certifications: ${response.message}`);
+        const response = await postAPI(
+          "/api/create-certification",
+          submissionData,
+          {},
+          true
+        );
+
+        if (response?.data?.data?.paymentUrl) {
+          window.location.href = response.data.data.paymentUrl;
+        } else if (!response.hasError) {
+          toast.success("Certification created successfully!");
+          navigate("/artist/certification");
+        } else {
+          toast.error(`Failed to create certification: ${response.message}`);
+        }
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.message ||
+          "An error occurred while creating the certification.";
+        toast.error(errorMessage);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.message ||
-        "An error occurred while creating the certifications.";
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
   const selectedProduct = products.find(
     (product) => product._id === formData.productId
@@ -282,30 +274,30 @@ function CreateCertification() {
                   </div>
                 )}
                 <div className="form-group">
-                  <label htmlFor="certifications">
-                    Certifications
-                  </label>
-                  <Select
-                    id="certifications"
-                    name="certifications"
-                    options={certificationOptions}
-                    value={certificationOptions.filter((option) =>
-                      formData.certifications.includes(option.value)
-                    )}
-                    onChange={(options) =>
-                      handleChange("certifications", options)
-                    }
-                    placeholder="Select Certifications"
-                    isMulti
-                    isDisabled={
-                      formData.mainCategories.length === 0 ||
-                      certifications.length === 0
-                    }
-                  />
-                  <small className="form-text text-muted">
-                    Select one or more certifications
-                  </small>
-                </div>
+                    <label htmlFor="certifications">
+                      Certification
+                    </label>
+                    <Select
+                      id="certifications"
+                      name="certifications"
+                      options={certificationOptions}
+                      value={certificationOptions.find((option) =>
+                        formData.certifications.includes(option.value)
+                      ) || null}
+                      onChange={(option) =>
+                        handleChange("certifications", option ? [option] : [])
+                      }
+                      placeholder="Select Certification"
+                      isClearable
+                      isDisabled={
+                        formData.mainCategories.length === 0 ||
+                        certifications.length === 0
+                      }
+                    />
+                    <small className="form-text text-muted">
+                      Select a certification for your product
+                    </small>
+                  </div>
                 {formData.certifications.length > 0 && (
                   <div className="form-group">
                     <label>Selected Certifications</label>

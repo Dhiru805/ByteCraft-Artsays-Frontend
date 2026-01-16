@@ -625,24 +625,30 @@ const Setting = () => {
   useEffect(() => {
     const fetchToggleState = async () => {
       const userId = localStorage.getItem("userId");
-      const res = await getAPI(`/api/memberships/active?userId=${userId}`);
-
-      if (res.data.success) {
-        setActiveMemberships(res.data.membershipsActive);
+      if (!userId) return;
+      
+      try {
+        const res = await getAPI(`/api/memberships/active?userId=${userId}`);
+        if (res?.data?.success) {
+          setActiveMemberships(res.data.membershipsActive);
+        }
+      } catch (err) {
+        console.error("Error fetching membership state:", err);
       }
     };
     if (userType === "Artist") {
       fetchToggleState();
     }
-  }, []);
+  }, [userType]);
 
   useEffect(() => {
     const fetchToggle = async () => {
+      const userId = localStorage.getItem("userId");
+      if (!userId) return;
+      
       try {
-        const userId = localStorage.getItem("userId");
         const res = await getAPI(`/api/profile/post-products?userId=${userId}`);
-
-        if (res.data.success) {
+        if (res?.data?.success) {
           setToggleEnable(res.data.postProductsEnabled);
         }
       } catch (err) {
@@ -656,15 +662,17 @@ const Setting = () => {
   }, [userType]);
 
   const handleToggleChange = async () => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) return;
+    
     try {
-      const userId = localStorage.getItem("userId");
       const newValue = !toggleEnable;
 
       await postAPI("/api/profile/post-products/toggle", {
         userId,
         enabled: newValue,
       });
-      setToggleEnable(newValue); // ✅ update UI instantly (optimistic)
+      setToggleEnable(newValue);
     } catch (err) {
       console.error("Error updating toggle:", err);
     }

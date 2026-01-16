@@ -51,7 +51,8 @@ const Post = () => {
   const commentRef = useRef();
   const commentRefs = useRef({});
 
-  const { userType } = useAuth();
+  const auth = useAuth();
+  const userType = auth?.userType;
   const productsPost = posts.filter((pro) => pro.forProduct);
   const normalPost = posts.filter((pro) => !pro.forProduct);
   const finalPost = [...productsPost, ...normalPost];

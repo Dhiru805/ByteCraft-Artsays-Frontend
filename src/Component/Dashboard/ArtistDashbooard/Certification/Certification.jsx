@@ -192,12 +192,15 @@ const Product = () => {
                           {/* Certification Price */}
                           <td>{product.certificationPrice || "N/A"}</td>
 
-                          {/* Actions */}
-                          <td>
-                            <button className="btn btn-sm btn-outline-info mr-2">
-                              <i className="fa fa-eye"></i>
-                            </button>
-                          </td>
+                            {/* Actions */}
+                            <td>
+                              <button 
+                                className="btn btn-sm btn-outline-info mr-2"
+                                onClick={() => navigate(`/${userType}/certification/view/${product._id}`)}
+                              >
+                                <i className="fa fa-eye"></i>
+                              </button>
+                            </td>
                         </tr>
                       ))
                     ) : (
