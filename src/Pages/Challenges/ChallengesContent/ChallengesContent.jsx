@@ -246,10 +246,17 @@ const ChallengesContent = () => {
   try {
     const response = await getAPI("/api/getchallengedata");
     if (response?.hasError === false) {
-      const liveChallenges = response?.data?.challenges?.filter(
-        (challenge) => challenge?.status === "live"
-      );
-      setChallengesData(liveChallenges);
+      // const liveChallenges = response?.data?.challenges?.filter(
+      //   (challenge) => challenge?.status === "live"
+      // );
+      // setChallengesData(liveChallenges);
+      const liveChallenges =
+  response?.data?.challenges?.filter(
+    (challenge) => challenge?.status === "live"
+  ) || [];
+
+setChallengesData(liveChallenges);
+
     }
   } catch (error) {
     console.log(error);
@@ -351,7 +358,7 @@ const ChallengesContent = () => {
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2 pt-4">
-                    {challenge?.tags.map((tag, index) => (
+                    {challenge?.tags?.map((tag, index) => (
                       <span key={index} className="bg-[#3a2a23] text-white px-4 py-1 rounded-full text-sm">
                         {tag}
                       </span>
@@ -404,7 +411,7 @@ const ChallengesContent = () => {
 
                   <ul className="list-disc pl-5 space-y-2 text-sm md:text-base text-dark">
                     <li>Theme: {challenge?.type}</li>
-                    <li>Mediums: {challenge?.tags.join(", ")}</li>
+                    <li>Mediums: {challenge?.tags?.join(", ") || "N/A"}</li>
                     <li>Entry Fee: {challenge?.entryFee}</li>
                     <li>
                       Submission Deadline:{" "}

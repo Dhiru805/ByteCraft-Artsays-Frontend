@@ -172,7 +172,8 @@ if(loading){
             {/* Overlay Header */}
             <div className="absolute top-0 left-0 w-full bg-[#000000BF] bg-opacity-50 text-white flex justify-between items-center px-2 py-2.5 text-xs">
               <span className="font-medium sm:text-lg text-[15px]">
-                {art.user.username}
+                {art.user?.username || "Unknown User"}
+
               </span>
               <div className="flex gap-2 items-center text-lg">
                 {/* <i className="ri-shopping-cart-2-fill text-[#FB5934]"></i> */}
@@ -283,7 +284,9 @@ if(loading){
       )}
       {reportPopupOpen && (
         <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
-          <div className="bg-white rounded-xl shadow-lg w-[400px] max-w-full p-4">
+          <div className="bg-white rounded-xl shadow-lg w-[400px] max-w-full p-4
+                max-h-[90vh] overflow-y-auto">
+
             {/* Header */}
             <div className="flex justify-between items-center border-b pb-3 mb-2">
               <h2 className="text-lg font-semibold text-gray-800">
@@ -362,7 +365,7 @@ if(loading){
               )}
 
               {/* Actions */}
-              <div className="flex justify-end gap-3 ">
+              <div className="flex justify-end gap-3  bg-white pt-3">
                 <button
                   type="button"
                   onClick={() => setReportPopupOpen(false)}
@@ -370,17 +373,18 @@ if(loading){
                 >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  disabled={!selectedReason}
-                  className={`px-4 py-2 rounded-lg text-white font-medium ${
-                    selectedReason
-                      ? "bg-#6e4e37 hover:bg-white"
-                      : "bg-#6e4e37 cursor-not-allowed"
-                  }`}
-                >
-                  Submit
-                </button>
+               <button
+  type="submit"
+  disabled={!selectedReason}
+  className={`px-4 py-2 rounded-lg text-white font-medium ${
+    selectedReason
+      ? "bg-[#6e4e32] hover:opacity-90"
+      : "bg-[#6e4e37] opacity-50 cursor-not-allowed"
+  }`}
+>
+  Submit
+</button>
+
               </div>
             </form>
           </div>

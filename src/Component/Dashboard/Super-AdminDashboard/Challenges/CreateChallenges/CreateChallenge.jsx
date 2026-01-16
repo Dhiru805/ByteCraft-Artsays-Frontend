@@ -143,7 +143,16 @@ function CreateChallenge() {
     setLoading(true);
 
     try {
-      const res = await postAPI(`/api/create/${userId}`, formData);
+      const res = await postAPI(
+  `/api/create/${userId}`,
+  formData,
+  {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  }
+);
+
       toast.success(
         actionType === "draft"
           ? "Challenge saved as draft!"
