@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { RiImageAddLine } from "react-icons/ri";
+import { FaCamera, FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
+import { IoVideocam, IoVideocamOff } from "react-icons/io5";
 import postAPI from "../../../api/postAPI";
 import { toast } from "react-toastify";
 import getAPI from "../../../api/getAPI";
@@ -49,6 +51,13 @@ const Customization = () => {
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
+
+  // Preview tab state
+  const [previewStream, setPreviewStream] = useState(null);
+  const [permissionStatus, setPermissionStatus] = useState('pending'); // 'pending', 'granted', 'denied'
+  const [isMicOn, setIsMicOn] = useState(true);
+  const [isCameraOn, setIsCameraOn] = useState(true);
+  const previewVideoRef = useRef(null);
 
 
   // const generateStreamKey = () => {
@@ -255,9 +264,13 @@ const Customization = () => {
 
   useEffect(() => {
     const fetchUsername = async () => {
+      if (!formData.userId) return;
       try {
-        const response = await getAPI(`/auth/user/${formData.userId}`);
-        setUsername(response.data.username); // get username from response
+        const response = await getAPI(`/auth/userid/${formData.userId}`);
+        const fetchedUsername = response?.data?.user?.username;
+        if (fetchedUsername) {
+          setUsername(fetchedUsername);
+        }
       } catch (error) {
         console.error('Error fetching username:', error);
       }
@@ -265,6 +278,89 @@ const Customization = () => {
 
     fetchUsername();
   }, [formData.userId]);
+
+  // Request camera and microphone permissions
+  const requestMediaPermissions = async () => {
+    try {
+      setPermissionStatus('pending');
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: { ideal: 1280, max: 1920 },
+          height: { ideal: 720, max: 1080 },
+          frameRate: { ideal: 30, max: 60 },
+          facingMode: "user",
+        },
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+      });
+
+      setPreviewStream(stream);
+      setPermissionStatus('granted');
+      setIsMicOn(true);
+      setIsCameraOn(true);
+
+      // Set video element source
+      if (previewVideoRef.current) {
+        previewVideoRef.current.srcObject = stream;
+      }
+
+      toast.success("Camera and microphone access granted!");
+    } catch (error) {
+      console.error("Permission error:", error);
+      setPermissionStatus('denied');
+      
+      let errorMessage = "Failed to access camera/microphone";
+      if (error.name === "NotAllowedError") {
+        errorMessage = "Camera/microphone access denied. Please allow permissions in your browser settings.";
+      } else if (error.name === "NotFoundError") {
+        errorMessage = "No camera/microphone found. Please connect your devices.";
+      } else if (error.name === "NotSupportedError") {
+        errorMessage = "Media access not supported in this browser.";
+      }
+      toast.error(errorMessage);
+    }
+  };
+
+  // Toggle microphone
+  const toggleMic = () => {
+    if (previewStream) {
+      const audioTracks = previewStream.getAudioTracks();
+      audioTracks.forEach((track) => {
+        track.enabled = !track.enabled;
+      });
+      setIsMicOn(!isMicOn);
+    }
+  };
+
+  // Toggle camera
+  const toggleCamera = () => {
+    if (previewStream) {
+      const videoTracks = previewStream.getVideoTracks();
+      videoTracks.forEach((track) => {
+        track.enabled = !track.enabled;
+      });
+      setIsCameraOn(!isCameraOn);
+    }
+  };
+
+  // Cleanup preview stream on unmount or tab change
+  useEffect(() => {
+    return () => {
+      if (previewStream) {
+        previewStream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, [previewStream]);
+
+  // Set video source when stream changes
+  useEffect(() => {
+    if (previewVideoRef.current && previewStream) {
+      previewVideoRef.current.srcObject = previewStream;
+    }
+  }, [previewStream]);
 
   const handleSubmit = async (e) => {
   setIsLoading(true);
@@ -328,7 +424,15 @@ const Customization = () => {
     if (response.data?.success) {
       toast.success(formData._id ? "Live updated successfully!" : "Live created successfully!");
       setThumbnailPreview(null);
-      navigate(`/artsays-community/${response.data.streamKey}/${username}`);
+      const resolvedStreamKey = response.data?.streamKey || formData.streamKey;
+      const usernameSlug = username?.trim()
+        ? username
+            .trim()
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "")
+        : "creator";
+      navigate(`/artsays-community/${resolvedStreamKey}/${usernameSlug || "creator"}`);
     } else {
       toast.error(response.data?.message || "Something went wrong");
     }
@@ -340,23 +444,30 @@ const Customization = () => {
   }
 };
 return (
-  <div className="lg:w-[56%] w-full sm:mx-auto sm:border-[0.5px] sm:border-[#48372D]  bg-white flex flex-col sm:h-[80vh] sm:rounded-t-xl sm:rounded-b-xl">
+  <div className="lg:w-[75%] w-full sm:mx-auto sm:border-[0.5px] sm:border-[#48372D] mt-6 bg-white flex flex-col sm:h-[80vh] sm:rounded-t-xl sm:rounded-b-xl">
     {/* Header Tabs */}
     <header className="flex flex-col w-full border-b border-[#48372D] mb-2 sm:mb-0 ">
       <div className="flex justify-evenly w-full rounded-t-xl border-b border-[#48372D]">
         <div
-          className={`flex w-1/2 justify-center items-center text-[#48372D] text-lg border border-solid py-3 font-semibold cursor-pointer py-4 rounded-tl-2xl ${activeTab === "details" ? "bg-[#48372D] text-white" : ""
+          className={`flex w-1/3 justify-center items-center text-[#48372D] text-lg border border-solid py-3 font-semibold cursor-pointer py-4 rounded-tl-2xl ${activeTab === "details" ? "bg-[#48372D] text-white" : ""
             }`}
           onClick={() => setActiveTab("details")}
         >
           Details
         </div>
         <div
-          className={`flex w-1/2 justify-center items-center text-[#48372D] text-lg border border-solid py-3 font-semibold cursor-pointer py-4 rounded-tr-2xl ${activeTab === "customization" ? "bg-[#48372D] text-white" : ""
+          className={`flex w-1/3 justify-center items-center text-[#48372D] text-lg border border-solid py-3 font-semibold cursor-pointer py-4 ${activeTab === "customization" ? "bg-[#48372D] text-white" : ""
             }`}
           onClick={() => setActiveTab("customization")}
         >
           Customization
+        </div>
+        <div
+          className={`flex w-1/3 justify-center items-center text-[#48372D] text-lg border border-solid py-3 font-semibold cursor-pointer py-4 rounded-tr-2xl ${activeTab === "preview" ? "bg-[#48372D] text-white" : ""
+            }`}
+          onClick={() => setActiveTab("preview")}
+        >
+          Preview
         </div>
       </div>
       {activeTab === "details" && (
@@ -369,6 +480,14 @@ return (
           <h2 className="text-[26px]  font-bold text-[#48372D]">Customization</h2>
           <p className="text-[16px] text-[#474242]">
             Settings to tailor your stream to your needs
+          </p>
+        </div>
+      )}
+      {activeTab === "preview" && (
+        <div className="p-3 ">
+          <h2 className="text-[26px] font-bold text-[#48372D]">Preview</h2>
+          <p className="text-[16px] text-[#474242]">
+            Test your camera and microphone before going live
           </p>
         </div>
       )}
@@ -706,21 +825,190 @@ return (
           </div>
         </div>
       )}
+
+      {/* Preview Tab */}
+      {activeTab === "preview" && (
+        <div className="min-h-full flex flex-col gap-6 p-2">
+          {/* Permission Request Section */}
+          {permissionStatus === 'pending' && !previewStream && (
+            <div className="flex flex-col items-center justify-center gap-6 py-10">
+              <div className="flex gap-8">
+                <div className="flex flex-col items-center gap-2">
+                  <div className="w-20 h-20 rounded-full bg-[#48372D]/10 flex items-center justify-center">
+                    <IoVideocam className="text-[#48372D] text-4xl" />
+                  </div>
+                  <span className="text-[#474242] text-[16px]">Camera</span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <div className="w-20 h-20 rounded-full bg-[#48372D]/10 flex items-center justify-center">
+                    <FaMicrophone className="text-[#48372D] text-4xl" />
+                  </div>
+                  <span className="text-[#474242] text-[16px]">Microphone</span>
+                </div>
+              </div>
+              <div className="text-center">
+                <h3 className="text-[#48372D] text-[20px] font-semibold mb-2">
+                  Allow Camera & Microphone Access
+                </h3>
+                <p className="text-[#474242] text-[16px] max-w-md">
+                  To start your live stream, we need access to your camera and microphone. 
+                  Click the button below to grant permission.
+                </p>
+              </div>
+              <button
+                onClick={requestMediaPermissions}
+                className="bg-[#48372D] text-white px-8 py-3 rounded-xl text-[18px] font-semibold hover:bg-[#5a473d] transition-colors flex items-center gap-2"
+              >
+                <FaCamera className="text-xl" />
+                Allow Access
+              </button>
+            </div>
+          )}
+
+          {/* Permission Denied Section */}
+          {permissionStatus === 'denied' && (
+            <div className="flex flex-col items-center justify-center gap-6 py-10">
+              <div className="w-24 h-24 rounded-full bg-red-100 flex items-center justify-center">
+                <IoVideocamOff className="text-red-500 text-5xl" />
+              </div>
+              <div className="text-center">
+                <h3 className="text-red-500 text-[20px] font-semibold mb-2">
+                  Permission Denied
+                </h3>
+                <p className="text-[#474242] text-[16px] max-w-md">
+                  Camera and microphone access was denied. Please enable permissions in your browser settings and try again.
+                </p>
+              </div>
+              <button
+                onClick={requestMediaPermissions}
+                className="bg-[#48372D] text-white px-8 py-3 rounded-xl text-[18px] font-semibold hover:bg-[#5a473d] transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
+          )}
+
+          {/* Live Preview Section */}
+          {permissionStatus === 'granted' && previewStream && (
+            <div className="flex flex-col gap-6">
+              {/* Video Preview */}
+              <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden">
+                <video
+                  ref={previewVideoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className={`w-full h-full object-cover ${!isCameraOn ? 'hidden' : ''}`}
+                />
+                {!isCameraOn && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
+                    <div className="text-center">
+                      <IoVideocamOff className="text-white text-6xl mx-auto mb-2" />
+                      <p className="text-white text-[16px]">Camera is off</p>
+                    </div>
+                  </div>
+                )}
+                {/* Live indicator */}
+                <div className="absolute top-4 left-4 flex items-center gap-2">
+                  <div className="bg-red-500 text-white px-3 py-1 rounded-md text-sm font-semibold flex items-center gap-1">
+                    <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                    PREVIEW
+                  </div>
+                </div>
+              </div>
+
+              {/* Controls */}
+              <div className="flex justify-center gap-6">
+                <button
+                  onClick={toggleCamera}
+                  className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${
+                    isCameraOn 
+                      ? 'bg-[#48372D] text-white' 
+                      : 'bg-red-500 text-white'
+                  }`}
+                  title={isCameraOn ? "Turn off camera" : "Turn on camera"}
+                >
+                  {isCameraOn ? <IoVideocam className="text-2xl" /> : <IoVideocamOff className="text-2xl" />}
+                </button>
+                <button
+                  onClick={toggleMic}
+                  className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${
+                    isMicOn 
+                      ? 'bg-[#48372D] text-white' 
+                      : 'bg-red-500 text-white'
+                  }`}
+                  title={isMicOn ? "Mute microphone" : "Unmute microphone"}
+                >
+                  {isMicOn ? <FaMicrophone className="text-2xl" /> : <FaMicrophoneSlash className="text-2xl" />}
+                </button>
+              </div>
+
+              {/* Status Info */}
+              <div className="flex justify-center gap-8 text-[16px]">
+                <div className="flex items-center gap-2">
+                  <div className={`w-3 h-3 rounded-full ${isCameraOn ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                  <span className="text-[#474242]">Camera: {isCameraOn ? 'On' : 'Off'}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={`w-3 h-3 rounded-full ${isMicOn ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                  <span className="text-[#474242]">Microphone: {isMicOn ? 'On' : 'Off'}</span>
+                </div>
+              </div>
+
+              {/* Ready message */}
+              <div className="text-center p-4 bg-green-50 rounded-xl border border-green-200">
+                <p className="text-green-700 text-[16px] font-medium">
+                  ✓ You're all set! Click "Go Live" to start your stream.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </main>
 
     {/* Footer */}
-    <div className="p-3 flex justify-end bg-white rounded-b-xl sm:border-t sm:border-[#48372D] ">
+    <div className="p-3 flex justify-center bg-white rounded-b-xl sm:border-t sm:border-[#48372D] relative">
+      {activeTab !== "details" && (
+        <button
+          className="absolute left-3 border border-[#48372D] text-[#48372D] px-6 py-2 rounded-md hover:bg-gray-50"
+          onClick={() => {
+            if (activeTab === "customization") {
+              setActiveTab("details");
+            } else if (activeTab === "preview") {
+              setActiveTab("customization");
+            }
+          }}
+        >
+          Back
+        </button>
+      )}
       <button
-        className="bg-[#48372D] text-white px-6 py-2 rounded-md"
+        className={`px-6 py-2 rounded-md ${
+          activeTab === "preview" && permissionStatus !== 'granted'
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            : 'bg-[#48372D] text-white hover:bg-[#5a473d]'
+        }`}
         onClick={() => {
           if (activeTab === "details") {
             setActiveTab("customization");
-          } else {
-            handleSubmit();
+          } else if (activeTab === "customization") {
+            setActiveTab("preview");
+          } else if (activeTab === "preview") {
+            if (permissionStatus === 'granted') {
+              // Stop preview stream before navigating
+              if (previewStream) {
+                previewStream.getTracks().forEach((track) => track.stop());
+              }
+              handleSubmit();
+            } else {
+              toast.error("Please grant camera and microphone permissions before going live.");
+            }
           }
         }}
+        disabled={activeTab === "preview" && permissionStatus !== 'granted'}
       >
-        {activeTab === "details" ? "Next" : "Done"}
+        {activeTab === "details" ? "Next" : activeTab === "customization" ? "Next" : "Go Live"}
       </button>
     </div>
   </div>

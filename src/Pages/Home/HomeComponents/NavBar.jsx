@@ -47,6 +47,12 @@ const NavBar = () => {
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(false);
   useEffect(() => {
+    if (!userId) {
+      setUser({});
+      setProfile({});
+      return;
+    }
+
     const fetchUserData = async () => {
       setLoading(true);
       try {

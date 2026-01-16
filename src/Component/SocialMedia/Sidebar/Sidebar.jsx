@@ -98,6 +98,12 @@ const Sidebar = () => {
   ];
 
   useEffect(() => {
+    if (!userId) {
+      setUser({});
+      setLoading(false);
+      return;
+    }
+
     const fetchUserData = async () => {
       try {
         const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
