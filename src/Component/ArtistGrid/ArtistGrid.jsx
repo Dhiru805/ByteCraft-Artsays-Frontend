@@ -308,7 +308,7 @@ const ArtistCard = ({ limit = 8, searchQuery = "" }) => {
   };
 
   const handleStoreVisit = (artistId) => {
-    navigate(`/social-media/profile/product-view?artistId=${artistId}`);
+    navigate(`/artsays-community/profile/product-view?artistId=${artistId}`);
   };
 
   return (

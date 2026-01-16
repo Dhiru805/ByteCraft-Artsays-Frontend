@@ -100,6 +100,7 @@ const hasValidUsername =
   useEffect(() => {
     if (!userId) {
       setUser({});
+      setLoading(false);
       return;
     }
 
@@ -107,8 +108,10 @@ const hasValidUsername =
       try {
         const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
         setUser(result.data.user);
+        setLoading(false);
       } catch (error) {
         console.error("Failed to load sidebar user", error);
+        setLoading(false);
       }
     };
     fetchUserData();
@@ -162,9 +165,8 @@ const hasValidUsername =
       <nav className="bottom-nav-s">
         <ul className="nav-items-s">
           {items.slice(0, 2).map((item) => (
-            <Link to={`${item.link}`}>
+            <Link key={item.key} to={`${item.link}`}>
               <li
-                key={item.key}
                 className={`nav-item-s ${isActive(item.link) ? "active" : ""}`}
               >
                 <i className={` bi-${item.icon}`}></i>

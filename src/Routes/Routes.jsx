@@ -8,6 +8,8 @@ import {
   useNavigate,
 } from "react-router-dom";
 import WebsiteLayout from "../Layouts/WebsiteLayout";
+import PostLive from "../Pages/socialMedia/PostLive";
+import LiveHistory from "../Pages/socialMedia/LiveHistory";
 import { useAuth } from "../AuthContext";
 import PreloaderAnimation from "../Pages/Animation/PreloaderAnimation";
 
@@ -1681,17 +1683,20 @@ const AppRoutes = () => {
             path="/artsays-community/profile/promote-post"
             element={<PromotePost />}
           />
+          <Route path="/artsays-community/post-live" element={<PostLive />} />
+          <Route path="/artsays-community/live-history" element={<LiveHistory />} />
           <Route path="/artsays-community/create-live" element={<CreateLive />} />
           <Route
             path="/artsays-community/:streamKey/:username"
             element={<MyLive />}
           />
-          <Route path="/artsays-community/live/:streamKey" element={<Live />} />
           <Route path="/artsays-community/test" element={<Test />} />
           <Route path="/artsays-community/setting" element={<Settings />} />
           <Route path="/artsays-community/saved" element={<Saved />} />
           <Route path="/artsays-community/logout" element={<ProfileLogout />} />
         </Route>
+        {/* Public live stream viewing - no authentication required */}
+        <Route path="/artsays-community/live/:streamKey" element={<Live />} />
         <Route path="/invoice" element={<EdprowiseInvoice />} />
         <Route path="/invoice1" element={<Invoice />} />
       </Route>

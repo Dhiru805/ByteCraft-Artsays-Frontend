@@ -432,7 +432,7 @@ const Customization = () => {
             .replace(/[^a-z0-9]+/g, "-")
             .replace(/^-+|-+$/g, "")
         : "creator";
-      navigate(`/social-media/${resolvedStreamKey}/${usernameSlug || "creator"}`);
+      navigate(`/artsays-community/${resolvedStreamKey}/${usernameSlug || "creator"}`);
     } else {
       toast.error(response.data?.message || "Something went wrong");
     }
@@ -444,7 +444,7 @@ const Customization = () => {
   }
 };
 return (
-  <div className="lg:w-[56%] w-full sm:mx-auto sm:border-[0.5px] sm:border-[#48372D]  bg-white flex flex-col sm:h-[80vh] sm:rounded-t-xl sm:rounded-b-xl">
+  <div className="lg:w-[75%] w-full sm:mx-auto sm:border-[0.5px] sm:border-[#48372D] mt-6 bg-white flex flex-col sm:h-[80vh] sm:rounded-t-xl sm:rounded-b-xl">
     {/* Header Tabs */}
     <header className="flex flex-col w-full border-b border-[#48372D] mb-2 sm:mb-0 ">
       <div className="flex justify-evenly w-full rounded-t-xl border-b border-[#48372D]">
@@ -968,10 +968,10 @@ return (
     </main>
 
     {/* Footer */}
-    <div className="p-3 flex justify-between bg-white rounded-b-xl sm:border-t sm:border-[#48372D] ">
+    <div className="p-3 flex justify-center bg-white rounded-b-xl sm:border-t sm:border-[#48372D] relative">
       {activeTab !== "details" && (
         <button
-          className="border border-[#48372D] text-[#48372D] px-6 py-2 rounded-md hover:bg-gray-50"
+          className="absolute left-3 border border-[#48372D] text-[#48372D] px-6 py-2 rounded-md hover:bg-gray-50"
           onClick={() => {
             if (activeTab === "customization") {
               setActiveTab("details");
@@ -983,7 +983,6 @@ return (
           Back
         </button>
       )}
-      {activeTab === "details" && <div></div>}
       <button
         className={`px-6 py-2 rounded-md ${
           activeTab === "preview" && permissionStatus !== 'granted'

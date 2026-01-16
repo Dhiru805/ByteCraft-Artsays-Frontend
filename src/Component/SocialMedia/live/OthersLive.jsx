@@ -3,6 +3,12 @@ import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 import axios from 'axios';
+import { 
+  Settings, ChevronDown, Share2,
+  ThumbsUp, ThumbsDown, Play, Maximize, Volume2,
+  MoreHorizontal, X, Smile, DollarSign, Heart, 
+  MessageSquare, Sticker, Users, Gift, ChevronRight
+} from 'lucide-react';
 
 const SOCKET_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
@@ -14,6 +20,90 @@ const rtcConfig = {
   ]
 };
 
+const GIFT_ITEMS = [
+  { id: 1, name: 'Pookie Skull', price: 199, icon: '💀' },
+  { id: 2, name: 'Love Zap', price: 299, icon: '⚡' },
+  { id: 3, name: 'Pookie Skull', price: 199, icon: '💀' },
+  { id: 4, name: 'Love Zap', price: 299, icon: '⚡' },
+  { id: 5, name: 'Pookie Skull', price: 199, icon: '💀' },
+  { id: 6, name: 'Love Zap', price: 299, icon: '⚡' },
+  { id: 7, name: 'Pookie Skull', price: 199, icon: '💀' },
+  { id: 8, name: 'Love Zap', price: 299, icon: '⚡' },
+  { id: 9, name: 'Pookie Skull', price: 199, icon: '💀' },
+  { id: 10, name: 'Love Zap', price: 299, icon: '⚡' },
+  { id: 11, name: 'Pookie Skull', price: 199, icon: '💀' },
+  { id: 12, name: 'Love Zap', price: 299, icon: '⚡' }
+];
+
+const STICKER_ITEMS = [
+  { id: 1, name: 'Skull Heart', price: 99, icon: '💀❤️' },
+  { id: 2, name: 'Lightning Love', price: 149, icon: '⚡💝' },
+  { id: 3, name: 'Cute Skull', price: 99, icon: '💀🎀' },
+  { id: 4, name: 'Power Heart', price: 149, icon: '💖⚡' },
+  { id: 5, name: 'Skull Heart', price: 99, icon: '💀❤️' },
+  { id: 6, name: 'Lightning Love', price: 149, icon: '⚡💝' },
+  { id: 7, name: 'Cute Skull', price: 99, icon: '💀🎀' },
+  { id: 8, name: 'Power Heart', price: 149, icon: '💖⚡' },
+  { id: 9, name: 'Skull Heart', price: 99, icon: '💀❤️' },
+  { id: 10, name: 'Lightning Love', price: 149, icon: '⚡💝' },
+];
+
+const MEMBERSHIP_TIERS = [
+  { 
+    id: 'SILVER', 
+    name: 'SILVER', 
+    price: '₹50/month', 
+    color: 'bg-[#FCE7F3]', 
+    activeColor: 'bg-[#FBCFE8]', // Pinkish styling from image
+    description: 'Loyalty badges next to your name in comments and live chat',
+    badges: ['🐶', '⚡', '🦉', '☠️']
+  },
+  { 
+    id: 'GOLD', 
+    name: 'GOLD', 
+    price: '₹60/month', 
+    color: 'bg-white', 
+    activeColor: 'bg-gray-100',
+    description: 'Includes all Silver perks plus exclusive member-only polls',
+    badges: ['🐶', '⚡', '🦉', '☠️']
+  },
+  { 
+    id: 'PLATINUM', 
+    name: 'PLATINUM', 
+    price: '₹200/month', 
+    color: 'bg-white', 
+    activeColor: 'bg-gray-100',
+    description: 'Early access to new videos and member shout-outs',
+    badges: ['🐶', '⚡', '🦉', '☠️']
+  },
+  { 
+    id: 'PLATINUM +', 
+    name: 'PLATINUM +', 
+    price: '₹1000/month', 
+    color: 'bg-white', 
+    activeColor: 'bg-gray-100',
+    description: 'Exclusive behind-the-scenes content and personal video messages',
+    badges: ['🐶', '⚡', '🦉', '☠️']
+  },
+];
+
+const SUPER_CHAT_TIERS = [40, 100, 200, 400, 1000, 4000];
+
+const EMOJI_CATEGORIES = [
+  {
+    name: "Smileys & People",
+    emojis: ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '🥰', '😍', '🤩', '😘', '😋', '😎']
+  },
+  {
+    name: "Gestures",
+    emojis: ['👋', '🤚', '🖐', '✋', '🖖', '👌', '✌️', '🤞', '🤟', '🤘', '🤙', '👈', '👉', '👆', '👇', '👍', '👎', '👏', '🙌', '🙏', '💪']
+  },
+  {
+    name: "Hearts & Objects",
+    emojis: ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔', '🎉', '🎊', '🎁', '🎈']
+  }
+];
+
 const OthersLive = () => {
   const { streamKey } = useParams();
   
@@ -23,53 +113,111 @@ const OthersLive = () => {
   const [viewerCount, setViewerCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
-  const [disliked, setDisliked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
-  const [dislikeCount, setDislikeCount] = useState(0);
+  const [isMuted, setIsMuted] = useState(true);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showSuperChatMenu, setShowSuperChatMenu] = useState(false);
+  const [superChatView, setSuperChatView] = useState('main'); // 'main' | 'gifting' | 'stickers' | 'membership' | 'superchat'
+  const [selectedMembership, setSelectedMembership] = useState(MEMBERSHIP_TIERS[0]);
+  const [superChatAmount, setSuperChatAmount] = useState(SUPER_CHAT_TIERS[0]);
   
   // Refs
   const videoRef = useRef(null);
+  const videoContainerRef = useRef(null);
   const socketRef = useRef(null);
   const peerConnectionRef = useRef(null);
+  const chatEndRef = useRef(null);
 
-  // Handle like/dislike
-  const handleLike = () => {
-    if (liked) {
-      setLiked(false);
-      setLikeCount(prev => Math.max(0, prev - 1));
+  // Fullscreen handler
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      videoContainerRef.current?.requestFullscreen().catch(err => {
+        toast.error(`Error attempting to enable full-screen mode: ${err.message}`);
+      });
     } else {
-      setLiked(true);
-      setLikeCount(prev => prev + 1);
-      if (disliked) {
-        setDisliked(false);
-        setDislikeCount(prev => Math.max(0, prev - 1));
+      document.exitFullscreen();
+    }
+  };
+
+  // Auto-scroll chat to bottom
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  // Handle like
+  const handleLike = () => {
+    let userId = localStorage.getItem('userId');
+    
+    // If no userId, use/create an anonymousId
+    if (!userId || userId === 'null') {
+      userId = localStorage.getItem('anonymousId');
+      if (!userId) {
+        userId = 'anon_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('anonymousId', userId);
       }
+    }
+
+    setLiked(!liked);
+    if (socketRef.current) {
+      socketRef.current.emit('likeStream', { streamKey, userId });
+    }
+    
+    if (!liked) {
       toast.success('Thanks for your feedback!');
     }
   };
 
-  const handleDislike = () => {
-    if (disliked) {
-      setDisliked(false);
-      setDislikeCount(prev => Math.max(0, prev - 1));
-    } else {
-      setDisliked(true);
-      setDislikeCount(prev => prev + 1);
-      if (liked) {
-        setLiked(false);
-        setLikeCount(prev => Math.max(0, prev - 1));
-      }
-      toast.info('Thanks for your feedback!');
+  const handleSendMessage = (e, customMessage) => {
+    if (e) e.preventDefault();
+    const messageToSend = customMessage || newMessage;
+    if (!messageToSend.trim()) return;
+
+    let userId = localStorage.getItem('userId');
+    let username = localStorage.getItem('username');
+    let profilePhoto = localStorage.getItem('profilePhoto');
+
+    // If not logged in, use Anonymous
+    if (!userId || userId === 'null') {
+      userId = null;
+      username = 'Anonymous';
+      profilePhoto = null;
+    }
+
+    if (!customMessage) setNewMessage('');
+    
+    if (socketRef.current) {
+      socketRef.current.emit('sendMessage', {
+        streamKey,
+        message: messageToSend,
+        userId,
+        username,
+        profilePhoto
+      });
     }
   };
 
   // Fetch live details
   const fetchLiveDetails = async () => {
     try {
+      let userId = localStorage.getItem('userId');
+      if (!userId || userId === 'null') {
+        userId = localStorage.getItem('anonymousId');
+      }
+
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/social-media/live/${streamKey}`);
       if (response.data.success) {
-        setLiveDetail(response.data.liveData);
-        setIsStreamerLive(response.data.liveData.live?.isLive || false);
+        const liveData = response.data.liveData;
+        setLiveDetail(liveData);
+        setIsStreamerLive(liveData.live?.isLive || false);
+        setLikeCount(liveData.live?.likeCount || 0);
+        setViewerCount(liveData.live?.viewCount || 0);
+        
+        // Check if current user (logged in or anonymous) has liked
+        if (userId && liveData.live?.likes?.includes(userId)) {
+          setLiked(true);
+        }
       }
       setLoading(false);
     } catch (error) {
@@ -110,7 +258,7 @@ const OthersLive = () => {
             videoRef.current.srcObject = event.streams[0];
             setIsStreamerLive(true);
             // Mute initially to allow autoplay (browser policy)
-            videoRef.current.muted = true;
+            videoRef.current.muted = isMuted;
             // Ensure video plays
             videoRef.current.play().then(() => {
               console.log('Video playing successfully');
@@ -192,6 +340,22 @@ const OthersLive = () => {
       setViewerCount(count);
     });
 
+    // Handle like count updates
+    socketRef.current.on('likeCountUpdate', ({ count }) => {
+      setLikeCount(count);
+    });
+
+    // Handle new messages
+    socketRef.current.on('newMessage', (message) => {
+      setMessages(prev => [...prev, {
+        id: Date.now(),
+        user: message.username,
+        text: message.text,
+        avatar: message.profilePhoto || 'https://i.pravatar.cc/150?u=' + message.username,
+        isCreator: message.isCreator || false
+      }]);
+    });
+
     // Handle stream ended
     socketRef.current.on('streamEnded', () => {
       toast.info('Stream has ended');
@@ -212,240 +376,628 @@ const OthersLive = () => {
         peerConnectionRef.current.close();
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [streamKey]);
 
-  return (
-    <div className="flex-1 flex flex-col bg-gray-50 min-h-screen pt-4">
-      {/* Loading State */}
-      {loading ? (
-        <div className="flex justify-center items-center min-h-[400px]">
-          <div className="text-gray-500 text-lg">Loading stream...</div>
+  if (loading) {
+    return (
+      <div className="flex h-screen bg-white items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-[#3D2B1F]/20 border-t-[#3D2B1F] rounded-full animate-spin"></div>
+          <p className="text-gray-500 font-medium">Loading stream...</p>
         </div>
-      ) : (
-        <div className="max-w-[1800px] mx-auto w-full">
-          {/* Video Player */}
-          <div className="bg-black w-full relative">
-            <video
-              ref={videoRef}
-              autoPlay
-              muted
-              playsInline
-              controls
-              className="w-full h-full object-contain"
-              style={{ maxHeight: '80vh' }}
-            />
-            
-            {/* Live Badge */}
-            {isStreamerLive && (
-              <div className="absolute top-4 left-4 bg-red-600 px-3 py-1.5 rounded flex items-center gap-2 shadow-lg">
-                <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                <span className="text-white font-bold text-sm">LIVE</span>
-              </div>
-            )}
+      </div>
+    );
+  }
 
-            {/* Viewer Count */}
-            <div className="absolute top-4 right-4 bg-black bg-opacity-80 backdrop-blur-sm px-3 py-1.5 rounded text-white text-sm font-medium">
-              {viewerCount} watching
-            </div>
-
-            {/* Waiting Message */}
-            {!isStreamerLive && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
-                <div className="text-center text-white">
-                  <div className="w-16 h-16 border-4 border-gray-600 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-                  <p className="text-lg font-medium">Waiting for stream to start...</p>
-                  <p className="text-sm text-gray-400 mt-2">The streamer will be live shortly</p>
+  return (
+    <div className="flex-1 flex flex-col overflow-hidden font-sans bg-white">
+      {/* Content Area */}
+      <div className="flex-1 flex overflow-x-auto overflow-y-hidden custom-scrollbar justify-start gap-6">
+          {/* Main Content Wrapper (Video + Info) */}
+          <div className="flex-shrink-0 pt-10 pb-12 pl-4 pr-2 custom-scrollbar overflow-y-auto" style={{ width: '760px' }}>
+            {/* Video Player */}
+            <div 
+              ref={videoContainerRef}
+              className="relative bg-black overflow-hidden shadow-2xl group" 
+              style={{ width: '720px', height: '540px', borderRadius: '10px' }}
+            >
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                className="w-full h-full object-cover"
+              />
+              
+              {/* Video Controls Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                <div className="flex items-center justify-between text-white">
+                  <div className="flex items-center gap-4">
+                    <button className="hover:scale-110 transition-transform"><Play size={24} fill="white" /></button>
+                    <button 
+                      onClick={() => {
+                        if (videoRef.current) {
+                          videoRef.current.muted = !videoRef.current.muted;
+                          setIsMuted(videoRef.current.muted);
+                        }
+                      }}
+                      className="hover:scale-110 transition-transform"
+                    >
+                      {isMuted ? <Volume2 size={24} className="opacity-50" /> : <Volume2 size={24} />}
+                    </button>
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                      <span className="text-sm font-bold">Live</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <button className="hover:scale-110 transition-transform"><Settings size={24} /></button>
+                    <button 
+                      onClick={toggleFullScreen}
+                      className="hover:scale-110 transition-transform"
+                    >
+                      <Maximize size={24} />
+                    </button>
+                  </div>
                 </div>
               </div>
-            )}
+
+              {!isStreamerLive && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-900/90 backdrop-blur-sm">
+                  <div className="text-center text-white">
+                    <div className="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-xl font-bold">Waiting for streamer...</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Video Info */}
+            <div className="mt-8">
+              <h1 className="text-2xl font-bold text-gray-900">
+                {liveDetail?.title || 'Lorem ipsum dolor sit amet consectetur elit est laborum.'}
+                <span className="ml-2 text-[#6E4E37] font-medium">#art #artwork</span>
+              </h1>
+
+              <div className="mt-6 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <img 
+                    src={liveDetail?.userId?.profilePhoto || 'https://i.pravatar.cc/150?u=vikas'} 
+                    className="w-12 h-12 rounded-full object-cover border-2 border-gray-100"
+                    alt="Artist"
+                  />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-bold text-gray-900">{liveDetail?.userId?.fullName || 'Vikas Khanna'}</h3>
+                      <button className="bg-[#3D2B1F] text-white px-4 py-1 rounded-full text-sm font-bold hover:bg-[#2D1F16] transition-all">Join</button>
+                      <button className="text-gray-500 text-sm font-bold hover:text-gray-700 transition-all ml-2">Unfollow</button>
+                    </div>
+                    <p className="text-sm text-gray-500 font-medium">12M • Art</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center bg-gray-100 rounded-full p-1">
+                    <button onClick={handleLike} className="flex items-center gap-2 px-4 py-2 hover:bg-gray-200 rounded-full transition-all">
+                      <ThumbsUp size={20} className={liked ? 'fill-[#3D2B1F] text-[#3D2B1F]' : 'text-gray-600'} />
+                      <span className="font-bold text-sm">{likeCount || '0'}</span>
+                    </button>
+                  </div>
+                  <button className="flex items-center gap-2 px-6 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-full font-bold text-sm text-gray-700 transition-all">
+                    <Share2 size={20} />
+                    Share
+                  </button>
+                  <button className="flex items-center gap-2 px-6 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-full font-bold text-sm text-gray-700 transition-all">
+                    Report
+                  </button>
+                </div>
+              </div>
+
+              {/* Description Box */}
+              <div className="mt-8 bg-[#FEE2CC]/30 rounded-[24px] p-6">
+                <div className="flex items-center gap-4 mb-4">
+                  <span className="font-bold text-gray-900">{viewerCount || '25k'} views</span>
+                  <span className="font-bold text-gray-900">Streamed 2h ago</span>
+                </div>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  {liveDetail?.description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, est laborum.de q.hbwk iww ighiuw iuwiwi gigoigwif gwiwif rgwif iwgf iwgf iwufwrgr grewr .'}
+                </p>
+                <button className="mt-2 text-xs font-bold text-gray-500 hover:text-gray-700">...more</button>
+              </div>
+
+              {/* Product Cards */}
+              <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-[#FEE2CC]/30 rounded-[24px] p-4 flex items-center gap-4 group cursor-pointer hover:bg-[#FEE2CC]/50 transition-all">
+                  <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=200" className="w-24 h-24 rounded-2xl object-cover" alt="Product" />
+                  <div className="flex-1">
+                    <h4 className="font-bold text-gray-900">Lorem ipsum</h4>
+                    <p className="text-sm font-bold text-gray-900 mt-1">₹ 500</p>
+                    <p className="text-[10px] text-gray-500 mt-1 line-clamp-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, consectetur adipiscing elit, est</p>
+                  </div>
+                  <div className="flex flex-col items-end gap-4">
+                    <button className="text-gray-400 group-hover:text-gray-900 transition-all">
+                      <ChevronDown className="-rotate-90" size={20} />
+                    </button>
+                    <span className="text-xs font-bold text-gray-900 underline">View Product</span>
+                  </div>
+                </div>
+
+                <div className="bg-[#FEE2CC]/30 rounded-[24px] p-4 flex items-center gap-4 group cursor-pointer hover:bg-[#FEE2CC]/50 transition-all">
+                  <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center overflow-hidden">
+                    <img src="https://logo.clearbit.com/gopro.com" className="w-8 h-8 object-contain" alt="Sponsor" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-bold text-gray-900 text-sm">Art Masterclass - Water Color</h4>
+                      <ChevronDown size={16} className="text-gray-500" />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-0.5">Sponsored • GoPro.com</p>
+                  </div>
+                  <button className="bg-[#6E4E37] text-white px-8 py-2.5 rounded-full text-sm font-bold hover:bg-[#5a3c2d] transition-all">
+                    Visit site
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Content Below Video */}
-          <div className="p-4 sm:p-6">
-            <div className="max-w-[1280px] mx-auto">
-              <div className="flex flex-col lg:flex-row gap-6">
-                {/* Main Content */}
-                <div className="flex-1">
-                  {/* Title and Stats */}
-                  <div className="mb-4">
-                    <h1 className="text-xl sm:text-2xl font-bold text-[#48372D] mb-3">
-                      {liveDetail?.title || 'Live Stream'}
-                    </h1>
-                    
-                    {/* Channel Name */}
-                    <div className="flex items-center gap-3 mb-3">
-                      {liveDetail?.userId?.profilePhoto ? (
-                        <img 
-                          src={liveDetail.userId.profilePhoto} 
-                          alt={liveDetail.userId.username}
-                          className="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-full bg-[#6E4E37] flex items-center justify-center text-white font-semibold">
-                          {liveDetail?.userId?.username?.charAt(0).toUpperCase() || 'U'}
+          {/* Chat Sidebar */}
+          <div className="flex-shrink-0 bg-white border border-gray-100 flex flex-col mt-10 mb-12 shadow-sm overflow-hidden" style={{ width: '300.42px', height: '624.36px', borderRadius: '10px' }}>
+            {/* Chat Header */}
+            <div className="p-4 bg-[#6E4E37] flex items-center justify-between text-white">
+              <div className="flex items-center gap-2 cursor-pointer">
+                <h3 className="font-bold text-sm">Top Chat</h3>
+                <ChevronDown size={16} />
+              </div>
+              <div className="flex items-center gap-3">
+                <MoreHorizontal size={18} className="cursor-pointer opacity-80 hover:opacity-100" />
+                <X size={18} className="cursor-pointer opacity-80 hover:opacity-100" />
+              </div>
+            </div>
+
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+              {messages.map((msg, idx) => (
+                <div key={idx} className="flex items-start gap-3 group">
+                  <img 
+                    src={msg.avatar} 
+                    className="w-8 h-8 rounded-full object-cover flex-shrink-0" 
+                    alt={msg.user} 
+                  />
+                  <div className="flex-1 min-w-0 text-sm leading-tight">
+                    <span className={`${msg.isCreator ? 'font-black text-gray-900' : 'font-bold text-[#6E4E37]'}`}>
+                      {msg.user}:
+                    </span>
+                    <span className={`ml-1 ${idx % 3 === 0 ? 'text-gray-700' : 'text-[#6E4E37]'}`}>
+                      {msg.text}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              <div ref={chatEndRef} />
+            </div>
+
+            {/* Input Area */}
+            <div className="p-4 bg-[#6E4E37] relative">
+              {showSuperChatMenu && (
+                <div className="absolute bottom-full left-0 w-full bg-white rounded-t-[20px] shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-300 z-40 pb-1" onClick={(e) => e.stopPropagation()}>
+                  {superChatView === 'main' && (
+                    <>
+                      <div className="p-3 flex items-center justify-between">
+                        <h3 className="text-black font-bold text-base" style={{ color: 'black' }}>
+                          Show support to {liveDetail?.userId?.fullName || liveDetail?.userId?.username || 'Creator'}
+                        </h3>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowSuperChatMenu(false);
+                            setSuperChatView('main');
+                          }}
+                          className="text-gray-500 hover:text-gray-800 transition-colors z-50 p-1"
+                        >
+                          <X size={18} className="stroke-[3]" />
+                        </button>
+                      </div>
+                      
+                      <div className="px-3 pb-3 space-y-2">
+                        <button 
+                          onClick={() => setSuperChatView('superchat')}
+                          className="w-full bg-[#EDEDD5] hover:bg-[#E3E3C3] active:scale-[0.98] transition-all rounded-full p-2 flex items-center justify-between text-[#4A3728] group"
+                        >
+                          <div className="flex items-center gap-3 font-bold text-sm">
+                            <div className="w-7 h-7 rounded-full bg-[#4A3728] flex items-center justify-center text-[#EDEDD5]">
+                              <MessageSquare size={14} fill="#EDEDD5" />
+                            </div>
+                            Super Chat
+                          </div>
+                          <ChevronRight size={16} className="text-[#4A3728]/70 group-hover:translate-x-1 transition-transform" />
+                        </button>
+
+                        <button 
+                          onClick={() => setSuperChatView('stickers')}
+                          className="w-full bg-[#EDEDD5] hover:bg-[#E3E3C3] active:scale-[0.98] transition-all rounded-full p-2 flex items-center justify-between text-[#4A3728] group"
+                        >
+                          <div className="flex items-center gap-3 font-bold text-sm">
+                            <div className="w-7 h-7 rounded-full bg-[#4A3728] flex items-center justify-center text-[#EDEDD5]">
+                              <Sticker size={14} fill="#EDEDD5" />
+                            </div>
+                            Super Stickers
+                          </div>
+                          <ChevronRight size={16} className="text-[#4A3728]/70 group-hover:translate-x-1 transition-transform" />
+                        </button>
+                        
+                        <button 
+                          onClick={() => setSuperChatView('membership')}
+                          className="w-full bg-[#EDEDD5] hover:bg-[#E3E3C3] active:scale-[0.98] transition-all rounded-full p-2 flex items-center justify-between text-[#4A3728] group"
+                        >
+                          <div className="flex items-center gap-3 font-bold text-sm">
+                            <div className="w-7 h-7 rounded-full bg-[#4A3728] flex items-center justify-center text-[#EDEDD5]">
+                              <Users size={14} fill="#EDEDD5" />
+                            </div>
+                            Membership
+                          </div>
+                          <ChevronRight size={16} className="text-[#4A3728]/70 group-hover:translate-x-1 transition-transform" />
+                        </button>
+
+                        <button 
+                          onClick={() => setSuperChatView('gifting')}
+                          className="w-full bg-[#EDEDD5] hover:bg-[#E3E3C3] active:scale-[0.98] transition-all rounded-full p-2 flex items-center justify-between text-[#4A3728] group"
+                        >
+                          <div className="flex items-center gap-3 font-bold text-sm">
+                            <div className="w-7 h-7 rounded-full bg-[#4A3728] flex items-center justify-center text-[#EDEDD5]">
+                              <Gift size={14} fill="#EDEDD5" />
+                            </div>
+                            In App Gifting
+                          </div>
+                          <ChevronRight size={16} className="text-[#4A3728]/70 group-hover:translate-x-1 transition-transform" />
+                        </button>
+                      </div>
+                    </>
+                  )}
+
+                  {superChatView === 'membership' && (
+                    <div className="flex flex-col h-[500px]">
+                      {/* Header */}
+                      <div className="p-4 bg-[#FCE7F3] rounded-t-[20px] relative overflow-hidden">
+                         {/* Decorative Circles - Moved first and behind content */}
+                        <div className="absolute right-[-20px] top-[-20px] w-24 h-24 border-2 border-[#4A3728] rounded-full opacity-20 pointer-events-none"></div>
+                        <div className="absolute left-[30%] top-[-10px] w-12 h-12 border-2 border-[#4A3728] rounded-full opacity-20 pointer-events-none"></div>
+                        <div className="absolute right-[30%] bottom-[10px] w-8 h-8 border-2 border-[#4A3728] rounded-full opacity-20 pointer-events-none"></div>
+
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowSuperChatMenu(false);
+                            setSuperChatView('main');
+                          }}
+                          className="absolute right-4 top-4 text-gray-600 hover:text-black transition-colors z-50 p-2 hover:bg-white/20 rounded-full"
+                        >
+                          <X size={20} className="stroke-[3]" />
+                        </button>
+                        
+                        <div className="flex items-center gap-4 mb-2 relative z-10">
+                          <img 
+                            src={liveDetail?.userId?.profileImage || 'https://via.placeholder.com/40'} 
+                            alt="Creator" 
+                            className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
+                          />
                         </div>
-                      )}
-                      <div>
-                        <div className="font-semibold text-gray-900">
-                          {liveDetail?.userId?.fullName || liveDetail?.userId?.username || 'Channel'}
+                        
+                        <div className="relative z-10">
+                          <h3 className="text-[#4A3728] text-lg font-medium leading-tight">
+                            {liveDetail?.userId?.fullName || 'Creator'}
+                          </h3>
+                          <h2 className="text-[#4A3728] text-2xl font-bold">
+                            Be a member
+                          </h2>
                         </div>
-                        <div className="text-sm text-gray-500">
-                          @{liveDetail?.userId?.username || 'channel'}
+                      </div>
+
+                      <div className="flex flex-1 overflow-hidden bg-white">
+                        {/* Left Sidebar - Tiers List */}
+                        <div className="w-1/3 border-r border-gray-100 overflow-y-auto custom-scrollbar">
+                          {MEMBERSHIP_TIERS.map((tier) => (
+                            <button
+                              key={tier.id}
+                              onClick={() => setSelectedMembership(tier)}
+                              className={`w-full text-left p-4 transition-colors relative ${
+                                selectedMembership.id === tier.id 
+                                  ? tier.activeColor 
+                                  : 'hover:bg-gray-50'
+                              }`}
+                            >
+                              {selectedMembership.id === tier.id && (
+                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#4A3728]"></div>
+                              )}
+                              <div className="text-sm font-medium text-gray-800 mb-0.5">
+                                {tier.name}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {tier.price}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* Right Content - Tier Details */}
+                        <div className="w-2/3 p-5 overflow-y-auto custom-scrollbar">
+                          <h3 className="text-lg font-bold text-[#4A3728] mb-1">
+                            {selectedMembership.price}
+                          </h3>
+                          
+                          <button className="bg-[#5c4033] hover:bg-[#4A3728] text-white rounded-full px-6 py-1.5 text-sm font-bold mb-4 transition-colors">
+                            Join
+                          </button>
+
+                          <p className="text-xs text-gray-600 mb-6 leading-relaxed">
+                            {selectedMembership.description}
+                          </p>
+
+                          <div>
+                            <h4 className="text-xs font-bold text-[#4A3728] mb-2">
+                              Loyalty badges next to your name in comments and live chat
+                            </h4>
+                            <div className="flex flex-wrap gap-2">
+                              {selectedMembership.badges.map((badge, index) => (
+                                <span key={index} className="text-xl filter drop-shadow-sm" title="Badge">
+                                  {badge}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    
-                    <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
-                      <span className="font-semibold text-gray-700">{viewerCount} viewers</span>
-                      {isStreamerLive && (
-                        <>
-                          <span className="text-gray-400">•</span>
-                          <span className="flex items-center gap-1.5 text-red-600 font-medium">
-                            <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"></span>
-                            Live now
-                          </span>
-                        </>
-                      )}
-                      {liveDetail?.category && (
-                        <>
-                          <span className="text-gray-400">•</span>
-                          <span className="text-gray-600">{liveDetail.category}</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
+                  )}
 
-                  {/* Like/Dislike Buttons */}
-                  <div className="flex items-center gap-2 mb-6 pb-6 border-b border-gray-200">
-                    <div className="flex items-center bg-gray-100 rounded-full">
-                      <button
-                        onClick={handleLike}
-                        className={`flex items-center gap-2 px-4 py-2.5 rounded-l-full font-medium transition ${
-                          liked 
-                            ? 'bg-[#6E4E37] text-white' 
-                            : 'hover:bg-gray-200 text-gray-700'
-                        }`}
-                      >
-                        <svg className="w-5 h-5" fill={liked ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                        </svg>
-                        <span className="text-sm font-semibold">{likeCount}</span>
-                      </button>
-                      <div className="w-px h-6 bg-gray-300"></div>
-                      <button
-                        onClick={handleDislike}
-                        className={`flex items-center gap-2 px-4 py-2.5 rounded-r-full font-medium transition ${
-                          disliked 
-                            ? 'bg-[#6E4E37] text-white' 
-                            : 'hover:bg-gray-200 text-gray-700'
-                        }`}
-                      >
-                        <svg className="w-5 h-5" fill={disliked ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5" />
-                          </svg>
-                        <span className="text-sm font-semibold">{dislikeCount}</span>
-                      </button>
-                    </div>
-                    
-                    <button
-                      onClick={() => {
-                        navigator.clipboard.writeText(window.location.href);
-                        toast.success('Link copied to clipboard!');
-                      }}
-                      className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-full font-medium text-gray-700 transition"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                      </svg>
-                      <span className="text-sm font-semibold">Share</span>
-                    </button>
-                  </div>
+                  {superChatView === 'stickers' && (
+                    <>
+                      <div className="p-3 flex items-center justify-between">
+                        <div className="flex-1"></div>
+                        <h3 className="text-[#FACC15] font-bold text-lg text-center flex-1 whitespace-nowrap">
+                          Super Stickers
+                        </h3>
+                        <div className="flex-1 flex justify-end">
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowSuperChatMenu(false);
+                              setSuperChatView('main');
+                            }}
+                            className="text-[#FACC15] hover:text-[#EAB308] transition-colors z-50 p-1"
+                          >
+                            <X size={24} className="stroke-[3]" />
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div className="px-2 pb-3 max-h-[300px] overflow-y-auto custom-scrollbar">
+                        <div className="grid grid-cols-4 gap-2">
+                          {STICKER_ITEMS.map((sticker) => (
+                            <button 
+                              key={sticker.id}
+                              className="flex flex-col items-center justify-center gap-1 p-2 hover:bg-gray-50 rounded-lg transition-all active:scale-95 aspect-square"
+                            >
+                              <div className="text-4xl filter drop-shadow-sm hover:scale-110 transition-transform">
+                                {sticker.icon}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
 
-                  {/* Description */}
-                  <div className="bg-[#FEE2CC] bg-opacity-30 p-4 rounded-xl mb-4">
-                    <h3 className="font-semibold text-[#48372D] mb-2">About</h3>
-                    <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">
-                      {liveDetail?.description || 'No description available'}
-                    </p>
-                    
-                    {/* Tags */}
-                    {liveDetail?.tags && liveDetail.tags.length > 0 && (
-                      <div className="flex gap-2 flex-wrap mt-3">
-                        {liveDetail.tags.map((tag, index) => (
-                          <span key={index} className="bg-[#6E4E37] text-white px-3 py-1 rounded-full text-xs font-medium">
-                            #{tag}
-                          </span>
+                  {superChatView === 'gifting' && (
+                    <>
+                      <div className="p-3 flex items-center justify-between">
+                        <div className="flex-1"></div>
+                        <h3 className="text-[#D93025] font-bold text-lg text-center flex-1 whitespace-nowrap">
+                          In App Gifting
+                        </h3>
+                        <div className="flex-1 flex justify-end">
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowSuperChatMenu(false);
+                              setSuperChatView('main');
+                            }}
+                            className="text-[#D93025] hover:text-[#B02018] transition-colors z-50 p-1"
+                          >
+                            <X size={24} className="stroke-[3]" />
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div className="px-2 pb-3 max-h-[300px] overflow-y-auto custom-scrollbar">
+                        <div className="grid grid-cols-4 gap-2">
+                          {GIFT_ITEMS.map((gift) => (
+                            <button 
+                              key={gift.id}
+                              className="flex flex-col items-center gap-1 p-1 hover:bg-gray-50 rounded-lg transition-colors group relative"
+                            >
+                              <div className="text-3xl filter drop-shadow-sm group-hover:scale-110 transition-transform">
+                                {gift.icon}
+                              </div>
+                              <span className="text-[10px] text-gray-500 font-medium text-center leading-tight line-clamp-1">
+                                {gift.name}
+                              </span>
+                              <div className="flex items-center gap-1 bg-[#FEF3C7] px-1.5 py-0.5 rounded-full">
+                                <span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>
+                                <span className="text-[10px] font-bold text-[#4A3728]">
+                                  {gift.price}
+                                </span>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {superChatView === 'superchat' && (
+                    <div className="flex flex-col">
+                      <div className="p-3 flex items-center justify-between">
+                        <h3 className="text-[#137333] font-bold text-lg">Super Chat</h3>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowSuperChatMenu(false);
+                            setSuperChatView('main');
+                          }}
+                          className="text-[#137333] hover:text-[#0d5524] transition-colors z-50 p-1"
+                        >
+                          <X size={24} className="stroke-[3]" />
+                        </button>
+                      </div>
+
+                      <div className="px-4 pb-4">
+                        {/* Preview Card */}
+                        <div className="bg-[#81C995] rounded-xl p-4 text-center mb-6 shadow-sm">
+                          <div className="flex items-center gap-3 justify-center">
+                              <img 
+                                src={localStorage.getItem('profilePhoto') || 'https://via.placeholder.com/40'} 
+                                alt="User" 
+                                className="w-8 h-8 rounded-full border border-white/20"
+                              />
+                              <span className="font-medium text-[#202124] text-base">
+                                {localStorage.getItem('username') || 'Lucky Singh'}
+                              </span>
+                              <span className="font-bold text-[#202124] text-base">
+                              ₹{superChatAmount.toFixed(1)}
+                              </span>
+                          </div>
+                        </div>
+
+                        <div className="text-center font-medium text-xl text-[#202124] mb-8">
+                          ₹{superChatAmount.toFixed(1)}
+                        </div>
+
+                        {/* Slider */}
+                        <div className="relative h-1 bg-[#E8EAED] rounded-full mb-10 mx-2">
+                          {/* Active Track */}
+                          <div 
+                            className="absolute left-0 top-0 h-full bg-[#137333] rounded-full transition-all duration-300"
+                            style={{ width: `${(SUPER_CHAT_TIERS.indexOf(superChatAmount) / (SUPER_CHAT_TIERS.length - 1)) * 100}%` }}
+                          ></div>
+                          
+                          {/* Points */}
+                          <div className="absolute top-1/2 -translate-y-1/2 left-0 w-full flex justify-between px-[1px]">
+                            {SUPER_CHAT_TIERS.map((tier) => (
+                              <button
+                                key={tier}
+                                onClick={() => setSuperChatAmount(tier)}
+                                className={`w-3 h-3 rounded-full transition-all duration-300 z-10 ${
+                                  superChatAmount === tier 
+                                    ? 'bg-[#137333] scale-[1.5]' 
+                                    : superChatAmount > tier 
+                                      ? 'bg-[#137333]' 
+                                      : 'bg-[#C6C6C6]' // Slightly darker grey for unselected
+                                }`}
+                              >
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <button className="w-full bg-[#81C995] hover:bg-[#68bd80] text-[#202124] font-medium py-3 rounded-full transition-colors active:scale-[0.98] shadow-sm">
+                          Buy and Send
+                        </button>
+
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div className="flex items-center gap-3">
+                <div className="flex-1 relative">
+                  {showEmojiPicker && (
+                    <div className="absolute bottom-full left-0 mb-2 w-[260px] bg-white rounded-lg shadow-xl border border-gray-200 p-3 z-50">
+                      <div className="h-64 overflow-y-auto custom-scrollbar">
+                        {EMOJI_CATEGORIES.map((category, catIdx) => (
+                          <div key={catIdx} className="mb-4 last:mb-0">
+                            <h4 className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">{category.name}</h4>
+                            <div className="grid grid-cols-6 gap-2">
+                              {category.emojis.map((emoji, idx) => (
+                                <button
+                                  key={idx}
+                                  onClick={() => {
+                                    setNewMessage(prev => prev + emoji);
+                                    setShowEmojiPicker(false);
+                                  }}
+                                  className="aspect-square flex items-center justify-center hover:bg-gray-100 rounded text-xl transition-colors"
+                                >
+                                  {emoji}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
                         ))}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
+                  <input
+                    type="text"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    placeholder="Add a comment"
+                    className="w-full bg-transparent border border-white rounded-[20px] py-2 pl-4 pr-10 text-sm text-white placeholder:text-white/70 focus:outline-none focus:bg-white/10 transition-all"
+                  />
+                  <button 
+                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white hover:text-gray-200"
+                  >
+                    <Smile size={20} />
+                  </button>
                 </div>
-
-                {/* Sidebar */}
-                <div className="lg:w-[400px] space-y-4">
-                  {/* Stream Info Card */}
-                  <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
-                    <h3 className="font-semibold text-[#48372D] mb-3 flex items-center gap-2">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      Stream Details
-                    </h3>
-                    <div className="space-y-3 text-sm">
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-500">Status</span>
-                        <span className="font-medium">
-                          {isStreamerLive ? (
-                            <span className="text-red-600 flex items-center gap-1">
-                              <span className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span>
-                              Live
-                            </span>
-                          ) : (
-                            <span className="text-gray-500">Offline</span>
-                          )}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-500">Viewers</span>
-                        <span className="font-medium text-gray-700">{viewerCount}</span>
-                      </div>
-                      {liveDetail?.category && (
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-500">Category</span>
-                          <span className="font-medium text-gray-700">{liveDetail.category}</span>
-                        </div>
-                      )}
-                      {liveDetail?.language && (
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-500">Language</span>
-                          <span className="font-medium text-gray-700">{liveDetail.language}</span>
-                        </div>
-                      )}
+                
+                <button 
+                  onClick={() => setShowSuperChatMenu(!showSuperChatMenu)}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl transition-colors ${showSuperChatMenu ? 'bg-[#EDEDD5] text-[#3D2B1F]' : 'bg-white text-[#6E4E37] hover:bg-gray-100'}`}
+                >
+                  ₹
+                </button>
+                
+                <div className="relative group">
+                  <div className="absolute bottom-full right-0 hidden group-hover:flex flex-col items-center pb-4 z-50">
+                    <div className="flex flex-col bg-white rounded-full shadow-xl p-1.5 gap-1 border border-black/5">
+                      {['❤️', '😂', '🎊', '😳', '💯'].map((emoji) => (
+                        <button
+                          key={emoji}
+                          onClick={() => handleSendMessage(null, emoji)}
+                          className="text-lg hover:scale-125 transition-transform p-1"
+                        >
+                          {emoji}
+                        </button>
+                      ))}
                     </div>
                   </div>
-
-                  {/* Share Card */}
-                  <div className="bg-gradient-to-br from-[#FEE2CC] to-[#FED7B0] rounded-xl p-4 shadow-sm">
-                    <h3 className="font-semibold text-[#48372D] mb-2 flex items-center gap-2">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                      </svg>
-                      Enjoying the stream?
-                    </h3>
-                    <p className="text-xs text-[#6E4E37] mb-3">Share this live stream with your friends!</p>
-                    <button className="w-full bg-[#6E4E37] hover:bg-[#5a3c2d] text-white py-2 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                      </svg>
-                      Share
-                    </button>
-                  </div>
+                  <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#6E4E37] hover:bg-gray-100 transition-colors">
+                    <Heart size={20} />
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      )}
+
+      <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #E5E7EB;
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #D1D5DB;
+        }
+      `}</style>
     </div>
   );
 };

@@ -415,13 +415,6 @@ const NavBar = () => {
                         }}
                         onClick={handleUserIconClick}
                       >
-                        {console.log("user saved data", {
-                          token: localStorage.getItem("token"),
-                          usertype: localStorage.getItem("usertype"),
-                          profilePhoto: localStorage.getItem("profilePhoto"),
-                          username: localStorage.getItem("username"),
-                        })}
-                        {console.log("BASE_URL:", BASE_URL)}
                         <img
                           src={
                             user.profilePhoto
