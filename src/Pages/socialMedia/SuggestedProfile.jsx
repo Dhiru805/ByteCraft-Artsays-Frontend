@@ -1,4 +1,4 @@
-import NavBar from '../Home/HomeComponents/NavBar';
+// import NavBar from '../Home/HomeComponents/NavBar';
 import Sidebar from '../../Component/SocialMedia/Sidebar/Sidebar';
 import ProfileSuggestion from '../../Component/SocialMedia/Suggestion/ProfileSuggestion';
 

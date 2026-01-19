@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, ChevronRight, MessageCircle, HelpCircle, ShieldCheck, Star } from "lucide-react";
+import { ChevronRight, HelpCircle, Star } from "lucide-react";
 import axiosInstance from "../../api/axiosConfig";
 import InsuranceContentSkeliton from "../../Component/Skeleton/Home/Account/InsuranceContentSkeliton";
 import "../store/products/product.css";

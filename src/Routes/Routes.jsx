@@ -382,15 +382,15 @@ import ArtistProductsDetails from "../Component/Dashboard/Super-AdminDashboard/A
 import ArtistProductBidding from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/Product/BiddingPass";
 import ArtistPDet from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/UserProfile/Products/ArtistProductDetails";
 //import ArtistSoldProduct from "../Component/Dashboard/Super-AdminDashboard/ArtistDetails/UserProfile/SoldProduct/SoldProductDetails";
-import ArtistProductFetchView from "../Component/ArtistProductFetchView/ArtistProductFetchView";
+// import ArtistProductFetchView from "../Component/ArtistProductFetchView/ArtistProductFetchView";
 
 
 
 import BuyerManagement from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/BuyerManageTable";
 import BuyerProductPurchase from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductPurchased/ProductPurchased";
 import BuyerProductPurchaseView from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductPurchased/ProductPurchasedDetails";
-import BuyerProductRequest from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductRequest/ProductRequestTable";
-import BuyerSoldProduct from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/SoldProduct/SoldProduct";
+// import BuyerProductRequest from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductRequest/ProductRequestTable";
+// import BuyerSoldProduct from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/SoldProduct/SoldProduct";
 import BuyerTransaction from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/Transaction/BuyerTransaction";
 import BuyerPackagingMaterial from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/PackagingMaterial/ProductPurchasedBuyer";
 import BuyermanageProductView from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/BuyerUserProdileView/UserProf";
@@ -411,7 +411,8 @@ import SellerPackaging from "../Component/Dashboard/Super-AdminDashboard/Seller/
 import SellerManageProductView from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerUserProdileView/UserProf";
 import SellerManageProductEdit from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerUserProfile/UserProf";
 import SellerProductBidding from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerProducts/BiddingPass";
-import SellerProductFetchView from "../Component/SellerProductFetchView/ProductFetchView";
+// import SellerProductFetchView from "../Component/SellerProductFetchView/ProductFetchView";
+
 //-----------------------------Product--------------------------//
 import ProductTableView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Product";
 import CustomOrderView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/CustomOrder/CustomOrderAll/Customorder";

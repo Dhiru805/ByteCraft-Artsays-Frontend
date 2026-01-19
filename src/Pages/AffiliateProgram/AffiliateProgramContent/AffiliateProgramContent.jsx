@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, ChevronRight, Info, MessageCircle, HelpCircle, Layout, Users, TrendingUp, Gift, DollarSign } from "lucide-react";
+import { Search, ChevronRight, HelpCircle, TrendingUp } from "lucide-react";
 import axiosInstance from "../../../api/axiosConfig";
 import "../../store/products/product.css";
 

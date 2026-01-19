@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
   RiArrowLeftLine,
-  RiArrowDownSLine,
-  RiArrowUpSLine,
+  // RiArrowDownSLine,
+  // RiArrowUpSLine,
 } from "react-icons/ri";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import getAPI from "../../api/getAPI";
 import postAPI from "../../api/postAPI";
 import { toast } from "react-toastify";
@@ -16,8 +16,8 @@ const PromotePost = () => {
   const postImage = location.state?.postImage;
   const userId = localStorage.getItem("userId");
   const username = localStorage.getItem("username");
-  const firstName = localStorage.getItem("firstName");
-  const lastName = localStorage.getItem("lastName");
+  // const firstName = localStorage.getItem("firstName");
+  // const lastName = localStorage.getItem("lastName");
   const [budget, setBudget] = useState(346);
   const [days, setDays] = useState(3);
   const [categories, setCategories] = useState([]);

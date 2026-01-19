@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaCreditCard, FaRegCircle } from 'react-icons/fa';
+import { FaCreditCard } from 'react-icons/fa';
 import { BsFillCreditCard2FrontFill } from 'react-icons/bs';
 
 const PaymentMethod = () => {

@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { ChevronRight, Upload, CheckCircle2, AlertCircle } from "lucide-react";
+import { useParams } from "react-router-dom";
+import { ChevronRight, Upload, CheckCircle2 } from "lucide-react";
 import { toast } from "react-toastify";
 import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
 
 const LifeAtArtsays = () => {
   const { slug } = useParams();
-  const navigate = useNavigate();
   const jobId = slug?.split("-").pop();
 
   const [jobData, setJobData] = useState(null);
@@ -23,7 +22,7 @@ const LifeAtArtsays = () => {
     jobId: jobId || "",
   });
   const [resume, setResume] = useState(null);
-  const [message, setMessage] = useState("");
+  const [setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const base = process.env.REACT_APP_API_URL_FOR_IMAGE;

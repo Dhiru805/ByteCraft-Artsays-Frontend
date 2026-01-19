@@ -85,11 +85,11 @@ const MyOrders = () => {
     mergeOrderProducts();
   }, [orders.length]);
 
-  const openImagePopup = (images = [], startIndex = 0) => {
-    setCurrentImages(images);
-    setCurrentImageIndex(startIndex);
-    setShowPopup(true);
-  };
+  // const openImagePopup = (images = [], startIndex = 0) => {
+  //   setCurrentImages(images);
+  //   setCurrentImageIndex(startIndex);
+  //   setShowPopup(true);
+  // };
 
   const closeImagePopup = () => {
     setShowPopup(false);

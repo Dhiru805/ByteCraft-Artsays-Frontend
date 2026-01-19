@@ -1,5 +1,5 @@
 import { MdVerified } from "react-icons/md";
-import { Star, Truck, Gift, Banknote, CreditCard } from "lucide-react";
+import { Star } from "lucide-react";
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { HiMiniPercentBadge } from "react-icons/hi2";
@@ -48,7 +48,7 @@ const ProductDetails = () => {
         "/herosectionimg/shraddha.jpg",
     ];
 
-    const [selectedImage, setSelectedImage] = useState(images[0]);
+    // const [selectedImage, setSelectedImage] = useState(images[0]);
 
     const nextSlide = () => {
         if (index < offersData.length - 3) setIndex(index + 1);

@@ -104,7 +104,7 @@ import { motion, AnimatePresence } from "framer-motion";
  */
 
 const CookieConsent = () => {
-  const [cookies, setCookie, removeCookie] = useCookies([
+  const [cookies, setCookie] = useCookies([
     "userConsent",
     "pageData",
   ]);

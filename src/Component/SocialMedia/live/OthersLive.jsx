@@ -5,8 +5,8 @@ import io from 'socket.io-client';
 import axios from 'axios';
 import { 
   Settings, ChevronDown, Share2,
-  ThumbsUp, ThumbsDown, Play, Maximize, Volume2,
-  MoreHorizontal, X, Smile, DollarSign, Heart, 
+  ThumbsUp, Play, Maximize, Volume2,
+  MoreHorizontal, X, Smile, Heart, 
   MessageSquare, Sticker, Users, Gift, ChevronRight
 } from 'lucide-react';
 

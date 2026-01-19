@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, ListFilter, X, ChevronRight, ChevronLeft, SortAsc, Star, User, Briefcase, Award, Tag, Filter } from "lucide-react";
+import { Search, ListFilter, X, ChevronRight, ChevronLeft, SortAsc, Star, Award, Tag, Filter } from "lucide-react";
 import { ImArrowUpRight2 } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../api/getAPI";

@@ -29,7 +29,6 @@ const NegotiateModalforBuyer = ({ request, onClose, onSubmit }) => {
 
   const [customCreationDays, setCustomCreationDays] = useState("");
   const [isCustomCreationDays, setIsCustomCreationDays] = useState(false);
-  const [isYesClicked, setIsYesClicked] = useState(false);
   const [showYesNoButtons, setShowYesNoButtons] = useState(true);
 
   const latestArtistDays =

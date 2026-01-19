@@ -39,7 +39,7 @@ const initialProducts = [
 const MyCart = () => {
   const [products, setProducts] = useState(initialProducts);
   const [coupon, setCoupon] = useState("");
-  const couponDiscount = 10;
+  // const couponDiscount = 10;
 
   const handleQuantity = (id, delta) => {
     setProducts((prev) =>
@@ -55,8 +55,8 @@ const MyCart = () => {
     setProducts((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const subtotal = products.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const total = subtotal - couponDiscount;
+  // const subtotal = products.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  // const total = subtotal - couponDiscount;
 
   return (
     <div className="max-w-[1464px] px-4 sm:px-6 lg:px-12 pt-10 text-lg">

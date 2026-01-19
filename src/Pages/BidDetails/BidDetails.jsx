@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { MdVerified } from "react-icons/md";
-import { Star, Heart, MapPin, ArrowRight, ChevronLeft, ChevronRight, Share2, Eye, Box, Ruler, Award, ShieldCheck, Truck, Clock, MessageCircle, FileText, Download, ExternalLink } from "lucide-react";
+import { Star, Heart, ChevronLeft, ChevronRight, Share2, Eye, Box, Ruler, Award, ShieldCheck, Truck, MessageCircle, FileText, Download, ExternalLink } from "lucide-react";
 import { HiMiniPercentBadge } from "react-icons/hi2";
 import { ImHammer2 } from "react-icons/im";
 import getAPI from "../../api/getAPI";
@@ -11,7 +11,6 @@ import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
 import { useAuth } from "../../AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
-import Swal from "sweetalert2";
 
 const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 
@@ -32,7 +31,7 @@ const offersData = [
 ];
 
 const BidDetails = () => {
-  const { bidSlug, bidId } = useParams();
+  const { bidId } = useParams();
   const navigate = useNavigate();
   const { userId: authUserId, userType } = useAuth();
   const userId = authUserId || localStorage.getItem("userId");

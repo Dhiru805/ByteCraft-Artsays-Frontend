@@ -288,13 +288,13 @@ const NotificationAndPreferences = () => {
     }));
   };
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  // const handleInputChange = (event) => {
+  //   const { name, value } = event.target;
+  //   setFormData((prevData) => ({
+  //     ...prevData,
+  //     [name]: value,
+  //   }));
+  // };
   
   const handleToggle = () => {
     setFormData((prevData) => ({

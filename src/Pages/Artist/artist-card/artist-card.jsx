@@ -2,16 +2,14 @@ import "./artist-card.css";
 import React, { useEffect, useMemo, useState } from "react";
   import { 
     Search, ListFilter, X, ChevronRight, ChevronLeft, 
-    Tag, SortAsc, UserCheck, TrendingUp, Filter 
+    Tag, SortAsc, Filter 
   } from "lucide-react";
-import { FiChevronRight, FiChevronLeft } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
 import { DEFAULT_PROFILE_IMAGE } from "./constant";
 import ProductsSkeliton from "../../../Component/Skeleton/products/ProductsSkeliton";
-import HeroImgArtist from "../hero-img/hero-img";
 
 const ArtistCard = () => {
   const [showFilters, setShowFilters] = useState(false);

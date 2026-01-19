@@ -1,5 +1,4 @@
-import { ClipboardList, ClipboardCheck, Box, Truck, BadgeCheck } from "lucide-react";
-import { CiSquareCheck } from "react-icons/ci";
+import { ClipboardList, ClipboardCheck, Box, BadgeCheck } from "lucide-react";
 import { FaTruckFast } from "react-icons/fa6";
 import { BsCheckLg } from "react-icons/bs";
 

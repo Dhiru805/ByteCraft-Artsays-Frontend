@@ -290,11 +290,10 @@
 
 import React, { useEffect, useState } from "react";
 import { GoCheck } from "react-icons/go";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import getAPI from "../../../../../../../../api/getAPI";
 
 const OrderCompleted = () => {
-  const { userId } = useParams();
   const { state } = useLocation();
 
   const order = state?.order;

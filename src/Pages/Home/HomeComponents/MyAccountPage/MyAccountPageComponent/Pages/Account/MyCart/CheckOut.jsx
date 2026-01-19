@@ -4,7 +4,7 @@ import getAPI from "../../../../../../../../api/getAPI";
 import deleteAPI from "../../../../../../../../api/deleteAPI";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { ChevronRight, Truck } from "lucide-react";
+import { Truck } from "lucide-react";
 import { LocationSelector } from "../../../../../../../../Component/Common/LocationSelector";
 import CheckOutSkeleton from "../../../../../../../../Component/Skeleton/Home/Account/CheckOutSkeleton.jsx";
 
@@ -30,7 +30,7 @@ const CheckOut = () => {
     const [couponCode, setCouponCode] = useState("");
     const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
     const [couponDiscountAmount, setCouponDiscountAmount] = useState(0);
-    const [appliedCoupons, setAppliedCoupons] = useState([]);
+    const [setAppliedCoupons] = useState([]);
   
     const [wallet, setWallet] = useState(null);
     const [useWallet, setUseWallet] = useState(false);

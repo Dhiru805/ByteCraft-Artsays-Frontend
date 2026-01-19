@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, ChevronRight, Info, HelpCircle } from "lucide-react";
+import {ChevronRight, Info, HelpCircle } from "lucide-react";
 import axiosInstance from "../../../api/axiosConfig";
 import PartnerContentSkeliton from "../../../Component/Skeleton/Home/Account/PartnerContentSkeliton";
 import PartnerTypes from "../PartnerTypes/PartnerTypes";

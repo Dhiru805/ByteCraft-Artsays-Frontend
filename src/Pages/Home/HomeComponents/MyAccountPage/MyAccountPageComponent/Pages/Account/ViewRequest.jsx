@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 import axios from 'axios';
-import Switch from "react-switch";
 
 const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 

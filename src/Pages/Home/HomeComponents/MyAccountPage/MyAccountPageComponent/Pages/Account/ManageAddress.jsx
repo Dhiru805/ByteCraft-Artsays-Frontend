@@ -91,31 +91,31 @@ import { Country, State, City } from "country-state-city";
   const [submitType, setSubmitType] = useState("Submit");
   const userId = localStorage.getItem("userId");
 
-  const customSelectStyles = {
-    control: (provided) => ({
-      ...provided,
-      borderRadius: "0.75rem",
-      borderWidth: "2px",
-      borderColor: "rgb(229, 231, 235)",
-      padding: "2px 4px",
-      boxShadow: "none",
-      "&:hover": {
-        borderColor: "rgb(209, 213, 219)",
-      },
-    }),
-    option: (provided, state) => ({
-      ...provided,
-      backgroundColor: state.isSelected
-        ? "#6F4D34"
-        : state.isFocused
-        ? "#f3f4f6"
-        : "white",
-      color: state.isSelected ? "white" : "black",
-      "&:active": {
-        backgroundColor: "#6F4D34",
-      },
-    }),
-  };
+  // const customSelectStyles = {
+  //   control: (provided) => ({
+  //     ...provided,
+  //     borderRadius: "0.75rem",
+  //     borderWidth: "2px",
+  //     borderColor: "rgb(229, 231, 235)",
+  //     padding: "2px 4px",
+  //     boxShadow: "none",
+  //     "&:hover": {
+  //       borderColor: "rgb(209, 213, 219)",
+  //     },
+  //   }),
+  //   option: (provided, state) => ({
+  //     ...provided,
+  //     backgroundColor: state.isSelected
+  //       ? "#6F4D34"
+  //       : state.isFocused
+  //       ? "#f3f4f6"
+  //       : "white",
+  //     color: state.isSelected ? "white" : "black",
+  //     "&:active": {
+  //       backgroundColor: "#6F4D34",
+  //     },
+  //   }),
+  // };
 
   const fetchAddresses = async () => {
     if (!userId) {

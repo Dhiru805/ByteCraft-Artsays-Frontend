@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
-import { Scroll } from "lucide-react";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -14,21 +13,14 @@ const Sidebar = () => {
   const [fetchedTabs, setFetchedTabs] = useState([]);
   const [userType, setUserType] = useState(null);
   const userId = localStorage.getItem("userId");
-  const [initialLoad, setInitialLoad] = useState(true);
-  const [hasLoaded, setHasLoaded] = useState(false);
   const [activeSubTab, setActiveSubTab] = useState(null);
 
   const userrole = localStorage.getItem("userrole");
 
-  const roleAliases = {
-    "Super-Admin": userrole ? userrole.toLowerCase() : "super-admin",
-  };
+  // const roleAliases = {
+  //   "Super-Admin": userrole ? userrole.toLowerCase() : "super-admin",
+  // };
 
-  const getDisplayPath = (path) => {
-    const alias = roleAliases[userrole] || userrole?.toLowerCase();
-    if (!alias) return path;
-    return path.replace("/super-admin", `/${alias}`);
-  };
 
   // const menuConfig = {
 
@@ -1018,7 +1010,7 @@ const Sidebar = () => {
   //             <ul className={`collapse ${expandedTab === tab.label ? 'in' : ''}`}>
   //               {tab.subTabs.map((subTab, subIndex) => (
 
-  const menuItems = userType ? menuConfig[userType] || [] : [];
+  // const menuItems = userType ? menuConfig[userType] || [] : [];
 
   // useEffect(() => {
   //   if (userType) {

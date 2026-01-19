@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
-import { toast } from "react-toastify";
 
 const SuccessPartner = () => {
   const [slides, setSlides] = useState([]);

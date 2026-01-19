@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaCalendarAlt, FaClock, FaEye, FaThumbsUp, FaComment, FaTag, FaGlobe, FaLock } from 'react-icons/fa';
+import { FaArrowLeft, FaCalendarAlt, FaEye, FaThumbsUp, FaComment, FaGlobe, FaLock } from 'react-icons/fa';
 import getAPI from '../../api/getAPI';
 import Sidebar from '../../Component/SocialMedia/Sidebar/Sidebar';
 import Suggestion from '../../Component/SocialMedia/Suggestion/Suggestion';

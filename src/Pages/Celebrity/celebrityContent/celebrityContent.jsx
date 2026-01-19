@@ -1,4 +1,3 @@
-import ProductGrid from "../../../Component/ProductCard/ProductCard";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
@@ -7,11 +6,9 @@ import {
   ListFilter,
   X,
   ChevronRight,
-  ChevronLeft,
   Tag,
   SortAsc,
   DollarSign,
-  Maximize,
   ShoppingCart,
   Star,
 } from "lucide-react";
@@ -546,20 +543,20 @@ const CelebrityContent = () => {
     }
   };
 
-  const renderStars = (avg) => {
-    const filled = Math.round(avg || 0);
-    return [1, 2, 3, 4, 5].map((s) => (
-      <Star
-        key={s}
-        size={14}
-        className={
-          s <= filled
-            ? "text-yellow-400 fill-yellow-400"
-            : "text-gray-200 fill-gray-200"
-        }
-      />
-    ));
-  };
+  // const renderStars = (avg) => {
+  //   const filled = Math.round(avg || 0);
+  //   return [1, 2, 3, 4, 5].map((s) => (
+  //     <Star
+  //       key={s}
+  //       size={14}
+  //       className={
+  //         s <= filled
+  //           ? "text-yellow-400 fill-yellow-400"
+  //           : "text-gray-200 fill-gray-200"
+  //       }
+  //     />
+  //   ));
+  // };
 
   const FilterSection = ({
     title,
@@ -663,38 +660,38 @@ const CelebrityContent = () => {
     </label>
   );
 
-  const mainCategories = [
-    ...new Set(options.categories.map((c) => c.mainCategoryName)),
-  ];
-  const availableCategories =
-    filters.mainCategory.length > 0
-      ? [
-          ...new Set(
-            options.categories
-              .filter((c) => filters.mainCategory.includes(c.mainCategoryName))
-              .map((c) => c.categoryName)
-          ),
-        ]
-      : [...new Set(options.categories.map((c) => c.categoryName))];
+  // const mainCategories = [
+  //   ...new Set(options.categories.map((c) => c.mainCategoryName)),
+  // ];
+  // const availableCategories =
+  //   filters.mainCategory.length > 0
+  //     ? [
+  //         ...new Set(
+  //           options.categories
+  //             .filter((c) => filters.mainCategory.includes(c.mainCategoryName))
+  //             .map((c) => c.categoryName)
+  //         ),
+  //       ]
+  //     : [...new Set(options.categories.map((c) => c.categoryName))];
 
-  const availableSubCategories =
-    filters.category.length > 0
-      ? [
-          ...new Set(
-            options.categories
-              .filter((c) => filters.category.includes(c.categoryName))
-              .map((c) => c.subCategoryName)
-          ),
-        ]
-      : filters.mainCategory.length > 0
-      ? [
-          ...new Set(
-            options.categories
-              .filter((c) => filters.mainCategory.includes(c.mainCategoryName))
-              .map((c) => c.subCategoryName)
-          ),
-        ]
-      : [...new Set(options.categories.map((c) => c.subCategoryName))];
+  // const availableSubCategories =
+  //   filters.category.length > 0
+  //     ? [
+  //         ...new Set(
+  //           options.categories
+  //             .filter((c) => filters.category.includes(c.categoryName))
+  //             .map((c) => c.subCategoryName)
+  //         ),
+  //       ]
+  //     : filters.mainCategory.length > 0
+  //     ? [
+  //         ...new Set(
+  //           options.categories
+  //             .filter((c) => filters.mainCategory.includes(c.mainCategoryName))
+  //             .map((c) => c.subCategoryName)
+  //         ),
+  //       ]
+  //     : [...new Set(options.categories.map((c) => c.subCategoryName))];
 
   if (loading || !celebrity)
     return <CelebrityContentSkeleton />;

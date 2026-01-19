@@ -1268,8 +1268,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import getAPI from "../../../api/getAPI";
-import { Heart, ShoppingCart, Star, ChevronLeft, ChevronRight, Search } from "lucide-react";
-import { FaStar } from "react-icons/fa";
+import { Heart, ShoppingCart, Star, Search } from "lucide-react";
+// import { FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import postAPI from "../../../api/postAPI";
 import deleteAPI from "../../../api/deleteAPI";
@@ -1289,7 +1289,7 @@ const BrowseCategories = () => {
 
   const navigate = useNavigate();
   const [likedProducts, setLikedProducts] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");

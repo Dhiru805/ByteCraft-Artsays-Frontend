@@ -2,36 +2,19 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import getAPI from "../../../../src/api/getAPI";
 import putAPI from "../../../../src/api/putAPI";
-import AdPayments from "./Creator-Control/AdPayments";
-import BrandedContent from "./Creator-Control/BrandedContent";
-import PartnershipAds from "./Creator-Control/PartnershipAds";
-import Faq from "./Creator-Control/Faq";
-import WelcomeMessage from "./Creator-Control/WelcomeMessage";
-import MinimumAge from "./Creator-Control/MinimumAge";
-import MonetizationStatus from "./Creator-Control/MonetizationStatus";
-import ViewCounts from "./Creator-Control/ViewCounts";
-import AddProfessional from "./Creator-Control/AddProfessional";
-import AppointmentRequests from "./Creator-Control/AppointmentRequests";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { FiBell } from "react-icons/fi";
-import { LuArchive } from "react-icons/lu";
 import { FaUserGroup } from "react-icons/fa6";
 import { GoMention } from "react-icons/go";
 import { FaRegComment } from "react-icons/fa";
 import {
-  RiBarChartBoxLine,
   RiProhibitedLine,
   RiVerifiedBadgeLine,
-  RiQuestionLine,
   RiShieldUserLine,
 } from "react-icons/ri";
 import { FiEdit, FiChevronDown } from "react-icons/fi";
 import { FaCheck } from "react-icons/fa";
 import { FaTimes } from "react-icons/fa";
-import { MdVerified } from "react-icons/md";
-import { FaRegClock } from "react-icons/fa";
-import { RiShieldStarFill } from "react-icons/ri";
-import { FaCircleCheck } from "react-icons/fa6";
 import { IoPaperPlaneOutline } from "react-icons/io5";
 import deleteAPI from "../../../api/deleteAPI";
 import postAPI from "../../../api/postAPI";

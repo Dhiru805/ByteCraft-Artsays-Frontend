@@ -41,7 +41,6 @@
 // }
 
 import React, { useState, useEffect } from "react";
-import TestimonialCard from "./TestimonialCard";
 import getAPI from "../../../api/getAPI";
 
 const Testimonials = () => {

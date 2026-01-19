@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { FiSearch } from "react-icons/fi";
 import { FaPlus } from "react-icons/fa6";
 import { GoPencil } from "react-icons/go";
-import { RiDeleteBin6Line, RiProhibited2Line } from "react-icons/ri";
 import { LuHandshake } from "react-icons/lu";
 import { FaEye, FaCheck, FaRupeeSign, FaSpinner } from "react-icons/fa";
 import ReactQuill from "react-quill";
@@ -31,22 +29,17 @@ const AddCustomRequestForm = () => {
   const [colorPreferences, setColorPreferences] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [artists, setArtists] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const [fileType, setFileType] = useState(null);
-  const [showFullImage, setShowFullImage] = useState(false);
-  const [selectedArtistName, setSelectedArtistName] = useState("");
+  const [setSelectedArtistName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
-  const [rejectComment, setRejectComment] = useState("");
   const [viewRequest, setViewRequest] = useState(null);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedRequestToDelete, setSelectedRequestToDelete] = useState(null);
   const [descriptionError, setDescriptionError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [allCategories, setAllCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
   const [addresses, setAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [fetchError, setFetchError] = useState(null);
@@ -333,18 +326,18 @@ const AddCustomRequestForm = () => {
       // toast.error("Something went wrong while fetching categories.");
     }
   };
-  const handleArtTypeChange = (selectedOption) => {
-    const value = selectedOption?.label || "";
-    setFormData((prev) => ({
-      ...prev,
-      artType: value,
-    }));
-    setSelectedCategory(selectedOption?.label || "");
-  };
+  // const handleArtTypeChange = (selectedOption) => {
+  //   const value = selectedOption?.label || "";
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     artType: value,
+  //   }));
+  //   setSelectedCategory(selectedOption?.label || "");
+  // };
 
-  const handleSizeChange = (selectedOption) => {
-    setFormData({ ...formData, size: selectedOption?.value || "" });
-  };
+  // const handleSizeChange = (selectedOption) => {
+  //   setFormData({ ...formData, size: selectedOption?.value || "" });
+  // };
 
   // const handleImageClick = () => {
   //   setShowFullImage((prev) => !prev);
@@ -716,10 +709,10 @@ const AddCustomRequestForm = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
-  const handleRowsPerPageChange = (e) => {
-    setRowsPerPage(Number(e.target.value));
-    setCurrentPage(1); // Reset to first page on rows change
-  };
+  // const handleRowsPerPageChange = (e) => {
+  //   setRowsPerPage(Number(e.target.value));
+  //   setCurrentPage(1); // Reset to first page on rows change
+  // };
 
   const handleInitiatePayment = async (requestId, amount) => {
     if (!amount || amount === "—" || !requestId) {

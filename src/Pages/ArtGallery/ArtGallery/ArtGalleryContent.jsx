@@ -15,7 +15,7 @@ const ArtGalleryContent = () => {
   const [likedProducts, setLikedProducts] = useState({});
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [setError] = useState("");
 
   const navigate = useNavigate();
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;

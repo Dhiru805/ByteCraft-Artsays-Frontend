@@ -5,9 +5,9 @@ import "react-toastify/dist/ReactToastify.css";
 import "../Login/LoginStyles.css";
 import { FaEye, FaEyeSlash, FaCheck } from "react-icons/fa";
 import postAPI from "../../api/postAPI";
-import { FcGoogle } from "react-icons/fc";
+// import { FcGoogle } from "react-icons/fc";
 import { useGoogleLogin } from "@react-oauth/google";
-import putAPI from "../../api/putAPI";
+// import putAPI from "../../api/putAPI";
 import { FaGoogle } from "react-icons/fa";
 
 const Register = () => {
@@ -109,7 +109,7 @@ const Register = () => {
 
     const input = formData.emailOrPhone.trim();
     const isEmail = isValidEmail(input);
-    const isPhone = isValidPhone(input);
+    // const isPhone = isValidPhone(input);
 
     try {
       setLoadingOTP(true);

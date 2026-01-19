@@ -1,18 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./Headerstyle.css";
 import artLogo from "./artlogo.png";
-import inactive from "./inactive.png";
 import AIcon from "./AIcon.png";
-import artwork from "./artwork.jpg";
-import { NavUserState, NavGuestState } from "./NavLoginState";
-import MegaMenu from "./MegaMenu";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { BsHammer } from "react-icons/bs";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { use } from "react";
-import { AiFillDashboard } from "react-icons/ai";
-import { Bell, FileX, Menu, User } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
 import {
   RiMoneyRupeeCircleLine,
   RiAuctionFill,
@@ -26,20 +18,19 @@ import { IoWalletOutline } from "react-icons/io5";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { BsBoxSeam } from "react-icons/bs";
 import getAPI from "../../../api/getAPI";
-import { FaUser, FaChevronLeft, FaTools } from "react-icons/fa";
+import { FaUser, FaTools } from "react-icons/fa";
 import { MdOutlineSecurity, MdVerified, MdLibraryAdd } from "react-icons/md";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 import HeaderSkeleton from "../../../Component/Skeleton/Home/HeaderSkeleton";
 
 const NavBar = () => {
-  const [showMegamenu, setShowMegamenu] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [Usertype, setUserType] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [isToggled, setIsToggled] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [user, setUser] = useState({});
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  // const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
   const location = useLocation();
@@ -117,13 +108,13 @@ const NavBar = () => {
     }
   }, [location.pathname]);
 
-  const handleToggle = () => {
-    if (isToggled) {
-      navigate("/");
-    } else {
-      navigate("/artsays-community");
-    }
-  };
+  // const handleToggle = () => {
+  //   if (isToggled) {
+  //     navigate("/");
+  //   } else {
+  //     navigate("/artsays-community");
+  //   }
+  // };
 
   useEffect(() => {
     const token = localStorage.getItem("token");

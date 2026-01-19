@@ -4,8 +4,6 @@ import { format } from "date-fns";
 import { toast } from "react-toastify";
 import { 
   ChevronRight, 
-  Info, 
-  HelpCircle, 
   Trophy, 
   Calendar, 
   Layers, 
@@ -17,7 +15,6 @@ import {
   Phone,
   Layout,
   FileText,
-  ShieldCheck
 } from "lucide-react";
 import postAPI from "../../../api/postAPI";
 import getAPI from "../../../api/getAPI";
@@ -141,15 +138,15 @@ const JoinChallenges = () => {
       }
   };
 
-  const SidebarCard = ({ title, icon: Icon, children }) => (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-4 transition-all hover:shadow-md">
-      <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-        <Icon size={18} className="text-[#6F4D34]" />
-        {title}
-      </h3>
-      <div className="space-y-4">{children}</div>
-    </div>
-  );
+  // const SidebarCard = ({ title, icon: Icon, children }) => (
+  //   <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-4 transition-all hover:shadow-md">
+  //     <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+  //       <Icon size={18} className="text-[#6F4D34]" />
+  //       {title}
+  //     </h3>
+  //     <div className="space-y-4">{children}</div>
+  //   </div>
+  // );
 
   if (loading) {
     return <JoinChallengeSkeleton />;

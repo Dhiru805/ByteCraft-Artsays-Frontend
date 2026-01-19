@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Heart, Search, ListFilter, X, ChevronRight, ChevronLeft, Tag, SortAsc, DollarSign, Maximize, ShoppingCart, Star } from "lucide-react";
-import { FaStar, FaShoppingCart } from "react-icons/fa";
+// import { FaStar, FaShoppingCart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
@@ -10,7 +10,7 @@ import ProductsSkeliton from "../../../Component/Skeleton/products/ProductsSkeli
 import "./product.css";
 
 const Product = () => {
-  const [searchText, setSearchText] = useState("");
+  // const [searchText, setSearchText] = useState("");
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [showFilters, setShowFilters] = useState(false);

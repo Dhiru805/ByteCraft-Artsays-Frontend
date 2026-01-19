@@ -1,5 +1,5 @@
 import React from 'react';
-import NavBar from '../Home/HomeComponents/NavBar';
+// import NavBar from '../Home/HomeComponents/NavBar';
 import Sidebar from '../../Component/SocialMedia/Sidebar/Sidebar';
 import Post from '../../Component/SocialMedia/Posts/Posts';
 import Suggestion from '../../Component/SocialMedia/Suggestion/Suggestion';

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, ChevronRight, Info, HelpCircle, Shield, Award, CheckCircle2, FileCheck } from "lucide-react";
-import axiosInstance from "../../../api/axiosConfig";
+import { Search, ChevronRight, HelpCircle, Shield, Award, CheckCircle2, FileCheck } from "lucide-react";
 import getAPI from "../../../api/getAPI";
 import CertificationSkeleton from "../../../Component/Skeleton/CertificationSkeleton";
 import "../../store/products/product.css";

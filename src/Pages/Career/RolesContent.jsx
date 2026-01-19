@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { ChevronRight, Briefcase, FileText, Send, CheckCircle2 } from "lucide-react";
+import { ChevronRight, Briefcase, FileText, Send } from "lucide-react";
 import getAPI from "../../api/getAPI";
 import postAPI from "../../api/postAPI";
 import { toast } from "react-toastify";

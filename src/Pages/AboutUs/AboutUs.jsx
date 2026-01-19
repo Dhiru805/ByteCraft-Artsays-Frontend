@@ -27,8 +27,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { toast } from "react-toastify";
-import { Search, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import axiosInstance from "../../api/axiosConfig";
 import getAPI from "../../api/getAPI";
 

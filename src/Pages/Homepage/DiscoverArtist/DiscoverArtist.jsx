@@ -553,13 +553,11 @@ import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
 import DiscoverArtistSkeleton from "../../../Component/Skeleton/DiscoverArtistSkeleton";
 import ArtistGrid from "../../../Component/ArtistGrid/ArtistGrid";
-import { useNavigate } from "react-router-dom";
 
 const DiscoverArtist = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {

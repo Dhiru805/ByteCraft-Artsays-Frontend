@@ -131,7 +131,7 @@ const Register = () => {
 
     const input = formData.emailOrPhone.trim();
     const isEmail = isValidEmail(input);
-    const isPhone = isValidPhone(input);
+    // const isPhone = isValidPhone(input);
 
     try {
       setLoadingOTP(true);

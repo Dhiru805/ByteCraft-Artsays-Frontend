@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 import axiosInstance from "../../api/axiosConfig";
 import HeroImgPartner from "./hero-img/hero-img";
 import PartnerContent from "./PartnerContent/PartnerContent";

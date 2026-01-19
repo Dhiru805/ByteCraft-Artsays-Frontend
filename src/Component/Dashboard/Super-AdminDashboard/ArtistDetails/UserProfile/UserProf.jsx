@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Preferences from './Preferences/Pereferences';
@@ -10,7 +10,6 @@ import Productrequest from "./ProductRequest/ProductRequestTable"
 import Soldproduct from "./SoldProduct/SoldProduct"
 import Customrequest from "../../BuyerManagement/BuyerUserProdileView/CustomRequest/Customorder"
 import getAPI from '../../../../../api/getAPI';
-import { Link } from 'react-router-dom';
 import Settings from './UserInfo/BasicInformation';
 import useUserType from '../../../urlconfig'
 import putAPI from '../../../../../api/putAPI';

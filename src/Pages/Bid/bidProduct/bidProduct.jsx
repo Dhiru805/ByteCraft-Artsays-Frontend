@@ -1,6 +1,6 @@
 import "../../store/products/product.css";
 import React, { useState, useEffect } from "react";
-import { Heart, Search, ListFilter, X, ChevronRight, ChevronLeft, Tag, SortAsc, DollarSign, Maximize, Bell, Star } from "lucide-react";
+import {Search, ListFilter, X, ChevronRight, ChevronLeft, Tag, SortAsc, DollarSign, Maximize, Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
 import { toast } from "react-toastify";
@@ -12,8 +12,6 @@ const BidProduct = () => {
   const [showFilters, setShowFilters] = useState(false);
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   const [loading, setLoading] = useState(false);
-  const userId = localStorage.getItem("userId");
-  const userType = localStorage.getItem("userType");
   const [highestLiveBid, setHighestLiveBid] = useState({});
 
   const [filters, setFilters] = useState({

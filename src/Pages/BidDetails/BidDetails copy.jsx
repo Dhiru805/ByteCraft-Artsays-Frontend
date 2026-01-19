@@ -1,44 +1,12 @@
 import { MdVerified } from "react-icons/md";
-import { Star, Truck, Gift, Banknote, CreditCard } from "lucide-react";
 import React, { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { HiMiniPercentBadge } from "react-icons/hi2";
-import { Heart, MapPin, ArrowRight, ShoppingCart, Zap } from "lucide-react";
 import { BsTelegram } from "react-icons/bs";
 import { FaChevronCircleRight } from "react-icons/fa";
 import { FaChevronCircleLeft } from "react-icons/fa";
 import { ImHammer2 } from "react-icons/im";
 import { motion, AnimatePresence } from "framer-motion";
 
-
-const offersData = [
-    {
-        title: "Cashback",
-        description: "Upto ₹50.00 cashback as Google Pay Balance when...",
-        offers: "3 offers",
-    },
-    {
-        title: "Bank Offer",
-        description: "Upto ₹1,000.00 discount on SBI Credit Cards",
-        offers: "8 offers",
-    },
-    {
-        title: "EMI Offers",
-        description: "Get GST invoice and save up to 28% on business purchases",
-        offers: "1 offer",
-    },
-    {
-        title: "Festival Offer",
-        description: "Flat ₹500 off on selected paintings during the festival sale",
-        offers: "2 offers",
-    },
-];
-
 const BidDetails = () => {
-    const [quantity, setQuantity] = useState(1);
-    const [protection, setProtection] = useState(true);
-    const [giftOption, setGiftOption] = useState(true);
-    const [index, setIndex] = useState(0);
     const [activeTab, setActiveTab] = useState("description");
 
     const images = [
@@ -50,12 +18,6 @@ const BidDetails = () => {
         "/herosectionimg/2.png",
         "/herosectionimg/shraddha.jpg",
     ];
-
-    const [selectedImage, setSelectedImage] = useState(images[0]);
-
-    const nextSlide = () => {
-        if (index < offersData.length - 3) setIndex(index + 1);
-    };
 
     const ProductImages = () => {
         const roomBackgrounds = [
@@ -92,25 +54,6 @@ const BidDetails = () => {
                     .catch((err) => console.log('Error sharing', err));
             } else {
                 alert('Share not supported in this browser');
-            }
-        };
-
-        const [pinCode, setPinCode] = useState("");
-        const [address, setAddress] = useState("");
-
-        const addresses = {
-            "110017": "23 Aurum Lane, Sector 17, Vasant Vibe, New Delhi",
-            "560001": "MG Road, Bangalore, Karnataka",
-        };
-
-        const handleSubmit = (e) => {
-            e.preventDefault();
-
-            if (addresses[pinCode]) {
-                setAddress(addresses[pinCode]);
-            } else {
-                alert("Invalid PIN code");
-                setAddress("");
             }
         };
 
@@ -191,10 +134,6 @@ const BidDetails = () => {
 
         const [hoveredIndex, setHoveredIndex] = useState(null);
 
-
-        const prevSlide = () => {
-            if (index > 0) setIndex(index - 1);
-        };
         return (
             <div className="max-w-[1440px] mx-auto font-[Poppins] bg-[#ffffff] text-[#111] p-6">
                 {/* ====== Top Section ====== */}

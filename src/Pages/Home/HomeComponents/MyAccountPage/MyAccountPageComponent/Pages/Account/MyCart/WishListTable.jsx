@@ -2,13 +2,11 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
   Trash2, 
-  ShoppingBag, 
   ChevronRight, 
   ChevronLeft,
   Heart,
   ShoppingCart,
   ArrowLeft,
-  AlertCircle,
   ShieldCheck,
   Truck
 } from "lucide-react";

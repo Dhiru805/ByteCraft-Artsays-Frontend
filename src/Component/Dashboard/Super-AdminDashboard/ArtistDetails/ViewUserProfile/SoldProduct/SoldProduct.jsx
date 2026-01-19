@@ -228,7 +228,7 @@ const SoldProduct = ({ userId }) => {
 
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
     const navigate = useNavigate();
-    const userType = useUserType();
+    // const userType = useUserType();
 
     useEffect(() => {
         const fetchProducts = async () => {
