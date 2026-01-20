@@ -47,6 +47,7 @@ const OrderView = () => {
   const [cancelComment, setCancelComment] = useState("");
   const [loadingCancel, setLoadingCancel] = useState(false);
   const [hasSubmittedReview, setHasSubmittedReview] = useState(false);
+  const [existingReview, setExistingReview] = useState(null);
   const [reviewTitle, setReviewTitle] = useState("");
   const [reviewDescription, setReviewDescription] = useState("");
   const [estimatedDeliveryDate, setEstimatedDeliveryDate] = useState("—");
@@ -55,12 +56,13 @@ const OrderView = () => {
     if (!path) return "/images/placeholder.jpg";
     if (/^https?:\/\//i.test(path)) return path;
     if (/^\/\//.test(path)) return `${window.location.protocol}${path}`;
-    const normalized = path.replace(/\\/g, "/").replace(/^\/+/, "/");
+    const normalized = path.replace(/\\/g, "/");
+    const withSlash = normalized.startsWith("/") ? normalized : `/${normalized}`;
     if (BASE_URL) {
       const prefix = BASE_URL.endsWith("/") ? BASE_URL.slice(0, -1) : BASE_URL;
-      return `${prefix}${normalized}`;
+      return `${prefix}${withSlash}`;
     }
-    return normalized;
+    return withSlash;
   };
 
   useEffect(() => {
@@ -86,6 +88,49 @@ const OrderView = () => {
     };
     fetchOrderIfNeeded();
   }, []);
+
+  useEffect(() => {
+    const fetchExistingReview = async () => {
+      if (!order || !order.items) return;
+      
+      const firstItem = order.items[0];
+      let actualProductId = null;
+      
+      if (firstItem) {
+        if (firstItem.customProduct) {
+          actualProductId = firstItem.customProduct._id || firstItem.customProduct;
+        } else if (firstItem.productId) {
+          actualProductId = firstItem.productId._id || firstItem.productId;
+        } else if (firstItem.resellProduct) {
+          actualProductId = firstItem.resellProduct._id || firstItem.resellProduct;
+        }
+      }
+      
+      if (!actualProductId) return;
+      
+      const userId = order?.Buyer?.id || localStorage.getItem("userId");
+      if (!userId) return;
+      
+      try {
+        const res = await getAPI(`/api/reviews/user-review?userId=${userId}&productId=${actualProductId}`);
+        if (res?.data?.success && res.data.review) {
+          const review = res.data.review;
+          setExistingReview(review);
+          setHasSubmittedReview(true);
+          setRating(review.rating);
+          setReviewTitle(review.title);
+          setReviewDescription(review.description);
+          if (review.photos && review.photos.length > 0) {
+            setUploadedFiles(review.photos.map(p => ({ previewUrl: buildImageUrl(p), isExisting: true })));
+          }
+        }
+      } catch (err) {
+        // No existing review, that's fine
+      }
+    };
+    
+    fetchExistingReview();
+  }, [order]);
 
   useEffect(() => {
     if (!order || !order.items) return;
@@ -555,45 +600,57 @@ const OrderView = () => {
         </motion.div>
       </div>
 
-      {/* REVIEW SECTION */}
-      <motion.div 
-        id="review-section"
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.4 }}
-        className="bg-[#FDF8F3] rounded-[2.5rem] p-8 sm:p-12 border border-[#6F4D34]/10 shadow-inner"
-      >
-        <div className="space-y-10">
-          <div className="text-center space-y-3">
-            <div className="inline-flex p-3 bg-white rounded-2xl shadow-sm mb-2">
-              <Star className="w-8 h-8 text-[#6F4D34] fill-[#6F4D34]" />
+        {/* REVIEW SECTION */}
+        <motion.div 
+          id="review-section"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="bg-[#FDF8F3] rounded-[2.5rem] p-8 sm:p-12 border border-[#6F4D34]/10 shadow-inner"
+        >
+          <div className="space-y-10">
+            <div className="text-center space-y-3">
+              <div className="inline-flex p-3 bg-white rounded-2xl shadow-sm mb-2">
+                <Star className="w-8 h-8 text-[#6F4D34] fill-[#6F4D34]" />
+              </div>
+              <h3 className="text-3xl font-black text-gray-900">
+                {hasSubmittedReview ? "Your Review" : "How was your experience?"}
+              </h3>
+              <p className="text-gray-600 font-medium">
+                {hasSubmittedReview ? "Thank you for sharing your feedback!" : "Your feedback helps our community and artists grow."}
+              </p>
             </div>
-            <h3 className="text-3xl font-black text-gray-900">How was your experience?</h3>
-            <p className="text-gray-600 font-medium">Your feedback helps our community and artists grow.</p>
-          </div>
 
-          <div className="flex justify-center gap-3">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button 
-                key={star} 
-                onClick={() => !hasSubmittedReview && setRating(star)} 
-                className={`transform transition-all duration-300 hover:scale-125 ${
-                  rating >= star ? "text-[#6F4D34] drop-shadow-lg" : "text-gray-300"
-                }`}
-              >
-                <Star className={`w-12 h-12 ${rating >= star ? "fill-[#6F4D34]" : "fill-transparent"}`} />
-              </button>
-            ))}
-          </div>
+            <div className="flex justify-center gap-3">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button 
+                  key={star} 
+                  onClick={() => !hasSubmittedReview && setRating(star)} 
+                  disabled={hasSubmittedReview}
+                  className={`transform transition-all duration-300 ${!hasSubmittedReview ? 'hover:scale-125' : ''} ${
+                    rating >= star ? "text-[#6F4D34] drop-shadow-lg" : "text-gray-300"
+                  }`}
+                >
+                  <Star className={`w-12 h-12 ${rating >= star ? "fill-[#6F4D34]" : "fill-transparent"}`} />
+                </button>
+              ))}
+            </div>
 
           <AnimatePresence>
-            {rating > 0 && (
+            {(rating > 0 || hasSubmittedReview) && (
               <motion.div 
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 className="space-y-8 bg-white p-4 md:!p-8 rounded-[2rem] shadow-xl border border-gray-50"
               >
+                {hasSubmittedReview && existingReview && (
+                  <div className="flex items-center gap-2 text-green-600 bg-green-50 px-4 py-2 rounded-xl">
+                    <CheckCircle2 className="w-5 h-5" />
+                    <span className="font-bold text-sm">Review submitted on {new Date(existingReview.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
                   <div className="space-y-2">
                     <label className="text-sm font-black text-gray-800 uppercase tracking-wider ml-1">Review Title</label>
@@ -603,7 +660,7 @@ const OrderView = () => {
                       onChange={(e) => setReviewTitle(e.target.value)} 
                       disabled={hasSubmittedReview}
                       placeholder="e.g. Stunning Artwork!" 
-                      className="w-full p-3 bg-gray-50 border-none rounded-2xl text-gray-900 font-medium focus:ring-2 focus:ring-[#6F4D34] transition-all placeholder:text-gray-300" 
+                      className={`w-full p-3 bg-gray-50 border-none rounded-2xl text-gray-900 font-medium focus:ring-2 focus:ring-[#6F4D34] transition-all placeholder:text-gray-300 ${hasSubmittedReview ? 'cursor-not-allowed opacity-80' : ''}`}
                     />
                   </div>
 
@@ -648,7 +705,7 @@ const OrderView = () => {
                     onChange={(e) => setReviewDescription(e.target.value)} 
                     disabled={hasSubmittedReview}
                     placeholder="Tell us what you loved about this piece..." 
-                    className="w-full p-3 bg-gray-50 border-none rounded-2xl text-gray-900 font-medium focus:ring-2 focus:ring-[#6F4D34] transition-all resize-none placeholder:text-gray-300"
+                    className={`w-full p-3 bg-gray-50 border-none rounded-2xl text-gray-900 font-medium focus:ring-2 focus:ring-[#6F4D34] transition-all resize-none placeholder:text-gray-300 ${hasSubmittedReview ? 'cursor-not-allowed opacity-80' : ''}`}
                   ></textarea>
                 </div>
 
