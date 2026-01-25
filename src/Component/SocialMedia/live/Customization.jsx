@@ -494,36 +494,36 @@ return (
     </header>
 
     {/* Scrollable main content */}
-    <main className="flex-1 overflow-y-scroll w-full sm:w-[90%] sm:mx-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+    <main className="flex-1 overflow-y-scroll w-full sm:mx-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
       {activeTab === "details" && (
-        <div className="flex flex-col gap-6 sm:p-2">
+        <div className="flex flex-col gap-4 p-3">
           {/* Title */}
-          <div className="flex items-center p-2.5 border-[1px] border-[#48372D] rounded-xl gap-1">
+          <div className="items-center p-2.5 border-[1px] border-[#48372D] rounded-xl gap-1">
             <div className="text-[18px] text-[#474242] font-semibold ml-2">Title</div>
             <input
               type="text"
               name="title"
               value={formData.title}
               onChange={handleChange}
-              className="rounded-md outline-none border-none placeholder:text-[18px] placeholder:text-[#474242] flex-1"
-              placeholder="(required)"
+              className="rounded-md outline-none border-none placeholder:text-[18px] placeholder:text-[#474242] flex-1 ml-2"
+              placeholder="Enter your stream title"
             />
           </div>
 
           {/* Description */}
-          <div className="flex flex-col items-start p-3 rounded-xl border-[1px] border-[#48372D] ">
+          <div className="items-start p-3 rounded-xl border-[1px] border-[#48372D] ">
             <div className="text-[18px] text-[#474242] font-semibold ml-2">Description</div>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
-              className="w-full rounded-lg placeholder:text-[#474242] placeholder:text-[17px] ml-2"
-              placeholder="Tell viewers more about your stream"
+              className="w-full rounded-md outline-none border-none placeholder:text-[18px] placeholder:text-[#474242] flex-1 ml-2"
+              placeholder="Describe your stream"
             ></textarea>
           </div>
 
           {/* Category */}
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-2">
             <h2 className="text-[#48372D] text-[20px] font-semibold">Category</h2>
             <p className="text-[#474242] text-[16px]">Add your stream to a category so viewers can find it more easily.</p>
             <select
@@ -542,7 +542,7 @@ return (
           </div>
 
           {/* Thumbnail */}
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-2">
             <h2 className="text-[#48372D] text-[20px] font-semibold">Thumbnail</h2>
             <p className="text-[#474242] text-[16px]">Select or upload a picture that represents your stream.</p>
             <label
@@ -575,7 +575,7 @@ return (
           </div>
 
           {/* Paid Promotion */}
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-2">
             <h2 className="text-[#48372D] text-[20px] font-semibold">Paid Promotion</h2>
             <p className="text-[#474242] text-[16px] ">If you accepted anything of value from a third party to make stream,
               you must let us know. We'll show viewers a message that your stream contains paid promotion.</p>
@@ -592,11 +592,11 @@ return (
           </div>
 
           {/* Tags */}
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-2">
             <h2 className="text-[#48372D] text-[20px] font-semibold">Tags</h2>
             <p className="text-[#474242] text-[16px] ">Tags can be useful in your stream, tags play a minimal role in helping users find your stream.</p>
             <div className="relative p-2 rounded-xl border-[1px] border-[#48372D]">
-              <div className="flex flex-wrap items-center gap-2 text-[18px] ml-2">Enter your tags
+              <div className="grid flex-wrap items-center gap-2 text-[18px] ml-2 font-bold">Enter your tags
                 {formData.tags.map((tag, idx) => (
                   <span
                     key={idx}
@@ -617,15 +617,15 @@ return (
                   value={tagInput}
                   onChange={(e) => setTagInput(e.target.value)}
                   onKeyDown={handleTags}
-                  className="rounded-md outline-none border-none placeholder:text-[18px] placeholder:text-[#474242] flex-1"
-                  placeholder="(enter a comma after each tag)"
+                  className="rounded-md font-normal outline-none border-none placeholder:text-[18px] placeholder:text-[#474242] flex-1"
+                  placeholder="Type a tag and press Enter or comma"
                 />
               </div>
             </div>
           </div>
 
           {/* Language */}
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-2">
             <h2 className="text-[#48372D] text-[20px] font-semibold">Language</h2>
             <p className="text-[#474242] text-[16px]">Select your stream's language</p>
             <div className="w-1/2 relative">
@@ -670,7 +670,7 @@ return (
           </div>
 
           {/* License */}
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             <h2 className="text-[#48372D] text-[20px] font-semibold">License</h2>
             <label className="text-[18px] text-[#474242]">
               <input
@@ -685,31 +685,31 @@ return (
           </div>
 
           {/* Comments */}
-          <div>
+          <div className="flex flex-col gap-2">
             <h2 className="text-[#48372D] text-[20px] font-semibold">Comments</h2>
             <div className="flex gap-6">
-              <div className="sm:w-1/3 w-1/2 border-[1px] border-[#48372D] rounded-xl p-2">
+              <div className="sm:w-1/3 w-1/2 border-[1px] border-[#48372D] rounded-xl p-3">
                 <p className="text-[18px] text-[#474242]">Comments</p>
                 <select
                   value={formData.comments.comments}
                   onChange={(e) =>
                     handleNestedChange("comments", "comments", e.target.value)
                   }
-                  className="w-full rounded-md p-2 text-[18px] font-bold text-[#474242]"
+                  className="w-full rounded-md text-[18px] font-bold text-[#474242]"
                 >
                   <option value="ON">ON</option>
                   <option value="OFF">OFF</option>
                   <option value="PAUSE">PAUSE</option>
                 </select>
               </div>
-              <div className="sm:w-1/3 w-1/2 border-[1px] border-[#48372D] rounded-xl p-2">
+              <div className="sm:w-1/3 w-1/2 border-[1px] border-[#48372D] rounded-xl p-3">
                 <p className="text-[18px] text-[#474242]">Sort by</p>
                 <select
                   value={formData.comments.sortBy}
                   onChange={(e) =>
                     handleNestedChange("comments", "sortBy", e.target.value)
                   }
-                  className="w-full rounded-md p-2 text-[18px] font-bold text-[#474242]"
+                  className="w-full rounded-md text-[18px] font-bold text-[#474242]"
                 >
                   <option value="top">Top</option>
                   <option value="newest">Newest</option>
@@ -722,11 +722,11 @@ return (
 
       {/* Customization Tab */}
       {activeTab === "customization" && (
-        <div className="min-h-full flex flex-col gap-6 ">
+        <div className="min-h-full flex flex-col gap-4 p-3">
           {/* Comments Section */}
-          <div className="border-t pt-4">
+          <div>
             <h3 className="font-semibold text-[#48372D] text-[20px] mb-2">Comments</h3>
-            <div className="flex flex-col gap-2 text-[#48372D] text-[16px] ml-4">
+            <div className="flex flex-col gap-2 text-[#48372D] text-[16px] ml-3">
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -767,7 +767,7 @@ return (
           <div>
             <h3 className="font-semibold text-[#48372D] text-[20px] mb-2">Participant modes</h3>
             <p className="text-[16px] text-[#474242] mb-2">Who can send messages</p>
-            <div className="flex flex-col gap-2 text-[#48372D] text-[16px] ml-4">
+            <div className="flex flex-col gap-2 text-[#48372D] text-[16px] ml-3">
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -811,7 +811,7 @@ return (
           {/* Reactions */}
           <div>
             <h3 className="font-semibold text-[#48372D] text-[20px] mb-2">Reactions</h3>
-            <label className="flex items-center text-[#48372D] text-[16px] ml-4  gap-2">
+            <label className="flex items-center text-[#48372D] text-[16px] ml-3 gap-2">
               <input
                 type="checkbox"
                 checked={formData.customization.reactions.liveReactions}
@@ -968,10 +968,10 @@ return (
     </main>
 
     {/* Footer */}
-    <div className="p-3 flex justify-center bg-white rounded-b-xl sm:border-t sm:border-[#48372D] relative">
+    <div className="p-3 flex justify-between bg-white rounded-b-xl sm:border-t sm:border-[#48372D] relative">
       {activeTab !== "details" && (
         <button
-          className="absolute left-3 border border-[#48372D] text-[#48372D] px-6 py-2 rounded-md hover:bg-gray-50"
+          className="relative border border-[#48372D] text-[#48372D] px-6 py-2 rounded-md bg-white"
           onClick={() => {
             if (activeTab === "customization") {
               setActiveTab("details");
