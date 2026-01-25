@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Headerstyle.css";
 import artLogo from "./artlogo.png";
 import AIcon from "./AIcon.png";
+import { toast } from "react-toastify";
 
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Bell, Menu } from "lucide-react";
@@ -384,11 +385,15 @@ const NavBar = () => {
                   <a className="nav-link-h me-3" href="/blogs">
                     BLOG
                   </a>
-                ) : !isLoggedIn ? (
-                  <a className="nav-link-h icon-link-h me-3" href="/">
-                    <i className="fas fa-shopping-cart" />
-                  </a>
-                ) : null}
+                  ) : !isLoggedIn ? (
+                    <a 
+                      className="nav-link-h icon-link-h me-3" 
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => toast.info("Please login to access your cart.")}
+                    >
+                      <i className="fas fa-shopping-cart" />
+                    </a>
+                  ) : null}
                 {isLoggedIn === false && (
                   <a className="nav-link-h btn-started-h ms-2" href="/login">
                     GET STARTED
