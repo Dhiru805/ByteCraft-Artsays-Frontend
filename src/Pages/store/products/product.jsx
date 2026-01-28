@@ -235,13 +235,45 @@ const Product = () => {
     }
 
     if (filters.sortBy === "Price Low to High") {
-      result.sort((a, b) => (a.finalPrice) - (b.finalPrice));
+      result.sort((a, b) => {
+        const stockA = a.quantity > 0;
+        const stockB = b.quantity > 0;
+        if (!stockA && stockB) return 1;
+        if (stockA && !stockB) return -1;
+        return (a.finalPrice) - (b.finalPrice);
+      });
     } else if (filters.sortBy === "Price High to Low") {
-      result.sort((a, b) => (b.finalPrice) - (a.finalPrice));
+      result.sort((a, b) => {
+        const stockA = a.quantity > 0;
+        const stockB = b.quantity > 0;
+        if (!stockA && stockB) return 1;
+        if (stockA && !stockB) return -1;
+        return (b.finalPrice) - (a.finalPrice);
+      });
     } else if (filters.sortBy === "New Arrivals") {
-      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      result.sort((a, b) => {
+        const stockA = a.quantity > 0;
+        const stockB = b.quantity > 0;
+        if (!stockA && stockB) return 1;
+        if (stockA && !stockB) return -1;
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
     } else if (filters.sortBy === "Trending") {
-      result.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
+      result.sort((a, b) => {
+        const stockA = a.quantity > 0;
+        const stockB = b.quantity > 0;
+        if (!stockA && stockB) return 1;
+        if (stockA && !stockB) return -1;
+        return (b.averageRating || 0) - (a.averageRating || 0);
+      });
+    } else {
+      result.sort((a, b) => {
+        const stockA = a.quantity > 0;
+        const stockB = b.quantity > 0;
+        if (!stockA && stockB) return 1;
+        if (stockA && !stockB) return -1;
+        return 0;
+      });
     }
 
     setFilteredProducts(result);

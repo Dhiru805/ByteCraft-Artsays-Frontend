@@ -238,11 +238,37 @@ const BidProduct = () => {
     }
 
     if (filters.sortBy === "Price Low to High") {
-      result.sort((a, b) => (highestLiveBid[a._id] || a.basePrice) - (highestLiveBid[b._id] || b.basePrice));
+      result.sort((a, b) => {
+        const statusA = getFinalStatus(a);
+        const statusB = getFinalStatus(b);
+        if (statusA === "Ended" && statusB !== "Ended") return 1;
+        if (statusA !== "Ended" && statusB === "Ended") return -1;
+        return (highestLiveBid[a._id] || a.basePrice) - (highestLiveBid[b._id] || b.basePrice);
+      });
     } else if (filters.sortBy === "Price High to Low") {
-      result.sort((a, b) => (highestLiveBid[b._id] || b.basePrice) - (highestLiveBid[a._id] || a.basePrice));
+      result.sort((a, b) => {
+        const statusA = getFinalStatus(a);
+        const statusB = getFinalStatus(b);
+        if (statusA === "Ended" && statusB !== "Ended") return 1;
+        if (statusA !== "Ended" && statusB === "Ended") return -1;
+        return (highestLiveBid[b._id] || b.basePrice) - (highestLiveBid[a._id] || a.basePrice);
+      });
     } else if (filters.sortBy === "New Arrivals") {
-      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      result.sort((a, b) => {
+        const statusA = getFinalStatus(a);
+        const statusB = getFinalStatus(b);
+        if (statusA === "Ended" && statusB !== "Ended") return 1;
+        if (statusA !== "Ended" && statusB === "Ended") return -1;
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+    } else {
+      result.sort((a, b) => {
+        const statusA = getFinalStatus(a);
+        const statusB = getFinalStatus(b);
+        if (statusA === "Ended" && statusB !== "Ended") return 1;
+        if (statusA !== "Ended" && statusB === "Ended") return -1;
+        return 0;
+      });
     }
 
     setFilteredProducts(result);
@@ -684,7 +710,7 @@ const BidProduct = () => {
                             {/* Bid Ended Overlay */}
                             {isEnded && (
                               <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-[1px]">
-                                <div className="bg-white/90 px-6 py-2 rounded-lg shadow-2xl border border-white/50 transform -rotate-12">
+                                <div className="bg-white px-6 py-2 rounded-lg shadow-2xl border border-white/50 transform -rotate-12">
                                   <span className="text-red-600 font-black text-xl uppercase tracking-wider">Bid Ended</span>
                                 </div>
                               </div>

@@ -211,7 +211,7 @@ const ArtistCard = ({ limit = 8, searchQuery = "", filters = {} }) => {
                   />
                   <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
                     {artist.badges.length > 0 && (
-                      <div className="bg-white/90 backdrop-blur-md text-[#6F4D34] text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest border border-white/20">
+                      <div className="bg-white backdrop-blur-md text-[#6F4D34] text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest border border-white/20">
                         Verified Artist
                       </div>
                     )}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 import axios from 'axios';
@@ -106,6 +106,7 @@ const EMOJI_CATEGORIES = [
 
 const OthersLive = () => {
   const { streamKey } = useParams();
+  const navigate = useNavigate();
   
   // State
   const [liveDetail, setLiveDetail] = useState(null);
@@ -120,15 +121,123 @@ const OthersLive = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showSuperChatMenu, setShowSuperChatMenu] = useState(false);
   const [superChatView, setSuperChatView] = useState('main'); // 'main' | 'gifting' | 'stickers' | 'membership' | 'superchat'
-  const [selectedMembership, setSelectedMembership] = useState(MEMBERSHIP_TIERS[0]);
+  const [streamerMemberships, setStreamerMemberships] = useState([]);
+  const [selectedMembership, setSelectedMembership] = useState(null);
   const [superChatAmount, setSuperChatAmount] = useState(SUPER_CHAT_TIERS[0]);
+  const [isMembershipsLoading, setIsMembershipsLoading] = useState(false);
+    const [isFollowing, setIsFollowing] = useState(false);
+    const [followerCount, setFollowerCount] = useState(0);
+    const [streamerProducts, setStreamerProducts] = useState([]);
+    const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   
-  // Refs
-  const videoRef = useRef(null);
+    // Refs
+    const videoRef = useRef(null);
   const videoContainerRef = useRef(null);
   const socketRef = useRef(null);
   const peerConnectionRef = useRef(null);
   const chatEndRef = useRef(null);
+
+  // Fetch streamer memberships
+  const fetchStreamerMemberships = async (userId) => {
+    setIsMembershipsLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      // If no token, we still try to fetch if the backend allows or handle it
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/membership?userId=${userId}`, { headers });
+      
+      if (response.data.success && response.data.memberships) {
+        const mapped = response.data.memberships.map((m, index) => ({
+          id: m._id,
+          name: m.title,
+          price: `₹${m.price}/month`,
+          color: index === 0 ? 'bg-[#FCE7F3]' : 'bg-white',
+          activeColor: index === 0 ? 'bg-[#FBCFE8]' : 'bg-gray-100',
+          description: m.perks && m.perks.length > 0 
+            ? m.perks.map(p => p.perkName).join(', ') 
+            : 'No description available',
+          badges: ['🐶', '⚡', '🦉', '☠️'] // Default badges as they're not in DB schema yet
+        }));
+        setStreamerMemberships(mapped);
+        if (mapped.length > 0) {
+          setSelectedMembership(mapped[0]);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching memberships:', error);
+    } finally {
+      setIsMembershipsLoading(false);
+    }
+  };
+
+  const slugify = (text) =>
+    text ? text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "") : "";
+
+  const fetchStreamerProducts = async (userId, userType) => {
+    try {
+      const endpoint = userType === 'Seller' 
+        ? `/api/getsellerproductbyid/${userId}`
+        : `/api/getproductbyartist/${userId}`;
+      
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}${endpoint}`);
+      if (response.data.success && response.data.data) {
+        setStreamerProducts(response.data.data.slice(0, 4)); // Show top 4 products
+      }
+    } catch (error) {
+      console.error('Error fetching streamer products:', error);
+    }
+  };
+
+  // Check follow status
+  const checkFollowStatus = async (streamerId) => {
+    const currentUserId = localStorage.getItem('userId');
+    if (!currentUserId || currentUserId === 'null') return;
+    
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/social-media/profile/${streamerId}`);
+      if (response.data.profile) {
+        const followers = response.data.profile.followers || [];
+        setFollowerCount(followers.length);
+        // Handle both cases where followers are IDs or populated objects
+        const isFollowing = followers.some(f => (f._id || f) === currentUserId);
+        setIsFollowing(isFollowing);
+      }
+    } catch (error) {
+      console.error('Error checking follow status:', error);
+    }
+  };
+
+  // Handle follow toggle
+  const handleFollowToggle = async () => {
+    const currentUserId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+    
+    if (!currentUserId || !token || currentUserId === 'null') {
+      toast.error('Please login to follow creators');
+      return;
+    }
+
+    const streamerId = liveDetail?.userId?._id;
+    if (!streamerId) return;
+
+    try {
+      const endpoint = isFollowing ? 'unfollow' : 'follow';
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/social-media/${endpoint}/${streamerId}`,
+        { userId: currentUserId }, // Backend expects userId in body
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+        if (response.status === 200 || response.status === 201) {
+          setIsFollowing(!isFollowing);
+          setFollowerCount(prev => isFollowing ? prev - 1 : prev + 1);
+          toast.success(isFollowing ? 'Unfollowed' : 'Followed');
+        }
+    } catch (error) {
+      console.error('Error toggling follow:', error);
+      toast.error('Failed to update follow status');
+    }
+  };
 
   // Fullscreen handler
   const toggleFullScreen = () => {
@@ -198,6 +307,49 @@ const OthersLive = () => {
     }
   };
 
+  const handleJoinMembership = (tier) => {
+    const currentUserId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+    
+    if (!currentUserId || !token || currentUserId === 'null') {
+      toast.error('Please login to join memberships');
+      return;
+    }
+
+    toast.success(`Successfully joined ${tier.name} membership!`);
+    handleSendMessage(null, `Joined the ${tier.name} membership! 🎊`);
+    setShowSuperChatMenu(false);
+    setSuperChatView('main');
+  };
+
+  const handleSendSuperChat = () => {
+    const currentUserId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+    
+    if (!currentUserId || !token || currentUserId === 'null') {
+      toast.error('Please login to send Super Chat');
+      return;
+    }
+
+    handleSendMessage(null, `Super Chat: ₹${superChatAmount} 💸`);
+    setShowSuperChatMenu(false);
+    setSuperChatView('main');
+    toast.success('Super Chat sent!');
+  };
+
+  const handleSendGift = (gift) => {
+    handleSendMessage(null, `Sent a gift: ${gift.icon} ${gift.name} 🎁`);
+    setShowSuperChatMenu(false);
+    setSuperChatView('main');
+    toast.success(`${gift.name} gift sent!`);
+  };
+
+  const handleSendSticker = (sticker) => {
+    handleSendMessage(null, `${sticker.icon}`);
+    setShowSuperChatMenu(false);
+    setSuperChatView('main');
+  };
+
   // Fetch live details
   const fetchLiveDetails = async () => {
     try {
@@ -206,15 +358,22 @@ const OthersLive = () => {
         userId = localStorage.getItem('anonymousId');
       }
 
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/social-media/live/${streamKey}`);
-      if (response.data.success) {
-        const liveData = response.data.liveData;
-        setLiveDetail(liveData);
-        setIsStreamerLive(liveData.live?.isLive || false);
-        setLikeCount(liveData.live?.likeCount || 0);
-        setViewerCount(liveData.live?.viewCount || 0);
-        
-        // Check if current user (logged in or anonymous) has liked
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/social-media/live/${streamKey}`);
+        if (response.data.success) {
+          const liveData = response.data.liveData;
+          setLiveDetail(liveData);
+          setIsStreamerLive(liveData.live?.isLive || false);
+          setLikeCount(liveData.live?.likeCount || 0);
+          setViewerCount(liveData.live?.viewCount || 0);
+          
+            if (liveData.userId?._id) {
+              fetchStreamerMemberships(liveData.userId._id);
+              checkFollowStatus(liveData.userId._id);
+              fetchStreamerProducts(liveData.userId._id, liveData.userId.role);
+            }
+
+          // Check if current user (logged in or anonymous) has liked
+
         if (userId && liveData.live?.likes?.includes(userId)) {
           setLiked(true);
         }
@@ -454,51 +613,68 @@ const OthersLive = () => {
 
             {/* Video Info */}
             <div className="mt-8">
-              <h1 className="text-2xl font-bold text-gray-900">
-                {liveDetail?.title || 'Lorem ipsum dolor sit amet consectetur elit est laborum.'}
-                <span className="ml-2 text-[#6E4E37] font-medium">#art #artwork</span>
-              </h1>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {liveDetail?.title || 'Lorem ipsum dolor sit amet consectetur elit est laborum.'}
+                  {liveDetail?.tags?.map((tag, idx) => (
+                    <span key={idx} className="ml-2 text-[#6E4E37] font-medium">#{tag}</span>
+                  ))}
+                </h1>
 
               <div className="mt-6 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <img 
-                    src={liveDetail?.userId?.profilePhoto || 'https://i.pravatar.cc/150?u=vikas'} 
-                    className="w-12 h-12 rounded-full object-cover border-2 border-gray-100"
-                    alt="Artist"
-                  />
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-gray-900">{liveDetail?.userId?.fullName || 'Vikas Khanna'}</h3>
-                      <button className="bg-[#3D2B1F] text-white px-4 py-1 rounded-full text-sm font-bold hover:bg-[#2D1F16] transition-all">Join</button>
-                      <button className="text-gray-500 text-sm font-bold hover:text-gray-700 transition-all ml-2">Unfollow</button>
-                    </div>
-                    <p className="text-sm text-gray-500 font-medium">12M • Art</p>
+                    <img 
+                      src={liveDetail?.userId?.profilePhoto || 'https://i.pravatar.cc/150?u=vikas'} 
+                      className="w-12 h-12 rounded-full object-cover border-2 border-gray-100"
+                      alt="Artist"
+                    />
+                    <div>
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-bold text-gray-900">{liveDetail?.userId?.fullName || liveDetail?.userId?.username || 'Creator'}</h3>
+                            <button 
+                              onClick={() => {
+                                setShowSuperChatMenu(true);
+                                setSuperChatView('membership');
+                                if (liveDetail?.userId?._id) {
+                                  fetchStreamerMemberships(liveDetail.userId._id);
+                                }
+                              }}
+                              className="bg-[#3D2B1F] text-white px-4 py-1 rounded-full text-sm font-bold hover:bg-[#2D1F16] transition-all"
+                            >
+                              Join
+                            </button>
+                            <button 
+                              onClick={handleFollowToggle}
+                              className={`${isFollowing ? 'text-gray-500 hover:text-gray-700' : 'text-[#6E4E37] hover:text-[#5a3c2d]'} text-sm font-bold transition-all ml-2`}
+                            >
+                              {isFollowing ? 'Unfollow' : 'Follow'}
+                            </button>
+                          </div>
+                            <p className="text-sm text-gray-500 font-medium">{followerCount} followers • {liveDetail?.category || 'General'}</p>
+                        </div>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center bg-gray-100 rounded-full p-1">
-                    <button onClick={handleLike} className="flex items-center gap-2 px-4 py-2 hover:bg-gray-200 rounded-full transition-all">
-                      <ThumbsUp size={20} className={liked ? 'fill-[#3D2B1F] text-[#3D2B1F]' : 'text-gray-600'} />
-                      <span className="font-bold text-sm">{likeCount || '0'}</span>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center bg-gray-100 rounded-full p-1">
+                      <button onClick={handleLike} className="flex items-center gap-2 px-4 py-2 hover:bg-gray-200 rounded-full transition-all">
+                        <ThumbsUp size={20} className={liked ? 'fill-[#3D2B1F] text-[#3D2B1F]' : 'text-gray-600'} />
+                        <span className="font-bold text-sm">{likeCount || '0'}</span>
+                      </button>
+                    </div>
+                    <button className="flex items-center gap-2 px-6 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-full font-bold text-sm text-gray-700 transition-all">
+                      <Share2 size={20} />
+                      Share
+                    </button>
+                    <button className="flex items-center gap-2 px-6 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-full font-bold text-sm text-gray-700 transition-all">
+                      Report
                     </button>
                   </div>
-                  <button className="flex items-center gap-2 px-6 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-full font-bold text-sm text-gray-700 transition-all">
-                    <Share2 size={20} />
-                    Share
-                  </button>
-                  <button className="flex items-center gap-2 px-6 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-full font-bold text-sm text-gray-700 transition-all">
-                    Report
-                  </button>
                 </div>
-              </div>
 
-              {/* Description Box */}
-              <div className="mt-8 bg-[#FEE2CC]/30 rounded-[24px] p-6">
-                <div className="flex items-center gap-4 mb-4">
-                  <span className="font-bold text-gray-900">{viewerCount || '25k'} views</span>
-                  <span className="font-bold text-gray-900">Streamed 2h ago</span>
-                </div>
+                  <div className="mt-8 bg-[#FEE2CC]/30 rounded-[24px] p-6">
+                    <div className="flex items-center gap-4 mb-4">
+                      <span className="font-bold text-gray-900">{followerCount} followers</span>
+                    <span className="font-bold text-gray-900">Streamed 2h ago</span>
+                  </div>
                 <p className="text-sm text-gray-700 leading-relaxed">
                   {liveDetail?.description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, est laborum.de q.hbwk iww ighiuw iuwiwi gigoigwif gwiwif rgwif iwgf iwgf iwufwrgr grewr .'}
                 </p>
@@ -507,34 +683,59 @@ const OthersLive = () => {
 
               {/* Product Cards */}
               <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-[#FEE2CC]/30 rounded-[24px] p-4 flex items-center gap-4 group cursor-pointer hover:bg-[#FEE2CC]/50 transition-all">
-                  <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=200" className="w-24 h-24 rounded-2xl object-cover" alt="Product" />
-                  <div className="flex-1">
-                    <h4 className="font-bold text-gray-900">Lorem ipsum</h4>
-                    <p className="text-sm font-bold text-gray-900 mt-1">₹ 500</p>
-                    <p className="text-[10px] text-gray-500 mt-1 line-clamp-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, consectetur adipiscing elit, est</p>
+                {streamerProducts.length > 0 ? (
+                  streamerProducts.map((product) => (
+                    <div 
+                      key={product._id}
+                      onClick={() => navigate(`/product-details/${slugify(product.productName)}/${product._id}`)}
+                      className="bg-[#FEE2CC]/30 rounded-[24px] p-4 flex items-center gap-4 group cursor-pointer hover:bg-[#FEE2CC]/50 transition-all"
+                    >
+                      <img 
+                        src={`${imageBaseURL}${product.mainImage}`} 
+                        className="w-24 h-24 rounded-2xl object-cover" 
+                        alt={product.productName} 
+                      />
+                      <div className="flex-1">
+                        <h4 className="font-bold text-gray-900 line-clamp-1">{product.productName}</h4>
+                        <p className="text-sm font-bold text-gray-900 mt-1">₹ {product.finalPrice || product.sellingPrice}</p>
+                        <p className="text-[10px] text-gray-500 mt-1 line-clamp-2">
+                          {product.description || 'No description available'}
+                        </p>
+                      </div>
+                      <div className="flex flex-col items-end gap-4">
+                        <button className="text-gray-400 group-hover:text-gray-900 transition-all">
+                          <ChevronDown className="-rotate-90" size={20} />
+                        </button>
+                        <span className="text-xs font-bold text-gray-900 underline whitespace-nowrap">View Product</span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="bg-[#FEE2CC]/30 rounded-[24px] p-4 flex items-center justify-center col-span-1 md:col-span-2">
+                    <p className="text-sm text-gray-500 font-medium">No products listed by this creator yet.</p>
                   </div>
-                  <div className="flex flex-col items-end gap-4">
-                    <button className="text-gray-400 group-hover:text-gray-900 transition-all">
-                      <ChevronDown className="-rotate-90" size={20} />
-                    </button>
-                    <span className="text-xs font-bold text-gray-900 underline">View Product</span>
-                  </div>
-                </div>
+                )}
 
+                {/* Sponsor Card (Keeping as placeholder or making slightly dynamic) */}
                 <div className="bg-[#FEE2CC]/30 rounded-[24px] p-4 flex items-center gap-4 group cursor-pointer hover:bg-[#FEE2CC]/50 transition-all">
                   <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center overflow-hidden">
                     <img src="https://logo.clearbit.com/gopro.com" className="w-8 h-8 object-contain" alt="Sponsor" />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <h4 className="font-bold text-gray-900 text-sm">Art Masterclass - Water Color</h4>
+                      <h4 className="font-bold text-gray-900 text-sm">Art Masterclass</h4>
                       <ChevronDown size={16} className="text-gray-500" />
                     </div>
-                    <p className="text-xs text-gray-500 mt-0.5">Sponsored • GoPro.com</p>
+                    <p className="text-xs text-gray-500 mt-0.5">Sponsored • Artsays</p>
                   </div>
-                  <button className="bg-[#6E4E37] text-white px-8 py-2.5 rounded-full text-sm font-bold hover:bg-[#5a3c2d] transition-all">
-                    Visit site
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate('/art-gallery');
+                    }}
+                    className="bg-[#6E4E37] text-white px-8 py-2.5 rounded-full text-sm font-bold hover:bg-[#5a3c2d] transition-all"
+                  >
+                    Explore
                   </button>
                 </div>
               </div>
@@ -655,100 +856,134 @@ const OthersLive = () => {
                     </>
                   )}
 
-                  {superChatView === 'membership' && (
-                    <div className="flex flex-col h-[500px]">
-                      {/* Header */}
-                      <div className="p-4 bg-[#FCE7F3] rounded-t-[20px] relative overflow-hidden">
-                         {/* Decorative Circles - Moved first and behind content */}
-                        <div className="absolute right-[-20px] top-[-20px] w-24 h-24 border-2 border-[#4A3728] rounded-full opacity-20 pointer-events-none"></div>
-                        <div className="absolute left-[30%] top-[-10px] w-12 h-12 border-2 border-[#4A3728] rounded-full opacity-20 pointer-events-none"></div>
-                        <div className="absolute right-[30%] bottom-[10px] w-8 h-8 border-2 border-[#4A3728] rounded-full opacity-20 pointer-events-none"></div>
+                      {superChatView === 'membership' && (
+                        <div className="flex flex-col h-[500px]">
+                          {/* Header */}
+                          <div className="p-4 bg-[#FCE7F3] rounded-t-[20px] relative overflow-hidden">
+                             {/* Decorative Circles */}
+                            <div className="absolute right-[-20px] top-[-20px] w-24 h-24 border-2 border-[#4A3728] rounded-full opacity-20 pointer-events-none"></div>
+                            <div className="absolute left-[30%] top-[-10px] w-12 h-12 border-2 border-[#4A3728] rounded-full opacity-20 pointer-events-none"></div>
+                            <div className="absolute right-[30%] bottom-[10px] w-8 h-8 border-2 border-[#4A3728] rounded-full opacity-20 pointer-events-none"></div>
 
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowSuperChatMenu(false);
-                            setSuperChatView('main');
-                          }}
-                          className="absolute right-4 top-4 text-gray-600 hover:text-black transition-colors z-50 p-2 hover:bg-white/20 rounded-full"
-                        >
-                          <X size={20} className="stroke-[3]" />
-                        </button>
-                        
-                        <div className="flex items-center gap-4 mb-2 relative z-10">
-                          <img 
-                            src={liveDetail?.userId?.profileImage || 'https://via.placeholder.com/40'} 
-                            alt="Creator" 
-                            className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
-                          />
-                        </div>
-                        
-                        <div className="relative z-10">
-                          <h3 className="text-[#4A3728] text-lg font-medium leading-tight">
-                            {liveDetail?.userId?.fullName || 'Creator'}
-                          </h3>
-                          <h2 className="text-[#4A3728] text-2xl font-bold">
-                            Be a member
-                          </h2>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-1 overflow-hidden bg-white">
-                        {/* Left Sidebar - Tiers List */}
-                        <div className="w-1/3 border-r border-gray-100 overflow-y-auto custom-scrollbar">
-                          {MEMBERSHIP_TIERS.map((tier) => (
-                            <button
-                              key={tier.id}
-                              onClick={() => setSelectedMembership(tier)}
-                              className={`w-full text-left p-4 transition-colors relative ${
-                                selectedMembership.id === tier.id 
-                                  ? tier.activeColor 
-                                  : 'hover:bg-gray-50'
-                              }`}
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setShowSuperChatMenu(false);
+                                setSuperChatView('main');
+                              }}
+                              className="absolute right-4 top-4 text-gray-600 hover:text-black transition-colors z-50 p-2 hover:bg-white/20 rounded-full"
                             >
-                              {selectedMembership.id === tier.id && (
-                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#4A3728]"></div>
-                              )}
-                              <div className="text-sm font-medium text-gray-800 mb-0.5">
-                                {tier.name}
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                {tier.price}
-                              </div>
+                              <X size={20} className="stroke-[3]" />
                             </button>
-                          ))}
-                        </div>
-
-                        {/* Right Content - Tier Details */}
-                        <div className="w-2/3 p-5 overflow-y-auto custom-scrollbar">
-                          <h3 className="text-lg font-bold text-[#4A3728] mb-1">
-                            {selectedMembership.price}
-                          </h3>
-                          
-                          <button className="bg-[#5c4033] hover:bg-[#4A3728] text-white rounded-full px-6 py-1.5 text-sm font-bold mb-4 transition-colors">
-                            Join
-                          </button>
-
-                          <p className="text-xs text-gray-600 mb-6 leading-relaxed">
-                            {selectedMembership.description}
-                          </p>
-
-                          <div>
-                            <h4 className="text-xs font-bold text-[#4A3728] mb-2">
-                              Loyalty badges next to your name in comments and live chat
-                            </h4>
-                            <div className="flex flex-wrap gap-2">
-                              {selectedMembership.badges.map((badge, index) => (
-                                <span key={index} className="text-xl filter drop-shadow-sm" title="Badge">
-                                  {badge}
-                                </span>
-                              ))}
+                            
+                            <div className="flex items-center gap-4 mb-2 relative z-10">
+                              <img 
+                                src={liveDetail?.userId?.profilePhoto || 'https://via.placeholder.com/40'} 
+                                alt="Creator" 
+                                className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
+                              />
+                            </div>
+                            
+                            <div className="relative z-10">
+                              <h3 className="text-[#4A3728] text-lg font-medium leading-tight">
+                                {liveDetail?.userId?.fullName || 'Creator'}
+                              </h3>
+                              <h2 className="text-[#4A3728] text-2xl font-bold">
+                                Be a member
+                              </h2>
                             </div>
                           </div>
+
+                          <div className="flex flex-1 overflow-hidden bg-white">
+                            {isMembershipsLoading ? (
+                              <div className="flex-1 flex flex-col items-center justify-center p-8">
+                                <div className="w-8 h-8 border-4 border-[#4A3728]/20 border-t-[#4A3728] rounded-full animate-spin mb-2"></div>
+                                <p className="text-sm text-gray-500">Loading memberships...</p>
+                              </div>
+                            ) : streamerMemberships.length > 0 ? (
+                              <>
+                                {/* Left Sidebar - Tiers List */}
+                                <div className="w-1/3 border-r border-gray-100 overflow-y-auto custom-scrollbar">
+                                  {streamerMemberships.map((tier) => (
+                                    <button
+                                      key={tier.id}
+                                      onClick={() => setSelectedMembership(tier)}
+                                      className={`w-full text-left p-4 transition-colors relative ${
+                                        selectedMembership?.id === tier.id 
+                                          ? tier.activeColor 
+                                          : 'hover:bg-gray-50'
+                                      }`}
+                                    >
+                                      {selectedMembership?.id === tier.id && (
+                                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#4A3728]"></div>
+                                      )}
+                                      <div className="text-sm font-medium text-gray-800 mb-0.5">
+                                        {tier.name}
+                                      </div>
+                                      <div className="text-xs text-gray-500">
+                                        {tier.price}
+                                      </div>
+                                    </button>
+                                  ))}
+                                </div>
+
+                                {/* Right Content - Tier Details */}
+                                <div className="w-2/3 p-5 overflow-y-auto custom-scrollbar">
+                                  {selectedMembership ? (
+                                    <>
+                                      <h3 className="text-lg font-bold text-[#4A3728] mb-1">
+                                        {selectedMembership.price}
+                                      </h3>
+                                      
+                                        <button 
+                                          onClick={() => handleJoinMembership(selectedMembership)}
+                                          className="bg-[#5c4033] hover:bg-[#4A3728] text-white rounded-full px-6 py-1.5 text-sm font-bold mb-4 transition-colors"
+                                        >
+                                          Join
+                                        </button>
+
+
+                                      <p className="text-xs text-gray-600 mb-6 leading-relaxed">
+                                        {selectedMembership.description}
+                                      </p>
+
+                                      <div>
+                                        <h4 className="text-xs font-bold text-[#4A3728] mb-2">
+                                          Loyalty badges next to your name in comments and live chat
+                                        </h4>
+                                        <div className="flex flex-wrap gap-2">
+                                          {selectedMembership.badges.map((badge, index) => (
+                                            <span key={index} className="text-xl filter drop-shadow-sm" title="Badge">
+                                              {badge}
+                                            </span>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    </>
+                                  ) : (
+                                    <div className="h-full flex items-center justify-center text-gray-400 text-sm">
+                                      Select a tier to see details
+                                    </div>
+                                  )}
+                                </div>
+                              </>
+                            ) : (
+                              <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+                                <Users size={48} className="text-gray-200 mb-4" />
+                                <h3 className="text-lg font-bold text-gray-700 mb-1">No memberships available</h3>
+                                <p className="text-sm text-gray-500">This creator hasn't set up any membership tiers yet.</p>
+                                <button 
+                                  onClick={() => setSuperChatView('main')}
+                                  className="mt-4 text-[#4A3728] font-bold text-sm underline"
+                                >
+                                  Go back
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  )}
+                      )}
+
 
                   {superChatView === 'stickers' && (
                     <>
@@ -773,16 +1008,18 @@ const OthersLive = () => {
                       
                       <div className="px-2 pb-3 max-h-[300px] overflow-y-auto custom-scrollbar">
                         <div className="grid grid-cols-4 gap-2">
-                          {STICKER_ITEMS.map((sticker) => (
-                            <button 
-                              key={sticker.id}
-                              className="flex flex-col items-center justify-center gap-1 p-2 hover:bg-gray-50 rounded-lg transition-all active:scale-95 aspect-square"
-                            >
-                              <div className="text-4xl filter drop-shadow-sm hover:scale-110 transition-transform">
-                                {sticker.icon}
-                              </div>
-                            </button>
-                          ))}
+                            {STICKER_ITEMS.map((sticker) => (
+                              <button 
+                                key={sticker.id}
+                                onClick={() => handleSendSticker(sticker)}
+                                className="flex flex-col items-center justify-center gap-1 p-2 hover:bg-gray-50 rounded-lg transition-all active:scale-95 aspect-square"
+                              >
+                                <div className="text-4xl filter drop-shadow-sm hover:scale-110 transition-transform">
+                                  {sticker.icon}
+                                </div>
+                              </button>
+                            ))}
+
                         </div>
                       </div>
                     </>
@@ -809,29 +1046,31 @@ const OthersLive = () => {
                         </div>
                       </div>
                       
-                      <div className="px-2 pb-3 max-h-[300px] overflow-y-auto custom-scrollbar">
-                        <div className="grid grid-cols-4 gap-2">
-                          {GIFT_ITEMS.map((gift) => (
-                            <button 
-                              key={gift.id}
-                              className="flex flex-col items-center gap-1 p-1 hover:bg-gray-50 rounded-lg transition-colors group relative"
-                            >
-                              <div className="text-3xl filter drop-shadow-sm group-hover:scale-110 transition-transform">
-                                {gift.icon}
-                              </div>
-                              <span className="text-[10px] text-gray-500 font-medium text-center leading-tight line-clamp-1">
-                                {gift.name}
-                              </span>
-                              <div className="flex items-center gap-1 bg-[#FEF3C7] px-1.5 py-0.5 rounded-full">
-                                <span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>
-                                <span className="text-[10px] font-bold text-[#4A3728]">
-                                  {gift.price}
+                        <div className="px-2 pb-3 max-h-[300px] overflow-y-auto custom-scrollbar">
+                          <div className="grid grid-cols-4 gap-2">
+                            {GIFT_ITEMS.map((gift) => (
+                              <button 
+                                key={gift.id}
+                                onClick={() => handleSendGift(gift)}
+                                className="flex flex-col items-center gap-1 p-1 hover:bg-gray-50 rounded-lg transition-colors group relative"
+                              >
+                                <div className="text-3xl filter drop-shadow-sm group-hover:scale-110 transition-transform">
+                                  {gift.icon}
+                                </div>
+                                <span className="text-[10px] text-gray-500 font-medium text-center leading-tight line-clamp-1">
+                                  {gift.name}
                                 </span>
-                              </div>
-                            </button>
-                          ))}
+                                <div className="flex items-center gap-1 bg-[#FEF3C7] px-1.5 py-0.5 rounded-full">
+                                  <span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>
+                                  <span className="text-[10px] font-bold text-[#4A3728]">
+                                    {gift.price}
+                                  </span>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
                         </div>
-                      </div>
+
                     </>
                   )}
 
@@ -983,7 +1222,7 @@ const OthersLive = () => {
           </div>
         </div>
 
-      <style jsx>{`
+      <style>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;
         }

@@ -99,22 +99,22 @@ const ProductDetails = () => {
     return true;
   };
 
-  const addToCart = async (productId, desiredQty = 1) => {
-    if (!userId) {
-      toast.warn("You must be logged in to add items to cart");
-      return;
-    }
-    try {
-      await postAPI(`/api/cart/addcart/${productId}`, {}, true);
-      if (desiredQty > 1) {
-        await postAPI("/api/cart/update", { userId, productId, quantity: desiredQty }, true, false);
+    const addToCart = async (productId, desiredQty = 1) => {
+      if (!userId) {
+        toast.warn("You must be logged in to add items to cart");
+        return;
       }
-      toast.success("Added to Cart!");
-    } catch (err) {
-      console.error("Add to cart error:", err);
-      toast.error("Failed to add to cart");
-    }
-  };
+      try {
+        await postAPI(`/api/cart/addcart/${productId}`);
+        if (desiredQty > 1) {
+          await postAPI("/api/cart/update", { userId, productId, quantity: desiredQty });
+        }
+        toast.success("Added to Cart!");
+      } catch (err) {
+        console.error("Add to cart error:", err);
+        toast.error("Failed to add to cart");
+      }
+    };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -555,12 +555,12 @@ const ProductGallery = ({ images, product, username, imageBaseURL, navigate, nav
           </div>
 
 
-        <button 
+        {/* <button 
           onClick={() => setShowRoom(true)}
           className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white backdrop-blur-md text-[#6F4D34] px-3 py-2 rounded-2xl font-bold text-sm shadow-xl hidden lg:flex items-center gap-2 hover:!bg-[#6F4D34] hover:text-[#ffffff] transition-all border border-[#6F4D34]/10"
         >
           <Eye size={18} /> View in Room
-        </button>
+        </button> */}
       </div>
 
       <div className="flex gap-4 overflow-x-auto py-2 no-scrollbar">

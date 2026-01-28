@@ -132,7 +132,7 @@ const MyCartList = () => {
     }
 
     try {
-      await postAPI("/api/cart/update", { userId, productId, quantity: qty }, false);
+      await postAPI("/api/cart/update", { userId, productId, quantity: qty });
       setCart((prev) =>
         prev.map((item) =>
           item.product._id === productId ? { ...item, quantity: qty } : item

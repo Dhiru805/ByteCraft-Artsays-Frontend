@@ -412,7 +412,7 @@ useEffect(() => {
                               {/* Sold Out Overlay */}
                               {(!product.quantity || product.quantity === 0) && (
                                 <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-[1px]">
-                                  <div className="bg-white/90 px-6 py-2 rounded-lg shadow-2xl border border-white/50 transform -rotate-12">
+                                  <div className="bg-white px-6 py-2 rounded-lg shadow-2xl border border-white/50 transform -rotate-12">
                                     <span className="text-red-600 font-black text-xl uppercase tracking-wider">Sold Out</span>
                                   </div>
                                 </div>

@@ -211,17 +211,17 @@ const BidDetails = () => {
     };
   }, [bidData, productData]);
 
-  const mainCategoryName = useMemo(() => 
+  const mainCategoryName = useMemo(() =>
     categoryData.mainCategories.find((c) => c && String(c._id) === String(finalData?.mainCategory))?.mainCategoryName || "N/A"
-  , [finalData, categoryData]);
+    , [finalData, categoryData]);
 
-  const categoryName = useMemo(() => 
+  const categoryName = useMemo(() =>
     categoryData.categories.find((c) => c && String(c._id) === String(finalData?.category))?.categoryName || "N/A"
-  , [finalData, categoryData]);
+    , [finalData, categoryData]);
 
-  const subCategoryName = useMemo(() => 
+  const subCategoryName = useMemo(() =>
     categoryData.subCategories.find((c) => c && String(c._id) === String(finalData?.subCategory))?.subCategoryName || "N/A"
-  , [finalData, categoryData]);
+    , [finalData, categoryData]);
 
   const productReviews = useMemo(() => {
     if (!finalData || !reviews || reviews.length === 0) return [];
@@ -334,7 +334,7 @@ const BidDetails = () => {
   const handleBidSubmit = async (amount) => {
     try {
       setConfirmPopup(false);
-      const res = await postAPI(`/api/bidding/place-bid`, { bidId: finalData.bid.biddingId, userId, amount }, true, false);
+      const res = await postAPI(`/api/bidding/place-bid`, { bidId: finalData.bid.biddingId, userId, amount });
       if (res?.data?.success) {
         toast.success("Bid submitted successfully!");
         setManualBid("");
@@ -412,9 +412,9 @@ const BidDetails = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           <div className="lg:col-span-7 space-y-6">
-            <ProductGallery 
-              images={images} 
-              product={finalData} 
+            <ProductGallery
+              images={images}
+              product={finalData}
               username={finalData.userId?.username || "Artist"}
               imageBaseURL={imageBaseURL}
               navigate={navigate}
@@ -430,8 +430,8 @@ const BidDetails = () => {
 
           <div className="lg:col-span-5">
             <div className="sticky top-6 space-y-6">
-              <ProductInfo 
-                product={finalData} 
+              <ProductInfo
+                product={finalData}
                 currentHighest={currentHighest}
                 isBidEnded={isBidEnded}
                 winner={winner}
@@ -439,8 +439,8 @@ const BidDetails = () => {
                 username={finalData.userId?.username || "Artist"}
                 imageBaseURL={imageBaseURL}
               />
-              
-              <BiddingCard 
+
+              <BiddingCard
                 product={finalData}
                 currentHighest={currentHighest}
                 timeLeft={timeLeft}
@@ -459,10 +459,10 @@ const BidDetails = () => {
                 winner={winner}
               />
 
-              <OffersBlock 
-                offersData={offersData} 
-                index={offerIndex} 
-                setIndex={setOfferIndex} 
+              <OffersBlock
+                offersData={offersData}
+                index={offerIndex}
+                setIndex={setOfferIndex}
               />
             </div>
           </div>
@@ -474,9 +474,8 @@ const BidDetails = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`pb-4 text-lg font-bold transition-all focus:outline-none relative whitespace-nowrap ${
-                  activeTab === tab ? "text-[#6F4D34]" : "text-gray-400 hover:text-gray-600"
-                }`}
+                className={`pb-4 text-lg font-bold transition-all focus:outline-none relative whitespace-nowrap ${activeTab === tab ? "text-[#6F4D34]" : "text-gray-400 hover:text-gray-600"
+                  }`}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
                 {activeTab === tab && (
@@ -495,16 +494,16 @@ const BidDetails = () => {
               </div>
             )}
 
-            {activeTab === "details" && <DetailsGrid product={finalData} categoryInfo={{mainCategoryName, categoryName, subCategoryName}} imageBaseURL={imageBaseURL} resolveMediaUrl={resolveMediaUrl} />}
+            {activeTab === "details" && <DetailsGrid product={finalData} categoryInfo={{ mainCategoryName, categoryName, subCategoryName }} imageBaseURL={imageBaseURL} resolveMediaUrl={resolveMediaUrl} />}
 
             {activeTab === "artist" && (
               <div className="flex flex-col md:flex-row gap-8 items-start">
                 <div className="w-32 h-32 rounded-3xl overflow-hidden bg-gray-100 shrink-0 border-4 border-white shadow-lg">
-                    <img 
-                      src={finalData.userId?.profilePhoto ? resolveMediaUrl(finalData.userId.profilePhoto) : "/assets/profile/default.png"} 
-                      alt="Artist"
-                      className="w-full h-full object-cover"
-                    />
+                  <img
+                    src={finalData.userId?.profilePhoto ? resolveMediaUrl(finalData.userId.profilePhoto) : "/assets/profile/default.png"}
+                    alt="Artist"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="space-y-4 flex-grow">
                   <div className="flex items-center gap-2">
@@ -517,7 +516,7 @@ const BidDetails = () => {
                     {finalData.artistBio || "A passionate artist sharing unique visions through Artsays."}
                   </p>
                   <div className="flex flex-wrap gap-4 pt-4">
-                    <button 
+                    <button
                       onClick={() => navigateToArtistProfile(finalData.userId)}
                       className="px-6 py-3 bg-[#6F4D34] text-white rounded-xl font-bold hover:bg-[#5a3e2a] transition-all flex items-center gap-2"
                     >
@@ -538,16 +537,14 @@ const BidDetails = () => {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {liveBids.map((bid, index) => (
-                      <div 
-                        key={index} 
-                        className={`p-6 rounded-[32px] border transition-all flex items-center justify-between ${
-                          index === 0 && !isBidEnded ? "bg-[#6F4D34]/5 border-[#6F4D34]/20 shadow-md" : "bg-white border-gray-100"
-                        }`}
+                      <div
+                        key={index}
+                        className={`p-6 rounded-[32px] border transition-all flex items-center justify-between ${index === 0 && !isBidEnded ? "bg-[#6F4D34]/5 border-[#6F4D34]/20 shadow-md" : "bg-white border-gray-100"
+                          }`}
                       >
                         <div className="flex items-center gap-4">
-                          <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${
-                            index === 0 && !isBidEnded ? "bg-[#6F4D34] text-white" : "bg-gray-100 text-gray-400"
-                          }`}>
+                          <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${index === 0 && !isBidEnded ? "bg-[#6F4D34] text-white" : "bg-gray-100 text-gray-400"
+                            }`}>
                             {bid.userId?.name?.[0] || bid.userId?.username?.[0] || "U"}
                           </div>
                           <div>
@@ -591,7 +588,7 @@ const ProductGallery = ({ images, product, username, imageBaseURL, navigate, nav
   const [roomBg, setRoomBg] = useState("/artimages/viewintheroom.jpg");
   const [zoomStyle, setZoomStyle] = useState({ transformOrigin: 'center', transform: 'scale(1)' });
   const [isZoomed, setIsZoomed] = useState(false);
-  
+
   const roomBgs = ["/artimages/viewintheroom.jpg", "/artimages/wall3.jpg", "/artimages/wall4.webp"];
 
   useEffect(() => {
@@ -609,18 +606,18 @@ const ProductGallery = ({ images, product, username, imageBaseURL, navigate, nav
   return (
     <div className="space-y-4">
       <div className="relative aspect-square md:aspect-[4/3] bg-white rounded-[40px] overflow-hidden border border-gray-100 shadow-sm group">
-        <img 
-          src={selected} 
-          alt="Product" 
-          className={`w-full h-full object-contain bg-[#F8F9FA] transition-all duration-300 cursor-zoom-in ${isBidEnded ? "grayscale blur-[2px]" : ""} ${!isZoomed ? 'group-hover:scale-105' : ''}`} 
+        <img
+          src={selected}
+          alt="Product"
+          className={`w-full h-full object-contain bg-[#F8F9FA] transition-all duration-300 cursor-zoom-in ${isBidEnded ? "grayscale blur-[2px]" : ""} ${!isZoomed ? 'group-hover:scale-105' : ''}`}
           style={isZoomed ? zoomStyle : {}}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => setIsZoomed(false)}
         />
-        
+
         {isBidEnded && (
           <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-[1px] pointer-events-none">
-            <div className="bg-white/90 px-8 py-3 rounded-lg shadow-2xl border border-white/50 transform -rotate-12">
+            <div className="bg-white px-8 py-3 rounded-lg shadow-2xl border border-white/50 transform -rotate-12">
               <span className="text-red-600 font-black text-3xl uppercase tracking-widest">Bid Ended</span>
             </div>
           </div>
@@ -631,7 +628,7 @@ const ProductGallery = ({ images, product, username, imageBaseURL, navigate, nav
           <button onClick={(e) => { e.stopPropagation(); handleWishlist(product._id, e); }} className={`w-12 h-12 bg-white rounded-2xl shadow-xl flex items-center justify-center transition-all ${likedProducts[product._id] ? "text-red-500" : "text-gray-600 hover:text-red-500"}`}><Heart size={20} fill={likedProducts[product._id] ? "currentColor" : "none"} /></button>
         </div>
 
-        <button onClick={() => setShowRoom(true)} className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white backdrop-blur-md text-[#6F4D34] px-3 py-2 rounded-2xl font-bold text-sm shadow-xl hidden lg:flex items-center gap-2 hover:!bg-[#6F4D34] hover:text-[#ffffff] transition-all border border-[#6F4D34]/10"><Eye size={18} /> View in Room</button>
+        {/* <button onClick={() => setShowRoom(true)} className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white backdrop-blur-md text-[#6F4D34] px-3 py-2 rounded-2xl font-bold text-sm shadow-xl hidden lg:flex items-center gap-2 hover:!bg-[#6F4D34] hover:text-[#ffffff] transition-all border border-[#6F4D34]/10"><Eye size={18} /> View in Room</button> */}
       </div>
 
       <div className="flex gap-4 overflow-x-auto py-2 no-scrollbar">
@@ -776,40 +773,40 @@ const BiddingCard = ({ product, currentHighest, timeLeft, isLastDay, isBidEnded,
                     <ImHammer2 size={20} /> Place Your Bid
                   </motion.button>
                 ) : (
-                    <motion.div
-                      key="bid-input"
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="space-y-4"
-                    >
-                      <div className="flex items-center gap-2 p-1 bg-gray-50 rounded-2xl border-2 border-[#6F4D34]">
-                        <div className="flex items-center flex-grow min-w-0">
-                          <span className="pl-3 sm:pl-4 text-lg sm:text-xl font-black text-[#6F4D34]">₹</span>
-                          <input 
-                            type="number"
-                            placeholder={`${currentHighest + minIncrement}`}
-                            value={manualBid}
-                            onChange={(e) => setManualBid(e.target.value)}
-                            className="w-full h-12 sm:h-14 bg-transparent outline-none text-lg sm:text-xl font-black text-gray-900 px-2"
-                          />
-                        </div>
-                        <button 
-                          onClick={() => {
-                            const amt = Number(manualBid);
-                            if (!amt) return toast.error("Enter a valid amount");
-                            if (amt < currentHighest + minIncrement) return toast.error(`Minimum bid ₹${currentHighest + minIncrement}`);
-                            setBidToConfirm(amt);
-                            setConfirmPopup(true);
-                          }}
-                          className="h-10 sm:h-12 px-4 sm:px-6 rounded-xl bg-[#6F4D34] text-white font-bold whitespace-nowrap text-sm sm:text-base flex-shrink-0"
-                        >
-                          Confirm
-                        </button>
+                  <motion.div
+                    key="bid-input"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="space-y-4"
+                  >
+                    <div className="flex items-center gap-2 p-1 bg-gray-50 rounded-2xl border-2 border-[#6F4D34]">
+                      <div className="flex items-center flex-grow min-w-0">
+                        <span className="pl-3 sm:pl-4 text-lg sm:text-xl font-black text-[#6F4D34]">₹</span>
+                        <input
+                          type="number"
+                          placeholder={`${currentHighest + minIncrement}`}
+                          value={manualBid}
+                          onChange={(e) => setManualBid(e.target.value)}
+                          className="w-full h-12 sm:h-14 bg-transparent outline-none text-lg sm:text-xl font-black text-gray-900 px-2"
+                        />
                       </div>
-                      <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+                      <button
+                        onClick={() => {
+                          const amt = Number(manualBid);
+                          if (!amt) return toast.error("Enter a valid amount");
+                          if (amt < currentHighest + minIncrement) return toast.error(`Minimum bid ₹${currentHighest + minIncrement}`);
+                          setBidToConfirm(amt);
+                          setConfirmPopup(true);
+                        }}
+                        className="h-10 sm:h-12 px-4 sm:px-6 rounded-xl bg-[#6F4D34] text-white font-bold whitespace-nowrap text-sm sm:text-base flex-shrink-0"
+                      >
+                        Confirm
+                      </button>
+                    </div>
+                    <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
 
                       {[300, 500, 1000, 3000].map((inc) => (
-                        <button 
+                        <button
                           key={inc}
                           onClick={() => setManualBid(currentHighest + inc)}
                           className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-600 hover:border-[#6F4D34] hover:text-[#6F4D34] transition-all whitespace-nowrap"
@@ -835,7 +832,7 @@ const BiddingCard = ({ product, currentHighest, timeLeft, isLastDay, isBidEnded,
           )}
         </div>
       </div>
-      
+
       {confirmPopup && (
         <div className="fixed inset-0 z-[10000] backdrop-blur-sm flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}>
           <div className="bg-white rounded-[32px] p-8 w-full max-w-sm text-center shadow-2xl animate-in zoom-in duration-200">
@@ -985,11 +982,11 @@ const ReviewsList = ({ reviews, resolveMediaUrl, onImageClick }) => {
           {review.photos?.length > 0 && (
             <div className="flex gap-2">
               {review.photos.map((photo, k) => (
-                <img 
-                  key={k} 
-                  src={resolveMediaUrl(photo)} 
-                  className="w-16 h-16 rounded-xl object-cover border border-gray-100 cursor-pointer hover:border-[#6F4D34]/50 hover:scale-105 transition-all" 
-                  alt="Review" 
+                <img
+                  key={k}
+                  src={resolveMediaUrl(photo)}
+                  className="w-16 h-16 rounded-xl object-cover border border-gray-100 cursor-pointer hover:border-[#6F4D34]/50 hover:scale-105 transition-all"
+                  alt="Review"
                   onClick={() => onImageClick?.(resolveMediaUrl(photo))}
                 />
               ))}

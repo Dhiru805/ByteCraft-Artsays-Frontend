@@ -15,7 +15,7 @@ const ArtGalleryContent = () => {
   const [likedProducts, setLikedProducts] = useState({});
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [setError] = useState("");
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
@@ -258,6 +258,13 @@ const ArtGalleryContent = () => {
       <div className="w-full max-w-[1440px] mx-auto p-3">
         {/* ---------------- MAIN CONTENT ---------------- */}
         <main className="w-full">
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-2xl text-center font-bold">
+              {error}
+            </div>
+          )}
+
           {/* Search Bar */}
           <div className="relative mb-8 group mx-auto">
             <input
@@ -297,7 +304,7 @@ const ArtGalleryContent = () => {
                         )}
                         <div className="absolute top-5 left-5 flex flex-col gap-2 z-10">
                           {product.editionType && (
-                            <div className="bg-white/90 backdrop-blur-md text-[#6F4D34] text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest border border-white/20">{product.editionType}</div>
+                            <div className="bg-white backdrop-blur-md text-[#6F4D34] text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest border border-white/20">{product.editionType}</div>
                           )}
                         </div>
                         <button
