@@ -206,8 +206,7 @@ import { Country, State, City } from "country-state-city";
   };
 
   const isValidPhone = (phone) => {
-    const phoneRegex = /^(\+91)?[0-9]{10}$/;
-    return phoneRegex.test(phone);
+    return phone && phone.trim().length >= 10;
   };
   const handleAddAddress = async (e) => {
     e.preventDefault();
