@@ -5,7 +5,7 @@ const AccountSecurityAgreement = ({ userId }) => {
     const [formData, setFormData] = useState({});
 
     const checkboxLabels = {
-        twoStepAuthentication: "2-Step Authentication (OTP, Email verification, etc.)",
+        secureAccessAgreement: "Secure Access & Identity Verification Agreement",
         termsConditionsAgreement: "Terms & Conditions Agreement",
         privacyPolicyAgreement: "Privacy Policy Agreement"
     };
@@ -35,10 +35,6 @@ const AccountSecurityAgreement = ({ userId }) => {
         fetchAgreementDetails();
     }, [userId]);
 
-    
-
-  
-
     return (
         <div className="body">
             <h5 className="mb-2">Account Security And Agreements</h5>
@@ -47,12 +43,12 @@ const AccountSecurityAgreement = ({ userId }) => {
                 <div className="form-group">
                     <input 
                         type="checkbox" 
-                        name="twoStepAuthentication" 
-                        checked={!!formData.twoStepAuthentication} 
+                        name="secureAccessAgreement" 
+                        checked={!!formData.secureAccessAgreement} 
                         disabled
                         
                     />
-                    <label className="mx-2">{checkboxLabels.twoStepAuthentication}</label>
+                    <label className="mx-2">{checkboxLabels.secureAccessAgreement}</label>
                 </div>
                 <div className="form-group">
                     <input 

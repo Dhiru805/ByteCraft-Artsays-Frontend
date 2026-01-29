@@ -7,12 +7,12 @@ const AccountSecurityAgreement = ({ userId }) => {
     const [formData, setFormData] = useState({});
 
     const checkboxLabels = {
-        twoStepAuthentication: "2-Step Authentication (OTP, Email verification, etc.)",
+        secureAccessAgreement: "Secure Access & Identity Verification Agreement",
         termsConditionsAgreement: "Terms & Conditions Agreement",
         privacyPolicyAgreement: "Privacy Policy Agreement"
     };
   const [loading, setLoading] = useState(false);
-
+  
     useEffect(() => {
         const fetchAgreementDetails = async () => {
             try {
@@ -40,6 +40,13 @@ const AccountSecurityAgreement = ({ userId }) => {
 
     const handleChange = (event) => {
         const { name, checked } = event.target;
+
+        // Logic: once all are checked, they cannot be unchecked
+        const allCurrentlyChecked = Object.keys(checkboxLabels).every(key => formData[key]);
+        if (allCurrentlyChecked && !checked) {
+            return;
+        }
+
         setFormData((prevData) => ({
             ...prevData,
             [name]: checked
@@ -102,12 +109,12 @@ const AccountSecurityAgreement = ({ userId }) => {
                 <div className="form-group">
                     <input 
                         type="checkbox" 
-                        name="twoStepAuthentication" 
-                        checked={!!formData.twoStepAuthentication} 
+                        name="secureAccessAgreement" 
+                        checked={!!formData.secureAccessAgreement} 
                         onChange={handleChange} 
                         
                     />
-                    <label className="mx-2">{checkboxLabels.twoStepAuthentication} <span style={{ color: 'red' }}>*</span></label>
+                    <label className="mx-2">{checkboxLabels.secureAccessAgreement} <span style={{ color: 'red' }}>*</span></label>
                 </div>
                 <div className="form-group">
                     <input 

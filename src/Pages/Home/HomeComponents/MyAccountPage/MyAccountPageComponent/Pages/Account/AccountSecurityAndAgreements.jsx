@@ -9,7 +9,7 @@ const AccountSecurityAgreements = () => {
   const userId = localStorage.getItem('userId');
 
   const checkboxLabels = {
-    twoStepAuthentication: "2-Step Authentication (OTP, Email verification, etc.)",
+    secureAccessAgreement: "Secure Access & Identity Verification Agreement",
     termsConditionsAgreement: "Terms & Conditions Agreement",
     privacyPolicyAgreement: "Privacy Policy Agreement"
   };
@@ -41,6 +41,13 @@ const AccountSecurityAgreements = () => {
 
   const handleChange = (event) => {
     const { name, checked } = event.target;
+
+    // Logic: once all are checked, they cannot be unchecked
+    const allCurrentlyChecked = Object.keys(checkboxLabels).every(key => formData[key]);
+    if (allCurrentlyChecked && !checked) {
+      return;
+    }
+
     setFormData((prevData) => ({
       ...prevData,
       [name]: checked
