@@ -2572,21 +2572,21 @@ const Profile = ({ shareprofileid }) => {
             <MdHistory className="text-2xl" />
           </button>
 
-          {userType !== "Buyer" && profile?.postProductsEnabled && (
-            <button
-              onClick={() => {
-                setOnPosts(false);
-                setOnSave(false);
-                setOnItem(true);
-                setOnTag(false);
-                setOnLiveHistory(false);
-              }}
-              className={`${onItem ? "bg-[#48372D] text-white rounded-full  py-1 px-5" : ""
-                } p-3 focus:outline-none`}
-            >
-              <LuArchive className="text-2xl" />
-            </button>
-          )}
+            {profile?.postProductsEnabled && (
+              <button
+                onClick={() => {
+                  setOnPosts(false);
+                  setOnSave(false);
+                  setOnItem(true);
+                  setOnTag(false);
+                  setOnLiveHistory(false);
+                }}
+                className={`${onItem ? "bg-[#48372D] text-white rounded-full  py-1 px-5" : ""
+                  } p-3 focus:outline-none`}
+              >
+                <LuArchive className="text-2xl" />
+              </button>
+            )}
           <button
             onClick={() => {
               setOnPosts(false);
@@ -2671,8 +2671,8 @@ const Profile = ({ shareprofileid }) => {
           </div>
         )}
 
-        {/* Selling Items */}
-        {userType !== "Buyer" && onItem && (
+          {/* Selling Items */}
+          {onItem && (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-1 w-full">
             {products.length > 0 ? (
               products.map((item, index) => (
