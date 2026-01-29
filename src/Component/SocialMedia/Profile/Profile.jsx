@@ -181,7 +181,7 @@ const Profile = ({ shareprofileid }) => {
 
   const reversedPosts =
     [
-      ...(profile?.postProductsEnabled ? productPosts : []),
+      ...(profile?.postProductsEnabled && profile?.role !== "buyer" ? productPosts : []),
       ...normalPosts,
     ].reverse() || [];
   const reversedSaved = profile?.saved?.slice().reverse() || [];
@@ -2572,7 +2572,7 @@ const Profile = ({ shareprofileid }) => {
             <MdHistory className="text-2xl" />
           </button>
 
-            {profile?.postProductsEnabled && (
+              {profile?.postProductsEnabled && profile?.role !== "buyer" && (
               <button
                 onClick={() => {
                   setOnPosts(false);
@@ -2671,8 +2671,8 @@ const Profile = ({ shareprofileid }) => {
           </div>
         )}
 
-          {/* Selling Items */}
-          {onItem && (
+            {/* Selling Items */}
+            {onItem && profile?.role !== "Buyer" && (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-1 w-full">
             {products.length > 0 ? (
               products.map((item, index) => (
