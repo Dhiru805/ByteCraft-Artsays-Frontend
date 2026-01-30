@@ -410,7 +410,7 @@ const Hero = () => {
                   onFocus={() => setOpen(true)}
                   onBlur={() => setTimeout(() => setOpen(false), 200)}
                 />
-                <button className="px-6 py-3 bg-[#f04a2f] text-white font-medium transition font-semibold text-md md:text-lg hover:bg-[#d93e27]">
+                <button className="px-6 py-3 bg-[#6F4D34] text-white font-medium transition font-semibold text-md md:text-lg">
                   Search
                 </button>
               </div>
@@ -472,10 +472,10 @@ const Hero = () => {
               {heroData.buttons?.map((btn, i) => (
                 <button
                   key={i}
-                  className={`py-2 md:!py-3 px-4 md:!px-8 rounded-full font-bold transition-all duration-300 ${
+                  className={`px-8 py-4 rounded-2xl font-bold transition-all duration-300 ${
                     i % 2 === 0
-                      ? "bg-red-500 text-white py-2 md:!py-3 px-4 md:!px-8 rounded-full font-bold shadow buy-now"
-                      : "items-center justify-center border border-dark rounded-full text-dark py-2 md:!py-3 px-4 md:!px-8 font-bold add-cart"
+                      ? "bg-[#6F4D34] hover:bg-gray-900 text-white px-8 py-4 rounded-2xl font-bold shadow buy-now"
+                      : "items-center hover:bg-[#6F4D34] hover:!text-[#ffffff] justify-center border border-dark rounded-2xl text-dark px-8 py-4 font-bold add-cart"
                     // <button className="bg-red-500 text-white py-2 md:!py-3 px-4 md:!px-8 rounded-full font-bold shadow buy-now">
                     //  Explore now
                     // </button>
