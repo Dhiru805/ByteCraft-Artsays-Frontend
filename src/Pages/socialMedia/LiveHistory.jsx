@@ -34,10 +34,10 @@ const LiveHistory = () => {
 
   return (
     <div className="flex flex-col w-full bg-[#F9F9F9] min-h-screen">
-      <main className='flex flex-row items-start sm:gap-4 w-full sm:w-[96%] mx-auto pt-4'>
+      <main className='grid grid-cols-12 gap-2 p-2'>
         <Sidebar />
         
-        <div className="flex-1 flex flex-col gap-6">
+        <div className="col-span-12 lg:col-span-6 w-full my-4">
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
             <div className="flex items-center gap-4 mb-6">
               <button 
