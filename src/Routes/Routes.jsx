@@ -1774,8 +1774,13 @@ const AppRoutes = () => {
           <Route path="/artsays-community/notification" element={<Notification />} />
           <Route path="/artsays-community/search" element={<Search />} />
           <Route path="/artsays-community/explore" element={<Explore />} />
-          <Route path="/artsays-community/create-post" element={<CreatePost />} />
-          <Route path="/artsays-community/upload-post" element={<UploadPost />} />
+          {/* Only creators can create/upload posts */}
+          <Route
+            element={<PrivateRoute allowedRoles={["Artist", "Seller", "Super-Admin"]} />}
+          >
+            <Route path="/artsays-community/create-post" element={<CreatePost />} />
+            <Route path="/artsays-community/upload-post" element={<UploadPost />} />
+          </Route>
           <Route
             path="/artsays-community/profile/:ProfileUserId"
             element={<SocialProfile />}

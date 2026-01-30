@@ -17,7 +17,9 @@ const Sidebar = () => {
   const username = localStorage.getItem("username");
   const firstName = localStorage.getItem("firstName");
   const lastName = localStorage.getItem("lastName");
+  const userType = localStorage.getItem("userType");
   const [loading, setLoading] = useState(true);
+  const isBuyer = userType === "Buyer";
 
   const hasValidUsername =
     typeof username === "string" &&
@@ -39,7 +41,7 @@ const Sidebar = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  const items = [
+  const allItems = [
     { key: "home", icon: "house-fill", label: "Home", link: "/artsays-community/" },
     {
       key: "search",
@@ -96,6 +98,11 @@ const Sidebar = () => {
       link: "/artsays-community/logout",
     },
   ];
+
+  // Filter out "create" item for buyers
+  const items = isBuyer 
+    ? allItems.filter(item => item.key !== "create")
+    : allItems;
 
   useEffect(() => {
     if (!userId) {
@@ -171,40 +178,42 @@ const Sidebar = () => {
               </Link>
             ))}
 
-          {/* Create Button */}
-          <li id="createTrigger">
-            <div
-              className="create-btn-s"
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowCreate((prev) => !prev);
-              }}
-            >
-              <i className=" bi-plus-lg"></i>
-            </div>
-            {showCreate && (
-              <div className="create-options-s flex" ref={createRef}>
-                <Link to="/artsays-community/create-post">
-                  <div
-                    className="create-option-s"
-                    onClick={() => console.log("Post")}
-                  >
-                    <i className=" bi-plus-square"></i>
-                    <span>Post</span>
-                  </div>
-                </Link>
-                <Link to="/artsays-community/create-live">
-                  <div
-                    className="create-option-s"
-                    onClick={() => console.log("Live")}
-                  >
-                    <i className=" bi-broadcast-pin"></i>
-                    <span>Live</span>
-                  </div>
-                </Link>
+          {/* Create Button - Hide for buyers */}
+          {!isBuyer && (
+            <li id="createTrigger">
+              <div
+                className="create-btn-s"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowCreate((prev) => !prev);
+                }}
+              >
+                <i className=" bi-plus-lg"></i>
               </div>
-            )}
-          </li>
+              {showCreate && (
+                <div className="create-options-s flex" ref={createRef}>
+                  <Link to="/artsays-community/create-post">
+                    <div
+                      className="create-option-s"
+                      onClick={() => console.log("Post")}
+                    >
+                      <i className=" bi-plus-square"></i>
+                      <span>Post</span>
+                    </div>
+                  </Link>
+                  <Link to="/artsays-community/create-live">
+                    <div
+                      className="create-option-s"
+                      onClick={() => console.log("Live")}
+                    >
+                      <i className=" bi-broadcast-pin"></i>
+                      <span>Live</span>
+                    </div>
+                  </Link>
+                </div>
+              )}
+            </li>
+          )}
 
             {items.slice(2, 3).map((item) => (
               <Link to={`${item.link}`} key={item.key}>

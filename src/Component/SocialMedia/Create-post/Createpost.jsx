@@ -1,11 +1,21 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../AuthContext.jsx";
+import { toast } from "react-toastify";
 import "./Post.css";
 
 const Createpost = () => {
    const navigate = useNavigate();
+   const { isAuthenticated, userType } = useAuth();
 
   const handleFileChange = (e) => {
+    // Prevent buyers from creating posts
+    if (isAuthenticated && userType === 'Buyer') {
+      toast.error("Buyers are not allowed to create posts in the community.");
+      e.target.value = ''; // Reset file input
+      return;
+    }
+
     const files = Array.from(e.target.files);
      const fileData = files.map((file) => ({
     file,

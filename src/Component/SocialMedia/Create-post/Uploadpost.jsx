@@ -56,6 +56,14 @@ const Uploadpost = () => {
   }, [userId]);
 
   const uploadPost = async () => {
+    // Check if user is a buyer
+    const userType = localStorage.getItem("userType");
+    if (userType === "Buyer") {
+      toast.error("Buyers are not allowed to create posts in the community.");
+      navigate("/artsays-community");
+      return;
+    }
+
     if (images.length === 0) {
       toast.error("Please select an image before posting.");
       return;
