@@ -85,7 +85,7 @@
 .searchBtn {
   width: 96px;
   height: 48px;
-  background: #f04a2f;
+  background: #6F4D34;
 }
 
 /* Description */
@@ -114,7 +114,7 @@
 .btnPrimary {
   height: 48px;
   width: 128px;
-  background: #ef4444;
+  background: #6F4D34;
   border-radius: 999px;
 }
 
@@ -196,7 +196,7 @@
 
   .right {
     display: flex;
-    height: 600px;
+    /* height: 600px; */
     align-items: center;
     justify-content: center;
   }
