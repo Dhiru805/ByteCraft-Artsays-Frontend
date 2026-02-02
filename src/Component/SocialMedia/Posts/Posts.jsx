@@ -10,6 +10,129 @@ import { timeAgo } from "./../../../utils/TimeAgo.js";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables.jsx";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../AuthContext.jsx";
+const CommentInput = ({ post, userId, setPosts, inputRef }) => {
+  const [text, setText] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const handleComment = async () => {
+    if (!text.trim()) return;
+    try {
+      const res = await postAPI(
+        `/api/social-media/posts/${post._id}/comments`,
+        { userId, text: text },
+        false,
+        true
+      );
+      setPosts((prev) =>
+        prev.map((p) =>
+          p._id === post._id
+            ? { ...p, comments: [...p.comments, res.data.comment] }
+            : p
+        )
+      );
+      setText("");
+    } catch (err) {
+      console.error("Error adding comment:", err);
+    }
+  };
+
+  const handleChange = async (e) => {
+    const value = e.target.value;
+    setText(value);
+
+    const match = value.match(/@(\w*)$/);
+    if (match) {
+      const query = match[1];
+      if (query.length > 0) {
+        try {
+          const res = await getAPI(
+            `/api/social-media/mention?q=@${query}&userId=${userId}`,
+            {},
+            true,
+            true
+          );
+          setSuggestions(res.data.users || []);
+          setShowSuggestions(true);
+        } catch (err) {
+          console.error("Error fetching mentions:", err);
+        }
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleSelectMention = (username) => {
+    const newText = text.replace(/@\w*$/, `@${username} `);
+    setText(newText);
+    setSuggestions([]);
+    setShowSuggestions(false);
+  };
+
+  return (
+    <div className="w-full relative">
+      {showSuggestions && suggestions.length > 0 && (
+        <div className="absolute bottom-full left-0 w-full bg-white border rounded-md shadow-md z-50 max-h-40 overflow-y-auto mb-1">
+          {suggestions.map((user) => (
+            <div
+              key={user._id}
+              onClick={() => handleSelectMention(user.username)}
+              className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
+            >
+              <img
+                src={
+                  user.profilePhoto
+                    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`
+                    : DEFAULT_PROFILE_IMAGE
+                }
+                alt={user.username}
+                className="w-8 h-8 rounded-full"
+              />
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-gray-800 flex items-center">
+                  {user.username}
+                  {user.verified?.length > 0 && (
+                    <img
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.verified[user.verified.length - 1]?.badgeImage}`}
+                      className="inline-block ml-1 w-4 h-4 object-contain"
+                      alt="verified"
+                    />
+                  )}
+                </span>
+                <span className="text-xs text-gray-500">{user.role}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      <div className="flex gap-2 items-center">
+        <input
+          type="text"
+          ref={inputRef}
+          placeholder="Add a comment..."
+          value={text}
+          onChange={handleChange}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') handleComment();
+          }}
+          className="flex-grow outline-none text-sm focus:outline-none text-[#000000] py-1 bg-transparent"
+        />
+        <button
+          onClick={handleComment}
+          className="text-blue-500 text-sm font-semibold hover:text-blue-700"
+        >
+          Post
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const Post = () => {
   const userId = localStorage.getItem("userId");
   const Navigate = useNavigate();
@@ -18,9 +141,6 @@ const Post = () => {
   const [tipPopupOpen, setTipPopupOpen] = useState(false);
   const [tipSuccess, setTipSuccess] = useState(false);
   const [menuOpenId, setMenuOpenId] = useState(null);
-  const [commentText, setCommentText] = useState("");
-  const [mentionSuggestions, setMentionSuggestions] = useState([]);
-  const [showMentions, setShowMentions] = useState(false);
   const [activeIndex, setActiveIndex] = useState(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [tipAmount, setTipAmount] = useState(40);
@@ -212,74 +332,11 @@ const Post = () => {
     }
   };
 
-  const handleComment = async (postId) => {
-    if (!commentText.trim()) return;
-    try {
-      const res = await postAPI(
-        `/api/social-media/posts/${postId}/comments`,
-        { userId, text: commentText },
-        false,
-        true
-      );
-      setPosts((prev) =>
-        prev.map((p) =>
-          p._id === postId
-            ? { ...p, comments: [...p.comments, res.data.comment] }
-            : p
-        )
-      );
-      setCommentText("");
-    } catch (err) {
-      console.error("Error adding comment:", err);
-    }
-  };
-
   useEffect(() => {
     if (activePost) {
       setActiveImageIndex(0);
     }
   }, [activePost]);
-
-  // ✅ Detect @ and fetch suggestions
-  const handleChange = async (e) => {
-    const value = e.target.value;
-    setCommentText(value);
-
-    // Check if text contains '@' + word
-    const match = value.match(/@(\w*)$/); // last word starting with @
-    if (match) {
-      const query = match[1];
-      if (query.length > 0) {
-        try {
-          const res = await getAPI(
-            `/api/social-media/mention?q=@${query}&userId=${userId}`,
-            {},
-            true,
-            true
-          );
-          setMentionSuggestions(res.data.users || []);
-          setShowMentions(true);
-        } catch (err) {
-          console.error("Error fetching mentions:", err);
-        }
-      } else {
-        setMentionSuggestions([]);
-        setShowMentions(false);
-      }
-    } else {
-      setMentionSuggestions([]);
-      setShowMentions(false);
-    }
-  };
-
-  // Insert selected mention
-  const handleSelectMention = (username) => {
-    // Replace last @word with @username
-    const newText = commentText.replace(/@\w*$/, `@${username} `);
-    setCommentText(newText);
-    setMentionSuggestions([]);
-    setShowMentions(false);
-  };
 
   const handleFollowToggle = async (targetUserId, isFollowing) => {
     const userId = localStorage.getItem("userId");
@@ -676,60 +733,19 @@ const Post = () => {
                     {activePost.likes.length} likes
                   </p>
 
-                  {/* Suggestions dropdown */}
-                  {activePost &&
-                    showMentions &&
-                    mentionSuggestions.length > 0 && (
-                      <div className="relative bottom-10 left-0 hidden lg:flex flex-col w-full bg-white border rounded-md shadow-md z-50 max-h-40 overflow-y-auto">
-                        {mentionSuggestions.map((user) => (
-                          <div
-                            key={user._id}
-                            onClick={() => handleSelectMention(user.username)}
-                            className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
-                          >
-                            <img
-                              src={
-                                activePost.user?.profilePhoto
-                                  ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost?.user?.profilePhoto}`
-                                  : `${DEFAULT_PROFILE_IMAGE}`
-                              }
-                              alt={user.username}
-                              className="w-8 h-8 rounded-full"
-                            />
-                            <span className="text-sm font-medium text-gray-800">
-                              {user.username}
-                            </span>
-                            <span className="text-xs text-gray-500">
-                              {user.role}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                  {/* Add Comment */}
-                  {activePost.canComment ? (
-                    <div className="flex gap-2 relative">
-                      <input
-                        type="text"
-                        ref={commentRef}
-                        placeholder="Add a comment..."
-                        value={commentText}
-                        onChange={handleChange}
-                        className="flex-grow outline-none text-sm"
+                    {/* Add Comment */}
+                    {activePost.canComment ? (
+                      <CommentInput
+                        post={activePost}
+                        userId={userId}
+                        setPosts={setPosts}
+                        inputRef={commentRef}
                       />
-                      <button
-                        className="text-blue-500 text-sm"
-                        onClick={() => handleComment(activePost._id)}
-                      >
-                        Post
-                      </button>
-                    </div>
-                  ) : (
-                    <p className="text-gray-500 text-sm italic">
-                      Comments are restricted
-                    </p>
-                  )}
+                    ) : (
+                      <p className="text-gray-500 text-sm italic">
+                        Comments are restricted
+                      </p>
+                    )}
                 </div>
               </div>
             </div>
@@ -820,49 +836,14 @@ const Post = () => {
               </div>
             </div>
 
-            {/* Suggestions dropdown */}
-            {activePost && showMentions && mentionSuggestions.length > 0 && (
-              <div className="absolute bottom-10 left-0 w-full bg-white border rounded-md shadow-md z-50 max-h-[80] overflow-y-auto">
-                {mentionSuggestions.map((user) => (
-                  <div
-                    key={user._id}
-                    onClick={() => handleSelectMention(user.username)}
-                    className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
-                  >
-                    <img
-                      src={
-                        user.profilePhoto
-                          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`
-                          : `${DEFAULT_PROFILE_IMAGE}`
-                      }
-                      alt={user.username}
-                      className="w-8 h-8 rounded-full"
-                    />
-                    <span className="text-sm font-medium text-gray-800">
-                      {user.username}
-                    </span>
-                    <span className="text-xs text-gray-500">{user.role}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-
             {/* Add Comment */}
             {activePost.canComment ? (
-              <div className="flex gap-2 p-2 border-t">
-                <input
-                  type="text"
-                  placeholder="Add a comment..."
-                  value={commentText}
-                  onChange={handleChange}
-                  className="flex-grow outline-none text-sm"
+              <div className="p-2 border-t">
+                <CommentInput
+                  post={activePost}
+                  userId={userId}
+                  setPosts={setPosts}
                 />
-                <button
-                  className="text-blue-500 text-[15px]"
-                  onClick={() => handleComment(activePost._id)}
-                >
-                  Post
-                </button>
               </div>
             ) : (
               <p className="text-gray-500 text-sm italic">
@@ -1576,71 +1557,19 @@ const Post = () => {
                 View all {post.comments.length} comments
               </div>
 
-              {/* Add Comment */}
-              {/* Comment Input */}
-              {/* Suggestions dropdown */}
-              {showMentions && mentionSuggestions.length > 0 && (
-                <div className=" absolute bottom-10 left-0 w-full lg:bg-white bg-[#FAF9F6] border rounded-md shadow-md z-50 max-h-40 overflow-y-auto">
-                  {mentionSuggestions.map((user) => (
-                    <div
-                      key={user._id}
-                      onClick={() => handleSelectMention(user.username)}
-                      className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
-                    >
-                      <img
-                        src={
-                          user.profilePhoto
-                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`
-                            : `${DEFAULT_PROFILE_IMAGE}`
-                        }
-                        alt={user.username}
-                        className="w-8 h-8 rounded-full"
-                      />
-                      <span className="text-sm font-medium text-gray-800">
-                        {user.username}
-                        {user.verified?.length > 0 && (
-                          <img
-                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.verified[user.verified.length - 1]
-                              ?.badgeImage
-                              }`}
-                            className="inline-block ml-1 w-6 h-6 object-contain"
-                            alt={
-                              user.verified[user.verified.length - 1]
-                                ?.badgeName || "badge"
-                            }
-                            title={
-                              user.verified[user.verified.length - 1]?.badgeName
-                            }
-                          />
-                        )}
-                      </span>
-                      <span className="text-xs text-gray-500">{user.role}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {post.canComment ? (
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Add a comment..."
-                    value={commentText}
-                    onChange={handleChange}
-                    ref={(el) => (commentRefs.current[post._id] = el)}
-                    className="w-full text-sm focus:outline-none text-[#000000]"
+                {/* Add Comment */}
+                {post.canComment ? (
+                  <CommentInput
+                    post={post}
+                    userId={userId}
+                    setPosts={setPosts}
+                    inputRef={(el) => (commentRefs.current[post._id] = el)}
                   />
-                  <button
-                    onClick={() => handleComment(post._id, commentText)}
-                    className="text-blue-500 text-sm"
-                  >
-                    Post
-                  </button>
-                </div>
-              ) : (
-                <p className="text-gray-500 text-sm italic p-3">
-                  Comments are restricted
-                </p>
-              )}
+                ) : (
+                  <p className="text-gray-500 text-sm italic p-3">
+                    Comments are restricted
+                  </p>
+                )}
             </div>
           </div>
         ))}

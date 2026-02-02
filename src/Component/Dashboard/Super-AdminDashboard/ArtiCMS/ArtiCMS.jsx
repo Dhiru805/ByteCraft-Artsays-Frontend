@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ArtiCMSTable from "./ArtiCMSTable";
 import AddCompanyModal from "./AddCompanyModal";
+import ArtyAIConfig from "./ArtyAIConfig";
 import getAPI from "../../../../api/getAPI";
 
 const ArtiCMS = () => {
+  const [activeTab, setActiveTab] = useState("company");
   const [showModal, setShowModal] = useState(false);
   const [companyInfo, setCompanyInfo] = useState([]);
   const navigate = useNavigate();
@@ -64,11 +66,48 @@ const ArtiCMS = () => {
         </div>
       </div>
 
-      {/* Table */}
-      <ArtiCMSTable
-        companyInfo={companyInfo}
-        fetchCompanyInfo={fetchCompanyInfo}
-      />
+      <div className="card-body">
+        <ul className="nav nav-tabs mb-4">
+          <li className="nav-item">
+            <span
+              className={`nav-link ${activeTab === "company" ? "active" : ""}`}
+              onClick={() => setActiveTab("company")}
+              style={{ cursor: "pointer" }}
+            >
+              Company Information
+            </span>
+          </li>
+          <li className="nav-item">
+            <span
+              className={`nav-link ${activeTab === "arty" ? "active" : ""}`}
+              onClick={() => setActiveTab("arty")}
+              style={{ cursor: "pointer" }}
+            >
+              Arty AI Settings
+            </span>
+          </li>
+        </ul>
+
+        {activeTab === "company" ? (
+          <>
+            {/* <div className="d-flex justify-content-end mb-3">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setShowModal(true)}
+              >
+                <i className="fa fa-plus"></i> Add Company
+              </button>
+            </div> */}
+            <ArtiCMSTable
+              companyInfo={companyInfo}
+              fetchCompanyInfo={fetchCompanyInfo}
+            />
+          </>
+        ) : (
+          <ArtyAIConfig />
+        )}
+      </div>
 
       {/* Add Modal */}
       {showModal && (

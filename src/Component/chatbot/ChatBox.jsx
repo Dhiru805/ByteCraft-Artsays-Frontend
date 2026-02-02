@@ -226,48 +226,45 @@ export default function ChatBox({ closeBox }) {
     return () => { mounted = false; };
   }, [userId]);
 
-  useEffect(() => {
-    if (userName === undefined) return;
-    if (greeted.current) return;
-    greeted.current = true;
+    useEffect(() => {
+      if (userName === undefined) return;
+      if (greeted.current) return;
+      greeted.current = true;
+  
+      const greeting = userName 
+        ? `Hey ${userName}! I'm Arty, your intelligent assistant for Artsays. How can I help you with our art collection or products today?`
+        : "Hello! I'm Arty, your intelligent assistant for Artsays. How can I help you with our art collection or products today?";
+      
+      setMessages([{ sender: 'bot', text: greeting, time: new Date() }]);
+    }, [userName]);
 
-    (async () => {
+    useEffect(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, [messages]);
+  
+    const sendMessage = async (prefilled) => {
+      const text = (prefilled ?? input).trim();
+      if (!text) return;
+      if (!prefilled) setInput("");
+  
+      setMessages((m) => [...m, { sender: 'user', text, time: new Date() }]);
+      setIsSending(true);
+      setShowSuggestions(false);
+  
       try {
-        const res = await axios.get("http://localhost:3001/api/knowledge/search?query=");
-        const base = res.data?.answer || "What can I help you with today?";
-        const text = userName ? `Hey ${userName}! ${base}` : base;
-        setMessages([{ sender: 'bot', text, time: new Date() }]);
+        const res = await axios.post("http://localhost:3001/api/gemini/ask", {
+          question: text
+        });
+        const reply = res.data?.answer || "still i'm in learning stage, i'm improving my self";
+        // tiny delay
+        await new Promise((r) => setTimeout(r, 350 + Math.random() * 350));
+        setMessages((m) => [...m, { sender: 'bot', text: reply, time: new Date() }]);
       } catch (e) {
-        setMessages([{ sender: 'bot', text: 'Server error — please try again later.', time: new Date() }]);
+        setMessages((m) => [...m, { sender: 'bot', text: "still i'm in learning stage, i'm improving my self", time: new Date() }]);
+      } finally {
+        setIsSending(false);
       }
-    })();
-  }, [userName]);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, [messages]);
-
-  const sendMessage = async (prefilled) => {
-    const text = (prefilled ?? input).trim();
-    if (!text) return;
-    if (!prefilled) setInput("");
-
-    setMessages((m) => [...m, { sender: 'user', text, time: new Date() }]);
-    setIsSending(true);
-    setShowSuggestions(false);
-
-    try {
-      const res = await axios.get(`http://localhost:3001/api/knowledge/search?query=${encodeURIComponent(text)}`);
-      const reply = res.data?.answer || "I don't have that info yet.";
-      // tiny delay
-      await new Promise((r) => setTimeout(r, 350 + Math.random() * 350));
-      setMessages((m) => [...m, { sender: 'bot', text: reply, time: new Date() }]);
-    } catch (e) {
-      setMessages((m) => [...m, { sender: 'bot', text: 'Server error. Please try again later.', time: new Date() }]);
-    } finally {
-      setIsSending(false);
-    }
-  };
+    };
 
   const formatTime = (d) => d ? new Date(d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
 
