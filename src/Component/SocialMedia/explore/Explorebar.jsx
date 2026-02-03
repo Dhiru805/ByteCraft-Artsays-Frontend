@@ -152,28 +152,28 @@ const Explorebar = () => {
     <div className="col-span-12 lg:col-span-6 w-full max-w-6xl my-4 mx-auto flex flex-col">
       {/* Masonry Grid */}
       <div className="columns-2 sm:columns-3 gap-2 space-y-2">
-        {posts.map((art) => (
-          <div
-            key={art._id}
-            className="relative break-inside-avoid rounded-xl overflow-hidden shadow"
-          >
-            <Link to={`/artsays-community/single-post/${art._id}`}>
-              {/* Post Image */}
-              <img
-                src={
-                  art.images && art.images.length > 0
-                    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${art.images[0]}`
-                    : "https://via.placeholder.com/300"
-                }
-                alt="Art"
-                className="w-full object-cover rounded-t-xl"
-              />
-            </Link>
-            {/* Overlay Header */}
-            <div className="absolute top-0 left-0 w-full bg-[#000000BF] bg-opacity-50 text-white flex justify-between items-center px-2 py-2 text-xs">
-              <span className="font-medium sm:text-md text-sm">
-                {art.user.username}
-              </span>
+          {posts.filter((art) => art.user).map((art) => (
+            <div
+              key={art._id}
+              className="relative break-inside-avoid rounded-xl overflow-hidden shadow"
+            >
+              <Link to={`/artsays-community/single-post/${art._id}`}>
+                {/* Post Image */}
+                <img
+                  src={
+                    art.images && art.images.length > 0
+                      ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${art.images[0]}`
+                      : "https://via.placeholder.com/300"
+                  }
+                  alt="Art"
+                  className="w-full object-cover rounded-t-xl"
+                />
+              </Link>
+              {/* Overlay Header */}
+              <div className="absolute top-0 left-0 w-full bg-[#000000BF] bg-opacity-50 text-white flex justify-between items-center px-2 py-2 text-xs">
+                <span className="font-medium sm:text-md text-sm">
+                  {art.user?.username || 'Unknown'}
+                </span>
               <div className="flex relative gap-2 items-center text-lg">
                 {/* <i className="ri-shopping-cart-2-fill text-[#FB5934]"></i> */}
                 <i
