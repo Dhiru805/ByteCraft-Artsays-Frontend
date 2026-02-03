@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import "../Sidebar/Side-post-sugg.css";
 import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
@@ -160,6 +160,14 @@ const Post = () => {
   const [allCollaboraters, setAllCollaboraters] = useState([]);
   const isMobile = window.innerWidth < 1024; // Tailwind lg breakpoint
 
+  // Pagination states
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const POSTS_PER_PAGE = 10;
+  const observerRef = useRef(null);
+  const loadMoreRef = useRef(null);
+
   const userName = localStorage.getItem("username");
   const firstName = localStorage.getItem("firstName");
   const lastName = localStorage.getItem("lastName");
@@ -250,26 +258,99 @@ const Post = () => {
     const collaboraters = post.collaborators || [];
     setAllCollaboraters(collaboraters);
   };
-  // 🔹 Fetch homepage posts
-  useEffect(() => {
-    const fetchPosts = async () => {
-      setLoading(true);
-      try {
-        const res = await getAPI(
-          `/api/social-media/homepage?userId=${userId}`,
-          true
-        );
-        setPosts(res?.data?.posts || []);
 
-        // console.log("Fetched posts:", res.data.posts);
-      } catch (err) {
-        console.error("Error fetching posts:", err);
-      } finally {
-        setLoading(false);
+  // 🔹 Fetch homepage posts with pagination
+  const fetchPosts = useCallback(async (pageNum = 1, append = false) => {
+    if (pageNum === 1) {
+      setLoading(true);
+    } else {
+      setLoadingMore(true);
+    }
+
+    try {
+      const res = await getAPI(
+        `/api/social-media/homepage?userId=${userId}&page=${pageNum}&limit=${POSTS_PER_PAGE}`,
+        true
+      );
+      
+      const newPosts = res?.data?.posts || [];
+      const pagination = res?.data?.pagination;
+
+      if (append) {
+        // Filter out duplicates when appending
+        setPosts((prev) => {
+          const existingIds = new Set(prev.map(p => p._id));
+          const uniqueNewPosts = newPosts.filter(p => !existingIds.has(p._id));
+          return [...prev, ...uniqueNewPosts];
+        });
+      } else {
+        setPosts(newPosts);
+      }
+
+      // Update hasMore based on pagination response
+      if (pagination) {
+        setHasMore(pagination.hasMore);
+      } else {
+        setHasMore(newPosts.length >= POSTS_PER_PAGE);
+      }
+    } catch (err) {
+      console.error("Error fetching posts:", err);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  }, [userId]);
+
+  // Initial fetch
+  useEffect(() => {
+    if (userId) {
+      setPage(1);
+      setHasMore(true);
+      fetchPosts(1, false);
+    }
+  }, [userId, fetchPosts]);
+
+  // Load more posts function
+  const loadMorePosts = useCallback(() => {
+    if (!loadingMore && hasMore) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchPosts(nextPage, true);
+    }
+  }, [page, loadingMore, hasMore, fetchPosts]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const currentRef = loadMoreRef.current;
+    
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting && hasMore && !loadingMore && !loading) {
+          loadMorePosts();
+        }
+      },
+      {
+        root: null,
+        rootMargin: '100px',
+        threshold: 0.1,
+      }
+    );
+
+    if (currentRef) {
+      observerRef.current.observe(currentRef);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
       }
     };
-    fetchPosts();
-  }, [userId]);
+  }, [hasMore, loadingMore, loading, loadMorePosts]);
   const handleLike = async (postId) => {
     try {
       await postAPI(
@@ -1557,25 +1638,38 @@ const Post = () => {
                 View all {post.comments.length} comments
               </div>
 
-                {/* Add Comment */}
-                {post.canComment ? (
-                  <CommentInput
-                    post={post}
-                    userId={userId}
-                    setPosts={setPosts}
-                    inputRef={(el) => (commentRefs.current[post._id] = el)}
-                  />
-                ) : (
-                  <p className="text-gray-500 text-sm italic p-3">
-                    Comments are restricted
-                  </p>
-                )}
+                  {/* Add Comment */}
+                  {post.canComment ? (
+                    <CommentInput
+                      post={post}
+                      userId={userId}
+                      setPosts={setPosts}
+                      inputRef={(el) => (commentRefs.current[post._id] = el)}
+                    />
+                  ) : (
+                    <p className="text-gray-500 text-sm italic p-3">
+                      Comments are restricted
+                    </p>
+                  )}
+              </div>
             </div>
+          ))}
+
+          {/* Infinite Scroll Loading Indicator */}
+          <div ref={loadMoreRef} className="w-full py-4 flex justify-center">
+            {loadingMore && (
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-8 h-8 border-4 border-gray-300 border-t-[#AD6449] rounded-full animate-spin"></div>
+                <p className="text-sm text-gray-500">Loading more posts...</p>
+              </div>
+            )}
+            {!hasMore && posts.length > 0 && (
+              <p className="text-sm text-gray-400 py-4">You've reached the end</p>
+            )}
           </div>
-        ))}
-      </div>
-      
-      {showCollaborators && allCollaboraters && (
+        </div>
+        
+        {showCollaborators && allCollaboraters && (
         <div className="fixed inset-0 flex items-center justify-center  bg-[#000000]/40 backdrop-blur-sm z-50">
           <div
             ref={collabRef}
