@@ -1277,6 +1277,23 @@ import { toast } from "react-toastify";
 import BrowserCategorySkeleton from "../../../Component/Skeleton/BrowserCategorySkeleton";
 import "../../store/products/product.css";
 
+// Debounce hook
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
 const BrowseCategories = () => {
   const [data, setData] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -1286,6 +1303,7 @@ const BrowseCategories = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 400); // 400ms debounce delay
 
   const navigate = useNavigate();
   const [likedProducts, setLikedProducts] = useState({});
@@ -1331,15 +1349,15 @@ const BrowseCategories = () => {
         result = allProducts.filter((p) => p.category === cat._id);
       }
     }
-    if (searchQuery) {
+    if (debouncedSearchQuery) {
       result = result.filter(p => 
-        p.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (p.userId?.name && p.userId.name.toLowerCase().includes(searchQuery.toLowerCase()))
+        p.productName.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+        (p.userId?.name && p.userId.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()))
       );
     }
     setFilteredProducts(result);
     setCurrentPage(1);
-  }, [selectedCategory, searchQuery, allProducts, categories]);
+  }, [selectedCategory, debouncedSearchQuery, allProducts, categories]);
 
     const currentItems = filteredProducts.slice(0, 8);
 

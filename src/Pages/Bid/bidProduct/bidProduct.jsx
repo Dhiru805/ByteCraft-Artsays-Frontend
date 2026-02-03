@@ -6,6 +6,23 @@ import getAPI from "../../../api/getAPI";
 import { toast } from "react-toastify";
 import ProductsSkeliton from "../../../Component/Skeleton/products/ProductsSkeliton";
 
+// Debounce hook
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
 const BidProduct = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -32,6 +49,7 @@ const BidProduct = () => {
     auctionType: [],
     search: "",
   });
+  const debouncedSearch = useDebounce(filters.search, 400); // 400ms debounce delay
 
   const [options, setOptions] = useState({
     categories: [],
@@ -108,11 +126,11 @@ const BidProduct = () => {
   useEffect(() => {
     let result = [...products];
 
-    if (filters.search) {
+    if (debouncedSearch) {
       result = result.filter((item) =>
-        item.artworkName?.toLowerCase().includes(filters.search.toLowerCase()) ||
-        item.product?.userId?.name?.toLowerCase().includes(filters.search.toLowerCase()) ||
-        item.product?.userId?.lastName?.toLowerCase().includes(filters.search.toLowerCase())
+        item.artworkName?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        item.product?.userId?.name?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        item.product?.userId?.lastName?.toLowerCase().includes(debouncedSearch.toLowerCase())
       );
     }
 
@@ -273,7 +291,7 @@ const BidProduct = () => {
 
     setFilteredProducts(result);
     setCurrentPage(1);
-  }, [products, filters, options.categories, highestLiveBid]);
+  }, [products, filters, debouncedSearch, options.categories, highestLiveBid]);
 
   const handleFilterChange = (category, value, isChecked) => {
     setFilters((prev) => {

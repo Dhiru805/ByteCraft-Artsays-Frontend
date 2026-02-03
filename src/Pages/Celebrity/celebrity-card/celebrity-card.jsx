@@ -5,6 +5,23 @@ import { useNavigate } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
 import CelebrityCardskeliton from "../../../Component/Skeleton/products/CelebrityCardskeliton";
 
+// Debounce hook
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
 const CelebrityCard = () => {
   const navigate = useNavigate();
   const [celebritiesData, setCelebritiesData] = useState([]);
@@ -19,6 +36,7 @@ const CelebrityCard = () => {
       specialTags: [],
       search: "",
     });
+  const debouncedSearch = useDebounce(filters.search, 400); // 400ms debounce delay
 
   const [options, setOptions] = useState({
     expertise: [],
@@ -61,10 +79,10 @@ const CelebrityCard = () => {
     let result = [...celebritiesData];
 
     // Search filter
-    if (filters.search) {
+    if (debouncedSearch) {
       result = result.filter((c) =>
-        c.artistName?.toLowerCase().includes(filters.search.toLowerCase()) ||
-        c.profession?.toLowerCase().includes(filters.search.toLowerCase())
+        c.artistName?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        c.profession?.toLowerCase().includes(debouncedSearch.toLowerCase())
       );
     }
 
@@ -115,7 +133,7 @@ const CelebrityCard = () => {
 
     setFilteredCelebrities(result);
     setCurrentPage(1);
-  }, [celebritiesData, filters]);
+  }, [celebritiesData, filters, debouncedSearch]);
 
   const handleFilterChange = (category, value, isChecked) => {
     setFilters((prev) => {

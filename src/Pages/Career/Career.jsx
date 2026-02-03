@@ -8,8 +8,26 @@ import JoinArtsays from "./JoinArtsays/JoinArtsays";
 import OpenRoles from "./OpenRoles/OpenRoles";
 import LifeAtArtsays from "./LifeAtArtsays/LifeAtArtsays";
 
+// Debounce hook
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
 const Career = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 400);
   const [seoData, setSeoData] = useState({
     metaTitle: "Careers at Artsays",
     metaDescription: "Join the Artsays team and help shape the future of art and technology.",
@@ -81,7 +99,7 @@ const Career = () => {
 
 
         <JoinArtsays />
-        <OpenRoles searchTerm={searchTerm} />
+        <OpenRoles searchTerm={debouncedSearchTerm} />
         <LifeAtArtsays />
       </div>
     </div>

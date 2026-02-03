@@ -11,6 +11,23 @@ import postAPI from "../../../api/postAPI";
 import { DEFAULT_PROFILE_IMAGE } from "./constant";
 import ProductsSkeliton from "../../../Component/Skeleton/products/ProductsSkeliton";
 
+// Debounce hook
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
 const ArtistCard = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [artists, setArtists] = useState([]);
@@ -28,6 +45,7 @@ const ArtistCard = () => {
     expertise: [],
     search: "",
   });
+  const debouncedSearch = useDebounce(filters.search, 400);
 
   const [options, setOptions] = useState({
     expertise: [],
@@ -158,8 +176,8 @@ const ArtistCard = () => {
   const filteredArtists = useMemo(() => {
     let result = [...artists];
 
-    if (filters.search) {
-      const search = filters.search.toLowerCase();
+    if (debouncedSearch) {
+      const search = debouncedSearch.toLowerCase();
       result = result.filter(
         (a) =>
           a.username.toLowerCase().includes(search) ||
@@ -194,7 +212,7 @@ const ArtistCard = () => {
     }
 
     return result;
-  }, [artists, filters]);
+  }, [artists, filters.sortBy, filters.specialTags, filters.expertise, debouncedSearch]);
 
   const paginatedArtists = useMemo(() => {
     const start = (currentPage - 1) * pageSize;

@@ -9,6 +9,23 @@ import { toast } from "react-toastify";
 import ProductsSkeliton from "../../../Component/Skeleton/products/ProductsSkeliton";
 import "./product.css";
 
+// Debounce hook
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
 const Product = () => {
   // const [searchText, setSearchText] = useState("");
   const [products, setProducts] = useState([]);
@@ -33,13 +50,14 @@ const Product = () => {
       productMaterial: [],
       productEditionType: [],
       productSurfaceType: [],
-      framing: [],
-      handmade: [],
-      periodEra: [],
-      search: "",
-    });
+    framing: [],
+    handmade: [],
+    periodEra: [],
+    search: "",
+  });
+  const debouncedSearch = useDebounce(filters.search, 400); // 400ms debounce delay
 
-    const [options, setOptions] = useState({
+  const [options, setOptions] = useState({
       categories: [],
       productTypes: [],
       productMediums: [],
@@ -119,11 +137,11 @@ const Product = () => {
   useEffect(() => {
     let result = [...products];
 
-    if (filters.search) {
+    if (debouncedSearch) {
       result = result.filter((p) =>
-        p.productName.toLowerCase().includes(filters.search.toLowerCase()) ||
-        (p.userId?.name && p.userId.name.toLowerCase().includes(filters.search.toLowerCase())) ||
-        (p.userId?.lastName && p.userId.lastName.toLowerCase().includes(filters.search.toLowerCase()))
+        p.productName.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        (p.userId?.name && p.userId.name.toLowerCase().includes(debouncedSearch.toLowerCase())) ||
+        (p.userId?.lastName && p.userId.lastName.toLowerCase().includes(debouncedSearch.toLowerCase()))
       );
     }
 
@@ -278,7 +296,7 @@ const Product = () => {
 
     setFilteredProducts(result);
     setCurrentPage(1);
-  }, [products, filters, options.categories]);
+  }, [products, filters, debouncedSearch, options.categories]);
 
   const handleFilterChange = (category, value, isChecked) => {
     setFilters((prev) => {

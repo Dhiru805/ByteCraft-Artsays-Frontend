@@ -1,10 +1,27 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
 import deleteAPI from "../../../api/deleteAPI";
 import { MdVerified } from "react-icons/md";
 import { Link } from "react-router-dom";
+
+// Debounce hook
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
 // import { BsBroadcast } from "react-icons/bs";
 
 // const suggestedVideo = [
@@ -55,6 +72,7 @@ import { Link } from "react-router-dom";
 const SearchBar = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounce(query, 400); // 400ms debounce delay
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [suggestedPosts, setSuggestedPosts] = useState([]);
   const [suggestedTags, setSuggestedTags] = useState([]);
@@ -140,48 +158,64 @@ const SearchBar = () => {
         console.error("Error fetching data:", err);
       }
     };
-    if (userId) fetchRecentAndSuggestions();
+      if (userId) fetchRecentAndSuggestions();
   }, [userId]);
   console.log("kkkkkkkkkkkkkkkk", { recentSearches, suggestionForUser });
-  //  Handle search input
-  const handleSearch = async (e) => {
+
+  // Debounced search effect - API call only fires after user stops typing
+  useEffect(() => {
+    const performSearch = async () => {
+      if (!debouncedQuery.trim()) {
+        setSuggestedUsers([]);
+        setSuggestedPosts([]);
+        setSuggestedTags([]);
+        setShowDropdown(false);
+        return;
+      }
+
+      try {
+        const userId = localStorage.getItem("userId");
+        const endpoint = `/api/social-media/search?q=${encodeURIComponent(
+          debouncedQuery
+        )}&userId=${encodeURIComponent(userId)}`;
+        const res = await getAPI(endpoint, {}, true, true);
+        const result = res.data || res;
+
+        setSuggestedUsers([]);
+        setSuggestedTags([]);
+        setSuggestedPosts([]);
+
+        if (result.type === "users" && result.users)
+          setSuggestedUsers(result.users);
+        if (result.type === "hashtags" && result.tags)
+          setSuggestedTags(result.tags);
+        if (result.type === "posts" && result.posts)
+          setSuggestedPosts(result.posts);
+
+        setShowDropdown(
+          result.users?.length > 0 ||
+          result.tags?.length > 0 ||
+          result.posts?.length > 0
+        );
+      } catch (err) {
+        console.error("Search error:", err);
+        setShowDropdown(false);
+      }
+    };
+
+    performSearch();
+  }, [debouncedQuery]);
+
+  //  Handle search input - only updates query state (debounced search happens in useEffect)
+  const handleSearch = (e) => {
     const value = e.target.value;
     setQuery(value);
 
+    // Immediately clear results if input is empty
     if (!value.trim()) {
       setSuggestedUsers([]);
       setSuggestedPosts([]);
       setSuggestedTags([]);
-      setShowDropdown(false);
-      return;
-    }
-
-    try {
-      const userId = localStorage.getItem("userId");
-      const endpoint = `/api/social-media/search?q=${encodeURIComponent(
-        value
-      )}&userId=${encodeURIComponent(userId)}`;
-      const res = await getAPI(endpoint, {}, true, true);
-      const result = res.data || res;
-
-      setSuggestedUsers([]);
-      setSuggestedTags([]);
-      setSuggestedPosts([]);
-
-      if (result.type === "users" && result.users)
-        setSuggestedUsers(result.users);
-      if (result.type === "hashtags" && result.tags)
-        setSuggestedTags(result.tags);
-      if (result.type === "posts" && result.posts)
-        setSuggestedPosts(result.posts);
-
-      setShowDropdown(
-        result.users?.length > 0 ||
-        result.tags?.length > 0 ||
-        result.posts?.length > 0
-      );
-    } catch (err) {
-      console.error("Search error:", err);
       setShowDropdown(false);
     }
   };

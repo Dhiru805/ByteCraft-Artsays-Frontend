@@ -8,6 +8,23 @@ import { toast } from "react-toastify";
 import ArtGalleryContentSkeleton from "../../../Component/Skeleton/Home/Account/ArtGalleryContentSkeleton";
 import "../../store/products/product.css";
 
+// Debounce hook
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
 const ArtGalleryContent = () => {
   const [page, setPage] = useState(null);
   const [allProducts, setAllProducts] = useState([]);
@@ -57,6 +74,7 @@ const ArtGalleryContent = () => {
     productSurfaceType: [],
     search: "",
   });
+  const debouncedSearch = useDebounce(filters.search, 400); // 400ms debounce delay
 
   const [options, setOptions] = useState({
     categories: [],
@@ -221,11 +239,11 @@ const ArtGalleryContent = () => {
   useEffect(() => {
     let result = [...allProducts];
 
-    if (filters.search) {
+    if (debouncedSearch) {
       result = result.filter((p) =>
-        p.productName.toLowerCase().includes(filters.search.toLowerCase()) ||
-        (p.userId?.name && p.userId.name.toLowerCase().includes(filters.search.toLowerCase())) ||
-        (p.userId?.lastName && p.userId.lastName.toLowerCase().includes(filters.search.toLowerCase()))
+        p.productName.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        (p.userId?.name && p.userId.name.toLowerCase().includes(debouncedSearch.toLowerCase())) ||
+        (p.userId?.lastName && p.userId.lastName.toLowerCase().includes(debouncedSearch.toLowerCase()))
       );
     }
 
@@ -236,7 +254,7 @@ const ArtGalleryContent = () => {
 
     setFilteredProducts(result);
     setCurrentPage(1);
-  }, [allProducts, filters]);
+  }, [allProducts, filters, debouncedSearch]);
 
   const handleFilterChange = (category, value) => {
     setFilters((prev) => ({ ...prev, [category]: value }));

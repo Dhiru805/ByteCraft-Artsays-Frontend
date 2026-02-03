@@ -7,6 +7,23 @@ import mainImage from "../../assets/blogGrid/blog-grid-main.png";
 import BlogCard from "./BlogCard";
 import { BlogGridSkeleton } from "../../Component/Skeleton/Blog/BlogSkeleton";
 
+// Debounce hook
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
 function Blogs() {
     const [showFilters, setShowFilters] = useState(false);
     const [blogs, setBlogs] = useState([]);
@@ -18,6 +35,7 @@ function Blogs() {
     const [selectedCategory, setSelectedCategory] = useState("");
     const [selectedSort, setSelectedSort] = useState("newest");
     const [search, setSearch] = useState("");
+    const debouncedSearch = useDebounce(search, 400); // 400ms debounce delay
     const [selectedReadingTime, setSelectedReadingTime] = useState("");
 
     const ITEMS_PER_PAGE = 12;
@@ -33,7 +51,7 @@ function Blogs() {
             const params = new URLSearchParams();
             if (selectedCategory) params.append("category", selectedCategory);
             if (selectedSort) params.append("sort", selectedSort);
-            if (search) params.append("search", search);
+            if (debouncedSearch) params.append("search", debouncedSearch);
             if (selectedReadingTime) params.append("readingTime", selectedReadingTime);
             
             if (params.toString()) {
@@ -80,7 +98,7 @@ function Blogs() {
 
     useEffect(() => {
         fetchBlogsData();
-    }, [selectedCategory, selectedSort, search, selectedReadingTime]);
+    }, [selectedCategory, selectedSort, debouncedSearch, selectedReadingTime]);
 
     useEffect(() => {
         fetchCMS();

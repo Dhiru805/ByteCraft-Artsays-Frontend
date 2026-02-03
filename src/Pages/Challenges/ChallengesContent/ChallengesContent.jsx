@@ -18,6 +18,23 @@ import { differenceInDays, format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import ChallengeSkeleton from "../../../Component/Skeleton/ChallengeSkeleton";
 
+// Debounce hook
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
 const ChallengesContent = () => {
   const [showDetails, setShowDetails] = useState({});
   const [challengesData, setChallengesData] = useState([]);
@@ -25,6 +42,7 @@ const ChallengesContent = () => {
   const [cmsData, setCmsData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 400);
 
   const navigate = useNavigate();
 
@@ -84,7 +102,7 @@ const ChallengesContent = () => {
   };
 
   const filteredChallenges = challengesData.filter((challenge) => {
-    const matchesSearch = challenge.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = challenge.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
     const matchesStatus = selectedStatus === "all" || challenge.status === selectedStatus;
     return matchesSearch && matchesStatus;
   });
