@@ -314,7 +314,6 @@ const BuyerWallet = () => {
   const transactionsRef = useRef(null);
 
   const API_URL = process.env.REACT_APP_API_URL;
-    const RAZORPAY_KEY = process.env.REACT_APP_RAZORPAY_KEY;
     const userId = localStorage.getItem("userId");
     const userType = localStorage.getItem("userType");
 
@@ -428,151 +427,24 @@ const BuyerWallet = () => {
     }
   };
 
-  const loadRazorpayScript = () =>
-    new Promise((resolve) => {
-      if (document.getElementById("razorpay-sdk")) return resolve(true);
-      const script = document.createElement("script");
-      script.id = "razorpay-sdk";
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-
   const addMoneyDirect = async () => {
     if (!amount || Number(amount) <= 0) return alert("Enter deposit amount");
     setIsLoading(true);
     try {
-      const res = await axios.post(`${API_URL}/api/wallet/add-money/${userId}`, { amount: Number(amount) });
-      setWallet(res.data.wallet);
-      setTransactions(prev => [res.data.transaction, ...prev]);
-      setAmount("");
-      toast.success("Wallet credited");
+      const res = await axios.post(`${API_URL}/api/wallet/add-money/initiate/${userId}`, { amount: Number(amount) });
+      if (res.data.success && res.data.data?.paymentUrl) {
+        // Redirect to Easebuzz payment page
+        window.location.href = res.data.data.paymentUrl;
+      } else {
+        toast.error(res.data.message || "Failed to initiate payment");
+      }
     } catch (err) {
       console.error("Error adding money:", err);
-      toast.error("Failed to add money");
+      toast.error(err.response?.data?.message || "Failed to add money");
     } finally {
       setIsLoading(false);
     }
   };
-
-  // const addMoneyViaRazorpay = async () => {
-  //   if (!amount || Number(amount) <= 0) return alert("Enter deposit amount");
-
-  //   if (!RAZORPAY_KEY) {
-  //     toast.warning("Razorpay key not configured. Using test mode...");
-  //     setTimeout(async () => {
-  //       await fetchWallet();
-  //       await fetchTransactions();
-  //       toast.success("Test payment completed!");
-  //     }, 1000);
-  //     return;
-  //   }
-
-  //   const ok = await loadRazorpayScript();
-  //   if (!ok) return toast.error("Failed to load payment SDK");
-
-  //   try {
-  //     const init = await axios.post(`${API_URL}/api/wallet/add-money-initiate/${userId}`, { amount: Number(amount) });
-  //     const { id: orderId, amount: razorpayAmount, currency } = init.data;
-
-  //     const options = {
-  //       key: RAZORPAY_KEY,
-  //       amount: razorpayAmount,
-  //       currency: currency || "INR",
-  //       name: "Artsays Wallet",
-  //       description: "Add Money to Wallet",
-  //       order_id: orderId,
-  //       handler: async function (response) {
-  //         toast.success("Payment successful! Updating wallet...");
-  //         setTimeout(async () => {
-  //           await fetchWallet();
-  //           await fetchTransactions();
-  //         }, 1500);
-  //       },
-  //       prefill: { name: "Artsays User", email: "user@artsays.com" },
-  //       theme: { color: "#121212" },
-  //       modal: { ondismiss: function () { toast.info("Payment cancelled"); } }
-  //     };
-
-  //     const rz = new window.Razorpay(options);
-  //     rz.on("payment.failed", function (response) {
-  //       toast.error("Payment failed: " + (response.error?.description || "Unknown error"));
-  //     });
-  //     rz.open();
-  //   } catch (err) {
-  //     console.error("Error initiating payment:", err);
-  //     toast.error("Failed to start payment: " + (err.response?.data?.error || err.message));
-  //   }
-  // };
-const addMoneyViaRazorpay = async () => {
-  if (!amount || Number(amount) <= 0) {
-    toast.error("Enter a valid amount");
-    return;
-  }
-
-  setIsLoading(true);
-
-  try {
-    // 🔹 TEST MODE (NO RAZORPAY KEY)
-    if (!RAZORPAY_KEY) {
-      const res = await axios.post(
-        `${API_URL}/api/wallet/add-money/${userId}`,
-        { amount: Number(amount), source: "test" }
-      );
-
-      setWallet(res.data.wallet);
-      setTransactions(prev => [res.data.transaction, ...prev]);
-      setAmount("");
-
-      toast.success("Payment successful! Wallet credited.");
-      return;
-    }
-
-    // 🔹 REAL RAZORPAY FLOW
-    const ok = await loadRazorpayScript();
-    if (!ok) {
-      toast.error("Unable to load payment gateway");
-      return;
-    }
-
-    const init = await axios.post(
-      `${API_URL}/api/wallet/add-money-initiate/${userId}`,
-      { amount: Number(amount) }
-    );
-
-    const { id: orderId, amount: razorpayAmount, currency } = init.data;
-
-    const options = {
-      key: RAZORPAY_KEY,
-      amount: razorpayAmount,
-      currency: currency || "INR",
-      name: "Artsays Wallet",
-      description: "Add Money to Wallet",
-      order_id: orderId,
-      handler: async () => {
-        toast.success("Payment successful!");
-
-        await fetchWallet();
-        await fetchTransactions();
-      },
-      modal: {
-        ondismiss: () => toast.info("Payment cancelled")
-      }
-    };
-
-    const rz = new window.Razorpay(options);
-    rz.on("payment.failed", () => {
-      toast.error("Payment failed");
-    });
-    rz.open();
-  } catch (err) {
-    console.error(err);
-    toast.error("Payment failed. Please try again.");
-  } finally {
-    setIsLoading(false);
-  }
-};
 
   const isValidUpi = (upi) => {
   const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
@@ -883,27 +755,20 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
                   onChange={e => setAmount(e.target.value)}
                   min="1"
                 />
-              </div>
-              <div className="d-flex gap-2">
-                <button
-                  disabled={isLoading}
-                  className="btn btn-primary"
-                  style={{ backgroundColor: "#4B2E05", borderColor: "#4B2E05", color: "#fff" }}
-                  onClick={addMoneyDirect}
-                >
-                  Quick Add
-                </button>
-                <button
-                  disabled={isLoading}
-                  className="btn btn-success"
-                  onClick={addMoneyViaRazorpay}
-                >
-                  Pay via Razorpay
-                </button>
+                </div>
+                <div className="d-flex gap-2">
+                  <button
+                    disabled={isLoading}
+                    className="btn btn-primary"
+                    style={{ backgroundColor: "#4B2E05", borderColor: "#4B2E05", color: "#fff" }}
+                    onClick={addMoneyDirect}
+                  >
+                    Add Money
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
         <div className="col-lg-6 col-md-12">
           <div className="card">
@@ -1077,7 +942,7 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
                   <div className="col-md-4">
                     <h5>How to Use</h5>
                     <ul>
-                      <li>1 coin = {coinSetting.currency} {coinSetting.coinValue.toFixed(2)} discount</li>
+                      <li>1 coin = {coinSetting.currency} {(coinSetting.coinValue || 0).toFixed(2)} discount</li>
                       <li>Max 20% discount per order</li>
                       <li>Use during checkout</li>
                     </ul>

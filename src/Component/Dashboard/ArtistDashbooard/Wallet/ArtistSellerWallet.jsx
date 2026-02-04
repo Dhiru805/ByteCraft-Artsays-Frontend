@@ -87,23 +87,25 @@ const ArtistWallet = () => {
     fetchReferralSettings();
   }, [userId, fetchWallet, fetchTransactions, fetchWithdrawals, fetchReferralData, fetchReferralSettings]);
 
-  const addMoneyDirect = async () => {
-    if (!amount || amount <= 0) return toast.error("Please enter a valid amount");
-    setIsLoading(true);
-    try {
-      const res =await axios.post(`${API_URL}/api/wallet/add-money/initiate/${userId}`, { amount: Number(amount) });
-     if (res.data.success && res.data.data.paymentUrl) {
-      window.location.href = res.data.data.paymentUrl;
-    }
-      setAmount("");
-      fetchWallet();
-      fetchTransactions();
-    } catch (err) {
-      toast.error("Failed to add money");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    const addMoneyDirect = async () => {
+      if (!amount || amount <= 0) return toast.error("Please enter a valid amount");
+      setIsLoading(true);
+      try {
+        const res = await axios.post(`${API_URL}/api/wallet/add-money/initiate/${userId}`, { amount: Number(amount) });
+        if (res.data.success && res.data.data.paymentUrl) {
+          window.location.href = res.data.data.paymentUrl;
+        }
+        setAmount("");
+        fetchWallet();
+        fetchTransactions();
+      } catch (err) {
+        const errorMsg = err.response?.data?.message || err.response?.data?.error?.data || "Failed to add money";
+        toast.error(errorMsg);
+        console.error("Add money error:", err.response?.data);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
   // const addMoneyViaRazorpay = async () => {
   //   if (!amount || amount <= 0) return toast.error("Please enter a valid amount");
