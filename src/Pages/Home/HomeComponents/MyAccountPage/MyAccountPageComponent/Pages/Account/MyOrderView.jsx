@@ -598,16 +598,17 @@ const OrderView = () => {
             </div>
           </div>
         </motion.div>
-      </div>
+        </div>
 
-        {/* REVIEW SECTION */}
-        <motion.div 
-          id="review-section"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="bg-[#FDF8F3] rounded-[2.5rem] p-8 sm:p-12 border border-[#6F4D34]/10 shadow-inner"
-        >
+        {/* REVIEW SECTION - Only show if order is NOT cancelled */}
+        {orderStatus !== "Cancelled" && (
+          <motion.div 
+            id="review-section"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="bg-[#FDF8F3] rounded-[2.5rem] p-8 sm:p-12 border border-[#6F4D34]/10 shadow-inner"
+          >
           <div className="space-y-10">
             <div className="text-center space-y-3">
               <div className="inline-flex p-3 bg-white rounded-2xl shadow-sm mb-2">
@@ -723,10 +724,11 @@ const OrderView = () => {
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
-      </motion.div>
+          </div>
+        </motion.div>
+        )}
 
-      {/* MODALS & POPUPS */}
+        {/* MODALS & POPUPS */}
       <AnimatePresence>
         {showCancelModal && (
           <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-md z-[100] px-4">
