@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { FaWallet, FaCoins, FaExchangeAlt, FaArrowUp, FaArrowDown, FaCopy, FaDownload, FaGift, FaUsers, FaCheckCircle, FaHistory, FaChartLine } from "react-icons/fa";
+import { FaWallet, FaCoins, FaExchangeAlt, FaArrowUp, FaArrowDown, FaCopy, FaDownload, FaGift, FaUsers, FaCheckCircle, FaHistory, FaChartLine, FaPlus } from "react-icons/fa";
 import BuyerWalletSkeleton from "../../../Skeleton/wallet/BuyerWalletSkeleton";
 
 const BuyerWallet = () => {
@@ -22,6 +22,8 @@ const BuyerWallet = () => {
   const [isApplyingReferral, setIsApplyingReferral] = useState(false);
   const [referralSettings, setReferralSettings] = useState(null);
   const [coinSetting, setCoinSetting] = useState({ coinValue: 0.10, currency: "INR", transactionReward: 10 });
+  const [savedBankDetails, setSavedBankDetails] = useState(null);
+  const [selectedPaymentOption, setSelectedPaymentOption] = useState("saved"); // "saved" or "new"
 
   const transactionsRef = useRef(null);
 
@@ -108,6 +110,26 @@ const BuyerWallet = () => {
     }
   };
 
+  const fetchBankDetails = async () => {
+    if (!userId) return;
+    try {
+      const res = await axios.get(`${API_URL}/auth/bankdetails/${userId}`);
+      if (res.data && res.data.bankDetails) {
+        setSavedBankDetails(res.data.bankDetails);
+        if (res.data.bankDetails.upiId || res.data.bankDetails.accountNumber) {
+          setSelectedPaymentOption("saved");
+        }
+      } else {
+        setSavedBankDetails(null);
+      }
+    } catch (err) {
+      if (err.response?.status !== 404) {
+        console.error("Error fetching bank details:", err);
+      }
+      setSavedBankDetails(null);
+    }
+  };
+
   const copyReferralCode = () => {
     if (wallet?.referralCode) {
       navigator.clipboard.writeText(wallet.referralCode);
@@ -162,18 +184,37 @@ const BuyerWallet = () => {
   const requestWithdrawal = async () => {
     if (!withdrawAmount || Number(withdrawAmount) <= 0) return toast.error("Enter amount to withdraw");
 
+    // Determine destination based on saved or new selection
+    let destination;
+    
     if (withdrawMethod === "upi") {
-      if (!withdrawDestination.upi) return toast.error("Please enter UPI ID");
-      if (!isValidUpi(withdrawDestination.upi)) return toast.error("Invalid UPI ID format (example: name@bank)");
+      if (selectedPaymentOption === "saved" && savedBankDetails?.upiId) {
+        destination = savedBankDetails.upiId;
+      } else {
+        if (!withdrawDestination.upi) return toast.error("Please enter UPI ID");
+        if (!isValidUpi(withdrawDestination.upi)) return toast.error("Invalid UPI ID format (example: name@bank)");
+        destination = withdrawDestination.upi;
+      }
     }
 
     if (withdrawMethod === "bank") {
-      const { name, accountNumber, ifsc, bankName, purpose } = withdrawDestination;
-      if (!isValidName(name)) return toast.error("Enter a valid beneficiary name (letters only)");
-      if (!isValidAccountNumber(accountNumber)) return toast.error("Enter a valid account number (9-18 digits)");
-      if (!isValidIFSC(ifsc)) return toast.error("Enter a valid IFSC code (example: SBIN0001234)");
-      if (!isValidText(bankName)) return toast.error("Enter a valid bank name and branch");
-      if (!isValidText(purpose)) return toast.error("Purpose of transfer is required");
+      if (selectedPaymentOption === "saved" && savedBankDetails?.accountNumber) {
+        destination = {
+          name: savedBankDetails.accountHolderName,
+          accountNumber: savedBankDetails.accountNumber,
+          ifsc: savedBankDetails.ifscCode,
+          bankName: savedBankDetails.bankName,
+          purpose: "Wallet Withdrawal"
+        };
+      } else {
+        const { name, accountNumber, ifsc, bankName, purpose } = withdrawDestination;
+        if (!isValidName(name)) return toast.error("Enter a valid beneficiary name (letters only)");
+        if (!isValidAccountNumber(accountNumber)) return toast.error("Enter a valid account number (9-18 digits)");
+        if (!isValidIFSC(ifsc)) return toast.error("Enter a valid IFSC code (example: SBIN0001234)");
+        if (!isValidText(bankName)) return toast.error("Enter a valid bank name and branch");
+        if (!isValidText(purpose)) return toast.error("Purpose of transfer is required");
+        destination = withdrawDestination;
+      }
     }
 
     if (Number(withdrawAmount) > (wallet?.balance || 0)) return toast.error("Insufficient balance");
@@ -184,7 +225,7 @@ const BuyerWallet = () => {
       const res = await axios.post(`${API_URL}/api/wallet/withdraw/${userId}`, {
         amount: Number(withdrawAmount),
         method: withdrawMethod,
-        destination: withdrawMethod === "upi" ? withdrawDestination.upi : withdrawDestination
+        destination: destination
       });
       setWallet(res.data.wallet);
       setTransactions(prev => [res.data.transaction, ...prev]);
@@ -268,6 +309,7 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
     fetchReferralData();
     fetchReferralSettings();
     fetchCoinSetting();
+    fetchBankDetails();
   }, [userId]);
 
   useEffect(() => {
@@ -408,96 +450,189 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
         </div>
 
         {/* Request Withdrawal */}
-        <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-gray-100 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50/50 transition-all duration-500">
-          <h3 className="text-lg font-bold text-gray-900 mb-6">Request Withdrawal</h3>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Amount (₹)</label>
-              <input
-                type="number"
-                value={withdrawAmount}
-                onChange={e => setWithdrawAmount(e.target.value)}
-                placeholder="Enter amount"
-                min="100"
-                className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Withdrawal Method</label>
-              <select
-                value={withdrawMethod}
-                onChange={e => setWithdrawMethod(e.target.value)}
-                className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
-              >
-                <option value="upi">UPI</option>
-                <option value="bank">Bank Transfer</option>
-              </select>
-            </div>
-
-            {withdrawMethod === "upi" && (
+          <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-gray-100 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50/50 transition-all duration-500">
+            <h3 className="text-lg font-bold text-gray-900 mb-6">Request Withdrawal</h3>
+            <div className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">UPI ID</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Amount (₹)</label>
                 <input
-                  type="text"
-                  value={withdrawDestination.upi || ""}
-                  onChange={e => setWithdrawDestination({ upi: e.target.value })}
-                  placeholder="yourname@upi"
+                  type="number"
+                  value={withdrawAmount}
+                  onChange={e => setWithdrawAmount(e.target.value)}
+                  placeholder="Enter amount"
+                  min="100"
                   className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
                 />
               </div>
-            )}
-
-            {withdrawMethod === "bank" && (
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  value={withdrawDestination.name || ""}
-                  onChange={e => setWithdrawDestination({ ...withdrawDestination, name: e.target.value })}
-                  placeholder="Beneficiary Name"
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Withdrawal Method</label>
+                <select
+                  value={withdrawMethod}
+                  onChange={e => {
+                    setWithdrawMethod(e.target.value);
+                    setSelectedPaymentOption("saved");
+                    setWithdrawDestination({});
+                  }}
                   className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
-                />
-                <input
-                  type="text"
-                  value={withdrawDestination.accountNumber || ""}
-                  onChange={e => setWithdrawDestination({ ...withdrawDestination, accountNumber: e.target.value })}
-                  placeholder="Account Number"
-                  className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
-                />
-                <input
-                  type="text"
-                  value={withdrawDestination.ifsc || ""}
-                  onChange={e => setWithdrawDestination({ ...withdrawDestination, ifsc: e.target.value.toUpperCase() })}
-                  placeholder="IFSC Code"
-                  className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
-                />
-                <input
-                  type="text"
-                  value={withdrawDestination.bankName || ""}
-                  onChange={e => setWithdrawDestination({ ...withdrawDestination, bankName: e.target.value })}
-                  placeholder="Bank Name & Branch"
-                  className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
-                />
-                <input
-                  type="text"
-                  value={withdrawDestination.purpose || ""}
-                  onChange={e => setWithdrawDestination({ ...withdrawDestination, purpose: e.target.value })}
-                  placeholder="Purpose of Transfer"
-                  className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
-                />
+                >
+                  <option value="upi">UPI</option>
+                  <option value="bank">Bank Transfer</option>
+                </select>
               </div>
-            )}
 
-            <button
-              onClick={requestWithdrawal}
-              disabled={isLoading}
-              className="w-full bg-amber-500 hover:bg-amber-600 text-white py-3 px-6 rounded-2xl font-semibold shadow-lg shadow-amber-500/20 transition-all duration-300 active:scale-95 disabled:opacity-50"
-            >
-              {isLoading ? "Processing..." : "Request Withdrawal"}
-            </button>
-            <p className="text-xs text-gray-500 text-center">Minimum withdrawal: ₹100. Admin approval required.</p>
+              {/* Payment Option Selection */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Select Payment Details</label>
+                <div className="flex gap-2">
+                  {((withdrawMethod === "upi" && savedBankDetails?.upiId) || 
+                    (withdrawMethod === "bank" && savedBankDetails?.accountNumber)) && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedPaymentOption("saved")}
+                      className={`flex-1 py-3 px-4 rounded-xl text-sm font-medium transition-all duration-300 ${
+                        selectedPaymentOption === "saved" 
+                          ? "bg-[#5C4033] text-white" 
+                          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      }`}
+                    >
+                      Use Saved Details
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedPaymentOption("new");
+                      setWithdrawDestination({});
+                    }}
+                    className={`flex-1 py-3 px-4 rounded-xl text-sm font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
+                      selectedPaymentOption === "new" 
+                        ? "bg-[#5C4033] text-white" 
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    <FaPlus className="text-xs" /> Add New
+                  </button>
+                </div>
+              </div>
+
+              {/* Saved UPI Details */}
+              {withdrawMethod === "upi" && selectedPaymentOption === "saved" && savedBankDetails?.upiId && (
+                <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 p-4 rounded-2xl border border-emerald-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <FaCheckCircle className="text-emerald-500" />
+                    <span className="text-sm font-semibold text-emerald-700">Saved UPI ID</span>
+                  </div>
+                  <p className="text-lg font-bold text-gray-900">{savedBankDetails.upiId}</p>
+                </div>
+              )}
+
+              {/* Saved Bank Details */}
+              {withdrawMethod === "bank" && selectedPaymentOption === "saved" && savedBankDetails?.accountNumber && (
+                <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 p-4 rounded-2xl border border-emerald-200">
+                  <div className="flex items-center gap-2 mb-3">
+                    <FaCheckCircle className="text-emerald-500" />
+                    <span className="text-sm font-semibold text-emerald-700">Saved Bank Account</span>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Account Holder:</span>
+                      <span className="font-semibold text-gray-900">{savedBankDetails.accountHolderName}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Account Number:</span>
+                      <span className="font-semibold text-gray-900">
+                        ****{savedBankDetails.accountNumber?.slice(-4)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">IFSC Code:</span>
+                      <span className="font-semibold text-gray-900">{savedBankDetails.ifscCode}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Bank:</span>
+                      <span className="font-semibold text-gray-900">{savedBankDetails.bankName}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* No Saved Details Message */}
+              {selectedPaymentOption === "saved" && 
+                ((withdrawMethod === "upi" && !savedBankDetails?.upiId) || 
+                 (withdrawMethod === "bank" && !savedBankDetails?.accountNumber)) && (
+                <div className="bg-amber-50 p-4 rounded-2xl border border-amber-200">
+                  <p className="text-sm text-amber-700">
+                    No saved {withdrawMethod === "upi" ? "UPI ID" : "bank account"} found. Please add new details below.
+                  </p>
+                </div>
+              )}
+
+              {/* New UPI Input */}
+              {withdrawMethod === "upi" && (selectedPaymentOption === "new" || !savedBankDetails?.upiId) && (
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">UPI ID</label>
+                  <input
+                    type="text"
+                    value={withdrawDestination.upi || ""}
+                    onChange={e => setWithdrawDestination({ upi: e.target.value })}
+                    placeholder="yourname@upi"
+                    className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+                  />
+                </div>
+              )}
+
+              {/* New Bank Details Input */}
+              {withdrawMethod === "bank" && (selectedPaymentOption === "new" || !savedBankDetails?.accountNumber) && (
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    value={withdrawDestination.name || ""}
+                    onChange={e => setWithdrawDestination({ ...withdrawDestination, name: e.target.value })}
+                    placeholder="Beneficiary Name"
+                    className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+                  />
+                  <input
+                    type="text"
+                    value={withdrawDestination.accountNumber || ""}
+                    onChange={e => setWithdrawDestination({ ...withdrawDestination, accountNumber: e.target.value })}
+                    placeholder="Account Number"
+                    className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+                  />
+                  <input
+                    type="text"
+                    value={withdrawDestination.ifsc || ""}
+                    onChange={e => setWithdrawDestination({ ...withdrawDestination, ifsc: e.target.value.toUpperCase() })}
+                    placeholder="IFSC Code"
+                    className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+                  />
+                  <input
+                    type="text"
+                    value={withdrawDestination.bankName || ""}
+                    onChange={e => setWithdrawDestination({ ...withdrawDestination, bankName: e.target.value })}
+                    placeholder="Bank Name & Branch"
+                    className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+                  />
+                  <input
+                    type="text"
+                    value={withdrawDestination.purpose || ""}
+                    onChange={e => setWithdrawDestination({ ...withdrawDestination, purpose: e.target.value })}
+                    placeholder="Purpose of Transfer"
+                    className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+                  />
+                </div>
+              )}
+
+              <button
+                onClick={requestWithdrawal}
+                disabled={isLoading}
+                className="w-full bg-amber-500 hover:bg-amber-600 text-white py-3 px-6 rounded-2xl font-semibold shadow-lg shadow-amber-500/20 transition-all duration-300 active:scale-95 disabled:opacity-50"
+              >
+                {isLoading ? "Processing..." : "Request Withdrawal"}
+              </button>
+              <p className="text-xs text-gray-500 text-center">Minimum withdrawal: ₹100. Admin approval required.</p>
+            </div>
           </div>
         </div>
-      </div>
 
       {/* Referral Program Card */}
       {showReferral && referralData && (
