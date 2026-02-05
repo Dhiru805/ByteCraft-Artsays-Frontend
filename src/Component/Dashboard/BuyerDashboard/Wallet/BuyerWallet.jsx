@@ -1,297 +1,7 @@
-// import React, { useEffect, useState } from "react";
-// import axios from "axios";
-// import { toast } from "react-toastify";
-
-// const BuyerWallet = () => {
-//   const [wallet, setWallet] = useState(null);
-//   const [transactions, setTransactions] = useState([]);
-//   const [amount, setAmount] = useState("");
-//   const [isLoading, setIsLoading] = useState(false);
-
-//   const API_URL = process.env.REACT_APP_API_URL;
-//   const RAZORPAY_KEY = process.env.REACT_APP_RAZORPAY_KEY;
-//   const userId = localStorage.getItem("userId");
-
-//   const fetchWallet = async () => {
-//     if (!userId) return;
-//     try {
-//       const res = await axios.get(`${API_URL}/api/wallet/${userId}`);
-//       setWallet(res.data);
-//     } catch (err) {
-//       if (err.response && err.response.status === 404) {
-//         const createRes = await axios.post(`${API_URL}/api/wallet/ensure/${userId}`);
-//         setWallet(createRes.data);
-//       } else console.error("Error fetching wallet:", err);
-//     }
-//   };
-
-//   const fetchTransactions = async () => {
-//     if (!userId) return;
-//     try {
-//       const res = await axios.get(`${API_URL}/api/wallet/transactions/${userId}`);
-//       setTransactions(res.data);
-//     } catch (err) {
-//       console.error("Error fetching transactions:", err);
-//     }
-//   };
-
-//   const loadRazorpayScript = () => new Promise((resolve) => {
-//     if (document.getElementById("razorpay-sdk")) return resolve(true);
-//     const script = document.createElement("script");
-//     script.id = "razorpay-sdk";
-//     script.src = "https://checkout.razorpay.com/v1/checkout.js";
-//     script.onload = () => resolve(true);
-//     script.onerror = () => resolve(false);
-//     document.body.appendChild(script);
-//   });
-
-//   const addMoneyDirect = async () => {
-//     if (!amount) return alert("Enter deposit amount");
-//     setIsLoading(true);
-//     try {
-//       const res = await axios.post(`${API_URL}/api/wallet/add-money/${userId}`, { amount: Number(amount) });
-//       setWallet(res.data.wallet);
-//       setTransactions([res.data.transaction, ...transactions]);
-//       setAmount("");
-//       toast.success("Wallet credited");
-//     } catch (err) {
-//       console.error("Error adding money:", err);
-//       toast.error("Failed to add money");
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-
-//   const addMoneyViaRazorpay = async () => {
-//     if (!amount) return alert("Enter deposit amount");
-
-//     if (!RAZORPAY_KEY) {
-//       toast.warning("Razorpay key not configured. Using test mode...");
-//       setTimeout(async () => {
-//         await fetchWallet();
-//         await fetchTransactions();
-//         toast.success("Test payment completed!");
-//       }, 1000);
-//       return;
-//     }
-
-//     const ok = await loadRazorpayScript();
-//     if (!ok) return toast.error("Failed to load payment SDK");
-//     try {
-//       const init = await axios.post(`${API_URL}/api/wallet/add-money-initiate/${userId}`, { amount: Number(amount) });
-//       const { id: orderId, amount: razorpayAmount, currency } = init.data;
-
-//       const options = {
-//         key: RAZORPAY_KEY,
-//         amount: razorpayAmount,
-//         currency: currency || "INR",
-//         name: "Artsays Wallet",
-//         description: "Add Money to Wallet",
-//         order_id: orderId,
-//         handler: async function (response) {
-//           toast.success("Payment successful! Updating wallet...");
-//           setTimeout(async () => {
-//             await fetchWallet();
-//             await fetchTransactions();
-//           }, 2000);
-//         },
-//         prefill: {
-//           name: "Artsays User",
-//           email: "user@artsays.com"
-//         },
-//         theme: { color: "#121212" },
-//         modal: {
-//           ondismiss: function() {
-//             toast.info("Payment cancelled");
-//           }
-//         }
-//       };
-
-//       const rz = new window.Razorpay(options);
-//       rz.on('payment.failed', function (response) {
-//         toast.error("Payment failed: " + response.error.description);
-//       });
-//       rz.open();
-//     } catch (err) {
-//       console.error("Error initiating payment:", err);
-//       toast.error("Failed to start payment: " + (err.response?.data?.error || err.message));
-//     }
-//   };
-
-//   useEffect(() => {
-//     if (!userId) return;
-//     fetchWallet();
-//     fetchTransactions();
-//   }, [userId]);
-
-//   if (!wallet) return <div>Loading...</div>;
-
-//   return (
-//     <div className="container-fluid">
-//       <div className="block-header mb-4">
-//         <h2>My Wallet</h2>
-//       </div>
-
-//       {/* Balance Cards */}
-//       <div className="row clearfix row-deck mb-4">
-//         <div className="col-lg-4 col-md-6 col-sm-6">
-//           <div className="card top_widget primary-bg">
-//             <div className="body">
-//               <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-rupee"></i></div>
-//               <div className="content text-light">
-//                 <div className="text mb-2 text-uppercase">Available Balance</div>
-//                 <h4 className="number mb-0">₹{wallet.balance}</h4>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         <div className="col-lg-4 col-md-6 col-sm-6">
-//           <div className="card top_widget secondary-bg">
-//             <div className="body">
-//               <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-shopping-basket"></i></div>
-//               <div className="content text-light">
-//                 <div className="text mb-2 text-uppercase">Art Coins</div>
-//                 <h4 className="number mb-0">{wallet.artCoins}</h4>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         <div className="col-lg-4 col-md-6 col-sm-6">
-//           <div className="card top_widget bg-dark">
-//             <div className="body">
-//               <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-history"></i></div>
-//               <div className="content text-light">
-//                 <div className="text mb-2 text-uppercase">Total Transactions</div>
-//                 <h4 className="number mb-0">{transactions.length}</h4>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Add Money Section */}
-//       <div className="row clearfix mb-4">
-//         <div className="col-lg-6 col-md-12">
-//           <div className="card">
-//             <div className="header">
-//               <h2>Add Money to Wallet</h2>
-//             </div>
-//             <div className="body">
-//               <div className="form-group">
-//                 <label>Amount (₹)</label>
-//                 <input
-//                   type="number"
-//                   className="form-control"
-//                   placeholder="Enter amount"
-//                   value={amount}
-//                   onChange={e => setAmount(e.target.value)}
-//                   min="1"
-//                 />
-//               </div>
-//               <div className="d-flex gap-2">
-//                 <button 
-//                   disabled={isLoading} 
-//                   className="btn btn-primary" 
-//                   onClick={addMoneyDirect}
-//                 >
-//                   Quick Add
-//                 </button>
-//                 <button 
-//                   disabled={isLoading} 
-//                   className="btn btn-success" 
-//                   onClick={addMoneyViaRazorpay}
-//                 >
-//                   Pay via Razorpay
-//                 </button>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         <div className="col-lg-6 col-md-12">
-//           <div className="card">
-//             <div className="header">
-//               <h2>Wallet Benefits</h2>
-//             </div>
-//             <div className="body">
-//               <ul className="list-unstyled">
-//                 <li><i className="fa fa-check text-success"></i> Instant payments for purchases</li>
-//                 <li><i className="fa fa-check text-success"></i> Secure bidding with wallet balance</li>
-//                 <li><i className="fa fa-check text-success"></i> Earn Art Coins with every transaction</li>
-//                 <li><i className="fa fa-check text-success"></i> Automatic refunds for failed bids</li>
-//                 <li><i className="fa fa-check text-success"></i> No transaction fees</li>
-//               </ul>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Recent Transactions */}
-//       <div className="row clearfix">
-//         <div className="col-sm-12">
-//           <div className="card">
-//             <div className="header">
-//               <h2>Recent Transactions</h2>
-//             </div>
-//             <div className="body table-responsive">
-//               <table className="table table-hover mb-0">
-//                 <thead>
-//                   <tr>
-//                     <th>#</th>
-//                     <th>Type</th>
-//                     <th>Amount</th>
-//                     <th>Purpose</th>
-//                     <th>Status</th>
-//                     <th>Date</th>
-//                   </tr>
-//                 </thead>
-//                 <tbody>
-//                   {transactions.slice(0, 10).map((txn, idx) => (
-//                     <tr key={txn._id}>
-//                       <td>{idx + 1}</td>
-//                       <td>
-//                         <span className={`badge ${txn.type === 'credit' ? 'badge-success' : 'badge-danger'}`}>
-//                           {txn.type}
-//                         </span>
-//                       </td>
-//                       <td>₹{txn.amount}</td>
-//                       <td>{txn.purpose}</td>
-//                       <td>
-//                         <span className={`badge ${
-//                           txn.status === 'success' ? 'badge-success' : 
-//                           txn.status === 'pending' ? 'badge-warning' : 'badge-danger'
-//                         }`}>
-//                           {txn.status}
-//                         </span>
-//                       </td>
-//                       <td>{new Date(txn.createdAt).toLocaleString()}</td>
-//                     </tr>
-//                   ))}
-//                   {transactions.length === 0 && (
-//                     <tr>
-//                       <td colSpan="6" className="text-center">No transactions yet</td>
-//                     </tr>
-//                   )}
-//                 </tbody>
-//               </table>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default BuyerWallet;
-
-
-
-
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { FaWallet, FaCoins, FaExchangeAlt, FaArrowUp, FaArrowDown, FaCopy, FaDownload, FaGift, FaUsers, FaCheckCircle, FaHistory, FaChartLine } from "react-icons/fa";
 import BuyerWalletSkeleton from "../../../Skeleton/wallet/BuyerWalletSkeleton";
 
 const BuyerWallet = () => {
@@ -310,15 +20,16 @@ const BuyerWallet = () => {
   const [referralData, setReferralData] = useState(null);
   const [referralCodeInput, setReferralCodeInput] = useState("");
   const [isApplyingReferral, setIsApplyingReferral] = useState(false);
+  const [referralSettings, setReferralSettings] = useState(null);
+  const [coinSetting, setCoinSetting] = useState({ coinValue: 0.10, currency: "INR", transactionReward: 10 });
 
   const transactionsRef = useRef(null);
 
   const API_URL = process.env.REACT_APP_API_URL;
-    const userId = localStorage.getItem("userId");
-    const userType = localStorage.getItem("userType");
+  const userId = localStorage.getItem("userId");
+  const userType = localStorage.getItem("userType");
 
-    const totalPages = Math.max(1, Math.ceil(transactions.length / pageSize));
-
+  const totalPages = Math.max(1, Math.ceil(transactions.length / pageSize));
   const displayedTransactions = transactions.slice((page - 1) * pageSize, page * pageSize);
 
   const fetchWallet = async () => {
@@ -378,6 +89,32 @@ const BuyerWallet = () => {
     }
   };
 
+  const fetchCoinSetting = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/api/coin-settings`);
+      if (res.data) setCoinSetting(res.data);
+    } catch (err) {
+      console.error("Error fetching coin settings:", err);
+    }
+  };
+
+  const fetchReferralSettings = async () => {
+    if (!userId) return;
+    try {
+      const res = await axios.get(`${API_URL}/api/wallet/referral/settings/${userId}`);
+      setReferralSettings(res.data);
+    } catch (err) {
+      console.error("Error fetching referral settings:", err);
+    }
+  };
+
+  const copyReferralCode = () => {
+    if (wallet?.referralCode) {
+      navigator.clipboard.writeText(wallet.referralCode);
+      toast.success("Referral code copied to clipboard!");
+    }
+  };
+
   const applyReferralCode = async () => {
     if (!referralCodeInput.trim()) return toast.error("Please enter a referral code");
     if (wallet?.referredBy) return toast.error("You have already used a referral code");
@@ -398,42 +135,12 @@ const BuyerWallet = () => {
     }
   };
 
-    const [referralSettings, setReferralSettings] = useState(null);
-    const [coinSetting, setCoinSetting] = useState({ coinValue: 0.10, currency: "INR", transactionReward: 10 });
-
-    const fetchCoinSetting = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/api/coin-settings`);
-        if (res.data) setCoinSetting(res.data);
-      } catch (err) {
-        console.error("Error fetching coin settings:", err);
-      }
-    };
-
-    const fetchReferralSettings = async () => {
-      if (!userId) return;
-      try {
-        const res = await axios.get(`${API_URL}/api/wallet/referral/settings/${userId}`);
-        setReferralSettings(res.data);
-      } catch (err) {
-        console.error("Error fetching referral settings:", err);
-      }
-    };
-
-  const copyReferralCode = () => {
-    if (wallet?.referralCode) {
-      navigator.clipboard.writeText(wallet.referralCode);
-      toast.success("Referral code copied to clipboard!");
-    }
-  };
-
   const addMoneyDirect = async () => {
-    if (!amount || Number(amount) <= 0) return alert("Enter deposit amount");
+    if (!amount || Number(amount) <= 0) return toast.error("Enter deposit amount");
     setIsLoading(true);
     try {
       const res = await axios.post(`${API_URL}/api/wallet/add-money/initiate/${userId}`, { amount: Number(amount) });
       if (res.data.success && res.data.data?.paymentUrl) {
-        // Redirect to Easebuzz payment page
         window.location.href = res.data.data.paymentUrl;
       } else {
         toast.error(res.data.message || "Failed to initiate payment");
@@ -446,79 +153,31 @@ const BuyerWallet = () => {
     }
   };
 
-  const isValidUpi = (upi) => {
-  const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
-  return upiRegex.test(upi);
-};
-const isValidName = (name) => {
-  return /^[A-Za-z\s]{3,50}$/.test(name);
-};
-
-const isValidAccountNumber = (acc) => {
-  return /^[0-9]{9,18}$/.test(acc);
-};
-
-const isValidIFSC = (ifsc) => {
-  return /^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc);
-};
-
-const isValidText = (text) => {
-  return text && text.trim().length >= 3;
-};
-
+  const isValidUpi = (upi) => /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/.test(upi);
+  const isValidName = (name) => /^[A-Za-z\s]{3,50}$/.test(name);
+  const isValidAccountNumber = (acc) => /^[0-9]{9,18}$/.test(acc);
+  const isValidIFSC = (ifsc) => /^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc);
+  const isValidText = (text) => text && text.trim().length >= 3;
 
   const requestWithdrawal = async () => {
-    if (!withdrawAmount || Number(withdrawAmount) <= 0) return alert("Enter amount to withdraw");
-
+    if (!withdrawAmount || Number(withdrawAmount) <= 0) return toast.error("Enter amount to withdraw");
 
     if (withdrawMethod === "upi") {
-  if (!withdrawDestination.upi) {
-    toast.error("Please enter UPI ID");
-    return;
-  }
+      if (!withdrawDestination.upi) return toast.error("Please enter UPI ID");
+      if (!isValidUpi(withdrawDestination.upi)) return toast.error("Invalid UPI ID format (example: name@bank)");
+    }
 
-  if (!isValidUpi(withdrawDestination.upi)) {
-    toast.error("Invalid UPI ID format (example: name@bank)");
-    return;
-  }
-}
-
-    // if (withdrawMethod === "bank") {
-    //   const { name, accountNumber, ifsc, bankName, purpose } = withdrawDestination;
-    //   if (!name || !accountNumber || !ifsc || !bankName || !purpose) return alert("Fill all bank transfer details");
-    // }
     if (withdrawMethod === "bank") {
-  const { name, accountNumber, ifsc, bankName, purpose } = withdrawDestination;
+      const { name, accountNumber, ifsc, bankName, purpose } = withdrawDestination;
+      if (!isValidName(name)) return toast.error("Enter a valid beneficiary name (letters only)");
+      if (!isValidAccountNumber(accountNumber)) return toast.error("Enter a valid account number (9-18 digits)");
+      if (!isValidIFSC(ifsc)) return toast.error("Enter a valid IFSC code (example: SBIN0001234)");
+      if (!isValidText(bankName)) return toast.error("Enter a valid bank name and branch");
+      if (!isValidText(purpose)) return toast.error("Purpose of transfer is required");
+    }
 
-  if (!isValidName(name)) {
-    toast.error("Enter a valid beneficiary name (letters only)");
-    return;
-  }
-
-  if (!isValidAccountNumber(accountNumber)) {
-    toast.error("Enter a valid account number (9–18 digits)");
-    return;
-  }
-
-  if (!isValidIFSC(ifsc)) {
-    toast.error("Enter a valid IFSC code (example: SBIN0001234)");
-    return;
-  }
-
-  if (!isValidText(bankName)) {
-    toast.error("Enter a valid bank name and branch");
-    return;
-  }
-
-  if (!isValidText(purpose)) {
-    toast.error("Purpose of transfer is required");
-    return;
-  }
-}
-
-
-    if (Number(withdrawAmount) > (wallet?.balance || 0)) return alert("Insufficient balance");
-    if (Number(withdrawAmount) < 100) return alert("Minimum withdrawal amount is ₹100");
+    if (Number(withdrawAmount) > (wallet?.balance || 0)) return toast.error("Insufficient balance");
+    if (Number(withdrawAmount) < 100) return toast.error("Minimum withdrawal amount is ₹100");
 
     setIsLoading(true);
     try {
@@ -542,13 +201,10 @@ const isValidText = (text) => {
     }
   };
 
-
-
   const downloadReceipt = async (txnId) => {
     try {
       const res = await axios.get(`${API_URL}/api/wallet/transaction/receipt/${txnId}`);
       const receipt = res.data;
-      
       const receiptContent = `
 ========================================
            ARTSAYS RECEIPT
@@ -572,7 +228,6 @@ Art Coins: ${receipt.artCoinsEarned > 0 ? '+' : ''}${receipt.artCoinsEarned}
 Generated: ${new Date(receipt.generatedAt).toLocaleString()}
 ========================================
       `;
-      
       const blob = new Blob([receiptContent], { type: 'text/plain' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -604,656 +259,607 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
     }
   };
 
-    useEffect(() => {
-      if (!userId) return;
-      fetchWallet();
-      fetchTransactions();
-      fetchWithdrawals();
-      fetchLimits();
-      fetchReferralData();
-      fetchReferralSettings();
-      fetchCoinSetting();
-    }, [userId]);
+  useEffect(() => {
+    if (!userId) return;
+    fetchWallet();
+    fetchTransactions();
+    fetchWithdrawals();
+    fetchLimits();
+    fetchReferralData();
+    fetchReferralSettings();
+    fetchCoinSetting();
+  }, [userId]);
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
   }, [transactions.length, pageSize, totalPages]);
- useEffect(() => {
-  if (transactionsRef.current) {
-    const yOffset = -20;
-    const y =
-      transactionsRef.current.getBoundingClientRect().top +
-      window.pageYOffset +
-      yOffset;
 
-    window.scrollTo({ top: y, behavior: "smooth" });
-  }
-}, [page]);
-
-
-
-    const showReferral = referralSettings?.isActive || userType === "Super-Admin";
-
-    if (!wallet) {
-      return <BuyerWalletSkeleton />;
+  useEffect(() => {
+    if (transactionsRef.current) {
+      const yOffset = -20;
+      const y = transactionsRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
     }
+  }, [page]);
 
-    return (
+  const showReferral = referralSettings?.isActive || userType === "Super-Admin";
 
-    <div className="container-fluid">
-      <div className="block-header mb-4">
-        <h2>My Wallet</h2>
+  if (!wallet) {
+    return <BuyerWalletSkeleton />;
+  }
+
+  return (
+    <div className="max-w-[1440px] mx-auto">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+          My Wallet
+        </h1>
       </div>
 
-      <div className="row clearfix row-deck mb-4">
-        <div className="col-lg-3 col-md-6 col-sm-6">
-          <div className="card top_widget primary-bg" style={{ backgroundColor: "#4B2E05", color: "#ffffff" }}>
-            <div className="body">
-              <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-rupee"></i></div>
-              <div className="content text-light">
-                <div className="text mb-2 text-uppercase">Available Balance</div>
-                <h4 className="number mb-0">₹{wallet.balance}</h4>
-              </div>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {/* Balance Card */}
+        <div className="bg-gradient-to-br from-[#5C4033] to-[#3d2a22] rounded-[1.5rem] p-6 text-white shadow-lg shadow-[#5C4033]/20 hover:shadow-xl hover:shadow-[#5C4033]/30 transition-all duration-300">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+              <FaWallet className="text-xl" />
             </div>
           </div>
+          <p className="text-white/70 text-sm font-medium mb-1">Available Balance</p>
+          <h3 className="text-2xl font-bold">₹{wallet.balance?.toLocaleString()}</h3>
         </div>
 
-          <div className="col-lg-3 col-md-6 col-sm-6">
-            <div className="card top_widget secondary-bg" style={{ backgroundColor: "#F36F21", color: "#ffffff" }}>
-              <div className="body">
-                <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-shopping-basket"></i></div>
-                <div className="content text-light">
-                  <div className="text mb-2 text-uppercase">Art Coins</div>
-                  <h4 className="number mb-0">{wallet.artCoins}</h4>
-                  <small>Worth {coinSetting.currency} {(wallet.artCoins * coinSetting.coinValue).toFixed(2)}</small>
-                </div>
-              </div>
+        {/* Art Coins Card */}
+        <div className="bg-gradient-to-br from-[#F36F21] to-[#d55a10] rounded-[1.5rem] p-6 text-white shadow-lg shadow-[#F36F21]/20 hover:shadow-xl hover:shadow-[#F36F21]/30 transition-all duration-300">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+              <FaCoins className="text-xl" />
             </div>
           </div>
-
-        <div className="col-lg-3 col-md-6 col-sm-6">
-          <div className="card top_widget bg-dark">
-            <div className="body">
-              <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-history"></i></div>
-              <div className="content text-light">
-                <div className="text mb-2 text-uppercase">All Transactions</div>
-                <h4 className="number mb-0">{transactions.length}</h4>
-              </div>
-            </div>
-          </div>
+          <p className="text-white/70 text-sm font-medium mb-1">Art Coins</p>
+          <h3 className="text-2xl font-bold">{wallet.artCoins?.toLocaleString() || 0}</h3>
+          <p className="text-white/60 text-xs mt-1">Worth {coinSetting.currency} {(wallet.artCoins * (coinSetting.coinValue || 0)).toFixed(2)}</p>
         </div>
 
-        <div className="col-lg-3 col-md-6 col-sm-6">
-          <div className="card top_widget bg-info">
-            <div className="body">
-              <div className="icon bg-light" style={{ fontSize: "20px" }}><i className="fa fa-chart-line"></i></div>
-              <div className="content text-light">
-                <div className="text mb-2 text-uppercase">Total Credited</div>
-                <h4 className="number mb-0">₹{wallet.totalCredited || 0}</h4>
-              </div>
+        {/* Transactions Card */}
+        <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-[1.5rem] p-6 text-white shadow-lg shadow-gray-700/20 hover:shadow-xl hover:shadow-gray-700/30 transition-all duration-300">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+              <FaHistory className="text-xl" />
             </div>
           </div>
+          <p className="text-white/70 text-sm font-medium mb-1">All Transactions</p>
+          <h3 className="text-2xl font-bold">{transactions.length}</h3>
+        </div>
+
+        {/* Total Credited Card */}
+        <div className="bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-[1.5rem] p-6 text-white shadow-lg shadow-cyan-500/20 hover:shadow-xl hover:shadow-cyan-500/30 transition-all duration-300">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+              <FaChartLine className="text-xl" />
+            </div>
+          </div>
+          <p className="text-white/70 text-sm font-medium mb-1">Total Credited</p>
+          <h3 className="text-2xl font-bold">₹{(wallet.totalCredited || 0).toLocaleString()}</h3>
         </div>
       </div>
 
+      {/* Withdrawal Limits */}
       {limits && (
-        <div className="row clearfix mb-4">
-          <div className="col-12">
-            <div className="card">
-              <div className="header"><h2>Withdrawal Limits</h2></div>
-              <div className="body">
-                <div className="row">
-                  <div className="col-md-6">
-                      <div className="progress-container">
-                        <label>Daily Limit</label>
-                      <div className="progress" style={{ height: "20px" }}>
-                        <div
-                          className="progress-bar"
-                          style={{ width: `${(limits.dailyUsed / limits.dailyLimit) * 100}%`, backgroundColor: "#4B2E05" }}
-                        >
-                          ₹{limits.dailyUsed} / ₹{limits.dailyLimit}
-                        </div>
-                      </div>
-                      <small className="text-muted">Remaining: ₹{limits.dailyRemaining}</small>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                      <div className="progress-container">
-                        <label>Monthly Limit</label>
-                        <div className="progress" style={{ height: "20px" }}>
-                          <div
-                            className="progress-bar bg-success"
-                            style={{ width: `${(limits.monthlyUsed / limits.monthlyLimit) * 100}%` }}
-                          >
-                            ₹{limits.monthlyUsed} / ₹{limits.monthlyLimit}
-                          </div>
-                        </div>
-                        <small className="text-muted">Remaining: ₹{limits.monthlyRemaining}</small>
-                      </div>
-                    </div>
-                </div>
+        <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-gray-100 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50/50 transition-all duration-500 mb-6">
+          <h3 className="text-lg font-bold text-gray-900 mb-6">Withdrawal Limits</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <div className="flex justify-between mb-2">
+                <span className="text-sm font-medium text-gray-600">Daily Limit</span>
+                <span className="text-sm font-bold text-gray-900">₹{limits.dailyUsed?.toLocaleString()} / ₹{limits.dailyLimit?.toLocaleString()}</span>
               </div>
+              <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-[#5C4033] to-[#8B6914] rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min((limits.dailyUsed / limits.dailyLimit) * 100, 100)}%` }}
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-1">Remaining: ₹{limits.dailyRemaining?.toLocaleString()}</p>
+            </div>
+            <div>
+              <div className="flex justify-between mb-2">
+                <span className="text-sm font-medium text-gray-600">Monthly Limit</span>
+                <span className="text-sm font-bold text-gray-900">₹{limits.monthlyUsed?.toLocaleString()} / ₹{limits.monthlyLimit?.toLocaleString()}</span>
+              </div>
+              <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min((limits.monthlyUsed / limits.monthlyLimit) * 100, 100)}%` }}
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-1">Remaining: ₹{limits.monthlyRemaining?.toLocaleString()}</p>
             </div>
           </div>
         </div>
       )}
 
-      <div className="row clearfix mb-4">
-        <div className="col-lg-6 col-md-12">
-          <div className="card">
-            <div className="header">
-              <h2>Add Money to Wallet</h2>
+      {/* Add Money & Withdraw Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Add Money */}
+        <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-gray-100 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50/50 transition-all duration-500">
+          <h3 className="text-lg font-bold text-gray-900 mb-6">Add Money to Wallet</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Amount (₹)</label>
+              <input
+                type="number"
+                value={amount}
+                onChange={e => setAmount(e.target.value)}
+                placeholder="Enter amount"
+                min="1"
+                className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+              />
             </div>
-            <div className="body">
-              <div className="form-group">
-                <label>Amount (₹)</label>
+            <button
+              onClick={addMoneyDirect}
+              disabled={isLoading}
+              className="w-full bg-[#5C4033] hover:bg-[#4b3327] text-white py-3 px-6 rounded-2xl font-semibold shadow-lg shadow-[#5C4033]/20 transition-all duration-300 active:scale-95 disabled:opacity-50"
+            >
+              {isLoading ? "Processing..." : "Add Money"}
+            </button>
+          </div>
+        </div>
+
+        {/* Request Withdrawal */}
+        <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-gray-100 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50/50 transition-all duration-500">
+          <h3 className="text-lg font-bold text-gray-900 mb-6">Request Withdrawal</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Amount (₹)</label>
+              <input
+                type="number"
+                value={withdrawAmount}
+                onChange={e => setWithdrawAmount(e.target.value)}
+                placeholder="Enter amount"
+                min="100"
+                className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Withdrawal Method</label>
+              <select
+                value={withdrawMethod}
+                onChange={e => setWithdrawMethod(e.target.value)}
+                className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+              >
+                <option value="upi">UPI</option>
+                <option value="bank">Bank Transfer</option>
+              </select>
+            </div>
+
+            {withdrawMethod === "upi" && (
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">UPI ID</label>
                 <input
-                  type="number"
-                  className="form-control"
-                  placeholder="Enter amount"
-                  value={amount}
-                  onChange={e => setAmount(e.target.value)}
-                  min="1"
+                  type="text"
+                  value={withdrawDestination.upi || ""}
+                  onChange={e => setWithdrawDestination({ upi: e.target.value })}
+                  placeholder="yourname@upi"
+                  className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
                 />
-                </div>
-                <div className="d-flex gap-2">
-                  <button
-                    disabled={isLoading}
-                    className="btn btn-primary"
-                    style={{ backgroundColor: "#4B2E05", borderColor: "#4B2E05", color: "#fff" }}
-                    onClick={addMoneyDirect}
-                  >
-                    Add Money
-                  </button>
-                </div>
               </div>
+            )}
+
+            {withdrawMethod === "bank" && (
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  value={withdrawDestination.name || ""}
+                  onChange={e => setWithdrawDestination({ ...withdrawDestination, name: e.target.value })}
+                  placeholder="Beneficiary Name"
+                  className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+                />
+                <input
+                  type="text"
+                  value={withdrawDestination.accountNumber || ""}
+                  onChange={e => setWithdrawDestination({ ...withdrawDestination, accountNumber: e.target.value })}
+                  placeholder="Account Number"
+                  className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+                />
+                <input
+                  type="text"
+                  value={withdrawDestination.ifsc || ""}
+                  onChange={e => setWithdrawDestination({ ...withdrawDestination, ifsc: e.target.value.toUpperCase() })}
+                  placeholder="IFSC Code"
+                  className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+                />
+                <input
+                  type="text"
+                  value={withdrawDestination.bankName || ""}
+                  onChange={e => setWithdrawDestination({ ...withdrawDestination, bankName: e.target.value })}
+                  placeholder="Bank Name & Branch"
+                  className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+                />
+                <input
+                  type="text"
+                  value={withdrawDestination.purpose || ""}
+                  onChange={e => setWithdrawDestination({ ...withdrawDestination, purpose: e.target.value })}
+                  placeholder="Purpose of Transfer"
+                  className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+                />
+              </div>
+            )}
+
+            <button
+              onClick={requestWithdrawal}
+              disabled={isLoading}
+              className="w-full bg-amber-500 hover:bg-amber-600 text-white py-3 px-6 rounded-2xl font-semibold shadow-lg shadow-amber-500/20 transition-all duration-300 active:scale-95 disabled:opacity-50"
+            >
+              {isLoading ? "Processing..." : "Request Withdrawal"}
+            </button>
+            <p className="text-xs text-gray-500 text-center">Minimum withdrawal: ₹100. Admin approval required.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Referral Program Card */}
+      {showReferral && referralData && (
+        <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-gray-100 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50/50 transition-all duration-500 mb-6">
+          <h3 className="text-lg font-bold text-gray-900 mb-6">Referral Program</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Your Referral Code</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={referralData.referralCode || wallet?.referralCode || ""}
+                  readOnly
+                  className="flex-1 border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 font-bold text-center tracking-widest"
+                />
+                <button
+                  onClick={copyReferralCode}
+                  className="px-4 py-3 bg-[#5C4033] hover:bg-[#4b3327] text-white rounded-2xl transition-all duration-300"
+                >
+                  <FaCopy />
+                </button>
+              </div>
+            </div>
+            <div className="text-center">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Total Referrals</label>
+              <h4 className="text-3xl font-bold text-[#5C4033]">{referralData.totalReferrals || 0}</h4>
+            </div>
+            <div className="text-center">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Referral Earnings</label>
+              <h4 className="text-3xl font-bold text-emerald-500">₹{referralData.totalEarnings || 0}</h4>
             </div>
           </div>
+          <div className="mt-4 p-4 bg-blue-50 rounded-2xl">
+            <p className="text-sm text-blue-700">
+              Share your referral code with friends. When they sign up and make their first purchase, you earn ₹50 + 100 Art Coins!
+            </p>
+          </div>
+        </div>
+      )}
 
-        <div className="col-lg-6 col-md-12">
-          <div className="card">
-            <div className="header"><h2>Request Withdrawal</h2></div>
-            <div className="body">
-              <div className="form-group">
-                <label>Amount (₹)</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  placeholder="Enter amount"
-                  value={withdrawAmount}
-                  onChange={e => setWithdrawAmount(e.target.value)}
-                  min="100"
-                />
+      {/* Art Coins Benefits */}
+      <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-gray-100 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50/50 transition-all duration-500 mb-6">
+        <h3 className="text-lg font-bold text-gray-900 mb-6">Art Coins Benefits</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <h5 className="font-semibold text-gray-900 mb-3">How to Earn</h5>
+            <ul className="space-y-2 text-sm text-gray-600">
+              <li className="flex items-center gap-2"><FaCheckCircle className="text-emerald-500 flex-shrink-0" /> {coinSetting.transactionReward || 10} coins per transaction</li>
+              {showReferral && <li className="flex items-center gap-2"><FaCheckCircle className="text-emerald-500 flex-shrink-0" /> {referralSettings?.buyerReferredCoinsReward || 100} coins on referral signup</li>}
+              <li className="flex items-center gap-2"><FaCheckCircle className="text-emerald-500 flex-shrink-0" /> Bonus coins on special offers</li>
+            </ul>
+          </div>
+          <div>
+            <h5 className="font-semibold text-gray-900 mb-3">How to Use</h5>
+            <ul className="space-y-2 text-sm text-gray-600">
+              <li className="flex items-center gap-2"><FaCheckCircle className="text-emerald-500 flex-shrink-0" /> 1 coin = {coinSetting.currency} {(coinSetting.coinValue || 0).toFixed(2)} discount</li>
+              <li className="flex items-center gap-2"><FaCheckCircle className="text-emerald-500 flex-shrink-0" /> Max 20% discount per order</li>
+              <li className="flex items-center gap-2"><FaCheckCircle className="text-emerald-500 flex-shrink-0" /> Use during checkout</li>
+            </ul>
+          </div>
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-2xl">
+            <h6 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <FaGift className="text-[#F36F21]" /> Benefit Preview
+            </h6>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Transaction Reward:</span>
+                <strong className="text-[#5C4033]">{coinSetting.transactionReward || 10} Coins</strong>
               </div>
-
-              <div className="form-group">
-                <label>Withdrawal Method</label>
-                <select
-                  className="form-control"
-                  value={withdrawMethod}
-                  onChange={e => setWithdrawMethod(e.target.value)}
-                >
-                  <option value="upi">UPI</option>
-                  <option value="bank">Bank Transfer</option>
-                </select>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Referral Reward:</span>
+                <strong className="text-[#5C4033]">{referralSettings?.buyerReferrerCoinsReward || 0} Coins</strong>
               </div>
-
-              {withdrawMethod === "upi" && (
-                <div className="form-group">
-                  <label>UPI ID</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter UPI ID"
-                    value={withdrawDestination.upi || ""}
-                    onChange={e => setWithdrawDestination({ upi: e.target.value })}
-                  />
-                </div>
-              )}
-
-              {withdrawMethod === "bank" && (
-                <>
-                  <div className="form-group">
-                    <label>Beneficiary's Full Name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Enter full name"
-                      value={withdrawDestination.name || ""}
-                      onChange={e => setWithdrawDestination({ ...withdrawDestination, name: e.target.value })}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Account Number</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Enter account number"
-                      value={withdrawDestination.accountNumber || ""}
-                      onChange={e => setWithdrawDestination({ ...withdrawDestination, accountNumber: e.target.value })}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>IFSC Code</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Enter IFSC code"
-                      value={withdrawDestination.ifsc || ""}
-                      onChange={e => setWithdrawDestination({ ...withdrawDestination, ifsc: e.target.value })}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Bank Name & Branch</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Enter bank name & branch"
-                      value={withdrawDestination.bankName || ""}
-                      onChange={e => setWithdrawDestination({ ...withdrawDestination, bankName: e.target.value })}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Purpose of Transfer</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Enter purpose"
-                      value={withdrawDestination.purpose || ""}
-                      onChange={e => setWithdrawDestination({ ...withdrawDestination, purpose: e.target.value })}
-                    />
-                  </div>
-                </>
-              )}
-
-              <button
-                className="btn btn-warning btn-block mt-3"
-                onClick={requestWithdrawal}
-                disabled={isLoading}
-              >
-                {isLoading ? "Processing..." : "Request Withdrawal"}
-              </button>
-              <small className="text-muted">Minimum withdrawal: ₹100. Admin approval required.</small>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Signup Bonus:</span>
+                <strong className="text-[#5C4033]">{coinSetting[`${userType?.toLowerCase()}SignupBonus`] || 0} Coins</strong>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {showReferral && referralData && (
-        <div className="row clearfix mb-4">
-          <div className="col-12">
-            <div className="card">
-              <div className="header"><h2>Referral Program</h2></div>
-              <div className="body">
-                <div className="row">
-                  <div className="col-md-4">
-                    <div className="form-group">
-                      <label>Your Referral Code</label>
-                      <div className="input-group">
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={referralData.referralCode || ""}
-                          readOnly
-                        />
-                        <div className="input-group-append">
-                          <button className="btn btn-primary" onClick={copyReferralCode} style={{ backgroundColor: "#4B2E05", borderColor: "#4B2E05" }}>
-                            <i className="fa fa-copy"></i> Copy
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-4">
-                    <label>Total Referrals</label>
-                    <h4>{referralData.totalReferrals || 0}</h4>
-                  </div>
-                  <div className="col-md-4">
-                    <label>Referral Earnings</label>
-                    <h4>₹{referralData.totalEarnings || 0}</h4>
-                  </div>
+      {/* Transactions & History Tabs */}
+      <div ref={transactionsRef} className="bg-white rounded-[2rem] border border-gray-100 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50/50 transition-all duration-500 overflow-hidden">
+        {/* Tab Headers */}
+        <div className="flex border-b border-gray-100">
+          <button
+            onClick={() => setActiveTab('transactions')}
+            className={`flex-1 py-4 px-6 text-sm font-semibold transition-all focus:outline-none duration-300 ${activeTab === 'transactions' ? 'text-[#5C4033] border-b-4 border-[#5C4033] bg-[#5C4033]/5' : 'text-gray-500 hover:text-gray-700'}`}
+          >
+            Transactions
+          </button>
+          <button
+            onClick={() => setActiveTab('withdrawals')}
+            className={`flex-1 py-4 px-6 text-sm font-semibold transition-all focus:outline-none duration-300 ${activeTab === 'withdrawals' ? 'text-[#5C4033] border-b-4 border-[#5C4033] bg-[#5C4033]/5' : 'text-gray-500 hover:text-gray-700'}`}
+          >
+            Withdrawal History
+          </button>
+          {showReferral && (
+            <button
+              onClick={() => setActiveTab('referral')}
+              className={`flex-1 py-4 px-6 text-sm font-semibold transition-all focus:outline-none duration-300 ${activeTab === 'referral' ? 'text-[#5C4033] border-b-4 border-[#5C4033] bg-[#5C4033]/5' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              Referral Program
+            </button>
+          )}
+        </div>
+
+        {/* Transactions Tab */}
+        {activeTab === 'transactions' && (
+          <div className="p-6">
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <h4 className="font-semibold text-gray-900">Recent Transactions</h4>
+              <div className="flex items-center gap-4">
+                <button 
+                  onClick={() => exportTransactions('csv')}
+                  className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all"
+                >
+                  <FaDownload /> Export CSV
+                </button>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-500">Show</span>
+                  <select
+                    value={pageSize}
+                    onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
+                    className="border border-gray-200 px-3 py-2 rounded-xl text-sm"
+                  >
+                    {[5, 10, 15, 20, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
+                  </select>
+                  <span className="text-sm text-gray-500">entries</span>
                 </div>
-                <hr />
-                <small className="text-muted">
-                  Share your referral code with friends. When they sign up and make their first purchase, you earn ₹50 + 100 Art Coins!
-                </small>
               </div>
             </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-100">
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">#</th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Type</th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Amount</th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Purpose</th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Status</th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Date</th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Receipt</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {displayedTransactions.map((txn, idx) => (
+                    <tr key={txn._id || idx} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                      <td className="py-4 px-4 text-sm text-gray-600">{(page - 1) * pageSize + idx + 1}</td>
+                      <td className="py-4 px-4">
+                        <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${txn.type === 'credit' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
+                          {txn.type === 'credit' ? <FaArrowDown className="text-[10px]" /> : <FaArrowUp className="text-[10px]" />}
+                          {txn.type}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4 text-sm font-semibold text-gray-900">₹{txn.amount}</td>
+                      <td className="py-4 px-4 text-sm text-gray-600">{txn.purpose}</td>
+                      <td className="py-4 px-4">
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          txn.status === 'success' ? 'bg-emerald-100 text-emerald-700' :
+                          txn.status === 'pending' ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700'
+                        }`}>
+                          {txn.status}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4 text-sm text-gray-500">{txn.createdAt ? new Date(txn.createdAt).toLocaleString() : "-"}</td>
+                      <td className="py-4 px-4">
+                        <button
+                          onClick={() => downloadReceipt(txn._id)}
+                          className="p-2 text-gray-400 hover:text-[#5C4033] hover:bg-[#5C4033]/10 rounded-xl transition-all"
+                        >
+                          <FaDownload />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {displayedTransactions.length === 0 && (
+                    <tr>
+                      <td colSpan="7" className="py-12 text-center text-gray-500">No transactions yet</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-6">
+                <button
+                  onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+                  disabled={page === 1}
+                  className="px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-all"
+                >
+                  Previous
+                </button>
+                <div className="flex gap-1">
+                  {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                    let pageNum = i + 1;
+                    if (totalPages > 5) {
+                      if (page > 3) pageNum = page - 2 + i;
+                      if (page > totalPages - 2) pageNum = totalPages - 4 + i;
+                    }
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setPage(pageNum)}
+                        className={`w-10 h-10 rounded-xl text-sm font-medium transition-all ${page === pageNum ? 'bg-[#5C4033] text-white' : 'border border-gray-200 hover:bg-gray-50'}`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
+                <button
+                  onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={page === totalPages}
+                  className="px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-all"
+                >
+                  Next
+                </button>
+              </div>
+            )}
           </div>
-        </div>
         )}
 
-          <div className="row clearfix mb-4">
-            <div className="col-sm-12">
-              <div className="card">
-                <div className="header">
-                  <h2>Art Coins Benefits</h2>
+        {/* Withdrawals Tab */}
+        {activeTab === 'withdrawals' && (
+          <div className="p-6">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-100">
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">#</th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Amount</th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Method</th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Status</th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Requested</th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Processed</th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Admin Note</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {withdrawals.map((w, idx) => (
+                    <tr key={w._id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                      <td className="py-4 px-4 text-sm text-gray-600">{idx + 1}</td>
+                      <td className="py-4 px-4 text-sm font-semibold text-gray-900">₹{w.amount}</td>
+                      <td className="py-4 px-4 text-sm text-gray-600 uppercase">{w.method}</td>
+                      <td className="py-4 px-4">
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          w.status === 'paid' ? 'bg-emerald-100 text-emerald-700' :
+                          w.status === 'approved' ? 'bg-blue-100 text-blue-700' :
+                          w.status === 'pending' ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700'
+                        }`}>
+                          {w.status}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4 text-sm text-gray-500">{new Date(w.createdAt).toLocaleString()}</td>
+                      <td className="py-4 px-4 text-sm text-gray-500">{w.processedAt ? new Date(w.processedAt).toLocaleString() : '-'}</td>
+                      <td className="py-4 px-4 text-sm text-gray-500">{w.adminNote || '-'}</td>
+                    </tr>
+                  ))}
+                  {withdrawals.length === 0 && (
+                    <tr>
+                      <td colSpan="7" className="py-12 text-center text-gray-500">No withdrawal requests yet</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Referral Tab */}
+        {showReferral && activeTab === 'referral' && (
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {/* Your Referral Code */}
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-2xl">
+                <h5 className="font-semibold text-gray-900 mb-4">Your Referral Code</h5>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={wallet?.referralCode || "Not Generated"}
+                    readOnly
+                    className="flex-1 border border-gray-200 px-4 py-3 rounded-xl bg-white font-bold text-center tracking-widest text-lg"
+                  />
+                  <button
+                    onClick={copyReferralCode}
+                    disabled={!wallet?.referralCode}
+                    className="px-6 py-3 bg-[#5C4033] hover:bg-[#4b3327] text-white rounded-xl font-semibold transition-all duration-300 disabled:opacity-50"
+                  >
+                    <FaCopy />
+                  </button>
                 </div>
-              <div className="body">
-                <div className="row">
-                  <div className="col-md-4">
-                    <h5>How to Earn</h5>
-                    <ul>
-                      <li>{coinSetting.transactionReward || 10} coins per transaction</li>
-                      {showReferral && <li>{referralSettings?.buyerReferredCoinsReward || 100} coins on referral signup</li>}
-                      <li>Bonus coins on special offers</li>
-                    </ul>
+                <p className="text-sm text-gray-500 mt-3">Share this code with friends to earn rewards!</p>
+              </div>
+
+              {/* Enter Referral Code */}
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-2xl">
+                <h5 className="font-semibold text-gray-900 mb-4">Enter Referral Code</h5>
+                {wallet?.referredBy ? (
+                  <div className="bg-emerald-100 text-emerald-700 p-4 rounded-xl flex items-center gap-2">
+                    <FaCheckCircle />
+                    <span>You joined using code: <strong>{wallet.referredBy}</strong></span>
                   </div>
-                  <div className="col-md-4">
-                    <h5>How to Use</h5>
-                    <ul>
-                      <li>1 coin = {coinSetting.currency} {(coinSetting.coinValue || 0).toFixed(2)} discount</li>
-                      <li>Max 20% discount per order</li>
-                      <li>Use during checkout</li>
-                    </ul>
-                  </div>
-                  <div className="col-md-4">
-                    <div className="p-3 bg-light border rounded">
-                      <h6><i className="fa fa-gift mr-2"></i>Benefit Preview</h6>
-                      <hr />
-                        <div className="d-flex justify-content-between mb-1 small">
-                          <span>Transaction Reward:</span>
-                          <strong className="text-primary">{coinSetting.transactionReward || 10} Coins</strong>
-                        </div>
-                        <div className="d-flex justify-content-between mb-1 small">
-                          <span>Referral Reward:</span>
-                          <strong className="text-primary">{referralSettings?.buyerReferrerCoinsReward || 0} Coins</strong>
-                        </div>
-                        <div className="d-flex justify-content-between mb-1 small">
-                          <span>Signup Bonus:</span>
-                          <strong className="text-primary">{coinSetting[`${userType.toLowerCase()}SignupBonus`] || 0} Coins</strong>
-                        </div>
+                ) : (
+                  <>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={referralCodeInput}
+                        onChange={e => setReferralCodeInput(e.target.value.toUpperCase())}
+                        placeholder="Enter friend's code"
+                        maxLength={10}
+                        className="flex-1 border border-gray-200 px-4 py-3 rounded-xl bg-white"
+                      />
+                      <button
+                        onClick={applyReferralCode}
+                        disabled={isApplyingReferral || !referralCodeInput.trim()}
+                        className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-semibold transition-all duration-300 disabled:opacity-50"
+                      >
+                        Apply
+                      </button>
                     </div>
-                  </div>
-                </div>
+                    <p className="text-sm text-gray-500 mt-3">Enter a referral code to get bonus Art Coins!</p>
+                  </>
+                )}
               </div>
             </div>
-          </div>
-        </div>
 
-      <div className="row clearfix">
-        <div className="col-sm-12">
-          <div className="card">
-            <div className="header">
-              <ul className="nav nav-tabs">
-                <li className="nav-item">
-                  <button
-                    className={`nav-link ${activeTab === 'transactions' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('transactions')}
-                  >
-                    Transactions
-                  </button>
-                </li>
-                    <li className="nav-item">
-                      <button
-                        className={`nav-link ${activeTab === 'withdrawals' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('withdrawals')}
-                      >
-                        Withdrawal History
-                      </button>
-                    </li>
-                    {showReferral && (
-                      <li className="nav-item">
-                        <button
-                          className={`nav-link ${activeTab === 'referral' ? 'active' : ''}`}
-                          onClick={() => setActiveTab('referral')}
-                        >
-                          Referral Program
-                        </button>
-                      </li>
-                    )}
-                  </ul>
-
+            {/* Referral Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="bg-gradient-to-br from-[#5C4033] to-[#3d2a22] p-6 rounded-2xl text-white text-center">
+                <h3 className="text-3xl font-bold">{referralData?.totalReferrals || wallet?.referralCount || 0}</h3>
+                <p className="text-white/70 mt-1">Friends Referred</p>
+              </div>
+              <div className="bg-gradient-to-br from-[#F36F21] to-[#d55a10] p-6 rounded-2xl text-white text-center">
+                <h3 className="text-3xl font-bold">₹{referralData?.totalEarnings || wallet?.referralEarnings || 0}</h3>
+                <p className="text-white/70 mt-1">Referral Earnings</p>
+              </div>
+              <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 p-6 rounded-2xl text-white text-center">
+                <h3 className="text-2xl font-bold">
+                  {referralSettings ? `₹${referralSettings.referrerCash} + ${referralSettings.referrerCoins} Coins` : "₹50 + 100 Coins"}
+                </h3>
+                <p className="text-white/70 mt-1">Per Referral Reward</p>
+              </div>
             </div>
 
-            {activeTab === 'transactions' && (
-              <>
-                <div className="header d-flex justify-content-between align-items-center">
-                  <h2>Recent Transactions</h2>
-                  <div>
-                    <button className="btn btn-sm btn-outline-primary mr-2" onClick={() => exportTransactions('csv')}>
-                      <i className="fa fa-download"></i> Export CSV
-                    </button>
-                    Show
-                    <select
-                      className="form-control d-inline-block w-auto ml-2"
-                      value={pageSize}
-                      onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
-                    >
-                      {[5, 10, 15, 20, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
-                    </select>
-                    entries
-                  </div>
-                </div>
-                <div className="body table-responsive">
-                  <table className="table table-hover mb-0">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Type</th>
-                        <th>Amount</th>
-                        <th>Purpose</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th>Receipt</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {displayedTransactions.map((txn, idx) => (
-                        <tr key={txn._id || idx}>
-                          <td>{(page - 1) * pageSize + idx + 1}</td>
-                          <td>
-                            <span className={`badge ${txn.type === 'credit' ? 'badge-success' : 'badge-danger'}`}>
-                              {txn.type}
-                            </span>
-                          </td>
-                          <td>₹{txn.amount}</td>
-                          <td>{txn.purpose}</td>
-                          <td>
-                            <span className={`badge ${txn.status === 'success' ? 'badge-success' :
-                              txn.status === 'pending' ? 'badge-warning' : 'badge-danger'}`}>
-                              {txn.status}
-                            </span>
-                          </td>
-                          <td>{txn.createdAt ? new Date(txn.createdAt).toLocaleString() : "-"}</td>
-                          <td>
-                            <button
-                              className="btn btn-sm btn-outline-secondary"
-                              onClick={() => downloadReceipt(txn._id)}
-                            >
-                              <i className="fa fa-download"></i>
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                      {displayedTransactions.length === 0 && (
-                        <tr>
-                          <td colSpan="7" className="text-center">No transactions yet</td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="d-flex justify-content-end align-items-center mt-3 px-3 py-3">
-                  <ul className="pagination mb-0">
-                    <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
-                      <button className="page-link" onClick={() => setPage(prev => Math.max(prev - 1, 1))}>&laquo;</button>
-                    </li>
-                    {Array.from({ length: totalPages }, (_, i) => (
-                      <li key={i} className={`page-item ${page === i + 1 ? 'active' : ''}`}>
-                        <button className="page-link" onClick={() => setPage(i + 1)}>{i + 1}</button>
-                      </li>
-                    ))}
-                    <li className={`page-item ${page === totalPages ? 'disabled' : ''}`}>
-                      <button className="page-link" onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}>&raquo;</button>
-                    </li>
-                  </ul>
-                </div>
-              </>
-            )}
-
-            {activeTab === 'withdrawals' && (
-                <div className="body table-responsive">
-                  <table className="table table-hover mb-0">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Amount</th>
-                        <th>Method</th>
-                        <th>Status</th>
-                        <th>Requested</th>
-                        <th>Processed</th>
-                        <th>Admin Note</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {withdrawals.map((w, idx) => (
-                        <tr key={w._id}>
-                          <td>{idx + 1}</td>
-                          <td>₹{w.amount}</td>
-                          <td>{w.method?.toUpperCase()}</td>
-                          <td>
-                            <span className={`badge badge-${
-                              w.status === 'paid' ? 'success' :
-                              w.status === 'approved' ? 'info' :
-                              w.status === 'pending' ? 'warning' : 'danger'
-                            }`}>
-                              {w.status}
-                            </span>
-                          </td>
-                          <td>{new Date(w.createdAt).toLocaleString()}</td>
-                          <td>{w.processedAt ? new Date(w.processedAt).toLocaleString() : '-'}</td>
-                          <td>{w.adminNote || '-'}</td>
-                        </tr>
-                      ))}
-                      {withdrawals.length === 0 && (
-                        <tr>
-                          <td colSpan="7" className="text-center">No withdrawal requests yet</td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-                {showReferral && activeTab === 'referral' && (
-                  <div className="body">
-
-                  <div className="row">
-                    <div className="col-md-6">
-                      <div className="card bg-light">
-                        <div className="card-body">
-                          <h5>Your Referral Code</h5>
-                          <div className="input-group mb-3">
-                            <input
-                              type="text"
-                              className="form-control form-control-lg text-center font-weight-bold"
-                              value={wallet?.referralCode || "Not Generated"}
-                              readOnly
-                              style={{ letterSpacing: "2px" }}
-                            />
-                            <div className="input-group-append">
-                              <button 
-                                className="btn btn-primary" 
-                                onClick={copyReferralCode}
-                                disabled={!wallet?.referralCode}
-                                style={{ backgroundColor: "#4B2E05", borderColor: "#4B2E05" }}
-                              >
-                                <i className="fa fa-copy"></i> Copy
-                              </button>
-                            </div>
-                          </div>
-                          <p className="text-muted mb-0">Share this code with friends to earn rewards!</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="col-md-6">
-                      <div className="card bg-light">
-                        <div className="card-body">
-                          <h5>Enter Referral Code</h5>
-                          {wallet?.referredBy ? (
-                            <div className="alert alert-success">
-                              <i className="fa fa-check-circle"></i> You joined using code: <strong>{wallet.referredBy}</strong>
-                            </div>
-                          ) : (
-                            <>
-                              <div className="input-group mb-3">
-                                <input
-                                  type="text"
-                                  className="form-control"
-                                  placeholder="Enter friend's referral code"
-                                  value={referralCodeInput}
-                                  onChange={e => setReferralCodeInput(e.target.value.toUpperCase())}
-                                  maxLength={10}
-                                />
-                                <div className="input-group-append">
-                                  <button 
-                                    className="btn btn-success" 
-                                    onClick={applyReferralCode}
-                                    disabled={isApplyingReferral || !referralCodeInput.trim()}
-                                  >
-                                    {isApplyingReferral ? "Applying..." : "Apply"}
-                                  </button>
-                                </div>
-                              </div>
-                              <p className="text-muted mb-0">Enter a referral code to get bonus Art Coins!</p>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="row mt-4">
-                    <div className="col-md-4">
-                      <div className="card text-center" style={{ backgroundColor: "#4B2E05", color: "#fff" }}>
-                        <div className="card-body">
-                          <h3>{referralData?.totalReferrals || wallet?.referralCount || 0}</h3>
-                          <p className="mb-0">Friends Referred</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4">
-                      <div className="card text-center" style={{ backgroundColor: "#F36F21", color: "#fff" }}>
-                        <div className="card-body">
-                          <h3>₹{referralData?.totalEarnings || wallet?.referralEarnings || 0}</h3>
-                          <p className="mb-0">Referral Earnings</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4">
-                      <div className="card text-center bg-success text-white">
-                        <div className="card-body">
-                          <h3>
-                            {referralSettings 
-                              ? `₹${referralSettings.referrerCash} + ${referralSettings.referrerCoins} Coins` 
-                              : "₹50 + 100 Coins"}
-                          </h3>
-                          <p className="mb-0">Per Referral Reward</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="alert alert-info mt-4">
-                    <h5><i className="fa fa-info-circle"></i> How Referrals Work</h5>
-                    <ul className="mb-0">
-                      <li>Share your referral code with friends</li>
-                      <li>When they sign up and enter your code, both of you get rewards</li>
-                      <li>
-                        You earn {referralSettings ? `₹${referralSettings.referrerCash} cash + ${referralSettings.referrerCoins} Art Coins` : "₹50 cash + 100 Art Coins"} per successful referral
-                      </li>
-                      <li>
-                        Your friend gets {referralSettings ? `${referralSettings.referredCoins} Art Coins ${referralSettings.referredCash > 0 ? `+ ₹${referralSettings.referredCash} cash` : ''}` : "50 Art Coins"} as a welcome bonus
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              )}
+            {/* How it works */}
+            <div className="bg-blue-50 p-6 rounded-2xl">
+              <h5 className="font-semibold text-blue-900 mb-3">How Referrals Work</h5>
+              <ul className="space-y-2 text-sm text-blue-700">
+                <li className="flex items-start gap-2"><FaCheckCircle className="mt-0.5 flex-shrink-0" /> Share your referral code with friends</li>
+                <li className="flex items-start gap-2"><FaCheckCircle className="mt-0.5 flex-shrink-0" /> When they sign up and enter your code, both of you get rewards</li>
+                <li className="flex items-start gap-2"><FaCheckCircle className="mt-0.5 flex-shrink-0" /> You earn {referralSettings ? `₹${referralSettings.referrerCash} cash + ${referralSettings.referrerCoins} Art Coins` : "₹50 cash + 100 Art Coins"} per successful referral</li>
+                <li className="flex items-start gap-2"><FaCheckCircle className="mt-0.5 flex-shrink-0" /> Your friend gets {referralSettings ? `${referralSettings.referredCoins} Art Coins ${referralSettings.referredCash > 0 ? `+ ₹${referralSettings.referredCash} cash` : ''}` : "50 Art Coins"} as a welcome bonus</li>
+              </ul>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

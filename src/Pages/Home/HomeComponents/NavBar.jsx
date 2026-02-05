@@ -19,7 +19,8 @@ import { IoWalletOutline } from "react-icons/io5";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { BsBoxSeam } from "react-icons/bs";
 import getAPI from "../../../api/getAPI";
-import { FaUser, FaTools } from "react-icons/fa";
+import { FaUser, FaTools, FaShareAlt } from "react-icons/fa";
+import { CiCreditCard1 } from "react-icons/ci";
 import { MdOutlineSecurity, MdVerified, MdLibraryAdd } from "react-icons/md";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 import HeaderSkeleton from "../../../Component/Skeleton/Home/HeaderSkeleton";
@@ -503,7 +504,7 @@ const NavBar = () => {
                           </Link>
                           <Link
                             className="dropdown-item-h"
-                            to={"/my-account/notification-preferences"}
+                            to={"/"}
                             onClick={handleUserIconClick}
                           >
                             <i className="fas fa-bell me-2" /> Notification
@@ -916,18 +917,21 @@ const NavBar = () => {
                   <MdVerified className="icon-sidebar" />
                   <span>Account Verification</span>
                 </Link>
+                <Link
+                  className="profile-item-h"
+                  to={"/my-account/bank-payment-details"}
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                >
+                  <CiCreditCard1  className="icon-sidebar" />
+                  <span>Bank Payment Details</span>
+                </Link>
 
                 <Link
-                  to={"my-account/artsays-community-promotion"}
+                  to={"my-account/social-media-promotion"}
                   onClick={() => setShowProfileMenu(!showProfileMenu)}
                 >
                   <div className="profile-item-h flex">
-                    <img
-                      src={artLogo}
-                      style={{ height: 24 }}
-                      className="icon-sidebar"
-                      alt="Artsays Logo"
-                    />
+                    <FaShareAlt  className="icon-sidebar" />
                     <span>Social Media Promotion</span>
                   </div>
                 </Link>
