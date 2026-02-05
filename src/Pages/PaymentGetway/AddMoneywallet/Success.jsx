@@ -5,16 +5,16 @@ const SuccessPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [paymentInfo, setPaymentInfo] = useState(null);
-    const userType = localStorage.getItem("userType");
- const handleGoBack = () => {
-  if (userType === "Seller") {
-    navigate("/seller/wallet");
-  } else if (userType === "Buyer") {
-    navigate("/buyer/wallet");
-  } else {
-    navigate("/artist/wallet");
-  }
-};
+  const userType = localStorage.getItem("userType");
+  const handleGoBack = () => {
+    if (userType === "Seller") {
+      navigate("/seller/wallet");
+    } else if (userType === "Buyer") {
+      navigate("/my-account/buyer-wallet");
+    } else {
+      navigate("/artist/wallet");
+    }
+  };
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const txnid = params.get("txnid") || params.get("txn");
@@ -53,7 +53,7 @@ const SuccessPage = () => {
           textAlign: "center",
         }}
       >
-        {}
+        { }
         <div
           style={{
             width: "80px",
@@ -95,80 +95,80 @@ const SuccessPage = () => {
           been generated.
         </p>
 
-        {}
-          <div
-            style={{
-              background: "#f0fff4",
-              borderRadius: "12px",
-              padding: "25px",
-              marginBottom: "30px",
-              textAlign: "left",
-              borderLeft: "4px solid #38a169",
-            }}
-          >
-            {paymentInfo?.amount && (
-              <div style={{ marginBottom: "15px", fontSize: "14px" }}>
-                <span style={{ color: "#718096", fontWeight: "500" }}>
-                  Amount Added
-                </span>
-                <p
-                  style={{
-                    margin: "5px 0 0 0",
-                    color: "#38a169",
-                    fontWeight: "700",
-                    fontSize: "24px",
-                  }}
-                >
-                  ₹{paymentInfo.amount}
-                </p>
-              </div>
-            )}
-
-            {paymentInfo?.txnid && (
-              <div style={{ marginBottom: "15px", fontSize: "14px" }}>
-                <span style={{ color: "#718096", fontWeight: "500" }}>
-                  Transaction ID
-                </span>
-                <p
-                  style={{
-                    margin: "5px 0 0 0",
-                    color: "#1a1a1a",
-                    fontWeight: "600",
-                    fontSize: "15px",
-                    wordBreak: "break-all",
-                  }}
-                >
-                  {paymentInfo.txnid}
-                </p>
-              </div>
-            )}
-
-            {paymentInfo?.orderId && (
-              <div style={{ marginBottom: "15px", fontSize: "14px" }}>
-                <span style={{ color: "#718096", fontWeight: "500" }}>
-                  Order ID
-                </span>
-                <p
-                  style={{
-                    margin: "5px 0 0 0",
-                    color: "#1a1a1a",
-                    fontWeight: "600",
-                    fontSize: "15px",
-                  }}
-                >
-                  {paymentInfo.orderId}
-                </p>
-              </div>
-            )}
-
-            {!paymentInfo && (
-              <p style={{ color: "#718096", fontStyle: "italic" }}>
-                Loading payment details...
+        { }
+        <div
+          style={{
+            background: "#f0fff4",
+            borderRadius: "12px",
+            padding: "25px",
+            marginBottom: "30px",
+            textAlign: "left",
+            borderLeft: "4px solid #38a169",
+          }}
+        >
+          {paymentInfo?.amount && (
+            <div style={{ marginBottom: "15px", fontSize: "14px" }}>
+              <span style={{ color: "#718096", fontWeight: "500" }}>
+                Amount Added
+              </span>
+              <p
+                style={{
+                  margin: "5px 0 0 0",
+                  color: "#38a169",
+                  fontWeight: "700",
+                  fontSize: "24px",
+                }}
+              >
+                ₹{paymentInfo.amount}
               </p>
-            )}
-          </div>
+            </div>
+          )}
 
-        {}
+          {paymentInfo?.txnid && (
+            <div style={{ marginBottom: "15px", fontSize: "14px" }}>
+              <span style={{ color: "#718096", fontWeight: "500" }}>
+                Transaction ID
+              </span>
+              <p
+                style={{
+                  margin: "5px 0 0 0",
+                  color: "#1a1a1a",
+                  fontWeight: "600",
+                  fontSize: "15px",
+                  wordBreak: "break-all",
+                }}
+              >
+                {paymentInfo.txnid}
+              </p>
+            </div>
+          )}
+
+          {paymentInfo?.orderId && (
+            <div style={{ marginBottom: "15px", fontSize: "14px" }}>
+              <span style={{ color: "#718096", fontWeight: "500" }}>
+                Order ID
+              </span>
+              <p
+                style={{
+                  margin: "5px 0 0 0",
+                  color: "#1a1a1a",
+                  fontWeight: "600",
+                  fontSize: "15px",
+                }}
+              >
+                {paymentInfo.orderId}
+              </p>
+            </div>
+          )}
+
+          {!paymentInfo && (
+            <p style={{ color: "#718096", fontStyle: "italic" }}>
+              Loading payment details...
+            </p>
+          )}
+        </div>
+
+        { }
         <div style={{ textAlign: "left", marginBottom: "30px" }}>
           <p
             style={{
@@ -273,35 +273,35 @@ const SuccessPage = () => {
           </ul>
         </div>
 
-       <button
-  onClick={handleGoBack}
-  style={{
-    padding: "14px 24px",
-    background: "white",
-    color: "#38a169",
-    border: "2px solid #c6f6d5",
-    borderRadius: "10px",
-    fontSize: "16px",
-    fontWeight: "600",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    width: "100%",
-  }}
-  onMouseEnter={(e) => {
-    e.target.style.background = "#f0fff4";
-    e.target.style.borderColor = "#38a169";
-  }}
-  onMouseLeave={(e) => {
-    e.target.style.background = "white";
-    e.target.style.borderColor = "#c6f6d5";
-  }}
->
-  Go Back
-</button>
+        <button
+          onClick={handleGoBack}
+          style={{
+            padding: "14px 24px",
+            background: "white",
+            color: "#38a169",
+            border: "2px solid #c6f6d5",
+            borderRadius: "10px",
+            fontSize: "16px",
+            fontWeight: "600",
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+            width: "100%",
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.background = "#f0fff4";
+            e.target.style.borderColor = "#38a169";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.background = "white";
+            e.target.style.borderColor = "#c6f6d5";
+          }}
+        >
+          Go Back
+        </button>
 
       </div>
 
-      {}
+      { }
       <style jsx>{`
         @keyframes slideIn {
           from {
