@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import Routes from "./Routes/Routes";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "./styles/CustomToast.css";
 import CookieConsent from "./CookieConsent/CookieConsent";
 import { CookiesProvider } from "react-cookie";
 import { BrowserRouter } from "react-router-dom";
@@ -59,20 +60,21 @@ const AppContent = () => {
   }, [isAuthenticated, logout]);
 
   return (
-    <div className="App">
-      <Routes />
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
+      <div className="App">
+          <Routes />
+            <ToastContainer
+              position="top-right"
+              autoClose={4000}
+              hideProgressBar={false}
+              newestOnTop
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+              limit={5}
+            />
       <CookieConsent />
       <ChatIcon />
       <WonBidPopup userId={userId} isAuthenticated={isAuthenticated} />
