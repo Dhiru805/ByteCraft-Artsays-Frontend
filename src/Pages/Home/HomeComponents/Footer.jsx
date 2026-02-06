@@ -119,129 +119,145 @@ const Footer = () => {
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
 
-          {/* Left Column - Newsletter, Contact, Social, Partners */}
-          <div className="lg:col-span-4 space-y-5">
+            {/* Left Column - Newsletter, Contact, Social, Partners — Unified Card */}
+            <div className="lg:col-span-4">
+              <div className="footer-card bg-[#0a0a0a] rounded-[2rem] border border-gray-800/60 relative overflow-hidden group h-full">
+                {/* Top accent line */}
+                <div className="h-[2px] bg-gradient-to-r from-transparent via-[#FB5934]/60 to-transparent"></div>
 
-              {/* Newsletter */}
-              <div className="footer-card bg-[#0a0a0a] rounded-[2rem] p-7 border border-gray-800/60 relative overflow-hidden group">
-                {/* Decorative background glow */}
+                {/* Decorative background glows */}
                 <div className="absolute -top-12 -right-12 w-32 h-32 bg-[#FB5934]/5 rounded-full blur-2xl group-hover:bg-[#FB5934]/10 transition-all duration-500"></div>
                 <div className="absolute -bottom-8 -left-8 w-24 h-24 bg-[#FB5934]/3 rounded-full blur-xl"></div>
 
-                <div className="relative">
-                  {/* Icon + Title row */}
-                  <div className="flex items-center gap-2.5 mb-1">
-                    <span className="w-8 h-8 rounded-xl bg-[#FB5934]/10 flex items-center justify-center group-hover:bg-[#FB5934]/20 transition-colors">
-                      <svg className="w-4 h-4 text-[#FB5934]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                    </span>
-                    <h3 className="footer-section-title text-xs font-bold uppercase tracking-[0.15em] text-[#FB5934] mb-0">
-                      Stay Updated
-                    </h3>
+                <div className="relative p-7 space-y-0">
+
+                  {/* ── Stay Updated ── */}
+                  <div className="pb-3">
+                    <div className="flex items-center gap-2.5 mb-1">
+                      <span className="w-8 h-8 rounded-xl bg-[#FB5934]/10 flex items-center justify-center group-hover:bg-[#FB5934]/20 transition-colors">
+                        <svg className="w-4 h-4 text-[#FB5934]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                      </span>
+                      <h3 className="footer-section-title text-xs font-bold uppercase tracking-[0.15em] text-[#FB5934] mb-0">
+                        Stay Updated
+                      </h3>
+                    </div>
+                    <p className="text-gray-500 text-sm mb-4 ml-[42px]">Get the latest art drops and exclusive offers.</p>
+                    <form onSubmit={handleSubscribe} className="flex gap-2">
+                      <div className="relative flex-1">
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="abc@gmail.com"
+                          className="w-full bg-[#161616] border border-gray-800/80 text-white placeholder-gray-600 pl-10 pr-4 py-2.5 rounded-xl text-sm focus:border-[#FB5934]/50 focus:ring-1 focus:ring-[#FB5934]/20 focus:outline-none transition-all"
+                        />
+                        <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                        </svg>
+                      </div>
+                      <button
+                        type="submit"
+                        className="bg-gradient-to-r from-[#FB5934] to-[#e04a28] hover:from-[#e04a28] hover:to-[#c93d1e] text-white font-semibold py-2.5 px-5 rounded-xl text-sm transition-all duration-300 shadow-lg shadow-[#FB5934]/10 hover:shadow-[#FB5934]/25 hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-1.5 whitespace-nowrap"
+                      >
+                        Subscribe
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                      </button>
+                    </form>
                   </div>
 
-                  <p className="text-gray-500 text-sm mb-5 ml-[42px]">Get the latest art drops and exclusive offers.</p>
+                  {/* Divider */}
+                  <div className="h-px bg-gradient-to-r from-transparent via-gray-800/60 to-transparent"></div>
 
-                  <form onSubmit={handleSubscribe} className="space-y-3">
-                    <div className="relative">
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="abc@gmail.com"
-                        className="w-full bg-[#161616] border border-gray-800/80 text-white placeholder-gray-600 pl-11 pr-4 py-3 rounded-xl text-sm focus:border-[#FB5934]/50 focus:ring-1 focus:ring-[#FB5934]/20 focus:outline-none transition-all"
-                      />
-                      <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                      </svg>
+                  {/* ── Contact Us ── */}
+                  <div className="py-3">
+                    <h3 className="footer-section-title text-xs font-bold uppercase tracking-[0.15em] text-[#FB5934] mb-4">
+                      Contact Us
+                    </h3>
+                    <div className="space-y-2.5">
+                      <a href="tel:+918668367265" className="flex items-center gap-3 group/contact px-3 py-2.5 rounded-xl bg-[#0d0d0d] border border-gray-800/30 hover:border-[#FB5934]/20 transition-all duration-200">
+                        <span className="w-8 h-8 bg-[#161616] rounded-lg flex items-center justify-center flex-shrink-0 group-hover/contact:bg-[#FB5934]/10 transition-colors">
+                          <img src="/assets/footer/call.svg" alt="call" className="w-3.5 h-3.5" />
+                        </span>
+                        <div>
+                          <span className="text-gray-600 text-[10px] uppercase tracking-wider font-medium block leading-none mb-0.5">Phone</span>
+                          <span className="text-gray-300 text-sm group-hover/contact:text-white transition-colors">+91 8668 36 7265</span>
+                        </div>
+                      </a>
+                      <a href="mailto:contact@artsays.in" className="flex items-center gap-3 group/contact px-3 py-2.5 rounded-xl bg-[#0d0d0d] border border-gray-800/30 hover:border-[#FB5934]/20 transition-all duration-200">
+                        <span className="w-8 h-8 bg-[#161616] rounded-lg flex items-center justify-center flex-shrink-0 group-hover/contact:bg-[#FB5934]/10 transition-colors">
+                          <img src="/assets/footer/mail.svg" alt="mail" className="w-3.5 h-3.5" />
+                        </span>
+                        <div>
+                          <span className="text-gray-600 text-[10px] uppercase tracking-wider font-medium block leading-none mb-0.5">Email</span>
+                          <span className="text-gray-300 text-sm group-hover/contact:text-white transition-colors">contact@artsays.in</span>
+                        </div>
+                      </a>
+                      <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#0d0d0d] border border-gray-800/30">
+                        <span className="w-8 h-8 bg-[#161616] rounded-lg flex items-center justify-center flex-shrink-0">
+                          <img src="/assets/footer/location.svg" alt="location" className="w-3.5 h-3.5" />
+                        </span>
+                        <div>
+                          <span className="text-gray-600 text-[10px] uppercase tracking-wider font-medium block leading-none mb-0.5">Address</span>
+                          <span className="text-gray-300 text-sm leading-snug">Pune, Pimpri Chinchwad, Maharashtra, India</span>
+                        </div>
+                      </div>
                     </div>
-                    <button
-                      type="submit"
-                      className="w-full bg-gradient-to-r from-[#FB5934] to-[#e04a28] hover:from-[#e04a28] hover:to-[#c93d1e] text-white font-semibold py-3 px-5 rounded-xl text-sm transition-all duration-300 shadow-lg shadow-[#FB5934]/10 hover:shadow-[#FB5934]/25 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2"
-                    >
-                      Subscribe
-                      <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                      </svg>
-                    </button>
-                  </form>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="h-px bg-gradient-to-r from-transparent via-gray-800/60 to-transparent"></div>
+
+                  {/* ── Follow Us ── */}
+                  <div className="py-3">
+                    <h3 className="footer-section-title text-xs font-bold uppercase tracking-[0.15em] text-[#FB5934] mb-3">
+                      Follow Us
+                    </h3>
+                    <div className="flex gap-2">
+                      {socials.map((social, idx) => (
+                        <a
+                          key={idx}
+                          href={social.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="footer-social-icon w-9 h-9 bg-[#161616] rounded-lg flex items-center justify-center text-gray-500 hover:bg-[#FB5934] hover:text-white transition-all duration-200 border border-gray-800/30 hover:border-[#FB5934]/40"
+                        >
+                          <social.icon className="text-sm" />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="h-px bg-gradient-to-r from-transparent via-gray-800/60 to-transparent"></div>
+
+                  {/* ── Partner With Us ── */}
+                  <div className="pt-3">
+                    <h3 className="footer-section-title text-xs font-bold uppercase tracking-[0.15em] text-[#FB5934] mb-3">
+                      Partner With Us
+                    </h3>
+                    <div className="space-y-1.5">
+                      <Link to="/partner" className="flex items-center gap-2 text-gray-500 hover:text-gray-200 text-sm transition-colors group/partner">
+                        <svg className="w-3.5 h-3.5 text-[#FB5934]/60 group-hover/partner:text-[#FB5934] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                        Become a Gallery Partner
+                      </Link>
+                      <Link to="/corporate" className="flex items-center gap-2 text-gray-500 hover:text-gray-200 text-sm transition-colors group/partner">
+                        <svg className="w-3.5 h-3.5 text-[#FB5934]/60 group-hover/partner:text-[#FB5934] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                        Corporate Art Solutions
+                      </Link>
+                    </div>
+                  </div>
+
                 </div>
               </div>
-
-            {/* Contact */}
-            <div className="footer-card bg-[#0a0a0a] rounded-[2rem] p-7 border border-gray-800/60">
-              <h3 className="footer-section-title text-xs font-bold uppercase tracking-[0.15em] text-[#FB5934] mb-5">
-                Contact Us
-              </h3>
-              <ul className="space-y-4">
-                <li>
-                  <a href="tel:+918668367265" className="footer-contact-item flex items-center gap-3 group">
-                    <span className="w-9 h-9 bg-[#161616] rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-[#FB5934]/10 transition-colors">
-                      <img src="/assets/footer/call.svg" alt="call" className="w-4 h-4" />
-                    </span>
-                    <span className="text-gray-300 text-sm group-hover:text-white transition-colors">+91 8668 36 7265</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="mailto:contact@artsays.in" className="footer-contact-item flex items-center gap-3 group">
-                    <span className="w-9 h-9 bg-[#161616] rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-[#FB5934]/10 transition-colors">
-                      <img src="/assets/footer/mail.svg" alt="mail" className="w-4 h-4" />
-                    </span>
-                    <span className="text-gray-300 text-sm group-hover:text-white transition-colors">contact@artsays.in</span>
-                  </a>
-                </li>
-                <li>
-                  <div className="flex items-start gap-3">
-                    <span className="w-9 h-9 bg-[#161616] rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <img src="/assets/footer/location.svg" alt="location" className="w-4 h-4" />
-                    </span>
-                    <span className="text-gray-300 text-sm leading-relaxed">
-                      Pune, Pimpri Chinchwad, Maharashtra, India
-                    </span>
-                  </div>
-                </li>
-              </ul>
             </div>
-
-            {/* Social + Partner */}
-            <div className="footer-card bg-[#0a0a0a] rounded-[2rem] p-7 border border-gray-800/60">
-              <h3 className="footer-section-title text-xs font-bold uppercase tracking-[0.15em] text-[#FB5934] mb-4">
-                Follow Us
-              </h3>
-              <div className="flex gap-2.5 mb-6">
-                {socials.map((social, idx) => (
-                  <a
-                    key={idx}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="footer-social-icon w-9 h-9 bg-[#161616] rounded-lg flex items-center justify-center text-gray-500 hover:bg-[#FB5934] hover:text-white transition-all duration-200"
-                  >
-                    <social.icon className="text-sm" />
-                  </a>
-                ))}
-              </div>
-
-              <div className="border-t border-gray-800/60 pt-5">
-                <h3 className="footer-section-title text-xs font-bold uppercase tracking-[0.15em] text-[#FB5934] mb-3">
-                  Partner With Us
-                </h3>
-                <ul className="space-y-1.5">
-                  <li>
-                    <Link to="/partner" className="footer-link text-gray-500 hover:text-gray-200 text-sm transition-colors">
-                      Become a Gallery Partner
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/corporate" className="footer-link text-gray-500 hover:text-gray-200 text-sm transition-colors">
-                      Corporate Art Solutions
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
 
           {/* Right Column - Navigation Links */}
           <div className="lg:col-span-8">
