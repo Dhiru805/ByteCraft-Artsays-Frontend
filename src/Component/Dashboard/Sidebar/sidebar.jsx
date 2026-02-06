@@ -325,13 +325,20 @@ const Sidebar = () => {
           },
         ],
       },
-      {
-        label: "Enquiry",
-        icon: "fa fa-mail-forward",
-        path: `/super-admin/enquiry`,
-        basePath: "/super-admin/enquiry",
-        subTabs: [],
-      },
+        {
+          label: "Enquiry",
+          icon: "fa fa-mail-forward",
+          path: `/super-admin/enquiry`,
+          basePath: "/super-admin/enquiry",
+          subTabs: [],
+        },
+        {
+          label: "Newsletter",
+          icon: "fa fa-envelope",
+          path: `/super-admin/newsletter`,
+          basePath: "/super-admin/newsletter",
+          subTabs: [],
+        },
       {
         label: "Art Gallery",
         icon: "fa fa-image",

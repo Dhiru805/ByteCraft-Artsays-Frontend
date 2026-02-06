@@ -29,14 +29,20 @@ const Footer = () => {
     fetchCategories();
   }, []);
 
-  const handleSubscribe = (e) => {
+  const handleSubscribe = async (e) => {
     e.preventDefault();
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       toast.error("Please enter a valid email address");
       return;
     }
-    toast.success("Thank you for subscribing!");
-    setEmail("");
+    try {
+      await axios.post("/api/newsletter/subscribe", { email });
+      toast.success("Thank you for subscribing!");
+      setEmail("");
+    } catch (err) {
+      const msg = err.response?.data?.message || "Failed to subscribe. Please try again.";
+      toast.error(msg);
+    }
   };
 
   const linkSections = [
@@ -190,7 +196,7 @@ const Footer = () => {
                       </div>
                       <button
                         type="submit"
-                        className="bg-gradient-to-r from-[#FB5934] to-[#e04a28] hover:from-[#e04a28] hover:to-[#c93d1e] text-white font-semibold py-2.5 px-5 rounded-xl text-sm transition-all duration-300 shadow-lg shadow-[#FB5934]/10 hover:shadow-[#FB5934]/25 hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-1.5 whitespace-nowrap"
+                        className="bg-gradient-to-r from-[#FB5934] to-[#e04a28] hover:from-[#e04a28] hover:to-[#c93d1e] focus:outline-none text-white font-semibold py-2.5 px-5 rounded-xl text-sm transition-all duration-300 shadow-lg shadow-[#FB5934]/10 hover:shadow-[#FB5934]/25 hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-1.5 whitespace-nowrap"
                       >
                         Subscribe
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -234,6 +234,8 @@ import EditInsurance from "../Component/Dashboard/Super-AdminDashboard/Insurance
 import EnquiryTable from "../Component/Dashboard/Super-AdminDashboard/Enquiry/table";
 import ViewEnquiry from "../Component/Dashboard/Super-AdminDashboard/Enquiry/view";
 
+import NewsletterTable from "../Component/Dashboard/Super-AdminDashboard/Newsletter/NewsletterTable";
+
 import SMSSettingSignup from "../Component/Dashboard/Super-AdminDashboard/SMSSettings/SmsSettingsSignup";
 import PaymentGetwaySetting from "../Component/Dashboard/Super-AdminDashboard/Settings/PaymentGetway/PaymentGetway"
 
@@ -1208,9 +1210,11 @@ const AppRoutes = () => {
           path="CMS-art-gallery/edit/:id"
           element={<ArtsaysGalleryEdit />}
         />
-        {/* Enquiries */}
-        <Route path="enquiry" element={<EnquiryTable />} />
-        <Route path="enquiry/view" element={<ViewEnquiry />} />
+          {/* Enquiries */}
+          <Route path="enquiry" element={<EnquiryTable />} />
+          <Route path="enquiry/view" element={<ViewEnquiry />} />
+          {/* Newsletter */}
+          <Route path="newsletter" element={<NewsletterTable />} />
         {/* Policy Routes */}
         <Route path="policy" element={<PolicyTable />} />
         <Route path="policy/create-policy" element={<CreatePolicy />} />
