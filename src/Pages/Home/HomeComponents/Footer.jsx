@@ -1,275 +1,400 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaFacebookF } from "react-icons/fa";
-import { FaInstagram } from "react-icons/fa";
-import { FaLinkedinIn } from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaLinkedinIn, FaYoutube } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import { FaYoutube } from "react-icons/fa";
-import { ReactComponent as Logo} from '../../../assets/logo.svg';
+import { HiShieldCheck, HiCheckBadge } from "react-icons/hi2";
+import { BsCreditCard2FrontFill, BsBank2 } from "react-icons/bs";
+import { SiVisa, SiMastercard } from "react-icons/si";
+import { ReactComponent as Logo } from '../../../assets/logo.svg';
 import "./FooterStyle.css";
+import { toast } from "react-toastify";
 
 const Footer = () => {
+  const [email, setEmail] = useState("");
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+    toast.success("Thank you for subscribing!");
+    setEmail("");
+  };
+
+  const linkSections = [
+    {
+      title: "ABOUT ARTSAYS",
+      links: [
+        { label: "About us", to: "/about-us" },
+        { label: "Contact Us", to: "/contact-us" },
+        { label: "Careers", to: "/career" },
+        { label: "Why Artsays Different", to: "/why-artsays" },
+        { label: "Benefits of Choosing Artsays", to: "/why-artsays" },
+        { label: "Blog / Art Journal", to: "/blogs" },
+      ],
+    },
+    {
+      title: "FOR BUYERS",
+      links: [
+        { label: "Store", to: "/store" },
+        { label: "Art Gallery", to: "/art-gallery" },
+        { label: "Bidding", to: "/bid" },
+        { label: "Discover Artists", to: "/artist-card" },
+        { label: "Challenges", to: "/challenge" },
+        { label: "How to Buy", to: "/how-to-buy" },
+        { label: "Art Icons", to: "/celebrity" },
+        { label: "Certificates", to: "/certification" },
+        { label: "Insurance", to: "/insurance" },
+      ],
+    },
+    {
+      title: "FOR ARTISTS",
+      links: [
+        { label: "Why Artsays", to: "/why-artsays" },
+        { label: "Careers", to: "/career" },
+        { label: "How to Sell", to: "/how-to-sell" },
+        { label: "Blog / Art Journal", to: "/blogs" },
+        { label: "Affiliate Program", to: "/affiliate-program" },
+        { label: "Partnerships", to: "/partner" },
+        { label: "Commission", to: "/commission" },
+      ],
+    },
+    {
+      title: "HELP CENTER",
+      links: [
+        { label: "FAQs", to: "/policy" },
+        { label: "Privacy Policy", to: "/policy" },
+        { label: "Terms of Use", to: "/policy" },
+        { label: "Shipping & Returns", to: "/policy" },
+        { label: "Copyright & Licensing", to: "/policy" },
+        { label: "Order Tracking", to: "/my-account/my-orders" },
+        { label: "Payment Methods", to: "/policy" },
+        { label: "Refund Policy", to: "/policy" },
+      ],
+    },
+  ];
+
+  const socials = [
+    { icon: FaFacebookF, url: "https://facebook.com/artsays" },
+    { icon: FaInstagram, url: "https://instagram.com/artsays" },
+    { icon: FaLinkedinIn, url: "https://linkedin.com/company/artsays" },
+    { icon: FaXTwitter, url: "https://twitter.com/artsays" },
+    { icon: FaYoutube, url: "https://youtube.com/artsays" },
+  ];
+
+  const categories = [
+    "Painting", "Sculpture", "Digital Art", "Artifact",
+    "Handmade Crafts", "Photography", "Abstract", "Portrait",
+    "Landscape", "Modern Art", "Contemporary", "Traditional",
+    "Watercolor", "Oil Painting", "Acrylic", "Mixed Media",
+  ];
+
+  const trustBadges = ["100% Safe Transactions", "Verified Artworks & Sellers", "Visa", "MasterCard", "RuPay", "UPI", "Net Banking"];
+  const promises = ["Authenticity verified for every artwork", "24/7 artist & buyer support", "Transparent pricing & zero hidden charges"];
+
   return (
     <footer className="w-full bg-[#111111] text-gray-300">
-      {/* Top Section */}
-      <div className="max-w-[1440px] mx-auto py-10 space-y-4">
-        {/* Header */}
-        <section className="flex flex-col md:flex-row items-center justify-between px-4 md:px-4 py-4 bg-[#000000] rounded-xl gap-4">
-          <div className="text-left w-full md:w-1/3">
-              <Link to="/"> <Logo className=" logo"/></Link>
-            <p className="text-base sm:text-lg text-white">
-              When Art Speaks, Value Grows
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-5">
+
+        {/* Brand Header */}
+        <div className="footer-card bg-[#0a0a0a] rounded-[2rem] p-8 md:p-10 border border-gray-800/60">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div>
+              <Link to="/">
+                <Logo className="logo h-10 w-auto mb-3" />
+              </Link>
+              <p className="text-white text-lg font-semibold tracking-tight">
+                When Art Speaks, Value Grows
+              </p>
+            </div>
+            <p className="md:max-w-2xl text-sm text-gray-500 leading-relaxed md:text-right">
+              Artsays is a global art marketplace connecting artists, collectors,
+              and galleries. Discover original paintings, sculptures, and digital
+              art — authenticated, insured, and delivered with care.
             </p>
           </div>
+        </div>
 
-          <p className="md:w-2/3 text-sm sm:text-md text-white text-start md:text-end leading-relaxed">
-            Artsays is a global art marketplace connecting artists, collectors,
-            and galleries. Discover original paintings, sculptures, and digital
-            art — authenticated, insured, and delivered with care.
-          </p>
-        </section>
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
 
+          {/* Left Column - Newsletter, Contact, Social, Partners */}
+          <div className="lg:col-span-4 space-y-5">
 
-        {/* Middle Content */}
-        <section className="flex flex-col md:flex-row gap-4">
-          <div className="w-full md:w-2/5 flex flex-col gap-4">
-            <div className="bg-[#000000] text-start rounded-2xl p-6">
-              <div className="flex flex-col md:flex-col lg:flex-row items-center bg-transparent border border-gray-500 rounded-xl lg:!rounded-full px-2 py-2 w-full mx-auto">
-                <input
-                  type="email"
-                  placeholder="abc@gmail.com"
-                  className="flex-1 bg-transparent outline-none text-gray-300 placeholder-gray-400 text-lg px-3"
-                />
-                <button className="w-full lg:w-auto bg-[#FB5934] hover:bg-[#ffffff] !text-[#000000] font-semibold text-lg px-6 py-2 rounded-xl lg:rounded-full shadow-md transition-all duration-300 !mt-3 md:!mt-3 lg:!mt-0">
-                  Subscribe
-                </button>
+              {/* Newsletter */}
+              <div className="footer-card bg-[#0a0a0a] rounded-[2rem] p-7 border border-gray-800/60 relative overflow-hidden group">
+                {/* Decorative background glow */}
+                <div className="absolute -top-12 -right-12 w-32 h-32 bg-[#FB5934]/5 rounded-full blur-2xl group-hover:bg-[#FB5934]/10 transition-all duration-500"></div>
+                <div className="absolute -bottom-8 -left-8 w-24 h-24 bg-[#FB5934]/3 rounded-full blur-xl"></div>
+
+                <div className="relative">
+                  {/* Icon + Title row */}
+                  <div className="flex items-center gap-2.5 mb-1">
+                    <span className="w-8 h-8 rounded-xl bg-[#FB5934]/10 flex items-center justify-center group-hover:bg-[#FB5934]/20 transition-colors">
+                      <svg className="w-4 h-4 text-[#FB5934]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    </span>
+                    <h3 className="footer-section-title text-xs font-bold uppercase tracking-[0.15em] text-[#FB5934] mb-0">
+                      Stay Updated
+                    </h3>
+                  </div>
+
+                  <p className="text-gray-500 text-sm mb-5 ml-[42px]">Get the latest art drops and exclusive offers.</p>
+
+                  <form onSubmit={handleSubscribe} className="space-y-3">
+                    <div className="relative">
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="abc@gmail.com"
+                        className="w-full bg-[#161616] border border-gray-800/80 text-white placeholder-gray-600 pl-11 pr-4 py-3 rounded-xl text-sm focus:border-[#FB5934]/50 focus:ring-1 focus:ring-[#FB5934]/20 focus:outline-none transition-all"
+                      />
+                      <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                      </svg>
+                    </div>
+                    <button
+                      type="submit"
+                      className="w-full bg-gradient-to-r from-[#FB5934] to-[#e04a28] hover:from-[#e04a28] hover:to-[#c93d1e] text-white font-semibold py-3 px-5 rounded-xl text-sm transition-all duration-300 shadow-lg shadow-[#FB5934]/10 hover:shadow-[#FB5934]/25 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2"
+                    >
+                      Subscribe
+                      <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </button>
+                  </form>
+                </div>
               </div>
-              <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold mt-8 pb-2 mb-3">
-                CONTACT US
+
+            {/* Contact */}
+            <div className="footer-card bg-[#0a0a0a] rounded-[2rem] p-7 border border-gray-800/60">
+              <h3 className="footer-section-title text-xs font-bold uppercase tracking-[0.15em] text-[#FB5934] mb-5">
+                Contact Us
               </h3>
-              <ul className="space-y-3 text-sm">
+              <ul className="space-y-4">
                 <li>
-                  <table>
-                    <tbody>
-                      <tr className="align-top">
-                        <td className="pr-3">
-                          <img src="/assets/footer/call.svg" alt="call" className="w-5 h-5" />
-                        </td>
-                        <td className="text-white">+91 8668 36 7265</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <a href="tel:+918668367265" className="footer-contact-item flex items-center gap-3 group">
+                    <span className="w-9 h-9 bg-[#161616] rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-[#FB5934]/10 transition-colors">
+                      <img src="/assets/footer/call.svg" alt="call" className="w-4 h-4" />
+                    </span>
+                    <span className="text-gray-300 text-sm group-hover:text-white transition-colors">+91 8668 36 7265</span>
+                  </a>
                 </li>
-
                 <li>
-                  <table>
-                    <tbody>
-                      <tr className="align-top">
-                        <td className="pr-3">
-                          <img src="/assets/footer/mail.svg" alt="mail" className="w-5 h-5" />
-                        </td>
-                        <td className="text-white">contact@artsays.in</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <a href="mailto:contact@artsays.in" className="footer-contact-item flex items-center gap-3 group">
+                    <span className="w-9 h-9 bg-[#161616] rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-[#FB5934]/10 transition-colors">
+                      <img src="/assets/footer/mail.svg" alt="mail" className="w-4 h-4" />
+                    </span>
+                    <span className="text-gray-300 text-sm group-hover:text-white transition-colors">contact@artsays.in</span>
+                  </a>
                 </li>
-
                 <li>
-                  <table>
-                    <tbody>
-                      <tr className="align-top">
-                        <td className="pr-3">
-                          <img
-                            src="/assets/footer/location.svg"
-                            alt="location"
-                            className="w-5 h-5"
-                          />
-                        </td>
-                        <td className="text-white leading-snug">
-                          Pune, Pimpri Chinchwad, Maharashtra, India
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <div className="flex items-start gap-3">
+                    <span className="w-9 h-9 bg-[#161616] rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <img src="/assets/footer/location.svg" alt="location" className="w-4 h-4" />
+                    </span>
+                    <span className="text-gray-300 text-sm leading-relaxed">
+                      Pune, Pimpri Chinchwad, Maharashtra, India
+                    </span>
+                  </div>
                 </li>
               </ul>
-
-              <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold mt-8 pb-2 mb-3">
-                FOLLOW US
-              </h3>
-              <ul className="flex gap-10 text-xl">
-                <li className="flex items-center gap-2">
-                  <FaFacebookF />
-                </li>
-                <li className="flex items-center gap-2">
-                  <FaInstagram />
-                </li>
-                <li className="flex items-start gap-2">
-                  <FaLinkedinIn />
-                </li>
-                <li className="flex items-start gap-2">
-                  <FaXTwitter />
-                </li>
-                <li className="flex items-start gap-2">
-                  <FaYoutube />
-                </li>
-              </ul>
-
             </div>
-            <div className="bg-[#000000] rounded-2xl p-6 text-start">
-              <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold pb-2 mb-3">
-                PARTNER WITH US
-              </h3>
 
-              <ul className="custom-bullet list-none text-sm flex flex-col md:flex-row gap-3">
-                <li>Become a Gallery Partner</li>
-                <li>Corporate Art Solutions</li>
-              </ul>
+            {/* Social + Partner */}
+            <div className="footer-card bg-[#0a0a0a] rounded-[2rem] p-7 border border-gray-800/60">
+              <h3 className="footer-section-title text-xs font-bold uppercase tracking-[0.15em] text-[#FB5934] mb-4">
+                Follow Us
+              </h3>
+              <div className="flex gap-2.5 mb-6">
+                {socials.map((social, idx) => (
+                  <a
+                    key={idx}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="footer-social-icon w-9 h-9 bg-[#161616] rounded-lg flex items-center justify-center text-gray-500 hover:bg-[#FB5934] hover:text-white transition-all duration-200"
+                  >
+                    <social.icon className="text-sm" />
+                  </a>
+                ))}
+              </div>
+
+              <div className="border-t border-gray-800/60 pt-5">
+                <h3 className="footer-section-title text-xs font-bold uppercase tracking-[0.15em] text-[#FB5934] mb-3">
+                  Partner With Us
+                </h3>
+                <ul className="space-y-1.5">
+                  <li>
+                    <Link to="/partner" className="footer-link text-gray-500 hover:text-gray-200 text-sm transition-colors">
+                      Become a Gallery Partner
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/corporate" className="footer-link text-gray-500 hover:text-gray-200 text-sm transition-colors">
+                      Corporate Art Solutions
+                    </Link>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
-          <div className="w-full md:w-3/5 bg-[#000000] rounded-2xl text-start p-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              {/* ABOUT */}
-              <div>
-                <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold pb-2 mb-3">
-                  ABOUT ARTSAYS
-                </h3>
-                <ul className="space-y-2 text-sm">
-                  <li><Link to="/about">About us</Link></li>
-                  <li><Link to="/contact">Contact Us</Link></li>
-                  <li><Link to="/careers">Careers</Link></li>
-                  <li><Link to="/why-artsays">Why Artsays Different</Link></li>
-                  <li><Link to="/benefits">Benefits of Choosing Artsays</Link></li>
-                  <li><Link to="/blog">Blog / Art Journal</Link></li>
-                </ul>
+
+          {/* Right Column - Navigation Links */}
+          <div className="lg:col-span-8">
+            <div className="footer-card bg-[#0a0a0a] rounded-[2rem] p-7 md:p-8 border border-gray-800/60 h-full">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-8">
+                {linkSections.map((section, sIdx) => (
+                  <div key={sIdx}>
+                    <h3 className="footer-section-title text-xs font-bold uppercase tracking-[0.15em] text-[#FB5934] mb-4 pb-2.5 border-b border-gray-800/40">
+                      {section.title}
+                    </h3>
+                    <ul className="space-y-2">
+                      {section.links.map((link, lIdx) => (
+                        <li key={lIdx}>
+                          <Link
+                            to={link.to}
+                            className="footer-link text-gray-500 hover:text-gray-200 text-[13px] leading-relaxed transition-colors inline-block"
+                          >
+                            {link.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
               </div>
 
-              {/* FOR BUYERS */}
-              <div>
-                <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold pb-2 mb-3">
-                  FOR BUYERS
-                </h3>
-                <ul className="space-y-2 text-sm">
-                  <li><Link to="/store">Store</Link></li>
-                  <li><Link to="/gallery">Art Gallery</Link></li>
-                  <li><Link to="/bidding">Bidding</Link></li>
-                  <li><Link to="/artists">Discover Artists</Link></li>
-                  <li><Link to="/challenges">Challenges</Link></li>
-                  <li><Link to="/how-to-buy">How to Buy</Link></li>
-                  <li><Link to="/icons">Art Icons</Link></li>
-                  <li><Link to="/certificates">Certificates</Link></li>
-                  <li><Link to="/insurance">Insurance</Link></li>
-                </ul>
-              </div>
+                  {/* Trust & Promise - Unified */}
+                    <div className="mt-8 pt-8 border-t border-gray-800/40">
+                      <div className="relative overflow-hidden rounded-2xl bg-[#0d0d0d] border border-gray-800/40 group hover:border-gray-700/50 transition-all duration-300">
+                        {/* Top accent */}
+                        <div className="h-[2px] bg-gradient-to-r from-transparent via-[#FB5934]/60 to-transparent"></div>
 
-              {/* FOR ARTISTS */}
-              <div>
-                <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold pb-2 mb-3">
-                  FOR ARTISTS
-                </h3>
-                <ul className="space-y-2 text-sm">
-                  <li><Link to="/why-artsays">Why Artsays</Link></li>
-                  <li><Link to="/careers">Careers</Link></li>
-                  <li><Link to="/how-to-sell">How to Sell</Link></li>
-                  <li><Link to="/blog">Blog / Art Journal</Link></li>
-                  <li><Link to="/affiliate">Affiliate Program</Link></li>
-                  <li><Link to="/partnerships">Partnerships</Link></li>
-                  <li><Link to="/commission">Commission</Link></li>
-                </ul>
-              </div>
+                        <div className="p-5 sm:p-6">
+                          {/* Header row */}
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5">
+                            <div className="flex items-center gap-3">
+                              <div className="relative">
+                                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FB5934] to-[#e04a28] flex items-center justify-center">
+                                  <HiShieldCheck className="text-white text-lg" />
+                                </div>
+                                <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#0d0d0d]"></span>
+                              </div>
+                              <div>
+                                <h3 className="text-white text-sm font-bold">Secure Payments & Trust Badges</h3>
+                                <p className="text-gray-500 text-[11px]">Your transactions are protected & verified</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] font-semibold rounded-full border border-emerald-500/20">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                100% Safe Transactions
+                              </span>
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-500/10 text-blue-400 text-[10px] font-semibold rounded-full border border-blue-500/20">
+                                <HiCheckBadge className="text-xs" />
+                                Verified Artworks & Sellers
+                              </span>
+                            </div>
+                          </div>
 
-              {/* HELP CENTER */}
-              <div>
-                <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold pb-2 mb-3">
-                  HELP CENTER
-                </h3>
-                <ul className="space-y-2 text-sm">
-                  <li><Link to="/faqs">FAQs</Link></li>
-                  <li><Link to="/privacy-policy">Privacy Policy</Link></li>
-                  <li><Link to="/terms">Terms of Use</Link></li>
-                  <li><Link to="/shipping">Shipping & Returns</Link></li>
-                  <li><Link to="/copyright">Copyright & Licensing</Link></li>
-                  <li><Link to="/order-tracking">Order Tracking</Link></li>
-                  <li><Link to="/payment-methods">Payment Methods</Link></li>
-                  <li><Link to="/refund-policy">Refund Policy</Link></li>
-                </ul>
-              </div>
+                          {/* Content: Payments + Promise side by side */}
+                          <div className="flex flex-col md:flex-row gap-5">
+                            {/* Payment Methods */}
+                            <div className="flex-1">
+                              <h4 className="text-gray-500 text-[10px] font-semibold uppercase tracking-[0.15em] mb-3">Accepted Payment Methods</h4>
+                              <div className="flex flex-wrap gap-2">
+                                {[
+                                  { icon: <SiVisa className="text-base text-[#1A1F71]" />, label: "Visa" },
+                                  { icon: <SiMastercard className="text-base text-[#EB001B]" />, label: "MasterCard" },
+                                  { icon: <span className="text-[10px] font-black text-[#6F3B8A]">RuPay</span>, label: "RuPay" },
+                                  { icon: <BsCreditCard2FrontFill className="text-sm text-purple-400" />, label: "UPI" },
+                                  { icon: <BsBank2 className="text-sm text-amber-400" />, label: "Net Banking" },
+                                ].map((method, idx) => (
+                                  <div key={idx} className="flex items-center gap-2 px-3 py-2 bg-[#161616] rounded-lg border border-gray-800/30 hover:border-gray-700/50 hover:bg-[#1a1a1a] transition-all duration-200 cursor-default">
+                                    {method.icon}
+                                    <span className="text-gray-400 text-[11px] font-medium">{method.label}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Divider */}
+                            <div className="hidden md:block w-px bg-gradient-to-b from-transparent via-gray-800/60 to-transparent"></div>
+                            <div className="md:hidden h-px bg-gradient-to-r from-transparent via-gray-800/60 to-transparent"></div>
+
+                            {/* Artsays Promise */}
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-3">
+                                <HiCheckBadge className="text-[#FB5934] text-sm" />
+                                <h4 className="text-gray-500 text-[10px] font-semibold uppercase tracking-[0.15em]">Artsays Promise</h4>
+                              </div>
+                              <div className="space-y-2">
+                                {promises.map((item, idx) => (
+                                  <div key={idx} className="flex items-center gap-2.5 group/item">
+                                    <span className="w-5 h-5 rounded-md bg-[#FB5934]/15 flex items-center justify-center flex-shrink-0 group-hover/item:bg-[#FB5934]/25 transition-colors">
+                                      <svg className="w-2.5 h-2.5 text-[#FB5934]" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                      </svg>
+                                    </span>
+                                    <span className="text-gray-400 text-xs group-hover/item:text-gray-200 transition-colors">{item}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
             </div>
-
-            <div>
-              {/* TRUST & PROMISE */}
-              <div className="pt-3">
-                <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold pb-2 mb-3">
-                  SECURE PAYMENTS & TRUST BADGES
-                </h3>
-                <ul className="custom-bullet list-none text-sm flex flex-col sm:flex-row gap-3">
-                  <li>100% Safe Transactions</li>
-                  <li>Verified Artworks & Sellers</li>
-                  <li>Visa, MasterCard, PayPal, UPI, Net Banking</li>
-                </ul>
-
-                <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold mt-3 pb-2 mb-3">
-                  ARTSAYS PROMISE
-                </h3>
-                <ul className="custom-bullet list-none text-sm flex flex-col sm:flex-row gap-3">
-                  <li>Authenticity verified for every artwork</li>
-                  <li>24/7 artist & buyer support</li>
-                  <li>Transparent pricing & zero hidden charges</li>
-                </ul>
-              </div>
-            </div>
-
           </div>
-        </section>
+        </div>
 
-        {/* CATEGORIES */}
-        <section className="bg-[#000000] rounded-2xl p-6 text-start">
-          <h3 className="inline-block border-b-2 border-white text-[#FB5934] text-lg font-semibold pb-2 mb-3">
-            CATEGORIES
+        {/* Categories */}
+        <div className="footer-card bg-[#0a0a0a] rounded-[2rem] p-7 border border-gray-800/60">
+          <h3 className="footer-section-title text-xs font-bold uppercase tracking-[0.15em] text-[#FB5934] mb-4">
+            Categories
           </h3>
-          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-y-2 text-sm">
-            {[
-              "Painting",
-              "Sculpture",
-              "Digital Art",
-              "Artifact",
-              "Handmade Crafts",
-              "Photography",
-            ].map((category, i) =>
-              Array(8)
-                .fill(null)
-                .map((_, idx) => (
-                  <p key={`${category}-${idx}`} className="text-white">
-                    {category}
-                  </p>
-                ))
-            )}
+          <div className="flex flex-wrap gap-2">
+            {categories.map((category, idx) => (
+              <Link
+                key={idx}
+                to={`/store?category=${category.toLowerCase().replace(/\s+/g, '-')}`}
+                className="footer-category-tag px-3.5 py-1.5 bg-[#161616] text-gray-500 hover:text-white hover:bg-[#FB5934]/15 hover:border-[#FB5934]/30 border border-gray-800/40 rounded-xl text-xs transition-all duration-200"
+              >
+                {category}
+              </Link>
+            ))}
           </div>
-        </section>
+        </div>
 
         {/* Bottom Bar */}
-        <section className="flex flex-col md:flex-row justify-between items-center text-xs text-white gap-3 bg-[#000000] rounded-2xl p-6">
-          <div className="flex items-center gap-2">
-            <img
-              className="w-5 h-5 rounded-full"
-              src="/assets/footer/ind.png"
-              alt="India"
-            />
-            India | English (UK) | ₹ (INR)
+        <div className="footer-card bg-[#0a0a0a] rounded-[2rem] px-7 py-5 border border-gray-800/60">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-3">
+            <div className="flex items-center gap-2.5 text-gray-500 text-xs">
+              <img
+                className="w-5 h-5 rounded-full"
+                src="/assets/footer/ind.png"
+                alt="India"
+              />
+              <span>India | English (UK) | &#8377; (INR)</span>
+            </div>
+            <div className="text-gray-600 text-[11px] md:text-xs text-center md:text-right">
+              &copy; {new Date().getFullYear()} Artsays Pvt. Ltd. All rights reserved. | Designed for Global Artists &amp; Collectors |{" "}
+              <Link to="/policy" className="text-gray-500 hover:text-[#FB5934] transition-colors">Terms</Link>
+              {" \u2022 "}
+              <Link to="/policy" className="text-gray-500 hover:text-[#FB5934] transition-colors">Privacy</Link>
+              {" \u2022 "}
+              <span className="text-gray-500">Cookies</span>
+              {" \u2022 "}
+              <span className="text-gray-500">Accessibility</span>
+            </div>
           </div>
-          <div className="text-center md:text-right">
-            © 2025 Artsays Pvt. Ltd. All rights reserved. | Designed for Global
-            Artists & Collectors |{" "}
-            <Link to="/terms" className="hover:text-[#FB5934]">
-              Terms
-            </Link>{" "}
-            •{" "}
-            <Link to="/privacy" className="hover:text-[#FB5934]">
-              Privacy
-            </Link>{" "}
-            • Cookies • Accessibility
-          </div>
-        </section>
+        </div>
+
       </div>
     </footer>
   );
