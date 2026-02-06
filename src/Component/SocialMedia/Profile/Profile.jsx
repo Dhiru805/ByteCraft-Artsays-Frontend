@@ -144,6 +144,7 @@ const Profile = ({ shareprofileid }) => {
   const [showMentions, setShowMentions] = useState(false);
   const [canComment, setCanComment] = useState(false);
   const [products, setProducts] = useState([]);
+  const [buyerOrders, setBuyerOrders] = useState([]);
   const [reportPopupOpen, setReportPopupOpen] = useState(false);
   const [reportSuccess, setReportSuccess] = useState(false);
   const [reportedUser, setReportedUser] = useState(null);
@@ -208,6 +209,7 @@ const Profile = ({ shareprofileid }) => {
   const [onItem, setOnItem] = useState(false);
   const [onTag, setOnTag] = useState(false);
   const [onLiveHistory, setOnLiveHistory] = useState(false);
+  const [onCollections, setOnCollections] = useState(false);
   const [liveHistory, setLiveHistory] = useState([]);
   const [liveHistoryLoading, setLiveHistoryLoading] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -475,7 +477,35 @@ const Profile = ({ shareprofileid }) => {
     if (profile?.postProductsEnabled) {
       fetchProduct();
     }
-  }, [viewedUserId, profile]);
+    }, [viewedUserId, profile]);
+
+  useEffect(() => {
+    const fetchBuyerOrders = async () => {
+      try {
+        const res = await getAPI(`/api/buyer-order-list/buyer/${viewedUserId}`);
+        setBuyerOrders(res?.data?.data || []);
+      } catch (error) {
+        console.error("Error fetching buyer orders:", error);
+      }
+    };
+
+      if (profile?.role === "buyer" && viewedUserId) {
+        fetchBuyerOrders();
+      }
+    }, [viewedUserId, profile]);
+
+    // Filter out cancelled orders for display
+    const activeBuyerOrders = buyerOrders.filter(
+      (order) => order.orderStatus !== "Cancelled"
+    );
+
+  // When profile loads and user is a buyer, default to Collections tab instead of Posts
+  useEffect(() => {
+    if (profile?.role === "buyer") {
+      setOnPosts(false);
+      setOnCollections(true);
+    }
+  }, [profile?.role]);
 
   useEffect(() => {
     const fetchLiveHistory = async () => {
@@ -2130,15 +2160,24 @@ const Profile = ({ shareprofileid }) => {
 
               {/* Stats */}
               <div className="flex sm:gap-8 gap-6 text-base">
-                <p className="text-gray-600 font-medium">
-                  <span className="font-bold text-lg text-[#000000]">
-                    {profile.postCount}
-                  </span>{" "}
-                  Posts
-                </p>
-                <p
-                  className="text-gray-600 cursor-pointer font-medium"
-                  onClick={() => setShowFollowers(true)}
+                {profile.role === "buyer" ? (
+                  <p className="text-gray-600 font-medium">
+                    <span className="font-bold text-lg text-[#000000]">
+                      {activeBuyerOrders.length}
+                      </span>{" "}
+                      Collections
+                    </p>
+                  ) : (
+                    <p className="text-gray-600 font-medium">
+                      <span className="font-bold text-lg text-[#000000]">
+                        {profile.postCount}
+                      </span>{" "}
+                      Posts
+                    </p>
+                  )}
+                  <p
+                    className="text-gray-600 cursor-pointer font-medium"
+                    onClick={() => setShowFollowers(true)}
                 >
                   <span className="font-bold text-lg text-[#000000]">
                     {profile.followersCount}
@@ -2246,12 +2285,21 @@ const Profile = ({ shareprofileid }) => {
 
                   {/* Stats */}
                   <div className="flex justify-between sm:gap-8 gap-6 text-base">
-                    <p className="flex flex-col text-center text-[#6E4E37] text-lg font-medium">
-                      <span className="font-bold text-[#48372D]">
-                        {profile.postCount}
-                      </span>{" "}
-                      Posts
-                    </p>
+                    {profile.role === "buyer" ? (
+                        <p className="flex flex-col text-center text-[#6E4E37] text-lg font-medium">
+                          <span className="font-bold text-[#48372D]">
+                            {activeBuyerOrders.length}
+                          </span>{" "}
+                          Collections
+                        </p>
+                    ) : (
+                      <p className="flex flex-col text-center text-[#6E4E37] text-lg font-medium">
+                        <span className="font-bold text-[#48372D]">
+                          {profile.postCount}
+                        </span>{" "}
+                        Posts
+                      </p>
+                    )}
                     <p className="flex flex-col text-center text-[#6E4E37] text-lg cursor-pointer font-medium" onClick={() => setShowFollowers(true)}>
                       <span className="font-bold text-[#48372D]">
                         {profile.followersCount}
@@ -2525,25 +2573,44 @@ const Profile = ({ shareprofileid }) => {
           </div>
         )}
 
-        {/* Divider Tabs */}
-        <div className="flex justify-around items-center">
-          <button
-            onClick={() => {
-              setOnPosts(true);
-              setOnSave(false);
-              setOnItem(false);
-              setOnTag(false);
-              setOnLiveHistory(false);
-            }}
-            className={`${onPosts ? "bg-[#48372D] text-white rounded-full py-1 px-5 " : ""
-              } p-3 focus:outline-none`}
-          >
-            <BsGrid3X3 className="text-2xl" />
-          </button>
+          {/* Divider Tabs */}
+          <div className="flex justify-around items-center">
+            {profile?.role === "buyer" ? (
+              <button
+                onClick={() => {
+                  setOnCollections(true);
+                  setOnPosts(false);
+                  setOnSave(false);
+                  setOnItem(false);
+                  setOnTag(false);
+                  setOnLiveHistory(false);
+                }}
+                className={`${onCollections ? "bg-[#48372D] text-white rounded-full py-1 px-5 " : ""
+                  } p-3 focus:outline-none`}
+              >
+                <BsGrid3X3 className="text-2xl" />
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setOnPosts(true);
+                  setOnCollections(false);
+                  setOnSave(false);
+                  setOnItem(false);
+                  setOnTag(false);
+                  setOnLiveHistory(false);
+                }}
+                className={`${onPosts ? "bg-[#48372D] text-white rounded-full py-1 px-5 " : ""
+                  } p-3 focus:outline-none`}
+              >
+                <BsGrid3X3 className="text-2xl" />
+              </button>
+            )}
           {isMyProfile && (
             <button
               onClick={() => {
                 setOnPosts(false);
+                setOnCollections(false);
                 setOnSave(true);
                 setOnItem(false);
                 setOnTag(false);
@@ -2557,25 +2624,29 @@ const Profile = ({ shareprofileid }) => {
           )}
 
           {/* Past Lives History Tab */}
-           <button
-            onClick={() => {
-              setOnPosts(false);
-              setOnSave(false);
-              setOnItem(false);
-              setOnTag(false);
-              setOnLiveHistory(true);
-            }}
-            className={`${
-              onLiveHistory ? "bg-[#48372D] text-white rounded-full  py-1 px-5" : ""
-            } p-3`}
-          >
-            <MdHistory className="text-2xl" />
-          </button>
+            {profile?.role !== "buyer" && (
+             <button
+              onClick={() => {
+                setOnPosts(false);
+                setOnCollections(false);
+                setOnSave(false);
+                setOnItem(false);
+                setOnTag(false);
+                setOnLiveHistory(true);
+              }}
+              className={`${
+                onLiveHistory ? "bg-[#48372D] text-white rounded-full  py-1 px-5" : ""
+              } p-3`}
+            >
+              <MdHistory className="text-2xl" />
+            </button>
+            )}
 
               {profile?.postProductsEnabled && profile?.role !== "buyer" && (
               <button
                 onClick={() => {
                   setOnPosts(false);
+                  setOnCollections(false);
                   setOnSave(false);
                   setOnItem(true);
                   setOnTag(false);
@@ -2590,6 +2661,7 @@ const Profile = ({ shareprofileid }) => {
           <button
             onClick={() => {
               setOnPosts(false);
+              setOnCollections(false);
               setOnSave(false);
               setOnItem(false);
               setOnTag(true);
@@ -2602,7 +2674,60 @@ const Profile = ({ shareprofileid }) => {
           </button>
         </div>
 
-        {/* post tabs */}
+          {/* Collections tab (for buyers) */}
+            {onCollections && profile?.role === "buyer" && (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-1 w-full">
+                {activeBuyerOrders.length > 0 ? (
+                  activeBuyerOrders.map((order) =>
+                  order.items?.map((item, idx) => {
+                    const product = item.productId || item.resellProduct || item.customProduct;
+                    const mainImage = product?.mainImage || product?.images?.[0];
+                    return (
+                      <div
+                        key={`${order._id}-${idx}`}
+                        className="bg-[#48372D] rounded-lg border-[#48372D] border-2 overflow-hidden text-white flex flex-col shadow-md cursor-pointer"
+                          onClick={() => product?._id && navigate(`/product-details/${product.slug || product._id}/${product._id}`)}
+                      >
+                        <div className="h-[200px] bg-[#EBEBEB] rounded-b-2xl">
+                          {mainImage ? (
+                            <img
+                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${mainImage}`}
+                              alt={item.name || "Product"}
+                              className="h-full w-full object-contain rounded-b-2xl"
+                            />
+                          ) : (
+                            <div className="flex items-center justify-center text-gray-500 w-full h-full">
+                              No Image
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex flex-col bg-[#48372D] p-2">
+                          <h3 className="font-semibold text-lg truncate">
+                            {item.name || "Product"}
+                          </h3>
+                          <hr className="w-full my-2 text-white" />
+                          <div className="flex justify-between items-center">
+                            <span className="text-base font-semibold text-white">
+                              ₹ {item.price?.toLocaleString("en-IN") || 0}
+                            </span>
+                            <span className="text-xs text-gray-300">
+                              Qty: {item.quantity || 1}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )
+              ) : (
+                <div className="col-span-3 text-center text-gray-500 py-10">
+                  No collections yet
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* post tabs */}
         {onPosts && (
           <div className="grid grid-cols-3 gap-1 w-full">
             {reversedPosts.map((post, index) => (
