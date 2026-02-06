@@ -22,6 +22,8 @@ const NewsletterTable = () => {
   const [composeHtml, setComposeHtml] = useState("");
   const [sending, setSending] = useState(false);
   const [selectedTemplateId, setSelectedTemplateId] = useState("");
+  const [recipientType, setRecipientType] = useState("newsletter");
+  const [recipientCounts, setRecipientCounts] = useState({ newsletter: 0, artist: 0, seller: 0, buyer: 0 });
 
   // Templates state
   const [templates, setTemplates] = useState([]);
@@ -62,9 +64,22 @@ const NewsletterTable = () => {
     }
   };
 
+  // ─── Fetch recipient counts ───
+  const fetchRecipientCounts = async () => {
+    try {
+      const response = await getAPI("/api/newsletter/recipient-counts");
+      if (response.data?.data) {
+        setRecipientCounts(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching recipient counts:", error);
+    }
+  };
+
   useEffect(() => {
     fetchSubscribers();
     fetchTemplates();
+    fetchRecipientCounts();
   }, []);
 
   // ─── Subscriber delete ───
@@ -107,7 +122,7 @@ const NewsletterTable = () => {
     }
     setSending(true);
     try {
-      const res = await axiosInstance.post("/api/newsletter/send-bulk", { subject: composeSubject, htmlContent: composeHtml }, authHeaders);
+      const res = await axiosInstance.post("/api/newsletter/send-bulk", { subject: composeSubject, htmlContent: composeHtml, recipientType }, authHeaders);
       toast.success(res.data.message || "Emails sent successfully!");
       setComposeSubject("");
       setComposeHtml("");
@@ -281,83 +296,97 @@ const NewsletterTable = () => {
 
       {/* ═══════════ COMPOSE & SEND TAB ═══════════ */}
       {activeTab === "compose" && (
-        <div className="row clearfix">
-          <div className="col-lg-12">
-            <div className="card">
-              <div className="header">
-                <h2><i className="fa fa-paper-plane mr-2"></i>Compose Newsletter Email</h2>
-                <small>This email will be sent to all {subscribers.length} subscriber(s). The unsubscribe footer is auto-appended.</small>
-              </div>
-              <div className="body">
-                {/* Quick template select */}
-                {templates.length > 0 && (
+          <div className="row clearfix">
+            <div className="col-lg-12">
+              <div className="card">
+                <div className="header">
+                  <h2><i className="fa fa-paper-plane mr-2"></i>Compose Newsletter Email</h2>
+                  <small>Select recipient group and compose your email. The unsubscribe footer is auto-appended for newsletter subscribers.</small>
+                </div>
+                <div className="body">
+                  {/* Recipient type dropdown */}
                   <div className="form-group">
-                    <label><strong>Load from Template</strong></label>
+                    <label><strong>Send To</strong></label>
                     <select
                       className="form-control"
-                      value={selectedTemplateId}
-                      onChange={(e) => {
-                        const tmpl = templates.find((t) => t._id === e.target.value);
-                        if (tmpl) {
-                          setComposeSubject(tmpl.subject);
-                          setComposeHtml(tmpl.htmlContent);
-                          setSelectedTemplateId(tmpl._id);
-                        }
-                      }}
+                      value={recipientType}
+                      onChange={(e) => setRecipientType(e.target.value)}
                     >
-                      <option value="">-- Select a template --</option>
-                      {templates.map((t) => (
-                        <option key={t._id} value={t._id}>{t.name}</option>
-                      ))}
+                      <option value="newsletter">Newsletter Subscribers ({recipientCounts.newsletter})</option>
+                      <option value="artist">Artists ({recipientCounts.artist})</option>
+                      <option value="seller">Sellers ({recipientCounts.seller})</option>
+                      <option value="buyer">Buyers ({recipientCounts.buyer})</option>
                     </select>
                   </div>
-                )}
 
-                <div className="form-group">
-                  <label><strong>Subject</strong></label>
-                  <input type="text" className="form-control" placeholder="Enter email subject" value={composeSubject} onChange={(e) => setComposeSubject(e.target.value)} />
-                </div>
-
-                <div className="form-group">
-                  <label><strong>Email Body (HTML)</strong></label>
-                  <div className="row">
-                    <div className="col-md-6">
-                      <textarea
+                  {/* Quick template select */}
+                  {templates.length > 0 && (
+                    <div className="form-group">
+                      <label><strong>Load from Template</strong></label>
+                      <select
                         className="form-control"
-                        rows={16}
-                        placeholder="Paste or write your HTML email content here..."
-                        value={composeHtml}
-                        onChange={(e) => setComposeHtml(e.target.value)}
-                        style={{ fontFamily: "monospace", fontSize: "13px" }}
-                      />
+                        value={selectedTemplateId}
+                        onChange={(e) => {
+                          const tmpl = templates.find((t) => t._id === e.target.value);
+                          if (tmpl) {
+                            setComposeSubject(tmpl.subject);
+                            setComposeHtml(tmpl.htmlContent);
+                            setSelectedTemplateId(tmpl._id);
+                          }
+                        }}
+                      >
+                        <option value="">-- Select a template --</option>
+                        {templates.map((t) => (
+                          <option key={t._id} value={t._id}>{t.name}</option>
+                        ))}
+                      </select>
                     </div>
-                    <div className="col-md-6">
-                      <div style={{ border: "1px solid #ddd", borderRadius: "4px", padding: "15px", minHeight: "370px", backgroundColor: "#fff", overflow: "auto" }}>
-                        <p style={{ color: "#999", fontSize: "11px", marginBottom: "10px", textTransform: "uppercase", letterSpacing: "1px" }}>Live Preview</p>
-                        <div dangerouslySetInnerHTML={{ __html: composeHtml + footerPreview }} />
+                  )}
+
+                  <div className="form-group">
+                    <label><strong>Subject</strong></label>
+                    <input type="text" className="form-control" placeholder="Enter email subject" value={composeSubject} onChange={(e) => setComposeSubject(e.target.value)} />
+                  </div>
+
+                  <div className="form-group">
+                    <label><strong>Email Body (HTML)</strong></label>
+                    <div className="row">
+                      <div className="col-md-6">
+                        <textarea
+                          className="form-control"
+                          placeholder="Paste or write your HTML email content here..."
+                          value={composeHtml}
+                          onChange={(e) => setComposeHtml(e.target.value)}
+                          style={{ fontFamily: "monospace", fontSize: "13px", height: "100%" }}
+                        />
+                      </div>
+                      <div className="col-md-6">
+                        <div style={{ border: "1px solid #ddd", borderRadius: "4px", padding: "15px", minHeight: "370px", backgroundColor: "#fff", overflow: "auto" }}>
+                          <p style={{ color: "#999", fontSize: "11px", marginBottom: "10px", textTransform: "uppercase", letterSpacing: "1px" }}>Live Preview</p>
+                          <div dangerouslySetInnerHTML={{ __html: composeHtml + footerPreview }} />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="d-flex justify-content-between align-items-center mt-3">
-                  <span className="text-muted">
-                    <i className="fa fa-info-circle mr-1"></i>
-                    Sending to <strong>{subscribers.length}</strong> subscriber(s)
-                  </span>
-                  <button className="btn btn-primary" onClick={handleSendBulk} disabled={sending || !composeSubject.trim() || !composeHtml.trim()}>
-                    {sending ? (
-                      <><i className="fa fa-spinner fa-spin mr-1"></i> Sending...</>
-                    ) : (
-                      <><i className="fa fa-paper-plane mr-1"></i> Send to All Subscribers</>
-                    )}
-                  </button>
+                  <div className="d-flex justify-content-between align-items-center mt-3">
+                    <span className="text-muted">
+                      <i className="fa fa-info-circle mr-1"></i>
+                      Sending to <strong>{recipientCounts[recipientType] || 0}</strong> {recipientType === "newsletter" ? "subscriber" : recipientType}(s)
+                    </span>
+                    <button className="btn btn-primary" onClick={handleSendBulk} disabled={sending || !composeSubject.trim() || !composeHtml.trim()}>
+                      {sending ? (
+                        <><i className="fa fa-spinner fa-spin mr-1"></i> Sending...</>
+                      ) : (
+                        <><i className="fa fa-paper-plane mr-1"></i> Send to {recipientType === "newsletter" ? "All Subscribers" : recipientType === "artist" ? "All Artists" : recipientType === "seller" ? "All Sellers" : "All Buyers"}</>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
       {/* ═══════════ TEMPLATES TAB ═══════════ */}
       {activeTab === "templates" && (
