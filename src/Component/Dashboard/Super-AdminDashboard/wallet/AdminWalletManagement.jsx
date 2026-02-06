@@ -29,6 +29,8 @@ const AdminWalletManagement = () => {
   const [filterType, setFilterType] = useState("");
   const [page, setPage] = useState(1);
   const [walletPage, setWalletPage] = useState(1);
+  const [withdrawalPage, setWithdrawalPage] = useState(1);
+  const [referralPage, setReferralPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   
   // Date Filters
@@ -455,18 +457,29 @@ const AdminWalletManagement = () => {
 
 
 
-{activeTab === 'withdrawals' && (
+{activeTab === 'withdrawals' && (() => {
+          const filteredWithdrawals = withdrawals.filter(w => {
+            if (filterStatus && w.status !== filterStatus) return false;
+            if (filterWithdrawalUserType) {
+              const wal = wallets.find(wal => String(wal.userId?._id || wal.userId) === String(w.userId));
+              if (!wal || (wal.role || '').toLowerCase() !== filterWithdrawalUserType.toLowerCase()) return false;
+            }
+            return true;
+          });
+          const totalWithdrawalPages = Math.ceil(filteredWithdrawals.length / pageSize);
+          const displayWithdrawals = filteredWithdrawals.slice((withdrawalPage - 1) * pageSize, withdrawalPage * pageSize);
+          return (
           <div className="card">
             <div className="header d-flex justify-content-between align-items-center">
               <h2>Withdrawal Requests</h2>
               <div className="d-flex" style={{ gap: '10px' }}>
-                <select className="form-control" style={{ width: '150px' }} value={filterWithdrawalUserType} onChange={e => setFilterWithdrawalUserType(e.target.value)}>
+                <select className="form-control" style={{ width: '150px' }} value={filterWithdrawalUserType} onChange={e => { setFilterWithdrawalUserType(e.target.value); setWithdrawalPage(1); }}>
                   <option value="">All User Types</option>
                   <option value="Artist">Artist</option>
                   <option value="Seller">Seller</option>
                   <option value="Buyer">Buyer</option>
                 </select>
-                <select className="form-control" style={{ width: '150px' }} value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+                <select className="form-control" style={{ width: '150px' }} value={filterStatus} onChange={e => { setFilterStatus(e.target.value); setWithdrawalPage(1); }}>
                   <option value="">All Status</option>
                   <option value="pending">Pending</option>
                   <option value="approved">Approved</option>
@@ -490,14 +503,7 @@ const AdminWalletManagement = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {withdrawals.filter(w => {
-                      if (filterStatus && w.status !== filterStatus) return false;
-                      if (filterWithdrawalUserType) {
-                        const wal = wallets.find(wal => String(wal.userId?._id || wal.userId) === String(w.userId));
-                        if (!wal || (wal.role || '').toLowerCase() !== filterWithdrawalUserType.toLowerCase()) return false;
-                      }
-                      return true;
-                    }).map(req => {
+                    {displayWithdrawals.map(req => {
                       const userWallet = wallets.find(wal => String(wal.userId?._id || wal.userId) === String(req.userId));
                       return (
                         <tr key={req._id}>
@@ -534,19 +540,20 @@ const AdminWalletManagement = () => {
                       </tr>
                     );
                   })}
-                    {withdrawals.filter(w => {
-                      if (filterStatus && w.status !== filterStatus) return false;
-                      if (filterWithdrawalUserType) {
-                        const wal = wallets.find(wal => String(wal.userId?._id || wal.userId) === String(w.userId));
-                        if (!wal || (wal.role || '').toLowerCase() !== filterWithdrawalUserType.toLowerCase()) return false;
-                      }
-                      return true;
-                    }).length === 0 && <tr><td colSpan="8" className="text-center">No withdrawals found</td></tr>}
+                    {displayWithdrawals.length === 0 && <tr><td colSpan="8" className="text-center">No withdrawals found</td></tr>}
                 </tbody>
               </table>
+              <div className="mt-3 d-flex justify-content-between align-items-center">
+                <div>Page {withdrawalPage} of {totalWithdrawalPages || 1} ({filteredWithdrawals.length} total)</div>
+                <div className="btn-group">
+                  <button className="btn btn-sm btn-light" disabled={withdrawalPage === 1} onClick={() => setWithdrawalPage(p => p - 1)}>Prev</button>
+                  <button className="btn btn-sm btn-light" disabled={withdrawalPage >= totalWithdrawalPages} onClick={() => setWithdrawalPage(p => p + 1)}>Next</button>
+                </div>
+              </div>
             </div>
           </div>
-        )}
+          );
+        })()}
 
       {activeTab === 'transactions' && (
         <div className="card">
@@ -612,7 +619,10 @@ const AdminWalletManagement = () => {
         </div>
       )}
 
-{activeTab === 'referrals' && (
+{activeTab === 'referrals' && (() => {
+            const totalReferralPages = Math.ceil(wallets.length / pageSize);
+            const displayReferrals = wallets.slice((referralPage - 1) * pageSize, referralPage * pageSize);
+            return (
             <div className="card">
               <div className="header d-flex justify-content-between align-items-center">
                 <h2>Referral Program Insights</h2>
@@ -636,7 +646,7 @@ const AdminWalletManagement = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {wallets.map(w => (
+                    {displayReferrals.map(w => (
                       <tr key={w._id}>
                         <td><strong>{w.name} {w.lastName}</strong></td>
                         <td><code>{w.referralCode || 'Not Generated'}</code></td>
@@ -645,12 +655,20 @@ const AdminWalletManagement = () => {
                         <td>{w.referredBy || '-'}</td>
                       </tr>
                     ))}
-                    {wallets.length === 0 && <tr><td colSpan="5" className="text-center">No wallets found</td></tr>}
+                    {displayReferrals.length === 0 && <tr><td colSpan="5" className="text-center">No wallets found</td></tr>}
                   </tbody>
                 </table>
+                <div className="mt-3 d-flex justify-content-between align-items-center">
+                  <div>Page {referralPage} of {totalReferralPages || 1} ({wallets.length} total)</div>
+                  <div className="btn-group">
+                    <button className="btn btn-sm btn-light" disabled={referralPage === 1} onClick={() => setReferralPage(p => p - 1)}>Prev</button>
+                    <button className="btn btn-sm btn-light" disabled={referralPage >= totalReferralPages} onClick={() => setReferralPage(p => p + 1)}>Next</button>
+                  </div>
+                </div>
               </div>
             </div>
-          )}
+            );
+          })()}
 
             {activeTab === 'settings' && referralSettings && (
               <div className="row clearfix">
