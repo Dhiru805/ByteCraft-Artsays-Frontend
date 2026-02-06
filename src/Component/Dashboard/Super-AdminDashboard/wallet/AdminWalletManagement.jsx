@@ -22,6 +22,7 @@ const AdminWalletManagement = () => {
   
   // Filters
   const [filterStatus, setFilterStatus] = useState("");
+  const [filterWithdrawalUserType, setFilterWithdrawalUserType] = useState("");
   const [filterRole, setFilterRole] = useState("");
   const [filterUser, setFilterUser] = useState("");
   const [filterAllUser, setFilterAllUser] = useState("");
@@ -458,39 +459,58 @@ const AdminWalletManagement = () => {
           <div className="card">
             <div className="header d-flex justify-content-between align-items-center">
               <h2>Withdrawal Requests</h2>
-              <select className="form-control" style={{ width: '150px' }} value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
-                <option value="">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="paid">Paid</option>
-                <option value="declined">Declined</option>
-              </select>
+              <div className="d-flex" style={{ gap: '10px' }}>
+                <select className="form-control" style={{ width: '150px' }} value={filterWithdrawalUserType} onChange={e => setFilterWithdrawalUserType(e.target.value)}>
+                  <option value="">All User Types</option>
+                  <option value="Artist">Artist</option>
+                  <option value="Seller">Seller</option>
+                  <option value="Buyer">Buyer</option>
+                </select>
+                <select className="form-control" style={{ width: '150px' }} value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+                  <option value="">All Status</option>
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="paid">Paid</option>
+                  <option value="declined">Declined</option>
+                </select>
+              </div>
             </div>
             <div className="body table-responsive">
               <table className="table table-hover">
                 <thead>
-                  <tr>
-                    <th>User</th>
-                    <th>Amount</th>
-                    <th>KYC</th>
-                    <th>Request Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {withdrawals.filter(w => !filterStatus || w.status === filterStatus).map(req => {
-                    const userWallet = wallets.find(wal => String(wal.userId?._id || wal.userId) === String(req.userId));
-                    return (
-                      <tr key={req._id}>
-                        <td>{userWallet ? `${userWallet.name} ${userWallet.lastName}` : req.userId}</td>
-                        <td>₹{req.amount.toLocaleString()}</td>
-                        <td>
-                          <span className={`badge ${userWallet?.kycStatus === 'verified' ? 'badge-success' : 'badge-danger'}`}>
-                            {userWallet?.kycStatus || 'Unknown'}
-                          </span>
-                        </td>
-                        <td>{new Date(req.createdAt).toLocaleString()}</td>
+                    <tr>
+                      <th>User</th>
+                      <th>User Type</th>
+                      <th>Amount</th>
+                      <th>Withdrawal Method</th>
+                      <th>KYC</th>
+                      <th>Request Date</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {withdrawals.filter(w => {
+                      if (filterStatus && w.status !== filterStatus) return false;
+                      if (filterWithdrawalUserType) {
+                        const wal = wallets.find(wal => String(wal.userId?._id || wal.userId) === String(w.userId));
+                        if (!wal || (wal.role || '').toLowerCase() !== filterWithdrawalUserType.toLowerCase()) return false;
+                      }
+                      return true;
+                    }).map(req => {
+                      const userWallet = wallets.find(wal => String(wal.userId?._id || wal.userId) === String(req.userId));
+                      return (
+                        <tr key={req._id}>
+                          <td>{userWallet ? `${userWallet.name} ${userWallet.lastName}` : req.userId}</td>
+                          <td><span className={`badge ${userWallet?.role === 'Artist' ? 'badge-primary' : userWallet?.role === 'Seller' ? 'badge-success' : userWallet?.role === 'Buyer' ? 'badge-info' : 'badge-secondary'}`}>{userWallet?.role || 'Unknown'}</span></td>
+                          <td>₹{req.amount.toLocaleString()}</td>
+                          <td><span className={`badge ${req.method === 'bank' ? 'badge-primary' : 'badge-info'}`}>{(req.method || 'upi').toUpperCase()}</span></td>
+                          <td>
+                            <span className={`badge ${userWallet?.kycStatus === 'verified' ? 'badge-success' : 'badge-danger'}`}>
+                              {userWallet?.kycStatus || 'Unknown'}
+                            </span>
+                          </td>
+                          <td>{new Date(req.createdAt).toLocaleString()}</td>
                         <td>
                           <span className={`badge ${req.status === 'pending' ? 'badge-warning' : req.status === 'approved' ? 'badge-info' : req.status === 'paid' ? 'badge-success' : 'badge-danger'}`}>
                             {req.status}
@@ -514,7 +534,14 @@ const AdminWalletManagement = () => {
                       </tr>
                     );
                   })}
-                  {withdrawals.filter(w => !filterStatus || w.status === filterStatus).length === 0 && <tr><td colSpan="6" className="text-center">No withdrawals found</td></tr>}
+                    {withdrawals.filter(w => {
+                      if (filterStatus && w.status !== filterStatus) return false;
+                      if (filterWithdrawalUserType) {
+                        const wal = wallets.find(wal => String(wal.userId?._id || wal.userId) === String(w.userId));
+                        if (!wal || (wal.role || '').toLowerCase() !== filterWithdrawalUserType.toLowerCase()) return false;
+                      }
+                      return true;
+                    }).length === 0 && <tr><td colSpan="8" className="text-center">No withdrawals found</td></tr>}
                 </tbody>
               </table>
             </div>
