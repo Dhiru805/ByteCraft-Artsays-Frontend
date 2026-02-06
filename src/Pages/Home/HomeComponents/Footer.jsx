@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaYoutube } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
@@ -8,9 +8,26 @@ import { SiVisa, SiMastercard } from "react-icons/si";
 import { ReactComponent as Logo } from '../../../assets/logo.svg';
 import "./FooterStyle.css";
 import { toast } from "react-toastify";
+import axios from "../../../api/axiosConfig";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
+  const [categoryData, setCategoryData] = useState({ mainCategories: [], categories: [], subCategories: [] });
+  const [expandedMain, setExpandedMain] = useState(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get("/api/all-complete");
+        if (res.data?.success) {
+          setCategoryData(res.data.data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch categories:", err);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -83,12 +100,26 @@ const Footer = () => {
     { icon: FaYoutube, url: "https://youtube.com/artsays" },
   ];
 
-  const categories = [
-    "Painting", "Sculpture", "Digital Art", "Artifact",
-    "Handmade Crafts", "Photography", "Abstract", "Portrait",
-    "Landscape", "Modern Art", "Contemporary", "Traditional",
-    "Watercolor", "Oil Painting", "Acrylic", "Mixed Media",
-  ];
+  // Build category tree: mainCategory -> categories -> subCategories
+  const getCategoryTree = () => {
+    const { mainCategories, categories, subCategories } = categoryData;
+    return mainCategories.map((main) => {
+      const cats = categories.filter(
+        (c) => c.mainCategoryId?._id === main._id || c.mainCategoryId === main._id
+      );
+      return {
+        ...main,
+        children: cats.map((cat) => {
+          const subs = subCategories.filter(
+            (s) => s.categoryId?._id === cat._id || s.categoryId === cat._id
+          );
+          return { ...cat, children: subs };
+        }),
+      };
+    });
+  };
+
+  const categoryTree = getCategoryTree();
 
   const trustBadges = ["100% Safe Transactions", "Verified Artworks & Sellers", "Visa", "MasterCard", "RuPay", "UPI", "Net Banking"];
   const promises = ["Authenticity verified for every artwork", "24/7 artist & buyer support", "Transparent pricing & zero hidden charges"];
@@ -369,22 +400,112 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Categories */}
+        {/* Categories - Dynamic from Database */}
         <div className="footer-card bg-[#0a0a0a] rounded-[2rem] p-7 border border-gray-800/60">
-          <h3 className="footer-section-title text-xs font-bold uppercase tracking-[0.15em] text-[#FB5934] mb-4">
-            Categories
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category, idx) => (
-              <Link
-                key={idx}
-                to={`/store?category=${category.toLowerCase().replace(/\s+/g, '-')}`}
-                className="footer-category-tag px-3.5 py-1.5 text-white bg-[#000000] hover:!bg-[#ffffff] hover:!text-[#000000] hover:border-[#FB5934]/30 border border-gray-800/40 rounded-xl text-xs transition-all duration-200"
-              >
-                {category}
-              </Link>
-            ))}
+          <div className="flex items-center gap-2.5 mb-5">
+            <span className="w-8 h-8 rounded-xl bg-[#FB5934]/10 flex items-center justify-center">
+              <svg className="w-4 h-4 text-[#FB5934]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+            </span>
+            <h3 className="footer-section-title text-xs font-bold uppercase tracking-[0.15em] text-[#FB5934] mb-0">
+              Categories
+            </h3>
           </div>
+
+          {categoryTree.length > 0 ? (
+            <div className="space-y-4">
+              {categoryTree.map((main) => (
+                <div key={main._id} className="rounded-xl bg-[#0d0d0d] border border-gray-800/30 overflow-hidden">
+                  {/* Main Category Header */}
+                  <button
+                    onClick={() => setExpandedMain(expandedMain === main._id ? null : main._id)}
+                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-[#161616] focus:outline-none transition-colors text-left"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span className="w-6 h-6 rounded-lg bg-[#FB5934]/15 flex items-center justify-center flex-shrink-0">
+                        <svg className="w-3 h-3 text-[#FB5934]" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.5a1.5 1.5 0 01-3 0V6z" clipRule="evenodd" />
+                          <path d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 002-2v-2z" />
+                        </svg>
+                      </span>
+                      <span className="text-white text-sm font-semibold">{main.mainCategoryName}</span>
+                      <span className="text-[10px] text-gray-500 bg-[#161616] px-2 py-0.5 rounded-full">
+                        {main.children.length} {main.children.length === 1 ? 'category' : 'categories'}
+                      </span>
+                    </div>
+                    <svg
+                      className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${expandedMain === main._id ? 'rotate-180' : ''}`}
+                      fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+
+                  {/* Expanded: Categories & SubCategories */}
+                  {expandedMain === main._id && main.children.length > 0 && (
+                    <div className="px-4 pb-4 border-t border-gray-800/30">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 pt-3">
+                        {main.children.map((cat) => (
+                          <div key={cat._id} className="space-y-2">
+                            <Link
+                              to={`/store?category=${encodeURIComponent(cat.categoryName)}`}
+                              className="text-[#FB5934] text-xs font-bold uppercase tracking-wider hover:text-white transition-colors inline-flex items-center gap-1.5"
+                            >
+                              <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                              </svg>
+                              {cat.categoryName}
+                            </Link>
+                            {cat.children.length > 0 && (
+                              <div className="flex flex-wrap gap-1.5 pl-4">
+                                {cat.children.map((sub) => (
+                                  <Link
+                                    key={sub._id}
+                                    to={`/store?category=${encodeURIComponent(sub.subCategoryName)}`}
+                                    className="footer-category-tag px-2.5 py-1 text-white bg-[#161616] hover:!bg-[#ffffff] hover:!text-[#000000] border border-gray-800/40 rounded-lg text-[11px] transition-all duration-200"
+                                  >
+                                    {sub.subCategoryName}
+                                  </Link>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Collapsed: Show category tags inline */}
+                  {expandedMain !== main._id && main.children.length > 0 && (
+                    <div className="px-4 pb-3 flex flex-wrap gap-1.5">
+                      {main.children.map((cat) => (
+                        <Link
+                          key={cat._id}
+                          to={`/store?category=${encodeURIComponent(cat.categoryName)}`}
+                          className="footer-category-tag px-3 py-1 text-white bg-[#000000] hover:!bg-[#ffffff] hover:!text-[#000000] hover:border-[#FB5934]/30 border border-gray-800/40 rounded-xl text-xs transition-all duration-200"
+                        >
+                          {cat.categoryName}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {["Painting", "Sculpture", "Digital Art", "Artifact", "Handmade Crafts", "Photography", "Abstract", "Portrait", "Landscape", "Modern Art", "Contemporary", "Traditional", "Watercolor", "Oil Painting", "Acrylic", "Mixed Media"].map((category, idx) => (
+                <Link
+                  key={idx}
+                  to={`/store?category=${category.toLowerCase().replace(/\s+/g, '-')}`}
+                  className="footer-category-tag px-3.5 py-1.5 text-white bg-[#000000] hover:!bg-[#ffffff] hover:!text-[#000000] hover:border-[#FB5934]/30 border border-gray-800/40 rounded-xl text-xs transition-all duration-200"
+                >
+                  {category}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Bottom Bar */}
