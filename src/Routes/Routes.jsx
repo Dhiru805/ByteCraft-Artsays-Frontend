@@ -918,6 +918,10 @@ const AppRoutes = () => {
           element={<ArtistProductsDetails />}
         /> */}
         <Route path="artist/bidding-pass" element={<ArtistProductBidding />} />
+        <Route
+          path="product-fetch-view/:productId"
+          element={<ArtistProductRequestView />}
+        />
         {/* Buyer Management */}
         <Route path="buyer/management" element={<BuyerManagement />} />
         <Route
