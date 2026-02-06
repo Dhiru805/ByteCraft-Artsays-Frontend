@@ -94,13 +94,13 @@ const Footer = () => {
   const promises = ["Authenticity verified for every artwork", "24/7 artist & buyer support", "Transparent pricing & zero hidden charges"];
 
   return (
-    <footer className="w-full bg-[#111111] text-gray-300">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-5">
+    <footer className="w-full bg-[#111111] text-white">
+      <div className="max-w-[1440px] mx-auto py-12 space-y-5">
 
         {/* Brand Header */}
-        <div className="footer-card bg-[#0a0a0a] rounded-[2rem] p-8 md:p-10 border border-gray-800/60">
+        <div className="footer-card bg-[#0a0a0a] rounded-[2rem] p-7 md:!p-8 border border-gray-800/60">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div>
+            <div className="w-full md:items-start sm:items-center">
               <Link to="/">
                 <Logo className="logo h-10 w-auto mb-3" />
               </Link>
@@ -108,7 +108,7 @@ const Footer = () => {
                 When Art Speaks, Value Grows
               </p>
             </div>
-            <p className="md:max-w-2xl text-sm text-gray-500 leading-relaxed md:text-right">
+            <p className="md:max-w-2xl text-sm text-white leading-relaxed md:text-right">
               Artsays is a global art marketplace connecting artists, collectors,
               and galleries. Discover original paintings, sculptures, and digital
               art — authenticated, insured, and delivered with care.
@@ -143,8 +143,8 @@ const Footer = () => {
                         Stay Updated
                       </h3>
                     </div>
-                    <p className="text-gray-500 text-sm mb-4 ml-[42px]">Get the latest art drops and exclusive offers.</p>
-                    <form onSubmit={handleSubscribe} className="flex gap-2">
+                    <p className="text-white text-sm mb-4 ml-[42px]">Get the latest art drops and exclusive offers.</p>
+                    <form onSubmit={handleSubscribe} className="grid gap-3">
                       <div className="relative flex-1">
                         <input
                           type="email"
@@ -153,7 +153,7 @@ const Footer = () => {
                           placeholder="abc@gmail.com"
                           className="w-full bg-[#161616] border border-gray-800/80 text-white placeholder-gray-600 pl-10 pr-4 py-2.5 rounded-xl text-sm focus:border-[#FB5934]/50 focus:ring-1 focus:ring-[#FB5934]/20 focus:outline-none transition-all"
                         />
-                        <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                         </svg>
                       </div>
@@ -178,31 +178,31 @@ const Footer = () => {
                       Contact Us
                     </h3>
                     <div className="space-y-2.5">
-                      <a href="tel:+918668367265" className="flex items-center gap-3 group/contact px-3 py-2.5 rounded-xl bg-[#0d0d0d] border border-gray-800/30 hover:border-[#FB5934]/20 transition-all duration-200">
+                      <a href="tel:+918668367265" className="flex items-center gap-3 group/contact  hover:border-[#FB5934]/20 transition-all duration-200">
                         <span className="w-8 h-8 bg-[#161616] rounded-lg flex items-center justify-center flex-shrink-0 group-hover/contact:bg-[#FB5934]/10 transition-colors">
                           <img src="/assets/footer/call.svg" alt="call" className="w-3.5 h-3.5" />
                         </span>
                         <div>
-                          <span className="text-gray-600 text-[10px] uppercase tracking-wider font-medium block leading-none mb-0.5">Phone</span>
-                          <span className="text-gray-300 text-sm group-hover/contact:text-white transition-colors">+91 8668 36 7265</span>
+                          <span className="text-gray-300 text-[10px] uppercase tracking-wider font-medium block leading-none mb-0.5">Phone</span>
+                          <span className="text-white text-sm group-hover/contact:text-white transition-colors">+91 8668 36 7265</span>
                         </div>
                       </a>
-                      <a href="mailto:contact@artsays.in" className="flex items-center gap-3 group/contact px-3 py-2.5 rounded-xl bg-[#0d0d0d] border border-gray-800/30 hover:border-[#FB5934]/20 transition-all duration-200">
+                      <a href="mailto:contact@artsays.in" className="flex items-center gap-3 group/contact  hover:border-[#FB5934]/20 transition-all duration-200">
                         <span className="w-8 h-8 bg-[#161616] rounded-lg flex items-center justify-center flex-shrink-0 group-hover/contact:bg-[#FB5934]/10 transition-colors">
                           <img src="/assets/footer/mail.svg" alt="mail" className="w-3.5 h-3.5" />
                         </span>
                         <div>
-                          <span className="text-gray-600 text-[10px] uppercase tracking-wider font-medium block leading-none mb-0.5">Email</span>
-                          <span className="text-gray-300 text-sm group-hover/contact:text-white transition-colors">contact@artsays.in</span>
+                          <span className="text-gray-300 text-[10px] uppercase tracking-wider font-medium block leading-none mb-0.5">Email</span>
+                          <span className="text-white text-sm group-hover/contact:text-white transition-colors">contact@artsays.in</span>
                         </div>
                       </a>
-                      <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#0d0d0d] border border-gray-800/30">
+                      <div className="flex items-center gap-3 ">
                         <span className="w-8 h-8 bg-[#161616] rounded-lg flex items-center justify-center flex-shrink-0">
                           <img src="/assets/footer/location.svg" alt="location" className="w-3.5 h-3.5" />
                         </span>
                         <div>
-                          <span className="text-gray-600 text-[10px] uppercase tracking-wider font-medium block leading-none mb-0.5">Address</span>
-                          <span className="text-gray-300 text-sm leading-snug">Pune, Pimpri Chinchwad, Maharashtra, India</span>
+                          <span className="text-gray-300 text-[10px] uppercase tracking-wider font-medium block leading-none mb-0.5">Address</span>
+                          <span className="text-white text-sm leading-snug">Pune, Pimpri Chinchwad, Maharashtra, India</span>
                         </div>
                       </div>
                     </div>
@@ -223,7 +223,7 @@ const Footer = () => {
                           href={social.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="footer-social-icon w-9 h-9 bg-[#161616] rounded-lg flex items-center justify-center text-gray-500 hover:bg-[#FB5934] hover:text-white transition-all duration-200 border border-gray-800/30 hover:border-[#FB5934]/40"
+                          className="footer-social-icon w-9 h-9 bg-[#161616] rounded-lg flex items-center justify-center text-white hover:bg-[#FB5934] transition-all duration-200 border border-gray-800/30 hover:border-[#FB5934]/40"
                         >
                           <social.icon className="text-sm" />
                         </a>
@@ -240,14 +240,14 @@ const Footer = () => {
                       Partner With Us
                     </h3>
                     <div className="space-y-1.5">
-                      <Link to="/partner" className="flex items-center gap-2 text-gray-500 hover:text-gray-200 text-sm transition-colors group/partner">
-                        <svg className="w-3.5 h-3.5 text-[#FB5934]/60 group-hover/partner:text-[#FB5934] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <Link to="/partner" className="flex items-center gap-2 text-white hover:pl-2 text-sm transition-colors group/partner">
+                        <svg className="w-3.5 h-3.5 text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                         Become a Gallery Partner
                       </Link>
-                      <Link to="/corporate" className="flex items-center gap-2 text-gray-500 hover:text-gray-200 text-sm transition-colors group/partner">
-                        <svg className="w-3.5 h-3.5 text-[#FB5934]/60 group-hover/partner:text-[#FB5934] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <Link to="/corporate" className="flex items-center gap-2 text-white hover:pl-2 text-sm transition-colors group/partner">
+                        <svg className="w-3.5 h-3.5 text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                         Corporate Art Solutions
@@ -273,7 +273,7 @@ const Footer = () => {
                         <li key={lIdx}>
                           <Link
                             to={link.to}
-                            className="footer-link text-gray-500 hover:text-gray-200 text-[13px] leading-relaxed transition-colors inline-block"
+                            className="footer-link text-white text-[13px] leading-relaxed transition-colors inline-block"
                           >
                             {link.label}
                           </Link>
@@ -290,9 +290,9 @@ const Footer = () => {
                         {/* Top accent */}
                         <div className="h-[2px] bg-gradient-to-r from-transparent via-[#FB5934]/60 to-transparent"></div>
 
-                        <div className="p-5 sm:p-6">
+                        <div className="p-3 md:!p-6">
                           {/* Header row */}
-                          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5">
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3 md:!mb-8">
                             <div className="flex items-center gap-3">
                               <div className="relative">
                                 <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FB5934] to-[#e04a28] flex items-center justify-center">
@@ -301,11 +301,11 @@ const Footer = () => {
                                 <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#0d0d0d]"></span>
                               </div>
                               <div>
-                                <h3 className="text-white text-sm font-bold">Secure Payments & Trust Badges</h3>
-                                <p className="text-gray-500 text-[11px]">Your transactions are protected & verified</p>
+                                <h3 className="text-white text-lg font-bold">Secure Payments & Trust Badges</h3>
+                                <p className="text-white text-[11px]">Your transactions are protected & verified</p>
                               </div>
                             </div>
-                            <div className="flex items-center gap-2 flex-wrap">
+                            <div className="flex items-center gap-3 flex-wrap">
                               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] font-semibold rounded-full border border-emerald-500/20">
                                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                                 100% Safe Transactions
@@ -321,8 +321,8 @@ const Footer = () => {
                           <div className="flex flex-col md:flex-row gap-5">
                             {/* Payment Methods */}
                             <div className="flex-1">
-                              <h4 className="text-gray-500 text-[10px] font-semibold uppercase tracking-[0.15em] mb-3">Accepted Payment Methods</h4>
-                              <div className="flex flex-wrap gap-2">
+                              <h4 className="text-white text-xs font-semibold uppercase tracking-[0.15em] mb-3 md:!mb-5">Accepted Payment Methods</h4>
+                              <div className="flex flex-wrap gap-3">
                                 {[
                                   { icon: <SiVisa className="text-base text-[#1A1F71]" />, label: "Visa" },
                                   { icon: <SiMastercard className="text-base text-[#EB001B]" />, label: "MasterCard" },
@@ -344,9 +344,9 @@ const Footer = () => {
 
                             {/* Artsays Promise */}
                             <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-3">
+                              <div className="flex items-center gap-2 mb-3 md:!mb-5">
                                 <HiCheckBadge className="text-[#FB5934] text-sm" />
-                                <h4 className="text-gray-500 text-[10px] font-semibold uppercase tracking-[0.15em]">Artsays Promise</h4>
+                                <h4 className="text-white text-xs font-semibold uppercase tracking-[0.15em]">Artsays Promise</h4>
                               </div>
                               <div className="space-y-2">
                                 {promises.map((item, idx) => (
@@ -356,7 +356,7 @@ const Footer = () => {
                                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                       </svg>
                                     </span>
-                                    <span className="text-gray-400 text-xs group-hover/item:text-gray-200 transition-colors">{item}</span>
+                                    <span className="text-white text-xs group-hover/item:pl-2 transition-colors">{item}</span>
                                   </div>
                                 ))}
                               </div>
@@ -379,7 +379,7 @@ const Footer = () => {
               <Link
                 key={idx}
                 to={`/store?category=${category.toLowerCase().replace(/\s+/g, '-')}`}
-                className="footer-category-tag px-3.5 py-1.5 bg-[#161616] text-gray-500 hover:text-white hover:bg-[#FB5934]/15 hover:border-[#FB5934]/30 border border-gray-800/40 rounded-xl text-xs transition-all duration-200"
+                className="footer-category-tag px-3.5 py-1.5 text-white bg-[#000000] hover:!bg-[#ffffff] hover:!text-[#000000] hover:border-[#FB5934]/30 border border-gray-800/40 rounded-xl text-xs transition-all duration-200"
               >
                 {category}
               </Link>
@@ -388,9 +388,9 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="footer-card bg-[#0a0a0a] rounded-[2rem] px-7 py-5 border border-gray-800/60">
+        <div className="footer-card bg-[#0a0a0a] rounded-[2rem] p-3 md:!p-6 border border-gray-800/60">
           <div className="flex flex-col md:flex-row justify-between items-center gap-3">
-            <div className="flex items-center gap-2.5 text-gray-500 text-xs">
+            <div className="flex items-center gap-2.5 text-white text-xs">
               <img
                 className="w-5 h-5 rounded-full"
                 src="/assets/footer/ind.png"
@@ -398,15 +398,15 @@ const Footer = () => {
               />
               <span>India | English (UK) | &#8377; (INR)</span>
             </div>
-            <div className="text-gray-600 text-[11px] md:text-xs text-center md:text-right">
+            <div className="text-white text-[11px] md:text-xs text-center md:text-right">
               &copy; {new Date().getFullYear()} Artsays Pvt. Ltd. All rights reserved. | Designed for Global Artists &amp; Collectors |{" "}
-              <Link to="/policy" className="text-gray-500 hover:text-[#FB5934] transition-colors">Terms</Link>
+              <Link to="/policy" className="text-white hover:text-[#FB5934] transition-colors">Terms</Link>
               {" \u2022 "}
-              <Link to="/policy" className="text-gray-500 hover:text-[#FB5934] transition-colors">Privacy</Link>
+              <Link to="/policy" className="text-white hover:text-[#FB5934] transition-colors">Privacy</Link>
               {" \u2022 "}
-              <span className="text-gray-500">Cookies</span>
+              <span className="text-white">Cookies</span>
               {" \u2022 "}
-              <span className="text-gray-500">Accessibility</span>
+              <span className="text-white">Accessibility</span>
             </div>
           </div>
         </div>
