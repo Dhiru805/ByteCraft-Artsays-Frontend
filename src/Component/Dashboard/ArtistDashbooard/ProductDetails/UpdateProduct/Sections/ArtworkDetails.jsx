@@ -14,7 +14,7 @@ const ArtworkDetails = ({
     yearOptions,
     surfaceTypeOptions,
     conditionOptions,
-    culturalRegionOptions,
+    culturalRegionOptions = [],
     handleSelectChange,
     handleMultiSelectChange,
     handleMultiSelecttoolChange,

@@ -419,8 +419,7 @@ function ProductUpload() {
       const formDataToSend = prepareFormData('Pending');
       const response = await postAPI('/api/cropImage', formDataToSend, {}, true);
       
-    console.log("response data:--",response)
-      if (response.data) {
+        if (response.data) {
         const productId =response.data.data._id ;
         setCreatedProductId(productId);
       }
@@ -683,11 +682,6 @@ function ProductUpload() {
         return false;
       }
 
-      if (!isSigned) {
-        toast.error("Please confirm that the artwork is signed by the artist.");
-        return false;
-      }
-
       if (
         (medium?.value?.toLowerCase() === 'print' || medium?.value?.toLowerCase() === 'poster') &&
         (!printResolution || printResolution.trim() === '')
@@ -807,6 +801,22 @@ function ProductUpload() {
       return true;
     },
 
+
+    legal: () => {
+      const missingFields = [];
+
+      if (!formData.ownershipConfirmation) missingFields.push("Ownership Confirmation");
+      if (!formData.copyrightRights) missingFields.push("Copyright & Reproduction Rights");
+      if (!formData.commercialUse) missingFields.push("Commercial Use");
+      if (!formData.prohibitedItems) missingFields.push("Prohibited Items Confirmation");
+
+      if (missingFields.length > 0) {
+        toast.error(`Please fill the following required fields: ${missingFields.join(", ")}.`);
+        return false;
+      }
+
+      return true;
+    },
 
     antique: () => {
       const missingFields = [];
@@ -1122,6 +1132,7 @@ function ProductUpload() {
 
                   {activeTab !== 'legal' ? (
                     <button
+                      key="next-btn"
                       type="button"
                       className="btn btn-primary"
                       onClick={handleNextTab}
@@ -1131,6 +1142,7 @@ function ProductUpload() {
                     </button>
                   ) : (
                     <button
+                      key="submit-btn"
                       type="submit"
                       className="btn btn-primary"
                       disabled={isSubmitting}

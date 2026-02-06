@@ -801,52 +801,68 @@ function ProductUpload() {
     },
 
 
-    antique: () => {
-      const missingFields = [];
+    legal: () => {
+        const missingFields = [];
 
-      if (!formData.originRegion) missingFields.push("Origin / Region");
-      if (!formData.periodEra) missingFields.push("Period / Era");
-      if (!formData.antiqueCondition) missingFields.push("Condition");
-      if (!formData.originalReproduction) missingFields.push("Original vs. Reproduction");
-      if (formData.isHandmade === undefined || formData.isHandmade === null) {
-        missingFields.push("Specify if handmade");
-      }
+        if (!formData.ownershipConfirmation) missingFields.push("Ownership Confirmation");
+        if (!formData.copyrightRights) missingFields.push("Copyright & Reproduction Rights");
+        if (!formData.commercialUse) missingFields.push("Commercial Use");
+        if (!formData.prohibitedItems) missingFields.push("Prohibited Items Confirmation");
 
-      if (formData.conservationStatus?.value === "restored") {
-        if (!formData.restorationHistory) missingFields.push("Restoration History");
-        if (!formData.restorationDocumentation)
-          missingFields.push("Restoration Documentation");
-      }
+        if (missingFields.length > 0) {
+          toast.error(`Please fill the following required fields: ${missingFields.join(", ")}.`);
+          return false;
+        }
 
-      if (!formData.conservationStatus) missingFields.push("Conservation Status");
-      if (!formData.certification) missingFields.push("Certification Document");
-      if (!formData.maintenanceRequired) missingFields.push("Maintenance Required");
+        return true;
+      },
 
-      const hasAnyAddressField = [
-        formData.addressLine1,
-        formData.city,
-        formData.state,
-        formData.country,
-        formData.pincode,
-      ].some(Boolean);
+      antique: () => {
+        const missingFields = [];
 
-      if (hasAnyAddressField) {
-        if (!formData.addressLine1) missingFields.push("Address Line 1");
-        if (!formData.city) missingFields.push("City");
-        if (!formData.state) missingFields.push("State");
-        if (!formData.country) missingFields.push("Country");
-        if (!formData.pincode) missingFields.push("Pincode");
-      }
+        if (!formData.originRegion) missingFields.push("Origin / Region");
+        if (!formData.periodEra) missingFields.push("Period / Era");
+        if (!formData.antiqueCondition) missingFields.push("Condition");
+        if (!formData.originalReproduction) missingFields.push("Original vs. Reproduction");
+        if (formData.isHandmade === undefined || formData.isHandmade === null) {
+          missingFields.push("Specify if handmade");
+        }
 
-      if (missingFields.length > 0) {
-        toast.error(`Please fill Required Details: ${missingFields.join(", ")}.`);
-        return false;
-      }
+        if (formData.conservationStatus?.value === "restored") {
+          if (!formData.restorationHistory) missingFields.push("Restoration History");
+          if (!formData.restorationDocumentation)
+            missingFields.push("Restoration Documentation");
+        }
 
-      return true;
-    },
+        if (!formData.conservationStatus) missingFields.push("Conservation Status");
+        if (!formData.certification) missingFields.push("Certification Document");
+        if (!formData.maintenanceRequired) missingFields.push("Maintenance Required");
 
-    nft: () => {
+        const hasAnyAddressField = [
+          formData.addressLine1,
+          formData.city,
+          formData.state,
+          formData.country,
+          formData.pincode,
+        ].some(Boolean);
+
+        if (hasAnyAddressField) {
+          if (!formData.addressLine1) missingFields.push("Address Line 1");
+          if (!formData.city) missingFields.push("City");
+          if (!formData.state) missingFields.push("State");
+          if (!formData.country) missingFields.push("Country");
+          if (!formData.pincode) missingFields.push("Pincode");
+        }
+
+        if (missingFields.length > 0) {
+          toast.error(`Please fill Required Details: ${missingFields.join(", ")}.`);
+          return false;
+        }
+
+        return true;
+      },
+
+      nft: () => {
       const missingFields = [];
 
       if (!formData.blockchainNetwork) missingFields.push("Blockchain Network");
@@ -1115,6 +1131,7 @@ function ProductUpload() {
 
                   {activeTab !== 'legal' ? (
                     <button
+                      key="next-btn"
                       type="button"
                       className="btn btn-primary"
                       onClick={handleNextTab}
@@ -1124,6 +1141,7 @@ function ProductUpload() {
                     </button>
                   ) : (
                     <button
+                      key="submit-btn"
                       type="submit"
                       className="btn btn-primary"
                       disabled={isSubmitting}

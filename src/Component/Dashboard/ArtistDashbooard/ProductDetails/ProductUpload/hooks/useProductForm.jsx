@@ -61,12 +61,6 @@ export default function useProductForm() {
     packagingType: null,
     insuranceCoverage: false,
     selfShipping: false,
-    quantity: '',
-    hsnCode: '',
-    surfaceType: null,
-    isSigned: false,
-    condition: null,
-    provenance: '',
     handlingTime: null,
     returnPolicy: null,
     exportRestriction: false,
@@ -127,13 +121,6 @@ export default function useProductForm() {
     provenanceHistory: '',
     culturalSignificance: '',
     appraisalDetails: '',
-    addressLine1: '',
-    addressLine2: '',
-    landmark: '',
-    city: '',
-    state: '',
-    country: '',
-    pincode: '',
     engravingMarkings: '',
     patinaWear: '',
     museumExhibitionHistory: '',
@@ -253,7 +240,6 @@ export default function useProductForm() {
           subCategories: subCategoriesList
         };
 
-        console.log("Processed category data:", newCategoryData);
         setCategoryData(newCategoryData);
       } else {
         console.warn("No category items found in response");

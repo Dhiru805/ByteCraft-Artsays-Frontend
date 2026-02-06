@@ -749,6 +749,22 @@
     },
 
 
+    legal: () => {
+        const missingFields = [];
+
+        if (!formData.ownershipConfirmation) missingFields.push("Ownership Confirmation");
+        if (!formData.copyrightRights) missingFields.push("Copyright & Reproduction Rights");
+        if (!formData.commercialUse) missingFields.push("Commercial Use");
+        if (!formData.prohibitedItems) missingFields.push("Prohibited Items Confirmation");
+
+        if (missingFields.length > 0) {
+          toast.error(`Please fill the following required fields: ${missingFields.join(", ")}.`);
+          return false;
+        }
+
+        return true;
+      },
+
     antique: () => {
       const missingFields = [];
 
@@ -1039,6 +1055,7 @@
                     
                     {activeTab !== 'legal' ? (
                       <button
+                        key="next-btn"
                         type="button"
                         className="btn btn-primary"
                         onClick={handleNextTab}
@@ -1048,11 +1065,12 @@
                       </button>
                     ) : (
                       <button
+                        key="submit-btn"
                         type="submit"
                         className="btn btn-primary"
                         disabled={isSubmitting || isCheckingAddress}
                       >
-                        {isSubmitting ? 'Updateing...' : 'Update'}
+                        {isSubmitting ? 'Updating...' : 'Update'}
                       </button>
                     )}
                   </div>

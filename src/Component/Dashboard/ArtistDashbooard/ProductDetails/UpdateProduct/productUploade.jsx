@@ -22,8 +22,6 @@
     const [activeTab, setActiveTab] = useState("basic");
     const { state } = useLocation();
     const product = state?.productData;
-    
-    console.log("All Product Data ",product)
 
     const {
       formData,
@@ -90,7 +88,7 @@
         false
       );
       
-      console.log("Default address check response:", response);
+        
       
   
       if (!response.hasError && response.data.data && response.data.data.isDefault === true) {
@@ -345,16 +343,30 @@
       return;
     }
 
-      if (!userId) return toast.error("User not authenticated");
-      if (!pricingData.sellingPrice) return toast.error("Selling price required");
+      if (!userId) {
+        toast.error("User not authenticated");
+        setIsSubmitting(false);
+        return;
+      }
+      if (!pricingData.sellingPrice) {
+        toast.error("Selling price required");
+        setIsSubmitting(false);
+        return;
+      }
       if (!formData.mainCategory || !formData.category || !formData.subCategory || !formData.productType) {
-        return toast.error("All category fields required");
+        toast.error("All category fields required");
+        setIsSubmitting(false);
+        return;
       }
       if (formData.productType?.value === "Limited Edition" && !formData.editionNumber) {
-        return toast.error("Edition number required");
+        toast.error("Edition number required");
+        setIsSubmitting(false);
+        return;
       }
       if (formData.partOfCollection && !formData.editionSize) {
-        return toast.error("Edition size required");
+        toast.error("Edition size required");
+        setIsSubmitting(false);
+        return;
       }
       if (isAntiqueVintageSelected) {
         const err = validateAntiqueFields(formData);
@@ -623,11 +635,6 @@
         return false;
       }
 
-      if (!isSigned) {
-        toast.error("Please confirm that the artwork is signed by the artist.");
-        return false;
-      }
-
       if (
         (medium?.value?.toLowerCase() === 'print' || medium?.value?.toLowerCase() === 'poster') &&
         (!printResolution || printResolution.trim() === '')
@@ -747,6 +754,22 @@
       return true;
     },
 
+
+    legal: () => {
+      const missingFields = [];
+
+      if (!formData.ownershipConfirmation) missingFields.push("Ownership Confirmation");
+      if (!formData.copyrightRights) missingFields.push("Copyright & Reproduction Rights");
+      if (!formData.commercialUse) missingFields.push("Commercial Use");
+      if (!formData.prohibitedItems) missingFields.push("Prohibited Items Confirmation");
+
+      if (missingFields.length > 0) {
+        toast.error(`Please fill the following required fields: ${missingFields.join(", ")}.`);
+        return false;
+      }
+
+      return true;
+    },
 
     antique: () => {
       const missingFields = [];
@@ -891,7 +914,7 @@
         <div className="block-header">
           <div className="row">
             <div className="col-lg-6 col-md-6 col-sm-12">
-              <h2>Create Product</h2>
+              <h2>Update Product</h2>
               <ul className="breadcrumb">
                 <li className="breadcrumb-item">
                   <span onClick={() => navigate('/artist/dashboard')} style={{ cursor: 'pointer' }}>
@@ -903,7 +926,7 @@
                     All Product
                   </span>
                 </li>
-                <li className="breadcrumb-item">Create Product</li>
+                <li className="breadcrumb-item">Update Product</li>
               </ul>
             </div>
           </div>
@@ -1038,6 +1061,7 @@
                     
                     {activeTab !== 'legal' ? (
                       <button
+                        key="next-btn"
                         type="button"
                         className="btn btn-primary"
                         onClick={handleNextTab}
@@ -1047,11 +1071,12 @@
                       </button>
                     ) : (
                       <button
+                        key="submit-btn"
                         type="submit"
                         className="btn btn-primary"
                         disabled={isSubmitting || isCheckingAddress}
                       >
-                        {isSubmitting ? 'Updateing...' : 'Update'}
+                        {isSubmitting ? 'Updating...' : 'Update'}
                       </button>
                     )}
                   </div>
