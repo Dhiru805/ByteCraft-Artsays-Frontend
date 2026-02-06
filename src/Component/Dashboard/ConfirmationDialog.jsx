@@ -486,6 +486,13 @@ exhibitionplan:{
   idKey: "exhibitionplanId",
 },
 
+"newsletter subscriber": {
+  getEndpoint: (id) => `/api/newsletter/delete/${id}`,
+  successMessage: "Subscriber successfully deleted!",
+  errorMessage: "Failed to delete subscriber.",
+  idKey: "subscriberId",
+},
+
 };
 
 function ConfirmationDialog({ onClose, deleteType, id, onDeleted }) {

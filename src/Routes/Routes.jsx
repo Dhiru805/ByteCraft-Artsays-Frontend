@@ -235,6 +235,7 @@ import EnquiryTable from "../Component/Dashboard/Super-AdminDashboard/Enquiry/ta
 import ViewEnquiry from "../Component/Dashboard/Super-AdminDashboard/Enquiry/view";
 
 import NewsletterTable from "../Component/Dashboard/Super-AdminDashboard/Newsletter/NewsletterTable";
+import Unsubscribe from "../Pages/Unsubscribe/Unsubscribe";
 
 import SMSSettingSignup from "../Component/Dashboard/Super-AdminDashboard/SMSSettings/SmsSettingsSignup";
 import PaymentGetwaySetting from "../Component/Dashboard/Super-AdminDashboard/Settings/PaymentGetway/PaymentGetway"
@@ -1820,6 +1821,7 @@ const AppRoutes = () => {
         </Route>
         {/* Public live stream viewing - no authentication required */}
         <Route path="/artsays-community/live/:streamKey" element={<Live />} />
+        <Route path="/unsubscribe/:id" element={<Unsubscribe />} />
         <Route path="/invoice" element={<EdprowiseInvoice />} />
         <Route path="/invoice1" element={<Invoice />} />
       </Route>
