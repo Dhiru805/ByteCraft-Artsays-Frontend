@@ -1526,14 +1526,15 @@ const Setting = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-left border-collapse">
                     <thead>
-                      <tr className="bg-[#48372D] text-white">
-                        <th className="px-3 py-2 font-semibold rounded-tl-lg">Membership</th>
-                        <th className="px-3 py-2 font-semibold">{userType === "Artist" ? "Buyer" : "Creator"}</th>
-                        <th className="px-3 py-2 font-semibold">Amount</th>
-                        <th className="px-3 py-2 font-semibold">Date</th>
-                        <th className="px-3 py-2 font-semibold">Status</th>
-                        <th className="px-3 py-2 font-semibold rounded-tr-lg">Txn ID</th>
-                      </tr>
+                        <tr className="bg-[#48372D] text-white">
+                          <th className="px-3 py-2 font-semibold rounded-tl-lg">Membership</th>
+                          <th className="px-3 py-2 font-semibold">{userType === "Artist" ? "Buyer" : "Creator"}</th>
+                          <th className="px-3 py-2 font-semibold">Amount</th>
+                          <th className="px-3 py-2 font-semibold">Date</th>
+                          <th className="px-3 py-2 font-semibold">Expires</th>
+                          <th className="px-3 py-2 font-semibold">Status</th>
+                          <th className="px-3 py-2 font-semibold rounded-tr-lg">Txn ID</th>
+                        </tr>
                     </thead>
                     <tbody>
                       {membershipOrders.map((order) => (
@@ -1549,22 +1550,43 @@ const Setting = () => {
                           <td className="px-3 py-2 font-semibold text-[#48372D]">
                             {"₹"}{order.amount}
                           </td>
-                          <td className="px-3 py-2 text-gray-600 whitespace-nowrap">
-                            {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
-                          </td>
-                          <td className="px-3 py-2">
-                            <span
-                              className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                                order.status === "Paid"
-                                  ? "bg-green-100 text-green-700"
-                                  : order.status === "Pending"
-                                  ? "bg-yellow-100 text-yellow-700"
-                                  : "bg-red-100 text-red-700"
-                              }`}
-                            >
-                              {order.status}
-                            </span>
-                          </td>
+                            <td className="px-3 py-2 text-gray-600 whitespace-nowrap">
+                              {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                            </td>
+                            <td className="px-3 py-2 text-gray-600 whitespace-nowrap">
+                              {order.expiresAt
+                                ? (() => {
+                                    const isExpired = new Date(order.expiresAt) < new Date();
+                                    return (
+                                      <span className={isExpired ? "text-red-500 font-semibold" : ""}>
+                                        {new Date(order.expiresAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                                        {!isExpired && order.status === "Paid" && (
+                                          <span className="block text-xs text-gray-400">
+                                            {Math.ceil((new Date(order.expiresAt) - new Date()) / (1000 * 60 * 60 * 24))} days left
+                                          </span>
+                                        )}
+                                      </span>
+                                    );
+                                  })()
+                                : "-"}
+                            </td>
+                            <td className="px-3 py-2">
+                              <span
+                                className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                                  order.status === "Paid"
+                                    ? "bg-green-100 text-green-700"
+                                    : order.status === "Expired"
+                                    ? "bg-orange-100 text-orange-700"
+                                    : order.status === "Pending"
+                                    ? "bg-yellow-100 text-yellow-700"
+                                    : "bg-red-100 text-red-700"
+                                }`}
+                              >
+                                {order.status === "Paid" && order.expiresAt && new Date(order.expiresAt) < new Date()
+                                  ? "Expired"
+                                  : order.status}
+                              </span>
+                            </td>
                             <td className="px-3 py-2 text-xs text-gray-400 break-all">
                               {order.easebuzzTxnId || "-"}
                             </td>

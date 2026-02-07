@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import getAPI from "../../../api/getAPI";
 
 const MembershipSuccessPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [paymentInfo, setPaymentInfo] = useState(null);
+  const [orderDetails, setOrderDetails] = useState(null);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -15,6 +17,26 @@ const MembershipSuccessPage = () => {
     if (txnid || orderId) {
       setPaymentInfo({ txnid, orderId });
     }
+
+    // Fetch order details to get expiry date
+    const fetchOrderDetails = async () => {
+      const userId = localStorage.getItem("userId");
+      if (!userId) return;
+      try {
+        const res = await getAPI(`/api/membership/orders?userId=${userId}`, {}, true, true);
+        const orders = res?.data?.orders || [];
+        const matchedOrder = orders.find(
+          (o) => o.easebuzzTxnId === txnid && o.status === "Paid"
+        );
+        if (matchedOrder) {
+          setOrderDetails(matchedOrder);
+        }
+      } catch (err) {
+        console.error("Error fetching order details:", err);
+      }
+    };
+
+    if (txnid) fetchOrderDetails();
 
     sessionStorage.removeItem("easebuzzPayment");
   }, [location.search]);
@@ -132,12 +154,40 @@ const MembershipSuccessPage = () => {
             </div>
           )}
 
-          {!paymentInfo && (
-            <p style={{ color: "#718096", fontStyle: "italic" }}>
-              Loading payment details...
-            </p>
+            {!paymentInfo && (
+              <p style={{ color: "#718096", fontStyle: "italic" }}>
+                Loading payment details...
+              </p>
+            )}
+          </div>
+
+          {/* Membership Expiry Info */}
+          {orderDetails?.expiresAt && (
+            <div
+              style={{
+                background: "#fffbeb",
+                borderRadius: "12px",
+                padding: "20px",
+                marginBottom: "30px",
+                textAlign: "center",
+                borderLeft: "4px solid #d69e2e",
+              }}
+            >
+              <p style={{ fontSize: "14px", color: "#744210", fontWeight: "600", margin: "0 0 5px 0" }}>
+                Membership Valid Until
+              </p>
+              <p style={{ fontSize: "20px", color: "#975a16", fontWeight: "700", margin: "0" }}>
+                {new Date(orderDetails.expiresAt).toLocaleDateString("en-IN", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </p>
+              <p style={{ fontSize: "13px", color: "#b7791f", margin: "8px 0 0 0" }}>
+                Your membership will expire after 1 month. You can renew it from the creator's profile.
+              </p>
+            </div>
           )}
-        </div>
 
         { }
         <div style={{ textAlign: "left", marginBottom: "30px" }}>
@@ -247,7 +297,7 @@ const MembershipSuccessPage = () => {
         { }
         <button
           onClick={() =>
-            navigate("/social-media/setting")
+            navigate("/artsays-community/setting/")
           }
           style={{
             padding: "14px 24px",

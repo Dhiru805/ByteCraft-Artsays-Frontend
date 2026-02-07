@@ -220,10 +220,11 @@ const Profile = ({ shareprofileid }) => {
   const [showFollowers, setShowFollowers] = useState(false);
   const [showFollowing, setShowFollowing] = useState(false);
   const [showMembershipModal, setShowMembershipModal] = useState(false);
-  const [memberships, setMemberships] = useState([]);
-  const [selectedMembership, setSelectedMembership] = useState(null);
-  const [membershipsLoading, setMembershipsLoading] = useState(false);
-  const [purchasingMembership, setPurchasingMembership] = useState(false);
+    const [memberships, setMemberships] = useState([]);
+    const [selectedMembership, setSelectedMembership] = useState(null);
+    const [membershipsLoading, setMembershipsLoading] = useState(false);
+    const [purchasingMembership, setPurchasingMembership] = useState(false);
+    const [userMembershipStatus, setUserMembershipStatus] = useState(null); // { active: bool, expiresAt, membership }
   const isMobile = window.innerWidth < 1024; // Tailwind lg breakpoint
   useEffect(() => {
     if (location.state?.onItem === true) {
@@ -563,22 +564,69 @@ const Profile = ({ shareprofileid }) => {
     }
   };
 
-  // Fetch memberships for a creator
-  const fetchMemberships = async (creatorUserId) => {
-    setMembershipsLoading(true);
-    try {
-      const res = await getAPI(`/api/membership?userId=${creatorUserId}`);
-      const list = res?.data?.memberships || [];
-      setMemberships(list);
-      if (list.length > 0) setSelectedMembership(list[0]);
-      else setSelectedMembership(null);
-    } catch (err) {
-      console.error("Error fetching memberships:", err);
-      setMemberships([]);
-    } finally {
-      setMembershipsLoading(false);
-    }
-  };
+    // Fetch memberships for a creator
+    const fetchMemberships = async (creatorUserId) => {
+      setMembershipsLoading(true);
+      try {
+        const res = await getAPI(`/api/membership?userId=${creatorUserId}`);
+        const list = res?.data?.memberships || [];
+        setMemberships(list);
+        if (list.length > 0) setSelectedMembership(list[0]);
+        else setSelectedMembership(null);
+      } catch (err) {
+        console.error("Error fetching memberships:", err);
+        setMemberships([]);
+      } finally {
+        setMembershipsLoading(false);
+      }
+    };
+
+    // Check if logged-in user has active membership for this creator
+    useEffect(() => {
+      const checkMembershipStatus = async () => {
+        if (!loggedInUserId || !viewedUserId || isMyProfile) return;
+        try {
+          const res = await getAPI(
+            `/api/membership/orders?userId=${loggedInUserId}`,
+            {},
+            true,
+            true
+          );
+          const orders = res?.data?.orders || [];
+          // Find active membership for this creator
+          const activeMembership = orders.find(
+            (o) =>
+              (o.creatorId?._id === viewedUserId || o.creatorId === viewedUserId) &&
+              o.status === "Paid" &&
+              o.expiresAt &&
+              new Date(o.expiresAt) > new Date()
+          );
+          const expiredMembership = orders.find(
+            (o) =>
+              (o.creatorId?._id === viewedUserId || o.creatorId === viewedUserId) &&
+              (o.status === "Expired" || (o.status === "Paid" && o.expiresAt && new Date(o.expiresAt) <= new Date()))
+          );
+          if (activeMembership) {
+            setUserMembershipStatus({
+              active: true,
+              expiresAt: activeMembership.expiresAt,
+              membership: activeMembership.membershipId,
+            });
+          } else if (expiredMembership) {
+            setUserMembershipStatus({
+              active: false,
+              expiresAt: expiredMembership.expiresAt,
+              membership: expiredMembership.membershipId,
+            });
+          } else {
+            setUserMembershipStatus(null);
+          }
+        } catch (err) {
+          console.error("Error checking membership status:", err);
+        }
+      };
+      checkMembershipStatus();
+    }, [loggedInUserId, viewedUserId, isMyProfile]);
 
   // Handle Join button click - open modal
   const handleJoinClick = () => {
@@ -2177,11 +2225,27 @@ const Profile = ({ shareprofileid }) => {
                       {follow ? "Unfollow" : "Follow"}
                     </button>
 
-                    {follow && profile?.role !== "buyer" && (
-                      <button onClick={handleJoinClick} className="flex items-center gap-1 px-2 py-1 bg-[#6F4D34] font-bold text-white rounded-md text-sm focus:outline-none">
-                        Join
-                      </button>
-                    )}
+                      {follow && profile?.role !== "buyer" && (
+                        userMembershipStatus?.active ? (
+                          <div className="flex flex-col items-center">
+                            <span className="flex items-center gap-1 px-2 py-1 bg-green-600 font-bold text-white rounded-md text-sm">
+                              <i className="ri-vip-crown-fill text-yellow-300"></i> Member
+                            </span>
+                            <span className="text-[10px] text-gray-500 mt-0.5">
+                              Expires {new Date(userMembershipStatus.expiresAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                            </span>
+                          </div>
+                        ) : userMembershipStatus && !userMembershipStatus.active ? (
+                          <button onClick={handleJoinClick} className="flex flex-col items-center gap-0 px-2 py-1 bg-orange-500 font-bold text-white rounded-md text-sm focus:outline-none">
+                            <span>Renew</span>
+                            <span className="text-[10px] font-normal">Expired</span>
+                          </button>
+                        ) : (
+                          <button onClick={handleJoinClick} className="flex items-center gap-1 px-2 py-1 bg-[#6F4D34] font-bold text-white rounded-md text-sm focus:outline-none">
+                            Join
+                          </button>
+                        )
+                      )}
                     <button
                       className="flex items-center gap-1 px-2 py-1 bg-[#6F4D34] font-bold text-white rounded-md focus:outline-none"
                       onClick={() => setSuggestionOn((prev) => !prev)}
@@ -3334,18 +3398,47 @@ const Profile = ({ shareprofileid }) => {
                     ))}
                   </div>
 
-                  {/* Right - Tier Details */}
-                  <div className="w-2/3 p-4 overflow-y-auto">
-                    {selectedMembership ? (
-                      <>
-                        <h3 className="text-lg font-bold text-[#4A3728] mb-1">₹{selectedMembership.price}/month</h3>
-                        <button
-                          onClick={() => handlePurchaseMembership(selectedMembership)}
-                          disabled={purchasingMembership}
-                          className="bg-[#5c4033] hover:bg-[#4A3728] text-white rounded-full px-6 py-1.5 text-sm font-bold mb-3 transition-colors disabled:opacity-50"
-                        >
-                          {purchasingMembership ? "Processing..." : "Join"}
-                        </button>
+                    {/* Right - Tier Details */}
+                    <div className="w-2/3 p-4 overflow-y-auto">
+                      {selectedMembership ? (
+                        <>
+                          <h3 className="text-lg font-bold text-[#4A3728] mb-1">₹{selectedMembership.price}/month</h3>
+
+                          {userMembershipStatus?.active && userMembershipStatus.membership?._id === selectedMembership._id ? (
+                            <div className="mb-3">
+                              <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 rounded-full px-3 py-1.5 text-sm font-bold">
+                                <i className="ri-vip-crown-fill text-yellow-500"></i> Active Member
+                              </span>
+                              <p className="text-xs text-gray-500 mt-1">
+                                Expires on {new Date(userMembershipStatus.expiresAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                                {" "}({Math.ceil((new Date(userMembershipStatus.expiresAt) - new Date()) / (1000 * 60 * 60 * 24))} days left)
+                              </p>
+                            </div>
+                          ) : userMembershipStatus && !userMembershipStatus.active && userMembershipStatus.membership?._id === selectedMembership._id ? (
+                            <div className="mb-3">
+                              <span className="inline-flex items-center gap-1 bg-orange-100 text-orange-700 rounded-full px-3 py-1.5 text-xs font-bold mb-1">
+                                Membership Expired
+                              </span>
+                              <p className="text-xs text-gray-500 mt-1">
+                                Expired on {new Date(userMembershipStatus.expiresAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                              </p>
+                              <button
+                                onClick={() => handlePurchaseMembership(selectedMembership)}
+                                disabled={purchasingMembership}
+                                className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-6 py-1.5 text-sm font-bold mt-2 transition-colors disabled:opacity-50"
+                              >
+                                {purchasingMembership ? "Processing..." : "Renew Membership"}
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => handlePurchaseMembership(selectedMembership)}
+                              disabled={purchasingMembership}
+                              className="bg-[#5c4033] hover:bg-[#4A3728] text-white rounded-full px-6 py-1.5 text-sm font-bold mb-3 transition-colors disabled:opacity-50"
+                            >
+                              {purchasingMembership ? "Processing..." : "Join"}
+                            </button>
+                          )}
                         <p className="text-xs text-gray-600 mb-4 leading-relaxed">
                           {selectedMembership.perks?.length > 0
                             ? selectedMembership.perks.map((p) => p.perkName).join(", ")
