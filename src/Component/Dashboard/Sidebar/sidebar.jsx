@@ -592,10 +592,14 @@ const Sidebar = () => {
           },
           { label: "Reports", path: `/super-admin/community-cms/reports` },
           { label: "Sponsors", path: `/super-admin/community-cms/sponsors` },
-          {
-            label: "Purchase Badge",
-            path: `/super-admin/community-cms/purchase-badge`,
-          },
+            {
+              label: "Purchase Badge",
+              path: `/super-admin/community-cms/purchase-badge`,
+            },
+            {
+              label: "Membership Orders",
+              path: `/super-admin/community-cms/membership-orders`,
+            },
         ],
       },
 

@@ -644,6 +644,7 @@ import Sponsors from "../Component/Dashboard/Super-AdminDashboard/Community CMS/
 import ViewSponsors from "../Component/Dashboard/Super-AdminDashboard/Community CMS/Sponsors/ViewSponsors";
 import PurchaseBadge from "../Component/Dashboard/Super-AdminDashboard/Community CMS/PurchaseBadge/PurchaseBadge";
 import ShowPurchasedBadge from "../Component/Dashboard/Super-AdminDashboard/Community CMS/PurchaseBadge/ShowPurchasedBadge";
+import MembershipOrders from "../Component/Dashboard/Super-AdminDashboard/Community CMS/MembershipOrders/MembershipOrders";
 import ProductViewing from "../Component/SocialMedia/Profile/ProductView";
 import SharePost from "../Component/SocialMedia/Posts/SharePost";
 import SinglePost from "../Component/SocialMedia/Posts/SinglePost";
@@ -1080,9 +1081,13 @@ const AppRoutes = () => {
           element={<PurchaseBadge />}
         />
         <Route
-          path="community-cms/purchase-badge/show"
-          element={<ShowPurchasedBadge />}
-        />
+            path="community-cms/purchase-badge/show"
+            element={<ShowPurchasedBadge />}
+          />
+          <Route
+            path="community-cms/membership-orders"
+            element={<MembershipOrders />}
+          />
         {/*PackagingMaterialSettings */}
         <Route
           path="packaging-material-setting/material-name"
