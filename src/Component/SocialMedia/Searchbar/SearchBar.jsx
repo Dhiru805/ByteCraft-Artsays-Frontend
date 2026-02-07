@@ -383,17 +383,24 @@ const SearchBar = () => {
                         alt={user?.username}
                         className="w-12 h-12 rounded-full object-cover border"
                       />
-                      <div>
-                        <p className="font-semibold text-black flex items-center gap-1">
-                          {user?.username}
-                          {user.verified && (
-                            <MdVerified className="text-blue-500 text-lg" />
-                          )}
-                        </p>
-                        <p className="text-sm text-gray-700">
-                          {user.city || user.bio}
-                        </p>
-                      </div>
+                        <div>
+                          <p className="font-semibold text-black flex items-center gap-1">
+                            {user?.username}
+                            {user.verified && (
+                              <MdVerified className="text-blue-500 text-lg" />
+                            )}
+                            {user.role && (
+                              <span className="text-[10px] bg-[#6E4E37] text-white px-1.5 py-0.5 rounded-md capitalize">
+                                {user.role}
+                              </span>
+                            )}
+                          </p>
+                          <p className="text-sm text-gray-700">
+                            {user.name && user.lastName
+                              ? `${user.name} ${user.lastName}`
+                              : user.city || user.bio}
+                          </p>
+                        </div>
                     </div>
                   ))}
                 </div>

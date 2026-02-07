@@ -1121,7 +1121,7 @@ const Profile = ({ shareprofileid }) => {
             content="width=device-width, initial-scale=1.0"
           />
           <meta name="robots" content="index, follow" />
-          <title>{profile.username}</title>
+            <title>{profile.username || `${profile.firstName || ''} ${profile.lastName || ''}`.trim()}</title>
           <meta name="description" content={profile.bio} />
           {/* <meta name="keywords" content={}/> */}
           <meta
@@ -2148,26 +2148,26 @@ const Profile = ({ shareprofileid }) => {
             <div className="flex flex-col gap-2 w-full">
               <div className="flex justify-between items-center">
                 <h1 className="text-lg font-semibold text-[#000000]">
-                  {profile.username}
-                  {profile.verified?.length > 0 && (
-                    <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]
-                        ?.badgeImage
-                        }`}
-                      className="inline-block ml-1 w-5 h-5 object-contain"
-                      alt={
-                        profile.verified[profile.verified.length - 1]
-                          ?.badgeName || "badge"
-                      }
-                      title={
-                        profile.verified[profile.verified.length - 1]?.badgeName
-                      }
-                    />
-                  )}
-                </h1>
+                    {profile.username || `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || 'User'}
+                    {profile.verified?.length > 0 && (
+                      <img
+                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]
+                          ?.badgeImage
+                          }`}
+                        className="inline-block ml-1 w-5 h-5 object-contain"
+                        alt={
+                          profile.verified[profile.verified.length - 1]
+                            ?.badgeName || "badge"
+                        }
+                        title={
+                          profile.verified[profile.verified.length - 1]?.badgeName
+                        }
+                      />
+                    )}
+                  </h1>
 
-                {/* button only enables when this profile is mine */}
-                {isMyProfile ? (
+                  {/* button only enables when this profile is mine */}
+                  {isMyProfile ? (
                   //  Owner sees Edit + Boost Profile
                   <div
                     className="flex gap-2 items-center relative"
@@ -2413,14 +2413,14 @@ const Profile = ({ shareprofileid }) => {
                 )}
 
                 <div className="flex flex-col gap-2 w-full">
-                  <h1 className="text-lg font-semibold text-[#000000]">
-                    {profile.username}
-                    {profile.verified?.length > 0 && (
-                      <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]
-                          ?.badgeImage
-                          }`}
-                        className="inline-block ml-1 w-4 h-4 object-contain"
+                    <h1 className="text-lg font-semibold text-[#000000]">
+                      {profile.username || `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || 'User'}
+                      {profile.verified?.length > 0 && (
+                        <img
+                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]
+                            ?.badgeImage
+                            }`}
+                          className="inline-block ml-1 w-4 h-4 object-contain"
                         alt={
                           profile.verified[profile.verified.length - 1]
                             ?.badgeName || "badge"

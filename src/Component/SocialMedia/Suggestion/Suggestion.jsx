@@ -194,9 +194,11 @@ const Suggestion = () => {
           const followStatus = user.followStatus || "Follow";
           const isFollowing = followStatus === "Unfollow" || followStatus === "Following";
 
+          const fullName = `${user?.name || ''} ${user?.lastName || ''}`.trim();
+          const displayName = user?.username || fullName || 'User';
           const displayUsername = isNarrow
-          ? (user?.username ? user.username.slice(0, 5) : "")
-          : user?.username;
+            ? displayName.slice(0, 5)
+            : displayName;
 
         return (
           <div
