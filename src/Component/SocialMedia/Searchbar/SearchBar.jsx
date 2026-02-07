@@ -5,6 +5,9 @@ import postAPI from "../../../api/postAPI";
 import deleteAPI from "../../../api/deleteAPI";
 import { MdVerified } from "react-icons/md";
 import { Link } from "react-router-dom";
+import { FaPlay } from "react-icons/fa";
+import { BsBroadcast } from "react-icons/bs";
+import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 
 // Debounce hook
 const useDebounce = (value, delay) => {
@@ -85,6 +88,25 @@ const SearchBar = () => {
   const userId = localStorage.getItem("userId");
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const dropdownRef = useRef(null);
+  const [activeLives, setActiveLives] = useState([]);
+
+  // Fetch active live streams
+  useEffect(() => {
+    const fetchActiveLives = async () => {
+      try {
+        const res = await getAPI("/api/social-media/active-lives", {}, true, true);
+        if (res?.data?.success) {
+          setActiveLives(res.data.data || []);
+        }
+      } catch (err) {
+        console.error("Error fetching active lives:", err);
+      }
+    };
+    fetchActiveLives();
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchActiveLives, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -429,27 +451,7 @@ const SearchBar = () => {
         </div>
 
       </div>
-
-      {/* Full-page Post Grid */}
-      {showPostGrid && suggestedPosts.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3">
-          {suggestedPosts.map((post) => (
-            <Link to={`/artsays-community/single-post/${post._id}`}>
-              <div key={post._id} className="relative">
-                <img
-                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
-                  alt="post"
-                  className="w-full h-40 sm:h-52 object-cover rounded-lg"
-                />
-                <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
-                  {post.caption}
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      )}
-
+      
       {/* Suggested Users */}
       <div className="flex flex-col gap-3">
         {suggestionForUser.map((user) => (
@@ -507,6 +509,137 @@ const SearchBar = () => {
           </div>
         ))}
       </div>
+
+      {/* Active Live Streams */}
+      {activeLives.length > 0 && (
+        <div>
+          <h3 className="text-lg font-medium text-[#000000] mb-2 flex items-center gap-2">
+            <BsBroadcast className="text-red-500" />
+            Live Now
+          </h3>
+          <div className="flex flex-col gap-3">
+            {activeLives.map((stream) => {
+              const thumb = stream.thumbnail
+                ? stream.thumbnail.startsWith("http")
+                  ? stream.thumbnail
+                  : `${process.env.REACT_APP_API_URL}/${stream.thumbnail.replace(/\\/g, "/")}`
+                : "/assets/profile/user.png";
+
+              const profileImg = stream.userId?.profilePhoto
+                ? stream.userId.profilePhoto.startsWith("http")
+                  ? stream.userId.profilePhoto
+                  : `${process.env.REACT_APP_API_URL}/${stream.userId.profilePhoto}`
+                : DEFAULT_PROFILE_IMAGE;
+
+              return (
+                <div
+                  key={stream._id}
+                  className="relative flex flex-row bg-[#FFE5D9] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 min-h-[140px] pl-3 cursor-pointer"
+                  onClick={() =>
+                    navigate(
+                      `/artsays-community/live/${stream.live?.streamKey}`
+                    )
+                  }
+                >
+                  {/* Left Accent Bar */}
+                  <div className="absolute left-0 top-0 bottom-0 w-3 bg-[#FF6B6B] z-10"></div>
+
+                  {/* Layout Container */}
+                  <div className="flex flex-row w-full p-2 py-3 gap-3 md:gap-4 items-start">
+                    {/* Thumbnail Section */}
+                    <div className="relative w-[160px] sm:w-[240px] aspect-video flex-shrink-0">
+                      <div className="w-full h-full rounded-xl overflow-hidden relative group cursor-pointer bg-black/10">
+                        <img
+                          src={thumb}
+                          alt={stream.title}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                        {/* Overlay & Play Button */}
+                        <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center text-white border border-white/50 group-hover:scale-110 transition-transform">
+                            <FaPlay className="ml-1 text-xs sm:text-sm" />
+                          </div>
+                        </div>
+                        {/* LIVE Badge */}
+                        <div className="absolute top-1 left-1 bg-red-600 text-white px-1.5 py-0.5 rounded text-[10px] font-bold flex items-center gap-1">
+                          <BsBroadcast className="text-xs" /> LIVE
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Content Section */}
+                    <div className="flex-1 flex flex-col justify-between h-full min-h-[90px] text-[#48372D]">
+                      <div>
+                        <h3
+                          className="font-bold text-sm sm:text-lg text-[#48372D] leading-tight line-clamp-2 mb-0.5"
+                          title={stream.title}
+                        >
+                          {stream.title}
+                        </h3>
+
+                        <div className="text-[10px] sm:text-xs text-gray-600 mb-2 flex items-center gap-1 flex-wrap">
+                          <span>{stream.live?.viewCount || 0} watching</span>
+                          <span>•</span>
+                          <span className="text-red-500 font-semibold">
+                            Streaming Now
+                          </span>
+                        </div>
+
+                        {/* User Info */}
+                        {stream.userId && (
+                          <div className="flex items-center gap-2 mb-2">
+                            <img
+                              src={profileImg}
+                              alt={stream.userId.username}
+                              className="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover"
+                            />
+                            <span className="text-[10px] sm:text-xs font-semibold text-gray-700">
+                              {stream.userId.username || "User"}
+                            </span>
+                          </div>
+                        )}
+
+                        <p className="text-[10px] sm:text-xs text-gray-600 line-clamp-2 mb-2 leading-relaxed hidden sm:block">
+                          {stream.description}
+                        </p>
+                      </div>
+
+                      {/* Tags/Category Button */}
+                      <div className="mt-auto">
+                        <span className="bg-[#5D4037] text-white text-[10px] px-2 py-0.5 sm:py-1 rounded inline-block">
+                          {stream.category || "New"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Full-page Post Grid */}
+      {showPostGrid && suggestedPosts.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3">
+          {suggestedPosts.map((post) => (
+            <Link to={`/artsays-community/single-post/${post._id}`}>
+              <div key={post._id} className="relative">
+                <img
+                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
+                  alt="post"
+                  className="w-full h-40 sm:h-52 object-cover rounded-lg"
+                />
+                <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
+                  {post.caption}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+
+      
 
       {/* Suggested Videos */}
       {/* <div>

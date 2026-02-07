@@ -2010,34 +2010,34 @@ const Profile = ({ shareprofileid }) => {
         {profile ? (
           <div className="hidden sm:flex items-start gap-6 w-full">
             <div className="relative w-[150px] h-[150px] shrink-0 align-self-center">
-              {user.live ? (
-                <div className="p-[3px] sm:p-[6px] rounded-full bg-gradient-to-r from-[#6E300C] via-[#F1620E] to-[#6E300C] w-full h-full">
-                  <div className="w-full h-full bg-white rounded-full overflow-hidden">
-                    <img
-                      src={
-                        profile?.profilePhoto
-                          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
-                          : `${DEFAULT_PROFILE_IMAGE}`
-                      }
-                      alt={profile.username}
-                      className="w-full h-full object-cover rounded-full"
-                    />
-                  </div>
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-1/2 px-2 py-0.5 text-white text-xl sm:text-sm font-semibold bg-gradient-to-r from-[#F1620E] to-[#72320C] rounded-tl-[10px] rounded-tr-[10px]">
-                    LIVE
-                  </div>
-                </div>
-              ) : (
-                <img
-                  src={
-                    profile?.profilePhoto
-                      ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
-                      : `${DEFAULT_PROFILE_IMAGE}`
-                  }
-                  alt={profile.username}
-                  className="w-full h-full object-cover rounded-full"
-                />
-              )}
+                {profile?.isLive ? (
+                    <div className="p-[3px] sm:p-[6px] rounded-full bg-gradient-to-r from-[#6E300C] via-[#F1620E] to-[#6E300C] w-full h-full cursor-pointer" onClick={() => profile?.liveStreamKey && navigate(`/artsays-community/live/${profile.liveStreamKey}`)}>
+                      <div className="w-full h-full bg-white rounded-full overflow-hidden">
+                        <img
+                          src={
+                            profile?.profilePhoto
+                              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                              : `${DEFAULT_PROFILE_IMAGE}`
+                          }
+                          alt={profile.username}
+                          className="w-full h-full object-cover rounded-full"
+                        />
+                      </div>
+                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-1/2 px-2 py-0.5 text-white text-xl sm:text-sm font-semibold bg-gradient-to-r from-[#F1620E] to-[#72320C] rounded-tl-[10px] rounded-tr-[10px]">
+                        LIVE
+                      </div>
+                    </div>
+                ) : (
+                  <img
+                    src={
+                      profile?.profilePhoto
+                        ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                        : `${DEFAULT_PROFILE_IMAGE}`
+                    }
+                    alt={profile.username}
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                )}
             </div>
 
             <div className="flex flex-col gap-2 w-full">
@@ -2264,8 +2264,8 @@ const Profile = ({ shareprofileid }) => {
           <div className="sm:hidden flex flex-col  gap-3 lg:gap-8 w-full ">
             <div className="flex items-center justify-between">
               <div className="flex justify-between gap-2 items-center">
-                {user.live ? (
-                  <div className="relative w-[90px] h-[90px] p-[4px] bg-gradient-to-r from-[#6E300C] via-[#F1620E] to-[#6E300C] rounded-full overflow-visible">
+                {profile?.isLive ? (
+                    <div className="relative w-[90px] h-[90px] p-[4px] bg-gradient-to-r from-[#6E300C] via-[#F1620E] to-[#6E300C] rounded-full overflow-visible cursor-pointer" onClick={() => profile?.liveStreamKey && navigate(`/artsays-community/live/${profile.liveStreamKey}`)}>
                     <img
                       src={
                         profile?.profilePhoto
@@ -2954,22 +2954,26 @@ const Profile = ({ shareprofileid }) => {
              <div className="flex flex-col gap-4 w-full">
                 {liveHistory.map((stream) => (
                     <div key={stream._id} className="relative flex flex-row bg-[#FFE5D9] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 min-h-[140px] pl-3 cursor-pointer" onClick={() => {
-                      const thumb = stream.thumbnail ? (stream.thumbnail.startsWith('http') ? stream.thumbnail : `${process.env.REACT_APP_API_URL}/${stream.thumbnail.replace(/\\/g, '/')}`) : '/assets/profile/user.png';
-                        navigate('/artsays-community/post-live', {
-                          state: {
-                            totalViews: stream.live?.viewCount || 0,
-                            comments: 0,
-                            likes: stream.live?.likeCount || 0,
-                            name: profile?.username || 'Creator',
-                            thumbnail: thumb,
-                            description: stream.title || 'Live Stream',
-                            duration: stream.live?.streamDuration || '00:00',
-                            streamKey: stream.live?.streamKey,
-                            isPublished: stream.live?.isPublished || false,
-                            isOwner: isMyProfile
-                          }
-                        });
-                    }}>
+                        if (stream.live?.isLive && stream.live?.streamKey) {
+                          navigate(`/artsays-community/live/${stream.live.streamKey}`);
+                        } else {
+                          const thumb = stream.thumbnail ? (stream.thumbnail.startsWith('http') ? stream.thumbnail : `${process.env.REACT_APP_API_URL}/${stream.thumbnail.replace(/\\/g, '/')}`) : '/assets/profile/user.png';
+                          navigate('/artsays-community/post-live', {
+                            state: {
+                              totalViews: stream.live?.viewCount || 0,
+                              comments: 0,
+                              likes: stream.live?.likeCount || 0,
+                              name: profile?.username || 'Creator',
+                              thumbnail: thumb,
+                              description: stream.title || 'Live Stream',
+                              duration: stream.live?.streamDuration || '00:00',
+                              streamKey: stream.live?.streamKey,
+                              isPublished: stream.live?.isPublished || false,
+                              isOwner: isMyProfile
+                            }
+                          });
+                        }
+                      }}>
                     {/* Left Accent Bar */}
                     <div className="absolute left-0 top-0 bottom-0 w-3 bg-[#FF6B6B] z-10"></div>
                     
