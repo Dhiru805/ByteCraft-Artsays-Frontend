@@ -307,7 +307,7 @@ const OthersLive = () => {
     }
   };
 
-  const handleJoinMembership = (tier) => {
+  const handleJoinMembership = async (tier) => {
     const currentUserId = localStorage.getItem('userId');
     const token = localStorage.getItem('token');
     
@@ -316,10 +316,21 @@ const OthersLive = () => {
       return;
     }
 
-    toast.success(`Successfully joined ${tier.name} membership!`);
-    handleSendMessage(null, `Joined the ${tier.name} membership! 🎊`);
-    setShowSuperChatMenu(false);
-    setSuperChatView('main');
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/membership/purchase`,
+        { userId: currentUserId, membershipId: tier.id },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (response.data?.success && response.data?.data?.paymentUrl) {
+        window.location.href = response.data.data.paymentUrl;
+      } else {
+        toast.error(response.data?.message || 'Failed to initiate payment');
+      }
+    } catch (err) {
+      console.error('Membership purchase error:', err);
+      toast.error('Failed to initiate membership payment');
+    }
   };
 
   const handleSendSuperChat = () => {

@@ -219,6 +219,11 @@ const Profile = ({ shareprofileid }) => {
   const [isCancelling, setIsCancelling] = useState(false);
   const [showFollowers, setShowFollowers] = useState(false);
   const [showFollowing, setShowFollowing] = useState(false);
+  const [showMembershipModal, setShowMembershipModal] = useState(false);
+  const [memberships, setMemberships] = useState([]);
+  const [selectedMembership, setSelectedMembership] = useState(null);
+  const [membershipsLoading, setMembershipsLoading] = useState(false);
+  const [purchasingMembership, setPurchasingMembership] = useState(false);
   const isMobile = window.innerWidth < 1024; // Tailwind lg breakpoint
   useEffect(() => {
     if (location.state?.onItem === true) {
@@ -555,6 +560,58 @@ const Profile = ({ shareprofileid }) => {
       toast.error("Error deleting live stream");
     } finally {
       setDeletingLiveId(null);
+    }
+  };
+
+  // Fetch memberships for a creator
+  const fetchMemberships = async (creatorUserId) => {
+    setMembershipsLoading(true);
+    try {
+      const res = await getAPI(`/api/membership?userId=${creatorUserId}`);
+      const list = res?.data?.memberships || [];
+      setMemberships(list);
+      if (list.length > 0) setSelectedMembership(list[0]);
+      else setSelectedMembership(null);
+    } catch (err) {
+      console.error("Error fetching memberships:", err);
+      setMemberships([]);
+    } finally {
+      setMembershipsLoading(false);
+    }
+  };
+
+  // Handle Join button click - open modal
+  const handleJoinClick = () => {
+    if (!loggedInUserId) {
+      toast.error("Please login to join memberships");
+      return;
+    }
+    setShowMembershipModal(true);
+    fetchMemberships(viewedUserId);
+  };
+
+  // Handle membership purchase
+  const handlePurchaseMembership = async (membership) => {
+    if (!loggedInUserId) {
+      toast.error("Please login to purchase membership");
+      return;
+    }
+    setPurchasingMembership(true);
+    try {
+      const res = await postAPI("/api/membership/purchase", {
+        userId: loggedInUserId,
+        membershipId: membership._id,
+      });
+      if (res?.data?.success && res?.data?.data?.paymentUrl) {
+        window.location.href = res.data.data.paymentUrl;
+      } else {
+        toast.error(res?.data?.message || "Failed to initiate payment");
+      }
+    } catch (err) {
+      console.error("Membership purchase error:", err);
+      toast.error("Failed to initiate membership payment");
+    } finally {
+      setPurchasingMembership(false);
     }
   };
 
@@ -2121,7 +2178,7 @@ const Profile = ({ shareprofileid }) => {
                     </button>
 
                     {follow && profile?.role !== "buyer" && (
-                      <button className="flex items-center gap-1 px-2 py-1 bg-[#6F4D34] font-bold text-white rounded-md text-sm focus:outline-none">
+                      <button onClick={handleJoinClick} className="flex items-center gap-1 px-2 py-1 bg-[#6F4D34] font-bold text-white rounded-md text-sm focus:outline-none">
                         Join
                       </button>
                     )}
@@ -3225,9 +3282,110 @@ const Profile = ({ shareprofileid }) => {
   </div>
 )}
 
-    </div>
-  );
-};
+      {/* Membership Modal */}
+      {showMembershipModal && (
+        <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex items-center justify-center bg-black/50" onClick={() => setShowMembershipModal(false)}>
+          <div className="bg-white rounded-2xl w-[90%] max-w-md max-h-[80vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            {/* Header */}
+            <div className="p-4 bg-[#FCE7F3] relative overflow-hidden">
+              <div className="absolute right-[-20px] top-[-20px] w-24 h-24 border-2 border-[#4A3728] rounded-full opacity-20 pointer-events-none"></div>
+              <div className="absolute left-[30%] top-[-10px] w-12 h-12 border-2 border-[#4A3728] rounded-full opacity-20 pointer-events-none"></div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={profile?.profilePhoto || DEFAULT_PROFILE_IMAGE}
+                    className="w-10 h-10 rounded-full object-cover"
+                    alt=""
+                  />
+                  <div>
+                    <h3 className="text-[#4A3728] text-sm font-medium">{profile?.fullName || profile?.username}</h3>
+                    <h2 className="text-[#4A3728] text-lg font-bold">Be a member</h2>
+                  </div>
+                </div>
+                <button onClick={() => setShowMembershipModal(false)} className="text-[#4A3728] text-xl font-bold">
+                  <i className="ri-close-line"></i>
+                </button>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="overflow-y-auto max-h-[60vh]">
+              {membershipsLoading ? (
+                <div className="flex flex-col items-center justify-center p-8">
+                  <div className="w-8 h-8 border-4 border-[#4A3728]/20 border-t-[#4A3728] rounded-full animate-spin mb-2"></div>
+                  <p className="text-sm text-gray-500">Loading memberships...</p>
+                </div>
+              ) : memberships.length > 0 ? (
+                <div className="flex h-[350px]">
+                  {/* Left - Tier List */}
+                  <div className="w-1/3 border-r border-gray-100 overflow-y-auto">
+                    {memberships.map((m) => (
+                      <button
+                        key={m._id}
+                        onClick={() => setSelectedMembership(m)}
+                        className={`w-full text-left p-3 transition-colors relative ${selectedMembership?._id === m._id ? "bg-[#FBCFE8]" : "hover:bg-gray-50"}`}
+                      >
+                        {selectedMembership?._id === m._id && (
+                          <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#4A3728]"></div>
+                        )}
+                        <div className="text-sm font-medium text-gray-800">{m.title}</div>
+                        <div className="text-xs text-gray-500">₹{m.price}/month</div>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Right - Tier Details */}
+                  <div className="w-2/3 p-4 overflow-y-auto">
+                    {selectedMembership ? (
+                      <>
+                        <h3 className="text-lg font-bold text-[#4A3728] mb-1">₹{selectedMembership.price}/month</h3>
+                        <button
+                          onClick={() => handlePurchaseMembership(selectedMembership)}
+                          disabled={purchasingMembership}
+                          className="bg-[#5c4033] hover:bg-[#4A3728] text-white rounded-full px-6 py-1.5 text-sm font-bold mb-3 transition-colors disabled:opacity-50"
+                        >
+                          {purchasingMembership ? "Processing..." : "Join"}
+                        </button>
+                        <p className="text-xs text-gray-600 mb-4 leading-relaxed">
+                          {selectedMembership.perks?.length > 0
+                            ? selectedMembership.perks.map((p) => p.perkName).join(", ")
+                            : "No perks listed"}
+                        </p>
+                        {selectedMembership.perks?.length > 0 && (
+                          <div>
+                            <h4 className="text-xs font-bold text-[#4A3728] mb-2">Perks included:</h4>
+                            <ul className="space-y-1">
+                              {selectedMembership.perks.map((perk, i) => (
+                                <li key={i} className="text-xs text-gray-700 flex items-center gap-1">
+                                  <span className="text-green-500">&#10003;</span> {perk.perkName}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="h-full flex items-center justify-center text-gray-400 text-sm">
+                        Select a tier to see details
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center p-8 text-center">
+                  <i className="ri-group-line text-4xl text-gray-200 mb-3"></i>
+                  <h3 className="text-lg font-bold text-gray-700 mb-1">No memberships available</h3>
+                  <p className="text-sm text-gray-500">This creator hasn't set up any membership tiers yet.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      </div>
+    );
+  };
 const ProfileSkeleton = () => {
   return (
     <div className="w-full min-h-screen col-span-12 lg:col-span-6 bg-white my-4">

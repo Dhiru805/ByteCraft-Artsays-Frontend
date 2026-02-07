@@ -11,6 +11,7 @@ import {
   RiProhibitedLine,
   RiVerifiedBadgeLine,
   RiShieldUserLine,
+  RiShoppingBag3Line,
 } from "react-icons/ri";
 import { FiEdit, FiChevronDown } from "react-icons/fi";
 import { FaCheck } from "react-icons/fa";
@@ -29,6 +30,7 @@ const items = [
   ...(userType === "Artist"
     ? [{ key: "membership", label: "Membership", icon: <FaUserGroup /> }]
     : []),
+  { key: "membership-orders", label: "Membership Orders", icon: <RiShoppingBag3Line /> },
   {
     key: "collaboration-mentions",
     label: "Collaboration and Mentions",
@@ -510,6 +512,13 @@ const Setting = () => {
     fetchMemberships();
   }, []);
 
+
+  useEffect(() => {
+    if (active === "membership-orders") {
+      fetchMembershipOrders();
+    }
+  }, [active]);
+
   //  Handle outside click for dropdowns
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -604,6 +613,25 @@ const Setting = () => {
       prev.map((m) => (m._id === id ? { ...m, expanded: !m.expanded } : m))
     );
   };
+
+  // membership orders
+  const [membershipOrders, setMembershipOrders] = useState([]);
+  const [membershipOrdersLoading, setMembershipOrdersLoading] = useState(false);
+
+  const fetchMembershipOrders = async () => {
+    setMembershipOrdersLoading(true);
+    try {
+      const userId = localStorage.getItem("userId");
+      const param = userType === "Artist" ? `creatorId=${userId}` : `userId=${userId}`;
+      const res = await getAPI(`/api/membership/orders?${param}`, {}, true, true);
+      setMembershipOrders(res?.data?.orders || []);
+    } catch (err) {
+      console.error("Error fetching membership orders:", err);
+    } finally {
+      setMembershipOrdersLoading(false);
+    }
+  };
+
 
   useEffect(() => {
     const fetchToggleState = async () => {
@@ -1465,6 +1493,87 @@ const Setting = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+
+          {/* Membership Orders panel */}
+          {active === "membership-orders" && (
+            <div className="w-full my-4 bg-white rounded-xl lg:border lg:border-gray-200 lg:shadow-sm lg:p-[1rem] space-y-3 h-fit">
+              <div className="flex items-center gap-2">
+                {lgActive && (
+                  <button
+                    className="text-2xl font-bold text-[#000000]"
+                    onClick={() => setLgActive(false)}
+                  >
+                    <i className="ri-arrow-left-s-line"></i>
+                  </button>
+                )}
+                <h2 className="text-2xl font-bold text-[#48372D]">Membership Orders</h2>
+              </div>
+
+              {membershipOrdersLoading ? (
+                <div className="flex justify-center py-8">
+                  <div className="w-8 h-8 border-4 border-[#4A3728]/20 border-t-[#4A3728] rounded-full animate-spin"></div>
+                </div>
+              ) : membershipOrders.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <RiShoppingBag3Line className="text-5xl text-gray-300 mb-3" />
+                  <h3 className="text-lg font-semibold text-gray-600">No membership orders yet</h3>
+                  <p className="text-sm text-gray-400 mt-1">Your purchased memberships will appear here.</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left border-collapse">
+                    <thead>
+                      <tr className="bg-[#48372D] text-white">
+                        <th className="px-3 py-2 font-semibold rounded-tl-lg">Membership</th>
+                        <th className="px-3 py-2 font-semibold">{userType === "Artist" ? "Buyer" : "Creator"}</th>
+                        <th className="px-3 py-2 font-semibold">Amount</th>
+                        <th className="px-3 py-2 font-semibold">Date</th>
+                        <th className="px-3 py-2 font-semibold">Status</th>
+                        <th className="px-3 py-2 font-semibold rounded-tr-lg">Txn ID</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {membershipOrders.map((order) => (
+                        <tr key={order._id} className="border-b border-gray-100 hover:bg-gray-50 transition">
+                          <td className="px-3 py-2 font-semibold text-[#48372D]">
+                            {order.membershipId?.title || "Membership"}
+                          </td>
+                          <td className="px-3 py-2 text-gray-600">
+                            {userType === "Artist"
+                              ? (order.userId?.firstName || order.userId?.name || "Unknown")
+                              : (order.creatorId?.firstName || order.creatorId?.name || "Unknown")}
+                          </td>
+                          <td className="px-3 py-2 font-semibold text-[#48372D]">
+                            {"₹"}{order.amount}
+                          </td>
+                          <td className="px-3 py-2 text-gray-600 whitespace-nowrap">
+                            {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                          </td>
+                          <td className="px-3 py-2">
+                            <span
+                              className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                                order.status === "Paid"
+                                  ? "bg-green-100 text-green-700"
+                                  : order.status === "Pending"
+                                  ? "bg-yellow-100 text-yellow-700"
+                                  : "bg-red-100 text-red-700"
+                              }`}
+                            >
+                              {order.status}
+                            </span>
+                          </td>
+                            <td className="px-3 py-2 text-xs text-gray-400 break-all">
+                              {order.easebuzzTxnId || "-"}
+                            </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           )}
 

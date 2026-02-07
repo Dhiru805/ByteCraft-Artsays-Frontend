@@ -60,6 +60,9 @@ import InsuranceFailurePage from "../Pages/PaymentGetway/Insurance/Failure";
 import ExhibitionSuccessPage from "../Pages/PaymentGetway/Exhibition/Success";
 import ExhibitionFailurePage from "../Pages/PaymentGetway/Exhibition/Failure";
 
+import MembershipSuccessPage from "../Pages/PaymentGetway/Membership/Success";
+import MembershipFailurePage from "../Pages/PaymentGetway/Membership/Failure";
+
 
 
 //----------------------------------------My Account-----------------------------------------//
@@ -802,8 +805,11 @@ const AppRoutes = () => {
         <Route path="/insurance-payment/success" element={<InsuranceSuccessPage/>} />
       <Route path="/insurance-payment/failure" element={<InsuranceFailurePage/>} />
 
-         <Route path="/exhibition-payment/success" element={<ExhibitionSuccessPage/>} />
-      <Route path="/exhibition-payment/failure" element={<ExhibitionFailurePage/>} />
+           <Route path="/exhibition-payment/success" element={<ExhibitionSuccessPage/>} />
+        <Route path="/exhibition-payment/failure" element={<ExhibitionFailurePage/>} />
+
+        <Route path="/membership-payment/success" element={<MembershipSuccessPage/>} />
+        <Route path="/membership-payment/failure" element={<MembershipFailurePage/>} />
 
      
 
