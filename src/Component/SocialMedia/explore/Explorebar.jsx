@@ -163,7 +163,7 @@ const Explorebar = () => {
                   src={
                     art.images && art.images.length > 0
                       ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${art.images[0]}`
-                      : "https://via.placeholder.com/300"
+                        : "/assets/profile/user.png"
                   }
                   alt="Art"
                   className="w-full object-cover rounded-t-xl"

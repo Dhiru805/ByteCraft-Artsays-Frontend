@@ -15,49 +15,21 @@ const Suggestion = () => {
   const [isNarrow, setIsNarrow] = useState(
     typeof window !== "undefined" ? window.innerWidth <= 1024 : false
   );
+  const userId = localStorage.getItem("userId");
+  const userType = localStorage.getItem("userType");
+  const navigate = useNavigate();
+
   useEffect(() => {
     const handleResize = () => setIsNarrow(window.innerWidth <= 1024);
-    window.addEventListener("resize", handleResize());
+    window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  useEffect(() => {
-  const fetchSuggestedUsers = async () => {
-    try {
-      if (!userId) return;
-
-      const res = await getAPI(
-        `/api/social-media/suggested-users?userId=${userId}`,
-        { userId, userType }
-      );
-
-      // Map users to include followStatus
-      const usersWithStatus = (res?.data?.suggestedUsers || []).map(user => {
-        const isFollowing = Array.isArray(user?.profile?.followers)
-          ? user.profile.followers.map(String).includes(String(userId))
-          : false;
-        return { ...user, followStatus: isFollowing ? "Unfollow" : "Follow" };
-      });
-
-      setUsers(usersWithStatus);
-    } catch (error) {
-      console.error("Error fetching suggested users:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchSuggestedUsers();
-}, []);
-
 
   const adImages = [
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3oql1QTjEkuSfZYyT2Rxsxb_CNSSjwUeyXg&s",
     "https://images.pexels.com/photos/1585325/pexels-photo-1585325.jpeg?cs=srgb&dl=pexels-steve-1585325.jpg&fm=jpg",
     "https://i0.wp.com/montessorifromtheheart.com/wp-content/uploads/2023/03/Straw-Print-Flower-Painting-Craft.jpg?resize=1080%2C1350&ssl=1",
   ];
-  const userId = localStorage.getItem("userId");
-  const userType = localStorage.getItem("userType");
-  const navigate = useNavigate();
   // helper: normalize array -> [ids]
   // const toIdArray = (arr) =>
   //   Array.isArray(arr)
@@ -127,12 +99,18 @@ const Suggestion = () => {
           {
             userId,
             userType,
-            // mainCategories, // can be array, backend should handle it
           }
         );
-        console.log("Fetch suggested users response:", res);
-        // console.log("Suggested users fetched:", res?.data?.suggestedUsers);
-        setUsers(res?.data?.suggestedUsers || []);
+        const suggestedUsers = (res?.data?.suggestedUsers || []).map(user => {
+          const isFollowing = Array.isArray(user?.profile?.followers)
+            ? user.profile.followers.some(f => {
+                const fId = typeof f === "object" && f !== null ? f._id : f;
+                return String(fId) === String(userId);
+              })
+            : false;
+          return { ...user, followStatus: isFollowing ? "Unfollow" : "Follow" };
+        });
+        setUsers(suggestedUsers);
       } catch (error) {
         console.error("Error fetching suggested users:", error);
       } finally {
@@ -213,11 +191,10 @@ const Suggestion = () => {
       <h3 className="text-lg font-bold my-2 ml-1">Discover Creators</h3>
 
       {users.map((user, index) => {
-        let isFollowing = Array.isArray(user?.profile?.followers)
-          ? user.profile.followers.map(String).includes(String(userId))
-          : false;
+          const followStatus = user.followStatus || "Follow";
+          const isFollowing = followStatus === "Unfollow" || followStatus === "Following";
 
-        const displayUsername = isNarrow
+          const displayUsername = isNarrow
           ? (user?.username ? user.username.slice(0, 5) : "")
           : user?.username;
 
@@ -247,16 +224,16 @@ const Suggestion = () => {
             </div>
 
             {/* Buttons */}
-            <div className="col-span-2 flex flex-row gap-1 items-center sm:ml-auto">
-              <button
-                className={`${isFollowing
-                    ? "bg-gray-200 text-black"
-                    : "bg-[#6F4D34] text-white"
-                  } text-xs px-2 py-1 rounded-lg border border-gray-300 font-semibold transition-colors duration-300 whitespace-nowrap`}
-                onClick={() => handleFollowToggle(user._id, isFollowing)}
-              >
-                {isFollowing ? "Unfollow" : "Follow"}
-              </button>
+              <div className="col-span-2 flex flex-row gap-1 items-center sm:ml-auto">
+                <button
+                  className={`${isFollowing
+                      ? "bg-gray-200 text-black"
+                      : "bg-[#6F4D34] text-white"
+                    } text-xs px-2 py-1 rounded-lg border border-gray-300 font-semibold transition-colors duration-300 whitespace-nowrap`}
+                  onClick={(e) => { e.stopPropagation(); handleFollowToggle(user._id, followStatus); }}
+                >
+                  {followStatus === "Following" ? "Following" : isFollowing ? "Unfollow" : "Follow"}
+                </button>
               {/* <button
                 className="text-[#6E4E37] text-sm font-bold leading-none"
                 onClick={() =>

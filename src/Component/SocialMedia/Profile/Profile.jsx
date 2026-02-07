@@ -19,7 +19,7 @@ import postAPI from "../../../../src/api/postAPI";
 import putAPI from "../../../../src/api/putAPI";
 import deleteAPI from "../../../../src/api/deleteAPI";
 import { toast } from "react-toastify";
-import { FaCheckCircle, FaGlobe, FaLock, FaEye, FaThumbsUp, FaComment, FaCalendarAlt, FaPlay, FaEllipsisH } from "react-icons/fa";
+import { FaCheckCircle, FaGlobe, FaLock, FaEye, FaThumbsUp, FaComment, FaCalendarAlt, FaPlay, FaEllipsisH, FaTrash } from "react-icons/fa";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 import { Helmet } from "react-helmet-async";
 
@@ -212,6 +212,7 @@ const Profile = ({ shareprofileid }) => {
   const [onCollections, setOnCollections] = useState(false);
   const [liveHistory, setLiveHistory] = useState([]);
   const [liveHistoryLoading, setLiveHistoryLoading] = useState(false);
+  const [deletingLiveId, setDeletingLiveId] = useState(null);
   const [showMenu, setShowMenu] = useState(false);
   const [follow, setFollow] = useState(false);
   const [suggestionOn, setSuggestionOn] = useState(false);
@@ -429,11 +430,11 @@ const Profile = ({ shareprofileid }) => {
           // Check if logged in user can comment (frontend logic)
           const allowed = canUserComment(res.data.profile, loggedInUserId);
           setCanComment(allowed);
-          setFollow(
-            res.data.profile.followers
-              .map((id) => id.toString())
-              .includes(String(loggedInUserId))
-          );
+            setFollow(
+              res.data.profile.followers
+                .map((f) => (typeof f === "string" ? f : f._id?.toString()))
+                .includes(String(loggedInUserId))
+            );
 
           const apiUserId =
             res.data.profile.user?._id ||
@@ -529,6 +530,33 @@ const Profile = ({ shareprofileid }) => {
     };
     fetchLiveHistory();
   }, [onLiveHistory, viewedUserId]);
+
+  const handleDeleteLive = async (streamId, streamKey) => {
+    if (!streamKey) {
+      toast.error("Cannot delete: missing stream key");
+      return;
+    }
+    try {
+      setDeletingLiveId(streamId);
+      const res = await postAPI(
+        `/api/social-media/delete-live`,
+        { streamKey },
+        true,
+        true
+      );
+      if (res?.data?.success) {
+        toast.success("Live stream deleted");
+        setLiveHistory((prev) => prev.filter((s) => s._id !== streamId));
+      } else {
+        toast.error(res?.data?.message || "Failed to delete");
+      }
+    } catch (err) {
+      console.error("Error deleting live stream:", err);
+      toast.error("Error deleting live stream");
+    } finally {
+      setDeletingLiveId(null);
+    }
+  };
 
   const handleFollowToggle = async (targetUserId, isFollowing) => {
     const userId = localStorage.getItem("userId");
@@ -1430,12 +1458,12 @@ const Profile = ({ shareprofileid }) => {
                   </div>
 
                   <p className="text-sm font-medium mt-1">{likesCount} likes</p>
-                  {activePost.comments.length > 0 && (
-                    <div
-                      className="lg:hidden text-[13px] font-light cursor-pointer"
-                      onClick={() => setComentPanel(true)} // ✅ open panel on click .It is only in mobile view
-                    >
-                      View all {activePost.comments.length} comments
+                    {activePost?.comments?.length > 0 && (
+                      <div
+                        className="lg:hidden text-[13px] font-light cursor-pointer"
+                        onClick={() => setComentPanel(true)} // ✅ open panel on click .It is only in mobile view
+                      >
+                        View all {activePost.comments.length} comments
                     </div>
                   )}
                 </div>
@@ -2092,7 +2120,7 @@ const Profile = ({ shareprofileid }) => {
                       {follow ? "Unfollow" : "Follow"}
                     </button>
 
-                    {follow && (
+                    {follow && profile?.role !== "buyer" && (
                       <button className="flex items-center gap-1 px-2 py-1 bg-[#6F4D34] font-bold text-white rounded-md text-sm focus:outline-none">
                         Join
                       </button>
@@ -2460,7 +2488,7 @@ const Profile = ({ shareprofileid }) => {
               {follow ? "Unfollow" : "Follow"}
             </button>
 
-            {follow && (
+            {follow && profile?.role !== "buyer" && (
               // <button className=" bg-[#6F4D34] text-white col-span-5 px-4 py-2 font-semibold rounded-md text-md">
               //   Join
               // </button>
@@ -2771,28 +2799,29 @@ const Profile = ({ shareprofileid }) => {
         {onSave && (
           <div className="grid grid-cols-3 gap-1 w-full relative">
             {profile.saved
-              ?.slice()
-              .reverse()
-              .map((post, index) => (
-                <div key={post._id} className="relative">
-                  <img
-                    onClick={() => {
-                      setActiveIndex(index);
-                      setActiveSection("saved");
-                    }}
-                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
-                    alt={`post-${index}`}
-                    className="h-[120px] sm:h-[210px] w-full object-cover rounded-md cursor-pointer"
-                  />
+                ?.slice()
+                .reverse()
+                .filter((post) => post?.images?.length > 0)
+                .map((post, index) => (
+                  <div key={post._id} className="relative">
+                    <img
+                      onClick={() => {
+                        setActiveIndex(index);
+                        setActiveSection("saved");
+                      }}
+                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
+                      alt={`post-${index}`}
+                      className="h-[120px] sm:h-[210px] w-full object-cover rounded-md cursor-pointer"
+                    />
 
-                  {/* Multi-image icon */}
-                  {post.images.length > 1 && (
-                    <div className="absolute top-2 right-2 bg-black/60 p-1 rounded">
-                      <i className="ri-checkbox-multiple-blank-line text-gray-100 text-lg"></i>
-                    </div>
-                  )}
-                </div>
-              ))}
+                    {/* Multi-image icon */}
+                    {post.images.length > 1 && (
+                      <div className="absolute top-2 right-2 bg-black/60 p-1 rounded">
+                        <i className="ri-checkbox-multiple-blank-line text-gray-100 text-lg"></i>
+                      </div>
+                    )}
+                  </div>
+                ))}
           </div>
         )}
 
@@ -2924,7 +2953,23 @@ const Profile = ({ shareprofileid }) => {
             ) : (
              <div className="flex flex-col gap-4 w-full">
                 {liveHistory.map((stream) => (
-                  <div key={stream._id} className="relative flex flex-row bg-[#FFE5D9] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 min-h-[140px] pl-3">
+                    <div key={stream._id} className="relative flex flex-row bg-[#FFE5D9] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 min-h-[140px] pl-3 cursor-pointer" onClick={() => {
+                      const thumb = stream.thumbnail ? (stream.thumbnail.startsWith('http') ? stream.thumbnail : `${process.env.REACT_APP_API_URL}/${stream.thumbnail.replace(/\\/g, '/')}`) : '/assets/profile/user.png';
+                        navigate('/artsays-community/post-live', {
+                          state: {
+                            totalViews: stream.live?.viewCount || 0,
+                            comments: 0,
+                            likes: stream.live?.likeCount || 0,
+                            name: profile?.username || 'Creator',
+                            thumbnail: thumb,
+                            description: stream.title || 'Live Stream',
+                            duration: stream.live?.streamDuration || '00:00',
+                            streamKey: stream.live?.streamKey,
+                            isPublished: stream.live?.isPublished || false,
+                            isOwner: isMyProfile
+                          }
+                        });
+                    }}>
                     {/* Left Accent Bar */}
                     <div className="absolute left-0 top-0 bottom-0 w-3 bg-[#FF6B6B] z-10"></div>
                     
@@ -2935,7 +2980,7 @@ const Profile = ({ shareprofileid }) => {
                         <div className="relative w-[160px] sm:w-[240px] aspect-video flex-shrink-0">
                              <div className="w-full h-full rounded-xl overflow-hidden relative group cursor-pointer bg-black/10">
                                 <img 
-                                    src={stream.thumbnail ? (stream.thumbnail.startsWith('http') ? stream.thumbnail : `${process.env.REACT_APP_API_URL}/${stream.thumbnail.replace(/\\/g, '/')}`) : 'https://via.placeholder.com/300x169?text=No+Thumbnail'} 
+                                    src={stream.thumbnail ? (stream.thumbnail.startsWith('http') ? stream.thumbnail : `${process.env.REACT_APP_API_URL}/${stream.thumbnail.replace(/\\/g, '/')}`) : '/assets/profile/user.png'} 
                                     alt={stream.title} 
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                 />
@@ -2959,9 +3004,16 @@ const Profile = ({ shareprofileid }) => {
                                     <h3 className="font-bold text-sm sm:text-lg text-[#48372D] leading-tight line-clamp-2" title={stream.title}>
                                         {stream.title}
                                     </h3>
-                                    <button className="text-[#48372D] hover:text-black p-1 shrink-0">
-                                        <FaEllipsisH />
-                                    </button>
+                                      {isMyProfile && (
+                                        <button
+                                          className="text-[#48372D] hover:text-red-600 p-1 shrink-0"
+                                          title="Delete live stream"
+                            disabled={deletingLiveId === stream._id}
+                                            onClick={(e) => { e.stopPropagation(); handleDeleteLive(stream._id, stream.live?.streamKey); }}
+                                        >
+                                          <FaTrash />
+                                        </button>
+                                      )}
                                 </div>
 
                                 <div className="text-[10px] sm:text-xs text-gray-600 mb-2 flex items-center gap-1 flex-wrap">

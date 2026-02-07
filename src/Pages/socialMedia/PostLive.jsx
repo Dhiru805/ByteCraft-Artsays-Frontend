@@ -15,7 +15,9 @@ const PostLive = () => {
     thumbnail = 'https://via.placeholder.com/150', 
     description = 'Live Stream Description',
     duration = '00:00',
-    streamKey
+    streamKey,
+    isPublished = false,
+    isOwner = true
   } = location.state || {};
 
   const handlePublish = async () => {
@@ -74,23 +76,27 @@ const PostLive = () => {
                     <p className="text-xs text-gray-500">12M • Art</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button 
-                    onClick={handlePublish}
-                    className="px-6 py-2 bg-[#48372D] text-white rounded-lg font-bold hover:bg-[#3a2c24]"
-                  >
-                    Publish
-                  </button>
-                  <button 
-                    onClick={handleDelete}
-                    className="px-4 py-2 bg-red-100 text-red-600 rounded-lg font-bold hover:bg-red-200 flex items-center gap-2"
-                  >
-                    <FaTrash /> Delete
-                  </button>
-                  <button className="p-2 rounded-full hover:bg-gray-100 text-gray-600">
-                    <FaShare />
-                  </button>
-                </div>
+                  <div className="flex items-center gap-2">
+                    {isOwner && !isPublished && (
+                      <button 
+                        onClick={handlePublish}
+                        className="px-6 py-2 bg-[#48372D] text-white rounded-lg font-bold hover:bg-[#3a2c24]"
+                      >
+                        Publish
+                      </button>
+                    )}
+                    {isOwner && (
+                      <button 
+                        onClick={handleDelete}
+                        className="px-4 py-2 bg-red-100 text-red-600 rounded-lg font-bold hover:bg-red-200 flex items-center gap-2"
+                      >
+                        <FaTrash /> Delete
+                      </button>
+                    )}
+                    <button className="p-2 rounded-full hover:bg-gray-100 text-gray-600">
+                      <FaShare />
+                    </button>
+                  </div>
               </div>
               
               <div className="bg-orange-50 rounded-lg p-4 mb-4">
