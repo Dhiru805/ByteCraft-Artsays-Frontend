@@ -15,6 +15,9 @@ export const AuthProvider = ({ children }) => {
   const [status, setStatus] = useState(
     () => localStorage.getItem("status") || null
   );
+  const [userrole, setUserrole] = useState(
+    () => localStorage.getItem("userrole") || null
+  );
 
   const login = (token, type, userStatus,username,firstName,lastName) => {
     localStorage.setItem("token", token);
@@ -27,6 +30,7 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(true);
     setUserType(type);
     setStatus(userStatus);
+    setUserrole(localStorage.getItem("userrole"));
   };
 
   const logout = (isExpired = false) => {
@@ -38,12 +42,14 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("rememberedEmailOrPhone");
     localStorage.removeItem("rememberedPassword");
     localStorage.removeItem("status");
+    localStorage.removeItem("userrole");
     localStorage.removeItem("username");
     localStorage.removeItem("firstName");
     localStorage.removeItem("lastName");
     
     setUserType(null);
     setStatus(null);
+    setUserrole(null);
     setIsAuthenticated(false);
 
     if (isExpired) {
@@ -78,7 +84,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, userType, status, login, logout }}
+      value={{ isAuthenticated, userType, status, userrole, login, logout }}
     >
       {children}
     </AuthContext.Provider>

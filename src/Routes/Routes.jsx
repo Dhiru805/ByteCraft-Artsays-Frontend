@@ -653,8 +653,8 @@ import ProfileLogout from "../Pages/socialMedia/ProfileLogout";
 
 
 
-const PrivateRoute = ({ allowedRoles, children }) => {
-  const { isAuthenticated, userType, status: userStatus } = useAuth();
+const PrivateRoute = ({ allowedRoles, blockCreatedAdmins, children }) => {
+  const { isAuthenticated, userType, status: userStatus, userrole } = useAuth();
   const location = useLocation();
 
   if (!isAuthenticated) {
@@ -662,6 +662,11 @@ const PrivateRoute = ({ allowedRoles, children }) => {
   }
 
   if (allowedRoles && !allowedRoles.includes(userType)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  // Block admins created by super-admin (userType is "Super-Admin" but userrole is not "super-admin")
+  if (blockCreatedAdmins && userType === "Super-Admin" && userrole !== "super-admin") {
     return <Navigate to="/unauthorized" replace />;
   }
 
@@ -1779,7 +1784,7 @@ const AppRoutes = () => {
         <Route path="/partner" element={<Partner />} />
 
         {/* ----------------------------------------------------social media Route ----------------------------------------------- */}
-        <Route element={<PrivateRoute allowedRoles={["Buyer", "Artist", "Seller", "Super-Admin"]} />}>
+        <Route element={<PrivateRoute allowedRoles={["Buyer", "Artist", "Seller", "Super-Admin"]} blockCreatedAdmins />}>
           <Route path="/artsays-community" element={<Homee />} />
           <Route
             path="/artsays-community/sharepost/:postId"
@@ -1795,9 +1800,9 @@ const AppRoutes = () => {
           <Route path="/artsays-community/search" element={<Search />} />
           <Route path="/artsays-community/explore" element={<Explore />} />
           {/* Only creators can create/upload posts */}
-          <Route
-            element={<PrivateRoute allowedRoles={["Artist", "Seller", "Super-Admin"]} />}
-          >
+            <Route
+              element={<PrivateRoute allowedRoles={["Artist", "Seller"]} />}
+            >
             <Route path="/artsays-community/create-post" element={<CreatePost />} />
             <Route path="/artsays-community/upload-post" element={<UploadPost />} />
           </Route>

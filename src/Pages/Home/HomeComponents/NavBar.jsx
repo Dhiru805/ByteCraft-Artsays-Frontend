@@ -34,6 +34,7 @@ const NavBar = () => {
   const [user, setUser] = useState({});
   // const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   const userId = localStorage.getItem("userId");
+  const userrole = localStorage.getItem("userrole");
   const navigate = useNavigate();
   const location = useLocation();
   const isOnSocialMedia = location.pathname.startsWith("/artsays-community");
@@ -58,6 +59,8 @@ const NavBar = () => {
       }
     };
     const fetchProfile = async () => {
+      const storedUserType = localStorage.getItem("userType");
+      if (storedUserType === "Super-Admin") return;
       try {
         const res = await getAPI(
           `/api/social-media/profile/${userId}`,
@@ -537,53 +540,55 @@ const NavBar = () => {
                             zIndex: 1,
                           }}
                         >
-                          <div className="dropdown-arrow-h" />
-                          <div className="dropdown-item-group-h">
-                            <div
-                              className="dropdown-item-h"
-                              onClick={() => {
-                                handleDashboardClick(Usertype);
-                              }}
-                            >
-                              <i className="fas fa-tachometer-alt me-1" />
-                              My Dashboard
-                            </div>
-                            {!isOnSocialMedia ? (
-                              <Link
+                            <div className="dropdown-arrow-h" />
+                            <div className="dropdown-item-group-h">
+                              <div
                                 className="dropdown-item-h"
-                                to={"/artsays-community"}
-                                onClick={handleUserIconClick}
+                                onClick={() => {
+                                  handleDashboardClick(Usertype);
+                                }}
                               >
-                                <img
-                                  alt="community-logo"
-                                  src={artLogo}
-                                  style={{
-                                    width: "20px",
-                                    height: "20px",
-                                    marginRight: "2px",
-                                  }}
-                                />
-                                Switch to Community
-                              </Link>
-                            ) : (
+                                <i className="fas fa-tachometer-alt me-1" />
+                                My Dashboard
+                              </div>
+                {!(Usertype === "Super-Admin" && userrole !== "super-admin") && (
+                                  !isOnSocialMedia ? (
+                                    <Link
+                                      className="dropdown-item-h"
+                                      to={"/artsays-community"}
+                                      onClick={handleUserIconClick}
+                                    >
+                                      <img
+                                        alt="community-logo"
+                                        src={artLogo}
+                                        style={{
+                                          width: "20px",
+                                          height: "20px",
+                                          marginRight: "2px",
+                                        }}
+                                      />
+                                      Switch to Community
+                                    </Link>
+                                  ) : (
+                                    <Link
+                                      className="dropdown-item-h"
+                                      to={"/"}
+                                      onClick={handleUserIconClick}
+                                    >
+                                      <img
+                                        src={AIcon}
+                                        alt="Artsays-Icon"
+                                        style={{
+                                          width: "16px",
+                                          height: "16px",
+                                          marginRight: "7px",
+                                        }}
+                                      />
+                                      Switch to Artsays
+                                    </Link>
+                                  )
+                                )}
                               <Link
-                                className="dropdown-item-h"
-                                to={"/"}
-                                onClick={handleUserIconClick}
-                              >
-                                <img
-                                  src={AIcon}
-                                  alt="Artsays-Icon"
-                                  style={{
-                                    width: "16px",
-                                    height: "16px",
-                                    marginRight: "7px",
-                                  }}
-                                />
-                                Switch to Artsays
-                              </Link>
-                            )}
-                            <Link
                               className="dropdown-item-h"
                               onClick={handleUserIconClick}
                             >
@@ -721,45 +726,47 @@ const NavBar = () => {
                   <i className="bi bi-person-fill" />
                   <span>My Dashboard</span>
                 </div>
-                {!isOnSocialMedia ? (
-                  <Link to="/artsays-community">
-                    <div
-                      className="profile-item-h pl-4"
-                      onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    >
-                      <img
-                        alt="community-logo"
-                        src={artLogo}
-                        style={{
-                          width: "24px",
-                          height: "24px",
-                          marginRight: "10px",
-                        }}
-                      />
-                      Switch to Community
-                    </div>
-                  </Link>
-                ) : (
-                  <Link to={"/"}>
-                    <div
-                      className="profile-item-h pl-4"
-                      onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    >
-                      <img
-                        src={AIcon}
-                        alt="Artsays-Icon"
-                        style={{
-                          width: "16px",
-                          height: "16px",
-                          marginRight: "10px",
-                        }}
-                      />
-                      Switch to Artsays
-                    </div>
-                  </Link>
-                )}
+                    {!(Usertype === "Super-Admin" && userrole !== "super-admin") && (
+                      !isOnSocialMedia ? (
+                        <Link to="/artsays-community">
+                          <div
+                            className="profile-item-h pl-4"
+                            onClick={() => setShowProfileMenu(!showProfileMenu)}
+                          >
+                            <img
+                              alt="community-logo"
+                              src={artLogo}
+                              style={{
+                                width: "24px",
+                                height: "24px",
+                                marginRight: "10px",
+                              }}
+                            />
+                            Switch to Community
+                          </div>
+                        </Link>
+                      ) : (
+                        <Link to={"/"}>
+                          <div
+                            className="profile-item-h pl-4"
+                            onClick={() => setShowProfileMenu(!showProfileMenu)}
+                          >
+                            <img
+                              src={AIcon}
+                              alt="Artsays-Icon"
+                              style={{
+                                width: "16px",
+                                height: "16px",
+                                marginRight: "10px",
+                              }}
+                            />
+                            Switch to Artsays
+                          </div>
+                        </Link>
+                      )
+                    )}
 
-                <Link>
+                  <Link>
                   <div className="profile-item-h">
                     <i className="bi bi-patch-check-fill" />
                     <span>Account Verification</span>
