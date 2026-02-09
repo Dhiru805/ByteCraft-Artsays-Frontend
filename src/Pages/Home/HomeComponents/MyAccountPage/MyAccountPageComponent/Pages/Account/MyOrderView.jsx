@@ -176,7 +176,12 @@ const OrderView = () => {
   });
 
   const orderId = order?.orderId || order?._id || order?.transactionId;
-  const orderStatus = order?.orderStatus || order?.OrderStatus || order?.status;
+  const rawOrderStatus = order?.orderStatus || order?.OrderStatus || order?.status;
+  // Buyer-friendly label: show "Processing" instead of "Handling Time"
+  const BUYER_STATUS_LABELS = {
+    "Handling Time": "Processing",
+  };
+  const orderStatus = BUYER_STATUS_LABELS[rawOrderStatus] || rawOrderStatus;
   const createdAt = order?.createdAt || order?.purchaseDate || order?.created;
   const sellerName = order?.Artist?.name || order?.Artist?.id || order?.sellerName || order?.seller?.name;
   const deliveryAddress = order?.deliveryAddress || order?.BuyerSelectedAddress || order?.shippingAddress || {};

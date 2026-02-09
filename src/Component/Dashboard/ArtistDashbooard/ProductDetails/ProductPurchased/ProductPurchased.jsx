@@ -1,8 +1,58 @@
 import React, { useState, useEffect } from "react";
 import getAPI from "../../../../../api/getAPI";
+import putAPI from "../../../../../api/putAPI";
 import { useNavigate } from "react-router-dom";
 import useUserType from "../../../urlconfig";
 import { jwtDecode } from "jwt-decode";
+
+// Artist (Seller) view labels for order status
+const ARTIST_STATUS_LABELS = {
+  "Ordered": "New Order Received",
+  "Payment Pending": "Payment Pending",
+  "Payment Received": "Payment Received",
+  "Handling Time": "Handling Time (Processing)",
+  "Order Confirmed": "Order Confirmed",
+  "Ready for Dispatch": "Ready for Dispatch",
+  "Shipped": "Shipped",
+  "Out for Delivery": "Out for Delivery",
+  "Delivered": "Delivered",
+  "Completed": "Completed",
+  "Cancelled": "Order Cancelled",
+  "Return Requested": "Return Requested",
+  "Refund Approved": "Refund Approved",
+};
+
+const STATUS_COLORS = {
+  "Ordered": "#17a2b8",
+  "Payment Pending": "#ffc107",
+  "Payment Received": "#28a745",
+  "Handling Time": "#fd7e14",
+  "Order Confirmed": "#007bff",
+  "Ready for Dispatch": "#6f42c1",
+  "Shipped": "#20c997",
+  "Out for Delivery": "#17a2b8",
+  "Delivered": "#28a745",
+  "Completed": "#28a745",
+  "Cancelled": "#dc3545",
+  "Return Requested": "#dc3545",
+  "Refund Approved": "#ffc107",
+};
+
+// Statuses the artist can set (shown in Action dropdown)
+const ARTIST_ALLOWED_STATUSES = [
+  "Handling Time",
+  "Ready for Dispatch",
+  "Shipped",
+  "Delivered",
+  "Completed",
+  "Cancelled",
+];
+
+// Dropdown labels (different from status display labels)
+const ARTIST_DROPDOWN_LABELS = {
+  ...ARTIST_STATUS_LABELS,
+  "Cancelled": "Cancel Order",
+};
 
 const ProductRequest = () => {
   const [products, setProducts] = useState([]);
@@ -111,14 +161,21 @@ const ProductRequest = () => {
     fetchProducts();
   }, [userId]);
 
-  const filteredProducts = products.filter(
-    (product) =>
-      product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.artistName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.userId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.buyerName?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProducts = products
+    .filter(
+      (product) =>
+        product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.artistName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.userId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.buyerName?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      const aCancelled = a.orderStatus === "Cancelled" ? 1 : 0;
+      const bCancelled = b.orderStatus === "Cancelled" ? 1 : 0;
+      if (aCancelled !== bCancelled) return aCancelled - bCancelled;
+      return new Date(b.purchaseDate) - new Date(a.purchaseDate);
+    });
 
   const displayedProducts = filteredProducts.slice(
     (currentPage - 1) * productsPerPage,
@@ -146,6 +203,22 @@ const ProductRequest = () => {
 
   const goToNextImage = () => {
     if (currentImageIndex < currentImages.length - 1) setCurrentImageIndex(currentImageIndex + 1);
+  };
+
+  const handleStatusChange = async (orderId, newStatus, index) => {
+    try {
+      const res = await putAPI(`/api/update-order-status/${orderId}`, { status: newStatus });
+      if (res?.data?.success) {
+        setProducts(prev => {
+          const updated = [...prev];
+          updated[index] = { ...updated[index], orderStatus: newStatus };
+          return updated;
+        });
+      }
+    } catch (error) {
+      console.error("Error updating order status:", error);
+      alert("Failed to update order status");
+    }
   };
 
   return (
@@ -204,13 +277,14 @@ const ProductRequest = () => {
                     <th>Product Price</th>
                     <th>Product Quantity</th>
                     <th>Payment Type</th>
-                    <th>Date</th>
+                      <th>Order Status</th>
+                      <th>Date</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {displayedProducts.map((product, index) => (
-                    <tr key={product._id}>
+                    <tr key={`${product.orderId}-${product.productId}-${index}`}>
                       <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
                       <td>{product.artistName || "N/A"}</td>
                       <td>
@@ -233,16 +307,59 @@ const ProductRequest = () => {
                           .replace(/\.00$/, "")}
                       </td>
                       <td>{product.quantityPurchased}</td>
-                      <td>{product.paymentMethod}</td>
-                      <td>{new Date(product.purchaseDate).toLocaleDateString("en-IN")}</td>
-                      <td>
-                        <button
-                          className="btn btn-sm btn-outline-info"
-                          onClick={() => navigate(`/artist/product-fetch-view-artist/${product.productId}`)}
-                        >
-                          <i className="fa fa-eye"></i>
-                        </button>
-                      </td>
+                        <td>{product.paymentMethod}</td>
+                        <td>
+                          <span
+                            className="badge"
+                            style={{
+                              backgroundColor: STATUS_COLORS[product.orderStatus] || "#6c757d",
+                              color: "#fff",
+                              padding: "5px 10px",
+                              borderRadius: "4px",
+                              fontSize: "12px",
+                            }}
+                          >
+                            {ARTIST_STATUS_LABELS[product.orderStatus] || product.orderStatus || "New Order Received"}
+                          </span>
+                        </td>
+                        <td>{new Date(product.purchaseDate).toLocaleDateString("en-IN")}</td>
+                        <td className="d-flex align-items-center" style={{ gap: "6px" }}>
+                          <button
+                            className="btn btn-sm btn-outline-info"
+                            onClick={() => navigate(`/artist/product-fetch-view-artist/${product.productId}`)}
+                          >
+                            <i className="fa fa-eye"></i>
+                          </button>
+                          {product.orderStatus !== "Cancelled" && product.orderStatus !== "Completed" && (
+                            <select
+                              className="form-control form-control-sm"
+                              value=""
+                              onChange={(e) => {
+                                if (e.target.value) {
+                                  handleStatusChange(
+                                    product.orderId,
+                                    e.target.value,
+                                    products.indexOf(product)
+                                  );
+                                }
+                              }}
+                              style={{
+                                minWidth: "150px",
+                                borderColor: "#6c757d",
+                                color: "#6c757d",
+                                fontWeight: "600",
+                                fontSize: "12px",
+                              }}
+                            >
+                              <option value="" disabled>Update Status</option>
+                              {ARTIST_ALLOWED_STATUSES.filter(s => s !== product.orderStatus).map((status) => (
+                                <option key={status} value={status}>
+                                  {ARTIST_DROPDOWN_LABELS[status]}
+                                </option>
+                              ))}
+                            </select>
+                          )}
+                        </td>
                     </tr>
                   ))}
                 </tbody>

@@ -140,18 +140,37 @@ const MyOrders = () => {
     });
   };
 
+  // Buyer-friendly labels: map internal statuses to what the buyer should see
+  const BUYER_STATUS_LABELS = {
+    "Ordered": "Ordered",
+    "Payment Pending": "Payment Pending",
+    "Payment Received": "Payment Received",
+    "Handling Time": "Processing",
+    "Order Confirmed": "Order Confirmed",
+    "Ready for Dispatch": "Ready for Dispatch",
+    "Shipped": "Shipped",
+    "Out for Delivery": "Out for Delivery",
+    "Delivered": "Delivered",
+    "Completed": "Completed",
+    "Cancelled": "Cancelled",
+    "Return Requested": "Return Requested",
+    "Refund Approved": "Refund Approved",
+  };
+
   const getStatusInfo = (status) => {
+    const buyerLabel = BUYER_STATUS_LABELS[status] || status || 'Pending';
     switch (status) {
       case 'Cancelled':
-        return { color: 'text-red-600', bg: 'bg-red-50', icon: <FaTimesCircle className="text-red-500" />, label: 'Cancelled' };
+        return { color: 'text-red-600', bg: 'bg-red-50', icon: <FaTimesCircle className="text-red-500" />, label: buyerLabel };
       case 'Delivered':
-        return { color: 'text-emerald-600', bg: 'bg-emerald-50', icon: <FaCheckCircle className="text-emerald-500" />, label: 'Delivered' };
+        return { color: 'text-emerald-600', bg: 'bg-emerald-50', icon: <FaCheckCircle className="text-emerald-500" />, label: buyerLabel };
+      case 'Handling Time':
       case 'Processing':
         return { color: 'text-amber-600', bg: 'bg-amber-50', icon: <FaBox className="text-amber-500" />, label: 'Processing' };
       case 'In Transit':
-        return { color: 'text-blue-600', bg: 'bg-blue-50', icon: <FaTruck className="text-blue-500" />, label: 'In Transit' };
+        return { color: 'text-blue-600', bg: 'bg-blue-50', icon: <FaTruck className="text-blue-500" />, label: buyerLabel };
       default:
-        return { color: 'text-gray-600', bg: 'bg-gray-50', icon: <FaExclamationCircle className="text-gray-500" />, label: status || 'Pending' };
+        return { color: 'text-gray-600', bg: 'bg-gray-50', icon: <FaExclamationCircle className="text-gray-500" />, label: buyerLabel };
     }
   };
 

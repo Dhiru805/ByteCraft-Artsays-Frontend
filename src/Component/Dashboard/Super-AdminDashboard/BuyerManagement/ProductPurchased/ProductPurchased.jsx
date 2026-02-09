@@ -331,8 +331,42 @@
 // export default ProductRequest;
 import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../api/getAPI';
+import putAPI from '../../../../../api/putAPI';
 import { useNavigate } from 'react-router-dom';
 import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
+
+// Buyer view labels for order status
+const BUYER_STATUS_LABELS = {
+  "Ordered": "Order Placed",
+  "Payment Pending": "Payment Pending",
+  "Payment Received": "Payment Confirmed",
+  "Handling Time": "Processing",
+  "Order Confirmed": "Order Confirmed",
+  "Ready for Dispatch": "Ready for Dispatch",
+  "Shipped": "Shipped",
+  "Out for Delivery": "Out for Delivery",
+  "Delivered": "Delivered",
+  "Completed": "Order Completed",
+  "Cancelled": "Order Cancelled",
+  "Return Requested": "Return Requested",
+  "Refund Approved": "Refund Approved",
+};
+
+const STATUS_COLORS = {
+  "Ordered": "#17a2b8",
+  "Payment Pending": "#ffc107",
+  "Payment Received": "#28a745",
+  "Handling Time": "#fd7e14",
+  "Order Confirmed": "#007bff",
+  "Ready for Dispatch": "#6f42c1",
+  "Shipped": "#20c997",
+  "Out for Delivery": "#17a2b8",
+  "Delivered": "#28a745",
+  "Completed": "#28a745",
+  "Cancelled": "#dc3545",
+  "Return Requested": "#dc3545",
+  "Refund Approved": "#ffc107",
+};
 
 const SoldProduct = () => {
   const [products, setProducts] = useState([]);
@@ -357,25 +391,23 @@ const SoldProduct = () => {
         
         const data = result?.data?.data || [];
 
-        const formatted = data.flatMap(order => {
-          return order.items
-            .filter(item => item.productId)
-            .map(item => ({
-              orderId: order.orderId,
-              productId: item.productId._id,
-              productName: item.productId.productName || '',
-              mainImage: item.productId.mainImage || '',
-              productPrice: item.productId.sellingPrice || 0,
-
-              // ✅ FIXED BUYER STRUCTURE
-              buyerName: `${order?.Buyer?.id?.name || ''} ${order?.Buyer?.id?.lastName || ''}`.trim(),
-
-              // ✅ FIXED ARTIST STRUCTURE
-              artistName: `${order?.Artist?.id?.name || ''} ${order?.Artist?.id?.lastName || ''}`.trim(),
-
-              totalQuantity: item.quantity || 0
-            }));
-        });
+          const formatted = data.flatMap(order => {
+            return order.items
+              .filter(item => item.productId)
+              .map(item => ({
+                orderId: order.orderId,
+                productId: item.productId._id,
+                productName: item.productId.productName || '',
+                mainImage: item.productId.mainImage || '',
+                productPrice: item.productId.sellingPrice || 0,
+                buyerName: `${order?.Buyer?.id?.name || ''} ${order?.Buyer?.id?.lastName || ''}`.trim(),
+                artistName: `${order?.Artist?.id?.name || ''} ${order?.Artist?.id?.lastName || ''}`.trim(),
+                totalQuantity: item.quantity || 0,
+                orderStatus: order.orderStatus || 'Ordered',
+                paymentMethod: order.paymentMethod || 'N/A',
+                purchaseDate: order.purchaseDate || order.createdAt,
+              }));
+          });
 
         setProducts(formatted);
       } catch (error) {
@@ -509,16 +541,19 @@ const filteredProducts = products.filter(product => {
           <div className="body">
             <div className="table-responsive">
               <table className="table table-hover">
-                <thead className="thead-dark">
-                  <tr>
-                    <th>#</th>
-                    <th>Buyer Name</th>
-                    <th>Product Name</th>
-                    <th>Product Price</th>
-                    <th>Ordered Quantity</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
+                  <thead className="thead-dark">
+                    <tr>
+                      <th>#</th>
+                      <th>Buyer Name</th>
+                      <th>Product Name</th>
+                      <th>Product Price</th>
+                      <th>Ordered Quantity</th>
+                      <th>Payment Type</th>
+                      <th>Order Status</th>
+                      <th>Date</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
                 <tbody>
                   {displayedProducts.map((product, index) => (
                     <tr key={`${product.orderId}-${product.productId}-${index}`}>
@@ -543,6 +578,22 @@ const filteredProducts = products.filter(product => {
                       </td>
                       <td>{product.productPrice}</td>
                       <td>{product.totalQuantity}</td>
+                      <td>{product.paymentMethod}</td>
+                      <td>
+                        <span
+                          className="badge"
+                          style={{
+                            backgroundColor: STATUS_COLORS[product.orderStatus] || "#6c757d",
+                            color: "#fff",
+                            padding: "5px 10px",
+                            borderRadius: "4px",
+                            fontSize: "12px",
+                          }}
+                        >
+                          {BUYER_STATUS_LABELS[product.orderStatus] || product.orderStatus}
+                        </span>
+                      </td>
+                      <td>{product.purchaseDate ? new Date(product.purchaseDate).toLocaleDateString("en-IN") : "N/A"}</td>
                       <td>
                         <button
                           className="btn btn-sm btn-outline-info"

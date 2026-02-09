@@ -1,9 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../api/getAPI';
+import putAPI from '../../../../../api/putAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
 import { jwtDecode } from 'jwt-decode';
 import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
+
+const ADMIN_STATUS_LABELS = {
+    "Ordered": "New Order Received",
+    "Payment Pending": "Payment Pending",
+    "Payment Received": "Payment Received",
+    "Handling Time": "Seller Handling Time",
+    "Order Confirmed": "Order Confirmed",
+    "Ready for Dispatch": "Ready for Dispatch",
+    "Shipped": "Shipped",
+    "Out for Delivery": "Out for Delivery",
+    "Delivered": "Delivered",
+    "Completed": "Completed",
+    "Cancelled": "Cancel Order",
+    "Return Requested": "Schedule Return",
+    "Refund Approved": "Approve Refund",
+};
+
+const STATUS_COLORS = {
+    "Ordered": "#17a2b8",
+    "Payment Pending": "#ffc107",
+    "Payment Received": "#28a745",
+    "Handling Time": "#fd7e14",
+    "Order Confirmed": "#007bff",
+    "Ready for Dispatch": "#6f42c1",
+    "Shipped": "#20c997",
+    "Out for Delivery": "#17a2b8",
+    "Delivered": "#28a745",
+    "Completed": "#28a745",
+    "Cancelled": "#dc3545",
+    "Return Requested": "#dc3545",
+    "Refund Approved": "#ffc107",
+};
+
+const ADMIN_ALLOWED_STATUSES = [
+    "Ordered",
+    "Handling Time",
+    "Order Confirmed",
+    "Ready for Dispatch",
+    "Shipped",
+    "Out for Delivery",
+    "Delivered",
+    "Completed",
+    "Cancelled",
+    "Return Requested",
+    "Refund Approved",
+];
 
 const ProductRequest = () => {
     const [products, setProducts] = useState([]);
@@ -99,7 +146,7 @@ const ProductRequest = () => {
 
 
     const filteredProducts = products.filter(product => {
-        const buyerName = product.buyer?.name?.toLowerCase() || '';
+        const buyerName = product.buyer?.name?.toLowerCase() || product.buyerName?.toLowerCase() || '';
         const buyerLastName = product.buyer?.lastName?.toLowerCase() || '';
         const search = searchTerm.toLowerCase();
 
@@ -109,8 +156,15 @@ const ProductRequest = () => {
         );
     });
 
-    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-    const displayedProducts = filteredProducts.slice(
+    const sortedProducts = [...filteredProducts].sort((a, b) => {
+        const aCancelled = a.orderStatus === "Cancelled" ? 1 : 0;
+        const bCancelled = b.orderStatus === "Cancelled" ? 1 : 0;
+        if (aCancelled !== bCancelled) return aCancelled - bCancelled;
+        return new Date(b.purchaseDate) - new Date(a.purchaseDate);
+    });
+
+    const totalPages = Math.ceil(sortedProducts.length / productsPerPage);
+    const displayedProducts = sortedProducts.slice(
         (currentPage - 1) * productsPerPage,
         currentPage * productsPerPage
     );
@@ -129,6 +183,22 @@ const ProductRequest = () => {
     const handleProductsPerPageChange = (event) => {
         setProductsPerPage(Number(event.target.value));
         setCurrentPage(1);
+    };
+
+    const handleStatusChange = async (orderId, newStatus, index) => {
+        try {
+            const res = await putAPI(`/api/update-order-status/${orderId}`, { status: newStatus });
+            if (res?.data?.success) {
+                setProducts(prev => {
+                    const updated = [...prev];
+                    updated[index] = { ...updated[index], orderStatus: newStatus };
+                    return updated;
+                });
+            }
+        } catch (error) {
+            console.error("Error updating order status:", error);
+            alert("Failed to update order status");
+        }
     };
 
 
@@ -205,60 +275,13 @@ const ProductRequest = () => {
                                             <th>Product Price</th>
                                             <th>Product Quantity</th>
                                             <th>Payment Type</th>
-                                            <th>Date</th>
+                                              <th>Order Status</th>
+                                              <th>Date</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {displayedProducts.map((product, index) => {
-                                            console.log("PURCHASE ENTRY:", product);
-                                            const productData = product?.product || product?.resellProduct || {};
-
-                                            return (
-                                                // <tr key={product._id}>
-                                                //     <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
-                                                //     <td>{product.buyer.name} {product.buyer.lastName}</td>
-                                                //     <td>
-                                                //         {productData ? (
-                                                //             <>
-                                                //                 <img
-                                                //                     src={productData.mainImage || 'default-image-url.jpg'}
-                                                //                     className="rounded-circle avatar"
-                                                //                     alt=""
-                                                //                     style={{
-                                                //                         width: '30px',
-                                                //                         height: '30px',
-                                                //                         objectFit: 'cover',
-                                                //                         marginRight: '10px'
-                                                //                     }}
-                                                //                 />
-                                                //                 {productData.productName}
-                                                //             </>
-                                                //         ) : (
-                                                //             "No Product Data"
-                                                //         )}
-                                                //     </td>
-                                                //     <td>
-                                                //         {productData
-                                                //             ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' })
-                                                //                 .format(productData.price)
-                                                //                 .replace(/\.00$/, '')
-                                                //             : 'N/A'}
-                                                //     </td>
-                                                //     <td>{product.quantity}</td>
-                                                //     <td>{product.paymentMethod}</td>
-                                                //     <td>
-                                                //         {new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
-                                                //     </td>
-                                                //     <td>
-                                                //         {productData && (
-                                                //             <button className="btn btn-sm btn-outline-info mr-2"
-                                                //                 onClick={() => navigate(`/${userType}/Dashboard/productpurchased/productview/${product._id}`)}>
-                                                //                 <i className="fa fa-eye"></i>
-                                                //             </button>
-                                                //         )}
-                                                //     </td>
-                                                // </tr>
+                                        {displayedProducts.map((product, index) => (
                                                 <tr key={index}>
                                                     <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
 
@@ -268,6 +291,7 @@ const ProductRequest = () => {
                                                         <img
                                                             src={`${BASE_URL}${product.productImage}`}
                                                             className="rounded-circle avatar"
+                                                            alt=""
                                                             style={{ width: "30px", height: "30px", marginRight: "10px", objectFit: "cover" }}
                                                         />
                                                         {product.productName}
@@ -283,28 +307,68 @@ const ProductRequest = () => {
 
                                                     <td>{product.paymentMethod || "N/A"}</td>
 
+                                                    <td>
+                                                        <span
+                                                            className="badge"
+                                                            style={{
+                                                                backgroundColor: STATUS_COLORS[product.orderStatus] || "#6c757d",
+                                                                color: "#fff",
+                                                                padding: "5px 10px",
+                                                                borderRadius: "4px",
+                                                                fontSize: "12px",
+                                                            }}
+                                                        >
+                                                            {ADMIN_STATUS_LABELS[product.orderStatus] || product.orderStatus || "New Order Received"}
+                                                        </span>
+                                                    </td>
 
                                                     <td>{new Date(product.purchaseDate).toLocaleDateString("en-IN")}</td>
 
-                                                    <td>
+                                                    <td className="d-flex align-items-center" style={{ gap: "6px" }}>
                                                         <button
                                                             className="btn btn-sm btn-outline-info"
-                                                            // onClick={() => navigate(`/${userType}/Dashboard/productpurchased/productview/${product.orderId}`)}
                                                             onClick={() => navigate(`/super-admin/product-fetch-view/${product.productId}`)}
                                                         >
                                                             <i className="fa fa-eye"></i>
                                                         </button>
+                                                        {product.orderStatus !== "Cancelled" && product.orderStatus !== "Completed" && (
+                                                            <select
+                                                                className="form-control form-control-sm"
+                                                                value=""
+                                                                onChange={(e) => {
+                                                                    if (e.target.value) {
+                                                                        handleStatusChange(
+                                                                            product.orderId,
+                                                                            e.target.value,
+                                                                            products.indexOf(product)
+                                                                        );
+                                                                    }
+                                                                }}
+                                                                style={{
+                                                                    minWidth: "160px",
+                                                                    borderColor: "#6c757d",
+                                                                    color: "#6c757d",
+                                                                    fontWeight: "600",
+                                                                    fontSize: "12px",
+                                                                }}
+                                                            >
+                                                                <option value="" disabled>Update Status</option>
+                                                                {ADMIN_ALLOWED_STATUSES.filter(s => s !== product.orderStatus).map((status) => (
+                                                                    <option key={status} value={status}>
+                                                                        {ADMIN_STATUS_LABELS[status]}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        )}
                                                     </td>
                                                 </tr>
-
-                                            );
-                                        })}
+                                        ))}
                                     </tbody>
                                 </table>
                             </div>
                             <div className="pagination d-flex justify-content-between mt-4">
                                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                                    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
+                                    Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, sortedProducts.length)} of {sortedProducts.length} entries
                                 </span>
 
                                 <ul className="pagination d-flex justify-content-end w-100">
