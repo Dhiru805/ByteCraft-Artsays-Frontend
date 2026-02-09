@@ -2031,7 +2031,14 @@ const Setting = () => {
                     Verification Badge
                   </h2>
 
-                  {badges.map((badge) => {
+                  {badges
+                    .filter((badge) => {
+                      if (userType === "Buyer") {
+                        return badge.badgeName.toLowerCase().includes("artsays");
+                      }
+                      return true;
+                    })
+                    .map((badge) => {
                     const alreadyHasBadge = profile?.verified?.some(
                       (b) => b._id.toString() === badge._id.toString()
                     );
