@@ -617,13 +617,6 @@ if(loading)return <ProductRequestSkeleton/>
                                                         <i className="fa fa-map-marker"></i>
                                                     </button>
                                                     <button
-                                                        className="btn btn-sm btn-outline-danger mr-2"
-                                                        title="Bidding Pass"
-                                                        onClick={() => navigate('/artist/product/bidding-pass')}
-                                                    >
-                                                        <i className="fas fa-ticket-alt"></i>
-                                                    </button>
-                                                    <button
                                                         type="button"
                                                         className="btn btn-outline-danger btn-sm"
                                                         title="Delete"
