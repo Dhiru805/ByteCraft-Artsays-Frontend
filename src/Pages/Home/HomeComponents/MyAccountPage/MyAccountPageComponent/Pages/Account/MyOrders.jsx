@@ -271,15 +271,20 @@ const MyOrders = () => {
               const isDelivered = order.orderStatus === "Delivered";
               const statusInfo = getStatusInfo(order.orderStatus);
 
-              const deliveryDate = createdDate;
-              const currentDate = new Date();
-              const diffInDays = Math.floor((currentDate - deliveryDate) / (1000 * 60 * 60 * 24));
-              const returnPolicyDays = 10;
-              
-              let actionType = "";
-              if (!isDelivered && !isCancelled) actionType = "cancel";
-              else if (isDelivered && diffInDays <= returnPolicyDays) actionType = "return";
-              else actionType = "chat";
+                const deliveryDate = createdDate;
+                const currentDate = new Date();
+                const diffInDays = Math.floor((currentDate - deliveryDate) / (1000 * 60 * 60 * 24));
+                const returnPolicyDays = 10;
+
+                // Check if any item in the order has a returnable product
+                const isReturnable = order.items?.some(
+                  (item) => item.fullProduct?.returnPolicy === "Returnable"
+                );
+                
+                let actionType = "";
+                if (!isDelivered && !isCancelled) actionType = "cancel";
+                else if (isDelivered && diffInDays <= returnPolicyDays && isReturnable) actionType = "return";
+                else actionType = "chat";
 
               return (
                 <div

@@ -51,6 +51,7 @@ const OrderView = () => {
   const [reviewTitle, setReviewTitle] = useState("");
   const [reviewDescription, setReviewDescription] = useState("");
   const [estimatedDeliveryDate, setEstimatedDeliveryDate] = useState("—");
+  const [isReturnable, setIsReturnable] = useState(false);
 
   const buildImageUrl = (path) => {
     if (!path) return "/images/placeholder.jpg";
@@ -142,11 +143,17 @@ const OrderView = () => {
           getAPI("/api/getstatusapprovedproductforSELLER", {}, true, false),
         ]);
         const allProducts = [...(buyerRes?.data?.data || []), ...(sellerRes?.data?.data || [])];
-        const matched = allProducts.find((p) => productIds.includes(p._id.toString()));
-        if (!matched || !matched.estimatedDelivery) {
-          setEstimatedDeliveryDate("—");
-          return;
-        }
+      const matched = allProducts.find((p) => productIds.includes(p._id.toString()));
+
+      // Check if any matched product is returnable
+      const matchedProducts = allProducts.filter((p) => productIds.includes(p._id.toString()));
+      const hasReturnable = matchedProducts.some((p) => p.returnPolicy === "Returnable");
+      setIsReturnable(hasReturnable);
+
+      if (!matched || !matched.estimatedDelivery) {
+        setEstimatedDeliveryDate("—");
+        return;
+      }
         const range = matched.estimatedDelivery;
         const split = range.split("-");
         const days = parseInt(split[1]);
@@ -495,20 +502,26 @@ const OrderView = () => {
             </div>
 
             <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-              {orderStatus !== "Delivered" && (
-                <button 
-                  onClick={() => setShowCancelModal(true)} 
-                  className="flex items-center gap-2 border-2 border-red-100 text-red-600 px-8 py-3 rounded-2xl hover:bg-red-50 transition-all font-bold group"
-                >
-                  <XCircle className="w-5 h-5 group-hover:rotate-90 transition-transform" />
-                  <span>Cancel Order</span>
+                {orderStatus !== "Delivered" && (
+                  <button 
+                    onClick={() => setShowCancelModal(true)} 
+                    className="flex items-center gap-2 border-2 border-red-100 text-red-600 px-8 py-3 rounded-2xl hover:bg-red-50 transition-all font-bold group"
+                  >
+                    <XCircle className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+                    <span>Cancel Order</span>
+                  </button>
+                )}
+                {orderStatus === "Delivered" && isReturnable && (
+                  <button className="flex items-center gap-2 border-2 border-blue-100 text-blue-600 px-8 py-3 rounded-2xl hover:bg-blue-50 transition-all font-bold">
+                    <Package className="w-5 h-5" />
+                    <span>Return Product</span>
+                  </button>
+                )}
+                <button className="flex items-center gap-2 bg-[#6F4D34] text-white px-8 py-3 rounded-2xl hover:bg-[#5b3f2a] transition-all font-bold shadow-xl shadow-[#6F4D34]/30 group">
+                  <MessageSquare className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  <span>Chat with Specialist</span>
                 </button>
-              )}
-              <button className="flex items-center gap-2 bg-[#6F4D34] text-white px-8 py-3 rounded-2xl hover:bg-[#5b3f2a] transition-all font-bold shadow-xl shadow-[#6F4D34]/30 group">
-                <MessageSquare className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                <span>Chat with Specialist</span>
-              </button>
-            </div>
+              </div>
           </div>
         )}
       </motion.div>
@@ -623,8 +636,8 @@ const OrderView = () => {
         </motion.div>
         </div>
 
-        {/* REVIEW SECTION - Only show if order is NOT cancelled */}
-        {orderStatus !== "Cancelled" && (
+        {/* REVIEW SECTION - Only show when order is Delivered */}
+          {orderStatus === "Delivered" && (
           <motion.div 
             id="review-section"
             initial={{ y: 20, opacity: 0 }}
