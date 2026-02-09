@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FaChevronDown, FaEye, FaCalendarAlt, FaCreditCard, FaBox, FaExclamationCircle, FaCheckCircle, FaTruck, FaTimesCircle, FaShoppingBag } from 'react-icons/fa';
 import getAPI from '../../../../../../../api/getAPI';
 import putAPI from '../../../../../../../api/putAPI';
@@ -19,6 +19,13 @@ const MyOrders = () => {
   const [cancelReason, setCancelReason] = useState("");
   const [cancelComment, setCancelComment] = useState("");
   const navigate = useNavigate();
+
+  // Pagination states
+  const ORDERS_PER_PAGE = 10;
+  const [visibleCount, setVisibleCount] = useState(ORDERS_PER_PAGE);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const observerRef = useRef(null);
+  const loadMoreRef = useRef(null);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -174,6 +181,37 @@ const MyOrders = () => {
     }
   };
 
+  // Infinite scroll: IntersectionObserver to load more orders
+  const hasMore = visibleCount < orders.length;
+
+  useEffect(() => {
+    if (!hasMore || loadingMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore) {
+          setLoadingMore(true);
+          setTimeout(() => {
+            setVisibleCount((prev) => Math.min(prev + ORDERS_PER_PAGE, orders.length));
+            setLoadingMore(false);
+          }, 400);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentRef = loadMoreRef.current;
+    if (currentRef) observer.observe(currentRef);
+    observerRef.current = observer;
+
+    return () => {
+      if (currentRef) observer.unobserve(currentRef);
+      observer.disconnect();
+    };
+  }, [hasMore, loadingMore, orders.length, visibleCount]);
+
+  const visibleOrders = orders.slice(0, visibleCount);
+
   if (loading) return <div><MyOrderSkeleton /></div>;
 
   return (
@@ -201,7 +239,7 @@ const MyOrders = () => {
           </div>
         </div>
 
-        {orders.length === 0 ? (
+          {orders.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
             <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm mb-6">
               <FaShoppingBag className="text-gray-300 text-3xl" />
@@ -219,7 +257,7 @@ const MyOrders = () => {
           </div>
         ) : (
           <div className="space-y-6">
-            {!selectedOrder && orders.map((order, index) => {
+            {!selectedOrder && visibleOrders.map((order, index) => {
               const createdDate = new Date(order.createdAt || order.purchaseDate || Date.now());
               const createdStr = createdDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
               const firstItem = order.items && order.items.length > 0 ? order.items[0] : null;
@@ -384,8 +422,26 @@ const MyOrders = () => {
                   </div>
                 </div>
               );
-            })}
-          </div>
+              })}
+
+              {/* Infinite scroll sentinel */}
+              {!selectedOrder && hasMore && (
+                <div ref={loadMoreRef} className="flex justify-center py-8">
+                  {loadingMore ? (
+                    <div className="flex items-center gap-3 text-gray-500">
+                      <div className="w-6 h-6 border-2 border-gray-300 border-t-[#6F4D34] rounded-full animate-spin"></div>
+                      <span className="text-sm font-medium">Loading more orders...</span>
+                    </div>
+                  ) : (
+                    <div className="h-4" />
+                  )}
+                </div>
+              )}
+
+              {!selectedOrder && !hasMore && orders.length > ORDERS_PER_PAGE && (
+                <p className="text-center text-sm text-gray-400 font-medium py-4">You've reached the end of your orders</p>
+              )}
+            </div>
         )}
 
         {selectedOrder && (

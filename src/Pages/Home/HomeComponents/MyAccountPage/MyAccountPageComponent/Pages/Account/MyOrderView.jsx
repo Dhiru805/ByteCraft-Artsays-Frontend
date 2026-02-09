@@ -325,12 +325,30 @@ const OrderView = () => {
     );
   }
 
+  // Map order statuses to timeline steps in order
+  const TIMELINE_STEPS = ["Ordered", "Packed", "Shipped", "Out for Delivery", "Delivered"];
+  const STATUS_TO_STEP = {
+    "Ordered": 0,
+    "Payment Pending": 0,
+    "Payment Received": 0,
+    "Handling Time": 1,
+    "Order Confirmed": 1,
+    "Ready for Dispatch": 1,
+    "Shipped": 2,
+    "Out for Delivery": 3,
+    "Delivered": 4,
+    "Completed": 4,
+    "Return Requested": 4,
+    "Refund Approved": 4,
+  };
+  const activeStepIndex = STATUS_TO_STEP[rawOrderStatus] ?? 0;
+
   const statusUpdates = [
     { label: "Ordered", date: createdAt ? new Date(createdAt).toLocaleDateString() : "—", icon: Package },
-    { label: "Packed", date: "—", icon: Clock },
-    { label: "Shipped", date: "—", icon: Truck },
-    { label: "Out for Delivery", date: "—", icon: Truck },
-    { label: "Delivered", date: order.DeliveredAt ? new Date(order.DeliveredAt).toLocaleDateString() : "—", icon: CheckCircle2 },
+    { label: "Packed", date: activeStepIndex >= 1 ? (order.PackedAt ? new Date(order.PackedAt).toLocaleDateString() : "—") : "—", icon: Clock },
+    { label: "Shipped", date: activeStepIndex >= 2 ? (order.ShippedAt ? new Date(order.ShippedAt).toLocaleDateString() : "—") : "—", icon: Truck },
+    { label: "Out for Delivery", date: activeStepIndex >= 3 ? (order.OutForDeliveryAt ? new Date(order.OutForDeliveryAt).toLocaleDateString() : "—") : "—", icon: Truck },
+    { label: "Delivered", date: activeStepIndex >= 4 ? (order.DeliveredAt ? new Date(order.DeliveredAt).toLocaleDateString() : "—") : "—", icon: CheckCircle2 },
   ];
 
   const originalPrice = order.MaxBudget || 0;
@@ -442,14 +460,14 @@ const OrderView = () => {
           <div className="relative py-4 px-2">
             {/* PROGRESS LINE */}
             <div className="absolute top-[22px] left-8 right-8 h-1 bg-gray-100 rounded-full hidden sm:block" />
-            <div 
-              className="absolute top-[22px] left-8 h-1 bg-[#6F4D34] rounded-full transition-all duration-1000 hidden sm:block" 
-              style={{ width: '25%' }} // Hardcoded for demo, normally calculated
-            />
+              <div 
+                className="absolute top-[22px] left-8 h-1 bg-[#6F4D34] rounded-full transition-all duration-1000 hidden sm:block" 
+                style={{ width: `${Math.max(0, activeStepIndex / (TIMELINE_STEPS.length - 1)) * 100}%` }}
+              />
 
             <div className="flex flex-col sm:flex-row justify-between gap-8 sm:gap-4 relative">
               {statusUpdates.map((status, index) => {
-                const isActive = index <= 1; // Demo: first two are active
+                const isActive = index <= activeStepIndex;
                 const StatusIcon = status.icon;
                 return (
                   <div key={index} className="flex sm:flex-col items-center gap-4 sm:gap-3 sm:flex-1 group">

@@ -86,7 +86,7 @@ const isOrderCompleted = pathname.startsWith('/my-account/order-completed');
           </div>
         </div>
       ) : (
-        <div className="w-full max-w-[1440px] mx-auto bg-white py-8">
+        <div className="w-full max-w-[1440px] mx-auto bg-white py-8 px-6 md:px-12">
           <Outlet />
         </div>
       )}
