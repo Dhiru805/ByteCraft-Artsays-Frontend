@@ -6,6 +6,8 @@ import putAPI from "../../../../../../../api/putAPI";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion, AnimatePresence } from "framer-motion";
+import { jsPDF } from "jspdf";
+import { autoTable } from "jspdf-autotable";
 import { 
   ArrowLeft, 
   Package, 
@@ -311,6 +313,30 @@ const OrderView = () => {
     setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
+  // ── Number to words helper ──
+  const numberToWords = (num) => {
+    if (num === 0) return "Zero";
+    const ones = ["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
+    const tens = ["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+    const scales = ["","Thousand","Lakh","Crore"];
+    const convert = (n) => {
+      if (n === 0) return "";
+      if (n < 20) return ones[n] + " ";
+      if (n < 100) return tens[Math.floor(n / 10)] + " " + ones[n % 10] + " ";
+      return ones[Math.floor(n / 100)] + " Hundred " + convert(n % 100);
+    };
+    // Indian numbering: last 3 digits, then groups of 2
+    let result = "";
+    const parts = [];
+    let rem = Math.floor(num);
+    parts.push(rem % 1000); rem = Math.floor(rem / 1000);
+    while (rem > 0) { parts.push(rem % 100); rem = Math.floor(rem / 100); }
+    for (let i = parts.length - 1; i >= 0; i--) {
+      if (parts[i] !== 0) result += convert(parts[i]) + scales[i] + " ";
+    }
+    return "INR " + result.trim() + " Only";
+  };
+
   if (!order && loadingOrder) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -359,10 +385,199 @@ const OrderView = () => {
   ];
 
   const originalPrice = order.MaxBudget || 0;
-  const negotiated = order.ArtistNegotiatedBudgets?.[0] || order.finalPrice || order.totalAmount || originalPrice;
-  const discount = originalPrice - negotiated;
+    const negotiated = order.ArtistNegotiatedBudgets?.[0] || order.finalPrice || order.totalAmount || originalPrice;
+    const discount = originalPrice - negotiated;
 
-  return (
+    // ── Invoice PDF generator ──
+    const handleDownloadInvoice = () => {
+      if (!order) return;
+      const doc = new jsPDF("p", "mm", "a4");
+      const pageW = doc.internal.pageSize.getWidth();
+      const margin = 14;
+      const contentW = pageW - margin * 2;
+      let y = 12;
+
+      const brown = [95, 64, 52];
+      const darkGray = [51, 51, 51];
+      const medGray = [100, 100, 100];
+      const lightBg = [249, 246, 243];
+      const white = [255, 255, 255];
+      const lineColor = [220, 210, 200];
+
+      // ── Header ──
+      doc.setFillColor(...brown);
+      doc.rect(0, 0, pageW, 32, "F");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(18);
+      doc.setTextColor(...white);
+      doc.text("TAX INVOICE", margin, 16);
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "normal");
+      doc.text("Original for Recipient", margin, 23);
+
+      const invoiceNo = `INV/${orderId || "N/A"}`;
+      const invoiceDate = createdAt ? new Date(createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "2-digit", year: "numeric" }) : "N/A";
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.text(`Invoice No: ${invoiceNo}`, pageW - margin, 14, { align: "right" });
+      doc.setFont("helvetica", "normal");
+      doc.text(`Date: ${invoiceDate}`, pageW - margin, 21, { align: "right" });
+
+      y = 38;
+
+      // ── Helper: draw a labeled section box ──
+      const drawSectionBox = (startY, title, lines, x, w) => {
+        const boxH = 6 + lines.length * 5.5;
+        doc.setFillColor(...lightBg);
+        doc.roundedRect(x, startY, w, boxH, 2, 2, "F");
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(8);
+        doc.setTextColor(...brown);
+        doc.text(title, x + 4, startY + 5);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8);
+        doc.setTextColor(...darkGray);
+        lines.forEach((line, i) => {
+          doc.text(line, x + 4, startY + 11 + i * 5.5);
+        });
+        return startY + 8 + lines.length * 5.5;
+      };
+
+      // ── Seller / Buyer Info (side by side) ──
+      const halfW = (contentW - 4) / 2;
+      const sellerLines = [
+        `Name: ${sellerName || "Artsays"}`,
+        `Address: ${order.Artist?.address || "Artsays Platform"}`,
+        `Contact: ${order.Artist?.phone || "N/A"}`,
+      ];
+      const buyerAddr = deliveryAddress;
+      const buyerLines = [
+        `Name: ${order.Buyer?.name || "N/A"}`,
+        `Email: ${order.Buyer?.email || "N/A"}`,
+        `Address: ${[buyerAddr.line1, buyerAddr.line2, buyerAddr.landmark].filter(Boolean).join(", ") || "N/A"}`,
+        `City: ${buyerAddr.city || "N/A"}, State: ${buyerAddr.state || "N/A"} - ${buyerAddr.pincode || ""}`,
+        `Country: ${buyerAddr.country || "India"}`,
+      ];
+
+      drawSectionBox(y, "SELLER", sellerLines, margin, halfW);
+      const boxEndY = drawSectionBox(y, "BUYER / SHIP TO", buyerLines, margin + halfW + 4, halfW);
+      y = boxEndY + 4;
+
+      // ── Order Details row ──
+      doc.setFillColor(...lightBg);
+      doc.roundedRect(margin, y, contentW, 12, 2, 2, "F");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(7.5);
+      doc.setTextColor(...brown);
+      const detailItems = [
+        `Order No: ${orderId || "N/A"}`,
+        `Payment: ${order.paymentMethod || order.PaymentTerm || "Prepaid"}`,
+        `Transaction ID: ${order.transactionId || "N/A"}`,
+        `Status: ${orderStatus}`,
+      ];
+      const detailSpacing = contentW / detailItems.length;
+      detailItems.forEach((item, i) => {
+        doc.text(item, margin + 4 + i * detailSpacing, y + 7.5);
+      });
+      y += 18;
+
+      // ── Items Table ──
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setTextColor(...brown);
+      doc.text("Order Items", margin, y);
+      y += 3;
+
+      const tableData = unifiedItems.map((item, idx) => [
+        (idx + 1).toString(),
+        item.name || "Product",
+        (item.qty || 1).toString(),
+        `Rs.${Number(item.price || 0).toLocaleString("en-IN")}`,
+        `Rs.${Number((item.price || 0) * (item.qty || 1)).toLocaleString("en-IN")}`,
+      ]);
+
+    autoTable(doc, {
+      startY: y,
+      head: [["#", "Item Description", "Qty", "Unit Price", "Amount"]],
+      body: tableData,
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 8, cellPadding: 4, textColor: darkGray, lineColor: lineColor, lineWidth: 0.2 },
+      headStyles: { fillColor: brown, textColor: white, fontStyle: "bold", fontSize: 8 },
+      alternateRowStyles: { fillColor: [252, 250, 248] },
+      columnStyles: {
+        0: { halign: "center", cellWidth: 12 },
+        1: { cellWidth: "auto" },
+        2: { halign: "center", cellWidth: 18 },
+        3: { halign: "right", cellWidth: 30 },
+        4: { halign: "right", cellWidth: 32 },
+      },
+    });
+
+    y = doc.lastAutoTable.finalY + 6;
+
+      // ── Price Summary ──
+      const summaryX = pageW - margin - 75;
+      const summaryW = 75;
+      doc.setFillColor(...lightBg);
+      doc.roundedRect(summaryX, y, summaryW, 38, 2, 2, "F");
+
+      const drawSummaryRow = (label, value, yPos, bold = false) => {
+        doc.setFont("helvetica", bold ? "bold" : "normal");
+        doc.setFontSize(8);
+        doc.setTextColor(...(bold ? brown : medGray));
+        doc.text(label, summaryX + 4, yPos);
+        doc.setTextColor(...(bold ? brown : darkGray));
+        doc.text(value, summaryX + summaryW - 4, yPos, { align: "right" });
+      };
+
+      drawSummaryRow("Original Price", `Rs.${Number(originalPrice).toLocaleString("en-IN")}`, y + 7);
+      drawSummaryRow("Discount", `- Rs.${Number(discount).toLocaleString("en-IN")}`, y + 14);
+      drawSummaryRow("Framing", order.IsFramed ? "Included" : "N/A", y + 21);
+
+      doc.setDrawColor(...lineColor);
+      doc.setLineWidth(0.3);
+      doc.line(summaryX + 4, y + 26, summaryX + summaryW - 4, y + 26);
+
+      drawSummaryRow("TOTAL PAID", `Rs.${Number(negotiated).toLocaleString("en-IN")}`, y + 33, true);
+      y += 46;
+
+      // ── Amount in Words ──
+      doc.setFillColor(...brown);
+      doc.roundedRect(margin, y, contentW, 12, 2, 2, "F");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8);
+      doc.setTextColor(...white);
+      doc.text(`Amount in Words: ${numberToWords(negotiated)}`, margin + 4, y + 7.5);
+      y += 20;
+
+      // ── Authorized Signatory ──
+      doc.setDrawColor(...lineColor);
+      doc.setLineWidth(0.3);
+      doc.line(pageW - margin - 55, y + 12, pageW - margin, y + 12);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8);
+      doc.setTextColor(...brown);
+      doc.text("For Artsays", pageW - margin - 55, y + 4);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7);
+      doc.setTextColor(...medGray);
+      doc.text("Authorised Signatory", pageW - margin - 55, y + 18);
+
+      // ── Footer ──
+      const footerY = doc.internal.pageSize.getHeight() - 12;
+      doc.setDrawColor(...lineColor);
+      doc.line(margin, footerY - 4, pageW - margin, footerY - 4);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7);
+      doc.setTextColor(...medGray);
+      doc.text("This is a computer-generated invoice and does not require a physical signature.", margin, footerY);
+      doc.text(`Generated on ${new Date().toLocaleDateString("en-IN")}`, pageW - margin, footerY, { align: "right" });
+
+      doc.save(`Artsays-Invoice-${orderId || "order"}.pdf`);
+      toast.success("Invoice downloaded successfully!");
+    };
+
+    return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex items-center justify-between">
         <button
@@ -372,8 +587,11 @@ const OrderView = () => {
           <ArrowLeft className="w-5 h-5" />
           <span>Back to Orders</span>
         </button>
-        {orderStatus !== "Cancelled" && (
-           <button className="flex items-center gap-2 text-sm bg-white border border-[#6F4D34] text-[#6F4D34] px-4 py-2 rounded-xl hover:bg-gray-50 transition shadow-sm">
+        {orderStatus === "Delivered" && (
+           <button 
+             onClick={handleDownloadInvoice}
+             className="flex items-center gap-2 text-sm bg-white border border-[#6F4D34] text-[#6F4D34] px-4 py-2 rounded-xl hover:bg-gray-50 transition shadow-sm"
+           >
            <Download className="w-4 h-4" />
            <span className="hidden sm:inline">Download Invoice</span>
          </button>

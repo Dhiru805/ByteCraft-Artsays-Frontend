@@ -29,6 +29,8 @@
     "hls.js": "^1.6.13",
     "jquery": "^3.7.1",
     "jquery-ui-dist": "^1.13.3",
+    "jspdf": "^4.1.0",
+    "jspdf-autotable": "^5.0.7",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.509.0",
     "millify": "^6.1.0",
