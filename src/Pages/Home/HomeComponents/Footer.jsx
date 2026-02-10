@@ -54,7 +54,10 @@ const Footer = () => {
         { label: "Careers", to: "/career" },
         { label: "Why Artsays Different", to: "/why-artsays" },
         { label: "Benefits of Choosing Artsays", to: "/why-artsays" },
-        { label: "Blog / Art Journal", to: "/blogs" },
+        { label: "Blogs / Art Journal", to: "/blogs" },
+        { label: "Insurance", to: "/insurance" },
+        { label: "Brand Partnerships", to: "/affiliate-brand-partner" },
+
       ],
     },
     {
@@ -66,15 +69,16 @@ const Footer = () => {
         { label: "Discover Artists", to: "/artist-card" },
         { label: "Challenges", to: "/challenge" },
         { label: "How to Buy", to: "/how-to-buy" },
-        { label: "Art Icons", to: "/celebrity" },
+        { label: "How to Bid", to: "/how-to-bid" },
+        { label: "Celebrities", to: "/celebrity" },
         { label: "Certificates", to: "/certification" },
-        { label: "Insurance", to: "/insurance" },
       ],
     },
     {
       title: "FOR ARTISTS",
       links: [
         { label: "Why Artsays", to: "/why-artsays" },
+        { label: "AI Art Verification", to: "/commission" },
         { label: "Careers", to: "/career" },
         { label: "How to Sell", to: "/how-to-sell" },
         { label: "Blog / Art Journal", to: "/blogs" },
@@ -86,12 +90,12 @@ const Footer = () => {
     {
       title: "HELP CENTER",
       links: [
-        { label: "FAQs", to: "/policy" },
+        { label: "FAQs", to: "/faqs" },
         { label: "Privacy Policy", to: "/policy" },
         { label: "Terms of Use", to: "/policy" },
         { label: "Shipping & Returns", to: "/policy" },
         { label: "Copyright & Licensing", to: "/policy" },
-        { label: "Order Tracking", to: "/my-account/my-orders" },
+        { label: "Track Order", to: "/track-your-order" },
         { label: "Payment Methods", to: "/policy" },
         { label: "Refund Policy", to: "/policy" },
       ],
