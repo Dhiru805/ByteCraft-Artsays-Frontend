@@ -3,7 +3,6 @@ import Axios from "axios";
 import { toast } from "react-toastify";
 
 const baseURL = process.env.REACT_APP_API_URL;
-console.log("Base URL:", baseURL);
 
 const axiosInstance = Axios.create({
   baseURL,
