@@ -650,6 +650,7 @@ import ProductViewing from "../Component/SocialMedia/Profile/ProductView";
 import SharePost from "../Component/SocialMedia/Posts/SharePost";
 import SinglePost from "../Component/SocialMedia/Posts/SinglePost";
 import ProfileLogout from "../Pages/socialMedia/ProfileLogout";
+import Sitemap from "../Pages/Sitemap/Sitemap";
 
 
 
@@ -759,10 +760,13 @@ const WebsiteWrapper = () => {
 const AppRoutes = () => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
 
-  return (
-    <Routes>
-      {/* -------------------------------------------Public Routes------------------------------------------------- */}
-      <Route element={<PublicRoute />}>
+    return (
+      <Routes>
+        {/* Sitemap & Robots */}
+        <Route path="/sitemap.xml" element={<Sitemap />} />
+
+        {/* -------------------------------------------Public Routes------------------------------------------------- */}
+        <Route element={<PublicRoute />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route
