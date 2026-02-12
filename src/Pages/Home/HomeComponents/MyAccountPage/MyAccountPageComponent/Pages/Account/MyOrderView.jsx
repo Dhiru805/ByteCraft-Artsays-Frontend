@@ -36,8 +36,8 @@ const OrderView = () => {
   const params = useParams();
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 
-  const [order, setOrder] = useState(location.state?.order || null);
-  const [loadingOrder, setLoadingOrder] = useState(false);
+  const [order, setOrder] = useState(null);
+  const [loadingOrder, setLoadingOrder] = useState(true);
 
   const [showPopup, setShowPopup] = useState(false);
   const [currentImages, setCurrentImages] = useState([]);
@@ -70,21 +70,39 @@ const OrderView = () => {
 
   useEffect(() => {
     const fetchOrderIfNeeded = async () => {
-      if (order) return;
       const buyerId = localStorage.getItem("userId");
-      const orderIdFromUrl = params.orderId || params.id || new URLSearchParams(window.location.search).get("orderId");
-      if (!buyerId || !orderIdFromUrl) return;
+      const stateOrder = location.state?.order;
+      const orderIdFromUrl =
+        params.orderId ||
+        params.id ||
+        new URLSearchParams(window.location.search).get("orderId") ||
+        stateOrder?.orderId ||
+        stateOrder?._id;
+
+      if (!buyerId || !orderIdFromUrl) {
+        // No API params available – fall back to location.state if present
+        if (stateOrder) setOrder(stateOrder);
+        setLoadingOrder(false);
+        return;
+      }
       setLoadingOrder(true);
       try {
         const res = await getAPI(`/api/buyer-order-list/${buyerId}/${orderIdFromUrl}`);
         if (res?.data?.data) {
           setOrder(res.data.data);
+        } else if (stateOrder) {
+          // API failed but we still have the state order
+          setOrder(stateOrder);
         } else {
           toast.error("Unable to load order.");
         }
       } catch (err) {
         console.error("fetch error:", err);
-        toast.error("Failed to fetch order. Try again.");
+        if (stateOrder) {
+          setOrder(stateOrder);
+        } else {
+          toast.error("Failed to fetch order. Try again.");
+        }
       } finally {
         setLoadingOrder(false);
       }
@@ -173,12 +191,12 @@ const OrderView = () => {
   }, [order]);
 
   const unifiedItems = (order?.items || []).map((it) => {
-    const fullProduct = it.fullProduct || (it.productId && typeof it.productId === "object" ? it.productId : null);
+    const fullProduct = it.fullProduct || it.productDetails || (it.productId && typeof it.productId === "object" ? it.productId : null);
     return {
       ...it,
       fullProduct,
       mainImage: (fullProduct && (fullProduct.mainImage || fullProduct.image)) || it.image || it.mainImage || null,
-      name: it.name || (fullProduct && (fullProduct.productName || fullProduct.productName)) || (it.productId && it.productId.name) || "",
+      name: it.name || (fullProduct && (fullProduct.productName || fullProduct.name)) || "",
       qty: it.quantity || it.qty || it.count || 1,
       price: it.price || it.finalPrice || (fullProduct && fullProduct.finalPrice) || it.totalPrice || 0,
     };
@@ -443,25 +461,37 @@ const OrderView = () => {
         return startY + 8 + lines.length * 5.5;
       };
 
-      // ── Seller / Buyer Info (side by side) ──
-      const halfW = (contentW - 4) / 2;
-      const sellerLines = [
-        `Name: ${sellerName || "Artsays"}`,
-        `Address: ${order.Artist?.address || "Artsays Platform"}`,
-        `Contact: ${order.Artist?.phone || "N/A"}`,
-      ];
+    // ── Seller / Buyer Info (side by side) ──
+    const halfW = (contentW - 4) / 2;
+    const sellerAddr = order.Artist?.address || {};
+    const sellerAddrLine = [sellerAddr.line1, sellerAddr.line2].filter(Boolean).join(", ") || "Artsays Platform";
+    const sellerCityLine = [sellerAddr.city, sellerAddr.state].filter(Boolean).join(", ");
+    const sellerPincode = sellerAddr.pincode || "";
+    const sellerLabel = (order.Artist?.userType || "Artist").toUpperCase();
+    const sellerLines = [
+      `Name: ${order.Artist?.fullName || sellerName || "Artsays"}`,
+      `Address: ${sellerAddrLine}`,
+      sellerCityLine ? `City: ${sellerCityLine}${sellerPincode ? " - " + sellerPincode : ""}` : "",
+      `Contact: ${order.Artist?.phone || "N/A"}`,
+      `Email: ${order.Artist?.email || "N/A"}`,
+      order.Artist?.gstin ? `GSTIN: ${order.Artist.gstin}` : "",
+      order.Artist?.pan ? `PAN: ${order.Artist.pan}` : "",
+    ].filter(Boolean);
       const buyerAddr = deliveryAddress;
       const buyerLines = [
-        `Name: ${order.Buyer?.name || "N/A"}`,
+        `Name: ${order.Buyer?.fullName || order.Buyer?.name || "N/A"}`,
         `Email: ${order.Buyer?.email || "N/A"}`,
+        `Contact: ${order.Buyer?.phone || "N/A"}`,
         `Address: ${[buyerAddr.line1, buyerAddr.line2, buyerAddr.landmark].filter(Boolean).join(", ") || "N/A"}`,
         `City: ${buyerAddr.city || "N/A"}, State: ${buyerAddr.state || "N/A"} - ${buyerAddr.pincode || ""}`,
         `Country: ${buyerAddr.country || "India"}`,
-      ];
+        order.Buyer?.gstin ? `GSTIN: ${order.Buyer.gstin}` : "",
+        order.Buyer?.pan ? `PAN: ${order.Buyer.pan}` : "",
+      ].filter(Boolean);
 
-      drawSectionBox(y, "SELLER", sellerLines, margin, halfW);
-      const boxEndY = drawSectionBox(y, "BUYER / SHIP TO", buyerLines, margin + halfW + 4, halfW);
-      y = boxEndY + 4;
+      const sellerEndY = drawSectionBox(y, sellerLabel, sellerLines, margin, halfW);
+      const buyerEndY = drawSectionBox(y, "BUYER / SHIP TO", buyerLines, margin + halfW + 4, halfW);
+      y = Math.max(sellerEndY, buyerEndY) + 4;
 
       // ── Order Details row ──
       doc.setFillColor(...lightBg);
@@ -639,7 +669,7 @@ const OrderView = () => {
               </div>
               <div className="flex items-center gap-3 text-gray-600">
                 <Store className="w-4 h-4 text-[#6F4D34]" />
-                <span className="text-sm font-medium">Seller: <span className="text-gray-900">{sellerName || "Artsays Official"}</span></span>
+                <span className="text-sm font-medium">{order.Artist?.userType === "Seller" ? "Seller" : "Artist"}: <span className="text-gray-900">{order.Artist?.fullName || sellerName || "Artsays Official"}</span></span>
               </div>
               <div className="flex items-center gap-3 text-gray-600">
                 <Truck className="w-4 h-4 text-[#6F4D34]" />
