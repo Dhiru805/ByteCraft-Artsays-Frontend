@@ -515,6 +515,7 @@ import ProductView from "../Component/Dashboard/ArtistDashbooard/ProductDetails/
 import ViewCustomRequest from "../Component/Dashboard/ArtistDashbooard/ProductDetails/CustomOrder/Artist/ViewRequest";
 import Productpurchase from "../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductPurchased/ProductPurchased";
 import ProductpurchaseView from "../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductPurchased/ProductPurchasedDetails";
+import ArtistOrderView from "../Component/Dashboard/ArtistDashbooard/ProductDetails/ProductPurchased/ArtistOrderView";
 
 //----------------------------------------Buyer Components-----------------------------------//
 import BuyerDashboard from "../Component/Dashboard/BuyerDashboard/Dashboard/MainContent";
@@ -1006,7 +1007,8 @@ const AppRoutes = () => {
           element={<ProductFetchView />}
         />
         <Route path="purchasetable" element={<PurchaseTable />} />
-        <Route path="purchasetable/view/:productId" element={<PurchaseTableView />} />
+          <Route path="purchasetable/view/:productId" element={<PurchaseTableView />} />
+          <Route path="order-view/:orderId" element={<ArtistOrderView />} />
 
         {/* Bidding Management */}
         <Route path="bidding/allproduct" element={<AllBiddingProduct />} />
@@ -1481,79 +1483,9 @@ const AppRoutes = () => {
         <Route path="purchase" element={<Productpurchase />} />
         <Route path="purchase/view" element={<ProductpurchaseView />} />
         <Route path="product-purchase" element={<Productpurchase />} />
+          <Route path="order-view/:orderId" element={<ArtistOrderView />} />
 
-        {/* Advertise Routes */}
-        <Route path="advertise" element={<ArtistAdvertise />} />
-        <Route path="advertise/sponser" element={<ArtistSponser />} />
-        {/* Artist Insurance Routes */}
-          <Route path="insurance" element={<ArtistIsnaurance />} />
-        <Route path="insurance/create" element={< CreateInsuranceArtist/>} />
-         <Route path="insurance/view" element={< ViewInsuranceArtist/>} />
-       
-
-        {/* Bidding Routes */}
-        <Route
-          path="bidding-products-table"
-          element={<ArtistBidingAllProducts />}
-        />
-        <Route
-          path="bidding-products-table/create"
-          element={<ArtistBidingAllProductsCreate />}
-        />
-        <Route
-          path="bidding-products-table/edit/:id"
-          element={<ArtistBidingAllProductsEdit />}
-        />
-        <Route
-          path="bidded-products-table"
-          element={<ArtistBiddedProducts />}
-        />
-        <Route path="bidding-pass-table" element={<ArtistBiddingTable />} />
-        <Route
-          path="bidding-pass-table/bidding-pass"
-          element={<ArtistBiddingTablePass />}
-        />
-        <Route
-          path="bidding-pass-table/upgrade"
-          element={<ArtistBiddingTablePassUpgrade />}
-        />
-
-        {/* Certification Routes */}
-        <Route path="certification" element={<ArtistCertification />} />
-        <Route
-          path="certification/create-certification"
-          element={<CreateArtitstCertifications />}
-        />
-        <Route
-          path="certification/view/:id"
-          element={<ViewArtistCertification />}
-        />
-
-        {/* Exhibition */}
-        <Route path="exhibition" element={<ArtistExhibition />} />
-        <Route
-          path="exhibition/create-exhibition"
-          element={<ArtistCreateExhibition />}
-        />
-        <Route
-          path="exhibition/update-exhibition"
-          element={<ArtistUpdateExhibition />}
-        />
-        <Route
-          path="exhibition/view-exhibition"
-          element={<ArtistViewExhibition />}
-        />
-
-        {/* Premium Badges */}
-        <Route path="premium-badges" element={<ArtistPremiumBages />} />
-
-        <Route
-          path="products-settings/product-coupon-code"
-          element={<ArtistProductCouponCodes />}
-        />
-
-        <Route path="product-purchase" element={<Productpurchase />} />
-        {/* Packaging Material */}
+          {/* Packaging Material */}
         <Route path="packaging-material" element={<OrderMaterial />} />
         <Route path="packaging-material/create" element={<CreateOrder />} />
         <Route path="packaging-material/edit/:id" element={<UpdateOrder />} />
@@ -1607,6 +1539,7 @@ const AppRoutes = () => {
         <Route path="SellerProductUpload" element={<SellerProductUpload />} />
         <Route path="purchased-product" element={<SellerPurchasedProducts />} />
         <Route path="product-fetch-view-seller/:productId" element={<ProductViewSeller />} />
+          <Route path="order-view/:orderId" element={<ArtistOrderView />} />
 
         {/* Advertise Routes */}
         <Route path="advertise" element={<SellerAdvertise />} />

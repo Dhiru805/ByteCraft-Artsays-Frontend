@@ -384,7 +384,8 @@ useEffect(() => {
             <td className="d-flex align-items-center" style={{ gap: "6px" }}>
                 <button
                     className="btn btn-sm btn-outline-info"
-                    onClick={() => navigate(`/seller/product-fetch-view-seller/${item.productId}`)}
+                    onClick={() => navigate(`/seller/order-view/${item.orderId}`)}
+                    title="View Order"
                 >
                     <i className="fa fa-eye"></i>
                 </button>

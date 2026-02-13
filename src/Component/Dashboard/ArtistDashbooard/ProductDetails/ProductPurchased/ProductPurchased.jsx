@@ -335,7 +335,8 @@ const ProductRequest = () => {
                         <td className="d-flex align-items-center" style={{ gap: "6px" }}>
                           <button
                             className="btn btn-sm btn-outline-info"
-                            onClick={() => navigate(`/artist/product-fetch-view-artist/${product.productId}`)}
+                            onClick={() => navigate(`/artist/order-view/${product.orderId}`)}
+                            title="View Order"
                           >
                             <i className="fa fa-eye"></i>
                           </button>
