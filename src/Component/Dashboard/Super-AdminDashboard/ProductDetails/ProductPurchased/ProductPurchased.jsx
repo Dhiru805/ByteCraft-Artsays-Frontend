@@ -329,13 +329,16 @@ const ProductRequest = () => {
                                                         {product.isResale && (
                                                             <span className="badge ml-1" style={{ backgroundColor: "#ff6600", color: "#fff", fontSize: "10px" }}>Resale</span>
                                                         )}
+                                                        {product.isCustomOrder && (
+                                                            <span className="badge ml-1" style={{ backgroundColor: "#ff8c00", color: "#fff", fontSize: "10px" }}>Custom Order</span>
+                                                        )}
                                                     </td>
 
                                                     <td>{product.buyerName}</td>
 
                                                     <td>
                                                         <img
-                                                            src={`${BASE_URL}${product.productImage}`}
+                                                            src={product.isCustomOrder ? `${BASE_URL}/${product.productImage?.replace(/\\/g, "/")}` : `${BASE_URL}${product.productImage}`}
                                                             className="rounded-circle avatar"
                                                             alt=""
                                                             style={{ width: "30px", height: "30px", marginRight: "10px", objectFit: "cover" }}
@@ -378,7 +381,7 @@ const ProductRequest = () => {
                                                         >
                                                             <i className="fa fa-eye"></i>
                                                         </button>
-                                                        {product.orderStatus === "Completed" && (
+                                                        {product.orderStatus === "Completed" && !product.isCustomOrder && (
                                                             <button
                                                                 className="btn btn-sm btn-outline-success"
                                                                 onClick={() => openResellModal(product.productId, product.orderId, product.productName)}

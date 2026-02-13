@@ -192,11 +192,16 @@ const OrderView = () => {
 
   const unifiedItems = (order?.items || []).map((it) => {
     const fullProduct = it.fullProduct || it.productDetails || (it.productId && typeof it.productId === "object" ? it.productId : null);
+    const isCustom = it.customProduct != null;
+    const customProd = typeof it.customProduct === "object" ? it.customProduct : null;
     return {
       ...it,
       fullProduct,
-      mainImage: (fullProduct && (fullProduct.mainImage || fullProduct.image)) || it.image || it.mainImage || null,
-      name: it.name || (fullProduct && (fullProduct.productName || fullProduct.name)) || "",
+      isCustomOrder: isCustom,
+      mainImage: isCustom && customProd?.BuyerImage
+        ? customProd.BuyerImage
+        : (fullProduct && (fullProduct.mainImage || fullProduct.image)) || it.image || it.mainImage || null,
+      name: it.name || (isCustom && customProd?.ProductName) || (fullProduct && (fullProduct.productName || fullProduct.name)) || "",
       qty: it.quantity || it.qty || it.count || 1,
       price: it.price || it.finalPrice || (fullProduct && fullProduct.finalPrice) || it.totalPrice || 0,
     };

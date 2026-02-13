@@ -262,10 +262,14 @@ const MyOrders = () => {
               const createdStr = createdDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
               const firstItem = order.items && order.items.length > 0 ? order.items[0] : null;
               
-              let firstImage = null;
-              if (firstItem?.fullProduct?.mainImage) {
-                firstImage = `${BASE_URL}${firstItem.fullProduct.mainImage}`;
-              }
+                let firstImage = null;
+                const isCustomOrder = firstItem?.customProduct != null;
+                  if (isCustomOrder && firstItem?.customProduct?.BuyerImage) {
+                    const img = firstItem.customProduct.BuyerImage;
+                    firstImage = `${BASE_URL}${img.startsWith('/') ? '' : '/'}${img}`;
+                  } else if (firstItem?.fullProduct?.mainImage) {
+                    firstImage = `${BASE_URL}${firstItem.fullProduct.mainImage}`;
+                  }
 
               const isCancelled = order.orderStatus === "Cancelled";
               const isDelivered = order.orderStatus === "Delivered";
@@ -340,10 +344,17 @@ const MyOrders = () => {
                           )}
                         </div>
 
-                        <div className="min-w-0">
-                          <h4 className="text-lg font-bold text-gray-900 truncate">
-                            {firstItem?.name || firstItem?.productId?.productName || "Untitled Product"}
-                          </h4>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                              <h4 className="text-lg font-bold text-gray-900 truncate">
+                                {firstItem?.name || firstItem?.productId?.productName || "Untitled Product"}
+                              </h4>
+                              {isCustomOrder && (
+                                <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-orange-700 bg-orange-100 border border-orange-200 px-2 py-0.5 rounded-md">
+                                  Custom Order
+                                </span>
+                              )}
+                            </div>
                           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
                             <p className="text-sm font-medium text-gray-500">
                               By <span className="text-gray-700">{order.Artist?.name ? `${order.Artist.name} ${order.Artist?.lastName || ""}` : "Unknown Artist"}</span>

@@ -44,7 +44,8 @@ const STATUS_TO_STEP = {
 const ArtistOrderView = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
-  const userType = useUserType();
+  const rawUserType = useUserType();
+  const userType = rawUserType?.toLowerCase();
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   const [order, setOrder] = useState(null);
@@ -341,51 +342,69 @@ const ArtistOrderView = () => {
                       <th>Total</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {items.map((item, idx) => {
-                      const product = item.productId && typeof item.productId === "object" ? item.productId : null;
-                      const name = product?.productName || item.name || "Product";
-                      const image = product?.mainImage || item.image || item.mainImage;
-                      const price = item.price || item.finalPrice || product?.finalPrice || 0;
-                      const qty = item.quantity || item.qty || 1;
+                    <tbody>
+                      {items.map((item, idx) => {
+                        const product = item.productId && typeof item.productId === "object" ? item.productId : null;
+                        const customProduct = item.customProduct && typeof item.customProduct === "object" ? item.customProduct : null;
+                        const isCustomOrder = !!customProduct;
+                        const name = isCustomOrder
+                          ? (customProduct.ProductName || item.name || "Custom Order")
+                          : (product?.productName || item.name || "Product");
+                        const image = isCustomOrder
+                          ? customProduct.BuyerImage
+                          : (product?.mainImage || item.image || item.mainImage);
+                        const price = item.price || item.finalPrice || product?.finalPrice || 0;
+                        const qty = item.quantity || item.qty || 1;
 
-                      return (
-                        <tr key={idx}>
-                          <td>{idx + 1}</td>
-                          <td>
-                            <div className="d-flex align-items-center">
-                              {image && (
-                                <img
-                                  src={buildImageUrl(image)}
-                                  alt={name}
-                                  style={{
-                                    width: "45px",
-                                    height: "45px",
-                                    objectFit: "cover",
-                                    borderRadius: "8px",
-                                    marginRight: "12px",
-                                    border: "1px solid #eee",
-                                  }}
-                                />
-                              )}
-                                <div>
-                                  <span
-                                    style={{ fontWeight: 600, color: "#007bff", cursor: "pointer", textDecoration: "none" }}
-                                    onMouseEnter={(e) => (e.target.style.textDecoration = "underline")}
-                                    onMouseLeave={(e) => (e.target.style.textDecoration = "none")}
-                                    onClick={() => {
-                                      const pid = product?._id || item.productId;
-                                      if (pid) navigate(`/${userType}/product-fetch-view-${userType}/${pid}`);
+                        return (
+                          <tr key={idx}>
+                            <td>{idx + 1}</td>
+                            <td>
+                              <div className="d-flex align-items-center">
+                                {image && (
+                                  <img
+                                    src={buildImageUrl(image)}
+                                    alt={name}
+                                    style={{
+                                      width: "45px",
+                                      height: "45px",
+                                      objectFit: "cover",
+                                      borderRadius: "8px",
+                                      marginRight: "12px",
+                                      border: "1px solid #eee",
                                     }}
-                                  >
-                                    {name}
-                                  </span>
-                                  {product?.estimatedDelivery && (
-                                    <small className="d-block text-muted">Est. Delivery: {product.estimatedDelivery} days</small>
-                                  )}
-                                </div>
-                            </div>
-                          </td>
+                                  />
+                                )}
+                                  <div>
+                                    <span
+                                      style={{ fontWeight: 600, color: "#007bff", cursor: "pointer", textDecoration: "none" }}
+                                      onMouseEnter={(e) => (e.target.style.textDecoration = "underline")}
+                                      onMouseLeave={(e) => (e.target.style.textDecoration = "none")}
+                                        onClick={() => {
+                                          if (isCustomOrder) {
+                                            const customPath = userType === "super-admin"
+                                              ? `/${userType}/customordertable/view-request`
+                                              : `/${userType}/custom-order/view-request`;
+                                            navigate(customPath, { state: { request: customProduct } });
+                                          } else {
+                                            const pid = product?._id || item.productId;
+                                            if (pid) navigate(`/${userType}/product-fetch-view/${pid}`);
+                                          }
+                                        }}
+                                    >
+                                      {name}
+                                    </span>
+                                    {isCustomOrder && (
+                                      <span className="badge ml-2" style={{ backgroundColor: "#ff8c00", color: "#fff", fontSize: "10px", verticalAlign: "middle" }}>
+                                        Custom Order
+                                      </span>
+                                    )}
+                                    {product?.estimatedDelivery && (
+                                      <small className="d-block text-muted">Est. Delivery: {product.estimatedDelivery} days</small>
+                                    )}
+                                  </div>
+                              </div>
+                            </td>
                           <td>{qty}</td>
                           <td>
                             {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" })

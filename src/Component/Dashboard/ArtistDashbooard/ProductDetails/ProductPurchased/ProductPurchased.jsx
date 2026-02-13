@@ -289,27 +289,30 @@ const ProductRequest = () => {
                   {displayedProducts.map((product, index) => (
                     <tr key={`${product.orderId}-${product.productId}-${index}`}>
                       <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
-                        <td>
-                          {product.orderId}
-                          {product.isResale && (
-                            <span className="badge ml-1" style={{ backgroundColor: "#ff6600", color: "#fff", fontSize: "10px" }}>Resale</span>
-                          )}
-                        </td>
+                          <td>
+                            {product.orderId}
+                            {product.isResale && (
+                              <span className="badge ml-1" style={{ backgroundColor: "#ff6600", color: "#fff", fontSize: "10px" }}>Resale</span>
+                            )}
+                            {product.isCustomOrder && (
+                              <span className="badge ml-1" style={{ backgroundColor: "#ff8c00", color: "#fff", fontSize: "10px" }}>Custom Order</span>
+                            )}
+                          </td>
                         <td>{product.artistName || "N/A"}</td>
-                      <td>
-                        <img
-                          src={`${BASE_URL}${product.productImage}`}
-                          alt=""
-                          style={{
-                            width: "30px",
-                            height: "30px",
-                            objectFit: "cover",
-                            borderRadius: "50%",
-                            marginRight: "10px"
-                          }}
-                        />
-                        {product.productName}
-                      </td>
+                        <td>
+                          <img
+                            src={product.isCustomOrder ? `${BASE_URL}/${product.productImage?.replace(/\\/g, "/")}` : `${BASE_URL}${product.productImage}`}
+                            alt=""
+                            style={{
+                              width: "30px",
+                              height: "30px",
+                              objectFit: "cover",
+                              borderRadius: "50%",
+                              marginRight: "10px"
+                            }}
+                          />
+                            {product.productName}
+                        </td>
                       <td>
                         {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" })
                           .format(product.subtotal)

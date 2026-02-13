@@ -32,7 +32,7 @@ const AddCustomRequestForm = () => {
   const [searchTerm] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const [fileType, setFileType] = useState(null);
-  const [setSelectedArtistName] = useState("");
+  const [selectedArtistName, setSelectedArtistName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);

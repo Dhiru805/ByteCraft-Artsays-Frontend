@@ -35,7 +35,7 @@ const Customorder = () => {
         try {
             const response = await getAPI("/api/get-buyer-request-data");
             const buyerRequestsData = response.data.buyerRequests;
-            setBuyerRequestsdata(buyerRequestsData);
+            setBuyerRequestsdata(buyerRequestsData.reverse());
         } catch (error) {
             console.error("Error fetching buyer requests:", error);
         }
