@@ -177,6 +177,17 @@ const ProductDetails = () => {
     fetchProduct();
   }, [id]);
 
+  // Track recently viewed product in DB
+    useEffect(() => {
+      if (!product || !userId) return;
+      postAPI("/api/recently-viewed", {
+        userId,
+        productId: product._id,
+      })
+        .then((res) => console.log("Recently viewed saved:", res))
+        .catch((err) => console.error("Recently viewed error:", err));
+    }, [product, userId]);
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {

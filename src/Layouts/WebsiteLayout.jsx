@@ -2,6 +2,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import NavBar from "../Pages/Home/HomeComponents/NavBar";
 import Footer from "../Pages/Home/HomeComponents/Footer";
+import RecentlyViewedProducts from "../Component/Common/RecentlyViewedProducts";
 import { useState } from "react";
 import HeroSectionSkeleton from "../Component/Skeleton/HeroSectionSkeleton";
 import BrowserCategorySkeleton from "../Component/Skeleton/BrowserCategorySkeleton";
@@ -61,6 +62,7 @@ const WebsiteLayout = () => {
     <div>
       <NavBar />
       <Outlet />
+      <RecentlyViewedProducts />
       <Footer />
     </div>
   );
