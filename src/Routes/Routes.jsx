@@ -1485,17 +1485,49 @@ const AppRoutes = () => {
         <Route path="product-purchase" element={<Productpurchase />} />
           <Route path="order-view/:orderId" element={<ArtistOrderView />} />
 
+          {/* Advertise Routes */}
+          <Route path="advertise" element={<ArtistAdvertise />} />
+          <Route path="advertise/sponser" element={<ArtistSponser />} />
+
+          {/* Bidding Routes */}
+          <Route path="bidding-products-table" element={<ArtistBidingAllProducts />} />
+          <Route path="bidding-products-table/create" element={<ArtistBidingAllProductsCreate />} />
+          <Route path="bidding-products-table/edit/:id" element={<ArtistBidingAllProductsEdit />} />
+          <Route path="bidded-products-table" element={<ArtistBiddedProducts />} />
+          <Route path="bidding-pass-table" element={<ArtistBiddingTable />} />
+          <Route path="bidding-pass-table/bidding-pass" element={<ArtistBiddingTablePass />} />
+          <Route path="bidding-pass-table/upgrade" element={<ArtistBiddingTablePassUpgrade />} />
+
+          {/* Certification Routes */}
+          <Route path="certification" element={<ArtistCertification />} />
+          <Route path="certification/create-certification" element={<CreateArtitstCertifications />} />
+          <Route path="certification/view" element={<ViewArtistCertification />} />
+
+          {/* Insurance Routes */}
+          <Route path="insurance" element={<ArtistIsnaurance />} />
+          <Route path="insurance/create" element={<CreateInsuranceArtist />} />
+          <Route path="insurance/view" element={<ViewInsuranceArtist />} />
+
+          {/* Exhibition Routes */}
+          <Route path="exhibition" element={<ArtistExhibition />} />
+          <Route path="exhibition/create-exhibition" element={<ArtistCreateExhibition />} />
+          <Route path="exhibition/update-exhibition" element={<ArtistUpdateExhibition />} />
+          <Route path="exhibition/view-exhibition" element={<ArtistViewExhibition />} />
+
+          {/* Product Coupon Codes */}
+          <Route path="product-coupon-codes" element={<ArtistProductCouponCodes />} />
+
           {/* Packaging Material */}
-        <Route path="packaging-material" element={<OrderMaterial />} />
-        <Route path="packaging-material/create" element={<CreateOrder />} />
-        <Route path="packaging-material/edit/:id" element={<UpdateOrder />} />
-        <Route path="packaging-material/view/:id" element={<ViewOrder />} />
+          <Route path="packaging-material" element={<OrderMaterial />} />
+          <Route path="packaging-material/create" element={<CreateOrder />} />
+          <Route path="packaging-material/edit/:id" element={<UpdateOrder />} />
+          <Route path="packaging-material/view/:id" element={<ViewOrder />} />
 
-        {/* Wallet */}
-        <Route path="wallet" element={<ArtistSellerWallet />} />
+          {/* Wallet */}
+          <Route path="wallet" element={<ArtistSellerWallet />} />
 
 
-      </Route>
+        </Route>
 
       {/* --------------------------------------------Buyer Routes---------------------------------------------------- */}
       <Route
