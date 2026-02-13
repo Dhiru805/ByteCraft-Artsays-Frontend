@@ -659,14 +659,17 @@ const ProductInfo = ({ product, discountPercent, ratingValue, reviewCount, artis
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        {product.tags?.map((t, i) => (
-          <span key={i} className="px-3 py-1 bg-white border border-gray-100 rounded-full text-xs font-semibold text-gray-500">#{t}</span>
-        ))}
-        {product.editionType && (
-          <span className="px-3 py-1 bg-[#6F4D34]/5 text-[#6F4D34] rounded-full text-xs font-bold uppercase tracking-wider">{product.editionType}</span>
-        )}
-      </div>
+        <div className="flex flex-wrap gap-2">
+          {product.condition === "Resale" && (
+            <span className="px-3 py-1 bg-orange-100 text-orange-700 border border-orange-300 rounded-full text-xs font-bold uppercase tracking-wider">Resale</span>
+          )}
+          {product.tags?.map((t, i) => (
+            <span key={i} className="px-3 py-1 bg-white border border-gray-100 rounded-full text-xs font-semibold text-gray-500">#{t}</span>
+          ))}
+          {product.editionType && (
+            <span className="px-3 py-1 bg-[#6F4D34]/5 text-[#6F4D34] rounded-full text-xs font-bold uppercase tracking-wider">{product.editionType}</span>
+          )}
+        </div>
 
       <div className="p-8 bg-white rounded-[40px] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-32 h-32 bg-[#6F4D34]/5 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-[#6F4D34]/10 transition-colors" />
@@ -937,7 +940,7 @@ const DetailsGrid = ({ product, categoryInfo, imageBaseURL, resolveMediaUrl }) =
     return (
       <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100/50">
         <span className="text-sm font-bold text-gray-400 uppercase tracking-tighter">{label}</span>
-        <span className="text-sm font-bold text-gray-800 text-right">{String(displayValue)}</span>
+          <span className="text-sm font-bold text-gray-800 text-right">{typeof displayValue === "object" ? displayValue : String(displayValue)}</span>
       </div>
     );
   };
@@ -955,7 +958,18 @@ const DetailsGrid = ({ product, categoryInfo, imageBaseURL, resolveMediaUrl }) =
         <Item label="Edition Type" value={product.editionType} />
         {product.productType === "Limited Edition" && <Item label="Edition Number" value={product.editionNumber} />}
         <Item label="Year of Creation" value={product.year} />
-        <Item label="Condition" value={product.condition} />
+          <Item
+            label="Condition"
+            value={
+              product.condition === "Resale" ? (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-orange-100 text-orange-700 border border-orange-300 rounded-full text-xs font-bold">
+                  Resale
+                </span>
+              ) : (
+                product.condition
+              )
+            }
+          />
       </Section>
 
       <Section title="Technical Details" icon={Award}>

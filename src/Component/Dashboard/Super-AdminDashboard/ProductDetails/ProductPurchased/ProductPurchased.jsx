@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
 import { jwtDecode } from 'jwt-decode';
 import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
+import { toast } from 'react-toastify';
 
 const ADMIN_STATUS_LABELS = {
     "Ordered": "New Order Received",
@@ -58,6 +59,7 @@ const ProductRequest = () => {
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(false);
+    const [resellModal, setResellModal] = useState({ show: false, productId: null, orderId: null, productName: '' });
 
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
@@ -189,15 +191,43 @@ const ProductRequest = () => {
         try {
             const res = await putAPI(`/api/update-order-status/${orderId}`, { status: newStatus });
             if (res?.data?.success) {
-                setProducts(prev => {
-                    const updated = [...prev];
-                    updated[index] = { ...updated[index], orderStatus: newStatus };
-                    return updated;
-                });
+                // Update ALL rows with the same orderId (an order can have multiple items)
+                setProducts(prev =>
+                    prev.map(p =>
+                        p.orderId === orderId ? { ...p, orderStatus: newStatus } : p
+                    )
+                );
             }
         } catch (error) {
             console.error("Error updating order status:", error);
-            alert("Failed to update order status");
+            alert(error?.response?.data?.message || "Failed to update order status");
+        }
+    };
+
+    const openResellModal = (productId, orderId, productName) => {
+        setResellModal({ show: true, productId, orderId, productName });
+    };
+
+    const closeResellModal = () => {
+        setResellModal({ show: false, productId: null, orderId: null, productName: '' });
+    };
+
+    const confirmResell = async () => {
+        const { productId, orderId } = resellModal;
+        closeResellModal();
+        try {
+            const res = await putAPI(`/api/resell-product`, { productId, orderId });
+            if (res?.data?.success) {
+                toast.success("Product listed for resale successfully");
+                const result = await getAPI(`/api/purchased-products`, {}, true, false);
+                const purchasedArray = result?.data?.data;
+                if (Array.isArray(purchasedArray)) {
+                    setProducts(purchasedArray);
+                }
+            }
+        } catch (error) {
+            console.error("Error reselling product:", error);
+            toast.error(error?.response?.data?.message || "Failed to resell product");
         }
     };
 
@@ -331,6 +361,15 @@ const ProductRequest = () => {
                                                         >
                                                             <i className="fa fa-eye"></i>
                                                         </button>
+                                                        {product.orderStatus === "Completed" && (
+                                                            <button
+                                                                className="btn btn-sm btn-outline-success"
+                                                                onClick={() => openResellModal(product.productId, product.orderId, product.productName)}
+                                                                title="Resell this product"
+                                                            >
+                                                                <i className="fa fa-refresh"></i> Resell
+                                                            </button>
+                                                        )}
                                                         {product.orderStatus !== "Cancelled" && product.orderStatus !== "Completed" && (
                                                             <select
                                                                 className="form-control form-control-sm"
@@ -421,6 +460,38 @@ const ProductRequest = () => {
                     </div>
                 </div>
             </div>
+            {/* Resell Confirmation Modal */}
+            {resellModal.show && (
+                <div
+                    className="modal fade show d-block"
+                    tabIndex="-1"
+                    style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+                    onClick={closeResellModal}
+                >
+                    <div className="modal-dialog modal-dialog-centered" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Confirm Resell</h5>
+                                <button type="button" className="close" onClick={closeResellModal}>
+                                    <span>&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                <p>Are you sure you want to list <strong>{resellModal.productName}</strong> for resale?</p>
+                                <p className="text-muted mb-0" style={{ fontSize: "13px" }}>
+                                    This will make the product live again with condition set to "Resale".
+                                </p>
+                            </div>
+                            <div className="modal-footer">
+                                <button className="btn btn-secondary btn-sm" onClick={closeResellModal}>Cancel</button>
+                                <button className="btn btn-success btn-sm" onClick={confirmResell}>
+                                    <i className="fa fa-refresh"></i> Yes, Resell
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
