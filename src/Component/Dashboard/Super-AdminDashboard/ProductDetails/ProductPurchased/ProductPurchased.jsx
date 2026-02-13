@@ -21,6 +21,7 @@ const ADMIN_STATUS_LABELS = {
     "Cancelled": "Cancel Order",
     "Return Requested": "Schedule Return",
     "Refund Approved": "Approve Refund",
+    "Resale": "Listed for Resale",
 };
 
 const STATUS_COLORS = {
@@ -37,6 +38,7 @@ const STATUS_COLORS = {
     "Cancelled": "#dc3545",
     "Return Requested": "#dc3545",
     "Refund Approved": "#ffc107",
+    "Resale": "#ff6600",
 };
 
 const ADMIN_ALLOWED_STATUSES = [
@@ -200,7 +202,13 @@ const ProductRequest = () => {
             }
         } catch (error) {
             console.error("Error updating order status:", error);
-            alert(error?.response?.data?.message || "Failed to update order status");
+            toast.error(error?.response?.data?.message || "Failed to update order status");
+            // Refresh products to get latest data from server
+            const result = await getAPI(`/api/purchased-products`, {}, true, false);
+            const purchasedArray = result?.data?.data;
+            if (Array.isArray(purchasedArray)) {
+                setProducts(purchasedArray);
+            }
         }
     };
 
@@ -300,6 +308,7 @@ const ProductRequest = () => {
                                     <thead className="thead-dark">
                                         <tr>
                                             <th>#</th>
+                                            <th>Order ID</th>
                                             <th>Name</th>
                                             <th>Product Name</th>
                                             <th>Product Price</th>
@@ -314,6 +323,13 @@ const ProductRequest = () => {
                                         {displayedProducts.map((product, index) => (
                                                 <tr key={index}>
                                                     <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
+
+                                                    <td>
+                                                        {product.orderId}
+                                                        {product.isResale && (
+                                                            <span className="badge ml-1" style={{ backgroundColor: "#ff6600", color: "#fff", fontSize: "10px" }}>Resale</span>
+                                                        )}
+                                                    </td>
 
                                                     <td>{product.buyerName}</td>
 
@@ -370,7 +386,7 @@ const ProductRequest = () => {
                                                                 <i className="fa fa-refresh"></i> Resell
                                                             </button>
                                                         )}
-                                                        {product.orderStatus !== "Cancelled" && product.orderStatus !== "Completed" && (
+                                                        {product.orderStatus !== "Cancelled" && product.orderStatus !== "Completed" && product.orderStatus !== "Resale" && (
                                                             <select
                                                                 className="form-control form-control-sm"
                                                                 value=""

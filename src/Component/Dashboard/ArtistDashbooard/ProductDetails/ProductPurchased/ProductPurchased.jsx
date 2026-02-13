@@ -20,6 +20,7 @@ const ARTIST_STATUS_LABELS = {
   "Cancelled": "Order Cancelled",
   "Return Requested": "Return Requested",
   "Refund Approved": "Refund Approved",
+  "Resale": "Listed for Resale",
 };
 
 const STATUS_COLORS = {
@@ -36,6 +37,7 @@ const STATUS_COLORS = {
   "Cancelled": "#dc3545",
   "Return Requested": "#dc3545",
   "Refund Approved": "#ffc107",
+  "Resale": "#ff6600",
 };
 
 // Statuses the artist can set (shown in Action dropdown)
@@ -270,10 +272,11 @@ const ProductRequest = () => {
             <div className="table-responsive">
               <table className="table table-hover">
                 <thead className="thead-dark">
-                  <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Product Name</th>
+                    <tr>
+                      <th>#</th>
+                      <th>Order ID</th>
+                      <th>Name</th>
+                      <th>Product Name</th>
                     <th>Product Price</th>
                     <th>Product Quantity</th>
                     <th>Payment Type</th>
@@ -286,7 +289,13 @@ const ProductRequest = () => {
                   {displayedProducts.map((product, index) => (
                     <tr key={`${product.orderId}-${product.productId}-${index}`}>
                       <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
-                      <td>{product.artistName || "N/A"}</td>
+                        <td>
+                          {product.orderId}
+                          {product.isResale && (
+                            <span className="badge ml-1" style={{ backgroundColor: "#ff6600", color: "#fff", fontSize: "10px" }}>Resale</span>
+                          )}
+                        </td>
+                        <td>{product.artistName || "N/A"}</td>
                       <td>
                         <img
                           src={`${BASE_URL}${product.productImage}`}
@@ -330,7 +339,7 @@ const ProductRequest = () => {
                           >
                             <i className="fa fa-eye"></i>
                           </button>
-                          {product.orderStatus !== "Cancelled" && product.orderStatus !== "Completed" && (
+                          {product.orderStatus !== "Cancelled" && product.orderStatus !== "Completed" && product.orderStatus !== "Resale" && !product.isResale && (
                             <select
                               className="form-control form-control-sm"
                               value=""

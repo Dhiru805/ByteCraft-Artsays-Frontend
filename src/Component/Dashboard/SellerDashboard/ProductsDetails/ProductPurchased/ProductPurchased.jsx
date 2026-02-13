@@ -19,6 +19,7 @@ const SELLER_STATUS_LABELS = {
   "Cancelled": "Order Cancelled",
   "Return Requested": "Return Requested",
   "Refund Approved": "Refund Approved",
+  "Resale": "Listed for Resale",
 };
 
 const STATUS_COLORS = {
@@ -35,6 +36,7 @@ const STATUS_COLORS = {
   "Cancelled": "#dc3545",
   "Return Requested": "#dc3545",
   "Refund Approved": "#ffc107",
+  "Resale": "#ff6600",
 };
 
 const SELLER_ALLOWED_STATUSES = [
@@ -248,9 +250,10 @@ useEffect(() => {
                             <div className="table-responsive">
                                 <table className="table table-hover">
                                     <thead className="thead-dark">
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Name</th>
+                                          <tr>
+                                              <th>#</th>
+                                              <th>Order ID</th>
+                                              <th>Name</th>
                                             <th>Product Name</th>
                                             <th>Product Price</th>
                                             <th>Product Quantity</th>
@@ -317,6 +320,14 @@ useEffect(() => {
         <tr key={index}>
             <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
 
+            {/* Order ID */}
+            <td>
+                {item.orderId}
+                {item.isResale && (
+                    <span className="badge ml-1" style={{ backgroundColor: "#ff6600", color: "#fff", fontSize: "10px" }}>Resale</span>
+                )}
+            </td>
+
             {/* Buyer Name */}
             <td>{item.buyerName || "Unknown"}</td>
 
@@ -377,7 +388,7 @@ useEffect(() => {
                 >
                     <i className="fa fa-eye"></i>
                 </button>
-                {item.orderStatus !== "Cancelled" && item.orderStatus !== "Completed" && (
+                {item.orderStatus !== "Cancelled" && item.orderStatus !== "Completed" && item.orderStatus !== "Resale" && !item.isResale && (
                     <select
                         className="form-control form-control-sm"
                         value=""

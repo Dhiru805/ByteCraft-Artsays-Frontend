@@ -84,7 +84,7 @@ const CheckOut = () => {
 
   const fetchProductById = async (id) => {
     try {
-      const artist = await getAPI(`/artist/getproduct/${id}`);
+      const artist = await getAPI(`/api/getproduct/${id}`);
       if (artist?.data?.data) return artist.data.data;
     } catch (e) {}
 
@@ -388,7 +388,7 @@ const CheckOut = () => {
       const itemsWithArtist = await Promise.all(
         cartItems.map(async (item) => {
           try {
-            const artistRes = await getAPI(`/artist/getproduct/${item.productId}`);
+            const artistRes = await getAPI(`/api/getproduct/${item.productId}`);
             if (artistRes?.data?.data?.userId) {
               const art = artistRes.data.data.userId;
               return { ...item, artistId: art._id, artistName: art.name || "", artistLastName: art.lastName || "" };
@@ -442,9 +442,11 @@ const CheckOut = () => {
       const savedOrder = response?.data?.data;
 
       if (response?.data?.success) {
-        for (const item of cartItems) {
-          if (item.productId) await deleteAPI("/api/cart/remove", { params: { userId, productId: item.productId } });
-        }
+          if (!productId) {
+            for (const item of cartItems) {
+              if (item.productId) await deleteAPI("/api/cart/remove", { params: { userId, productId: item.productId } });
+            }
+          }
         if (savedOrder?.paymentUrl) {
           window.location.href = savedOrder.paymentUrl;
         } else {
