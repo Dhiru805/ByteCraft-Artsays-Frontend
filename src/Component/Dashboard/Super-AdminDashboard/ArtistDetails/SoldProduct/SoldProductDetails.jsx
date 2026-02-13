@@ -111,7 +111,7 @@ function AllProduct() {
                             objectFit: "cover",
                           }}
                           alt="Product Preview"
-                          onError={(e) => { e.target.src = "https://via.placeholder.com/350?text=Image+Not+Found"; }}
+                            onError={(e) => { e.target.onerror = null; e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='350' height='350'%3E%3Crect width='350' height='350' fill='%23ddd'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23999' font-size='16'%3EImage Not Found%3C/text%3E%3C/svg%3E"; }}
                         />
                       </div>
                     </div>
@@ -137,7 +137,7 @@ function AllProduct() {
                               outline: "none",
                             }}
                             onClick={() => handleImageClick(product._id, image)}
-                            onError={(e) => { e.target.src = "https://via.placeholder.com/55?text=NA"; }}
+                              onError={(e) => { e.target.onerror = null; e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='55' height='55'%3E%3Crect width='55' height='55' fill='%23ddd'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23999' font-size='10'%3ENA%3C/text%3E%3C/svg%3E"; }}
                             onMouseEnter={(e) => {
                               e.target.style.transform = "scale(1.1)";
                               e.target.style.border = "none";

@@ -174,10 +174,10 @@ const SoldProduct = () => {
                                 cursor: 'pointer',
                                 border: '1px solid #ddd'
                               }}
-                              onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = "https://via.placeholder.com/35?text=NA";
-                              }}
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='35' height='35'%3E%3Crect width='35' height='35' fill='%23ddd'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23999' font-size='10'%3ENA%3C/text%3E%3C/svg%3E";
+                                }}
                             />
                             <span className="text-truncate" style={{ maxWidth: '200px' }}>
                               {product.productName}
@@ -257,7 +257,7 @@ const SoldProduct = () => {
                   className="img-fluid w-100"
                   alt="Preview"
                   style={{ maxHeight: '80vh', objectFit: 'contain' }}
-                  onError={(e) => { e.target.src = "https://via.placeholder.com/600?text=Image+Not+Found"; }}
+                    onError={(e) => { e.target.onerror = null; e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400'%3E%3Crect width='600' height='400' fill='%23ddd'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23999' font-size='20'%3EImage Not Found%3C/text%3E%3C/svg%3E"; }}
                 />
                 {currentImages.length > 1 && (
                   <>
