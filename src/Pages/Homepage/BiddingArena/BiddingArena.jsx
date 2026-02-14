@@ -137,7 +137,7 @@ const BiddingArena = () => {
 
   return (
     <div className="w-full bg-gray-50/50 py-12 font-[poppins]">
-      <div className="max-w-[1440px] mx-auto px-4">
+      <div className="max-w-[1440px] mx-auto px-4 md:!px-0">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 align-items-center mb-12">
           <div className="flex flex-col gap-6">
@@ -159,8 +159,8 @@ const BiddingArena = () => {
         </div>
 
         {/* BID GRID */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {products.map((item, index) => {
+        <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 no-scrollbar sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:overflow-visible" style={{ scrollbarWidth: "none" }}>
+            {products.map((item, index) => {
             const status = getFinalStatus(item);
             const timeRemaining = getTimeRemaining(item.bidEnd);
             const isEnded = timeRemaining === "Ended";
@@ -169,8 +169,8 @@ const BiddingArena = () => {
             return (
               <div
                 key={item._id}
-                className="group flex flex-col h-full bg-white rounded-[24px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100/50 animate-fade-in-up relative"
-                style={{ animationDelay: `${index * 50}ms` }}
+                  className="min-w-[77%] snap-start sm:min-w-0 group flex flex-col h-full bg-white rounded-[24px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100/50 animate-fade-in-up relative"
+                  style={{ animationDelay: `${index * 50}ms` }}
                 onClick={() => {
                   const name =
                     item?.artworkName ||

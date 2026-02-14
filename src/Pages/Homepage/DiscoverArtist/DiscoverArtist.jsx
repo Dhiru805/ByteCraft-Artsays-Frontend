@@ -588,7 +588,7 @@ const DiscoverArtist = () => {
 
   return (
     <div className="w-full bg-gray-50/50 py-12 font-[poppins]">
-      <div className="max-w-[1440px] mx-auto px-4">
+      <div className="max-w-[1440px] mx-auto px-4 md:!px-0">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 align-items-center mb-12">
           <div className="flex flex-col gap-6">

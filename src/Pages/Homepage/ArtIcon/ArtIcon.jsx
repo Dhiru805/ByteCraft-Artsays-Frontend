@@ -412,7 +412,7 @@ const ArtIcon = () => {
 
     return (
     <div className="bg-[#F8F8F8] font-[poppins] py-12">
-      <div className="max-w-[1440px] mx-auto">
+      <div className="max-w-[1440px] mx-auto px-4 md:!px-0">
        
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 align-items-center mb-8">
           <div className="flex flex-col gap-6">
@@ -433,12 +433,12 @@ const ArtIcon = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-6">
+        <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-6 overflow-x-auto snap-x snap-mandatory no-scrollbar" style={{ scrollbarWidth: "none" }}>
           {celebrities.length > 0 ? (
             celebrities.slice(0, 8).map((celebrity, index) => (
               <div
                 key={celebrity._id}
-                className="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 flex flex-col h-full"
+                className="min-w-[77%] sm:min-w-0 snap-start group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 flex flex-col h-full"
               >
                 <div className="p-4 md:p-6 text-center">
                   <h2 className="text-base md:text-xl font-bold text-gray-900 group-hover:text-[#6F4D34] transition-colors line-clamp-1">

@@ -1432,9 +1432,12 @@ const BrowseCategories = () => {
         const products2 =
           res2?.data?.data?.filter((p) => p.status === "Approved") || [];
 
-        const merged = [...products1, ...products2].sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        );
+        const merged = [...products1, ...products2].sort((a, b) => {
+            const aInStock = (a.quantity && a.quantity > 0) ? 1 : 0;
+            const bInStock = (b.quantity && b.quantity > 0) ? 1 : 0;
+            if (bInStock !== aInStock) return bInStock - aInStock;
+            return new Date(b.createdAt) - new Date(a.createdAt);
+          });
 
         const ratings = ratingRes?.data?.data || [];
         const withRatings = merged.map((p) => {
@@ -1567,7 +1570,7 @@ const BrowseCategories = () => {
 
   return (
     <div className="w-full bg-gray-50/50 py-12 font-[poppins]">
-      <div className="max-w-[1440px] mx-auto px-4">
+      <div className="max-w-[1440px] mx-auto px-4 md:!px-0">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 align-items-center mb-3">
           <div className="flex flex-col gap-6">
@@ -1638,17 +1641,17 @@ const BrowseCategories = () => {
 
         {/* Products Grid - Using Premium Card Design */}
         {currentItems.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {currentItems.map((product, index) => {
-                const displayPrice = product.finalPrice || product.sellingPrice;
-                const hasDiscount = displayPrice < product.marketPrice;
-                const discountPercent = hasDiscount ? Math.round(((product.marketPrice - displayPrice) / product.marketPrice) * 100) : 0;
+            <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:overflow-visible">
+              {currentItems.map((product, index) => {
+                  const displayPrice = product.finalPrice || product.sellingPrice;
+                  const hasDiscount = displayPrice < product.marketPrice;
+                  const discountPercent = hasDiscount ? Math.round(((product.marketPrice - displayPrice) / product.marketPrice) * 100) : 0;
 
-                return (
-                  <div
-                    key={product._id}
-                    className="group flex flex-col h-full bg-white rounded-[24px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100/50 animate-fade-in-up relative"
-                    style={{ animationDelay: `${index * 50}ms` }}
+                  return (
+                    <div
+                      key={product._id}
+                      className="group flex flex-col h-full bg-white rounded-[24px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100/50 animate-fade-in-up relative min-w-[77%] snap-start sm:min-w-0"
+                      style={{ animationDelay: `${index * 50}ms` }}
                     onClick={() => { const slug = slugify(product.productName); navigate(`/product-details/${slug}/${product._id}`); }}
                   >
                   {/* Image Container */}

@@ -38,7 +38,7 @@ const WhyArtsaysDifferent = () => {
       <div className="max-w-[1440px] mx-auto">
         
         {/* Header - Matching HomeChallenges Style */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 align-items-center mb-16">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div className="flex flex-col gap-6">
             <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
               {data.heading}

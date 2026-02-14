@@ -193,13 +193,13 @@ const ArtistCard = ({ limit = 8, searchQuery = "", filters = {} }) => {
   return (
     <div className="w-full">
       {paginatedArtists.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {paginatedArtists.map((artist, index) => {
-            const isFollowing = userId && (artist.isFollowing || myFollowing.includes(String(artist.id)));
-            return (
-              <div
-                key={artist.id}
-                className="group flex flex-col h-full bg-white rounded-[24px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100/50 animate-fade-in-up relative"
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 no-scrollbar sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:overflow-visible">
+            {paginatedArtists.map((artist, index) => {
+              const isFollowing = userId && (artist.isFollowing || myFollowing.includes(String(artist.id)));
+              return (
+                <div
+                  key={artist.id}
+                  className="min-w-[77%] snap-start sm:min-w-0 group flex flex-col h-full bg-white rounded-[24px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100/50 animate-fade-in-up relative"
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 <div className="relative aspect-square overflow-hidden bg-[#F8F9FA]">

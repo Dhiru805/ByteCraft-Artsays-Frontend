@@ -75,7 +75,7 @@ const HowToSell = () => {
 
       <div className="max-w-[1440px] mx-auto relative z-10">
         {/* Header Section - Matching HomeChallenges style */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-10">
           <motion.div 
             initial={{ x: -50, opacity: 0 }}
             whileInView={{ x: 0, opacity: 1 }}
@@ -102,7 +102,7 @@ const HowToSell = () => {
             >
               <a
                 href={data.buttonLink || "#"}
-                className="group relative inline-flex items-center gap-3 bg-[#6F4D34] text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-all shadow-2xl shadow-[#6F4D34]/30 hover:bg-gray-900 hover:-translate-y-1 active:scale-95 overflow-hidden"
+                className="hidden lg:flex group relative inline-flex items-center gap-3 bg-[#6F4D34] text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-all shadow-2xl shadow-[#6F4D34]/30 hover:bg-gray-900 hover:-translate-y-1 active:scale-95 overflow-hidden"
               >
                 <span className="relative z-10">{data.buttonName}</span>
                 <ChevronRight size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
@@ -187,20 +187,20 @@ const HowToSell = () => {
 
         {/* Floating Decorative Elements */}
         <div className="mt-20 flex justify-center">
-          <div className="flex items-center gap-8 py-6 px-10 bg-gray-50 rounded-full border border-gray-100">
+          <div className="flex items-center gap-3 md:!gap-8 py-6 px-4 md:!px-10 bg-gray-50 rounded-full border border-gray-100">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="text-green-500" size={20} />
-              <span className="text-gray-700 font-bold text-sm">Safe Delivery</span>
+              <span className="text-gray-700 font-bold text-xs md:!text-sm">Safe Delivery</span>
             </div>
             <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />
             <div className="flex items-center gap-2">
               <UserCheck className="text-blue-500" size={20} />
-              <span className="text-gray-700 font-bold text-sm">Verified Sellers</span>
+              <span className="text-gray-700 font-bold text-xs md:!text-sm">Verified Sellers</span>
             </div>
             <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />
             <div className="flex items-center gap-2">
               <TrendingUp className="text-amber-500" size={20} />
-              <span className="text-gray-700 font-bold text-sm">Instant Selling</span>
+              <span className="text-gray-700 font-bold text-xs md:!text-sm">Instant Selling</span>
             </div>
           </div>
         </div>
