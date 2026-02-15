@@ -60,33 +60,35 @@ const Footer = () => {
 
       ],
     },
-    {
-      title: "FOR BUYERS",
-      links: [
-        { label: "Store", to: "/store" },
-        { label: "Art Gallery", to: "/art-gallery" },
-        { label: "Bidding", to: "/bid" },
-        { label: "Discover Artists", to: "/artist-card" },
-        { label: "Challenges", to: "/challenge" },
-        { label: "How to Buy", to: "/how-to-buy" },
-        { label: "How to Bid", to: "/how-to-bid" },
-        { label: "Celebrities", to: "/celebrity" },
-        { label: "Certificates", to: "/certification" },
-      ],
-    },
-    {
-      title: "FOR ARTISTS",
-      links: [
-        { label: "Why Artsays", to: "/why-artsays" },
-        { label: "AI Art Verification", to: "/commission" },
-        { label: "Careers", to: "/career" },
-        { label: "How to Sell", to: "/how-to-sell" },
-        { label: "Blog / Art Journal", to: "/blogs" },
-        { label: "Affiliate Program", to: "/affiliate-program" },
-        { label: "Partnerships", to: "/partner" },
-        { label: "Commission", to: "/commission" },
-      ],
-    },
+      {
+        title: "FOR BUYERS",
+        links: [
+          { label: "Store", to: "/store" },
+          { label: "Art Gallery", to: "/art-gallery" },
+          { label: "Bidding", to: "/bid" },
+          { label: "Discover Artists", to: "/artist-card" },
+          { label: "Challenges", to: "/challenge" },
+          { label: "How to Buy", to: "/how-to-buy" },
+          { label: "How to Bid", to: "/how-to-bid" },
+          { label: "How to Resell", to: "/how-to-resell" },
+          { label: "Celebrities", to: "/celebrity" },
+          { label: "Certificates", to: "/certification" },
+        ],
+      },
+      {
+        title: "FOR ARTISTS",
+        links: [
+          { label: "Why Artsays", to: "/why-artsays" },
+          { label: "AI Art Verification", to: "/commission" },
+          { label: "Careers", to: "/career" },
+          { label: "How to Sell", to: "/how-to-sell" },
+          { label: "Blog / Art Journal", to: "/blogs" },
+          { label: "Affiliate Program", to: "/affiliate-program" },
+          { label: "Licensing Partner", to: "/licensing-partner" },
+          { label: "Partnerships", to: "/partner" },
+          { label: "Commission", to: "/commission" },
+        ],
+      },
     {
       title: "HELP CENTER",
       links: [

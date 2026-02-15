@@ -138,7 +138,7 @@ const CertificationContent = () => {
                     </aside>
 
                     {/* Main Content */}
-                    <main className="flex-grow space-y-8">
+                    <main className="flex-grow min-w-0 space-y-8">
                         {/* Search and Header */}
                         <div className="space-y-4">
                             <div className="relative group">
@@ -163,7 +163,7 @@ const CertificationContent = () => {
                         </div>
 
                         {/* Verified Certificates Section */}
-                        <div className="space-y-6">
+                        <div className="space-y-6 overflow-hidden">
                             <div className="flex items-center justify-between px-2">
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 bg-[#6F4D34]/10 rounded-xl flex items-center justify-center">
