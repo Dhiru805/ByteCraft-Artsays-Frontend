@@ -82,7 +82,7 @@ const Partner = () => {
       <HeroImgPartner />
       <PartnerContent />
       <div className="max-w-[1440px] mx-auto px-4 md:!px-0 py-8">
-        <SponsoredProducts placement="homepage" title="Promoted Products" layout="row" />
+        <SponsoredProducts placement="otherPublicPages" title="Promoted Products" layout="row" />
       </div>
     </div>
   );

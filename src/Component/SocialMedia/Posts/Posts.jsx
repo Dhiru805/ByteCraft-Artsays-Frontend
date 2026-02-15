@@ -11,35 +11,131 @@ import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables.jsx
 import { toast } from "react-toastify";
 import { useAuth } from "../../../AuthContext.jsx";
 
-const SponsoredFeedCard = ({ ad }) => {
+const SponsoredFeedSlider = ({ ads }) => {
   const navigate = useNavigate();
-  const image = ad.images?.[0];
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    if (ads.length <= 1 || isHovered) return;
+    timerRef.current = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % ads.length);
+    }, 5000);
+    return () => clearInterval(timerRef.current);
+  }, [ads.length, isHovered]);
+
+  if (!ads || ads.length === 0) return null;
+    const ad = ads[currentIndex];
+    const image = ad.mainImage;
+    const hasDiscount = ad.marketPrice && ad.finalPrice && ad.marketPrice > ad.finalPrice;
+    const discountPercent = hasDiscount ? Math.round(((ad.marketPrice - ad.finalPrice) / ad.marketPrice) * 100) : 0;
+
   return (
-    <div className="w-full flex flex-col p-2 relative rounded-xl shadow-sm border bg-gradient-to-r from-yellow-50 to-orange-50">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-[10px] font-semibold text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">Sponsored</span>
-        <span className="text-xs text-gray-500">{ad.artistName || "Artist"}</span>
-      </div>
-      {image && (
-        <img
-          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${image}`}
-          alt={ad.title}
-          className="w-full max-h-[400px] object-cover rounded-lg cursor-pointer"
-          onClick={() => navigate(`/product/${ad.productSlug || ad._id}`)}
-        />
-      )}
-      <div className="mt-2 flex justify-between items-center">
-        <div>
-          <h4 className="font-semibold text-sm text-gray-800 line-clamp-1">{ad.title}</h4>
-          <p className="text-xs text-gray-500 line-clamp-1">{ad.description}</p>
+    <div
+      className="w-full rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between px-3 py-2.5 border-b border-gray-100">
+        <div className="flex items-center gap-2.5">
+          <img
+            src={ad.userId?.profilePhoto ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${ad.userId.profilePhoto}` : DEFAULT_PROFILE_IMAGE}
+            alt={ad.userId?.name || "Seller"}
+            className="w-8 h-8 rounded-full object-cover border border-gray-200"
+          />
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold text-gray-900">
+              {ad.userId?.name || ""}{ad.userId?.lastName ? ` ${ad.userId.lastName}` : ""}
+            </span>
+            <span className="text-[9px] font-bold tracking-wide uppercase text-white bg-[#6F4D34] px-1.5 py-0.5 rounded">Ad</span>
+          </div>
         </div>
-        <button
-          onClick={() => navigate(`/product/${ad.productSlug || ad._id}`)}
-          className="text-xs bg-orange-500 text-white px-3 py-1 rounded-full hover:bg-orange-600 whitespace-nowrap"
+        {ads.length > 1 && (
+          <span className="text-[10px] text-gray-400">{currentIndex + 1}/{ads.length}</span>
+        )}
+      </div>
+
+      {/* Image */}
+      <div className="relative w-full aspect-square bg-gray-50 cursor-pointer group" onClick={() => navigate(`/product/${ad.slug || ad._id}`)}>
+          {image ? (
+            <img
+              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${image}`}
+              alt={ad.productName}
+            className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-300">
+            <i className="ri-image-line text-4xl"></i>
+          </div>
+        )}
+        {hasDiscount && (
+          <span className="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+            {discountPercent}% OFF
+          </span>
+        )}
+
+        {/* Navigation arrows */}
+        {ads.length > 1 && (
+          <>
+            <button
+              onClick={(e) => { e.stopPropagation(); setCurrentIndex((prev) => (prev - 1 + ads.length) % ads.length); }}
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 shadow flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <i className="ri-arrow-left-s-line text-sm"></i>
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); setCurrentIndex((prev) => (prev + 1) % ads.length); }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 shadow flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <i className="ri-arrow-right-s-line text-sm"></i>
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Product Info */}
+      <div className="px-3 py-2.5">
+        <h4
+          className="font-semibold text-sm text-gray-900 line-clamp-1 cursor-pointer hover:text-[#6F4D34] transition-colors"
+          onClick={() => navigate(`/product/${ad.slug || ad._id}`)}
         >
-          Shop Now
+          {ad.productName || "Untitled Product"}
+        </h4>
+
+        {/* Price */}
+        <div className="flex items-center gap-2 mt-1.5">
+          {hasDiscount && (
+            <span className="text-xs text-gray-400 line-through">&#8377;{ad.marketPrice}</span>
+          )}
+          {ad.finalPrice && (
+            <span className="text-sm font-bold text-[#6F4D34]">&#8377;{ad.finalPrice}</span>
+          )}
+        </div>
+
+        {/* Buy Now Button */}
+        <button
+          onClick={() => navigate(`/product/${ad.slug || ad._id}`)}
+          className="w-full mt-2.5 py-2 bg-[#6F4D34] text-white text-sm font-semibold rounded-lg hover:bg-[#5a3d28] transition-colors flex items-center justify-center gap-1.5"
+        >
+          <i className="ri-shopping-bag-line text-sm"></i>
+          Buy Now
         </button>
       </div>
+
+      {/* Dots */}
+      {ads.length > 1 && (
+        <div className="flex justify-center gap-1 pb-2">
+          {ads.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentIndex(i)}
+              className={`rounded-full transition-all duration-300 ${i === currentIndex ? "w-4 h-1.5 bg-[#6F4D34]" : "w-1.5 h-1.5 bg-gray-300 hover:bg-gray-400"}`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -223,8 +319,8 @@ const Post = () => {
   useEffect(() => {
     const fetchSponsoredAds = async () => {
       try {
-        const res = await getAPI("/api/campaigns/ads?placement=communityFeed&limit=5");
-        if (res?.data?.ads) setSponsoredAds(res.data.ads);
+const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed", {}, true, false);
+          if (res?.data?.data) setSponsoredAds(res.data.data);
       } catch (err) {
         console.error("Error fetching sponsored ads:", err);
       }
@@ -1278,8 +1374,8 @@ const Post = () => {
           <React.Fragment key={post._id}>
             {/* Insert sponsored ad after every 5th post */}
             {idx > 0 && idx % 5 === 0 && sponsoredAds.length > 0 && (
-              <SponsoredFeedCard ad={sponsoredAds[Math.floor(idx / 5 - 1) % sponsoredAds.length]} />
-            )}
+                <SponsoredFeedSlider ads={sponsoredAds} />
+              )}
             <div className="w-full flex flex-col p-2 relative rounded-xl shadow-sm border">
             {/* Post Header */}
             <div className="flex justify-between items-center">
