@@ -39,7 +39,7 @@ const ProductSection = ({
         case "newest":
           return new Date(b.createdAt) - new Date(a.createdAt)
         case "oldest":
-          return new Date(a.createdAt) - new Date(a.createdAt)
+          return new Date(a.createdAt) - new Date(b.createdAt)
         case "price-low":
           return (a.finalPrice || 0) - (b.finalPrice || 0)
         case "price-high":

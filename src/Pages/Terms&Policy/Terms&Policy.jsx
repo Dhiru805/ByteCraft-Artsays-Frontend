@@ -3,8 +3,9 @@ import HeroImgTermsPolicy from "./hero-img/hero-img";
 import TermsPolicySidebar from "./Terms&PolicySidebar/Terms&PolicySidebar";
 import TermsPolicyContent from "./TermsPolicyContent/TermsPolicyContent";
 import { Helmet } from "react-helmet-async";
-import axiosInstance from "../../api/axiosConfig"; 
+import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
+import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 
 const TermsPolicyPage = () => {
   const [selectedPolicyId, setSelectedPolicyId] = useState(null);
@@ -39,13 +40,13 @@ const TermsPolicyPage = () => {
 
   return (
     <div className="w-full bg-gray-50 min-h-screen font-[poppins]">
-     
+
       <Helmet>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="robots" content="index, follow" />
         <meta name="title" content={seoData.metaTitle} />
-        
+
         <title>{seoData.metaTitle}</title>
         <meta name="description" content={seoData.metaDescription} />
         <meta name="keywords" content={seoData.metaKeywords} />
@@ -79,6 +80,9 @@ const TermsPolicyPage = () => {
             <TermsPolicyContent selectedPolicyId={selectedPolicyId} />
           </main>
         </div>
+      </div>
+      <div className="max-w-[1440px] mx-auto px-4 md:!px-0 py-8">
+        <SponsoredProducts placement="otherPublicPages" title="Promoted Products" layout="row" />
       </div>
     </div>
   );

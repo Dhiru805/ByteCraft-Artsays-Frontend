@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
 import { useAuth } from "../../AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
+import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 
 const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 
@@ -568,9 +569,13 @@ const BidDetails = () => {
             {activeTab === "reviews" && <ReviewsList reviews={productReviews} resolveMediaUrl={resolveMediaUrl} onImageClick={setPreviewImage} />}
           </div>
         </div>
-      </div>
+        </div>
 
-      {previewImage && (
+        <div className="max-w-[1440px] mx-auto px-4 md:!px-0 py-8">
+            <SponsoredProducts placement="otherPublicPages" title="Promoted Products" layout="row" />
+        </div>
+
+        {previewImage && (
         <div className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 md:p-10 cursor-zoom-out" onClick={() => setPreviewImage(null)}>
           <div className="relative max-w-5xl max-h-full flex items-center justify-center">
             <button onClick={(e) => { e.stopPropagation(); setPreviewImage(null); }} className="absolute -top-12 right-0 md:-right-12 w-10 h-10 bg-white/10 text-white rounded-full hover:bg-white/20 transition-all flex items-center justify-center z-50">✕</button>

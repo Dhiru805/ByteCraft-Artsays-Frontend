@@ -34,7 +34,6 @@ import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { toast } from "react-toastify";
 import axiosInstance from "../../api/axiosConfig";
-// import NavBar from "../Home/HomeComponents/NavBar";
 
 import Hero from "./Hero/Hero";
 import BrowseCategories from "./BrowseCategories/BrowseCategories";
@@ -46,6 +45,7 @@ import WhyArtsaysDifferent from "./WhyArtsaysDifferent/WhyArtsaysDifferent.jsx";
 import HomeChallenges from "./HomeChallenges/HomeChallenges";
 import ArtIcon from "./ArtIcon/ArtIcon";
 import HowToSell from "./HowToSell/HowToSell";
+import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 
 const Homepage = () => {
   const [seoData, setSeoData] = useState({
@@ -116,8 +116,14 @@ const Homepage = () => {
 
       <Hero />
       <BrowseCategories />
+      <div className="max-w-[1440px] mx-auto px-4 md:!px-0">
+        <SponsoredProducts placement="homepage" title="Promoted Products" layout="row" />
+      </div>
       <WhyFromArtsays />
       <BiddingArena />
+      <div className="max-w-[1440px] mx-auto px-4 md:!px-0">
+        <SponsoredProducts placement="homepage" title="Promoted Products" layout="row" />
+      </div>
       <HowToBuy />
       <DiscoverArtist />
       <WhyArtsaysDifferent />

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import axiosInstance from "../../api/axiosConfig";
+import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 
 import HeroImgChallenges from './hero-img/hero-img';
 import ChallengesContent from './ChallengesContent/ChallengesContent'
@@ -73,6 +74,9 @@ const Challenge = () => {
 
       <HeroImgChallenges />
       <ChallengesContent />
+      <div className="max-w-[1440px] mx-auto px-4 md:!px-0 py-8">
+        <SponsoredProducts placement="otherPublicPages" title="Promoted Products" layout="row" />
+      </div>
     </div>
   );
 };

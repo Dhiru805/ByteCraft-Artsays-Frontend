@@ -20,6 +20,7 @@ import postAPI from "../../../api/postAPI";
 import getAPI from "../../../api/getAPI";
 import JoinChallengeSkeleton from "../../../Component/Skeleton/JoinChallengeSkeleton";
 import "./JoinChallenges.css";
+import SponsoredProducts from "../../../Component/Common/SponsoredProducts";
 
 const JoinChallenges = () => {
   const location = useLocation();
@@ -401,6 +402,9 @@ const JoinChallenges = () => {
             </div>
           </main>
         </div>
+      </div>
+      <div className="max-w-[1440px] mx-auto px-4 md:!px-0 py-8">
+        <SponsoredProducts placement="homepage" title="Promoted Products" layout="row" />
       </div>
     </div>
   );

@@ -202,9 +202,15 @@ const ApprovedProduct = () => {
                                                 <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(product.sellingPrice)).replace(/\.00$/, '')}</td>
                                                 <td>{new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
                                                 <td>
-                                                    <button className={`btn btn-sm ${product.status === 'Pending' ? 'btn-outline-warning' : product.status === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
-                                                        {product.status}
-                                                    </button>
+                                                    {product.quantity === 0 ? (
+                                                        <button className="btn btn-sm btn-outline-danger">
+                                                            Out of Stock
+                                                        </button>
+                                                    ) : (
+                                                        <button className={`btn btn-sm ${product.status === 'Pending' ? 'btn-outline-warning' : product.status === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
+                                                            {product.status}
+                                                        </button>
+                                                    )}
                                                 </td>
                                                 <td>
                                                     <button

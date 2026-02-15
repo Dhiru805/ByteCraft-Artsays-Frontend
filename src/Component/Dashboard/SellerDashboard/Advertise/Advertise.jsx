@@ -224,10 +224,12 @@ const [loading,setLoading]=useState(false);
                           }
                         })();
 
-                        return (
-                          <tr key={product._id}>
-                            <td>{index + 1}</td>
-                            <td>{product.campaignName}</td>
+                          const isOutOfStock = product.selectedProductIds?.every(p => (p.quantity || 0) <= 0);
+
+                          return (
+                            <tr key={product._id}>
+                              <td>{index + 1}</td>
+                              <td>{product.campaignName}</td>
                             <td>
 
                               <img
@@ -264,13 +266,12 @@ const [loading,setLoading]=useState(false);
                                 >
                                   <i className="fa fa-eye"></i>
                                 </button>
-                                {product.status?.toLowerCase() !== "closed" && (
-                                  <>
-                                    {product.status?.toLowerCase() === "draft" && (
+                                  {product.status?.toLowerCase() !== "closed" && (
+                                    <>
                                       <button
                                         type="button"
                                         className="btn btn-outline-info btn-sm"
-                                        title="Edit"
+                                        title="Modify"
                                         onClick={() =>
                                           navigate("/seller/advertise/sponser", {
                                             state: { campaign: product }
@@ -279,7 +280,6 @@ const [loading,setLoading]=useState(false);
                                       >
                                         <i className="fa fa-pencil"></i>
                                       </button>
-                                    )}
 
                                     <button
                                       type="button"
@@ -290,16 +290,16 @@ const [loading,setLoading]=useState(false);
                                       <i className="fa fa-trash-o"></i>
                                     </button>
 
-                                    {product.status?.toLowerCase() !== "draft" && (
-                                      <button
-                                        type="button"
-                                        className="btn btn-outline-dark btn-sm"
-                                        title="Close"
-                                        onClick={() => handleCloseCampaign(product._id)}
-                                      >
-                                        <i className="fas fa-times-circle"></i>
-                                      </button>
-                                    )}
+                                      {product.status?.toLowerCase() !== "draft" && isOutOfStock && (
+                                        <button
+                                          type="button"
+                                          className="btn btn-outline-dark btn-sm"
+                                          title="Close (Out of Stock)"
+                                          onClick={() => handleCloseCampaign(product._id)}
+                                        >
+                                          <i className="fas fa-times-circle"></i>
+                                        </button>
+                                      )}
                                   </>
                                 )}
                               </div>

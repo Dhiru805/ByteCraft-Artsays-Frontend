@@ -1268,6 +1268,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import getAPI from "../../../api/getAPI";
+
 import { Heart, ShoppingCart, Star, Search } from "lucide-react";
 // import { FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -1639,7 +1640,9 @@ const BrowseCategories = () => {
           </div>
         </div>
 
-        {/* Products Grid - Using Premium Card Design */}
+
+
+          {/* Products Grid - Using Premium Card Design */}
         {currentItems.length > 0 ? (
             <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:overflow-visible">
               {currentItems.map((product, index) => {
@@ -1811,10 +1814,11 @@ const BrowseCategories = () => {
               Clear All Filters
             </button>
           </div>
-        )}
+          )}
 
 
-      </div>
+
+        </div>
     </div>
   );
 };

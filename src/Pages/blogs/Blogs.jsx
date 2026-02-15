@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import "./Blogs.css";
 import { ListFilter, ChevronLeft, ChevronRight, Search, Clock, Tag, SortAsc, X } from "lucide-react";
 import getAPI from "../../api/getAPI";
+import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 
 import mainImage from "../../assets/blogGrid/blog-grid-main.png";
 import BlogCard from "./BlogCard";
@@ -9,19 +10,19 @@ import { BlogGridSkeleton } from "../../Component/Skeleton/Blog/BlogSkeleton";
 
 // Debounce hook
 const useDebounce = (value, delay) => {
-  const [debouncedValue, setDebouncedValue] = useState(value);
+    const [debouncedValue, setDebouncedValue] = useState(value);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedValue(value);
+        }, delay);
 
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [value, delay]);
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [value, delay]);
 
-  return debouncedValue;
+    return debouncedValue;
 };
 
 function Blogs() {
@@ -40,10 +41,10 @@ function Blogs() {
 
     const ITEMS_PER_PAGE = 12;
 
-   
+
     const blogGridRef = useRef(null);
 
-   
+
     const fetchBlogsData = async () => {
         setLoading(true);
         try {
@@ -53,7 +54,7 @@ function Blogs() {
             if (selectedSort) params.append("sort", selectedSort);
             if (debouncedSearch) params.append("search", debouncedSearch);
             if (selectedReadingTime) params.append("readingTime", selectedReadingTime);
-            
+
             if (params.toString()) {
                 url += `?${params.toString()}`;
             }
@@ -105,7 +106,7 @@ function Blogs() {
         fetchCategories();
     }, []);
 
-   
+
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
     const currentBlogs = blogs.slice(startIndex, endIndex);
@@ -206,24 +207,21 @@ function Blogs() {
                                     ].map((option) => (
                                         <label key={option.id} className="flex items-center group cursor-pointer">
                                             <div className="relative flex items-center">
-                                                <input 
-                                                    type="radio" 
-                                                    name="sort" 
+                                                <input
+                                                    type="radio"
+                                                    name="sort"
                                                     className="sr-only"
-                                                    checked={selectedSort === option.id} 
-                                                    onChange={() => handleSortChange(option.id)} 
+                                                    checked={selectedSort === option.id}
+                                                    onChange={() => handleSortChange(option.id)}
                                                 />
-                                                <div className={`w-5 h-5 border-2 rounded-full transition-all ${
-                                                    selectedSort === option.id ? "border-[#6F4D34] bg-[#6F4D34]" : "border-gray-300 group-hover:border-[#6F4D34]"
-                                                }`}>
-                                                    <div className={`w-2 h-2 bg-white rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform ${
-                                                        selectedSort === option.id ? "scale-100" : "scale-0"
-                                                    }`} />
+                                                <div className={`w-5 h-5 border-2 rounded-full transition-all ${selectedSort === option.id ? "border-[#6F4D34] bg-[#6F4D34]" : "border-gray-300 group-hover:border-[#6F4D34]"
+                                                    }`}>
+                                                    <div className={`w-2 h-2 bg-white rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform ${selectedSort === option.id ? "scale-100" : "scale-0"
+                                                        }`} />
                                                 </div>
                                             </div>
-                                            <span className={`ml-3 text-sm font-medium transition-colors ${
-                                                selectedSort === option.id ? "text-[#6F4D34]" : "text-gray-600 group-hover:text-gray-900"
-                                            }`}>
+                                            <span className={`ml-3 text-sm font-medium transition-colors ${selectedSort === option.id ? "text-[#6F4D34]" : "text-gray-600 group-hover:text-gray-900"
+                                                }`}>
                                                 {option.label}
                                             </span>
                                         </label>
@@ -241,15 +239,14 @@ function Blogs() {
                                     {categories.map((cat) => (
                                         <label key={cat._id} className="flex items-center group cursor-pointer">
                                             <div className="relative flex items-center">
-                                                <input 
-                                                    type="checkbox" 
+                                                <input
+                                                    type="checkbox"
                                                     className="sr-only"
-                                                    checked={selectedCategory === cat.name} 
-                                                    onChange={() => handleCategoryChange(cat.name)} 
+                                                    checked={selectedCategory === cat.name}
+                                                    onChange={() => handleCategoryChange(cat.name)}
                                                 />
-                                                <div className={`w-5 h-5 border-2 rounded-md transition-all flex items-center justify-center ${
-                                                    selectedCategory === cat.name ? "border-[#6F4D34] bg-[#6F4D34]" : "border-gray-300 group-hover:border-[#6F4D34]"
-                                                }`}>
+                                                <div className={`w-5 h-5 border-2 rounded-md transition-all flex items-center justify-center ${selectedCategory === cat.name ? "border-[#6F4D34] bg-[#6F4D34]" : "border-gray-300 group-hover:border-[#6F4D34]"
+                                                    }`}>
                                                     {selectedCategory === cat.name && (
                                                         <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
@@ -257,9 +254,8 @@ function Blogs() {
                                                     )}
                                                 </div>
                                             </div>
-                                            <span className={`ml-3 text-sm font-medium transition-colors ${
-                                                selectedCategory === cat.name ? "text-[#6F4D34]" : "text-gray-600 group-hover:text-gray-900"
-                                            }`}>
+                                            <span className={`ml-3 text-sm font-medium transition-colors ${selectedCategory === cat.name ? "text-[#6F4D34]" : "text-gray-600 group-hover:text-gray-900"
+                                                }`}>
                                                 {cat.name}
                                             </span>
                                         </label>
@@ -281,15 +277,14 @@ function Blogs() {
                                     ].map((range) => (
                                         <label key={range.id} className="flex items-center group cursor-pointer">
                                             <div className="relative flex items-center">
-                                                <input 
-                                                    type="checkbox" 
+                                                <input
+                                                    type="checkbox"
                                                     className="sr-only"
-                                                    checked={selectedReadingTime === range.id} 
-                                                    onChange={() => handleReadingTimeChange(range.id)} 
+                                                    checked={selectedReadingTime === range.id}
+                                                    onChange={() => handleReadingTimeChange(range.id)}
                                                 />
-                                                <div className={`w-5 h-5 border-2 rounded-md transition-all flex items-center justify-center ${
-                                                    selectedReadingTime === range.id ? "border-[#6F4D34] bg-[#6F4D34]" : "border-gray-300 group-hover:border-[#6F4D34]"
-                                                }`}>
+                                                <div className={`w-5 h-5 border-2 rounded-md transition-all flex items-center justify-center ${selectedReadingTime === range.id ? "border-[#6F4D34] bg-[#6F4D34]" : "border-gray-300 group-hover:border-[#6F4D34]"
+                                                    }`}>
                                                     {selectedReadingTime === range.id && (
                                                         <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
@@ -297,9 +292,8 @@ function Blogs() {
                                                     )}
                                                 </div>
                                             </div>
-                                            <span className={`ml-3 text-sm font-medium transition-colors ${
-                                                selectedReadingTime === range.id ? "text-[#6F4D34]" : "text-gray-600 group-hover:text-gray-900"
-                                            }`}>
+                                            <span className={`ml-3 text-sm font-medium transition-colors ${selectedReadingTime === range.id ? "text-[#6F4D34]" : "text-gray-600 group-hover:text-gray-900"
+                                                }`}>
                                                 {range.label}
                                             </span>
                                         </label>
@@ -343,7 +337,7 @@ function Blogs() {
                                     <p className="text-gray-500 max-w-sm mx-auto">
                                         We couldn't find any articles matching your current filters. Try adjusting your search or category selection.
                                     </p>
-                                    <button 
+                                    <button
                                         onClick={() => {
                                             setSelectedCategory("");
                                             setSelectedSort("newest");
@@ -386,11 +380,10 @@ function Blogs() {
                                                 <button
                                                     key={page}
                                                     onClick={() => setCurrentPage(page)}
-                                                    className={`w-11 h-11 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
-                                                        page === currentPage
-                                                            ? "bg-[#6F4D34] text-white shadow-md shadow-[#6F4D34]/20"
-                                                            : "text-gray-600 hover:bg-gray-50"
-                                                    }`}
+                                                    className={`w-11 h-11 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${page === currentPage
+                                                        ? "bg-[#6F4D34] text-white shadow-md shadow-[#6F4D34]/20"
+                                                        : "text-gray-600 hover:bg-gray-50"
+                                                        }`}
                                                 >
                                                     {page}
                                                 </button>
@@ -413,7 +406,11 @@ function Blogs() {
 
                 </div>
             </div>
+            <div className="max-w-[1440px] mx-auto px-4 md:!px-0 py-8">
+                <SponsoredProducts placement="otherPublicPages" title="Promoted Products" layout="row" />
+            </div>
         </div>
+
     );
 }
 

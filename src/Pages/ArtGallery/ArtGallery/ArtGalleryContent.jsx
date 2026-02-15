@@ -290,7 +290,7 @@ const ArtGalleryContent = () => {
               placeholder="Search masterpieces, artists, or styles in our gallery..."
               value={filters.search}
               onChange={(e) => handleFilterChange("search", e.target.value)}
-              className="w-full p-6 pl-16 bg-white border border-gray-200 rounded-full shadow-sm focus:outline-none focus:ring-4 focus:ring-[#6F4D34]/5 focus:border-[#6F4D34] transition-all text-lg placeholder:text-gray-400"
+              className="w-full p-6 pl-4 bg-white border border-gray-200 rounded-full shadow-sm focus:outline-none focus:ring-4 focus:ring-[#6F4D34]/5 focus:border-[#6F4D34] transition-all text-lg placeholder:text-gray-400"
             />
           </div>
 

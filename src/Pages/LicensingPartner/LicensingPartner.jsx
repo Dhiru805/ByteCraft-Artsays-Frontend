@@ -18,6 +18,7 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import axiosInstance from "../../api/axiosConfig";
+import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 
 import HeroImgLicensingPartner from "./hero-img/hero-img";
 import LicensingPartnerContent from "./LicensingPartnerContent/LicensingPartnerContent";
@@ -58,15 +59,15 @@ const LicensingPartner = () => {
     fetchSEOMetadata();
   }, []);
 
-    return (
-      <div className="w-full font-[poppins]">
-       
-        <Helmet>
+  return (
+    <div className="w-full font-[poppins]">
+
+      <Helmet>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="robots" content="index, follow" />
         <meta name="title" content={seoData.metaTitle} />
-        
+
         <title>{seoData.metaTitle}</title>
         <meta name="description" content={seoData.metaDescription} />
         <meta name="keywords" content={seoData.metaKeywords} />
@@ -87,6 +88,9 @@ const LicensingPartner = () => {
 
       <HeroImgLicensingPartner />
       <LicensingPartnerContent />
+      <div className="max-w-[1440px] mx-auto px-4 md:!px-0 py-8">
+        <SponsoredProducts placement="homepage" title="Promoted Products" layout="row" />
+      </div>
     </div>
   );
 };

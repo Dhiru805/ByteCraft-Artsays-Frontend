@@ -29,6 +29,7 @@ import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { ChevronRight } from "lucide-react";
 import axiosInstance from "../../api/axiosConfig";
+import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 import getAPI from "../../api/getAPI";
 
 import HeroImgAboutUs from "./hero-img/hero-img";
@@ -159,10 +160,11 @@ const AboutUs = () => {
             <DeliveryProcess />
             <MeetTeam />
             <Testimonials />
+            </div>
           </div>
+          <SponsoredProducts placement="otherPublicPages" title="Sponsored Products" />
         </div>
       </div>
-    </div>
   );
 };
 

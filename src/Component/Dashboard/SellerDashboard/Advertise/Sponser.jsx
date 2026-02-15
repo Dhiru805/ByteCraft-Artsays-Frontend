@@ -286,10 +286,10 @@ function Sponser() {
     bidAdjustments: {
       homepage: 0,
       topOfSearch: 0,
-      restOfSearch: 0,
-      topOfBrowse: 0,
-      restOfBrowse: 0,
       productPage: 0,
+      blogPage: 0,
+      communityFeed: 0,
+      communitySidebar: 0,
     },
   })
 

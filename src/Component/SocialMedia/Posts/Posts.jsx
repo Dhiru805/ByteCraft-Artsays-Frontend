@@ -10,6 +10,39 @@ import { timeAgo } from "./../../../utils/TimeAgo.js";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables.jsx";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../AuthContext.jsx";
+
+const SponsoredFeedCard = ({ ad }) => {
+  const navigate = useNavigate();
+  const image = ad.images?.[0];
+  return (
+    <div className="w-full flex flex-col p-2 relative rounded-xl shadow-sm border bg-gradient-to-r from-yellow-50 to-orange-50">
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-[10px] font-semibold text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">Sponsored</span>
+        <span className="text-xs text-gray-500">{ad.artistName || "Artist"}</span>
+      </div>
+      {image && (
+        <img
+          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${image}`}
+          alt={ad.title}
+          className="w-full max-h-[400px] object-cover rounded-lg cursor-pointer"
+          onClick={() => navigate(`/product/${ad.productSlug || ad._id}`)}
+        />
+      )}
+      <div className="mt-2 flex justify-between items-center">
+        <div>
+          <h4 className="font-semibold text-sm text-gray-800 line-clamp-1">{ad.title}</h4>
+          <p className="text-xs text-gray-500 line-clamp-1">{ad.description}</p>
+        </div>
+        <button
+          onClick={() => navigate(`/product/${ad.productSlug || ad._id}`)}
+          className="text-xs bg-orange-500 text-white px-3 py-1 rounded-full hover:bg-orange-600 whitespace-nowrap"
+        >
+          Shop Now
+        </button>
+      </div>
+    </div>
+  );
+};
 const CommentInput = ({ post, userId, setPosts, inputRef }) => {
   const [text, setText] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -159,6 +192,7 @@ const Post = () => {
   const [showCollaborators, setShowCollaborators] = useState(false);
   const [allCollaboraters, setAllCollaboraters] = useState([]);
   const isMobile = window.innerWidth < 1024; // Tailwind lg breakpoint
+  const [sponsoredAds, setSponsoredAds] = useState([]);
 
   // Pagination states
   const [page, setPage] = useState(1);
@@ -185,6 +219,19 @@ const Post = () => {
   const normalPost = posts.filter((pro) => !pro.forProduct);
   const finalPost = [...productsPost, ...normalPost];
   const activePost = activeIndex !== null ? finalPost[activeIndex] : null;
+
+  useEffect(() => {
+    const fetchSponsoredAds = async () => {
+      try {
+        const res = await getAPI("/api/campaigns/ads?placement=communityFeed&limit=5");
+        if (res?.data?.ads) setSponsoredAds(res.data.ads);
+      } catch (err) {
+        console.error("Error fetching sponsored ads:", err);
+      }
+    };
+    fetchSponsoredAds();
+  }, []);
+
   useEffect(() => {
     const shouldLockScroll = activePost || reportPopupOpen || tipPopupOpen || deleteConfirmId;
 
@@ -1227,8 +1274,13 @@ const Post = () => {
       )}
 
       <div className="w-full space-y-2">
-        {finalPost?.map((post) => (
-          <div key={post._id} className="w-full flex flex-col p-2 relative rounded-xl shadow-sm border">
+        {finalPost?.map((post, idx) => (
+          <React.Fragment key={post._id}>
+            {/* Insert sponsored ad after every 5th post */}
+            {idx > 0 && idx % 5 === 0 && sponsoredAds.length > 0 && (
+              <SponsoredFeedCard ad={sponsoredAds[Math.floor(idx / 5 - 1) % sponsoredAds.length]} />
+            )}
+            <div className="w-full flex flex-col p-2 relative rounded-xl shadow-sm border">
             {/* Post Header */}
             <div className="flex justify-between items-center">
               <div className="flex gap-2 items-center">
@@ -1650,12 +1702,13 @@ const Post = () => {
                     <p className="text-gray-500 text-sm italic p-3">
                       Comments are restricted
                     </p>
-                  )}
+                    )}
               </div>
             </div>
-          ))}
+          </React.Fragment>
+        ))}
 
-          {/* Infinite Scroll Loading Indicator */}
+        {/* Infinite Scroll Loading Indicator */}
           <div ref={loadMoreRef} className="w-full py-4 flex justify-center">
             {loadingMore && (
               <div className="flex flex-col items-center gap-2">

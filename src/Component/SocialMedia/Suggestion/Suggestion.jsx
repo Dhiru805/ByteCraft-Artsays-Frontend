@@ -7,10 +7,12 @@ import "../Create-post/Post.css";
 import { useNavigate } from "react-router-dom";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 import MediaSideSuggestionSkele from "../../Skeleton/Home/MedisSideSuggestionSkele";
+
+const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 const Suggestion = () => {
   const [users, setUsers] = useState([]);
   const [activeAdIndex, setActiveAdIndex] = useState(0);
-  // const [mainCategories, setMainCategories] = useState([]);
+  const [sidebarAds, setSidebarAds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isNarrow, setIsNarrow] = useState(
     typeof window !== "undefined" ? window.innerWidth <= 1024 : false
@@ -30,65 +32,27 @@ const Suggestion = () => {
     "https://images.pexels.com/photos/1585325/pexels-photo-1585325.jpeg?cs=srgb&dl=pexels-steve-1585325.jpg&fm=jpg",
     "https://i0.wp.com/montessorifromtheheart.com/wp-content/uploads/2023/03/Straw-Print-Flower-Painting-Craft.jpg?resize=1080%2C1350&ssl=1",
   ];
-  // helper: normalize array -> [ids]
-  // const toIdArray = (arr) =>
-  //   Array.isArray(arr)
-  //     ? arr.map((x) => (typeof x === "string" ? x : x?._id)).filter(Boolean)
-  //     : [];
 
-  // helper: avoid needless setState loops
-  // const sameIds = (a, b) => {
-  //   if (a.length !== b.length) return false;
-  //   const sa = [...a].sort().join(",");
-  //   const sb = [...b].sort().join(",");
-  //   return sa === sb;
-  // };
+  // Fetch sidebar ads from campaigns
+  useEffect(() => {
+    const fetchSidebarAds = async () => {
+      try {
+        const res = await getAPI(`/api/campaigns/ads?placement=communitySidebar&limit=3`);
+        if (res?.data?.data?.length > 0) {
+          setSidebarAds(res.data.data);
+        }
+      } catch (err) {
+        console.error("Error fetching sidebar ads:", err);
+      }
+    };
+    fetchSidebarAds();
+  }, []);
 
-  // useEffect(() => {
-  //   if (!userId || !userType) return;
+  // Use campaign images if available, otherwise fallback
+  const displayAdImages = sidebarAds.length > 0
+    ? sidebarAds.map(ad => `${imageBaseURL}${ad.mainImage}`)
+    : adImages;
 
-  //   let cancelled = false;
-  //   (async () => {
-  //     try {
-  //       if (userType === "Seller") {
-  //         const res = await getAPI(`/auth/getsellartwork/${userId}`);
-  //         console.log("get seller artwork response:", res);
-  //         const ids = toIdArray(res?.data?.artwork?.categoryOfArt);
-  //         if (!cancelled) {
-  //           setMainCategories((prev) => (sameIds(prev, ids) ? prev : ids));
-  //         }
-  //       } else if (userType === "Artist") {
-  //         const res = await getAPI(`/auth/getartistdetails/${userId}`);
-  //         console.log("get artist details response:", res);
-  //         const ids = toIdArray(res?.data?.artCategories);
-  //         if (!cancelled) {
-  //           setMainCategories((prev) => (sameIds(prev, ids) ? prev : ids));
-  //         }
-  //       } else if (userType === "Buyer") {
-  //         const res = await getAPI(`/auth/getpreferences/${userId}`);
-  //         console.log("get buyer preferences response:", res);
-  //         const first = res?.data?.data?.preferredArtCategories?.[0];
-
-  //         const ids = first ? toIdArray([first]) : [];
-  //         if (!cancelled) {
-  //           setMainCategories((prev) => (sameIds(prev, ids) ? prev : ids));
-  //         }
-  //       }
-  //     } catch (err) {
-  //       console.error("Error loading categories:", err);
-  //       toast.error("Failed to load categories");
-  //     }
-  //   })();
-
-  //   return () => {
-  //     cancelled = true;
-  //   };
-  // }, [userId, userType, mainCategories]);
-
-  // optional: see the **updated** value
-  // useEffect(() => {
-  //   console.log("mainCategories (IDs):", mainCategories);
-  // }, [mainCategories]);
   useEffect(() => {
     const fetchSuggestedUsers = async () => {
       try {
@@ -253,13 +217,18 @@ const Suggestion = () => {
 
       {/* Ad Section */}
       <div className="mt-3 w-full flex flex-col">
+        <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold mb-1 ml-1">Sponsored</p>
         <div className="flex border-4 border-[#4C3427] bg-[#4C3427] mb-3 rounded-xl overflow-hidden h-40 w-full">
-          {adImages.map((src, idx) => {
+          {displayAdImages.map((src, idx) => {
             const isActive = idx === activeAdIndex;
+            const adProduct = sidebarAds[idx];
             return (
               <div
                 key={idx}
-                onClick={() => setActiveAdIndex(idx)}
+                onClick={() => {
+                  setActiveAdIndex(idx);
+                  if (adProduct) navigate(`/product-details/${adProduct.productName?.toLowerCase().replace(/\s+/g, '-')}/${adProduct._id}`);
+                }}
                 className={`cursor-pointer transition-all duration-300 ease-in overflow-hidden ${idx === 0 ? "border-l-0" : "border-l-4 border-l-[#2C211B]"
                   }`}
                 style={{
@@ -270,7 +239,7 @@ const Suggestion = () => {
               >
                 <img
                   src={src}
-                  alt={`ad-${idx}`}
+                  alt={adProduct?.productName || `ad-${idx}`}
                   className="w-full h-full object-cover rounded-lg"
                   draggable={false}
                 />
@@ -280,12 +249,10 @@ const Suggestion = () => {
         </div>
 
         <p className="w-full text-sm text-[#564138] p-1.5 rounded-xl border-2 border-[#4C3427] font-bold text-[#333]">
-          The art drop you didn’t know you needed!!
+          {sidebarAds.length > 0 && sidebarAds[activeAdIndex]
+            ? sidebarAds[activeAdIndex].productName
+            : "The art drop you didn't know you needed!!"}
         </p>
-        {/* 
-        <button className="text-xs mt-2 sm:text-sm w-full font-semibold text-white bg-[#6F4D34] px-3 sm:px-4 py-2 rounded hover:bg-[#cc3e0e] transition">
-          Explore Now
-        </button> */}
       </div>
     </div>
   );

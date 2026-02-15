@@ -264,14 +264,12 @@ import { useState, useEffect } from "react"
 
 const BidAdjustmentsSection = ({ initialBidAdjustments, onUpdateBidAdjustments, setIsBidAdjustmentValid }) => {
   const [bidAdjustments, setBidAdjustments] = useState(
-    initialBidAdjustments || {
+      initialBidAdjustments || {
       homepage: 0,
-      topOfSearch: 0,
-      restOfSearch: 0,
-      topOfBrowse: 0,
-      restOfBrowse: 0,
-      productPage: 0,
-    },
+          otherPublicPages: 0,
+          communityFeed: 0,
+          communitySidebar: 0,
+        },
   )
   const [showBusinessBoost, setShowBusinessBoost] = useState(true)
   const [enableBusinessBoost, setEnableBusinessBoost] = useState(false)
@@ -279,16 +277,10 @@ const BidAdjustmentsSection = ({ initialBidAdjustments, onUpdateBidAdjustments, 
   const [totalError, setTotalError] = useState(null);
 
 useEffect(() => {
-    if (initialBidAdjustments) {
-      setBidAdjustments(initialBidAdjustments);
-    }
-  }, [initialBidAdjustments]);
-
-useEffect(() => {
-  if (initialBidAdjustments) {
-    setBidAdjustments(initialBidAdjustments);
-  }
-}, [initialBidAdjustments]);
+      if (initialBidAdjustments) {
+        setBidAdjustments(initialBidAdjustments);
+      }
+    }, [initialBidAdjustments]);
 
 const handleBidAdjustmentChange = (placement, value) => {
   const intValue = parseInt(value) || 0;
@@ -336,23 +328,15 @@ const handleBidAdjustmentChange = (placement, value) => {
   const resetBidAdjustments = () => {
     const defaultAdjustments = {
       homepage: 0,
-      topOfSearch: 0,
-      restOfSearch: 0,
-      topOfBrowse: 0,
-      restOfBrowse: 0,
-      productPage: 0,
-    };
-    setBidAdjustments(defaultAdjustments);
+          otherPublicPages: 0,
+          communityFeed: 0,
+          communitySidebar: 0,
+        };
+      setBidAdjustments(defaultAdjustments);
     setErrors({});
     setTotalError(null);
     if (setIsBidAdjustmentValid) setIsBidAdjustmentValid(false);
   };
-
-  useEffect(() => {
-    if (typeof onUpdateBidAdjustments === "function") {
-      onUpdateBidAdjustments.resetBidAdjustments = resetBidAdjustments;
-    }
-  }, [onUpdateBidAdjustments]);
 
   const InfoIcon = ({ tooltip }) => (
     <span
@@ -367,13 +351,11 @@ const handleBidAdjustmentChange = (placement, value) => {
   )
 
   const placementLabels = {
-    homepage: "Homepage",
-    topOfSearch: "Top of search page",
-    restOfSearch: "Rest of search page",
-    topOfBrowse: "Top of browse page",
-    restOfBrowse: "Rest of browse page",
-    productPage: "Product page",
-  }
+        homepage: "Homepage",
+        otherPublicPages: "Other public pages",
+        communityFeed: "Community feed",
+        communitySidebar: "Community sidebar",
+      }
 
   return (
     <div className="card p-3 mb-4">

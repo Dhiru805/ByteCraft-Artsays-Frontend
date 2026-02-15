@@ -156,7 +156,7 @@ const CertificationContent = () => {
                                     {pageData.webpageHeading || "Certification"}
                                 </h1>
                                 <div className="w-20 h-1.5 bg-[#6F4D34] rounded-full mb-6" />
-                                <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-3xl font-medium">
+                                <p className="text-lg md:text-xl text-gray-600 leading-relaxed font-medium">
                                     {pageData.webpageDescription || "Showcase authenticity and build trust with verified certifications."}
                                 </p>
                             </div>

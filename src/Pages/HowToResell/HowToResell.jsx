@@ -3,6 +3,7 @@ import HeroImgHowToResell from "./hero-img/hero-img";
 import HowToResellContent from "./HowToResellContent/HowToResellContent";
 import { Helmet } from "react-helmet-async";
 import axiosInstance from "../../api/axiosConfig";
+import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 import Testimonials from "../AboutUs/Testimonials/Testimonials";
 
 const HowToResell = () => {
@@ -49,7 +50,7 @@ const HowToResell = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="robots" content="index, follow" />
         <meta name="title" content={seoData.metaTitle} />
-        
+
         <title>{seoData.metaTitle}</title>
         <meta name="description" content={seoData.metaDescription} />
         <meta name="keywords" content={seoData.metaKeywords} />
@@ -73,7 +74,10 @@ const HowToResell = () => {
         <HeroImgHowToResell />
         <HowToResellContent />
         <div className="max-w-[1440px] mx-auto px-4 lg:px-6">
-        <Testimonials />
+          <Testimonials />
+        </div>
+        <div className="max-w-[1440px] mx-auto px-4 md:!px-0 py-8">
+          <SponsoredProducts placement="homepage" title="Promoted Products" layout="row" />
         </div>
       </div>
     </>

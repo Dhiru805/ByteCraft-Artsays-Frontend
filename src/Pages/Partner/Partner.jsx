@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 // import { toast } from "react-toastify";
 import axiosInstance from "../../api/axiosConfig";
+import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 import HeroImgPartner from "./hero-img/hero-img";
 import PartnerContent from "./PartnerContent/PartnerContent";
 
@@ -80,6 +81,9 @@ const Partner = () => {
 
       <HeroImgPartner />
       <PartnerContent />
+      <div className="max-w-[1440px] mx-auto px-4 md:!px-0 py-8">
+        <SponsoredProducts placement="homepage" title="Promoted Products" layout="row" />
+      </div>
     </div>
   );
 };

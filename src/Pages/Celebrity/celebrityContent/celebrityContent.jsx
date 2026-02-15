@@ -18,6 +18,7 @@ import "../../store/products/product.css";
 import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
 import deleteAPI from "../../../api/deleteAPI";
+import SponsoredProducts from "../../../Component/Common/SponsoredProducts";
 import { toast } from "react-toastify";
 import CelebrityContentSkeleton from "../../../Component/Skeleton/products/CelebrityContentSkeleton";
 
@@ -83,9 +84,9 @@ const CelebrityContent = () => {
   const normalizeIds = (arr) =>
     Array.isArray(arr)
       ? arr
-          .map((f) => (typeof f === "object" ? f?._id || f?.id || f : f))
-          .filter(Boolean)
-          .map(String)
+        .map((f) => (typeof f === "object" ? f?._id || f?.id || f : f))
+        .filter(Boolean)
+        .map(String)
       : [];
 
   const slugify = (text) => {
@@ -593,11 +594,10 @@ const CelebrityContent = () => {
           onChange={onChange}
         />
         <div
-          className={`w-5 h-5 border-2 rounded-md transition-all flex items-center justify-center ${
-            checked
+          className={`w-5 h-5 border-2 rounded-md transition-all flex items-center justify-center ${checked
               ? "border-[#6F4D34] bg-[#6F4D34]"
               : "border-gray-300 group-hover:border-[#6F4D34]"
-          }`}
+            }`}
         >
           {checked && (
             <svg
@@ -617,9 +617,8 @@ const CelebrityContent = () => {
         </div>
       </div>
       <span
-        className={`ml-3 text-sm font-medium transition-colors ${
-          checked ? "text-[#6F4D34]" : "text-gray-600 group-hover:text-gray-900"
-        }`}
+        className={`ml-3 text-sm font-medium transition-colors ${checked ? "text-[#6F4D34]" : "text-gray-600 group-hover:text-gray-900"
+          }`}
       >
         {label}
       </span>
@@ -637,23 +636,20 @@ const CelebrityContent = () => {
           onChange={onChange}
         />
         <div
-          className={`w-5 h-5 border-2 rounded-full transition-all ${
-            checked
+          className={`w-5 h-5 border-2 rounded-full transition-all ${checked
               ? "border-[#6F4D34] bg-[#6F4D34]"
               : "border-gray-300 group-hover:border-[#6F4D34]"
-          }`}
+            }`}
         >
           <div
-            className={`w-2 h-2 bg-white rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform ${
-              checked ? "scale-100" : "scale-0"
-            }`}
+            className={`w-2 h-2 bg-white rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform ${checked ? "scale-100" : "scale-0"
+              }`}
           />
         </div>
       </div>
       <span
-        className={`ml-3 text-sm font-medium transition-colors ${
-          checked ? "text-[#6F4D34]" : "text-gray-600 group-hover:text-gray-900"
-        }`}
+        className={`ml-3 text-sm font-medium transition-colors ${checked ? "text-[#6F4D34]" : "text-gray-600 group-hover:text-gray-900"
+          }`}
       >
         {label}
       </span>
@@ -721,16 +717,15 @@ const CelebrityContent = () => {
                 <h1 className="text-4xl md:text-7xl font-black text-white leading-tight drop-shadow-xl mb-3">
                   {celebrity?.artistName || ""}
                 </h1>
-                  <button
-                    onClick={handleFollowToggle}
-                    className={`mb-2 px-6 py-2 rounded-full font-bold transition-all transform active:scale-95 ${
-                      follow
-                        ? "bg-white/10 text-white border border-white/20 hover:bg-white/20"
-                        : "bg-[#6F4D34] text-white hover:!text-[#6F4D34] hover:bg-[#ffffff] shadow-lg shadow-[#6F4D34]/20"
+                <button
+                  onClick={handleFollowToggle}
+                  className={`mb-2 px-6 py-2 rounded-full font-bold transition-all transform active:scale-95 ${follow
+                      ? "bg-white/10 text-white border border-white/20 hover:bg-white/20"
+                      : "bg-[#6F4D34] text-white hover:!text-[#6F4D34] hover:bg-[#ffffff] shadow-lg shadow-[#6F4D34]/20"
                     }`}
-                  >
-                    {follow ? "Unfollow" : "Follow"}
-                  </button>
+                >
+                  {follow ? "Unfollow" : "Follow"}
+                </button>
               </div>
 
               <div className="max-w-2xl mb-6 space-y-4">
@@ -842,9 +837,8 @@ const CelebrityContent = () => {
             </div>
 
             <div
-              className={`${
-                showFilters ? "block" : "hidden"
-              } lg:block sticky top-6 space-y-4`}
+              className={`${showFilters ? "block" : "hidden"
+                } lg:block sticky top-6 space-y-4`}
             >
               <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <h2 className="text-xl font-bold text-gray-900 mb-1">
@@ -965,39 +959,38 @@ const CelebrityContent = () => {
             <div className="mb-12">
               {filteredProducts.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
-                    {filteredProducts.map((product, index) => {
-                      const displayPrice = product.finalPrice || product.sellingPrice;
-                      const hasDiscount = displayPrice < product.marketPrice;
-                      const discountPercent = hasDiscount
-                        ? Math.round(
-                            ((product.marketPrice - displayPrice) /
-                              product.marketPrice) *
-                              100
-                          )
-                        : 0;
+                  {filteredProducts.map((product, index) => {
+                    const displayPrice = product.finalPrice || product.sellingPrice;
+                    const hasDiscount = displayPrice < product.marketPrice;
+                    const discountPercent = hasDiscount
+                      ? Math.round(
+                        ((product.marketPrice - displayPrice) /
+                          product.marketPrice) *
+                        100
+                      )
+                      : 0;
 
-                      return (
-                        <div
-                          key={product._id}
-                          className="group flex flex-col h-full bg-white rounded-[32px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100 relative"
-                          style={{ animationDelay: `${index * 50}ms` }}
-                          onClick={() => {
-                            const slug = slugify(product.productName);
-                            navigate(
-                              `/product-details/${slug}/${product._id}`
-                            );
-                          }}
-                        >
+                    return (
+                      <div
+                        key={product._id}
+                        className="group flex flex-col h-full bg-white rounded-[32px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100 relative"
+                        style={{ animationDelay: `${index * 50}ms` }}
+                        onClick={() => {
+                          const slug = slugify(product.productName);
+                          navigate(
+                            `/product-details/${slug}/${product._id}`
+                          );
+                        }}
+                      >
                         {/* Image Container */}
                         <div className="relative aspect-square overflow-hidden bg-[#F8F9FA]">
                           <img
                             src={`${imageBaseURL}${product.mainImage}`}
                             alt={product.productName}
-                            className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${
-                              !product.quantity || product.quantity === 0
+                            className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${!product.quantity || product.quantity === 0
                                 ? "blur-[2px]"
                                 : ""
-                            }`}
+                              }`}
                           />
 
                           {/* Heart Button */}
@@ -1007,11 +1000,10 @@ const CelebrityContent = () => {
                           >
                             <Heart
                               size={20}
-                              className={`transition-colors ${
-                                likedProducts[product._id]
+                              className={`transition-colors ${likedProducts[product._id]
                                   ? "text-red-500 fill-red-500"
                                   : "text-gray-900"
-                              }`}
+                                }`}
                             />
                           </button>
 
@@ -1062,9 +1054,9 @@ const CelebrityContent = () => {
                                   ₹{product.marketPrice.toLocaleString()}
                                 </span>
                               )}
-                                <span className="text-2xl font-black text-gray-900 tracking-tighter">
-                                  ₹{displayPrice.toLocaleString()}
-                                </span>
+                              <span className="text-2xl font-black text-gray-900 tracking-tighter">
+                                ₹{displayPrice.toLocaleString()}
+                              </span>
                             </div>
                             {hasDiscount && (
                               <div className="bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-black">
@@ -1149,6 +1141,9 @@ const CelebrityContent = () => {
             </div>
           </main>
         </div>
+      </div>
+      <div className="max-w-[1440px] mx-auto px-4 md:!px-0 py-8">
+        <SponsoredProducts placement="homepage" title="Promoted Products" layout="row" />
       </div>
     </div>
   );

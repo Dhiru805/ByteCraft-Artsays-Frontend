@@ -79,7 +79,7 @@ const Testimonials = () => {
     return <p className="text-center py-6">Testimonials not available</p>;
 
   return (
-    <div className="w-full bg-gray-50 font-[poppins] py-8 px-4">
+    <div className="w-full bg-gray-50 font-[poppins] py-8">
       <div className="max-w-[1440px] mx-auto bg-white p-6 md:p-10 rounded-[32px] shadow-sm border border-gray-100 m-8 transition-all hover:shadow-xl group">
         <div className="space-y-8">
           <div className="text-center space-y-4">

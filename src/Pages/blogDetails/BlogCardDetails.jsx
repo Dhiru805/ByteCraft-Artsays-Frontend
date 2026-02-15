@@ -14,6 +14,7 @@ import artist from "../../assets/blog/artist-image.png";
 import "./BlogCardDetails.css";
 import getAPI from "../../api/getAPI";
 import putAPI from "../../api/putAPI";
+import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 
 function BlogCardDetails() {
     const [open, setOpen] = useState(true);
@@ -305,7 +306,7 @@ function BlogCardDetails() {
             {/* Mobile Table of Contents - Sticky after Hero */}
             <div className="lg:hidden sticky top-3 mx-3 z-40 bg-white rounded-[1.25rem] border-b border-gray-100 shadow-lg transition-all duration-300">
                 <div className="max-w-7xl mx-auto p-4">
-                    <div 
+                    <div
                         className="flex justify-between items-center cursor-pointer"
                         onClick={() => setMobileOpen(!mobileOpen)}
                     >
@@ -319,7 +320,7 @@ function BlogCardDetails() {
                             {mobileOpen ? <IoIosArrowUp className="text-[#6F4D34]" size={20} /> : <IoIosArrowDown className="text-[#6F4D34]" size={20} />}
                         </div>
                     </div>
-                    
+
                     {mobileOpen && (
                         <div className="mt-4 max-h-[60vh] overflow-y-auto pb-2 animate-fade-in">
                             <nav className="space-y-1">
@@ -330,11 +331,10 @@ function BlogCardDetails() {
                                             scrollToHeading(item.id);
                                             setMobileOpen(false);
                                         }}
-                                        className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center gap-3 ${
-                                            activeHeading === item.id 
-                                            ? 'bg-[#6F4D34] text-white shadow-lg' 
-                                            : 'text-gray-600 hover:bg-gray-50'
-                                        }`}
+                                        className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center gap-3 ${activeHeading === item.id
+                                                ? 'bg-[#6F4D34] text-white shadow-lg'
+                                                : 'text-gray-600 hover:bg-gray-50'
+                                            }`}
                                     >
                                         <div className={`w-1.5 h-1.5 rounded-full ${activeHeading === item.id ? 'bg-white' : 'bg-[#6F4D34]/30'}`} />
                                         <span className="truncate text-sm font-medium">{item.text}</span>
@@ -349,7 +349,7 @@ function BlogCardDetails() {
             {/* Main Content Area */}
             <div className="max-w-[1440px] mx-auto p-6">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-                    
+
                     {/* Blog Content */}
                     <article className="lg:col-span-8">
                         {blogDetails && (
@@ -377,7 +377,7 @@ function BlogCardDetails() {
 
                     {/* Sidebar */}
                     <aside className="lg:col-span-4 space-y-10">
-                        
+
                         {/* Author Profile */}
                         <div className="sidebar-card-dark p-8 text-center relative group">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
@@ -397,9 +397,9 @@ function BlogCardDetails() {
                                 <p className="text-white/60 mb-8 font-medium tracking-wide">
                                     {userDetails?.role?.toUpperCase() || 'CONTRIBUTOR'}
                                 </p>
-                                
+
                                 <div className="flex items-center justify-center gap-8 py-4 px-6 rounded-2xl bg-white/5 border border-white/10">
-                                    <button 
+                                    <button
                                         onClick={handleBlogLikes}
                                         className="flex flex-col items-center gap-1.5 hover:text-white transition-colors"
                                     >
@@ -417,7 +417,7 @@ function BlogCardDetails() {
 
                         {/* Table of Contents */}
                         <div className="sidebar-card p-8 sticky top-10 hidden lg:block">
-                            <div 
+                            <div
                                 className="flex justify-between items-center cursor-pointer mb-6"
                                 onClick={() => setOpen(!open)}
                             >
@@ -464,6 +464,9 @@ function BlogCardDetails() {
                         </div>
                     </aside>
                 </div>
+            </div>
+            <div className="max-w-[1440px] mx-auto px-4 md:!px-0 py-8">
+                <SponsoredProducts placement="otherPublicPages" title="Promoted Products" layout="row" />
             </div>
         </div>
     );
