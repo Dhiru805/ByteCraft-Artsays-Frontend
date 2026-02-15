@@ -441,7 +441,7 @@ const Product = () => {
     fetchAllProducts();
   }, []);
 
-  // Fetch sponsored products
+    // Fetch sponsored products
   useEffect(() => {
     const fetchSponsored = async () => {
         try {
@@ -454,6 +454,22 @@ const Product = () => {
       };
     fetchSponsored();
   }, []);
+
+  // Track ad click and navigate to product
+  const handleAdClick = async (adProduct) => {
+    const slug = slugify(adProduct.productName);
+    // Fire and forget - don't block navigation
+    try {
+      await postAPI("/api/campaigns/ads/click", {
+        campaignId: adProduct.campaignId,
+        productId: adProduct._id,
+        placement: adProduct.placement || "topOfSearch",
+      }, {}, false);
+    } catch (err) {
+      console.error("Ad click tracking error:", err);
+    }
+    navigate(`/product-details/${slug}/${adProduct._id}`);
+  };
 
   useEffect(() => {
     const fetchWishlist = async () => {
@@ -868,12 +884,12 @@ const Product = () => {
                         return (
                           <div
                             className="group flex flex-col h-full bg-white rounded-[24px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border-2 border-[#6F4D34]/20 animate-fade-in-up relative"
-                            onClick={() => { const slug = slugify(firstAd.productName); navigate(`/product-details/${slug}/${firstAd._id}`); }}
-                          >
-                            <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
-                              <img src={`${imageBaseURL}${firstAd.mainImage}`} alt={firstAd.productName} className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" />
-                              <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
-                                <div className="bg-[#6F4D34] text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest">Sponsored</div>
+                              onClick={() => handleAdClick(firstAd)}
+                            >
+                              <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
+                                <img src={`${imageBaseURL}${firstAd.mainImage}`} alt={firstAd.productName} className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" />
+                                <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                                  <div className="bg-[#6F4D34] text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest">Sponsored</div>
                               </div>
                               <button onClick={(e) => { e.stopPropagation(); handleWishlist(firstAd._id); }} className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-sm hover:bg-white hover:text-red-500 transition-all transform hover:scale-110 group/heart z-10">
                                 <Heart size={18} className={`transition-colors ${likedProducts[firstAd._id] ? "text-red-500 fill-red-500" : "text-gray-900 group-hover/heart:text-red-500"}`} />
@@ -935,7 +951,7 @@ const Product = () => {
                             return (
                               <div
                                 className="group flex flex-col h-full bg-white rounded-[24px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border-2 border-[#6F4D34]/20 animate-fade-in-up relative"
-                                onClick={() => { const slug = slugify(adProduct.productName); navigate(`/product-details/${slug}/${adProduct._id}`); }}
+                                  onClick={() => handleAdClick(adProduct)}
                               >
                                 {/* Image Container */}
                                 <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import getAPI from "../../../../src/api/getAPI";
-import { toast } from "react-toastify";
 import postAPI from "../../../../src/api/postAPI";
+import { toast } from "react-toastify";
 import "../Sidebar/Side-post-sugg.css";
 import "../Create-post/Post.css";
 import { useNavigate } from "react-router-dom";
@@ -272,14 +272,26 @@ const SidebarAdCard = ({ sidebarAds, displayAdImages, activeAdIndex, setActiveAd
   const handleBuyNow = (e) => {
     e.stopPropagation();
     if (!hasRealAd) return;
-    const slug = ad.productName?.toLowerCase().replace(/\s+/g, "-") || "product";
-    navigate(`/product-details/${slug}/${ad._id}`);
+    handleAdClick(ad);
   };
 
   const handleCardClick = () => {
     if (!hasRealAd) return;
-    const slug = ad.productName?.toLowerCase().replace(/\s+/g, "-") || "product";
-    navigate(`/product-details/${slug}/${ad._id}`);
+    handleAdClick(ad);
+  };
+
+  const handleAdClick = async (adItem) => {
+    const slug = adItem.productName?.toLowerCase().replace(/\s+/g, "-") || "product";
+    try {
+      await postAPI("/api/campaigns/ads/click", {
+        campaignId: adItem.campaignId,
+        productId: adItem._id,
+        placement: adItem.placement || "communitySidebar",
+      }, {}, false);
+    } catch (err) {
+      console.error("Ad click tracking error:", err);
+    }
+    navigate(`/product-details/${slug}/${adItem._id}`);
   };
 
   return (

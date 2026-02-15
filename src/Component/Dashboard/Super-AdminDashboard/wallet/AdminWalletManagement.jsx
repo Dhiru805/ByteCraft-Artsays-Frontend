@@ -31,6 +31,9 @@ const AdminWalletManagement = () => {
   const [walletPage, setWalletPage] = useState(1);
   const [withdrawalPage, setWithdrawalPage] = useState(1);
   const [referralPage, setReferralPage] = useState(1);
+  const [earningsPage, setEarningsPage] = useState(1);
+  const [earningsFilter, setEarningsFilter] = useState("");
+  const [earningsCategory, setEarningsCategory] = useState("all");
   const [pageSize, setPageSize] = useState(10);
   
   // Date Filters
@@ -257,8 +260,9 @@ const AdminWalletManagement = () => {
               <button className={`btn ${activeTab === 'wallets' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('wallets')}>User Wallets</button>
               <button className={`btn ${activeTab === 'withdrawals' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('withdrawals')}>Withdrawals</button>
               <button className={`btn ${activeTab === 'transactions' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('transactions')}>Transactions</button>
-              <button className={`btn ${activeTab === 'referrals' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('referrals')}>Referrals</button>
-              <button className={`btn ${activeTab === 'settings' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('settings')}>Settings</button>
+            <button className={`btn ${activeTab === 'referrals' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('referrals')}>Referrals</button>
+            <button className={`btn ${activeTab === 'earnings' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('earnings')}>Platform Earnings</button>
+            <button className={`btn ${activeTab === 'settings' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('settings')}>Settings</button>
           </div>
       </div>
 
@@ -669,6 +673,215 @@ const AdminWalletManagement = () => {
             </div>
             );
           })()}
+
+            {activeTab === 'earnings' && (() => {
+              // Categorize platform earning transactions
+              const categorize = (txn) => {
+                const p = (txn.purpose || '').toLowerCase();
+                if (p.includes('ad click')) return 'ads';
+                if (p.includes('payment for order') || p.includes('art coins redeemed for order')) return 'orders';
+                if (p.includes('withdrawal')) return 'withdrawals';
+                if (p.includes('admin adjustment') && txn.type === 'debit') return 'adjustments';
+                if (txn.type === 'debit') return 'other';
+                return null;
+              };
+
+              // All debit transactions = platform earnings (money spent by users on platform)
+              const allEarningTxns = transactions.filter(txn => {
+                const cat = categorize(txn);
+                return cat !== null;
+              });
+
+              const categoryFiltered = earningsCategory === 'all' 
+                ? allEarningTxns 
+                : allEarningTxns.filter(txn => categorize(txn) === earningsCategory);
+
+              const filteredEarnings = earningsFilter 
+                ? categoryFiltered.filter(txn => {
+                    const user = wallets.find(w => String(w.userId?._id || w.userId) === String(txn.userId));
+                    const userName = txn.name && txn.lastName 
+                      ? `${txn.name} ${txn.lastName}`.toLowerCase() 
+                      : user ? `${user.name} ${user.lastName}`.toLowerCase() : '';
+                    return userName.includes(earningsFilter.toLowerCase()) || 
+                           (txn.purpose || '').toLowerCase().includes(earningsFilter.toLowerCase());
+                  })
+                : categoryFiltered;
+
+              const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+
+              // Category-wise totals (from all earnings, not filtered)
+              const adTxns = allEarningTxns.filter(t => categorize(t) === 'ads');
+              const orderTxns = allEarningTxns.filter(t => categorize(t) === 'orders');
+              const totalAdRevenue = adTxns.reduce((s, t) => s + (t.amount || 0), 0);
+              const totalOrderRevenue = orderTxns.reduce((s, t) => s + (t.amount || 0), 0);
+                const withdrawalTxns = allEarningTxns.filter(t => categorize(t) === 'withdrawals');
+                const totalWithdrawals = withdrawalTxns.reduce((s, t) => s + (t.amount || 0), 0);
+                const totalAllRevenue = allEarningTxns.reduce((s, t) => {
+                  return categorize(t) === 'withdrawals' ? s - (t.amount || 0) : s + (t.amount || 0);
+                }, 0);
+                const todayRevenue = allEarningTxns.filter(t => new Date(t.createdAt) >= todayStart).reduce((s, t) => {
+                  return categorize(t) === 'withdrawals' ? s - (t.amount || 0) : s + (t.amount || 0);
+                }, 0);
+
+              const getCategoryLabel = (cat) => {
+                const labels = { ads: 'Ad Revenue', orders: 'Order Payments', withdrawals: 'Withdrawals', adjustments: 'Admin Adjustments', other: 'Other' };
+                return labels[cat] || cat;
+              };
+              const getCategoryBadge = (cat) => {
+                const badges = { ads: 'badge-info', orders: 'badge-success', withdrawals: 'badge-warning', adjustments: 'badge-secondary', other: 'badge-dark' };
+                return badges[cat] || 'badge-secondary';
+              };
+
+                // Build cumulative earnings (running total sorted by date ascending)
+                // Withdrawals SUBTRACT from platform earnings, everything else ADDS
+                const sortedForCumulative = [...filteredEarnings].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                let runningTotal = 0;
+                const cumulativeMap = {};
+                sortedForCumulative.forEach(txn => {
+                  const cat = categorize(txn);
+                  if (cat === 'withdrawals') {
+                    runningTotal -= (txn.amount || 0);
+                  } else {
+                    runningTotal += (txn.amount || 0);
+                  }
+                  cumulativeMap[txn._id] = runningTotal;
+                });
+
+              const totalEarningsPages = Math.ceil(filteredEarnings.length / pageSize);
+              const displayEarnings = filteredEarnings.slice((earningsPage - 1) * pageSize, earningsPage * pageSize);
+
+              return (
+                <>
+                  <div className="row clearfix row-deck mb-4">
+                    <div className="col-lg-3 col-md-6">
+                      <div className="card top_widget bg-success text-light" style={{ cursor: 'pointer' }} onClick={() => { setEarningsCategory('all'); setEarningsPage(1); }}>
+                        <div className="body">
+                          <div className="icon bg-light text-success mb-2"><i className="fa fa-rupee"></i></div>
+                          <div className="content">
+                            <div className="text-uppercase small">Total Platform Revenue</div>
+                            <h4 className="number mb-0">₹{totalAllRevenue.toLocaleString()}</h4>
+                            <small>{allEarningTxns.length} transactions</small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-3 col-md-6">
+                      <div className="card top_widget primary-bg text-light" style={{ cursor: 'pointer' }} onClick={() => { setEarningsCategory('all'); setEarningsPage(1); }}>
+                        <div className="body">
+                          <div className="icon bg-light text-primary mb-2"><i className="fa fa-calendar"></i></div>
+                          <div className="content">
+                            <div className="text-uppercase small">Today's Revenue</div>
+                            <h4 className="number mb-0">₹{todayRevenue.toLocaleString()}</h4>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-3 col-md-6">
+                      <div className="card top_widget bg-info text-light" style={{ cursor: 'pointer' }} onClick={() => { setEarningsCategory('ads'); setEarningsPage(1); }}>
+                        <div className="body">
+                          <div className="icon bg-light text-info mb-2"><i className="fa fa-bullhorn"></i></div>
+                          <div className="content">
+                            <div className="text-uppercase small">Ad Revenue</div>
+                            <h4 className="number mb-0">₹{totalAdRevenue.toLocaleString()}</h4>
+                            <small>{adTxns.length} clicks</small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-3 col-md-6">
+                      <div className="card top_widget bg-warning text-dark" style={{ cursor: 'pointer' }} onClick={() => { setEarningsCategory('orders'); setEarningsPage(1); }}>
+                        <div className="body">
+                          <div className="icon bg-light text-warning mb-2"><i className="fa fa-shopping-cart"></i></div>
+                          <div className="content">
+                            <div className="text-uppercase small">Order Revenue</div>
+                            <h4 className="number mb-0">₹{totalOrderRevenue.toLocaleString()}</h4>
+                            <small>{orderTxns.length} orders</small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="card">
+                    <div className="header d-flex justify-content-between align-items-center flex-wrap" style={{ gap: '10px' }}>
+                      <h2>Platform Earnings {earningsCategory !== 'all' ? `- ${getCategoryLabel(earningsCategory)}` : '- All Sources'}</h2>
+                      <div className="d-flex" style={{ gap: '10px' }}>
+                        <select 
+                          className="form-control" 
+                          value={earningsCategory} 
+                          onChange={e => { setEarningsCategory(e.target.value); setEarningsPage(1); }}
+                          style={{ width: '180px' }}
+                        >
+                          <option value="all">All Sources</option>
+                          <option value="ads">Ad Revenue</option>
+                          <option value="orders">Order Payments</option>
+                          <option value="withdrawals">Withdrawals</option>
+                          <option value="adjustments">Admin Adjustments</option>
+                          <option value="other">Other</option>
+                        </select>
+                        <input 
+                          type="text" 
+                          className="form-control" 
+                          placeholder="Search by user or purpose..." 
+                          value={earningsFilter} 
+                          onChange={e => { setEarningsFilter(e.target.value); setEarningsPage(1); }} 
+                          style={{ width: '250px' }}
+                        />
+                      </div>
+                    </div>
+                    <div className="body table-responsive">
+                      <table className="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>Date</th>
+                            <th>User</th>
+                            <th>Category</th>
+                            <th>Purpose</th>
+                              <th>Amount</th>
+                              <th>Balance After</th>
+                              <th>Cumulative Earnings</th>
+                              <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {displayEarnings.map(txn => {
+                            const user = wallets.find(w => String(w.userId?._id || w.userId) === String(txn.userId));
+                            const userName = txn.name && txn.lastName 
+                              ? `${txn.name} ${txn.lastName}` 
+                              : user 
+                                ? `${user.name} ${user.lastName}` 
+                                : (txn.userId || 'Unknown');
+                            const cat = categorize(txn);
+                            return (
+                              <tr key={txn._id}>
+                                <td>{new Date(txn.createdAt).toLocaleString()}</td>
+                                <td>{userName}</td>
+                                <td><span className={`badge ${getCategoryBadge(cat)}`}>{getCategoryLabel(cat)}</span></td>
+                                <td>{txn.purpose}</td>
+                                <td className={`font-weight-bold ${categorize(txn) === 'withdrawals' ? 'text-danger' : 'text-success'}`}>
+                                    {categorize(txn) === 'withdrawals' ? '-' : '+'}₹{txn.amount.toLocaleString()}
+                                  </td>
+                                <td>₹{(txn.balanceAfter != null ? txn.balanceAfter : '-').toLocaleString()}</td>
+                                  <td className="font-weight-bold text-primary">₹{(cumulativeMap[txn._id] || 0).toLocaleString()}</td>
+                                <td><span className={`badge ${txn.status === 'success' ? 'badge-success' : txn.status === 'pending' ? 'badge-warning' : 'badge-secondary'}`}>{txn.status}</span></td>
+                              </tr>
+                            );
+                          })}
+                          {displayEarnings.length === 0 && <tr><td colSpan="8" className="text-center">No earnings found</td></tr>}
+                        </tbody>
+                      </table>
+                      <div className="mt-3 d-flex justify-content-between align-items-center">
+                        <div>Page {earningsPage} of {totalEarningsPages || 1} ({filteredEarnings.length} transactions)</div>
+                        <div className="btn-group">
+                          <button className="btn btn-sm btn-light" disabled={earningsPage === 1} onClick={() => setEarningsPage(p => p - 1)}>Prev</button>
+                          <button className="btn btn-sm btn-light" disabled={earningsPage >= totalEarningsPages} onClick={() => setEarningsPage(p => p + 1)}>Next</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              );
+            })()}
 
             {activeTab === 'settings' && referralSettings && (
               <div className="row clearfix">

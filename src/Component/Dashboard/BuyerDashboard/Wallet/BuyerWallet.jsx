@@ -31,8 +31,49 @@ const BuyerWallet = () => {
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
 
-  const totalPages = Math.max(1, Math.ceil(transactions.length / pageSize));
-  const displayedTransactions = transactions.slice((page - 1) * pageSize, page * pageSize);
+  const [categoryFilter, setCategoryFilter] = useState("all");
+
+  const categorize = (txn) => {
+    const p = (txn.purpose || "").toLowerCase();
+    if (p.includes("ad click") || p.includes("ad spend") || p.includes("campaign")) return "ads";
+    if (p.includes("order") || p.includes("payment") || p.includes("purchase") || p.includes("art coins redeemed")) return "orders";
+    if (p.includes("commission")) return "commission";
+    if (p.includes("promot")) return "promotion";
+    if (p.includes("referral")) return "referral";
+    if (p.includes("withdraw")) return "withdrawal";
+    if (p.includes("add money") || p.includes("deposit") || p.includes("top-up") || p.includes("topup")) return "deposit";
+    if (p.includes("admin")) return "admin";
+    return "other";
+  };
+
+  const categoryLabels = {
+    all: "All Transactions", ads: "Ad Spending",       orders: "Orders",
+    commission: "Commissions", promotion: "Promotions", referral: "Referral",
+    withdrawal: "Withdrawals", deposit: "Deposits", admin: "Admin Adjustments", other: "Other"
+  };
+
+  const categoryColors = {
+    ads: "bg-purple-100 text-purple-700", orders: "bg-blue-100 text-blue-700",
+    commission: "bg-amber-100 text-amber-700", promotion: "bg-pink-100 text-pink-700",
+    referral: "bg-cyan-100 text-cyan-700", withdrawal: "bg-red-100 text-red-700",
+    deposit: "bg-emerald-100 text-emerald-700", admin: "bg-gray-100 text-gray-700",
+    other: "bg-slate-100 text-slate-700"
+  };
+
+  const filteredTransactions = categoryFilter === "all"
+    ? transactions
+    : transactions.filter(t => categorize(t) === categoryFilter);
+
+  const sortedForCumulative = [...filteredTransactions].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  const cumulativeMap = {};
+  let runningTotal = 0;
+  sortedForCumulative.forEach(txn => {
+    runningTotal += txn.type === "credit" ? Number(txn.amount) : -Number(txn.amount);
+    cumulativeMap[txn._id] = runningTotal;
+  });
+
+  const totalPages = Math.max(1, Math.ceil(filteredTransactions.length / pageSize));
+  const displayedTransactions = filteredTransactions.slice((page - 1) * pageSize, page * pageSize);
 
   const fetchWallet = async () => {
     if (!userId) return;
@@ -744,53 +785,76 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
         {/* Transactions Tab */}
         {activeTab === 'transactions' && (
           <div className="p-6">
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-              <h4 className="font-semibold text-gray-900">Recent Transactions</h4>
-              <div className="flex items-center gap-4">
-                <button 
-                  onClick={() => exportTransactions('csv')}
-                  className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all"
-                >
-                  <FaDownload /> Export CSV
-                </button>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500">Show</span>
+              <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <h4 className="font-semibold text-gray-900">Recent Transactions</h4>
+                <div className="flex items-center gap-4">
                   <select
-                    value={pageSize}
-                    onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
-                    className="border border-gray-200 px-3 py-2 rounded-xl text-sm"
+                    value={categoryFilter}
+                    onChange={e => { setCategoryFilter(e.target.value); setPage(1); }}
+                    className="border border-gray-200 px-3 py-2 rounded-xl text-sm font-medium"
                   >
-                    {[5, 10, 15, 20, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
+                    {Object.entries(categoryLabels).map(([key, label]) => (
+                      <option key={key} value={key}>{label}</option>
+                    ))}
                   </select>
-                  <span className="text-sm text-gray-500">entries</span>
+                  <button 
+                    onClick={() => exportTransactions('csv')}
+                    className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all"
+                  >
+                    <FaDownload /> Export CSV
+                  </button>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-500">Show</span>
+                    <select
+                      value={pageSize}
+                      onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
+                      className="border border-gray-200 px-3 py-2 rounded-xl text-sm"
+                    >
+                      {[5, 10, 15, 20, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
+                    </select>
+                    <span className="text-sm text-gray-500">entries</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-100">
-                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">#</th>
-                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Type</th>
-                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Amount</th>
-                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Purpose</th>
-                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Status</th>
-                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Date</th>
-                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Receipt</th>
-                  </tr>
+                      <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">#</th>
+                      <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Category</th>
+                      <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Type</th>
+                      <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Amount</th>
+                      <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Purpose</th>
+                      <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Status</th>
+                      <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Cumulative</th>
+                      <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Date</th>
+                      <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase">Receipt</th>
+                    </tr>
                 </thead>
                 <tbody>
-                  {displayedTransactions.map((txn, idx) => (
+                  {displayedTransactions.map((txn, idx) => {
+                    const cat = categorize(txn);
+                    const cumVal = cumulativeMap[txn._id];
+                    return (
                     <tr key={txn._id || idx} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                       <td className="py-4 px-4 text-sm text-gray-600">{(page - 1) * pageSize + idx + 1}</td>
+                      <td className="py-4 px-4">
+                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${categoryColors[cat]}`}>
+                          {categoryLabels[cat]}
+                        </span>
+                      </td>
                       <td className="py-4 px-4">
                         <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${txn.type === 'credit' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
                           {txn.type === 'credit' ? <FaArrowDown className="text-[10px]" /> : <FaArrowUp className="text-[10px]" />}
                           {txn.type}
                         </span>
                       </td>
-                      <td className="py-4 px-4 text-sm font-semibold text-gray-900">₹{txn.amount}</td>
+                      <td className="py-4 px-4 text-sm font-semibold">
+                        <span className={txn.type === 'credit' ? 'text-emerald-600' : 'text-rose-600'}>
+                          {txn.type === 'credit' ? '+' : '-'}₹{txn.amount}
+                        </span>
+                      </td>
                       <td className="py-4 px-4 text-sm text-gray-600">{txn.purpose}</td>
                       <td className="py-4 px-4">
                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
@@ -799,6 +863,10 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
                         }`}>
                           {txn.status}
                         </span>
+                      </td>
+                      <td className="py-4 px-4 text-sm font-bold" style={{ color: cumVal >= 0 ? '#059669' : '#dc2626' }}>
+                        ₹{Math.abs(cumVal || 0).toLocaleString()}
+                        {cumVal < 0 ? ' (-)' : ''}
                       </td>
                       <td className="py-4 px-4 text-sm text-gray-500">{txn.createdAt ? new Date(txn.createdAt).toLocaleString() : "-"}</td>
                       <td className="py-4 px-4">
@@ -810,10 +878,11 @@ Generated: ${new Date(receipt.generatedAt).toLocaleString()}
                         </button>
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                   {displayedTransactions.length === 0 && (
                     <tr>
-                      <td colSpan="7" className="py-12 text-center text-gray-500">No transactions yet</td>
+                      <td colSpan="9" className="py-12 text-center text-gray-500">No transactions yet</td>
                     </tr>
                   )}
                 </tbody>

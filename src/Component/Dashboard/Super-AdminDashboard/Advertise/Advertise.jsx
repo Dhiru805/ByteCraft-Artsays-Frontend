@@ -23,9 +23,8 @@ const[loading,setLoading]=useState(true);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const userId = localStorage.getItem('userId');
-      try {
-        const result = await getAPI(`/api/campaigns/${userId}`, {}, true, false);
+        try {
+          const result = await getAPI(`/api/campaigns/all`, {}, true, false);
         setProducts(result.data.data);
         console.log(result.data.data);
       } catch (error) {
@@ -88,13 +87,7 @@ const[loading,setLoading]=useState(true);
 
   const handleCloseCampaign = async (id) => {
     try {
-      await putAPI(`/api/campaigns/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
+      await putAPI(`/api/campaigns/${id}`, { status: 'closed' });
 
       setProducts(prevProducts =>
         prevProducts.map(product =>
@@ -102,7 +95,7 @@ const[loading,setLoading]=useState(true);
         )
       );
 
-      toast.error("Campaign is closed successfully");
+      toast.success("Campaign closed successfully");
     } catch (error) {
       console.error("Error closing campaign:", error);
       toast.error("Failed to close the campaign");
@@ -187,18 +180,20 @@ const[loading,setLoading]=useState(true);
             <div className="body">
               <div className="table-responsive">
                 <table className="table table-hover">
-                  <thead className="thead-dark">
-                    <tr>
-                      <th>#</th>
-                      <th>Name</th>
-                      <th>Product Name</th>
-                      <th>Market Price</th>
-                      <th>Selling Price</th>
-                      <th>Date</th>
-                      <th>Status</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
+                    <thead className="thead-dark">
+                      <tr>
+                          <th>#</th>
+                          <th>User</th>
+                          <th>Name</th>
+                          <th>Product Name</th>
+                          <th>Clicks</th>
+                          <th>Daily Spent</th>
+                          <th>Total Spent</th>
+                          <th>Date</th>
+                          <th>Status</th>
+                          <th>Action</th>
+                        </tr>
+                    </thead>
                   <tbody>
                     {products
                       .filter(product =>
@@ -218,8 +213,22 @@ const[loading,setLoading]=useState(true);
                               return 'btn-outline-danger';
                             case 'draft':
                               return 'btn-outline-primary';
+                            case 'paused_low_wallet':
+                            case 'paused_daily_limit':
+                              return 'btn-outline-warning';
                             default:
                               return 'btn-outline-secondary';
+                          }
+                        })();
+
+                        const statusLabel = (() => {
+                          switch (product.status) {
+                            case 'paused_low_wallet':
+                              return 'Low Balance';
+                            case 'paused_daily_limit':
+                              return 'Daily Limit';
+                            default:
+                              return capitalizeFirstLetter(product.status);
                           }
                         })();
 
@@ -227,34 +236,21 @@ const[loading,setLoading]=useState(true);
 
                           return (
                             <tr key={product._id}>
-                              <td>{index + 1}</td>
-                              <td>{product.campaignName}</td>
+                                <td>{index + 1}</td>
+                                <td>{product.userId?.name} {product.userId?.lastName}</td>
+                                <td>{product.campaignName}</td>
                               <td>
-
-                                <img
-                                src={product.mainImage ? `${BASE_URL}${product.mainImage}` : DEFAULT_PROFILE_IMAGE}
-                                className="rounded-circle avatar"
-                                alt=""
-                                onClick={() => handleImageClick(product)}
-                                style={{
-                                  width: '30px',
-                                  height: '30px',
-                                  objectFit: 'cover',
-                                  marginRight: '10px',
-                                  cursor: 'pointer'
-                                }}
-                              />{product.productName}
-
                               {product.selectedProductIds?.[0]?.productName || 'N/A'}</td>
-                            <td>{product.selectedProductIds?.[0]?.price || 'N/A'}</td>
-                            <td>{product.sellingPrice || 'N/A'}</td>
+                            <td>{product.clicks || 0}</td>
+                            <td>₹{(product.dailySpent || 0).toFixed(2)}</td>
+                            <td>₹{(product.totalSpent || 0).toFixed(2)}</td>
                             <td>{new Date(product.createdAt).toLocaleDateString()}</td>
                             <td>
                               <button
                                 className={`btn btn-sm ${statusClass}`}
                                 style={{ textAlign: 'center' }}
                               >
-                                {capitalizeFirstLetter(product.status)}
+                                {statusLabel}
                               </button>
                             </td>
                             <td>

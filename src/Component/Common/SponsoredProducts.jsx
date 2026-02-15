@@ -28,6 +28,20 @@ const SponsoredProducts = ({ placement, title = "Sponsored", layout = "row", max
   const slugify = (text) =>
     text?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "") || "";
 
+  const handleAdClick = async (product) => {
+    const slug = slugify(product.productName);
+    try {
+      await postAPI("/api/campaigns/ads/click", {
+        campaignId: product.campaignId,
+        productId: product._id,
+        placement: product.placement || placement,
+      }, {}, false);
+    } catch (err) {
+      console.error("Ad click tracking error:", err);
+    }
+    navigate(`/product-details/${slug}/${product._id}`);
+  };
+
   useEffect(() => {
     const fetchAds = async () => {
       try {
@@ -144,7 +158,7 @@ const SponsoredProducts = ({ placement, title = "Sponsored", layout = "row", max
                 key={`${product.campaignId}-${product._id}`}
                 className="group flex flex-col h-full bg-white rounded-[24px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100/50 animate-fade-in-up relative min-w-[72%] snap-start sm:min-w-0"
                 style={{ animationDelay: `${index * 50}ms` }}
-                onClick={() => { const slug = slugify(product.productName); navigate(`/product-details/${slug}/${product._id}`); }}
+                  onClick={() => handleAdClick(product)}
               >
                 {/* Image Container */}
                 <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">

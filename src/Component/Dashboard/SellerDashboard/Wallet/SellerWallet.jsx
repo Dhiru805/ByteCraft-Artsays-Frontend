@@ -14,6 +14,7 @@ const SellerWallet = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [activeTab, setActiveTab] = useState("transactions");
+  const [txnCategory, setTxnCategory] = useState("all");
   const [withdrawals, setWithdrawals] = useState([]);
   const [referralData, setReferralData] = useState(null);
   const [referralCodeInput, setReferralCodeInput] = useState("");
@@ -165,8 +166,45 @@ const SellerWallet = () => {
 
   if (!wallet) return <WalletSkeleton />;
 
-  const displayedTransactions = transactions.slice((page - 1) * pageSize, page * pageSize);
-  const totalPages = Math.ceil(transactions.length / pageSize);
+  const categorize = (txn) => {
+    const p = (txn.purpose || "").toLowerCase();
+    if (p.includes("ad click") || p.includes("campaign") || p.includes("advertis")) return "ads";
+    if (p.includes("order") || p.includes("payment") || p.includes("purchase") || p.includes("art coins redeemed")) return "orders";
+    if (p.includes("commission")) return "commission";
+    if (p.includes("promot")) return "promotion";
+    if (p.includes("referral")) return "referral";
+    if (p.includes("withdraw")) return "withdrawal";
+    if (p.includes("add money") || p.includes("wallet top") || p.includes("deposit")) return "deposit";
+    if (p.includes("admin") || p.includes("adjust")) return "admin";
+    return "other";
+  };
+
+  const categoryLabels = {
+    all: "All Transactions", ads: "Ad Spending", orders: "Orders & Payments",
+    commission: "Commissions", promotion: "Promotions", referral: "Referral",
+    withdrawal: "Withdrawals", deposit: "Deposits", admin: "Admin Adjustments", other: "Other"
+  };
+
+  const categoryColors = {
+    ads: "#F36F21", orders: "#4B2E05", commission: "#6f42c1", promotion: "#e83e8c",
+    referral: "#20c997", withdrawal: "#dc3545", deposit: "#28a745", admin: "#6c757d", other: "#17a2b8"
+  };
+
+  const filteredTransactions = txnCategory === "all"
+    ? transactions
+    : transactions.filter(t => categorize(t) === txnCategory);
+
+  // Cumulative balance: credits add, debits subtract
+  const sortedForCumulative = [...filteredTransactions].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  const cumulativeMap = {};
+  let runningTotal = 0;
+  sortedForCumulative.forEach(t => {
+    runningTotal += t.type === "credit" ? t.amount : -t.amount;
+    cumulativeMap[t._id] = runningTotal;
+  });
+
+  const displayedTransactions = filteredTransactions.slice((page - 1) * pageSize, page * pageSize);
+  const totalPages = Math.ceil(filteredTransactions.length / pageSize);
 
   return (
     <div className="container-fluid">
@@ -504,17 +542,27 @@ const SellerWallet = () => {
 
             {activeTab === 'transactions' && (
               <>
-                <div className="header d-flex justify-content-between align-items-center">
+                <div className="header d-flex justify-content-between align-items-center flex-wrap">
                   <h2>Recent Transactions</h2>
-                  <div>Show
+                  <div className="d-flex align-items-center gap-2 flex-wrap">
                     <select
-                      className="form-control d-inline-block w-auto ml-2"
+                      className="form-control d-inline-block w-auto"
+                      value={txnCategory}
+                      onChange={e => { setTxnCategory(e.target.value); setPage(1); }}
+                    >
+                      {Object.entries(categoryLabels).map(([key, label]) => (
+                        <option key={key} value={key}>{label}</option>
+                      ))}
+                    </select>
+                    <span className="ml-2">Show</span>
+                    <select
+                      className="form-control d-inline-block w-auto ml-1"
                       value={pageSize}
                       onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
                     >
                       {[5, 10, 15, 20, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
                     </select>
-                    entries
+                    <span>entries</span>
                   </div>
                 </div>
                 <div className="body table-responsive">
@@ -522,37 +570,53 @@ const SellerWallet = () => {
                     <thead>
                       <tr>
                         <th>#</th>
+                        <th>Category</th>
                         <th>Type</th>
                         <th>Amount</th>
                         <th>Purpose</th>
                         <th>Status</th>
+                        <th>Cumulative</th>
                         <th>Date</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {displayedTransactions.map((txn, idx) => (
-                        <tr key={txn._id}>
-                          <td>{(page - 1) * pageSize + idx + 1}</td>
-                          <td>
-                            <span className={`badge ${txn.type === 'credit' ? 'badge-success' : 'badge-danger'}`}>
-                              {txn.type}
-                            </span>
-                          </td>
-                          <td>₹{txn.amount}</td>
-                          <td>{txn.purpose}</td>
-                          <td>
-                            <span className={`badge ${txn.status === 'success' ? 'badge-success' :
-                              txn.status === 'pending' ? 'badge-warning' : 'badge-danger'
-                              }`}>
-                              {txn.status}
-                            </span>
-                          </td>
-                          <td>{new Date(txn.createdAt).toLocaleString()}</td>
-                        </tr>
-                      ))}
+                      {displayedTransactions.map((txn, idx) => {
+                        const cat = categorize(txn);
+                        const cumVal = cumulativeMap[txn._id] || 0;
+                        return (
+                          <tr key={txn._id}>
+                            <td>{(page - 1) * pageSize + idx + 1}</td>
+                            <td>
+                              <span className="badge" style={{ backgroundColor: categoryColors[cat] || "#6c757d", color: "#fff" }}>
+                                {categoryLabels[cat] || cat}
+                              </span>
+                            </td>
+                            <td>
+                              <span className={`badge ${txn.type === 'credit' ? 'badge-success' : 'badge-danger'}`}>
+                                {txn.type}
+                              </span>
+                            </td>
+                            <td style={{ color: txn.type === 'credit' ? '#28a745' : '#dc3545', fontWeight: 'bold' }}>
+                              {txn.type === 'credit' ? '+' : '-'}₹{txn.amount}
+                            </td>
+                            <td>{txn.purpose}</td>
+                            <td>
+                              <span className={`badge ${txn.status === 'success' ? 'badge-success' :
+                                txn.status === 'pending' ? 'badge-warning' : 'badge-danger'
+                                }`}>
+                                {txn.status}
+                              </span>
+                            </td>
+                            <td style={{ fontWeight: 'bold', color: cumVal >= 0 ? '#28a745' : '#dc3545' }}>
+                              ₹{cumVal.toFixed(2)}
+                            </td>
+                            <td>{new Date(txn.createdAt).toLocaleString()}</td>
+                          </tr>
+                        );
+                      })}
                       {displayedTransactions.length === 0 && (
                         <tr>
-                          <td colSpan="6" className="text-center">No transactions yet</td>
+                          <td colSpan="8" className="text-center">No transactions yet</td>
                         </tr>
                       )}
                     </tbody>

@@ -17,6 +17,19 @@ const SponsoredFeedSlider = ({ ads }) => {
   const [isHovered, setIsHovered] = useState(false);
   const timerRef = useRef(null);
 
+  const handleAdClick = async (ad) => {
+    try {
+      await postAPI("/api/campaigns/ads/click", {
+        campaignId: ad.campaignId,
+        productId: ad._id,
+        placement: ad.placement || "communityFeed",
+      }, {}, false);
+    } catch (err) {
+      console.error("Ad click tracking error:", err);
+    }
+    navigate(`/product/${ad.slug || ad._id}`);
+  };
+
   useEffect(() => {
     if (ads.length <= 1 || isHovered) return;
     timerRef.current = setInterval(() => {
@@ -58,7 +71,7 @@ const SponsoredFeedSlider = ({ ads }) => {
       </div>
 
       {/* Image */}
-      <div className="relative w-full aspect-square bg-gray-50 cursor-pointer group" onClick={() => navigate(`/product/${ad.slug || ad._id}`)}>
+      <div className="relative w-full aspect-square bg-gray-50 cursor-pointer group" onClick={() => handleAdClick(ad)}>
           {image ? (
             <img
               src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${image}`}
@@ -98,8 +111,8 @@ const SponsoredFeedSlider = ({ ads }) => {
       {/* Product Info */}
       <div className="px-3 py-2.5">
         <h4
-          className="font-semibold text-sm text-gray-900 line-clamp-1 cursor-pointer hover:text-[#6F4D34] transition-colors"
-          onClick={() => navigate(`/product/${ad.slug || ad._id}`)}
+            className="font-semibold text-sm text-gray-900 line-clamp-1 cursor-pointer hover:text-[#6F4D34] transition-colors"
+            onClick={() => handleAdClick(ad)}
         >
           {ad.productName || "Untitled Product"}
         </h4>
@@ -116,7 +129,7 @@ const SponsoredFeedSlider = ({ ads }) => {
 
         {/* Buy Now Button */}
         <button
-          onClick={() => navigate(`/product/${ad.slug || ad._id}`)}
+            onClick={() => handleAdClick(ad)}
           className="w-full mt-2.5 py-2 bg-[#6F4D34] text-white text-sm font-semibold rounded-lg hover:bg-[#5a3d28] transition-colors flex items-center justify-center gap-1.5"
         >
           <i className="ri-shopping-bag-line text-sm"></i>
