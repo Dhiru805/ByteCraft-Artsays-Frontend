@@ -332,15 +332,7 @@ function Sponser() {
 
             </>
           )}
-          {selectedCampaignType === "profile" && (
-            <div className="card p-3 mb-4">
-              <h3>Sponsored Profile - Coming Soon</h3>
-              <p>This feature is currently under development and will be available soon.</p>
-              <button className="btn btn-outline-secondary mt-3" onClick={handleBack}>
-                Back
-              </button>
-            </div>
-          )}
+
         </div>
       </div>
     </div>
