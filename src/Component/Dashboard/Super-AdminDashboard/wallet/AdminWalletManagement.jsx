@@ -64,6 +64,7 @@ const AdminWalletManagement = () => {
     const [orderFilter, setOrderFilter] = useState("");
     const [orderStatusFilter, setOrderStatusFilter] = useState("");
     const [payoutProcessing, setPayoutProcessing] = useState(null);
+    const [payoutModal, setPayoutModal] = useState({ show: false, orderId: null });
 
     // Platform Earnings (from dedicated API)
     const [platformEarnings, setPlatformEarnings] = useState({ transactions: [], summary: {} });
@@ -921,19 +922,21 @@ const AdminWalletManagement = () => {
             })()}
 
         {activeTab === 'orderPayouts' && (() => {
-          const handleImmediatePayout = async (orderId) => {
-            if (!window.confirm(`Are you sure you want to process immediate payout for order ${orderId}? This will credit the seller and deduct platform commission.`)) return;
-            setPayoutProcessing(orderId);
-            try {
-              const res = await axios.post(`/api/immediate-seller-payout/${orderId}`);
-              toast.success(res.data.message || "Payout processed successfully");
-              fetchData();
-            } catch (err) {
-              toast.error(err?.response?.data?.message || "Failed to process payout");
-            } finally {
-              setPayoutProcessing(null);
-            }
-          };
+            const handleImmediatePayout = async () => {
+              const orderId = payoutModal.orderId;
+              if (!orderId) return;
+              setPayoutModal({ show: false, orderId: null });
+              setPayoutProcessing(orderId);
+              try {
+                const res = await axios.post(`/api/immediate-seller-payout/${orderId}`);
+                toast.success(res.data.message || "Payout processed successfully");
+                fetchData();
+              } catch (err) {
+                toast.error(err?.response?.data?.message || "Failed to process payout");
+              } finally {
+                setPayoutProcessing(null);
+              }
+            };
 
           const filtered = orders.filter(o => {
             if (orderStatusFilter && o.orderStatus !== orderStatusFilter) return false;
@@ -1064,12 +1067,12 @@ const AdminWalletManagement = () => {
                             <td>{order.platformCommission != null ? `₹${order.platformCommission.toLocaleString()}` : '-'}</td>
                             <td>{order.sellerEarnings != null ? `₹${order.sellerEarnings.toLocaleString()}` : '-'}</td>
                             <td>
-                              {!order.sellerPaid && order.orderStatus === 'Delivered' ? (
-                                <button
-                                  className="btn btn-sm btn-warning"
-                                  disabled={payoutProcessing === order.orderId}
-                                  onClick={() => handleImmediatePayout(order.orderId)}
-                                >
+                                {!order.sellerPaid && order.orderStatus === 'Delivered' ? (
+                                  <button
+                                    className="btn btn-sm btn-warning"
+                                    disabled={payoutProcessing === order.orderId}
+                                    onClick={() => setPayoutModal({ show: true, orderId: order.orderId })}
+                                  >
                                   {payoutProcessing === order.orderId ? (
                                     <><i className="fa fa-spinner fa-spin mr-1"></i>Processing</>
                                   ) : (
@@ -1096,10 +1099,51 @@ const AdminWalletManagement = () => {
                     </div>
                   </div>
                 </div>
+                </div>
+              </>
+            );
+          })()}
+
+          {/* Immediate Payout Confirmation Modal */}
+          {payoutModal.show && (
+            <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+              <div className="modal-dialog modal-dialog-centered">
+                <div className="modal-content">
+                  <div className="modal-header bg-warning">
+                    <h5 className="modal-title"><i className="fa fa-bolt mr-2"></i>Confirm Immediate Payout</h5>
+                    <button type="button" className="close" onClick={() => setPayoutModal({ show: false, orderId: null })}>
+                      <span>&times;</span>
+                    </button>
+                  </div>
+                  <div className="modal-body">
+                    <div className="text-center mb-3">
+                      <i className="fa fa-exclamation-triangle text-warning" style={{ fontSize: '48px' }}></i>
+                    </div>
+                    <p className="text-center mb-2">
+                      Are you sure you want to process immediate payout for order <strong>{payoutModal.orderId}</strong>?
+                    </p>
+                    <p className="text-center text-muted small">
+                      This will credit the seller's wallet and deduct platform commission. This action cannot be undone.
+                    </p>
+                  </div>
+                  <div className="modal-footer">
+                    <button className="btn btn-secondary" onClick={() => setPayoutModal({ show: false, orderId: null })}>Cancel</button>
+                    <button className="btn btn-warning" onClick={() => {
+                      const orderId = payoutModal.orderId;
+                      setPayoutModal({ show: false, orderId: null });
+                      setPayoutProcessing(orderId);
+                      axios.post(`/api/immediate-seller-payout/${orderId}`)
+                        .then(res => { toast.success(res.data.message || "Payout processed successfully"); fetchData(); })
+                        .catch(err => { toast.error(err?.response?.data?.message || "Failed to process payout"); })
+                        .finally(() => setPayoutProcessing(null));
+                    }}>
+                      <i className="fa fa-bolt mr-1"></i>Confirm Payout
+                    </button>
+                  </div>
+                </div>
               </div>
-            </>
-          );
-        })()}
+            </div>
+          )}
 
             {activeTab === 'settings' && referralSettings && (
               <div className="row clearfix">

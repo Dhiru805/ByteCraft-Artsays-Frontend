@@ -55,7 +55,6 @@ const ADMIN_ALLOWED_STATUSES = [
     "Delivered",
     "Completed",
     "Cancelled",
-    "Return Requested",
 ];
 
 const SHIPPED_OR_LATER = ["Shipped", "Out for Delivery", "Delivered"];
