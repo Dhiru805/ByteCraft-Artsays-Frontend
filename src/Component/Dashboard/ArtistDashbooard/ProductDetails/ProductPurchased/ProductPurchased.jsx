@@ -64,6 +64,7 @@ const ProductRequest = () => {
   const [currentImages, setCurrentImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [cancelPopup, setCancelPopup] = useState({ show: false, orderId: null, index: null });
 
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
@@ -207,6 +208,10 @@ const ProductRequest = () => {
   };
 
   const handleStatusChange = async (orderId, newStatus, index) => {
+    if (newStatus === "Cancelled") {
+      setCancelPopup({ show: true, orderId, index });
+      return;
+    }
     try {
       const res = await putAPI(`/api/update-order-status/${orderId}`, { status: newStatus });
       if (res?.data?.success) {
@@ -220,6 +225,24 @@ const ProductRequest = () => {
       console.error("Error updating order status:", error);
       alert("Failed to update order status");
     }
+  };
+
+  const confirmCancelOrder = async () => {
+    const { orderId, index } = cancelPopup;
+    try {
+      const res = await putAPI(`/api/update-order-status/${orderId}`, { status: "Cancelled" });
+      if (res?.data?.success) {
+        setProducts(prev => {
+          const updated = [...prev];
+          updated[index] = { ...updated[index], orderStatus: "Cancelled" };
+          return updated;
+        });
+      }
+    } catch (error) {
+      console.error("Error cancelling order:", error);
+      alert("Failed to cancel order");
+    }
+    setCancelPopup({ show: false, orderId: null, index: null });
   };
 
   return (
@@ -398,6 +421,39 @@ const ProductRequest = () => {
           </div>
         </div>
       </div>
+
+      {/* Cancel Order Confirmation Popup */}
+      {cancelPopup.show && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: "rgba(0,0,0,0.5)", zIndex: 9999,
+          display: "flex", alignItems: "center", justifyContent: "center"
+        }}>
+          <div style={{
+            background: "#fff", borderRadius: "8px", padding: "24px",
+            maxWidth: "400px", width: "90%", textAlign: "center", boxShadow: "0 4px 20px rgba(0,0,0,0.3)"
+          }}>
+            <h5 style={{ marginBottom: "12px", fontWeight: "600" }}>Cancel Order</h5>
+            <p style={{ color: "#666", marginBottom: "20px" }}>
+              Are you sure you want to cancel this order? This action cannot be undone.
+            </p>
+            <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+              <button
+                className="btn btn-secondary btn-sm"
+                onClick={() => setCancelPopup({ show: false, orderId: null, index: null })}
+              >
+                No, Go Back
+              </button>
+              <button
+                className="btn btn-danger btn-sm"
+                onClick={confirmCancelOrder}
+              >
+                Yes, Cancel Order
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
