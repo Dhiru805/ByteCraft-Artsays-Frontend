@@ -70,6 +70,14 @@ const Setting = () => {
   const [deleteAccount, setDeleteAccount] = useState(false);
   const [copyMsg, setCopyMsg] = useState("");
 
+  const [allUsernames, setAllUsernames] = useState([]);
+  const [originalUsername, setOriginalUsername] = useState('');
+  const [usernameCheckLoading, setUsernameCheckLoading] = useState(false);
+  const [usernameAvailable, setUsernameAvailable] = useState(null);
+  const [usernameError, setUsernameError] = useState('');
+  const usernameCheckTimeout = useRef(null);
+  const usernameRegex = /^[a-z0-9._]*$/;
+
   useEffect(() => {
     if (profile) {
       setFirstName(profile.firstName || "");
@@ -78,9 +86,54 @@ const Setting = () => {
       setWebsite(profile.website || "");
       setBio(profile.bio || "");
       setProfilePhoto(profile.profilePhoto || "");
+      setOriginalUsername(profile.username?.trim().toLowerCase() || '');
     }
   }, [profile]);
 
+  useEffect(() => {
+    const fetchUsernames = async () => {
+      try {
+        const res = await getAPI('/auth/all-usernames');
+        setAllUsernames(res.data?.usernames || []);
+      } catch (err) {
+        console.error("Failed to fetch usernames", err);
+      }
+    };
+    fetchUsernames();
+  }, []);
+
+  const handleLiveUsernameCheck = (val) => {
+    const typed = val.trim().toLowerCase();
+    if (!typed) {
+      setUsernameAvailable(null);
+      setUsernameError('');
+      return;
+    }
+    if (!usernameRegex.test(typed)) {
+      setUsernameError('Only letters (a-z), numbers (0-9), periods (.) and underscores (_) allowed');
+      setUsernameAvailable(null);
+      setUsernameCheckLoading(false);
+      return;
+    }
+    if (typed.length > 30) {
+      setUsernameError('Username cannot exceed 30 characters');
+      setUsernameAvailable(null);
+      setUsernameCheckLoading(false);
+      return;
+    }
+    setUsernameError('');
+    setUsernameCheckLoading(true);
+    if (usernameCheckTimeout.current) {
+      clearTimeout(usernameCheckTimeout.current);
+    }
+    usernameCheckTimeout.current = setTimeout(() => {
+      const isTaken = allUsernames
+        .filter((uname) => uname && uname.trim().toLowerCase() !== originalUsername)
+        .some((uname) => uname.trim().toLowerCase() === typed);
+      setUsernameAvailable(!isTaken);
+      setUsernameCheckLoading(false);
+    }, 300);
+  };
 
   const hasValidUsername =
     typeof userName === "string" &&
@@ -823,16 +876,36 @@ const Setting = () => {
                 </div>
 
                 {/* Username */}
-                <div>
-                  <label className="block text-md font-semibold text-[#000000] mb-1">
-                    User Name
-                  </label>
-                  <input
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="w-full bg-[#EBEBEB] rounded-md px-3 py-2 font-semibold text-[#000000] text-sm placeholder-[#000000] placeholder:font-semibold outline-none"
-                  />
-                </div>
+                  <div>
+                    <label className="block text-md font-semibold text-[#000000] mb-1">
+                      User Name
+                    </label>
+                    <input
+                        value={username}
+                        maxLength={30}
+                        onChange={(e) => {
+                          const lowercaseValue = e.target.value.toLowerCase().replace(/[^a-z0-9._]/g, '');
+                          setUsername(lowercaseValue);
+                          handleLiveUsernameCheck(lowercaseValue);
+                        }}
+                        className="w-full bg-[#EBEBEB] rounded-md px-3 py-2 font-semibold text-[#000000] text-sm placeholder-[#000000] placeholder:font-semibold outline-none"
+                      />
+                      <span className="text-gray-400 text-xs mt-1 block">
+                        {username.length}/30 — Only letters (a-z), numbers, periods (.) and underscores (_)
+                      </span>
+                      {usernameError && (
+                        <small className="text-red-600 text-xs mt-1 block">{usernameError}</small>
+                      )}
+                      {usernameCheckLoading && (
+                        <small className="text-gray-500 text-xs mt-1 block">Checking availability...</small>
+                      )}
+                      {!usernameError && !usernameCheckLoading && usernameAvailable === true && (
+                        <small className="text-green-600 text-xs mt-1 block">Username is available</small>
+                      )}
+                      {!usernameError && !usernameCheckLoading && usernameAvailable === false && (
+                        <small className="text-red-600 text-xs mt-1 block">Username is already taken</small>
+                      )}
+                  </div>
 
                 {/* Website */}
                 <div>

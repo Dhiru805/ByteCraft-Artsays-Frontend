@@ -29,6 +29,13 @@ export const AccountForm = () => {
   const [originalEmail, setOriginalEmail] = useState('');
   const [originalPhone, setOriginalPhone] = useState('');
 
+  const [allUsernames, setAllUsernames] = useState([]);
+  const [usernameStatus, setUsernameStatus] = useState('');
+  const [usernameMsg, setUsernameMsg] = useState('');
+  const [usernameError, setUsernameError] = useState('');
+  const usernameTimerRef = useRef(null);
+  const usernameRegex = /^[a-z0-9._]*$/;
+
   const [showEmailOtpModal, setShowEmailOtpModal] = useState(false);
   const [showPhoneOtpModal, setShowPhoneOtpModal] = useState(false);
   const [emailOtp, setEmailOtp] = useState('');
@@ -83,6 +90,67 @@ export const AccountForm = () => {
   useEffect(() => {
     fetchProfile();
   }, []);
+
+  useEffect(() => {
+    const fetchUsernames = async () => {
+      try {
+        const res = await getAPI('/auth/all-usernames', {}, true, false);
+        if (res.data?.usernames) {
+          setAllUsernames(res.data.usernames.map(u => u.toLowerCase()));
+        }
+      } catch (err) {
+        console.error('Failed to fetch usernames:', err);
+      }
+    };
+    fetchUsernames();
+  }, []);
+
+  const checkUsernameAvailability = (value) => {
+    if (usernameTimerRef.current) clearTimeout(usernameTimerRef.current);
+    const trimmed = value.trim().toLowerCase();
+    if (!trimmed) {
+      setUsernameStatus('');
+      setUsernameMsg('');
+      setUsernameError('');
+      return;
+    }
+    if (!usernameRegex.test(trimmed)) {
+      setUsernameError('Only letters (a-z), numbers (0-9), periods (.) and underscores (_) allowed');
+      setUsernameStatus('');
+      setUsernameMsg('');
+      return;
+    }
+    if (trimmed.length > 30) {
+      setUsernameError('Username cannot exceed 30 characters');
+      setUsernameStatus('');
+      setUsernameMsg('');
+      return;
+    }
+    setUsernameError('');
+    if (profileData?.username && trimmed === profileData.username.toLowerCase()) {
+      setUsernameStatus('');
+      setUsernameMsg('');
+      return;
+    }
+    setUsernameStatus('checking');
+    setUsernameMsg('Checking availability...');
+    usernameTimerRef.current = setTimeout(() => {
+      const taken = allUsernames.includes(trimmed);
+      if (taken) {
+        setUsernameStatus('taken');
+        setUsernameMsg('Username is already taken');
+      } else {
+        setUsernameStatus('available');
+        setUsernameMsg('Username is available');
+      }
+    }, 300);
+  };
+
+  const handleUsernameChange = (e) => {
+    const val = e.target.value.toLowerCase().replace(/[^a-z0-9._]/g, '');
+    setUsername(val);
+    checkUsernameAvailability(val);
+  };
 
   const handleGenderSelect = (selectedGender) => {
     setGender(selectedGender);
@@ -415,16 +483,32 @@ export const AccountForm = () => {
         <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-gray-100 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50/50 transition-all duration-500">
           <h3 className="text-lg font-bold text-gray-900 mb-6">Account Details</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Username *</label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="mrstark"
-                className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
-              />
-            </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Username *</label>
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={handleUsernameChange}
+                    maxLength={30}
+                    placeholder="mrstark"
+                    className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none"
+                  />
+                  <span className="text-gray-400 text-xs mt-1 block">
+                    {username.length}/30 — Only letters (a-z), numbers, periods (.) and underscores (_)
+                  </span>
+                  {usernameError && (
+                    <p className="text-xs mt-1 font-medium text-red-500">{usernameError}</p>
+                  )}
+                  {!usernameError && usernameMsg && (
+                    <p className={`text-xs mt-1 font-medium ${
+                      usernameStatus === 'available' ? 'text-green-600' :
+                      usernameStatus === 'taken' ? 'text-red-500' :
+                      'text-gray-500'
+                    }`}>
+                      {usernameMsg}
+                    </p>
+                  )}
+                </div>
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">Email *</label>

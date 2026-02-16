@@ -33,7 +33,10 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
   const [originalUsername, setOriginalUsername] = useState('');
   const [usernameCheckLoading, setUsernameCheckLoading] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState(null);
+  const [usernameError, setUsernameError] = useState('');
   const usernameCheckTimeout = useRef(null);
+
+  const usernameRegex = /^[a-z0-9._]*$/;
 
   const [emailVerified, setEmailVerified] = useState(false);
   const [phoneVerified, setPhoneVerified] = useState(false);
@@ -279,9 +282,25 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
 
     if (!typed) {
       setUsernameAvailable(null);
+      setUsernameError('');
       return;
     }
 
+    if (!usernameRegex.test(typed)) {
+      setUsernameError('Only letters (a-z), numbers (0-9), periods (.) and underscores (_) allowed');
+      setUsernameAvailable(null);
+      setUsernameCheckLoading(false);
+      return;
+    }
+
+    if (typed.length > 30) {
+      setUsernameError('Username cannot exceed 30 characters');
+      setUsernameAvailable(null);
+      setUsernameCheckLoading(false);
+      return;
+    }
+
+    setUsernameError('');
     setUsernameCheckLoading(true);
     if (usernameCheckTimeout.current) {
       clearTimeout(usernameCheckTimeout.current);
@@ -289,7 +308,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
 
     usernameCheckTimeout.current = setTimeout(() => {
       const isTaken = allUsernames
-        .filter((uname) => uname && uname.trim().toLowerCase() !== originalUsername) // ignore user's current username
+        .filter((uname) => uname && uname.trim().toLowerCase() !== originalUsername)
         .some((uname) => uname.trim().toLowerCase() === typed);
 
       setUsernameAvailable(!isTaken);
@@ -568,28 +587,35 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
             <div className="form-group">
               <label htmlFor="username">Username <span style={{ color: 'red' }}>*</span></label>
               <input
-                type="text"
-                className="form-control"
-                id="username"
-                placeholder="Username"
-                fdprocessedid="du108l"
-                name="username"
-                value={profileData.username}
-                onChange={(e) => {
-                  const lowercaseValue = e.target.value.toLowerCase();
-                  handleChange({ target: { name: e.target.name, value: lowercaseValue } });
-                  handleLiveUsernameCheck(lowercaseValue);
-                }}
-              />
-              {usernameCheckLoading && (
-                <small className="text-muted">Checking availability...</small>
-              )}
-              {usernameAvailable === true && (
-                <small className="text-success">Username is available</small>
-              )}
-              {usernameAvailable === false && (
-                <small className="text-danger">Username is already taken</small>
-              )}
+                  type="text"
+                  className="form-control"
+                  id="username"
+                  placeholder="Username"
+                  fdprocessedid="du108l"
+                  name="username"
+                  maxLength={30}
+                  value={profileData.username}
+                  onChange={(e) => {
+                    const lowercaseValue = e.target.value.toLowerCase().replace(/[^a-z0-9._]/g, '');
+                    handleChange({ target: { name: e.target.name, value: lowercaseValue } });
+                    handleLiveUsernameCheck(lowercaseValue);
+                  }}
+                />
+                <small className="text-muted d-block" style={{ fontSize: '11px' }}>
+                  {(profileData.username || '').length}/30 — Only letters (a-z), numbers, periods (.) and underscores (_)
+                </small>
+                {usernameError && (
+                  <small className="text-danger">{usernameError}</small>
+                )}
+                {usernameCheckLoading && (
+                  <small className="text-muted">Checking availability...</small>
+                )}
+                {!usernameError && usernameAvailable === true && (
+                  <small className="text-success">Username is available</small>
+                )}
+                {!usernameError && usernameAvailable === false && (
+                  <small className="text-danger">Username is already taken</small>
+                )}
             </div>
               <div className="form-group">
                 <label htmlFor="email">Email <span style={{ color: 'red' }}>*</span></label>
