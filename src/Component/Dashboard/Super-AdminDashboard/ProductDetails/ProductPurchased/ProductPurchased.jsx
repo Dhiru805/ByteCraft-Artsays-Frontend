@@ -19,8 +19,7 @@ const ADMIN_STATUS_LABELS = {
     "Delivered": "Delivered",
     "Completed": "Completed",
     "Cancelled": "Cancel Order",
-    "Return Requested": "Schedule Return",
-    "Refund Approved": "Approve Refund",
+    "Return Requested": "Initiate Refund",
     "Resale": "Listed for Resale",
 };
 
@@ -52,8 +51,9 @@ const ADMIN_ALLOWED_STATUSES = [
     "Completed",
     "Cancelled",
     "Return Requested",
-    "Refund Approved",
 ];
+
+const SHIPPED_OR_LATER = ["Shipped", "Out for Delivery", "Delivered"];
 
 const ProductRequest = () => {
     const [products, setProducts] = useState([]);
@@ -390,35 +390,38 @@ const ProductRequest = () => {
                                                                 <i className="fa fa-refresh"></i> Resell
                                                             </button>
                                                         )}
-                                                        {product.orderStatus !== "Cancelled" && product.orderStatus !== "Completed" && product.orderStatus !== "Resale" && (
-                                                            <select
-                                                                className="form-control form-control-sm"
-                                                                value=""
-                                                                onChange={(e) => {
-                                                                    if (e.target.value) {
-                                                                        handleStatusChange(
-                                                                            product.orderId,
-                                                                            e.target.value,
-                                                                            products.indexOf(product)
-                                                                        );
-                                                                    }
-                                                                }}
-                                                                style={{
-                                                                    minWidth: "160px",
-                                                                    borderColor: "#6c757d",
-                                                                    color: "#6c757d",
-                                                                    fontWeight: "600",
-                                                                    fontSize: "12px",
-                                                                }}
-                                                            >
-                                                                <option value="" disabled>Update Status</option>
-                                                                {ADMIN_ALLOWED_STATUSES.filter(s => s !== product.orderStatus).map((status) => (
-                                                                    <option key={status} value={status}>
-                                                                        {ADMIN_STATUS_LABELS[status]}
-                                                                    </option>
-                                                                ))}
-                                                            </select>
-                                                        )}
+{product.orderStatus !== "Cancelled" && product.orderStatus !== "Completed" && product.orderStatus !== "Resale" && (
+                                                              <select
+                                                                  className="form-control form-control-sm"
+                                                                  value=""
+                                                                  onChange={(e) => {
+                                                                      if (e.target.value) {
+                                                                          handleStatusChange(
+                                                                              product.orderId,
+                                                                              e.target.value,
+                                                                              products.indexOf(product)
+                                                                          );
+                                                                      }
+                                                                  }}
+                                                                  style={{
+                                                                      minWidth: "160px",
+                                                                      borderColor: "#6c757d",
+                                                                      color: "#6c757d",
+                                                                      fontWeight: "600",
+                                                                      fontSize: "12px",
+                                                                  }}
+                                                              >
+                                                                  <option value="" disabled>Update Status</option>
+                                                                  {ADMIN_ALLOWED_STATUSES
+                                                                      .filter(s => s !== product.orderStatus)
+                                                                      .filter(s => !(SHIPPED_OR_LATER.includes(product.orderStatus) && s === "Cancelled"))
+                                                                      .map((status) => (
+                                                                      <option key={status} value={status}>
+                                                                          {ADMIN_STATUS_LABELS[status]}
+                                                                      </option>
+                                                                  ))}
+                                                              </select>
+                                                          )}
                                                     </td>
                                                 </tr>
                                         ))}

@@ -46,7 +46,6 @@ const ARTIST_ALLOWED_STATUSES = [
   "Ready for Dispatch",
   "Shipped",
   "Delivered",
-  "Completed",
   "Cancelled",
 ];
 
@@ -343,7 +342,7 @@ const ProductRequest = () => {
                           >
                             <i className="fa fa-eye"></i>
                           </button>
-                          {product.orderStatus !== "Cancelled" && product.orderStatus !== "Completed" && product.orderStatus !== "Resale" && !product.isResale && (
+                          {product.orderStatus !== "Cancelled" && product.orderStatus !== "Completed" && product.orderStatus !== "Delivered" && product.orderStatus !== "Resale" && !product.isResale && (
                             <select
                               className="form-control form-control-sm"
                               value=""

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import getAPI from "../../../../../api/getAPI";
+import putAPI from "../../../../../api/putAPI";
 import useUserType from "../../../urlconfig";
 
 const STATUS_COLORS = {
@@ -50,6 +51,36 @@ const ArtistOrderView = () => {
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [cancelling, setCancelling] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
+  const [cancelComment, setCancelComment] = useState("");
+
+  const handleCancelOrder = async () => {
+    if (!cancelReason.trim()) {
+      alert("Please select a reason for cancellation.");
+      return;
+    }
+    setCancelling(true);
+    try {
+      const res = await putAPI(`/api/buyer-order-list/cancel/${order.orderId}`, {
+        cancelReason,
+        cancelComment,
+      });
+      if (res?.data) {
+        alert("Order cancelled and refund processed successfully.");
+        setOrder((prev) => ({ ...prev, orderStatus: "Cancelled", cancelReason, cancelComment }));
+        setShowCancelModal(false);
+        setCancelReason("");
+        setCancelComment("");
+      }
+    } catch (error) {
+      console.error("Cancel order error:", error);
+      alert(error?.response?.data?.message || "Failed to cancel order.");
+    } finally {
+      setCancelling(false);
+    }
+  };
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -159,21 +190,31 @@ const ArtistOrderView = () => {
                     )}
                   </p>
                 </div>
-                <div>
-                  <span
-                    className="badge"
-                    style={{
-                      backgroundColor: STATUS_COLORS[orderStatus] || "#6c757d",
-                      color: "#fff",
-                      padding: "8px 16px",
-                      borderRadius: "6px",
-                      fontSize: "13px",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {orderStatus}
-                  </span>
-                </div>
+                <div className="d-flex align-items-center" style={{ gap: "10px" }}>
+                    <span
+                      className="badge"
+                      style={{
+                        backgroundColor: STATUS_COLORS[orderStatus] || "#6c757d",
+                        color: "#fff",
+                        padding: "8px 16px",
+                        borderRadius: "6px",
+                        fontSize: "13px",
+                        fontWeight: 600,
+                      }}
+                    >
+                      {orderStatus}
+                    </span>
+                    {!isCancelled && orderStatus !== "Completed" && (
+                      <button
+                        className="btn btn-danger btn-sm"
+                        style={{ fontWeight: 600, borderRadius: "6px" }}
+                        onClick={() => setShowCancelModal(true)}
+                      >
+                        <i className="fa fa-times-circle mr-1"></i>
+                        Cancel / Refund Order
+                      </button>
+                    )}
+                  </div>
               </div>
             </div>
           </div>
@@ -388,7 +429,15 @@ const ArtistOrderView = () => {
                                             navigate(customPath, { state: { request: customProduct } });
                                           } else {
                                             const pid = product?._id || item.productId;
-                                            if (pid) navigate(`/${userType}/product-fetch-view/${pid}`);
+                                            if (pid) {
+                                              if (userType === "artist") {
+                                                navigate(`/artist/product-fetch-view-artist/${pid}`);
+                                              } else if (userType === "seller") {
+                                                navigate(`/seller/product-fetch-view-seller/${pid}`);
+                                              } else {
+                                                navigate(`/${userType}/product-fetch-view/${pid}`);
+                                              }
+                                            }
                                           }
                                         }}
                                     >
@@ -454,6 +503,84 @@ const ArtistOrderView = () => {
           </div>
         </div>
       </div>
+
+      {/* Cancel / Refund Modal */}
+      {showCancelModal && (
+        <div
+          style={{
+            position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.5)", zIndex: 9999,
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}
+          onClick={() => setShowCancelModal(false)}
+        >
+          <div
+            style={{
+              backgroundColor: "#fff", borderRadius: "12px", padding: "24px",
+              width: "100%", maxWidth: "480px", boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h5 style={{ fontWeight: 700, marginBottom: "16px" }}>
+              <i className="fa fa-exclamation-triangle text-danger mr-2"></i>
+              Cancel & Refund Order
+            </h5>
+            <p className="text-muted" style={{ fontSize: "13px" }}>
+              {order.sellerPaid
+                ? "Payout was already done. Cancelling will reverse the seller payout and admin commission, and refund the full amount to buyer's wallet."
+                : "Cancelling will refund the full amount to buyer's wallet."}
+            </p>
+            <div className="form-group">
+              <label style={{ fontWeight: 600 }}>Reason for Cancellation <span className="text-danger">*</span></label>
+              <select
+                className="form-control"
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+              >
+                <option value="">-- Select Reason --</option>
+                <option value="Buyer requested cancellation">Buyer requested cancellation</option>
+                <option value="Out of stock">Out of stock</option>
+                <option value="Product damaged">Product damaged</option>
+                <option value="Delivery issue">Delivery issue</option>
+                <option value="Pricing error">Pricing error</option>
+                <option value="Fraudulent order">Fraudulent order</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label style={{ fontWeight: 600 }}>Additional Comments</label>
+              <textarea
+                className="form-control"
+                rows="3"
+                placeholder="Any additional details..."
+                value={cancelComment}
+                onChange={(e) => setCancelComment(e.target.value)}
+              ></textarea>
+            </div>
+            <div className="d-flex justify-content-end" style={{ gap: "10px" }}>
+              <button
+                className="btn btn-secondary btn-sm"
+                onClick={() => setShowCancelModal(false)}
+                disabled={cancelling}
+              >
+                Close
+              </button>
+              <button
+                className="btn btn-danger btn-sm"
+                onClick={handleCancelOrder}
+                disabled={cancelling}
+                style={{ fontWeight: 600 }}
+              >
+                {cancelling ? (
+                  <><i className="fa fa-spinner fa-spin mr-1"></i> Processing...</>
+                ) : (
+                  <><i className="fa fa-times-circle mr-1"></i> Confirm Cancel & Refund</>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

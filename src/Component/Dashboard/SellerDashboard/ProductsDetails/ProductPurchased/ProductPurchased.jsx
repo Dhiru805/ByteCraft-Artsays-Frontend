@@ -44,7 +44,6 @@ const SELLER_ALLOWED_STATUSES = [
   "Ready for Dispatch",
   "Shipped",
   "Delivered",
-  "Completed",
   "Cancelled",
 ];
 
@@ -389,7 +388,7 @@ useEffect(() => {
                 >
                     <i className="fa fa-eye"></i>
                 </button>
-                {item.orderStatus !== "Cancelled" && item.orderStatus !== "Completed" && item.orderStatus !== "Resale" && !item.isResale && (
+                {item.orderStatus !== "Cancelled" && item.orderStatus !== "Completed" && item.orderStatus !== "Delivered" && item.orderStatus !== "Resale" && !item.isResale && (
                     <select
                         className="form-control form-control-sm"
                         value=""

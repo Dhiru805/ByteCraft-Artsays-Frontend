@@ -57,6 +57,16 @@ const AdminWalletManagement = () => {
     const [isSavingSettings, setIsSavingSettings] = useState(false);
     const [coinSetting, setCoinSetting] = useState({ coinValue: 0.10, currency: "INR" });
     const [isSavingCoinSetting, setIsSavingCoinSetting] = useState(false);
+
+    // Order Payouts
+    const [orders, setOrders] = useState([]);
+    const [orderPage, setOrderPage] = useState(1);
+    const [orderFilter, setOrderFilter] = useState("");
+    const [orderStatusFilter, setOrderStatusFilter] = useState("");
+    const [payoutProcessing, setPayoutProcessing] = useState(null);
+
+    // Platform Earnings (from dedicated API)
+    const [platformEarnings, setPlatformEarnings] = useState({ transactions: [], summary: {} });
   
     const fetchData = async () => {
 
@@ -73,6 +83,12 @@ const AdminWalletManagement = () => {
 
       const coinRes = await axios.get(`/api/coin-settings`);
       if (coinRes.data) setCoinSetting(coinRes.data);
+
+      const ordersRes = await axios.get(`/api/wallet/admin/all-orders`);
+      setOrders(ordersRes.data || []);
+
+      const earningsRes = await axios.get(`/api/wallet/admin/platform-earnings`);
+      setPlatformEarnings(earningsRes.data || { transactions: [], summary: {} });
     } catch (err) {
       console.error("Error fetching admin wallet data:", err?.response?.data || err?.message || err);
       toast.error(err?.response?.data?.message || "Failed to load dashboard data");
@@ -261,8 +277,9 @@ const AdminWalletManagement = () => {
               <button className={`btn ${activeTab === 'withdrawals' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('withdrawals')}>Withdrawals</button>
               <button className={`btn ${activeTab === 'transactions' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('transactions')}>Transactions</button>
             <button className={`btn ${activeTab === 'referrals' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('referrals')}>Referrals</button>
-            <button className={`btn ${activeTab === 'earnings' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('earnings')}>Platform Earnings</button>
-            <button className={`btn ${activeTab === 'settings' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('settings')}>Settings</button>
+              <button className={`btn ${activeTab === 'earnings' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('earnings')}>Platform Earnings</button>
+              <button className={`btn ${activeTab === 'orderPayouts' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('orderPayouts')}>Order Payouts</button>
+              <button className={`btn ${activeTab === 'settings' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('settings')}>Settings</button>
           </div>
       </div>
 
@@ -675,77 +692,69 @@ const AdminWalletManagement = () => {
           })()}
 
             {activeTab === 'earnings' && (() => {
-              // Categorize platform earning transactions
-              const categorize = (txn) => {
-                const p = (txn.purpose || '').toLowerCase();
-                if (p.includes('ad click')) return 'ads';
-                if (p.includes('payment for order') || p.includes('art coins redeemed for order')) return 'orders';
-                if (p.includes('withdrawal')) return 'withdrawals';
-                if (p.includes('admin adjustment') && txn.type === 'debit') return 'adjustments';
-                if (txn.type === 'debit') return 'other';
-                return null;
-              };
-
-              // All debit transactions = platform earnings (money spent by users on platform)
-              const allEarningTxns = transactions.filter(txn => {
-                const cat = categorize(txn);
-                return cat !== null;
-              });
-
-              const categoryFiltered = earningsCategory === 'all' 
-                ? allEarningTxns 
-                : allEarningTxns.filter(txn => categorize(txn) === earningsCategory);
-
-              const filteredEarnings = earningsFilter 
-                ? categoryFiltered.filter(txn => {
-                    const user = wallets.find(w => String(w.userId?._id || w.userId) === String(txn.userId));
-                    const userName = txn.name && txn.lastName 
-                      ? `${txn.name} ${txn.lastName}`.toLowerCase() 
-                      : user ? `${user.name} ${user.lastName}`.toLowerCase() : '';
-                    return userName.includes(earningsFilter.toLowerCase()) || 
-                           (txn.purpose || '').toLowerCase().includes(earningsFilter.toLowerCase());
-                  })
-                : categoryFiltered;
-
-              const todayStart = new Date(); todayStart.setHours(0,0,0,0);
-
-              // Category-wise totals (from all earnings, not filtered)
-              const adTxns = allEarningTxns.filter(t => categorize(t) === 'ads');
-              const orderTxns = allEarningTxns.filter(t => categorize(t) === 'orders');
-              const totalAdRevenue = adTxns.reduce((s, t) => s + (t.amount || 0), 0);
-              const totalOrderRevenue = orderTxns.reduce((s, t) => s + (t.amount || 0), 0);
-                const withdrawalTxns = allEarningTxns.filter(t => categorize(t) === 'withdrawals');
-                const totalWithdrawals = withdrawalTxns.reduce((s, t) => s + (t.amount || 0), 0);
-                const totalAllRevenue = allEarningTxns.reduce((s, t) => {
-                  return categorize(t) === 'withdrawals' ? s - (t.amount || 0) : s + (t.amount || 0);
-                }, 0);
-                const todayRevenue = allEarningTxns.filter(t => new Date(t.createdAt) >= todayStart).reduce((s, t) => {
-                  return categorize(t) === 'withdrawals' ? s - (t.amount || 0) : s + (t.amount || 0);
-                }, 0);
+              const allTxns = platformEarnings.transactions || [];
+              const summary = platformEarnings.summary || {};
 
               const getCategoryLabel = (cat) => {
-                const labels = { ads: 'Ad Revenue', orders: 'Order Payments', withdrawals: 'Withdrawals', adjustments: 'Admin Adjustments', other: 'Other' };
-                return labels[cat] || cat;
-              };
-              const getCategoryBadge = (cat) => {
-                const badges = { ads: 'badge-info', orders: 'badge-success', withdrawals: 'badge-warning', adjustments: 'badge-secondary', other: 'badge-dark' };
-                return badges[cat] || 'badge-secondary';
-              };
+                  const labels = { 
+                    buyer_payment: 'Buyer Payment',
+                    buyer_refund: 'Buyer Refund',
+                    seller_payout: 'Seller Payout',
+                    seller_payout_reversed: 'Seller Payout Reversed',
+                    commission_earned: 'Commission Earned', 
+                    commission_reversed: 'Commission Reversed', 
+                    admin_adjustment: 'Admin Adjustment', 
+                    add_money: 'Add Money', 
+                    withdrawal: 'Withdrawal', 
+                    other_credit: 'Other Credit', 
+                    other_debit: 'Other Debit',
+                    other: 'Other'
+                  };
+                  return labels[cat] || cat;
+                };
+                const getCategoryBadge = (cat) => {
+                  const badges = { 
+                    buyer_payment: 'badge-primary',
+                    buyer_refund: 'badge-warning',
+                    seller_payout: 'badge-info',
+                    seller_payout_reversed: 'badge-dark',
+                    commission_earned: 'badge-success', 
+                    commission_reversed: 'badge-danger', 
+                    admin_adjustment: 'badge-secondary', 
+                    add_money: 'badge-info', 
+                    withdrawal: 'badge-warning', 
+                    other_credit: 'badge-primary', 
+                    other_debit: 'badge-dark',
+                    other: 'badge-secondary'
+                  };
+                  return badges[cat] || 'badge-secondary';
+                };
 
-                // Build cumulative earnings (running total sorted by date ascending)
-                // Withdrawals SUBTRACT from platform earnings, everything else ADDS
-                const sortedForCumulative = [...filteredEarnings].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-                let runningTotal = 0;
-                const cumulativeMap = {};
-                sortedForCumulative.forEach(txn => {
-                  const cat = categorize(txn);
-                  if (cat === 'withdrawals') {
-                    runningTotal -= (txn.amount || 0);
-                  } else {
-                    runningTotal += (txn.amount || 0);
-                  }
-                  cumulativeMap[txn._id] = runningTotal;
-                });
+              // Filter by category
+              const categoryFiltered = earningsCategory === 'all' 
+                ? allTxns 
+                : allTxns.filter(txn => txn.category === earningsCategory);
+
+              // Filter by search
+              const filteredEarnings = earningsFilter 
+                ? categoryFiltered.filter(txn => 
+                    (txn.purpose || '').toLowerCase().includes(earningsFilter.toLowerCase()) ||
+                    (txn.referenceId || '').toLowerCase().includes(earningsFilter.toLowerCase())
+                  )
+                : categoryFiltered;
+
+              // Build cumulative earnings (running total sorted by date ascending)
+              const sortedForCumulative = [...filteredEarnings].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+              let runningTotal = 0;
+              const cumulativeMap = {};
+              sortedForCumulative.forEach(txn => {
+                if (txn.type === 'debit') {
+                  runningTotal -= (txn.amount || 0);
+                } else {
+                  runningTotal += (txn.amount || 0);
+                }
+                cumulativeMap[txn._id] = runningTotal;
+              });
 
               const totalEarningsPages = Math.ceil(filteredEarnings.length / pageSize);
               const displayEarnings = filteredEarnings.slice((earningsPage - 1) * pageSize, earningsPage * pageSize);
@@ -758,9 +767,9 @@ const AdminWalletManagement = () => {
                         <div className="body">
                           <div className="icon bg-light text-success mb-2"><i className="fa fa-rupee"></i></div>
                           <div className="content">
-                            <div className="text-uppercase small">Total Platform Revenue</div>
-                            <h4 className="number mb-0">₹{totalAllRevenue.toLocaleString()}</h4>
-                            <small>{allEarningTxns.length} transactions</small>
+                            <div className="text-uppercase small">Net Commission Earnings</div>
+                            <h4 className="number mb-0">₹{(summary.netPlatformEarnings || 0).toLocaleString()}</h4>
+                            <small>Earned - Reversed</small>
                           </div>
                         </div>
                       </div>
@@ -770,33 +779,61 @@ const AdminWalletManagement = () => {
                         <div className="body">
                           <div className="icon bg-light text-primary mb-2"><i className="fa fa-calendar"></i></div>
                           <div className="content">
-                            <div className="text-uppercase small">Today's Revenue</div>
-                            <h4 className="number mb-0">₹{todayRevenue.toLocaleString()}</h4>
+                            <div className="text-uppercase small">Today's Net Earnings</div>
+                            <h4 className="number mb-0">₹{(summary.todayNetEarnings || 0).toLocaleString()}</h4>
+                            <small>+₹{(summary.todayCommissionEarned || 0).toLocaleString()} / -₹{(summary.todayCommissionReversed || 0).toLocaleString()}</small>
                           </div>
                         </div>
                       </div>
                     </div>
                     <div className="col-lg-3 col-md-6">
-                      <div className="card top_widget bg-info text-light" style={{ cursor: 'pointer' }} onClick={() => { setEarningsCategory('ads'); setEarningsPage(1); }}>
+                      <div className="card top_widget bg-info text-light" style={{ cursor: 'pointer' }} onClick={() => { setEarningsCategory('commission_earned'); setEarningsPage(1); }}>
                         <div className="body">
-                          <div className="icon bg-light text-info mb-2"><i className="fa fa-bullhorn"></i></div>
+                          <div className="icon bg-light text-info mb-2"><i className="fa fa-plus-circle"></i></div>
                           <div className="content">
-                            <div className="text-uppercase small">Ad Revenue</div>
-                            <h4 className="number mb-0">₹{totalAdRevenue.toLocaleString()}</h4>
-                            <small>{adTxns.length} clicks</small>
+                            <div className="text-uppercase small">Total Commission Earned</div>
+                            <h4 className="number mb-0">₹{(summary.totalCommissionEarned || 0).toLocaleString()}</h4>
+                            <small>From order payouts</small>
                           </div>
                         </div>
                       </div>
                     </div>
                     <div className="col-lg-3 col-md-6">
-                      <div className="card top_widget bg-warning text-dark" style={{ cursor: 'pointer' }} onClick={() => { setEarningsCategory('orders'); setEarningsPage(1); }}>
+                      <div className="card top_widget bg-danger text-light" style={{ cursor: 'pointer' }} onClick={() => { setEarningsCategory('commission_reversed'); setEarningsPage(1); }}>
                         <div className="body">
-                          <div className="icon bg-light text-warning mb-2"><i className="fa fa-shopping-cart"></i></div>
+                          <div className="icon bg-light text-danger mb-2"><i className="fa fa-minus-circle"></i></div>
                           <div className="content">
-                            <div className="text-uppercase small">Order Revenue</div>
-                            <h4 className="number mb-0">₹{totalOrderRevenue.toLocaleString()}</h4>
-                            <small>{orderTxns.length} orders</small>
+                            <div className="text-uppercase small">Commission Reversed</div>
+                            <h4 className="number mb-0">₹{(summary.totalCommissionReversed || 0).toLocaleString()}</h4>
+                            <small>From order cancellations</small>
                           </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="row clearfix row-deck mb-4">
+                    <div className="col-lg-4 col-md-6">
+                      <div className="card">
+                        <div className="body text-center">
+                          <h6 className="text-muted">Admin Wallet Balance</h6>
+                          <h3 className="text-primary">₹{(summary.adminWalletBalance || 0).toLocaleString()}</h3>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-4 col-md-6">
+                      <div className="card" style={{ cursor: 'pointer' }} onClick={() => { setEarningsCategory('admin_adjustment'); setEarningsPage(1); }}>
+                        <div className="body text-center">
+                          <h6 className="text-muted">Adjustments (Credit / Debit)</h6>
+                          <h3><span className="text-success">+₹{(summary.totalAdjustmentCredit || 0).toLocaleString()}</span> / <span className="text-danger">-₹{(summary.totalAdjustmentDebit || 0).toLocaleString()}</span></h3>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-4 col-md-6">
+                      <div className="card">
+                        <div className="body text-center">
+                          <h6 className="text-muted">Other (Credit / Debit)</h6>
+                          <h3><span className="text-success">+₹{(summary.totalOtherCredit || 0).toLocaleString()}</span> / <span className="text-danger">-₹{(summary.totalOtherDebit || 0).toLocaleString()}</span></h3>
                         </div>
                       </div>
                     </div>
@@ -804,25 +841,31 @@ const AdminWalletManagement = () => {
 
                   <div className="card">
                     <div className="header d-flex justify-content-between align-items-center flex-wrap" style={{ gap: '10px' }}>
-                      <h2>Platform Earnings {earningsCategory !== 'all' ? `- ${getCategoryLabel(earningsCategory)}` : '- All Sources'}</h2>
+                      <h2>Admin Wallet Transactions {earningsCategory !== 'all' ? `- ${getCategoryLabel(earningsCategory)}` : '- All'}</h2>
                       <div className="d-flex" style={{ gap: '10px' }}>
                         <select 
                           className="form-control" 
                           value={earningsCategory} 
                           onChange={e => { setEarningsCategory(e.target.value); setEarningsPage(1); }}
-                          style={{ width: '180px' }}
+                          style={{ width: '200px' }}
                         >
-                          <option value="all">All Sources</option>
-                          <option value="ads">Ad Revenue</option>
-                          <option value="orders">Order Payments</option>
-                          <option value="withdrawals">Withdrawals</option>
-                          <option value="adjustments">Admin Adjustments</option>
-                          <option value="other">Other</option>
+                            <option value="all">All Categories</option>
+                            <option value="buyer_payment">Buyer Payments</option>
+                            <option value="buyer_refund">Buyer Refunds</option>
+                            <option value="seller_payout">Seller Payouts</option>
+                            <option value="seller_payout_reversed">Seller Payout Reversed</option>
+                            <option value="commission_earned">Commission Earned</option>
+                            <option value="commission_reversed">Commission Reversed</option>
+                            <option value="add_money">Add Money</option>
+                            <option value="withdrawal">Withdrawals</option>
+                            <option value="admin_adjustment">Admin Adjustments</option>
+                            <option value="other_credit">Other Credit</option>
+                            <option value="other_debit">Other Debit</option>
                         </select>
                         <input 
                           type="text" 
                           className="form-control" 
-                          placeholder="Search by user or purpose..." 
+                          placeholder="Search by purpose or order ID..." 
                           value={earningsFilter} 
                           onChange={e => { setEarningsFilter(e.target.value); setEarningsPage(1); }} 
                           style={{ width: '250px' }}
@@ -832,42 +875,36 @@ const AdminWalletManagement = () => {
                     <div className="body table-responsive">
                       <table className="table table-hover">
                         <thead>
-                          <tr>
-                            <th>Date</th>
-                            <th>User</th>
-                            <th>Category</th>
-                            <th>Purpose</th>
+                            <tr>
+                              <th>Date</th>
+                              <th>User</th>
+                              <th>Category</th>
+                              <th>Type</th>
+                              <th>Purpose</th>
                               <th>Amount</th>
                               <th>Balance After</th>
-                              <th>Cumulative Earnings</th>
                               <th>Status</th>
-                          </tr>
+                            </tr>
                         </thead>
                         <tbody>
-                          {displayEarnings.map(txn => {
-                            const user = wallets.find(w => String(w.userId?._id || w.userId) === String(txn.userId));
-                            const userName = txn.name && txn.lastName 
-                              ? `${txn.name} ${txn.lastName}` 
-                              : user 
-                                ? `${user.name} ${user.lastName}` 
-                                : (txn.userId || 'Unknown');
-                            const cat = categorize(txn);
-                            return (
+                          {displayEarnings.map(txn => (
                               <tr key={txn._id}>
                                 <td>{new Date(txn.createdAt).toLocaleString()}</td>
-                                <td>{userName}</td>
-                                <td><span className={`badge ${getCategoryBadge(cat)}`}>{getCategoryLabel(cat)}</span></td>
-                                <td>{txn.purpose}</td>
-                                <td className={`font-weight-bold ${categorize(txn) === 'withdrawals' ? 'text-danger' : 'text-success'}`}>
-                                    {categorize(txn) === 'withdrawals' ? '-' : '+'}₹{txn.amount.toLocaleString()}
-                                  </td>
+                                <td>
+                                  <div style={{fontSize:'13px'}}>{txn.userName || 'Unknown'}</div>
+                                  <small className="text-muted">{txn.userRole}</small>
+                                </td>
+                                <td><span className={`badge ${getCategoryBadge(txn.category)}`}>{getCategoryLabel(txn.category)}</span></td>
+                                <td><span className={`badge ${txn.type === 'credit' ? 'badge-success' : 'badge-danger'}`}>{txn.type}</span></td>
+                                <td className="whitespace-normal" style={{maxWidth:'250px'}}>{txn.purpose}</td>
+                                <td className={`font-weight-bold ${txn.type === 'debit' ? 'text-danger' : 'text-success'}`}>
+                                  {txn.type === 'debit' ? '-' : '+'}₹{(txn.amount || 0).toLocaleString()}
+                                </td>
                                 <td>₹{(txn.balanceAfter != null ? txn.balanceAfter : '-').toLocaleString()}</td>
-                                  <td className="font-weight-bold text-primary">₹{(cumulativeMap[txn._id] || 0).toLocaleString()}</td>
                                 <td><span className={`badge ${txn.status === 'success' ? 'badge-success' : txn.status === 'pending' ? 'badge-warning' : 'badge-secondary'}`}>{txn.status}</span></td>
                               </tr>
-                            );
-                          })}
-                          {displayEarnings.length === 0 && <tr><td colSpan="8" className="text-center">No earnings found</td></tr>}
+                            ))}
+                            {displayEarnings.length === 0 && <tr><td colSpan="8" className="text-center">No transactions found</td></tr>}
                         </tbody>
                       </table>
                       <div className="mt-3 d-flex justify-content-between align-items-center">
@@ -882,6 +919,187 @@ const AdminWalletManagement = () => {
                 </>
               );
             })()}
+
+        {activeTab === 'orderPayouts' && (() => {
+          const handleImmediatePayout = async (orderId) => {
+            if (!window.confirm(`Are you sure you want to process immediate payout for order ${orderId}? This will credit the seller and deduct platform commission.`)) return;
+            setPayoutProcessing(orderId);
+            try {
+              const res = await axios.post(`/api/immediate-seller-payout/${orderId}`);
+              toast.success(res.data.message || "Payout processed successfully");
+              fetchData();
+            } catch (err) {
+              toast.error(err?.response?.data?.message || "Failed to process payout");
+            } finally {
+              setPayoutProcessing(null);
+            }
+          };
+
+          const filtered = orders.filter(o => {
+            if (orderStatusFilter && o.orderStatus !== orderStatusFilter) return false;
+            if (orderFilter) {
+              const q = orderFilter.toLowerCase();
+              return (o.orderId || "").toLowerCase().includes(q) ||
+                     (o.buyerName || "").toLowerCase().includes(q) ||
+                     (o.artistName || "").toLowerCase().includes(q) ||
+                     (o.productName || "").toLowerCase().includes(q);
+            }
+            return true;
+          });
+          const totalOrderPages = Math.ceil(filtered.length / pageSize);
+          const displayOrders = filtered.slice((orderPage - 1) * pageSize, orderPage * pageSize);
+
+          const unpaidDelivered = orders.filter(o => o.orderStatus === "Delivered" && !o.sellerPaid).length;
+          const paidCount = orders.filter(o => o.sellerPaid).length;
+          const totalCommission = orders.filter(o => o.platformCommission).reduce((s, o) => s + o.platformCommission, 0);
+          const totalSellerEarnings = orders.filter(o => o.sellerEarnings).reduce((s, o) => s + o.sellerEarnings, 0);
+
+          return (
+            <>
+              <div className="row clearfix row-deck mb-4">
+                <div className="col-lg-3 col-md-6">
+                  <div className="card top_widget bg-warning text-dark">
+                    <div className="body">
+                      <div className="icon bg-light text-warning mb-2"><i className="fa fa-clock-o"></i></div>
+                      <div className="content">
+                        <div className="text-uppercase small">Pending Payouts</div>
+                        <h4 className="number mb-0">{unpaidDelivered}</h4>
+                        <small>Delivered but unpaid</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-lg-3 col-md-6">
+                  <div className="card top_widget bg-success text-light">
+                    <div className="body">
+                      <div className="icon bg-light text-success mb-2"><i className="fa fa-check"></i></div>
+                      <div className="content">
+                        <div className="text-uppercase small">Paid Orders</div>
+                        <h4 className="number mb-0">{paidCount}</h4>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-lg-3 col-md-6">
+                  <div className="card top_widget bg-info text-light">
+                    <div className="body">
+                      <div className="icon bg-light text-info mb-2"><i className="fa fa-rupee"></i></div>
+                      <div className="content">
+                        <div className="text-uppercase small">Total Commission</div>
+                        <h4 className="number mb-0">₹{totalCommission.toLocaleString()}</h4>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-lg-3 col-md-6">
+                  <div className="card top_widget primary-bg text-light">
+                    <div className="body">
+                      <div className="icon bg-light text-primary mb-2"><i className="fa fa-money"></i></div>
+                      <div className="content">
+                        <div className="text-uppercase small">Total Seller Payouts</div>
+                        <h4 className="number mb-0">₹{totalSellerEarnings.toLocaleString()}</h4>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="card">
+                <div className="header d-flex justify-content-between align-items-center flex-wrap" style={{ gap: '10px' }}>
+                  <h2>Order Payouts Management</h2>
+                  <div className="d-flex" style={{ gap: '10px' }}>
+                    <select className="form-control" style={{ width: '160px' }} value={orderStatusFilter} onChange={e => { setOrderStatusFilter(e.target.value); setOrderPage(1); }}>
+                      <option value="">All Statuses</option>
+                      <option value="Pending">Pending</option>
+                      <option value="Confirmed">Confirmed</option>
+                      <option value="Shipped">Shipped</option>
+                      <option value="Delivered">Delivered</option>
+                      <option value="Completed">Completed</option>
+                      <option value="Cancelled">Cancelled</option>
+                    </select>
+                    <input type="text" className="form-control" placeholder="Search order, buyer, artist..." value={orderFilter} onChange={e => { setOrderFilter(e.target.value); setOrderPage(1); }} style={{ width: '250px' }} />
+                  </div>
+                </div>
+                <div className="body table-responsive">
+                  <table className="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Buyer</th>
+                        <th>Artist/Seller</th>
+                        <th>Product</th>
+                        <th>Amount</th>
+                        <th>Order Status</th>
+                        <th>Payout Status</th>
+                        <th>Commission</th>
+                        <th>Seller Earnings</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {displayOrders.map(order => {
+                        const statusColors = {
+                          Pending: 'badge-secondary', Confirmed: 'badge-info', Shipped: 'badge-primary',
+                          Delivered: 'badge-success', Completed: 'badge-success', Cancelled: 'badge-danger'
+                        };
+                        return (
+                          <tr key={order._id}>
+                            <td><code>{order.orderId}</code></td>
+                            <td>{new Date(order.createdAt).toLocaleDateString()}</td>
+                            <td>{order.buyerName}</td>
+                            <td>{order.artistName}</td>
+                            <td style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{order.productName}</td>
+                            <td className="font-weight-bold">₹{(order.totalAmount || 0).toLocaleString()}</td>
+                            <td><span className={`badge ${statusColors[order.orderStatus] || 'badge-secondary'}`}>{order.orderStatus}</span></td>
+                            <td>
+                              {order.sellerPaid ? (
+                                <span className="badge badge-success">Paid {order.sellerPaidAt ? new Date(order.sellerPaidAt).toLocaleDateString() : ''}</span>
+                              ) : order.orderStatus === 'Cancelled' ? (
+                                <span className="badge badge-dark">N/A</span>
+                              ) : (
+                                <span className="badge badge-warning">Unpaid</span>
+                              )}
+                            </td>
+                            <td>{order.platformCommission != null ? `₹${order.platformCommission.toLocaleString()}` : '-'}</td>
+                            <td>{order.sellerEarnings != null ? `₹${order.sellerEarnings.toLocaleString()}` : '-'}</td>
+                            <td>
+                              {!order.sellerPaid && order.orderStatus === 'Delivered' ? (
+                                <button
+                                  className="btn btn-sm btn-warning"
+                                  disabled={payoutProcessing === order.orderId}
+                                  onClick={() => handleImmediatePayout(order.orderId)}
+                                >
+                                  {payoutProcessing === order.orderId ? (
+                                    <><i className="fa fa-spinner fa-spin mr-1"></i>Processing</>
+                                  ) : (
+                                    <><i className="fa fa-bolt mr-1"></i>Immediate Payout</>
+                                  )}
+                                </button>
+                              ) : order.sellerPaid ? (
+                                <span className="text-success"><i className="fa fa-check-circle"></i> Done</span>
+                              ) : (
+                                <span className="text-muted">-</span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                      {displayOrders.length === 0 && <tr><td colSpan="11" className="text-center">No orders found</td></tr>}
+                    </tbody>
+                  </table>
+                  <div className="mt-3 d-flex justify-content-between align-items-center">
+                    <div>Page {orderPage} of {totalOrderPages || 1} ({filtered.length} orders)</div>
+                    <div className="btn-group">
+                      <button className="btn btn-sm btn-light" disabled={orderPage === 1} onClick={() => setOrderPage(p => p - 1)}>Prev</button>
+                      <button className="btn btn-sm btn-light" disabled={orderPage >= totalOrderPages} onClick={() => setOrderPage(p => p + 1)}>Next</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          );
+        })()}
 
             {activeTab === 'settings' && referralSettings && (
               <div className="row clearfix">

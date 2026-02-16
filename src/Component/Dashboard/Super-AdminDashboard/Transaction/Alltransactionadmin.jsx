@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../api/getAPI';
+import postAPI from '../../../../api/postAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../urlconfig';
 
@@ -22,14 +23,18 @@ const Transaction = () => {
                 let combinedProducts = [];
 
                 if (result?.data) {
+                    // Orders from BuyerOrderList (have payout info)
+                    if (Array.isArray(result.data.orders)) {
+                        combinedProducts = [...result.data.orders];
+                    }
                     if (Array.isArray(result.data.productPurchases)) {
-                        combinedProducts = [...result.data.productPurchases];
+                        combinedProducts = [...combinedProducts, ...result.data.productPurchases];
                     }
                     if (Array.isArray(result.data.packagingPurchases)) {
                         combinedProducts = [...combinedProducts, ...result.data.packagingPurchases];
                     }
                     if (Array.isArray(result.data.biddedProducts)) {
-                      
+                    
                         const formattedBiddedProducts = result.data.biddedProducts.map(bid => ({
                             ...bid,
                             product: bid.product?.product || null 
@@ -63,6 +68,35 @@ const Transaction = () => {
     const handleProductsPerPageChange = (event) => {
         setProductsPerPage(Number(event.target.value));
         setCurrentPage(1);
+    };
+
+    const [payoutLoading, setPayoutLoading] = useState({});
+
+    const handleImmediatePayout = async (orderId) => {
+        if (!window.confirm(`Are you sure you want to process immediate payout for order ${orderId}?`)) return;
+
+        setPayoutLoading(prev => ({ ...prev, [orderId]: true }));
+        try {
+            const result = await postAPI(
+                `${process.env.REACT_APP_API_URL}/api/immediate-seller-payout/${orderId}`,
+                {},
+                {},
+                true
+            );
+            if (result?.data?.success) {
+                alert(result.data.message);
+                // Update the local state to reflect payout
+                setProducts(prev => prev.map(p =>
+                    p.orderId === orderId ? { ...p, sellerPaid: true, sellerPaidAt: new Date().toISOString() } : p
+                ));
+            } else {
+                alert(result?.data?.message || "Payout failed");
+            }
+        } catch (error) {
+            alert(error?.response?.data?.message || "Error processing payout");
+        } finally {
+            setPayoutLoading(prev => ({ ...prev, [orderId]: false }));
+        }
     };
 
     return (
@@ -100,6 +134,8 @@ const Transaction = () => {
                                             <th>Product Quantity</th>
                                             <th>Payment Type</th>
                                             <th>Date</th>
+                                            <th>Order Status</th>
+                                            <th>Payout</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -155,6 +191,42 @@ const Transaction = () => {
                                                     <td>{product.paymentMethod}</td>
                                                     <td>
                                                         {new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                                    </td>
+                                                    <td>
+                                                        <span className={`badge ${
+                                                            product.orderStatus === 'Delivered' ? 'badge-success' :
+                                                            product.orderStatus === 'Completed' ? 'badge-primary' :
+                                                            product.orderStatus === 'Cancelled' ? 'badge-danger' :
+                                                            product.orderStatus === 'Shipped' ? 'badge-info' :
+                                                            'badge-warning'
+                                                        }`}>
+                                                            {product.orderStatus || 'N/A'}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        {product._source === 'order' ? (
+                                                            product.sellerPaid ? (
+                                                                <span className="badge badge-success">
+                                                                    Paid {product.sellerPaidAt ? `on ${new Date(product.sellerPaidAt).toLocaleDateString('en-IN')}` : ''}
+                                                                </span>
+                                                            ) : product.orderStatus === 'Cancelled' ? (
+                                                                <span className="badge badge-secondary">N/A</span>
+                                                            ) : (
+                                                                <button
+                                                                    className="btn btn-sm btn-warning"
+                                                                    onClick={() => handleImmediatePayout(product.orderId)}
+                                                                    disabled={payoutLoading[product.orderId]}
+                                                                >
+                                                                    {payoutLoading[product.orderId] ? (
+                                                                        <><i className="fa fa-spinner fa-spin mr-1"></i>Processing</>
+                                                                    ) : (
+                                                                        <><i className="fa fa-money mr-1"></i>Immediate Payout</>
+                                                                    )}
+                                                                </button>
+                                                            )
+                                                        ) : (
+                                                            <span className="badge badge-secondary">-</span>
+                                                        )}
                                                     </td>
                                                     <td>
                                                         {productData && (
