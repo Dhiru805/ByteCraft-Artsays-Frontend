@@ -27,7 +27,11 @@ import {
   Clock,
   Store,
   Tag,
-  ReceiptIndianRupee
+  ReceiptIndianRupee,
+  Ban,
+  RotateCcw,
+  Wallet,
+  BadgeCheck
 } from "lucide-react";
 
 const OrderView = () => {
@@ -381,31 +385,72 @@ const OrderView = () => {
     );
   }
 
-  // Map order statuses to timeline steps in order
-  const TIMELINE_STEPS = ["Ordered", "Packed", "Shipped", "Out for Delivery", "Delivered"];
-  const STATUS_TO_STEP = {
-    "Ordered": 0,
-    "Payment Pending": 0,
-    "Payment Received": 0,
-    "Handling Time": 1,
-    "Order Confirmed": 1,
-    "Ready for Dispatch": 1,
-    "Shipped": 2,
-    "Out for Delivery": 3,
-    "Delivered": 4,
-    "Completed": 4,
-    "Return Requested": 4,
-    "Refund Approved": 4,
-  };
-  const activeStepIndex = STATUS_TO_STEP[rawOrderStatus] ?? 0;
+  // Determine if this is a cancel/refund/return flow
+    const CANCEL_REFUND_STATUSES = ["Cancelled", "Return Requested", "Refund Approved", "Refund Initiated", "Refund Successful"];
+    const isCancelRefundFlow = CANCEL_REFUND_STATUSES.includes(rawOrderStatus);
 
-  const statusUpdates = [
-    { label: "Ordered", date: createdAt ? new Date(createdAt).toLocaleDateString() : "—", icon: Package },
-    { label: "Packed", date: activeStepIndex >= 1 ? (order.PackedAt ? new Date(order.PackedAt).toLocaleDateString() : "—") : "—", icon: Clock },
-    { label: "Shipped", date: activeStepIndex >= 2 ? (order.ShippedAt ? new Date(order.ShippedAt).toLocaleDateString() : "—") : "—", icon: Truck },
-    { label: "Out for Delivery", date: activeStepIndex >= 3 ? (order.OutForDeliveryAt ? new Date(order.OutForDeliveryAt).toLocaleDateString() : "—") : "—", icon: Truck },
-    { label: "Delivered", date: activeStepIndex >= 4 ? (order.DeliveredAt ? new Date(order.DeliveredAt).toLocaleDateString() : "—") : "—", icon: CheckCircle2 },
-  ];
+    // ── Normal delivery timeline ──
+    const TIMELINE_STEPS = ["Ordered", "Packed", "Shipped", "Out for Delivery", "Delivered"];
+    const STATUS_TO_STEP = {
+      "Ordered": 0,
+      "Payment Pending": 0,
+      "Payment Received": 0,
+      "Handling Time": 1,
+      "Order Confirmed": 1,
+      "Ready for Dispatch": 1,
+      "Shipped": 2,
+      "Out for Delivery": 3,
+      "Delivered": 4,
+      "Completed": 4,
+    };
+    const activeStepIndex = STATUS_TO_STEP[rawOrderStatus] ?? 0;
+
+    const statusUpdates = [
+      { label: "Ordered", date: createdAt ? new Date(createdAt).toLocaleDateString() : "—", icon: Package },
+      { label: "Packed", date: activeStepIndex >= 1 ? (order.PackedAt ? new Date(order.PackedAt).toLocaleDateString() : "—") : "—", icon: Clock },
+      { label: "Shipped", date: activeStepIndex >= 2 ? (order.ShippedAt ? new Date(order.ShippedAt).toLocaleDateString() : "—") : "—", icon: Truck },
+      { label: "Out for Delivery", date: activeStepIndex >= 3 ? (order.OutForDeliveryAt ? new Date(order.OutForDeliveryAt).toLocaleDateString() : "—") : "—", icon: Truck },
+      { label: "Delivered", date: activeStepIndex >= 4 ? (order.DeliveredAt ? new Date(order.DeliveredAt).toLocaleDateString() : "—") : "—", icon: CheckCircle2 },
+    ];
+
+    // ── Cancel / Refund / Return timeline ──
+    const cancelRefundSteps = rawOrderStatus === "Return Requested" || (rawOrderStatus !== "Cancelled" && order.ReturnRequestedAt)
+      ? ["Ordered", "Delivered", "Return Requested", "Refund Initiated", "Refund Successful"]
+      : ["Ordered", "Cancelled", "Refund Initiated", "Refund Successful"];
+
+    const CANCEL_STEP_ICONS = {
+      "Ordered": Package,
+      "Delivered": CheckCircle2,
+      "Cancelled": Ban,
+      "Return Requested": RotateCcw,
+      "Refund Approved": Wallet,
+      "Refund Initiated": Wallet,
+      "Refund Successful": BadgeCheck,
+    };
+
+    const CANCEL_STEP_COLORS = {
+      "Ordered": { bg: "bg-[#6F4D34]", text: "text-white", shadow: "shadow-[#6F4D34]/30" },
+      "Delivered": { bg: "bg-[#6F4D34]", text: "text-white", shadow: "shadow-[#6F4D34]/30" },
+      "Cancelled": { bg: "bg-red-500", text: "text-white", shadow: "shadow-red-500/30" },
+      "Return Requested": { bg: "bg-orange-500", text: "text-white", shadow: "shadow-orange-500/30" },
+      "Refund Approved": { bg: "bg-blue-500", text: "text-white", shadow: "shadow-blue-500/30" },
+      "Refund Initiated": { bg: "bg-blue-500", text: "text-white", shadow: "shadow-blue-500/30" },
+      "Refund Successful": { bg: "bg-green-500", text: "text-white", shadow: "shadow-green-500/30" },
+    };
+
+    const cancelStepDateMap = {
+      "Ordered": createdAt ? new Date(createdAt).toLocaleDateString() : "—",
+      "Delivered": order.DeliveredAt ? new Date(order.DeliveredAt).toLocaleDateString() : "—",
+      "Cancelled": order.CancelledAt ? new Date(order.CancelledAt).toLocaleDateString() : (order.updatedAt ? new Date(order.updatedAt).toLocaleDateString() : "—"),
+      "Return Requested": order.ReturnRequestedAt ? new Date(order.ReturnRequestedAt).toLocaleDateString() : "—",
+      "Refund Approved": order.RefundApprovedAt ? new Date(order.RefundApprovedAt).toLocaleDateString() : "—",
+      "Refund Initiated": order.RefundInitiatedAt ? new Date(order.RefundInitiatedAt).toLocaleDateString() : "—",
+      "Refund Successful": order.RefundSuccessfulAt ? new Date(order.RefundSuccessfulAt).toLocaleDateString() : "—",
+    };
+
+    // Find active index in cancel/refund flow
+    const cancelActiveIndex = cancelRefundSteps.indexOf(rawOrderStatus);
+    const cancelActiveStepIndex = cancelActiveIndex >= 0 ? cancelActiveIndex : 0;
 
   const originalPrice = order.MaxBudget || 0;
     const negotiated = order.ArtistNegotiatedBudgets?.[0] || order.finalPrice || order.totalAmount || originalPrice;
@@ -698,85 +743,130 @@ const OrderView = () => {
         className="bg-white rounded-3xl border border-gray-100 shadow-lg p-6 sm:p-8"
       >
         <div className="flex items-center gap-3 mb-8">
-          <Truck className="w-6 h-6 text-[#6F4D34]" />
-          <h3 className="text-xl font-bold text-gray-800 tracking-tight">Track Your Delivery</h3>
-        </div>
-
-        {orderStatus === "Cancelled" ? (
-          <div className="bg-red-50 rounded-2xl p-8 flex flex-col items-center text-center">
-            <XCircle className="w-16 h-16 text-red-500 mb-4 animate-pulse" />
-            <h4 className="text-2xl font-bold text-red-700">Order Cancelled</h4>
-            <p className="text-red-600/80 mt-2 max-w-md font-medium">
-              We're sorry! This order has been cancelled and is no longer being processed.
-            </p>
-            <div className="mt-8 flex gap-4">
-              <button className="flex items-center gap-2 bg-[#6F4D34] text-white px-8 py-3 rounded-2xl hover:bg-[#5b3f2a] transition font-bold shadow-lg shadow-[#6F4D34]/20">
-                <MessageSquare className="w-5 h-5" />
-                <span>Chat for Help</span>
-              </button>
-            </div>
+            <Truck className="w-6 h-6 text-[#6F4D34]" />
+            <h3 className="text-xl font-bold text-gray-800 tracking-tight">
+              {isCancelRefundFlow ? "Order Status" : "Track Your Delivery"}
+            </h3>
           </div>
-        ) : (
-          <div className="relative py-4 px-2">
-            {/* PROGRESS LINE */}
-            <div className="absolute top-[22px] left-8 right-8 h-1 bg-gray-100 rounded-full hidden sm:block" />
+
+          {isCancelRefundFlow ? (
+            <div className="relative py-4 px-2">
+              {/* PROGRESS LINE for cancel/refund */}
+              <div className="absolute top-[22px] left-8 right-8 h-1 bg-gray-100 rounded-full hidden sm:block" />
               <div 
-                className="absolute top-[22px] left-8 h-1 bg-[#6F4D34] rounded-full transition-all duration-1000 hidden sm:block" 
-                style={{ width: `${Math.max(0, activeStepIndex / (TIMELINE_STEPS.length - 1)) * 100}%` }}
+                className={`absolute top-[22px] left-8 h-1 rounded-full transition-all duration-1000 hidden sm:block ${
+                  rawOrderStatus === "Refund Successful" ? "bg-green-500" : rawOrderStatus === "Cancelled" ? "bg-red-500" : "bg-orange-500"
+                }`}
+                style={{ width: `${Math.max(0, cancelActiveStepIndex / (cancelRefundSteps.length - 1)) * 100}%` }}
               />
 
-            <div className="flex flex-col sm:flex-row justify-between gap-8 sm:gap-4 relative">
-              {statusUpdates.map((status, index) => {
-                const isActive = index <= activeStepIndex;
-                const StatusIcon = status.icon;
-                return (
-                  <div key={index} className="flex sm:flex-col items-center gap-4 sm:gap-3 sm:flex-1 group">
-                    <div className={`relative z-10 w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 ${
-                      isActive ? 'bg-[#6F4D34] text-white shadow-xl shadow-[#6F4D34]/30' : 'bg-gray-50 text-gray-300'
-                    }`}>
-                      <StatusIcon className={`w-6 h-6 ${isActive ? 'scale-110' : 'scale-100'}`} />
-                      {isActive && (
-                         <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
-                           <CheckCircle2 className="w-2 h-2 text-white" />
-                         </div>
-                      )}
+              <div className="flex flex-col sm:flex-row justify-between gap-8 sm:gap-4 relative">
+                {cancelRefundSteps.map((step, index) => {
+                  const isActive = index <= cancelActiveStepIndex;
+                  const StepIcon = CANCEL_STEP_ICONS[step] || Package;
+                  const colors = CANCEL_STEP_COLORS[step] || { bg: "bg-gray-50", text: "text-gray-300", shadow: "" };
+                  const stepDate = cancelStepDateMap[step] || "—";
+                  return (
+                    <div key={index} className="flex sm:flex-col items-center gap-4 sm:gap-3 sm:flex-1 group">
+                      <div className={`relative z-10 w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 ${
+                        isActive ? `${colors.bg} ${colors.text} shadow-xl ${colors.shadow}` : 'bg-gray-50 text-gray-300'
+                      }`}>
+                        <StepIcon className={`w-6 h-6 ${isActive ? 'scale-110' : 'scale-100'}`} />
+                        {isActive && (
+                          <div className={`absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-white flex items-center justify-center ${
+                            step === "Cancelled" ? "bg-red-500" : step === "Return Requested" ? "bg-orange-500" : "bg-green-500"
+                          }`}>
+                            <CheckCircle2 className="w-2 h-2 text-white" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex flex-col sm:items-center text-left sm:text-center">
+                        <p className={`text-sm font-bold tracking-wide transition-colors duration-300 ${isActive ? 'text-gray-900' : 'text-gray-400'}`}>
+                          {step}
+                        </p>
+                        <span className={`text-[11px] font-medium mt-0.5 ${
+                          isActive 
+                            ? step === "Cancelled" ? "text-red-500" 
+                              : step === "Refund Successful" ? "text-green-600" 
+                              : "text-[#6F4D34]"
+                            : "text-gray-400"
+                        }`}>
+                          {isActive ? stepDate : "—"}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex flex-col sm:items-center text-left sm:text-center">
-                      <p className={`text-sm font-bold tracking-wide transition-colors duration-300 ${isActive ? 'text-gray-900' : 'text-gray-400'}`}>
-                        {status.label}
-                      </p>
-                      <span className={`text-[11px] font-medium mt-0.5 ${isActive ? 'text-[#6F4D34]' : 'text-gray-400'}`}>
-                        {status.date}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
 
-            <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-                {!["Delivered", "Cancelled", "Refund Approved", "Refund Initiated", "Refund Successful", "Completed"].includes(rawOrderStatus) && (
-                    <button 
-                      onClick={() => setShowCancelModal(true)} 
-                      className="flex items-center gap-2 border-2 border-red-100 text-red-600 px-8 py-3 rounded-2xl hover:bg-red-50 transition-all font-bold group"
-                    >
-                      <XCircle className="w-5 h-5 group-hover:rotate-90 transition-transform" />
-                      <span>Cancel Order</span>
-                    </button>
-                  )}
-                {orderStatus === "Delivered" && isReturnable && (
-                  <button className="flex items-center gap-2 border-2 border-blue-100 text-blue-600 px-8 py-3 rounded-2xl hover:bg-blue-50 transition-all font-bold">
-                    <Package className="w-5 h-5" />
-                    <span>Return Product</span>
-                  </button>
-                )}
+              <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
                 <button className="flex items-center gap-2 bg-[#6F4D34] text-white px-8 py-3 rounded-2xl hover:bg-[#5b3f2a] transition-all font-bold shadow-xl shadow-[#6F4D34]/30 group">
                   <MessageSquare className="w-5 h-5 group-hover:scale-110 transition-transform" />
                   <span>Chat with Specialist</span>
                 </button>
               </div>
-          </div>
-        )}
+            </div>
+          ) : (
+            <div className="relative py-4 px-2">
+              {/* PROGRESS LINE */}
+              <div className="absolute top-[22px] left-8 right-8 h-1 bg-gray-100 rounded-full hidden sm:block" />
+                <div 
+                  className="absolute top-[22px] left-8 h-1 bg-[#6F4D34] rounded-full transition-all duration-1000 hidden sm:block" 
+                  style={{ width: `${Math.max(0, activeStepIndex / (TIMELINE_STEPS.length - 1)) * 100}%` }}
+                />
+
+              <div className="flex flex-col sm:flex-row justify-between gap-8 sm:gap-4 relative">
+                {statusUpdates.map((status, index) => {
+                  const isActive = index <= activeStepIndex;
+                  const StatusIcon = status.icon;
+                  return (
+                    <div key={index} className="flex sm:flex-col items-center gap-4 sm:gap-3 sm:flex-1 group">
+                      <div className={`relative z-10 w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 ${
+                        isActive ? 'bg-[#6F4D34] text-white shadow-xl shadow-[#6F4D34]/30' : 'bg-gray-50 text-gray-300'
+                      }`}>
+                        <StatusIcon className={`w-6 h-6 ${isActive ? 'scale-110' : 'scale-100'}`} />
+                        {isActive && (
+                           <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+                             <CheckCircle2 className="w-2 h-2 text-white" />
+                           </div>
+                        )}
+                      </div>
+                      <div className="flex flex-col sm:items-center text-left sm:text-center">
+                        <p className={`text-sm font-bold tracking-wide transition-colors duration-300 ${isActive ? 'text-gray-900' : 'text-gray-400'}`}>
+                          {status.label}
+                        </p>
+                        <span className={`text-[11px] font-medium mt-0.5 ${isActive ? 'text-[#6F4D34]' : 'text-gray-400'}`}>
+                          {status.date}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
+                  {!["Delivered", "Cancelled", "Refund Approved", "Refund Initiated", "Refund Successful", "Completed", "Return Requested"].includes(rawOrderStatus) && (
+                      <button 
+                        onClick={() => setShowCancelModal(true)} 
+                        className="flex items-center gap-2 border-2 border-red-100 text-red-600 px-8 py-3 rounded-2xl hover:bg-red-50 transition-all font-bold group"
+                      >
+                        <XCircle className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+                        <span>Cancel Order</span>
+                      </button>
+                    )}
+                  {orderStatus === "Delivered" && isReturnable && (
+                    <button className="flex items-center gap-2 border-2 border-blue-100 text-blue-600 px-8 py-3 rounded-2xl hover:bg-blue-50 transition-all font-bold">
+                      <Package className="w-5 h-5" />
+                      <span>Return Product</span>
+                    </button>
+                  )}
+                  <button className="flex items-center gap-2 bg-[#6F4D34] text-white px-8 py-3 rounded-2xl hover:bg-[#5b3f2a] transition-all font-bold shadow-xl shadow-[#6F4D34]/30 group">
+                    <MessageSquare className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                    <span>Chat with Specialist</span>
+                  </button>
+                </div>
+            </div>
+          )}
       </motion.div>
 
       {/* INFORMATION GRID */}
