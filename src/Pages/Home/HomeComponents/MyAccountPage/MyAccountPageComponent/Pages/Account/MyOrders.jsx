@@ -104,37 +104,52 @@ const MyOrders = () => {
     setCurrentImageIndex(0);
   };
 
-  const cancelOrderInstant = async (orderIdParam) => {
-    const id = orderIdParam || cancelOrderId;
-    if (!id) return;
-    if (!cancelReason) {
-      alert("Please select a cancellation reason.");
-      return;
-    }
-    if (!cancelComment.trim()) {
-      alert("Please enter cancellation remarks.");
-      return;
-    }
+    const cancelOrderInstant = async (orderIdParam) => {
+      const id = orderIdParam || cancelOrderId;
+      if (!id) return;
+      if (!cancelReason) {
+        alert("Please select a cancellation reason.");
+        return;
+      }
+      if (!cancelComment.trim()) {
+        alert("Please enter cancellation remarks.");
+        return;
+      }
 
-    try {
-      await putAPI(`/api/buyer-order-list/cancel/${id}`, {
-        cancelReason,
-        cancelComment,
-      });
+      try {
+        await putAPI(`/api/buyer-order-list/cancel/${id}`, {
+          cancelReason,
+          cancelComment,
+        });
 
-      setOrders((prev) =>
-        prev.map((o) =>
-          o.orderId === id ? { ...o, orderStatus: "Cancelled" } : o
-        )
-      );
+        setOrders((prev) =>
+          prev.map((o) =>
+            o.orderId === id ? { ...o, orderStatus: "Cancelled" } : o
+          )
+        );
 
-      setShowCancelModal(false);
-      setCancelReason("");
-      setCancelComment("");
-    } catch (err) {
-      console.error("Cancel Error:", err);
-    }
-  };
+        setShowCancelModal(false);
+        setCancelReason("");
+        setCancelComment("");
+      } catch (err) {
+        console.error("Cancel Error:", err);
+        const msg = err?.response?.data?.message || "";
+        if (msg.toLowerCase().includes("already cancelled")) {
+          // Order was already cancelled by admin/seller — sync local state
+          setOrders((prev) =>
+            prev.map((o) =>
+              o.orderId === id ? { ...o, orderStatus: "Cancelled" } : o
+            )
+          );
+          setShowCancelModal(false);
+          setCancelReason("");
+          setCancelComment("");
+          alert("This order has already been cancelled.");
+        } else {
+          alert(msg || "Failed to cancel order. Please try again.");
+        }
+      }
+    };
 
   const handleViewOrder = (order) => {
     navigate("/my-account/my-orders/view", { state: { order } });
@@ -271,9 +286,9 @@ const MyOrders = () => {
                     firstImage = `${BASE_URL}${firstItem.fullProduct.mainImage}`;
                   }
 
-              const isCancelled = order.orderStatus === "Cancelled";
-              const isDelivered = order.orderStatus === "Delivered";
-              const statusInfo = getStatusInfo(order.orderStatus);
+                const isCancelled = ["Cancelled", "Refund Approved", "Refund Initiated", "Refund Successful"].includes(order.orderStatus);
+                const isDelivered = ["Delivered", "Completed"].includes(order.orderStatus);
+                const statusInfo = getStatusInfo(order.orderStatus);
 
                 const deliveryDate = createdDate;
                 const currentDate = new Date();

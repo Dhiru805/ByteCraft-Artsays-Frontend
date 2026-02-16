@@ -755,15 +755,15 @@ const OrderView = () => {
             </div>
 
             <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-                {orderStatus !== "Delivered" && (
-                  <button 
-                    onClick={() => setShowCancelModal(true)} 
-                    className="flex items-center gap-2 border-2 border-red-100 text-red-600 px-8 py-3 rounded-2xl hover:bg-red-50 transition-all font-bold group"
-                  >
-                    <XCircle className="w-5 h-5 group-hover:rotate-90 transition-transform" />
-                    <span>Cancel Order</span>
-                  </button>
-                )}
+                {!["Delivered", "Cancelled", "Refund Approved", "Refund Initiated", "Refund Successful", "Completed"].includes(rawOrderStatus) && (
+                    <button 
+                      onClick={() => setShowCancelModal(true)} 
+                      className="flex items-center gap-2 border-2 border-red-100 text-red-600 px-8 py-3 rounded-2xl hover:bg-red-50 transition-all font-bold group"
+                    >
+                      <XCircle className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+                      <span>Cancel Order</span>
+                    </button>
+                  )}
                 {orderStatus === "Delivered" && isReturnable && (
                   <button className="flex items-center gap-2 border-2 border-blue-100 text-blue-600 px-8 py-3 rounded-2xl hover:bg-blue-50 transition-all font-bold">
                     <Package className="w-5 h-5" />

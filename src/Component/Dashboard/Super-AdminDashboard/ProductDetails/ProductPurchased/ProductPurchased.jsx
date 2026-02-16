@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../api/getAPI';
 import putAPI from '../../../../../api/putAPI';
+import postAPI from '../../../../../api/postAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
 import { jwtDecode } from 'jwt-decode';
@@ -20,6 +21,8 @@ const ADMIN_STATUS_LABELS = {
     "Completed": "Completed",
     "Cancelled": "Cancel Order",
     "Return Requested": "Initiate Refund",
+    "Refund Initiated": "Refund Initiated",
+    "Refund Successful": "Refund Successful",
     "Resale": "Listed for Resale",
 };
 
@@ -37,6 +40,8 @@ const STATUS_COLORS = {
     "Cancelled": "#dc3545",
     "Return Requested": "#dc3545",
     "Refund Approved": "#ffc107",
+    "Refund Initiated": "#fd7e14",
+    "Refund Successful": "#28a745",
     "Resale": "#ff6600",
 };
 
@@ -191,6 +196,20 @@ const ProductRequest = () => {
 
     const handleStatusChange = async (orderId, newStatus, index) => {
         try {
+            // If "Initiate Refund" selected, call the refund API
+            if (newStatus === "Return Requested") {
+                const res = await postAPI(`/api/initiate-refund/${orderId}`, {});
+                if (res?.data?.success) {
+                    toast.success(res.data.message || "Refund initiated successfully");
+                    setProducts(prev =>
+                        prev.map(p =>
+                            p.orderId === orderId ? { ...p, orderStatus: "Refund Initiated" } : p
+                        )
+                    );
+                }
+                return;
+            }
+
             const res = await putAPI(`/api/update-order-status/${orderId}`, { status: newStatus });
             if (res?.data?.success) {
                 // Update ALL rows with the same orderId (an order can have multiple items)
@@ -382,15 +401,24 @@ const ProductRequest = () => {
                                                             <i className="fa fa-eye"></i>
                                                         </button>
                                                         {product.orderStatus === "Completed" && !product.isCustomOrder && (
-                                                            <button
-                                                                className="btn btn-sm btn-outline-success"
-                                                                onClick={() => openResellModal(product.productId, product.orderId, product.productName)}
-                                                                title="Resell this product"
-                                                            >
-                                                                <i className="fa fa-refresh"></i> Resell
-                                                            </button>
-                                                        )}
-{product.orderStatus !== "Cancelled" && product.orderStatus !== "Completed" && product.orderStatus !== "Resale" && (
+                                                              <button
+                                                                  className="btn btn-sm btn-outline-success"
+                                                                  onClick={() => openResellModal(product.productId, product.orderId, product.productName)}
+                                                                  title="Resell this product"
+                                                              >
+                                                                  <i className="fa fa-refresh"></i> Resell
+                                                              </button>
+                                                          )}
+                                                          {product.orderStatus === "Cancelled" && product.hasOnlinePayment && (
+                                                              <button
+                                                                  className="btn btn-sm btn-outline-warning"
+                                                                  onClick={() => handleStatusChange(product.orderId, "Return Requested", products.indexOf(product))}
+                                                                  title="Initiate Refund"
+                                                              >
+                                                                  <i className="fa fa-money"></i> Refund
+                                                              </button>
+                                                          )}
+{product.orderStatus !== "Cancelled" && product.orderStatus !== "Completed" && product.orderStatus !== "Resale" && product.orderStatus !== "Refund Initiated" && product.orderStatus !== "Refund Successful" && (
                                                               <select
                                                                   className="form-control form-control-sm"
                                                                   value=""
