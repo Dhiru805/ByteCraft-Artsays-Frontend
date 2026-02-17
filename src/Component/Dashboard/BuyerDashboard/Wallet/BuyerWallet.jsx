@@ -34,8 +34,21 @@ const BuyerWallet = () => {
   const [categoryFilter, setCategoryFilter] = useState("all");
 
   const categorize = (txn) => {
+    if (txn.category) return txn.category;
     const p = (txn.purpose || "").toLowerCase();
+    if (p.includes("bidding pass")) return "bidding_pass";
+    if (p.includes("certificate")) return "certificate";
     if (p.includes("ad click") || p.includes("ad spend") || p.includes("campaign")) return "ads";
+    if (p.includes("challenge")) return "challenges";
+    if (p.includes("insurance")) return "insurance";
+    if (p.includes("verification badge") || p.includes("badge purchase") || p.includes("badge")) return "verification_badge";
+    if (p.includes("promote post") || p.includes("post promotion") || p.includes("boost post")) return "promote_post";
+    if (p.includes("packaging") || p.includes("packing material")) return "packaging_materials";
+    if (p.includes("final bid") || p.includes("bid won") || p.includes("bid refund")) return "final_bidding";
+    if (p.includes("exhibition")) return "exhibition";
+    if (p.includes("order") && p.includes("commission")) return "product_order";
+    if (p.includes("order payment") || p.includes("payment for order")) return "product_order";
+    if (p.includes("order refund") || p.includes("order cancelled")) return "refund";
     if (p.includes("order") || p.includes("payment") || p.includes("purchase") || p.includes("art coins redeemed")) return "orders";
     if (p.includes("commission")) return "commission";
     if (p.includes("promot")) return "promotion";
@@ -47,16 +60,49 @@ const BuyerWallet = () => {
   };
 
   const categoryLabels = {
-    all: "All Transactions", ads: "Ad Spending",       orders: "Orders",
-    commission: "Commissions", promotion: "Promotions", referral: "Referral",
-    withdrawal: "Withdrawals", deposit: "Deposits", admin: "Admin Adjustments", other: "Other"
+    all: "All Transactions",
+    bidding_pass: "Bidding Pass",
+    certificate: "Certificate",
+    ads: "Ads / Campaigns",
+    challenges: "Challenges",
+    insurance: "Insurance",
+    verification_badge: "Verification Badges",
+    promote_post: "Promote Post",
+    packaging_materials: "Packaging Materials",
+    final_bidding: "Final Bidding",
+    exhibition: "Exhibition",
+    product_order: "Product Orders",
+    commission: "Commissions",
+    orders: "Orders & Payments",
+    promotion: "Promotions",
+    referral: "Referral",
+    withdrawal: "Withdrawals",
+    deposit: "Deposits",
+    admin: "Admin Adjustments",
+    refund: "Refunds",
+    other: "Other"
   };
 
   const categoryColors = {
-    ads: "bg-purple-100 text-purple-700", orders: "bg-blue-100 text-blue-700",
-    commission: "bg-amber-100 text-amber-700", promotion: "bg-pink-100 text-pink-700",
-    referral: "bg-cyan-100 text-cyan-700", withdrawal: "bg-red-100 text-red-700",
-    deposit: "bg-emerald-100 text-emerald-700", admin: "bg-gray-100 text-gray-700",
+    bidding_pass: "bg-violet-100 text-violet-700",
+    certificate: "bg-blue-100 text-blue-700",
+    ads: "bg-orange-100 text-orange-700",
+    challenges: "bg-pink-100 text-pink-700",
+    insurance: "bg-teal-100 text-teal-700",
+    verification_badge: "bg-amber-100 text-amber-700",
+    promote_post: "bg-fuchsia-100 text-fuchsia-700",
+    packaging_materials: "bg-stone-100 text-stone-700",
+    final_bidding: "bg-indigo-100 text-indigo-700",
+    exhibition: "bg-cyan-100 text-cyan-700",
+    product_order: "bg-yellow-100 text-yellow-700",
+    commission: "bg-amber-100 text-amber-700",
+    orders: "bg-blue-100 text-blue-700",
+    promotion: "bg-pink-100 text-pink-700",
+    referral: "bg-cyan-100 text-cyan-700",
+    withdrawal: "bg-red-100 text-red-700",
+    deposit: "bg-emerald-100 text-emerald-700",
+    admin: "bg-gray-100 text-gray-700",
+    refund: "bg-yellow-100 text-yellow-700",
     other: "bg-slate-100 text-slate-700"
   };
 
@@ -95,10 +141,16 @@ const BuyerWallet = () => {
   const fetchTransactions = async () => {
     if (!userId) return;
     try {
-      const res = await axios.get(`${API_URL}/api/wallet/transactions/${userId}`);
-      setTransactions(res.data || []);
+      const res = await axios.get(`${API_URL}/api/wallet/user-all-transactions/${userId}`);
+      setTransactions(res.data.transactions || []);
     } catch (err) {
-      console.error("Error fetching transactions:", err);
+      // Fallback to wallet-only transactions
+      try {
+        const res2 = await axios.get(`${API_URL}/api/wallet/transactions/${userId}`);
+        setTransactions(res2.data || []);
+      } catch (e) {
+        console.error("Error fetching transactions:", e);
+      }
     }
   };
 

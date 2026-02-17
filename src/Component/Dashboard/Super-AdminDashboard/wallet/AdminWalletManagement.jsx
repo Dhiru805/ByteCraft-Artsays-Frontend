@@ -235,24 +235,23 @@ const AdminWalletManagement = () => {
     fetchReferralSettings();
   }, []);
 
-  // Filtering logic
-  const filteredTransactions = transactions.filter(txn => {
-    const userWallet = wallets.find(w => String(w.userId?._id || w.userId) === String(txn.userId));
-    
+  // Filtering logic - use platformEarnings.transactions (merged wallet + all service data)
+  const allPlatformTxns = platformEarnings.transactions || [];
+  const filteredTransactions = allPlatformTxns.filter(txn => {
     const matchesType = !filterType || txn.type === filterType;
-    const matchesStatus = !filterStatus || txn.status === filterStatus;
     
     if (filterRole) {
-      if (!userWallet) return false;
-      if ((userWallet.role || '').toLowerCase() !== filterRole.toLowerCase()) return false;
+      const txnRole = (txn.userRole || (typeof txn.userId === 'object' ? (txn.userId?.role || txn.userId?.userType) : '') || '').toLowerCase();
+      if (txnRole !== filterRole.toLowerCase()) return false;
     }
     
     if (filterUser || filterAllUser) {
       const targetUserId = filterUser || filterAllUser;
-      if (String(txn.userId) !== targetUserId) return false;
+      const txnUserId = typeof txn.userId === 'object' ? String(txn.userId?._id || txn.userId) : String(txn.userId);
+      if (txnUserId !== targetUserId) return false;
     }
     
-    return matchesType && matchesStatus;
+    return matchesType;
   });
 
   const displayTransactions = filteredTransactions.slice((page - 1) * pageSize, page * pageSize);
@@ -609,24 +608,19 @@ const AdminWalletManagement = () => {
                 </tr>
               </thead>
               <tbody>
-                {displayTransactions.map(txn => {
-                  const user = wallets.find(w => String(w.userId?._id || w.userId) === String(txn.userId));
-                  const userName = txn.name && txn.lastName 
-                    ? `${txn.name} ${txn.lastName}` 
-                    : user 
-                      ? `${user.name} ${user.lastName}` 
-                      : (txn.userId || 'Unknown');
-                  return (
-                    <tr key={txn._id}>
-                      <td>{new Date(txn.createdAt).toLocaleDateString()}</td>
-                      <td>{userName}</td>
-                      <td><span className={`badge ${txn.type === 'credit' ? 'badge-success' : 'badge-danger'}`}>{txn.type}</span></td>
-                      <td>₹{txn.amount.toLocaleString()}</td>
-                      <td>{txn.purpose}</td>
-                      <td><span className={`badge ${txn.status === 'success' ? 'badge-success' : txn.status === 'pending' ? 'badge-warning' : 'badge-secondary'}`}>{txn.status}</span></td>
-                    </tr>
-                  );
-                })}
+              {displayTransactions.map(txn => {
+                    const userName = txn.userName || (typeof txn.userId === 'object' && txn.userId?.name ? txn.userId.name : '') || txn.name || 'Unknown';
+                    return (
+                      <tr key={txn._id + (txn.category || '')}>
+                        <td>{new Date(txn.createdAt).toLocaleDateString()}</td>
+                        <td>{userName}</td>
+                        <td><span className={`badge ${txn.type === 'credit' ? 'badge-success' : 'badge-danger'}`}>{txn.type}</span></td>
+                        <td>₹{(txn.amount || 0).toLocaleString()}</td>
+                        <td>{txn.purpose}</td>
+                        <td><span className={`badge ${txn.status === 'success' ? 'badge-success' : txn.status === 'pending' ? 'badge-warning' : 'badge-secondary'}`}>{txn.status}</span></td>
+                      </tr>
+                    );
+                  })}
                 {displayTransactions.length === 0 && <tr><td colSpan="6" className="text-center">No transactions found</td></tr>}
               </tbody>
             </table>
