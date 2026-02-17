@@ -707,7 +707,18 @@ const AdminWalletManagement = () => {
                     admin_adjustment: 'Admin Adjustment', 
                     add_money: 'Add Money', 
                     withdrawal: 'Withdrawal', 
-                    other_credit: 'Other Credit', 
+                    bidding_pass: 'Bidding Pass',
+                    certificate: 'Certificate',
+                    ads: 'Ads',
+                    exhibition: 'Exhibition',
+                    challenges: 'Challenges',
+                    insurance: 'Insurance',
+                    verification_badge: 'Verification Badge',
+                    promote_post: 'Promote Post',
+                    packaging_materials: 'Packaging Materials',
+                      final_bidding: 'Final Bidding',
+                      product_order: 'Product Order',
+                      other_credit: 'Other Credit', 
                     other_debit: 'Other Debit',
                     other: 'Other'
                   };
@@ -724,7 +735,18 @@ const AdminWalletManagement = () => {
                     admin_adjustment: 'badge-secondary', 
                     add_money: 'badge-info', 
                     withdrawal: 'badge-warning', 
-                    other_credit: 'badge-primary', 
+                    bidding_pass: 'badge-primary',
+                    certificate: 'badge-info',
+                    ads: 'badge-warning',
+                    exhibition: 'badge-success',
+                    challenges: 'badge-danger',
+                    insurance: 'badge-secondary',
+                    verification_badge: 'badge-info',
+                    promote_post: 'badge-primary',
+                    packaging_materials: 'badge-dark',
+                      final_bidding: 'badge-success',
+                      product_order: 'badge-warning',
+                      other_credit: 'badge-primary', 
                     other_debit: 'badge-dark',
                     other: 'badge-secondary'
                   };
@@ -760,9 +782,32 @@ const AdminWalletManagement = () => {
               const totalEarningsPages = Math.ceil(filteredEarnings.length / pageSize);
               const displayEarnings = filteredEarnings.slice((earningsPage - 1) * pageSize, earningsPage * pageSize);
 
-              return (
-                <>
-                  <div className="row clearfix row-deck mb-4">
+                return (
+                  <>
+                    {/* Total Platform Earnings - Prominent Card */}
+                    <div className="row clearfix row-deck mb-4">
+                      <div className="col-12">
+                        <div className="card" style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)', border: 'none', cursor: 'pointer' }} onClick={() => { setEarningsCategory('all'); setEarningsPage(1); }}>
+                          <div className="body d-flex align-items-center justify-content-between flex-wrap" style={{ padding: '20px 30px' }}>
+                            <div className="d-flex align-items-center">
+                              <div style={{ width: 55, height: 55, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 20 }}>
+                                <i className="fa fa-bar-chart text-white" style={{ fontSize: '24px' }}></i>
+                              </div>
+                              <div>
+                                <div className="text-uppercase small" style={{ color: 'rgba(255,255,255,0.7)', letterSpacing: '1px' }}>Total Platform Earnings</div>
+                                <h2 className="mb-0 text-white" style={{ fontWeight: 700 }}>₹{(summary.totalPlatformEarningsAll || 0).toLocaleString()}</h2>
+                                <small style={{ color: 'rgba(255,255,255,0.5)' }}>All services + commissions combined</small>
+                              </div>
+                            </div>
+                            <div className="text-right d-none d-md-block">
+                              <small style={{ color: 'rgba(255,255,255,0.6)' }}>Total Transactions: {summary.totalTransactions || 0}</small>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="row clearfix row-deck mb-4">
                     <div className="col-lg-3 col-md-6">
                       <div className="card top_widget bg-success text-light" style={{ cursor: 'pointer' }} onClick={() => { setEarningsCategory('all'); setEarningsPage(1); }}>
                         <div className="body">
@@ -813,32 +858,68 @@ const AdminWalletManagement = () => {
                     </div>
                   </div>
 
-                  <div className="row clearfix row-deck mb-4">
-                    <div className="col-lg-4 col-md-6">
-                      <div className="card">
-                        <div className="body text-center">
-                          <h6 className="text-muted">Admin Wallet Balance</h6>
-                          <h3 className="text-primary">₹{(summary.adminWalletBalance || 0).toLocaleString()}</h3>
+                    <div className="row clearfix row-deck mb-4">
+                      <div className="col-lg-4 col-md-6">
+                        <div className="card">
+                          <div className="body text-center">
+                            <h6 className="text-muted">Admin Wallet Balance</h6>
+                            <h3 className="text-primary">₹{(summary.adminWalletBalance || 0).toLocaleString()}</h3>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="col-lg-4 col-md-6">
+                        <div className="card" style={{ cursor: 'pointer' }} onClick={() => { setEarningsCategory('admin_adjustment'); setEarningsPage(1); }}>
+                          <div className="body text-center">
+                            <h6 className="text-muted">Adjustments (Credit / Debit)</h6>
+                            <h3><span className="text-success">+₹{(summary.totalAdjustmentCredit || 0).toLocaleString()}</span> / <span className="text-danger">-₹{(summary.totalAdjustmentDebit || 0).toLocaleString()}</span></h3>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="col-lg-4 col-md-6">
+                        <div className="card">
+                          <div className="body text-center">
+                            <h6 className="text-muted">Other (Credit / Debit)</h6>
+                            <h3><span className="text-success">+₹{(summary.totalOtherCredit || 0).toLocaleString()}</span> / <span className="text-danger">-₹{(summary.totalOtherDebit || 0).toLocaleString()}</span></h3>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div className="col-lg-4 col-md-6">
-                      <div className="card" style={{ cursor: 'pointer' }} onClick={() => { setEarningsCategory('admin_adjustment'); setEarningsPage(1); }}>
-                        <div className="body text-center">
-                          <h6 className="text-muted">Adjustments (Credit / Debit)</h6>
-                          <h3><span className="text-success">+₹{(summary.totalAdjustmentCredit || 0).toLocaleString()}</span> / <span className="text-danger">-₹{(summary.totalAdjustmentDebit || 0).toLocaleString()}</span></h3>
+
+                    {/* Service-wise Transaction Summary Cards */}
+                    <h6 className="mb-3 text-muted" style={{ fontWeight: 600 }}>Service-wise Earnings Breakdown</h6>
+                    <div className="row clearfix row-deck mb-4">
+                      {[
+                        { key: 'bidding_pass', label: 'Bidding Pass', icon: 'fa-ticket', color: '#6f42c1', total: summary.totalBiddingPass },
+                        { key: 'certificate', label: 'Certificate', icon: 'fa-certificate', color: '#17a2b8', total: summary.totalCertificate },
+                        { key: 'ads', label: 'Ads', icon: 'fa-bullhorn', color: '#fd7e14', total: summary.totalAds },
+                        { key: 'exhibition', label: 'Exhibition', icon: 'fa-picture-o', color: '#28a745', total: summary.totalExhibition },
+                        { key: 'challenges', label: 'Challenges', icon: 'fa-trophy', color: '#dc3545', total: summary.totalChallenges },
+                        { key: 'insurance', label: 'Insurance', icon: 'fa-shield', color: '#6c757d', total: summary.totalInsurance },
+                        { key: 'verification_badge', label: 'Verification Badges', icon: 'fa-check-circle', color: '#007bff', total: summary.totalVerificationBadge },
+                        { key: 'promote_post', label: 'Promote Post', icon: 'fa-rocket', color: '#e83e8c', total: summary.totalPromotePost },
+                        { key: 'packaging_materials', label: 'Packaging Materials', icon: 'fa-cube', color: '#343a40', total: summary.totalPackagingMaterials },
+                          { key: 'final_bidding', label: 'Final Bidding', icon: 'fa-gavel', color: '#20c997', total: summary.totalFinalBidding },
+                          { key: 'product_order', label: 'Product Order', icon: 'fa-shopping-cart', color: '#fd7e14', total: summary.totalProductOrder },
+                      ].map(item => (
+                        <div className="col-lg-3 col-md-4 col-sm-6 mb-3" key={item.key}>
+                          <div 
+                            className="card" 
+                            style={{ cursor: 'pointer', borderLeft: `4px solid ${item.color}` }} 
+                            onClick={() => { setEarningsCategory(item.key); setEarningsPage(1); }}
+                          >
+                            <div className="body d-flex align-items-center" style={{ padding: '15px' }}>
+                              <div style={{ width: 40, height: 40, borderRadius: '50%', background: item.color, display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
+                                <i className={`fa ${item.icon} text-white`}></i>
+                              </div>
+                              <div>
+                                <small className="text-muted d-block">{item.label}</small>
+                                <strong style={{ fontSize: '16px' }}>₹{(item.total || 0).toLocaleString()}</strong>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                      ))}
                     </div>
-                    <div className="col-lg-4 col-md-6">
-                      <div className="card">
-                        <div className="body text-center">
-                          <h6 className="text-muted">Other (Credit / Debit)</h6>
-                          <h3><span className="text-success">+₹{(summary.totalOtherCredit || 0).toLocaleString()}</span> / <span className="text-danger">-₹{(summary.totalOtherDebit || 0).toLocaleString()}</span></h3>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
 
                   <div className="card">
                     <div className="header d-flex justify-content-between align-items-center flex-wrap" style={{ gap: '10px' }}>
@@ -857,7 +938,18 @@ const AdminWalletManagement = () => {
                             <option value="seller_payout_reversed">Seller Payout Reversed</option>
                             <option value="commission_earned">Commission Earned</option>
                             <option value="commission_reversed">Commission Reversed</option>
-                            <option value="add_money">Add Money</option>
+                            <option value="bidding_pass">Bidding Pass</option>
+                            <option value="certificate">Certificate</option>
+                            <option value="ads">Ads</option>
+                            <option value="exhibition">Exhibition</option>
+                            <option value="challenges">Challenges</option>
+                            <option value="insurance">Insurance</option>
+                            <option value="verification_badge">Verification Badges</option>
+                            <option value="promote_post">Promote Post</option>
+                            <option value="packaging_materials">Packaging Materials</option>
+                              <option value="final_bidding">Final Bidding</option>
+                              <option value="product_order">Product Order</option>
+                              <option value="add_money">Add Money</option>
                             <option value="withdrawal">Withdrawals</option>
                             <option value="admin_adjustment">Admin Adjustments</option>
                             <option value="other_credit">Other Credit</option>
