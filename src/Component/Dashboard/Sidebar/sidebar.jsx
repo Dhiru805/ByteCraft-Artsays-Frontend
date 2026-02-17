@@ -553,14 +553,14 @@ const Sidebar = () => {
             label: "Default Auto Targeting",
             path: `/super-admin/settings/auto-targeting`,
           },
-          {
-            label: "Auto Targeting Group",
-            path: `/super-admin/settings/group-targeting`,
-          },
-          {
-            label: "Keyword Targeting",
-            path: `/super-admin/settings/keyword-targeting`,
-          },
+          // {
+          //   label: "Auto Targeting Group",
+          //   path: `/super-admin/settings/group-targeting`,
+          // },
+          // {
+          //   label: "Keyword Targeting",
+          //   path: `/super-admin/settings/keyword-targeting`,
+          // },
         ],
       },
       {
