@@ -435,12 +435,11 @@ const[loading,setLoading]=useState(false);
     const userType = useUserType();
 
     useEffect(() => {
-        if (!userId) return;
-
         const fetchProducts = async () => {
             setLoading(true)
             try {
-                const result = await getAPI(`/api/orders/seller/${userId}`, {}, true, false);
+                const url = userId ? `/api/orders/seller/${userId}` : `/api/orders/seller`;
+                const result = await getAPI(url, {}, true, false);
                 console.log("SELLER ORDERS RAW:", result?.data);
 
                 // if (!result?.data?.data || !Array.isArray(result.data.data)) {
@@ -489,19 +488,20 @@ if (result?.data?.data && Array.isArray(result.data.data)) {
 const sellerName =
     `${product.userId?.name || ""} ${product.userId?.lastName || ""}`.trim();
 
-        return {
-          orderId: order.orderId,
+          return {
+            orderId: order.orderId,
 
-          sellerName: sellerName,
+            sellerName: sellerName,
 
-          productId: product._id,
-          productName: product.productName,
-          mainImage: product.mainImage,
+            productId: product._id,
+            productName: product.productName,
+            mainImage: product.mainImage,
 
-          productPrice: product.sellingPrice ?? product.finalPrice ?? 0,
-          totalQuantity: item.quantity,
-          createdAt: order.createdAt
-        };
+            productPrice: product.sellingPrice ?? product.finalPrice ?? 0,
+            totalQuantity: item.quantity,
+            createdAt: order.createdAt,
+            orderStatus: order.orderStatus || "Ordered"
+          };
       });
   });
 
@@ -517,7 +517,7 @@ const sellerName =
         };
 
         fetchProducts();
-    }, [userId]);
+    }, [userId]); // eslint-disable-line
 
     const filteredProducts = products.filter(p =>
         p.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -623,13 +623,14 @@ const sellerName =
                                     <th>Price</th>
                                     <th>Quantity</th>
                                     <th>Date</th>
+                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
 
                             <tbody>
                                 {displayedProducts.map((p, index) => (
-                                    <tr key={p.productId}>
+                                    <tr key={`${p.orderId}-${p.productId}-${index}`}>
                                         <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
 
                                         <td>{p.sellerName}</td>
@@ -666,6 +667,18 @@ const sellerName =
                                                 month: "long",
                                                 day: "numeric"
                                             })}
+                                        </td>
+
+                                        <td>
+                                            <span className={`badge ${
+                                                p.orderStatus === "Delivered" || p.orderStatus === "Completed" ? "badge-success" :
+                                                p.orderStatus === "Cancelled" ? "badge-danger" :
+                                                p.orderStatus === "Shipped" || p.orderStatus === "Out for Delivery" ? "badge-info" :
+                                                p.orderStatus === "Return Requested" || p.orderStatus === "Refund Approved" || p.orderStatus === "Refund Initiated" || p.orderStatus === "Refund Successful" ? "badge-warning" :
+                                                "badge-secondary"
+                                            }`}>
+                                                {p.orderStatus}
+                                            </span>
                                         </td>
 
                                         <td>

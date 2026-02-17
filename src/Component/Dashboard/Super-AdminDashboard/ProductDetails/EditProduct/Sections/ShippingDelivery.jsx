@@ -70,67 +70,71 @@ const ShippingDelivery = ({
         )}
       </div>
 
-      <div className="form-group">
-        <label htmlFor="shippingCharges">Shipping Charges (₹) *</label>
-        <input
-          type="number"
-          id="shippingCharges"
-          name="shippingCharges"
-          className="form-control"
-          placeholder="Enter shipping charges (0 for free shipping)"
-          min="0"
-          step="0.01"
-          value={formData.shippingCharges}
-          onChange={handleInputChange}
-          required
-          disabled={isSubmitting}
-        />
-        <small className="text-muted">Enter 0 for free shipping</small>
-      </div>
-
-      <div className="form-group">
-        <label>Estimated Delivery Time *</label>
-        {!showCustomDeliveryInput ? (
-          <Select
-            options={[
-              ...deliveryOptions,
-              { value: 'custom', label: 'Custom delivery time...' }
-            ]}
-            value={formData.estimatedDelivery}
-            onChange={handleDeliveryChange}
-            placeholder="Select delivery time"
-            isSearchable
-            required
-            isDisabled={isSubmitting}
-          />
-        ) : (
-          <div className="input-group">
+        {formData.selfShipping && (
+          <div className="form-group">
+            <label htmlFor="shippingCharges">Shipping Charges (₹) *</label>
             <input
-              type="text"
+              type="number"
+              id="shippingCharges"
+              name="shippingCharges"
               className="form-control"
-              placeholder="Enter custom delivery time (e.g., '2-3 weeks')"
-              value={customDeliveryValue}
-              onChange={handleCustomDeliveryChange}
+              placeholder="Enter shipping charges (0 for free shipping)"
+              min="0"
+              step="0.01"
+              value={formData.shippingCharges}
+              onChange={handleInputChange}
               required
               disabled={isSubmitting}
             />
-            <div className="input-group-append">
-              <button
-                type="button"
-                className="btn btn-outline-secondary"
-                onClick={() => {
-                  setShowCustomDeliveryInput(false);
-                  setCustomDeliveryValue('');
-                  handleSelectChange('estimatedDelivery', null);
-                }}
-                disabled={isSubmitting}
-              >
-                Cancel
-              </button>
-            </div>
+            <small className="text-muted">Enter 0 for free shipping</small>
           </div>
         )}
-      </div>
+
+        {formData.selfShipping && (
+          <div className="form-group">
+            <label>Estimated Delivery Time *</label>
+            {!showCustomDeliveryInput ? (
+              <Select
+                options={[
+                  ...deliveryOptions,
+                  { value: 'custom', label: 'Custom delivery time...' }
+                ]}
+                value={formData.estimatedDelivery}
+                onChange={handleDeliveryChange}
+                placeholder="Select delivery time"
+                isSearchable
+                required
+                isDisabled={isSubmitting}
+              />
+            ) : (
+              <div className="input-group">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter custom delivery time (e.g., '2-3 weeks')"
+                  value={customDeliveryValue}
+                  onChange={handleCustomDeliveryChange}
+                  required
+                  disabled={isSubmitting}
+                />
+                <div className="input-group-append">
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={() => {
+                      setShowCustomDeliveryInput(false);
+                      setCustomDeliveryValue('');
+                      handleSelectChange('estimatedDelivery', null);
+                    }}
+                    disabled={isSubmitting}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
       <div className="form-group">
         <label>Packaging Type *</label>

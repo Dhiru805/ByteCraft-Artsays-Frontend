@@ -1,6 +1,7 @@
 // src/components/productUpload/sections/PricingOffers.js
 import React from "react";
 import Select from 'react-select';
+import GiftWrappingSection from "./GiftWrappingSection";
 
 const installmentOptions = [
   { value: 3, label: "3 months" },
@@ -17,7 +18,10 @@ const PricingOffers = ({
   offerOptions,
   handlePricingChange,
   handleOffersChange,
-  handleInstallmentDurationChange
+  handleInstallmentDurationChange,
+  formData,
+  setFormData,
+  handleInputChange
 }) => (
   <>
     <h4 className="mb-3">Pricing & Offers</h4>
@@ -121,10 +125,9 @@ const PricingOffers = ({
       <label className="form-check-label" htmlFor="allowInstallments">
         Allow payment in installments (EMI)
       </label>
-    
-      </div>
+    </div>
 
-      {pricingData.allowInstallments && (
+    {pricingData.allowInstallments && (
       <div className="form-group" style={{ paddingLeft: 0, marginLeft: 0 }}>
         <label htmlFor="installmentDuration">Select Installment Duration <span style={{ color: 'red' }}>*</span></label>
         <Select
@@ -138,11 +141,16 @@ const PricingOffers = ({
       </div>
     )}
 
+    {formData && setFormData && (
+      <GiftWrappingSection
+        formData={formData}
+        isSubmitting={isSubmitting}
+        handleInputChange={handleInputChange}
+        setFormData={setFormData}
+      />
+    )}
+
     <hr className="my-4" />
-  </>
-);
-    </div>
-        <hr className="my-4" />
   </>
 );
 

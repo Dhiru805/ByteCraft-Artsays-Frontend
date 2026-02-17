@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Select from "react-select";
 import getAPI from "../../../../../../api/getAPI";
+import GiftWrappingSection from "./GiftWrappingSection";
 
 const installmentOptions = [
     { value: "Yearly", label: "Yearly" },
@@ -10,6 +11,10 @@ const installmentOptions = [
 const PricingOffers = ({
     pricingData,
     finalPrice,
+    formData,
+    setFormData,
+    handleInputChange,
+    readOnly,
 }) => {
     const [gstPercentage] = useState(pricingData.gstPercentage || 0);
     const [insuranceSettings] = useState(null);
@@ -224,6 +229,13 @@ const PricingOffers = ({
                     </ul>
                 </div>
             )}
+
+            <GiftWrappingSection
+                formData={formData}
+                setFormData={setFormData}
+                handleInputChange={handleInputChange}
+                readOnly={readOnly}
+            />
 
             <hr className="my-4" />
         </>

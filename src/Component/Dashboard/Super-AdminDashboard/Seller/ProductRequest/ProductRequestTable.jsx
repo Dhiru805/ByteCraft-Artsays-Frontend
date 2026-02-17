@@ -265,9 +265,15 @@ if(loading)return <ProductRequestSkeleton/>
                                                 <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(product?.sellingPrice ?? 0)).replace(/\.00$/, '')}</td>
                                                 <td>{new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
                                                 <td>
-                                                    <button className={`btn btn-sm ${product.status === 'Pending' ? 'btn-outline-warning' : product.status === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
-                                                        {product.status}
-                                                    </button>
+                                                    <span className={`badge ${
+                                                        product.quantity === 0 ? 'badge-dark' :
+                                                        product.status === 'Approved' ? 'badge-success' :
+                                                        product.status === 'Pending' ? 'badge-warning' :
+                                                        product.status === 'Rejected' ? 'badge-danger' :
+                                                        'badge-secondary'
+                                                    }`}>
+                                                        {product.quantity === 0 ? 'Out of Stock' : product.status}
+                                                    </span>
                                                 </td>
                                                 <td>
                                                     <button
@@ -276,36 +282,38 @@ if(loading)return <ProductRequestSkeleton/>
                                                     >
                                                         <i className="fa fa-eye"></i>
                                                     </button>
-                                                    <button
-                                                        className="btn btn-sm btn-outline-success mr-2"
-                                                        title="Approved"
-                                                        disabled={loadingIds.includes(product._id)}
-                                                        onClick={async () => {
-                                                            setLoadingIds(prev => [...prev, product._id]);
-                                                            await updateProductStatus(product._id, 'Approved');
-                                                            setLoadingIds(prev => prev.filter(id => id !== product._id));
-                                                        }}
-                                                    >
-                                                        {loadingIds.includes(product._id) ? (
-                                                            <i className="fa fa-spinner fa-spin"></i>
-                                                        ) : (
-                                                            <i className="fa fa-check"></i>
-                                                        )}
-                                                    </button>
-
-                                                    {/* Reject button loading state and disabling */}
-                                                    <button
-                                                        className="btn btn-sm btn-outline-danger mr-2"
-                                                        title="Declined"
-                                                        disabled={loadingIds.includes(product._id)}
-                                                        onClick={() => handleReject(product._id)}
-                                                    >
-                                                        {loadingIds.includes(product._id) ? (
-                                                            <i className="fa fa-spinner fa-spin"></i>
-                                                        ) : (
-                                                            <i className="fa fa-ban"></i>
-                                                        )}
-                                                    </button>                                                    
+                                                    {product.status === 'Pending' && (
+                                                        <>
+                                                            <button
+                                                                className="btn btn-sm btn-outline-success mr-2"
+                                                                title="Approved"
+                                                                disabled={loadingIds.includes(product._id)}
+                                                                onClick={async () => {
+                                                                    setLoadingIds(prev => [...prev, product._id]);
+                                                                    await updateProductStatus(product._id, 'Approved');
+                                                                    setLoadingIds(prev => prev.filter(id => id !== product._id));
+                                                                }}
+                                                            >
+                                                                {loadingIds.includes(product._id) ? (
+                                                                    <i className="fa fa-spinner fa-spin"></i>
+                                                                ) : (
+                                                                    <i className="fa fa-check"></i>
+                                                                )}
+                                                            </button>
+                                                            <button
+                                                                className="btn btn-sm btn-outline-danger mr-2"
+                                                                title="Declined"
+                                                                disabled={loadingIds.includes(product._id)}
+                                                                onClick={() => handleReject(product._id)}
+                                                            >
+                                                                {loadingIds.includes(product._id) ? (
+                                                                    <i className="fa fa-spinner fa-spin"></i>
+                                                                ) : (
+                                                                    <i className="fa fa-ban"></i>
+                                                                )}
+                                                            </button>
+                                                        </>
+                                                    )}                                                    
                                                     <button
                                                         type="button"
                                                         className="btn btn-outline-danger btn-sm mr-2"

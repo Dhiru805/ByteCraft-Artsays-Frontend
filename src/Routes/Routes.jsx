@@ -396,12 +396,13 @@ import BuyerManagement from "../Component/Dashboard/Super-AdminDashboard/BuyerMa
 import BuyerProductPurchase from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductPurchased/ProductPurchased";
 import BuyerProductPurchaseView from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductPurchased/ProductPurchasedDetails";
 // import BuyerProductRequest from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductRequest/ProductRequestTable";
-// import BuyerSoldProduct from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/SoldProduct/SoldProduct";
 import BuyerTransaction from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/Transaction/BuyerTransaction";
 import BuyerPackagingMaterial from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/PackagingMaterial/ProductPurchasedBuyer";
 import BuyermanageProductView from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/BuyerUserProdileView/UserProf";
 import BuyermanageProductEdit from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/UserProfile/UserProf";
 import BuyerResellProductView from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductRequest/ProductRequestView";
+import BuyerResellProductRequest from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductRequest/ProductRequestTable";
+import BuyerSoldProduct from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/SoldProduct/SoldProduct";
 
 import OrderMaterial from "../Component/Dashboard/ArtistDashbooard/PackagingMaterial/OrderMaterial";
 import CreateOrder from "../Component/Dashboard/ArtistDashbooard/PackagingMaterial/CreateOrder";
@@ -963,11 +964,13 @@ const AppRoutes = () => {
           path="buyer/management/productedit/"
           element={<BuyermanageProductEdit />}
         />
-        <Route
-          path="buyer/resellproduct/productview/:userId"
-          element={<BuyerResellProductView />}
-        />
-        {/* Seller Management */}
+          <Route
+            path="buyer/resellproduct/productview/:userId"
+            element={<BuyerResellProductView />}
+          />
+          <Route path="buyer/resellproduct" element={<BuyerResellProductRequest />} />
+          <Route path="buyer/soldproduct" element={<BuyerSoldProduct />} />
+          {/* Seller Management */}
         <Route path="seller/management" element={<SellerManagement />} />
         <Route path="seller/product" element={<SellerProducts />} />
         <Route

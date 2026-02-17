@@ -1,8 +1,10 @@
 import "../../store/products/product.css";
 import React, { useState, useEffect } from "react";
-import {Search, ListFilter, X, ChevronRight, ChevronLeft, Tag, SortAsc, DollarSign, Maximize, Bell } from "lucide-react";
+import {Search, ListFilter, X, ChevronRight, ChevronLeft, Tag, SortAsc, DollarSign, Maximize, Bell, Heart, ShoppingCart, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
+import postAPI from "../../../api/postAPI";
+import deleteAPI from "../../../api/deleteAPI";
 import { toast } from "react-toastify";
 import ProductsSkeliton from "../../../Component/Skeleton/products/ProductsSkeliton";
 
@@ -64,6 +66,11 @@ const BidProduct = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 24;
   const [expandedFilters, setExpandedFilters] = useState({});
+  const [sponsoredProducts, setSponsoredProducts] = useState([]);
+  const [likedProducts, setLikedProducts] = useState({});
+  const [cartItems, setCartItems] = useState([]);
+  const userId = localStorage.getItem("userId");
+  const userType = localStorage.getItem("userType");
   const navigate = useNavigate();
 
   const toggleExpand = (category) => {
@@ -436,6 +443,114 @@ const BidProduct = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Fetch sponsored products
+  useEffect(() => {
+    const fetchSponsored = async () => {
+      try {
+        const res = await getAPI(`/api/campaigns/ads/placement?placement=topOfSearch`, {}, true, false);
+        setSponsoredProducts(res?.data?.data || []);
+      } catch (err) {
+        console.error("Error fetching sponsored products:", err);
+      }
+    };
+    fetchSponsored();
+  }, []);
+
+  // Fetch wishlist
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      if (!userId) return;
+      try {
+        const res = await getAPI(`/api/wishlist/${userId}`, {}, true, false);
+        const wishlistArray = res?.data?.wishlist || [];
+        const obj = {};
+        wishlistArray.forEach((item) => { obj[item._id] = true; });
+        setLikedProducts(obj);
+      } catch (error) {
+        console.log("Error loading wishlist:", error);
+      }
+    };
+    fetchWishlist();
+  }, [userId]);
+
+  // Fetch cart
+  useEffect(() => {
+    if (!userId || userType !== "Buyer") return;
+    const fetchCart = async () => {
+      try {
+        const res = await getAPI(`/api/cart/${userId}`);
+        setCartItems(res?.data?.items || []);
+      } catch (err) {
+        console.error("Error fetching cart:", err);
+      }
+    };
+    fetchCart();
+  }, [userId, userType]);
+
+  const ensureBuyer = () => {
+    if (userType !== "Buyer") {
+      toast.warn("Only buyers can use this feature, Register as a Buyer to continue.");
+      return false;
+    }
+    return true;
+  };
+
+  const handleWishlist = async (productId) => {
+    if (!ensureBuyer()) return;
+    const isLiked = likedProducts[productId];
+    try {
+      if (isLiked) {
+        await deleteAPI("/api/wishlist/remove", { params: { userId, productId } });
+        toast.warn("Removed from Wishlist");
+      } else {
+        await postAPI("/api/wishlist/add", { userId, productId });
+        toast.success("Added to Wishlist");
+      }
+      setLikedProducts((prev) => ({ ...prev, [productId]: !isLiked }));
+    } catch (err) {
+      console.error("Wishlist error:", err);
+    }
+  };
+
+  const addToCart = async (productId) => {
+    if (!userId) {
+      toast.warn("You must be logged in to add items to cart");
+      return;
+    }
+    try {
+      await postAPI(`/api/cart/addcart/${productId}`, {}, true);
+      toast.success("Added to Cart!");
+      const res = await getAPI(`/api/cart/${userId}`);
+      setCartItems(res?.data?.items || []);
+    } catch (err) {
+      console.error("Add to cart error:", err);
+      const errorMessage = err.response?.data?.message || "Failed to add to cart";
+      toast.error(errorMessage);
+    }
+  };
+
+  const handleAdClick = async (adProduct) => {
+    const slug = slugify(adProduct.productName);
+    try {
+      await postAPI("/api/campaigns/ads/click", {
+        campaignId: adProduct.campaignId,
+        productId: adProduct._id,
+        placement: adProduct.placement || "topOfSearch",
+      }, {}, false);
+    } catch (err) {
+      console.error("Ad click tracking error:", err);
+    }
+    navigate(`/product-details/${slug}/${adProduct._id}`);
+  };
+
+  const renderStars = (averageRating) => {
+    if (averageRating == null) return [1, 2, 3, 4, 5].map((s) => <Star key={s} size={14} className="text-gray-200 fill-gray-200" />);
+    const filled = Math.round(averageRating);
+    return [1, 2, 3, 4, 5].map((s) => (
+      <Star key={s} size={14} className={s <= filled ? "text-yellow-400 fill-yellow-400" : "text-gray-200 fill-gray-200"} />
+    ));
+  };
+
   const FilterSection = ({ title, icon: Icon, children, id, optionsLength, onExpand }) => (
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-4 animate-slide-up">
       <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
@@ -704,118 +819,234 @@ const BidProduct = () => {
             <div className="mb-6">
               {currentProducts.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
-                  {currentProducts.map((item, index) => {
-                    const status = getFinalStatus(item);
-                    const timeRemaining = getTimeRemaining(item.bidEnd);
-                    const isEnded = timeRemaining === "Ended";
-                    const currentHighestBid = highestLiveBid[item._id] || item.basePrice;
+                    {/* First card is an ad, then an ad after every 5 product cards */}
+                    {sponsoredProducts.length > 0 && (() => {
+                      const firstAd = sponsoredProducts[0];
+                      const adHasDiscount = firstAd.finalPrice < firstAd.marketPrice;
+                      return (
+                        <div
+                          className="group flex flex-col h-full bg-white rounded-[24px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border-2 border-[#6F4D34]/20 animate-fade-in-up relative"
+                          onClick={() => handleAdClick(firstAd)}
+                        >
+                          <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
+                            <img src={`${imageBaseURL}${firstAd.mainImage}`} alt={firstAd.productName} className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" />
+                            <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                              <div className="bg-[#6F4D34] text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest">Sponsored</div>
+                            </div>
+                            <button onClick={(e) => { e.stopPropagation(); handleWishlist(firstAd._id); }} className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-sm hover:bg-white hover:text-red-500 transition-all transform hover:scale-110 group/heart z-10">
+                              <Heart size={18} className={`transition-colors ${likedProducts[firstAd._id] ? "text-red-500 fill-red-500" : "text-gray-900 group-hover/heart:text-red-500"}`} />
+                            </button>
+                            <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                          </div>
+                          <div className="flex flex-col flex-grow p-3 gap-3">
+                            <div className="flex items-center gap-1">
+                              <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-[#6F4D34] animate-pulse" />
+                                <span className="text-[#6F4D34] text-[10px] font-black uppercase tracking-widest">{firstAd.userId?.name || "Independent Artist"}</span>
+                              </div>
+                            </div>
+                            <h3 className="text-lg font-bold text-gray-900 line-clamp-1 group-hover:text-[#6F4D34] transition-colors tracking-tight">{firstAd.productName}</h3>
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center bg-gray-50 px-2 py-0.5 rounded-lg border border-gray-100">
+                                <div className="flex items-center mr-1.5">{renderStars(firstAd.averageRating)}</div>
+                                <span className="text-[11px] font-black text-gray-900">{firstAd.averageRating ? Number(firstAd.averageRating).toFixed(1) : "0.0"}</span>
+                              </div>
+                              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">• {firstAd.reviewCount || 0} reviews</span>
+                            </div>
+                            <div className="flex items-center justify-between mt-auto border-t border-gray-50">
+                              <div className="flex items-center gap-2">
+                                {adHasDiscount && <span className="text-lg text-gray-400 line-through font-bold">₹{(firstAd.marketPrice || 0).toLocaleString()}</span>}
+                                <span className="text-2xl font-black text-gray-900 tracking-tighter">₹{(firstAd.finalPrice || 0).toLocaleString()}</span>
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-5 gap-2">
+                              <button onClick={(e) => { e.stopPropagation(); if (!ensureBuyer()) return; addToCart(firstAd._id); }} disabled={!firstAd.quantity || firstAd.quantity === 0} className="col-span-1 h-[48px] bg-gray-50 text-gray-900 hover:text-[#ffffff] rounded-2xl hover:bg-[#6F4D34] hover:text-white transition-all duration-300 disabled:opacity-50 border border-gray-100 flex items-center justify-center group/cart shadow-sm" title="Add to Cart">
+                                <div className="relative">
+                                  <ShoppingCart size={20} className="transition-transform group-hover/cart:scale-110" />
+                                  {(() => { const cartItem = cartItems.find((ci) => ci.product?._id === firstAd._id); return cartItem && cartItem.quantity > 0 ? (<span className="absolute -top-3 -right-3 bg-red-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center shadow-lg border-2 border-white flex items-center justify-center">{cartItem.quantity}</span>) : null; })()}
+                                </div>
+                              </button>
+                              <button onClick={async (e) => { e.stopPropagation(); if (!ensureBuyer()) return; if (!firstAd.quantity || firstAd.quantity === 0) return; await addToCart(firstAd._id); navigate(`/my-account/check-out/${userId}?productId=${firstAd._id}`); }} disabled={!firstAd.quantity || firstAd.quantity === 0} className="col-span-4 h-[48px] bg-[#6F4D34] text-white hover:!text-[#6F4D34] rounded-2xl font-black text-[12px] uppercase tracking-[0.1em] transition-all duration-300 shadow-sm hover:!bg-[#ffffff] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed border border-gray-100 transform active:scale-95 flex items-center justify-center overflow-hidden relative">
+                                <span className="relative z-10">Buy Now</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                    {currentProducts.map((item, index) => {
+                      const shouldInsertAd = (index + 1) % 5 === 0 && sponsoredProducts.length > 1;
+                      const adIndex = shouldInsertAd ? (1 + (Math.floor(index / 5) % (sponsoredProducts.length - 1))) : 0;
+                      const adProduct = shouldInsertAd ? sponsoredProducts[adIndex] : null;
 
-                    return (
-                      <div
-                        key={item._id}
-                        className="group flex flex-col h-full bg-white rounded-[24px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100/50 animate-fade-in-up relative"
-                        style={{ animationDelay: `${index * 50}ms` }}
-                        onClick={() => { const slug = slugify(item.artworkName); navigate(`/bid-details/${slug}/${item._id}`); }}
-                      >
-                        {/* Image Container */}
-                        <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
-                            <img
-                              src={`${imageBaseURL}${item.product?.mainImage}`}
-                              alt={item.artworkName}
-                              className={`w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 ${isEnded ? 'grayscale-[0.5] blur-[2px]' : ''}`}
-                            />
+                      const status = getFinalStatus(item);
+                      const timeRemaining = getTimeRemaining(item.bidEnd);
+                      const isEnded = timeRemaining === "Ended";
+                      const currentHighestBid = highestLiveBid[item._id] || item.basePrice;
 
-                            {/* Bid Ended Overlay */}
-                            {isEnded && (
-                              <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-[1px]">
-                                <div className="bg-white px-6 py-2 rounded-lg shadow-2xl border border-white/50 transform -rotate-12">
-                                  <span className="text-red-600 font-black text-xl uppercase tracking-wider">Bid Ended</span>
+                      return (
+                        <React.Fragment key={item._id}>
+                          {/* Ad Card - inserted after every 5 products */}
+                          {adProduct && (() => {
+                            const adHasDiscount = adProduct.finalPrice < adProduct.marketPrice;
+                            return (
+                              <div
+                                className="group flex flex-col h-full bg-white rounded-[24px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border-2 border-[#6F4D34]/20 animate-fade-in-up relative"
+                                onClick={() => handleAdClick(adProduct)}
+                              >
+                                <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
+                                  <img src={`${imageBaseURL}${adProduct.mainImage}`} alt={adProduct.productName} className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" />
+                                  <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                                    <div className="bg-[#6F4D34] text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest">Sponsored</div>
+                                  </div>
+                                  <button onClick={(e) => { e.stopPropagation(); handleWishlist(adProduct._id); }} className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-sm hover:bg-white hover:text-red-500 transition-all transform hover:scale-110 group/heart z-10">
+                                    <Heart size={18} className={`transition-colors ${likedProducts[adProduct._id] ? "text-red-500 fill-red-500" : "text-gray-900 group-hover/heart:text-red-500"}`} />
+                                  </button>
+                                  <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                                </div>
+                                <div className="flex flex-col flex-grow p-3 gap-3">
+                                  <div className="flex items-center gap-1">
+                                    <div className="flex items-center gap-2">
+                                      <div className="w-2 h-2 rounded-full bg-[#6F4D34] animate-pulse" />
+                                      <span className="text-[#6F4D34] text-[10px] font-black uppercase tracking-widest">{adProduct.userId?.name || "Independent Artist"}</span>
+                                    </div>
+                                  </div>
+                                  <h3 className="text-lg font-bold text-gray-900 line-clamp-1 group-hover:text-[#6F4D34] transition-colors tracking-tight">{adProduct.productName}</h3>
+                                  <div className="flex items-center gap-2">
+                                    <div className="flex items-center bg-gray-50 px-2 py-0.5 rounded-lg border border-gray-100">
+                                      <div className="flex items-center mr-1.5">{renderStars(adProduct.averageRating)}</div>
+                                      <span className="text-[11px] font-black text-gray-900">{adProduct.averageRating ? Number(adProduct.averageRating).toFixed(1) : "0.0"}</span>
+                                    </div>
+                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">• {adProduct.reviewCount || 0} reviews</span>
+                                  </div>
+                                  <div className="flex items-center justify-between mt-auto border-t border-gray-50">
+                                    <div className="flex items-center gap-2">
+                                      {adHasDiscount && <span className="text-lg text-gray-400 line-through font-bold">₹{(adProduct.marketPrice || 0).toLocaleString()}</span>}
+                                      <span className="text-2xl font-black text-gray-900 tracking-tighter">₹{(adProduct.finalPrice || 0).toLocaleString()}</span>
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-5 gap-2">
+                                    <button onClick={(e) => { e.stopPropagation(); if (!ensureBuyer()) return; addToCart(adProduct._id); }} disabled={!adProduct.quantity || adProduct.quantity === 0} className="col-span-1 h-[48px] bg-gray-50 text-gray-900 hover:text-[#ffffff] rounded-2xl hover:bg-[#6F4D34] hover:text-white transition-all duration-300 disabled:opacity-50 border border-gray-100 flex items-center justify-center group/cart shadow-sm" title="Add to Cart">
+                                      <div className="relative">
+                                        <ShoppingCart size={20} className="transition-transform group-hover/cart:scale-110" />
+                                        {(() => { const cartItem = cartItems.find((ci) => ci.product?._id === adProduct._id); return cartItem && cartItem.quantity > 0 ? (<span className="absolute -top-3 -right-3 bg-red-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center shadow-lg border-2 border-white flex items-center justify-center">{cartItem.quantity}</span>) : null; })()}
+                                      </div>
+                                    </button>
+                                    <button onClick={async (e) => { e.stopPropagation(); if (!ensureBuyer()) return; if (!adProduct.quantity || adProduct.quantity === 0) return; await addToCart(adProduct._id); navigate(`/my-account/check-out/${userId}?productId=${adProduct._id}`); }} disabled={!adProduct.quantity || adProduct.quantity === 0} className="col-span-4 h-[48px] bg-[#6F4D34] text-white hover:!text-[#6F4D34] rounded-2xl font-black text-[12px] uppercase tracking-[0.1em] transition-all duration-300 shadow-sm hover:!bg-[#ffffff] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed border border-gray-100 transform active:scale-95 flex items-center justify-center overflow-hidden relative">
+                                      <span className="relative z-10">Buy Now</span>
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
-                            )}
+                            );
+                          })()}
 
-                          {/* Status Badge */}
-                          <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
-                            <div className={`backdrop-blur-md text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest border border-white/20 
-                              ${status === 'Upcoming' ? 'bg-blue-500' : status === 'Ending Soon' ? 'bg-orange-500' : status === 'Ended' ? 'bg-gray-500' : 'bg-green-500'}`}>
-                              {status}
-                            </div>
-                          </div>
-
-                          {/* Bell Button */}
-                          <button
-                            onClick={(e) => { e.stopPropagation(); toast.info("Reminder Set!"); }}
-                            className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-sm hover:bg-white hover:text-[#6F4D34] transition-all transform hover:scale-110 z-10"
+                          {/* Regular Bid Product Card */}
+                          <div
+                            className="group flex flex-col h-full bg-white rounded-[24px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100/50 animate-fade-in-up relative"
+                            style={{ animationDelay: `${index * 50}ms` }}
+                            onClick={() => { const slug = slugify(item.artworkName); navigate(`/bid-details/${slug}/${item._id}`); }}
                           >
-                            <Bell size={18} className="text-gray-900" />
-                          </button>
-                        </div>
+                            {/* Image Container */}
+                            <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
+                              <img
+                                src={`${imageBaseURL}${item.product?.mainImage}`}
+                                alt={item.artworkName}
+                                className={`w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 ${isEnded ? 'grayscale-[0.5] blur-[2px]' : ''}`}
+                              />
 
-                        {/* Content */}
-                        <div className="flex flex-col flex-grow p-3 gap-3">
-                          {/* Artist Info */}
-                          <div className="flex items-center gap-1">
-                            <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 rounded-full bg-[#6F4D34] animate-pulse" />
-                              <span className="text-[#6F4D34] text-[10px] font-black uppercase tracking-widest">
-                                {item.product?.userId?.name || "Independent Artist"}
-                              </span>
-                            </div>
-                            <div className="flex -space-x-1.5">
-                              {item.product?.badges?.map((img, idx) => (
-                                <div key={idx}>
-                                  <img src={`${imageBaseURL}${img}`} className="w-4 h-4 rounded-full border border-white" alt="Badge" />
+                              {/* Bid Ended Overlay */}
+                              {isEnded && (
+                                <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-[1px]">
+                                  <div className="bg-white px-6 py-2 rounded-lg shadow-2xl border border-white/50 transform -rotate-12">
+                                    <span className="text-red-600 font-black text-xl uppercase tracking-wider">Bid Ended</span>
+                                  </div>
                                 </div>
-                              ))}
+                              )}
+
+                              {/* Status Badge */}
+                              <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                                <div className={`backdrop-blur-md text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest border border-white/20 
+                                  ${status === 'Upcoming' ? 'bg-blue-500' : status === 'Ending Soon' ? 'bg-orange-500' : status === 'Ended' ? 'bg-gray-500' : 'bg-green-500'}`}>
+                                  {status}
+                                </div>
+                              </div>
+
+                              {/* Bell Button */}
+                              <button
+                                onClick={(e) => { e.stopPropagation(); toast.info("Reminder Set!"); }}
+                                className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-sm hover:bg-white hover:text-[#6F4D34] transition-all transform hover:scale-110 z-10"
+                              >
+                                <Bell size={18} className="text-gray-900" />
+                              </button>
+                            </div>
+
+                            {/* Content */}
+                            <div className="flex flex-col flex-grow p-3 gap-3">
+                              {/* Artist Info */}
+                              <div className="flex items-center gap-1">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-2 h-2 rounded-full bg-[#6F4D34] animate-pulse" />
+                                  <span className="text-[#6F4D34] text-[10px] font-black uppercase tracking-widest">
+                                    {item.product?.userId?.name || "Independent Artist"}
+                                  </span>
+                                </div>
+                                <div className="flex -space-x-1.5">
+                                  {item.product?.badges?.map((img, idx) => (
+                                    <div key={idx}>
+                                      <img src={`${imageBaseURL}${img}`} className="w-4 h-4 rounded-full border border-white" alt="Badge" />
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+
+                              {/* Title */}
+                              <h3 className="text-lg font-bold text-gray-900 line-clamp-1 group-hover:text-[#6F4D34] transition-colors tracking-tight">
+                                {item.artworkName}
+                              </h3>
+
+                              {/* Bidding Info */}
+                              <div className="flex flex-col gap-1 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                <div className="flex justify-between items-center">
+                                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">Starting Price</span>
+                                  <span className="text-sm font-bold text-gray-900">₹{item.basePrice.toLocaleString()}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                  <span className="text-[10px] font-bold text-[#6F4D34] uppercase tracking-tighter">Highest Bid</span>
+                                  <span className="text-lg font-black text-[#6F4D34]">₹{currentHighestBid.toLocaleString()}</span>
+                                </div>
+                              </div>
+
+                              {/* Action Buttons */}
+                              <div className="grid grid-cols-5 gap-2">
+                                <div className="col-span-2 flex flex-col justify-center">
+                                  <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">Time Left</span>
+                                  <span className={`text-lg font-black tracking-tight ${status === 'Ending Soon' ? 'text-orange-500' : 'text-gray-900'}`}>
+                                    {timeRemaining}
+                                  </span>
+                                </div>
+
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    const slug = slugify(item.artworkName);
+                                    navigate(`/bid-details/${slug}/${item._id}`);
+                                  }}
+                                  disabled={isEnded}
+                                  className={`col-span-3 h-[48px] rounded-2xl font-black text-[11px] hover:!text-[#6F4D34] hover:!bg-[#ffffff] uppercase tracking-[0.1em] transition-all duration-300 shadow-sm border border-gray-100 transform active:scale-95 flex items-center justify-center
+                                    ${isEnded 
+                                      ? "bg-gray-100 text-gray-400 cursor-not-allowed" 
+                                      : "bg-[#6F4D34] text-white hover:bg-white hover:text-[#6F4D34]"}`}
+                                >
+                                  {status === 'Upcoming' ? 'Remind Me' : isEnded ? 'Ended' : 'Place Bid'}
+                                </button>
+                              </div>
                             </div>
                           </div>
-
-                          {/* Title */}
-                          <h3 className="text-lg font-bold text-gray-900 line-clamp-1 group-hover:text-[#6F4D34] transition-colors tracking-tight">
-                            {item.artworkName}
-                          </h3>
-
-                          {/* Bidding Info */}
-                          <div className="flex flex-col gap-1 bg-gray-50 p-3 rounded-xl border border-gray-100">
-                            <div className="flex justify-between items-center">
-                              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">Starting Price</span>
-                              <span className="text-sm font-bold text-gray-900">₹{item.basePrice.toLocaleString()}</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <span className="text-[10px] font-bold text-[#6F4D34] uppercase tracking-tighter">Highest Bid</span>
-                              <span className="text-lg font-black text-[#6F4D34]">₹{currentHighestBid.toLocaleString()}</span>
-                            </div>
-                          </div>
-
-                          {/* Action Buttons */}
-                          <div className="grid grid-cols-5 gap-2">
-                            <div className="col-span-2 flex flex-col justify-center">
-                              <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">Time Left</span>
-                              <span className={`text-lg font-black tracking-tight ${status === 'Ending Soon' ? 'text-orange-500' : 'text-gray-900'}`}>
-                                {timeRemaining}
-                              </span>
-                            </div>
-
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                const slug = slugify(item.artworkName);
-                                navigate(`/bid-details/${slug}/${item._id}`);
-                              }}
-                              disabled={isEnded}
-                              className={`col-span-3 h-[48px] rounded-2xl font-black text-[11px] hover:!text-[#6F4D34] hover:!bg-[#ffffff] uppercase tracking-[0.1em] transition-all duration-300 shadow-sm border border-gray-100 transform active:scale-95 flex items-center justify-center
-                                ${isEnded 
-                                  ? "bg-gray-100 text-gray-400 cursor-not-allowed" 
-                                  : "bg-[#6F4D34] text-white hover:bg-white hover:text-[#6F4D34]"}`}
-                            >
-                              {status === 'Upcoming' ? 'Remind Me' : isEnded ? 'Ended' : 'Place Bid'}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                        </React.Fragment>
+                      );
+                    })}
+                  </div>
               ) : (
                 <div className="py-24 text-center">
                   <div className="inline-flex items-center justify-center w-24 h-24 bg-gray-100 rounded-full mb-6 text-gray-400">

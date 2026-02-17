@@ -1,951 +1,243 @@
-// import React, { useState, useEffect } from 'react';
-// import getAPI from '../../../../../api/getAPI';
-// import { useNavigate } from 'react-router-dom';
-// import useUserType from '../../../urlconfig';
-
-// const SoldProduct = () => {
-//     const [products, setProducts] = useState([]);
-//     const [currentPage, setCurrentPage] = useState(1);
-//     const [productsPerPage, setProductsPerPage] = useState(10);
-//     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-//     const [searchTerm, setSearchTerm] = useState('');
-//     const [showPopup, setShowPopup] = useState(false);
-//     const [currentImages, setCurrentImages] = useState([]);
-//     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-
-//     const navigate = useNavigate();
-//     const userType = useUserType();
-
-//     useEffect(() => {
-//         const fetchProducts = async () => {
-//             try {
-//                 const result = await getAPI("/api/buyersoldproduct", {}, true, false);
-//                 console.log("Full API Response:", result);
-
-//                 if (result && result.data && Array.isArray(result.data)) {
-//                     setProducts(result.data); // Set only the array
-//                 } else {
-//                     console.error("API response does not contain an array:", result.data);
-//                     setProducts([]);
-//                 }
-//             } catch (error) {
-//                 console.error("Error fetching products:", error);
-//                 setProducts([]);
-//             }
-//         };
-
-//         fetchProducts();
-//     }, []);
-
-//     const filteredProducts = products.filter((product) => {
-//         return product.buyerName.toLowerCase().includes(searchTerm.toLowerCase().trim());
-//     });
-
-//     const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-//     const displayedProducts = filteredProducts.slice(
-//         (currentPage - 1) * productsPerPage,
-//         currentPage * productsPerPage
-//     );
-//     const handlePrevious = () => {
-//         if (currentPage > 1) {
-//             setCurrentPage(currentPage - 1);
-//         }
-//     };
-
-//     const handleNext = () => {
-//         if (currentPage < totalPages) {
-//             setCurrentPage(currentPage + 1);
-//         }
-//     };
-
-//     const handleProductsPerPageChange = (event) => {
-//         setProductsPerPage(Number(event.target.value));
-//         setCurrentPage(1);
-//     };
-
-//     const handleImageClick = (product) => {
-//     const images = [product.product];        
-//     setCurrentImages(images);
-//         setCurrentImageIndex(0);
-//         setShowPopup(true);
-//     };
-
-
-//     const goToPreviousImage = () => {
-//         setCurrentImageIndex((prevIndex) => Math.max(prevIndex - 1, 0));
-//     };
-
-//     const goToNextImage = () => {
-//         setCurrentImageIndex((prevIndex) => Math.min(prevIndex + 1, currentImages.length - 1));
-//     };
-
-
-//     return (
-//         <div className="container-fluid">
-//             <div className="block-header">
-//                 <div className="row">
-//                     <div className="col-lg-6 col-md-6 col-sm-12">
-//                         <h2>Buyer Sold Product</h2>
-//                         <ul className="breadcrumb">
-//                             <li className="breadcrumb-item">
-//                                 <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
-//                                     <i className="fa fa-dashboard"></i>
-//                                 </span>
-//                             </li>
-//                             <li className="breadcrumb-item">Buyer Sold Product</li>
-//                         </ul>
-//                     </div>
-//                 </div>
-//             </div>
-
-//             <div className="row clearfix">
-//                 <div className="col-lg-12">
-//                     <div className="card">
-//                         <div className="header d-flex justify-content-between align-items-center">
-//                             <div className="d-none d-md-flex align-items-center mb-2 mb-md-0">
-//                                 <label className="mb-0 mr-2">Show</label>
-//                                 <select
-//                                     name="DataTables_Table_0_length"
-//                                     aria-controls="DataTables_Table_0"
-//                                     className="form-control form-control-sm"
-//                                     value={productsPerPage}
-//                                     onChange={handleProductsPerPageChange}
-//                                     style={{ minWidth: '70px' }}
-//                                 >
-//                                     {/* <option value="5">5</option> */}
-//                                     <option value="10">10</option>
-//                                     <option value="25">25</option>
-//                                     <option value="50">50</option>
-//                                     <option value="100">100</option>
-//                                 </select>
-//                                 <label className="mb-0 ml-2">entries</label>
-//                             </div>
-//                             <div className="w-100 w-md-auto d-flex justify-content-end">
-//                                 <div className="input-group" style={{ maxWidth: '150px' }}>
-//                                     <input
-//                                         type="text"
-//                                         className="form-control form-control-sm"
-//                                         placeholder="Search"
-//                                         value={searchTerm}
-//                                         onChange={(e) => setSearchTerm(e.target.value)}
-//                                     />
-//                                     <i
-//                                         className="fa fa-search"
-//                                         style={{
-//                                             position: 'absolute',
-//                                             right: '10px',
-//                                             top: '50%',
-//                                             transform: 'translateY(-50%)',
-//                                             pointerEvents: 'none',
-//                                         }}
-//                                     ></i>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                         <div className="body">
-//                             <div className="table-responsive">
-//                                 <table className="table table-hover">
-//                                     <thead className="thead-dark">
-//                                         <tr>
-//                                             <th>#</th>
-//                                             <th>Buyer Name</th>
-//                                             <th>Product Name</th>
-//                                             <th>Product Price</th>
-//                                             <th>Sold Product Quantity</th>
-//                                             <th>Action</th>
-//                                         </tr>
-//                                     </thead>
-//                                     <tbody>
-//                                         {displayedProducts.map((product, index) => (
-//                                             <tr key={product.productId}>
-//                                                 <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
-//                                                 <td>{product.buyerName}</td>
-//                                                 <td>
-//                                                         <img
-//                                                             src={product.product}
-//                                                             className="rounded-circle avatar"
-//                                                             alt=""
-//                                                             onClick={() => handleImageClick(product)}
-//                                                             style={{
-//                                                                 width: '30px',
-//                                                                 height: '30px',
-//                                                                 objectFit: 'cover',
-//                                                                 marginRight: '10px',
-//                                                                 cursor: 'pointer'
-//                                                             }}
-//                                                         /> {product.productName}
-//                                                 </td>
-//                                                 <td>{product.productPrice}</td>
-//                                                 <td>{product.totalQuantity}</td>
-//                                                 <td>
-//                                                     <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/${userType}/Dashboard/buyersoldproduct/soldproductdetails/${product.productId}`)}>
-//                                                         <i className="fa fa-eye"></i>
-//                                                     </button>
-//                                                 </td>
-//                                             </tr>
-//                                         ))}
-//                                     </tbody>
-//                                 </table>
-//                             </div>
-//                             <div className="pagination d-flex justify-content-between mt-4">
-//                                 <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-//                                     Showing {filteredProducts.length === 0 ? 0 : (currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
-//                                 </span>
-
-//                                 <ul className="pagination d-flex justify-content-end w-100">
-//                                     <li
-//                                         className={`paginate_button page-item ${currentPage === 1 ? 'disabled' : ''}`}
-//                                         onClick={handlePrevious}
-//                                     >
-//                                         <button className="page-link">Previous</button>
-//                                     </li>
-
-//                                     {Array.from({ length: totalPages }, (_, index) => index + 1)
-//                                         .filter((pageNumber) => pageNumber === currentPage)
-//                                         .map((pageNumber, index, array) => {
-//                                             const prevPage = array[index - 1];
-//                                             if (prevPage && pageNumber - prevPage > 1) {
-//                                                 return (
-//                                                     <React.Fragment key={`ellipsis-${pageNumber}`}>
-//                                                         <li className="page-item disabled"><span className="page-link">...</span></li>
-//                                                         <li
-//                                                             key={pageNumber}
-//                                                             className={`paginate_button page-item ${currentPage === pageNumber ? 'active' : ''}`}
-//                                                             onClick={() => setCurrentPage(pageNumber)}
-//                                                         >
-//                                                             <button className="page-link">{pageNumber}</button>
-//                                                         </li>
-//                                                     </React.Fragment>
-//                                                 );
-//                                             }
-
-//                                             return (
-//                                                 <li
-//                                                     key={pageNumber}
-//                                                     className={`paginate_button page-item ${currentPage === pageNumber ? 'active' : ''}`}
-//                                                     onClick={() => setCurrentPage(pageNumber)}
-//                                                 >
-//                                                     <button className="page-link">{pageNumber}</button>
-//                                                 </li>
-//                                             );
-//                                         })}
-
-//                                     <li
-//                                         className={`paginate_button page-item ${currentPage === totalPages ? 'disabled' : ''}`}
-//                                         onClick={handleNext}
-//                                     >
-//                                         <button className="page-link">Next</button>
-//                                     </li>
-//                                 </ul>
-//                             </div>
-
-
-//                         </div>
-//                     </div>
-//                 </div>
-//             </div>
-//             {showPopup && (
-//                 <div
-//                     onClick={() => setShowPopup(false)}
-//                     style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}
-//                 >
-//                     <div
-//                         onClick={(e) => e.stopPropagation()}
-//                         style={{ position: 'relative', width: '500px', height: '600px', backgroundColor: '#111', borderRadius: '12px', display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}
-//                     >
-//                         <button onClick={goToPreviousImage} disabled={currentImageIndex === 0} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', fontSize: '2rem', background: 'black', color: currentImageIndex === 0 ? '#666' : '#fff', border: 'none', cursor: currentImageIndex === 0 ? 'not-allowed' : 'pointer' }}>
-//                             &#10094;
-//                         </button>
-//                         <img
-//                             src={currentImages[currentImageIndex]}
-//                             alt="Popup"
-//                             style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '12px' }}
-//                         />
-//                         <button onClick={goToNextImage} disabled={currentImageIndex === currentImages.length - 1} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', fontSize: '2rem', background: 'black', color: currentImageIndex === currentImages.length - 1 ? '#666' : '#fff', border: 'none', cursor: currentImageIndex === currentImages.length - 1 ? 'not-allowed' : 'pointer' }}>
-//                             &#10095;
-//                         </button>
-//                     </div>
-//                 </div>
-//             )}
-
-//         </div>
-//     );
-// };
-
-// export default SoldProduct;
-import React, { useState, useEffect } from 'react';
-import getAPI from '../../../../../api/getAPI';
-import { useNavigate } from 'react-router-dom';
-import useUserType from '../../../urlconfig';
+import React, { useState, useEffect } from "react";
+import getAPI from "../../../../../api/getAPI";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 
-const SoldProduct = () => {
-  const [products, setProducts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage, setProductsPerPage] = useState(10);
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-  const [searchTerm, setSearchTerm] = useState("");
-  const [showPopup, setShowPopup] = useState(false);
-  const [currentImages, setCurrentImages] = useState([]);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [loading, setLoading] = useState(false);
+const BuyerSoldProduct = () => {
+    const { buyerId } = useParams();
+    const location = useLocation();
+    const userId = buyerId || location.state?.buyer?._id || location.state?.userId;
 
-  const navigate = useNavigate();
-  const userType = useUserType();
+    const [products, setProducts] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [productsPerPage, setProductsPerPage] = useState(10);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [loading, setLoading] = useState(false);
 
-  // Fetch sold products
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const result = await getAPI("/api/buyersoldproduct", {}, true, false);
-        console.log("Full API Response:", result);
+    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const navigate = useNavigate();
 
-        if (result && result.data && Array.isArray(result.data)) {
-          setProducts(result.data);
-        } else {
-          console.error("API response does not contain an array:", result.data);
-          setProducts([]);
-        }
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        setProducts([]);
-      }
-    };
+    useEffect(() => {
+        const fetchProducts = async () => {
+            setLoading(true);
+            try {
+                const url = userId ? `/api/orders/buyer/${userId}` : `/api/orders/buyer`;
+                const result = await getAPI(url, {}, true, false);
 
-    fetchProducts();
-  }, []);
+                if (result?.data?.data && Array.isArray(result.data.data)) {
+                    const formatted = result.data.data.flatMap(order => {
+                        const buyerName =
+                            `${order.Buyer?.id?.name || ""} ${order.Buyer?.id?.lastName || ""}`.trim();
 
-  // SAFE SEARCH FILTER — prevents null crash
-  const filteredProducts = products.filter((product) => {
-    const name = product?.buyerName || "";
-    return name.toLowerCase().includes(searchTerm.toLowerCase().trim());
-  });
+                        return order.items
+                            .filter(item => item.productId || item.resellProduct || item.customProduct)
+                            .map(item => {
+                                const product = item.productId || item.resellProduct || item.customProduct || {};
+                                return {
+                                    orderId: order.orderId,
+                                    buyerName: buyerName || "N/A",
+                                    productId: product._id || "",
+                                    productName: product.productName || product.requestTitle || "Unknown Product",
+                                    mainImage: product.mainImage || product.referenceImage || "",
+                                    productPrice: product.sellingPrice || product.finalPrice || item.price || 0,
+                                    totalQuantity: item.quantity,
+                                    createdAt: order.createdAt,
+                                    orderStatus: order.orderStatus || "Ordered"
+                                };
+                            });
+                    });
+                    setProducts(formatted);
+                } else {
+                    setProducts([]);
+                }
+            } catch (err) {
+                console.error("Error fetching buyer sold products:", err);
+                setProducts([]);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-  const displayedProducts = filteredProducts.slice(
-    (currentPage - 1) * productsPerPage,
-    currentPage * productsPerPage
-  );
+        fetchProducts();
+    }, [userId]);
 
-  const handlePrevious = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
-
-  // const filteredProducts = products.filter((product) => {
-  //   return product.buyerName
-  //     .toLowerCase()
-  //     .includes(searchTerm.toLowerCase().trim());
-  // });
-
-  const handleProductsPerPageChange = (event) => {
-    setProductsPerPage(Number(event.target.value));
-    setCurrentPage(1);
-  };
-
-  const handleImageClick = (product) => {
-    const imageSrc = product?.product?.startsWith('http') ? product.product : `${BASE_URL}${product.product || ''}`;
-    const images = [imageSrc];
-    setCurrentImages(images);
-    setCurrentImageIndex(0);
-    setShowPopup(true);
-  };
-
-  const goToPreviousImage = () => {
-    setCurrentImageIndex((prevIndex) => Math.max(prevIndex - 1, 0));
-  };
-
-  const goToNextImage = () => {
-    setCurrentImageIndex((prevIndex) =>
-      Math.min(prevIndex + 1, currentImages.length - 1)
+    const filteredProducts = products.filter(p =>
+        p.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.buyerName?.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  };
 
-  return (
-    <div className="container-fluid">
-      <div className="block-header">
-        <div className="row">
-          <div className="col-lg-6 col-md-6 col-sm-12">
-            <h2>Buyer Ordered Product</h2>
-            <ul className="breadcrumb">
-              <li className="breadcrumb-item">
-                <span
-                  onClick={() => navigate('/super-admin/dashboard')}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <i className="fa fa-dashboard"></i>
-                </span>
-              </li>
-              <li className="breadcrumb-item">Buyer Ordered Product</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+    const displayedProducts = filteredProducts.slice(
+        (currentPage - 1) * productsPerPage,
+        currentPage * productsPerPage
+    );
 
-      <div className="row clearfix">
-        <div className="col-lg-12">
-          <div className="card">
-            <div className="header d-flex justify-content-between align-items-center">
-              <div className="d-none d-md-flex align-items-center mb-2 mb-md-0">
-                <label className="mb-0 mr-2">Show</label>
-                <select
-                  className="form-control form-control-sm"
-                  value={productsPerPage}
-                  onChange={handleProductsPerPageChange}
-                  style={{ minWidth: '70px' }}
-                >
-                  <option value="10">10</option>
-                  <option value="25">25</option>
-                  <option value="50">50</option>
-                  <option value="100">100</option>
-                </select>
-                <label className="mb-0 ml-2">entries</label>
-              </div>
-              <div className="w-100 w-md-auto d-flex justify-content-end">
-                <div className="input-group" style={{ maxWidth: '150px' }}>
-                  <input
-                    type="text"
-                    className="form-control form-control-sm"
-                    placeholder="Search"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                  <i
-                    className="fa fa-search"
-                    style={{
-                      position: 'absolute',
-                      right: '10px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      pointerEvents: 'none',
-                    }}
-                  ></i>
-                </div>
-              </div>
-            </div>
+    if (loading) return <ProductRequestSkeleton />;
 
-            <div className="body">
-              <div className="table-responsive">
-                <table className="table table-hover">
-                  <thead className="thead-dark">
-                    <tr>
-                      <th>#</th>
-                      <th>Buyer Name</th>
-                      <th>Product Name</th>
-                      <th>Product Price</th>
-                      <th>Ordered Product Quantity</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {displayedProducts.map((product, index) => (
-                      <tr key={product.productId}>
-                        <td>
-                          {/* <img
-                                                            src={product.product?.startsWith('http') ? product.product : `${BASE_URL}${product.product || ''}`}
-                                                            className="rounded-circle avatar"
-                                                            alt=""
-                                                            onClick={() => handleImageClick(product)}
-                                                            style={{
-                                                                width: '30px',
-                                                                height: '30px',
-                                                                objectFit: 'cover',
-                                                                marginRight: '10px',
-                                                                cursor: 'pointer'
-                                                            }}
-                                                        /> {product.productName} */}
-                          <img
-                            src={`${BASE_URL}${product.mainImage}`}
-                            className="rounded-circle avatar"
-                            alt=""
-                            style={{
-                              width: '30px',
-                              height: '30px',
-                              objectFit: 'cover',
-                              marginRight: '10px'
-                            }}
-                          />
-                          {product.productName}
-
-                        </td>
-
-                        {/* SAFE DISPLAY */}
-                        <td>{product?.buyerName?.trim() || "N/A"}</td>
-
-                        <td>
-                          <img
-                            src={product.product}
-                            className="rounded-circle avatar"
-                            alt=""
-                            onClick={() => handleImageClick(product)}
-                            style={{
-                              width: '30px',
-                              height: '30px',
-                              objectFit: 'cover',
-                              marginRight: '10px',
-                              cursor: 'pointer',
-                            }}
-                          />
-                          {product.productName}
-                        </td>
-
-                        <td>{product.productPrice}</td>
-                        <td>{product.totalQuantity}</td>
-
-                        <td>
-                          <button
-                            className="btn btn-sm btn-outline-info mr-2"
-                            onClick={() =>
-                              navigate(
-                                `/${userType}/Dashboard/buyersoldproduct/soldproductdetails/${product.productId}`
-                              )
-                            }
-                          >
-                            <i className="fa fa-eye"></i>
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* PAGINATION */}
-              <div className="pagination d-flex justify-content-between mt-4">
-                <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                  Showing{" "}
-                  {filteredProducts.length === 0
-                    ? 0
-                    : (currentPage - 1) * productsPerPage + 1}{" "}
-                  to{" "}
-                  {Math.min(
-                    currentPage * productsPerPage,
-                    filteredProducts.length
-                  )}{" "}
-                  of {filteredProducts.length} entries
-                </span>
-
-                <ul className="pagination d-flex justify-content-end w-100">
-                  <li
-                    className={`paginate_button page-item ${currentPage === 1 ? "disabled" : ""
-                      }`}
-                    onClick={handlePrevious}
-                  >
-                    <button className="page-link">Previous</button>
-                  </li>
-
-                  {Array.from(
-                    { length: totalPages },
-                    (_, index) => index + 1
-                  )
-                    .filter((pageNumber) => pageNumber === currentPage)
-                    .map((pageNumber) => (
-                      <li
-                        key={pageNumber}
-                        className={`paginate_button page-item ${currentPage === pageNumber ? "active" : ""
-                          }`}
-                        onClick={() => setCurrentPage(pageNumber)}
-                      >
-                        <button className="page-link">
-                          {pageNumber}
-                        </button>
-                      </li>
-                    ))}
-
-                  <li
-                    className={`paginate_button page-item ${currentPage === totalPages ? "disabled" : ""
-                      }`}
-                    onClick={handleNext}
-                  >
-                    <button className="page-link">Next</button>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* IMAGE POPUP */}
-      {showPopup && (
-        <div
-          onClick={() => setShowPopup(false)}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.85)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 1000,
-          }}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              position: 'relative',
-              width: '500px',
-              height: '600px',
-              backgroundColor: '#111',
-              borderRadius: '12px',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              overflow: 'hidden',
-            }}
-          >
-            <button
-              onClick={goToPreviousImage}
-              disabled={currentImageIndex === 0}
-              style={{
-                position: 'absolute',
-                left: '10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                fontSize: '2rem',
-                background: 'black',
-                color:
-                  currentImageIndex === 0 ? '#666' : '#fff',
-                border: 'none',
-                cursor:
-                  currentImageIndex === 0
-                    ? 'not-allowed'
-                    : 'pointer',
-              }}
-            >
-              &#10094;
-            </button>
-
-            <img
-              src={currentImages[currentImageIndex]}
-              alt="Popup"
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'contain',
-                borderRadius: '12px',
-              }}
-            />
-
-            <button
-              onClick={goToNextImage}
-              disabled={
-                currentImageIndex === currentImages.length - 1
-              }
-              style={{
-                position: 'absolute',
-                right: '10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                fontSize: '2rem',
-                background: 'black',
-                color:
-                  currentImageIndex ===
-                    currentImages.length - 1
-                    ? '#666'
-                    : '#fff',
-                border: 'none',
-                cursor:
-                  currentImageIndex ===
-                    currentImages.length - 1
-                    ? 'not-allowed'
-                    : 'pointer',
-              }}
-            >
-              &#10095;
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-
-  if (loading) return <ProductRequestSkeleton />
-  return (
-    <div className="container-fluid">
-      <div className="block-header">
-        <div className="row">
-          <div className="col-lg-6 col-md-6 col-sm-12">
-            <h2>Buyer Sold Product</h2>
-            <ul className="breadcrumb">
-              <li className="breadcrumb-item">
-                <span
-                  onClick={() => navigate("/super-admin/dashboard")}
-                  style={{ cursor: "pointer" }}
-                >
-                  <i className="fa fa-dashboard"></i>
-                </span>
-              </li>
-              <li className="breadcrumb-item">Buyer Sold Product</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div className="row clearfix">
-        <div className="col-lg-12">
-          <div className="card">
-            <div className="header d-flex justify-content-between align-items-center">
-              <div className="d-none d-md-flex align-items-center mb-2 mb-md-0">
-                <label className="mb-0 mr-2">Show</label>
-                <select
-                  name="DataTables_Table_0_length"
-                  aria-controls="DataTables_Table_0"
-                  className="form-control form-control-sm"
-                  value={productsPerPage}
-                  onChange={handleProductsPerPageChange}
-                  style={{ minWidth: "70px" }}
-                >
-                  {/* <option value="5">5</option> */}
-                  <option value="10">10</option>
-                  <option value="25">25</option>
-                  <option value="50">50</option>
-                  <option value="100">100</option>
-                </select>
-                <label className="mb-0 ml-2">entries</label>
-              </div>
-              <div className="w-100 w-md-auto d-flex justify-content-end">
-                <div className="input-group" style={{ maxWidth: "150px" }}>
-                  <input
-                    type="text"
-                    className="form-control form-control-sm"
-                    placeholder="Search"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                  <i
-                    className="fa fa-search"
-                    style={{
-                      position: "absolute",
-                      right: "10px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      pointerEvents: "none",
-                    }}
-                  ></i>
-                </div>
-              </div>
-            </div>
-            <div className="body">
-              <div className="table-responsive">
-                <table className="table table-hover">
-                  <thead className="thead-dark">
-                    <tr>
-                      <th>#</th>
-                      <th>Buyer Name</th>
-                      <th>Product Name</th>
-                      <th>Product Price</th>
-                      <th>Sold Product Quantity</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {displayedProducts?.map((product, index) => (
-                      <tr key={product.productId}>
-                        <td>
-                          {(currentPage - 1) * productsPerPage + index + 1}
-                        </td>
-                        <td>{product.buyerName}</td>
-                        <td>
-                          <img
-                            src={product.product}
-                            className="rounded-circle avatar"
-                            alt=""
-                            onClick={() => handleImageClick(product)}
-                            style={{
-                              width: "30px",
-                              height: "30px",
-                              objectFit: "cover",
-                              marginRight: "10px",
-                              cursor: "pointer",
-                            }}
-                          />{" "}
-                          {product.productName}
-                        </td>
-                        <td>{product.productPrice}</td>
-                        <td>{product.totalQuantity}</td>
-                        <td>
-                          <button
-                            className="btn btn-sm btn-outline-info mr-2"
-                            onClick={() =>
-                              navigate(
-                                `/${userType}/Dashboard/buyersoldproduct/soldproductdetails/${product.productId}`
-                              )
-                            }
-                          >
-                            <i className="fa fa-eye"></i>
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <div className="pagination d-flex justify-content-between mt-4">
-                <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                  Showing{" "}
-                  {filteredProducts.length === 0
-                    ? 0
-                    : (currentPage - 1) * productsPerPage + 1}{" "}
-                  to{" "}
-                  {Math.min(
-                    currentPage * productsPerPage,
-                    filteredProducts.length
-                  )}{" "}
-                  of {filteredProducts.length} entries
-                </span>
-
-                <ul className="pagination d-flex justify-content-end w-100">
-                  <li
-                    className={`paginate_button page-item ${currentPage === 1 ? "disabled" : ""
-                      }`}
-                    onClick={handlePrevious}
-                  >
-                    <button className="page-link">Previous</button>
-                  </li>
-
-                  {Array.from({ length: totalPages }, (_, index) => index + 1)
-                    .filter((pageNumber) => pageNumber === currentPage)
-                    .map((pageNumber, index, array) => {
-                      const prevPage = array[index - 1];
-                      if (prevPage && pageNumber - prevPage > 1) {
-                        return (
-                          <React.Fragment key={`ellipsis-${pageNumber}`}>
-                            <li className="page-item disabled">
-                              <span className="page-link">...</span>
+    return (
+        <div className="container-fluid">
+            <div className="block-header">
+                <div className="row">
+                    <div className="col-lg-6 col-md-6 col-sm-12">
+                        <h2>Buyer Sold Products</h2>
+                        <ul className="breadcrumb">
+                            <li className="breadcrumb-item">
+                                <span onClick={() => navigate("/super-admin/dashboard")} style={{ cursor: "pointer" }}>
+                                    <i className="fa fa-dashboard"></i>
+                                </span>
                             </li>
-                            <li
-                              key={pageNumber}
-                              className={`paginate_button page-item ${currentPage === pageNumber ? "active" : ""
-                                }`}
-                              onClick={() => setCurrentPage(pageNumber)}
-                            >
-                              <button className="page-link">
-                                {pageNumber}
-                              </button>
-                            </li>
-                          </React.Fragment>
-                        );
-                      }
+                            <li className="breadcrumb-item">Buyer Sold Products</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-                      return (
-                        <li
-                          key={pageNumber}
-                          className={`paginate_button page-item ${currentPage === pageNumber ? "active" : ""
-                            }`}
-                          onClick={() => setCurrentPage(pageNumber)}
+            <div className="card">
+                <div className="header d-flex justify-content-between align-items-center">
+                    <div className="d-flex align-items-center">
+                        <label className="mr-2">Show</label>
+                        <select
+                            className="form-control form-control-sm"
+                            value={productsPerPage}
+                            onChange={e => {
+                                setProductsPerPage(Number(e.target.value));
+                                setCurrentPage(1);
+                            }}
                         >
-                          <button className="page-link">{pageNumber}</button>
-                        </li>
-                      );
-                    })}
+                            {[10, 25, 50, 100].map(num => (
+                                <option key={num} value={num}>{num}</option>
+                            ))}
+                        </select>
+                        <label className="ml-2">entries</label>
+                    </div>
 
-                  <li
-                    className={`paginate_button page-item ${currentPage === totalPages ? "disabled" : ""
-                      }`}
-                    onClick={handleNext}
-                  >
-                    <button className="page-link">Next</button>
-                  </li>
-                </ul>
-              </div>
+                    <div className="input-group" style={{ maxWidth: "200px" }}>
+                        <input
+                            type="text"
+                            className="form-control form-control-sm"
+                            placeholder="Search..."
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                        />
+                        <i className="fa fa-search" style={{
+                            position: "absolute",
+                            right: "10px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            pointerEvents: "none"
+                        }}></i>
+                    </div>
+                </div>
+
+                <div className="body">
+                    <div className="table-responsive">
+                        <table className="table table-hover">
+                            <thead className="thead-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Buyer Name</th>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {displayedProducts.map((p, index) => (
+                                    <tr key={`${p.orderId}-${p.productId}-${index}`}>
+                                        <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
+
+                                        <td>{p.buyerName}</td>
+
+                                        <td>
+                                            <div style={{ display: "flex", alignItems: "center" }}>
+                                                <img
+                                                    src={`${BASE_URL}${p.mainImage}`}
+                                                    className="rounded-circle avatar"
+                                                    alt={p.productName}
+                                                    style={{
+                                                        width: "30px",
+                                                        height: "30px",
+                                                        objectFit: "cover",
+                                                        marginRight: "10px"
+                                                    }}
+                                                />
+                                                {p.productName}
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            {new Intl.NumberFormat("en-IN", {
+                                                style: "currency",
+                                                currency: "INR"
+                                            }).format(p.productPrice)}
+                                        </td>
+
+                                        <td>{p.totalQuantity}</td>
+
+                                        <td>
+                                            {new Date(p.createdAt).toLocaleDateString("en-IN", {
+                                                year: "numeric",
+                                                month: "long",
+                                                day: "numeric"
+                                            })}
+                                        </td>
+
+                                        <td>
+                                            <span className={`badge ${
+                                                p.orderStatus === "Delivered" || p.orderStatus === "Completed" ? "badge-success" :
+                                                p.orderStatus === "Cancelled" ? "badge-danger" :
+                                                p.orderStatus === "Shipped" || p.orderStatus === "Out for Delivery" ? "badge-info" :
+                                                p.orderStatus === "Return Requested" || p.orderStatus === "Refund Approved" || p.orderStatus === "Refund Initiated" || p.orderStatus === "Refund Successful" ? "badge-warning" :
+                                                "badge-secondary"
+                                            }`}>
+                                                {p.orderStatus}
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <button
+                                                className="btn btn-sm btn-outline-info"
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/super-admin/product-fetch-view/${p.productId}`,
+                                                        { state: { userId } }
+                                                    )
+                                                }
+                                            >
+                                                <i className="fa fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="pagination d-flex justify-content-between mt-4">
+                        <span>
+                            Showing{" "}
+                            {filteredProducts.length === 0 ? 0 : (currentPage - 1) * productsPerPage + 1}{" "}
+                            to {Math.min(currentPage * productsPerPage, filteredProducts.length)}{" "}
+                            of {filteredProducts.length} entries
+                        </span>
+
+                        <ul className="pagination">
+                            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                                <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
+                            </li>
+                            <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                                <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-      {showPopup && (
-        <div
-          onClick={() => setShowPopup(false)}
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0,0,0,0.85)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              position: "relative",
-              width: "500px",
-              height: "600px",
-              backgroundColor: "#111",
-              borderRadius: "12px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              overflow: "hidden",
-            }}
-          >
-            <button
-              onClick={goToPreviousImage}
-              disabled={currentImageIndex === 0}
-              style={{
-                position: "absolute",
-                left: "10px",
-                top: "50%",
-                transform: "translateY(-50%)",
-                fontSize: "2rem",
-                background: "black",
-                color: currentImageIndex === 0 ? "#666" : "#fff",
-                border: "none",
-                cursor: currentImageIndex === 0 ? "not-allowed" : "pointer",
-              }}
-            >
-              &#10094;
-            </button>
-            <img
-              src={currentImages[currentImageIndex]}
-              alt="Popup"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "contain",
-                borderRadius: "12px",
-              }}
-            />
-            <button
-              onClick={goToNextImage}
-              disabled={currentImageIndex === currentImages.length - 1}
-              style={{
-                position: "absolute",
-                right: "10px",
-                top: "50%",
-                transform: "translateY(-50%)",
-                fontSize: "2rem",
-                background: "black",
-                color:
-                  currentImageIndex === currentImages.length - 1
-                    ? "#666"
-                    : "#fff",
-                border: "none",
-                cursor:
-                  currentImageIndex === currentImages.length - 1
-                    ? "not-allowed"
-                    : "pointer",
-              }}
-            >
-              &#10095;
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+    );
 };
 
-export default SoldProduct;
+export default BuyerSoldProduct;

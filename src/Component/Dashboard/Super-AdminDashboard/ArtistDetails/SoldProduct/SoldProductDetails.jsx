@@ -1,280 +1,446 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import getAPI from "../../../../../api/getAPI";
-import { useParams } from "react-router-dom";
-import useUserType from "../../../urlconfig";
-import { Link } from "react-router-dom";
-import ProductRequestSkeleton from "../../../../../Component/Skeleton/artist/ProductRequestSkeleton"
-function AllProduct() {
-  const { productId } = useParams();
-  const [products, setProducts] = useState([]);
-  const [selectedImages, setSelectedImages] = useState({});
-  const [expanded, setExpanded] = useState({});
-  const [activeTab, setActiveTab] = useState("description");
-  const [loading, setLoading] = useState(false);
-  // const navigate = useNavigate();
-  const userType = useUserType();
+import BasicDetails from "../../../../Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/Sections/BasicDetails";
+import ImagesMedia from "../../../../Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/Sections/ImagesMedia";
+import ArtworkDetails from "../../../../Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/Sections/ArtworkDetails";
+import PricingOffers from "../../../../Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/Sections/PricingOffers";
+import ShippingDelivery from "../../../../Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/Sections/ShippingDelivery";
+import PayoutDetails from "../../../../Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/Sections/PayoutDetails";
+import LegalCompliance from "../../../../Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/Sections/LegalCompliance";
+import NFTDetails from "../../../../Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/Sections/NFTDetails";
+import AntiqueVintageDetails from "../../../../Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/Sections/AntiqueVintageDetails";
+import useProductForm from "../../../../Dashboard/ArtistDashbooard/ProductDetails/ViewProduct/hooks/useProductForm";
 
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+function SoldProductDetails() {
+  const navigate = useNavigate();
+  const { productId } = useParams();
+  const { state } = useLocation();
+  const orderInfo = state || {};
+  const [activeTab, setActiveTab] = useState("basic");
+  const [productData, setProductData] = useState(state?.productData);
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      setLoading(true);
-      try {
-        const result = await getAPI(
-          `/api/getproduct/${productId}`,
-          {},
-          true,
-          false
-        );
-        if (result.data && result.data.data) {
-          const productData = Array.isArray(result.data.data)
-            ? result.data.data
-            : [result.data.data];
-          setProducts(productData);
-
-          const initialSelectedImages = {};
-          productData.forEach((product) => {
-            initialSelectedImages[product._id] = `${BASE_URL}${product.mainImage}`;
-          });
-          setSelectedImages(initialSelectedImages);
-        } else {
-          console.error("Unexpected API response:", result);
-          setProducts([]);
+    if (!productData && productId) {
+      const fetchProduct = async () => {
+        try {
+          const res = await getAPI(`/api/product/details/${productId}`, {}, true, false);
+          if (res?.data?.success) {
+            setProductData(res.data.product);
+          }
+        } catch (err) {
+          console.error("Error fetching product:", err);
+          toast.error("Failed to load product details");
         }
-      } catch (error) {
-        console.error("Error fetching product:", error);
-        setProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProduct();
-  }, [productId, BASE_URL]);
+      };
+      fetchProduct();
+    }
+  }, [productId, productData]);
 
-  const handleImageClick = (productId, image) => {
-    setSelectedImages((prevState) => ({
-      ...prevState,
-      [productId]: `${BASE_URL}${image}`,
-    }));
+  const {
+    formData,
+    pricingData,
+    tags,
+    inputTag,
+    images,
+    fileInputRef,
+    isSubmitting,
+    userId,
+    finalPrice,
+    handleInputChange,
+    handlePricingChange,
+    handleInstallmentDurationChange,
+    handleSelectChange,
+    handleMultiSelectChange,
+    handleOffersChange,
+    handleTagKeyDown,
+    removeTag,
+    setInputTag,
+    handleImageUpload,
+    handleRemoveImage,
+    handleReplaceImage,
+    handleMoveImage,
+    setIsSubmitting,
+    deliveryOptions,
+    packagingOptions,
+    mediumOptions,
+    materialOptions,
+    editionOptions,
+    framingOptions,
+    yearOptions,
+    offerOptions,
+    surfaceTypeOptions,
+    conditionOptions,
+    setFormData,
+    categoryData,
+    productTypeOptions,
+    getCategoriesByMainCategory,
+    getSubCategoriesByCategory,
+    profileData,
+  } = useProductForm(productData);
+
+  const isNFTArtSelected = formData.category?.label === "NFT Art" ||
+    formData.subCategory?.label === "NFT Art";
+
+  const isAntiqueVintageSelected = formData.mainCategory?.label === "Antiques & Vintage";
+
+  const getStatusBadge = (status) => {
+    const cls =
+      status === "Delivered" || status === "Completed" ? "badge-success" :
+      status === "Cancelled" ? "badge-danger" :
+      status === "Shipped" || status === "Out for Delivery" ? "badge-info" :
+      status === "Return Requested" || status === "Refund Approved" || status === "Refund Initiated" || status === "Refund Successful" ? "badge-warning" :
+      "badge-secondary";
+    return <span className={`badge ${cls}`} style={{ fontSize: "13px", padding: "5px 12px" }}>{status}</span>;
   };
 
-  const toggleDescription = (productId) => {
-    setExpanded((prevState) => ({
-      ...prevState,
-      [productId]: !prevState[productId],
-    }));
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'basic':
+        return (
+          <BasicDetails
+            formData={formData}
+            tags={tags}
+            inputTag={inputTag}
+            isSubmitting={isSubmitting}
+            handleInputChange={handleInputChange}
+            handleTagKeyDown={handleTagKeyDown}
+            removeTag={removeTag}
+            setInputTag={setInputTag}
+            categoryData={categoryData}
+            productTypeOptions={productTypeOptions}
+            getCategoriesByMainCategory={getCategoriesByMainCategory}
+            getSubCategoriesByCategory={getSubCategoriesByCategory}
+            handleSelectChange={handleSelectChange}
+            readOnly={true}
+          />
+        );
+      case 'nft':
+        return (
+          <NFTDetails
+            formData={formData}
+            isSubmitting={isSubmitting}
+            handleInputChange={handleInputChange}
+            handleSelectChange={handleSelectChange}
+            userId={userId}
+            profileData={profileData}
+            readOnly={true}
+          />
+        );
+      case 'antique':
+        return (
+          <AntiqueVintageDetails
+            formData={formData}
+            setFormData={setFormData}
+            isSubmitting={isSubmitting}
+            handleInputChange={handleInputChange}
+            handleSelectChange={handleSelectChange}
+            userId={userId}
+            profileData={profileData}
+            readOnly={true}
+          />
+        );
+      case 'images':
+        return (
+          <ImagesMedia
+            images={images}
+            fileInputRef={fileInputRef}
+            formData={formData}
+            isSubmitting={isSubmitting}
+            handleImageUpload={handleImageUpload}
+            handleRemoveImage={handleRemoveImage}
+            handleReplaceImage={handleReplaceImage}
+            handleMoveImage={handleMoveImage}
+            handleInputChange={handleInputChange}
+            readOnly={true}
+          />
+        );
+      case 'artwork':
+        return (
+          <ArtworkDetails
+            formData={formData}
+            isSubmitting={isSubmitting}
+            mediumOptions={mediumOptions}
+            materialOptions={materialOptions}
+            editionOptions={editionOptions}
+            framingOptions={framingOptions}
+            yearOptions={yearOptions}
+            surfaceTypeOptions={surfaceTypeOptions}
+            conditionOptions={conditionOptions}
+            handleSelectChange={handleSelectChange}
+            handleMultiSelectChange={handleMultiSelectChange}
+            handleInputChange={handleInputChange}
+            mainCategoryId={formData.mainCategory?.value}
+            readOnly={true}
+          />
+        );
+      case 'pricing':
+        return (
+          <PricingOffers
+            pricingData={pricingData}
+            finalPrice={finalPrice}
+            isSubmitting={isSubmitting}
+            handlePricingChange={handlePricingChange}
+            handleOffersChange={handleOffersChange}
+            handleInstallmentDurationChange={handleInstallmentDurationChange}
+            offerOptions={offerOptions}
+            mainCategoryId={formData.mainCategory?.value}
+            readOnly={true}
+          />
+        );
+      case 'shipping':
+        return (
+          <ShippingDelivery
+            formData={formData}
+            isSubmitting={isSubmitting}
+            deliveryOptions={deliveryOptions}
+            packagingOptions={packagingOptions}
+            handleInputChange={handleInputChange}
+            handleSelectChange={handleSelectChange}
+            readOnly={true}
+          />
+        );
+      case 'payoutDetails':
+        return (
+          <PayoutDetails
+            formData={formData}
+            isSubmitting={isSubmitting}
+            handleInputChange={handleInputChange}
+            setFormData={setFormData}
+            readOnly={true}
+          />
+        );
+      case 'legal':
+        return (
+          <LegalCompliance
+            formData={formData}
+            isSubmitting={isSubmitting}
+            handleInputChange={handleInputChange}
+            handleSelectChange={handleSelectChange}
+            setFormData={setFormData}
+            readOnly={true}
+          />
+        );
+      default:
+        return null;
+    }
   };
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
+  const tabOrder = ['basic', ...(isNFTArtSelected ? ['nft'] : []), ...(isAntiqueVintageSelected ? ['antique'] : []), 'images', 'artwork', 'pricing', 'shipping', 'payoutDetails', 'legal'];
+
+  const handleTabClick = (targetTab) => {
+    setActiveTab(targetTab);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if(loading) return  <ProductRequestSkeleton/>
+  const handleNextTab = () => {
+    const currentIndex = tabOrder.indexOf(activeTab);
+    const nextTab = tabOrder[currentIndex + 1];
+    if (nextTab) {
+      setActiveTab(nextTab);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  if (!productData) return <p className="text-center mt-4">Loading details...</p>;
+
   return (
-    <>
+    <div className="container-fluid">
       <div className="block-header">
         <div className="row">
           <div className="col-lg-6 col-md-6 col-sm-12">
             <h2>Sold Product Details</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <Link to="/super-admin/dashboard">
+                <span onClick={() => navigate('/super-admin/dashboard')} style={{ cursor: 'pointer' }}>
                   <i className="fa fa-dashboard"></i>
-                </Link>
+                </span>
               </li>
               <li className="breadcrumb-item active">
-                <Link to="/super-admin/artist/sold-product">
+                <span onClick={() => navigate('/super-admin/artist/sold-product')} style={{ cursor: 'pointer' }}>
                   Artist Sold Product
-                </Link>
+                </span>
               </li>
-              <li className="breadcrumb-item ">Sold Product Details</li>
+              <li className="breadcrumb-item">Sold Product Details</li>
             </ul>
           </div>
         </div>
       </div>
-      <div className="block-header">
-        {products.map((product) => {
-          return (
-            <div className="card" key={product._id}>
+
+      {/* Order Info Card */}
+      {orderInfo.orderId && (
+        <div className="row clearfix">
+          <div className="col-lg-12">
+            <div className="card">
               <div className="body">
                 <div className="row">
-                  {/* Image Preview Column */}
-                  <div className="preview col-lg-4 col-md-12">
-                    <div className="preview-pic tab-content">
-                      <div className="tab-pane active">
-                        <img
-                          src={selectedImages[product._id] || `${BASE_URL}${product.mainImage}`}
-                          className="img-fluid"
-                          style={{
-                            width: "350px",
-                            height: "350px",
-                            objectFit: "cover",
-                          }}
-                          alt="Product Preview"
-                            onError={(e) => { e.target.onerror = null; e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='350' height='350'%3E%3Crect width='350' height='350' fill='%23ddd'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23999' font-size='16'%3EImage Not Found%3C/text%3E%3C/svg%3E"; }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Small Images */}
-                    <div className="d-flex flex-wrap justify-content-start">
-                      {[
-                        product.mainImage,
-                        ...product.otherImages.slice(0, 4),
-                      ].map((image, imgIndex) => (
-                        <div key={imgIndex} style={{ margin: "5px" }}>
-                          <img
-                            src={`${BASE_URL}${image}`}
-                            className="img-thumbnail"
-                            alt={`Thumbnail ${imgIndex + 1}`}
-                            style={{
-                              width: "55px",
-                              height: "55px",
-                              cursor: "pointer",
-                              objectFit: "cover",
-                              transition: "transform 0.3s ease",
-                              border: "none",
-                              outline: "none",
-                            }}
-                            onClick={() => handleImageClick(product._id, image)}
-                              onError={(e) => { e.target.onerror = null; e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='55' height='55'%3E%3Crect width='55' height='55' fill='%23ddd'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23999' font-size='10'%3ENA%3C/text%3E%3C/svg%3E"; }}
-                            onMouseEnter={(e) => {
-                              e.target.style.transform = "scale(1.1)";
-                              e.target.style.border = "none";
-                              e.target.style.outline = "none";
-                            }}
-                            onMouseLeave={(e) => {
-                              e.target.style.transform = "scale(1)";
-                              e.target.style.border = "none";
-                              e.target.style.outline = "none";
-                            }}
-                          />
-                        </div>
-                      ))}
-                    </div>
+                  <div className="col-md-3 col-sm-6 mb-2">
+                    <small className="text-muted d-block">Order ID</small>
+                    <strong>{orderInfo.orderId}</strong>
                   </div>
-
-                  {/* Product Details Column */}
-                  <div className="details col-lg-8 col-md-12">
-                    <h3 className="product-title mb-0">
-                      {product.productName}
-                    </h3>
-                    <hr />
-                    <h5 className="price m-t-0">
-                      Price:{" "}
-                      <span className="text-warning">
-                        {new Intl.NumberFormat("en-IN", {
-                          style: "currency",
-                          currency: "INR",
-                        })
-                          .format(product.price)
-                          .replace(/\.00$/, "")}
-                      </span>
-                    </h5>
-                    <h5 className="category m-t-0">
-                      Category:{" "}
-                      <span className="text-info">{product.category}</span>
-                    </h5>
-                    <hr />
+                  <div className="col-md-2 col-sm-6 mb-2">
+                    <small className="text-muted d-block">Status</small>
+                    {getStatusBadge(orderInfo.orderStatus || "Ordered")}
                   </div>
-                </div>
-
-                {/* Full-Width Tab Content Below */}
-                <div className="row mt-4">
-                  <div className="col-12">
-                    <ul className="nav nav-tabs">
-                      <li className="nav-item">
-                        <button
-                          className={`nav-link ${
-                            activeTab === "description" ? "active" : ""
-                          }`}
-                          onClick={() => handleTabChange("description")}
-                        >
-                          Product Description
-                        </button>
-                      </li>
-                      <li className="nav-item">
-                        <button
-                          className={`nav-link ${
-                            activeTab === "artist" ? "active" : ""
-                          }`}
-                          onClick={() => handleTabChange("artist")}
-                        >
-                          Artist Details
-                        </button>
-                      </li>
-                    </ul>
-
-                    <div className="tab-content mt-3">
-                      {activeTab === "description" && (
-                        <div className="tab-pane active">
-                          <p
-                            className="product-description"
-                            style={{
-                              maxHeight: expanded[product._id]
-                                ? "none"
-                                : "60px",
-                              overflow: "hidden",
-                              transition: "max-height 0.3s ease",
-                            }}
-                          >
-                            {product.description}
-                          </p>
-                          <button
-                            className="btn btn-link"
-                            style={{
-                              padding: "0",
-                              textDecoration: "none",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => toggleDescription(product._id)}
-                          >
-                            {expanded[product._id] ? "Show Less" : "Read More"}
-                          </button>
-                        </div>
-                      )}
-
-                      {activeTab === "artist" && (
-                        <div className="tab-pane active">
-                          <p>
-                            <strong>Name:</strong>{" "}
-                            <span style={{ marginLeft: "10px" }}>
-                              {product.userId.name} {product.userId.lastName}
-                            </span>
-                          </p>
-                          <p>
-                            <strong>Email:</strong>{" "}
-                            <span style={{ marginLeft: "10px" }}>
-                              {product.userId.email}
-                            </span>
-                          </p>
-                          <p>
-                            <strong>Website:</strong>
-                            <a
-                              href={product.userId.website}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{
-                                marginLeft: "10px",
-                                textDecoration: "none",
-                                color: "blue",
-                              }}
-                            >
-                              {product.userId.website}
-                            </a>
-                          </p>
-                        </div>
-                      )}
-                    </div>
+                  <div className="col-md-2 col-sm-6 mb-2">
+                    <small className="text-muted d-block">Quantity Sold</small>
+                    <strong>{orderInfo.quantity}</strong>
+                  </div>
+                  <div className="col-md-3 col-sm-6 mb-2">
+                    <small className="text-muted d-block">Order Date</small>
+                    <strong>
+                      {orderInfo.orderDate
+                        ? new Date(orderInfo.orderDate).toLocaleDateString("en-IN", {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })
+                        : "-"}
+                    </strong>
+                  </div>
+                  <div className="col-md-2 col-sm-6 mb-2">
+                    <small className="text-muted d-block">Artist</small>
+                    <strong>{orderInfo.artistName || "-"}</strong>
                   </div>
                 </div>
               </div>
             </div>
-          );
-        })}
+          </div>
+        </div>
+      )}
+
+      <div className="row clearfix">
+        <div className="col-lg-12">
+          <div className="card">
+            <div className="bg-white p-4 rounded">
+              {/* Tabs Navigation */}
+              <ul className="nav nav-tabs mb-4">
+                <li className="nav-item">
+                  <button
+                    type="button"
+                    className={`nav-link ${activeTab === 'basic' ? 'active' : ''}`}
+                    onClick={() => handleTabClick('basic')}
+                  >
+                    Basic Details
+                  </button>
+                </li>
+                {isNFTArtSelected && (
+                  <li className="nav-item">
+                    <button
+                      type="button"
+                      className={`nav-link ${activeTab === 'nft' ? 'active' : ''}`}
+                      onClick={() => handleTabClick('nft')}
+                    >
+                      NFT Details
+                    </button>
+                  </li>
+                )}
+                {isAntiqueVintageSelected && (
+                  <li className="nav-item">
+                    <button
+                      type="button"
+                      className={`nav-link ${activeTab === 'antique' ? 'active' : ''}`}
+                      onClick={() => handleTabClick('antique')}
+                    >
+                      Antique
+                    </button>
+                  </li>
+                )}
+                <li className="nav-item">
+                  <button
+                    type="button"
+                    className={`nav-link ${activeTab === 'images' ? 'active' : ''}`}
+                    onClick={() => handleTabClick('images')}
+                  >
+                    Images & Media
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    type="button"
+                    className={`nav-link ${activeTab === 'artwork' ? 'active' : ''}`}
+                    onClick={() => handleTabClick('artwork')}
+                  >
+                    Artwork Details
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    type="button"
+                    className={`nav-link ${activeTab === 'pricing' ? 'active' : ''}`}
+                    onClick={() => handleTabClick('pricing')}
+                  >
+                    Pricing & Offers
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    type="button"
+                    className={`nav-link ${activeTab === 'shipping' ? 'active' : ''}`}
+                    onClick={() => handleTabClick('shipping')}
+                  >
+                    Shipping & Delivery
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    type="button"
+                    className={`nav-link ${activeTab === 'payoutDetails' ? 'active' : ''}`}
+                    onClick={() => handleTabClick('payoutDetails')}
+                  >
+                    Payout Details
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    type="button"
+                    className={`nav-link ${activeTab === 'legal' ? 'active' : ''}`}
+                    onClick={() => handleTabClick('legal')}
+                  >
+                    Legal & Compliance
+                  </button>
+                </li>
+              </ul>
+
+              {/* Tab Content */}
+              {renderTabContent()}
+
+              {/* Navigation Buttons */}
+              <div className="d-flex justify-content-between mt-4">
+                {activeTab !== 'basic' && (
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      const currentIndex = tabOrder.indexOf(activeTab);
+                      setActiveTab(tabOrder[currentIndex - 1]);
+                    }}
+                    disabled={isSubmitting}
+                  >
+                    Previous
+                  </button>
+                )}
+
+                <div className="ms-auto">
+                  {activeTab !== 'legal' && (
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={handleNextTab}
+                      disabled={isSubmitting}
+                    >
+                      Next
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 
-export default AllProduct;
+export default SoldProductDetails;

@@ -224,20 +224,24 @@ const ProductRequest = ({ userId }) => {
                                                     >
                                                         <i className="fa fa-eye"></i>
                                                     </button>
-                                                    <button
-                                                        className="btn btn-sm btn-outline-success mr-2"
-                                                        title="Approved"
-                                                        onClick={() => updateProductStatus(product._id, 'Approved')}
-                                                    >
-                                                        <i className="fa fa-check"></i>
-                                                    </button>
-                                                    <button
-                                                        className="btn btn-sm btn-outline-danger mr-2"
-                                                        title="Declined"
-                                                        onClick={() => handleReject(product._id)}
-                                                    >
-                                                        <i className="fa fa-ban"></i>
-                                                    </button>
+                                                    {product.status === 'Pending' && (
+                                                        <>
+                                                            <button
+                                                                className="btn btn-sm btn-outline-success mr-2"
+                                                                title="Approved"
+                                                                onClick={() => updateProductStatus(product._id, 'Approved')}
+                                                            >
+                                                                <i className="fa fa-check"></i>
+                                                            </button>
+                                                            <button
+                                                                className="btn btn-sm btn-outline-danger mr-2"
+                                                                title="Declined"
+                                                                onClick={() => handleReject(product._id)}
+                                                            >
+                                                                <i className="fa fa-ban"></i>
+                                                            </button>
+                                                        </>
+                                                    )}
                                                     {/* <button
                                                         type="button"
                                                         className="btn btn-outline-danger btn-sm mr-2"

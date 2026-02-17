@@ -191,9 +191,9 @@ const ApprovedProduct = () => {
                       <th>Name</th>
                       <th>Product Name</th>
                       <th>Product Price</th>
-                      <th>Date</th>
-                      {/* <th>Status</th> */}
-                      <th>Action</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -237,11 +237,11 @@ const ApprovedProduct = () => {
                             { year: "numeric", month: "long", day: "numeric" }
                           )}
                         </td>
-                        {/* <td>
-                                                    <button className={`btn btn-sm ${product.status === 'Pending' ? 'btn-outline-warning' : product.status === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
-                                                        {product.status}
-                                                    </button>
-                                                </td> */}
+                        <td>
+                                                    <span className={`badge ${product.quantity === 0 ? 'badge-dark' : 'badge-success'}`}>
+                                                        {product.quantity === 0 ? 'Out of Stock' : 'Approved'}
+                                                    </span>
+                                                </td>
                                                 <td>
                                                     <button
                                                         className="btn btn-sm btn-outline-info mr-2"

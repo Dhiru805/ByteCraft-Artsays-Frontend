@@ -27,17 +27,19 @@ const SoldProduct = () => {
           const formatted = result.data.data.flatMap((order) => {
             return order.items
               .filter((item) => item.productId)
-              .map((item, itemIndex) => ({
-                id: `${order.orderId}-${item.productId._id}-${itemIndex}`, // More unique ID
-                orderId: order.orderId,
-                productId: item.productId._id,
-                productName: item.productId.productName,
-                mainImage: item.productId.mainImage,
-                otherImages: item.productId.otherImages || [],
-                productPrice: item.productId.sellingPrice,
-                artistName: `${order.Artist?.id?.name || 'Unknown'} ${order.Artist?.id?.lastName || ''}`,
-                totalQuantity: item.quantity,
-              }));
+                .map((item, itemIndex) => ({
+                  id: `${order.orderId}-${item.productId._id}-${itemIndex}`,
+                  orderId: order.orderId,
+                  productId: item.productId._id,
+                  productName: item.productId.productName,
+                  mainImage: item.productId.mainImage,
+                  otherImages: item.productId.otherImages || [],
+                  productPrice: item.productId.sellingPrice,
+                  artistName: `${order.Artist?.id?.name || 'Unknown'} ${order.Artist?.id?.lastName || ''}`,
+                  totalQuantity: item.quantity,
+                  createdAt: order.createdAt,
+                  orderStatus: order.orderStatus || "Ordered",
+                }));
           });
           setProducts(formatted);
         } else {
@@ -146,14 +148,16 @@ const SoldProduct = () => {
               <div className="table-responsive">
                 <table className="table table-hover table-custom spacing5">
                   <thead className="thead-dark">
-                    <tr>
-                      <th>#</th>
-                      <th>Artist Name</th>
-                      <th>Product Name</th>
-                      <th>Product Price</th>
-                      <th>Sold Product Quantity</th>
-                      <th>Action</th>
-                    </tr>
+                      <tr>
+                        <th>#</th>
+                        <th>Artist Name</th>
+                        <th>Product Name</th>
+                        <th>Product Price</th>
+                        <th>Qty</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
                   </thead>
                   <tbody>
                     {displayedProducts.length > 0 ? (
@@ -183,13 +187,31 @@ const SoldProduct = () => {
                               {product.productName}
                             </span>
                           </td>
-                          <td>{product.productPrice}</td>
-                          <td>{product.totalQuantity}</td>
+                            <td>{product.productPrice != null
+                              ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.productPrice).replace(/\.00$/, '')
+                              : 'N/A'}</td>
+                            <td>{product.totalQuantity}</td>
+                            <td>
+                              {product.createdAt
+                                ? new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' })
+                                : '-'}
+                            </td>
+                            <td>
+                              <span className={`badge ${
+                                product.orderStatus === 'Delivered' || product.orderStatus === 'Completed' ? 'badge-success' :
+                                product.orderStatus === 'Cancelled' ? 'badge-danger' :
+                                product.orderStatus === 'Shipped' || product.orderStatus === 'Out for Delivery' ? 'badge-info' :
+                                product.orderStatus === 'Return Requested' || product.orderStatus === 'Refund Approved' || product.orderStatus === 'Refund Initiated' || product.orderStatus === 'Refund Successful' ? 'badge-warning' :
+                                'badge-secondary'
+                              }`}>
+                                {product.orderStatus}
+                              </span>
+                            </td>
                           <td>
                             <button
                               className="btn btn-sm btn-outline-info"
                               title="View Details"
-                              onClick={() => navigate(`/super-admin/artist/soldproducts/view/${product.productId}`)}
+                              onClick={() => navigate(`/super-admin/artist/soldproducts/view/${product.productId}`, { state: { orderId: product.orderId, orderStatus: product.orderStatus, quantity: product.totalQuantity, orderDate: product.createdAt, artistName: product.artistName } })}
                             >
                               <i className="fa fa-eye"></i>
                             </button>
@@ -198,7 +220,7 @@ const SoldProduct = () => {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="6" className="text-center py-4">No sold products found.</td>
+                        <td colSpan="8" className="text-center py-4">No sold products found.</td>
                       </tr>
                     )}
                   </tbody>

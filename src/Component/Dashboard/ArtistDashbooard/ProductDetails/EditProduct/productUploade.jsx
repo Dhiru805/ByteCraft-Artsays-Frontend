@@ -11,7 +11,7 @@ import ArtworkDetails from "./Sections/ArtworkDetails";
 import PricingOffers from "./Sections/PricingOffers";
 import useProductForm from "./hooks/useProductForm";
 import ShippingDelivery from "./Sections/ShippingDelivery";
-import PayoutDetails from "./Sections/PayoutDetails";
+
 import LegalCompliance from "./Sections/LegalCompliance";
 import NFTDetails from "./Sections/NFTDetails";
 import AntiqueVintageDetails from "./Sections/AntiqueVintageDetails";
@@ -219,7 +219,6 @@ function ProductUpload() {
         formDataToSend.append('provenance', formData.provenance);
       }
 
-      formDataToSend.append('autoCancelOrder', formData.autoCancelOrder);
       formDataToSend.append('giftWrapping', formData.giftWrapping);
       if (formData.giftWrapping) {
         formDataToSend.append('giftWrappingCustomMessage', formData.giftWrappingCustomMessage);
@@ -416,6 +415,9 @@ function ProductUpload() {
             handleOffersChange={handleOffersChange}
             handleInstallmentDurationChange={handleInstallmentDurationChange}
             offerOptions={offerOptions}
+            formData={formData}
+            setFormData={setFormData}
+            handleInputChange={handleInputChange}
           />
         );
       case 'shipping':
@@ -427,15 +429,6 @@ function ProductUpload() {
             packagingOptions={packagingOptions}
             handleInputChange={handleInputChange}
             handleSelectChange={handleSelectChange}
-          />
-        );
-      case 'payoutDetails':
-        return (
-          <PayoutDetails
-            formData={formData}
-            isSubmitting={isSubmitting}
-            handleInputChange={handleInputChange}
-            setFormData={setFormData}
           />
         );
       case 'legal':
@@ -553,15 +546,6 @@ function ProductUpload() {
                 <li className="nav-item">
                   <button
                     type="button"
-                    className={`nav-link ${activeTab === 'payoutDetails' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('payoutDetails')}
-                  >
-                    Payout Details
-                  </button>
-                </li>
-                <li className="nav-item">
-                  <button
-                    type="button"
                     className={`nav-link ${activeTab === 'legal' ? 'active' : ''}`}
                     onClick={() => setActiveTab('legal')}
                   >
@@ -580,7 +564,7 @@ function ProductUpload() {
                     type="button"
                     className="btn btn-secondary"
                     onClick={() => {
-                      const tabs = ['basic', ...(isNFTArtSelected ? ['nft'] : []), ...(isAntiqueVintageSelected ? ['antique'] : []), 'images', 'artwork', 'pricing', 'shipping', 'payoutDetails', 'legal'];
+                      const tabs = ['basic', ...(isNFTArtSelected ? ['nft'] : []), ...(isAntiqueVintageSelected ? ['antique'] : []), 'images', 'artwork', 'pricing', 'shipping', 'legal'];
                       const currentIndex = tabs.indexOf(activeTab);
                       setActiveTab(tabs[currentIndex - 1]);
                     }}
@@ -594,7 +578,7 @@ function ProductUpload() {
                     type="button"
                     className="btn btn-primary ms-auto"
                     onClick={() => {
-                      const tabs = ['basic', ...(isNFTArtSelected ? ['nft'] : []), ...(isAntiqueVintageSelected ? ['antique'] : []), 'images', 'artwork', 'pricing', 'shipping', 'payoutDetails', 'legal'];
+                      const tabs = ['basic', ...(isNFTArtSelected ? ['nft'] : []), ...(isAntiqueVintageSelected ? ['antique'] : []), 'images', 'artwork', 'pricing', 'shipping', 'legal'];
                       const currentIndex = tabs.indexOf(activeTab);
                       setActiveTab(tabs[currentIndex + 1]);
                     }}

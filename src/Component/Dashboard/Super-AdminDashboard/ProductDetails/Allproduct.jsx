@@ -544,6 +544,7 @@ const ApprovedProduct = () => {
                                             <th>Product Name</th>
                                             <th>Product Price</th>
                                             <th>Date</th>
+                                            <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -586,6 +587,22 @@ const ApprovedProduct = () => {
                                                 <td>{new Date(product.createdAt).toLocaleDateString('en-IN')}</td>
 
                                                 <td>
+                                                    {product.quantity === 0 ? (
+                                                        <span className="badge badge-dark">Out of Stock</span>
+                                                    ) : (
+                                                        <span className={`badge ${
+                                                            product.status === 'Approved' ? 'badge-success' : 
+                                                            product.status === 'Pending' ? 'badge-warning' : 
+                                                            product.status === 'Rejected' ? 'badge-danger' : 
+                                                            product.status === 'Drafted' ? 'badge-secondary' : 
+                                                            'badge-info'
+                                                        }`}>
+                                                            {product.status || 'N/A'}
+                                                        </span>
+                                                    )}
+                                                </td>
+
+                                                <td>
                                                     {/* <button
                                                         className="btn btn-sm btn-outline-info mr-2"
                                                         onClick={() => navigate(`navigate(`/super-admin/product/product-info/${product._id}`)
@@ -611,13 +628,6 @@ const ApprovedProduct = () => {
                                                     </button>
 
 
-                                                    <button
-                                                        className="btn btn-sm btn-outline-danger"
-                                                        title="Bidding Pass"
-                                                        onClick={() => navigate(`/super-admin/product-table/bidding-pass`)}
-                                                    >
-                                                        <i className="fas fa-ticket-alt"></i>
-                                                    </button>
 
                                                     <button
                                                         type="button"

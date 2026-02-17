@@ -8,7 +8,7 @@ import ImagesMedia from "./Sections/ImagesMedia";
 import ArtworkDetails from "./Sections/ArtworkDetails";
 import PricingOffers from "./Sections/PricingOffers";
 import ShippingDelivery from "./Sections/ShippingDelivery";
-import PayoutDetails from "./Sections/PayoutDetails";
+
 import LegalCompliance from "./Sections/LegalCompliance";
 import NFTDetails from "./Sections/NFTDetails";
 import AntiqueVintageDetails from "./Sections/AntiqueVintageDetails";
@@ -177,6 +177,9 @@ function ProductViewArtist() {
             handleInstallmentDurationChange={handleInstallmentDurationChange}
             offerOptions={offerOptions}
             mainCategoryId={formData.mainCategory?.value}
+            formData={formData}
+            setFormData={setFormData}
+            handleInputChange={handleInputChange}
             readOnly={true}
           />
         );
@@ -189,16 +192,6 @@ function ProductViewArtist() {
             packagingOptions={packagingOptions}
             handleInputChange={handleInputChange}
             handleSelectChange={handleSelectChange}
-            readOnly={true}
-          />
-        );
-      case 'payoutDetails':
-        return (
-          <PayoutDetails
-            formData={formData}
-            isSubmitting={isSubmitting}
-            handleInputChange={handleInputChange}
-            setFormData={setFormData}
             readOnly={true}
           />
         );
@@ -217,7 +210,7 @@ function ProductViewArtist() {
         return null;
     }
   };
-  const tabOrder = ['basic', ...(isNFTArtSelected ? ['nft'] : []), ...(isAntiqueVintageSelected ? ['antique'] : []), 'images', 'artwork', 'pricing', 'shipping', 'payoutDetails', 'legal'];
+  const tabOrder = ['basic', ...(isNFTArtSelected ? ['nft'] : []), ...(isAntiqueVintageSelected ? ['antique'] : []), 'images', 'artwork', 'pricing', 'shipping', 'legal'];
 
   const handleTabClick = (targetTab) => {
     setActiveTab(targetTab);
@@ -335,15 +328,6 @@ function ProductViewArtist() {
                 <li className="nav-item">
                   <button
                     type="button"
-                    className={`nav-link ${activeTab === 'payoutDetails' ? 'active' : ''}`}
-                    onClick={() => handleTabClick('payoutDetails')}
-                  >
-                    Payout Details
-                  </button>
-                </li>
-                <li className="nav-item">
-                  <button
-                    type="button"
                     className={`nav-link ${activeTab === 'legal' ? 'active' : ''}`}
                     onClick={() => handleTabClick('legal')}
                   >
@@ -364,7 +348,7 @@ function ProductViewArtist() {
                     type="button"
                     className="btn btn-secondary"
                     onClick={() => {
-                      const tabs = ['basic', ...(isNFTArtSelected ? ['nft'] : []), ...(isAntiqueVintageSelected ? ['antique'] : []), 'images', 'artwork', 'pricing', 'shipping', 'payoutDetails', 'legal'];
+                      const tabs = ['basic', ...(isNFTArtSelected ? ['nft'] : []), ...(isAntiqueVintageSelected ? ['antique'] : []), 'images', 'artwork', 'pricing', 'shipping', 'legal'];
                       const currentIndex = tabs.indexOf(activeTab);
                       setActiveTab(tabs[currentIndex - 1]);
                     }}

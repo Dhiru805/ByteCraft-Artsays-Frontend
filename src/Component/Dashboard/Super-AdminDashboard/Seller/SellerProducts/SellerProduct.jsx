@@ -182,7 +182,7 @@ const[loading,setLoading]=useState(false);
                                             <th>Product Name</th>
                                             <th>Product Price</th>
                                             <th>Date</th>
-                                            {/* <th>Status</th> */}
+                                            <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -208,7 +208,11 @@ const[loading,setLoading]=useState(false);
                                                     />{product.productName}</td>
                                                 <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.sellingPrice).replace(/\.00$/, '')}</td>
                                                 <td>{new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
-                                               
+                                                <td>
+                                                    <span className={`badge ${product.quantity === 0 ? 'badge-dark' : 'badge-success'}`}>
+                                                        {product.quantity === 0 ? 'Out of Stock' : 'Approved'}
+                                                    </span>
+                                                </td>
                                                 <td>
                                                     <button className="btn btn-sm btn-outline-info mr-2" onClick={() => navigate(`/super-admin/product-fetch-view/${product._id}`)}>
                                                         <i className="fa fa-eye"></i>

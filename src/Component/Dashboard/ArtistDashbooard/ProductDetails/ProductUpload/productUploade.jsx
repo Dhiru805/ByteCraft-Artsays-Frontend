@@ -11,7 +11,7 @@ import ArtworkDetails from "./Sections/ArtworkDetails";
 import PricingOffers from "./Sections/PricingOffers";
 import useProductForm from "./hooks/useProductForm";
 import ShippingDelivery from "./Sections/ShippingDelivery";
-import PayoutDetails from "./Sections/PayoutDetails";
+
 import LegalCompliance from "./Sections/LegalCompliance";
 import NFTDetails from "./Sections/NFTDetails";
 import AntiqueVintageDetails from "./Sections/AntiqueVintageDetails";
@@ -208,8 +208,7 @@ function ProductUpload() {
     formDataToSend.append('handlingTime', formData.handlingTime?.value || formData.handlingTime?.label || '');
     formDataToSend.append('exportRestriction', formData.exportRestriction || false);
 
-    // ---------------------------------Payout details------------------------------------//
-    formDataToSend.append('autoCancelOrder', formData.autoCancelOrder || false);
+    // Gift Wrapping
     formDataToSend.append('giftWrapping', formData.giftWrapping || false);
     if (formData.giftWrapping) {
       formDataToSend.append('giftWrappingCustomMessage', formData.giftWrappingCustomMessage || '');
@@ -536,6 +535,9 @@ function ProductUpload() {
             offerOptions={offerOptions}
             mainCategoryId={formData.mainCategory?.value}
             subCategoryId={formData.subCategory?.value}
+            formData={formData}
+            setFormData={setFormData}
+            handleInputChange={handleInputChange}
           />
         );
       case 'shipping':
@@ -547,15 +549,6 @@ function ProductUpload() {
             packagingOptions={packagingOptions}
             handleInputChange={handleInputChange}
             handleSelectChange={handleSelectChange}
-          />
-        );
-      case 'payoutDetails':
-        return (
-          <PayoutDetails
-            formData={formData}
-            isSubmitting={isSubmitting}
-            handleInputChange={handleInputChange}
-            setFormData={setFormData}
           />
         );
       case 'legal':
@@ -572,7 +565,7 @@ function ProductUpload() {
         return null;
     }
   };
-  const tabOrder = ['basic', ...(isNFTArtSelected ? ['nft'] : []), ...(isAntiqueVintageSelected ? ['antique'] : []), 'images', 'artwork', 'pricing', 'shipping', 'payoutDetails', 'legal'];
+  const tabOrder = ['basic', ...(isNFTArtSelected ? ['nft'] : []), ...(isAntiqueVintageSelected ? ['antique'] : []), 'images', 'artwork', 'pricing', 'shipping', 'legal'];
 
   const tabValidators = {
     basic: () => {
@@ -746,32 +739,39 @@ function ProductUpload() {
         return false;
       }
 
-      if (offers && Array.isArray(offers) && offers.length > 5) {
-        toast.error("You cannot apply more than 5 offers at once.");
+    if (offers && Array.isArray(offers) && offers.length > 5) {
+      toast.error("You cannot apply more than 5 offers at once.");
+      return false;
+    }
+
+    // Gift wrapping validation
+    if (formData.giftWrappingCost) {
+      if (!formData.giftWrappingCostAmount || isNaN(formData.giftWrappingCostAmount) || Number(formData.giftWrappingCostAmount) <= 0) {
+        toast.error("Please enter a valid wrapping cost amount.");
         return false;
       }
+    }
 
-      return true;
-    },
+    return true;
+  },
 
     shipping: () => {
       const { shippingCharges, handlingTime, estimatedDelivery, packagingType, returnPolicy } = formData;
 
+      if (formData.selfShipping) {
+        if (shippingCharges === '' || shippingCharges === null || isNaN(shippingCharges) || parseFloat(shippingCharges) < 0) {
+          toast.error("Shipping Charges are required and must be 0 or more.");
+          return false;
+        }
 
-      if (shippingCharges === '' || shippingCharges === null || isNaN(shippingCharges) || parseFloat(shippingCharges) < 0) {
-        toast.error("Shipping Charges are required and must be 0 or more.");
-        return false;
+        if (!estimatedDelivery || !estimatedDelivery.label || estimatedDelivery.label.trim() === '') {
+          toast.error("Estimated Delivery Time is required.");
+          return false;
+        }
       }
-
 
       if (!handlingTime || !handlingTime.label || handlingTime.label.trim() === '') {
         toast.error("Estimated Handling Time is required.");
-        return false;
-      }
-
-
-      if (!estimatedDelivery || !estimatedDelivery.label || estimatedDelivery.label.trim() === '') {
-        toast.error("Estimated Delivery Time is required.");
         return false;
       }
 
@@ -788,16 +788,6 @@ function ProductUpload() {
       }
 
 
-      return true;
-    },
-    payoutDetails: () => {
-      const { giftWrappingCost, giftWrappingCostAmount } = formData;
-      if (giftWrappingCost) {
-        if (!giftWrappingCostAmount || isNaN(giftWrappingCostAmount) || Number(giftWrappingCostAmount) <= 0) {
-          toast.error("Please enter a valid wrapping cost amount.");
-          return false;
-        }
-      }
       return true;
     },
 
@@ -1080,15 +1070,6 @@ function ProductUpload() {
                 <li className="nav-item">
                   <button
                     type="button"
-                    className={`nav-link ${activeTab === 'payoutDetails' ? 'active' : ''}`}
-                    onClick={() => handleTabClick('payoutDetails')}
-                  >
-                    Payout Details
-                  </button>
-                </li>
-                <li className="nav-item">
-                  <button
-                    type="button"
                     className={`nav-link ${activeTab === 'legal' ? 'active' : ''}`}
                     onClick={() => handleTabClick('legal')}
                   >
@@ -1109,7 +1090,7 @@ function ProductUpload() {
                     type="button"
                     className="btn btn-secondary"
                     onClick={() => {
-                      const tabs = ['basic', ...(isNFTArtSelected ? ['nft'] : []), ...(isAntiqueVintageSelected ? ['antique'] : []), 'images', 'artwork', 'pricing', 'shipping', 'payoutDetails', 'legal'];
+                      const tabs = ['basic', ...(isNFTArtSelected ? ['nft'] : []), ...(isAntiqueVintageSelected ? ['antique'] : []), 'images', 'artwork', 'pricing', 'shipping', 'legal'];
                       const currentIndex = tabs.indexOf(activeTab);
                       setActiveTab(tabs[currentIndex - 1]);
                     }}

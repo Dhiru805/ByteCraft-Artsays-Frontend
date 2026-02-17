@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Select from "react-select";
 import getAPI from "../../../../../../api/getAPI";
+import GiftWrappingSection from "./GiftWrappingSection";
 
 const installmentOptions = [
        { value: "Yearly", label: "Yearly" },
@@ -16,7 +17,10 @@ const PricingOffers = ({
     handlePricingChange,
     handleInstallmentDurationChange,
     mainCategoryId,
-    subCategoryId
+    subCategoryId,
+    formData,
+    setFormData,
+    handleInputChange
 }) => {
 
     const [gstPercentage, setGstPercentage] = useState(pricingData.gstPercentage || 0);
@@ -458,7 +462,6 @@ const PricingOffers = ({
                 </div>
             )}
 
-            { }
             {insuranceInfo && (
                 <div className="alert alert-success mt-3">
                     <strong>
@@ -475,6 +478,15 @@ const PricingOffers = ({
                         </li>
                     </ul>
                 </div>
+            )}
+
+            {formData && setFormData && (
+                <GiftWrappingSection
+                    formData={formData}
+                    isSubmitting={isSubmitting}
+                    handleInputChange={handleInputChange}
+                    setFormData={setFormData}
+                />
             )}
 
             <hr className="my-4" />

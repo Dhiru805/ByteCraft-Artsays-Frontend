@@ -417,7 +417,8 @@ const[loading,setLoading]=useState(true)
                 console.log("Data Type:", typeof result.data);
 
                 if (result && result.data && Array.isArray(result.data.data)) {
-                    setProducts(result.data.data);
+                    const sorted = [...result.data.data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    setProducts(sorted);
                 } else {
                     console.error("API response does not contain an array:", result.data);
                     setProducts([]);
