@@ -24,13 +24,13 @@
 // //   )
 
 // //   const handleNext = () => {
-// //     if (campaignName && dailyBudget && Number.parseFloat(dailyBudget) >= 300) {
+// //     if (campaignName && dailyBudget && Number.parseFloat(dailyBudget) >= 100) {
 // //       onNext()
 // //     }
 // //   }
 
 // //   const isFormValid = () => {
-// //     return campaignName.trim() !== "" && dailyBudget !== "" && Number.parseFloat(dailyBudget) >= 300
+// //     return campaignName.trim() !== "" && dailyBudget !== "" && Number.parseFloat(dailyBudget) >= 100
 // //   }
 
 // //   return (
@@ -179,19 +179,19 @@
 // //                 type="number"
 // //                 value={dailyBudget}
 // //                 onChange={(e) => setDailyBudget(e.target.value)}
-// //                 className={`form-control ${dailyBudget && Number.parseFloat(dailyBudget) < 300 ? "border-danger" : ""}`}
+// //                 className={`form-control ${dailyBudget && Number.parseFloat(dailyBudget) < 100 ? "border-danger" : ""}`}
 // //                 style={{ paddingLeft: "28px" }}
-// //                 placeholder="300.00"
-// //                 min="300"
+// //                 placeholder="100.00"
+// //                 min="100"
 // //                 step="0.01"
 // //               />
 // //             </div>
 // //             <div className="mt-2">
-// //               <small className="text-muted">Most advertisers start with a daily budget of at least ₹300.00.</small>
-// //               {dailyBudget && Number.parseFloat(dailyBudget) < 300 && (
+// //               <small className="text-muted">Most advertisers start with a daily budget of at least ₹100.00.</small>
+// //               {dailyBudget && Number.parseFloat(dailyBudget) < 100 && (
 // //                 <div className="text-danger mt-1" style={{ fontSize: "12px" }}>
 // //                   <i className="fa fa-exclamation-triangle me-1"></i>
-// //                   Daily budget should be at least ₹300.00
+// //                   Daily budget should be at least ₹100.00
 // //                 </div>
 // //               )}
 // //             </div>
@@ -263,7 +263,7 @@
 //   )
 
 //   const isFormValid = () => {
-//     return campaignName.trim() !== "" && dailyBudget !== "" && Number.parseFloat(dailyBudget) >= 300
+//     return campaignName.trim() !== "" && dailyBudget !== "" && Number.parseFloat(dailyBudget) >= 100
 //   }
 
 //   return (
@@ -412,19 +412,19 @@
 //                 type="number"
 //                 value={dailyBudget}
 //                 onChange={(e) => setDailyBudget(e.target.value)}
-//                 className={`form-control ${dailyBudget && Number.parseFloat(dailyBudget) < 300 ? "border-danger" : ""}`}
+//                 className={`form-control ${dailyBudget && Number.parseFloat(dailyBudget) < 100 ? "border-danger" : ""}`}
 //                 style={{ paddingLeft: "28px" }}
-//                 placeholder="300.00"
-//                 min="300"
+//                 placeholder="100.00"
+//                 min="100"
 //                 step="0.01"
 //               />
 //             </div>
 //             <div className="mt-2">
-//               <small className="text-muted">Most advertisers start with a daily budget of at least ₹300.00.</small>
-//               {dailyBudget && Number.parseFloat(dailyBudget) < 300 && (
+//               <small className="text-muted">Most advertisers start with a daily budget of at least ₹100.00.</small>
+//               {dailyBudget && Number.parseFloat(dailyBudget) < 100 && (
 //                 <div className="text-danger mt-1" style={{ fontSize: "12px" }}>
 //                   <i className="fa fa-exclamation-triangle me-1"></i>
-//                   Daily budget should be at least ₹300.00
+//                   Daily budget should be at least ₹100.00
 //                 </div>
 //               )}
 //             </div>
@@ -504,7 +504,7 @@ const CampaignSettingsSection = ({
   )
 
   const isFormValid = () => {
-    return campaignName.trim() !== "" && dailyBudget !== "" && Number.parseFloat(dailyBudget) >= 300
+    return campaignName.trim() !== "" && dailyBudget !== "" && Number.parseFloat(dailyBudget) >= 100
   }
 
   return (
@@ -612,27 +612,7 @@ const CampaignSettingsSection = ({
             </div>
           </div>
 
-          {/* Country */}
-          <div className="mb-4">
-            <label className="form-label d-flex align-items-center">
-              <span style={{ fontWeight: "600" }}>Country <span className="text-danger ms-1 ">*</span></span>
-              <InfoIcon tooltip="The country where your ads will be shown" />
-            </label>
-            <select
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-              className="form-select"
-              style={{ maxWidth: "200px" }}
-            >
-              <option value="India">India</option>
-              <option value="United States">United States</option>
-              <option value="United Kingdom">United Kingdom</option>
-              <option value="Canada">Canada</option>
-              <option value="Australia">Australia</option>
-            </select>
-          </div>
-
-          {/* Daily Budget */}
+            {/* Daily Budget */}
           <div className="mb-4">
             <label className="form-label d-flex align-items-center">
               <span style={{ fontWeight: "600" }}>Daily budget <span className="text-danger ms-1 ">*</span></span>
@@ -664,8 +644,8 @@ const CampaignSettingsSection = ({
                 }}
                 onBlur={() => {
                   const budget = parseInt(dailyBudget)
-                  if (isNaN(budget) || budget < 300) {
-                    setDailyBudget("300")
+                  if (isNaN(budget) || budget < 100) {
+                    setDailyBudget("100")
                   }
                 }}
                 onKeyDown={(e) => {
@@ -674,19 +654,19 @@ const CampaignSettingsSection = ({
                     e.preventDefault();
                   }
                 }}
-                className={`form-control ${dailyBudget && Number.parseFloat(dailyBudget) < 300 ? "border-danger" : ""}`}
+                className={`form-control ${dailyBudget && Number.parseFloat(dailyBudget) < 100 ? "border-danger" : ""}`}
                 style={{ paddingLeft: "28px" }}
-                // placeholder="300"
-                min="300"
+                // placeholder="100"
+                min="100"
                 step="1"
               />
             </div>
             <div className="mt-2">
-              <small className="text-muted">Most advertisers start with a daily budget of at least ₹300.00.</small>
-              {dailyBudget && Number.parseFloat(dailyBudget) < 300 && (
+              <small className="text-muted">Most advertisers start with a daily budget of at least ₹100.00.</small>
+              {dailyBudget && Number.parseFloat(dailyBudget) < 100 && (
                 <div className="text-danger mt-1" style={{ fontSize: "12px" }}>
                   <i className="fa fa-exclamation-triangle me-1"></i>
-                  Daily budget should be at least ₹300.00
+                  Daily budget should be at least ₹100.00
                 </div>
               )}
             </div>

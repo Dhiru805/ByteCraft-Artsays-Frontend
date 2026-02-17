@@ -28,14 +28,14 @@ const CampaignSettingsSection = ({
   const [country, setCountry] = useState(initialCountry)
   const [dailyBudget, setDailyBudget] = useState(initialDailyBudget)
   const [showHelp, setShowHelp] = useState(false)
-  const [userOptions, setUserOptions] = useState([]); // options fetched from API
-  const [products, setProducts] = useState([]);       // fetched products
+  const [userOptions, setUserOptions] = useState([]);
+  const [products, setProducts] = useState([]);
   const [mainCategories, setMainCategories] = useState([]);
   const isFormEnabled = userType && userId;
+  const initializedRef = useRef(false);
 
+  // Sync from parent props when they change (e.g. campaign data loaded)
   useEffect(() => {
-    setUserType(userType);
-    setUserId(userId);
     setCampaignName(initialCampaignName);
     setStartDate(initialStartDate);
     setEndDate(initialEndDate);
@@ -44,6 +44,20 @@ const CampaignSettingsSection = ({
     setDailyBudget(initialDailyBudget);
   }, [initialCampaignName, initialStartDate, initialEndDate, initialHasEndDate, initialCountry, initialDailyBudget]);
 
+  // Sync userType and userId from props
+  useEffect(() => {
+    if (initialUserType && !initializedRef.current) {
+      setUserType(initialUserType);
+    }
+  }, [initialUserType]);
+
+  useEffect(() => {
+    if (initialUserId && !initializedRef.current) {
+      setUserId(initialUserId);
+    }
+  }, [initialUserId]);
+
+  // Push settings up to parent
   useEffect(() => {
     onUpdateCampaignSettings({
       userType,
@@ -70,12 +84,16 @@ const CampaignSettingsSection = ({
   )
 
   const isFormValid = () => {
-    return campaignName.trim() !== "" && dailyBudget !== "" && Number.parseFloat(dailyBudget) >= 300
+    return campaignName.trim() !== "" && dailyBudget !== "" && Number.parseFloat(dailyBudget) >= 100
   }
+
+  // Fetch users when userType changes
   useEffect(() => {
     if (!userType) {
       setUserOptions([]);
-      setUserId("");
+      if (initializedRef.current) {
+        setUserId("");
+      }
       setProducts([]);
       setMainCategories([]);
       return;
@@ -83,15 +101,18 @@ const CampaignSettingsSection = ({
 
     const fetchUsers = async () => {
       try {
-const response = await getAPI(`/api/users-by-type?userType=${userType.charAt(0).toUpperCase() + userType.slice(1)}`, {}, true);
+        const response = await getAPI(`/api/users-by-type?userType=${userType.charAt(0).toUpperCase() + userType.slice(1)}`, {}, true);
         if (!response.hasError && Array.isArray(response.data.data)) {
-          console.log("User for user:", response.data.data);
-
           const options = response.data.data;
           setUserOptions(options);
-          setUserId("");
-          setProducts([]);
-          setMainCategories([]);
+          // Only clear userId if this is a user-initiated type change, not initial load
+          if (initializedRef.current) {
+            setUserId("");
+            setProducts([]);
+            setMainCategories([]);
+          } else {
+            initializedRef.current = true;
+          }
         } else {
           toast.error(`Failed to fetch ${userType}s: ${response.message}`);
         }
@@ -102,8 +123,6 @@ const response = await getAPI(`/api/users-by-type?userType=${userType.charAt(0).
 
     fetchUsers();
   }, [userType]);
-
-
 
   return (
     <div className="card p-3 mb-4">
@@ -125,7 +144,10 @@ const response = await getAPI(`/api/users-by-type?userType=${userType.charAt(0).
             <Select
               options={typeOptions}
               value={typeOptions.find((o) => o.value === userType) || null}
-              onChange={(option) => setUserType(option ? option.value : "")}
+              onChange={(option) => {
+                initializedRef.current = true;
+                setUserType(option ? option.value : "");
+              }}
               placeholder="Select Type"
               isClearable
             />
@@ -147,6 +169,7 @@ const response = await getAPI(`/api/users-by-type?userType=${userType.charAt(0).
                   .find((o) => o.value === userId) || null
               }
               onChange={(option) => {
+                initializedRef.current = true;
                 const selectedUserId = option ? option.value : "";
                 setUserId(selectedUserId);
 
@@ -247,28 +270,7 @@ const response = await getAPI(`/api/users-by-type?userType=${userType.charAt(0).
             </div>
           </div>
 
-          {/* Country */}
-          <div className="mb-4">
-            <label className="form-label d-flex align-items-center">
-              <span style={{ fontWeight: "600" }}>Country <span className="text-danger ms-1 ">*</span></span>
-              <InfoIcon tooltip="The country where your ads will be shown" />
-            </label>
-            <select
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-              className="form-select"
-              style={{ maxWidth: "200px" }}
-              disabled={!isFormEnabled}
-            >
-              <option value="India">India</option>
-              <option value="United States">United States</option>
-              <option value="United Kingdom">United Kingdom</option>
-              <option value="Canada">Canada</option>
-              <option value="Australia">Australia</option>
-            </select>
-          </div>
-
-          {/* Daily Budget */}
+            {/* Daily Budget */}
           <div className="mb-4">
             <label className="form-label d-flex align-items-center">
               <span style={{ fontWeight: "600" }}>Daily budget <span className="text-danger ms-1 ">*</span></span>
@@ -302,8 +304,8 @@ const response = await getAPI(`/api/users-by-type?userType=${userType.charAt(0).
                 }}
                 onBlur={() => {
                   const budget = parseInt(dailyBudget)
-                  if (isNaN(budget) || budget < 300) {
-                    setDailyBudget("300")
+                  if (isNaN(budget) || budget < 100) {
+                    setDailyBudget("100")
                   }
                 }}
                 onKeyDown={(e) => {
@@ -312,18 +314,18 @@ const response = await getAPI(`/api/users-by-type?userType=${userType.charAt(0).
                     e.preventDefault();
                   }
                 }}
-                className={`form-control ${dailyBudget && Number.parseFloat(dailyBudget) < 300 ? "border-danger" : ""}`}
+                className={`form-control ${dailyBudget && Number.parseFloat(dailyBudget) < 100 ? "border-danger" : ""}`}
                 style={{ paddingLeft: "28px" }}
-                min="300"
+                min="100"
                 step="1"
               />
             </div>
             <div className="mt-2">
-              <small className="text-muted">Most advertisers start with a daily budget of at least ₹300.00.</small>
-              {dailyBudget && Number.parseFloat(dailyBudget) < 300 && (
+              <small className="text-muted">Most advertisers start with a daily budget of at least ₹100.00.</small>
+              {dailyBudget && Number.parseFloat(dailyBudget) < 100 && (
                 <div className="text-danger mt-1" style={{ fontSize: "12px" }}>
                   <i className="fa fa-exclamation-triangle me-1"></i>
-                  Daily budget should be at least ₹300.00
+                  Daily budget should be at least ₹100.00
                 </div>
               )}
             </div>

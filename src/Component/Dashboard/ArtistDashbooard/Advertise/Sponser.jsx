@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react"
 import getAPI from "../../../../api/getAPI"
 import ProductSection from "./ProductSection"
-import TargetingSection from "./TargetingSection"
-import CampaignBidding from "./campaignbiddingsection"
+
 import BidAdjustment from "./bidadjustmentssection"
 import CampaignSettingsSection from "./campaignsettingssection"
 import CampaignTypeSelection from "./campaigntypeselection"
+import TargetingSection from "./TargetingSection"
+import CampaignBiddingSection from "./campaignbiddingsection"
 import postAPI from "../../../../api/postAPI"
 import { toast } from "react-toastify"
 import { useNavigate, useLocation } from "react-router-dom";
@@ -23,6 +24,7 @@ function Sponser() {
   const [currentPage, setCurrentPage] = useState(1)
   const [showTargetingSection, setShowTargetingSection] = useState(false)
   const [showCampaignBidding, setShowCampaignBidding] = useState(false)
+  // Note: showTargetingSection/showCampaignBidding kept for ProductSection flow control
   const [showBidAdjustment, setShowBidAdjustment] = useState(false)
   const [selectedCampaignType, setSelectedCampaignType] = useState(null)
   const [showCampaignTypeSelection, setShowCampaignTypeSelection] = useState(true)
@@ -32,6 +34,7 @@ function Sponser() {
   const location = useLocation();
   const campaignId = location.state?.campaignId || null;
   const campaignFromState = location.state?.campaign || null;
+  const isEditMode = !!(campaignFromState || campaignId);
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId")
@@ -39,43 +42,6 @@ function Sponser() {
       setUserId(storedUserId)
     }
   }, [])
-
- useEffect(() => {
-    if (campaignFromState) {
-      setCampaignData(campaignFromState)
-
-      if (
-        campaignFromState.selectedProductsDetails &&
-        campaignFromState.selectedProductsDetails.length > 0
-      ) {
-        setSelectedProducts(campaignFromState.selectedProductsDetails)
-        setSelectedCampaignType("product")
-      } else {
-        setSelectedCampaignType("profile")
-      }
-
-      setShowCampaignTypeSelection(false)
-    }
-  }, [campaignFromState])
-
-  useEffect(() => {
-    if (!campaignFromState && campaignId) {
-      getAPI(`/api/campaign/${campaignId}`)
-        .then((data) => {
-          setCampaignData(data)
-
-          if (data.selectedProductsDetails && data.selectedProductsDetails.length > 0) {
-            setSelectedProducts(data.selectedProductsDetails)
-            setSelectedCampaignType("product")
-          } else {
-            setSelectedCampaignType("profile")
-          }
-
-          setShowCampaignTypeSelection(false)
-        })
-        .catch((err) => console.error("Error fetching campaign:", err))
-    }
-  }, [campaignId, campaignFromState])
 
   const [campaignData, setCampaignData] = useState({
     campaignName: "",
@@ -85,26 +51,65 @@ function Sponser() {
     country: "India",
     dailyBudget: 300,
     selectedProductIds: [],
-    biddingStrategy: "dynamic-up-down",
-    targetingType: "automatic",
-    automaticBidType: "default",
-    defaultBid: 0.0,
-    targetingGroups: {
-      closeMatch: { enabled: true, bid: 0.0 },
-      looseMatch: { enabled: true, bid: 0.0 },
-      substitutes: { enabled: true, bid: 0.0 },
-      complements: { enabled: true, bid: 0.0 },
-    },
-    selectedKeywords: [],
-    bidAdjustments: {
-      homepage: 0,
-      topOfSearch: 0,
-      productPage: 0,
-      blogPage: 0,
-      communityFeed: 0,
-      communitySidebar: 0,
-    },
-  })
+      biddingStrategy: "dynamic-up-down",
+      targetingType: "automatic",
+      automaticBidType: "default",
+      defaultBid: 0,
+      targetingGroups: {},
+      selectedKeywords: [],
+      bidAdjustments: {
+        homepage: 0,
+        topOfSearch: 0,
+        productPage: 0,
+        blogPage: 0,
+        communityFeed: 0,
+        communitySidebar: 0,
+      },
+    })
+
+  // Pre-fill from campaign state (edit mode)
+  useEffect(() => {
+    const data = campaignFromState;
+    if (!data) return;
+
+    setCampaignData(data);
+
+    if (data.selectedProductsDetails && data.selectedProductsDetails.length > 0) {
+      setSelectedProducts(data.selectedProductsDetails);
+      setSelectedCampaignType("product");
+    } else {
+      setSelectedCampaignType("profile");
+    }
+
+    setShowCampaignTypeSelection(false);
+    setShowTargetingSection(true);
+    setShowCampaignBidding(true);
+    setShowBidAdjustment(true);
+  }, [campaignFromState]);
+
+  // Fetch by campaignId if no inline state
+  useEffect(() => {
+    if (!campaignFromState && campaignId) {
+      getAPI(`/api/campaign/${campaignId}`)
+        .then((res) => {
+          const data = res.data?.data || res.data || res;
+          setCampaignData(data);
+
+          if (data.selectedProductsDetails && data.selectedProductsDetails.length > 0) {
+            setSelectedProducts(data.selectedProductsDetails);
+            setSelectedCampaignType("product");
+          } else {
+            setSelectedCampaignType("profile");
+          }
+
+          setShowCampaignTypeSelection(false);
+          setShowTargetingSection(true);
+          setShowCampaignBidding(true);
+          setShowBidAdjustment(true);
+        })
+        .catch((err) => console.error("Error fetching campaign:", err));
+    }
+  }, [campaignId, campaignFromState]);
 
   const productsPerPage = 5
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE || ""
@@ -152,19 +157,17 @@ function Sponser() {
     setCampaignData((prev) => ({ ...prev, selectedProductIds: productIds }))
   }
 
-  const handleUpdateTargetingSettings = (targetingSettings) => {
-    setCampaignData((prev) => ({ ...prev, ...targetingSettings }))
-  }
+    const handleUpdateBidAdjustments = (adjustments) => {
+      setCampaignData((prev) => ({ ...prev, bidAdjustments: adjustments }))
+    }
 
-  const handleUpdateBiddingStrategy = (strategy) => {
-    setCampaignData((prev) => ({ ...prev, biddingStrategy: strategy }))
-  }
+    const handleUpdateTargetingSettings = (settings) => {
+      setCampaignData((prev) => ({ ...prev, ...settings }))
+    }
 
-  const handleUpdateBidAdjustments = (adjustments) => {
-    setCampaignData((prev) => ({ ...prev, bidAdjustments: adjustments }))
-  }
-
-
+    const handleUpdateBiddingStrategy = (strategy) => {
+      setCampaignData((prev) => ({ ...prev, biddingStrategy: strategy }))
+    }
 
   const handleSave = async () => {
     if (!isBidAdjustmentValid) {
@@ -180,16 +183,15 @@ function Sponser() {
       const payload = {
         ...campaignData,
         userId: userId,
-                selectedProductsDetails: selectedProducts,
+        selectedProductsDetails: selectedProducts,
         selectedProductIds: selectedProducts.map((p) => p._id),
-
       };
       const response = await postAPI("/api/create-campaign", payload)
 
       if (response.hasError) {
         toast.error(response.message)
       } else {
-        toast.success("Campaign saved successfully!");
+        toast.success(isEditMode ? "Campaign updated successfully!" : "Campaign saved successfully!");
         navigate("/artist/advertise")
       }
     } catch (error) {
@@ -197,6 +199,7 @@ function Sponser() {
       toast.error(errMsg)
     }
   }
+
   const handleSaveDraft = async () => {
     if (!campaignData.campaignName || campaignData.campaignName.trim() === "") {
       toast.error("Campaign title is required to save as draft.");
@@ -225,7 +228,6 @@ function Sponser() {
     }
   };
 
-  // console.log("Received campaign data:", campaignData);
   if(loading) return <AdvertiseSkeleton/>
   return (
     <div className="container-fluid">
@@ -267,64 +269,61 @@ function Sponser() {
                 initialDailyBudget={campaignData.dailyBudget}
                 onUpdateCampaignSettings={handleUpdateCampaignSettings}
               />
-                <ProductSection
-                  activeTab={activeTab}
-                  setActiveTab={setActiveTab}
-                  products={products}
-                  availableProducts={availableProducts}
-                  setAvailableProducts={setAvailableProducts}
-                  selectedProducts={selectedProducts}
-                  setSelectedProducts={setSelectedProducts}
-                  searchQuery={searchQuery}
-                  setSearchQuery={setSearchQuery}
-                  sortBy={sortBy}
-                  setSortBy={setSortBy}
-                  loading={loading}
-                  showHelp={showHelp}
-                  setShowHelp={setShowHelp}
-                  currentPage={currentPage}
-                  setCurrentPage={setCurrentPage}
-                  productsPerPage={productsPerPage}
-                  BASE_URL={BASE_URL}
-                  setShowTargetingSection={setShowTargetingSection}
-                  setShowCampaignBidding={setShowCampaignBidding}
-                  setShowBidAdjustment={setShowBidAdjustment}
-                  initialSelectedProducts={selectedProducts}
-                  onUpdateSelectedProducts={handleUpdateSelectedProducts}
-                />
-              {showTargetingSection && (
-                <TargetingSection
-                  selectedProducts={selectedProducts}
-                  targetingType={campaignData.targetingType}
-                  automaticBidType={campaignData.automaticBidType}
-                  defaultBid={campaignData.defaultBid}
-                  targetingGroups={campaignData.targetingGroups}
-                  selectedKeywords={campaignData.selectedKeywords}
-                  onUpdateTargetingSettings={handleUpdateTargetingSettings}
-                />
-              )}
-              {showCampaignBidding && (
-                <CampaignBidding
-                  initialBiddingStrategy={campaignData.biddingStrategy}
-                  onUpdateBiddingStrategy={handleUpdateBiddingStrategy}
-                />
-              )}
-              {showBidAdjustment && (
-                <BidAdjustment
+                  <ProductSection
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                    products={products}
+                    availableProducts={availableProducts}
+                    setAvailableProducts={setAvailableProducts}
+                    selectedProducts={selectedProducts}
+                    setSelectedProducts={setSelectedProducts}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
+                    loading={loading}
+                    showHelp={showHelp}
+                    setShowHelp={setShowHelp}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                    productsPerPage={productsPerPage}
+                    BASE_URL={BASE_URL}
+                    setShowTargetingSection={setShowTargetingSection}
+                    setShowCampaignBidding={setShowCampaignBidding}
+                    setShowBidAdjustment={setShowBidAdjustment}
+                    initialSelectedProducts={selectedProducts}
+                    onUpdateSelectedProducts={handleUpdateSelectedProducts}
+                    isEditMode={isEditMode}
+                  />
+                {showTargetingSection && (
+                  <TargetingSection
+                      selectedProducts={selectedProducts}
+                      defaultBid={campaignData.defaultBid}
+                      onUpdateTargetingSettings={handleUpdateTargetingSettings}
+                    />
+                )}
+                {showCampaignBidding && (
+                  <CampaignBiddingSection
+                    initialBiddingStrategy={campaignData.biddingStrategy}
+                    onUpdateBiddingStrategy={handleUpdateBiddingStrategy}
+                  />
+                )}
+                {showTargetingSection && (
+                  <BidAdjustment
                   initialBidAdjustments={campaignData.bidAdjustments}
                   onUpdateBidAdjustments={handleUpdateBidAdjustments}
                   setIsBidAdjustmentValid={setIsBidAdjustmentValid}
                 />
               )}
 
-              {(showTargetingSection || showCampaignBidding || showBidAdjustment) && (
+              {showTargetingSection && (
                 <div className="card p-3 ">
                   <div className="d-flex justify-content-between">
                     <button className="btn btn-secondary w-100 mr-2" onClick={handleSaveDraft} >
                       Save as Draft
                     </button>
                     <button className="btn btn-primary w-100" onClick={handleSave}>
-                      Save Campaign
+                      {isEditMode ? "Update Campaign" : "Save Campaign"}
                     </button>
                   </div>
                 </div>
