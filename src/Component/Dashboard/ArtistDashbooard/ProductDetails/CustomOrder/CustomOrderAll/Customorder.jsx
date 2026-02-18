@@ -11,22 +11,6 @@ const Customorder = () => {
 
     const confirm = useConfirm();
 
-    //Buyer
-    const [buyerRequests, setBuyerRequests] = useState([]);
-    const fetchBuyerRequests = async () => {
-        try {
-            const response = await getAPI("/api/get-buyer-request");
-            const buyerRequestsData = response.data.buyerRequests;
-            setBuyerRequests(buyerRequestsData);
-        } catch (error) {
-            console.error("Error fetching buyer requests:", error);
-        }
-    };
-
-    useEffect(() => {
-        fetchBuyerRequests();
-    }, []);
-
     //Artist
 
     const [buyerRequestsdata, setBuyerRequestsdata] = useState([]);
@@ -73,16 +57,8 @@ const Customorder = () => {
                 {},
                 true
             );
-            fetchBuyerRequests();
             fetchBuyerRequestsdata();
             fetchBuyerRequestsAdmin();
-
-            setBuyerRequests((prevRequests) =>
-                prevRequests.map((request) =>
-                    request._id === requestId ? { ...request, RequestStatus: status } : request
-                )
-            );
-
 
             if (status === 'Approved') {
                 toast.success('Buyer Request is Approved');
