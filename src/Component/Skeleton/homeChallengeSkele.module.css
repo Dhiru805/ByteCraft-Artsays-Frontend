@@ -1,0 +1,222 @@
+/* ===== Wrapper ===== */
+.wrapper {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 16px 12px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ===== Header ===== */
+.headerGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-top: 12px;
+}
+
+.title {
+  height: 32px;
+  width: 75%;
+  background: #d1d5db;
+  border-radius: 10px;
+  padding: 0 12px;
+}
+
+.separator {
+  margin: 12px 0;
+  border: 1px solid #d1d5db;
+}
+
+.description {
+  margin-top: 12px;
+  padding: 0 12px;
+}
+
+.descLine {
+  height: 16px;
+  background: #e5e7eb;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+/* ===== Challenge Item ===== */
+.challengeItem {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  padding: 24px 12px;
+  margin: 12px 0;
+}
+
+/* ===== Content Column ===== */
+.content {
+  order: 2;
+}
+
+.daysTag {
+  height: 24px;
+  width: 128px;
+  background: #6b7280;
+  border-radius: 9999px;
+  margin: 12px 0;
+}
+
+.titleLineLg {
+  height: 32px;
+  background: #9ca3af;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.titleLineSm {
+  height: 32px;
+  width: 83%;
+  background: #9ca3af;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.textLine {
+  height: 16px;
+  background: #e5e7eb;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 16px;
+  margin-bottom: 16px;
+}
+
+.tag {
+  height: 24px;
+  background: #d1d5db;
+  border-radius: 9999px;
+}
+
+.tagSm { width: 64px; }
+.tagMd { width: 80px; }
+.tagLg { width: 96px; }
+
+/* ===== Prize Box ===== */
+.prize {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  max-width: 420px;
+}
+
+.prizeIcon {
+  width: 48px;
+  height: 48px;
+  background: #6b7280;
+  border-radius: 50%;
+}
+
+.prizeTextSm {
+  height: 12px;
+  width: 64px;
+  background: #d1d5db;
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+
+.prizeTextLg {
+  height: 16px;
+  width: 160px;
+  background: #9ca3af;
+  border-radius: 6px;
+}
+
+/* ===== Buttons ===== */
+.buttons {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.btnPrimary {
+  height: 40px;
+  background: #6b7280;
+  border-radius: 9999px;
+}
+
+.btnOutline {
+  height: 40px;
+  border: 2px solid #6b7280;
+  border-radius: 9999px;
+  background: #ffffff;
+}
+
+/* ===== Image Column ===== */
+.imageBox {
+  order: 1;
+  background: #e5e7eb;
+  border-radius: 16px;
+  height: 240px;
+}
+
+.imageInner {
+  width: 100%;
+  height: 100%;
+  background: #d1d5db;
+  border-radius: 16px;
+}
+
+/* ===== Responsive ===== */
+@media (min-width: 640px) {
+  .imageBox {
+    height: 400px;
+  }
+}
+
+@media (min-width: 768px) {
+  .headerGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .title {
+    grid-column: span 3;
+    height: 40px;
+  }
+
+  .challengeItem {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 24px;
+  }
+
+  .buttons {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .content {
+    padding: 16px;
+  }
+
+  .orderNormal {
+    order: 1;
+  }
+
+  .orderReverse {
+    order: 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .imageBox {
+    height: 700px;
+  }
+}
+
+/* ===== Pulse ===== */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.45; }
+  100% { opacity: 1; }
+}

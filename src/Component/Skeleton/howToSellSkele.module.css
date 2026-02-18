@@ -1,0 +1,154 @@
+/* ===== Wrapper ===== */
+.wrapper {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 16px 12px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ===== Header ===== */
+.header {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-top: 12px;
+}
+
+.title {
+  height: 32px;
+  width: 75%;
+  background: #d1d5db;
+  border-radius: 10px;
+  padding: 0 12px;
+}
+
+.headerBtnWrap {
+  display: none;
+}
+
+.headerBtn {
+  height: 40px;
+  width: 128px;
+  background: #f87171;
+  border-radius: 9999px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== Separator ===== */
+.separator {
+  margin: 12px 0;
+  border: 1px solid #d1d5db;
+}
+
+/* ===== Description ===== */
+.description {
+  margin-top: 12px;
+  padding: 0 12px;
+}
+
+.descLine {
+  height: 16px;
+  background: #e5e7eb;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+/* ===== Section ===== */
+.section {
+  width: 100%;
+  padding: 64px 0;
+}
+
+/* ===== Grid ===== */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
+
+/* ===== Card ===== */
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+  padding: 24px;
+  text-align: center;
+  height: 100%;
+}
+
+/* Image */
+.image {
+  margin: 0 auto 16px;
+  width: 100%;
+  max-width: 200px;
+  height: 128px;
+  background: #d1d5db;
+  border-radius: 12px;
+}
+
+/* Title */
+.cardTitle {
+  height: 24px;
+  width: 75%;
+  background: #9ca3af;
+  border-radius: 8px;
+  margin: 0 auto 12px;
+}
+
+/* Text */
+.text {
+  margin-top: 8px;
+}
+
+.textLine {
+  height: 16px;
+  background: #e5e7eb;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+/* Icons */
+.icons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  background: #d1d5db;
+  border-radius: 50%;
+}
+
+/* ===== Responsive ===== */
+@media (min-width: 768px) {
+  .header {
+    grid-template-columns: repeat(4, 1fr);
+    align-items: center;
+  }
+
+  .title {
+    grid-column: span 3;
+    height: 40px;
+  }
+
+  .headerBtnWrap {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ===== Pulse ===== */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.45; }
+  100% { opacity: 1; }
+}
