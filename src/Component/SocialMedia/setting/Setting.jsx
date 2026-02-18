@@ -19,7 +19,8 @@ import { FaTimes } from "react-icons/fa";
 import { IoPaperPlaneOutline } from "react-icons/io5";
 import deleteAPI from "../../../api/deleteAPI";
 import postAPI from "../../../api/postAPI";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+
 
 const userType = localStorage.getItem("userType");
 
@@ -48,8 +49,9 @@ const items = [
 
 const Setting = () => {
   const userType = localStorage.getItem("userType");
-  const [active, setActive] = useState("");
-  const [lgActive, setLgActive] = useState(false);
+  const location = useLocation();
+  const [active, setActive] = useState(location.state?.tab || "");
+  const [lgActive, setLgActive] = useState(!!location.state?.tab);
 
   const userId = localStorage.getItem("userId");
   const [profile, setProfile] = useState(null);
@@ -356,22 +358,23 @@ const Setting = () => {
   }, [userId]);
 
   useEffect(() => {
-    const handleResize = () => {
-      if (userId) fetchProfile();
+    if (userId) fetchProfile();
 
-      if (window.innerWidth >= 1024) {
-        setActive("edit-profile");
-      } else {
-        setActive(""); // or some mobile default
+    const handleResize = () => {
+      if (!location.state?.tab) {
+        if (window.innerWidth >= 1024) {
+          setActive("edit-profile");
+        } else {
+          setActive("");
+        }
       }
     };
 
-    // Run once on mount
-    handleResize();
+    if (!location.state?.tab) {
+      handleResize();
+    }
 
-    // Optional: Update on resize too
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, [userId, fetchProfile]);
 
