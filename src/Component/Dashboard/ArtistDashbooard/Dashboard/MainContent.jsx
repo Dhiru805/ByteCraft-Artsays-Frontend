@@ -81,6 +81,7 @@ export default function ArtistDashboard() {
   const [biddingProducts, setBiddingProducts] = useState([]);
   const [socialProfile, setSocialProfile] = useState(null);
   const [certifications, setCertifications] = useState([]);
+  const [userProfile, setUserProfile] = useState(null);
   const [errors, setErrors] = useState({});
 
   // ── fetch helpers ──
@@ -171,12 +172,18 @@ export default function ArtistDashboard() {
           setSocialProfile(d?.profile || d?.data || d || null);
         }),
 
-        // 9. Certifications
-        safe("certifications", async () => {
-          const res = await axios.get(`${API_URL}/api/get-certificationbyId/${userId}`, { headers: authHeaders });
-          const d = res.data;
-          setCertifications(Array.isArray(d) ? d : Array.isArray(d?.data) ? d.data : []);
-        }),
+          // 9. Certifications
+          safe("certifications", async () => {
+            const res = await axios.get(`${API_URL}/api/get-certificationbyId/${userId}`, { headers: authHeaders });
+            const d = res.data;
+            setCertifications(Array.isArray(d) ? d : Array.isArray(d?.data) ? d.data : []);
+          }),
+
+          // 10. User profile (purchased badges)
+          safe("userProfile", async () => {
+const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authHeaders });
+              setUserProfile(res.data?.user || res.data || null);
+          }),
       ]);
 
       setLoading(false);
@@ -217,10 +224,11 @@ export default function ArtistDashboard() {
   const crCompleted = customRequests.filter((r) => r.OrderStatus === "Delivered").length;
 
   const certifiedCount = certifications.length;
-  const isVerified = Array.isArray(socialProfile?.verified)
-    ? socialProfile.verified.length > 0
-    : !!socialProfile?.verificationBadge;
-  const verificationStatus = isVerified ? "Verified Artist" : "Not Verified";
+  const purchasedBadges = Array.isArray(userProfile?.verified) ? userProfile.verified : [];
+  const isVerified = purchasedBadges.length > 0;
+  const verificationStatus = isVerified
+    ? purchasedBadges.map((b) => b.badgeName).join(", ")
+    : "Not Verified";
 
   const recentOrders = [...soldOrders]
     .sort((a, b) => new Date(b.purchaseDate || b.createdAt || 0) - new Date(a.purchaseDate || a.createdAt || 0))
@@ -464,7 +472,7 @@ export default function ArtistDashboard() {
                             <td>{buyerName}</td>
                             <td className="text-success font-weight-bold">{fmt(amount)}</td>
                             <td>
-                              <span className="badge badge-info">New Order</span>
+                                <span className="badge badge-info">New Order Received</span>
                             </td>
                           </tr>
                         );
