@@ -280,7 +280,7 @@ function CreateInsurance() {
                     <label>Selected Product</label>
                     <div className="d-flex align-items-center">
                       <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedProduct.mainImage}`}
+                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${selectedProduct.mainImage}`}
                         alt={selectedProduct.productName}
                         className="img-thumbnail mr-3"
                         style={{ maxWidth: "100px", maxHeight: "100px" }}
