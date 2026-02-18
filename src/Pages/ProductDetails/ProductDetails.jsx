@@ -390,7 +390,11 @@ const ProductDetails = () => {
                 }}
                 onAddToCart={() => { if (ensureBuyer()) addToCart(product._id, quantity); }}
                 onBuyNow={() => {
-                  if (ensureBuyer()) navigate(`/my-account/check-out/${userId}?productId=${product._id}&quantity=${quantity}`);
+                  if (ensureBuyer()) {
+                    const giftWrapAmount = (product.giftWrapping && giftOption) ? (product.giftWrappingCostAmount || 0) : 0;
+                    const params = `productId=${product._id}&quantity=${quantity}&giftWrap=${product.giftWrapping && giftOption ? 'true' : 'false'}&giftWrapAmount=${giftWrapAmount}`;
+                    navigate(`/my-account/check-out/${userId}?${params}`);
+                  }
                 }}
               />
 

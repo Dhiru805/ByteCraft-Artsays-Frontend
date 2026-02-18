@@ -17,6 +17,8 @@ const CheckOut = () => {
     Number.isFinite(quantityParam) && quantityParam > 0
       ? quantityParam
       : 1;
+  const giftWrap = searchParams.get("giftWrap") === "true";
+  const giftWrapAmount = Number(searchParams.get("giftWrapAmount")) || 0;
   const navigate = useNavigate();
 
   const [billingChoice, setBillingChoice] = useState("same");
@@ -300,7 +302,8 @@ const CheckOut = () => {
       const baseSellingPrice = cartItems.reduce((acc, item) => acc + item.subtotal, 0);
       
       const artCoinDiscount = useArtCoins ? Math.min(5, (wallet?.artCoins || 0) * coinSetting.coinValue) : 0;
-      const totalSellingPrice = Math.max(0, baseSellingPrice - couponDiscountAmount - artCoinDiscount);
+      const giftWrapCharge = giftWrap ? giftWrapAmount : 0;
+      const totalSellingPrice = Math.max(0, baseSellingPrice - couponDiscountAmount - artCoinDiscount + giftWrapCharge);
       const totalDiscount = totalMRP - baseSellingPrice + couponDiscountAmount + artCoinDiscount;
   
       const canUseWallet = wallet?.balance >= totalSellingPrice;
@@ -435,6 +438,8 @@ const CheckOut = () => {
           paymentMethod: useWallet ? "Wallet" : paymentMethod,
           useArtCoins: useArtCoins,
           artCoinDiscount: artCoinDiscount,
+          giftWrap: giftWrap,
+          giftWrapCharge: giftWrapCharge,
         };
 
 
@@ -819,6 +824,12 @@ const CheckOut = () => {
                       <div className="flex justify-between text-green-600">
                         <span>Coupon Discount</span>
                         <span className="font-semibold">- ₹{couponDiscountAmount.toLocaleString()}</span>
+                      </div>
+                    )}
+                    {giftWrap && giftWrapAmount > 0 && (
+                      <div className="flex justify-between text-[#6F4D34]">
+                        <span>🎁 Gift Wrap</span>
+                        <span className="font-semibold">+ ₹{giftWrapAmount.toLocaleString()}</span>
                       </div>
                     )}
                     {useArtCoins && (
