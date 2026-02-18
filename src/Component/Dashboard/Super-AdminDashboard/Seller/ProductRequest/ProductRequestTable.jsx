@@ -262,7 +262,7 @@ if(loading)return <ProductRequestSkeleton/>
                                                         }}
                                                     />{product.productName}
                                                 </td>
-                                                <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(product?.sellingPrice ?? 0)).replace(/\.00$/, '')}</td>
+                                                <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(product?.finalPrice ?? 0)).replace(/\.00$/, '')}</td>
                                                 <td>{new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
                                                 <td>
                                                     <span className={`badge ${

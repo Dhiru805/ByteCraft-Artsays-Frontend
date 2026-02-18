@@ -424,9 +424,9 @@ const CelebrityContent = () => {
     }
 
     if (filters.sortBy === "Price Low to High") {
-      result.sort((a, b) => (a.finalPrice || a.sellingPrice) - (b.finalPrice || b.sellingPrice));
+      result.sort((a, b) => (a.finalPrice) - (b.finalPrice));
     } else if (filters.sortBy === "Price High to Low") {
-      result.sort((a, b) => (b.finalPrice || b.sellingPrice) - (a.finalPrice || a.sellingPrice));
+      result.sort((a, b) => (b.finalPrice) - (a.finalPrice));
     } else if (filters.sortBy === "New Arrivals") {
       result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     } else if (filters.sortBy === "Trending") {
@@ -960,8 +960,8 @@ const CelebrityContent = () => {
               {filteredProducts.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
                   {filteredProducts.map((product, index) => {
-                    const displayPrice = product.finalPrice || product.sellingPrice;
-                    const hasDiscount = displayPrice < product.marketPrice;
+                      const displayPrice = product.finalPrice;
+                      const hasDiscount = displayPrice < product.marketPrice;
                     const discountPercent = hasDiscount
                       ? Math.round(
                         ((product.marketPrice - displayPrice) /

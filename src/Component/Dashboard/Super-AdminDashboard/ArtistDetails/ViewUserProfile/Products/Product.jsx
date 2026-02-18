@@ -144,7 +144,7 @@ const ProductRequest = ({ userId }) => {
                                                             marginRight: '10px'
                                                         }}
                                                     />{product.productName}</td>
-                                                <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.sellingPrice).replace(/\.00$/, '')}</td>
+                                                <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.finalPrice).replace(/\.00$/, '')}</td>
                                                 <td>{new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
                                                 {/* <td>
                                                     <button className={`btn btn-sm ${product.status === 'Pending' ? 'btn-outline-warning' : product.status === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>

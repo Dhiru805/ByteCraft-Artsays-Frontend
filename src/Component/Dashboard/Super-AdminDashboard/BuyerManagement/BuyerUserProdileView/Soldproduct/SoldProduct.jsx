@@ -48,7 +48,7 @@ useEffect(() => {
                             productId: item.productId._id,
                             productName: item.productId.productName,
                             productImage: item.productId.mainImage,
-                            productPrice: item.productId.sellingPrice,
+                            productPrice: item.productId.finalPrice,
                             buyerName: order.Buyer.id.name + " " + (order.Buyer.id.lastName || ''),
                             totalQuantity: item.quantity
                         }));

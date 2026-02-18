@@ -300,7 +300,7 @@ const SoldProduct = ({ userId }) => {
                     product.mainImage ||
                     product.referenceImage ||
                     "",
-                productPrice: product.sellingPrice || 0,
+                productPrice: product.finalPrice || 0,
                 totalQuantity: item.quantity,
                 artistName: artistFullName.trim()
             };

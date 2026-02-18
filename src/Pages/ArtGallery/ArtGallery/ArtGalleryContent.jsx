@@ -247,8 +247,8 @@ const ArtGalleryContent = () => {
       );
     }
 
-    if (filters.sortBy === "Price Low to High") result.sort((a, b) => (a.finalPrice || a.sellingPrice) - (b.finalPrice || b.sellingPrice));
-    else if (filters.sortBy === "Price High to Low") result.sort((a, b) => (b.finalPrice || b.sellingPrice) - (a.finalPrice || a.sellingPrice));
+    if (filters.sortBy === "Price Low to High") result.sort((a, b) => (a.finalPrice) - (b.finalPrice));
+    else if (filters.sortBy === "Price High to Low") result.sort((a, b) => (b.finalPrice) - (a.finalPrice));
     else if (filters.sortBy === "New Arrivals") result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     else if (filters.sortBy === "Trending") result.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
 
@@ -299,7 +299,7 @@ const ArtGalleryContent = () => {
             {currentProducts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                   {currentProducts.map((product, index) => {
-                    const displayPrice = product.finalPrice || product.sellingPrice;
+                    const displayPrice = product.finalPrice;
                     const hasDiscount = displayPrice < product.marketPrice;
                     const discountPercent = hasDiscount ? Math.round(((product.marketPrice - displayPrice) / product.marketPrice) * 100) : 0;
                     return (

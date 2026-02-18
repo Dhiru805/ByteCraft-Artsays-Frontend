@@ -190,7 +190,7 @@ function ProductUpload() {
     if (pricingData.discount) {
       formDataToSend.append('discount', parseFloat(pricingData.discount));
     }
-    formDataToSend.append('finalPrice', finalPrice || 0);
+      formDataToSend.append('finalPrice', parseFloat(pricingData.finalPrice) || parseFloat(finalPrice) || 0);
     formDataToSend.append('allowInstallments', pricingData.allowInstallments || false);
     if (pricingData.allowInstallments && pricingData.installmentDuration) {
       formDataToSend.append('installmentDuration', pricingData.installmentDuration.value);

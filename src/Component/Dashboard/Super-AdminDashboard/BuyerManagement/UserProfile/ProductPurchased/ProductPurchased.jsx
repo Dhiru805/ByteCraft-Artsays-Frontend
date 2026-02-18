@@ -299,7 +299,7 @@ const BuyerSoldProduct = ({ userId }) => {
                                 product.referenceImage ||
                                 "",
 
-                            productPrice: product.sellingPrice || 0,
+                            productPrice: product.finalPrice || 0,
                             totalQuantity: item.quantity,
                             buyerName: buyerName.trim()
                         };

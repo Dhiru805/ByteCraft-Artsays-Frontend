@@ -34,7 +34,7 @@ const SoldProduct = () => {
                   productName: item.productId.productName,
                   mainImage: item.productId.mainImage,
                   otherImages: item.productId.otherImages || [],
-                  productPrice: item.productId.sellingPrice,
+                  productPrice: item.productId.finalPrice,
                   artistName: `${order.Artist?.id?.name || 'Unknown'} ${order.Artist?.id?.lastName || ''}`,
                   totalQuantity: item.quantity,
                   createdAt: order.createdAt,

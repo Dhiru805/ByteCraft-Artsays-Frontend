@@ -190,7 +190,7 @@
       fd.append("sellingPrice", parseFloat(pricingData.sellingPrice) || 0);
       if (pricingData.marketPrice) fd.append("marketPrice", parseFloat(pricingData.marketPrice));
       if (pricingData.discount) fd.append("discount", parseFloat(pricingData.discount));
-      fd.append("finalPrice", finalPrice || 0);
+       fd.append("finalPrice", parseFloat(pricingData.finalPrice) || parseFloat(finalPrice) || 0);
       fd.append("allowInstallments", pricingData.allowInstallments || false);
       if (pricingData.allowInstallments && pricingData.installmentDuration) {
         fd.append("installmentDuration", pricingData.installmentDuration.value);

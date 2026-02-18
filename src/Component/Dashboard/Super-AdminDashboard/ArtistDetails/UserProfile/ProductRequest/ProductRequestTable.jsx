@@ -208,7 +208,7 @@ const ProductRequest = ({ userId }) => {
                                                 </td>
                                                 <td>
                                                     {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' })
-                                                        .format((Number(product.sellingPrice) || 0) - (Number(product.discount) || 0))
+                                                        .format((Number(product.finalPrice) || 0) - (Number(product.discount) || 0))
                                                         .replace(/\.00$/, '')}
                                                 </td>
                                                 <td>{new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</td>

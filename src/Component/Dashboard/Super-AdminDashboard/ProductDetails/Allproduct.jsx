@@ -581,7 +581,7 @@ const ApprovedProduct = () => {
                                                     {new Intl.NumberFormat('en-IN', {
                                                         style: 'currency',
                                                         currency: 'INR'
-                                                    }).format(product.sellingPrice).replace(/\.00$/, '')}
+                                                    }).format(product.finalPrice).replace(/\.00$/, '')}
                                                 </td>
 
                                                 <td>{new Date(product.createdAt).toLocaleDateString('en-IN')}</td>

@@ -497,7 +497,7 @@ const sellerName =
             productName: product.productName,
             mainImage: product.mainImage,
 
-            productPrice: product.sellingPrice ?? product.finalPrice ?? 0,
+            productPrice: product.finalPrice ?? product.finalPrice ?? 0,
             totalQuantity: item.quantity,
             createdAt: order.createdAt,
             orderStatus: order.orderStatus || "Ordered"

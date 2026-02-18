@@ -1044,13 +1044,13 @@ function ProductUpload() {
         formDataToSend.append('marketPrice', parseFloat(pricingData.marketPrice));
       }
       if (pricingData.discount) {
-        formDataToSend.append('discount', parseFloat(pricingData.discount));
-      }
-      formDataToSend.append('finalPrice', finalPrice);
-      pricingData.offers.forEach(offer =>
-        formDataToSend.append('offers', offer.value)
-      );
-      formDataToSend.append('allowInstallments', pricingData.allowInstallments);
+          formDataToSend.append('discount', parseFloat(pricingData.discount));
+        }
+        formDataToSend.append('finalPrice', parseFloat(pricingData.finalPrice) || parseFloat(finalPrice) || 0);
+        pricingData.offers.forEach(offer =>
+          formDataToSend.append('offers', offer.value)
+        );
+        formDataToSend.append('allowInstallments', pricingData.allowInstallments);
       if (pricingData.allowInstallments && pricingData.installmentDuration) {
         formDataToSend.append('installmentDuration', pricingData.installmentDuration.value);
       }

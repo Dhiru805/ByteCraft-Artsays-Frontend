@@ -222,12 +222,12 @@ const ApprovedProduct = () => {
                           {product.productName}
                         </td>
                         <td>
-                          {product.sellingPrice !== undefined
+                          {product.finalPrice !== undefined
                             ? new Intl.NumberFormat("en-IN", {
                                 style: "currency",
                                 currency: "INR",
                               })
-                                .format(product.sellingPrice)
+                                .format(product.finalPrice)
                                 .replace(/\.00$/, "")
                             : "N/A"}
                         </td>

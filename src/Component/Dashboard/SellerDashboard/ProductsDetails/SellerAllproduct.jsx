@@ -199,7 +199,7 @@ const ApprovedProduct = () => {
                                                     {product.productName}
                                                 </td>
                                                 <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(product.marketPrice)).replace(/\.00$/, '')}</td>
-                                                <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(product.sellingPrice)).replace(/\.00$/, '')}</td>
+                                                <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(product.finalPrice || product.finalPrice)).replace(/\.00$/, '')}</td>
                                                 <td>{new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
                                                 <td>
                                                     {product.quantity === 0 ? (

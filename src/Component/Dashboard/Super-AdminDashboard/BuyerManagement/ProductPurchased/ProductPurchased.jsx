@@ -399,7 +399,7 @@ const SoldProduct = () => {
                 productId: item.productId._id,
                 productName: item.productId.productName || '',
                 mainImage: item.productId.mainImage || '',
-                productPrice: item.productId.sellingPrice || 0,
+                productPrice: item.productId.finalPrice || 0,
                 buyerName: `${order?.Buyer?.id?.name || ''} ${order?.Buyer?.id?.lastName || ''}`.trim(),
                 artistName: `${order?.Artist?.id?.name || ''} ${order?.Artist?.id?.lastName || ''}`.trim(),
                 totalQuantity: item.quantity || 0,

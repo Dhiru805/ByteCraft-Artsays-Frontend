@@ -39,7 +39,7 @@ const BuyerSoldProduct = () => {
                                     productId: product._id || "",
                                     productName: product.productName || product.requestTitle || "Unknown Product",
                                     mainImage: product.mainImage || product.referenceImage || "",
-                                    productPrice: product.sellingPrice || product.finalPrice || item.price || 0,
+                                    productPrice: product.finalPrice || item.price || 0,
                                     totalQuantity: item.quantity,
                                     createdAt: order.createdAt,
                                     orderStatus: order.orderStatus || "Ordered"

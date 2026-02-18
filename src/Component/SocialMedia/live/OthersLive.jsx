@@ -708,7 +708,7 @@ const OthersLive = () => {
                       />
                       <div className="flex-1">
                         <h4 className="font-bold text-gray-900 line-clamp-1">{product.productName}</h4>
-                        <p className="text-sm font-bold text-gray-900 mt-1">₹ {product.finalPrice || product.sellingPrice}</p>
+                        <p className="text-sm font-bold text-gray-900 mt-1">₹ {product.finalPrice}</p>
                         <p className="text-[10px] text-gray-500 mt-1 line-clamp-2">
                           {product.description || 'No description available'}
                         </p>
