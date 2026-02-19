@@ -510,11 +510,11 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
   const handleLike = async (postId) => {
     try {
       await postAPI(
-        `/api/social-media/posts/${postId}/likeUnlike`,
-        { userId },
-        false,
-        true
-      );
+          `/api/social-media/posts/${postId}/likeUnlike`,
+          { userId },
+          {},
+          true
+        );
       setPosts((prev) =>
         prev.map((p) =>
           p._id === postId
@@ -535,11 +535,11 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
   const handleSave = async (postId) => {
     try {
       await postAPI(
-        `/api/social-media/posts/${postId}/saveUnsave`,
-        { userId },
-        false,
-        true
-      );
+          `/api/social-media/posts/${postId}/saveUnsave`,
+          { userId },
+          {},
+          true
+        );
 
       setPosts((prev) =>
         prev.map((p) => (p._id === postId ? { ...p, isSaved: !p.isSaved } : p))

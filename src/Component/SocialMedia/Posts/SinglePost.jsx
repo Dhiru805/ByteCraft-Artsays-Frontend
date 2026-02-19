@@ -88,11 +88,11 @@ const SharePost = () => {
   const handleLike = async (postId) => {
     try {
       await postAPI(
-        `/api/social-media/posts/${postId}/likeUnlike`,
-        { userId },
-        false,
-        true
-      );
+          `/api/social-media/posts/${postId}/likeUnlike`,
+          { userId },
+          {},
+          true
+        );
       setSharePostData((prev) => ({
         ...prev,
         likes: prev.likes.includes(userId)
@@ -140,11 +140,11 @@ const SharePost = () => {
   const handleSave = async (postId) => {
     try {
       await postAPI(
-        `/api/social-media/posts/${postId}/saveUnsave`,
-        { userId },
-        false,
-        true
-      );
+          `/api/social-media/posts/${postId}/saveUnsave`,
+          { userId },
+          {},
+          true
+        );
 
       // update `isSaved` flag directly
       setSharePostData((prev) => ({ ...prev, isSaved: !prev.isSaved })); // 👈 toggle boolean

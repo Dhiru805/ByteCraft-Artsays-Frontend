@@ -47,6 +47,150 @@ const items = [
   },
 ];
 
+// ─── Notification Settings Panel ────────────────────────────────────────────
+
+const BUYER_TOGGLES = [
+  { key: "likes",        label: "Likes",                  desc: "When someone likes your comment" },
+  { key: "comments",     label: "Comments",               desc: "When someone replies to your comment" },
+  { key: "followers",    label: "Followers",              desc: "When someone follows you" },
+  { key: "mentions",     label: "Mentions",               desc: "When someone mentions you" },
+  { key: "following_posts", label: "Posts from people you follow", desc: "When an artist you follow posts" },
+  { key: "live",         label: "Live Sessions",          desc: "When a followed artist goes live" },
+  { key: "memberships",  label: "Memberships",            desc: "Purchase confirmations and renewals" },
+  { key: "badges",       label: "Badges",                 desc: "Badge purchase confirmations" },
+];
+
+const ARTIST_EXTRA_TOGGLES = [
+  { key: "saves",        label: "Post Saves",             desc: "When someone saves your post" },
+  { key: "tips",         label: "Tips Received",          desc: "When a viewer sends you a tip" },
+  { key: "promotions",   label: "Promotions",             desc: "Approval, rejection and campaign updates" },
+  { key: "sales",        label: "Sales & Revenue",        desc: "Product purchases and milestones" },
+  { key: "milestones",   label: "Engagement Milestones",  desc: "When your post crosses like / save thresholds" },
+  { key: "collaborations", label: "Collaborations",       desc: "Collaboration requests and updates" },
+];
+
+const Toggle = ({ value, onChange }) => (
+  <label className="relative inline-flex items-center cursor-pointer">
+    <input type="checkbox" className="sr-only" checked={value} onChange={onChange} />
+    <div className={`w-11 h-6 rounded-full transition-colors duration-200 ${value ? "bg-[#4f3823]" : "bg-gray-300"}`} />
+    <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow transform transition-transform duration-200 ${value ? "translate-x-5" : "translate-x-0"}`} />
+  </label>
+);
+
+const NotificationSettingsPanel = ({ userType, lgActive, setLgActive }) => {
+  const userId = localStorage.getItem("userId");
+  const isCreator = userType === "Artist" || userType === "Seller";
+
+  const defaultSettings = () => {
+    const s = {};
+    BUYER_TOGGLES.forEach(t => { s[t.key] = true; });
+    if (isCreator) ARTIST_EXTRA_TOGGLES.forEach(t => { s[t.key] = true; });
+    return s;
+  };
+
+  const [settings, setSettings] = useState(defaultSettings);
+  const [saving, setSaving] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await getAPI(`/api/social-media/notification-settings/${userId}`);
+        if (res?.data?.settings) setSettings(prev => ({ ...prev, ...res.data.settings }));
+      } catch (_) {}
+      setLoaded(true);
+    };
+    load();
+  }, [userId]);
+
+  const toggle = (key) => setSettings(prev => ({ ...prev, [key]: !prev[key] }));
+
+  const save = async () => {
+    setSaving(true);
+    try {
+      await putAPI(`/api/social-media/notification-settings`, { userId, settings });
+      toast.success("Notification preferences saved");
+    } catch (_) {
+      toast.error("Failed to save preferences");
+    }
+    setSaving(false);
+  };
+
+  const allToggles = isCreator
+    ? [...BUYER_TOGGLES, ...ARTIST_EXTRA_TOGGLES]
+    : BUYER_TOGGLES;
+
+  return (
+    <div className="w-full lg:p-[1rem] bg-white lg:rounded-xl space-y-4 lg:border lg:border-gray-200 lg:shadow-sm h-fit">
+      {/* Header */}
+      <div className="flex items-center gap-2">
+        {lgActive && (
+          <button
+            className="text-[24px] font-bold text-[#000000]"
+            onClick={() => setLgActive(false)}
+          >
+            <i className="ri-arrow-left-s-line" />
+          </button>
+        )}
+        <div>
+          <h1 className="text-2xl font-bold text-[#000000]">Notifications</h1>
+          <p className="text-sm text-gray-500">Choose what you want to be notified about</p>
+        </div>
+      </div>
+
+      {!loaded ? (
+        <div className="text-center text-gray-400 py-8">Loading preferences…</div>
+      ) : (
+        <>
+          {/* Buyer / base toggles */}
+          <div className="space-y-1">
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 pb-1">Social & Discovery</p>
+            {BUYER_TOGGLES.map(t => (
+              <div key={t.key} className="flex justify-between items-center py-3 border-b border-gray-100">
+                <div>
+                  <p className="text-sm font-semibold text-[#000000]">{t.label}</p>
+                  <p className="text-xs text-gray-500">{t.desc}</p>
+                </div>
+                <Toggle value={!!settings[t.key]} onChange={() => toggle(t.key)} />
+              </div>
+            ))}
+          </div>
+
+          {/* Creator-only section */}
+          {isCreator && (
+            <div className="space-y-1 pt-2">
+              <div className="flex items-center gap-2 pb-1">
+                <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">Creator Controls</p>
+                <span className="text-[10px] bg-[#4f3823] text-white px-2 py-0.5 rounded-full font-semibold">Artist / Seller</span>
+              </div>
+              {ARTIST_EXTRA_TOGGLES.map(t => (
+                <div key={t.key} className="flex justify-between items-center py-3 border-b border-gray-100">
+                  <div>
+                    <p className="text-sm font-semibold text-[#000000]">{t.label}</p>
+                    <p className="text-xs text-gray-500">{t.desc}</p>
+                  </div>
+                  <Toggle value={!!settings[t.key]} onChange={() => toggle(t.key)} />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Save */}
+          <button
+            onClick={save}
+            disabled={saving}
+            className="w-full bg-[#4f3823] text-white py-2 rounded-md font-semibold text-sm disabled:opacity-60"
+          >
+            {saving ? "Saving…" : "Save preferences"}
+          </button>
+        </>
+      )}
+    </div>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 const Setting = () => {
   const userType = localStorage.getItem("userType");
   const location = useLocation();
@@ -242,15 +386,7 @@ const Setting = () => {
     fetchPolicies();
   }, []);
 
-  // notification panel
-  const [phonePaused, setPhonePaused] = useState(false);
-  const [likes, setLikes] = useState("off");
-  const [likesCommentsPhotos, setLikesCommentsPhotos] = useState("following");
-  const [comments, setComments] = useState("following");
-  const [commentsLike, setCommentsLike] = useState("following");
-  const [postsOfYou, setPostsOfYou] = useState("following");
-
-  // collaboration and mention panel
+    // collaboration and mention panel
   const [collaborationSetting, setCollaborationSetting] = useState("everyone"); // or 'following' / 'none'
   const [manualApprove, setManualApprove] = useState(false);
   const [mentionSetting, setMentionSetting] = useState("everyone");
@@ -1028,260 +1164,18 @@ const Setting = () => {
             </div>
           )}
 
-          {/* Notifications panel */}
-          {active === "notifications" && (
-            <div className="w-full my-4">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                }}
-                className="bg-white lg:rounded-xl lg:border lg:border-[#48372D] shadow-sm lg:p-[1rem] space-y-3"
-              >
-                <div className="flex items-center gap-2">
-                  {lgActive && (
-                    <button
-                      className="text-[24px] font-bold text-[#000000]"
-                      onClick={() => setLgActive(false)}
-                    >
-                      <i class="ri-arrow-left-s-line"></i>
-                    </button>
-                  )}
-                  <h1 className="text-[24px] font-bold text-[#000000]">
-                    Notifications
-                  </h1>
-                </div>
+            {/* Notifications panel */}
+            {active === "notifications" && (
+              <div className="w-full my-4">
+                <NotificationSettingsPanel
+                  userType={userType}
+                  lgActive={lgActive}
+                  setLgActive={setLgActive}
+                />
+              </div>
+            )}
 
-                {/* Phone Notifications */}
-                <div className="flex justify-between items-center">
-                  <div>
-                    <div className="text-[16px] text-[#000000] font-bold">
-                      Phone Notifications
-                    </div>
-                    <div className="text-[14px] text-gray-600">Pause all</div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setPhonePaused((p) => !p)}
-                    className={`relative inline-flex h-5 w-11 items-center rounded-xl transition-colors focus:outline-none ${phonePaused ? "bg-[#4f3823]" : "bg-gray-300"
-                      }`}
-                  >
-                    <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-gray-100 shadow transition-transform ${phonePaused ? "translate-x-7" : "translate-x-0"
-                        }`}
-                    />
-                  </button>
-                </div>
-
-                {/* Sections */}
-                <div className="space-y-3">
-                  {/* Likes */}
-                  <div>
-                    <div className="text-md font-semibold mb-1 text-[#000000]">
-                      Likes
-                    </div>
-                    <div className="flex flex-col gap-1 text-sm font-medium text-[#000000]">
-                      <label className="flex items-center gap-2 text-sm cursor-pointer mb-0">
-                        <input
-                          type="radio"
-                          name="likes"
-                          value="off"
-                          checked={likes === "off"}
-                          onChange={() => setLikes("off")}
-                        />
-                        <span>Off</span>
-                      </label>
-                      <label className="flex items-center gap-2 text-sm cursor-pointer mb-0">
-                        <input
-                          type="radio"
-                          name="likes"
-                          value="following"
-                          checked={likes === "following"}
-                          onChange={() => setLikes("following")}
-                        />
-                        <span>From profiles I follow</span>
-                      </label>
-                      <label className="flex items-center gap-2 text-sm cursor-pointer mb-0">
-                        <input
-                          type="radio"
-                          name="likes"
-                          value="everyone"
-                          checked={likes === "everyone"}
-                          onChange={() => setLikes("everyone")}
-                        />
-                        <span>From everyone</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* Like and comments on photos of you */}
-                  <div>
-                    <div className="text-md font-semibold mb-1 text-[#000000]">
-                      Like and comments on photos of you
-                    </div>
-                    <div className="flex flex-col gap-1 text-sm font-medium text-[#000000]">
-                      <label className="flex items-center gap-2 text-sm cursor-pointer mb-0">
-                        <input
-                          type="radio"
-                          name="likesCommentsPhotos"
-                          value="off"
-                          checked={likesCommentsPhotos === "off"}
-                          onChange={() => setLikesCommentsPhotos("off")}
-                        />
-                        <span>Off</span>
-                      </label>
-                      <label className="flex items-center gap-2 text-sm cursor-pointer mb-0">
-                        <input
-                          type="radio"
-                          name="likesCommentsPhotos"
-                          value="following"
-                          checked={likesCommentsPhotos === "following"}
-                          onChange={() => setLikesCommentsPhotos("following")}
-                        />
-                        <span>From profiles I follow</span>
-                      </label>
-                      <label className="flex items-center gap-2 text-sm cursor-pointer mb-0">
-                        <input
-                          type="radio"
-                          name="likesCommentsPhotos"
-                          value="everyone"
-                          checked={likesCommentsPhotos === "everyone"}
-                          onChange={() => setLikesCommentsPhotos("everyone")}
-                        />
-                        <span>From everyone</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* Comments */}
-                  <div>
-                    <div className="text-md font-semibold mb-1 text-[#000000]">
-                      Comments
-                    </div>
-                    <div className="flex flex-col gap-1 text-sm font-medium text-[#000000]">
-                      <label className="flex items-center gap-2 text-sm cursor-pointer mb-0">
-                        <input
-                          type="radio"
-                          name="comments"
-                          value="off"
-                          checked={comments === "off"}
-                          onChange={() => setComments("off")}
-                        />
-                        <span>Off</span>
-                      </label>
-                      <label className="flex items-center gap-2 text-sm cursor-pointer mb-0">
-                        <input
-                          type="radio"
-                          name="comments"
-                          value="following"
-                          checked={comments === "following"}
-                          onChange={() => setComments("following")}
-                        />
-                        <span>From profiles I follow</span>
-                      </label>
-                      <label className="flex items-center gap-2 text-sm cursor-pointer mb-0">
-                        <input
-                          type="radio"
-                          name="comments"
-                          value="everyone"
-                          checked={comments === "everyone"}
-                          onChange={() => setComments("everyone")}
-                        />
-                        <span>From everyone</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* Comments like */}
-                  <div>
-                    <div className="text-md font-semibold mb-1 text-[#000000]">
-                      Comments like
-                    </div>
-                    <div className="flex flex-col gap-1 text-sm font-medium text-[#000000]">
-                      <label className="flex items-center gap-2 text-sm cursor-pointer mb-0">
-                        <input
-                          type="radio"
-                          name="commentsLike"
-                          value="off"
-                          checked={commentsLike === "off"}
-                          onChange={() => setCommentsLike("off")}
-                        />
-                        <span>Off</span>
-                      </label>
-                      <label className="flex items-center gap-2 text-sm cursor-pointer mb-0">
-                        <input
-                          type="radio"
-                          name="commentsLike"
-                          value="following"
-                          checked={commentsLike === "following"}
-                          onChange={() => setCommentsLike("following")}
-                        />
-                        <span>From profiles I follow</span>
-                      </label>
-                      <label className="flex items-center gap-2 text-sm cursor-pointer mb-0">
-                        <input
-                          type="radio"
-                          name="commentsLike"
-                          value="everyone"
-                          checked={commentsLike === "everyone"}
-                          onChange={() => setCommentsLike("everyone")}
-                        />
-                        <span>From everyone</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* Posts of you */}
-                  <div>
-                    <div className="text-md font-semibold mb-1 text-[#000000]">
-                      Posts of you
-                    </div>
-                    <div className="flex flex-col gap-1 text-sm font-medium text-[#000000]">
-                      <label className="flex items-center gap-2 text-sm cursor-pointer mb-0">
-                        <input
-                          type="radio"
-                          name="postsOfYou"
-                          value="off"
-                          checked={postsOfYou === "off"}
-                          onChange={() => setPostsOfYou("off")}
-                        />
-                        <span>Off</span>
-                      </label>
-                      <label className="flex items-center gap-2 text-sm cursor-pointer mb-0">
-                        <input
-                          type="radio"
-                          name="postsOfYou"
-                          value="following"
-                          checked={postsOfYou === "following"}
-                          onChange={() => setPostsOfYou("following")}
-                        />
-                        <span>From profiles I follow</span>
-                      </label>
-                      <label className="flex items-center gap-2 text-sm cursor-pointer mb-0">
-                        <input
-                          type="radio"
-                          name="postsOfYou"
-                          value="everyone"
-                          checked={postsOfYou === "everyone"}
-                          onChange={() => setPostsOfYou("everyone")}
-                        />
-                        <span>From everyone</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Save / apply */}
-                <button
-                  type="submit"
-                  className="bg-[#4f3823] text-white w-full py-2 rounded-md font-medium"
-                >
-                  Save changes
-                </button>
-              </form>
-            </div>
-          )}
-
-          {/* Membership panel */}
+            {/* Membership panel */}
           {userType === "Artist" && active === "membership" && (
             <div className="w-full my-4 lg:p-[1rem] bg-white lg:rounded-xl space-y-3 lg:border lg:border-gray-200 lg:shadow-sm h-fit">
               <div className="flex items-center gap-2 rounded-md">

@@ -757,7 +757,7 @@ const Profile = ({ shareprofileid }) => {
   // Sync like state whenever post changes
   useEffect(() => {
     if (activePost) {
-      setLike(activePost.likes?.includes(viewedUserId));
+      setLike(activePost.likes?.some((id) => id?.toString() === loggedInUserId));
       setLikesCount(activePost.likes?.length || 0);
       setComments(activePost.comments || []);
     }
@@ -806,13 +806,13 @@ const Profile = ({ shareprofileid }) => {
     try {
       const res = await postAPI(
         `/api/social-media/posts/${postId}/likeUnlike`,
-        { userId: viewedUserId },
-        false,
+        { userId: loggedInUserId },
+        {},
         true
       );
 
       if (res && !res.hasError) {
-        setLike(res.data.likes.includes(viewedUserId));
+        setLike(res.data.likes.includes(loggedInUserId));
         setLikesCount(res.data.likes.length);
       } else {
         toast.error(res?.message || "Failed to like/unlike");
