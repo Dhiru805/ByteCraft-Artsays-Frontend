@@ -1,1023 +1,753 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./Headerstyle.css";
 import artLogo from "./artlogo.png";
 import AIcon from "./AIcon.png";
 import { toast } from "react-toastify";
-
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Bell, Menu } from "lucide-react";
 import {
-  RiMoneyRupeeCircleLine,
-  RiAuctionFill,
-  RiMapPin2Line,
-  RiLockPasswordLine,
-} from "react-icons/ri";
-import { PiHandbagBold } from "react-icons/pi";
-import { HiOutlineHeart } from "react-icons/hi";
-import { BiCart, BiLogOut } from "react-icons/bi";
+  Menu, Search, X, ChevronDown, ShoppingCart, Plus,
+  Home, Compass, Users, User, Video, ArrowRight,
+  Zap, TrendingUp, Star, Package
+} from "lucide-react";
+import { RiAuctionFill, RiMapPin2Line, RiMoneyRupeeCircleLine, RiLockPasswordLine } from "react-icons/ri";
+import { MdLibraryAdd, MdVerified, MdOutlineSecurity } from "react-icons/md";
+import { BiLogOut, BiCart } from "react-icons/bi";
 import { IoWalletOutline } from "react-icons/io5";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { BsBoxSeam } from "react-icons/bs";
-import getAPI from "../../../api/getAPI";
-import { FaUser, FaTools, FaShareAlt } from "react-icons/fa";
+import { HiOutlineHeart } from "react-icons/hi";
+import { PiHandbagBold } from "react-icons/pi";
+import { FaUser, FaTools, FaShareAlt, FaVideo } from "react-icons/fa";
 import { CiCreditCard1 } from "react-icons/ci";
-import { MdOutlineSecurity, MdVerified, MdLibraryAdd } from "react-icons/md";
+import getAPI from "../../../api/getAPI";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 import HeaderSkeleton from "../../../Component/Skeleton/Home/HeaderSkeleton";
 
+// ─────────────────────────────────────────────────────────────
+// AD CARD — shown in every mega menu
+// ─────────────────────────────────────────────────────────────
+const MegaAdCard = ({ badge, badgeColor, image, tag, title, sub, price, cta, href }) => (
+  <div className="mad-card">
+    <div className="mad-img-wrap">
+      <img src={image || "/assets/home/biditemurl.jpg"} alt={title} className="mad-img" />
+      <span className="mad-badge" style={{ background: badgeColor || "#1a1a1a" }}>{badge}</span>
+    </div>
+    <div className="mad-body">
+      <p className="mad-tag">{tag}</p>
+      <p className="mad-title">{title}</p>
+      <p className="mad-sub">{sub}</p>
+      <div className="mad-row">
+        <span className="mad-price">{price}</span>
+        <a href={href} className="mad-cta">{cta} <ArrowRight size={12} /></a>
+      </div>
+    </div>
+  </div>
+);
+
+// ─────────────────────────────────────────────────────────────
+// MEGA MENUS
+// ─────────────────────────────────────────────────────────────
+const ArtMega = () => (
+  <div className="mp">
+    <div className="mp-body">
+      <div className="mp-col">
+        <span className="mp-head">Browse Art</span>
+        <a className="mp-link" href="/art-gallery"><span className="mp-dot" />All Artworks</a>
+        <a className="mp-link" href="/art-gallery"><span className="mp-dot" />Paintings</a>
+        <a className="mp-link" href="/art-gallery"><span className="mp-dot" />Digital Art</a>
+        <a className="mp-link" href="/art-gallery"><span className="mp-dot" />Sculpture</a>
+        <a className="mp-link" href="/art-gallery"><span className="mp-dot" />Photography</a>
+        <a className="mp-link" href="/art-gallery"><span className="mp-dot" />NFTs</a>
+      </div>
+      <div className="mp-col">
+        <span className="mp-head">By Style</span>
+        <a className="mp-link" href="/art-gallery"><span className="mp-dot" />Abstract</a>
+        <a className="mp-link" href="/art-gallery"><span className="mp-dot" />Contemporary</a>
+        <a className="mp-link" href="/art-gallery"><span className="mp-dot" />Traditional</a>
+        <a className="mp-link" href="/art-gallery"><span className="mp-dot" />Minimal</a>
+        <a className="mp-link" href="/art-gallery"><span className="mp-dot" />Mandala / Dot Art</a>
+        <a className="mp-link" href="/art-gallery"><span className="mp-dot" />Tribal</a>
+      </div>
+      <div className="mp-col">
+        <span className="mp-head">Curated</span>
+        <a className="mp-link" href="/artist-card"><span className="mp-dot" style={{ background: "#f5a623" }} />Featured Artists</a>
+        <a className="mp-link" href="/art-gallery"><span className="mp-dot" style={{ background: "#f5a623" }} />Trending Now</a>
+        <a className="mp-link" href="/art-gallery"><span className="mp-dot" style={{ background: "#f5a623" }} />New Arrivals</a>
+        <a className="mp-link" href="/art-gallery"><span className="mp-dot" style={{ background: "#f5a623" }} />Investment Art</a>
+        <a className="mp-link" href="/art-gallery"><span className="mp-dot" style={{ background: "#f5a623" }} />Editor's Picks</a>
+        <a className="mp-link" href="/art-gallery"><span className="mp-dot" style={{ background: "#f5a623" }} />Awarded Artworks</a>
+      </div>
+      <MegaAdCard
+        badge="Editor's Pick"
+        badgeColor="#7c3aed"
+        tag="Abstract · Oil on Canvas"
+        title="Celestial Bloom"
+        sub="by Priya Sharma"
+        price="₹12,500"
+        cta="Buy Now"
+        href="/art-gallery"
+      />
+    </div>
+    <div className="mp-foot">
+      <a href="/art-gallery" className="mp-cta">
+        <TrendingUp size={14} /> Explore Art Gallery
+      </a>
+    </div>
+  </div>
+);
+
+const BidMega = () => (
+  <div className="mp">
+    <div className="mp-body">
+      <div className="mp-col">
+        <span className="mp-head">Live Auctions</span>
+        <a className="mp-link" href="/bid"><span className="mp-dot" style={{ background: "#ef4444" }} />All Auctions</a>
+        <a className="mp-link" href="/bid"><span className="mp-dot" style={{ background: "#ef4444" }} />Ending Soon</a>
+        <a className="mp-link" href="/bid"><span className="mp-dot" style={{ background: "#ef4444" }} />Upcoming</a>
+        <a className="mp-link" href="/how-to-bid"><span className="mp-dot" style={{ background: "#ef4444" }} />How to Bid</a>
+      </div>
+      <div className="mp-col">
+        <span className="mp-head">Categories</span>
+        <a className="mp-link" href="/bid"><span className="mp-dot" />Paintings</a>
+        <a className="mp-link" href="/bid"><span className="mp-dot" />Antiques</a>
+        <a className="mp-link" href="/bid"><span className="mp-dot" />Sculptures</a>
+        <a className="mp-link" href="/bid"><span className="mp-dot" />Photography</a>
+        <a className="mp-link" href="/bid"><span className="mp-dot" />Rare Prints</a>
+      </div>
+      <div className="mp-col">
+        <span className="mp-head">For Bidders</span>
+        <a className="mp-link" href="/bid"><span className="mp-dot" />New Bidders Guide</a>
+        <a className="mp-link" href="/bid"><span className="mp-dot" />My Bids</a>
+        <a className="mp-link" href="/bid"><span className="mp-dot" />Won Items</a>
+        <a className="mp-link" href="/bid"><span className="mp-dot" />Watchlist</a>
+      </div>
+      <MegaAdCard
+        badge="🔴 Live Now"
+        badgeColor="#dc2626"
+        tag="High-Value Lot · Ends in 2h"
+        title="Golden Era Painting"
+        sub="Current bid: ₹68,000"
+        price="68 bids"
+        cta="Place Bid"
+        href="/bid"
+      />
+    </div>
+    <div className="mp-foot">
+      <a href="/bid" className="mp-cta"><Zap size={14} /> Enter Bidding Arena</a>
+    </div>
+  </div>
+);
+
+const StoresMega = () => (
+  <div className="mp">
+    <div className="mp-body">
+      <div className="mp-col">
+        <span className="mp-head">Shop by Category</span>
+        <a className="mp-link" href="/store"><span className="mp-dot" />All Stores</a>
+        <a className="mp-link" href="/store"><span className="mp-dot" />Paintings & Prints</a>
+        <a className="mp-link" href="/store"><span className="mp-dot" />Sculptures</a>
+        <a className="mp-link" href="/store"><span className="mp-dot" />Jewellery</a>
+        <a className="mp-link" href="/store"><span className="mp-dot" />Handmade Crafts</a>
+        <a className="mp-link" href="/store"><span className="mp-dot" />Digital Downloads</a>
+      </div>
+      <div className="mp-col">
+        <span className="mp-head">By Seller</span>
+        <a className="mp-link" href="/store"><span className="mp-dot" style={{ background: "#10b981" }} />Verified Sellers</a>
+        <a className="mp-link" href="/store"><span className="mp-dot" style={{ background: "#10b981" }} />Trusted Stores</a>
+        <a className="mp-link" href="/store"><span className="mp-dot" style={{ background: "#10b981" }} />Rising Creators</a>
+        <a className="mp-link" href="/commission"><span className="mp-dot" style={{ background: "#10b981" }} />Custom Orders</a>
+      </div>
+      <div className="mp-col">
+        <span className="mp-head">Deals & Orders</span>
+        <a className="mp-link" href="/store"><span className="mp-dot" />Offers & Deals</a>
+        <a className="mp-link" href="/store"><span className="mp-dot" />Flash Sales</a>
+        <a className="mp-link" href="/track-your-order"><span className="mp-dot" />Track Order</a>
+        <a className="mp-link" href="/store"><span className="mp-dot" />Bundle Packs</a>
+      </div>
+      <MegaAdCard
+        badge="Verified Store"
+        badgeColor="#059669"
+        tag="Handmade · Free Shipping"
+        title="Terra Clay Studio"
+        sub="500+ products · 4.9 ★"
+        price="From ₹799"
+        cta="Visit Store"
+        href="/store"
+      />
+    </div>
+    <div className="mp-foot">
+      <a href="/store" className="mp-cta"><Package size={14} /> Browse All Stores</a>
+    </div>
+  </div>
+);
+
+const CommunityMega = () => (
+  <div className="mp">
+    <div className="mp-body">
+      <div className="mp-col">
+        <span className="mp-head">Explore</span>
+        <a className="mp-link" href="/artsays-community"><span className="mp-dot" style={{ background: "#8b5cf6" }} />Feed</a>
+        <a className="mp-link" href="/artsays-community/explore"><span className="mp-dot" style={{ background: "#8b5cf6" }} />Explore Creators</a>
+        <a className="mp-link" href="/artsays-community/live"><span className="mp-dot" style={{ background: "#8b5cf6" }} />Live Sessions</a>
+        <a className="mp-link" href="/challenge"><span className="mp-dot" style={{ background: "#8b5cf6" }} />Challenges</a>
+      </div>
+      <div className="mp-col">
+        <span className="mp-head">Membership</span>
+        <a className="mp-link" href="/artsays-community"><span className="mp-dot" />Free Tier</a>
+        <a className="mp-link" href="/artsays-community"><span className="mp-dot" />Creator Pro</a>
+        <a className="mp-link" href="/artsays-community"><span className="mp-dot" />Collector Club</a>
+      </div>
+      <div className="mp-col">
+        <span className="mp-head">Create</span>
+        <a className="mp-link" href="/artsays-community/create-post"><span className="mp-dot" style={{ background: "#f59e0b" }} />Create Post</a>
+        <a className="mp-link" href="/artsays-community/create-live"><span className="mp-dot" style={{ background: "#f59e0b" }} />Go Live</a>
+        <a className="mp-link" href="/artsays-community"><span className="mp-dot" style={{ background: "#f59e0b" }} />Collab Request</a>
+        <a className="mp-link" href="/artsays-community"><span className="mp-dot" style={{ background: "#f59e0b" }} />Promote Content</a>
+      </div>
+      <MegaAdCard
+        badge="Featured Creator"
+        badgeColor="#7c3aed"
+        tag="Digital Artist · 12K followers"
+        title="Arjun Das"
+        sub="Live in 30 min"
+        price="Free to join"
+        cta="Follow"
+        href="/artsays-community"
+      />
+    </div>
+    <div className="mp-foot">
+      <a href="/artsays-community" className="mp-cta"><Users size={14} /> Enter Community</a>
+    </div>
+  </div>
+);
+
+const LearnMega = () => (
+  <div className="mp">
+    <div className="mp-body">
+      <div className="mp-col">
+        <span className="mp-head">Guides</span>
+        <a className="mp-link" href="/how-to-buy"><span className="mp-dot" />How to Buy</a>
+        <a className="mp-link" href="/how-to-sell"><span className="mp-dot" />How to Sell</a>
+        <a className="mp-link" href="/how-to-resell"><span className="mp-dot" />How to Resell</a>
+        <a className="mp-link" href="/how-to-bid"><span className="mp-dot" />How to Bid</a>
+      </div>
+      <div className="mp-col">
+        <span className="mp-head">Resources</span>
+        <a className="mp-link" href="/blogs"><span className="mp-dot" />Blog</a>
+        <a className="mp-link" href="/faqs"><span className="mp-dot" />FAQs</a>
+        <a className="mp-link" href="/why-artsays"><span className="mp-dot" />Why Artsays</a>
+        <a className="mp-link" href="/privacy-policy"><span className="mp-dot" />Privacy Policy</a>
+      </div>
+      <div className="mp-col">
+        <span className="mp-head">Support</span>
+        <a className="mp-link" href="/faqs"><span className="mp-dot" />Help Center</a>
+        <a className="mp-link" href="/faqs"><span className="mp-dot" />Contact Support</a>
+        <a className="mp-link" href="/faqs"><span className="mp-dot" />Report an Issue</a>
+      </div>
+      <MegaAdCard
+        badge="New Guide"
+        badgeColor="#0ea5e9"
+        tag="Beginner Friendly"
+        title="Start Selling Your Art"
+        sub="Step-by-step for new artists"
+        price="Free"
+        cta="Read Now"
+        href="/how-to-sell"
+      />
+    </div>
+    <div className="mp-foot">
+      <a href="/blogs" className="mp-cta"><Star size={14} /> Visit Blog</a>
+    </div>
+  </div>
+);
+
+// ─────────────────────────────────────────────────────────────
+// SEARCH DROPDOWN
+// ─────────────────────────────────────────────────────────────
+const SEARCH_TABS = ["Artworks", "Artists", "Stores", "Community"];
+const TRENDING = ["Abstract Paintings", "Digital Sculpture", "Mandala Art", "Tribal Crafts", "NFT Art"];
+
+const SearchDropdown = ({ visible, query, setQuery, tab, setTab }) => {
+  if (!visible) return null;
+  return (
+    <div className="sdrop">
+      <div className="sdrop-tabs">
+        {SEARCH_TABS.map(t => (
+          <button key={t} className={`sdrop-tab ${tab === t ? "sdrop-tab-on" : ""}`} onClick={() => setTab(t)}>{t}</button>
+        ))}
+      </div>
+      <div className="sdrop-input-row">
+        <Search size={14} className="sdrop-icon" />
+        <input
+          autoFocus
+          type="text"
+          placeholder={`Search ${tab}...`}
+          className="sdrop-input"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+        />
+        {query && <button className="sdrop-clear" onClick={() => setQuery("")}><X size={12} /></button>}
+      </div>
+      <div className="sdrop-trending">
+        <span className="sdrop-trend-label">Trending</span>
+        {TRENDING.map(t => <a key={t} href="/art-gallery" className="sdrop-tag">{t}</a>)}
+      </div>
+    </div>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────
+// CREATE DROPDOWN (Artist / Seller)
+// ─────────────────────────────────────────────────────────────
+const CreateDrop = ({ usertype, onClose }) => (
+  <div className="cdrop">
+    <div className="cdrop-arrow" />
+    <a href="/artsays-community/create-post" className="cdrop-item" onClick={onClose}>
+      <Plus size={15} /> Create Post
+    </a>
+    <a href="/artsays-community/create-live" className="cdrop-item" onClick={onClose}>
+      <Video size={15} /> Go Live
+    </a>
+    {(usertype === "Artist" || usertype === "Seller") && (
+      <a
+        href={usertype === "Artist" ? "/artist/product/product-upload" : "/seller/product/product-upload"}
+        className="cdrop-item"
+        onClick={onClose}
+      >
+        <ShoppingCart size={15} /> Upload Product
+      </a>
+    )}
+  </div>
+);
+
+// ─────────────────────────────────────────────────────────────
+// NAV CONFIG
+// ─────────────────────────────────────────────────────────────
+const NAV_ITEMS = [
+  { key: "art",       label: "ART",       Mega: ArtMega,       href: "/art-gallery" },
+  { key: "bid",       label: "BID",       Mega: BidMega,       href: "/bid" },
+  { key: "stores",    label: "STORES",    Mega: StoresMega,    href: "/store" },
+  { key: "community", label: "COMMUNITY", Mega: CommunityMega, href: "/artsays-community" },
+  { key: "learn",     label: "LEARN",     Mega: LearnMega,     href: "/blogs" },
+];
+
+// ─────────────────────────────────────────────────────────────
+// MAIN NAVBAR
+// ─────────────────────────────────────────────────────────────
 const NavBar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [Usertype, setUserType] = useState(null);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [isToggled, setIsToggled] = useState(false);
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [user, setUser] = useState({});
-  // const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-  const userId = localStorage.getItem("userId");
+  const [isLoggedIn, setIsLoggedIn]       = useState(false);
+  const [Usertype, setUserType]           = useState(null);
+  const [showSidebar, setShowSidebar]     = useState(false);
+  const [showAvatarDrop, setShowAvatarDrop] = useState(false);
+  const [showCreate, setShowCreate]       = useState(false);
+  const [user, setUser]                   = useState({});
+  const [profile, setProfile]             = useState({});
+  const [loading, setLoading]             = useState(false);
+  const [activeMega, setActiveMega]       = useState(null);
+  const [showSearch, setShowSearch]       = useState(false);
+  const [searchQuery, setSearchQuery]     = useState("");
+  const [searchTab, setSearchTab]         = useState("Artworks");
+  const [scrolled, setScrolled]           = useState(false);
+
+  const megaTimer   = useRef(null);
+  const searchRef   = useRef(null);
+  const avatarRef   = useRef(null);
+  const createRef   = useRef(null);
+
+  const userId   = localStorage.getItem("userId");
   const userrole = localStorage.getItem("userrole");
   const navigate = useNavigate();
   const location = useLocation();
-  const isOnSocialMedia = location.pathname.startsWith("/artsays-community");
-  const [profile, setProfile] = useState({});
-  const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    if (!userId) {
-      setUser({});
-      setProfile({});
-      return;
-    }
+  const isOnCommunity = location.pathname.startsWith("/artsays-community");
 
-    const fetchUserData = async () => {
+  // scroll shadow
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // auth
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem("token"));
+    setUserType(localStorage.getItem("userType"));
+  }, []);
+
+  // user data
+  useEffect(() => {
+    if (!userId) { setUser({}); setProfile({}); return; }
+    (async () => {
       setLoading(true);
       try {
-        const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
-        setUser(result.data.user);
-      } catch (error) {
-        console.error("Fetching user Error", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    const fetchProfile = async () => {
-      const storedUserType = localStorage.getItem("userType");
-      if (storedUserType === "Super-Admin") return;
-      try {
-        const res = await getAPI(
-          `/api/social-media/profile/${userId}`,
-          {},
-          false,
-          true
-        );
-        setProfile(res.data.profile);
-      } catch (error) {
-        console.error("Fetching profile error", error);
-      }
-    };
-    fetchProfile();
-    fetchUserData();
+        const r = await getAPI(`/auth/userid/${userId}`, {}, true, false);
+        setUser(r.data.user);
+      } catch (e) { console.error(e); }
+      finally { setLoading(false); }
+    })();
+    if (localStorage.getItem("userType") !== "Super-Admin") {
+      getAPI(`/api/social-media/profile/${userId}`, {}, false, true)
+        .then(r => setProfile(r.data.profile))
+        .catch(() => {});
+    }
   }, [userId]);
 
-  const handleDashboardClick = (Usertype) => {
-    if (Usertype === "Artist") {
-      navigate("/artist/dashboard");
-    } else if (Usertype === "Super-Admin") {
-      navigate("/Super-Admin/dashboard");
-    } else if (Usertype === "Seller") {
-      navigate("/seller/dashboard");
-    }
+  // click outside
+  useEffect(() => {
+    const h = (e) => {
+      if (searchRef.current  && !searchRef.current.contains(e.target))  setShowSearch(false);
+      if (avatarRef.current  && !avatarRef.current.contains(e.target))  setShowAvatarDrop(false);
+      if (createRef.current  && !createRef.current.contains(e.target))  setShowCreate(false);
+    };
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
+  }, []);
+
+  const dashboardRoute = () => {
+    if (Usertype === "Artist")      navigate("/artist/dashboard");
+    else if (Usertype === "Seller") navigate("/seller/dashboard");
+    else if (Usertype === "Super-Admin") navigate("/Super-Admin/dashboard");
   };
 
-  const handleUserIconClick = (e) => {
-    e.stopPropagation();
-    setShowDropdown((prev) => !prev);
-  };
-  
   const handleSignOut = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userType");
-    localStorage.removeItem("email");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("profilePhoto");
-    localStorage.removeItem("username");
-    localStorage.removeItem("firstName");
-    localStorage.removeItem("lastName");
+    ["token","userType","email","userId","profilePhoto","username","firstName","lastName"]
+      .forEach(k => localStorage.removeItem(k));
     window.dispatchEvent(new Event("profilePhotoUpdated"));
     window.location.href = "/";
   };
 
-  useEffect(() => {
-    if (location.pathname.startsWith("/artsays-community")) {
-      setIsToggled(true);
-    } else {
-      setIsToggled(false);
-    }
-  }, [location.pathname]);
+  const openMega  = (key) => { clearTimeout(megaTimer.current); setActiveMega(key); };
+  const closeMega = ()    => { megaTimer.current = setTimeout(() => setActiveMega(null), 150); };
+  const keepMega  = ()    => clearTimeout(megaTimer.current);
 
-  // const handleToggle = () => {
-  //   if (isToggled) {
-  //     navigate("/");
-  //   } else {
-  //     navigate("/artsays-community");
-  //   }
-  // };
+  const avatarSrc = user.profilePhoto
+    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`
+    : DEFAULT_PROFILE_IMAGE;
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
-    const storedUserType = localStorage.getItem("userType");
-    setUserType(storedUserType);
-
-    const box = document.getElementById("searchBox");
-    const input = document.getElementById("searchInput");
-
-    const activateSearch = () => {
-      box?.classList.add("active");
-      input?.setAttribute("placeholder", "Paintings, Crafts...");
-      input?.focus();
-    };
-
-    const collapseSearchBox = () => {
-      box?.classList.remove("active");
-      if (input) {
-        input.value = "";
-        input.setAttribute("placeholder", "");
-        input.blur();
-      }
-    };
-
-    const handleClickOutside = (e) => {
-      const isClickInsideSearch = e.target.closest(".search-box-h");
-
-      if (!isClickInsideSearch) {
-        collapseSearchBox();
-      }
-
-      const isClickInsideDropdown = e.target.closest(".dropdown");
-      if (!isClickInsideDropdown) {
-        setShowDropdown(false);
-      }
-    };
-
-    const handleEscape = (e) => {
-      if (e.key === "Escape") collapseSearchBox();
-    };
-
-    box?.addEventListener("click", activateSearch);
-    document.addEventListener("click", handleClickOutside);
-    document.addEventListener("keydown", handleEscape);
-
-    // const toggleBtn = document.getElementById("mobileToggle");
-    // const sidebar = document.getElementById("mobileSidebar");
-    // const closeBtn = document.getElementById("closeSidebar");
-    // const overlay = document.getElementById("overlay1");
-
-    // const openSidebar = () => {
-    //   // sidebar?.classList.add("active");
-    //   overlay?.classList.add("active");
-    //   console.log("clicked on toggle for add");
-    // };
-
-    // const closeSidebar = () => {
-    //   sidebar?.classList.remove("active");
-    //   overlay?.classList.remove("active");
-    //   console.log("clicked on toggle for remove");
-
-    // };
-
-    // toggleBtn?.addEventListener("click", openSidebar);
-    // closeBtn?.addEventListener("click", closeSidebar);
-    // overlay?.addEventListener("click", closeSidebar);
-
-    return () => {
-      box?.removeEventListener("click", activateSearch);
-      document.removeEventListener("click", handleClickOutside);
-      document.removeEventListener("keydown", handleEscape);
-      // toggleBtn?.removeEventListener("click", openSidebar);
-      // closeBtn?.removeEventListener("click", closeSidebar);
-      // overlay?.removeEventListener("click", closeSidebar);
-    };
-  }, [isToggled]);
+  const isSuperAdminSub = Usertype === "Super-Admin" && userrole !== "super-admin";
 
   if (loading) return <HeaderSkeleton />;
+
   return (
-    <div className="w-full">
-      <header className="header-h">
-        <div className="">
-          <div className="flex items-center">
-            {/* Left Section */}
-            <div className="col-md-5 col-6 d-flex justify-content-end">
-              <div className="d-flex items-center">
-                <a className="nav-link-h me-3" href="/bid">
-                  BID
+    <div className="nav-root">
+
+      {/* ══════════════════ DESKTOP HEADER ══════════════════ */}
+      <header className={`nav-header ${scrolled ? "nav-header-scrolled" : ""}`}>
+        <div className="nav-inner">
+
+          {/* ── LEFT: nav links */}
+          <nav className="nav-links">
+            {NAV_ITEMS.map(({ key, label, Mega, href }) => (
+              <div
+                key={key}
+                className={`nav-item ${activeMega === key ? "nav-item-active" : ""}`}
+                onMouseEnter={() => openMega(key)}
+                onMouseLeave={closeMega}
+              >
+                <a href={href} className="nav-btn">
+                  {label}
+                  <ChevronDown size={10} className={`nav-chev ${activeMega === key ? "nav-chev-open" : ""}`} />
                 </a>
-                <a
-                  className="nav-link-h d-none d-md-inline-block me-3"
-                  href="/store"
-                >
-                  STORES
-                </a>
-                <a
-                  className="nav-link-h icon-link-h d-none d-md-inline-block me-3"
-                  href="/art-gallery"
-                >
-                  <i className="fas fa-store" />
-                </a>
-              </div>
-            </div>
-            {/* Logo Center */}
-            {isLoggedIn === false && (
-              <div className="col-md-2 col-12 text-center order-md-1 order-0">
-                <div className="logo-container-h">
-                  <a className="logo-h" href="/">
-                    <img src="/assets/home/logo.svg" alt="" />
-                  </a>
-                  {/* <div className="mega-menu">
-                    <div className="header-wrapper-m">
-                      <div className="corner left-corner" />
-                      <div className="scroll-container">
-                        <div className="header-bar-m">
-                          <div className="art-type active">Sculpture</div>
-                          <div className="art-type">Digital Art</div>
-                          <div className="art-type">Handmade Crafts</div>
-                          <div className="art-type">Painting</div>
-                          <div className="art-type">Pop Art</div>
-                          <div className="art-type">Abstract</div>
-                          <div className="art-type">Folk Art</div>
-                          <div className="art-type">Miniature Art</div>
-                          <div className="art-type">Modern Art</div>
-                          <div className="art-type">Traditional Art</div>
-                          <div className="art-type">Antique Crafts</div>
-                          <div className="art-type">Metal Sculpture</div>
-                          <div className="art-type">Wood Carving</div>
-                        </div>
-                      </div>
-                      <div className="corner right-corner" />
-                    </div>
-                    <div className="container-custom-m">
-                      <div className="sidebar-wrapper-m">
-                        <div className="sidebar-m">
-                          <button className="sidebar-btn-m active">
-                            Medium-Based
-                          </button>
-                          <button className="sidebar-btn-m">
-                            Style/Genre-Based
-                          </button>
-                          <button className="sidebar-btn-m">
-                            Subject-Based
-                          </button>
-                          <button className="sidebar-btn-m">
-                            Surface-Based
-                          </button>
-                          <button className="sidebar-btn-m">
-                            Cultural/Traditional Forms
-                          </button>
-                        </div>
-                      </div>
-                      <div className="table-section">
-                        <div className="table-wrapper table-responsive">
-                          <table className="mb-0">
-                            <tbody>
-                              <tr>
-                                <td>
-                                  <span className="hover-underline">
-                                    Abstract
-                                  </span>
-                                </td>
-                                <td>
-                                  <span className="hover-underline">
-                                    Pop Art
-                                  </span>
-                                </td>
-                                <td>
-                                  <span className="hover-underline">
-                                    Surrealism
-                                  </span>
-                                </td>
-                                <td>
-                                  <span className="hover-underline">
-                                    Minimalism
-                                  </span>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                        <div className="sales-support">
-                          <div id="supportText">Sales Support</div>
-                          <a
-                            href="/"
-                            style={{ textDecoration: "none", color: "white" }}
-                          >
-                            <span id="slider" className="align-content-center">
-                              Sales Support
-                            </span>
-                          </a>
-                        </div>
-                      </div>
-                      <div className="art-card position-relative overflow-hidden rounded-4 align-content-center">
-                        <img
-                          src={artwork}
-                          alt=""
-                          className="w-100 img-fluid card-image"
-                        />
-                        <div
-                          className="card-overlay position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-end p-3"
-                          style={{ textAlign: "left" }}
-                        >
-                          <div className="border-bottom border-white">
-                            <h5 className="text-white mb-1">
-                              Medieval Sculpture
-                            </h5>
-                            <p className="text-white-50 mb-1 small">
-                              Own the Exclusive art
-                            </p>
-                            <p className="text-white-50 small">
-                              Lorem ipsum dolor sit lala color amet, consectetur
-                            </p>
-                          </div>
-                          <div className="d-flex justify-content-between align-items-center mt-3">
-                            <span className="text-white fw-bold fs-6">
-                              ₹ 500.00
-                            </span>
-                            <div className="d-flex gap-2">
-                              <button className="btn-h btn-light btn-sm fs-6">
-                                Buy Now
-                              </button>
-                              <button className="btn-h btn-outline-light btn-sm rounded-circle fs-6">
-                                <i className="bi bi-send" />
-                              </button>
-                              <button className="btn-h btn-outline-light btn-sm rounded-circle fs-6">
-                                <i className="bi bi-bookmark" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div> */}
-                </div>
-              </div>
-            )}
-            {isLoggedIn === true && (
-              <div className="col-md-2 col-12 d-flex justify-content-center text-center order-md-1 order-0">
-                <a className="logo-h" href="/">
-                  <img src="/assets/home/logo.svg" alt="Logo" />
-                </a>
-              </div>
-            )}
-            {/* Right Section */}
-            <div className="col-md-5 col-6 order-md-2 order-1 d-flex justify-content-start">
-              <div className="d-flex align-items-center justify-content-end">
-                <div className="search-box-h me-3" id="searchBox">
-                  <input
-                    type="text"
-                    id="searchInput"
-                    className="search-input-h"
-                    placeholder="Paintings, Crafts..."
-                    aria-label="Search"
-                  />
-                  <i className="ri-search-line text-2xl font-bold search-icon-h" />
-                </div>
-                {Usertype === "Buyer" ? (
-                  <a
-                    className="nav-link-h icon-link-h me-3"
-                    onClick={() => navigate(`/my-account/my-cart/${userId}`)}
-                  >
-                    <i className="fas fa-shopping-cart" />
-                  </a>
-                ) : Usertype === "Artist" || Usertype === "Super-Admin" ? (
-                  <a className="nav-link-h me-3" href="/blogs">
-                    BLOG
-                  </a>
-                  ) : !isLoggedIn ? (
-                    <a 
-                      className="nav-link-h icon-link-h me-3" 
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => toast.info("Please login to access your cart.")}
-                    >
-                      <i className="fas fa-shopping-cart" />
-                    </a>
-                  ) : null}
-                {isLoggedIn === false && (
-                  <a className="nav-link-h btn-started-h ms-2" href="/login">
-                    GET STARTED
-                  </a>
-                )}
-                {isLoggedIn && (
-                  <div className="flex items-center">
-                    <div className="dropdown position-relative">
-                        <div
-                          className="ms-4 user-icon"
-                          style={{
-                            borderRadius: "50%",
-                            cursor: "pointer",
-                            border: "2px solid #3e2e22",
-                          }}
-                          onClick={handleUserIconClick}
-                        >
-                          <img
-                          src={
-                            user.profilePhoto
-                              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`
-                              : DEFAULT_PROFILE_IMAGE
-                          }
-                          className="rounded-circle avatar"
-                          alt="User Profile"
-                          style={{
-                            width: "40px",
-                            height: "40px",
-                            objectFit: "cover",
-                            borderRadius: "50%",
-                          }}
-                        />
-                      </div>
-                      {showDropdown && Usertype === "Buyer" && (
-                        <div
-                          className="dropdown-menu-h user-dropdown-h shadow"
-                          style={{
-                            display: "block",
-                            position: "absolute",
-                            background: "#fff",
-                            minWidth: "220px",
-                            boxShadow: "0 8px 16px rgba(0,0,0,0.2)",
-                            zIndex: 1,
-                          }}
-                        >
-                          <div className="dropdown-arrow-h" />
-                          <Link to="/my-account">
-                            <div
-                              className="dropdown-item-h"
-                              onClick={handleUserIconClick}
-                            >
-                              <i className="fas fa-user me-2" /> Your Account
-                            </div>
-                          </Link>
-                          {!isOnSocialMedia ? (
-                            <Link to="/artsays-community">
-                              <div
-                                className="dropdown-item-h"
-                                onClick={handleUserIconClick}
-                              >
-                                <img
-                                  alt="community-logo"
-                                  src={artLogo}
-                                  style={{
-                                    width: "20px",
-                                    height: "20px",
-                                    marginRight: "2px",
-                                  }}
-                                />
-                                Switch to Community
-                              </div>
-                            </Link>
-                          ) : (
-                            <Link to="/">
-                              <div
-                                className="dropdown-item-h"
-                                onClick={handleUserIconClick}
-                              >
-                                <img
-                                  src={AIcon}
-                                  alt="Artsays-Icon"
-                                  style={{
-                                    width: "16px",
-                                    height: "16px",
-                                    marginRight: "9px",
-                                  }}
-                                />
-                                Switch to Artsays
-                              </div>
-                            </Link>
-                          )}
-                          <Link to={"/my-account/my-orders"}>
-                            <div
-                              className="dropdown-item-h"
-                              onClick={handleUserIconClick}
-                            >
-                              <i className="fas fa-box me-2" /> Orders
-                            </div>
-                          </Link>
-                          <Link to={"/my-account/buyer-wallet"}>
-                            <div
-                              className="dropdown-item-h"
-                              onClick={handleUserIconClick}
-                            >
-                              <i className="fas fa-wallet me-2" /> Wallet
-                            </div>
-                          </Link>
-                          <Link
-                            className="dropdown-item-h"
-                            to={"/"}
-                            onClick={handleUserIconClick}
-                          >
-                            <i className="fas fa-bell me-2" /> Notification
-                          </Link>
-                            <Link to={`/my-account/wishlist/${userId}`}>
-                              <div
-                                className="dropdown-item-h"
-                                onClick={handleUserIconClick}
-                              >
-                                <i className="fas fa-heart me-2" /> Wishlist
-                              </div>
-                            </Link>
-                          <div
-                            className="dropdown-item-h"
-                            onClick={handleSignOut}
-                          >
-                            <i className="fas fa-sign-out-alt me-2" /> Logout
-                          </div>
-                        </div>
-                      )}
-                      {showDropdown && Usertype !== "Buyer" && (
-                        <div
-                          className="dropdown-menu-h user-dropdown-h shadow"
-                          style={{
-                            display: "block",
-                            position: "absolute",
-                            background: "#fff",
-                            minWidth: "190px",
-                            boxShadow: "0 8px 16px rgba(0,0,0,0.2)",
-                            zIndex: 1,
-                          }}
-                        >
-                            <div className="dropdown-arrow-h" />
-                            <div className="dropdown-item-group-h">
-                              <div
-                                className="dropdown-item-h"
-                                onClick={() => {
-                                  handleDashboardClick(Usertype);
-                                }}
-                              >
-                                <i className="fas fa-tachometer-alt me-1" />
-                                My Dashboard
-                              </div>
-                {!(Usertype === "Super-Admin" && userrole !== "super-admin") && (
-                                  !isOnSocialMedia ? (
-                                    <Link
-                                      className="dropdown-item-h"
-                                      to={"/artsays-community"}
-                                      onClick={handleUserIconClick}
-                                    >
-                                      <img
-                                        alt="community-logo"
-                                        src={artLogo}
-                                        style={{
-                                          width: "20px",
-                                          height: "20px",
-                                          marginRight: "2px",
-                                        }}
-                                      />
-                                      Switch to Community
-                                    </Link>
-                                  ) : (
-                                    <Link
-                                      className="dropdown-item-h"
-                                      to={"/"}
-                                      onClick={handleUserIconClick}
-                                    >
-                                      <img
-                                        src={AIcon}
-                                        alt="Artsays-Icon"
-                                        style={{
-                                          width: "16px",
-                                          height: "16px",
-                                          marginRight: "7px",
-                                        }}
-                                      />
-                                      Switch to Artsays
-                                    </Link>
-                                  )
-                                )}
-                              <Link
-                              className="dropdown-item-h"
-                              onClick={handleUserIconClick}
-                            >
-                              <i className="fas fa-bell me-2" /> Notifications
-                            </Link>
-                            <div
-                              className="dropdown-item-h"
-                              onClick={handleSignOut}
-                            >
-                              <i className="fas fa-sign-out-alt me-2" /> Logout
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                {activeMega === key && (
+                  <div className="mega-wrap" onMouseEnter={keepMega} onMouseLeave={closeMega}>
+                    <Mega />
                   </div>
                 )}
               </div>
+            ))}
+          </nav>
+
+          {/* ── CENTER: logo */}
+          <a href="/" className="nav-logo">
+            <img src="/assets/home/logo.svg" alt="Artsays" height={42} />
+          </a>
+
+          {/* ── RIGHT: search + actions */}
+          <div className="nav-actions">
+
+            {/* Search */}
+            <div className="nav-search-wrap" ref={searchRef}>
+              <button
+                className={`nav-search-btn ${showSearch ? "nav-search-open" : ""}`}
+                onClick={() => setShowSearch(s => !s)}
+                aria-label="Search"
+              >
+                <Search size={16} />
+                <span className="nav-search-label">Search</span>
+              </button>
+              <SearchDropdown
+                visible={showSearch}
+                query={searchQuery}
+                setQuery={setSearchQuery}
+                tab={searchTab}
+                setTab={setSearchTab}
+              />
             </div>
+
+            {/* ── Guest */}
+            {!isLoggedIn && (
+              <>
+                <button className="nav-icon-btn" onClick={() => toast.info("Please login to access your cart.")} title="Cart">
+                  <ShoppingCart size={18} />
+                </button>
+                <a href="/login" className="nav-cta-btn">Get Started</a>
+              </>
+            )}
+
+            {/* ── Buyer: cart */}
+            {isLoggedIn && Usertype === "Buyer" && (
+              <button className="nav-icon-btn" onClick={() => navigate(`/my-account/my-cart/${userId}`)} title="Cart">
+                <ShoppingCart size={18} />
+              </button>
+            )}
+
+            {/* ── Artist / Seller: CREATE */}
+            {isLoggedIn && (Usertype === "Artist" || Usertype === "Seller") && (
+              <div className="nav-create-wrap" ref={createRef}>
+                <button className="nav-create-btn" onClick={() => setShowCreate(s => !s)}>
+                  <Plus size={14} /> Create
+                </button>
+                {showCreate && <CreateDrop usertype={Usertype} onClose={() => setShowCreate(false)} />}
+              </div>
+            )}
+
+            {/* ── Super-Admin: blog */}
+            {isLoggedIn && Usertype === "Super-Admin" && (
+              <a href="/blogs" className="nav-blog-link">Blog</a>
+            )}
+
+            {/* ── Avatar dropdown */}
+            {isLoggedIn && (
+              <div className="nav-avatar-wrap" ref={avatarRef}>
+                <button className="nav-avatar-btn" onClick={() => setShowAvatarDrop(s => !s)}>
+                  <img src={avatarSrc} className="nav-avatar-img" alt="Profile" />
+                  <ChevronDown size={12} className={`nav-av-chev ${showAvatarDrop ? "nav-chev-open" : ""}`} />
+                </button>
+
+                {showAvatarDrop && (
+                  <div className="av-drop">
+                    <div className="av-drop-arrow" />
+
+                    {/* profile row */}
+                    <div className="av-profile">
+                      <img src={avatarSrc} className="av-avatar" alt="" />
+                      <div>
+                        <p className="av-name">{user.name} {user.lastName}</p>
+                        <p className="av-role">{Usertype}</p>
+                      </div>
+                    </div>
+                    <div className="av-sep" />
+
+                    {/* Buyer */}
+                    {Usertype === "Buyer" && (<>
+                      <Link to="/my-account"                              className="av-item" onClick={() => setShowAvatarDrop(false)}><FaUser size={13} /> My Account</Link>
+                      <Link to="/my-account/my-orders"                   className="av-item" onClick={() => setShowAvatarDrop(false)}><BsBoxSeam size={13} /> Orders</Link>
+                      <Link to={`/my-account/wishlist/${userId}`}        className="av-item" onClick={() => setShowAvatarDrop(false)}><HiOutlineHeart size={13} /> Wishlist</Link>
+                      <Link to="/my-account/buyer-wallet"                className="av-item" onClick={() => setShowAvatarDrop(false)}><IoWalletOutline size={13} /> Wallet</Link>
+                      <Link to="/my-account/notification-preferences"   className="av-item" onClick={() => setShowAvatarDrop(false)}><IoMdNotificationsOutline size={13} /> Notifications</Link>
+                    </>)}
+
+                    {/* Artist / Seller */}
+                    {(Usertype === "Artist" || Usertype === "Seller") && (<>
+                      <div className="av-item" onClick={() => { dashboardRoute(); setShowAvatarDrop(false); }}><FaUser size={13} /> My Dashboard</div>
+                      <Link to={`/artsays-community/profile/${userId}`} className="av-item" onClick={() => setShowAvatarDrop(false)}><Users size={13} /> Community Profile</Link>
+                      <Link to={Usertype === "Artist" ? "/artist/dashboard" : "/seller/dashboard"} className="av-item" onClick={() => setShowAvatarDrop(false)}><IoWalletOutline size={13} /> Wallet / Earnings</Link>
+                      <Link to="/artsays-community/notification"        className="av-item" onClick={() => setShowAvatarDrop(false)}><IoMdNotificationsOutline size={13} /> Notifications</Link>
+                    </>)}
+
+                    {/* Super-Admin */}
+                    {Usertype === "Super-Admin" && (<>
+                      <div className="av-item" onClick={() => { dashboardRoute(); setShowAvatarDrop(false); }}><FaUser size={13} /> Dashboard</div>
+                      <Link to="/artsays-community/notification" className="av-item" onClick={() => setShowAvatarDrop(false)}><IoMdNotificationsOutline size={13} /> Notifications</Link>
+                    </>)}
+
+                    <div className="av-sep" />
+
+                    {/* Community switch */}
+                    {!isSuperAdminSub && (
+                      <Link
+                        to={isOnCommunity ? "/" : "/artsays-community"}
+                        className="av-item av-community"
+                        onClick={() => setShowAvatarDrop(false)}
+                      >
+                        <img src={isOnCommunity ? AIcon : artLogo} alt="" style={{ width: 14, height: 14, objectFit: "contain" }} />
+                        {isOnCommunity ? "Switch to Artsays" : "Switch to Community"}
+                      </Link>
+                    )}
+
+                    <div className="av-item av-logout" onClick={handleSignOut}><BiLogOut size={13} /> Logout</div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </header>
 
-      {!isLoggedIn && (
-        <nav className="navbar-h navbar-light-h w-full shadow-sm px-3 py-2 d-flex justify-content-between align-items-center">
-          <a href="/" className="navbar-brand-h mb-0 h1">
-            <img
-              src="/assets/home/logo.svg"
-              style={{ height: "40px", objectFit: "contain" }}
-              alt=""
-            />
-          </a>
-          <a className="nav-link-h btn-started-h" href="/login">
-            GET STARTED
-          </a>
-        </nav>
-      )}
-      {isLoggedIn && (
-        <>
-          <nav className="navbar-h navbar-light-h w-full shadow-sm px-3 py-2 d-flex justify-content-between align-items-center">
-            <div>
-              <a href="/" className="navbar-brand-h mb-0 h1">
-                <img
-                  src="/assets/home/logo.svg"
-                  alt="Artsays Logo"
-                  style={{ height: "40px", objectFit: "contain" }}
-                />
-              </a>
-            </div>
-            <div className="flex items-center space-x-4 cursor-pointer">
-              <Bell className="w-5 h-5 text-gray-700" />
-              <div>
-                <Menu
-                  className="w-5 h-5 text-gray-700"
-                  id="mobileToggle"
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                />
-                {/* {
-                showProfileMenu && (
-                  <>
-                    <a className="dropdown-item-h" onClick={() => navigate("/artsays-community")}>
-                      <img 
-                        alt="community-logo" 
-                        src={artLogo} 
-                        tyle={{width: '20px', height: '20px', marginRight: '2px'}}/>Switch to Community
-                    </a>
-                    </>
-                )
-              } */}
-              </div>
-            </div>
-          </nav>
-          <div
-            className={`profile-menu-h ${showProfileMenu ? "active" : ""}`}
-            id="mobileSidebar"
-          >
-            <div className="profile-header-h">
-              <button
-                className="close-btn-h"
-                id="closeSidebar"
-                onClick={() => setShowProfileMenu(!showProfileMenu)}
-              >
-                &times;
+      {/* ══════════════════ MOBILE TOP BAR ══════════════════ */}
+      <nav className="mob-bar">
+        <a href="/" className="mob-logo">
+          <img src="/assets/home/logo.svg" alt="Artsays" height={32} />
+        </a>
+        <div className="mob-bar-right">
+          {isLoggedIn && (
+            <button className="mob-icon-btn" onClick={() => navigate("/artsays-community/notification")}>
+              <IoMdNotificationsOutline size={22} />
+            </button>
+          )}
+          {isLoggedIn ? (
+            <button className="mob-menu-btn" onClick={() => setShowSidebar(true)}>
+              <img src={avatarSrc} className="mob-av-img" alt="Profile" />
+            </button>
+          ) : (
+            <>
+              <a href="/login" className="nav-cta-btn" style={{ fontSize: 12, padding: "6px 14px" }}>Get Started</a>
+              <button className="mob-menu-btn" onClick={() => setShowSidebar(true)}>
+                <Menu size={22} />
               </button>
-              <img
-                src={
-                  user.profilePhoto
-                    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`
-                    : DEFAULT_PROFILE_IMAGE
-                }
-                className="rounded-circle avatar"
-                alt="User Profile"
-                style={{
-                  width: "131px",
-                  height: "131px",
-                  top: "65.89",
-                  left: "74.5",
-                  objectFit: "cover",
-                  borderRadius: "50%",
-                  display: "block",
-                  margin: "0 auto",
-                }}
-              />
-              <div className="profile-name-container">
-                <span className="profile-name-h">
-                  {user.name} {user.lastName}
-                </span>
-                {profile.verified?.length > 0 && (
-                  <img
-                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${
-                      profile.verified[profile.verified.length - 1]?.badgeImage
-                    }`}
-                    className="inline-block ml-1 w-6 h-6 object-contain"
-                    alt={
-                      profile.verified[profile.verified.length - 1]
-                        ?.badgeName || "badge"
-                    }
-                    title={
-                      profile.verified[profile.verified.length - 1]?.badgeName
-                    }
-                  />
-                )}{" "}
-              </div>
+            </>
+          )}
+        </div>
+      </nav>
+
+      {/* ══════════════════ MOBILE SIDEBAR ══════════════════ */}
+      <div className={`mob-sidebar ${showSidebar ? "mob-sidebar-open" : ""}`}>
+        {/* sidebar header */}
+        <div className="mob-sb-head">
+          <button className="mob-sb-close" onClick={() => setShowSidebar(false)}>
+            <X size={20} />
+          </button>
+          <img src={avatarSrc} className="mob-sb-av" alt="Profile" />
+          {isLoggedIn ? (
+            <div className="mob-sb-info">
+              <span className="mob-sb-name">{user.name} {user.lastName}</span>
+              {profile.verified?.length > 0 && (
+                <img
+                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]?.badgeImage}`}
+                  style={{ width: 18, height: 18, objectFit: "contain" }}
+                  alt="badge"
+                />
+              )}
+              <span className="mob-sb-role">{Usertype}</span>
             </div>
-            {Usertype === "Seller" ||
-            Usertype === "Artist" ||
-            Usertype === "Super-Admin" ? (
-              <div className="profile-content-h">
-                <div
-                  className="profile-item-h pl-4"
-                  onClick={() => {
-                    handleDashboardClick(Usertype);
-                  }}
-                >
-                  <i className="bi bi-person-fill" />
-                  <span>My Dashboard</span>
-                </div>
-                    {!(Usertype === "Super-Admin" && userrole !== "super-admin") && (
-                      !isOnSocialMedia ? (
-                        <Link to="/artsays-community">
-                          <div
-                            className="profile-item-h pl-4"
-                            onClick={() => setShowProfileMenu(!showProfileMenu)}
-                          >
-                            <img
-                              alt="community-logo"
-                              src={artLogo}
-                              style={{
-                                width: "24px",
-                                height: "24px",
-                                marginRight: "10px",
-                              }}
-                            />
-                            Switch to Community
-                          </div>
-                        </Link>
-                      ) : (
-                        <Link to={"/"}>
-                          <div
-                            className="profile-item-h pl-4"
-                            onClick={() => setShowProfileMenu(!showProfileMenu)}
-                          >
-                            <img
-                              src={AIcon}
-                              alt="Artsays-Icon"
-                              style={{
-                                width: "16px",
-                                height: "16px",
-                                marginRight: "10px",
-                              }}
-                            />
-                            Switch to Artsays
-                          </div>
-                        </Link>
-                      )
-                    )}
+          ) : (
+            <p className="mob-sb-name" style={{ marginTop: 8 }}>Welcome to Artsays</p>
+          )}
+        </div>
 
-                  <Link>
-                  <div className="profile-item-h">
-                    <i className="bi bi-patch-check-fill" />
-                    <span>Account Verification</span>
-                  </div>
-                </Link>
-                <Link>
-                  <div className="profile-item-h">
-                    <i className="bi bi-lock-fill" />
-                    <span>Security and Agreements</span>
-                  </div>
-                </Link>
-                <Link>
-                  <div className="profile-item-h">
-                    <i className="bi bi-question-circle" />
-                    <span>Help</span>
-                  </div>
-                </Link>
-                <Link
-                  to={"/privacy-policy"}
-                  className="profile-item-h"
-                  onClick={() => {
-                    handleDashboardClick(Usertype);
-                  }}
-                >
-                  <i className="bi bi-shield-shaded" />
-                  <span>Privacy Center</span>
-                </Link>
+        {/* sidebar body */}
+        <div className="mob-sb-body">
 
-                <div className="profile-item-h" onClick={handleSignOut}>
-                  <i className="bi bi-box-arrow-left" />
-                  <span>Logout</span>
-                </div>
-              </div>
-            ) : (
-              <div className="profile-content-h">
-                <Link
-                  className="profile-item-h"
-                  to="/my-account"
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                >
-                  <FaUser style={{ marginRight: "15px", marginLeft: "6px" }} />
-                  <span>My Account</span>
-                </Link>
-                {/* <div className="profile-item-h">
-                  <a className="dropdown-item-h" onClick={() => navigate("/")}>
-                    <span style={{ display: "flex", alignItems: "center" }}>
-                      <img
-                        src={AIcon}
-                        className="icon-sidebar"
-                        alt="Artsays-Icon"
-                        style={{
-                          width: "16px",
-                          height: "16px",
-                          marginRight: "15px",
-                          marginLeft: "4px",
-                        }}
-                      />
-                      Switch to Artsays
-                    </span>
-                  </a>
-                </div> */}
-                <Link
-                  to={"/my-account/art-gallery"}
-                  className="profile-item-h"
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                >
-                  <MdLibraryAdd className="icon-sidebar" />
-                  <span>Art Gallery</span>
-                </Link>
-                <Link
-                  to={"/bid"}
-                  className="profile-item-h"
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                >
-                  <RiAuctionFill className="icon-sidebar" />
-                  <span>Bid</span>
-                </Link>
-                <Link
-                  to={"/store"}
-                  className="profile-item-h"
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                >
-                  <PiHandbagBold className="icon-sidebar" />
-                  <span>Store</span>
-                </Link>
-                <Link
-                  to={"/my-account/my-cart"}
-                  className="profile-item-h"
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                >
-                  <BiCart className="icon-sidebar" />
-                  <span>Cart</span>
-                </Link>
-                <Link
-                  className="profile-item-h"
-                  to={"/my-account/buyer-wallet"}
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                >
-                  <IoWalletOutline className="icon-sidebar" />
-                  <span>Wallet</span>
-                </Link>
-                <Link
-                  className="profile-item-h"
-                  to={"/my-account/notification-preferences"}
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                >
-                  <IoMdNotificationsOutline className="icon-sidebar" />
-                  <span>Notification and Preferences</span>
-                </Link>
-                <Link
-                  className="profile-item-h"
-                  to={"/my-account/wishlist"}
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                >
-                  <HiOutlineHeart className="icon-sidebar" />
-                  <span>Wishlist</span>
-                </Link>
-                <Link
-                  className="profile-item-h"
-                  to={"/my-account/my-orders"}
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                >
-                  <BsBoxSeam className="icon-sidebar" />
-                  <span>Orders</span>
-                </Link>
-                <Link
-                  className="profile-item-h"
-                  to={"/my-account/manage-address"}
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                >
-                  <RiMapPin2Line className="icon-sidebar" />
-                  <span>Manage Address</span>
-                </Link>
-                <Link
-                  className="profile-item-h"
-                  to={"/my-account/payment-method"}
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                >
-                  <RiMoneyRupeeCircleLine className="icon-sidebar" />
-                  <span>Payment Methods</span>
-                </Link>
-                <Link
-                  className="profile-item-h"
-                  to={"/my-account/password-manager"}
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                >
-                  <MdOutlineSecurity className="icon-sidebar" />
-                  <span>Password Manager</span>
-                </Link>
-                <Link
-                  className="profile-item-h"
-                  to={"/my-account/account-verification"}
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                >
-                  <MdVerified className="icon-sidebar" />
-                  <span>Account Verification</span>
-                </Link>
-                <Link
-                  className="profile-item-h"
-                  to={"/my-account/bank-payment-details"}
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                >
-                  <CiCreditCard1  className="icon-sidebar" />
-                  <span>Bank Payment Details</span>
-                </Link>
+          {/* Guest */}
+          {!isLoggedIn && (<>
+            <a href="/art-gallery"      className="mob-item" onClick={() => setShowSidebar(false)}><MdLibraryAdd className="mob-icon" /> Art Gallery</a>
+            <a href="/bid"              className="mob-item" onClick={() => setShowSidebar(false)}><RiAuctionFill className="mob-icon" /> Bid</a>
+            <a href="/store"            className="mob-item" onClick={() => setShowSidebar(false)}><PiHandbagBold className="mob-icon" /> Store</a>
+            <a href="/artsays-community" className="mob-item" onClick={() => setShowSidebar(false)}><img src={artLogo} className="mob-icon" alt="" style={{ width: 18 }} /> Community</a>
+            <a href="/blogs"            className="mob-item" onClick={() => setShowSidebar(false)}><Star size={18} className="mob-icon" /> Blog</a>
+            <div className="mob-sep" />
+            <a href="/login"            className="mob-item mob-item-login" onClick={() => setShowSidebar(false)}><FaUser className="mob-icon" /> Login / Sign Up</a>
+          </>)}
 
-                <Link
-                  to={"my-account/social-media-promotion"}
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                >
-                  <div className="profile-item-h flex">
-                    <FaShareAlt  className="icon-sidebar" />
-                    <span>Social Media Promotion</span>
-                  </div>
-                </Link>
-                <Link
-                  to={"my-account/custom-request"}
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                >
-                  <div className="profile-item-h">
-                    <FaTools
-                      className="icon-sidebar"
-                      size={20}
-                      style={{ marginRight: "14px" }}
-                    />
-                    <span>Custom Request</span>
-                  </div>
-                </Link>
-                <Link
-                  to={"my-account/security-agreements"}
-                  className="profile-item-h"
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                >
-                  <RiLockPasswordLine className="icon-sidebar" />
-                  <span>Security and Agreements</span>
-                </Link>
+          {/* Buyer */}
+          {isLoggedIn && Usertype === "Buyer" && (<>
+            <Link to="/my-account"                               className="mob-item" onClick={() => setShowSidebar(false)}><FaUser className="mob-icon" /> My Account</Link>
+            <Link to="/art-gallery"                              className="mob-item" onClick={() => setShowSidebar(false)}><MdLibraryAdd className="mob-icon" /> Art Gallery</Link>
+            <Link to="/bid"                                      className="mob-item" onClick={() => setShowSidebar(false)}><RiAuctionFill className="mob-icon" /> Bid</Link>
+            <Link to="/store"                                    className="mob-item" onClick={() => setShowSidebar(false)}><PiHandbagBold className="mob-icon" /> Store</Link>
+            <Link to={`/my-account/my-cart/${userId}`}          className="mob-item" onClick={() => setShowSidebar(false)}><BiCart className="mob-icon" /> Cart</Link>
+            <Link to="/my-account/my-orders"                    className="mob-item" onClick={() => setShowSidebar(false)}><BsBoxSeam className="mob-icon" /> Orders</Link>
+            <Link to="/my-account/buyer-wallet"                 className="mob-item" onClick={() => setShowSidebar(false)}><IoWalletOutline className="mob-icon" /> Wallet</Link>
+            <Link to={`/my-account/wishlist/${userId}`}         className="mob-item" onClick={() => setShowSidebar(false)}><HiOutlineHeart className="mob-icon" /> Wishlist</Link>
+            <Link to="/my-account/manage-address"               className="mob-item" onClick={() => setShowSidebar(false)}><RiMapPin2Line className="mob-icon" /> Manage Address</Link>
+            <Link to="/my-account/payment-method"               className="mob-item" onClick={() => setShowSidebar(false)}><RiMoneyRupeeCircleLine className="mob-icon" /> Payment Methods</Link>
+            <Link to="/my-account/password-manager"             className="mob-item" onClick={() => setShowSidebar(false)}><MdOutlineSecurity className="mob-icon" /> Password Manager</Link>
+            <Link to="/my-account/account-verification"         className="mob-item" onClick={() => setShowSidebar(false)}><MdVerified className="mob-icon" /> Account Verification</Link>
+            <Link to="/my-account/bank-payment-details"         className="mob-item" onClick={() => setShowSidebar(false)}><CiCreditCard1 className="mob-icon" /> Bank Payment Details</Link>
+            <Link to="my-account/social-media-promotion"        className="mob-item" onClick={() => setShowSidebar(false)}><FaShareAlt className="mob-icon" /> Social Media Promotion</Link>
+            <Link to="my-account/custom-request"                className="mob-item" onClick={() => setShowSidebar(false)}><FaTools className="mob-icon" /> Custom Request</Link>
+            <Link to="my-account/security-agreements"           className="mob-item" onClick={() => setShowSidebar(false)}><RiLockPasswordLine className="mob-icon" /> Security & Agreements</Link>
+            <div className="mob-sep" />
+            <Link to={isOnCommunity ? "/" : "/artsays-community"} className="mob-item mob-item-comm" onClick={() => setShowSidebar(false)}>
+              <img src={isOnCommunity ? AIcon : artLogo} style={{ width: 18, marginRight: 10 }} alt="" />
+              {isOnCommunity ? "Switch to Artsays" : "Switch to Community"}
+            </Link>
+            <div className="mob-item mob-item-logout" onClick={handleSignOut}><BiLogOut className="mob-icon" /> Logout</div>
+          </>)}
 
-                {!isOnSocialMedia ? (
-                  <Link to="/artsays-community">
-                    <div
-                      className="profile-item-h"
-                      onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    >
-                      <img
-                        alt="community-logo"
-                        src={artLogo}
-                        style={{
-                          width: "24px",
-                          height: "24px",
-                          marginRight: "10px",
-                        }}
-                      />
-                      Switch to Community
-                    </div>
-                  </Link>
-                ) : (
-                  <Link to={"/"}>
-                    <div
-                      className="profile-item-h"
-                      onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    >
-                      <img
-                        src={AIcon}
-                        alt="Artsays-Icon"
-                        style={{
-                          width: "16px",
-                          height: "16px",
-                          marginRight: "10px",
-                        }}
-                      />
-                      Switch to Artsays
-                    </div>
-                  </Link>
-                )}
-                <div className="profile-item-h" onClick={handleSignOut}>
-                  <BiLogOut className="icon-sidebar" />
-                  <span>Logout</span>
-                </div>
-              </div>
+          {/* Artist / Seller */}
+          {isLoggedIn && (Usertype === "Artist" || Usertype === "Seller") && (<>
+            <div className="mob-item" onClick={() => { dashboardRoute(); setShowSidebar(false); }}><FaUser className="mob-icon" /> My Dashboard</div>
+            <Link to="/artsays-community/create-post"  className="mob-item" onClick={() => setShowSidebar(false)}><Plus size={18} className="mob-icon" /> Create Post</Link>
+            <Link to={Usertype === "Artist" ? "/artist/product/product-upload" : "/seller/product/product-upload"} className="mob-item" onClick={() => setShowSidebar(false)}><ShoppingCart size={18} className="mob-icon" /> Upload Product</Link>
+            <Link to="/artsays-community/create-live"  className="mob-item" onClick={() => setShowSidebar(false)}><FaVideo size={18} className="mob-icon" /> Go Live</Link>
+            <Link to="/artsays-community"              className="mob-item" onClick={() => setShowSidebar(false)}><img src={artLogo} className="mob-icon" alt="" style={{ width: 18 }} /> Community</Link>
+            <Link to="/artsays-community/explore"      className="mob-item" onClick={() => setShowSidebar(false)}><Compass size={18} className="mob-icon" /> Explore Creators</Link>
+            <Link to="/blogs"                          className="mob-item" onClick={() => setShowSidebar(false)}><MdLibraryAdd className="mob-icon" /> Blog</Link>
+            <div className="mob-sep" />
+            {!isSuperAdminSub && (
+              <Link to={isOnCommunity ? "/" : "/artsays-community"} className="mob-item mob-item-comm" onClick={() => setShowSidebar(false)}>
+                <img src={isOnCommunity ? AIcon : artLogo} style={{ width: 18, marginRight: 10 }} alt="" />
+                {isOnCommunity ? "Switch to Artsays" : "Switch to Community"}
+              </Link>
             )}
-          </div>
-          <div
-            className={`overlay-h ${showProfileMenu ? "active" : ""}`}
-            id="overlay1"
-            onClick={() => setShowProfileMenu(!showProfileMenu)}
-          />
-        </>
-      )}
+            <div className="mob-item mob-item-logout" onClick={handleSignOut}><BiLogOut className="mob-icon" /> Logout</div>
+          </>)}
+
+          {/* Super-Admin */}
+          {isLoggedIn && Usertype === "Super-Admin" && (<>
+            <div className="mob-item" onClick={() => { dashboardRoute(); setShowSidebar(false); }}><FaUser className="mob-icon" /> My Dashboard</div>
+            <Link to="/blogs" className="mob-item" onClick={() => setShowSidebar(false)}><MdLibraryAdd className="mob-icon" /> Blog</Link>
+            <div className="mob-sep" />
+            {!isSuperAdminSub && (
+              <Link to={isOnCommunity ? "/" : "/artsays-community"} className="mob-item mob-item-comm" onClick={() => setShowSidebar(false)}>
+                <img src={isOnCommunity ? AIcon : artLogo} style={{ width: 18, marginRight: 10 }} alt="" />
+                {isOnCommunity ? "Switch to Artsays" : "Switch to Community"}
+              </Link>
+            )}
+            <div className="mob-item mob-item-logout" onClick={handleSignOut}><BiLogOut className="mob-icon" /> Logout</div>
+          </>)}
+        </div>
+      </div>
+
+      {/* Overlay */}
+      <div className={`mob-overlay ${showSidebar ? "mob-overlay-on" : ""}`} onClick={() => setShowSidebar(false)} />
+
+      {/* ══════════════════ MOBILE BOTTOM NAV ══════════════════ */}
+      <nav className="mob-bottom">
+        <a href="/"               className={`mbn ${location.pathname === "/" ? "mbn-on" : ""}`}>
+          <Home size={20} /><span>Home</span>
+        </a>
+        <a href="/art-gallery"    className={`mbn ${["/art-gallery", "/bid", "/store"].some(p => location.pathname.startsWith(p)) ? "mbn-on" : ""}`}>
+          <Compass size={20} /><span>Explore</span>
+        </a>
+        <a href="/artsays-community" className={`mbn ${isOnCommunity ? "mbn-on" : ""}`}>
+          <Users size={20} /><span>Community</span>
+        </a>
+        {isLoggedIn && Usertype === "Buyer" && (
+          <button className="mbn" onClick={() => navigate(`/my-account/my-cart/${userId}`)}>
+            <ShoppingCart size={20} /><span>Cart</span>
+          </button>
+        )}
+        {isLoggedIn && (Usertype === "Artist" || Usertype === "Seller") && (
+          <a href="/artsays-community/create-post" className="mbn">
+            <Plus size={20} /><span>Create</span>
+          </a>
+        )}
+        {(!isLoggedIn || Usertype === "Super-Admin") && (
+          <a href="/blogs" className={`mbn ${location.pathname.startsWith("/blogs") ? "mbn-on" : ""}`}>
+            <MdLibraryAdd size={20} /><span>Blog</span>
+          </a>
+        )}
+        <button className="mbn" onClick={() => isLoggedIn ? setShowSidebar(true) : navigate("/login")}>
+          {isLoggedIn
+            ? <img src={avatarSrc} className="mbn-av" alt="" />
+            : <User size={20} />
+          }
+          <span>{isLoggedIn ? "Profile" : "Login"}</span>
+        </button>
+      </nav>
     </div>
   );
 };
 
 export default NavBar;
-

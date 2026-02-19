@@ -357,10 +357,10 @@ const ArtGalleryContent = () => {
                         </div>
 
                         <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
-                          <div className="flex flex-col">
-                            {hasDiscount && <span className="text-sm text-gray-400 line-through font-bold">₹{product.marketPrice.toLocaleString()}</span>}
-                            <span className="text-2xl font-black text-gray-900 tracking-tighter">₹{displayPrice.toLocaleString()}</span>
-                          </div>
+                              <div className="flex flex-col">
+                              {hasDiscount && product.marketPrice != null && <span className="text-sm text-gray-400 line-through font-bold">₹{product.marketPrice.toLocaleString()}</span>}
+                              <span className="text-2xl font-black text-gray-900 tracking-tighter">₹{(displayPrice ?? 0).toLocaleString()}</span>
+                            </div>
                           {hasDiscount && (
                             <div className="bg-red-50 text-[#E74C3C] px-3 py-1.5 rounded-2xl border border-red-100/50 shadow-sm"><span className="text-[10px] font-black uppercase tracking-tighter leading-none">{discountPercent}% OFF</span></div>
                           )}
