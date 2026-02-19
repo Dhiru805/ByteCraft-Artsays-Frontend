@@ -20,6 +20,7 @@ const Sidebar = () => {
   const userType = localStorage.getItem("userType");
   const [loading, setLoading] = useState(true);
   const isBuyer = userType === "Buyer";
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const hasValidUsername =
     typeof username === "string" &&
@@ -40,6 +41,25 @@ const Sidebar = () => {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!userId) return;
+    const fetchUnread = async () => {
+      try {
+        const res = await getAPI(`/api/notifications/${userId}?filter=all&page=1&limit=1`, {}, true, true);
+        if (res?.data?.success) setUnreadCount(res.data.unreadCount || 0);
+      } catch {}
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 30000);
+    return () => clearInterval(interval);
+  }, [userId]);
+
+  useEffect(() => {
+    if (location.pathname === "/artsays-community/notification") {
+      setUnreadCount(0);
+    }
+  }, [location.pathname]);
 
   const allItems = [
     { key: "home", icon: "house-fill", label: "Home", link: "/artsays-community/" },
@@ -140,7 +160,14 @@ const Sidebar = () => {
                 className={`icon-wrapper-s ${isActive(item.link) ? "active" : ""
                   } ${idx === 7 ? "" : ""}`}
               >
-                <i className={` bi-${item.icon}`}></i>
+                <div className="relative">
+                  <i className={` bi-${item.icon}`}></i>
+                  {item.key === "notification" && unreadCount > 0 && (
+                    <span className="absolute -top-2 -right-2 min-w-[16px] h-4 px-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                      {unreadCount > 99 ? "99+" : unreadCount}
+                    </span>
+                  )}
+                </div>
               </div>
             </Link>
           ))}
@@ -157,7 +184,7 @@ const Sidebar = () => {
                 className={`label-wrapper-s ${isActive(item.link) ? "active" : ""
                   } ${idx === 8 ? "" : ""}`}
               >
-                <i className={` bi-${item.icon}`}></i>
+                  <i className={` bi-${item.icon}`}></i>
                 {item.label}
               </div>
             </Link>
@@ -262,17 +289,24 @@ const Sidebar = () => {
               <div className="profile-category-s">{user.role}</div>
             </div>
               <div className="profile-content-s">
-                {items.map((item) => (
-                  <Link to={`${item.link}`} key={item.key}>
-                    <div
-                      className={`profile-item-s  ${isActive(item.link) ? "active" : ""
-                        }`}
-                    >
-                      <i className={`bi-${item.icon}`}></i>
-                      <span>{item.label}</span>
-                    </div>
-                  </Link>
-                ))}
+                  {items.map((item) => (
+                    <Link to={`${item.link}`} key={item.key}>
+                      <div
+                        className={`profile-item-s  ${isActive(item.link) ? "active" : ""
+                          }`}
+                      >
+                        <div className="relative inline-flex">
+                          <i className={`bi-${item.icon}`}></i>
+                          {item.key === "notification" && unreadCount > 0 && (
+                            <span className="absolute -top-2 -right-2 min-w-[16px] h-4 px-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                              {unreadCount > 99 ? "99+" : unreadCount}
+                            </span>
+                          )}
+                        </div>
+                        <span>{item.label}</span>
+                      </div>
+                    </Link>
+                  ))}
               </div>
           </div>
           <div
