@@ -4,6 +4,7 @@ import NavBar from "../Pages/Home/HomeComponents/NavBar";
 import Footer from "../Pages/Home/HomeComponents/Footer";
 import RecentlyViewedProducts from "../Component/Common/RecentlyViewedProducts";
 import { useState } from "react";
+import axiosInstance from "../api/axiosConfig";
 import HeroSectionSkeleton from "../Component/Skeleton/HeroSectionSkeleton";
 import BrowserCategorySkeleton from "../Component/Skeleton/BrowserCategorySkeleton";
 import WhyFromSkeleton from "../Component/Skeleton/WhyFromSkeleton";
@@ -19,6 +20,13 @@ import HeaderSkeleton from "../Component/Skeleton/Home/HeaderSkeleton";
 const WebsiteLayout = () => {
   const [cssReady, setCssReady] = useState(false);
   const location = useLocation();
+
+  // Track public page views for super-admin dashboard
+  useEffect(() => {
+    try {
+      axiosInstance.post("/api/superadmin/pageview", { page: location.pathname }).catch(() => {});
+    } catch (_) {}
+  }, [location.pathname]);
 
   useEffect(() => {
     let mounted = true;
