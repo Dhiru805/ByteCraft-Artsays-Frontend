@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import "./Side-post-sugg.css";
 import { Link, useLocation } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
@@ -9,10 +9,7 @@ const Sidebar = () => {
   const location = useLocation();
   const isActive = (link) => location.pathname === link;
   const [isPinned, setIsPinned] = useState(false);
-  const [showCreate, setShowCreate] = useState(false);
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [user, setUser] = useState({});
-  const createRef = useRef(null);
   const userId = localStorage.getItem("userId");
   const username = localStorage.getItem("username");
   const firstName = localStorage.getItem("firstName");
@@ -27,20 +24,6 @@ const Sidebar = () => {
     username.trim() !== "" &&
     username !== "undefined" &&
     username !== "null";
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (
-        createRef.current &&
-        !createRef.current.contains(e.target) &&
-        !e.target.closest("#createTrigger")
-      ) {
-        setShowCreate(false);
-      }
-    };
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, []);
 
   useEffect(() => {
     if (!userId) return;
@@ -147,21 +130,16 @@ const Sidebar = () => {
   if (loading) return <MediaSideBarSkele />
   return (
     <>
-      {/* Sidebar */}
+      {/* Desktop Sidebar only */}
       <div
-        className={`sidebar-container-s ${isPinned ? "pinned" : ""
-          } w-full col-span-3 mx-auto px-2 py-4 justify-content-center`}
+        className={`sidebar-container-s ${isPinned ? "pinned" : ""} w-full col-span-3 mx-auto px-2 py-4 justify-content-center`}
       >
         <div className="sidebar-icons-s justify-content-between pb-4">
           {items.map((item, idx) => (
             <Link to={`${item.link}`} key={item.key}>
-              <div
-                key={item.key}
-                className={`icon-wrapper-s ${isActive(item.link) ? "active" : ""
-                  } ${idx === 7 ? "" : ""}`}
-              >
+              <div className={`icon-wrapper-s ${isActive(item.link) ? "active" : ""}`}>
                 <div className="relative">
-                  <i className={` bi-${item.icon}`}></i>
+                  <i className={`bi-${item.icon}`}></i>
                   {item.key === "notification" && unreadCount > 0 && (
                     <span className="absolute -top-2 -right-2 min-w-[16px] h-4 px-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
                       {unreadCount > 99 ? "99+" : unreadCount}
@@ -175,146 +153,18 @@ const Sidebar = () => {
 
         <div className="sidebar-expanded-s justify-content-between pb-4">
           <div className="toggle-btn-s" onClick={() => setIsPinned(!isPinned)}>
-            <i className=" bi-square-half"></i>
+            <i className="bi-square-half"></i>
           </div>
-          {items.map((item, idx) => (
+          {items.map((item) => (
             <Link to={`${item.link}`} key={item.key}>
-              <div
-                key={item.key}
-                className={`label-wrapper-s ${isActive(item.link) ? "active" : ""
-                  } ${idx === 8 ? "" : ""}`}
-              >
-                  <i className={` bi-${item.icon}`}></i>
+              <div className={`label-wrapper-s ${isActive(item.link) ? "active" : ""}`}>
+                <i className={`bi-${item.icon}`}></i>
                 {item.label}
               </div>
             </Link>
           ))}
         </div>
       </div>
-
-      {/* Bottom Navigation */}
-      <nav className="bottom-nav-s">
-          <ul className="nav-items-s">
-            {items.slice(0, 2).map((item) => (
-              <Link to={`${item.link}`} key={item.key}>
-                <li
-                  className={`nav-item-s ${isActive(item.link) ? "active" : ""}`}
-                >
-                  <i className={` bi-${item.icon}`}></i>
-                </li>
-              </Link>
-            ))}
-
-          {/* Create Button - Hide for buyers */}
-          {!isBuyer && (
-            <li id="createTrigger">
-              <div
-                className="create-btn-s"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowCreate((prev) => !prev);
-                }}
-              >
-                <i className=" bi-plus-lg"></i>
-              </div>
-              {showCreate && (
-                <div className="create-options-s flex" ref={createRef}>
-                  <Link to="/artsays-community/create-post">
-                    <div
-                      className="create-option-s"
-                      onClick={() => console.log("Post")}
-                    >
-                      <i className=" bi-plus-square"></i>
-                      <span>Post</span>
-                    </div>
-                  </Link>
-                  <Link to="/artsays-community/create-live">
-                    <div
-                      className="create-option-s"
-                      onClick={() => console.log("Live")}
-                    >
-                      <i className=" bi-broadcast-pin"></i>
-                      <span>Live</span>
-                    </div>
-                  </Link>
-                </div>
-              )}
-            </li>
-          )}
-
-            {items.slice(2, 3).map((item) => (
-              <Link to={`${item.link}`} key={item.key}>
-                <li
-                  className={`nav-item-s  ${isActive(item.link) ? "active" : ""}`}
-                >
-                  <i className={` bi-${item.icon}`}></i>
-                </li>
-              </Link>
-            ))}
-
-          <li
-            className={`nav-item-s  ${showProfileMenu ? "active" : ""}`}
-            onClick={() => {
-              setShowProfileMenu(true);
-            }}
-          >
-            <i className=" bi-person"></i>
-          </li>
-        </ul>
-      </nav>
-
-      {/* Profile Slide Menu */}
-      {showProfileMenu && (
-        <>
-          <div className="profile-menu-s open">
-            <div className="profile-header-s">
-              <button
-                className="close-btn"
-                onClick={() => setShowProfileMenu(false)}
-              >
-                &times;
-              </button>
-              <img
-                src={
-                  user?.profilePhoto
-                    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`
-                    : DEFAULT_PROFILE_IMAGE
-                }
-                alt="Profile"
-                className="profile-pic"
-              />
-              <div className="profile-name-s">
-                {user.name} {user.lastName}
-              </div>
-              <div className="profile-category-s">{user.role}</div>
-            </div>
-              <div className="profile-content-s">
-                  {items.map((item) => (
-                    <Link to={`${item.link}`} key={item.key}>
-                      <div
-                        className={`profile-item-s  ${isActive(item.link) ? "active" : ""
-                          }`}
-                      >
-                        <div className="relative inline-flex">
-                          <i className={`bi-${item.icon}`}></i>
-                          {item.key === "notification" && unreadCount > 0 && (
-                            <span className="absolute -top-2 -right-2 min-w-[16px] h-4 px-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
-                              {unreadCount > 99 ? "99+" : unreadCount}
-                            </span>
-                          )}
-                        </div>
-                        <span>{item.label}</span>
-                      </div>
-                    </Link>
-                  ))}
-              </div>
-          </div>
-          <div
-            className={`overlay-s ${showProfileMenu ? "active" : ""}`}
-            onClick={() => setShowProfileMenu(false)}
-          ></div>
-        </>
-      )}
     </>
   );
 };

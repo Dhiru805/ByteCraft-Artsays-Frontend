@@ -7,7 +7,8 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Menu, Search, X, ChevronDown, ShoppingCart, Plus,
   Home, Compass, Users, User, Video, ArrowRight,
-  Zap, TrendingUp, Star, Package
+  Zap, TrendingUp, Star, Package, Bell, Bookmark,
+  Settings, Radio, LogOut
 } from "lucide-react";
 import { RiAuctionFill, RiMapPin2Line, RiMoneyRupeeCircleLine, RiLockPasswordLine } from "react-icons/ri";
 import { MdLibraryAdd, MdVerified, MdOutlineSecurity } from "react-icons/md";
@@ -324,41 +325,73 @@ const CreateDrop = ({ usertype, onClose }) => (
 // NAV CONFIG
 // ─────────────────────────────────────────────────────────────
 const NAV_ITEMS = [
-  { key: "art",       label: "ART",       Mega: ArtMega,       href: "/art-gallery" },
-  { key: "bid",       label: "BID",       Mega: BidMega,       href: "/bid" },
-  { key: "stores",    label: "STORES",    Mega: StoresMega,    href: "/store" },
+  { key: "art", label: "ART", Mega: ArtMega, href: "/art-gallery" },
+  { key: "bid", label: "BID", Mega: BidMega, href: "/bid" },
+  { key: "stores", label: "STORES", Mega: StoresMega, href: "/store" },
   { key: "community", label: "COMMUNITY", Mega: CommunityMega, href: "/artsays-community" },
-  { key: "learn",     label: "LEARN",     Mega: LearnMega,     href: "/blogs" },
+  { key: "learn", label: "LEARN", Mega: LearnMega, href: "/blogs" },
 ];
 
 // ─────────────────────────────────────────────────────────────
 // MAIN NAVBAR
 // ─────────────────────────────────────────────────────────────
 const NavBar = () => {
-  const [isLoggedIn, setIsLoggedIn]       = useState(false);
-  const [Usertype, setUserType]           = useState(null);
-  const [showSidebar, setShowSidebar]     = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [Usertype, setUserType] = useState(null);
+  const [showSidebar, setShowSidebar] = useState(false);
   const [showAvatarDrop, setShowAvatarDrop] = useState(false);
-  const [showCreate, setShowCreate]       = useState(false);
-  const [user, setUser]                   = useState({});
-  const [profile, setProfile]             = useState({});
-  const [loading, setLoading]             = useState(false);
-  const [activeMega, setActiveMega]       = useState(null);
-  const [showSearch, setShowSearch]       = useState(false);
-  const [searchQuery, setSearchQuery]     = useState("");
-  const [searchTab, setSearchTab]         = useState("Artworks");
-  const [scrolled, setScrolled]           = useState(false);
+  const [showCreate, setShowCreate] = useState(false);
+  const [showCommCreate, setShowCommCreate] = useState(false);
+  const [showCommMenu, setShowCommMenu] = useState(false);
+  const [showRegCreate, setShowRegCreate] = useState(false);
+  const [user, setUser] = useState({});
+  const [profile, setProfile] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [activeMega, setActiveMega] = useState(null);
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchTab, setSearchTab] = useState("Artworks");
+  const [scrolled, setScrolled] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
-  const megaTimer   = useRef(null);
-  const searchRef   = useRef(null);
-  const avatarRef   = useRef(null);
-  const createRef   = useRef(null);
+  const megaTimer = useRef(null);
+  const searchRef = useRef(null);
+  const avatarRef = useRef(null);
+  const createRef = useRef(null);
+  const commCreateRef = useRef(null);
+  const regCreateRef = useRef(null);
 
-  const userId   = localStorage.getItem("userId");
+  const userId = localStorage.getItem("userId");
+  const username = localStorage.getItem("username");
+  const firstName = localStorage.getItem("firstName");
+  const lastName = localStorage.getItem("lastName");
   const userrole = localStorage.getItem("userrole");
   const navigate = useNavigate();
   const location = useLocation();
   const isOnCommunity = location.pathname.startsWith("/artsays-community");
+
+  const hasValidUsername =
+    typeof username === "string" &&
+    username.trim() !== "" &&
+    username !== "undefined" &&
+    username !== "null";
+
+  const isBuyer = Usertype === "Buyer";
+
+  // Community nav items
+  const allCommItems = [
+    { key: "home", icon: <Home size={22} />, label: "Home", link: "/artsays-community/" },
+    { key: "search", icon: <Search size={22} />, label: "Search", link: "/artsays-community/search" },
+    { key: "explore", icon: <Compass size={22} />, label: "Explore", link: "/artsays-community/explore" },
+    { key: "notification", icon: <Bell size={22} />, label: "Notification", link: "/artsays-community/notification" },
+    { key: "create", icon: <Plus size={22} />, label: "Create", link: "/artsays-community/create-post" },
+    { key: "live", icon: <Radio size={22} />, label: "Live", link: "/artsays-community/create-live" },
+    { key: "profile", icon: <User size={22} />, label: "Profile", link: `/artsays-community/profile/${hasValidUsername ? username : `${firstName}_${lastName}_${userId}`}` },
+    { key: "saved", icon: <Bookmark size={22} />, label: "Saved", link: "/artsays-community/saved" },
+    { key: "settings", icon: <Settings size={22} />, label: "Settings", link: "/artsays-community/setting" },
+    { key: "logout", icon: <LogOut size={22} />, label: "Logout", link: "/artsays-community/logout" },
+  ];
+  const commItems = isBuyer ? allCommItems.filter(i => i.key !== "create") : allCommItems;
 
   // scroll shadow
   useEffect(() => {
@@ -387,37 +420,57 @@ const NavBar = () => {
     if (localStorage.getItem("userType") !== "Super-Admin") {
       getAPI(`/api/social-media/profile/${userId}`, {}, false, true)
         .then(r => setProfile(r.data.profile))
-        .catch(() => {});
+        .catch(() => { });
     }
   }, [userId]);
+
+  // unread notifications
+  useEffect(() => {
+    if (!userId) return;
+    const fetchUnread = async () => {
+      try {
+        const res = await getAPI(`/api/notifications/${userId}?filter=all&page=1&limit=1`, {}, true, true);
+        if (res?.data?.success) setUnreadCount(res.data.unreadCount || 0);
+      } catch { }
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 30000);
+    return () => clearInterval(interval);
+  }, [userId]);
+
+  useEffect(() => {
+    if (location.pathname === "/artsays-community/notification") setUnreadCount(0);
+  }, [location.pathname]);
 
   // click outside
   useEffect(() => {
     const h = (e) => {
-      if (searchRef.current  && !searchRef.current.contains(e.target))  setShowSearch(false);
-      if (avatarRef.current  && !avatarRef.current.contains(e.target))  setShowAvatarDrop(false);
-      if (createRef.current  && !createRef.current.contains(e.target))  setShowCreate(false);
+      if (searchRef.current && !searchRef.current.contains(e.target)) setShowSearch(false);
+      if (avatarRef.current && !avatarRef.current.contains(e.target)) setShowAvatarDrop(false);
+      if (createRef.current && !createRef.current.contains(e.target)) setShowCreate(false);
+      if (commCreateRef.current && !commCreateRef.current.contains(e.target)) setShowCommCreate(false);
+      if (regCreateRef.current && !regCreateRef.current.contains(e.target)) setShowRegCreate(false);
     };
     document.addEventListener("mousedown", h);
     return () => document.removeEventListener("mousedown", h);
   }, []);
 
   const dashboardRoute = () => {
-    if (Usertype === "Artist")      navigate("/artist/dashboard");
+    if (Usertype === "Artist") navigate("/artist/dashboard");
     else if (Usertype === "Seller") navigate("/seller/dashboard");
     else if (Usertype === "Super-Admin") navigate("/Super-Admin/dashboard");
   };
 
   const handleSignOut = () => {
-    ["token","userType","email","userId","profilePhoto","username","firstName","lastName"]
+    ["token", "userType", "email", "userId", "profilePhoto", "username", "firstName", "lastName"]
       .forEach(k => localStorage.removeItem(k));
     window.dispatchEvent(new Event("profilePhotoUpdated"));
     window.location.href = "/";
   };
 
-  const openMega  = (key) => { clearTimeout(megaTimer.current); setActiveMega(key); };
-  const closeMega = ()    => { megaTimer.current = setTimeout(() => setActiveMega(null), 150); };
-  const keepMega  = ()    => clearTimeout(megaTimer.current);
+  const openMega = (key) => { clearTimeout(megaTimer.current); setActiveMega(key); };
+  const closeMega = () => { megaTimer.current = setTimeout(() => setActiveMega(null), 150); };
+  const keepMega = () => clearTimeout(megaTimer.current);
 
   const avatarSrc = user.profilePhoto
     ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`
@@ -539,11 +592,11 @@ const NavBar = () => {
 
                     {/* Buyer */}
                     {Usertype === "Buyer" && (<>
-                      <Link to="/my-account"                              className="av-item" onClick={() => setShowAvatarDrop(false)}><FaUser size={13} /> My Account</Link>
-                      <Link to="/my-account/my-orders"                   className="av-item" onClick={() => setShowAvatarDrop(false)}><BsBoxSeam size={13} /> Orders</Link>
-                      <Link to={`/my-account/wishlist/${userId}`}        className="av-item" onClick={() => setShowAvatarDrop(false)}><HiOutlineHeart size={13} /> Wishlist</Link>
-                      <Link to="/my-account/buyer-wallet"                className="av-item" onClick={() => setShowAvatarDrop(false)}><IoWalletOutline size={13} /> Wallet</Link>
-                      <Link to="/my-account/notification-preferences"   className="av-item" onClick={() => setShowAvatarDrop(false)}><IoMdNotificationsOutline size={13} /> Notifications</Link>
+                      <Link to="/my-account" className="av-item" onClick={() => setShowAvatarDrop(false)}><FaUser size={13} /> My Account</Link>
+                      <Link to="/my-account/my-orders" className="av-item" onClick={() => setShowAvatarDrop(false)}><BsBoxSeam size={13} /> Orders</Link>
+                      <Link to={`/my-account/wishlist/${userId}`} className="av-item" onClick={() => setShowAvatarDrop(false)}><HiOutlineHeart size={13} /> Wishlist</Link>
+                      <Link to="/my-account/buyer-wallet" className="av-item" onClick={() => setShowAvatarDrop(false)}><IoWalletOutline size={13} /> Wallet</Link>
+                      <Link to="/my-account/notification-preferences" className="av-item" onClick={() => setShowAvatarDrop(false)}><IoMdNotificationsOutline size={13} /> Notifications</Link>
                     </>)}
 
                     {/* Artist / Seller */}
@@ -551,7 +604,7 @@ const NavBar = () => {
                       <div className="av-item" onClick={() => { dashboardRoute(); setShowAvatarDrop(false); }}><FaUser size={13} /> My Dashboard</div>
                       <Link to={`/artsays-community/profile/${userId}`} className="av-item" onClick={() => setShowAvatarDrop(false)}><Users size={13} /> Community Profile</Link>
                       <Link to={Usertype === "Artist" ? "/artist/dashboard" : "/seller/dashboard"} className="av-item" onClick={() => setShowAvatarDrop(false)}><IoWalletOutline size={13} /> Wallet / Earnings</Link>
-                      <Link to="/artsays-community/notification"        className="av-item" onClick={() => setShowAvatarDrop(false)}><IoMdNotificationsOutline size={13} /> Notifications</Link>
+                      <Link to="/artsays-community/notification" className="av-item" onClick={() => setShowAvatarDrop(false)}><IoMdNotificationsOutline size={13} /> Notifications</Link>
                     </>)}
 
                     {/* Super-Admin */}
@@ -585,11 +638,19 @@ const NavBar = () => {
 
       {/* ══════════════════ MOBILE TOP BAR ══════════════════ */}
       <nav className="mob-bar">
-        <a href="/" className="mob-logo">
+        <a href={isOnCommunity ? "/artsays-community/" : "/"} className="mob-logo">
           <img src="/assets/home/logo.svg" alt="Artsays" height={32} />
         </a>
         <div className="mob-bar-right">
-          {isLoggedIn && (
+          {isLoggedIn && isOnCommunity && (
+            <Link to="/artsays-community/notification" className="mob-icon-btn" style={{ position: "relative" }}>
+              <Bell size={22} />
+              {unreadCount > 0 && (
+                <span className="mob-notif-badge">{unreadCount > 99 ? "99+" : unreadCount}</span>
+              )}
+            </Link>
+          )}
+          {isLoggedIn && !isOnCommunity && (
             <button className="mob-icon-btn" onClick={() => navigate("/artsays-community/notification")}>
               <IoMdNotificationsOutline size={22} />
             </button>
@@ -637,74 +698,102 @@ const NavBar = () => {
         {/* sidebar body */}
         <div className="mob-sb-body">
 
-          {/* Guest */}
-          {!isLoggedIn && (<>
-            <a href="/art-gallery"      className="mob-item" onClick={() => setShowSidebar(false)}><MdLibraryAdd className="mob-icon" /> Art Gallery</a>
-            <a href="/bid"              className="mob-item" onClick={() => setShowSidebar(false)}><RiAuctionFill className="mob-icon" /> Bid</a>
-            <a href="/store"            className="mob-item" onClick={() => setShowSidebar(false)}><PiHandbagBold className="mob-icon" /> Store</a>
-            <a href="/artsays-community" className="mob-item" onClick={() => setShowSidebar(false)}><img src={artLogo} className="mob-icon" alt="" style={{ width: 18 }} /> Community</a>
-            <a href="/blogs"            className="mob-item" onClick={() => setShowSidebar(false)}><Star size={18} className="mob-icon" /> Blog</a>
-            <div className="mob-sep" />
-            <a href="/login"            className="mob-item mob-item-login" onClick={() => setShowSidebar(false)}><FaUser className="mob-icon" /> Login / Sign Up</a>
-          </>)}
-
-          {/* Buyer */}
-          {isLoggedIn && Usertype === "Buyer" && (<>
-            <Link to="/my-account"                               className="mob-item" onClick={() => setShowSidebar(false)}><FaUser className="mob-icon" /> My Account</Link>
-            <Link to="/art-gallery"                              className="mob-item" onClick={() => setShowSidebar(false)}><MdLibraryAdd className="mob-icon" /> Art Gallery</Link>
-            <Link to="/bid"                                      className="mob-item" onClick={() => setShowSidebar(false)}><RiAuctionFill className="mob-icon" /> Bid</Link>
-            <Link to="/store"                                    className="mob-item" onClick={() => setShowSidebar(false)}><PiHandbagBold className="mob-icon" /> Store</Link>
-            <Link to={`/my-account/my-cart/${userId}`}          className="mob-item" onClick={() => setShowSidebar(false)}><BiCart className="mob-icon" /> Cart</Link>
-            <Link to="/my-account/my-orders"                    className="mob-item" onClick={() => setShowSidebar(false)}><BsBoxSeam className="mob-icon" /> Orders</Link>
-            <Link to="/my-account/buyer-wallet"                 className="mob-item" onClick={() => setShowSidebar(false)}><IoWalletOutline className="mob-icon" /> Wallet</Link>
-            <Link to={`/my-account/wishlist/${userId}`}         className="mob-item" onClick={() => setShowSidebar(false)}><HiOutlineHeart className="mob-icon" /> Wishlist</Link>
-            <Link to="/my-account/manage-address"               className="mob-item" onClick={() => setShowSidebar(false)}><RiMapPin2Line className="mob-icon" /> Manage Address</Link>
-            <Link to="/my-account/payment-method"               className="mob-item" onClick={() => setShowSidebar(false)}><RiMoneyRupeeCircleLine className="mob-icon" /> Payment Methods</Link>
-            <Link to="/my-account/password-manager"             className="mob-item" onClick={() => setShowSidebar(false)}><MdOutlineSecurity className="mob-icon" /> Password Manager</Link>
-            <Link to="/my-account/account-verification"         className="mob-item" onClick={() => setShowSidebar(false)}><MdVerified className="mob-icon" /> Account Verification</Link>
-            <Link to="/my-account/bank-payment-details"         className="mob-item" onClick={() => setShowSidebar(false)}><CiCreditCard1 className="mob-icon" /> Bank Payment Details</Link>
-            <Link to="my-account/social-media-promotion"        className="mob-item" onClick={() => setShowSidebar(false)}><FaShareAlt className="mob-icon" /> Social Media Promotion</Link>
-            <Link to="my-account/custom-request"                className="mob-item" onClick={() => setShowSidebar(false)}><FaTools className="mob-icon" /> Custom Request</Link>
-            <Link to="my-account/security-agreements"           className="mob-item" onClick={() => setShowSidebar(false)}><RiLockPasswordLine className="mob-icon" /> Security & Agreements</Link>
-            <div className="mob-sep" />
-            <Link to={isOnCommunity ? "/" : "/artsays-community"} className="mob-item mob-item-comm" onClick={() => setShowSidebar(false)}>
-              <img src={isOnCommunity ? AIcon : artLogo} style={{ width: 18, marginRight: 10 }} alt="" />
-              {isOnCommunity ? "Switch to Artsays" : "Switch to Community"}
-            </Link>
-            <div className="mob-item mob-item-logout" onClick={handleSignOut}><BiLogOut className="mob-icon" /> Logout</div>
-          </>)}
-
-          {/* Artist / Seller */}
-          {isLoggedIn && (Usertype === "Artist" || Usertype === "Seller") && (<>
-            <div className="mob-item" onClick={() => { dashboardRoute(); setShowSidebar(false); }}><FaUser className="mob-icon" /> My Dashboard</div>
-            <Link to="/artsays-community/create-post"  className="mob-item" onClick={() => setShowSidebar(false)}><Plus size={18} className="mob-icon" /> Create Post</Link>
-            <Link to={Usertype === "Artist" ? "/artist/product/product-upload" : "/seller/product/product-upload"} className="mob-item" onClick={() => setShowSidebar(false)}><ShoppingCart size={18} className="mob-icon" /> Upload Product</Link>
-            <Link to="/artsays-community/create-live"  className="mob-item" onClick={() => setShowSidebar(false)}><FaVideo size={18} className="mob-icon" /> Go Live</Link>
-            <Link to="/artsays-community"              className="mob-item" onClick={() => setShowSidebar(false)}><img src={artLogo} className="mob-icon" alt="" style={{ width: 18 }} /> Community</Link>
-            <Link to="/artsays-community/explore"      className="mob-item" onClick={() => setShowSidebar(false)}><Compass size={18} className="mob-icon" /> Explore Creators</Link>
-            <Link to="/blogs"                          className="mob-item" onClick={() => setShowSidebar(false)}><MdLibraryAdd className="mob-icon" /> Blog</Link>
-            <div className="mob-sep" />
-            {!isSuperAdminSub && (
-              <Link to={isOnCommunity ? "/" : "/artsays-community"} className="mob-item mob-item-comm" onClick={() => setShowSidebar(false)}>
-                <img src={isOnCommunity ? AIcon : artLogo} style={{ width: 18, marginRight: 10 }} alt="" />
-                {isOnCommunity ? "Switch to Artsays" : "Switch to Community"}
+          {/* ── COMMUNITY SIDEBAR (when on /artsays-community) ── */}
+          {isOnCommunity && isLoggedIn && (
+            <>
+              {commItems.map((item) => (
+                <Link
+                  key={item.key}
+                  to={item.link}
+                  className={`mob-item ${location.pathname === item.link ? "mob-item-active" : ""} ${item.key === "logout" ? "mob-item-logout" : ""}`}
+                  onClick={() => setShowSidebar(false)}
+                >
+                  <span className="mob-icon">{item.icon}</span>
+                  {item.label}
+                  {item.key === "notification" && unreadCount > 0 && (
+                    <span className="mob-badge-inline">{unreadCount > 99 ? "99+" : unreadCount}</span>
+                  )}
+                </Link>
+              ))}
+              <div className="mob-sep" />
+              <Link to="/" className="mob-item mob-item-comm" onClick={() => setShowSidebar(false)}>
+                <img src={AIcon} style={{ width: 18, marginRight: 12 }} alt="" />
+                Switch to Artsays
               </Link>
-            )}
-            <div className="mob-item mob-item-logout" onClick={handleSignOut}><BiLogOut className="mob-icon" /> Logout</div>
-          </>)}
+            </>
+          )}
 
-          {/* Super-Admin */}
-          {isLoggedIn && Usertype === "Super-Admin" && (<>
-            <div className="mob-item" onClick={() => { dashboardRoute(); setShowSidebar(false); }}><FaUser className="mob-icon" /> My Dashboard</div>
-            <Link to="/blogs" className="mob-item" onClick={() => setShowSidebar(false)}><MdLibraryAdd className="mob-icon" /> Blog</Link>
-            <div className="mob-sep" />
-            {!isSuperAdminSub && (
-              <Link to={isOnCommunity ? "/" : "/artsays-community"} className="mob-item mob-item-comm" onClick={() => setShowSidebar(false)}>
-                <img src={isOnCommunity ? AIcon : artLogo} style={{ width: 18, marginRight: 10 }} alt="" />
-                {isOnCommunity ? "Switch to Artsays" : "Switch to Community"}
+          {/* ── REGULAR SIDEBAR ── */}
+          {!isOnCommunity && (<>
+            {/* Guest */}
+            {!isLoggedIn && (<>
+              <a href="/art-gallery" className="mob-item" onClick={() => setShowSidebar(false)}><MdLibraryAdd className="mob-icon" /> Art Gallery</a>
+              <a href="/bid" className="mob-item" onClick={() => setShowSidebar(false)}><RiAuctionFill className="mob-icon" /> Bid</a>
+              <a href="/store" className="mob-item" onClick={() => setShowSidebar(false)}><PiHandbagBold className="mob-icon" /> Store</a>
+              <a href="/artsays-community" className="mob-item" onClick={() => setShowSidebar(false)}><img src={artLogo} className="mob-icon" alt="" style={{ width: 18 }} /> Community</a>
+              <a href="/blogs" className="mob-item" onClick={() => setShowSidebar(false)}><Star size={18} className="mob-icon" /> Blog</a>
+              <div className="mob-sep" />
+              <a href="/login" className="mob-item mob-item-login" onClick={() => setShowSidebar(false)}><FaUser className="mob-icon" /> Login / Sign Up</a>
+            </>)}
+
+            {/* Buyer */}
+            {isLoggedIn && Usertype === "Buyer" && (<>
+              <Link to="/my-account" className="mob-item" onClick={() => setShowSidebar(false)}><FaUser className="mob-icon" /> My Account</Link>
+              <Link to="/art-gallery" className="mob-item" onClick={() => setShowSidebar(false)}><MdLibraryAdd className="mob-icon" /> Art Gallery</Link>
+              <Link to="/bid" className="mob-item" onClick={() => setShowSidebar(false)}><RiAuctionFill className="mob-icon" /> Bid</Link>
+              <Link to="/store" className="mob-item" onClick={() => setShowSidebar(false)}><PiHandbagBold className="mob-icon" /> Store</Link>
+              <Link to={`/my-account/my-cart/${userId}`} className="mob-item" onClick={() => setShowSidebar(false)}><BiCart className="mob-icon" /> Cart</Link>
+              <Link to="/my-account/my-orders" className="mob-item" onClick={() => setShowSidebar(false)}><BsBoxSeam className="mob-icon" /> Orders</Link>
+              <Link to="/my-account/buyer-wallet" className="mob-item" onClick={() => setShowSidebar(false)}><IoWalletOutline className="mob-icon" /> Wallet</Link>
+              <Link to={`/my-account/wishlist/${userId}`} className="mob-item" onClick={() => setShowSidebar(false)}><HiOutlineHeart className="mob-icon" /> Wishlist</Link>
+              <Link to="/my-account/manage-address" className="mob-item" onClick={() => setShowSidebar(false)}><RiMapPin2Line className="mob-icon" /> Manage Address</Link>
+              <Link to="/my-account/payment-method" className="mob-item" onClick={() => setShowSidebar(false)}><RiMoneyRupeeCircleLine className="mob-icon" /> Payment Methods</Link>
+              <Link to="/my-account/password-manager" className="mob-item" onClick={() => setShowSidebar(false)}><MdOutlineSecurity className="mob-icon" /> Password Manager</Link>
+              <Link to="/my-account/account-verification" className="mob-item" onClick={() => setShowSidebar(false)}><MdVerified className="mob-icon" /> Account Verification</Link>
+              <Link to="/my-account/bank-payment-details" className="mob-item" onClick={() => setShowSidebar(false)}><CiCreditCard1 className="mob-icon" /> Bank Payment Details</Link>
+              <Link to="my-account/social-media-promotion" className="mob-item" onClick={() => setShowSidebar(false)}><FaShareAlt className="mob-icon" /> Social Media Promotion</Link>
+              <Link to="my-account/custom-request" className="mob-item" onClick={() => setShowSidebar(false)}><FaTools className="mob-icon" /> Custom Request</Link>
+              <Link to="my-account/security-agreements" className="mob-item" onClick={() => setShowSidebar(false)}><RiLockPasswordLine className="mob-icon" /> Security & Agreements</Link>
+              <div className="mob-sep" />
+              <Link to="/artsays-community" className="mob-item mob-item-comm" onClick={() => setShowSidebar(false)}>
+                <img src={artLogo} style={{ width: 18, marginRight: 10 }} alt="" />
+                Switch to Community
               </Link>
-            )}
-            <div className="mob-item mob-item-logout" onClick={handleSignOut}><BiLogOut className="mob-icon" /> Logout</div>
+              <div className="mob-item mob-item-logout" onClick={handleSignOut}><BiLogOut className="mob-icon" /> Logout</div>
+            </>)}
+
+            {/* Artist / Seller */}
+            {isLoggedIn && (Usertype === "Artist" || Usertype === "Seller") && (<>
+              <div className="mob-item" onClick={() => { dashboardRoute(); setShowSidebar(false); }}><FaUser className="mob-icon" /> My Dashboard</div>
+              <Link to="/artsays-community/create-post" className="mob-item" onClick={() => setShowSidebar(false)}><Plus size={18} className="mob-icon" /> Create Post</Link>
+              <Link to={Usertype === "Artist" ? "/artist/product/product-upload" : "/seller/product/product-upload"} className="mob-item" onClick={() => setShowSidebar(false)}><ShoppingCart size={18} className="mob-icon" /> Upload Product</Link>
+              <Link to="/artsays-community/create-live" className="mob-item" onClick={() => setShowSidebar(false)}><FaVideo size={18} className="mob-icon" /> Go Live</Link>
+              <Link to="/artsays-community" className="mob-item" onClick={() => setShowSidebar(false)}><img src={artLogo} className="mob-icon" alt="" style={{ width: 18 }} /> Community</Link>
+              <Link to="/artsays-community/explore" className="mob-item" onClick={() => setShowSidebar(false)}><Compass size={18} className="mob-icon" /> Explore Creators</Link>
+              <Link to="/blogs" className="mob-item" onClick={() => setShowSidebar(false)}><MdLibraryAdd className="mob-icon" /> Blog</Link>
+              <div className="mob-sep" />
+              {!isSuperAdminSub && (
+                <Link to="/artsays-community" className="mob-item mob-item-comm" onClick={() => setShowSidebar(false)}>
+                  <img src={artLogo} style={{ width: 18, marginRight: 10 }} alt="" />
+                  Switch to Community
+                </Link>
+              )}
+              <div className="mob-item mob-item-logout" onClick={handleSignOut}><BiLogOut className="mob-icon" /> Logout</div>
+            </>)}
+
+            {/* Super-Admin */}
+            {isLoggedIn && Usertype === "Super-Admin" && (<>
+              <div className="mob-item" onClick={() => { dashboardRoute(); setShowSidebar(false); }}><FaUser className="mob-icon" /> My Dashboard</div>
+              <Link to="/blogs" className="mob-item" onClick={() => setShowSidebar(false)}><MdLibraryAdd className="mob-icon" /> Blog</Link>
+              <div className="mob-sep" />
+              {!isSuperAdminSub && (
+                <Link to="/artsays-community" className="mob-item mob-item-comm" onClick={() => setShowSidebar(false)}>
+                  <img src={artLogo} style={{ width: 18, marginRight: 10 }} alt="" />
+                  Switch to Community
+                </Link>
+              )}
+              <div className="mob-item mob-item-logout" onClick={handleSignOut}><BiLogOut className="mob-icon" /> Logout</div>
+            </>)}
           </>)}
         </div>
       </div>
@@ -712,40 +801,144 @@ const NavBar = () => {
       {/* Overlay */}
       <div className={`mob-overlay ${showSidebar ? "mob-overlay-on" : ""}`} onClick={() => setShowSidebar(false)} />
 
-      {/* ══════════════════ MOBILE BOTTOM NAV ══════════════════ */}
-      <nav className="mob-bottom">
-        <a href="/"               className={`mbn ${location.pathname === "/" ? "mbn-on" : ""}`}>
-          <Home size={20} /><span>Home</span>
-        </a>
-        <a href="/art-gallery"    className={`mbn ${["/art-gallery", "/bid", "/store"].some(p => location.pathname.startsWith(p)) ? "mbn-on" : ""}`}>
-          <Compass size={20} /><span>Explore</span>
-        </a>
-        <a href="/artsays-community" className={`mbn ${isOnCommunity ? "mbn-on" : ""}`}>
-          <Users size={20} /><span>Community</span>
-        </a>
-        {isLoggedIn && Usertype === "Buyer" && (
-          <button className="mbn" onClick={() => navigate(`/my-account/my-cart/${userId}`)}>
-            <ShoppingCart size={20} /><span>Cart</span>
+      {/* ══════════════ COMMUNITY MOBILE BOTTOM NAV ══════════════ */}
+      {isOnCommunity && (
+        <nav className="mob-bottom comm-bottom">
+          {/* Home */}
+          <Link to="/artsays-community/" className={`mbn ${location.pathname === "/artsays-community/" ? "mbn-on" : ""}`}>
+            <Home size={20} /><span>Home</span>
+          </Link>
+          {/* Search */}
+          <Link to="/artsays-community/search" className={`mbn ${location.pathname === "/artsays-community/search" ? "mbn-on" : ""}`}>
+            <Search size={20} /><span>Search</span>
+          </Link>
+          {/* CREATE — centre raised button (hidden for buyers) */}
+          {!isBuyer ? (
+            <div className="mbn-create-wrap" ref={commCreateRef}>
+              <button
+                className="mbn-create-btn"
+                onClick={(e) => { e.stopPropagation(); setShowCommCreate(p => !p); }}
+              >
+                <Plus size={26} />
+              </button>
+              {showCommCreate && (
+                <div className="mbn-create-pop">
+                  <Link to="/artsays-community/create-post" className="mbn-create-opt" onClick={() => setShowCommCreate(false)}>
+                    <Plus size={16} /><span>Post</span>
+                  </Link>
+                  <Link to="/artsays-community/create-live" className="mbn-create-opt" onClick={() => setShowCommCreate(false)}>
+                    <Radio size={16} /><span>Live</span>
+                  </Link>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              className="mbn-create-btn"
+              onClick={() => navigate(`/artsays-community/create-live`)}
+              aria-label="Cart"
+            >
+              <Video size={22} />
+            </button>
+          )}
+          {/* Explore */}
+          <Link to="/artsays-community/explore" className={`mbn ${location.pathname === "/artsays-community/explore" ? "mbn-on" : ""}`}>
+            <Compass size={20} /><span>Explore</span>
+          </Link>
+          {/* Profile → opens sidebar */}
+          <button className="mbn" onClick={() => setShowSidebar(true)}>
+            {isLoggedIn
+              ? <img src={avatarSrc} className="mbn-av" alt="" />
+              : <User size={20} />
+            }
+            <span>Profile</span>
           </button>
-        )}
-        {isLoggedIn && (Usertype === "Artist" || Usertype === "Seller") && (
-          <a href="/artsays-community/create-post" className="mbn">
-            <Plus size={20} /><span>Create</span>
+        </nav>
+      )}
+
+      {/* ══════════════ REGULAR MOBILE BOTTOM NAV ══════════════ */}
+      {!isOnCommunity && (
+        <nav className="mob-bottom">
+          {/* Slot 1 — Home */}
+          <a href="/" className={`mbn ${location.pathname === "/" ? "mbn-on" : ""}`}>
+            <Home size={20} /><span>Home</span>
           </a>
-        )}
-        {(!isLoggedIn || Usertype === "Super-Admin") && (
-          <a href="/blogs" className={`mbn ${location.pathname.startsWith("/blogs") ? "mbn-on" : ""}`}>
-            <MdLibraryAdd size={20} /><span>Blog</span>
+
+          {/* Slot 2 — Explore */}
+          <a href="/art-gallery" className={`mbn ${["/art-gallery", "/bid", "/store"].some(p => location.pathname.startsWith(p)) ? "mbn-on" : ""}`}>
+            <Compass size={20} /><span>Explore</span>
           </a>
-        )}
-        <button className="mbn" onClick={() => isLoggedIn ? setShowSidebar(true) : navigate("/login")}>
-          {isLoggedIn
-            ? <img src={avatarSrc} className="mbn-av" alt="" />
-            : <User size={20} />
-          }
-          <span>{isLoggedIn ? "Profile" : "Login"}</span>
-        </button>
-      </nav>
+
+          {/* Slot 3 — Raised Cart (Buyer) / Raised Create (Artist|Seller) / Community (Guest|Super-Admin) */}
+          {isLoggedIn && Usertype === "Buyer" && (
+            <div className="mbn-create-wrap">
+              <button
+                className="mbn-create-btn"
+                onClick={() => navigate(`/my-account/my-cart/${userId}`)}
+                aria-label="Cart"
+              >
+                <ShoppingCart size={22} />
+              </button>
+            </div>
+          )}
+          {isLoggedIn && (Usertype === "Artist" || Usertype === "Seller") && (
+            <div className="mbn-create-wrap" ref={regCreateRef}>
+              <button
+                className={`mbn-create-btn${showRegCreate ? " mbn-create-btn-on" : ""}`}
+                onClick={() => setShowRegCreate(v => !v)}
+                aria-label="Create"
+              >
+                <Plus size={24} style={{ transition: "transform 0.2s", transform: showRegCreate ? "rotate(45deg)" : "none" }} />
+              </button>
+              {showRegCreate && (
+                <div className="mbn-create-pop">
+                  <Link to="/artsays-community/create-post" className="mbn-create-opt" onClick={() => setShowRegCreate(false)}>
+                    <Plus size={15} /> Create Post
+                  </Link>
+                  <Link to="/artsays-community/create-live" className="mbn-create-opt" onClick={() => setShowRegCreate(false)}>
+                    <Video size={15} /> Go Live
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
+
+
+          {/* Slot 3 — Blog (Super-Admin/Guest) / empty spacer for logged-in roles */}
+          {(!isLoggedIn || Usertype === "Super-Admin") && (
+            <div className="mbn-create-wrap">
+              <button
+                className={`mbn-create-btn ${location.pathname.startsWith("/blogs") ? "mbn-on" : ""
+                  }`}
+                onClick={() => navigate("/blogs")}
+                aria-label="Blog"
+              >
+                <MdLibraryAdd size={20} />
+              </button>
+            </div>
+
+          )}
+          {(!isLoggedIn || Usertype === "Super-Admin") && (
+            <a href="/artsays-community" className={`mbn ${location.pathname.startsWith("/artsays-community") ? "mbn-on" : ""}`}>
+              <Users size={20} /><span>Community</span>
+            </a>
+          )}
+          {isLoggedIn && (Usertype === "Buyer" || Usertype === "Artist" || Usertype === "Seller") && (
+            <a href="/artsays-community" className={`mbn ${location.pathname.startsWith("/artsays-community") ? "mbn-on" : ""}`}>
+              <Users size={20} /><span>Community</span>
+            </a>
+          )}
+
+          {/* Slot 5 — Profile / Login */}
+          <button className="mbn" onClick={() => isLoggedIn ? setShowSidebar(true) : navigate("/login")}>
+            {isLoggedIn
+              ? <img src={avatarSrc} className="mbn-av" alt="" />
+              : <User size={20} />
+            }
+            <span>{isLoggedIn ? "Profile" : "Login"}</span>
+          </button>
+        </nav>
+      )}
     </div>
   );
 };

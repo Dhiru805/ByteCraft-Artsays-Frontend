@@ -1026,3 +1026,151 @@
 .container-custom-m {
   display: none !important;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   COMMUNITY MOBILE — BOTTOM NAV OVERRIDES
+   ═══════════════════════════════════════════════════════════ */
+
+/* Community bottom nav uses same mob-bottom base + these overrides */
+.comm-bottom {
+  background: #ffffff;
+  border-top: 1px solid #ede5e0;
+}
+
+/* Active state on community nav uses brand brown */
+.comm-bottom .mbn-on {
+  color: #48372d;
+}
+
+/* Raised centre CREATE button */
+.mbn-create-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.mbn-create-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #48372d;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(72, 55, 45, 0.35);
+  margin-bottom: 10px;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.mbn-create-btn:hover {
+  background: #5c4636;
+  transform: scale(1.06);
+}
+
+.mbn-create-btn-on {
+  background: #5c4636;
+  transform: scale(1.06);
+}
+
+/* Create popup above the button */
+.mbn-create-pop {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  border: 1px solid #ede5e0;
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(40, 25, 15, 0.14);
+  padding: 6px 0;
+  min-width: 130px;
+  z-index: 1200;
+  animation: mpIn 0.14s ease;
+}
+
+.mbn-create-pop::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #fff;
+}
+
+.mbn-create-opt {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2c1e17;
+  text-decoration: none;
+  transition: background 0.12s;
+}
+
+.mbn-create-opt:hover {
+  background: #fdf4ef;
+  color: #48372d;
+}
+
+/* Notification badge on mob-bar bell icon */
+.mob-notif-badge {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* Active sidebar item (community) */
+.mob-item-active {
+  background: #fdf4ef;
+  color: #48372d;
+  font-weight: 600;
+}
+
+.mob-item-active .mob-icon svg {
+  stroke: #48372d;
+}
+
+/* Inline notification badge in sidebar items */
+.mob-badge-inline {
+  margin-left: auto;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Placeholder slot when buyer (no create btn) */
+.mbn-placeholder {
+  pointer-events: none;
+  flex: 1;
+}
