@@ -15,6 +15,7 @@ const Sidebar = () => {
   const userId = localStorage.getItem("userId");
   const [activeSubTab, setActiveSubTab] = useState(null);
   const [globalVisibility, setGlobalVisibility] = useState(null);
+  const [visibilityLoaded, setVisibilityLoaded] = useState(false);
 
   const userrole = localStorage.getItem("userrole");
 
@@ -863,6 +864,8 @@ const Sidebar = () => {
         }
       } catch (err) {
         // no saved config — keep null (show all tabs)
+      } finally {
+        setVisibilityLoaded(true);
       }
     };
     fetchGlobalVisibility();
@@ -876,6 +879,9 @@ const Sidebar = () => {
   }, []);
 
   useEffect(() => {
+    // Wait until globalVisibility has been fetched (even if null = no config saved)
+    if (!visibilityLoaded) return;
+
     const roleKey = localStorage.getItem("userType");
 
     if (!roleKey || roleKey === "undefined" || roleKey === "null") {
@@ -925,31 +931,77 @@ const Sidebar = () => {
         setFetchedTabs(roleMenu);
       }
     } else {
-      // Artist or Seller — apply global visibility filter
+      // Artist or Seller — apply global visibility + order + renamed labels
       if (globalVisibility) {
-        const visibilityKey = roleKey === "Artist" ? "artistTabs" : roleKey === "Seller" ? "sellerTabs" : null;
+        const visibilityKey =
+          roleKey === "Artist"
+            ? "artistTabs"
+            : roleKey === "Seller"
+            ? "sellerTabs"
+            : null;
         const savedTabs = visibilityKey ? globalVisibility[visibilityKey] : null;
 
         if (savedTabs && savedTabs.length > 0) {
-          const filtered = roleMenu
-            .map((menuTab) => {
-              const savedTab = savedTabs.find((s) => s.label === menuTab.label);
-              if (savedTab && savedTab.visible === false) return null;
+          // Build a flat map: original label -> menuTab (for parent tabs)
+          const parentByLabel = {};
+          roleMenu.forEach((t) => { parentByLabel[t.label] = t; });
 
-              // Filter subtabs if any
-              if (menuTab.subTabs && menuTab.subTabs.length > 0 && savedTab?.subTabs?.length > 0) {
-                const visibleSubTabs = menuTab.subTabs.filter((sub) => {
-                  const savedSub = savedTab.subTabs.find((ss) => ss.label === sub.label);
-                  return !savedSub || savedSub.visible !== false;
-                });
-                return { ...menuTab, subTabs: visibleSubTabs };
+          // Build a flat map: original subtab label -> { path, parentIcon }
+          // so promoted subtabs can find their route
+          const subByLabel = {};
+          roleMenu.forEach((t) => {
+            (t.subTabs || []).forEach((sub) => {
+              subByLabel[sub.label] = { path: sub.path, icon: t.icon };
+            });
+          });
+
+          const result = [];
+          savedTabs.forEach((savedTab) => {
+            if (savedTab.visible === false) return;
+
+            const menuTab = parentByLabel[savedTab.label];
+            if (menuTab) {
+              // Normal parent tab — apply saved label (rename) + filter/order subtabs
+              let resolvedSubTabs = [];
+              if (menuTab.subTabs && menuTab.subTabs.length > 0) {
+                if (savedTab.subTabs && savedTab.subTabs.length > 0) {
+                  // Use saved subtab order + filter visibility
+                  savedTab.subTabs.forEach((savedSub) => {
+                    if (savedSub.visible === false) return;
+                    const match = menuTab.subTabs.find(
+                      (ms) => ms.label === savedSub.label
+                    );
+                    if (match) {
+                      resolvedSubTabs.push({
+                        ...match,
+                        label: savedSub.label, // renamed label
+                      });
+                    }
+                  });
+                } else {
+                  resolvedSubTabs = menuTab.subTabs;
+                }
               }
+              result.push({
+                ...menuTab,
+                label: savedTab.label, // renamed label
+                subTabs: resolvedSubTabs,
+              });
+            } else {
+              // Promoted subtab — look it up in the flat subtab map
+              const promoted = subByLabel[savedTab.label];
+              if (promoted) {
+                result.push({
+                  label: savedTab.label,
+                  icon: promoted.icon || "fa-circle",
+                  path: promoted.path,
+                  subTabs: [],
+                });
+              }
+            }
+          });
 
-              return menuTab;
-            })
-            .filter(Boolean);
-
-          setFetchedTabs(filtered);
+          setFetchedTabs(result);
         } else {
           setFetchedTabs(roleMenu);
         }
@@ -957,7 +1009,7 @@ const Sidebar = () => {
         setFetchedTabs(roleMenu);
       }
     }
-  }, [roleData, email, userrole, globalVisibility]);
+  }, [roleData, email, userrole, globalVisibility, visibilityLoaded]);
 
   useEffect(() => {
     const storedUserType = localStorage.getItem("userType");
