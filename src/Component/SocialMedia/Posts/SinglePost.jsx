@@ -447,9 +447,9 @@ const SharePost = () => {
       {sharePostData && (
         <>
           <div className="flex flex-col">
-            <main className="gap-2 grid grid-cols-12 mx-auto">
+            <main className="w-full gap-2 grid grid-cols-12 mx-auto">
               <Sidebar className="col-span-3" />
-              <div className="col-span-12 lg:col-span-6 w-full flex flex-col mx-auto">
+              <div className="col-span-12 lg:col-span-6 w-full flex flex-col mx-auto max-w-[470px]">
                 {/* Active Post Popup */}
                 {activeIndex && (
                   <div>

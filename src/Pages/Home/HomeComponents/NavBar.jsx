@@ -691,7 +691,7 @@ const NavBar = () => {
             {/* ── Avatar dropdown */}
             {isLoggedIn && (
               <div className="nav-avatar-wrap" ref={avatarRef}>
-                <button className="nav-avatar-btn" onClick={() => setShowAvatarDrop(s => !s)}>
+                <button className="nav-avatar-btn focus:outline-none" onClick={() => setShowAvatarDrop(s => !s)}>
                   <img src={avatarSrc} className="nav-avatar-img" alt="Profile" />
                   <ChevronDown size={12} className={`nav-av-chev ${showAvatarDrop ? "nav-chev-open" : ""}`} />
                 </button>

@@ -788,7 +788,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
     );
   }
   return (
-    <div className="col-span-12 lg:col-span-6 w-full my-4 flex flex-col mx-auto">
+    <div className="col-span-12 lg:col-span-6 w-full my-1 md:!my-4 flex flex-col mx-auto max-w-[470px]">
       {/* Active Post Popup */}
       {activePost && (
         <div>

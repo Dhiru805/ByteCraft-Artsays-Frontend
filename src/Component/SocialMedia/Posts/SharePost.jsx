@@ -48,7 +48,7 @@ const SharePost = () => {
     }
   };
   return (
-    <div className="max-w-[50%] mx-auto my-4">
+    <div className="max-w-[470px] mx-auto my-4">
       {sharePostData && (
         <Helmet>
           <meta charSet="utf-8" />
