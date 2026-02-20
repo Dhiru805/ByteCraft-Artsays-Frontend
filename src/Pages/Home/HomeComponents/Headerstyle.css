@@ -251,17 +251,15 @@
    MEGA MENUS
    ═══════════════════════════════════════════════════════════ */
 .mega-wrap {
-  position: absolute;
-  top: calc(100% + 10px);
-  left: 50%;
-  transform: translateX(-50%);
+  position: fixed;
+  top: 64px;
   z-index: 999;
   animation: mpIn 0.18s cubic-bezier(.22,.68,0,1.2);
 }
 
 @keyframes mpIn {
-  from { opacity: 0; transform: translateX(-50%) translateY(-8px) scale(0.98); }
-  to   { opacity: 1; transform: translateX(-50%) translateY(0)    scale(1);    }
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .mp {

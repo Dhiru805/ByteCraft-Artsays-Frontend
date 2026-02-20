@@ -360,6 +360,8 @@ const NavBar = () => {
   const createRef = useRef(null);
   const commCreateRef = useRef(null);
   const regCreateRef = useRef(null);
+  const navInnerRef = useRef(null);
+  const navItemRefs = useRef({});
 
   const userId = localStorage.getItem("userId");
   const username = localStorage.getItem("username");
@@ -468,7 +470,24 @@ const NavBar = () => {
     window.location.href = "/";
   };
 
-  const openMega = (key) => { clearTimeout(megaTimer.current); setActiveMega(key); };
+  const [megaLeft, setMegaLeft] = useState(0);
+  const MEGA_WIDTH = 740;
+
+  const openMega = (key) => {
+    clearTimeout(megaTimer.current);
+    setActiveMega(key);
+    const itemEl = navItemRefs.current[key];
+    if (itemEl) {
+      const itemRect = itemEl.getBoundingClientRect();
+      const viewW = window.innerWidth;
+      // ideal: centre the menu on the button
+      let ideal = itemRect.left + itemRect.width / 2 - MEGA_WIDTH / 2;
+      // clamp: never go past viewport edges (16px margin), never past 1440px container
+      const maxLeft = Math.min(viewW - MEGA_WIDTH - 16, (viewW - Math.min(viewW, 1440)) / 2 + Math.min(viewW, 1440) - MEGA_WIDTH - 16);
+      const clamped = Math.max(16, Math.min(ideal, maxLeft));
+      setMegaLeft(clamped);
+    }
+  };
   const closeMega = () => { megaTimer.current = setTimeout(() => setActiveMega(null), 150); };
   const keepMega = () => clearTimeout(megaTimer.current);
 
@@ -490,23 +509,24 @@ const NavBar = () => {
           {/* ── LEFT: nav links */}
           <nav className="nav-links">
             {NAV_ITEMS.map(({ key, label, Mega, href }) => (
-              <div
-                key={key}
-                className={`nav-item ${activeMega === key ? "nav-item-active" : ""}`}
-                onMouseEnter={() => openMega(key)}
-                onMouseLeave={closeMega}
-              >
-                <a href={href} className="nav-btn">
-                  {label}
-                  <ChevronDown size={10} className={`nav-chev ${activeMega === key ? "nav-chev-open" : ""}`} />
-                </a>
-                {activeMega === key && (
-                  <div className="mega-wrap" onMouseEnter={keepMega} onMouseLeave={closeMega}>
-                    <Mega />
-                  </div>
-                )}
-              </div>
-            ))}
+                <div
+                  key={key}
+                  ref={el => navItemRefs.current[key] = el}
+                  className={`nav-item ${activeMega === key ? "nav-item-active" : ""}`}
+                  onMouseEnter={() => openMega(key)}
+                  onMouseLeave={closeMega}
+                >
+                  <a href={href} className="nav-btn">
+                    {label}
+                    <ChevronDown size={10} className={`nav-chev ${activeMega === key ? "nav-chev-open" : ""}`} />
+                  </a>
+                  {activeMega === key && (
+                    <div className="mega-wrap" style={{ left: megaLeft }} onMouseEnter={keepMega} onMouseLeave={closeMega}>
+                      <Mega />
+                    </div>
+                  )}
+                </div>
+              ))}
           </nav>
 
           {/* ── CENTER: logo */}
