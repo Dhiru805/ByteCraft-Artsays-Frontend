@@ -348,7 +348,7 @@
   color: #c9184a;
 }
 
-/* ── Mega Ad Card */
+/* ── Mega Ad Slider Card */
 .mad-card {
   flex-shrink: 0;
   width: 170px;
@@ -357,10 +357,29 @@
   border: 1px solid #ede5e0;
   background: #ffffff;
   box-shadow: 0 2px 12px rgba(72,55,45,0.07);
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.mad-card:hover {
+  box-shadow: 0 8px 28px rgba(72,55,45,0.15);
+  transform: translateY(-2px);
+}
+
+/* skeleton while loading */
+.mad-skeleton {
+  height: 220px;
+  background: linear-gradient(90deg, #f3ece8 25%, #ede5e0 50%, #f3ece8 75%);
+  background-size: 200% 100%;
+  animation: madShimmer 1.4s infinite;
+}
+@keyframes madShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 .mad-img-wrap {
   position: relative;
+  overflow: hidden;   /* clips sliding animation */
 }
 
 .mad-img {
@@ -380,7 +399,24 @@
   letter-spacing: 0.04em;
   padding: 3px 9px;
   border-radius: 20px;
+  z-index: 2;
 }
+
+.mad-discount-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #fee2e2;
+  color: #dc2626;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  border-radius: 20px;
+  border: 1px solid #fca5a5;
+  z-index: 2;
+}
+
 
 .mad-body {
   padding: 11px 12px 13px;
@@ -399,12 +435,18 @@
   color: #1a1008;
   margin: 0 0 3px;
   line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mad-sub {
   font-size: 11px;
   color: #7a6258;
-  margin: 0 0 10px;
+  margin: 0 0 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mad-row {
@@ -423,19 +465,40 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: #1a1a1a;
+  background: #48372d;
   color: #fff;
   font-size: 10px;
   font-weight: 700;
-  padding: 5px 11px;
+  padding: 5px 10px;
   border-radius: 20px;
-  text-decoration: none;
+  border: none;
+  cursor: pointer;
   transition: background 0.2s;
 }
+.mad-cta:hover { background: #2c1e17; color: #fff; }
 
-.mad-cta:hover {
+/* dot indicators */
+.mad-dots {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 8px;
+}
+.mad-dot-btn {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ddd5d0;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.25s;
+  flex-shrink: 0;
+}
+.mad-dot-btn.mad-dot-on {
+  width: 16px;
+  border-radius: 3px;
   background: #48372d;
-  color: #fff;
 }
 
 /* ═══════════════════════════════════════════════════════════

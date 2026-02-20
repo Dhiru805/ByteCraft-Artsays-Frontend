@@ -25,25 +25,163 @@ import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 import HeaderSkeleton from "../../../Component/Skeleton/Home/HeaderSkeleton";
 
 // ─────────────────────────────────────────────────────────────
-// AD CARD — shown in every mega menu
+// MEGA AD SLIDER
+// Fetches all available campaign ads (tries specific placement
+// first, falls back to homepage, then static). No arrows —
+// auto-slide + dots only.
 // ─────────────────────────────────────────────────────────────
-const MegaAdCard = ({ badge, badgeColor, image, tag, title, sub, price, cta, href }) => (
-  <div className="mad-card">
-    <div className="mad-img-wrap">
-      <img src={image || "/assets/home/biditemurl.jpg"} alt={title} className="mad-img" />
-      <span className="mad-badge" style={{ background: badgeColor || "#1a1a1a" }}>{badge}</span>
-    </div>
-    <div className="mad-body">
-      <p className="mad-tag">{tag}</p>
-      <p className="mad-title">{title}</p>
-      <p className="mad-sub">{sub}</p>
-      <div className="mad-row">
-        <span className="mad-price">{price}</span>
-        <a href={href} className="mad-cta">{cta} <ArrowRight size={12} /></a>
+const STATIC_ADS_FALLBACK = [
+  { image: "/assets/home/biditemurl.jpg", badge: "Featured", badgeColor: "#7c3aed", tag: "Sponsored", title: "Discover Amazing Art", sub: "Artsays Collection", price: "", cta: "Explore", href: "/art-gallery" },
+  { image: "/assets/home/biditemurl.jpg", badge: "New", badgeColor: "#0ea5e9", tag: "Sponsored", title: "Bid on Rare Pieces", sub: "Live Auctions", price: "", cta: "Bid Now", href: "/bid" },
+];
+
+const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
+
+// Shared cache so all 5 mega menus don't each fire separate requests
+let _megaAdsCache = null;
+let _megaAdsFetching = null;
+
+const fetchMegaAds = () => {
+  if (_megaAdsCache) return Promise.resolve(_megaAdsCache);
+  if (_megaAdsFetching) return _megaAdsFetching;
+  _megaAdsFetching = getAPI(`/api/campaigns/ads/placement?placement=homepage`, {}, true, false)
+    .then(res => {
+      const data = res?.data?.data || [];
+      _megaAdsCache = data.length > 0 ? data : null;
+      return _megaAdsCache;
+    })
+    .catch(() => { _megaAdsCache = null; return null; })
+    .finally(() => { _megaAdsFetching = null; });
+  return _megaAdsFetching;
+};
+
+// Each menu gets a slice of real ads offset by menuIndex so menus show different ads when possible
+const MegaAdSlider = ({ menuIndex = 0 }) => {
+  const [ads, setAds] = useState([]);
+  const [idx, setIdx] = useState(0);
+  const [slideDir, setSlideDir] = useState("right");
+  const [hovered, setHovered] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const timerRef = useRef(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchMegaAds().then(rawAds => {
+      if (cancelled) return;
+      if (rawAds && rawAds.length > 0) {
+        // rotate the list so each menu starts at a different ad
+        const rotated = [...rawAds.slice(menuIndex % rawAds.length), ...rawAds.slice(0, menuIndex % rawAds.length)];
+        setAds(rotated.map(ad => ({
+          image: `${imageBaseURL}${ad.mainImage}`,
+          badge: "Ad",
+          badgeColor: "#48372d",
+          tag: ad.category || "Sponsored",
+          title: ad.productName || "Discover",
+          sub: ad.userId ? `${ad.userId.name || ""}${ad.userId.lastName ? ` ${ad.userId.lastName}` : ""}` : "",
+          price: ad.finalPrice ? `₹${Number(ad.finalPrice).toLocaleString()}` : "",
+          marketPrice: ad.marketPrice,
+          finalPrice: ad.finalPrice,
+          cta: "Buy Now",
+          href: `/product-details/${(ad.productName || "product").toLowerCase().replace(/\s+/g, "-")}/${ad._id}`,
+          _raw: ad,
+        })));
+      } else {
+        setAds(STATIC_ADS_FALLBACK);
+      }
+      setLoaded(true);
+    });
+    return () => { cancelled = true; };
+  }, [menuIndex]);
+
+  const total = ads.length;
+
+  // auto-slide every 4s, pause on hover
+  useEffect(() => {
+    if (total <= 1 || hovered) return;
+    timerRef.current = setInterval(() => {
+      setSlideDir("right");
+      setIdx(p => (p + 1) % total);
+    }, 4000);
+    return () => clearInterval(timerRef.current);
+  }, [total, hovered]);
+
+  const goTo = (i) => { setSlideDir(i > idx ? "right" : "left"); setIdx(i); };
+
+  const handleClick = async (ad) => {
+    if (ad._raw) {
+      try {
+        const postAPImod = (await import("../../../api/postAPI")).default;
+        await postAPImod("/api/campaigns/ads/click", {
+          campaignId: ad._raw.campaignId,
+          productId: ad._raw._id,
+          placement: "homepage",
+        }, {}, false);
+      } catch {}
+      navigate(ad.href);
+    } else {
+      window.location.href = ad.href;
+    }
+  };
+
+  const cur = ads[idx];
+  if (!loaded || !cur) return <div className="mad-card mad-skeleton" />;
+
+  const hasDiscount = cur.finalPrice && cur.marketPrice && cur.finalPrice < cur.marketPrice;
+  const discountPct = hasDiscount ? Math.round(((cur.marketPrice - cur.finalPrice) / cur.marketPrice) * 100) : 0;
+
+  return (
+    <div
+      className="mad-card"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={() => handleClick(cur)}
+    >
+      {/* image */}
+      <div className="mad-img-wrap">
+        <img
+          key={idx}
+          src={cur.image || "/assets/home/biditemurl.jpg"}
+          alt={cur.title}
+          className="mad-img"
+          style={{ animation: total > 1 ? `madSlide${slideDir === "right" ? "R" : "L"} 0.35s ease-out` : "none" }}
+          draggable={false}
+        />
+        <span className="mad-badge" style={{ background: cur.badgeColor || "#1a1a1a" }}>{cur.badge}</span>
+        {hasDiscount && <span className="mad-discount-badge">{discountPct}% OFF</span>}
       </div>
+
+      {/* body */}
+      <div className="mad-body">
+        <p className="mad-title">{cur.title}</p>
+        <p className="mad-sub">{cur.sub}</p>
+        <div className="mad-row">
+          <span className="mad-price">{cur.price}</span>
+          <button className="mad-cta" onClick={e => { e.stopPropagation(); handleClick(cur); }}>
+            {cur.cta} <ArrowRight size={11} />
+          </button>
+        </div>
+        {/* dot indicators */}
+        {total > 1 && (
+          <div className="mad-dots">
+            {ads.map((_, i) => (
+              <button
+                key={i}
+                className={`mad-dot-btn${i === idx ? " mad-dot-on" : ""}`}
+                onClick={e => { e.stopPropagation(); goTo(i); }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <style>{`
+        @keyframes madSlideR { from { transform: translateX(18px); opacity: 0.3; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes madSlideL { from { transform: translateX(-18px); opacity: 0.3; } to { transform: translateX(0); opacity: 1; } }
+      `}</style>
     </div>
-  </div>
-);
+  );
+};
 
 // ─────────────────────────────────────────────────────────────
 // MEGA MENUS
@@ -78,16 +216,7 @@ const ArtMega = () => (
         <a className="mp-link" href="/art-gallery"><span className="mp-dot" style={{ background: "#f5a623" }} />Editor's Picks</a>
         <a className="mp-link" href="/art-gallery"><span className="mp-dot" style={{ background: "#f5a623" }} />Awarded Artworks</a>
       </div>
-      <MegaAdCard
-        badge="Editor's Pick"
-        badgeColor="#7c3aed"
-        tag="Abstract · Oil on Canvas"
-        title="Celestial Bloom"
-        sub="by Priya Sharma"
-        price="₹12,500"
-        cta="Buy Now"
-        href="/art-gallery"
-      />
+        <MegaAdSlider menuIndex={0} />
     </div>
     <div className="mp-foot">
       <a href="/art-gallery" className="mp-cta">
@@ -122,16 +251,7 @@ const BidMega = () => (
         <a className="mp-link" href="/bid"><span className="mp-dot" />Won Items</a>
         <a className="mp-link" href="/bid"><span className="mp-dot" />Watchlist</a>
       </div>
-      <MegaAdCard
-        badge="🔴 Live Now"
-        badgeColor="#dc2626"
-        tag="High-Value Lot · Ends in 2h"
-        title="Golden Era Painting"
-        sub="Current bid: ₹68,000"
-        price="68 bids"
-        cta="Place Bid"
-        href="/bid"
-      />
+        <MegaAdSlider menuIndex={1} />
     </div>
     <div className="mp-foot">
       <a href="/bid" className="mp-cta"><Zap size={14} /> Enter Bidding Arena</a>
@@ -165,16 +285,7 @@ const StoresMega = () => (
         <a className="mp-link" href="/track-your-order"><span className="mp-dot" />Track Order</a>
         <a className="mp-link" href="/store"><span className="mp-dot" />Bundle Packs</a>
       </div>
-      <MegaAdCard
-        badge="Verified Store"
-        badgeColor="#059669"
-        tag="Handmade · Free Shipping"
-        title="Terra Clay Studio"
-        sub="500+ products · 4.9 ★"
-        price="From ₹799"
-        cta="Visit Store"
-        href="/store"
-      />
+        <MegaAdSlider menuIndex={2} />
     </div>
     <div className="mp-foot">
       <a href="/store" className="mp-cta"><Package size={14} /> Browse All Stores</a>
@@ -205,16 +316,7 @@ const CommunityMega = () => (
         <a className="mp-link" href="/artsays-community"><span className="mp-dot" style={{ background: "#f59e0b" }} />Collab Request</a>
         <a className="mp-link" href="/artsays-community"><span className="mp-dot" style={{ background: "#f59e0b" }} />Promote Content</a>
       </div>
-      <MegaAdCard
-        badge="Featured Creator"
-        badgeColor="#7c3aed"
-        tag="Digital Artist · 12K followers"
-        title="Arjun Das"
-        sub="Live in 30 min"
-        price="Free to join"
-        cta="Follow"
-        href="/artsays-community"
-      />
+        <MegaAdSlider menuIndex={3} />
     </div>
     <div className="mp-foot">
       <a href="/artsays-community" className="mp-cta"><Users size={14} /> Enter Community</a>
@@ -245,16 +347,7 @@ const LearnMega = () => (
         <a className="mp-link" href="/faqs"><span className="mp-dot" />Contact Support</a>
         <a className="mp-link" href="/faqs"><span className="mp-dot" />Report an Issue</a>
       </div>
-      <MegaAdCard
-        badge="New Guide"
-        badgeColor="#0ea5e9"
-        tag="Beginner Friendly"
-        title="Start Selling Your Art"
-        sub="Step-by-step for new artists"
-        price="Free"
-        cta="Read Now"
-        href="/how-to-sell"
-      />
+        <MegaAdSlider menuIndex={4} />
     </div>
     <div className="mp-foot">
       <a href="/blogs" className="mp-cta"><Star size={14} /> Visit Blog</a>
