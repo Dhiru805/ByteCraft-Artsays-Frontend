@@ -14,6 +14,7 @@ const Sidebar = () => {
   const [userType, setUserType] = useState(null);
   const userId = localStorage.getItem("userId");
   const [activeSubTab, setActiveSubTab] = useState(null);
+  const [globalVisibility, setGlobalVisibility] = useState(null);
 
   const userrole = localStorage.getItem("userrole");
 
@@ -547,12 +548,13 @@ const Sidebar = () => {
           },
           { label: "GST", path: `/super-admin/settings/GST` },
           { label: "Insurance", path: `/super-admin/settings/insurance` },
-          { label: "exhibition setting", path: `/super-admin/settings/exhibition` },
-       
-          {
-            label: "Default Auto Targeting",
-            path: `/super-admin/settings/auto-targeting`,
-          },
+           { label: "exhibition setting", path: `/super-admin/settings/exhibition` },
+           { label: "Sidebar Visibility", subtabId: "stg16", path: `/super-admin/settings/sidebar-visibility` },
+         
+           {
+             label: "Default Auto Targeting",
+             path: `/super-admin/settings/auto-targeting`,
+           },
           // {
           //   label: "Auto Targeting Group",
           //   path: `/super-admin/settings/group-targeting`,
@@ -853,6 +855,20 @@ const Sidebar = () => {
   }, [userrole]);
 
   useEffect(() => {
+    const fetchGlobalVisibility = async () => {
+      try {
+        const response = await getAPI("/api/sidebar-visibility");
+        if (response?.data) {
+          setGlobalVisibility(response.data);
+        }
+      } catch (err) {
+        // no saved config — keep null (show all tabs)
+      }
+    };
+    fetchGlobalVisibility();
+  }, []);
+
+  useEffect(() => {
     const storedEmail = localStorage.getItem("email");
     if (storedEmail) {
       setEmail(storedEmail);
@@ -909,9 +925,39 @@ const Sidebar = () => {
         setFetchedTabs(roleMenu);
       }
     } else {
-      setFetchedTabs(roleMenu);
+      // Artist or Seller — apply global visibility filter
+      if (globalVisibility) {
+        const visibilityKey = roleKey === "Artist" ? "artistTabs" : roleKey === "Seller" ? "sellerTabs" : null;
+        const savedTabs = visibilityKey ? globalVisibility[visibilityKey] : null;
+
+        if (savedTabs && savedTabs.length > 0) {
+          const filtered = roleMenu
+            .map((menuTab) => {
+              const savedTab = savedTabs.find((s) => s.label === menuTab.label);
+              if (savedTab && savedTab.visible === false) return null;
+
+              // Filter subtabs if any
+              if (menuTab.subTabs && menuTab.subTabs.length > 0 && savedTab?.subTabs?.length > 0) {
+                const visibleSubTabs = menuTab.subTabs.filter((sub) => {
+                  const savedSub = savedTab.subTabs.find((ss) => ss.label === sub.label);
+                  return !savedSub || savedSub.visible !== false;
+                });
+                return { ...menuTab, subTabs: visibleSubTabs };
+              }
+
+              return menuTab;
+            })
+            .filter(Boolean);
+
+          setFetchedTabs(filtered);
+        } else {
+          setFetchedTabs(roleMenu);
+        }
+      } else {
+        setFetchedTabs(roleMenu);
+      }
     }
-  }, [roleData, email, userrole]);
+  }, [roleData, email, userrole, globalVisibility]);
 
   useEffect(() => {
     const storedUserType = localStorage.getItem("userType");

@@ -343,6 +343,7 @@ import UpdateChallengeApplication from "../Component/Dashboard/Super-AdminDashbo
 import GSTSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/GST/GST';
 import InsuranceSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/Insurance/InsuranceSetting'
 import ExhibitionSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/Exhibition/ExhibitionSetting'
+import SidebarVisibility from '../Component/Dashboard/Super-AdminDashboard/Settings/SidebarVisibility/SidebarVisibility'
 
 //------------------------------PackagingMaterial--------------------------------//
 import Material from "../Component/Dashboard/Super-AdminDashboard/PackagingMaterial/Material";
@@ -1158,8 +1159,9 @@ const AppRoutes = () => {
         />
         <Route path="product-settings/period-era" element={<PeriodEras />} />
         <Route path="settings/gst" element={<GSTSetting />} />
-        <Route path="settings/insurance" element={<InsuranceSetting />} />
-         <Route path="settings/exhibition" element={<ExhibitionSetting />} />
+         <Route path="settings/insurance" element={<InsuranceSetting />} />
+          <Route path="settings/exhibition" element={<ExhibitionSetting />} />
+          <Route path="settings/sidebar-visibility" element={<SidebarVisibility />} />
         {/* Advertise Routes */}
         <Route path="advertise" element={<SuperAdminArtistAdvertise />} />
         <Route path="advertise/sponser" element={<SuperAdminArtistSponsor />} />
