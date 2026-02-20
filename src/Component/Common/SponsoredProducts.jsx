@@ -18,6 +18,10 @@ const SponsoredProducts = ({ placement, title = "Sponsored", layout = "row", max
   const userType = localStorage.getItem("userType");
 
   const ensureBuyer = () => {
+    if (!userId) {
+      toast.error("Please login first");
+      return false;
+    }
     if (userType !== "Buyer") {
       toast.warn("Only buyers can use this feature. Register as a Buyer to continue.");
       return false;

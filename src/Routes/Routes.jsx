@@ -591,6 +591,7 @@ import Certification from "../Pages/Certification/Certification";
 import Insurance from "../Pages/Insurance/Insurance";
 import Partner from "../Pages/Partner/Partner";
 import FAQsPage from "../Pages/FAQs/FAQsPage";
+import SearchPage from "../Pages/Search/SearchPage";
 import SellerProductCouponCodes from "../Component/Dashboard/SellerDashboard/ProductSetting/ProductCouponCode/ProductCouponCode";
 import UpdateProductSeller from "../Component/Dashboard/SellerDashboard/ProductsDetails/UpdateProduct/productUploade";
 import ProductViewSeller from "../Component/Dashboard/SellerDashboard/ProductsDetails/ViewProduct/productUploade";
@@ -1754,6 +1755,7 @@ const AppRoutes = () => {
         <Route path="/insurance" element={<Insurance />} />
         <Route path="/partner" element={<Partner />} />
         <Route path="/faqs" element={<FAQsPage />} />
+        <Route path="/search" element={<SearchPage />} />
         <Route path="/track-your-order" element={
           <>
             <div className="relative w-full h-[300px] sm:h-[250px] md:h-[300px] overflow-hidden flex items-center justify-center">

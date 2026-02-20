@@ -255,7 +255,11 @@ const ArtistCard = () => {
   };
 
   const handleStoreVisit = (artistId) => {
-    navigate(`/api/social-media/profile/product-view?artistId=${artistId}`);
+    if (!userId) {
+      toast.error("Please login first to visit the store");
+      return;
+    }
+    navigate(`/social-media/profile/product-view?artistId=${artistId}`);
   };
 
   const FilterSection = ({ title, icon: Icon, children }) => (

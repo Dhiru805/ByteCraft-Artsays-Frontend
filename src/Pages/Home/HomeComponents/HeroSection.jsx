@@ -1,6 +1,8 @@
 import React, { useState, useEffect, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, TrendingUp } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
 const heroStats = [
   "CurioCanvas design",
   "Arthive design",
@@ -15,15 +17,28 @@ const treands = [
   "Glass Art",
   "4+ More trends",
 ];
-const Input = memo(() => {
+
+const Input = memo(({ onSearch }) => {
+  const [query, setQuery] = useState("");
+
+  const handleSubmit = () => {
+    if (query.trim()) onSearch(query.trim());
+  };
+
   return (
     <div className="flex z-[100] flex-row justify-between w-[60%] bg-base px-2 py-1 h-[70px] rounded-xl">
       <input
         type="text"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
         className="w-[90%] text-[20px] h-full border-3  bg-[#FFFFFF] text-orange-200 px-2 roumded-xl focus:outline-none outline-none"
         placeholder="Search here..."
       />
-      <button className="bg-[#FB5934] p-[18px] rounded-[10px] flex items-center justify-center">
+      <button
+        onClick={handleSubmit}
+        className="bg-[#FB5934] p-[18px] rounded-[10px] flex items-center justify-center"
+      >
         <Search size={30} color="white" />
       </button>
     </div>
@@ -57,9 +72,12 @@ const AnimatedText = memo(() => {
 });
 
 const HeroSection = () => {
-  useEffect(()=>{
-  console.log("hero render here ")
-  },[])
+  const navigate = useNavigate();
+
+  const handleSearch = (q) => {
+    navigate(`/search?q=${encodeURIComponent(q)}`);
+  };
+
   return (
     <div className="w-full min-h-[740px]  bg-gray-100 ">
       <div className="max-w-[1440px] w-full h-full  px-[80px] mx-auto   flex flex-row relative pb-8">
@@ -86,7 +104,7 @@ const HeroSection = () => {
             A Marketplace for Unique Art & Artifacts, Connecting Artists with
             Collectors for Seamless Buying, Selling, and Showcasing.
           </p>
-          <Input />
+          <Input onSearch={handleSearch} />
 
           <div className="w-[40%]  py-6">
             <div className="flex flex-row items-center gap-4  mb-6">
@@ -99,7 +117,11 @@ const HeroSection = () => {
               {treands.map((trend) => {
                 return (
                   <>
-                    <button className="focus:outline-none border-none ">
+                    <button
+                      key={trend}
+                      onClick={() => handleSearch(trend)}
+                      className="focus:outline-none border-none "
+                    >
                       {trend}
                     </button>
                   </>

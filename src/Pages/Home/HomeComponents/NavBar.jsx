@@ -361,7 +361,7 @@ const LearnMega = () => (
 const SEARCH_TABS = ["Artworks", "Artists", "Stores", "Community"];
 const TRENDING = ["Abstract Paintings", "Digital Sculpture", "Mandala Art", "Tribal Crafts", "NFT Art"];
 
-const SearchDropdown = ({ visible, query, setQuery, tab, setTab }) => {
+const SearchDropdown = ({ visible, query, setQuery, tab, setTab, onSubmit }) => {
   if (!visible) return null;
   return (
     <div className="sdrop">
@@ -370,7 +370,7 @@ const SearchDropdown = ({ visible, query, setQuery, tab, setTab }) => {
           <button key={t} className={`sdrop-tab ${tab === t ? "sdrop-tab-on" : ""}`} onClick={() => setTab(t)}>{t}</button>
         ))}
       </div>
-      <div className="sdrop-input-row">
+      <form className="sdrop-input-row" onSubmit={onSubmit}>
         <Search size={14} className="sdrop-icon" />
         <input
           autoFocus
@@ -380,11 +380,13 @@ const SearchDropdown = ({ visible, query, setQuery, tab, setTab }) => {
           value={query}
           onChange={e => setQuery(e.target.value)}
         />
-        {query && <button className="sdrop-clear" onClick={() => setQuery("")}><X size={12} /></button>}
-      </div>
+        {query && <button type="button" className="sdrop-clear" onClick={() => setQuery("")}><X size={12} /></button>}
+      </form>
       <div className="sdrop-trending">
         <span className="sdrop-trend-label">Trending</span>
-        {TRENDING.map(t => <a key={t} href="/art-gallery" className="sdrop-tag">{t}</a>)}
+        {TRENDING.map(t => (
+          <a key={t} href={`/search?q=${encodeURIComponent(t)}`} className="sdrop-tag">{t}</a>
+        ))}
       </div>
     </div>
   );
@@ -630,24 +632,29 @@ const NavBar = () => {
           {/* ── RIGHT: search + actions */}
           <div className="nav-actions">
 
-            {/* Search */}
-            <div className="nav-search-wrap" ref={searchRef}>
-              <button
-                className={`nav-search-btn ${showSearch ? "nav-search-open" : ""}`}
-                onClick={() => setShowSearch(s => !s)}
-                aria-label="Search"
-              >
-                <Search size={16} />
-                <span className="nav-search-label">Search</span>
-              </button>
-              <SearchDropdown
-                visible={showSearch}
-                query={searchQuery}
-                setQuery={setSearchQuery}
-                tab={searchTab}
-                setTab={setSearchTab}
-              />
-            </div>
+              {/* Search */}
+              <div className="nav-search-wrap" ref={searchRef}>
+                <button
+                  className={`nav-search-btn ${showSearch ? "nav-search-open" : ""}`}
+                  onClick={() => setShowSearch(s => !s)}
+                  aria-label="Search"
+                >
+                  <Search size={16} />
+                  <span className="nav-search-label">Search</span>
+                </button>
+                <SearchDropdown
+                  visible={showSearch}
+                  query={searchQuery}
+                  setQuery={setSearchQuery}
+                  tab={searchTab}
+                  setTab={setSearchTab}
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    setShowSearch(false);
+                    navigate(searchQuery.trim() ? `/search?q=${encodeURIComponent(searchQuery.trim())}` : "/search");
+                  }}
+                />
+              </div>
 
             {/* ── Guest */}
             {!isLoggedIn && (

@@ -279,11 +279,15 @@
 // };
 // export default Hero;
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
 import HeroSectionSkeleton from "../../../Component/Skeleton/HeroSectionSkeleton";
+import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
+
 const Hero = () => {
+  const navigate = useNavigate();
   const [heroData, setHeroData] = useState(null);
   const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -293,10 +297,22 @@ const Hero = () => {
   const [typing, setTyping] = useState(true);
   const [open, setOpen] = useState(false);
   const [imgIndex, setImgIndex] = useState(0);
+  const [query, setQuery] = useState("");
+  const [allProducts, setAllProducts] = useState([]);
+  const [allArtists, setAllArtists] = useState([]);
+  const [recentSearches, setRecentSearches] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("artsays_recent_searches") || "[]");
+    } catch {
+      return [];
+    }
+  });
+  const searchRef = useRef(null);
+
+  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 
   useEffect(() => {
     const fetchHero = async () => {
-
       try {
         const pageRes = await getAPI("/api/homepage/published");
         const homepage = pageRes.data.data;
@@ -362,6 +378,95 @@ const Hero = () => {
     setImgIndex(wordIndex);
   }, [wordIndex, heroData]);
 
+  // fetch products + artists for dropdown
+  useEffect(() => {
+    Promise.all([
+      getAPI("/api/getstatusapprovedproduct", {}, true, false),
+      getAPI("/api/getstatusapprovedproductforSELLER", {}, true, false),
+    ])
+      .then(([res1, res2]) => {
+        const p1 = res1?.data?.data?.filter((p) => p.status === "Approved") || [];
+        const p2 = res2?.data?.data?.filter((p) => p.status === "Approved") || [];
+        const merged = [...p1, ...p2].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setAllProducts(merged);
+      })
+      .catch(() => {});
+
+    getAPI("/artist/artists", {}, true, false)
+      .then((res) => {
+        const list = res?.data?.artists || res?.data?.data || res?.data || [];
+        setAllArtists(Array.isArray(list) ? list : []);
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const q = query.trim().toLowerCase();
+
+  // smart filtering: check which type(s) match the query
+    const str = (v) => (typeof v === "string" ? v.toLowerCase() : Array.isArray(v) ? v.join(" ").toLowerCase() : "");
+
+    const matchedProducts = q
+      ? allProducts.filter((p) =>
+          str(p.productName).includes(q) ||
+          str(p.title).includes(q) ||
+          str(p.description).includes(q) ||
+          str(p.mainCategory).includes(q) ||
+          str(p.category).includes(q) ||
+          str(p.subcategory).includes(q) ||
+          str(p.medium).includes(q) ||
+          str(p.material).includes(q) ||
+          str(p.productType).includes(q) ||
+          str(p.artStyle).includes(q) ||
+          str(p.subject).includes(q)
+        )
+      : [];
+
+  const matchedArtists = q
+    ? allArtists.filter((a) => {
+        const name = `${a.name || a.firstName || ""} ${a.lastName || ""}`.toLowerCase();
+        return (
+          name.includes(q) ||
+          str(a.username).includes(q) ||
+          (a.expertise || []).some((e) => str(e).includes(q)) ||
+          str(a.userType).includes(q)
+        );
+      })
+    : [];
+
+    // products: only show when actively searching
+  const productSuggestions = q ? matchedProducts.slice(0, 8) : [];
+  // artists: show top 10 by default, matched when searching
+  const artistSuggestions = q ? matchedArtists.slice(0, 10) : allArtists.slice(0, 10);
+
+  const saveSearch = (term) => {
+    const t = term.trim();
+    if (!t) return;
+    setRecentSearches((prev) => {
+      const updated = [t, ...prev.filter((s) => s.toLowerCase() !== t.toLowerCase())].slice(0, 7);
+      localStorage.setItem("artsays_recent_searches", JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const handleSearch = (term) => {
+    const t = (term || query).trim();
+    if (!t) return;
+    saveSearch(t);
+    setOpen(false);
+    setQuery("");
+    navigate(`/search?q=${encodeURIComponent(t)}`);
+  };
+
   if (loading)
     return (
       <div className="h-[600px] flex items-center justify-center">
@@ -401,68 +506,195 @@ const Hero = () => {
               <span className="inline-block w-[3px] h-[1em] bg-gradient-to-r from-[#48372D] to-[#FF725E] align-bottom animate-blink ml-1"></span>
             </h2>
 
-            <div className="relative w-full max-w-3xl mt-4">
-              <div className="flex items-center justify-center lg:justify-start w-full rounded-xl border border-gray-300 shadow-lg overflow-hidden">
-                <input
-                  type="text"
-                  placeholder="Search your next Masterpiece NOW!"
-                  className="flex-1 px-4 py-3 text-md md:text-lg text-gray-600 focus:outline-none"
-                  onFocus={() => setOpen(true)}
-                  onBlur={() => setTimeout(() => setOpen(false), 200)}
-                />
-                <button className="px-6 py-3 bg-[#6F4D34] text-white font-medium transition font-semibold text-md md:text-lg">
-                  Search
-                </button>
-              </div>
+              <div className="relative w-full max-w-3xl mt-4" ref={searchRef}>
+                  <div className="flex items-center justify-center lg:justify-start w-full rounded-xl border border-gray-300 shadow-lg overflow-hidden">
+                    <input
+                      type="text"
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      onFocus={() => setOpen(true)}
+                      onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                      placeholder="Search your next Masterpiece NOW!"
+                      className="flex-1 px-4 py-3 text-md md:text-lg text-gray-600 focus:outline-none"
+                    />
+                    <button
+                      onClick={() => handleSearch()}
+                      className="px-6 py-3 bg-[#6F4D34] text-white font-medium transition font-semibold text-md md:text-lg"
+                    >
+                      Search
+                    </button>
+                  </div>
 
-              {open && (
-                <div className="absolute top-full left-0 w-full bg-white shadow-xl rounded-xl mt-2 z-50 p-4">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-4">
-                    {["1015", "1016", "1018", "1019"].map((id, i) => (
-                      <div
-                        key={i}
-                        className="flex flex-col items-center text-sm cursor-pointer hover:scale-105 transition"
-                      >
-                        <img
-                          src={`https://picsum.photos/id/${id}/150/100`}
-                          alt="Art"
-                          className="rounded-md shadow"
-                        />
-                        <span className="mt-2 font-medium text-gray-700">
-                          Modern Art
-                        </span>
+                    {open && (
+                      <div className="absolute top-full left-0 w-full bg-white shadow-xl rounded-2xl mt-2 z-50 p-4 max-h-[520px] overflow-y-auto">
+
+                          {/* ── Products section: only when actively searching ── */}
+                          {q && (
+                            <>
+                              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
+                                {`Products matching "${query}"`}
+                              </p>
+                {productSuggestions.length > 0 ? (
+                                  <div className="flex flex-col divide-y divide-gray-100 mb-4">
+                                    {productSuggestions.map((product, i) => (
+                                      <div
+                                        key={product._id || i}
+                                        onClick={() => navigate(`/store/product/${product._id}`)}
+                                        className="flex items-center gap-3 py-2 px-2 cursor-pointer hover:bg-gray-50 rounded-lg transition"
+                                      >
+                                        <img
+                                            src={
+                                              product.mainImage
+                                                ? `${imageBaseURL}${product.mainImage}`
+                                                : product.images?.[0]
+                                                ? `${imageBaseURL}${product.images[0]}`
+                                                : "/assets/home/biditemurl.jpg"
+                                            }
+                                          alt={product.productName}
+                                          className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+                                          onError={(e) => { e.target.src = "/assets/home/biditemurl.jpg"; }}
+                                        />
+                                        <div className="flex flex-col min-w-0">
+                                          <span className="text-sm font-semibold text-gray-800 line-clamp-1">
+                                            {product.productName}
+                                          </span>
+                                            <span className="text-xs text-gray-400 line-clamp-1">
+                                              {[
+                                                product.userId
+                                                  ? `${product.userId.name || product.userId.firstName || ""} ${product.userId.lastName || ""}`.trim()
+                                                  : null,
+                                                product.medium
+                                              ].filter(Boolean).join(" · ")}
+                                            </span>
+                                        </div>
+                                          {(product.finalPrice || product.price) && (
+                                            <span className="ml-auto text-xs font-bold text-[#6F4D34] flex-shrink-0">
+                                              ₹{(product.finalPrice || product.price).toLocaleString()}
+                                            </span>
+                                          )}
+                                      </div>
+                                    ))}
+                                  </div>
+                              ) : (
+                                matchedArtists.length === 0 ? null : <p className="text-xs text-gray-400 mb-4">No products found</p>
+                              )}
+                            </>
+                          )}
+
+                        {/* ── Artists section: always show (top 10 default, matched when searching) ── */}
+                        {artistSuggestions.length > 0 && (
+                          <>
+                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
+                              {q ? `Artists matching "${query}"` : "Top Artists"}
+                            </p>
+                            {artistSuggestions.length > 0 ? (
+                /* horizontal scroll: show 4 full cards + 30% of 5th */
+                <div
+                  className="flex gap-3 overflow-x-auto pb-2 mb-4 scroll-smooth"
+                  style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}
+                >
+                                {artistSuggestions.map((artist, i) => {
+                                  const name =
+                                    `${artist.name || artist.firstName || ""} ${artist.lastName || ""}`.trim() ||
+                                    artist.username ||
+                                    "Artist";
+                                  const avatar = artist.profilePhoto
+                                    ? `${imageBaseURL}${artist.profilePhoto}`
+                                    : artist.profileImage
+                                    ? `${imageBaseURL}${artist.profileImage}`
+                                    : DEFAULT_PROFILE_IMAGE;
+                                  return (
+                                    <div
+                                      key={artist._id || i}
+                                      onClick={() => {
+                                        setOpen(false);
+                                        navigate(`/social-media/profile/product-view?artistId=${artist._id}`);
+                                      }}
+                                      /* fixed min-width: 4 cards visible + 30% peek of 5th */
+                                        className="group flex-shrink-0 flex flex-col items-center bg-white rounded-[20px] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 p-3 cursor-pointer text-center"
+                                        style={{ minWidth: "140px", maxWidth: "140px" }}
+                                    >
+                                      {/* Avatar */}
+                                      <div className="relative mb-2">
+                                        <img
+                                          src={avatar}
+                                          alt={name}
+                                          className="w-14 h-14 rounded-full object-cover border-4 border-[#6F4D34]/20 group-hover:border-[#6F4D34] transition-all duration-300"
+                                          onError={(e) => { e.target.src = DEFAULT_PROFILE_IMAGE; }}
+                                        />
+                                        {(artist.status === "Verified" || artist.isVerified) && (
+                                          <div className="absolute -bottom-1 -right-1 bg-[#6F4D34] text-white text-[8px] font-black px-1.5 py-0.5 rounded-full">✓</div>
+                                        )}
+                                      </div>
+                                      {/* Name */}
+                                      <h3 className="text-xs font-bold text-gray-900 group-hover:text-[#6F4D34] transition-colors line-clamp-1 w-full">{name}</h3>
+                                      {/* User type badge */}
+                                      {artist.userType && (
+                                        <span className="mt-1 text-[9px] font-black text-[#6F4D34] uppercase tracking-widest bg-[#6F4D34]/10 px-2 py-0.5 rounded-full line-clamp-1">{artist.userType}</span>
+                                      )}
+                                      {/* Expertise */}
+                                      {artist.expertise?.length > 0 && (
+                                        <p className="mt-1.5 text-[9px] text-gray-400 line-clamp-1 w-full">{artist.expertise.slice(0, 2).join(", ")}</p>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            ) : (
+                              q && <p className="text-xs text-gray-400 mb-4">No artists found</p>
+                            )}
+                          </>
+                        )}
+
+                          {/* ── No results at all ── */}
+                          {q && productSuggestions.length === 0 && artistSuggestions.length === 0 && (
+                            <p className="text-sm text-gray-500 text-center py-4">No results found for "{query}"</p>
+                          )}
+
+                          {/* ── Artist not found when searching ── */}
+                          {q && matchedArtists.length === 0 && matchedProducts.length > 0 && (
+                            <p className="text-xs text-gray-400 mb-2">No artists found for "{query}"</p>
+                          )}
+
+                          {/* ── Recent Searches / Trend section ── */}
+                          <div className="border-t pt-3">
+                            <div className="font-bold flex items-center text-gray-800 mb-2 text-sm">
+                              <svg className="mr-2" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+                                <path d="M3 13 L9 7 L13 11 L21 3" stroke="#2BB673" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M21 3 L21 9" stroke="#2BB673" strokeWidth="2.2" strokeLinecap="round"/>
+                              </svg>
+                              {recentSearches.length > 0 ? "RECENT SEARCHES" : "TREND NOW"}
+                            </div>
+                            <div className="flex flex-wrap gap-3 text-sm text-[#f04a2f] font-medium">
+                              {recentSearches.length > 0 ? (
+                                recentSearches.map((term) => (
+                                  <button
+                                    key={term}
+                                    onClick={() => handleSearch(term)}
+                                    className="flex items-center gap-1 hover:underline focus:outline-none"
+                                  >
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                                    </svg>
+                                    {term}
+                                  </button>
+                                ))
+                              ) : (
+                                ["Fine Art Ceramics", "Sculpture", "Glass Art", "Paintings"].map((trend) => (
+                                  <button
+                                    key={trend}
+                                    onClick={() => handleSearch(trend)}
+                                    className="hover:underline focus:outline-none"
+                                  >
+                                    {trend}
+                                  </button>
+                                ))
+                              )}
+                            </div>
+                          </div>
                       </div>
-                    ))}
-                  </div>
-                  <ul className="flex flex-wrap gap-3 mb-4">
-                    {["Graphic Design", "Illustrations", "Glass Artwork"].map(
-                      (tag, i) => (
-                        <li
-                          key={i}
-                          className="flex items-center px-3 py-1 bg-gray-100 rounded-full text-sm font-medium text-gray-700"
-                        >
-                          {tag}
-                          <span className="ml-2 cursor-pointer text-gray-500 hover:text-red-500">
-                            ×
-                          </span>
-                        </li>
-                      )
                     )}
-                  </ul>
-                  <div className="border-t pt-3">
-                    <div className="font-bold flex items-center text-gray-800 mb-2">
-                      TREND NOW
-                    </div>
-                    <div className="flex flex-wrap gap-4 text-sm text-[#f04a2f] font-medium">
-                      <a href="#">Fine Art Ceramics</a>
-                      <a href="#">Sculpture</a>
-                      <a href="#">Glass Art</a>
-                      <a href="#">4+ More trends</a>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+              </div>
 
             <p className="mt-4 max-w-2xl text-sm md:text-base text-dark text-center lg:!text-left">
               {heroData.description}
