@@ -554,7 +554,7 @@ const Sidebar = () => {
           },
           { label: "GST", path: `/super-admin/settings/GST` },
           { label: "Insurance", path: `/super-admin/settings/insurance` },
-           { label: "exhibition setting", path: `/super-admin/settings/exhibition` },
+           { label: "Exhibition setting", path: `/super-admin/settings/exhibition` },
            { label: "Sidebar Visibility", subtabId: "stg16", path: `/super-admin/settings/sidebar-visibility` },
          
            {
