@@ -524,13 +524,18 @@ const Sidebar = () => {
             subtabId: "stg12",
             path: `/super-admin/settings/blog-category`,
           },
-          {
-            label: "Email Setting",
-            subtabId: "stg13",
-            path: `/super-admin/settings/email-setting`,
-          },
-          {
-            label: "Payment Getway",
+            {
+              label: "Email Setting",
+              subtabId: "stg13",
+              path: `/super-admin/settings/email-setting`,
+            },
+            {
+              label: "Storage Setting",
+              subtabId: "stg17",
+              path: `/super-admin/settings/storage-setting`,
+            },
+            {
+              label: "Payment Getway",
             path: `/super-admin/settings/payment-getway`,
           },
           {

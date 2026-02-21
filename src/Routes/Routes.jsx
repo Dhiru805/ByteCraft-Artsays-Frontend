@@ -474,6 +474,7 @@ import PeriodEras from "../Component/Dashboard/Super-AdminDashboard/Product Sett
 
 //-----------------------------Settings--------------------------//
 import EmailSettings from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailSetting/EmailSetting";
+import StorageSettingPage from "../Component/Dashboard/Super-AdminDashboard/Settings/StorageSetting/StorageSetting";
 import BlogCategory from "../Component/Dashboard/Super-AdminDashboard/Settings/Blogcategory/Category";
 import ProductCategory from "../Component/Dashboard/Super-AdminDashboard/Settings/Productcategory/Category";
 import CertificationSetting from "../Component/Dashboard/Super-AdminDashboard/Settings/Certification/Certifiaction";
@@ -1129,7 +1130,8 @@ const AppRoutes = () => {
         />
         <Route path="packaging-material-setting/card" element={<Card />} />
         {/* Settings */}
-        <Route path="settings/email-setting" element={<EmailSettings />} />
+          <Route path="settings/email-setting" element={<EmailSettings />} />
+          <Route path="settings/storage-setting" element={<StorageSettingPage />} />
         <Route path="settings/blog-category" element={<BlogCategory />} />
         <Route path="settings/product-category" element={<ProductCategory />} />
         <Route path="settings/marketing" element={<SuperAdminMarketing />} />
