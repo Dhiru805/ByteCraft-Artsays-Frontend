@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import ConfirmationDialog from "../../../ConfirmationDialog";
 import EditAutoTargetingModal from "./UpdateDefaultAutoTargeting";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const AutoTargetingTable = ({
   setSelectedAutoTargeting,
@@ -8,6 +10,8 @@ const AutoTargetingTable = ({
   autoTargetings,
   selectedAutoTargeting,
   fetchAutoTargetingData,
+  showImportModal,
+  setShowImportModal,
 }) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -15,6 +19,33 @@ const AutoTargetingTable = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [importFile, setImportFile] = useState(null);
+  const [importing, setImporting] = useState(false);
+
+  const handleDownloadTemplate = () => {
+    window.open("/api/export-auto-targeting-template", "_blank");
+  };
+
+  const handleImport = async () => {
+    if (!importFile) return toast.error("Please select a file first");
+    setImporting(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", importFile);
+      const res = await axios.post("/api/import-auto-targeting", formData);
+      toast.success(res.data.message || "Imported successfully");
+      if (res.data.errors?.length) {
+        res.data.errors.forEach((e) => toast.warn(e));
+      }
+      setShowImportModal(false);
+      setImportFile(null);
+      fetchAutoTargetingData();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Import failed");
+    } finally {
+      setImporting(false);
+    }
+  };
 
   const sortedAutoTargetings = [...autoTargetings].sort((a, b) => {
     const mainCatCompare = (a.mainCategoryId?.mainCategoryName || "").localeCompare(b.mainCategoryId?.mainCategoryName || "");
@@ -117,6 +148,13 @@ const AutoTargetingTable = ({
                     }}
                   ></i>
                 </div>
+                <button
+                  type="button"
+                  className="btn btn-outline-success btn-sm ml-2"
+                  onClick={() => setShowImportModal(true)}
+                >
+                  <i className="fa fa-upload mr-1"></i> Import
+                </button>
               </div>
             </div>
             <div className="body">
@@ -240,6 +278,46 @@ const AutoTargetingTable = ({
         autoTargeting={selectedAutoTargeting}
         fetchAutoTargetingData={fetchAutoTargetingData}
       />
+
+      {showImportModal && (
+        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Import Auto Targeting</h5>
+                <button type="button" className="close" onClick={() => { setShowImportModal(false); setImportFile(null); }}>
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <button className="btn btn-outline-primary btn-sm" onClick={handleDownloadTemplate}>
+                    <i className="fa fa-download mr-1"></i> Download Template
+                  </button>
+                  <small className="d-block mt-1 text-muted">
+                    Columns: Main Category, Category, Sub Category, Min Range, Max Range
+                  </small>
+                </div>
+                <div className="form-group">
+                  <label>Select Excel File (.xlsx)</label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    accept=".xlsx"
+                    onChange={(e) => setImportFile(e.target.files[0])}
+                  />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-secondary btn-sm" onClick={() => { setShowImportModal(false); setImportFile(null); }}>Cancel</button>
+                <button className="btn btn-success btn-sm" onClick={handleImport} disabled={importing}>
+                  {importing ? "Importing..." : "Import"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

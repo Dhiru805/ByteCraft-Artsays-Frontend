@@ -8,6 +8,7 @@ import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSk
 const AutoTargetingSetting = () => {
   const [autoTargetings, setAutoTargetings] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
   const [selectedAutoTargeting, setSelectedAutoTargeting] = useState(null);
   const navigate = useNavigate();
 const[loading,setLoading]=useState(true)
@@ -72,6 +73,8 @@ const[loading,setLoading]=useState(true)
         autoTargetings={autoTargetings}
         selectedAutoTargeting={selectedAutoTargeting}
         fetchAutoTargetingData={fetchAutoTargetingData}
+        showImportModal={showImportModal}
+        setShowImportModal={setShowImportModal}
       />
 
       {showModal && (

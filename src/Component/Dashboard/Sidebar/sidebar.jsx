@@ -19,27 +19,6 @@ const Sidebar = () => {
 
   const userrole = localStorage.getItem("userrole");
 
-  // const roleAliases = {
-  //   "Super-Admin": userrole ? userrole.toLowerCase() : "super-admin",
-  // };
-
-
-  // const menuConfig = {
-
-  //   "Super-Admin": [
-  //     {
-  //       label: "Dashboard",
-  //       tabId: "dbd1",
-  // const [userType, setUserType] = useState(null);
-  // const [email, setEmail] = useState("");
-
-  // useEffect(() => {
-  //   const storedEmail = localStorage.getItem("email");
-  //   if (storedEmail) {
-  //     setEmail(storedEmail);
-  //   }
-  // }, []);
-
   const menuConfig = {
     "Super-Admin": [
       {
@@ -116,17 +95,6 @@ const Sidebar = () => {
             subtabId: "att16",
             path: `/super-admin/artist/sold-product`,
           },
-          // icon: "fa fa-paint-brush",
-          // path: `#artist-management`,
-          // subTabs: [
-          //   { label: "Management", path: `/super-admin/artist/management` },
-          //   { label: "Blog Request", path: `/super-admin/artist/blogrequest` },
-          //   { label: "Blogs", path: `/super-admin/artist/blogs` },
-          //   { label: "Product Request", path: `/super-admin/artist/artistproductrequest` },
-          //   { label: "Products", path: `/super-admin/artist/allartistproduct` },
-          //   { label: "Sold Product ", path: `/super-admin/artist/sold-product` },
-          // { label: "Transaction", path: `/super-admin/artisttransaction`},
-          // { label: "Packaging Material", path: `/super-admin/artistpackagingmaterial` },
         ],
       },
       {
@@ -156,15 +124,6 @@ const Sidebar = () => {
             subtabId: "byr14",
             path: `/super-admin/buyer/soldproduct`,
           },
-          // icon: "fa-handshake",
-          // path: `#Buyer-management`,
-          // subTabs: [
-          //   { label: "Management", path: `/super-admin/buyer/management` },
-          //   { label: "Product Purchased", path: `/super-admin/buyer/productpurchased` },
-          //   { label: "Resell Product Request", path: `/super-admin/buyer/resellproduct` },
-          //   { label: "Sold Product", path: `/super-admin/buyer/soldproduct` },
-          // { label: "Transaction", path: `/super-admin/buyertransaction` },
-          // { label: "Packaging Material", path: `/super-admin/buyerpackagingmaterial` },
         ],
       },
       {
@@ -458,7 +417,6 @@ const Sidebar = () => {
             path: `/super-admin/challenge-CMS`,
           },
           { label: "Blogs", subtabId: "wcms19", path: `/super-admin/CMS-Blog` },
-          //{ label: "Policys", subtabId: "wcms19", path: `/super-admin/policy` },
           {
             label: "Policies",
             subtabId: "wcms21",
@@ -561,14 +519,6 @@ const Sidebar = () => {
              label: "Default Auto Targeting",
              path: `/super-admin/settings/auto-targeting`,
            },
-          // {
-          //   label: "Auto Targeting Group",
-          //   path: `/super-admin/settings/group-targeting`,
-          // },
-          // {
-          //   label: "Keyword Targeting",
-          //   path: `/super-admin/settings/keyword-targeting`,
-          // },
         ],
       },
       {
@@ -611,18 +561,6 @@ const Sidebar = () => {
         ],
       },
 
-      // {
-      //   label: "Transaction",
-      //   icon: "fa fa-credit-card",
-      //   path: `/super-admin/alltransaction`,
-      //   subTabs: [
-      //     // { label: "All Transaction", path: `/${userType}/Dashboard/alltransaction` },
-      //     // { label: "Product Transaction", path: `#` },
-      //     // { label: "Resell Product Transacticon", path: `#` },
-      //     // { label: "Bidding Transaction", path: `#` }
-      //   ]
-      // },
-
       {
         label: "Packaging Material",
         icon: "fa fa-archive",
@@ -634,7 +572,6 @@ const Sidebar = () => {
             path: `/super-admin/packaging-material/material`,
           },
           { label: "Order", path: `/super-admin/packaging-material/order` },
-          // { label: "Transaction", path: `/super-admin/packagingproducttransaction` },
         ],
       },
       {
@@ -898,8 +835,6 @@ const Sidebar = () => {
 
     if (email === "shantu131201@gmail.com") {
       setFetchedTabs(menuConfig["Super-Admin"]);
-      console.log("superadmin", fetchedTabs);
-
       return;
     }
 
@@ -1023,41 +958,6 @@ const Sidebar = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   const activeTabs = fetchedTabs.reduce((acc, item) => {
-  //     const isParentMatch = location.pathname.startsWith(item.path);
-  //     const isSubTabMatch = item.subTabs?.some(subTab => location.pathname === subTab.path);
-  //     const isActive = isParentMatch || isSubTabMatch;
-  //     acc[item.label] = isActive;
-  //     if (isActive) setExpandedTab(item.label);
-  //     return acc;
-  //   }, {});
-  //   setIsActive(activeTabs);
-  // }, [location.pathname, fetchedTabs]);
-
-  // useEffect(() => {
-  //   const activeTabs = fetchedTabs.reduce((acc, item) => {
-  //     const parentPath = item.basePath || item.path;
-  //     const isParentMatch = location.pathname.startsWith(parentPath);
-  //     const isSubTabMatch = item.subTabs?.some(subTab =>
-  //       location.pathname.startsWith(subTab.path)
-  //     );
-  //     const isActive = isParentMatch || isSubTabMatch;
-  //     acc[item.label] = isActive;
-
-  //     if (isActive) {
-  //       setExpandedTab(item.label);
-  //     }
-
-  //     return acc;
-  //   }, {});
-  //   setIsActive(activeTabs);
-  // }, [location.pathname, fetchedTabs]);
-
-  // const handleTabToggle = (label) => {
-  //   setExpandedTab(prev => (prev === label ? null : label));
-  // };
-
   const handleTabToggle = (label) => {
     setExpandedTab((prev) => (prev === label ? null : label));
     setIsActive((prev) => {
@@ -1082,102 +982,12 @@ const Sidebar = () => {
     });
   };
 
-  //       // path: `/super-admin/sponsor`,
-  //       subTabs: []
-  //     },
-  //     {
-  //       label: "Packaging Material",
-  //       icon: "fa fa-archive",
-  //       path: "/seller/packaging-material",
-  //       subTabs: []
-  //     },
-  //   ],
-
-  // };
-
-  // useEffect(() => {
-  //   const storedUserType = localStorage.getItem("userType");
-  //   if (storedUserType) {
-  //     setUserType(storedUserType);
-  //   }
-  // }, []);
-
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [location.pathname]);
 
-  // return (
-  //   <nav id="left-sidebar-nav" className="sidebar-nav">
-  //     <ul id="main-menu" className="metismenu">
-  //       {fetchedTabs.map((tab, index) => (
-  //         <li key={index} className={`menu-item ${isActive[tab.label] ? 'active' : ''}`}>
-  //           <Link
-  //             to={tab.path}
-  //             onClick={() => handleTabToggle(tab.label)}
-  //             className={tab.subTabs.length > 0 ? 'has-arrow' : ''}
-  //           >
-  //             <i className={`fa ${tab.icon}`}></i>
-  //             <span>{tab.label}</span>
-  //           </Link>
-
-  //           {tab.subTabs.length > 0 && (
-  //             <ul className={`collapse ${expandedTab === tab.label ? 'in' : ''}`}>
-  //               {tab.subTabs.map((subTab, subIndex) => (
-
-  // const menuItems = userType ? menuConfig[userType] || [] : [];
-
-  // useEffect(() => {
-  //   if (userType) {
-  //     const items = menuConfig[userType] || [];
-  //     const activeTabs = items.reduce((acc, item) => {
-  //       const isParentMatch = location.pathname.startsWith(item.path);
-  //       const isSubTabMatch = item.subTabs.some(subTab => location.pathname === subTab.path);
-  //       const isActive = isParentMatch || isSubTabMatch;
-  //       acc[item.label] = isActive;
-
-  //       if (isActive) {
-  //         setExpandedTab(item.label);
-  //       }
-
-  //       return acc;
-  //     }, {});
-  //     setIsActive(activeTabs);
-  //   }
-  // }, [location.pathname, userType]);
-
-  // const handleTabToggle = (label) => {
-  //   setExpandedTab(prevTab => (prevTab === label ? null : label));
-  // };
 
   return (
-    // <nav id="left-sidebar-nav" className="sidebar-nav">
-    //   <ul id="main-menu" className="metismenu">
-    //     {menuItems.map((item, index) => (
-    //       <li key={index} className={`menu-item ${isActive[item.label] ? 'active' : ''}`}>
-    //         <Link
-    //           to={item.path}
-    //           onClick={() => handleTabToggle(item.label)}
-    //           className={item.subTabs.length ? 'has-arrow' : ''}
-    //         >
-    //           <i className={`fa ${item.icon}`}></i>
-    //           <span>{item.label}</span>
-    //         </Link>
-    //         {item.subTabs.length > 0 && (
-    //           <ul className={`collapse ${expandedTab === item.label ? 'in' : ''}`}>
-    //             {item.subTabs.map((subTab, subIndex) => (
-    //               <li
-    //                 key={subIndex}
-    //                 className={location.pathname === subTab.path ? 'active' : ''}
-    //               >
-    //                 <Link to={subTab.path}>{subTab.label}</Link>
-    //               </li>
-    //             ))}
-    //           </ul>
-    //         )}
-    //       </li>
-    //     ))}
-    //   </ul>
-    // </nav>
     <nav id="left-sidebar-nav" className="sidebar-nav">
       <ul id="main-menu" className="metismenu">
         {fetchedTabs.map(
@@ -1229,222 +1039,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-
-// import React, { useEffect, useState } from "react";
-// import { Link, useLocation } from "react-router-dom";
-// import getAPI from "../../../api/getAPI";
-
-// const Sidebar = () => {
-//   const location = useLocation();
-//   const [isActive, setIsActive] = useState({});
-//   const [expandedTab, setExpandedTab] = useState(null);
-//   const [email, setEmail] = useState("");
-//   const [roleData, setRoleData] = useState({});
-//   const [fetchedTabs, setFetchedTabs] = useState([]);
-//   const [userType, setUserType] = useState(null);
-
-//   const userrole = localStorage.getItem("userrole");
-//   const storedEmail = localStorage.getItem("email");
-
-//   // -------------------------------- MENU CONFIG --------------------------------
-//   const menuConfig = {
-//     "Super-Admin": [
-//       {
-//         label: "Dashboard",
-//         tabId: "dbd1",
-//         icon: "fa-dashboard",
-//         path: "/super-admin/dashboard",
-//         subTabs: [],
-//       },
-//       {
-//         label: "Admin",
-//         tabId: "adn1",
-//         icon: "fas fa-user",
-//         path: "/super-admin/admin",
-//         subTabs: [],
-//       },
-//       {
-//         label: "Blogs",
-//         tabId: "bgs1",
-//         icon: "fa fa-newspaper",
-//         path: "/super-admin/blog",
-//         subTabs: [],
-//       },
-//       {
-//         label: "Artist",
-//         tabId: "att1",
-//         icon: "fa fa-paint-brush",
-//         path: "#artist-management",
-//         subTabs: [
-//           { label: "Management", subtabId: "att11", path: `/super-admin/artist/management` },
-//           { label: "Blog Request", subtabId: "att12", path: `/super-admin/artist/blogrequest` },
-//           { label: "Blogs", subtabId: "att13", path: `/super-admin/artist/blogs` },
-//           { label: "Product Request", subtabId: "att14", path: `/super-admin/artist/artistproductrequest` },
-//           { label: "Products", subtabId: "att15", path: `/super-admin/artist/allartistproduct` },
-//           { label: "Sold Product", subtabId: "att16", path: `/super-admin/artist/sold-product` },
-//         ],
-//       },
-//       {
-//         label: "Buyer",
-//         tabId: "byr1",
-//         icon: "fa-handshake",
-//         path: "#Buyer-management",
-//         subTabs: [
-//           { label: "Management", subtabId: "byr11", path: `/super-admin/buyer/management` },
-//           { label: "Product Purchased", subtabId: "byr12", path: `/super-admin/buyer/productpurchased` },
-//           { label: "Resell Product Request", subtabId: "byr13", path: `/super-admin/buyer/resellproduct` },
-//           { label: "Sold Product", subtabId: "byr14", path: `/super-admin/buyer/soldproduct` },
-//         ],
-//       },
-//       {
-//         label: "Settings",
-//         tabId: "stg1",
-//         icon: "fa fa-cog",
-//         path: "#Settings",
-//         subTabs: [
-//           { label: "Product Category", subtabId: "stg11", path: `/super-admin/settings/product-category` },
-//           { label: "User Role", subtabId: "stg15", path: `/super-admin/settings/user-role` },
-//         ],
-//       },
-//     ],
-
-//     Artist: [
-//       { label: "Dashboard", icon: "fa-dashboard", path: "/artist/dashboard", subTabs: [] },
-//       { label: "Blogs", icon: "fa fa-newspaper", path: "/artist/bloglist", subTabs: [] },
-//       { label: "Product", icon: "fa fa-cart-plus", path: "/artist/product", subTabs: [] },
-//       {
-//         label: "Bidding",
-//         icon: "fa fa-gavel",
-//         path: "#Bidding",
-//         subTabs: [
-//           { label: "All Products", path: `/artist/bidding-products-table` },
-//           { label: "Bidded Product", path: `/artist/bidded-products-table` },
-//           { label: "Bidding Pass", path: `/artist/bidding-pass-table` },
-//         ],
-//       },
-//     ],
-
-//     Buyer: [{ label: "Dashboard", icon: "fa-dashboard", path: "/buyer/dashboard", subTabs: [] }],
-
-//     Seller: [
-//       { label: "Dashboard", icon: "fa-dashboard", path: "/seller/dashboard", subTabs: [] },
-//       { label: "Product", icon: "fa fa-cart-plus", path: "/seller/product-details", subTabs: [] },
-//     ],
-//   };
-
-//   // -------------------------------- FETCH ROLE PERMISSIONS --------------------------------
-//   useEffect(() => {
-//     if (!userrole) return;
-
-//     const fetchTabsForRole = async () => {
-//       try {
-//         const response = await getAPI(`/api/get-role-by-role/${userrole}`);
-//         setRoleData(response.data);
-//       } catch (err) {
-//         console.error("Failed to fetch sidebar tabs", err);
-//       }
-//     };
-
-//     fetchTabsForRole();
-//   }, [userrole]);
-
-//   // -------------------------------- SET EMAIL + USER TYPE --------------------------------
-//   useEffect(() => {
-//     if (storedEmail) setEmail(storedEmail);
-//     const storedUserType = localStorage.getItem("userType");
-//     if (storedUserType) setUserType(storedUserType);
-//   }, [storedEmail]);
-
-//   // -------------------------------- HANDLE TABS BASED ON ROLE --------------------------------
-//   useEffect(() => {
-//     if (!userType) return;
-//     const roleMenu = menuConfig[userType] || [];
-
-//     // Super Admin with backend role permissions
-//     if (userType === "Super-Admin") {
-//       if (email === "shantu131201@gmail.com") {
-//         setFetchedTabs(menuConfig["Super-Admin"]);
-//         return;
-//       }
-
-//       if (roleData?.tabs?.length > 0) {
-//         const filteredTabs = roleData.tabs
-//           .map((apiTab) => {
-//             const match = roleMenu.find((tab) => tab.tabId === apiTab.tabId);
-//             if (!match) return null;
-
-//             const visibleSubTabs = (apiTab.subTabs || [])
-//               .filter((sub) => sub.permissions?.view)
-//               .map((sub) =>
-//                 match.subTabs.find((s) => s.subtabId === sub.subtabId)
-//               )
-//               .filter(Boolean);
-
-//             if (apiTab.permissions?.view || visibleSubTabs.length > 0) {
-//               return { ...match, subTabs: visibleSubTabs };
-//             }
-//             return null;
-//           })
-//           .filter(Boolean);
-
-//         setFetchedTabs(filteredTabs);
-//       } else {
-//         setFetchedTabs(roleMenu);
-//       }
-//     } else {
-//       setFetchedTabs(roleMenu);
-//     }
-//   }, [userType, roleData, email]);
-
-//   // -------------------------------- ACTIVE TAB HANDLING --------------------------------
-//   useEffect(() => {
-//     const activeTabs = fetchedTabs.reduce((acc, tab) => {
-//       const parentMatch = location.pathname === tab.path;
-//       const subTabMatch = tab.subTabs?.some((sub) => location.pathname === sub.path);
-//       const active = parentMatch || subTabMatch;
-//       acc[tab.label] = active;
-//       if (active) setExpandedTab(tab.label);
-//       return acc;
-//     }, {});
-//     setIsActive(activeTabs);
-//   }, [location.pathname, fetchedTabs]);
-
-//   const handleTabToggle = (label) => {
-//     setExpandedTab((prev) => (prev === label ? null : label));
-//   };
-
-//   // -------------------------------- RENDER SIDEBAR --------------------------------
-//   return (
-//     <nav id="left-sidebar-nav" className="sidebar-nav">
-//       <ul id="main-menu" className="metismenu">
-//         {fetchedTabs.map((item, index) => (
-//           <li key={index} className={`menu-item ${isActive[item.label] ? "active" : ""}`}>
-//             <Link
-//               to={item.path.startsWith("#") ? "#" : item.path}
-//               onClick={() => handleTabToggle(item.label)}
-//               className={item.subTabs.length > 0 ? "has-arrow" : ""}
-//             >
-//               <i className={`fa ${item.icon}`}></i>
-//               <span>{item.label}</span>
-//             </Link>
-
-//             {item.subTabs.length > 0 && (
-//               <ul className={`collapse ${expandedTab === item.label ? "in" : ""}`}>
-//                 {item.subTabs.map((subTab, subIndex) => (
-//                   <li
-//                     key={subIndex}
-//                     className={location.pathname === subTab.path ? "active" : ""}
-//                   >
-//                     <Link to={subTab.path}>{subTab.label}</Link>
-//                   </li>
-//                 ))}
-//               </ul>
-//             )}
-//           </li>
-//         ))}
-//       </ul>
-//     </nav>
-//   );
-// };
-
-// export default Sidebar;

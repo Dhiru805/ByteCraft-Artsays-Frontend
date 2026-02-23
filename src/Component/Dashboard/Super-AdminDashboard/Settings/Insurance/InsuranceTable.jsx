@@ -10,6 +10,8 @@ const InsuranceSettingTable = ({
   selectedInsuranceSetting,
   fetchInsuranceSettingData,
   setShowAddModal,
+  showImportModal,
+  setShowImportModal,
 }) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -17,6 +19,8 @@ const InsuranceSettingTable = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [importFile, setImportFile] = useState(null);
+  const [importing, setImporting] = useState(false);
 
   const sortedInsuranceSettings = [...insuranceSettings].sort((a, b) => {
     const mainCatCompare = (a.mainCategoryId?.mainCategoryName || "").localeCompare(b.mainCategoryId?.mainCategoryName || "");
@@ -74,6 +78,39 @@ const InsuranceSettingTable = ({
     setCurrentPage(1);
   };
 
+  const handleDownloadTemplate = () => {
+    window.open("/api/export-insurance-template", "_blank");
+  };
+
+  const handleImport = async () => {
+    if (!importFile) {
+      toast.error("Please select a file to import.");
+      return;
+    }
+    setImporting(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", importFile);
+      const response = await fetch("/api/import-insurance-settings", {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+      if (response.ok) {
+        toast.success(result.message || "Import successful.");
+        fetchInsuranceSettingData();
+        setShowImportModal(false);
+        setImportFile(null);
+      } else {
+        toast.error(result.message || "Import failed.");
+      }
+    } catch (err) {
+      toast.error("Import failed. Please try again.");
+    } finally {
+      setImporting(false);
+    }
+  };
+
   return (
     <>
       <div className="row clearfix">
@@ -118,6 +155,13 @@ const InsuranceSettingTable = ({
                     }}
                   ></i>
                 </div>
+                <button
+                  type="button"
+                  className="btn btn-outline-success btn-sm ml-2"
+                  onClick={() => setShowImportModal(true)}
+                >
+                  <i className="fa fa-upload mr-1"></i> Import
+                </button>
               </div>
             </div>
             <div className="body">
@@ -243,6 +287,43 @@ const InsuranceSettingTable = ({
         insuranceSetting={selectedInsuranceSetting}
         fetchInsuranceSettingData={fetchInsuranceSettingData}
       />
+
+      {showImportModal && (
+        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Import Insurance Settings</h5>
+                <button type="button" className="close" onClick={() => { setShowImportModal(false); setImportFile(null); }}>
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <button className="btn btn-outline-primary btn-sm" onClick={handleDownloadTemplate}>
+                    <i className="fa fa-download mr-1"></i> Download Template
+                  </button>
+                </div>
+                <div className="form-group">
+                  <label>Select Excel File (.xlsx)</label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    accept=".xlsx"
+                    onChange={(e) => setImportFile(e.target.files[0])}
+                  />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-secondary" onClick={() => { setShowImportModal(false); setImportFile(null); }}>Cancel</button>
+                <button className="btn btn-success" onClick={handleImport} disabled={importing}>
+                  {importing ? "Importing..." : "Import"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

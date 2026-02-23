@@ -8,6 +8,7 @@ import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSk
 const InsuranceSetting = () => {
   const [insuranceSettings, setInsuranceSettings] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
   const [selectedInsuranceSetting, setSelectedInsuranceSetting] = useState(null);
   const navigate = useNavigate();
 const[loading,setLoading]=useState(true);
@@ -53,26 +54,28 @@ const[loading,setLoading]=useState(true);
           <div className="col-lg-6 col-md-6 col-sm-12">
             <div className="d-flex flex-row-reverse">
               <div className="page_action">
-                <button
-                  type="button"
-                  className="btn btn-secondary mr-2"
-                  onClick={() => setShowAddModal(true)}
-                >
-                  <i className="fa fa-plus"></i> Add Insurance Setting
-                </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary mr-2"
+                    onClick={() => setShowAddModal(true)}
+                  >
+                    <i className="fa fa-plus"></i> Add Insurance Setting
+                  </button>
               </div>
             </div>
           </div>
         </div>
       </div>
       <InsuranceTable
-        setSelectedInsuranceSetting={setSelectedInsuranceSetting}
-        setInsuranceSettings={setInsuranceSettings}
-        insuranceSettings={insuranceSettings}
-        selectedInsuranceSetting={selectedInsuranceSetting}
-        fetchInsuranceSettingData={fetchInsuranceSettingData}
-        setShowAddModal={setShowAddModal}
-      />
+          setSelectedInsuranceSetting={setSelectedInsuranceSetting}
+          setInsuranceSettings={setInsuranceSettings}
+          insuranceSettings={insuranceSettings}
+          selectedInsuranceSetting={selectedInsuranceSetting}
+          fetchInsuranceSettingData={fetchInsuranceSettingData}
+          setShowAddModal={setShowAddModal}
+          showImportModal={showImportModal}
+          setShowImportModal={setShowImportModal}
+        />
 
       {showAddModal && (
         <AddInsuranceSetting
