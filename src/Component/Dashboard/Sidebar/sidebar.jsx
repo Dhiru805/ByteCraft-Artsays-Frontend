@@ -493,7 +493,7 @@ const Sidebar = () => {
               path: `/super-admin/settings/storage-setting`,
             },
             {
-              label: "Payment Getway",
+              label: "Payment Gateway",
             path: `/super-admin/settings/payment-getway`,
           },
           {
@@ -515,12 +515,16 @@ const Sidebar = () => {
            { label: "Exhibition setting", path: `/super-admin/settings/exhibition` },
            { label: "Sidebar Visibility", subtabId: "stg16", path: `/super-admin/settings/sidebar-visibility` },
          
-           {
-             label: "Default Auto Targeting",
-             path: `/super-admin/settings/auto-targeting`,
-           },
-        ],
-      },
+             {
+               label: "Default Auto Targeting",
+               path: `/super-admin/settings/auto-targeting`,
+             },
+             {
+               label: "Google OAuth",
+               path: `/super-admin/settings/google-oauth`,
+             },
+          ],
+        },
       {
         label: "SMS Settings",
         tabId: "sms1",

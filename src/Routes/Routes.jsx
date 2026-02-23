@@ -242,6 +242,7 @@ import Unsubscribe from "../Pages/Unsubscribe/Unsubscribe";
 
 import SMSSettingSignup from "../Component/Dashboard/Super-AdminDashboard/SMSSettings/SmsSettingsSignup";
 import PaymentGetwaySetting from "../Component/Dashboard/Super-AdminDashboard/Settings/PaymentGetway/PaymentGetway"
+import GoogleSetting from "../Component/Dashboard/Super-AdminDashboard/Settings/GoogleSetting/GoogleSetting"
 
 //----------------------------------------Homepage Super-Admin Dashboard-----------------------------------------------------------
 import Homepage from "../Component/Dashboard/Super-AdminDashboard/Homepage/table";
@@ -765,13 +766,13 @@ const WebsiteWrapper = () => {
 const AppRoutes = () => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
 
-    return (
-      <Routes>
-        {/* Sitemap & Robots */}
-        <Route path="/sitemap.xml" element={<Sitemap />} />
+  return (
+    <Routes>
+      {/* Sitemap & Robots */}
+      <Route path="/sitemap.xml" element={<Sitemap />} />
 
-        {/* -------------------------------------------Public Routes------------------------------------------------- */}
-        <Route element={<PublicRoute />}>
+      {/* -------------------------------------------Public Routes------------------------------------------------- */}
+      <Route element={<PublicRoute />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route
@@ -784,50 +785,50 @@ const AppRoutes = () => {
 
 
 
-      <Route path="/payment/success" element={<SuccessPage />} />
-      <Route path="/payment/failure" element={<FailurePage />} />
+        <Route path="/payment/success" element={<SuccessPage />} />
+        <Route path="/payment/failure" element={<FailurePage />} />
 
-       <Route path="/certification-payment/success" element={<CertificationSuccessPage/>} />
-      <Route path="/certification-payment/failure" element={<CertificationFailurePage />} />
+        <Route path="/certification-payment/success" element={<CertificationSuccessPage />} />
+        <Route path="/certification-payment/failure" element={<CertificationFailurePage />} />
 
-      <Route path="/package-material-payment/success" element={<PackagematerialSuccessPage/>} />
-      <Route path="/package-material-payment/failure" element={<PackagematerialFailurePage />} />
+        <Route path="/package-material-payment/success" element={<PackagematerialSuccessPage />} />
+        <Route path="/package-material-payment/failure" element={<PackagematerialFailurePage />} />
 
-      <Route path="/badge-payment/success" element={<BadgeSuccessPage/>} />
-      <Route path="/badge-payment/failure" element={<BadgeFailurePage/>} />
+        <Route path="/badge-payment/success" element={<BadgeSuccessPage />} />
+        <Route path="/badge-payment/failure" element={<BadgeFailurePage />} />
 
-      <Route path="/promote-post/success" element={<PromotePostSuccessPage/>} />
-      <Route path="/promote-post/failure" element={<PromotePostFailurePage/>} />
+        <Route path="/promote-post/success" element={<PromotePostSuccessPage />} />
+        <Route path="/promote-post/failure" element={<PromotePostFailurePage />} />
 
-      <Route path="/checkout/success" element={<CheckoutorderSuccessPage/>} />
-      <Route path="/checkout/failure" element={<CheckoutorderFailurePage/>} />
+        <Route path="/checkout/success" element={<CheckoutorderSuccessPage />} />
+        <Route path="/checkout/failure" element={<CheckoutorderFailurePage />} />
 
-      
-      <Route path="/tip-payment/success" element={<PaymentTipSuccessPage/>} />
-      <Route path="/tip-payment/failure" element={<PaymentTipFailurePage/>} />
 
-       <Route path="/payment/challenge-success" element={<ChallengeSuccessPage/>} />
-      <Route path="/payment/challenge-failure" element={<ChallengeFailurePage/>} />
-      <Route path="/challenge-payment/success" element={<ChallengeSuccessPage/>} />
-      <Route path="/challenge-payment/failure" element={<ChallengeFailurePage/>} />
+        <Route path="/tip-payment/success" element={<PaymentTipSuccessPage />} />
+        <Route path="/tip-payment/failure" element={<PaymentTipFailurePage />} />
 
-      
-       <Route path="/payment/custom/success" element={<CustomrequestSuccessPage/>} />
-      <Route path="/payment/custom/failure" element={<CustomrequestFailurePage/>} />
+        <Route path="/payment/challenge-success" element={<ChallengeSuccessPage />} />
+        <Route path="/payment/challenge-failure" element={<ChallengeFailurePage />} />
+        <Route path="/challenge-payment/success" element={<ChallengeSuccessPage />} />
+        <Route path="/challenge-payment/failure" element={<ChallengeFailurePage />} />
 
-      <Route path="/payment/wallet/success" element={<AddwalletSuccessPage/>} />
-      <Route path="/payment/wallet/failure" element={<AddwalletFailurePage/>} />
 
-        <Route path="/insurance-payment/success" element={<InsuranceSuccessPage/>} />
-      <Route path="/insurance-payment/failure" element={<InsuranceFailurePage/>} />
+        <Route path="/payment/custom/success" element={<CustomrequestSuccessPage />} />
+        <Route path="/payment/custom/failure" element={<CustomrequestFailurePage />} />
 
-           <Route path="/exhibition-payment/success" element={<ExhibitionSuccessPage/>} />
-        <Route path="/exhibition-payment/failure" element={<ExhibitionFailurePage/>} />
+        <Route path="/payment/wallet/success" element={<AddwalletSuccessPage />} />
+        <Route path="/payment/wallet/failure" element={<AddwalletFailurePage />} />
 
-        <Route path="/membership-payment/success" element={<MembershipSuccessPage/>} />
-        <Route path="/membership-payment/failure" element={<MembershipFailurePage/>} />
+        <Route path="/insurance-payment/success" element={<InsuranceSuccessPage />} />
+        <Route path="/insurance-payment/failure" element={<InsuranceFailurePage />} />
 
-     
+        <Route path="/exhibition-payment/success" element={<ExhibitionSuccessPage />} />
+        <Route path="/exhibition-payment/failure" element={<ExhibitionFailurePage />} />
+
+        <Route path="/membership-payment/success" element={<MembershipSuccessPage />} />
+        <Route path="/membership-payment/failure" element={<MembershipFailurePage />} />
+
+
 
       </Route>
 
@@ -967,13 +968,13 @@ const AppRoutes = () => {
           path="buyer/management/productedit/"
           element={<BuyermanageProductEdit />}
         />
-          <Route
-            path="buyer/resellproduct/productview/:userId"
-            element={<BuyerResellProductView />}
-          />
-          <Route path="buyer/resellproduct" element={<BuyerResellProductRequest />} />
-          <Route path="buyer/soldproduct" element={<BuyerSoldProduct />} />
-          {/* Seller Management */}
+        <Route
+          path="buyer/resellproduct/productview/:userId"
+          element={<BuyerResellProductView />}
+        />
+        <Route path="buyer/resellproduct" element={<BuyerResellProductRequest />} />
+        <Route path="buyer/soldproduct" element={<BuyerSoldProduct />} />
+        {/* Seller Management */}
         <Route path="seller/management" element={<SellerManagement />} />
         <Route path="seller/product" element={<SellerProducts />} />
         <Route
@@ -1013,8 +1014,8 @@ const AppRoutes = () => {
           element={<ProductFetchView />}
         />
         <Route path="purchasetable" element={<PurchaseTable />} />
-          <Route path="purchasetable/view/:productId" element={<PurchaseTableView />} />
-          <Route path="order-view/:orderId" element={<ArtistOrderView />} />
+        <Route path="purchasetable/view/:productId" element={<PurchaseTableView />} />
+        <Route path="order-view/:orderId" element={<ArtistOrderView />} />
 
         {/* Bidding Management */}
         <Route path="bidding/allproduct" element={<AllBiddingProduct />} />
@@ -1099,13 +1100,13 @@ const AppRoutes = () => {
           element={<PurchaseBadge />}
         />
         <Route
-            path="community-cms/purchase-badge/show"
-            element={<ShowPurchasedBadge />}
-          />
-          <Route
-            path="community-cms/membership-orders"
-            element={<MembershipOrders />}
-          />
+          path="community-cms/purchase-badge/show"
+          element={<ShowPurchasedBadge />}
+        />
+        <Route
+          path="community-cms/membership-orders"
+          element={<MembershipOrders />}
+        />
         {/*PackagingMaterialSettings */}
         <Route
           path="packaging-material-setting/material-name"
@@ -1130,13 +1131,13 @@ const AppRoutes = () => {
         />
         <Route path="packaging-material-setting/card" element={<Card />} />
         {/* Settings */}
-          <Route path="settings/email-setting" element={<EmailSettings />} />
-          <Route path="settings/storage-setting" element={<StorageSettingPage />} />
+        <Route path="settings/email-setting" element={<EmailSettings />} />
+        <Route path="settings/storage-setting" element={<StorageSettingPage />} />
         <Route path="settings/blog-category" element={<BlogCategory />} />
         <Route path="settings/product-category" element={<ProductCategory />} />
         <Route path="settings/marketing" element={<SuperAdminMarketing />} />
         <Route path="settings/payment-getway" element={< PaymentGetwaySetting />} />
- 
+
         <Route
           path="settings/certification"
           element={<CertificationSetting />}
@@ -1161,9 +1162,9 @@ const AppRoutes = () => {
         />
         <Route path="product-settings/period-era" element={<PeriodEras />} />
         <Route path="settings/gst" element={<GSTSetting />} />
-         <Route path="settings/insurance" element={<InsuranceSetting />} />
-          <Route path="settings/exhibition" element={<ExhibitionSetting />} />
-          <Route path="settings/sidebar-visibility" element={<SidebarVisibility />} />
+        <Route path="settings/insurance" element={<InsuranceSetting />} />
+        <Route path="settings/exhibition" element={<ExhibitionSetting />} />
+        <Route path="settings/sidebar-visibility" element={<SidebarVisibility />} />
         {/* Advertise Routes */}
         <Route path="advertise" element={<SuperAdminArtistAdvertise />} />
         <Route path="advertise/sponser" element={<SuperAdminArtistSponsor />} />
@@ -1246,11 +1247,11 @@ const AppRoutes = () => {
           path="CMS-art-gallery/edit/:id"
           element={<ArtsaysGalleryEdit />}
         />
-          {/* Enquiries */}
-          <Route path="enquiry" element={<EnquiryTable />} />
-          <Route path="enquiry/view" element={<ViewEnquiry />} />
-          {/* Newsletter */}
-          <Route path="newsletter" element={<NewsletterTable />} />
+        {/* Enquiries */}
+        <Route path="enquiry" element={<EnquiryTable />} />
+        <Route path="enquiry/view" element={<ViewEnquiry />} />
+        {/* Newsletter */}
+        <Route path="newsletter" element={<NewsletterTable />} />
         {/* Policy Routes */}
         <Route path="policy" element={<PolicyTable />} />
         <Route path="policy/create-policy" element={<CreatePolicy />} />
@@ -1318,14 +1319,14 @@ const AppRoutes = () => {
           element={<UpdateChallenge />}
         />
         <Route path="challenges-entries" element={<ChallengesEntries />} />
-          <Route
-            path="challenges/view-application"
-            element={<ViewChallengeApplication />}
-          />
-          <Route
-            path="challenges/update-application/:id"
-            element={<UpdateChallengeApplication />}
-          />
+        <Route
+          path="challenges/view-application"
+          element={<ViewChallengeApplication />}
+        />
+        <Route
+          path="challenges/update-application/:id"
+          element={<UpdateChallengeApplication />}
+        />
         {/* Celebraties */}
         <Route path="celebrities" element={<Celebrities />} />
         <Route path="celebrities/create" element={<CreateCelebrities />} />
@@ -1358,6 +1359,12 @@ const AppRoutes = () => {
         <Route
           path="/super-admin/sms-settings/signup-sms"
           element={<SMSSettingSignup />}
+        />
+
+        {/* Google OAuth Setting */}
+        <Route
+          path="settings/google-oauth"
+          element={<GoogleSetting />}
         />
 
         {/* Browse Categories */}
@@ -1491,51 +1498,51 @@ const AppRoutes = () => {
         <Route path="purchase" element={<Productpurchase />} />
         <Route path="purchase/view" element={<ProductpurchaseView />} />
         <Route path="product-purchase" element={<Productpurchase />} />
-          <Route path="order-view/:orderId" element={<ArtistOrderView />} />
+        <Route path="order-view/:orderId" element={<ArtistOrderView />} />
 
-          {/* Advertise Routes */}
-          <Route path="advertise" element={<ArtistAdvertise />} />
-          <Route path="advertise/sponser" element={<ArtistSponser />} />
+        {/* Advertise Routes */}
+        <Route path="advertise" element={<ArtistAdvertise />} />
+        <Route path="advertise/sponser" element={<ArtistSponser />} />
 
-          {/* Bidding Routes */}
-          <Route path="bidding-products-table" element={<ArtistBidingAllProducts />} />
-          <Route path="bidding-products-table/create" element={<ArtistBidingAllProductsCreate />} />
-          <Route path="bidding-products-table/edit/:id" element={<ArtistBidingAllProductsEdit />} />
-          <Route path="bidded-products-table" element={<ArtistBiddedProducts />} />
-          <Route path="bidding-pass-table" element={<ArtistBiddingTable />} />
-          <Route path="bidding-pass-table/bidding-pass" element={<ArtistBiddingTablePass />} />
-          <Route path="bidding-pass-table/upgrade" element={<ArtistBiddingTablePassUpgrade />} />
+        {/* Bidding Routes */}
+        <Route path="bidding-products-table" element={<ArtistBidingAllProducts />} />
+        <Route path="bidding-products-table/create" element={<ArtistBidingAllProductsCreate />} />
+        <Route path="bidding-products-table/edit/:id" element={<ArtistBidingAllProductsEdit />} />
+        <Route path="bidded-products-table" element={<ArtistBiddedProducts />} />
+        <Route path="bidding-pass-table" element={<ArtistBiddingTable />} />
+        <Route path="bidding-pass-table/bidding-pass" element={<ArtistBiddingTablePass />} />
+        <Route path="bidding-pass-table/upgrade" element={<ArtistBiddingTablePassUpgrade />} />
 
-          {/* Certification Routes */}
-          <Route path="certification" element={<ArtistCertification />} />
-          <Route path="certification/create-certification" element={<CreateArtitstCertifications />} />
-          <Route path="certification/view" element={<ViewArtistCertification />} />
+        {/* Certification Routes */}
+        <Route path="certification" element={<ArtistCertification />} />
+        <Route path="certification/create-certification" element={<CreateArtitstCertifications />} />
+        <Route path="certification/view" element={<ViewArtistCertification />} />
 
-          {/* Insurance Routes */}
-          <Route path="insurance" element={<ArtistIsnaurance />} />
-          <Route path="insurance/create" element={<CreateInsuranceArtist />} />
-          <Route path="insurance/view" element={<ViewInsuranceArtist />} />
+        {/* Insurance Routes */}
+        <Route path="insurance" element={<ArtistIsnaurance />} />
+        <Route path="insurance/create" element={<CreateInsuranceArtist />} />
+        <Route path="insurance/view" element={<ViewInsuranceArtist />} />
 
-          {/* Exhibition Routes */}
-          <Route path="exhibition" element={<ArtistExhibition />} />
-          <Route path="exhibition/create-exhibition" element={<ArtistCreateExhibition />} />
-          <Route path="exhibition/update-exhibition" element={<ArtistUpdateExhibition />} />
-          <Route path="exhibition/view-exhibition" element={<ArtistViewExhibition />} />
+        {/* Exhibition Routes */}
+        <Route path="exhibition" element={<ArtistExhibition />} />
+        <Route path="exhibition/create-exhibition" element={<ArtistCreateExhibition />} />
+        <Route path="exhibition/update-exhibition" element={<ArtistUpdateExhibition />} />
+        <Route path="exhibition/view-exhibition" element={<ArtistViewExhibition />} />
 
-          {/* Product Coupon Codes */}
-          <Route path="product-coupon-codes" element={<ArtistProductCouponCodes />} />
+        {/* Product Coupon Codes */}
+        <Route path="product-coupon-codes" element={<ArtistProductCouponCodes />} />
 
-          {/* Packaging Material */}
-          <Route path="packaging-material" element={<OrderMaterial />} />
-          <Route path="packaging-material/create" element={<CreateOrder />} />
-          <Route path="packaging-material/edit/:id" element={<UpdateOrder />} />
-          <Route path="packaging-material/view/:id" element={<ViewOrder />} />
+        {/* Packaging Material */}
+        <Route path="packaging-material" element={<OrderMaterial />} />
+        <Route path="packaging-material/create" element={<CreateOrder />} />
+        <Route path="packaging-material/edit/:id" element={<UpdateOrder />} />
+        <Route path="packaging-material/view/:id" element={<ViewOrder />} />
 
-          {/* Wallet */}
-          <Route path="wallet" element={<ArtistSellerWallet />} />
+        {/* Wallet */}
+        <Route path="wallet" element={<ArtistSellerWallet />} />
 
 
-        </Route>
+      </Route>
 
       {/* --------------------------------------------Buyer Routes---------------------------------------------------- */}
       <Route
@@ -1579,7 +1586,7 @@ const AppRoutes = () => {
         <Route path="SellerProductUpload" element={<SellerProductUpload />} />
         <Route path="purchased-product" element={<SellerPurchasedProducts />} />
         <Route path="product-fetch-view-seller/:productId" element={<ProductViewSeller />} />
-          <Route path="order-view/:orderId" element={<ArtistOrderView />} />
+        <Route path="order-view/:orderId" element={<ArtistOrderView />} />
 
         {/* Advertise Routes */}
         <Route path="advertise" element={<SellerAdvertise />} />
@@ -1618,10 +1625,10 @@ const AppRoutes = () => {
           element={<CreateSellerCertifications />}
         />
 
-           {/* Artist Insurance Routes */}
-          <Route path="insurance" element={<SellerIsnaurance />} />
-        <Route path="insurance/create" element={< CreateInsuranceSeller/>} />
-         <Route path="insurance/view" element={< ViewInsuranceSeller/>} />
+        {/* Artist Insurance Routes */}
+        <Route path="insurance" element={<SellerIsnaurance />} />
+        <Route path="insurance/create" element={< CreateInsuranceSeller />} />
+        <Route path="insurance/view" element={< ViewInsuranceSeller />} />
 
         {/* Exhibition */}
         <Route path="exhibition" element={<SellerExhibition />} />
@@ -1681,7 +1688,7 @@ const AppRoutes = () => {
             <Route path="my-orders/view" element={<MyOrderView />} />
             <Route path="manage-address" element={<ManageAddress />} />
             <Route
-              path="bank-payment-details" 
+              path="bank-payment-details"
               element={<BankPaymentDetails />}
             />
             <Route path="art-gallery" element={<ArtGallery />} />
@@ -1766,7 +1773,7 @@ const AppRoutes = () => {
               <div className="absolute inset-0 bg-gradient-to-r from-[#5C4033] via-[#4A3328] to-[#3D2920]"></div>
               <div className="absolute inset-0">
                 <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#8B6914]/30 rounded-full blur-[120px] animate-pulse"></div>
-                <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[#D4A574]/20 rounded-full blur-[100px] animate-pulse" style={{animationDelay: '1s'}}></div>
+                <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[#D4A574]/20 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1s' }}></div>
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-[#FFD700]/10 to-[#B8860B]/10 rounded-full blur-[150px]"></div>
               </div>
               <div className="absolute inset-0 bg-gradient-to-r from-[#5C4033]/70 to-transparent flex items-center">
@@ -1810,9 +1817,9 @@ const AppRoutes = () => {
           <Route path="/artsays-community/search" element={<Search />} />
           <Route path="/artsays-community/explore" element={<Explore />} />
           {/* Only creators can create/upload posts */}
-            <Route
-              element={<PrivateRoute allowedRoles={["Artist", "Seller"]} />}
-            >
+          <Route
+            element={<PrivateRoute allowedRoles={["Artist", "Seller"]} />}
+          >
             <Route path="/artsays-community/create-post" element={<CreatePost />} />
             <Route path="/artsays-community/upload-post" element={<UploadPost />} />
           </Route>
