@@ -112,8 +112,8 @@ const EditSubCategoryModal = ({
     setLoading(true)
 
     try {
-      const response = await putAPI(
-        `/api/sub-category/${subCategory.id}`,
+        const response = await putAPI(
+          `/api/sub-category/${subCategory._id}`,
         {
           subCategoryName: formData.subCategoryName,
           categoryId,

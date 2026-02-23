@@ -465,7 +465,7 @@ const CategoryTable = ({
 
     const handleDeleteConfirmed = (id) => {
         setSubCategories((prevSubCategories) =>
-            prevSubCategories.filter((subCategory) => subCategory.id !== id)
+            prevSubCategories.filter((subCategory) => subCategory._id !== id)
         );
     };
 
@@ -498,7 +498,7 @@ const CategoryTable = ({
             formData.append("file", selectedFile);
 
             try {
-                const response = await fetch("http://localhost:3001/api/import-product-categories", {
+                const response = await fetch("/api/import-product-categories", {
                     method: "POST",
                     body: formData,
                 });
@@ -536,7 +536,7 @@ const CategoryTable = ({
                             onClick={async () => {
                                 try {
                                     const response = await fetch(
-                                        "http://localhost:3001/api/export-product-category-template",
+                                        "/api/export-product-category-template",
                                         { method: "GET" }
                                     );
 
@@ -761,7 +761,7 @@ const CategoryTable = ({
                 <ConfirmationDialog
                     onClose={handleDeleteCancel}
                     deleteType={deleteType}
-                    id={selectedSubCategory.id}
+                    id={selectedSubCategory?._id}
                     onDeleted={handleDeleteConfirmed}
                 />
             )}

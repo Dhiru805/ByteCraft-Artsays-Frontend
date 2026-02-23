@@ -332,7 +332,7 @@ function BlogCategoryTable({ categories, setCategories, refreshCategories }) {
       const formData = new FormData();
       formData.append("file", selectedFile);
 
-      const response = await fetch("http://localhost:3001/api/import-blog-categories", {
+      const response = await fetch("/api/import-blog-categories", {
         method: "POST",
         body: formData,
       });
@@ -356,7 +356,7 @@ function BlogCategoryTable({ categories, setCategories, refreshCategories }) {
   // === Download Template ===
   const handleDownloadTemplate = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/export-blog-category-template", {
+      const response = await fetch("/api/export-blog-category-template", {
         method: "GET",
       });
 

@@ -87,7 +87,7 @@ const CertificationTable = ({
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://localhost:3001/api/import-certifications", {
+      const response = await fetch(      "/api/import-certifications", {
         method: "POST",
         body: formData,
       });
@@ -274,10 +274,10 @@ const CertificationTable = ({
               className="btn btn-outline-success btn-sm"
               onClick={async () => {
                 try {
-                  const response = await fetch(
-                    "http://localhost:3001/api/export-certification-template",
-                    { method: "GET" }
-                  );
+                    const response = await fetch(
+                      "/api/export-certification-template",
+                      { method: "GET" }
+                    );
 
                   if (!response.ok) throw new Error("Failed to fetch template");
 

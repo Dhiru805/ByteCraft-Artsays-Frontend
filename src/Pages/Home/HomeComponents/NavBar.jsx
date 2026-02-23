@@ -420,9 +420,9 @@ const CreateDrop = ({ usertype, onClose }) => (
 // NAV CONFIG
 // ─────────────────────────────────────────────────────────────
 const NAV_ITEMS = [
-  { key: "art", label: "ART", Mega: ArtMega, href: "/art-gallery" },
-  { key: "bid", label: "BID", Mega: BidMega, href: "/bid" },
-  { key: "stores", label: "STORES", Mega: StoresMega, href: "/store" },
+  { key: "art", label: "ART", Mega: null, href: "/art-gallery" },
+  { key: "bid", label: "BID", Mega: null, href: "/bid" },
+  { key: "stores", label: "STORES", Mega: null, href: "/store" },
   { key: "community", label: "COMMUNITY", Mega: CommunityMega, href: "/artsays-community" },
   { key: "learn", label: "LEARN", Mega: LearnMega, href: "/blogs" },
 ];
@@ -608,14 +608,14 @@ const NavBar = () => {
                   key={key}
                   ref={el => navItemRefs.current[key] = el}
                   className={`nav-item ${activeMega === key ? "nav-item-active" : ""}`}
-                  onMouseEnter={() => openMega(key)}
-                  onMouseLeave={closeMega}
+                  onMouseEnter={() => Mega && openMega(key)}
+                  onMouseLeave={() => Mega && closeMega()}
                 >
                   <a href={href} className="nav-btn">
                     {label}
-                    <ChevronDown size={10} className={`nav-chev ${activeMega === key ? "nav-chev-open" : ""}`} />
+                    {Mega && <ChevronDown size={10} className={`nav-chev ${activeMega === key ? "nav-chev-open" : ""}`} />}
                   </a>
-                  {activeMega === key && (
+                  {Mega && activeMega === key && (
                     <div className="mega-wrap" style={{ left: megaLeft }} onMouseEnter={keepMega} onMouseLeave={closeMega}>
                       <Mega />
                     </div>

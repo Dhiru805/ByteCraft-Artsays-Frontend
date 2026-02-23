@@ -14,7 +14,11 @@ const BlogCategory = () => {
     const fetchCategories = async () => {
         try {
             const response = await getAPI("/api/getblogcategory");
-            setCategories(response.data);
+            if (!response.hasError && Array.isArray(response.data)) {
+                    setCategories(response.data);
+            } else {
+                setCategories([]);
+            }
         } catch (error) {
             console.error("Error fetching categories:", error);
         }
