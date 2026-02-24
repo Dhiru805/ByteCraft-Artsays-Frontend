@@ -486,7 +486,7 @@ const Hero = () => {
   return (
     <div>
       {/* Banner Hero — matches public pages style */}
-      <div className="relative w-full min-h-[420px] sm:min-h-[480px] md:min-h-[640px] overflow-hidden flex items-center">
+        <div className="relative w-full min-h-[420px] sm:min-h-[480px] md:min-h-[640px] flex items-center">
         {/* Background: animated slide image or fallback hero-bg */}
         <AnimatePresence mode="wait">
           {currentTitleObj.image ? (
@@ -559,7 +559,7 @@ const Hero = () => {
                 </div>
 
                 {open && (
-                  <div className="absolute top-full left-0 w-full bg-white shadow-xl rounded-2xl mt-2 z-[9999] p-3 max-h-[520px] overflow-y-auto">
+                  <div className="absolute top-full left-0 w-full bg-white shadow-xl rounded-2xl mt-2 z-[99999] p-3 max-h-[520px] overflow-y-auto">
 
                     {/* ── Products section: only when actively searching ── */}
                     {q && (
