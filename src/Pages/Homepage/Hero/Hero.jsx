@@ -310,6 +310,11 @@ const Hero = () => {
   const searchRef = useRef(null);
 
   const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
+  const getImageUrl = (imgPath) => {
+    if (!imgPath) return "";
+    const normalized = imgPath.replace(/\\/g, "/");
+    return `${imageBaseURL}${normalized.startsWith("/") ? "" : "/"}${normalized}`;
+  };
 
   useEffect(() => {
     const fetchHero = async () => {
@@ -486,20 +491,24 @@ const Hero = () => {
   return (
     <div>
       {/* Banner Hero — matches public pages style */}
-        <div className="relative w-full min-h-[420px] sm:min-h-[480px] md:min-h-[640px] flex items-center">
+        <div className="relative w-full min-h-[420px] sm:min-h-[480px] md:min-h-[640px] flex items-center overflow-hidden">
         {/* Background: animated slide image or fallback hero-bg */}
         <AnimatePresence mode="wait">
           {currentTitleObj.image ? (
-            <motion.img
-              key={wordIndex}
-              src={`${process.env.REACT_APP_API_URL}/${currentTitleObj.image}`}
-              alt="Hero Background"
-              className="absolute inset-0 w-full h-full object-cover scale-105"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.2, ease: "easeInOut" }}
-            />
+              <motion.img
+                key={wordIndex}
+                src={getImageUrl(currentTitleObj.image)}
+                  alt="Hero Background"
+                className="absolute inset-0 w-full h-full object-cover scale-105"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1.2, ease: "easeInOut" }}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.style.display = "none";
+                }}
+              />
           ) : (
             <motion.div
               key="fallback-bg"
@@ -750,13 +759,14 @@ const Hero = () => {
               {currentTitleObj.image && (
                 <motion.img
                   key={wordIndex}
-                  src={`${process.env.REACT_APP_API_URL}/${currentTitleObj.image}`}
-                  alt="Hero Slide"
-                  className="w-[460px] h-full object-cover"
-                  initial={{ opacity: 0, scale: 1.08 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 1.05 }}
-                  transition={{ duration: 1.2, ease: "easeInOut" }}
+                  src={getImageUrl(currentTitleObj.image)}
+                    alt="Hero Slide"
+                    className="w-[460px] h-full object-cover"
+                    initial={{ opacity: 0, scale: 1.08 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.05 }}
+                    transition={{ duration: 1.2, ease: "easeInOut" }}
+                    onError={(e) => { e.target.onerror = null; e.target.style.display = "none"; }}
                 />
               )}
             </AnimatePresence>
@@ -774,7 +784,7 @@ const Hero = () => {
             <div key={idx} className="flex items-center gap-2">
               <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-100">
                 <img
-                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${tag.icon}`}
+                  src={getImageUrl(tag.icon)}
                   alt={tag.title}
                   className="w-6 h-6 object-contain"
                 />
