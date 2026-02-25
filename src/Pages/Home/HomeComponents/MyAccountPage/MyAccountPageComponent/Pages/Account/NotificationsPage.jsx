@@ -500,7 +500,7 @@ const NotificationsPage = () => {
       </div>
 
       {/* Category Tabs */}
-      <div className="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
+      <div className="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide" style={{ scrollbarWidth: "none" }}>
         {Object.entries(CATEGORY_LABELS).map(([cat, label]) => (
           <button
             key={cat}
@@ -553,8 +553,8 @@ const NotificationsPage = () => {
                     <div
                       key={notif._id}
                       onClick={() => handleMarkOne(notif)}
-                      className={`flex items-start gap-4 p-5 transition-colors hover:bg-gray-50/80 group ${
-                        !notif.isRead ? "bg-[#5C4033]/[0.025]" : ""
+                      className={`flex items-start gap-4 p-3 transition-colors hover:bg-gray-50/80 group ${
+                        !notif.isRead ? "bg-[#EBEBEB]" : ""
                       } ${redirectUrl ? "cursor-pointer" : "cursor-default"}`}
                     >
                       {/* Icon */}

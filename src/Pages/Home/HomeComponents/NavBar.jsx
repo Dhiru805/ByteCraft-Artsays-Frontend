@@ -24,6 +24,7 @@ import getAPI from "../../../api/getAPI";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 import HeaderSkeleton from "../../../Component/Skeleton/Home/HeaderSkeleton";
 import NotificationDropdown from "../../../Component/Notifications/NotificationDropdown";
+import SellerNotificationDropdown from "../../../Component/Notifications/SellerNotificationDropdown";
 
 // ─────────────────────────────────────────────────────────────
 // MEGA AD SLIDER
@@ -680,15 +681,18 @@ const NavBar = () => {
                 </>
               )}
 
-            {/* ── Artist / Seller: CREATE */}
-            {isLoggedIn && (Usertype === "Artist" || Usertype === "Seller") && (
-              <div className="nav-create-wrap" ref={createRef}>
-                <button className="nav-create-btn" onClick={() => setShowCreate(s => !s)}>
-                  <Plus size={14} /> Create
-                </button>
-                {showCreate && <CreateDrop usertype={Usertype} onClose={() => setShowCreate(false)} />}
-              </div>
-            )}
+              {/* ── Artist / Seller: CREATE + BELL */}
+              {isLoggedIn && (Usertype === "Artist" || Usertype === "Seller") && (
+                <>
+                  <div className="nav-create-wrap" ref={createRef}>
+                    <button className="nav-create-btn" onClick={() => setShowCreate(s => !s)}>
+                      <Plus size={14} /> Create
+                    </button>
+                    {showCreate && <CreateDrop usertype={Usertype} onClose={() => setShowCreate(false)} />}
+                  </div>
+                    <SellerNotificationDropdown />
+                </>
+              )}
 
             {/* ── Super-Admin: blog */}
             {isLoggedIn && Usertype === "Super-Admin" && (
