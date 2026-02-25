@@ -608,6 +608,7 @@ import ArtistPremiumBages from "../Component/Dashboard/ArtistDashbooard/Badges/P
 
 import SellerPremiumBages from "../Component/Dashboard/SellerDashboard/Badges/PremiumBadges";
 import SellerNotificationsPage from "../Component/Dashboard/SellerDashboard/Notifications/SellerNotificationsPage";
+import ArtistNotificationsPage from "../Component/Dashboard/ArtistDashbooard/Notifications/ArtistNotificationsPage";
 
 //-----------------------------Error 404--------------------------//
 
@@ -1540,11 +1541,13 @@ const AppRoutes = () => {
         <Route path="packaging-material/edit/:id" element={<UpdateOrder />} />
         <Route path="packaging-material/view/:id" element={<ViewOrder />} />
 
-        {/* Wallet */}
-        <Route path="wallet" element={<ArtistSellerWallet />} />
+          {/* Wallet */}
+          <Route path="wallet" element={<ArtistSellerWallet />} />
 
+          {/* Notifications */}
+          <Route path="notifications" element={<ArtistNotificationsPage />} />
 
-      </Route>
+        </Route>
 
       {/* --------------------------------------------Buyer Routes---------------------------------------------------- */}
       <Route

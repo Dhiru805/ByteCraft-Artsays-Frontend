@@ -21,15 +21,21 @@ const getNotificationRedirectUrl = (notification, role = "Seller") => {
     case "email_verified":
     case "login_successful":
     case "unauthorized_access_attempt":
+    case "profile_incomplete":
+    case "verification_submitted":
+    case "verification_update_required":
+    case "suspicious_login_detected":
+    case "account_action_required":
       return `${base}/profile`;
 
-    // ── Products ────────────────────────────────────────────────────────────
+    // ── Products / Artworks ─────────────────────────────────────────────────
     case "product_uploaded":
     case "product_submitted_for_review":
     case "product_updated":
     case "product_deleted":
     case "no_products_listed":
     case "products_live_no_sales":
+    case "high_views_low_conversion":
       return role === "Artist" ? "/artist/product" : "/seller/product-details";
 
     case "product_approved":
@@ -46,6 +52,7 @@ const getNotificationRedirectUrl = (notification, role = "Seller") => {
     // ── Orders ──────────────────────────────────────────────────────────────
     case "new_order_received":
     case "order_payment_confirmed":
+    case "order_status_reminder":
     case "order_packed":
     case "order_shipped":
     case "order_delivered":
@@ -55,7 +62,7 @@ const getNotificationRedirectUrl = (notification, role = "Seller") => {
     case "refund_completed":
       if (meta?.orderId)
         return `${base}/order-view/${meta.orderId}`;
-      return `${base}/purchased-product`;
+      return role === "Artist" ? "/artist/product-purchase" : "/seller/purchased-product";
 
     // ── Wallet ──────────────────────────────────────────────────────────────
     case "wallet_credited":
@@ -75,12 +82,14 @@ const getNotificationRedirectUrl = (notification, role = "Seller") => {
     // ── Bidding ─────────────────────────────────────────────────────────────
     case "product_added_to_bidding":
     case "bidding_product_updated":
+    case "auction_approved":
     case "auction_ending_soon":
     case "auction_restarted":
       return `${base}/bidding-products-table`;
 
     case "first_bid_received":
     case "new_highest_bid":
+    case "auction_won":
     case "auction_completed":
       if (meta?.biddingProductId)
         return `${base}/bidded-products-table`;
@@ -88,6 +97,7 @@ const getNotificationRedirectUrl = (notification, role = "Seller") => {
 
     case "bidding_pass_purchased":
     case "bidding_pass_upgraded":
+    case "bidding_pass_assigned":
     case "bidding_pass_expired":
       return `${base}/bidding-pass-table`;
 
@@ -99,6 +109,7 @@ const getNotificationRedirectUrl = (notification, role = "Seller") => {
     case "ad_campaign_paused":
     case "ad_campaign_ended":
     case "sponsored_product_alert":
+    case "promotion_performance_alert":
       return `${base}/advertise`;
 
     // ── Certification ────────────────────────────────────────────────────────
@@ -135,6 +146,7 @@ const getNotificationRedirectUrl = (notification, role = "Seller") => {
     case "membership_purchased":
     case "membership_expired":
     case "featured_seller_announcement":
+    case "featured_artist_announcement":
       return `${base}/premium-badges`;
 
     // ── Custom Orders ────────────────────────────────────────────────────────
@@ -143,6 +155,7 @@ const getNotificationRedirectUrl = (notification, role = "Seller") => {
     case "buyer_accepted_custom_price":
     case "buyer_rejected_custom_price":
     case "custom_order_payment_received":
+    case "custom_order_deadline_reminder":
     case "custom_order_marked_complete":
     case "custom_order_delivered":
       return `${base}/custom-order/view-request`;
@@ -165,6 +178,14 @@ const getNotificationRedirectUrl = (notification, role = "Seller") => {
         ? "/artist/product-coupon-codes"
         : "/seller/products-settings/product-coupon-code";
 
+    // ── Blogs (Artist only) ──────────────────────────────────────────────────
+    case "blog_submitted_for_review":
+    case "blog_approved":
+    case "blog_rejected":
+    case "blog_published":
+    case "blog_performance_milestone":
+      return "/artist/bloglist";
+
     // ── Social / Community ───────────────────────────────────────────────────
     case "new_follower":
     case "post_liked":
@@ -172,10 +193,6 @@ const getNotificationRedirectUrl = (notification, role = "Seller") => {
     case "post_promoted":
     case "community_reach_milestone":
       return `${base}/profile`;
-
-    // ── Dashboard alerts ─────────────────────────────────────────────────────
-    case "no_products_listed":
-      return role === "Artist" ? "/artist/product" : "/seller/product-details";
 
     // ── System ───────────────────────────────────────────────────────────────
     case "platform_announcement":

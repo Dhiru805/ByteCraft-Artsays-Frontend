@@ -128,6 +128,25 @@ const TYPE_META = {
   policy_update:                    { icon: "📜", label: "Policy Update" },
   maintenance_alert:                { icon: "🔧", label: "Maintenance" },
   unauthorized_access_attempt:      { icon: "🚨", label: "Security Alert" },
+  // Artist-specific extra types
+  profile_incomplete:               { icon: "📝", label: "Profile Incomplete" },
+  verification_submitted:           { icon: "🔍", label: "Verification Submitted" },
+  verification_update_required:     { icon: "⚠️", label: "Update Required" },
+  high_views_low_conversion:        { icon: "👁️", label: "Low Conversion" },
+  featured_artist_announcement:     { icon: "⭐", label: "Featured Artist" },
+  order_status_reminder:            { icon: "⏰", label: "Order Reminder" },
+  custom_order_deadline_reminder:   { icon: "⏰", label: "Deadline Reminder" },
+  auction_approved:                 { icon: "✅", label: "Auction Approved" },
+  auction_won:                      { icon: "🏆", label: "Auction Won" },
+  bidding_pass_assigned:            { icon: "🔗", label: "Pass Assigned" },
+  blog_submitted_for_review:        { icon: "📝", label: "Blog Submitted" },
+  blog_approved:                    { icon: "✅", label: "Blog Approved" },
+  blog_rejected:                    { icon: "❌", label: "Blog Rejected" },
+  blog_published:                   { icon: "🌐", label: "Blog Published" },
+  blog_performance_milestone:       { icon: "📈", label: "Blog Milestone" },
+  promotion_performance_alert:      { icon: "📈", label: "Promo Alert" },
+  suspicious_login_detected:        { icon: "🚨", label: "Suspicious Login" },
+  account_action_required:          { icon: "⚠️", label: "Action Required" },
 };
 
 const getIcon  = (type) => TYPE_META[type]?.icon  || "🔔";
@@ -151,21 +170,23 @@ const SellerNotificationDropdown = () => {
   const [loading, setLoading]             = useState(false);
   const ref                               = useRef(null);
   const navigate                          = useNavigate();
-  const userId = localStorage.getItem("userId");
+  const userId   = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType") || "Seller";
+  const isArtist = userType === "Artist";
+  const notifBase = isArtist ? "artist-notifications" : "seller-notifications";
 
   const fetchNotifications = useCallback(async () => {
     if (!userId) return;
     setLoading(true);
     try {
-      const res = await getAPI(`/api/seller-notifications/${userId}?limit=${DROPDOWN_LIMIT}&page=1`, {}, false, true);
+      const res = await getAPI(`/api/${notifBase}/${userId}?limit=${DROPDOWN_LIMIT}&page=1`, {}, false, true);
       if (res?.data?.success) {
         setNotifications(res.data.data || []);
         setUnreadCount(res.data.unreadCount || 0);
       }
     } catch (_) {}
     setLoading(false);
-  }, [userId]);
+  }, [userId, notifBase]);
 
   // Fetch on mount, poll every 30s
   useEffect(() => {
@@ -188,9 +209,10 @@ const SellerNotificationDropdown = () => {
         );
       }
     };
-    window.addEventListener("sellerNotifUpdated", handler);
-    return () => window.removeEventListener("sellerNotifUpdated", handler);
-  }, []);
+    const eventName = isArtist ? "artistNotifUpdated" : "sellerNotifUpdated";
+    window.addEventListener(eventName, handler);
+    return () => window.removeEventListener(eventName, handler);
+  }, [isArtist]);
 
   // Close on outside click
   useEffect(() => {
@@ -207,7 +229,7 @@ const SellerNotificationDropdown = () => {
     setOpen(false);
     if (!notif.isRead) {
       try {
-        await putAPI(`/api/seller-notifications/${userId}/mark-read`, { notificationId: notif._id });
+        await putAPI(`/api/${notifBase}/${userId}/mark-read`, { notificationId: notif._id });
         setNotifications((prev) =>
           prev.map((n) => n._id === notif._id ? { ...n, isRead: true } : n)
         );
@@ -222,7 +244,7 @@ const SellerNotificationDropdown = () => {
   const handleMarkAll = async (e) => {
     e.stopPropagation();
     try {
-      await putAPI(`/api/seller-notifications/${userId}/mark-read`, { all: true });
+      await putAPI(`/api/${notifBase}/${userId}/mark-read`, { all: true });
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
       setUnreadCount(0);
     } catch (_) {}
