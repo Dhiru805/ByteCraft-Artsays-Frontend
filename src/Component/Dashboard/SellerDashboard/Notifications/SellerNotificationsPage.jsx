@@ -186,7 +186,7 @@ const SellerNotificationsPage = () => {
       padding: "6px 14px", borderRadius: "6px", border: "1px solid #007bff",
       background: "#fff", color: "#007bff", cursor: "pointer", fontSize: "13px",
     },
-    tabsRow: { display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "16px" },
+    tabsRow: { display: "flex", gap: "8px", marginBottom: "16px", overflowX: "auto", scrollbarWidth: "none" },
     tab: (active) => ({
       padding: "6px 14px", borderRadius: "20px", border: "1px solid #ddd",
       background: active ? "#343a40" : "#fff", color: active ? "#fff" : "#555",
