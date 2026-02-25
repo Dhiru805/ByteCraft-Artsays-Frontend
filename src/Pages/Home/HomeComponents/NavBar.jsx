@@ -23,6 +23,7 @@ import { CiCreditCard1 } from "react-icons/ci";
 import getAPI from "../../../api/getAPI";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 import HeaderSkeleton from "../../../Component/Skeleton/Home/HeaderSkeleton";
+import NotificationDropdown from "../../../Component/Notifications/NotificationDropdown";
 
 // ─────────────────────────────────────────────────────────────
 // MEGA AD SLIDER
@@ -666,12 +667,18 @@ const NavBar = () => {
               </>
             )}
 
-            {/* ── Buyer: cart */}
-            {isLoggedIn && Usertype === "Buyer" && (
-              <button className="nav-icon-btn" onClick={() => navigate(`/my-account/my-cart/${userId}`)} title="Cart">
-                <ShoppingCart size={18} />
-              </button>
-            )}
+              {/* ── Buyer: cart + notifications */}
+              {isLoggedIn && Usertype === "Buyer" && (
+                <>
+                  <NotificationDropdown
+                    userId={userId}
+                    onUnreadChange={(count) => setUnreadCount(count)}
+                  />
+                  <button className="nav-icon-btn" onClick={() => navigate(`/my-account/my-cart/${userId}`)} title="Cart">
+                    <ShoppingCart size={18} />
+                  </button>
+                </>
+              )}
 
             {/* ── Artist / Seller: CREATE */}
             {isLoggedIn && (Usertype === "Artist" || Usertype === "Seller") && (
@@ -716,7 +723,7 @@ const NavBar = () => {
                       <Link to="/my-account/my-orders" className="av-item" onClick={() => setShowAvatarDrop(false)}><BsBoxSeam size={13} /> Orders</Link>
                       <Link to={`/my-account/wishlist/${userId}`} className="av-item" onClick={() => setShowAvatarDrop(false)}><HiOutlineHeart size={13} /> Wishlist</Link>
                       <Link to="/my-account/buyer-wallet" className="av-item" onClick={() => setShowAvatarDrop(false)}><IoWalletOutline size={13} /> Wallet</Link>
-                      <Link to="/my-account/notification-preferences" className="av-item" onClick={() => setShowAvatarDrop(false)}><IoMdNotificationsOutline size={13} /> Notifications</Link>
+                      <Link to="/my-account/notifications" className="av-item" onClick={() => setShowAvatarDrop(false)}><IoMdNotificationsOutline size={13} /> Notifications</Link>
                     </>)}
 
                     {/* Artist / Seller */}
@@ -857,14 +864,15 @@ const NavBar = () => {
             </>)}
 
             {/* Buyer */}
-            {isLoggedIn && Usertype === "Buyer" && (<>
-              <Link to="/my-account" className="mob-item" onClick={() => setShowSidebar(false)}><FaUser className="mob-icon" /> My Account</Link>
-              <Link to="/art-gallery" className="mob-item" onClick={() => setShowSidebar(false)}><MdLibraryAdd className="mob-icon" /> Art Gallery</Link>
-              <Link to="/bid" className="mob-item" onClick={() => setShowSidebar(false)}><RiAuctionFill className="mob-icon" /> Bid</Link>
-              <Link to="/store" className="mob-item" onClick={() => setShowSidebar(false)}><PiHandbagBold className="mob-icon" /> Store</Link>
-              <Link to={`/my-account/my-cart/${userId}`} className="mob-item" onClick={() => setShowSidebar(false)}><BiCart className="mob-icon" /> Cart</Link>
-              <Link to="/my-account/my-orders" className="mob-item" onClick={() => setShowSidebar(false)}><BsBoxSeam className="mob-icon" /> Orders</Link>
-              <Link to="/my-account/buyer-wallet" className="mob-item" onClick={() => setShowSidebar(false)}><IoWalletOutline className="mob-icon" /> Wallet</Link>
+              {isLoggedIn && Usertype === "Buyer" && (<>
+                <Link to="/my-account" className="mob-item" onClick={() => setShowSidebar(false)}><FaUser className="mob-icon" /> My Account</Link>
+                <Link to="/art-gallery" className="mob-item" onClick={() => setShowSidebar(false)}><MdLibraryAdd className="mob-icon" /> Art Gallery</Link>
+                <Link to="/bid" className="mob-item" onClick={() => setShowSidebar(false)}><RiAuctionFill className="mob-icon" /> Bid</Link>
+                <Link to="/store" className="mob-item" onClick={() => setShowSidebar(false)}><PiHandbagBold className="mob-icon" /> Store</Link>
+                <Link to={`/my-account/my-cart/${userId}`} className="mob-item" onClick={() => setShowSidebar(false)}><BiCart className="mob-icon" /> Cart</Link>
+                <Link to="/my-account/my-orders" className="mob-item" onClick={() => setShowSidebar(false)}><BsBoxSeam className="mob-icon" /> Orders</Link>
+                <Link to="/my-account/notifications" className="mob-item" onClick={() => setShowSidebar(false)}><IoMdNotificationsOutline className="mob-icon" /> Notifications</Link>
+                <Link to="/my-account/buyer-wallet" className="mob-item" onClick={() => setShowSidebar(false)}><IoWalletOutline className="mob-icon" /> Wallet</Link>
               <Link to={`/my-account/wishlist/${userId}`} className="mob-item" onClick={() => setShowSidebar(false)}><HiOutlineHeart className="mob-icon" /> Wishlist</Link>
               <Link to="/my-account/manage-address" className="mob-item" onClick={() => setShowSidebar(false)}><RiMapPin2Line className="mob-icon" /> Manage Address</Link>
               <Link to="/my-account/payment-method" className="mob-item" onClick={() => setShowSidebar(false)}><RiMoneyRupeeCircleLine className="mob-icon" /> Payment Methods</Link>

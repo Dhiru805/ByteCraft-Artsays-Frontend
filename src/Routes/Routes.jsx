@@ -77,6 +77,7 @@ import AccountVerification from "../Pages/Home/HomeComponents/MyAccountPage/MyAc
 import SocialMediaPromotion from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/SocialMediaPromotion";
 import CustomRequest from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/CustomRequest";
 import NotificationAndPreferences from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/NotificationAndPreferences";
+import NotificationsPage from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/NotificationsPage";
 import AccountSecurityAndAgreements from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/AccountSecurityAndAgreements";
 import MyOrders from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyOrders";
 import Logout from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/Logout";
@@ -1705,10 +1706,14 @@ const AppRoutes = () => {
               element={<SocialMediaPromotion />}
             />
             <Route path="custom-request" element={<CustomRequest />} />
-            <Route
-              path="notification-preferences"
-              element={<NotificationAndPreferences />}
-            />
+              <Route
+                path="notification-preferences"
+                element={<NotificationAndPreferences />}
+              />
+              <Route
+                path="notifications"
+                element={<NotificationsPage />}
+              />
             <Route
               path="security-agreements"
               element={<AccountSecurityAndAgreements />}

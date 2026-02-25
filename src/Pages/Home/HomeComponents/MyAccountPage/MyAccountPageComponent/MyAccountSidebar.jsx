@@ -1,8 +1,11 @@
+import { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import getAPI from '../../../../../api/getAPI';
 
 const links = [
   { name: 'Personal Information', path: 'personal-info', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
   { name: 'My Orders', path: 'my-orders', icon: 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' },
+  { name: 'Notifications', path: 'notifications', icon: 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9' },
   { name: 'Manage Address', path: 'manage-address', icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z' },
   { name: 'Bank Payment Details', path: 'bank-payment-details', icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z' },
   { name: 'Payment Method', path: 'payment-method', icon: 'M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z' },
@@ -19,6 +22,33 @@ const links = [
 const MyAccountSidebar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
+  const userId = localStorage.getItem('userId');
+
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const fetchUnread = async () => {
+      try {
+        const [generalRes, communityRes] = await Promise.allSettled([
+          getAPI(`/api/buyer-notifications/${userId}?page=1&limit=50`, {}, false, true),
+          getAPI(`/api/notifications/${userId}?page=1&limit=50`, {}, false, true),
+        ]);
+
+        let count = 0;
+
+        if (generalRes.status === 'fulfilled' && generalRes.value?.data?.success) {
+          const all = generalRes.value.data.data || [];
+          count += all.filter((n) => !n.isRead).length;
+        }
+
+        setUnreadCount(count);
+      } catch {}
+    };
+
+    fetchUnread();
+  }, [userId]);
 
   return (
     <div className="bg-white rounded-[2rem] p-4 border border-gray-100 shadow-lg shadow-gray-100/50">
@@ -31,6 +61,7 @@ const MyAccountSidebar = () => {
 
           const isActive = isPersonalInfo || currentPath === fullPath;
           const isLogout = path === 'logout';
+          const isNotifications = path === 'notifications';
 
           return (
             <NavLink
@@ -44,19 +75,35 @@ const MyAccountSidebar = () => {
                   : 'bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900'
               }`}
             >
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
                 className={`w-5 h-5 flex-shrink-0 transition-transform duration-300 group-hover:scale-110 ${isActive ? 'text-white' : isLogout ? 'text-rose-400' : 'text-gray-400 group-hover:text-[#5C4033]'}`}
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke="currentColor" 
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
                 strokeWidth="1.5"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d={icon} />
               </svg>
               <span className="truncate">{name}</span>
+
+              {isNotifications && unreadCount > 0 && (
+                <span className={`ml-auto mr-1 min-w-[20px] h-5 px-1 flex items-center justify-center rounded-full text-[11px] font-bold ${
+                  isActive ? 'bg-white text-[#5C4033]' : 'bg-[#5C4033] text-white'
+                }`}>
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              )}
+
               {isActive && (
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={`w-4 h-4 ${!(isNotifications && unreadCount > 0) ? 'ml-auto' : ''}`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
               )}
