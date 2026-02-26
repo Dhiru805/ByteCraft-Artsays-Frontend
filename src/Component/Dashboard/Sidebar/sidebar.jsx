@@ -322,7 +322,7 @@ const Sidebar = () => {
             path: `/super-admin/product-settings/product-medium`,
           },
           {
-            label: "Product Materia ",
+            label: "Product Material ",
             path: `/super-admin/product-settings/product-material`,
           },
           {
