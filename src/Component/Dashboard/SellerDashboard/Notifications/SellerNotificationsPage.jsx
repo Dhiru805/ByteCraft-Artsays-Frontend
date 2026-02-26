@@ -19,12 +19,13 @@ const CATEGORIES = [
   { key: "badges",        label: "Badges" },
   { key: "custom",        label: "Custom Orders" },
   { key: "packaging",     label: "Packaging" },
-  { key: "coupons",       label: "Coupons" },
-  { key: "social",        label: "Social" },
-  { key: "auth",          label: "Account" },
-  { key: "dashboard",     label: "Alerts" },
-  { key: "system",        label: "System" },
-];
+    { key: "coupons",       label: "Coupons" },
+    { key: "social",        label: "Social" },
+    { key: "support",       label: "Support" },
+    { key: "auth",          label: "Account" },
+    { key: "dashboard",     label: "Alerts" },
+    { key: "system",        label: "System" },
+  ];
 
 // ─── Type → icon map ─────────────────────────────────────────────────────────
 const TYPE_ICON = {
@@ -70,9 +71,15 @@ const TYPE_ICON = {
   coupon_usage_milestone: "🎯",
   new_follower: "👤", post_liked: "❤️", post_commented: "💬",
   post_promoted: "📣", community_reach_milestone: "🌟",
-  platform_announcement: "📢", policy_update: "📜",
-  maintenance_alert: "🔧", unauthorized_access_attempt: "🚨",
-};
+    platform_announcement: "📢", policy_update: "📜",
+    maintenance_alert: "🔧", unauthorized_access_attempt: "🚨",
+    // Support Tickets
+    ticket_created: "🎫",
+    ticket_status_changed: "🔄",
+    ticket_admin_reply: "💬",
+    ticket_escalated: "🚨",
+    ticket_resolved: "✅",
+  };
 
 function timeAgo(dateStr) {
   const diff = Date.now() - new Date(dateStr).getTime();

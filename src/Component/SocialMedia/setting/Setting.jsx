@@ -56,9 +56,10 @@ const BUYER_TOGGLES = [
   { key: "mentions",     label: "Mentions",               desc: "When someone mentions you" },
   { key: "following_posts", label: "Posts from people you follow", desc: "When an artist you follow posts" },
   { key: "live",         label: "Live Sessions",          desc: "When a followed artist goes live" },
-  { key: "memberships",  label: "Memberships",            desc: "Purchase confirmations and renewals" },
-  { key: "badges",       label: "Badges",                 desc: "Badge purchase confirmations" },
-];
+    { key: "memberships",  label: "Memberships",            desc: "Purchase confirmations and renewals" },
+    { key: "badges",       label: "Badges",                 desc: "Badge purchase confirmations" },
+    { key: "support_tickets", label: "Support Tickets",    desc: "Updates on your support requests" },
+  ];
 
 const ARTIST_EXTRA_TOGGLES = [
   { key: "saves",        label: "Post Saves",             desc: "When someone saves your post" },

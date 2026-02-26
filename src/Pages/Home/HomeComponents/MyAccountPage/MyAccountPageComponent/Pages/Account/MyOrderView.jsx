@@ -49,6 +49,7 @@ const OrderView = () => {
   const [rating, setRating] = useState(0);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showSupportModal, setShowSupportModal] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
   const [cancelComment, setCancelComment] = useState("");
   const [loadingCancel, setLoadingCancel] = useState(false);
@@ -854,17 +855,27 @@ const OrderView = () => {
                         <span>Cancel Order</span>
                       </button>
                     )}
-                  {orderStatus === "Delivered" && isReturnable && (
-                    <button className="flex items-center gap-2 border-2 border-blue-100 text-blue-600 px-8 py-3 rounded-2xl hover:bg-blue-50 transition-all font-bold">
-                      <Package className="w-5 h-5" />
-                      <span>Return Product</span>
+                    {orderStatus === "Delivered" && isReturnable && (
+                      <button className="flex items-center gap-2 border-2 border-blue-100 text-blue-600 px-8 py-3 rounded-2xl hover:bg-blue-50 transition-all font-bold">
+                        <Package className="w-5 h-5" />
+                        <span>Return Product</span>
+                      </button>
+                    )}
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowSupportModal(true);
+                          }}
+                          className="flex items-center gap-2 bg-white border border-[#6F4D34] text-[#6F4D34] px-8 py-3 rounded-2xl hover:bg-gray-50 transition-all font-bold group"
+                        >
+                      <MessageSquare className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <span>Need help?</span>
                     </button>
-                  )}
-                  <button className="flex items-center gap-2 bg-[#6F4D34] text-white px-8 py-3 rounded-2xl hover:bg-[#5b3f2a] transition-all font-bold shadow-xl shadow-[#6F4D34]/30 group">
-                    <MessageSquare className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                    <span>Chat with Specialist</span>
-                  </button>
-                </div>
+                    {/* <button className="flex items-center gap-2 bg-[#6F4D34] text-white px-8 py-3 rounded-2xl hover:bg-[#5b3f2a] transition-all font-bold shadow-xl shadow-[#6F4D34]/30 group">
+                      <MessageSquare className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <span>Chat with Specialist</span>
+                    </button> */}
+                  </div>
             </div>
           )}
       </motion.div>
@@ -1056,148 +1067,126 @@ const OrderView = () => {
                   )}
                 </div>
 
-                {uploadedFiles.length > 0 && (
-                  <div className="flex gap-4 flex-wrap pb-4">
-                    {uploadedFiles.map((file, index) => {
-                      const imageUrl = file.previewUrl || (file instanceof File ? URL.createObjectURL(file) : buildImageUrl(file));
-                      return (
-                        <div key={index} className="relative group w-32 h-32 rounded-2xl overflow-hidden shadow-md border-2 border-white">
-                          <img src={imageUrl} alt="Review" className="w-full h-full object-cover" />
-                          {!hasSubmittedReview && (
-                            <button 
-                              onClick={() => handleDeleteImage(index)} 
-                              className="absolute top-1 right-1 bg-red-500 text-white p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
+                  {uploadedFiles.length > 0 && (
+                    <div className="flex gap-4 flex-wrap pb-4">
+                      {uploadedFiles.map((file, index) => {
+                        const imageUrl = file.previewUrl || (file instanceof File ? URL.createObjectURL(file) : buildImageUrl(file));
+                        return (
+                          <div key={index} className="relative group w-32 h-32 rounded-2xl overflow-hidden shadow-md border-2 border-white">
+                            <img src={imageUrl} alt="Review" className="w-full h-full object-cover" />
+                            {!hasSubmittedReview && (
+                              <button 
+                                onClick={() => handleDeleteImage(index)} 
+                                className="absolute top-1 right-1 bg-red-500 text-white p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
 
-                <div className="space-y-2">
-                  <label className="text-sm font-black text-gray-800 uppercase tracking-wider ml-1">Your Experience</label>
-                  <textarea 
-                    rows="4" 
-                    value={reviewDescription} 
-                    onChange={(e) => setReviewDescription(e.target.value)} 
-                    disabled={hasSubmittedReview}
-                    placeholder="Tell us what you loved about this piece..." 
-                    className={`w-full p-3 bg-gray-50 border-none rounded-2xl text-gray-900 font-medium focus:ring-2 focus:ring-[#6F4D34] transition-all resize-none placeholder:text-gray-300 ${hasSubmittedReview ? 'cursor-not-allowed opacity-80' : ''}`}
-                  ></textarea>
-                </div>
-
-                {!hasSubmittedReview && (
-                  <div className="text-center pt-4">
-                    <button 
-                      onClick={handleSubmitReview} 
-                      className="inline-flex items-center gap-3 bg-[#6F4D34] text-white px-12 py-4 rounded-[2rem] hover:bg-[#5b3f2a] transition-all font-black text-lg shadow-2xl shadow-[#6F4D34]/30 active:scale-95"
-                    >
-                      <span>Post Review</span>
-                      <Star className="w-5 h-5 fill-white" />
-                    </button>
+                  <div className="space-y-2">
+                    <label className="text-sm font-black text-gray-800 uppercase tracking-wider ml-1">Write Your Review</label>
+                    <textarea
+                      value={reviewDescription}
+                      onChange={(e) => setReviewDescription(e.target.value)}
+                      disabled={hasSubmittedReview}
+                      rows={6}
+                      placeholder="Share your thoughts about the quality, service, and experience..."
+                      className={`w-full p-6 bg-gray-50 border-none rounded-3xl text-gray-900 font-medium focus:ring-2 focus:ring-[#6F4D34] transition-all resize-none placeholder:text-gray-300 ${hasSubmittedReview ? 'cursor-not-allowed opacity-80' : ''}`}
+                    />
                   </div>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
+
+                  {!hasSubmittedReview && (
+                    <div className="flex flex-col gap-4">
+                      <button 
+                        onClick={handleSubmitReview}
+                        className="w-full bg-[#6F4D34] text-white font-black py-5 rounded-3xl hover:bg-[#5b3f2a] transition-all shadow-xl shadow-[#6F4D34]/30 active:scale-[0.98] flex items-center justify-center gap-3"
+                      >
+                        <CheckCircle2 className="w-6 h-6" />
+                        <span>Submit Your Review</span>
+                      </button>
+                      <p className="text-[10px] text-gray-400 text-center font-bold uppercase tracking-[0.2em]">Verified Purchase Review</p>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
-        )}
+      )}
 
-        {/* MODALS & POPUPS */}
       <AnimatePresence>
-        {showCancelModal && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-md z-[100] px-4">
-            <motion.div 
-              initial={{ scale: 0.9, opacity: 0, y: 20 }} 
-              animate={{ scale: 1, opacity: 1, y: 0 }} 
-              exit={{ scale: 0.9, opacity: 0, y: 20 }} 
-              className="bg-white rounded-[2.5rem] shadow-2xl p-8 w-full max-w-lg overflow-hidden relative"
+        {showSupportModal && (
+          <div className="fixed inset-0 flex justify-center items-center z-[100] p-4 bg-black/60 backdrop-blur-md">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto relative"
             >
-              <div className="absolute top-0 left-0 right-0 h-2 bg-red-500" />
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <XCircle className="w-10 h-10 text-red-500" />
-                </div>
-                <h2 className="text-2xl font-black text-gray-900">Cancel Request</h2>
-                <p className="text-gray-500 mt-2">Please tell us why you'd like to cancel this order.</p>
-              </div>
+              <button 
+                onClick={() => setShowSupportModal(false)}
+                className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600 transition-colors z-10"
+              >
+                <XCircle className="w-5 h-5" />
+              </button>
 
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-xs font-black text-gray-800 uppercase tracking-widest ml-1">Cancellation Reason</label>
-                  <select 
-                    value={cancelReason} 
-                    onChange={(e) => setCancelReason(e.target.value)} 
-                    className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl text-gray-900 font-bold focus:ring-2 focus:ring-red-500 transition-all appearance-none"
+              <div className="p-6 sm:p-10">
+                <div className="absolute top-0 left-0 right-0 h-2 bg-amber-500" />
+                <div className="text-center mb-8">
+                  <div className="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <MessageSquare className="w-10 h-10 text-amber-500" />
+                  </div>
+                  <h2 className="text-2xl font-black text-gray-900">Need Help?</h2>
+                  <p className="text-gray-500 mt-2 text-sm sm:text-base">
+                    What issue are you facing with Order <span className="text-[#6F4D34] font-bold">#{orderId}</span>?
+                  </p>
+                </div>
+
+                <div className="space-y-2 sm:space-y-3">
+                  {[
+                    "Order delay",
+                    "Damaged product received",
+                    "Wrong product received",
+                    "Refund not received",
+                    "Payment failed but debited",
+                    "Seller unresponsive",
+                    "General Query"
+                  ].map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => {
+                        setShowSupportModal(false);
+                        navigate('/my-account/support/raise', { 
+                          state: { 
+                            order_id: orderId,
+                            category: cat,
+                            subject: `Issue with Order #${orderId}: ${cat}`
+                          } 
+                        });
+                      }}
+                      className="w-full text-left px-5 sm:px-6 py-3.5 sm:py-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-700 hover:bg-[#6F4D34] hover:text-white transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="mt-8 text-center">
+                  <button
+                    onClick={() => setShowSupportModal(false)}
+                    className="text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors"
                   >
-                    <option value="">Choose a reason...</option>
-                    <option value="Ordered by mistake">Ordered by mistake</option>
-                    <option value="Found a better price">Found a better price</option>
-                    <option value="Shipping time too long">Shipping time too long</option>
-                    <option value="Other">Other Reasons</option>
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs font-black text-gray-800 uppercase tracking-widest ml-1">Additional Comments</label>
-                  <textarea 
-                    rows="3" 
-                    value={cancelComment} 
-                    onChange={(e) => setCancelComment(e.target.value)} 
-                    placeholder="Provide more context (optional)" 
-                    className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl text-gray-900 font-medium focus:ring-2 focus:ring-red-500 transition-all resize-none"
-                  ></textarea>
-                </div>
-
-                <div className="flex gap-4 pt-4">
-                  <button onClick={() => setShowCancelModal(false)} className="flex-1 px-6 py-4 rounded-2xl border-2 border-gray-100 text-gray-600 font-bold hover:bg-gray-50 transition">
-                    Nevermind
-                  </button>
-                  <button 
-                    onClick={handleCancelOrder} 
-                    disabled={loadingCancel} 
-                    className="flex-1 bg-red-600 text-white px-6 py-4 rounded-2xl hover:bg-red-700 transition font-black shadow-xl shadow-red-600/20 disabled:opacity-50"
-                  >
-                    {loadingCancel ? "Processing..." : "Confirm Cancel"}
+                    Nevermind, I'm good
                   </button>
                 </div>
               </div>
             </motion.div>
           </div>
-        )}
-      </AnimatePresence>
-
-      {/* FULLSCREEN IMAGE VIEWER */}
-      <AnimatePresence>
-        {showPopup && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setShowPopup(false)} 
-            className="fixed inset-0 bg-black/95 backdrop-blur-xl z-[200] flex items-center justify-center p-4 sm:p-12"
-          >
-            <button className="absolute top-8 right-8 text-white/50 hover:text-white transition-colors">
-              <XCircle className="w-10 h-10" />
-            </button>
-            <motion.div 
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-              onClick={(e) => e.stopPropagation()} 
-              className="relative max-w-5xl w-full h-full flex items-center justify-center"
-            >
-              <img 
-                src={currentImages[currentImageIndex]} 
-                alt="Enlarged view" 
-                className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl" 
-              />
-            </motion.div>
-          </motion.div>
         )}
       </AnimatePresence>
     </div>

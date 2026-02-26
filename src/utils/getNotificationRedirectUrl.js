@@ -5,9 +5,11 @@
  * @param {string} role          - "Seller" | "Artist" (determines base path)
  * @returns {string|null}        - A route string, or null if no redirect is needed
  */
-const getNotificationRedirectUrl = (notification, role = "Seller") => {
-  const { type, meta = {} } = notification;
-  const base = role === "Artist" ? "/artist" : "/seller";
+  const getNotificationRedirectUrl = (notification, role = "Seller") => {
+    const { type, meta = {} } = notification;
+    let base = "/seller";
+    if (role === "Artist") base = "/artist";
+    else if (role === "Buyer") base = "/buyer";
 
   switch (type) {
     // ── Auth / Account ──────────────────────────────────────────────────────
@@ -199,6 +201,17 @@ const getNotificationRedirectUrl = (notification, role = "Seller") => {
     case "policy_update":
     case "maintenance_alert":
       return null; // no specific page, just mark as read
+
+    // ── Support Tickets ──────────────────────────────────────────────────────
+    case "ticket_created":
+    case "ticket_status_changed":
+    case "ticket_admin_reply":
+    case "ticket_escalated":
+    case "ticket_resolved":
+      if (meta?.ticketId) {
+        return `${base}/support/${meta.ticketId}`;
+      }
+      return `${base}/support`;
 
     default:
       return `${base}/dashboard`;

@@ -146,8 +146,14 @@ const TYPE_META = {
   blog_performance_milestone:       { icon: "📈", label: "Blog Milestone" },
   promotion_performance_alert:      { icon: "📈", label: "Promo Alert" },
   suspicious_login_detected:        { icon: "🚨", label: "Suspicious Login" },
-  account_action_required:          { icon: "⚠️", label: "Action Required" },
-};
+    account_action_required:          { icon: "⚠️", label: "Action Required" },
+    // Support Tickets
+    ticket_created:                   { icon: "🎫", label: "Ticket Raised" },
+    ticket_status_changed:            { icon: "🔄", label: "Ticket Status" },
+    ticket_admin_reply:               { icon: "💬", label: "Support Reply" },
+    ticket_escalated:                 { icon: "🚨", label: "Ticket Escalated" },
+    ticket_resolved:                  { icon: "✅", label: "Ticket Resolved" },
+  };
 
 const getIcon  = (type) => TYPE_META[type]?.icon  || "🔔";
 const getLabel = (type) => TYPE_META[type]?.label || "Notification";

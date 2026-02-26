@@ -90,6 +90,11 @@ import CheckOutTemplate from "../Pages/Home/HomeComponents/MyAccountPage/MyAccou
 import CheckOut from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/CheckOut";
 import OrderCompleted from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyCart/OrderCompleted";
 import MyOrderView from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/MyOrderView";
+import SupportTickets from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/SupportTickets";
+import RaiseTicket from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/RaiseTicket";
+import TicketDetail from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/TicketDetail";
+import BuyerTicketDetail from "../Pages/Home/HomeComponents/MyAccountPage/MyAccountPageComponent/Pages/Account/BuyerTicketDetail";
+import SupportTicketAdmin from "../Component/Dashboard/Super-AdminDashboard/Dashboard/SupportTickets";
 
 //----------------------------------------Error Pages-----------------------------------------//
 import PagenotFound404 from "../Pages/Error/404Error";
@@ -1017,8 +1022,11 @@ const AppRoutes = () => {
           element={<ProductFetchView />}
         />
         <Route path="purchasetable" element={<PurchaseTable />} />
-        <Route path="purchasetable/view/:productId" element={<PurchaseTableView />} />
-        <Route path="order-view/:orderId" element={<ArtistOrderView />} />
+          <Route path="purchasetable/view/:productId" element={<PurchaseTableView />} />
+            <Route path="support" element={<SupportTicketAdmin />} />
+            <Route path="support/:id" element={<TicketDetail />} />
+          <Route path="order-view/:orderId" element={<ArtistOrderView />} />
+
 
         {/* Bidding Management */}
         <Route path="bidding/allproduct" element={<AllBiddingProduct />} />
@@ -1546,7 +1554,10 @@ const AppRoutes = () => {
 
           {/* Notifications */}
           <Route path="notifications" element={<ArtistNotificationsPage />} />
-
+          {/* Support Tickets */}
+          <Route path="support" element={<SupportTickets />} />
+          <Route path="support/raise" element={<RaiseTicket />} />
+          <Route path="support/:id" element={<TicketDetail />} />
         </Route>
 
       {/* --------------------------------------------Buyer Routes---------------------------------------------------- */}
@@ -1558,9 +1569,12 @@ const AppRoutes = () => {
           </PrivateRoute>
         }
       >
-        <Route index element={<BuyerDashboard />} />
-        <Route path="dashboard" element={<BuyerDashboard />} />
-        <Route path="profile" element={<UserProfile />} />
+          <Route index element={<BuyerDashboard />} />
+          <Route path="dashboard" element={<BuyerDashboard />} />
+          <Route path="profile" element={<UserProfile />} />
+          <Route path="support" element={<SupportTickets />} />
+          <Route path="support/raise" element={<RaiseTicket />} />
+          <Route path="support/:id" element={<TicketDetail />} />
 
         {/* Wallet */}
         {/* <Route path="wallet" element={<BuyerWallet />} /> */}
@@ -1676,6 +1690,10 @@ const AppRoutes = () => {
 
           {/* Notifications */}
           <Route path="notifications" element={<SellerNotificationsPage />} />
+          {/* Support Tickets */}
+          <Route path="support" element={<SupportTickets />} />
+          <Route path="support/raise" element={<RaiseTicket />} />
+          <Route path="support/:id" element={<TicketDetail />} />
         </Route>
 
         {/*-------------------------------------------- Website Routes-------------------------------------------------- */}
@@ -1721,11 +1739,15 @@ const AppRoutes = () => {
                 path="notifications"
                 element={<NotificationsPage />}
               />
-            <Route
-              path="security-agreements"
-              element={<AccountSecurityAndAgreements />}
-            />
-            <Route path="logout" element={<Logout />} />
+              <Route
+                path="security-agreements"
+                element={<AccountSecurityAndAgreements />}
+              />
+                  <Route path="support" element={<SupportTickets />} />
+                  <Route path="support/raise" element={<RaiseTicket />} />
+                  <Route path="support/:id" element={<BuyerTicketDetail />} />
+                <Route path="logout" element={<Logout />} />
+
             <Route path="track-your-order" element={<TrackOrder />} />
             <Route path="wishlist" element={<WishListTableTemplate />} />
             <Route path="wishlist/:userId" element={<WishListTable />} />

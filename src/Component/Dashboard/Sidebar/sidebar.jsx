@@ -42,8 +42,15 @@ const Sidebar = () => {
           ]
         : []),
 
-      {
-        label: "Admin",
+          {
+            label: "Support",
+            icon: "fa-ticket",
+            path: "/super-admin/support",
+            subTabs: [],
+          },
+        {
+          label: "Admin",
+
         tabId: "adn1",
         icon: "fas fa-user",
         path: "/super-admin/admin",
@@ -616,19 +623,25 @@ const Sidebar = () => {
       },
     ],
     // ----------------------------------------------Artist-----------------------------------------------------//
-    Artist: [
-      {
-        label: "Dashboard",
-        icon: "fa-dashboard",
-        path: "/artist/dashboard",
-        subTabs: [],
-      },
-      {
-        label: "Blogs",
-        icon: "fa fa-newspaper",
-        path: "/artist/bloglist",
-        subTabs: [],
-      },
+      Artist: [
+        {
+          label: "Dashboard",
+          icon: "fa-dashboard",
+          path: "/artist/dashboard",
+          subTabs: [],
+        },
+        {
+          label: "Support",
+          icon: "fa-ticket",
+          path: "/artist/support",
+          subTabs: [],
+        },
+        {
+          label: "Blogs",
+          icon: "fa fa-newspaper",
+          path: "/artist/bloglist",
+          subTabs: [],
+        },
       {
         label: "Product",
         icon: "fa fa-cart-plus",
@@ -695,28 +708,40 @@ const Sidebar = () => {
       },
     ],
     // ----------------------------------------------Buyer-----------------------------------------------------//
-    Buyer: [
-      {
-        label: "Dashboard",
-        icon: "fa-dashboard",
-        path: "/buyer/dashboard",
-        subTabs: [],
-      },
-    ],
+      Buyer: [
+        {
+          label: "Dashboard",
+          icon: "fa-dashboard",
+          path: "/buyer/dashboard",
+          subTabs: [],
+        },
+        {
+          label: "Support",
+          icon: "fa-ticket",
+          path: "/buyer/support",
+          subTabs: [],
+        },
+      ],
     // ----------------------------------------------Seller-----------------------------------------------------//
-    Seller: [
-      {
-        label: "Dashboard",
-        icon: "fa-dashboard",
-        path: "/seller/dashboard",
-        subTabs: [],
-      },
-      {
-        label: "Product",
-        icon: "fa fa-cart-plus",
-        path: "/seller/product-details",
-        subTabs: [],
-      },
+      Seller: [
+        {
+          label: "Dashboard",
+          icon: "fa-dashboard",
+          path: "/seller/dashboard",
+          subTabs: [],
+        },
+        {
+          label: "Support",
+          icon: "fa-ticket",
+          path: "/seller/support",
+          subTabs: [],
+        },
+        {
+          label: "Product",
+          icon: "fa fa-cart-plus",
+          path: "/seller/product-details",
+          subTabs: [],
+        },
       {
         label: "Product Purchased",
         icon: "fa fa-cart-plus",

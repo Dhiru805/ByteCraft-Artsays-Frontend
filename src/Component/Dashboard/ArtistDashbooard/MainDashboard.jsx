@@ -5,6 +5,7 @@ import RightIconBar from "../RightIconBar/RightIconBar";
 import Footer from "../Footer/Footer";
 import { Outlet } from 'react-router-dom';
 import ScrollToTop from "../ScrollToTop/ScrollToTop";
+import FloatingHelp from "../Support/FloatingHelp";
 
 const Dashboard = () => {
 //  useEffect(() => {
@@ -32,15 +33,16 @@ useEffect(() => {
       <Sidebar />
       {/* <RightIconBar /> */}
 
-      <div id="main-content" className="d-flex flex-column min-vh-100">
-        <div className="flex-grow-1">
-          <Outlet />
+        <div id="main-content" className="d-flex flex-column min-vh-100">
+          <div className="flex-grow-1">
+            <Outlet />
+          </div>
+          <div className="mb-3">
+            <Footer />
+          </div>
         </div>
-        <div className="mb-3">
-          <Footer />
-        </div>
+        <FloatingHelp />
       </div>
-    </div>
   );
 };
 

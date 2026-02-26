@@ -12,8 +12,10 @@ const headingMap = {
   'social-media-promotion': 'Social Media Promotion',
   'custom-request': 'Custom Request',
   'notification-preferences': 'Notification and Preferences',
-  'security-agreements': 'Account Security and Agreements',
-  'logout': 'Logout',
+    'security-agreements': 'Account Security and Agreements',
+      'support': 'Support Tickets',
+    'logout': 'Logout',
+
 
   'track-your-order': 'Track Your Order',
   'wishlist': 'Wishlist',

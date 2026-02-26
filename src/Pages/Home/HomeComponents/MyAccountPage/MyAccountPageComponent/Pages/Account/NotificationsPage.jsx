@@ -352,6 +352,11 @@ function getRedirectUrl(notif) {
     return "/my-account/notification-preferences";
   }
 
+  // Support Tickets
+  if (["ticket_created","ticket_status_changed","ticket_admin_reply","ticket_escalated","ticket_resolved"].includes(type)) {
+    return meta.ticketId ? `/my-account/support/${meta.ticketId}` : "/my-account/support";
+  }
+
   return null; // no redirect
 }
 

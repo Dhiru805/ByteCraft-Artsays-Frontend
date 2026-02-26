@@ -21,10 +21,11 @@ const CATEGORIES = [
   { key: "packaging",     label: "Packaging" },
   { key: "blogs",         label: "Blogs" },
   { key: "coupons",       label: "Coupons" },
-  { key: "auth",          label: "Account" },
-  { key: "dashboard",     label: "Alerts" },
-  { key: "system",        label: "System" },
-];
+    { key: "auth",          label: "Account" },
+    { key: "support",       label: "Support" },
+    { key: "dashboard",     label: "Alerts" },
+    { key: "system",        label: "System" },
+  ];
 
 // ─── Type → icon map ─────────────────────────────────────────────────────────
 const TYPE_ICON = {
@@ -159,10 +160,16 @@ const TYPE_ICON = {
   coupon_usage_milestone:            "🎯",
   // System
   policy_update:                     "📜",
-  maintenance_alert:                 "🔧",
-  suspicious_login_detected:         "🚨",
-  account_action_required:           "⚠️",
-};
+    maintenance_alert:                 "🔧",
+    suspicious_login_detected:         "🚨",
+    account_action_required:           "⚠️",
+    // Support Tickets
+    ticket_created:                    "🎫",
+    ticket_status_changed:             "🔄",
+    ticket_admin_reply:                "💬",
+    ticket_escalated:                  "🚨",
+    ticket_resolved:                   "✅",
+  };
 
 function timeAgo(dateStr) {
   const diff = Date.now() - new Date(dateStr).getTime();

@@ -130,9 +130,15 @@ const TYPE_META = {
   blog_published:          { icon: "📰", label: "New Blog Post" },
   newsletter_subscribed:   { icon: "📧", label: "Subscribed" },
   newsletter_unsubscribed: { icon: "📧", label: "Unsubscribed" },
-  platform_announcement:   { icon: "📢", label: "Announcement" },
-  policy_update:           { icon: "📜", label: "Policy Update" },
-};
+    platform_announcement:   { icon: "📢", label: "Announcement" },
+    policy_update:           { icon: "📜", label: "Policy Update" },
+    // Support Tickets
+    ticket_created:          { icon: "🎫", label: "Ticket Raised" },
+    ticket_status_changed:   { icon: "🔄", label: "Ticket Status" },
+    ticket_admin_reply:      { icon: "💬", label: "Support Reply" },
+    ticket_escalated:        { icon: "🚨", label: "Ticket Escalated" },
+    ticket_resolved:         { icon: "✅", label: "Ticket Resolved" },
+  };
 
 const getIcon  = (type) => TYPE_META[type]?.icon  || "🔔";
 const getLabel = (type) => TYPE_META[type]?.label || "Notification";
@@ -249,6 +255,8 @@ const NotificationDropdown = ({ userId, onUnreadChange }) => {
       return meta.blogId ? `/blog/${meta.blogId}` : "/blogs";
     if (["art_challenge_launched","challenge_ending_soon"].includes(type))
       return "/challenge";
+    if (["ticket_created","ticket_status_changed","ticket_admin_reply","ticket_escalated","ticket_resolved"].includes(type))
+      return meta.ticketId ? `/my-account/support/${meta.ticketId}` : "/my-account/support";
     return "/my-account/notifications";
   };
 

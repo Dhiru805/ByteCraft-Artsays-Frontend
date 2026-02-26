@@ -54,18 +54,33 @@ const SearchForm = () => (
 );
 
 const NavbarMenu = ({ navigate, logout }) => (
-  <div id="navbar-menu">
-    <ul className="nav navbar-nav" style={{ display: "flex", alignItems: "center", flexDirection: "row" }}>
-        <li style={{ display: "flex", alignItems: "center" }}>
-          <SellerNotificationDropdown />
-        </li>
-        <li style={{ display: "flex", alignItems: "center" }}>
-          <a href="#" className="icon-menu" onClick={() => handleLogout(navigate, logout)}>
-            <i className="fa fa-power-off"></i>
-          </a>
-        </li>
-      </ul>
-  </div>
+    <div id="navbar-menu">
+      <ul className="nav navbar-nav" style={{ display: "flex", alignItems: "center", flexDirection: "row" }}>
+          <li style={{ display: "flex", alignItems: "center" }}>
+            <SellerNotificationDropdown />
+          </li>
+          <li style={{ display: "flex", alignItems: "center" }}>
+            <a 
+              href="#" 
+              className="btn btn-secondary px-2 mx-2" 
+              onClick={() => {
+                const role = localStorage.getItem("userType")?.toLowerCase() || 'buyer';
+                const path = role === 'buyer' ? '/my-account/support' : `/${role}/support`;
+                navigate(path);
+              }}
+              title="Help & Support"
+            >
+              Raise Ticket
+            </a>
+          </li>
+          <li style={{ display: "flex", alignItems: "center" }}>
+            <a href="#" className="icon-menu" onClick={() => handleLogout(navigate, logout)} style={{height: "34px", border: "1px solid rgb(226, 217, 212)", borderRadius: "10px"}}>
+              <i className="fa fa-power-off"></i>
+            </a>
+          </li>
+        </ul>
+    </div>
+
 );
 
 export default Navbar;

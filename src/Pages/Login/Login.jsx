@@ -130,18 +130,12 @@ const Login = () => {
           normalizedStatus,
           username,
           firstName,
-          lastName
+          lastName,
+          userId,
+          userrole
         );
 
-        localStorage.setItem("token", token);
-        localStorage.setItem("userType", normalizedUserType);
         localStorage.setItem("email", email);
-        localStorage.setItem("userId", userId);
-        localStorage.setItem("status", normalizedStatus);
-        localStorage.setItem("userrole", userrole);
-        localStorage.setItem("username", username);
-        localStorage.setItem("firstName", firstName);
-        localStorage.setItem("lastName", lastName);
 
         console.log("localStorage after login:", {
           token: localStorage.getItem("token"),
@@ -212,17 +206,9 @@ const Login = () => {
         ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
         : null;
 
-      login(token, normalizedUserType, normalizedStatus, username);
+      login(token, normalizedUserType, normalizedStatus, username, firstName, lastName, userId, userrole);
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("userType", normalizedUserType);
       localStorage.setItem("email", email);
-      localStorage.setItem("userId", userId);
-      localStorage.setItem("status", normalizedStatus);
-      localStorage.setItem("userrole", userrole);
-      localStorage.setItem("username", username);
-      localStorage.setItem("firstName", firstName);
-      localStorage.setItem("lastName", lastName);
       
       console.log("localStorage after login:", {
         token: localStorage.getItem("token"),

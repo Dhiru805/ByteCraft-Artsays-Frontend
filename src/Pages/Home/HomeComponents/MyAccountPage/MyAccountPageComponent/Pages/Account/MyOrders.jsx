@@ -15,6 +15,8 @@ const MyOrders = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showSupportModal, setShowSupportModal] = useState(false);
+  const [selectedSupportOrder, setSelectedSupportOrder] = useState(null);
   const [cancelOrderId, setCancelOrderId] = useState(null);
   const [cancelReason, setCancelReason] = useState("");
   const [cancelComment, setCancelComment] = useState("");
@@ -409,16 +411,26 @@ const MyOrders = () => {
                             Rate & Review
                           </button>
                         )}
-                        <button
-                          className="flex items-center gap-2 text-nowrap text-[#6F4D34] text-sm font-bold bg-[#6F4D34]/5 px-4 py-2.5 rounded-xl hover:bg-[#6F4D34]/10 transition-colors"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleViewOrder(order);
-                          }}
-                        >
-                          <FaEye className="text-xs" /> View Details
-                        </button>
-                      </div>
+                          <button
+                            className="flex items-center gap-2 text-nowrap text-[#6F4D34] text-sm font-bold bg-[#6F4D34]/5 px-4 py-2.5 rounded-xl hover:bg-[#6F4D34]/10 transition-colors"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleViewOrder(order);
+                            }}
+                          >
+                            <FaEye className="text-xs" /> View Details
+                          </button>
+                              <button
+                                className="flex items-center gap-2 text-nowrap text-amber-600 text-sm font-bold bg-amber-50 px-4 py-2.5 rounded-xl hover:bg-amber-100 transition-colors border border-amber-100"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedSupportOrder(order);
+                                    setShowSupportModal(true);
+                                  }}
+                              >
+                                <FaExclamationCircle className="text-xs" /> Help?
+                              </button>
+                        </div>
 
                       <div>
                         {isCancelled ? (
@@ -569,6 +581,66 @@ const MyOrders = () => {
                 onClick={() => cancelOrderInstant()}
               >
                 Confirm Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showSupportModal && (
+        <div className="fixed inset-0 flex justify-center items-center z-[999] p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white rounded-3xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl animate-in zoom-in-95 duration-300 relative">
+            <button 
+              onClick={() => setShowSupportModal(false)}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600 transition-colors z-10"
+            >
+              <FaTimesCircle className="text-lg" />
+            </button>
+            <div className="px-5 sm:px-8 pt-10 pb-6 text-center">
+              <div className="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                <FaExclamationCircle className="text-amber-500 text-3xl" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">Need Help?</h2>
+              <p className="text-gray-500 mt-2 text-sm sm:text-base">
+                What issue are you facing with Order <span className="text-[#6F4D34] font-bold">#{selectedSupportOrder?.orderId}</span>?
+              </p>
+              
+              <div className="mt-6 sm:mt-8 grid gap-2 sm:gap-3">
+                {[
+                  "Order delay",
+                  "Damaged product received",
+                  "Wrong product received",
+                  "Refund not received",
+                  "Payment failed but debited",
+                  "Seller unresponsive",
+                  "General Query"
+                ].map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => {
+                      setShowSupportModal(false);
+                      navigate('/my-account/support/raise', { 
+                        state: { 
+                          order_id: selectedSupportOrder?.orderId,
+                          category: cat,
+                          subject: `Issue with Order #${selectedSupportOrder?.orderId}: ${cat}`
+                        } 
+                      });
+                    }}
+                    className="w-full text-left px-4 sm:px-5 py-3 sm:py-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold text-gray-700 hover:bg-[#6F4D34] hover:text-white transition-all group active:scale-[0.98]"
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="px-8 py-4 bg-gray-50 text-center border-t border-gray-100">
+              <button
+                className="text-sm font-bold text-gray-500 hover:text-gray-700 transition-colors"
+                onClick={() => setShowSupportModal(false)}
+              >
+                Close
               </button>
             </div>
           </div>
