@@ -1,0 +1,14 @@
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.animate-blink {
+  animation: blink 0.8s steps(2, start) infinite;
+}
+
+/* Import Windhavi */
+@import url('https://fonts.googleapis.com/css2?family=Windhavi&display=swap');
+
+.font-\[Windhavi\] {
+  font-family: 'Windhavi', sans-serif;
+}
