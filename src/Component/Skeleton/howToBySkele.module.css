@@ -1,0 +1,165 @@
+/* Wrapper */
+.wrapper {
+  background: #f8f8f8;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 16px 12px;
+}
+
+/* Header */
+.headerGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-top: 12px;
+}
+
+.headerTitle {
+  height: 32px;
+  width: 75%;
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+.headerButtonWrap {
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.headerButton {
+  height: 40px;
+  width: 128px;
+  background: #9ca3af;
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Separator */
+.separator {
+  margin: 12px 0;
+  border: 1px solid #d1d5db;
+}
+
+/* Description */
+.description {
+  margin-top: 12px;
+  padding: 0 12px;
+}
+
+.descLine {
+  height: 16px;
+  background: #e5e7eb;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+/* Cards Section */
+.cardsSection {
+  width: 100%;
+  padding: 64px 0;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
+
+/* Card */
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  padding: 24px;
+  text-align: center;
+  height: 100%;
+}
+
+/* Image */
+.image {
+  margin: 0 auto 16px;
+  width: 100%;
+  max-width: 200px;
+  height: 128px;
+  background: #d1d5db;
+  border-radius: 12px;
+}
+
+/* Card Content */
+.title {
+  height: 24px;
+  width: 75%;
+  background: #9ca3af;
+  border-radius: 8px;
+  margin: 0 auto 12px;
+}
+
+.text {
+  margin-top: 8px;
+}
+
+.textLine {
+  height: 16px;
+  background: #e5e7eb;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.textLineSm {
+  width: 92%;
+  margin: 0 auto;
+}
+
+/* Icons */
+.icons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.icon {
+  height: 24px;
+  width: 24px;
+  background: #d1d5db;
+  border-radius: 50%;
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+  .headerGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .headerButtonWrap {
+    display: inline-flex;
+  }
+
+  .headerTitle {
+    height: 40px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .cardsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Animation */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+  100% {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,13 @@
+.nt-btn{
+    border: 1px solid #543b2b;
+    color: #000000;
+}
+.nt-btn:active{
+    background-color: #6E4E37;
+    color: white;
+    outline: none;
+}
+/* border-2 border-solid border-[#543b2b]
+border-2 border-solid border-[#543b2b]
+border-2 border-solid border-[#543b2b]
+border-2 border-solid border-[#543b2b] */

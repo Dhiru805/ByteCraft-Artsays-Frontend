@@ -1,0 +1,418 @@
+import React, { useState, useEffect } from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Select from "react-select";
+import putAPI from "../../../../../api/putAPI";
+import getAPI from "../../../../../api/getAPI";
+
+const ProductCouponCodeModal = ({ onClose, refreshProductCouponCodes, selectedProductCouponCode }) => {
+  const [formData, setFormData] = useState({
+    couponName: "",
+    userType: "",
+    userId: "",
+    productId: "",
+    discountPercentage: "",
+    applicationType: "immediately",
+  });
+  const [users, setUsers] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const typeOptions = [
+    { value: "Artist", label: "Artist" },
+    { value: "Seller", label: "Seller" },
+  ];
+
+
+  useEffect(() => {
+    if (selectedProductCouponCode) {
+      setFormData({
+        couponName: selectedProductCouponCode.couponName || "",
+        userType: selectedProductCouponCode.userType || "",
+        userId: selectedProductCouponCode.userId || "",
+        productId: selectedProductCouponCode.productId || "",
+        discountPercentage: selectedProductCouponCode.product?.discountPercentage || "",
+        applicationType: selectedProductCouponCode.applicationType || "immediately",
+      });
+
+
+      if (selectedProductCouponCode.userId && selectedProductCouponCode.userType) {
+        const fetchUser = async () => {
+          try {
+            const response = await getAPI(`/api/users-by-type?userType=${selectedProductCouponCode.userType}`, {}, true);
+            if (!response.hasError) {
+              const fetchedUsers = response.data.data;
+              setUsers(fetchedUsers);
+
+              if (!fetchedUsers.some(user => user._id === selectedProductCouponCode.userId)) {
+                setUsers([
+                  ...fetchedUsers,
+                  {
+                    _id: selectedProductCouponCode.userId,
+                    name: selectedProductCouponCode.user.firstName,
+                    lastName: selectedProductCouponCode.user.lastName,
+                  },
+                ]);
+              }
+            } else {
+              toast.error(`Failed to fetch users: ${response.message}`);
+            }
+          } catch (error) {
+            toast.error("An error occurred while fetching users.");
+          }
+        };
+        fetchUser();
+      }
+
+
+      if (selectedProductCouponCode.productId && selectedProductCouponCode.userId) {
+        const fetchProduct = async () => {
+          try {
+            const response = await getAPI(`/api/products-by-user?userId=${selectedProductCouponCode.userId}`, {}, true);
+            if (!response.hasError) {
+              const fetchedProducts = response.data.data;
+              setProducts(fetchedProducts);
+
+              if (!fetchedProducts.some(product => product._id === selectedProductCouponCode.productId)) {
+                setProducts([
+                  ...fetchedProducts,
+                  {
+                    _id: selectedProductCouponCode.productId,
+                    productName: selectedProductCouponCode.product.productName,
+                    finalPrice: selectedProductCouponCode.product.originalFinalPrice,
+                    mainImage: "", 
+                  },
+                ]);
+              }
+            } else {
+              toast.error(`Failed to fetch products: ${response.message}`);
+            }
+          } catch (error) {
+            toast.error("An error occurred while fetching products.");
+          }
+        };
+        fetchProduct();
+      }
+    }
+  }, [selectedProductCouponCode]);
+
+
+  useEffect(() => {
+    if (formData.userType && formData.userType !== selectedProductCouponCode?.userType) {
+      const fetchUsers = async () => {
+        try {
+          const response = await getAPI(`/api/users-by-type?userType=${formData.userType}`, {}, true);
+          if (!response.hasError) {
+            setUsers(response.data.data);
+            setFormData((prev) => ({ ...prev, userId: "", productId: "" }));
+            setProducts([]);
+          } else {
+            toast.error(`Failed to fetch users: ${response.message}`);
+          }
+        } catch (error) {
+          toast.error("An error occurred while fetching users.");
+        }
+      };
+      fetchUsers();
+    }
+  }, [formData.userType, selectedProductCouponCode?.userType]);
+
+
+  useEffect(() => {
+    if (formData.userId && formData.userId !== selectedProductCouponCode?.userId) {
+      const fetchProducts = async () => {
+        try {
+          const response = await getAPI(`/api/products-by-user?userId=${formData.userId}`, {}, true);
+          if (!response.hasError) {
+            setProducts(response.data.data);
+            setFormData((prev) => ({ ...prev, productId: "" }));
+          } else {
+            toast.error(`Failed to fetch products: ${response.message}`);
+          }
+        } catch (error) {
+          toast.error("An error occurred while fetching products.");
+        }
+      };
+      fetchProducts();
+    }
+  }, [formData.userId, selectedProductCouponCode?.userId]);
+
+  const handleChange = (name, value) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.userType) {
+      toast.error("Please select a type.");
+      return;
+    }
+    if (!formData.userId) {
+      toast.error(`Please select an ${formData.userType.toLowerCase()}.`);
+      return;
+    }
+    if (!formData.productId) {
+      toast.error("Please select a product.");
+      return;
+    }
+    if (!formData.couponName.trim()) {
+      toast.error("Coupon name is required.");
+      return;
+    }
+    if (!formData.discountPercentage || formData.discountPercentage <= 0 || formData.discountPercentage > 100) {
+      toast.error("Please enter a valid discount percentage (1-100).");
+      return;
+    }
+    if (!formData.applicationType) {
+      toast.error("Please select a coupon application type.");
+      return;
+    }
+
+    const payload = {
+      couponName: formData.couponName,
+      userType: formData.userType,
+      userId: formData.userId,
+      productId: formData.productId,
+      discountPercentage: parseFloat(formData.discountPercentage),
+      applicationType: formData.applicationType,
+    };
+
+    setLoading(true);
+
+    try {
+      const response = await putAPI(`/api/updateproductcouponcode/${selectedProductCouponCode._id}`, payload, {}, true);
+      toast.success(response.data.message);
+      refreshProductCouponCodes();
+      onClose();
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const userOptions = users.map((user) => ({
+    value: user._id,
+    label: `${user.name} ${user.lastName || ""}`.trim(),
+  }));
+
+  const productOptions = products.map((product) => ({
+    value: product._id,
+    label: `${product.productName} (₹${product.finalPrice || "N/A"})`,
+  }));
+
+  const selectedProduct = products.find((product) => product._id === formData.productId);
+  const originalPrice = selectedProduct?.finalPrice || 0;
+  const discountPercentage = parseFloat(formData.discountPercentage) || 0;
+  const discountAmount = (originalPrice * discountPercentage) / 100;
+  const finalPrice = originalPrice - discountAmount;
+
+  return (
+    <div
+      className="modal"
+      style={{
+        display: "block",
+        paddingLeft: "0px",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        zIndex: 1040,
+      }}
+    >
+      <div className="modal-dialog modal-lg" style={{ maxWidth: "800px" }}>
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">Update Product Coupon Code</h5>
+            <button
+              className="btn"
+              onClick={onClose}
+              style={{
+                border: "none",
+                background: "transparent",
+                fontSize: "1.0rem",
+              }}
+            >
+              &#x2715;
+            </button>
+          </div>
+          <form onSubmit={handleSubmit}>
+            <div
+              className="modal-body"
+              style={{
+                maxHeight: "calc(100vh - 200px)",
+                overflowY: "auto",
+              }}
+            >
+              <div className="mb-3">
+                <label htmlFor="userType" className="form-label">
+                  Type
+                </label>
+                <Select
+                  id="userType"
+                  name="userType"
+                  options={typeOptions}
+                  value={typeOptions.find((option) => option.value === formData.userType) || null}
+                  onChange={(option) => handleChange("userType", option ? option.value : "")}
+                  placeholder="Select Type"
+                  isClearable
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="userId" className="form-label">
+                  {formData.userType || "Artist or Seller"}
+                </label>
+                <Select
+                  id="userId"
+                  name="userId"
+                  options={userOptions}
+                  value={userOptions.find((option) => option.value === formData.userId) || null}
+                  onChange={(option) => handleChange("userId", option ? option.value : "")}
+                  placeholder={`Select ${formData.userType || "Artist or Seller"}`}
+                  isClearable
+                  isDisabled={!formData.userType}
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="productId" className="form-label">
+                  Product
+                </label>
+                <Select
+                  id="productId"
+                  name="productId"
+                  options={productOptions}
+                  value={productOptions.find((option) => option.value === formData.productId) || null}
+                  onChange={(option) => handleChange("productId", option ? option.value : "")}
+                  placeholder="Select Product"
+                  isClearable
+                  isDisabled={!formData.userId}
+                />
+              </div>
+              {selectedProduct && (
+                <div className="mb-3">
+                  <label>Product Details</label>
+                  <div className="d-flex align-items-center">
+                    <img
+                      src={selectedProduct.mainImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedProduct.mainImage}` : "https://via.placeholder.com/100"}
+                      alt={selectedProduct.productName}
+                      className="img-thumbnail mr-3"
+                      style={{ maxWidth: "100px", maxHeight: "100px" }}
+                    />
+                    <div>
+                      <p><strong>Product Name:</strong> {selectedProduct.productName}</p>
+                      <p><strong>Price:</strong> ₹{selectedProduct.finalPrice || "N/A"}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div className="mb-3">
+                <label className="form-label">Coupon Details</label>
+                <div className="row">
+                  <div className="col-md-6">
+                    <label htmlFor="couponName" className="form-label">
+                      Coupon Code
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="couponName"
+                      name="couponName"
+                      value={formData.couponName}
+                      onChange={(e) => handleChange("couponName", e.target.value)}
+                      disabled={!formData.productId}
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label htmlFor="discountPercentage" className="form-label">
+                      Discount Percentage (%)
+                    </label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="discountPercentage"
+                      name="discountPercentage"
+                      value={formData.discountPercentage}
+                      onChange={(e) => handleChange("discountPercentage", e.target.value)}
+                      min="1"
+                      max="100"
+                      step="0.01"
+                      disabled={!formData.productId}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Coupon Application Type</label>
+                <div>
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="applicationType"
+                      id="immediatelyApplied"
+                      value="immediately"
+                      checked={formData.applicationType === "immediately"}
+                      onChange={() => handleChange("applicationType", "immediately")}
+                      disabled={!formData.productId}
+                    />
+                    <label className="form-check-label" htmlFor="immediatelyApplied">
+                      Immediately Applied Coupon
+                    </label>
+                  </div>
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="applicationType"
+                      id="afterCheckoutApplied"
+                      value="afterCheckout"
+                      checked={formData.applicationType === "afterCheckout"}
+                      onChange={() => handleChange("applicationType", "afterCheckout")}
+                      disabled={!formData.productId}
+                    />
+                    <label className="form-check-label" htmlFor="afterCheckoutApplied">
+                      After Checkout Applied Coupon
+                    </label>
+                  </div>
+                </div>
+              </div>
+              {selectedProduct && formData.discountPercentage > 0 && (
+                <div className="mb-3">
+                  <label>Price Calculation</label>
+                  <div className="row">
+                    <div className="col-md-4">
+                      <p><strong>Original Price:</strong> ₹{originalPrice.toFixed(2)}</p>
+                    </div>
+                    <div className="col-md-4">
+                      <p><strong>Discount ({formData.discountPercentage}%):</strong> ₹{discountAmount.toFixed(2)}</p>
+                    </div>
+                    <div className="col-md-4">
+                      <p><strong>Final Price:</strong> ₹{finalPrice.toFixed(2)}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-secondary" onClick={onClose}>
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={loading}
+              >
+                {loading ? "Updating..." : "Update Product Coupon Code"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ProductCouponCodeModal;
