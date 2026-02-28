@@ -27,7 +27,9 @@ const Input = memo(({ onSearch }) => {
 
   return (
     <div className="flex z-[100] flex-row justify-between w-[60%] bg-base px-2 py-1 h-[70px] rounded-xl">
+      <label htmlFor="hero-search" className="sr-only">Search</label>
       <input
+        id="hero-search"
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -38,6 +40,7 @@ const Input = memo(({ onSearch }) => {
       <button
         onClick={handleSubmit}
         className="bg-[#FB5934] p-[18px] rounded-[10px] flex items-center justify-center"
+        aria-label="Submit search"
       >
         <Search size={30} color="white" />
       </button>
@@ -83,20 +86,24 @@ const HeroSection = () => {
       <div className="max-w-[1440px] w-full h-full  px-[80px] mx-auto   flex flex-row relative pb-8">
         <img
           src="/assets/home/mesh1.svg"
-          alt=""
+          alt="Mesh background left"
+          width="400"
+          height="400"
           className="absolute top-0 left-0 z-0 pointer-events-none"
         />
         <img
           src="/assets/home/mesh.svg"
-          alt=""
+          alt="Mesh background right"
+          width="400"
+          height="400"
           className="absolute top-0 right-0 z-0 pointer-events-none"
         />
 
-        <div className="w-[70%]  ml-8 mt-8">
-          <h2 className="text-black-900 text-[90px] font-bold ">
-            Find yours
-          </h2>
-          <div className="min-h-[110px] z-[40]  h-auto w-full overflow-hidden  whitespace-nowrap  text-left flex items-center justify-start">
+          <div className="w-[70%]  ml-8 mt-8">
+            <h1 className="text-black-900 text-[90px] font-bold ">
+              Find yours
+            </h1>
+            <div className="min-h-[110px] z-[40]  h-auto w-full overflow-hidden  whitespace-nowrap  text-left flex items-center justify-start">
             <AnimatedText />
           </div>
 

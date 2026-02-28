@@ -223,7 +223,7 @@ const Footer = () => {
                     <div className="space-y-2.5">
                       <a href="tel:+918668367265" className="flex items-center gap-3 group/contact  hover:border-[#FB5934]/20 transition-all duration-200">
                         <span className="w-8 h-8 bg-[#161616] rounded-lg flex items-center justify-center flex-shrink-0 group-hover/contact:bg-[#FB5934]/10 transition-colors">
-                          <img src="/assets/footer/call.svg" alt="call" className="w-3.5 h-3.5" />
+                          <img src="/assets/footer/call.svg" alt="call" width="14" height="14" />
                         </span>
                         <div>
                           <span className="text-gray-300 text-[10px] uppercase tracking-wider font-medium block leading-none mb-0.5">Phone</span>
@@ -232,7 +232,7 @@ const Footer = () => {
                       </a>
                       <a href="mailto:contact@artsays.in" className="flex items-center gap-3 group/contact  hover:border-[#FB5934]/20 transition-all duration-200">
                         <span className="w-8 h-8 bg-[#161616] rounded-lg flex items-center justify-center flex-shrink-0 group-hover/contact:bg-[#FB5934]/10 transition-colors">
-                          <img src="/assets/footer/mail.svg" alt="mail" className="w-3.5 h-3.5" />
+                          <img src="/assets/footer/mail.svg" alt="mail" width="14" height="14" />
                         </span>
                         <div>
                           <span className="text-gray-300 text-[10px] uppercase tracking-wider font-medium block leading-none mb-0.5">Email</span>
@@ -241,7 +241,7 @@ const Footer = () => {
                       </a>
                       <div className="flex items-center gap-3 ">
                         <span className="w-8 h-8 bg-[#161616] rounded-lg flex items-center justify-center flex-shrink-0">
-                          <img src="/assets/footer/location.svg" alt="location" className="w-3.5 h-3.5" />
+                          <img src="/assets/footer/location.svg" alt="location" width="14" height="14" />
                         </span>
                         <div>
                           <span className="text-gray-300 text-[10px] uppercase tracking-wider font-medium block leading-none mb-0.5">Address</span>
@@ -259,19 +259,20 @@ const Footer = () => {
                     <h3 className="footer-section-title text-xs font-bold uppercase tracking-[0.15em] text-[#FB5934] mb-3">
                       Follow Us
                     </h3>
-                    <div className="flex gap-2">
-                      {socials.map((social, idx) => (
-                        <a
-                          key={idx}
-                          href={social.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="footer-social-icon w-9 h-9 bg-[#161616] rounded-lg flex items-center justify-center text-white hover:bg-[#FB5934] transition-all duration-200 border border-gray-800/30 hover:border-[#FB5934]/40"
-                        >
-                          <social.icon className="text-sm" />
-                        </a>
-                      ))}
-                    </div>
+                      <div className="flex gap-2">
+                        {socials.map((social, idx) => (
+                          <a
+                            key={idx}
+                            href={social.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="footer-social-icon w-9 h-9 bg-[#161616] rounded-lg flex items-center justify-center text-white hover:bg-[#FB5934] transition-all duration-200 border border-gray-800/30 hover:border-[#FB5934]/40"
+                            aria-label={`Follow us on ${social.url.includes('facebook') ? 'Facebook' : social.url.includes('instagram') ? 'Instagram' : social.url.includes('linkedin') ? 'LinkedIn' : social.url.includes('twitter') ? 'Twitter' : social.url.includes('youtube') ? 'YouTube' : 'Social Media'}`}
+                          >
+                            <social.icon className="text-sm" />
+                          </a>
+                        ))}
+                      </div>
                   </div>
 
                   {/* Divider */}
@@ -525,9 +526,11 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-3">
             <div className="flex items-center gap-2.5 text-white text-xs">
               <img
-                className="w-5 h-5 rounded-full"
+                className="h-4 w-auto rounded-sm object-contain"
                 src="/assets/footer/ind.png"
-                alt="India"
+                alt="India Flag"
+                width="24"
+                height="16"
               />
               <span>India | English (UK) | &#8377; (INR)</span>
             </div>

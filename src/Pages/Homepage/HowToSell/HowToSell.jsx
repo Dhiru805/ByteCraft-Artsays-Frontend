@@ -86,9 +86,9 @@ const HowToSell = () => {
               <Sparkles size={18} className="animate-pulse" />
               <span>Step-by-step Guide</span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-black text-gray-900 tracking-tighter leading-[1.1]">
-              {data.heading}
-            </h1>
+              <h2 className="text-4xl md:text-6xl font-black text-gray-900 tracking-tighter leading-[1.1]">
+                {data.heading}
+              </h2>
             <p className="text-gray-500 text-lg md:text-xl max-w-2xl font-medium leading-relaxed">
               {data.description}
             </p>

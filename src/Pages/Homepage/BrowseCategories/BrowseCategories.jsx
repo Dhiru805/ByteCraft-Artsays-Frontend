@@ -308,14 +308,14 @@ const BrowseCategories = () => {
       <div className="max-w-[1440px] mx-auto px-4 md:!px-0">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 align-items-center mb-3">
-          <div className="flex flex-col gap-6">
-            <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
-              {data.heading || "Browse Categories"}
-            </h1>
-            <p className="text-gray-500 text-lg max-w-2xl font-medium leading-relaxed">
-              {data.description || "Discover a curated selection of masterpieces across various artistic styles and mediums."}
-            </p>
-          </div>
+            <div className="flex flex-col gap-6">
+              <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
+                {data.heading || "Browse Categories"}
+              </h2>
+              <p className="text-gray-500 text-lg max-w-2xl font-medium leading-relaxed">
+                {data.description || "Discover a curated selection of masterpieces across various artistic styles and mediums."}
+              </p>
+            </div>
           {data.buttonName && (
             <button
               onClick={() => navigate(data.buttonLink || "/store")}
@@ -420,6 +420,7 @@ const BrowseCategories = () => {
                     {/* Heart Button */}
                     <button
                       onClick={(e) => { e.stopPropagation(); handleWishlist(product._id, e); }}
+                      aria-label={likedProducts[product._id] ? "Remove from Wishlist" : "Add to Wishlist"}
                       className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-sm hover:bg-white hover:text-red-500 transition-all transform hover:scale-110 group/heart z-10"
                     >
                       <Heart
@@ -445,7 +446,7 @@ const BrowseCategories = () => {
                       <div className="flex -space-x-1.5">
                         {product.badges?.map((img, idx) => (
                           <div key={idx}>
-                            <img src={`${imageBaseURL}${img}`} className="w-4 h-4 rounded-full" alt="Badge" />
+                            <img src={`${imageBaseURL}${img}`} className="w-4 h-4 rounded-full" alt="Badge" width="16" height="16" />
                           </div>
                         ))}
                       </div>
@@ -466,7 +467,7 @@ const BrowseCategories = () => {
                           {product.averageRating ? product.averageRating.toFixed(1) : "0.0"}
                         </span>
                       </div>
-                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">
                         • {product.reviewCount || 0} reviews
                       </span>
                       {hasDiscount && (
@@ -480,13 +481,13 @@ const BrowseCategories = () => {
                     <div className="flex items-center justify-between mt-auto border-t border-gray-50 pt-3">
                       <div className="flex items-center gap-2">
                         {hasDiscount && (
-                          <span className="text-lg text-gray-400 line-through font-bold">
+                          <span className="text-lg text-gray-500 line-through font-bold">
                             ₹{product.marketPrice.toLocaleString()}
                           </span>
                         )}
-                          <span className="text-2xl font-black text-gray-900 tracking-tighter">
-                            ₹{displayPrice.toLocaleString()}
-                          </span>
+                            <span className="text-2xl font-black text-gray-900 tracking-tighter">
+                              ₹{displayPrice.toLocaleString()}
+                            </span>
                       </div>
                     </div>
 
@@ -495,6 +496,7 @@ const BrowseCategories = () => {
                         <button
                           onClick={(e) => { e.stopPropagation(); addToCart(product._id); }}
                           disabled={!product.quantity || product.quantity === 0}
+                          aria-label="Add to Cart"
                           className="col-span-1 h-[48px] bg-gray-50 text-gray-900 hover:text-[#ffffff] rounded-2xl hover:bg-[#6F4D34] hover:text-white transition-all duration-300 disabled:opacity-50 border border-gray-100 flex items-center justify-center group/cart shadow-sm"
                           title="Add to Cart"
                         >

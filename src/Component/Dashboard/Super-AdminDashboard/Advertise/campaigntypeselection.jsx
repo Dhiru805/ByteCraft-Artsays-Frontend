@@ -103,28 +103,12 @@ const CampaignTypeSelection = ({ onSelectCampaignType }) => {
       exploreLink: "#",
       type: "product",
     },
-<<<<<<< HEAD
-=======
-    {
-      id: "sponsored-profile",
-      title: "Sponsored Profile",
-      image: "/placeholder.svg?height=150&width=250",
-      description:
-        "Sponsored Profile can help customers discover your brand and products with creative ads that appear in relevant Artsyas shopping results.",
-      exploreLink: "#",
-      type: "profile",
-    },
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
   ]
 
   return (
     <div className="card p-3 mb-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h2 className="mb-0">Choose your campaign type</h2>
-<<<<<<< HEAD
-=======
-        <button className="btn btn-outline-secondary btn-sm">View drafts</button>
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
       </div>
       <hr />
 

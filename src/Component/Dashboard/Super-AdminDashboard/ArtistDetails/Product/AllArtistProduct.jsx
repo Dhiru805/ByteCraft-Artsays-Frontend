@@ -191,15 +191,9 @@ const ApprovedProduct = () => {
                       <th>Name</th>
                       <th>Product Name</th>
                       <th>Product Price</th>
-<<<<<<< HEAD
                         <th>Date</th>
                         <th>Status</th>
                         <th>Action</th>
-=======
-                      <th>Date</th>
-                      {/* <th>Status</th> */}
-                      <th>Action</th>
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
                     </tr>
                   </thead>
                   <tbody>
@@ -228,20 +222,12 @@ const ApprovedProduct = () => {
                           {product.productName}
                         </td>
                         <td>
-<<<<<<< HEAD
                           {product.finalPrice !== undefined
-=======
-                          {product.sellingPrice !== undefined
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
                             ? new Intl.NumberFormat("en-IN", {
                                 style: "currency",
                                 currency: "INR",
                               })
-<<<<<<< HEAD
                                 .format(product.finalPrice)
-=======
-                                .format(product.sellingPrice)
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
                                 .replace(/\.00$/, "")
                             : "N/A"}
                         </td>
@@ -251,19 +237,11 @@ const ApprovedProduct = () => {
                             { year: "numeric", month: "long", day: "numeric" }
                           )}
                         </td>
-<<<<<<< HEAD
                         <td>
                                                     <span className={`badge ${product.quantity === 0 ? 'badge-dark' : 'badge-success'}`}>
                                                         {product.quantity === 0 ? 'Out of Stock' : 'Approved'}
                                                     </span>
                                                 </td>
-=======
-                        {/* <td>
-                                                    <button className={`btn btn-sm ${product.status === 'Pending' ? 'btn-outline-warning' : product.status === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
-                                                        {product.status}
-                                                    </button>
-                                                </td> */}
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
                                                 <td>
                                                     <button
                                                         className="btn btn-sm btn-outline-info mr-2"

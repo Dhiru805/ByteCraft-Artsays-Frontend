@@ -25,28 +25,28 @@ export const Product = ({ product }) => {
   return (
     <div className="w-[300px]    mx-auto ">
       <div className="bg-blue-200 p-8  relative mx-auto w-full  h-[209px] flex justify-center items-center ">
-        <button className="absolute right-2 top-2 z-50 flex justify-center items-center bg-white rounded-full w-[40px] h-[40px]">
+        <button className="absolute right-2 top-2 z-50 flex justify-center items-center bg-white rounded-full w-[40px] h-[40px]" aria-label="Add to wishlist">
           <Heart className="" color="black" size={20} strokeWidth={2} />
         </button>
 
         <img
           className="max-w-full max-h-full object-contain "
           src={product.url || "/assets/home/biditemurl.jpg"}
-          alt=""
+          alt={product.name}
         />
       </div>
-      <h5 className="text-[12px]  mt-2 ">Highly Rated</h5>
-      <h4 className="text-[15px] font-medium mt-2">Owned by {product.owner}</h4>
+      <p className="text-[12px] font-medium  mt-2 ">Highly Rated</p>
+      <p className="text-[15px] font-medium mt-2">Owned by {product.owner}</p>
       <h3 className="text-[18px] font-semibold my-1 text-black-900">
         {product.name}
       </h3>
       <div className="flex items-center justify-between gap-1 my-[5px]  py-1">
-        <div className="flex items-center gap-1">
-          <img src="/assets/home/star.svg" alt="star" className="w-4 h-4" />
-          <span className="text-sm">
-            {product.rating} ({product.reviewCount} Reviews)
-          </span>
-        </div>
+          <div className="flex items-center gap-1">
+            <img src="/assets/home/star.svg" alt="star icon" width="16" height="16" className="w-4 h-4" />
+            <span className="text-sm">
+              {product.rating} ({product.reviewCount} Reviews)
+            </span>
+          </div>
         <span className="font-medium text-[18px] text-black-900">
           ${product.price}
         </span>

@@ -78,9 +78,9 @@ const FAQS = () => {
     <div className="w-full bg-base  ">
       <div className="max-w-[1440px] min-h-[408px] mx-auto px-[80px] mb-[40px]">
         <div className="flex flex-col gap-[24px]">
-          <h4 className="text-orange-200 font-semibold text-[40px] ">
+          <h2 className="text-orange-200 font-semibold text-[40px] ">
             Frequently Asked Questions
-          </h4>
+          </h2>
           <p className="text-sm text-black-900">
             Get the answers to the most commonly asked questions.
           </p>

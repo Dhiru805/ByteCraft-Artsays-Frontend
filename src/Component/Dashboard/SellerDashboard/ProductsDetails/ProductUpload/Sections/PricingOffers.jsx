@@ -2,10 +2,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Select from "react-select";
 import getAPI from "../../../../../../api/getAPI";
-<<<<<<< HEAD
 import GiftWrappingSection from "./GiftWrappingSection";
-=======
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
 
 const installmentOptions = [
     { value: "Yearly", label: "Yearly" },
@@ -19,14 +16,10 @@ const PricingOffers = ({
     handlePricingChange,
     handleInstallmentDurationChange,
     mainCategoryId,
-<<<<<<< HEAD
     subCategoryId,
     formData,
     setFormData,
     handleInputChange
-=======
-    subCategoryId
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
 }) => {
 
     const [gstPercentage, setGstPercentage] = useState(pricingData.gstPercentage || 0);
@@ -246,7 +239,6 @@ const PricingOffers = ({
 
     return (
         <>
-<<<<<<< HEAD
             <style>{`
               .selling-price-info-icon:hover .selling-price-tooltip {
                 visibility: visible !important;
@@ -257,8 +249,6 @@ const PricingOffers = ({
                 opacity: 1 !important;
               }
             `}</style>
-=======
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
             <h4 className="mb-3">Pricing & Offers</h4>
 
             {(isLoadingGST || isLoadingInsurance || isLoadingsubcategory) && (
@@ -274,7 +264,6 @@ const PricingOffers = ({
                     <div className="form-group">
                         <label htmlFor="sellingPrice">
                             Selling Price (₹) <span style={{ color: "red" }}>*</span>
-<<<<<<< HEAD
                             <span style={{ position: "relative", display: "inline-block", marginLeft: "6px", cursor: "pointer" }}
                                 className="selling-price-info-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
@@ -308,8 +297,6 @@ const PricingOffers = ({
                                     <em>Example: If your artwork feels worth ₹10,000, starting at ₹8,000–₹9,000 is a smart choice.</em>
                                 </span>
                             </span>
-=======
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
                         </label>
                         <input
                             type="number"
@@ -332,7 +319,6 @@ const PricingOffers = ({
 
                 <div className="col-md-6">
                     <div className="form-group">
-<<<<<<< HEAD
                         <label htmlFor="marketPrice">
                             Market Price (₹)
                             <span style={{ position: "relative", display: "inline-block", marginLeft: "6px", cursor: "pointer" }}
@@ -369,9 +355,6 @@ const PricingOffers = ({
                                 </span>
                             </span>
                         </label>
-=======
-                        <label htmlFor="marketPrice">Market Price (₹)</label>
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
                         <input
                             type="number"
                             id="marketPrice"
@@ -566,7 +549,6 @@ const PricingOffers = ({
                 </div>
             )}
 
-<<<<<<< HEAD
             {formData && setFormData && (
                 <GiftWrappingSection
                     formData={formData}
@@ -576,8 +558,6 @@ const PricingOffers = ({
                 />
             )}
 
-=======
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
             <hr className="my-4" />
         </>
     );

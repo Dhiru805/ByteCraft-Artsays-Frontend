@@ -24,10 +24,10 @@ const deals = [
 ];
 const Home = () => {
   return (
-    <div className="w-full     mx-auto h-screen  bg-base ">
+    <div className="w-full     mx-auto min-h-screen  bg-base ">
       <div className="  border-b-[0.6px] border-orange-200">
-        <NavBar />
-      </div>
+      <NavBar />
+    </div>
 
       <HeroSection />
 
@@ -44,7 +44,7 @@ const Home = () => {
       <Traction />
       <LeaderBar />
       <FAQS />
-      <Footer />
+    <Footer />
     </div>
   );
 };

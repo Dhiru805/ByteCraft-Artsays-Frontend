@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
-<<<<<<< HEAD
 import { Search, ChevronRight, HelpCircle, Gavel } from "lucide-react";
-=======
-import { Search, ChevronRight, Info, HelpCircle, Gavel } from "lucide-react";
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
 import axiosInstance from "../../../api/axiosConfig";
 import CommissionContentSkeliton from "../../../Component/Skeleton/Home/Account/CommissionContentSkeliton";
 import "../../store/products/product.css";

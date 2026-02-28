@@ -23,37 +23,41 @@ const ChatIcon = () => {
       >
 
         {/* Main Round Icon */}
-        <div
-          style={{
-            width: "60px",
-            height: "60px",
-            borderRadius: "50%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            fontSize: "28px",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-            overflow: "hidden",
-            background: "black"
-          }}
-        >
-          <img
-            src="/assets/profile/ArtyW.png"
-            alt="chat"
-            style={{ objectFit: "contain", width: "100%", height: "100%" }}
-          />
-        </div>
+          <div
+            style={{
+              width: "60px",
+              height: "60px",
+              borderRadius: "50%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontSize: "28px",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+              overflow: "hidden",
+              background: "black"
+            }}
+          >
+            <img
+              src="/assets/profile/ArtyW.png"
+              alt="chat"
+              width="60"
+              height="60"
+              style={{ objectFit: "contain", width: "100%", height: "100%" }}
+            />
+          </div>
 
-        {/* Name Image - BOTTOM */}
-        <img
-          src="/assets/profile/ArtyN.png"
-          alt="Name"
-          className="hidden md:block"
-          style={{
-            width: "70px",
-            objectFit: "contain"
-          }}
-        />
+          {/* Name Image - BOTTOM */}
+          <img
+            src="/assets/profile/ArtyN.png"
+            alt="Name"
+            className="hidden md:block"
+            width="70"
+            height="20"
+            style={{
+              width: "70px",
+              objectFit: "contain"
+            }}
+          />
 
       </div>
 

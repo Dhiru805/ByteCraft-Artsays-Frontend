@@ -288,7 +288,6 @@ const NotificationAndPreferences = () => {
     }));
   };
 
-<<<<<<< HEAD
   // const handleInputChange = (event) => {
   //   const { name, value } = event.target;
   //   setFormData((prevData) => ({
@@ -296,15 +295,6 @@ const NotificationAndPreferences = () => {
   //     [name]: value,
   //   }));
   // };
-=======
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
   
   const handleToggle = () => {
     setFormData((prevData) => ({

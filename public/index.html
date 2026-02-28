@@ -31,6 +31,35 @@
   <!-- JSON-LD Schema -->
   __META_SCHEMA__
 
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Artsays",
+      "url": "https://artsays.in",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://artsays.in/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+  </script>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Artsays",
+      "url": "https://artsays.in",
+      "logo": "https://artsays.in/logo192.png",
+      "sameAs": [
+        "https://www.facebook.com/artsays",
+        "https://www.instagram.com/artsays",
+        "https://twitter.com/artsays"
+      ]
+    }
+  </script>
+
   <!-- Bootstrap Stylesheet -->
   <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/bootstrap/css/bootstrap.min.css" />
 

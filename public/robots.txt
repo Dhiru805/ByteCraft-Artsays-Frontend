@@ -1,0 +1,19 @@
+User-agent: *
+Disallow: /cgi-bin/
+Disallow: /tmp/
+Disallow: /private/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /login/
+Disallow: /logout/
+Disallow: /forgot-password/
+Disallow: /reset-password/
+Disallow: /search/
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /account/
+Disallow: /profile/
+Disallow: /settings/
+Allow: /
+
+Sitemap: http://localhost:3000/sitemap.xml

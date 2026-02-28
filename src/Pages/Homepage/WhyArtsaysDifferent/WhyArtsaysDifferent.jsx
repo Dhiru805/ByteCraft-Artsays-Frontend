@@ -39,14 +39,14 @@ const WhyArtsaysDifferent = () => {
         
         {/* Header - Matching HomeChallenges Style */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-          <div className="flex flex-col gap-6">
-            <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
-              {data.heading}
-            </h1>
-            <p className="text-gray-500 text-lg max-w-3xl font-medium leading-relaxed">
-              {data.description}
-            </p>
-          </div>
+            <div className="flex flex-col gap-6">
+              <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
+                {data.heading}
+              </h2>
+              <p className="text-gray-500 text-lg max-w-3xl font-medium leading-relaxed">
+                {data.description}
+              </p>
+            </div>
           {data.buttonName && (
             <a
               href={data.buttonLink || "#"}

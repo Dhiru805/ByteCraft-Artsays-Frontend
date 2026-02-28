@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-=======
-import React, { useState, useEffect } from 'react';
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
 import { FaChevronDown, FaEye, FaCalendarAlt, FaCreditCard, FaBox, FaExclamationCircle, FaCheckCircle, FaTruck, FaTimesCircle, FaShoppingBag } from 'react-icons/fa';
 import getAPI from '../../../../../../../api/getAPI';
 import putAPI from '../../../../../../../api/putAPI';
@@ -19,17 +15,13 @@ const MyOrders = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
-<<<<<<< HEAD
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [selectedSupportOrder, setSelectedSupportOrder] = useState(null);
-=======
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
   const [cancelOrderId, setCancelOrderId] = useState(null);
   const [cancelReason, setCancelReason] = useState("");
   const [cancelComment, setCancelComment] = useState("");
   const navigate = useNavigate();
 
-<<<<<<< HEAD
   // Pagination states
   const ORDERS_PER_PAGE = 10;
   const [visibleCount, setVisibleCount] = useState(ORDERS_PER_PAGE);
@@ -37,11 +29,8 @@ const MyOrders = () => {
   const observerRef = useRef(null);
   const loadMoreRef = useRef(null);
 
-=======
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
   useEffect(() => {
     const fetchOrders = async () => {
-      setLoading(true);
       try {
         const userId = localStorage.getItem("userId");
         if (!userId) {
@@ -104,19 +93,11 @@ const MyOrders = () => {
     mergeOrderProducts();
   }, [orders.length]);
 
-<<<<<<< HEAD
   // const openImagePopup = (images = [], startIndex = 0) => {
   //   setCurrentImages(images);
   //   setCurrentImageIndex(startIndex);
   //   setShowPopup(true);
   // };
-=======
-  const openImagePopup = (images = [], startIndex = 0) => {
-    setCurrentImages(images);
-    setCurrentImageIndex(startIndex);
-    setShowPopup(true);
-  };
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
 
   const closeImagePopup = () => {
     setShowPopup(false);
@@ -124,7 +105,6 @@ const MyOrders = () => {
     setCurrentImageIndex(0);
   };
 
-<<<<<<< HEAD
     const cancelOrderInstant = async (orderIdParam) => {
       const id = orderIdParam || cancelOrderId;
       if (!id) return;
@@ -171,39 +151,6 @@ const MyOrders = () => {
         }
       }
     };
-=======
-  const cancelOrderInstant = async (orderIdParam) => {
-    const id = orderIdParam || cancelOrderId;
-    if (!id) return;
-    if (!cancelReason) {
-      alert("Please select a cancellation reason.");
-      return;
-    }
-    if (!cancelComment.trim()) {
-      alert("Please enter cancellation remarks.");
-      return;
-    }
-
-    try {
-      await putAPI(`/api/buyer-order-list/cancel/${id}`, {
-        cancelReason,
-        cancelComment,
-      });
-
-      setOrders((prev) =>
-        prev.map((o) =>
-          o.orderId === id ? { ...o, orderStatus: "Cancelled" } : o
-        )
-      );
-
-      setShowCancelModal(false);
-      setCancelReason("");
-      setCancelComment("");
-    } catch (err) {
-      console.error("Cancel Error:", err);
-    }
-  };
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
 
   const handleViewOrder = (order) => {
     navigate("/my-account/my-orders/view", { state: { order } });
@@ -216,7 +163,6 @@ const MyOrders = () => {
     });
   };
 
-<<<<<<< HEAD
   // Buyer-friendly labels: map internal statuses to what the buyer should see
   const BUYER_STATUS_LABELS = {
     "Ordered": "Ordered",
@@ -282,23 +228,6 @@ const MyOrders = () => {
 
   const visibleOrders = orders.slice(0, visibleCount);
 
-=======
-  const getStatusInfo = (status) => {
-    switch (status) {
-      case 'Cancelled':
-        return { color: 'text-red-600', bg: 'bg-red-50', icon: <FaTimesCircle className="text-red-500" />, label: 'Cancelled' };
-      case 'Delivered':
-        return { color: 'text-emerald-600', bg: 'bg-emerald-50', icon: <FaCheckCircle className="text-emerald-500" />, label: 'Delivered' };
-      case 'Processing':
-        return { color: 'text-amber-600', bg: 'bg-amber-50', icon: <FaBox className="text-amber-500" />, label: 'Processing' };
-      case 'In Transit':
-        return { color: 'text-blue-600', bg: 'bg-blue-50', icon: <FaTruck className="text-blue-500" />, label: 'In Transit' };
-      default:
-        return { color: 'text-gray-600', bg: 'bg-gray-50', icon: <FaExclamationCircle className="text-gray-500" />, label: status || 'Pending' };
-    }
-  };
-
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
   if (loading) return <div><MyOrderSkeleton /></div>;
 
   return (
@@ -326,11 +255,7 @@ const MyOrders = () => {
           </div>
         </div>
 
-<<<<<<< HEAD
           {orders.length === 0 ? (
-=======
-        {orders.length === 0 ? (
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
           <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
             <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm mb-6">
               <FaShoppingBag className="text-gray-300 text-3xl" />
@@ -348,16 +273,11 @@ const MyOrders = () => {
           </div>
         ) : (
           <div className="space-y-6">
-<<<<<<< HEAD
             {!selectedOrder && visibleOrders.map((order, index) => {
-=======
-            {!selectedOrder && orders.map((order, index) => {
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
               const createdDate = new Date(order.createdAt || order.purchaseDate || Date.now());
               const createdStr = createdDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
               const firstItem = order.items && order.items.length > 0 ? order.items[0] : null;
               
-<<<<<<< HEAD
                 let firstImage = null;
                 const isCustomOrder = firstItem?.customProduct != null;
                   if (isCustomOrder && firstItem?.customProduct?.BuyerImage) {
@@ -385,26 +305,6 @@ const MyOrders = () => {
                 if (!isDelivered && !isCancelled) actionType = "cancel";
                 else if (isDelivered && diffInDays <= returnPolicyDays && isReturnable) actionType = "return";
                 else actionType = "chat";
-=======
-              let firstImage = null;
-              if (firstItem?.fullProduct?.mainImage) {
-                firstImage = `${BASE_URL}${firstItem.fullProduct.mainImage}`;
-              }
-
-              const isCancelled = order.orderStatus === "Cancelled";
-              const isDelivered = order.orderStatus === "Delivered";
-              const statusInfo = getStatusInfo(order.orderStatus);
-
-              const deliveryDate = createdDate;
-              const currentDate = new Date();
-              const diffInDays = Math.floor((currentDate - deliveryDate) / (1000 * 60 * 60 * 24));
-              const returnPolicyDays = 10;
-              
-              let actionType = "";
-              if (!isDelivered && !isCancelled) actionType = "cancel";
-              else if (isDelivered && diffInDays <= returnPolicyDays) actionType = "return";
-              else actionType = "chat";
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
 
               return (
                 <div
@@ -460,7 +360,6 @@ const MyOrders = () => {
                           )}
                         </div>
 
-<<<<<<< HEAD
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
                               <h4 className="text-lg font-bold text-gray-900 truncate">
@@ -472,12 +371,6 @@ const MyOrders = () => {
                                 </span>
                               )}
                             </div>
-=======
-                        <div className="min-w-0">
-                          <h4 className="text-lg font-bold text-gray-900 truncate">
-                            {firstItem?.name || firstItem?.productId?.productName || "Untitled Product"}
-                          </h4>
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
                           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
                             <p className="text-sm font-medium text-gray-500">
                               By <span className="text-gray-700">{order.Artist?.name ? `${order.Artist.name} ${order.Artist?.lastName || ""}` : "Unknown Artist"}</span>
@@ -517,7 +410,6 @@ const MyOrders = () => {
                             Rate & Review
                           </button>
                         )}
-<<<<<<< HEAD
                           <button
                             className="flex items-center gap-2 text-nowrap text-[#6F4D34] text-sm font-bold bg-[#6F4D34]/5 px-4 py-2.5 rounded-xl hover:bg-[#6F4D34]/10 transition-colors"
                             onClick={(e) => {
@@ -538,18 +430,6 @@ const MyOrders = () => {
                                 <FaExclamationCircle className="text-xs" /> Help?
                               </button>
                         </div>
-=======
-                        <button
-                          className="flex items-center gap-2 text-nowrap text-[#6F4D34] text-sm font-bold bg-[#6F4D34]/5 px-4 py-2.5 rounded-xl hover:bg-[#6F4D34]/10 transition-colors"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleViewOrder(order);
-                          }}
-                        >
-                          <FaEye className="text-xs" /> View Details
-                        </button>
-                      </div>
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
 
                       <div>
                         {isCancelled ? (
@@ -584,7 +464,6 @@ const MyOrders = () => {
                   </div>
                 </div>
               );
-<<<<<<< HEAD
               })}
 
               {/* Infinite scroll sentinel */}
@@ -605,10 +484,6 @@ const MyOrders = () => {
                 <p className="text-center text-sm text-gray-400 font-medium py-4">You've reached the end of your orders</p>
               )}
             </div>
-=======
-            })}
-          </div>
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
         )}
 
         {selectedOrder && (
@@ -710,7 +585,6 @@ const MyOrders = () => {
           </div>
         </div>
       )}
-<<<<<<< HEAD
 
       {showSupportModal && (
         <div className="fixed inset-0 flex justify-center items-center z-[999] p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
@@ -771,8 +645,6 @@ const MyOrders = () => {
           </div>
         </div>
       )}
-=======
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
     </>
   );
 };

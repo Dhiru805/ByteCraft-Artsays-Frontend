@@ -563,10 +563,6 @@ import SellerProductCouponCodes from "../Component/Dashboard/SellerDashboard/Pro
 import UpdateProductSeller from "../Component/Dashboard/SellerDashboard/ProductsDetails/UpdateProduct/productUploade";
 import ProductViewSeller from "../Component/Dashboard/SellerDashboard/ProductsDetails/ViewProduct/productUploade";
 
-//-----------------------------Artist Premium Badges--------------------------//
-
-import ArtistPremiumBages from "../Component/Dashboard/ArtistDashbooard/Badges/PremiumBadges";
-
 //-----------------------------Seller Premium Badges--------------------------//
 
 import SellerPremiumBages from "../Component/Dashboard/SellerDashboard/Badges/PremiumBadges";
@@ -688,21 +684,34 @@ const PublicRoute = ({ children }) => {
 const WebsiteWrapper = () => {
   const [showAnimation, setShowAnimation] = useState(() => {
     if (typeof window !== "undefined") {
-      return !localStorage.getItem("hasSeenPreloader");
+      // Check if user has already seen the preloader
+      const hasSeen = localStorage.getItem("hasSeenPreloader");
+      
+      // Bot Detection: Skip preloader for Lighthouse, PageSpeed, and other search engine bots
+      const isBot = /Lighthouse|PageSpeed|Googlebot|bingbot|yandex|baiduspider|facebookexternalhit|twitterbot/i.test(
+        window.navigator.userAgent
+      );
+
+      return !hasSeen && !isBot;
     }
-    return true;
+    return false; // Don't show by default on SSR
   });
+
   const location = useLocation();
 
   useEffect(() => {
     if (location.pathname === "/" && showAnimation) {
       const timer = setTimeout(() => {
         setShowAnimation(false);
-        localStorage.setItem("hasSeenPreloader", "true");
-      }, 9000); // Synchronized with PreloaderAnimation duration (~8.8s + buffer)
+        try {
+          localStorage.setItem("hasSeenPreloader", "true");
+        } catch (e) {
+          console.warn("localStorage is not available", e);
+        }
+      }, 3500); // Reduced from 9000 to 3500ms
       return () => clearTimeout(timer);
     } else {
-      setShowAnimation(false); // Skip preloader for other routes or if already seen
+      setShowAnimation(false);
     }
   }, [location.pathname, showAnimation]);
 

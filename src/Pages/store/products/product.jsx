@@ -891,9 +891,9 @@ const Product = () => {
                                 <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
                                   <div className="bg-[#6F4D34] text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest">Sponsored</div>
                               </div>
-                              <button onClick={(e) => { e.stopPropagation(); handleWishlist(firstAd._id); }} className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-sm hover:bg-white hover:text-red-500 transition-all transform hover:scale-110 group/heart z-10">
-                                <Heart size={18} className={`transition-colors ${likedProducts[firstAd._id] ? "text-red-500 fill-red-500" : "text-gray-900 group-hover/heart:text-red-500"}`} />
-                              </button>
+                                <button onClick={(e) => { e.stopPropagation(); handleWishlist(firstAd._id); }} className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-sm hover:bg-white hover:text-red-500 transition-all transform hover:scale-110 group/heart z-10" aria-label={likedProducts[firstAd._id] ? "Remove from wishlist" : "Add to wishlist"}>
+                                  <Heart size={18} className={`transition-colors ${likedProducts[firstAd._id] ? "text-red-500 fill-red-500" : "text-gray-900 group-hover/heart:text-red-500"}`} />
+                                </button>
                               <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                             </div>
                             <div className="flex flex-col flex-grow p-3 gap-3">
@@ -913,7 +913,7 @@ const Product = () => {
                               </div>
                               <div className="flex items-center justify-between mt-auto border-t border-gray-50">
                                 <div className="flex items-center gap-2">
-                                  {adHasDiscount && <span className="text-lg text-gray-400 line-through font-bold">₹{(firstAd.marketPrice || 0).toLocaleString()}</span>}
+                                  {adHasDiscount && <span className="text-lg text-gray-500 line-through font-bold">₹{(firstAd.marketPrice || 0).toLocaleString()}</span>}
                                   <span className="text-2xl font-black text-gray-900 tracking-tighter">₹{(firstAd.finalPrice || 0).toLocaleString()}</span>
                                 </div>
                               </div>
@@ -972,6 +972,7 @@ const Product = () => {
                                   <button
                                     onClick={(e) => { e.stopPropagation(); handleWishlist(adProduct._id); }}
                                     className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-sm hover:bg-white hover:text-red-500 transition-all transform hover:scale-110 group/heart z-10"
+                                    aria-label={likedProducts[adProduct._id] ? "Remove from wishlist" : "Add to wishlist"}
                                   >
                                     <Heart size={18} className={`transition-colors ${likedProducts[adProduct._id] ? "text-red-500 fill-red-500" : "text-gray-900 group-hover/heart:text-red-500"}`} />
                                   </button>
@@ -1015,7 +1016,7 @@ const Product = () => {
                                   <div className="flex items-center justify-between mt-auto border-t border-gray-50">
                                     <div className="flex items-center gap-2">
                                       {adHasDiscount && (
-                                        <span className="text-lg text-gray-400 line-through font-bold">
+                                        <span className="text-lg text-gray-500 line-through font-bold">
                                           ₹{(adProduct.marketPrice || 0).toLocaleString()}
                                         </span>
                                       )}
@@ -1096,16 +1097,17 @@ const Product = () => {
                                 )}
                               </div>
 
-                              {/* Heart Button */}
-                              <button
-                                onClick={(e) => { e.stopPropagation(); handleWishlist(product._id); }}
-                                className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-sm hover:bg-white hover:text-red-500 transition-all transform hover:scale-110 group/heart z-10"
-                              >
-                                <Heart
-                                  size={18}
-                                  className={`transition-colors ${likedProducts[product._id] ? "text-red-500 fill-red-500" : "text-gray-900 group-hover/heart:text-red-500"}`}
-                                />
-                              </button>
+                                {/* Heart Button */}
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); handleWishlist(product._id); }}
+                                  className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-sm hover:bg-white hover:text-red-500 transition-all transform hover:scale-110 group/heart z-10"
+                                  aria-label={likedProducts[product._id] ? "Remove from wishlist" : "Add to wishlist"}
+                                >
+                                  <Heart
+                                    size={18}
+                                    className={`transition-colors ${likedProducts[product._id] ? "text-red-500 fill-red-500" : "text-gray-900 group-hover/heart:text-red-500"}`}
+                                  />
+                                </button>
 
                               {/* Hover Overlay */}
                               <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
@@ -1159,7 +1161,7 @@ const Product = () => {
                               <div className="flex items-center justify-between mt-auto border-t border-gray-50">
                                 <div className="flex items-center gap-2">
                                   {hasDiscount && (
-                                    <span className="text-lg text-gray-400 line-through font-bold">
+                                    <span className="text-lg text-gray-500 line-through font-bold">
                                       ₹{(product.marketPrice || 0).toLocaleString()}
                                     </span>
                                   )}

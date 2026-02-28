@@ -49,9 +49,9 @@ const HowToBuy = () => {
               <div className="w-2 h-2 bg-[#6F4D34] rounded-full animate-pulse" />
               <span className="text-[#6F4D34] text-sm font-bold uppercase tracking-wider">Simple Steps</span>
             </div>
-            <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
-              {data.heading}
-            </h1>
+              <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
+                {data.heading}
+              </h2>
             <p className="text-gray-500 text-lg max-w-2xl font-medium leading-relaxed">
               {data.description}
             </p>

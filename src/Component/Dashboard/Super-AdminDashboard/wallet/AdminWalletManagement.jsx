@@ -22,24 +22,18 @@ const AdminWalletManagement = () => {
   
   // Filters
   const [filterStatus, setFilterStatus] = useState("");
-<<<<<<< HEAD
   const [filterWithdrawalUserType, setFilterWithdrawalUserType] = useState("");
-=======
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
   const [filterRole, setFilterRole] = useState("");
   const [filterUser, setFilterUser] = useState("");
   const [filterAllUser, setFilterAllUser] = useState("");
   const [filterType, setFilterType] = useState("");
   const [page, setPage] = useState(1);
   const [walletPage, setWalletPage] = useState(1);
-<<<<<<< HEAD
   const [withdrawalPage, setWithdrawalPage] = useState(1);
   const [referralPage, setReferralPage] = useState(1);
   const [earningsPage, setEarningsPage] = useState(1);
   const [earningsFilter, setEarningsFilter] = useState("");
   const [earningsCategory, setEarningsCategory] = useState("all");
-=======
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
   const [pageSize, setPageSize] = useState(10);
   
   // Date Filters
@@ -63,7 +57,6 @@ const AdminWalletManagement = () => {
     const [isSavingSettings, setIsSavingSettings] = useState(false);
     const [coinSetting, setCoinSetting] = useState({ coinValue: 0.10, currency: "INR" });
     const [isSavingCoinSetting, setIsSavingCoinSetting] = useState(false);
-<<<<<<< HEAD
 
     // Order Payouts
     const [orders, setOrders] = useState([]);
@@ -75,8 +68,6 @@ const AdminWalletManagement = () => {
 
     // Platform Earnings (from dedicated API)
     const [platformEarnings, setPlatformEarnings] = useState({ transactions: [], summary: {} });
-=======
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
   
     const fetchData = async () => {
 
@@ -93,15 +84,12 @@ const AdminWalletManagement = () => {
 
       const coinRes = await axios.get(`/api/coin-settings`);
       if (coinRes.data) setCoinSetting(coinRes.data);
-<<<<<<< HEAD
 
       const ordersRes = await axios.get(`/api/wallet/admin/all-orders`);
       setOrders(ordersRes.data || []);
 
       const earningsRes = await axios.get(`/api/wallet/admin/platform-earnings`);
       setPlatformEarnings(earningsRes.data || { transactions: [], summary: {} });
-=======
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
     } catch (err) {
       console.error("Error fetching admin wallet data:", err?.response?.data || err?.message || err);
       toast.error(err?.response?.data?.message || "Failed to load dashboard data");
@@ -247,7 +235,6 @@ const AdminWalletManagement = () => {
     fetchReferralSettings();
   }, []);
 
-<<<<<<< HEAD
   // Filtering logic - use platformEarnings.transactions (merged wallet + all service data)
   const allPlatformTxns = platformEarnings.transactions || [];
   const filteredTransactions = allPlatformTxns.filter(txn => {
@@ -256,34 +243,15 @@ const AdminWalletManagement = () => {
     if (filterRole) {
       const txnRole = (txn.userRole || (typeof txn.userId === 'object' ? (txn.userId?.role || txn.userId?.userType) : '') || '').toLowerCase();
       if (txnRole !== filterRole.toLowerCase()) return false;
-=======
-  // Filtering logic
-  const filteredTransactions = transactions.filter(txn => {
-    const userWallet = wallets.find(w => String(w.userId?._id || w.userId) === String(txn.userId));
-    
-    const matchesType = !filterType || txn.type === filterType;
-    const matchesStatus = !filterStatus || txn.status === filterStatus;
-    
-    if (filterRole) {
-      if (!userWallet) return false;
-      if ((userWallet.role || '').toLowerCase() !== filterRole.toLowerCase()) return false;
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
     }
     
     if (filterUser || filterAllUser) {
       const targetUserId = filterUser || filterAllUser;
-<<<<<<< HEAD
       const txnUserId = typeof txn.userId === 'object' ? String(txn.userId?._id || txn.userId) : String(txn.userId);
       if (txnUserId !== targetUserId) return false;
     }
     
     return matchesType;
-=======
-      if (String(txn.userId) !== targetUserId) return false;
-    }
-    
-    return matchesType && matchesStatus;
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
   });
 
   const displayTransactions = filteredTransactions.slice((page - 1) * pageSize, page * pageSize);
@@ -308,13 +276,9 @@ const AdminWalletManagement = () => {
               <button className={`btn ${activeTab === 'wallets' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('wallets')}>User Wallets</button>
               <button className={`btn ${activeTab === 'withdrawals' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('withdrawals')}>Withdrawals</button>
               <button className={`btn ${activeTab === 'transactions' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('transactions')}>Transactions</button>
-<<<<<<< HEAD
             <button className={`btn ${activeTab === 'referrals' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('referrals')}>Referrals</button>
               <button className={`btn ${activeTab === 'earnings' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('earnings')}>Platform Earnings</button>
               <button className={`btn ${activeTab === 'orderPayouts' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('orderPayouts')}>Order Payouts</button>
-=======
-              <button className={`btn ${activeTab === 'referrals' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('referrals')}>Referrals</button>
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
               <button className={`btn ${activeTab === 'settings' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('settings')}>Settings</button>
           </div>
       </div>
@@ -514,7 +478,6 @@ const AdminWalletManagement = () => {
 
 
 
-<<<<<<< HEAD
 {activeTab === 'withdrawals' && (() => {
           const filteredWithdrawals = withdrawals.filter(w => {
             if (filterStatus && w.status !== filterStatus) return false;
@@ -545,24 +508,10 @@ const AdminWalletManagement = () => {
                   <option value="declined">Declined</option>
                 </select>
               </div>
-=======
-{activeTab === 'withdrawals' && (
-          <div className="card">
-            <div className="header d-flex justify-content-between align-items-center">
-              <h2>Withdrawal Requests</h2>
-              <select className="form-control" style={{ width: '150px' }} value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
-                <option value="">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="paid">Paid</option>
-                <option value="declined">Declined</option>
-              </select>
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
             </div>
             <div className="body table-responsive">
               <table className="table table-hover">
                 <thead>
-<<<<<<< HEAD
                     <tr>
                       <th>User</th>
                       <th>User Type</th>
@@ -589,30 +538,6 @@ const AdminWalletManagement = () => {
                             </span>
                           </td>
                           <td>{new Date(req.createdAt).toLocaleString()}</td>
-=======
-                  <tr>
-                    <th>User</th>
-                    <th>Amount</th>
-                    <th>KYC</th>
-                    <th>Request Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {withdrawals.filter(w => !filterStatus || w.status === filterStatus).map(req => {
-                    const userWallet = wallets.find(wal => String(wal.userId?._id || wal.userId) === String(req.userId));
-                    return (
-                      <tr key={req._id}>
-                        <td>{userWallet ? `${userWallet.name} ${userWallet.lastName}` : req.userId}</td>
-                        <td>₹{req.amount.toLocaleString()}</td>
-                        <td>
-                          <span className={`badge ${userWallet?.kycStatus === 'verified' ? 'badge-success' : 'badge-danger'}`}>
-                            {userWallet?.kycStatus || 'Unknown'}
-                          </span>
-                        </td>
-                        <td>{new Date(req.createdAt).toLocaleString()}</td>
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
                         <td>
                           <span className={`badge ${req.status === 'pending' ? 'badge-warning' : req.status === 'approved' ? 'badge-info' : req.status === 'paid' ? 'badge-success' : 'badge-danger'}`}>
                             {req.status}
@@ -636,7 +561,6 @@ const AdminWalletManagement = () => {
                       </tr>
                     );
                   })}
-<<<<<<< HEAD
                     {displayWithdrawals.length === 0 && <tr><td colSpan="8" className="text-center">No withdrawals found</td></tr>}
                 </tbody>
               </table>
@@ -651,14 +575,6 @@ const AdminWalletManagement = () => {
           </div>
           );
         })()}
-=======
-                  {withdrawals.filter(w => !filterStatus || w.status === filterStatus).length === 0 && <tr><td colSpan="6" className="text-center">No withdrawals found</td></tr>}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
 
       {activeTab === 'transactions' && (
         <div className="card">
@@ -692,7 +608,6 @@ const AdminWalletManagement = () => {
                 </tr>
               </thead>
               <tbody>
-<<<<<<< HEAD
               {displayTransactions.map(txn => {
                     const userName = txn.userName || (typeof txn.userId === 'object' && txn.userId?.name ? txn.userId.name : '') || txn.name || 'Unknown';
                     return (
@@ -706,26 +621,6 @@ const AdminWalletManagement = () => {
                       </tr>
                     );
                   })}
-=======
-                {displayTransactions.map(txn => {
-                  const user = wallets.find(w => String(w.userId?._id || w.userId) === String(txn.userId));
-                  const userName = txn.name && txn.lastName 
-                    ? `${txn.name} ${txn.lastName}` 
-                    : user 
-                      ? `${user.name} ${user.lastName}` 
-                      : (txn.userId || 'Unknown');
-                  return (
-                    <tr key={txn._id}>
-                      <td>{new Date(txn.createdAt).toLocaleDateString()}</td>
-                      <td>{userName}</td>
-                      <td><span className={`badge ${txn.type === 'credit' ? 'badge-success' : 'badge-danger'}`}>{txn.type}</span></td>
-                      <td>₹{txn.amount.toLocaleString()}</td>
-                      <td>{txn.purpose}</td>
-                      <td><span className={`badge ${txn.status === 'success' ? 'badge-success' : txn.status === 'pending' ? 'badge-warning' : 'badge-secondary'}`}>{txn.status}</span></td>
-                    </tr>
-                  );
-                })}
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
                 {displayTransactions.length === 0 && <tr><td colSpan="6" className="text-center">No transactions found</td></tr>}
               </tbody>
             </table>
@@ -740,14 +635,10 @@ const AdminWalletManagement = () => {
         </div>
       )}
 
-<<<<<<< HEAD
 {activeTab === 'referrals' && (() => {
             const totalReferralPages = Math.ceil(wallets.length / pageSize);
             const displayReferrals = wallets.slice((referralPage - 1) * pageSize, referralPage * pageSize);
             return (
-=======
-{activeTab === 'referrals' && (
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
             <div className="card">
               <div className="header d-flex justify-content-between align-items-center">
                 <h2>Referral Program Insights</h2>
@@ -771,11 +662,7 @@ const AdminWalletManagement = () => {
                     </tr>
                   </thead>
                   <tbody>
-<<<<<<< HEAD
                     {displayReferrals.map(w => (
-=======
-                    {wallets.map(w => (
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
                       <tr key={w._id}>
                         <td><strong>{w.name} {w.lastName}</strong></td>
                         <td><code>{w.referralCode || 'Not Generated'}</code></td>
@@ -784,7 +671,6 @@ const AdminWalletManagement = () => {
                         <td>{w.referredBy || '-'}</td>
                       </tr>
                     ))}
-<<<<<<< HEAD
                     {displayReferrals.length === 0 && <tr><td colSpan="5" className="text-center">No wallets found</td></tr>}
                   </tbody>
                 </table>
@@ -1341,11 +1227,6 @@ const AdminWalletManagement = () => {
                     </button>
                   </div>
                 </div>
-=======
-                    {wallets.length === 0 && <tr><td colSpan="5" className="text-center">No wallets found</td></tr>}
-                  </tbody>
-                </table>
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
               </div>
             </div>
           )}

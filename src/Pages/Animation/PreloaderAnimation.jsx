@@ -7,10 +7,12 @@ export default function PreloaderAnimation() {
   const [isLoading, setIsLoading] = useState(true);
   const isMobile = typeof window !== "undefined" && window.innerWidth <= 992;
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 8800); // extended to allow blackout
-    return () => clearTimeout(timer);
-  }, []);
+    useEffect(() => {
+      const timer = setTimeout(() => setIsLoading(false), 3300); // reduced from 8800ms
+      return () => clearTimeout(timer);
+    }, []);
+
+  if (!isLoading) return null;
 
   return (
     <div

@@ -5,9 +5,9 @@ const Deals = ({ deal }) => {
   return (
     // <div className="w-full bg-gray-100">
       <div className="px-[80px] py-[20px] pb-[80px]  max-w-[1440px] mx-auto">
-        <h4 className="text-orange-200 font-semibold text-[40px] ">
+        <h2 className="text-orange-200 font-semibold text-[40px] ">
          {deal.title}
-        </h4>
+        </h2>
         <div className="flex flex-row justify-between items-center mb-[24px]">
           <span className="text-[24px] font-normal text-black-900">
             {deal.description}

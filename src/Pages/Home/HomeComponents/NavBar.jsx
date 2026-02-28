@@ -372,18 +372,20 @@ const SearchDropdown = ({ visible, query, setQuery, tab, setTab, onSubmit }) => 
           <button key={t} className={`sdrop-tab ${tab === t ? "sdrop-tab-on" : ""}`} onClick={() => setTab(t)}>{t}</button>
         ))}
       </div>
-      <form className="sdrop-input-row" onSubmit={onSubmit}>
-        <Search size={14} className="sdrop-icon" />
-        <input
-          autoFocus
-          type="text"
-          placeholder={`Search ${tab}...`}
-          className="sdrop-input"
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-        />
-        {query && <button type="button" className="sdrop-clear" onClick={() => setQuery("")}><X size={12} /></button>}
-      </form>
+        <form className="sdrop-input-row" onSubmit={onSubmit}>
+          <label htmlFor="search-input" className="sr-only">Search {tab}</label>
+          <Search size={14} className="sdrop-icon" />
+          <input
+            autoFocus
+            id="search-input"
+            type="text"
+            placeholder={`Search ${tab}...`}
+            className="sdrop-input"
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+          />
+          {query && <button type="button" className="sdrop-clear" onClick={() => setQuery("")} aria-label="Clear search"><X size={12} /></button>}
+        </form>
       <div className="sdrop-trending">
         <span className="sdrop-trend-label">Trending</span>
         {TRENDING.map(t => (
@@ -626,10 +628,10 @@ const NavBar = () => {
               ))}
           </nav>
 
-          {/* ── CENTER: logo */}
-          <a href="/" className="nav-logo">
-            <img src="/assets/home/logo.svg" alt="Artsays" height={42} />
-          </a>
+            {/* ── CENTER: logo */}
+            <a href="/" className="nav-logo" aria-label="Artsays Home">
+              <img src="/assets/home/logo.svg" alt="Artsays Logo" width="150" height="42" />
+            </a>
 
           {/* ── RIGHT: search + actions */}
           <div className="nav-actions">
@@ -701,11 +703,11 @@ const NavBar = () => {
 
             {/* ── Avatar dropdown */}
             {isLoggedIn && (
-              <div className="nav-avatar-wrap" ref={avatarRef}>
-                <button className="nav-avatar-btn focus:outline-none" onClick={() => setShowAvatarDrop(s => !s)}>
-                  <img src={avatarSrc} className="nav-avatar-img" alt="Profile" />
-                  <ChevronDown size={12} className={`nav-av-chev ${showAvatarDrop ? "nav-chev-open" : ""}`} />
-                </button>
+                <div className="nav-avatar-wrap" ref={avatarRef}>
+                  <button className="nav-avatar-btn focus:outline-none" onClick={() => setShowAvatarDrop(s => !s)} aria-label="Toggle profile menu">
+                    <img src={avatarSrc} className="nav-avatar-img" alt="Profile" width="32" height="32" />
+                    <ChevronDown size={12} className={`nav-av-chev ${showAvatarDrop ? "nav-chev-open" : ""}`} />
+                  </button>
 
                 {showAvatarDrop && (
                   <div className="av-drop">
@@ -767,48 +769,48 @@ const NavBar = () => {
         </div>
       </header>
 
-      {/* ══════════════════ MOBILE TOP BAR ══════════════════ */}
-      <nav className="mob-bar">
-        <a href={isOnCommunity ? "/artsays-community/" : "/"} className="mob-logo">
-          <img src="/assets/home/logo.svg" alt="Artsays" height={32} />
-        </a>
-        <div className="mob-bar-right">
-          {isLoggedIn && isOnCommunity && (
-            <Link to="/artsays-community/notification" className="mob-icon-btn" style={{ position: "relative" }}>
-              <Bell size={22} />
-              {unreadCount > 0 && (
-                <span className="mob-notif-badge">{unreadCount > 99 ? "99+" : unreadCount}</span>
-              )}
-            </Link>
-          )}
-          {isLoggedIn && !isOnCommunity && (
-            <button className="mob-icon-btn" onClick={() => navigate("/artsays-community/notification")}>
-              <IoMdNotificationsOutline size={22} />
-            </button>
-          )}
-          {isLoggedIn ? (
-            <button className="mob-menu-btn" onClick={() => setShowSidebar(true)}>
-              <img src={avatarSrc} className="mob-av-img" alt="Profile" />
-            </button>
-          ) : (
-            <>
-              <a href="/login" className="nav-cta-btn" style={{ fontSize: 12, padding: "6px 14px" }}>Get Started</a>
-              <button className="mob-menu-btn" onClick={() => setShowSidebar(true)}>
-                <Menu size={22} />
+        {/* ══════════════════ MOBILE TOP BAR ══════════════════ */}
+        <nav className="mob-bar">
+          <a href={isOnCommunity ? "/artsays-community/" : "/"} className="mob-logo" aria-label="Artsays Home">
+            <img src="/assets/home/logo.svg" alt="Artsays Logo" width="115" height="32" />
+          </a>
+          <div className="mob-bar-right">
+            {isLoggedIn && isOnCommunity && (
+              <Link to="/artsays-community/notification" className="mob-icon-btn" style={{ position: "relative" }} aria-label="Notifications">
+                <Bell size={22} />
+                {unreadCount > 0 && (
+                  <span className="mob-notif-badge">{unreadCount > 99 ? "99+" : unreadCount}</span>
+                )}
+              </Link>
+            )}
+            {isLoggedIn && !isOnCommunity && (
+              <button className="mob-icon-btn" onClick={() => navigate("/artsays-community/notification")} aria-label="Notifications">
+                <IoMdNotificationsOutline size={22} />
               </button>
-            </>
-          )}
-        </div>
-      </nav>
+            )}
+            {isLoggedIn ? (
+              <button className="mob-menu-btn" onClick={() => setShowSidebar(true)} aria-label="Open sidebar">
+                <img src={avatarSrc} className="mob-av-img" alt="Profile" width="32" height="32" />
+              </button>
+            ) : (
+              <>
+                <a href="/login" className="nav-cta-btn" style={{ fontSize: 12, padding: "6px 14px" }}>Get Started</a>
+                <button className="mob-menu-btn" onClick={() => setShowSidebar(true)} aria-label="Open Menu">
+                  <Menu size={22} />
+                </button>
+              </>
+            )}
+          </div>
+        </nav>
 
-      {/* ══════════════════ MOBILE SIDEBAR ══════════════════ */}
-      <div className={`mob-sidebar ${showSidebar ? "mob-sidebar-open" : ""}`}>
-        {/* sidebar header */}
-        <div className="mob-sb-head">
-          <button className="mob-sb-close" onClick={() => setShowSidebar(false)}>
-            <X size={20} />
-          </button>
-          <img src={avatarSrc} className="mob-sb-av" alt="Profile" />
+        {/* ══════════════════ MOBILE SIDEBAR ══════════════════ */}
+        <div className={`mob-sidebar ${showSidebar ? "mob-sidebar-open" : ""}`} role="dialog" aria-modal="true" aria-label="Mobile Navigation">
+          {/* sidebar header */}
+            <div className="mob-sb-head">
+              <button className="mob-sb-close" onClick={() => setShowSidebar(false)} aria-label="Close sidebar">
+                <X size={20} />
+              </button>
+            <img src={avatarSrc} className="mob-sb-av" alt="Profile" width="80" height="80" />
           {isLoggedIn ? (
             <div className="mob-sb-info">
               <span className="mob-sb-name">{user.name} {user.lastName}</span>
@@ -816,7 +818,9 @@ const NavBar = () => {
                 <img
                   src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]?.badgeImage}`}
                   style={{ width: 18, height: 18, objectFit: "contain" }}
-                  alt="badge"
+                  alt="Verified Badge"
+                  width="18"
+                  height="18"
                 />
               )}
               <span className="mob-sb-role">{Usertype}</span>
@@ -977,98 +981,98 @@ const NavBar = () => {
           <Link to="/artsays-community/explore" className={`mbn ${location.pathname === "/artsays-community/explore" ? "mbn-on" : ""}`}>
             <Compass size={20} /><span>Explore</span>
           </Link>
-          {/* Profile → opens sidebar */}
-          <button className="mbn" onClick={() => setShowSidebar(true)}>
-            {isLoggedIn
-              ? <img src={avatarSrc} className="mbn-av" alt="" />
-              : <User size={20} />
-            }
-            <span>Profile</span>
-          </button>
-        </nav>
-      )}
+            {/* Profile → opens sidebar */}
+            <button className="mbn" onClick={() => setShowSidebar(true)} aria-label="Profile">
+              {isLoggedIn
+                ? <img src={avatarSrc} className="mbn-av" alt="" width="20" height="20" />
+                : <User size={20} />
+              }
+              <span>Profile</span>
+            </button>
+          </nav>
+        )}
 
-      {/* ══════════════ REGULAR MOBILE BOTTOM NAV ══════════════ */}
-      {!isOnCommunity && (
-        <nav className="mob-bottom">
-          {/* Slot 1 — Home */}
-          <a href="/" className={`mbn ${location.pathname === "/" ? "mbn-on" : ""}`}>
-            <Home size={20} /><span>Home</span>
-          </a>
-
-          {/* Slot 2 — Explore */}
-          <a href="/art-gallery" className={`mbn ${["/art-gallery", "/bid", "/store"].some(p => location.pathname.startsWith(p)) ? "mbn-on" : ""}`}>
-            <Compass size={20} /><span>Explore</span>
-          </a>
-
-          {/* Slot 3 — Raised Cart (Buyer) / Raised Create (Artist|Seller) / Community (Guest|Super-Admin) */}
-          {isLoggedIn && Usertype === "Buyer" && (
-            <div className="mbn-create-wrap">
-              <button
-                className="mbn-create-btn"
-                onClick={() => navigate(`/my-account/my-cart/${userId}`)}
-                aria-label="Cart"
-              >
-                <ShoppingCart size={22} />
-              </button>
-            </div>
-          )}
-          {isLoggedIn && (Usertype === "Artist" || Usertype === "Seller") && (
-            <div className="mbn-create-wrap" ref={regCreateRef}>
-              <button
-                className={`mbn-create-btn${showRegCreate ? " mbn-create-btn-on" : ""}`}
-                onClick={() => setShowRegCreate(v => !v)}
-                aria-label="Create"
-              >
-                <Plus size={24} style={{ transition: "transform 0.2s", transform: showRegCreate ? "rotate(45deg)" : "none" }} />
-              </button>
-              {showRegCreate && (
-                <div className="mbn-create-pop">
-                  <Link to="/artsays-community/create-post" className="mbn-create-opt" onClick={() => setShowRegCreate(false)}>
-                    <Plus size={15} /> Create Post
-                  </Link>
-                  <Link to="/artsays-community/create-live" className="mbn-create-opt" onClick={() => setShowRegCreate(false)}>
-                    <Video size={15} /> Go Live
-                  </Link>
-                </div>
-              )}
-            </div>
-          )}
-
-
-          {/* Slot 3 — Blog (Super-Admin/Guest) / empty spacer for logged-in roles */}
-          {(!isLoggedIn || Usertype === "Super-Admin") && (
-            <div className="mbn-create-wrap">
-              <button
-                className={`mbn-create-btn ${location.pathname.startsWith("/blogs") ? "mbn-on" : ""
-                  }`}
-                onClick={() => navigate("/blogs")}
-                aria-label="Blog"
-              >
-                <MdLibraryAdd size={20} />
-              </button>
-            </div>
-
-          )}
-          {(!isLoggedIn || Usertype === "Super-Admin") && (
-            <a href="/artsays-community" className={`mbn ${location.pathname.startsWith("/artsays-community") ? "mbn-on" : ""}`}>
-              <Users size={20} /><span>Community</span>
+        {/* ══════════════ REGULAR MOBILE BOTTOM NAV ══════════════ */}
+        {!isOnCommunity && (
+          <nav className="mob-bottom">
+            {/* Slot 1 — Home */}
+            <a href="/" className={`mbn ${location.pathname === "/" ? "mbn-on" : ""}`} aria-label="Home">
+              <Home size={20} /><span>Home</span>
             </a>
-          )}
-          {isLoggedIn && (Usertype === "Buyer" || Usertype === "Artist" || Usertype === "Seller") && (
-            <a href="/artsays-community" className={`mbn ${location.pathname.startsWith("/artsays-community") ? "mbn-on" : ""}`}>
-              <Users size={20} /><span>Community</span>
-            </a>
-          )}
 
-          {/* Slot 5 — Profile / Login */}
-          <button className="mbn" onClick={() => isLoggedIn ? setShowSidebar(true) : navigate("/login")}>
-            {isLoggedIn
-              ? <img src={avatarSrc} className="mbn-av" alt="" />
-              : <User size={20} />
-            }
-            <span>{isLoggedIn ? "Profile" : "Login"}</span>
-          </button>
+            {/* Slot 2 — Explore */}
+            <a href="/art-gallery" className={`mbn ${["/art-gallery", "/bid", "/store"].some(p => location.pathname.startsWith(p)) ? "mbn-on" : ""}`} aria-label="Explore">
+              <Compass size={20} /><span>Explore</span>
+            </a>
+
+            {/* Slot 3 — Raised Cart (Buyer) / Raised Create (Artist|Seller) / Community (Guest|Super-Admin) */}
+            {isLoggedIn && Usertype === "Buyer" && (
+              <div className="mbn-create-wrap">
+                <button
+                  className="mbn-create-btn"
+                  onClick={() => navigate(`/my-account/my-cart/${userId}`)}
+                  aria-label="Cart"
+                >
+                  <ShoppingCart size={22} />
+                </button>
+              </div>
+            )}
+            {isLoggedIn && (Usertype === "Artist" || Usertype === "Seller") && (
+              <div className="mbn-create-wrap" ref={regCreateRef}>
+                <button
+                  className={`mbn-create-btn${showRegCreate ? " mbn-create-btn-on" : ""}`}
+                  onClick={() => setShowRegCreate(v => !v)}
+                  aria-label="Create New"
+                >
+                  <Plus size={24} style={{ transition: "transform 0.2s", transform: showRegCreate ? "rotate(45deg)" : "none" }} />
+                </button>
+                {showRegCreate && (
+                  <div className="mbn-create-pop">
+                    <Link to="/artsays-community/create-post" className="mbn-create-opt" onClick={() => setShowRegCreate(false)}>
+                      <Plus size={15} /> Create Post
+                    </Link>
+                    <Link to="/artsays-community/create-live" className="mbn-create-opt" onClick={() => setShowRegCreate(false)}>
+                      <Video size={15} /> Go Live
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
+
+
+            {/* Slot 3 — Blog (Super-Admin/Guest) / empty spacer for logged-in roles */}
+            {(!isLoggedIn || Usertype === "Super-Admin") && (
+              <div className="mbn-create-wrap">
+                <button
+                  className={`mbn-create-btn ${location.pathname.startsWith("/blogs") ? "mbn-on" : ""
+                    }`}
+                  onClick={() => navigate("/blogs")}
+                  aria-label="Blog"
+                >
+                  <MdLibraryAdd size={20} />
+                </button>
+              </div>
+
+            )}
+            {(!isLoggedIn || Usertype === "Super-Admin") && (
+              <a href="/artsays-community" className={`mbn ${location.pathname.startsWith("/artsays-community") ? "mbn-on" : ""}`} aria-label="Community">
+                <Users size={20} /><span>Community</span>
+              </a>
+            )}
+            {isLoggedIn && (Usertype === "Buyer" || Usertype === "Artist" || Usertype === "Seller") && (
+              <a href="/artsays-community" className={`mbn ${location.pathname.startsWith("/artsays-community") ? "mbn-on" : ""}`} aria-label="Community">
+                <Users size={20} /><span>Community</span>
+              </a>
+            )}
+
+            {/* Slot 5 — Profile / Login */}
+            <button className="mbn" onClick={() => isLoggedIn ? setShowSidebar(true) : navigate("/login")} aria-label="Profile">
+              {isLoggedIn
+                ? <img src={avatarSrc} className="mbn-av" alt="" width="20" height="20" />
+                : <User size={20} />
+              }
+              <span>{isLoggedIn ? "Profile" : "Login"}</span>
+            </button>
         </nav>
       )}
     </div>

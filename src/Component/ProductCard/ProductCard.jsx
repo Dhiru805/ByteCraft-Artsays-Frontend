@@ -418,7 +418,7 @@ useEffect(() => {
                                 </div>
                               )}
 
-                              <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow">
+                              <button className="absolute bottom-3 bg-dark right-3 p-2 rounded-full shadow" aria-label={likedProducts[product._id] ? "Remove from wishlist" : "Add to wishlist"}>
                               {/* <Heart className="w-5 h-5 text-white" /> */}
                               <div
                                 onClick={(e) => {
@@ -504,16 +504,16 @@ useEffect(() => {
                                   {discountPercent}% OFF
                                 </span>
                               )}
-                                  {hasDiscount ? (
-                                    <>
-                                      <span className="text-gray-400 line-through">
-                                        ₹{product.marketPrice}
-                                      </span>
-                                      <span className="text-lg font-bold text-gray-900">
-                                        ₹{product.finalPrice}
-                                      </span>
-                                    </>
-                                  ) : (
+                                    {hasDiscount ? (
+                                      <>
+                                        <span className="text-gray-500 line-through">
+                                          ₹{product.marketPrice}
+                                        </span>
+                                        <span className="text-lg font-bold text-gray-900">
+                                          ₹{product.finalPrice}
+                                        </span>
+                                      </>
+                                    ) : (
                                     <span className="text-lg font-bold text-gray-900">
                                       ₹{product.finalPrice}
                                     </span>

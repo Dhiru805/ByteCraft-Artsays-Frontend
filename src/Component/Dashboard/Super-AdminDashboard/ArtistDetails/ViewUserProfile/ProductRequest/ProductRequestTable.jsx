@@ -167,11 +167,7 @@ const ProductRequest = ({ userId }) => {
                                                     />
                                                     {product.productName}
                                                 </td>
-<<<<<<< HEAD
                                                 <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.finalPrice).replace(/\.00$/, '')}</td>
-=======
-                                                <td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.sellingPrice).replace(/\.00$/, '')}</td>
->>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
                                                 <td>{new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
                                                 <td>
                                                     <button className={`btn btn-sm ${product.status === 'Pending' ? 'btn-outline-warning' : product.status === 'Approved' ? 'btn-outline-success' : 'btn-outline-danger'}`}>
