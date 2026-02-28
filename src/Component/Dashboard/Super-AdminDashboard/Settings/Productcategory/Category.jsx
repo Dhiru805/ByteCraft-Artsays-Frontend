@@ -113,7 +113,7 @@ const[loading,setLoading]=useState(false);
   const fetchCategoryData = async () => {
     setLoading(true)
     try {
-      const response = await getAPI(`/api/product-category`, {}, true);
+      const response = await getAPI(`/api/main-category`, {}, true);
       if (!response.hasError && response.data && Array.isArray(response.data.data)) {
         setCategories(response.data.data);
       }

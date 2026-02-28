@@ -113,7 +113,7 @@ const EditSubCategoryModal = ({
 
     try {
         const response = await putAPI(
-          `/api/sub-category/${subCategory._id}`,
+          `/api/sub-category/${subCategory._id || subCategory.id}`,
         {
           subCategoryName: formData.subCategoryName,
           categoryId,

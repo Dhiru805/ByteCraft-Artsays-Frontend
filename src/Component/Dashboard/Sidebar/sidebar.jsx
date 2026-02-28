@@ -56,8 +56,6 @@ const Sidebar = () => {
         path: "/super-admin/admin",
         subTabs: [],
       },
-      //   ]
-      // : []),
       {
         label: "Blogs",
         tabId: "bgs1",
