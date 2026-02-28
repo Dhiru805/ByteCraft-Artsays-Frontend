@@ -380,6 +380,7 @@ const BrowseCategories = () => {
         {currentItems.length > 0 ? (
             <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:overflow-visible">
               {currentItems.map((product, index) => {
+                  if (!product) return null;
                     const displayPrice = product.finalPrice;
                     const hasDiscount = displayPrice < product.marketPrice;
                   const discountPercent = hasDiscount ? Math.round(((product.marketPrice - displayPrice) / product.marketPrice) * 100) : 0;
@@ -480,14 +481,14 @@ const BrowseCategories = () => {
                     {/* Pricing & Discount */}
                     <div className="flex items-center justify-between mt-auto border-t border-gray-50 pt-3">
                       <div className="flex items-center gap-2">
-                        {hasDiscount && (
-                          <span className="text-lg text-gray-500 line-through font-bold">
-                            ₹{product.marketPrice.toLocaleString()}
-                          </span>
-                        )}
-                            <span className="text-2xl font-black text-gray-900 tracking-tighter">
-                              ₹{displayPrice.toLocaleString()}
+                          {hasDiscount && (
+                            <span className="text-lg text-gray-500 line-through font-bold">
+                              ₹{(product.marketPrice ?? 0).toLocaleString()}
                             </span>
+                          )}
+                              <span className="text-2xl font-black text-gray-900 tracking-tighter">
+                                ₹{(displayPrice ?? 0).toLocaleString()}
+                              </span>
                       </div>
                     </div>
 
